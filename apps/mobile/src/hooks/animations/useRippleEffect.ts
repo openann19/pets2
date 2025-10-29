@@ -3,11 +3,7 @@
  * Ripple animation effect on press
  */
 
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
+import { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 export const useRippleEffect = () => {
   const rippleScale = useSharedValue(0);

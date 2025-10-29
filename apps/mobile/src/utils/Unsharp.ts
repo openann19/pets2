@@ -4,7 +4,7 @@
  * Requires @shopify/react-native-skia; otherwise no-op passthrough.
  */
 
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from 'expo-file-system';
 
 /**
  * Lazy load Skia to avoid bundling if not installed
@@ -14,7 +14,7 @@ import * as FileSystem from "expo-file-system";
 async function loadSkia(): Promise<any> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-explicit-any
-    return require("@shopify/react-native-skia");
+    return require('@shopify/react-native-skia');
   } catch {
     return null;
   }
@@ -30,41 +30,32 @@ export interface UnsharpOpts {
   /** JPEG quality (0..1), default 1 */
   quality?: number;
   /** Output format */
-  format?: "jpg" | "png";
+  format?: 'jpg' | 'png';
 }
 
 /**
  * Apply unsharp mask to sharpen an image
  * Uses proper high-pass filtering: result = original + amount * (original - blurred)
- * 
+ *
  * @param uri - Source image URI
  * @param opts - Unsharp mask options
  * @returns URI of sharpened image, or original if Skia unavailable
  */
-export async function unsharpMask(
-  uri: string,
-  opts: UnsharpOpts = {}
-): Promise<string> {
+export async function unsharpMask(uri: string, opts: UnsharpOpts = {}): Promise<string> {
   const Skia = await loadSkia();
-  
+
   if (!Skia) {
     return uri; // graceful fallback
   }
 
-  const {
-    amount = 0.5,
-    radius = 1.5,
-    threshold = 0.02,
-    quality = 1,
-    format = "jpg",
-  } = opts;
+  const { amount = 0.5, radius = 1.5, threshold = 0.02, quality = 1, format = 'jpg' } = opts;
 
   const { Skia: S } = Skia;
 
   // Load source image
   const data = await S.Data.fromURI(uri);
   const src = S.Image.MakeImageFromEncoded(data);
-  
+
   if (!src) {
     return uri;
   }
@@ -73,23 +64,23 @@ export async function unsharpMask(
   const h = src.height();
 
   const surface = S.Surface.MakeSurface(w, h);
-  
+
   if (!surface) {
     return uri;
   }
-  
+
   const canvas = surface.getCanvas();
 
   // Blur original into temp surface
   const blurSurface = S.Surface.MakeSurface(w, h);
-  
+
   if (!blurSurface) {
     return uri;
   }
-  
+
   const blurCanvas = blurSurface.getCanvas();
   const blurPaint = S.Paint();
-  blurPaint.setImageFilter(S.ImageFilter.MakeBlur(radius, radius, "decal"));
+  blurPaint.setImageFilter(S.ImageFilter.MakeBlur(radius, radius, 'decal'));
   blurCanvas.drawImage(src, 0, 0, blurPaint);
   const blurred = blurSurface.makeImageSnapshot();
 
@@ -111,9 +102,9 @@ export async function unsharpMask(
       return half4(clamp(sharp, 0.0, 1.0), b.a);
     }
   `;
-  
+
   const effect = S.RuntimeEffect.Make(sksl);
-  
+
   if (!effect) {
     return uri;
   }
@@ -123,10 +114,7 @@ export async function unsharpMask(
     // uniforms
     { amount, threshold },
     // children (samplers)
-    [
-      src.makeShaderOptions({}, {}),
-      blurred.makeShaderOptions({}, {}),
-    ]
+    [src.makeShaderOptions({}, {}), blurred.makeShaderOptions({}, {})],
   );
 
   const p = S.Paint();
@@ -136,7 +124,7 @@ export async function unsharpMask(
   // Export sharpened image
   const snap = surface.makeImageSnapshot();
   const base64 =
-    format === "png"
+    format === 'png'
       ? snap.encodeToBase64()
       : snap.encodeToBase64(S.ImageFormat.JPEG, Math.round(quality * 100));
 
@@ -147,4 +135,3 @@ export async function unsharpMask(
 
   return outPath;
 }
-

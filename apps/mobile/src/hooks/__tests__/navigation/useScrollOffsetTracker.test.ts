@@ -2,18 +2,18 @@
  * @jest-environment jsdom
  * Comprehensive tests for useScrollOffsetTracker hook
  */
-import { renderHook, act } from "@testing-library/react-native";
-import { NativeScrollEvent } from "react-native";
-import { useScrollOffsetTracker } from "../../navigation/useScrollOffsetTracker";
+import { renderHook, act } from '@testing-library/react-native';
+import { NativeScrollEvent } from 'react-native';
+import { useScrollOffsetTracker } from '../../navigation/useScrollOffsetTracker';
 
-describe("useScrollOffsetTracker", () => {
-  it("should initialize with offset 0", () => {
+describe('useScrollOffsetTracker', () => {
+  it('should initialize with offset 0', () => {
     const { result } = renderHook(() => useScrollOffsetTracker());
-    
+
     expect(result.current.getOffset()).toBe(0);
   });
 
-  it("should track scroll offset correctly", () => {
+  it('should track scroll offset correctly', () => {
     const { result } = renderHook(() => useScrollOffsetTracker());
     const { onScroll, getOffset } = result.current;
 
@@ -30,7 +30,7 @@ describe("useScrollOffsetTracker", () => {
     expect(getOffset()).toBe(150);
   });
 
-  it("should update offset on multiple scroll events", () => {
+  it('should update offset on multiple scroll events', () => {
     const { result } = renderHook(() => useScrollOffsetTracker());
     const { onScroll, getOffset } = result.current;
 
@@ -56,7 +56,7 @@ describe("useScrollOffsetTracker", () => {
     expect(getOffset()).toBe(300);
   });
 
-  it("should handle zero offset", () => {
+  it('should handle zero offset', () => {
     const { result } = renderHook(() => useScrollOffsetTracker());
     const { onScroll, getOffset } = result.current;
 
@@ -69,7 +69,7 @@ describe("useScrollOffsetTracker", () => {
     expect(getOffset()).toBe(0);
   });
 
-  it("should handle negative offset", () => {
+  it('should handle negative offset', () => {
     const { result } = renderHook(() => useScrollOffsetTracker());
     const { onScroll, getOffset } = result.current;
 
@@ -82,7 +82,7 @@ describe("useScrollOffsetTracker", () => {
     expect(getOffset()).toBe(-50);
   });
 
-  it("should maintain latest offset across multiple calls", () => {
+  it('should maintain latest offset across multiple calls', () => {
     const { result } = renderHook(() => useScrollOffsetTracker());
     const { onScroll, getOffset } = result.current;
 
@@ -95,7 +95,7 @@ describe("useScrollOffsetTracker", () => {
     expect(getOffset()).toBe(30);
   });
 
-  it("should return stable references for callbacks", () => {
+  it('should return stable references for callbacks', () => {
     const { result, rerender } = renderHook(() => useScrollOffsetTracker());
     const firstOnScroll = result.current.onScroll;
     const firstGetOffset = result.current.getOffset;
@@ -106,7 +106,7 @@ describe("useScrollOffsetTracker", () => {
     expect(result.current.getOffset).toBe(firstGetOffset);
   });
 
-  it("should handle rapid scroll events", () => {
+  it('should handle rapid scroll events', () => {
     const { result } = renderHook(() => useScrollOffsetTracker());
     const { onScroll, getOffset } = result.current;
 
@@ -121,7 +121,7 @@ describe("useScrollOffsetTracker", () => {
     expect(getOffset()).toBe(990);
   });
 
-  it("should handle large offset values", () => {
+  it('should handle large offset values', () => {
     const { result } = renderHook(() => useScrollOffsetTracker());
     const { onScroll, getOffset } = result.current;
 
@@ -134,7 +134,7 @@ describe("useScrollOffsetTracker", () => {
     expect(getOffset()).toBe(999999);
   });
 
-  it("should work correctly with multiple hook instances", () => {
+  it('should work correctly with multiple hook instances', () => {
     const { result: result1 } = renderHook(() => useScrollOffsetTracker());
     const { result: result2 } = renderHook(() => useScrollOffsetTracker());
 
@@ -151,4 +151,3 @@ describe("useScrollOffsetTracker", () => {
     expect(result2.current.getOffset()).toBe(200);
   });
 });
-

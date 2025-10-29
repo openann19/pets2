@@ -1,8 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import { Ionicons } from '@expo/vector-icons';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import React, { useMemo } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface SwipeWidgetProps {
   pet: {
@@ -12,20 +12,27 @@ interface SwipeWidgetProps {
     breed: string;
     photos: string[];
   };
-  onSwipe: (direction: "left" | "right") => void;
+  onSwipe: (direction: 'left' | 'right') => void;
   onViewProfile: () => void;
 }
 
 export function SwipeWidget({ pet, onSwipe, onViewProfile }: SwipeWidgetProps): React.JSX.Element {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Quick Swipe</Text>
-        <TouchableOpacity onPress={onViewProfile} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Ionicons name="open-outline" size={20} color={theme.colors.primary} />
+        <TouchableOpacity
+          onPress={onViewProfile}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Ionicons
+            name="open-outline"
+            size={20}
+            color={theme.colors.primary}
+          />
         </TouchableOpacity>
       </View>
 
@@ -47,19 +54,27 @@ export function SwipeWidget({ pet, onSwipe, onViewProfile }: SwipeWidgetProps): 
         <TouchableOpacity
           style={StyleSheet.flatten([styles.actionButton, styles.passButton])}
           onPress={() => {
-            onSwipe("left");
+            onSwipe('left');
           }}
         >
-          <Ionicons name="close" size={24} color={theme.colors.danger} />
+          <Ionicons
+            name="close"
+            size={24}
+            color={theme.colors.danger}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={StyleSheet.flatten([styles.actionButton, styles.likeButton])}
           onPress={() => {
-            onSwipe("right");
+            onSwipe('right');
           }}
         >
-          <Ionicons name="heart" size={24} color={theme.colors.success} />
+          <Ionicons
+            name="heart"
+            size={24}
+            color={theme.colors.success}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -80,14 +95,14 @@ function makeStyles(theme: AppTheme) {
       elevation: 4,
     },
     header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginBottom: theme.spacing.sm,
     },
     title: {
       fontSize: 16,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
     },
     petCard: {
@@ -97,17 +112,17 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.md,
     },
     petImage: {
-      width: "100%",
+      width: '100%',
       height: 120,
       borderRadius: theme.radii.sm,
       marginBottom: theme.spacing.xs,
     },
     petInfo: {
-      alignItems: "center",
+      alignItems: 'center',
     },
     petName: {
       fontSize: 14,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
       marginBottom: 2,
     },
@@ -116,15 +131,15 @@ function makeStyles(theme: AppTheme) {
       color: theme.colors.onMuted,
     },
     actions: {
-      flexDirection: "row",
-      justifyContent: "space-around",
+      flexDirection: 'row',
+      justifyContent: 'space-around',
     },
     actionButton: {
       width: 48,
       height: 48,
       borderRadius: theme.radii.full,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       shadowColor: theme.colors.border,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
@@ -132,10 +147,10 @@ function makeStyles(theme: AppTheme) {
       elevation: 2,
     },
     passButton: {
-      backgroundColor: theme.colors.danger + "15",
+      backgroundColor: theme.colors.danger + '15',
     },
     likeButton: {
-      backgroundColor: theme.colors.success + "15",
+      backgroundColor: theme.colors.success + '15',
     },
   });
 }

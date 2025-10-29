@@ -1,21 +1,12 @@
-import React, { type ReactNode } from "react";
-import { View, type ViewStyle, type ViewProps, StyleSheet } from "react-native";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
-import Animated from "react-native-reanimated";
+import React, { type ReactNode } from 'react';
+import { View, type ViewStyle, type ViewProps, StyleSheet } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
-import { BorderRadius, Spacing } from "../../animation";
-import {
-  BLUR_CONFIGS,
-  TRANSPARENCY_CONFIGS,
-  BORDER_CONFIGS,
-  SHADOW_CONFIGS,
-} from "./configs";
+import { BorderRadius, Spacing } from '../../animation';
+import { BLUR_CONFIGS, TRANSPARENCY_CONFIGS, BORDER_CONFIGS, SHADOW_CONFIGS } from './configs';
 
 /**
  * GlassContainer Component
@@ -36,11 +27,11 @@ interface GlassContainerProps extends ViewProps {
 
 export const GlassContainer: React.FC<GlassContainerProps> = ({
   children,
-  intensity = "medium",
-  transparency = "medium",
-  border = "light",
-  shadow = "medium",
-  borderRadius = "2xl",
+  intensity = 'medium',
+  transparency = 'medium',
+  border = 'light',
+  shadow = 'medium',
+  borderRadius = '2xl',
   animated = false,
   hover = false,
   style,
@@ -78,7 +69,7 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
 
   const glassStyle: ViewStyle = {
     borderRadius: getBorderRadiusValue(borderRadius),
-    overflow: "hidden",
+    overflow: 'hidden',
     ...BORDER_CONFIGS[border],
     ...SHADOW_CONFIGS[shadow],
     ...style,
@@ -91,10 +82,7 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
 
   return (
     <Animated.View
-      style={StyleSheet.flatten([
-        glassStyle,
-        animated ? animatedStyle : undefined,
-      ])}
+      style={StyleSheet.flatten([glassStyle, animated ? animatedStyle : undefined])}
       onTouchStart={handlePressIn}
       onTouchEnd={handlePressOut}
       {...props}

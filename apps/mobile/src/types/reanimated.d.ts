@@ -1,14 +1,14 @@
 /**
  * React Native Reanimated Type Definitions
- * 
+ *
  * Provides proper typing for react-native-reanimated SharedValue, DerivedValue,
  * and other animated primitives used throughout the app.
  */
 
-import type { ComponentPropsWithRef } from "react";
-import type { ViewStyle, TextStyle, ImageStyle } from "react-native";
+import type { ComponentPropsWithRef } from 'react';
+import type { ViewStyle, TextStyle, ImageStyle } from 'react-native';
 
-declare module "react-native-reanimated" {
+declare module 'react-native-reanimated' {
   export type SharedValue<T> = {
     readonly value: T;
   };
@@ -25,14 +25,9 @@ declare module "react-native-reanimated" {
     (...args: Args): Return;
   }
 
-  export function useSharedValue<T>(
-    initialValue: T,
-  ): SharedValue<T>;
+  export function useSharedValue<T>(initialValue: T): SharedValue<T>;
 
-  export function useDerivedValue<T>(
-    callback: () => T,
-    dependencies?: unknown[],
-  ): DerivedValue<T>;
+  export function useDerivedValue<T>(callback: () => T, dependencies?: unknown[]): DerivedValue<T>;
 
   export function useAnimatedStyle<T extends UseAnimatedStyleCallback>(
     callback: T,
@@ -57,39 +52,28 @@ declare module "react-native-reanimated" {
     },
   ): T;
 
-  export function withDecay(
-    config: {
-      velocity: number;
-      deceleration?: number;
-      clamp?: [number, number];
-    },
-  ): number;
+  export function withDecay(config: {
+    velocity: number;
+    deceleration?: number;
+    clamp?: [number, number];
+  }): number;
 
   export function interpolate(
     value: number,
     inputRange: number[],
     outputRange: number[],
-    extrapolate?: "clamp" | "extend" | "identity",
+    extrapolate?: 'clamp' | 'extend' | 'identity',
   ): number;
 
-  export function useAnimatedGestureHandler<
-    T extends Record<string, unknown>,
-  >(handlers: T): (event: unknown) => void;
+  export function useAnimatedGestureHandler<T extends Record<string, unknown>>(
+    handlers: T,
+  ): (event: unknown) => void;
 
-  export function withDelay<T extends number>(
-    delayMs: number,
-    toValue: T,
-  ): T;
+  export function withDelay<T extends number>(delayMs: number, toValue: T): T;
 
-  export function withRepeat<T extends number>(
-    toValue: T,
-    reps?: number,
-    reverse?: boolean,
-  ): T;
+  export function withRepeat<T extends number>(toValue: T, reps?: number, reverse?: boolean): T;
 
-  export function withSequence(
-    ...animations: number[]
-  ): number;
+  export function withSequence(...animations: number[]): number;
 
   export function cancelAnimation<T>(sharedValue: SharedValue<T>): void;
 
@@ -101,28 +85,21 @@ declare module "react-native-reanimated" {
     fn: (...args: Args) => Return,
   ): WorkletFunction<Args, Return>;
 
-  export function useAnimatedProps<T>(
-    callback: () => T,
-    deps?: unknown[],
-  ): Partial<T>;
+  export function useAnimatedProps<T>(callback: () => T, deps?: unknown[]): Partial<T>;
 
-  export function withClamp(
-    value: number,
-    min: number,
-    max: number,
-  ): number;
+  export function withClamp(value: number, min: number, max: number): number;
 
   export function interpolateColor(
     value: number,
     inputRange: number[],
     outputRange: string[],
-    colorSpace?: "RGB" | "HSV",
+    colorSpace?: 'RGB' | 'HSV',
   ): string;
 
   export const Extrapolate: {
-    EXTEND: "extend";
-    CLAMP: "clamp";
-    IDENTITY: "identity";
+    EXTEND: 'extend';
+    CLAMP: 'clamp';
+    IDENTITY: 'identity';
   };
 
   export const Easing: {
@@ -162,4 +139,3 @@ export type AnimatedProps<T> = T & {
 export type WorkletCallback<Args extends readonly unknown[] = readonly unknown[], Return = void> = (
   ...args: Args
 ) => Return;
-

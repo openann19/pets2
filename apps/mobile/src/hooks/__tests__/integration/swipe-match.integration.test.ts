@@ -3,8 +3,8 @@
  * Integration Test: Swipe Gestures + Animations + Match Flow
  * Demonstrates how swipe-related hooks work together
  */
-import { renderHook, act } from "@testing-library/react-native";
-import { Animated } from "react-native";
+import { renderHook, act } from '@testing-library/react-native';
+import { Animated } from 'react-native';
 
 // This integration test demonstrates:
 // 1. User performs swipe gesture
@@ -13,12 +13,12 @@ import { Animated } from "react-native";
 // 4. Match modal appears on mutual like
 // 5. State synchronization across swipe ecosystem
 
-describe("Swipe + Match Integration", () => {
+describe('Swipe + Match Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should handle complete swipe right flow with animation", async () => {
+  it('should handle complete swipe right flow with animation', async () => {
     // Mock animated value
     const mockAnimatedValue = new Animated.Value(0);
 
@@ -26,8 +26,8 @@ describe("Swipe + Match Integration", () => {
     const swipeState = {
       currentCard: 0,
       cards: [
-        { _id: "pet-1", name: "Buddy" },
-        { _id: "pet-2", name: "Max" },
+        { _id: 'pet-1', name: 'Buddy' },
+        { _id: 'pet-2', name: 'Max' },
       ],
       isAnimating: false,
     };
@@ -54,7 +54,7 @@ describe("Swipe + Match Integration", () => {
     expect(swipeState.isAnimating).toBe(false);
   });
 
-  it("should handle swipe left (reject) flow", async () => {
+  it('should handle swipe left (reject) flow', async () => {
     const mockAnimatedValue = new Animated.Value(0);
 
     const swipeState = {
@@ -66,7 +66,7 @@ describe("Swipe + Match Integration", () => {
     // Swipe left
     await act(async () => {
       swipeState.isAnimating = true;
-      swipeState.rejectedCards.push("pet-1");
+      swipeState.rejectedCards.push('pet-1');
 
       Animated.timing(mockAnimatedValue, {
         toValue: -300,
@@ -75,7 +75,7 @@ describe("Swipe + Match Integration", () => {
       }).start();
     });
 
-    expect(swipeState.rejectedCards).toContain("pet-1");
+    expect(swipeState.rejectedCards).toContain('pet-1');
 
     // Animation completes
     await act(async () => {
@@ -86,13 +86,13 @@ describe("Swipe + Match Integration", () => {
     expect(swipeState.currentCard).toBe(1);
   });
 
-  it("should trigger match modal on mutual like", async () => {
+  it('should trigger match modal on mutual like', async () => {
     const matchState = {
       isMatchModalVisible: false,
       currentMatch: null as any,
     };
 
-    const currentPet = { _id: "pet-1", name: "Buddy", likedMe: true };
+    const currentPet = { _id: 'pet-1', name: 'Buddy', likedMe: true };
 
     // User likes pet that already liked them
     await act(async () => {
@@ -106,13 +106,13 @@ describe("Swipe + Match Integration", () => {
     expect(matchState.currentMatch).toEqual(currentPet);
   });
 
-  it("should not show match modal on non-mutual like", async () => {
+  it('should not show match modal on non-mutual like', async () => {
     const matchState = {
       isMatchModalVisible: false,
       currentMatch: null,
     };
 
-    const currentPet = { _id: "pet-1", name: "Buddy", likedMe: false };
+    const currentPet = { _id: 'pet-1', name: 'Buddy', likedMe: false };
 
     // User likes pet that hasn't liked them yet
     await act(async () => {
@@ -126,7 +126,7 @@ describe("Swipe + Match Integration", () => {
     expect(matchState.currentMatch).toBe(null);
   });
 
-  it("should handle rapid swipe gestures without conflicts", async () => {
+  it('should handle rapid swipe gestures without conflicts', async () => {
     const swipeState = {
       currentCard: 0,
       processedCards: [] as number[],
@@ -155,24 +155,24 @@ describe("Swipe + Match Integration", () => {
     expect(swipeState.currentCard).toBe(4);
   });
 
-  it("should maintain swipe history for undo functionality", async () => {
+  it('should maintain swipe history for undo functionality', async () => {
     const swipeHistory = {
-      actions: [] as Array<{ cardId: string; action: "like" | "reject" }>,
+      actions: [] as Array<{ cardId: string; action: 'like' | 'reject' }>,
     };
 
     // Swipe right
     await act(async () => {
-      swipeHistory.actions.push({ cardId: "pet-1", action: "like" });
+      swipeHistory.actions.push({ cardId: 'pet-1', action: 'like' });
     });
 
     // Swipe left
     await act(async () => {
-      swipeHistory.actions.push({ cardId: "pet-2", action: "reject" });
+      swipeHistory.actions.push({ cardId: 'pet-2', action: 'reject' });
     });
 
     expect(swipeHistory.actions).toHaveLength(2);
-    expect(swipeHistory.actions[0].action).toBe("like");
-    expect(swipeHistory.actions[1].action).toBe("reject");
+    expect(swipeHistory.actions[0].action).toBe('like');
+    expect(swipeHistory.actions[1].action).toBe('reject');
 
     // Undo last action
     await act(async () => {
@@ -182,7 +182,7 @@ describe("Swipe + Match Integration", () => {
     expect(swipeHistory.actions).toHaveLength(1);
   });
 
-  it("should handle swipe animations with rotation and opacity", async () => {
+  it('should handle swipe animations with rotation and opacity', async () => {
     const animationValues = {
       translateX: new Animated.Value(0),
       translateY: new Animated.Value(0),
@@ -217,9 +217,9 @@ describe("Swipe + Match Integration", () => {
     expect(animationValues.opacity).toBeDefined();
   });
 
-  it("should handle card stack depletion", async () => {
+  it('should handle card stack depletion', async () => {
     const cardStack = {
-      cards: [{ _id: "pet-1" }, { _id: "pet-2" }, { _id: "pet-3" }],
+      cards: [{ _id: 'pet-1' }, { _id: 'pet-2' }, { _id: 'pet-3' }],
       currentIndex: 0,
       isEmpty: false,
     };
@@ -238,7 +238,7 @@ describe("Swipe + Match Integration", () => {
     expect(cardStack.currentIndex).toBe(3);
   });
 
-  it("should refresh card stack when depleted", async () => {
+  it('should refresh card stack when depleted', async () => {
     const cardStack = {
       cards: [] as any[],
       isLoading: false,
@@ -252,7 +252,7 @@ describe("Swipe + Match Integration", () => {
       // Simulate API fetch
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      cardStack.cards = [{ _id: "pet-4" }, { _id: "pet-5" }, { _id: "pet-6" }];
+      cardStack.cards = [{ _id: 'pet-4' }, { _id: 'pet-5' }, { _id: 'pet-6' }];
       cardStack.isEmpty = false;
       cardStack.isLoading = false;
     });
@@ -262,7 +262,7 @@ describe("Swipe + Match Integration", () => {
     expect(cardStack.isLoading).toBe(false);
   });
 
-  it("should handle super like gesture (swipe up)", async () => {
+  it('should handle super like gesture (swipe up)', async () => {
     const swipeState = {
       superLikes: 0,
       maxSuperLikes: 3,
@@ -281,7 +281,7 @@ describe("Swipe + Match Integration", () => {
     expect(swipeState.usedSuperLike).toBe(true);
   });
 
-  it("should prevent super like when limit reached", async () => {
+  it('should prevent super like when limit reached', async () => {
     const swipeState = {
       superLikes: 3,
       maxSuperLikes: 3,
@@ -298,27 +298,27 @@ describe("Swipe + Match Integration", () => {
     expect(swipeState.limitReached).toBe(true);
   });
 
-  it("should sync liked pets with matches list", async () => {
+  it('should sync liked pets with matches list', async () => {
     const likedPets = new Set<string>();
     const matches = [] as string[];
 
     // Like a pet
     await act(async () => {
-      likedPets.add("pet-1");
+      likedPets.add('pet-1');
     });
 
     // Pet likes back - create match
     await act(async () => {
-      if (likedPets.has("pet-1")) {
-        matches.push("pet-1");
+      if (likedPets.has('pet-1')) {
+        matches.push('pet-1');
       }
     });
 
-    expect(matches).toContain("pet-1");
-    expect(likedPets.has("pet-1")).toBe(true);
+    expect(matches).toContain('pet-1');
+    expect(likedPets.has('pet-1')).toBe(true);
   });
 
-  it("should handle gesture velocity for quick swipes", async () => {
+  it('should handle gesture velocity for quick swipes', async () => {
     const gestureState = {
       velocity: 0,
       threshold: 0.5,
@@ -328,8 +328,7 @@ describe("Swipe + Match Integration", () => {
     // Fast swipe (high velocity)
     await act(async () => {
       gestureState.velocity = 1.2;
-      gestureState.shouldTriggerSwipe =
-        gestureState.velocity > gestureState.threshold;
+      gestureState.shouldTriggerSwipe = gestureState.velocity > gestureState.threshold;
     });
 
     expect(gestureState.shouldTriggerSwipe).toBe(true);
@@ -337,14 +336,13 @@ describe("Swipe + Match Integration", () => {
     // Slow swipe (low velocity)
     await act(async () => {
       gestureState.velocity = 0.3;
-      gestureState.shouldTriggerSwipe =
-        gestureState.velocity > gestureState.threshold;
+      gestureState.shouldTriggerSwipe = gestureState.velocity > gestureState.threshold;
     });
 
     expect(gestureState.shouldTriggerSwipe).toBe(false);
   });
 
-  it("should handle swipe cancellation (return to center)", async () => {
+  it('should handle swipe cancellation (return to center)', async () => {
     const mockAnimatedValue = new Animated.Value(150); // Mid-swipe position
 
     // User releases without completing swipe
@@ -361,7 +359,7 @@ describe("Swipe + Match Integration", () => {
     expect(mockAnimatedValue).toBeDefined();
   });
 
-  it("should track swipe analytics", async () => {
+  it('should track swipe analytics', async () => {
     const analytics = {
       totalSwipes: 0,
       likes: 0,

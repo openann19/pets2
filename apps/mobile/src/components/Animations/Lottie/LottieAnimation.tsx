@@ -3,11 +3,11 @@
  * Professional-grade Lottie animation wrapper with lifecycle management
  */
 
-import React, { useRef, useEffect, useState } from "react";
-import LottieView from "lottie-react-native";
-import type { AnimationObject } from "lottie-react-native";
-import type { ViewStyle } from "react-native";
-import { View, StyleSheet } from "react-native";
+import React, { useRef, useEffect, useState } from 'react';
+import LottieView from 'lottie-react-native';
+import type { AnimationObject } from 'lottie-react-native';
+import type { ViewStyle } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 export interface LottieAnimationProps {
   /** Animation source (JSON file or URL) */
@@ -93,7 +93,7 @@ export function LottieAnimation({
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

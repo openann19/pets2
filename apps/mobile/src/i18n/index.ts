@@ -16,25 +16,25 @@ import enChat from './locales/en/chat.json';
 import enPremium from './locales/en/premium.json';
 
 const resources = {
-  en: { 
+  en: {
     common: enCommon,
     auth: enAuth,
     map: enMap,
     chat: enChat,
-    premium: enPremium
+    premium: enPremium,
   },
-  bg: { 
+  bg: {
     common: bgCommon,
     auth: bgAuth,
     map: bgMap,
     chat: bgChat,
-    premium: bgPremium
+    premium: bgPremium,
   },
 };
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: 'en',                 // temp; we'll set real value below
+  lng: 'en', // temp; we'll set real value below
   fallbackLng: 'en',
   ns: ['common', 'auth', 'map', 'chat', 'premium'],
   defaultNS: 'common',
@@ -53,4 +53,3 @@ i18n.use(initReactI18next).init({
 })();
 
 export default i18n;
-

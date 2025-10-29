@@ -2,5 +2,4 @@
  * Security Hooks Index
  */
 
-export { useAdminSecurity } from "./useAdminSecurity";
-
+export { useAdminSecurity } from './useAdminSecurity';

@@ -4,7 +4,6 @@
  */
 
 import { logger } from '../utils/logger';
-import { ErrorType } from './APIErrorClassifier';
 
 export interface RecoveryOptions {
   maxRetries?: number;
@@ -25,15 +24,12 @@ export class RecoveryStrategies {
   /**
    * Auto-retry with exponential backoff
    */
-  async autoRetry<T>(
-    fn: () => Promise<T>,
-    options: RecoveryOptions = {}
-  ): Promise<RecoveryResult> {
+  async autoRetry<T>(fn: () => Promise<T>, options: RecoveryOptions = {}): Promise<RecoveryResult> {
     const maxRetries = options.maxRetries ?? 3;
     const retryDelay = options.retryDelay ?? 1000;
 
     let lastError: unknown;
-    
+
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         if (attempt > 0 && options.onRetry) {
@@ -41,7 +37,7 @@ export class RecoveryStrategies {
         }
 
         const result = await fn();
-        
+
         return {
           success: true,
           data: result,
@@ -49,7 +45,7 @@ export class RecoveryStrategies {
         };
       } catch (error) {
         lastError = error;
-        
+
         if (attempt < maxRetries) {
           const delay = retryDelay * Math.pow(2, attempt);
           logger.debug('Retrying after delay', { attempt, delay });
@@ -75,7 +71,7 @@ export class RecoveryStrategies {
   async retryWithTokenRefresh<T>(
     fn: () => Promise<T>,
     refreshTokenFn: () => Promise<void>,
-    options: RecoveryOptions = {}
+    options: RecoveryOptions = {},
   ): Promise<RecoveryResult> {
     try {
       const result = await fn();
@@ -84,11 +80,11 @@ export class RecoveryStrategies {
       // Check if error is authentication error
       if (this.isAuthenticationError(error)) {
         logger.info('Authentication error, refreshing token');
-        
+
         try {
           await refreshTokenFn();
           logger.info('Token refreshed, retrying request');
-          
+
           // Retry original request
           const retryResult = await this.autoRetry(fn, options);
           return retryResult;
@@ -100,7 +96,7 @@ export class RecoveryStrategies {
           };
         }
       }
-      
+
       return {
         success: false,
         error,
@@ -114,17 +110,17 @@ export class RecoveryStrategies {
   async fallbackToCache<T>(
     fn: () => Promise<T>,
     getCacheFn: () => Promise<T | null>,
-    options: RecoveryOptions = {}
+    _options: RecoveryOptions = {},
   ): Promise<RecoveryResult> {
     try {
       const result = await fn();
       return { success: true, data: result };
     } catch (error) {
       logger.warn('Request failed, attempting cache fallback', { error });
-      
+
       try {
         const cachedData = await getCacheFn();
-        
+
         if (cachedData !== null) {
           logger.info('Using cached data as fallback');
           return {
@@ -135,7 +131,7 @@ export class RecoveryStrategies {
       } catch (cacheError) {
         logger.error('Cache retrieval failed', { error: cacheError });
       }
-      
+
       return {
         success: false,
         error,
@@ -149,7 +145,7 @@ export class RecoveryStrategies {
   async queueForOffline<T>(
     fn: () => Promise<T>,
     queueFn: (data: unknown) => Promise<void>,
-    options: RecoveryOptions = {}
+    options: RecoveryOptions = {},
   ): Promise<RecoveryResult> {
     try {
       const result = await fn();
@@ -158,7 +154,7 @@ export class RecoveryStrategies {
       // Check if error is network error
       if (this.isNetworkError(error)) {
         logger.info('Network error, queueing for offline processing', { error });
-        
+
         try {
           await queueFn(options.fallbackData);
           return {
@@ -169,7 +165,7 @@ export class RecoveryStrategies {
           logger.error('Failed to queue request', { error: queueError });
         }
       }
-      
+
       return {
         success: false,
         error,
@@ -183,19 +179,19 @@ export class RecoveryStrategies {
   async promptUserIntervention<T>(
     fn: () => Promise<T>,
     promptFn: (error: unknown) => Promise<boolean>,
-    options: RecoveryOptions = {}
+    options: RecoveryOptions = {},
   ): Promise<RecoveryResult> {
     try {
       const result = await fn();
       return { success: true, data: result };
     } catch (error) {
       const userWantsRetry = await promptFn(error);
-      
+
       if (userWantsRetry) {
         logger.info('User requested retry');
         return await this.autoRetry(fn, options);
       }
-      
+
       return {
         success: false,
         error,
@@ -215,7 +211,7 @@ export class RecoveryStrategies {
       queue?: (data: unknown) => Promise<void>;
       promptUser?: (error: unknown) => Promise<boolean>;
     },
-    options: RecoveryOptions = {}
+    options: RecoveryOptions = {},
   ): Promise<RecoveryResult> {
     try {
       const result = await fn();
@@ -282,14 +278,16 @@ export class RecoveryStrategies {
         return true;
       }
     }
-    
+
     if (error instanceof Error) {
       const message = error.message.toLowerCase();
-      return message.includes('unauthorized') || 
-             message.includes('authentication') ||
-             message.includes('token');
+      return (
+        message.includes('unauthorized') ||
+        message.includes('authentication') ||
+        message.includes('token')
+      );
     }
-    
+
     return false;
   }
 
@@ -299,10 +297,12 @@ export class RecoveryStrategies {
   private isNetworkError(error: unknown): boolean {
     if (error instanceof Error) {
       const message = error.message.toLowerCase();
-      return message.includes('network') ||
-             message.includes('connection') ||
-             message.includes('timeout') ||
-             message.includes('econnrefused');
+      return (
+        message.includes('network') ||
+        message.includes('connection') ||
+        message.includes('timeout') ||
+        message.includes('econnrefused')
+      );
     }
     return false;
   }
@@ -311,7 +311,6 @@ export class RecoveryStrategies {
    * Sleep for specified milliseconds
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
-

@@ -1,6 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useMemo } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useMemo } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -8,11 +10,9 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import Footer from "../../components/Footer";
-import { usePremiumScreen } from "../../hooks/screens/premium";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+} from 'react-native';
+import Footer from '../../components/Footer';
+import { usePremiumScreen } from '../../hooks/screens/premium';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
@@ -24,28 +24,28 @@ function __makeStyles_styles(theme: AppTheme) {
     },
     header: {
       padding: theme.spacing.lg,
-      paddingTop: theme.spacing["4xl"],
-      alignItems: "center",
+      paddingTop: theme.spacing['4xl'],
+      alignItems: 'center',
     },
     backButton: {
-      position: "absolute",
-      top: theme.spacing["4xl"],
+      position: 'absolute',
+      top: theme.spacing['4xl'],
       left: theme.spacing.lg,
       zIndex: 10,
     },
     title: {
       fontSize: 32,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onPrimary,
       marginBottom: theme.spacing.xs,
     },
     subtitle: {
       fontSize: 16,
       color: `${theme.colors.onPrimary}E6`,
-      textAlign: "center",
+      textAlign: 'center',
     },
     billingToggle: {
-      flexDirection: "row",
+      flexDirection: 'row',
       backgroundColor: `${theme.colors.onPrimary}33`,
       borderRadius: theme.radii.lg,
       padding: theme.spacing.xs,
@@ -56,22 +56,22 @@ function __makeStyles_styles(theme: AppTheme) {
       flex: 1,
       paddingVertical: theme.spacing.sm,
       borderRadius: theme.radii.md,
-      alignItems: "center",
-      position: "relative",
+      alignItems: 'center',
+      position: 'relative',
     },
     billingOptionActive: {
       backgroundColor: theme.colors.onPrimary,
     },
     billingText: {
       fontSize: 16,
-      fontWeight: "600",
+      fontWeight: '600',
       color: `${theme.colors.onPrimary}CC`,
     },
     billingTextActive: {
       color: theme.palette.brand[600],
     },
     saveBadge: {
-      position: "absolute",
+      position: 'absolute',
       top: -8,
       right: 8,
       backgroundColor: theme.colors.success,
@@ -81,7 +81,7 @@ function __makeStyles_styles(theme: AppTheme) {
     },
     saveText: {
       fontSize: 10,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onPrimary,
     },
     tiersContainer: {
@@ -93,8 +93,8 @@ function __makeStyles_styles(theme: AppTheme) {
       borderRadius: theme.radii.xl,
       padding: theme.spacing.lg,
       borderWidth: 2,
-      borderColor: "transparent",
-      position: "relative",
+      borderColor: 'transparent',
+      position: 'relative',
     },
     tierCardSelected: {
       borderColor: theme.colors.primary,
@@ -104,7 +104,7 @@ function __makeStyles_styles(theme: AppTheme) {
       borderColor: theme.colors.success,
     },
     popularBadge: {
-      position: "absolute",
+      position: 'absolute',
       top: -12,
       right: theme.spacing.lg,
       backgroundColor: theme.colors.success,
@@ -114,28 +114,28 @@ function __makeStyles_styles(theme: AppTheme) {
     },
     popularText: {
       fontSize: 12,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onPrimary,
     },
     tierName: {
       fontSize: 24,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
     priceContainer: {
-      flexDirection: "row",
-      alignItems: "baseline",
+      flexDirection: 'row',
+      alignItems: 'baseline',
       marginBottom: theme.spacing.xs,
     },
     priceSymbol: {
       fontSize: 24,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onSurface,
     },
     priceAmount: {
       fontSize: 48,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onSurface,
     },
     pricePeriod: {
@@ -145,7 +145,7 @@ function __makeStyles_styles(theme: AppTheme) {
     },
     discount: {
       fontSize: 14,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.success,
       marginBottom: theme.spacing.md,
     },
@@ -154,8 +154,8 @@ function __makeStyles_styles(theme: AppTheme) {
       gap: theme.spacing.sm,
     },
     featureRow: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: theme.spacing.xs,
     },
     featureText: {
@@ -167,24 +167,24 @@ function __makeStyles_styles(theme: AppTheme) {
       backgroundColor: theme.colors.border,
       paddingVertical: theme.spacing.md,
       borderRadius: theme.radii.lg,
-      alignItems: "center",
+      alignItems: 'center',
     },
     subscribeButtonSelected: {
       backgroundColor: theme.colors.primary,
     },
     subscribeButtonText: {
       fontSize: 16,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onPrimary,
     },
     footer: {
       padding: theme.spacing.lg,
-      alignItems: "center",
+      alignItems: 'center',
     },
     footerText: {
       fontSize: 12,
       color: `${theme.colors.onPrimary}CC`,
-      textAlign: "center",
+      textAlign: 'center',
     },
   });
 }
@@ -207,7 +207,7 @@ export function PremiumScreen(): React.JSX.Element {
     const isSelected = selectedTier === tier.id;
     const price = tier.price[billingPeriod];
     const yearlyDiscount =
-      billingPeriod === "yearly"
+      billingPeriod === 'yearly'
         ? Math.round((1 - tier.price.yearly / 12 / tier.price.monthly) * 100)
         : 0;
 
@@ -238,21 +238,26 @@ export function PremiumScreen(): React.JSX.Element {
         <View style={styles.priceContainer}>
           <Text style={styles.priceSymbol}>$</Text>
           <Text style={styles.priceAmount}>
-            {billingPeriod === "yearly" ? (price / 12).toFixed(2) : price}
+            {billingPeriod === 'yearly' ? (price / 12).toFixed(2) : price}
           </Text>
-          <Text style={styles.pricePeriod}>
-            /{billingPeriod === "yearly" ? "mo" : "month"}
-          </Text>
+          <Text style={styles.pricePeriod}>/{billingPeriod === 'yearly' ? 'mo' : 'month'}</Text>
         </View>
 
-        {billingPeriod === "yearly" && yearlyDiscount > 0 && (
+        {billingPeriod === 'yearly' && yearlyDiscount > 0 && (
           <Text style={styles.discount}>Save {yearlyDiscount}%</Text>
         )}
 
         <View style={styles.featuresContainer}>
           {tier.features.map((feature, index) => (
-            <View key={index} style={styles.featureRow}>
-              <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+            <View
+              key={index}
+              style={styles.featureRow}
+            >
+              <Ionicons
+                name="checkmark-circle"
+                size={20}
+                color={theme.colors.success}
+              />
               <Text style={styles.featureText}>{feature}</Text>
             </View>
           ))}
@@ -264,16 +269,21 @@ export function PremiumScreen(): React.JSX.Element {
             isSelected && styles.subscribeButtonSelected,
           ])}
           testID={`subscribe-${tier.name.toLowerCase()}-button`}
-          accessibilityLabel={isSelected ? "You are subscribed to this plan" : "Subscribe to this plan"}
+          accessibilityLabel={
+            isSelected ? 'You are subscribed to this plan' : 'Subscribe to this plan'
+          }
           accessibilityRole="button"
           onPress={() => handleSubscribe(tier.id)}
           disabled={isLoading}
         >
           {isLoading && selectedTier === tier.id ? (
-            <ActivityIndicator color={theme.colors.onSurface} testID="loading-indicator" />
+            <ActivityIndicator
+              color={theme.colors.onSurface}
+              testID="loading-indicator"
+            />
           ) : (
             <Text style={styles.subscribeButtonText}>
-              {isSelected ? "Subscribe Now" : "Select Plan"}
+              {isSelected ? 'Subscribe Now' : 'Select Plan'}
             </Text>
           )}
         </TouchableOpacity>
@@ -282,8 +292,10 @@ export function PremiumScreen(): React.JSX.Element {
   };
 
   // Access palette safely - resolve.ts AppTheme doesn't have palette yet
-  const gradientColors = (theme as any).palette?.gradients?.primary ?? 
-    [theme.colors.primary, (theme as any).palette?.brand?.[600] ?? theme.colors.primary];
+  const gradientColors = (theme as any).palette?.gradients?.primary ?? [
+    theme.colors.primary,
+    (theme as any).palette?.brand?.[600] ?? theme.colors.primary,
+  ];
 
   return (
     <LinearGradient
@@ -302,29 +314,34 @@ export function PremiumScreen(): React.JSX.Element {
             onPress={handleGoBack}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color={theme.colors.onSurface}
+            />
           </TouchableOpacity>
 
           <Text style={styles.title}>Upgrade to Premium</Text>
-          <Text style={styles.subtitle}>
-            Find your perfect match with advanced features
-          </Text>
+          <Text style={styles.subtitle}>Find your perfect match with advanced features</Text>
         </View>
 
         <View style={styles.billingToggle}>
           <TouchableOpacity
             style={StyleSheet.flatten([
               styles.billingOption,
-              billingPeriod === "monthly" && styles.billingOptionActive,
+              billingPeriod === 'monthly' && styles.billingOptionActive,
             ])}
-             testID="PremiumScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-              setBillingPeriod("monthly");
+            testID="PremiumScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
+              setBillingPeriod('monthly');
             }}
           >
             <Text
               style={StyleSheet.flatten([
                 styles.billingText,
-                billingPeriod === "monthly" && styles.billingTextActive,
+                billingPeriod === 'monthly' && styles.billingTextActive,
               ])}
             >
               Monthly
@@ -334,16 +351,19 @@ export function PremiumScreen(): React.JSX.Element {
           <TouchableOpacity
             style={StyleSheet.flatten([
               styles.billingOption,
-              billingPeriod === "yearly" && styles.billingOptionActive,
+              billingPeriod === 'yearly' && styles.billingOptionActive,
             ])}
-             testID="PremiumScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-              setBillingPeriod("yearly");
+            testID="PremiumScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
+              setBillingPeriod('yearly');
             }}
           >
             <Text
               style={StyleSheet.flatten([
                 styles.billingText,
-                billingPeriod === "yearly" && styles.billingTextActive,
+                billingPeriod === 'yearly' && styles.billingTextActive,
               ])}
             >
               Yearly
@@ -354,9 +374,7 @@ export function PremiumScreen(): React.JSX.Element {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.tiersContainer}>
-          {subscriptionTiers.map(renderTierCard)}
-        </View>
+        <View style={styles.tiersContainer}>{subscriptionTiers.map(renderTierCard)}</View>
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>

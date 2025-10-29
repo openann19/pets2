@@ -83,17 +83,22 @@ describe('useUploadQueue', () => {
 
     // Mock slow uploads that don't resolve immediately
     mockUploadHygieneService.uploadWithRetry.mockImplementation(
-      () => new Promise(resolve => {
-        setTimeout(() => resolve({
-          uploadId: 'upload-123',
-          status: 'approved',
-          s3Key: 'uploads/test-key',
-        }), 1000);
-      })
+      () =>
+        new Promise((resolve) => {
+          setTimeout(
+            () =>
+              resolve({
+                uploadId: 'upload-123',
+                status: 'approved',
+                s3Key: 'uploads/test-key',
+              }),
+            1000,
+          );
+        }),
     );
 
     act(() => {
-      uploads.forEach(upload => result.current.enqueueUpload(upload));
+      uploads.forEach((upload) => result.current.enqueueUpload(upload));
       result.current.startProcessing();
     });
 
@@ -156,7 +161,7 @@ describe('useUploadQueue', () => {
 
   it('should stop retrying after maximum attempts', async () => {
     mockUploadHygieneService.uploadWithRetry.mockRejectedValue(
-      new Error('Persistent network error')
+      new Error('Persistent network error'),
     );
 
     const { result } = renderHook(() => useUploadQueue());
@@ -182,7 +187,7 @@ describe('useUploadQueue', () => {
   it('should allow cancelling individual uploads', async () => {
     // Mock slow upload
     mockUploadHygieneService.uploadWithRetry.mockImplementation(
-      () => new Promise(resolve => setTimeout(resolve, 5000))
+      () => new Promise((resolve) => setTimeout(resolve, 5000)),
     );
 
     const { result } = renderHook(() => useUploadQueue());
@@ -209,7 +214,7 @@ describe('useUploadQueue', () => {
   it('should allow cancelling all pending uploads', async () => {
     // Mock slow uploads
     mockUploadHygieneService.uploadWithRetry.mockImplementation(
-      () => new Promise(resolve => setTimeout(resolve, 5000))
+      () => new Promise((resolve) => setTimeout(resolve, 5000)),
     );
 
     const { result } = renderHook(() => useUploadQueue());
@@ -221,7 +226,7 @@ describe('useUploadQueue', () => {
     }));
 
     act(() => {
-      uploads.forEach(upload => result.current.enqueueUpload(upload));
+      uploads.forEach((upload) => result.current.enqueueUpload(upload));
       result.current.startProcessing();
     });
 
@@ -248,7 +253,7 @@ describe('useUploadQueue', () => {
     }));
 
     act(() => {
-      uploads.forEach(upload => result.current.enqueueUpload(upload));
+      uploads.forEach((upload) => result.current.enqueueUpload(upload));
       result.current.startProcessing();
     });
 
@@ -359,7 +364,12 @@ describe('useUploadQueue', () => {
     const { result } = renderHook(() => useUploadQueue());
 
     const regularUpload = { id: 'regular', fileUri: 'file://regular.jpg', petId: 'pet1' };
-    const priorityUpload = { id: 'priority', fileUri: 'file://priority.jpg', petId: 'pet2', priority: 'high' };
+    const priorityUpload = {
+      id: 'priority',
+      fileUri: 'file://priority.jpg',
+      petId: 'pet2',
+      priority: 'high',
+    };
 
     act(() => {
       result.current.enqueueUpload(regularUpload);
@@ -403,7 +413,7 @@ describe('useUploadQueue', () => {
     }));
 
     act(() => {
-      uploads.forEach(upload => result.current.enqueueUpload(upload));
+      uploads.forEach((upload) => result.current.enqueueUpload(upload));
     });
 
     expect(result.current.queueLength).toBe(10);
@@ -449,7 +459,7 @@ describe('useUploadQueue', () => {
     }));
 
     act(() => {
-      uploads.forEach(upload => result.current.enqueueUpload(upload));
+      uploads.forEach((upload) => result.current.enqueueUpload(upload));
       result.current.startProcessing();
     });
 

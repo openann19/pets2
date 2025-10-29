@@ -20,7 +20,7 @@ export {
   GlassModal,
   GlassNavigation,
   GLASS_CONFIGS,
-} from "./glass";
+} from './glass';
 
 // Import for default export object
 import {
@@ -31,7 +31,7 @@ import {
   GlassModal,
   GlassNavigation,
   GLASS_CONFIGS,
-} from "./glass";
+} from './glass';
 
 // Default export for backward compatibility
 const GlassMorphism = {

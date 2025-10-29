@@ -2,12 +2,12 @@
  * useLeaderboardScreen Hook
  * Manages Leaderboard screen state and interactions
  */
-import { useNavigation } from "@react-navigation/native";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import { useLeaderboard } from "../domains/social/useLeaderboard";
+import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import { useLeaderboard } from '../domains/social/useLeaderboard';
 
 interface UseLeaderboardScreenReturn {
   // From domain hook
@@ -21,13 +21,11 @@ interface UseLeaderboardScreenReturn {
   hasMore: boolean;
   showFilters: boolean;
   selectedCategory: string;
-  selectedPeriod: "daily" | "weekly" | "monthly" | "all_time";
+  selectedPeriod: 'daily' | 'weekly' | 'monthly' | 'all_time';
 
   // Actions
   setSelectedCategory: (category: string) => void;
-  setSelectedPeriod: (
-    period: "daily" | "weekly" | "monthly" | "all_time",
-  ) => void;
+  setSelectedPeriod: (period: 'daily' | 'weekly' | 'monthly' | 'all_time') => void;
   setShowFilters: (show: boolean) => void;
   refreshData: () => Promise<void>;
   loadMore: () => Promise<void>;

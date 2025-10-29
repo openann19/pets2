@@ -3,5 +3,5 @@
  * Barrel exports for photo analyzer components
  */
 
-export { PhotoUploadSection } from "./PhotoUploadSection";
-export { AnalysisResultsSection } from "./AnalysisResultsSection";
+export { PhotoUploadSection } from './PhotoUploadSection';
+export { AnalysisResultsSection } from './AnalysisResultsSection';

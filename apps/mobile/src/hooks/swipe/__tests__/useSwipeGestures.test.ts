@@ -1,11 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from "@testing-library/react-native";
-import { useSwipeGestures } from "../../swipe/useSwipeGestures";
+import { renderHook, act } from '@testing-library/react-native';
+import { useSwipeGestures } from '../../swipe/useSwipeGestures';
 
 // Mock PanResponder
-jest.mock("react-native", () => ({
+jest.mock('react-native', () => ({
   PanResponder: {
     create: jest.fn(() => ({
       panHandlers: {},
@@ -17,7 +17,7 @@ jest.mock("react-native", () => ({
 }));
 
 // Mock react-native-reanimated
-jest.mock("react-native-reanimated", () => ({
+jest.mock('react-native-reanimated', () => ({
   useSharedValue: jest.fn((initial) => ({ value: initial })),
   useAnimatedReaction: jest.fn(),
   runOnJS: jest.fn((fn) => fn),
@@ -25,11 +25,11 @@ jest.mock("react-native-reanimated", () => ({
   withSpring: jest.fn((value) => value),
 }));
 
-import { PanResponder } from "react-native";
+import { PanResponder } from 'react-native';
 
 const mockPanResponder = PanResponder as jest.Mocked<typeof PanResponder>;
 
-describe("useSwipeGestures", () => {
+describe('useSwipeGestures', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPanResponder.create.mockReturnValue({
@@ -44,7 +44,7 @@ describe("useSwipeGestures", () => {
     });
   });
 
-  it("should initialize with correct default state", () => {
+  it('should initialize with correct default state', () => {
     const { result } = renderHook(() =>
       useSwipeGestures({
         onSwipeLeft: jest.fn(),
@@ -55,18 +55,12 @@ describe("useSwipeGestures", () => {
     );
 
     expect(result.current.panHandlers).toBeDefined();
-    expect(typeof result.current.panHandlers.onStartShouldSetPanResponder).toBe(
-      "function",
-    );
-    expect(typeof result.current.panHandlers.onPanResponderMove).toBe(
-      "function",
-    );
-    expect(typeof result.current.panHandlers.onPanResponderRelease).toBe(
-      "function",
-    );
+    expect(typeof result.current.panHandlers.onStartShouldSetPanResponder).toBe('function');
+    expect(typeof result.current.panHandlers.onPanResponderMove).toBe('function');
+    expect(typeof result.current.panHandlers.onPanResponderRelease).toBe('function');
   });
 
-  it("should create PanResponder with correct configuration", () => {
+  it('should create PanResponder with correct configuration', () => {
     renderHook(() =>
       useSwipeGestures({
         onSwipeLeft: jest.fn(),
@@ -77,15 +71,15 @@ describe("useSwipeGestures", () => {
     expect(mockPanResponder.create).toHaveBeenCalledTimes(1);
     const config = mockPanResponder.create.mock.calls[0][0];
 
-    expect(config).toHaveProperty("onStartShouldSetPanResponder");
-    expect(config).toHaveProperty("onMoveShouldSetPanResponder");
-    expect(config).toHaveProperty("onPanResponderGrant");
-    expect(config).toHaveProperty("onPanResponderMove");
-    expect(config).toHaveProperty("onPanResponderRelease");
-    expect(config).toHaveProperty("onPanResponderTerminate");
+    expect(config).toHaveProperty('onStartShouldSetPanResponder');
+    expect(config).toHaveProperty('onMoveShouldSetPanResponder');
+    expect(config).toHaveProperty('onPanResponderGrant');
+    expect(config).toHaveProperty('onPanResponderMove');
+    expect(config).toHaveProperty('onPanResponderRelease');
+    expect(config).toHaveProperty('onPanResponderTerminate');
   });
 
-  it("should handle swipe left gesture", () => {
+  it('should handle swipe left gesture', () => {
     const onSwipeLeft = jest.fn();
     const onSwipeRight = jest.fn();
 
@@ -111,7 +105,7 @@ describe("useSwipeGestures", () => {
     expect(onSwipeRight).not.toHaveBeenCalled();
   });
 
-  it("should handle swipe right gesture", () => {
+  it('should handle swipe right gesture', () => {
     const onSwipeLeft = jest.fn();
     const onSwipeRight = jest.fn();
 
@@ -137,7 +131,7 @@ describe("useSwipeGestures", () => {
     expect(onSwipeLeft).not.toHaveBeenCalled();
   });
 
-  it("should handle swipe up gesture", () => {
+  it('should handle swipe up gesture', () => {
     const onSwipeUp = jest.fn();
     const onSwipeDown = jest.fn();
 
@@ -163,7 +157,7 @@ describe("useSwipeGestures", () => {
     expect(onSwipeDown).not.toHaveBeenCalled();
   });
 
-  it("should handle swipe down gesture", () => {
+  it('should handle swipe down gesture', () => {
     const onSwipeUp = jest.fn();
     const onSwipeDown = jest.fn();
 
@@ -189,7 +183,7 @@ describe("useSwipeGestures", () => {
     expect(onSwipeUp).not.toHaveBeenCalled();
   });
 
-  it("should not trigger swipe for movements below threshold", () => {
+  it('should not trigger swipe for movements below threshold', () => {
     const onSwipeLeft = jest.fn();
     const onSwipeRight = jest.fn();
 
@@ -215,7 +209,7 @@ describe("useSwipeGestures", () => {
     expect(onSwipeRight).not.toHaveBeenCalled();
   });
 
-  it("should respect custom swipe threshold", () => {
+  it('should respect custom swipe threshold', () => {
     const onSwipeLeft = jest.fn();
 
     renderHook(() =>
@@ -242,7 +236,7 @@ describe("useSwipeGestures", () => {
     expect(onSwipeLeft).toHaveBeenCalledTimes(1);
   });
 
-  it("should prioritize horizontal over vertical swipes", () => {
+  it('should prioritize horizontal over vertical swipes', () => {
     const onSwipeLeft = jest.fn();
     const onSwipeUp = jest.fn();
 
@@ -258,10 +252,7 @@ describe("useSwipeGestures", () => {
 
     // Diagonal movement (both horizontal and vertical beyond threshold)
     act(() => {
-      config.onPanResponderRelease?.(
-        {},
-        { dx: -80, dy: -80, vx: -0.5, vy: -0.5 },
-      );
+      config.onPanResponderRelease?.({}, { dx: -80, dy: -80, vx: -0.5, vy: -0.5 });
     });
 
     // Should trigger horizontal swipe (left) over vertical (up)
@@ -269,7 +260,7 @@ describe("useSwipeGestures", () => {
     expect(onSwipeUp).not.toHaveBeenCalled();
   });
 
-  it("should handle pan responder termination", () => {
+  it('should handle pan responder termination', () => {
     const onSwipeLeft = jest.fn();
 
     renderHook(() =>
@@ -289,7 +280,7 @@ describe("useSwipeGestures", () => {
     expect(onSwipeLeft).not.toHaveBeenCalled();
   });
 
-  it("should return stable panHandlers reference", () => {
+  it('should return stable panHandlers reference', () => {
     const { result, rerender } = renderHook(() =>
       useSwipeGestures({
         onSwipeLeft: jest.fn(),

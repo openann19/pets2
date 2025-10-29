@@ -128,4 +128,3 @@ describe('Scroll-to-Top E2E Tests', () => {
     });
   });
 });
-

@@ -3,9 +3,9 @@ declare module 'expo-notifications' {
   export interface NotificationSubscription {
     remove: () => void;
   }
-  
+
   export type Subscription = NotificationSubscription;
-  
+
   export interface Notification {
     request: {
       identifier: string;
@@ -14,7 +14,7 @@ declare module 'expo-notifications' {
     };
     date: number;
   }
-  
+
   export interface NotificationContent {
     title?: string;
     subtitle?: string;
@@ -30,26 +30,26 @@ declare module 'expo-notifications' {
     summaryArgumentCount?: number;
     targetContentIdentifier?: string;
   }
-  
+
   export interface NotificationAttachment {
     identifier: string;
     url: string;
     type: string;
   }
-  
+
   export interface NotificationResponse {
     notification: Notification;
     actionIdentifier: string;
   }
-  
+
   export interface NotificationTriggerInput {
     type: 'time' | 'date' | 'location' | 'calendar';
     repeats?: boolean;
     [key: string]: unknown;
   }
-  
+
   export type NotificationTrigger = NotificationTriggerInput;
-  
+
   export function getPermissionsAsync(): Promise<{
     status: 'granted' | 'denied' | 'undetermined';
     android?: {
@@ -59,7 +59,7 @@ declare module 'expo-notifications' {
       status: 'granted' | 'denied' | 'undetermined';
     };
   }>;
-  
+
   export function requestPermissionsAsync(): Promise<{
     status: 'granted' | 'denied' | 'undetermined';
     android?: {
@@ -69,12 +69,12 @@ declare module 'expo-notifications' {
       status: 'granted' | 'denied' | 'undetermined';
     };
   }>;
-  
+
   export function getExpoPushTokenAsync(): Promise<{
     type: string;
     data: string;
   }>;
-  
+
   export namespace AndroidImportance {
     export const DEFAULT = 3;
     export const HIGH = 4;
@@ -84,45 +84,46 @@ declare module 'expo-notifications' {
     export const NONE = 0;
     export const UNSPECIFIED = -1000;
   }
-  
-  export function setNotificationChannelAsync(channelId: string, channel: {
-    name: string;
-    importance: number;
-    description?: string;
-    enableVibrate?: boolean;
-    vibrationPattern?: number[];
-    showBadge?: boolean;
-    enableLights?: boolean;
-    lightColor?: string;
-    sound?: string;
-    audioAttributes?: Record<string, unknown>;
-    lockscreenVisibility?: number;
-    bypassDnd?: boolean;
-  }): Promise<void>;
-  
+
+  export function setNotificationChannelAsync(
+    channelId: string,
+    channel: {
+      name: string;
+      importance: number;
+      description?: string;
+      enableVibrate?: boolean;
+      vibrationPattern?: number[];
+      showBadge?: boolean;
+      enableLights?: boolean;
+      lightColor?: string;
+      sound?: string;
+      audioAttributes?: Record<string, unknown>;
+      lockscreenVisibility?: number;
+      bypassDnd?: boolean;
+    },
+  ): Promise<void>;
+
   export function getBadgeCountAsync(): Promise<number>;
-  
+
   export function setBadgeCountAsync(count: number): Promise<void>;
-  
+
   export function cancelAllScheduledNotificationsAsync(): Promise<void>;
-  
+
   export function addNotificationReceivedListener(
-    listener: (notification: Notification) => void
+    listener: (notification: Notification) => void,
   ): NotificationSubscription;
-  
+
   export function addNotificationResponseReceivedListener(
-    listener: (response: NotificationResponse) => void
+    listener: (response: NotificationResponse) => void,
   ): NotificationSubscription;
-  
+
   export function scheduleNotificationAsync(request: {
     content: NotificationContent;
     trigger?: NotificationTrigger;
   }): Promise<string>;
-  
-  export function cancelScheduledNotificationAsync(
-    notificationIdentifier: string
-  ): Promise<void>;
-  
+
+  export function cancelScheduledNotificationAsync(notificationIdentifier: string): Promise<void>;
+
   export function setNotificationHandler(handler: {
     handleNotification: (notification: Notification) => {
       shouldShowAlert: boolean;

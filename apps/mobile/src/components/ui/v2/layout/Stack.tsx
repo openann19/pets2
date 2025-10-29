@@ -26,7 +26,7 @@ export function Stack({
   ...rest
 }: StackProps) {
   const theme = useTheme();
-  
+
   const getGapValue = () => {
     if (typeof gap === 'number') return gap;
     return theme.spacing[gap];
@@ -34,23 +34,35 @@ export function Stack({
 
   const getAlignItems = () => {
     switch (align) {
-      case 'start': return direction?.includes('row') ? 'flex-start' : 'flex-start';
-      case 'center': return 'center';
-      case 'end': return direction?.includes('row') ? 'flex-end' : 'flex-end';
-      case 'stretch': return direction?.includes('row') ? 'stretch' : 'stretch';
-      default: return 'stretch';
+      case 'start':
+        return direction?.includes('row') ? 'flex-start' : 'flex-start';
+      case 'center':
+        return 'center';
+      case 'end':
+        return direction?.includes('row') ? 'flex-end' : 'flex-end';
+      case 'stretch':
+        return direction?.includes('row') ? 'stretch' : 'stretch';
+      default:
+        return 'stretch';
     }
   };
 
   const getJustifyContent = () => {
     switch (justify) {
-      case 'start': return 'flex-start';
-      case 'center': return 'center';
-      case 'end': return 'flex-end';
-      case 'between': return 'space-between';
-      case 'around': return 'space-around';
-      case 'evenly': return 'space-evenly';
-      default: return 'flex-start';
+      case 'start':
+        return 'flex-start';
+      case 'center':
+        return 'center';
+      case 'end':
+        return 'flex-end';
+      case 'between':
+        return 'space-between';
+      case 'around':
+        return 'space-around';
+      case 'evenly':
+        return 'space-evenly';
+      default:
+        return 'flex-start';
     }
   };
 

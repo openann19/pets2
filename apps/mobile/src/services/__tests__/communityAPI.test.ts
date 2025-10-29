@@ -107,7 +107,7 @@ describe('CommunityAPI', () => {
       const result = await communityAPI.getFeed(params);
 
       expect(mockApiClient.get).toHaveBeenCalledWith(
-        '/community/posts?page=2&limit=10&packId=pack123&userId=user456&type=activity'
+        '/community/posts?page=2&limit=10&packId=pack123&userId=user456&type=activity',
       );
       expect(result).toEqual(mockResponse);
     });
@@ -207,11 +207,11 @@ describe('CommunityAPI', () => {
 
     it('should validate required content', async () => {
       await expect(communityAPI.createPost({ content: '' })).rejects.toThrow(
-        'Post content is required'
+        'Post content is required',
       );
 
       await expect(communityAPI.createPost({ content: '   ' })).rejects.toThrow(
-        'Post content is required'
+        'Post content is required',
       );
 
       expect(mockApiClient.post).not.toHaveBeenCalled();
@@ -221,9 +221,7 @@ describe('CommunityAPI', () => {
       const error = new Error('API error');
       mockApiClient.post.mockRejectedValue(error);
 
-      await expect(communityAPI.createPost({ content: 'Test post' })).rejects.toThrow(
-        'API error'
-      );
+      await expect(communityAPI.createPost({ content: 'Test post' })).rejects.toThrow('API error');
 
       expect(mockLogger.error).toHaveBeenCalledWith('Failed to create community post:', {
         error: 'API error',
@@ -309,7 +307,7 @@ describe('CommunityAPI', () => {
       const result = await communityAPI.getComments('post123', { page: 2, limit: 5 });
 
       expect(mockApiClient.get).toHaveBeenCalledWith(
-        '/community/posts/post123/comments?page=2&limit=5'
+        '/community/posts/post123/comments?page=2&limit=5',
       );
       expect(result.pagination.page).toBe(2);
     });
@@ -318,9 +316,7 @@ describe('CommunityAPI', () => {
       const error = new Error('Comments fetch failed');
       mockApiClient.get.mockRejectedValue(error);
 
-      await expect(communityAPI.getComments('post123')).rejects.toThrow(
-        'Comments fetch failed'
-      );
+      await expect(communityAPI.getComments('post123')).rejects.toThrow('Comments fetch failed');
 
       expect(mockLogger.error).toHaveBeenCalledWith('Failed to fetch post comments:', {
         error: 'Comments fetch failed',
@@ -350,19 +346,19 @@ describe('CommunityAPI', () => {
 
       expect(mockApiClient.post).toHaveBeenCalledWith(
         '/community/posts/post123/comments',
-        commentData
+        commentData,
       );
       expect(result).toEqual(mockResponse);
     });
 
     it('should validate comment content', async () => {
-      await expect(
-        communityAPI.addComment('post123', { content: '' })
-      ).rejects.toThrow('Comment content is required');
+      await expect(communityAPI.addComment('post123', { content: '' })).rejects.toThrow(
+        'Comment content is required',
+      );
 
-      await expect(
-        communityAPI.addComment('post123', { content: '   ' })
-      ).rejects.toThrow('Comment content is required');
+      await expect(communityAPI.addComment('post123', { content: '   ' })).rejects.toThrow(
+        'Comment content is required',
+      );
 
       expect(mockApiClient.post).not.toHaveBeenCalled();
     });
@@ -371,9 +367,9 @@ describe('CommunityAPI', () => {
       const error = new Error('Comment creation failed');
       mockApiClient.post.mockRejectedValue(error);
 
-      await expect(
-        communityAPI.addComment('post123', { content: 'Test comment' })
-      ).rejects.toThrow('Comment creation failed');
+      await expect(communityAPI.addComment('post123', { content: 'Test comment' })).rejects.toThrow(
+        'Comment creation failed',
+      );
 
       expect(mockLogger.error).toHaveBeenCalledWith('Failed to add comment to post:', {
         error: 'Comment creation failed',
@@ -436,7 +432,7 @@ describe('CommunityAPI', () => {
       mockApiClient.post.mockRejectedValue(error);
 
       await expect(communityAPI.joinActivity('activity123')).rejects.toThrow(
-        'Activity operation failed'
+        'Activity operation failed',
       );
 
       expect(mockLogger.error).toHaveBeenCalledWith('Failed to join activity:', {
@@ -489,9 +485,7 @@ describe('CommunityAPI', () => {
       const error = new Error('Post operation failed');
       mockApiClient.delete.mockRejectedValue(error);
 
-      await expect(communityAPI.deletePost('post123')).rejects.toThrow(
-        'Post operation failed'
-      );
+      await expect(communityAPI.deletePost('post123')).rejects.toThrow('Post operation failed');
 
       expect(mockLogger.error).toHaveBeenCalledWith('Failed to delete post:', {
         error: 'Post operation failed',
@@ -562,11 +556,13 @@ describe('CommunityAPI', () => {
       const error = new Error('Moderation failed');
       mockApiClient.post.mockRejectedValue(error);
 
-      await expect(communityAPI.reportContent({
-        type: 'post',
-        targetId: 'post123',
-        reason: 'spam',
-      })).rejects.toThrow('Moderation failed');
+      await expect(
+        communityAPI.reportContent({
+          type: 'post',
+          targetId: 'post123',
+          reason: 'spam',
+        }),
+      ).rejects.toThrow('Moderation failed');
 
       expect(mockLogger.error).toHaveBeenCalledWith('Failed to report content:', {
         error: 'Moderation failed',
@@ -581,9 +577,12 @@ describe('CommunityAPI', () => {
 
       await expect(communityAPI.getFeed()).rejects.toThrow('Unknown error');
 
-      expect(mockLogger.error).toHaveBeenCalledWith('Failed to fetch community feed: Unknown error', {
-        error: 'String error',
-      });
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'Failed to fetch community feed: Unknown error',
+        {
+          error: 'String error',
+        },
+      );
     });
 
     it('should handle null/undefined errors', async () => {
@@ -591,9 +590,12 @@ describe('CommunityAPI', () => {
 
       await expect(communityAPI.getFeed()).rejects.toThrow('Unknown error');
 
-      expect(mockLogger.error).toHaveBeenCalledWith('Failed to fetch community feed: Unknown error', {
-        error: null,
-      });
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'Failed to fetch community feed: Unknown error',
+        {
+          error: null,
+        },
+      );
     });
 
     it('should preserve original error when it is an Error instance', async () => {
@@ -693,7 +695,7 @@ describe('CommunityAPI', () => {
       const results = await Promise.all(operations);
 
       expect(results).toHaveLength(4);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.success).toBe(true);
       });
 

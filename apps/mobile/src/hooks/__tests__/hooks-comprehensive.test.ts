@@ -1,6 +1,6 @@
 /**
  * Comprehensive Hooks Test Suite
- * 
+ *
  * Tests for all custom hooks in the mobile app covering:
  * - Animation hooks
  * - Chat hooks

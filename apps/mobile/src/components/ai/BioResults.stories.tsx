@@ -85,8 +85,7 @@ export const ProfessionalBio: Story = {
     onRegenerate: action('onRegenerate'),
   },
   parameters: {
-    notes:
-      'Bio generated with professional tone - moderate match score and positive sentiment',
+    notes: 'Bio generated with professional tone - moderate match score and positive sentiment',
   },
 };
 
@@ -114,8 +113,7 @@ export const RomanticBio: Story = {
     onRegenerate: action('onRegenerate'),
   },
   parameters: {
-    notes:
-      'Bio generated with romantic tone - very high match score and positive sentiment',
+    notes: 'Bio generated with romantic tone - very high match score and positive sentiment',
   },
 };
 
@@ -129,8 +127,7 @@ export const MysteriousBio: Story = {
     onRegenerate: action('onRegenerate'),
   },
   parameters: {
-    notes:
-      'Bio generated with mysterious tone - lower match score and neutral-positive sentiment',
+    notes: 'Bio generated with mysterious tone - lower match score and neutral-positive sentiment',
   },
 };
 
@@ -203,4 +200,3 @@ export const AllTones: Story = {
       'Showing first tone variation. All 5 tones are available as separate stories (Playful, Professional, Casual, Romantic, Mysterious)',
   },
 };
-

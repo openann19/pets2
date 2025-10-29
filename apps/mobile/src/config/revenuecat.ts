@@ -1,6 +1,6 @@
-import { Platform } from "react-native";
+import { Platform } from 'react-native';
 // @ts-ignore - react-native-purchases is optional
-import Purchases from "react-native-purchases";
+import Purchases from 'react-native-purchases';
 
 export async function initRevenueCat(userId?: string) {
   try {
@@ -15,4 +15,3 @@ export async function initRevenueCat(userId?: string) {
     console.warn('RevenueCat not available:', e);
   }
 }
-

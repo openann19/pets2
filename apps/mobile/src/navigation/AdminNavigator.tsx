@@ -18,7 +18,7 @@ import AdminServicesScreen from "../screens/admin/AdminServicesScreen";
 import AdminUploadsScreen from "../screens/admin/AdminUploadsScreen";
 import AdminUsersScreen from "../screens/admin/AdminUsersScreen";
 import AdminVerificationsScreen from "../screens/admin/AdminVerificationsScreen";
-import { useTheme } from '@/theme';
+import { useTheme } from '@mobile/src/theme';
 
 const Stack = createNativeStackNavigator();
 

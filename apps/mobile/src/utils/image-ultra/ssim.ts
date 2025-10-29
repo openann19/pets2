@@ -2,22 +2,19 @@
  * SSIM (Structural Similarity Index)
  * Fast downscaled, luminance-only, windowed SSIM computation
  * Used for adaptive JPEG quality targeting
- * 
+ *
  * Reference: Wang et al. (2004) "Image quality assessment: from error visibility to structural similarity"
  */
 
 /**
  * Approximate SSIM using downscaled luminance channel with 8x8 windows
  * Downscale to ~512px for performance, then compute windowed SSIM
- * 
+ *
  * @param a - First canvas (baseline)
  * @param b - Second canvas (comparison)
  * @returns SSIM score 0-1 (1 = identical, lower = more different)
  */
-export async function ssimApprox(
-  a: HTMLCanvasElement,
-  b: HTMLCanvasElement
-): Promise<number> {
+export async function ssimApprox(a: HTMLCanvasElement, b: HTMLCanvasElement): Promise<number> {
   const targetW = 512;
   const scale = targetW / Math.max(a.width, 1);
   const h = Math.max(1, Math.round(a.height * scale));
@@ -25,8 +22,8 @@ export async function ssimApprox(
   const aa = downscale(a, targetW, h);
   const bb = downscale(b, targetW, h);
 
-  const ai = aa.getContext("2d")!.getImageData(0, 0, aa.width, aa.height).data;
-  const bi = bb.getContext("2d")!.getImageData(0, 0, bb.width, bb.height).data;
+  const ai = aa.getContext('2d')!.getImageData(0, 0, aa.width, aa.height).data;
+  const bi = bb.getContext('2d')!.getImageData(0, 0, bb.width, bb.height).data;
 
   const win = 8;
   const C1 = 6.5025; // (0.01 * 255)^2
@@ -100,13 +97,12 @@ export async function ssimApprox(
  * Downscale canvas using high-quality interpolation
  */
 function downscale(src: HTMLCanvasElement, w: number, h: number): HTMLCanvasElement {
-  const c = document.createElement("canvas");
+  const c = document.createElement('canvas');
   c.width = w;
   c.height = h;
-  const ctx = c.getContext("2d")!;
+  const ctx = c.getContext('2d')!;
   ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
+  ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(src, 0, 0, w, h);
   return c;
 }
-

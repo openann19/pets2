@@ -24,7 +24,10 @@ describe('VerificationTierCard', () => {
   describe('Status Display', () => {
     it('should display unverified status correctly', () => {
       const { getByText, getByTestId } = render(
-        <VerificationTierCard {...defaultProps} status="unverified" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="unverified"
+        />,
       );
 
       expect(getByText('Tier 1 Verification')).toBeTruthy();
@@ -35,7 +38,10 @@ describe('VerificationTierCard', () => {
 
     it('should display pending status correctly', () => {
       const { getByText, getByTestId } = render(
-        <VerificationTierCard {...defaultProps} status="pending" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="pending"
+        />,
       );
 
       expect(getByText('Tier 1 Verification')).toBeTruthy();
@@ -46,7 +52,10 @@ describe('VerificationTierCard', () => {
 
     it('should display approved status with badge correctly', () => {
       const { getByText, getByTestId } = render(
-        <VerificationTierCard {...defaultProps} status="approved" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="approved"
+        />,
       );
 
       expect(getByText('Tier 1 Verification')).toBeTruthy();
@@ -58,7 +67,10 @@ describe('VerificationTierCard', () => {
 
     it('should display rejected status correctly', () => {
       const { getByText, getByTestId } = render(
-        <VerificationTierCard {...defaultProps} status="rejected" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="rejected"
+        />,
       );
 
       expect(getByText('Tier 1 Verification')).toBeTruthy();
@@ -69,7 +81,10 @@ describe('VerificationTierCard', () => {
 
     it('should display requires_info status correctly', () => {
       const { getByText, getByTestId } = render(
-        <VerificationTierCard {...defaultProps} status="requires_info" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="requires_info"
+        />,
       );
 
       expect(getByText('Tier 1 Verification')).toBeTruthy();
@@ -82,7 +97,10 @@ describe('VerificationTierCard', () => {
   describe('Badge Mapping', () => {
     it('should show id_verified badge for Tier 1 approval', () => {
       const { getByTestId } = render(
-        <VerificationTierCard {...defaultProps} status="approved" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="approved"
+        />,
       );
 
       expect(getByTestId('verification-badge-id_verified')).toBeTruthy();
@@ -94,7 +112,7 @@ describe('VerificationTierCard', () => {
           {...defaultProps}
           tier={2}
           status="approved"
-        />
+        />,
       );
 
       expect(getByTestId('verification-badge-premium_verified')).toBeTruthy();
@@ -102,7 +120,10 @@ describe('VerificationTierCard', () => {
 
     it('should not show badge when not approved', () => {
       const { queryByTestId } = render(
-        <VerificationTierCard {...defaultProps} status="pending" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="pending"
+        />,
       );
 
       expect(queryByTestId('verification-badge-id_verified')).toBeNull();
@@ -112,7 +133,10 @@ describe('VerificationTierCard', () => {
   describe('Tier Differences', () => {
     it('should display Tier 1 specific content', () => {
       const { getByText } = render(
-        <VerificationTierCard {...defaultProps} tier={1} />
+        <VerificationTierCard
+          {...defaultProps}
+          tier={1}
+        />,
       );
 
       expect(getByText('Tier 1 Verification')).toBeTruthy();
@@ -121,7 +145,10 @@ describe('VerificationTierCard', () => {
 
     it('should display Tier 2 specific content', () => {
       const { getByText } = render(
-        <VerificationTierCard {...defaultProps} tier={2} />
+        <VerificationTierCard
+          {...defaultProps}
+          tier={2}
+        />,
       );
 
       expect(getByText('Tier 2 Verification')).toBeTruthy();
@@ -137,7 +164,7 @@ describe('VerificationTierCard', () => {
           {...defaultProps}
           status="unverified"
           onStartVerification={mockOnStart}
-        />
+        />,
       );
 
       fireEvent.press(getByText('Start Verification'));
@@ -151,7 +178,7 @@ describe('VerificationTierCard', () => {
           {...defaultProps}
           status="pending"
           onViewDetails={mockOnViewDetails}
-        />
+        />,
       );
 
       fireEvent.press(getByText('View Status'));
@@ -165,7 +192,7 @@ describe('VerificationTierCard', () => {
           {...defaultProps}
           status="approved"
           onViewDetails={mockOnViewDetails}
-        />
+        />,
       );
 
       fireEvent.press(getByText('View Details'));
@@ -179,7 +206,7 @@ describe('VerificationTierCard', () => {
           {...defaultProps}
           status="rejected"
           onStartVerification={mockOnStart}
-        />
+        />,
       );
 
       fireEvent.press(getByText('Try Again'));
@@ -193,7 +220,7 @@ describe('VerificationTierCard', () => {
           {...defaultProps}
           status="requires_info"
           onStartVerification={mockOnStart}
-        />
+        />,
       );
 
       fireEvent.press(getByText('Provide Info'));
@@ -204,7 +231,10 @@ describe('VerificationTierCard', () => {
   describe('Visual Indicators', () => {
     it('should show correct status colors', () => {
       const { getByTestId } = render(
-        <VerificationTierCard {...defaultProps} status="approved" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="approved"
+        />,
       );
 
       const indicator = getByTestId('status-indicator-approved');
@@ -213,7 +243,10 @@ describe('VerificationTierCard', () => {
 
     it('should show progress indicator for pending status', () => {
       const { getByTestId } = render(
-        <VerificationTierCard {...defaultProps} status="pending" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="pending"
+        />,
       );
 
       expect(getByTestId('status-progress-indicator')).toBeTruthy();
@@ -221,7 +254,10 @@ describe('VerificationTierCard', () => {
 
     it('should show warning icon for rejected status', () => {
       const { getByTestId } = render(
-        <VerificationTierCard {...defaultProps} status="rejected" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="rejected"
+        />,
       );
 
       expect(getByTestId('status-warning-icon')).toBeTruthy();
@@ -229,7 +265,10 @@ describe('VerificationTierCard', () => {
 
     it('should show info icon for requires_info status', () => {
       const { getByTestId } = render(
-        <VerificationTierCard {...defaultProps} status="requires_info" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="requires_info"
+        />,
       );
 
       expect(getByTestId('status-info-icon')).toBeTruthy();
@@ -239,7 +278,10 @@ describe('VerificationTierCard', () => {
   describe('Accessibility', () => {
     it('should have correct accessibility labels', () => {
       const { getByLabelText } = render(
-        <VerificationTierCard {...defaultProps} status="approved" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="approved"
+        />,
       );
 
       expect(getByLabelText('Tier 1 Verification, Verified')).toBeTruthy();
@@ -248,11 +290,17 @@ describe('VerificationTierCard', () => {
 
     it('should announce status changes', () => {
       const { rerender } = render(
-        <VerificationTierCard {...defaultProps} status="unverified" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="unverified"
+        />,
       );
 
       rerender(
-        <VerificationTierCard {...defaultProps} status="approved" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="approved"
+        />,
       );
 
       // Accessibility announcement should be made
@@ -261,7 +309,10 @@ describe('VerificationTierCard', () => {
 
     it('should support screen reader navigation', () => {
       const { getByA11yHint } = render(
-        <VerificationTierCard {...defaultProps} status="pending" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="pending"
+        />,
       );
 
       expect(getByA11yHint('Double tap to view verification status')).toBeTruthy();
@@ -270,16 +321,16 @@ describe('VerificationTierCard', () => {
 
   describe('Loading States', () => {
     it('should show loading state during verification start', async () => {
-      const mockOnStart = jest.fn().mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 1000))
-      );
+      const mockOnStart = jest
+        .fn()
+        .mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 1000)));
 
       const { getByText } = render(
         <VerificationTierCard
           {...defaultProps}
           status="unverified"
           onStartVerification={mockOnStart}
-        />
+        />,
       );
 
       fireEvent.press(getByText('Start Verification'));
@@ -293,7 +344,10 @@ describe('VerificationTierCard', () => {
 
     it('should disable buttons during loading', () => {
       const { getByText } = render(
-        <VerificationTierCard {...defaultProps} isLoading />
+        <VerificationTierCard
+          {...defaultProps}
+          isLoading
+        />,
       );
 
       const button = getByText('Start Verification');
@@ -307,7 +361,7 @@ describe('VerificationTierCard', () => {
         <VerificationTierCard
           {...defaultProps}
           error="Verification service unavailable"
-        />
+        />,
       );
 
       expect(getByText('Verification service unavailable')).toBeTruthy();
@@ -319,7 +373,7 @@ describe('VerificationTierCard', () => {
           {...defaultProps}
           error="Network error"
           onRetry={jest.fn()}
-        />
+        />,
       );
 
       expect(getByText('Retry')).toBeTruthy();
@@ -332,7 +386,7 @@ describe('VerificationTierCard', () => {
           {...defaultProps}
           error="Network error"
           onRetry={mockOnRetry}
-        />
+        />,
       );
 
       fireEvent.press(getByText('Retry'));
@@ -345,7 +399,10 @@ describe('VerificationTierCard', () => {
   describe('Edge Cases', () => {
     it('should handle invalid tier numbers', () => {
       const { getByText } = render(
-        <VerificationTierCard {...defaultProps} tier={99} />
+        <VerificationTierCard
+          {...defaultProps}
+          tier={99}
+        />,
       );
 
       expect(getByText('Tier 99 Verification')).toBeTruthy();
@@ -355,8 +412,10 @@ describe('VerificationTierCard', () => {
       const { getByText } = render(
         <VerificationTierCard
           {...defaultProps}
-          status="unknown" as any
-        />
+          status="unknown"
+          as
+          any
+        />,
       );
 
       expect(getByText('Unknown Status')).toBeTruthy();
@@ -368,7 +427,7 @@ describe('VerificationTierCard', () => {
           {...defaultProps}
           onStartVerification={undefined}
           onViewDetails={undefined}
-        />
+        />,
       );
 
       // Should not crash when buttons are pressed
@@ -394,7 +453,10 @@ describe('VerificationTierCard', () => {
       }));
 
       const { getByText } = render(
-        <VerificationTierCard {...defaultProps} status="approved" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="approved"
+        />,
       );
 
       expect(getByText('Verified')).toBeTruthy();
@@ -402,7 +464,10 @@ describe('VerificationTierCard', () => {
 
     it('should support RTL layouts', () => {
       const { getByTestId } = render(
-        <VerificationTierCard {...defaultProps} isRTL />
+        <VerificationTierCard
+          {...defaultProps}
+          isRTL
+        />,
       );
 
       const card = getByTestId('verification-card');
@@ -433,13 +498,19 @@ describe('VerificationTierCard', () => {
 
       // Mock component that uses memoization
       const { rerender } = render(
-        <VerificationTierCard {...defaultProps} expensiveProp={expensiveComputation} />
+        <VerificationTierCard
+          {...defaultProps}
+          expensiveProp={expensiveComputation}
+        />,
       );
 
       expect(expensiveComputation).toHaveBeenCalledTimes(1);
 
       rerender(
-        <VerificationTierCard {...defaultProps} expensiveProp={expensiveComputation} />
+        <VerificationTierCard
+          {...defaultProps}
+          expensiveProp={expensiveComputation}
+        />,
       );
 
       expect(expensiveComputation).toHaveBeenCalledTimes(1); // Should be memoized
@@ -449,12 +520,18 @@ describe('VerificationTierCard', () => {
   describe('Integration with Verification Flow', () => {
     it('should update status when verification completes', () => {
       const { rerender } = render(
-        <VerificationTierCard {...defaultProps} status="unverified" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="unverified"
+        />,
       );
 
       // Simulate verification completion
       rerender(
-        <VerificationTierCard {...defaultProps} status="approved" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="approved"
+        />,
       );
 
       expect(screen.getByText('Verified')).toBeTruthy();
@@ -465,7 +542,10 @@ describe('VerificationTierCard', () => {
       jest.useFakeTimers();
 
       const { getByText } = render(
-        <VerificationTierCard {...defaultProps} status="pending" />
+        <VerificationTierCard
+          {...defaultProps}
+          status="pending"
+        />,
       );
 
       // Fast forward time to simulate timeout
@@ -482,7 +562,7 @@ describe('VerificationTierCard', () => {
           {...defaultProps}
           status="pending"
           estimatedCompletion="2024-01-01T15:30:00Z"
-        />
+        />,
       );
 
       expect(getByText('Estimated completion: 3:30 PM')).toBeTruthy();

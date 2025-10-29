@@ -131,12 +131,9 @@ describe('useTabDoublePress', () => {
 
   describe('Callback Updates', () => {
     it('should re-subscribe when callback changes', () => {
-      const { rerender } = renderHook(
-        (props) => useTabDoublePress(props.callback),
-        {
-          initialProps: { callback: jest.fn() },
-        },
-      );
+      const { rerender } = renderHook((props) => useTabDoublePress(props.callback), {
+        initialProps: { callback: jest.fn() },
+      });
 
       const initialCallCount = mockNavigation.addListener.mock.calls.length;
 
@@ -156,12 +153,9 @@ describe('useTabDoublePress', () => {
         return jest.fn();
       });
 
-      const { rerender } = renderHook(
-        (props) => useTabDoublePress(props.callback),
-        {
-          initialProps: { callback: (firstCallback = jest.fn()) },
-        },
-      );
+      const { rerender } = renderHook((props) => useTabDoublePress(props.callback), {
+        initialProps: { callback: (firstCallback = jest.fn()) },
+      });
 
       rerender({ callback: (secondCallback = jest.fn()) });
 

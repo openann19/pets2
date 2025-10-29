@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 
 // Mock Audio for missing expo-av dependency
 type RecordingInstance = {

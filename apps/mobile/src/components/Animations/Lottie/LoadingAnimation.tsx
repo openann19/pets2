@@ -3,8 +3,8 @@
  * Animated loading spinner
  */
 
-import React from "react";
-import { LottieAnimation } from "./LottieAnimation";
+import React from 'react';
+import { LottieAnimation } from './LottieAnimation';
 
 interface LoadingAnimationProps {
   size?: number;
@@ -13,13 +13,13 @@ interface LoadingAnimationProps {
 
 export function LoadingAnimation({ size = 120, style }: LoadingAnimationProps) {
   const loadingAnimation = {
-    v: "5.7.4",
+    v: '5.7.4',
     fr: 30,
     ip: 0,
     op: 90,
     w: 200,
     h: 200,
-    nm: "Loading",
+    nm: 'Loading',
     ddd: 0,
     assets: [],
     layers: [
@@ -27,7 +27,7 @@ export function LoadingAnimation({ size = 120, style }: LoadingAnimationProps) {
         ddd: 0,
         ind: 1,
         ty: 4,
-        nm: "Circle",
+        nm: 'Circle',
         sr: 1,
         ks: {
           o: { a: 0, k: 100 },
@@ -50,19 +50,19 @@ export function LoadingAnimation({ size = 120, style }: LoadingAnimationProps) {
         ao: 0,
         shapes: [
           {
-            ty: "gr",
+            ty: 'gr',
             it: [
               {
                 d: 1,
-                ty: "el",
+                ty: 'el',
                 s: { a: 0, k: [80, 80] },
                 p: { a: 0, k: [0, 0] },
-                nm: "Ellipse Path 1",
-                mn: "ADBE Vector Shape - Ellipse",
+                nm: 'Ellipse Path 1',
+                mn: 'ADBE Vector Shape - Ellipse',
                 hd: false,
               },
               {
-                ty: "st",
+                ty: 'st',
                 c: { a: 0, k: [0.3, 0.6, 1, 1] },
                 o: { a: 0, k: 100 },
                 w: { a: 0, k: 6 },
@@ -70,18 +70,18 @@ export function LoadingAnimation({ size = 120, style }: LoadingAnimationProps) {
                 lj: 1,
                 ml: 4,
                 bm: 0,
-                d: [{ n: "d", nm: "dash", v: 0 }],
-                nm: "Stroke 1",
-                mn: "ADBE Vector Graphic - Stroke",
+                d: [{ n: 'd', nm: 'dash', v: 0 }],
+                nm: 'Stroke 1',
+                mn: 'ADBE Vector Graphic - Stroke',
                 hd: false,
               },
             ],
-            nm: "Circle",
+            nm: 'Circle',
             np: 2,
             cix: 2,
             bm: 0,
             ix: 1,
-            mn: "ADBE Vector Group",
+            mn: 'ADBE Vector Group',
             hd: false,
           },
         ],

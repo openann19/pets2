@@ -1,10 +1,10 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import type { PersistStorage } from "zustand/middleware";
-import { immer } from "zustand/middleware/immer";
-import { createSecureStorage } from "../utils/secureStorage";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type { PersistStorage } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
+import { createSecureStorage } from '../utils/secureStorage';
 
-import type { User } from "@pawfectmatch/core";
+import type { User } from '@pawfectmatch/core';
 
 export interface AuthState {
   user: User | null;
@@ -99,7 +99,7 @@ export const useAuthStore = create<AuthState>()(
         }),
     })),
     {
-      name: "auth-storage-secure",
+      name: 'auth-storage-secure',
       storage: createSecureStorage() as any,
       partialize: (state) => ({
         accessToken: state.accessToken,

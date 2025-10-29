@@ -3,9 +3,9 @@
  * Comprehensive type definitions for all navigation screens
  */
 
-import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { ReactNode } from "react";
+import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { ReactNode } from 'react';
 
 // Root Stack Navigator Types
 import VerificationCenterScreen from '../screens/VerificationCenterScreen';
@@ -35,11 +35,13 @@ export type RootStackParamList = {
   AIBio: undefined;
   AIPhotoAnalyzer: undefined;
   AICompatibility: { petAId?: string; petBId?: string };
-  MemoryWeave: undefined | {
-    matchId: string;
-    petName: string;
-    memories?: unknown[];
-  };
+  MemoryWeave:
+    | undefined
+    | {
+        matchId: string;
+        petName: string;
+        memories?: unknown[];
+      };
   ARScentTrails:
     | undefined
     | {
@@ -128,22 +130,25 @@ export type PremiumStackParamList = {
 };
 
 // Screen Props Types
-export type RootStackScreenProps<T extends keyof RootStackParamList> =
-  NativeStackScreenProps<RootStackParamList, T>;
-
-export type TabScreenProps<T extends keyof TabParamList> = BottomTabScreenProps<
-  TabParamList,
+export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<
+  RootStackParamList,
   T
 >;
+
+export type TabScreenProps<T extends keyof TabParamList> = BottomTabScreenProps<TabParamList, T>;
 
 export type OnboardingScreenProps<T extends keyof OnboardingStackParamList> =
   NativeStackScreenProps<OnboardingStackParamList, T>;
 
-export type AdminScreenProps<T extends keyof AdminStackParamList> =
-  NativeStackScreenProps<AdminStackParamList, T>;
+export type AdminScreenProps<T extends keyof AdminStackParamList> = NativeStackScreenProps<
+  AdminStackParamList,
+  T
+>;
 
-export type PremiumScreenProps<T extends keyof PremiumStackParamList> =
-  NativeStackScreenProps<PremiumStackParamList, T>;
+export type PremiumScreenProps<T extends keyof PremiumStackParamList> = NativeStackScreenProps<
+  PremiumStackParamList,
+  T
+>;
 
 // Navigation Hook Types
 export interface NavigationProp {
@@ -233,11 +238,7 @@ export interface ScreenOptions {
   headerRight?: () => React.ReactNode;
   headerStyle?: unknown;
   headerTitleStyle?: unknown;
-  tabBarIcon?: (props: {
-    focused: boolean;
-    color: string;
-    size: number;
-  }) => React.ReactNode;
+  tabBarIcon?: (props: { focused: boolean; color: string; size: number }) => React.ReactNode;
   tabBarLabel?: string;
   tabBarStyle?: unknown;
   tabBarActiveTintColor?: string;
@@ -248,7 +249,7 @@ export interface ScreenOptions {
 export interface NavigationConfig {
   initialRouteName?: keyof RootStackParamList;
   screenOptions?: ScreenOptions;
-  headerMode?: "float" | "screen" | "none";
+  headerMode?: 'float' | 'screen' | 'none';
   gestureEnabled?: boolean;
   animationEnabled?: boolean;
 }
@@ -260,12 +261,12 @@ export interface RouteParams {
 
 // Navigation Events
 export type NavigationEvent =
-  | "focus"
-  | "blur"
-  | "beforeRemove"
-  | "state"
-  | "transitionStart"
-  | "transitionEnd";
+  | 'focus'
+  | 'blur'
+  | 'beforeRemove'
+  | 'state'
+  | 'transitionStart'
+  | 'transitionEnd';
 
 // Navigation Event Data
 export interface NavigationEventData {
@@ -290,10 +291,7 @@ export interface NavigationEventEmitter {
     event: NavigationEvent,
     listener: NavigationEventListener,
   ) => NavigationEventSubscription;
-  removeListener: (
-    event: NavigationEvent,
-    listener: NavigationEventListener,
-  ) => void;
+  removeListener: (event: NavigationEvent, listener: NavigationEventListener) => void;
   emit: (event: NavigationEvent, data?: unknown) => void;
 }
 
@@ -397,7 +395,7 @@ export interface DeepLinkConfig {
 // Navigation Gesture Types
 export interface NavigationGesture {
   enabled: boolean;
-  direction: "horizontal" | "vertical";
+  direction: 'horizontal' | 'vertical';
   distance: number;
   velocity: number;
 }
@@ -406,8 +404,8 @@ export interface NavigationGesture {
 export interface NavigationAnimation {
   enabled: boolean;
   duration: number;
-  type: "slide" | "fade" | "scale" | "none";
-  direction: "left" | "right" | "up" | "down";
+  type: 'slide' | 'fade' | 'scale' | 'none';
+  direction: 'left' | 'right' | 'up' | 'down';
 }
 
 // Navigation Header Types
@@ -438,7 +436,7 @@ export interface NavigationTabBar {
 export interface NavigationDrawer {
   open: boolean;
   width: number;
-  position: "left" | "right";
+  position: 'left' | 'right';
   style?: unknown;
   overlayStyle?: unknown;
   contentStyle?: unknown;
@@ -448,40 +446,36 @@ export interface NavigationDrawer {
 export interface NavigationModal {
   visible: boolean;
   transparent: boolean;
-  animationType: "slide" | "fade" | "none";
-  presentationStyle:
-    | "fullScreen"
-    | "pageSheet"
-    | "formSheet"
-    | "overFullScreen";
+  animationType: 'slide' | 'fade' | 'none';
+  presentationStyle: 'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen';
   style?: unknown;
   contentStyle?: unknown;
 }
 
 // Navigation Stack Types
 export interface NavigationStack {
-  type: "stack";
+  type: 'stack';
   options?: ScreenOptions;
   children: React.ReactNode;
 }
 
 // Navigation Tab Types
 export interface NavigationTab {
-  type: "tab";
+  type: 'tab';
   options?: ScreenOptions;
   children: React.ReactNode;
 }
 
 // Navigation Drawer Types
 export interface NavigationDrawerNavigator {
-  type: "drawer";
+  type: 'drawer';
   options?: ScreenOptions;
   children: React.ReactNode;
 }
 
 // Navigation Modal Types
 export interface NavigationModalNavigator {
-  type: "modal";
+  type: 'modal';
   options?: ScreenOptions;
   children: React.ReactNode;
 }
@@ -510,20 +504,20 @@ export interface NavigationGroup {
 
 // Navigation Tree Types
 export interface NavigationTree {
-  type: "tree";
+  type: 'tree';
   children: (NavigationScreen | NavigationGroup)[];
 }
 
 // Navigation Schema Types
 export interface NavigationSchema {
-  type: "schema";
+  type: 'schema';
   groups: NavigationGroup[];
   screens: NavigationScreen[];
 }
 
 // Navigation Config Schema Types
 export interface NavigationConfigSchema {
-  type: "config";
+  type: 'config';
   initialRouteName: string;
   screenOptions: ScreenOptions;
   groups: NavigationGroup[];
@@ -613,16 +607,9 @@ export interface NavigationUtils {
   createNavigationRef: () => NavigationRef;
   createNavigationState: () => NavigationState;
   createNavigationAction: (type: string, payload?: unknown) => NavigationAction;
-  createNavigationEvent: (
-    type: NavigationEvent,
-    data?: unknown,
-  ) => NavigationEventData;
-  createNavigationListener: (
-    callback: NavigationEventListener,
-  ) => NavigationEventListener;
-  createNavigationSubscription: (
-    remove: () => void,
-  ) => NavigationEventSubscription;
+  createNavigationEvent: (type: NavigationEvent, data?: unknown) => NavigationEventData;
+  createNavigationListener: (callback: NavigationEventListener) => NavigationEventListener;
+  createNavigationSubscription: (remove: () => void) => NavigationEventSubscription;
 }
 
 // Navigation Error Types
@@ -696,7 +683,7 @@ export interface NavigationStorage {
 // Navigation Network Types
 export interface NavigationNetwork {
   isConnected: boolean;
-  type: "wifi" | "cellular" | "ethernet" | "unknown";
+  type: 'wifi' | 'cellular' | 'ethernet' | 'unknown';
   isInternetReachable: boolean;
   addListener: (callback: (state: unknown) => void) => () => void;
   removeListener: (callback: (state: unknown) => void) => void;
@@ -704,7 +691,7 @@ export interface NavigationNetwork {
 
 // Navigation Device Types
 export interface NavigationDevice {
-  platform: "ios" | "android" | "web" | "windows" | "macos";
+  platform: 'ios' | 'android' | 'web' | 'windows' | 'macos';
   version: string;
   model: string;
   brand: string;

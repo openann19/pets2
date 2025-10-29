@@ -275,7 +275,16 @@ export interface Message {
   _id: string;
   sender: User;
   content: string;
-  messageType: 'text' | 'image' | 'location' | 'system' | 'voice' | 'video' | 'audio' | 'gif' | 'sticker';
+  messageType:
+    | 'text'
+    | 'image'
+    | 'location'
+    | 'system'
+    | 'voice'
+    | 'video'
+    | 'audio'
+    | 'gif'
+    | 'sticker';
   attachments?: Attachment[];
   readBy: ReadReceipt[];
   sentAt: string;
@@ -527,7 +536,14 @@ export interface AdoptionApplication {
   petId: string;
   applicantId: string;
   shelterId: string;
-  status: 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'withdrawn' | 'completed';
+  status:
+    | 'draft'
+    | 'submitted'
+    | 'under_review'
+    | 'approved'
+    | 'rejected'
+    | 'withdrawn'
+    | 'completed';
   submittedAt?: string;
   reviewedAt?: string;
   completedAt?: string;

@@ -34,7 +34,9 @@ export function MatchModal({
       const timer = setTimeout(() => {
         setShowConfetti(false);
       }, 4000);
-      return () => { clearTimeout(timer); };
+      return () => {
+        clearTimeout(timer);
+      };
     }
   }, [show]);
 
@@ -47,21 +49,19 @@ export function MatchModal({
         show={showConfetti}
         intensity="heavy"
         duration={4000}
-        onComplete={() => { setShowConfetti(false); }}
+        onComplete={() => {
+          setShowConfetti(false);
+        }}
       />
 
       <FXContainerPresets.premium style={styles.content}>
         <Heading1 style={styles.title}>It's a Match! 🎉</Heading1>
 
         <View style={styles.photos}>
-          <View style={styles.photoContainer}>
-            {/* Match photo would go here */}
-          </View>
+          <View style={styles.photoContainer}>{/* Match photo would go here */}</View>
         </View>
 
-        <Body style={styles.text}>
-          You and {pet.name} liked each other!
-        </Body>
+        <Body style={styles.text}>You and {pet.name} liked each other!</Body>
 
         <View style={styles.buttons}>
           <EliteButtonPresets.glass

@@ -1,10 +1,10 @@
-import { useCallback, useState } from "react";
-import { Alert } from "react-native";
-import * as Haptics from "expo-haptics";
-import { logger } from "../../services/logger";
-import { authService, AuthError } from "../../services/AuthService";
-import { useFormState } from "../utils/useFormState";
-import type { RootStackScreenProps } from "../../navigation/types";
+import { useCallback, useState } from 'react';
+import { Alert } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { logger } from '../../services/logger';
+import { authService, AuthError } from '../../services/AuthService';
+import { useFormState } from '../utils/useFormState';
+import type { RootStackScreenProps } from '../../navigation/types';
 
 interface LoginFormValues {
   email: string;
@@ -12,7 +12,7 @@ interface LoginFormValues {
 }
 
 interface UseLoginScreenOptions {
-  navigation: RootStackScreenProps<"Login">["navigation"];
+  navigation: RootStackScreenProps<'Login'>['navigation'];
 }
 
 interface UseLoginScreenReturn {
@@ -30,26 +30,22 @@ interface UseLoginScreenReturn {
 /**
  * Hook for managing LoginScreen state and actions
  */
-export function useLoginScreen({
-  navigation,
-}: UseLoginScreenOptions): UseLoginScreenReturn {
+export function useLoginScreen({ navigation }: UseLoginScreenOptions): UseLoginScreenReturn {
   // Form validation rules
   const validateForm = useCallback(
-    (
-      values: LoginFormValues,
-    ): Partial<Record<keyof LoginFormValues, string>> => {
+    (values: LoginFormValues): Partial<Record<keyof LoginFormValues, string>> => {
       const errors: Partial<Record<keyof LoginFormValues, string>> = {};
 
       if (!values.email.trim()) {
-        errors.email = "Email is required";
+        errors.email = 'Email is required';
       } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-        errors.email = "Email format is invalid";
+        errors.email = 'Email format is invalid';
       }
 
       if (!values.password) {
-        errors.password = "Password is required";
+        errors.password = 'Password is required';
       } else if (values.password.length < 8) {
-        errors.password = "Password must be at least 8 characters";
+        errors.password = 'Password must be at least 8 characters';
       }
 
       return errors;
@@ -68,8 +64,8 @@ export function useLoginScreen({
     handleSubmit: handleSubmitForm,
   } = useFormState<LoginFormValues>({
     initialValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
     validate: validateForm,
   });
@@ -78,9 +74,9 @@ export function useLoginScreen({
   const handleLogin = useCallback(async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     setLoading(true);
-    
+
     try {
-      logger.info("Login attempt:", { email: values.email });
+      logger.info('Login attempt:', { email: values.email });
 
       const response = await authService.login({
         email: values.email,
@@ -88,28 +84,24 @@ export function useLoginScreen({
       });
 
       // Success haptic feedback
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
-        () => {},
-      );
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
 
-      logger.info("Login successful", { userId: response.user.id });
+      logger.info('Login successful', { userId: response.user.id });
 
       // Navigate to Home on successful login
-      navigation.navigate("Home");
+      navigation.navigate('Home');
     } catch (error) {
       // Error haptic feedback
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(
-        () => {},
-      );
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
 
-      logger.error("Login failed", { error: error as Error, email: values.email });
+      logger.error('Login failed', { error: error as Error, email: values.email });
 
       const errorMessage =
         error instanceof AuthError
           ? error.message
-          : "Login failed. Please check your credentials and try again.";
+          : 'Login failed. Please check your credentials and try again.';
 
-      Alert.alert("Login Failed", errorMessage, [{ text: "OK", style: "default" }]);
+      Alert.alert('Login Failed', errorMessage, [{ text: 'OK', style: 'default' }]);
     } finally {
       setLoading(false);
     }
@@ -119,15 +111,15 @@ export function useLoginScreen({
     async (e?: any) => {
       await handleSubmitForm(handleLogin)(e);
     },
-    [handleSubmitForm, handleLogin]
+    [handleSubmitForm, handleLogin],
   );
 
   const navigateToRegister = useCallback(() => {
-    navigation.navigate("Register");
+    navigation.navigate('Register');
   }, [navigation]);
 
   const navigateToForgotPassword = useCallback(() => {
-    navigation.navigate("ForgotPassword");
+    navigation.navigate('ForgotPassword');
   }, [navigation]);
 
   return {

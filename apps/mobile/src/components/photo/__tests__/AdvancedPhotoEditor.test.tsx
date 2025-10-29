@@ -60,7 +60,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       expect(getByTestId).toBeDefined();
@@ -72,7 +72,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       expect(getByText('Edit Photo')).toBeTruthy();
@@ -85,7 +85,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       expect(getByText('Adjust')).toBeTruthy();
@@ -100,7 +100,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const adjustTab = getByText('Adjust');
@@ -117,7 +117,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const filtersTab = getByText('Filters');
@@ -136,7 +136,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const rotateLeftButton = getByText('Rotate L');
@@ -151,7 +151,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const rotateRightButton = getByText('Rotate R');
@@ -166,7 +166,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const flipHButton = getByText('Flip H');
@@ -181,7 +181,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const flipVButton = getByText('Flip V');
@@ -196,7 +196,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const resetButton = getByText('Reset All');
@@ -213,7 +213,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       // Switch to filters tab
@@ -235,7 +235,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const filtersTab = getByText('Filters');
@@ -250,7 +250,7 @@ describe('AdvancedPhotoEditor', () => {
             brightness: 105,
             saturation: 110,
             warmth: 30,
-          })
+          }),
         );
       });
     });
@@ -263,11 +263,11 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const saveButton = getByText('Save');
-      
+
       await act(async () => {
         fireEvent.press(saveButton);
       });
@@ -289,11 +289,11 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const saveButton = getByText('Save');
-      
+
       // Button should be disabled
       expect(saveButton.props.disabled).toBeTruthy();
     });
@@ -309,7 +309,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       expect(getByText('Processing...')).toBeTruthy();
@@ -323,7 +323,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       // Press cancel button
@@ -343,7 +343,7 @@ describe('AdvancedPhotoEditor', () => {
           aspectRatio={[1, 1]}
           maxWidth={512}
           maxHeight={512}
-        />
+        />,
       );
 
       expect(mockUsePhotoEditor).toHaveBeenCalledWith(
@@ -351,7 +351,7 @@ describe('AdvancedPhotoEditor', () => {
         expect.objectContaining({
           maxWidth: 512,
           maxHeight: 512,
-        })
+        }),
       );
     });
 
@@ -364,7 +364,7 @@ describe('AdvancedPhotoEditor', () => {
           aspectRatio={[4, 3]}
           maxWidth={1920}
           maxHeight={1920}
-        />
+        />,
       );
 
       expect(mockUsePhotoEditor).toHaveBeenCalledWith(
@@ -372,7 +372,7 @@ describe('AdvancedPhotoEditor', () => {
         expect.objectContaining({
           maxWidth: 1920,
           maxHeight: 1920,
-        })
+        }),
       );
     });
   });
@@ -384,7 +384,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       // Adjust tab should be active by default
@@ -400,7 +400,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -414,7 +414,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -428,7 +428,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -450,11 +450,11 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const saveButton = getByText('Save');
-      
+
       await act(async () => {
         fireEvent.press(saveButton);
       });
@@ -470,7 +470,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri=""
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       // Should not crash
@@ -488,7 +488,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       // Should not crash
@@ -503,7 +503,7 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       // Check for accessibility elements
@@ -518,17 +518,17 @@ describe('AdvancedPhotoEditor', () => {
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       const renderCount = jest.fn();
-      
+
       rerender(
         <AdvancedPhotoEditor
           imageUri={mockImageUri}
           onSave={mockOnSave}
           onCancel={mockOnCancel}
-        />
+        />,
       );
 
       // Component should be optimized
@@ -536,4 +536,3 @@ describe('AdvancedPhotoEditor', () => {
     });
   });
 });
-

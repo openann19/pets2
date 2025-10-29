@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import { useTheme } from '@mobile/src/theme';
+import { useMemo } from 'react';
 import { type LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -8,7 +9,6 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { useTheme } from "@/theme";
 import { useReduceMotion } from '../hooks/useReducedMotion';
 
 export type ReactionItem = { emoji: string; label?: string };
@@ -33,8 +33,7 @@ const DEFAULTS: ReactionItem[] = [
   { emoji: '👏', label: 'Clap' },
 ];
 
-const springCfg = (reduced: boolean) =>
-  reduced ? undefined : { damping: 18, stiffness: 340 };
+const springCfg = (reduced: boolean) => (reduced ? undefined : { damping: 18, stiffness: 340 });
 
 export default function ReactionBarMagnetic({
   reactions = DEFAULTS,
@@ -51,7 +50,7 @@ export default function ReactionBarMagnetic({
   // centers.x shared for each reaction
   const centers = useMemo(
     () => reactions.map(() => ({ x: useSharedValue(0) })),
-    [reactions.length]
+    [reactions.length],
   );
   const touchX = useSharedValue<number | null>(null);
   const active = useSharedValue(false);
@@ -80,7 +79,7 @@ export default function ReactionBarMagnetic({
         touchX.value = null;
         return;
       }
-      'worklet';
+      ('worklet');
       let bestIdx = 0;
       let bestDist = 1e9;
       for (let i = 0; i < centers.length; i++) {
@@ -171,7 +170,7 @@ const makeStyles = (theme: any, bg?: string, border?: string) =>
       backgroundColor: bg ?? theme.colors.bg,
       borderColor: border ?? theme.colors.border,
       borderWidth: 1,
-      borderRadius: theme.radius.lg,
+      borderRadius: theme.radii.lg,
       gap: theme.spacing.md,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },

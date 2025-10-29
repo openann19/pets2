@@ -6,7 +6,7 @@
 process.env.RNTL_SKIP_AUTO_CLEANUP = 'true';
 
 // Mock everything before importing
-jest.mock("@sentry/react-native", () => ({
+jest.mock('@sentry/react-native', () => ({
   init: jest.fn(),
   captureException: jest.fn(),
   captureMessage: jest.fn(),
@@ -15,18 +15,18 @@ jest.mock("@sentry/react-native", () => ({
   addBreadcrumb: jest.fn(),
 }));
 
-jest.mock("react-native-keychain", () => ({
+jest.mock('react-native-keychain', () => ({
   setInternetCredentials: jest.fn(),
   getInternetCredentials: jest.fn(),
   resetInternetCredentials: jest.fn(),
 }));
 
-jest.mock("react-native-aes-crypto", () => ({
+jest.mock('react-native-aes-crypto', () => ({
   encrypt: jest.fn(),
   decrypt: jest.fn(),
 }));
 
-jest.mock("react-native-encrypted-storage", () => ({
+jest.mock('react-native-encrypted-storage', () => ({
   setItem: jest.fn(),
   getItem: jest.fn(),
   removeItem: jest.fn(),
@@ -34,7 +34,7 @@ jest.mock("react-native-encrypted-storage", () => ({
 }));
 
 // Mock the core package
-jest.mock("@pawfectmatch/core", () => ({
+jest.mock('@pawfectmatch/core', () => ({
   logger: {
     info: jest.fn(),
     error: jest.fn(),
@@ -42,14 +42,14 @@ jest.mock("@pawfectmatch/core", () => ({
 }));
 
 // Mock expo-haptics
-jest.mock("expo-haptics", () => ({
+jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   notificationAsync: jest.fn(),
   selectionAsync: jest.fn(),
 }));
 
 // Mock error handler
-jest.mock("../../useErrorHandler", () => ({
+jest.mock('../../useErrorHandler', () => ({
   useErrorHandler: () => ({
     handleNetworkError: jest.fn(),
     handleOfflineError: jest.fn(),
@@ -57,10 +57,10 @@ jest.mock("../../useErrorHandler", () => ({
 }));
 
 // Now import the hook
-import { useAdminDashboardScreen } from "../useAdminDashboardScreen";
+import { useAdminDashboardScreen } from '../useAdminDashboardScreen';
 
 // Simple test function
-test("hook should not crash on initialization", () => {
+test('hook should not crash on initialization', () => {
   const mockNavigation = {
     navigate: jest.fn(),
     goBack: jest.fn(),
@@ -70,7 +70,7 @@ test("hook should not crash on initialization", () => {
   expect(() => {
     // This is a simplified test - we're not actually rendering the hook
     // just checking if the module can be imported without crashing
-    const hookModule = require("../useAdminDashboardScreen");
+    const hookModule = require('../useAdminDashboardScreen');
     expect(hookModule.useAdminDashboardScreen).toBeDefined();
   }).not.toThrow();
 });

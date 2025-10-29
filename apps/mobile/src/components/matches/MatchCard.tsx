@@ -1,19 +1,19 @@
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { memo, useMemo } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { logger } from '@pawfectmatch/core';
+import { LinearGradient } from 'expo-linear-gradient';
+import { memo, useMemo } from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
-import type { Match } from "../../hooks/useMatchesData";
-import * as Haptics from "expo-haptics";
-import OptimizedImage from "../OptimizedImage";
-import { useTheme } from "@/theme";
+import { useTheme } from '@mobile/src/theme';
+import * as Haptics from 'expo-haptics';
+import type { Match } from '../../hooks/useMatchesData';
+import OptimizedImage from '../OptimizedImage';
 
 interface MatchCardProps {
   match: Match;
@@ -54,7 +54,7 @@ function MatchCardBase({
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       await onUnmatch?.(match._id, match.petName);
     } catch (error) {
-      logger.error("Error unmatching:", { error });
+      logger.error('Error unmatching:', { error });
     }
   };
 
@@ -63,20 +63,18 @@ function MatchCardBase({
       void Haptics.selectionAsync();
       await onArchive?.(match._id, match.petName);
     } catch (error) {
-      logger.error("Error archiving:", { error });
+      logger.error('Error archiving:', { error });
     }
   };
 
   const handleReport = () => {
-    Alert.alert("Report Match", `Report this match with ${match.petName}?`, [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert('Report Match', `Report this match with ${match.petName}?`, [
+      { text: 'Cancel', style: 'cancel' },
       {
-        text: "Report",
-        style: "destructive",
+        text: 'Report',
+        style: 'destructive',
         onPress: () => {
-          void Haptics.notificationAsync(
-            Haptics.NotificationFeedbackType.Warning,
-          );
+          void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
           onReport?.(match._id, match.petName);
         },
       },
@@ -89,7 +87,7 @@ function MatchCardBase({
   }));
 
   // Use simplified match data
-  const petPhoto = match.petPhoto || "";
+  const petPhoto = match.petPhoto || '';
   const lastMessage = match.lastMessage;
 
   return (
@@ -103,7 +101,7 @@ function MatchCardBase({
         accessibilityLabel={`View match with ${match.petName}`}
       >
         <LinearGradient
-          colors={["#fceabb", "#f8b500", "Theme.colors.primary[500]", "#a21caf"]}
+          colors={['#fceabb', '#f8b500', 'Theme.colors.primary[500]', '#a21caf']}
           style={styles.gradient}
         >
           <OptimizedImage
@@ -123,7 +121,10 @@ function MatchCardBase({
             </Text>
             <Text style={styles.owner}>Owner information</Text>
             {lastMessage ? (
-              <Text style={styles.lastMessage} numberOfLines={1}>
+              <Text
+                style={styles.lastMessage}
+                numberOfLines={1}
+              >
                 {lastMessage.content}
               </Text>
             ) : null}
@@ -135,14 +136,15 @@ function MatchCardBase({
             <View style={styles.actions}>
               {onReport && (
                 <TouchableOpacity
-                  style={StyleSheet.flatten([
-                    styles.actionButton,
-                    styles.reportButton,
-                  ])}
+                  style={StyleSheet.flatten([styles.actionButton, styles.reportButton])}
                   onPress={handleReport}
                   accessibilityLabel="Report match"
                 >
-                  <Ionicons name="flag-outline" size={20} color={colors.warning} />
+                  <Ionicons
+                    name="flag-outline"
+                    size={20}
+                    color={colors.warning}
+                  />
                 </TouchableOpacity>
               )}
               {onArchive && (
@@ -151,15 +153,16 @@ function MatchCardBase({
                   onPress={handleArchive}
                   accessibilityLabel="Archive match"
                 >
-                  <Ionicons name="archive-outline" size={20} color={colors.primary} />
+                  <Ionicons
+                    name="archive-outline"
+                    size={20}
+                    color={colors.primary}
+                  />
                 </TouchableOpacity>
               )}
               {onUnmatch && (
                 <TouchableOpacity
-                  style={StyleSheet.flatten([
-                    styles.actionButton,
-                    styles.unmatchButton,
-                  ])}
+                  style={StyleSheet.flatten([styles.actionButton, styles.unmatchButton])}
                   onPress={handleUnmatch}
                   accessibilityLabel="Unmatch"
                 >
@@ -178,79 +181,83 @@ function MatchCardBase({
   );
 }
 
-  const styles = useMemo(() => StyleSheet.create({
-    card: {
-      borderRadius: 24,
-      margin: 12,
-      shadowColor: colors.primary,
-      shadowOpacity: 0.15,
-      shadowRadius: 16,
-      elevation: 8,
-    },
-    gradient: {
-      borderRadius: 24,
-      overflow: "hidden",
-      flexDirection: "row",
-      alignItems: "center",
-      padding: 16,
-    },
-    photo: {
-      width: 80,
-      height: 80,
-      borderRadius: 16,
-      backgroundColor: colors.bgElevated,
-      marginRight: 16,
-    },
-    info: {
-      flex: 1,
-    },
-    name: {
-      fontSize: 20,
-      fontWeight: "bold",
-      color: colors.primary,
-    },
-    meta: {
-      fontSize: 15,
-      color: colors.primary,
-      marginVertical: 2,
-    },
-    owner: {
-      fontSize: 14,
-      color: colors.primary,
-      marginBottom: 2,
-    },
-    lastMessage: {
-      fontSize: 13,
-      color: colors.textMuted,
-      marginBottom: 2,
-    },
-    matchedAt: {
-      fontSize: 12,
-      color: colors.primary,
-      marginTop: 4,
-    },
-    actions: {
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      marginLeft: 8,
-    },
-    actionButton: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      backgroundColor: "rgba(255, 255, 255, 0.2)",
-      alignItems: "center",
-      justifyContent: "center",
-      marginVertical: 4,
-    },
-    unmatchButton: {
-      backgroundColor: colors.danger + "1A", // Add alpha for background
-    },
-    reportButton: {
-      backgroundColor: colors.warning + "1A", // Add alpha for background
-    },
-  }), [colors]);
+const styles = useMemo(
+  () =>
+    StyleSheet.create({
+      card: {
+        borderRadius: 24,
+        margin: 12,
+        shadowColor: colors.primary,
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 8,
+      },
+      gradient: {
+        borderRadius: 24,
+        overflow: 'hidden',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+      },
+      photo: {
+        width: 80,
+        height: 80,
+        borderRadius: 16,
+        backgroundColor: colors.bgElevated,
+        marginRight: 16,
+      },
+      info: {
+        flex: 1,
+      },
+      name: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: colors.primary,
+      },
+      meta: {
+        fontSize: 15,
+        color: colors.primary,
+        marginVertical: 2,
+      },
+      owner: {
+        fontSize: 14,
+        color: colors.primary,
+        marginBottom: 2,
+      },
+      lastMessage: {
+        fontSize: 13,
+        color: colors.textMuted,
+        marginBottom: 2,
+      },
+      matchedAt: {
+        fontSize: 12,
+        color: colors.primary,
+        marginTop: 4,
+      },
+      actions: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 8,
+      },
+      actionButton: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 4,
+      },
+      unmatchButton: {
+        backgroundColor: colors.danger + '1A', // Add alpha for background
+      },
+      reportButton: {
+        backgroundColor: colors.warning + '1A', // Add alpha for background
+      },
+    }),
+  [colors],
+);
 
 export const MatchCard = memo(MatchCardBase);
-MatchCard.displayName = "MatchCard";
+MatchCard.displayName = 'MatchCard';

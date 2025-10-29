@@ -1,6 +1,6 @@
 /**
  * Verification Service - Mobile Client
- * 
+ *
  * Handles all verification-related API calls and state management
  * for user verification tier progression.
  */
@@ -46,7 +46,12 @@ export interface IdentityVerificationData {
 
 export interface PetOwnershipVerificationData {
   primaryProof: {
-    type: 'registration' | 'microchip' | 'adoption_contract' | 'vaccination_booklet' | 'vet_invoice';
+    type:
+      | 'registration'
+      | 'microchip'
+      | 'adoption_contract'
+      | 'vaccination_booklet'
+      | 'vet_invoice';
     documentUrl: string;
   };
   secondaryProof: {
@@ -107,7 +112,10 @@ class VerificationService {
    */
   async submitIdentityVerification(data: IdentityVerificationData): Promise<VerificationStatus> {
     try {
-      return await request<VerificationStatus>('/verification/identity', { method: 'POST', body: data });
+      return await request<VerificationStatus>('/verification/identity', {
+        method: 'POST',
+        body: data,
+      });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error : new Error(String(error));
       logger.error('Error submitting identity verification', { error: errorMessage });
@@ -119,10 +127,13 @@ class VerificationService {
    * Submit Tier 2: Pet Ownership Verification
    */
   async submitPetOwnershipVerification(
-    data: PetOwnershipVerificationData
+    data: PetOwnershipVerificationData,
   ): Promise<VerificationStatus> {
     try {
-      return await request<VerificationStatus>('/verification/pet-ownership', { method: 'POST', body: data });
+      return await request<VerificationStatus>('/verification/pet-ownership', {
+        method: 'POST',
+        body: data,
+      });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error : new Error(String(error));
       logger.error('Error submitting pet ownership verification', { error: errorMessage });
@@ -134,10 +145,13 @@ class VerificationService {
    * Submit Tier 3: Veterinary Verification
    */
   async submitVeterinaryVerification(
-    data: VeterinaryVerificationData
+    data: VeterinaryVerificationData,
   ): Promise<VerificationStatus> {
     try {
-      return await request<VerificationStatus>('/verification/veterinary', { method: 'POST', body: data });
+      return await request<VerificationStatus>('/verification/veterinary', {
+        method: 'POST',
+        body: data,
+      });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error : new Error(String(error));
       logger.error('Error submitting veterinary verification', { error: errorMessage });
@@ -149,10 +163,13 @@ class VerificationService {
    * Submit Tier 4: Organization Verification
    */
   async submitOrganizationVerification(
-    data: OrganizationVerificationData
+    data: OrganizationVerificationData,
   ): Promise<VerificationStatus> {
     try {
-      return await request<VerificationStatus>('/verification/organization', { method: 'POST', body: data });
+      return await request<VerificationStatus>('/verification/organization', {
+        method: 'POST',
+        body: data,
+      });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error : new Error(String(error));
       logger.error('Error submitting organization verification', { error: errorMessage });
@@ -165,7 +182,10 @@ class VerificationService {
    */
   async getRequirements(tier: string): Promise<string[]> {
     try {
-      const response = await request<{ requirements: string[] }>(`/verification/requirements/${tier}`, { method: 'GET' });
+      const response = await request<{ requirements: string[] }>(
+        `/verification/requirements/${tier}`,
+        { method: 'GET' },
+      );
       return response.requirements;
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error : new Error(String(error));
@@ -192,7 +212,9 @@ class VerificationService {
    */
   async getBadges(): Promise<string[]> {
     try {
-      const response = await request<{ badges: string[] }>('/verification/badges', { method: 'GET' });
+      const response = await request<{ badges: string[] }>('/verification/badges', {
+        method: 'GET',
+      });
       return response.badges;
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error : new Error(String(error));
@@ -206,7 +228,10 @@ class VerificationService {
    */
   async hasTier(requiredTier: string): Promise<boolean> {
     try {
-      const response = await request<{ hasTier: boolean }>(`/verification/has-tier/${requiredTier}`, { method: 'GET' });
+      const response = await request<{ hasTier: boolean }>(
+        `/verification/has-tier/${requiredTier}`,
+        { method: 'GET' },
+      );
       return response.hasTier;
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error : new Error(String(error));
@@ -221,7 +246,7 @@ class VerificationService {
   async uploadDocument(
     fileUri: string,
     documentType: string,
-    verificationType?: string
+    verificationType?: string,
   ): Promise<string> {
     if (!fileUri || fileUri.trim() === '') {
       throw new Error('Empty file');
@@ -230,7 +255,7 @@ class VerificationService {
     try {
       const FormData = require('form-data');
       const formData = new FormData();
-      
+
       // In React Native, you'd use expo-file-system or similar
       // formData.append('file', {
       //   uri: fileUri,
@@ -253,7 +278,11 @@ class VerificationService {
       return response.url;
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error : new Error(String(error));
-      logger.error('Error uploading document', { error: errorMessage, documentType, verificationType });
+      logger.error('Error uploading document', {
+        error: errorMessage,
+        documentType,
+        verificationType,
+      });
       throw errorMessage;
     }
   }
@@ -273,4 +302,3 @@ class VerificationService {
 }
 
 export const verificationService = new VerificationService();
-

@@ -49,14 +49,14 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
 
   it('should forward ref to ScrollView', () => {
     const { getByText } = render(<TestComponent />);
-    
+
     expect(getByText('Test Content')).toBeTruthy();
     expect(useScrollToTop).toHaveBeenCalled();
   });
 
   it('should scroll when ref method is called', async () => {
     const scrollToMock = jest.fn();
-    
+
     const TestComponentWithMock = () => {
       const scrollRef = useRef<any>({ scrollTo: scrollToMock } as any);
       useScrollToTop(scrollRef);
@@ -84,7 +84,7 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
         showsVerticalScrollIndicator={true}
       >
         <div>Test Content</div>
-      </EliteScrollContainer>
+      </EliteScrollContainer>,
     );
 
     expect(getByText('Test Content')).toBeTruthy();
@@ -96,7 +96,7 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
         <div>Child 1</div>
         <div>Child 2</div>
         <div>Child 3</div>
-      </EliteScrollContainer>
+      </EliteScrollContainer>,
     );
 
     expect(getByText('Child 1')).toBeTruthy();
@@ -109,7 +109,7 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
     const { container } = render(
       <EliteScrollContainer contentContainerStyle={customStyle}>
         <div>Test Content</div>
-      </EliteScrollContainer>
+      </EliteScrollContainer>,
     );
 
     expect(container).toBeTruthy();
@@ -119,7 +119,7 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
     const { getByText } = render(
       <EliteScrollContainer gradient="primary">
         <div>Test Content</div>
-      </EliteScrollContainer>
+      </EliteScrollContainer>,
     );
 
     expect(getByText('Test Content')).toBeTruthy();
@@ -127,15 +127,13 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
 
   it('should handle refreshControl prop', () => {
     const onRefreshMock = jest.fn();
-    
+
     const RefreshControl = () => null;
 
     const { getByText } = render(
-      <EliteScrollContainer
-        refreshControl={<RefreshControl />}
-      >
+      <EliteScrollContainer refreshControl={<RefreshControl />}>
         <div>Test Content</div>
-      </EliteScrollContainer>
+      </EliteScrollContainer>,
     );
 
     expect(getByText('Test Content')).toBeTruthy();
@@ -145,7 +143,7 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
     it('should work with useScrollToTop hook', () => {
       const TestComponent = () => {
         const scrollRef = useRef<any>(null);
-        
+
         // This simulates what useScrollToTop does
         React.useEffect(() => {
           if (scrollRef.current) {
@@ -170,7 +168,7 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
 
       const TestComponent = () => {
         const scrollRef = useRef<any>(null);
-        
+
         React.useEffect(() => {
           refValue = scrollRef.current;
         });
@@ -183,7 +181,7 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
       };
 
       render(<TestComponent />);
-      
+
       // Verify ref is forwarded
       expect(refValue).toBeTruthy();
     });
@@ -221,13 +219,13 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
       const { rerender, getByText } = render(
         <EliteScrollContainer gradient="primary">
           <div>Test Content</div>
-        </EliteScrollContainer>
+        </EliteScrollContainer>,
       );
 
       rerender(
         <EliteScrollContainer gradient="secondary">
           <div>Test Content</div>
-        </EliteScrollContainer>
+        </EliteScrollContainer>,
       );
 
       expect(getByText('Test Content')).toBeTruthy();
@@ -242,7 +240,7 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
           accessibilityLabel="Scroll Container"
         >
           <div>Test Content</div>
-        </EliteScrollContainer>
+        </EliteScrollContainer>,
       );
 
       expect(getByText('Test Content')).toBeTruthy();
@@ -252,7 +250,7 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
       const { getByText } = render(
         <EliteScrollContainer accessibilityRole="scrollbar">
           <div>Test Content</div>
-        </EliteScrollContainer>
+        </EliteScrollContainer>,
       );
 
       expect(getByText('Test Content')).toBeTruthy();
@@ -261,13 +259,9 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
 
   describe('Performance', () => {
     it('should handle large content efficiently', () => {
-      const largeContent = Array.from({ length: 100 }, (_, i) => (
-        <div key={i}>Item {i}</div>
-      ));
+      const largeContent = Array.from({ length: 100 }, (_, i) => <div key={i}>Item {i}</div>);
 
-      const { container } = render(
-        <EliteScrollContainer>{largeContent}</EliteScrollContainer>
-      );
+      const { container } = render(<EliteScrollContainer>{largeContent}</EliteScrollContainer>);
 
       expect(container).toBeTruthy();
     });
@@ -276,14 +270,14 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
       const { rerender, unmount } = render(
         <EliteScrollContainer>
           <div>Test Content</div>
-        </EliteScrollContainer>
+        </EliteScrollContainer>,
       );
 
       for (let i = 0; i < 50; i++) {
         rerender(
           <EliteScrollContainer>
             <div>Test Content {i}</div>
-          </EliteScrollContainer>
+          </EliteScrollContainer>,
         );
       }
 
@@ -293,4 +287,3 @@ describe('EliteScrollContainer - Ref Forwarding', () => {
     });
   });
 });
-

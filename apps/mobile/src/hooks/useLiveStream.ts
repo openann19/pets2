@@ -12,7 +12,7 @@ export interface UseLiveStreamReturn {
   localParticipant: LocalParticipant | null;
   viewerCount: number;
   error: string | null;
-  
+
   // Actions
   startStream: (streamId: string) => Promise<void>;
   endStream: () => Promise<void>;
@@ -32,7 +32,7 @@ export function useLiveStream(): UseLiveStreamReturn {
   const [localParticipant, setLocalParticipant] = useState<LocalParticipant | null>(null);
   const [viewerCount, setViewerCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  
+
   const socketRef = useRef<any>(null);
 
   /**
@@ -41,7 +41,7 @@ export function useLiveStream(): UseLiveStreamReturn {
   const startStream = useCallback(async (streamId: string) => {
     try {
       setError(null);
-      
+
       // Get token from backend
       const response = await fetch(`${API_URL}/live/start`, {
         method: 'POST',
@@ -72,7 +72,6 @@ export function useLiveStream(): UseLiveStreamReturn {
 
       // Connect to Socket.IO for chat
       // socketRef.current = connectToChat(roomName);
-
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to start stream');
       logger.error('Failed to start stream', { error });
@@ -86,7 +85,7 @@ export function useLiveStream(): UseLiveStreamReturn {
   const watchStream = useCallback(async (streamId: string) => {
     try {
       setError(null);
-      
+
       // Get token from backend
       const response = await fetch(`${API_URL}/live/${streamId}/watch`, {
         method: 'GET',
@@ -113,7 +112,6 @@ export function useLiveStream(): UseLiveStreamReturn {
 
       // Setup listeners
       setupRoomListeners(roomInstance);
-
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to watch stream');
       logger.error('Failed to watch stream', { error });
@@ -129,7 +127,7 @@ export function useLiveStream(): UseLiveStreamReturn {
       if (!room) return;
 
       await liveKitService.disconnect();
-      
+
       // Call backend to end stream
       if (isPublishing) {
         const streamId = room.name.replace('live_', '').split('_')[0];
@@ -152,7 +150,6 @@ export function useLiveStream(): UseLiveStreamReturn {
         socketRef.current.disconnect();
         socketRef.current = null;
       }
-
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to end stream');
       logger.error('Failed to end stream', { error });
@@ -183,11 +180,14 @@ export function useLiveStream(): UseLiveStreamReturn {
   /**
    * Send chat message
    */
-  const sendChatMessage = useCallback((message: string) => {
-    if (socketRef.current && room) {
-      socketRef.current.emit('live:message', { content: message });
-    }
-  }, [room]);
+  const sendChatMessage = useCallback(
+    (message: string) => {
+      if (socketRef.current && room) {
+        socketRef.current.emit('live:message', { content: message });
+      }
+    },
+    [room],
+  );
 
   /**
    * Send reaction
@@ -248,4 +248,3 @@ export function useLiveStream(): UseLiveStreamReturn {
     sendReaction,
   };
 }
-

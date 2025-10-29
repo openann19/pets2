@@ -1,17 +1,17 @@
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
 /**
  * 📸 PHOTO UPLOAD SECTION
  * Extracted from AIPhotoAnalyzerScreen
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { useMemo } from 'react';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { PinchZoomPro } from '../../../components/Gestures/PinchZoomPro';
 import { usePinchMetrics } from '../../../hooks/useInteractionMetrics';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface PhotoUploadSectionProps {
   selectedImage: string | null;
@@ -38,12 +38,7 @@ export function PhotoUploadSection({
 
   return (
     <View style={styles.imageSection}>
-      <Text
-        style={StyleSheet.flatten([
-          styles.sectionTitle,
-          { color: colors.onSurface},
-        ])}
-      >
+      <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
         Select Pet Photo
       </Text>
 
@@ -76,38 +71,39 @@ export function PhotoUploadSection({
             accessibilityRole="button"
             onPress={onPickImage}
           >
-            <Ionicons name="camera" size={20} color="#ffffff" />
+            <Ionicons
+              name="camera"
+              size={20}
+              color="#ffffff"
+            />
             <Text style={styles.changeImageText}>Change Photo</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View
-          style={StyleSheet.flatten([
-            styles.imagePlaceholder,
-            { backgroundColor: colors.surface },
-          ])}
+          style={StyleSheet.flatten([styles.imagePlaceholder, { backgroundColor: colors.surface }])}
         >
-          <Ionicons name="camera" size={48} color={colors.onMuted} />
-          <Text
-            style={StyleSheet.flatten([
-              styles.placeholderText,
-              { color: colors.onMuted },
-            ])}
-          >
+          <Ionicons
+            name="camera"
+            size={48}
+            color={colors.onMuted}
+          />
+          <Text style={StyleSheet.flatten([styles.placeholderText, { color: colors.onMuted }])}>
             No photo selected
           </Text>
           <View style={styles.imageButtons}>
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.imageButton,
-                { backgroundColor: colors.primary },
-              ])}
+              style={StyleSheet.flatten([styles.imageButton, { backgroundColor: colors.primary }])}
               testID="PhotoUploadSection-gallery-button"
               accessibilityLabel="Select from gallery"
               accessibilityRole="button"
               onPress={onPickImage}
             >
-              <Ionicons name="image" size={20} color="#ffffff" />
+              <Ionicons
+                name="image"
+                size={20}
+                color="#ffffff"
+              />
               <Text style={styles.imageButtonText}>Gallery</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -120,7 +116,11 @@ export function PhotoUploadSection({
               accessibilityRole="button"
               onPress={onTakePhoto}
             >
-              <Ionicons name="camera" size={20} color="#ffffff" />
+              <Ionicons
+                name="camera"
+                size={20}
+                color="#ffffff"
+              />
               <Text style={styles.imageButtonText}>Camera</Text>
             </TouchableOpacity>
           </View>
@@ -137,11 +137,11 @@ function makeStyles(theme: AppTheme) {
     },
     sectionTitle: {
       fontSize: 18,
-      fontWeight: "600",
+      fontWeight: '600',
       marginBottom: 16,
     },
     imageContainer: {
-      alignItems: "center",
+      alignItems: 'center',
     },
     selectedImage: {
       width: SCREEN_WIDTH - 32,
@@ -150,8 +150,8 @@ function makeStyles(theme: AppTheme) {
       marginBottom: 16,
     },
     changeImageButton: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       paddingHorizontal: 16,
       paddingVertical: 8,
       borderRadius: 20,
@@ -160,13 +160,13 @@ function makeStyles(theme: AppTheme) {
     changeImageText: {
       color: theme.colors.onPrimary,
       fontSize: 14,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     imagePlaceholder: {
       height: SCREEN_WIDTH - 32,
       borderRadius: 16,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       padding: 20,
     },
     placeholderText: {
@@ -175,12 +175,12 @@ function makeStyles(theme: AppTheme) {
       marginBottom: 20,
     },
     imageButtons: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: 16,
     },
     imageButton: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       paddingHorizontal: 16,
       paddingVertical: 12,
       borderRadius: 12,
@@ -189,7 +189,7 @@ function makeStyles(theme: AppTheme) {
     imageButtonText: {
       color: theme.colors.onPrimary,
       fontSize: 14,
-      fontWeight: "600",
+      fontWeight: '600',
     },
   });
 }

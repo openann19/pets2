@@ -84,7 +84,7 @@ describe('AccessibilityService', () => {
       const service = AccessibilityService.getInstance();
 
       // Wait for initialization
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockAccessibilityInfo.isScreenReaderEnabled).toHaveBeenCalled();
       expect(mockAccessibilityInfo.isBoldTextEnabled).toHaveBeenCalled();
@@ -100,7 +100,7 @@ describe('AccessibilityService', () => {
       mockAccessibilityInfo.isScreenReaderEnabled.mockRejectedValue(new Error('Failed'));
 
       const service = AccessibilityService.getInstance();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       const config = service.getAccessibilityConfig();
       expect(config.isScreenReaderEnabled).toBe(false);
@@ -114,31 +114,31 @@ describe('AccessibilityService', () => {
 
     it('should setup all accessibility event listeners', async () => {
       const service = AccessibilityService.getInstance();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockAccessibilityInfo.addEventListener).toHaveBeenCalledWith(
         'screenReaderChanged',
-        expect.any(Function)
+        expect.any(Function),
       );
       expect(mockAccessibilityInfo.addEventListener).toHaveBeenCalledWith(
         'boldTextChanged',
-        expect.any(Function)
+        expect.any(Function),
       );
       expect(mockAccessibilityInfo.addEventListener).toHaveBeenCalledWith(
         'grayscaleChanged',
-        expect.any(Function)
+        expect.any(Function),
       );
       expect(mockAccessibilityInfo.addEventListener).toHaveBeenCalledWith(
         'invertColorsChanged',
-        expect.any(Function)
+        expect.any(Function),
       );
       expect(mockAccessibilityInfo.addEventListener).toHaveBeenCalledWith(
         'reduceMotionChanged',
-        expect.any(Function)
+        expect.any(Function),
       );
       expect(mockAccessibilityInfo.addEventListener).toHaveBeenCalledWith(
         'reduceTransparencyChanged',
-        expect.any(Function)
+        expect.any(Function),
       );
     });
   });
@@ -160,7 +160,7 @@ describe('AccessibilityService', () => {
 
     it('should update config when accessibility changes', async () => {
       const service = AccessibilityService.getInstance();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       // Simulate screen reader enabled
       mockListeners['screenReaderChanged'](true);
@@ -171,7 +171,7 @@ describe('AccessibilityService', () => {
 
     it('should update config for all accessibility features', async () => {
       const service = AccessibilityService.getInstance();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       // Simulate all features enabled
       mockListeners['screenReaderChanged'](true);
@@ -357,7 +357,7 @@ describe('AccessibilityService', () => {
       accessibilityService.addChangeListener(listener);
 
       const service = AccessibilityService.getInstance();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       // Simulate change
       mockListeners['screenReaderChanged'](true);
@@ -383,7 +383,7 @@ describe('AccessibilityService', () => {
       accessibilityService.addChangeListener(goodListener);
 
       const service = AccessibilityService.getInstance();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       // Simulate change - should not throw
       mockListeners['screenReaderChanged'](true);
@@ -397,7 +397,7 @@ describe('AccessibilityService', () => {
       mockAccessibilityInfo.isScreenReaderEnabled.mockRejectedValue(new Error('Init failed'));
 
       const service = AccessibilityService.getInstance();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       // Should not crash, should use defaults
       expect(service.getAccessibilityConfig()).toBeDefined();
@@ -410,7 +410,7 @@ describe('AccessibilityService', () => {
 
       // Should not crash during initialization
       const service = AccessibilityService.getInstance();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(service).toBeDefined();
     });

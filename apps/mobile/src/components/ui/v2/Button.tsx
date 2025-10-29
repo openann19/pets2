@@ -1,11 +1,11 @@
 import React from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import type { ViewStyle } from 'react-native';
-import Animated, { 
-  useAnimatedStyle, 
-  useSharedValue, 
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
   withSpring,
-  withTiming
+  withTiming,
 } from 'react-native-reanimated';
 import { useTheme } from '../../../theme';
 import { useReduceMotion } from '../../../hooks/useReducedMotion';
@@ -58,7 +58,7 @@ export function Button({
   const getVariantStyles = () => {
     const { colors } = theme;
     const isDark = theme.scheme === 'dark';
-    
+
     switch (variant) {
       case 'primary':
         return {
@@ -89,7 +89,7 @@ export function Button({
         return {
           backgroundColor: 'transparent',
           borderColor: 'transparent',
-          textColor: colors.onSurface
+          textColor: colors.onSurface,
         };
     }
   };
@@ -114,7 +114,7 @@ export function Button({
         if (!finished) {
           scale.value = withTiming(1);
         }
-      }
+      },
     );
   };
 
@@ -156,19 +156,21 @@ export function Button({
       accessibilityState={{ disabled }}
       testID={testID}
     >
-      <View style={StyleSheet.flatten([
-        {
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: sizeStyles.gap,
-        }
-      ])}>
+      <View
+        style={StyleSheet.flatten([
+          {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: sizeStyles.gap,
+          },
+        ])}
+      >
         {leftIcon && !loading && leftIcon}
         {loading ? (
-          <ActivityIndicator 
-            size="small" 
-            color={variantStyles.textColor} 
+          <ActivityIndicator
+            size="small"
+            color={variantStyles.textColor}
           />
         ) : (
           <Text

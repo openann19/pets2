@@ -1,6 +1,6 @@
 /**
  * Comprehensive tests for PremiumService
- * 
+ *
  * Coverage:
  * - Subscription management and Stripe integration
  * - Feature gating and limits
@@ -86,7 +86,7 @@ describe('PremiumService', () => {
       const plans = premiumService.getAvailablePlans();
 
       expect(plans).toHaveLength(3);
-      expect(plans.map(p => p.id)).toEqual(['basic', 'premium', 'ultimate']);
+      expect(plans.map((p) => p.id)).toEqual(['basic', 'premium', 'ultimate']);
       expect(plans[0].price).toBe(4.99);
       expect(plans[1].price).toBe(9.99);
       expect(plans[2].price).toBe(19.99);
@@ -94,8 +94,8 @@ describe('PremiumService', () => {
 
     it('should have all required plan properties', () => {
       const plans = premiumService.getAvailablePlans();
-      
-      plans.forEach(plan => {
+
+      plans.forEach((plan) => {
         expect(plan).toHaveProperty('id');
         expect(plan).toHaveProperty('name');
         expect(plan).toHaveProperty('price');
@@ -123,7 +123,7 @@ describe('PremiumService', () => {
         '/premium/create-checkout-session',
         expect.objectContaining({
           method: 'POST',
-        })
+        }),
       );
     });
 
@@ -143,7 +143,7 @@ describe('PremiumService', () => {
         expect.objectContaining({
           method: 'POST',
           body: expect.stringContaining('custom://success'),
-        })
+        }),
       );
     });
   });
@@ -160,7 +160,7 @@ describe('PremiumService', () => {
       expect(result.success).toBe(true);
       expect(mockApi.request).toHaveBeenCalledWith(
         '/premium/cancel',
-        expect.objectContaining({ method: 'POST' })
+        expect.objectContaining({ method: 'POST' }),
       );
     });
   });
@@ -275,7 +275,7 @@ describe('PremiumService', () => {
         '/premium/track-usage',
         expect.objectContaining({
           method: 'POST',
-        })
+        }),
       );
     });
   });
@@ -300,9 +300,9 @@ describe('PremiumService', () => {
     });
 
     it('should throw error for invalid plan ID', async () => {
-      await expect(
-        premiumService.createCheckoutSession('invalid_plan')
-      ).rejects.toThrow('Invalid plan ID');
+      await expect(premiumService.createCheckoutSession('invalid_plan')).rejects.toThrow(
+        'Invalid plan ID',
+      );
     });
 
     it('should handle cancel subscription errors', async () => {
@@ -383,7 +383,7 @@ describe('PremiumService', () => {
         premiumService.canUseFeature('unlimitedRewind'),
       ]);
 
-      expect(checks.every(check => typeof check === 'boolean')).toBe(true);
+      expect(checks.every((check) => typeof check === 'boolean')).toBe(true);
     });
   });
 

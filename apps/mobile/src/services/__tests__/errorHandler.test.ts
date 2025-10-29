@@ -63,7 +63,7 @@ describe('ErrorHandler', () => {
 
       expect(mockAlert).toHaveBeenCalledWith(
         'Error',
-        'An unexpected error occurred. Please try again.'
+        'An unexpected error occurred. Please try again.',
       );
     });
 
@@ -101,7 +101,7 @@ describe('ErrorHandler', () => {
       };
 
       errorHandler.handleError(error, context, {
-        fallbackMessage: 'Custom fallback message'
+        fallbackMessage: 'Custom fallback message',
       });
 
       expect(mockAlert).toHaveBeenCalledWith('Error', 'Custom fallback message');
@@ -171,7 +171,7 @@ describe('ErrorHandler', () => {
 
       expect(mockAlert).toHaveBeenCalledWith(
         'Error',
-        'Network error. Please check your connection and try again.'
+        'Network error. Please check your connection and try again.',
       );
     });
 
@@ -180,10 +180,7 @@ describe('ErrorHandler', () => {
 
       errorHandler.handleValidationError(error, testContext);
 
-      expect(mockAlert).toHaveBeenCalledWith(
-        'Error',
-        'Please check your input and try again.'
-      );
+      expect(mockAlert).toHaveBeenCalledWith('Error', 'Please check your input and try again.');
     });
 
     it('should handle authentication errors with specific message', () => {
@@ -193,7 +190,7 @@ describe('ErrorHandler', () => {
 
       expect(mockAlert).toHaveBeenCalledWith(
         'Error',
-        'Authentication failed. Please log in again.'
+        'Authentication failed. Please log in again.',
       );
     });
 
@@ -204,7 +201,7 @@ describe('ErrorHandler', () => {
 
       expect(mockAlert).toHaveBeenCalledWith(
         'Error',
-        "You don't have permission to perform this action."
+        "You don't have permission to perform this action.",
       );
     });
 
@@ -229,7 +226,7 @@ describe('ErrorHandler', () => {
         new Error('Connection timeout'),
       ];
 
-      networkErrors.forEach(error => {
+      networkErrors.forEach((error) => {
         const message = (errorHandler as any).getUserFriendlyMessage(error);
         expect(message).toBe('Please check your internet connection and try again.');
       });
@@ -242,7 +239,7 @@ describe('ErrorHandler', () => {
         new Error('Session expired'),
       ];
 
-      authErrors.forEach(error => {
+      authErrors.forEach((error) => {
         const message = (errorHandler as any).getUserFriendlyMessage(error);
         expect(message).toBe('Your session has expired. Please log in again.');
       });
@@ -255,7 +252,7 @@ describe('ErrorHandler', () => {
         new Error('Access denied'),
       ];
 
-      permissionErrors.forEach(error => {
+      permissionErrors.forEach((error) => {
         const message = (errorHandler as any).getUserFriendlyMessage(error);
         expect(message).toBe("You don't have permission to perform this action.");
       });
@@ -268,7 +265,7 @@ describe('ErrorHandler', () => {
         new Error('Service unavailable'),
       ];
 
-      serverErrors.forEach(error => {
+      serverErrors.forEach((error) => {
         const message = (errorHandler as any).getUserFriendlyMessage(error);
         expect(message).toBe('Server error occurred. Please try again later.');
       });
@@ -281,7 +278,7 @@ describe('ErrorHandler', () => {
         new Error('Item does not exist'),
       ];
 
-      notFoundErrors.forEach(error => {
+      notFoundErrors.forEach((error) => {
         const message = (errorHandler as any).getUserFriendlyMessage(error);
         expect(message).toBe('The requested resource was not found.');
       });
@@ -296,7 +293,9 @@ describe('ErrorHandler', () => {
     });
 
     it('should return generic message for unknown errors', () => {
-      const unknownError = new Error('Some random error that is very long and contains Error: prefix');
+      const unknownError = new Error(
+        'Some random error that is very long and contains Error: prefix',
+      );
 
       const message = (errorHandler as any).getUserFriendlyMessage(unknownError);
 
@@ -411,9 +410,7 @@ describe('ErrorHandler', () => {
     it('should show user notifications with default OK button', () => {
       (errorHandler as any).showUserNotification('Test Title', 'Test Message');
 
-      expect(mockAlert).toHaveBeenCalledWith('Test Title', 'Test Message', [
-        { text: 'OK' }
-      ]);
+      expect(mockAlert).toHaveBeenCalledWith('Test Title', 'Test Message', [{ text: 'OK' }]);
     });
 
     it('should handle very long messages', () => {
@@ -422,9 +419,7 @@ describe('ErrorHandler', () => {
 
       (errorHandler as any).showUserNotification(longTitle, longMessage);
 
-      expect(mockAlert).toHaveBeenCalledWith(longTitle, longMessage, [
-        { text: 'OK' }
-      ]);
+      expect(mockAlert).toHaveBeenCalledWith(longTitle, longMessage, [{ text: 'OK' }]);
     });
 
     it('should handle empty title and message', () => {
@@ -609,27 +604,21 @@ describe('ErrorHandler', () => {
       };
 
       // First call - Error object
-      const result1 = await errorHandler.wrapAsync(
-        () => complexAsyncFn(),
-        context,
-        { showNotification: false }
-      );
+      const result1 = await errorHandler.wrapAsync(() => complexAsyncFn(), context, {
+        showNotification: false,
+      });
       expect(result1).toBeNull();
 
       // Second call - String error
-      const result2 = await errorHandler.wrapAsync(
-        () => complexAsyncFn(),
-        context,
-        { showNotification: false }
-      );
+      const result2 = await errorHandler.wrapAsync(() => complexAsyncFn(), context, {
+        showNotification: false,
+      });
       expect(result2).toBeNull();
 
       // Third call - Success
-      const result3 = await errorHandler.wrapAsync(
-        () => complexAsyncFn(),
-        context,
-        { showNotification: false }
-      );
+      const result3 = await errorHandler.wrapAsync(() => complexAsyncFn(), context, {
+        showNotification: false,
+      });
       expect(result3).toBe('success');
     });
   });
@@ -699,10 +688,14 @@ describe('ErrorHandler', () => {
       // Fire multiple errors rapidly
       for (let i = 0; i < 10; i++) {
         const error = new Error(`Error ${i}`);
-        errorHandler.handleError(error, {
-          ...context,
-          metadata: { index: i },
-        }, { showNotification: false });
+        errorHandler.handleError(
+          error,
+          {
+            ...context,
+            metadata: { index: i },
+          },
+          { showNotification: false },
+        );
       }
 
       expect(mockLogger.error).toHaveBeenCalledTimes(10);

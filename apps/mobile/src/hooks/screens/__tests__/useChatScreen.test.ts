@@ -36,7 +36,7 @@ const AnimatedMock = require('../../../../__mocks__/Animated.js');
 jest.mock('react-native', () => {
   const RN = jest.requireActual('react-native');
   const AnimatedMock = require('../../../../__mocks__/Animated.js');
-  
+
   return {
     ...RN,
     Animated: AnimatedMock,
@@ -69,7 +69,9 @@ const mockUseChatData = useChatData as jest.MockedFunction<typeof useChatData>;
 const mockUseReactionMetrics = useReactionMetrics as jest.MockedFunction<typeof useReactionMetrics>;
 const mockSetItem = AsyncStorage.setItem as jest.MockedFunction<typeof AsyncStorage.setItem>;
 const mockGetItem = AsyncStorage.getItem as jest.MockedFunction<typeof AsyncStorage.getItem>;
-const mockRemoveItem = AsyncStorage.removeItem as jest.MockedFunction<typeof AsyncStorage.removeItem>;
+const mockRemoveItem = AsyncStorage.removeItem as jest.MockedFunction<
+  typeof AsyncStorage.removeItem
+>;
 
 describe('useChatScreen Hook', () => {
   const mockNavigation = {
@@ -120,7 +122,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       expect(result.current.inputText).toBe('');
@@ -140,7 +142,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       await waitFor(() => {
@@ -158,7 +160,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       await waitFor(() => {
@@ -174,7 +176,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -190,7 +192,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -200,7 +202,7 @@ describe('useChatScreen Hook', () => {
       await waitFor(() => {
         expect(mockSetItem).toHaveBeenCalledWith(
           `mobile_chat_draft_${mockMatchId}`,
-          'Test message'
+          'Test message',
         );
       });
     });
@@ -211,7 +213,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -231,7 +233,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -253,7 +255,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -273,7 +275,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -296,7 +298,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -323,15 +325,17 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
-        const result = renderHook(() => useChatScreen({
-          matchId: mockMatchId,
-          petName: mockPetName,
-          navigation: mockNavigation,
-        })).result;
+        const result = renderHook(() =>
+          useChatScreen({
+            matchId: mockMatchId,
+            petName: mockPetName,
+            navigation: mockNavigation,
+          }),
+        ).result;
         result.current.handleTypingChange(true);
       });
 
@@ -347,12 +351,12 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       expect(result.current.quickReplies).toHaveLength(4);
       expect(result.current.quickReplies).toContain('Sounds good! 👍');
-      expect(result.current.quickReplies).toContain('Let\'s do it! 🎾');
+      expect(result.current.quickReplies).toContain("Let's do it! 🎾");
     });
 
     it('should handle quick reply selection', () => {
@@ -361,7 +365,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -380,7 +384,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -398,7 +402,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -414,7 +418,10 @@ describe('useChatScreen Hook', () => {
       expect(mockReactionMetrics.startInteraction).toHaveBeenCalled();
       expect(mockReactionMetrics.endInteraction).toHaveBeenCalled();
       expect(haptic.confirm).toHaveBeenCalled();
-      expect(logger.info).toHaveBeenCalledWith('Reacted with emoji', { emoji: '👍', messageId: 'message-123' });
+      expect(logger.info).toHaveBeenCalledWith('Reacted with emoji', {
+        emoji: '👍',
+        messageId: 'message-123',
+      });
     });
 
     it('should handle reaction cancel', () => {
@@ -423,7 +430,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -445,7 +452,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -463,7 +470,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       await act(async () => {
@@ -479,7 +486,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       await act(async () => {
@@ -497,7 +504,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       const mockEvent = {
@@ -509,10 +516,7 @@ describe('useChatScreen Hook', () => {
       });
 
       await waitFor(() => {
-        expect(mockSetItem).toHaveBeenCalledWith(
-          `mobile_chat_scroll_${mockMatchId}`,
-          '100'
-        );
+        expect(mockSetItem).toHaveBeenCalledWith(`mobile_chat_scroll_${mockMatchId}`, '100');
       });
     });
   });
@@ -524,7 +528,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       expect(result.current.data).toBe(mockChatData);
@@ -542,7 +546,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       expect(result.current.data.isLoading).toBe(true);
@@ -558,7 +562,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       await waitFor(() => {
@@ -572,7 +576,7 @@ describe('useChatScreen Hook', () => {
           matchId: mockMatchId,
           petName: mockPetName,
           navigation: mockNavigation,
-        })
+        }),
       );
 
       act(() => {
@@ -583,4 +587,3 @@ describe('useChatScreen Hook', () => {
     });
   });
 });
-

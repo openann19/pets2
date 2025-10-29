@@ -27,7 +27,7 @@ import {
   DangerZoneSection,
 } from "./settings";
 import { SettingSection } from "../components/settings/SettingSection";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 import { useTranslation } from 'react-i18next';
 
 type SettingsScreenProps = RootStackScreenProps<"Settings">;
@@ -78,7 +78,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       marginBottom: 12,
     },
     sectionContent: {
-      backgroundColor: theme.colors.bgElevated,
+      backgroundColor: theme.colors.surface,
       borderRadius: 12,
       shadowColor: theme.colors.border,
       shadowOffset: { width: 0, height: 1 },
@@ -423,7 +423,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
               category && handleToggle(category, item.id, value)
             }
             trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-            thumbColor={item.value ? theme.colors.background.primary : theme.colors.background.tertiary}
+            thumbColor={item.value ? theme.colors.bg.primary : theme.colors.bg.tertiary}
           />
         )}
         {item.type === "navigation" && (

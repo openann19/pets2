@@ -1,19 +1,19 @@
-import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useTheme } from '@mobile/src/theme';
+import { useEffect } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
-  useSharedValue,
   useAnimatedStyle,
-  withTiming,
+  useSharedValue,
   withSpring,
-} from "react-native-reanimated";
-import { useTheme } from "@/theme";
+  withTiming,
+} from 'react-native-reanimated';
 
 export interface MessageTimestampBadgeProps {
-  iso: string;           // ISO time
-  visible?: boolean;     // controls anim in/out
+  iso: string; // ISO time
+  visible?: boolean; // controls anim in/out
   textColor?: string;
   bgColor?: string;
-  accentColor?: string;  // for tiny dot
+  accentColor?: string; // for tiny dot
 }
 
 function formatClock(iso: string): string {
@@ -21,7 +21,7 @@ function formatClock(iso: string): string {
   const hh = d.getHours();
   const mm = d.getMinutes();
   const h12 = ((hh + 11) % 12) + 1;
-  const ampm = hh >= 12 ? "PM" : "AM";
+  const ampm = hh >= 12 ? 'PM' : 'AM';
   const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
   return `${h12}:${pad(mm)} ${ampm}`;
 }
@@ -34,14 +34,16 @@ export default function MessageTimestampBadge({
   accentColor,
 }: MessageTimestampBadgeProps) {
   const { colors } = useTheme();
-  
+
   const finalTextColor = textColor || colors.text;
   const finalBgColor = bgColor || colors.bgElevated;
   const finalAccentColor = accentColor || colors.primary;
   const shown = useSharedValue(visible ? 1 : 0);
 
   useEffect(() => {
-    shown.value = visible ? withSpring(1, { damping: 16, stiffness: 320 }) : withTiming(0, { duration: 120 });
+    shown.value = visible
+      ? withSpring(1, { damping: 16, stiffness: 320 })
+      : withTiming(0, { duration: 120 });
   }, [visible]);
 
   const sty = useAnimatedStyle(() => ({
@@ -59,15 +61,14 @@ export default function MessageTimestampBadge({
 
 const styles = StyleSheet.create({
   wrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-end",
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 999,
     gap: 6,
   },
   dot: { width: 4, height: 4, borderRadius: 2 },
-  txt: { fontSize: 11, fontWeight: "600" },
+  txt: { fontSize: 11, fontWeight: '600' },
 });
-

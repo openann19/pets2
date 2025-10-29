@@ -9,10 +9,10 @@ declare module 'expo-font' {
     fontStyle?: string;
     fontWeight?: string;
   }
-  
+
   export interface FontResource extends FontSource {
     [key: string]: unknown;
   }
-  
+
   export type FontSource = string | FontResource | number;
 }

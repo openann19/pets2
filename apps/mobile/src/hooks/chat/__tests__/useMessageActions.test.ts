@@ -52,9 +52,7 @@ describe('useMessageActions', () => {
 
   describe('Initialization', () => {
     it('should initialize with retry and delete functions', () => {
-      const { result } = renderHook(() =>
-        useMessageActions({ matchId }),
-      );
+      const { result } = renderHook(() => useMessageActions({ matchId }));
 
       expect(result.current.retryMessage).toBeDefined();
       expect(result.current.deleteMessage).toBeDefined();
@@ -64,16 +62,11 @@ describe('useMessageActions', () => {
   describe('Retry Message', () => {
     it('should retry an existing message', async () => {
       const onMessageRetried = jest.fn();
-      const { result } = renderHook(() =>
-        useMessageActions({ matchId, onMessageRetried }),
-      );
+      const { result } = renderHook(() => useMessageActions({ matchId, onMessageRetried }));
 
       await result.current.retryMessage('msg-1', mockMessages);
 
-      expect(mockMatchesAPI.sendMessage).toHaveBeenCalledWith(
-        matchId,
-        'Hello',
-      );
+      expect(mockMatchesAPI.sendMessage).toHaveBeenCalledWith(matchId, 'Hello');
       expect(onMessageRetried).toHaveBeenCalledWith('msg-1');
       expect(mockLogger.info).toHaveBeenCalledWith('Message retried', {
         messageId: 'msg-1',
@@ -82,9 +75,7 @@ describe('useMessageActions', () => {
     });
 
     it('should not retry non-existent message', async () => {
-      const { result } = renderHook(() =>
-        useMessageActions({ matchId }),
-      );
+      const { result } = renderHook(() => useMessageActions({ matchId }));
 
       await result.current.retryMessage('msg-999', mockMessages);
 
@@ -95,13 +86,9 @@ describe('useMessageActions', () => {
       const error = new Error('Network error');
       mockMatchesAPI.sendMessage.mockRejectedValue(error);
 
-      const { result } = renderHook(() =>
-        useMessageActions({ matchId }),
-      );
+      const { result } = renderHook(() => useMessageActions({ matchId }));
 
-      await expect(
-        result.current.retryMessage('msg-1', mockMessages),
-      ).rejects.toThrow(error);
+      await expect(result.current.retryMessage('msg-1', mockMessages)).rejects.toThrow(error);
 
       expect(mockLogger.error).toHaveBeenCalledWith('Failed to retry message', {
         error,
@@ -110,32 +97,22 @@ describe('useMessageActions', () => {
     });
 
     it('should work without callback', async () => {
-      const { result } = renderHook(() =>
-        useMessageActions({ matchId }),
-      );
+      const { result } = renderHook(() => useMessageActions({ matchId }));
 
       await result.current.retryMessage('msg-2', mockMessages);
 
-      expect(mockMatchesAPI.sendMessage).toHaveBeenCalledWith(
-        matchId,
-        'World',
-      );
+      expect(mockMatchesAPI.sendMessage).toHaveBeenCalledWith(matchId, 'World');
     });
   });
 
   describe('Delete Message', () => {
     it('should delete a message', async () => {
       const onMessageDeleted = jest.fn();
-      const { result } = renderHook(() =>
-        useMessageActions({ matchId, onMessageDeleted }),
-      );
+      const { result } = renderHook(() => useMessageActions({ matchId, onMessageDeleted }));
 
       await result.current.deleteMessage('msg-1');
 
-      expect(mockMatchesAPI.deleteMessage).toHaveBeenCalledWith(
-        matchId,
-        'msg-1',
-      );
+      expect(mockMatchesAPI.deleteMessage).toHaveBeenCalledWith(matchId, 'msg-1');
       expect(onMessageDeleted).toHaveBeenCalledWith('msg-1');
       expect(mockLogger.info).toHaveBeenCalledWith('Message deleted', {
         messageId: 'msg-1',
@@ -147,56 +124,35 @@ describe('useMessageActions', () => {
       const error = new Error('Network error');
       mockMatchesAPI.deleteMessage.mockRejectedValue(error);
 
-      const { result } = renderHook(() =>
-        useMessageActions({ matchId }),
-      );
+      const { result } = renderHook(() => useMessageActions({ matchId }));
 
-      await expect(result.current.deleteMessage('msg-1')).rejects.toThrow(
+      await expect(result.current.deleteMessage('msg-1')).rejects.toThrow(error);
+
+      expect(mockLogger.error).toHaveBeenCalledWith('Failed to delete message', {
         error,
-      );
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to delete message',
-        {
-          error,
-          messageId: 'msg-1',
-        },
-      );
+        messageId: 'msg-1',
+      });
     });
 
     it('should work without callback', async () => {
-      const { result } = renderHook(() =>
-        useMessageActions({ matchId }),
-      );
+      const { result } = renderHook(() => useMessageActions({ matchId }));
 
       await result.current.deleteMessage('msg-2');
 
-      expect(mockMatchesAPI.deleteMessage).toHaveBeenCalledWith(
-        matchId,
-        'msg-2',
-      );
+      expect(mockMatchesAPI.deleteMessage).toHaveBeenCalledWith(matchId, 'msg-2');
     });
   });
 
   describe('Integration', () => {
     it('should retry then delete message', async () => {
-      const { result } = renderHook(() =>
-        useMessageActions({ matchId }),
-      );
+      const { result } = renderHook(() => useMessageActions({ matchId }));
 
       await result.current.retryMessage('msg-1', mockMessages);
 
       await result.current.deleteMessage('msg-1');
 
-      expect(mockMatchesAPI.sendMessage).toHaveBeenCalledWith(
-        matchId,
-        'Hello',
-      );
-      expect(mockMatchesAPI.deleteMessage).toHaveBeenCalledWith(
-        matchId,
-        'msg-1',
-      );
+      expect(mockMatchesAPI.sendMessage).toHaveBeenCalledWith(matchId, 'Hello');
+      expect(mockMatchesAPI.deleteMessage).toHaveBeenCalledWith(matchId, 'msg-1');
     });
   });
 });
-

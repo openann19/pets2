@@ -39,7 +39,7 @@ export function useLinkPreview(url: string | null, enabled = true): UseLinkPrevi
 
     try {
       const data = await fetchLinkPreview(url);
-      
+
       if (isMountedRef.current) {
         setPreview(data);
         setIsLoading(false);
@@ -73,4 +73,3 @@ export function useLinkPreview(url: string | null, enabled = true): UseLinkPrevi
 }
 
 export default useLinkPreview;
-

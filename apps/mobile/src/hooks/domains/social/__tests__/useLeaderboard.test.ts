@@ -1,11 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { useLeaderboard } from "../useLeaderboard";
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { useLeaderboard } from '../useLeaderboard';
 
 // Mock logger
-jest.mock("@pawfectmatch/core", () => ({
+jest.mock('@pawfectmatch/core', () => ({
   logger: {
     error: jest.fn(),
     info: jest.fn(),
@@ -17,7 +17,7 @@ const mockGetCategories = jest.fn();
 const mockGetLeaderboard = jest.fn();
 const mockGetUserRank = jest.fn();
 
-jest.mock("../../../../services/LeaderboardService", () => ({
+jest.mock('../../../../services/LeaderboardService', () => ({
   __esModule: true,
   default: {
     getCategories: mockGetCategories,
@@ -27,51 +27,51 @@ jest.mock("../../../../services/LeaderboardService", () => ({
 }));
 
 const mockCategories = [
-  { id: "all", name: "All", icon: "🏆" },
-  { id: "matches", name: "Matches", icon: "💕" },
-  { id: "chats", name: "Chats", icon: "💬" },
+  { id: 'all', name: 'All', icon: '🏆' },
+  { id: 'matches', name: 'Matches', icon: '💕' },
+  { id: 'chats', name: 'Chats', icon: '💬' },
 ];
 
 const mockLeaderboardEntries = [
   {
-    id: "1",
-    userId: "user1",
-    username: "alice",
+    id: '1',
+    userId: 'user1',
+    username: 'alice',
     score: 1000,
     rank: 1,
-    avatar: "avatar1.jpg",
+    avatar: 'avatar1.jpg',
   },
   {
-    id: "2",
-    userId: "user2",
-    username: "bob",
+    id: '2',
+    userId: 'user2',
+    username: 'bob',
     score: 900,
     rank: 2,
-    avatar: "avatar2.jpg",
+    avatar: 'avatar2.jpg',
   },
   {
-    id: "3",
-    userId: "user3",
-    username: "charlie",
+    id: '3',
+    userId: 'user3',
+    username: 'charlie',
     score: 800,
     rank: 3,
-    avatar: "avatar3.jpg",
+    avatar: 'avatar3.jpg',
   },
 ];
 
 const mockUserRank = {
   rank: 5,
   entry: {
-    id: "current",
-    userId: "currentUser",
-    username: "me",
+    id: 'current',
+    userId: 'currentUser',
+    username: 'me',
     score: 600,
     rank: 5,
-    avatar: "myavatar.jpg",
+    avatar: 'myavatar.jpg',
   },
 };
 
-describe("useLeaderboard", () => {
+describe('useLeaderboard', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetCategories.mockResolvedValue(mockCategories);
@@ -82,18 +82,18 @@ describe("useLeaderboard", () => {
     mockGetUserRank.mockResolvedValue(mockUserRank);
   });
 
-  it("should initialize with default state", () => {
+  it('should initialize with default state', () => {
     const { result } = renderHook(() => useLeaderboard());
 
     expect(result.current.loading).toBe(true);
     expect(result.current.entries).toEqual([]);
-    expect(result.current.selectedCategory).toBe("all");
-    expect(result.current.selectedPeriod).toBe("weekly");
+    expect(result.current.selectedCategory).toBe('all');
+    expect(result.current.selectedPeriod).toBe('weekly');
     expect(result.current.page).toBe(1);
     expect(result.current.showFilters).toBe(false);
   });
 
-  it("should load initial data on mount", async () => {
+  it('should load initial data on mount', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {
@@ -110,45 +110,17 @@ describe("useLeaderboard", () => {
     expect(result.current.userEntry).toEqual(mockUserRank.entry);
   });
 
-  it("should load leaderboard with default filter", async () => {
+  it('should load leaderboard with default filter', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
 
-    expect(mockGetLeaderboard).toHaveBeenCalledWith(
-      { period: "weekly" },
-      1,
-      20,
-    );
+    expect(mockGetLeaderboard).toHaveBeenCalledWith({ period: 'weekly' }, 1, 20);
   });
 
-  it("should change selected category", async () => {
-    const { result } = renderHook(() => useLeaderboard());
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
-    });
-
-    mockGetLeaderboard.mockClear();
-
-    act(() => {
-      result.current.setSelectedCategory("matches");
-    });
-
-    await waitFor(() => {
-      expect(mockGetLeaderboard).toHaveBeenCalledWith(
-        { category: "matches", period: "weekly" },
-        expect.any(Number),
-        expect.any(Number),
-      );
-    });
-
-    expect(result.current.selectedCategory).toBe("matches");
-  });
-
-  it("should change selected period", async () => {
+  it('should change selected category', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {
@@ -158,21 +130,45 @@ describe("useLeaderboard", () => {
     mockGetLeaderboard.mockClear();
 
     act(() => {
-      result.current.setSelectedPeriod("monthly");
+      result.current.setSelectedCategory('matches');
     });
 
     await waitFor(() => {
       expect(mockGetLeaderboard).toHaveBeenCalledWith(
-        { period: "monthly" },
+        { category: 'matches', period: 'weekly' },
         expect.any(Number),
         expect.any(Number),
       );
     });
 
-    expect(result.current.selectedPeriod).toBe("monthly");
+    expect(result.current.selectedCategory).toBe('matches');
   });
 
-  it("should toggle filters visibility", () => {
+  it('should change selected period', async () => {
+    const { result } = renderHook(() => useLeaderboard());
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    mockGetLeaderboard.mockClear();
+
+    act(() => {
+      result.current.setSelectedPeriod('monthly');
+    });
+
+    await waitFor(() => {
+      expect(mockGetLeaderboard).toHaveBeenCalledWith(
+        { period: 'monthly' },
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+
+    expect(result.current.selectedPeriod).toBe('monthly');
+  });
+
+  it('should toggle filters visibility', () => {
     const { result } = renderHook(() => useLeaderboard());
 
     expect(result.current.showFilters).toBe(false);
@@ -190,7 +186,7 @@ describe("useLeaderboard", () => {
     expect(result.current.showFilters).toBe(false);
   });
 
-  it("should refresh data", async () => {
+  it('should refresh data', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {
@@ -205,15 +201,11 @@ describe("useLeaderboard", () => {
     });
 
     expect(result.current.refreshing).toBe(false);
-    expect(mockGetLeaderboard).toHaveBeenCalledWith(
-      { period: "weekly" },
-      1,
-      20,
-    );
+    expect(mockGetLeaderboard).toHaveBeenCalledWith({ period: 'weekly' }, 1, 20);
     expect(mockGetUserRank).toHaveBeenCalled();
   });
 
-  it("should set refreshing state during refresh", async () => {
+  it('should set refreshing state during refresh', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {
@@ -238,7 +230,7 @@ describe("useLeaderboard", () => {
     expect(result.current.refreshing).toBe(false);
   });
 
-  it("should load more entries when available", async () => {
+  it('should load more entries when available', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {
@@ -247,12 +239,12 @@ describe("useLeaderboard", () => {
 
     const moreEntries = [
       {
-        id: "4",
-        userId: "user4",
-        username: "dave",
+        id: '4',
+        userId: 'user4',
+        username: 'dave',
         score: 700,
         rank: 4,
-        avatar: "avatar4.jpg",
+        avatar: 'avatar4.jpg',
       },
     ];
 
@@ -266,7 +258,7 @@ describe("useLeaderboard", () => {
     });
 
     expect(mockGetLeaderboard).toHaveBeenCalledWith(
-      { period: "weekly" },
+      { period: 'weekly' },
       2, // Next page
       20,
     );
@@ -276,7 +268,7 @@ describe("useLeaderboard", () => {
     expect(result.current.page).toBe(2);
   });
 
-  it("should append entries when loading more", async () => {
+  it('should append entries when loading more', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {
@@ -286,12 +278,12 @@ describe("useLeaderboard", () => {
     const initialEntries = result.current.entries;
 
     const newEntry = {
-      id: "4",
-      userId: "user4",
-      username: "dave",
+      id: '4',
+      userId: 'user4',
+      username: 'dave',
       score: 700,
       rank: 4,
-      avatar: "avatar4.jpg",
+      avatar: 'avatar4.jpg',
     };
 
     mockGetLeaderboard.mockResolvedValue({
@@ -306,7 +298,7 @@ describe("useLeaderboard", () => {
     expect(result.current.entries).toEqual([...initialEntries, newEntry]);
   });
 
-  it("should not load more when hasMore is false", async () => {
+  it('should not load more when hasMore is false', async () => {
     mockGetLeaderboard.mockResolvedValue({
       entries: mockLeaderboardEntries,
       hasMore: false,
@@ -327,7 +319,7 @@ describe("useLeaderboard", () => {
     expect(mockGetLeaderboard).not.toHaveBeenCalled();
   });
 
-  it("should not load more when already loading", async () => {
+  it('should not load more when already loading', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     // Don't wait for initial load to finish
@@ -341,7 +333,7 @@ describe("useLeaderboard", () => {
     expect(mockGetLeaderboard).not.toHaveBeenCalled();
   });
 
-  it("should replace entries when loading page 1", async () => {
+  it('should replace entries when loading page 1', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {
@@ -350,12 +342,12 @@ describe("useLeaderboard", () => {
 
     const newEntries = [
       {
-        id: "10",
-        userId: "user10",
-        username: "eve",
+        id: '10',
+        userId: 'user10',
+        username: 'eve',
         score: 1100,
         rank: 1,
-        avatar: "avatar10.jpg",
+        avatar: 'avatar10.jpg',
       },
     ];
 
@@ -372,7 +364,7 @@ describe("useLeaderboard", () => {
     expect(result.current.entries).toHaveLength(1);
   });
 
-  it("should load user rank for specific category", async () => {
+  it('should load user rank for specific category', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {
@@ -382,15 +374,15 @@ describe("useLeaderboard", () => {
     mockGetUserRank.mockClear();
 
     act(() => {
-      result.current.setSelectedCategory("matches");
+      result.current.setSelectedCategory('matches');
     });
 
     await waitFor(() => {
-      expect(mockGetUserRank).toHaveBeenCalledWith("matches");
+      expect(mockGetUserRank).toHaveBeenCalledWith('matches');
     });
   });
 
-  it("should load user rank for all categories", async () => {
+  it('should load user rank for all categories', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {
@@ -400,8 +392,8 @@ describe("useLeaderboard", () => {
     expect(mockGetUserRank).toHaveBeenCalledWith(undefined);
   });
 
-  it("should handle error during initial load", async () => {
-    mockGetCategories.mockRejectedValue(new Error("API error"));
+  it('should handle error during initial load', async () => {
+    mockGetCategories.mockRejectedValue(new Error('API error'));
 
     const { result } = renderHook(() => useLeaderboard());
 
@@ -413,7 +405,7 @@ describe("useLeaderboard", () => {
     expect(result.current.loading).toBe(false);
   });
 
-  it("should provide all periods options", async () => {
+  it('should provide all periods options', async () => {
     const { result } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {
@@ -421,11 +413,11 @@ describe("useLeaderboard", () => {
     });
 
     // Test all period options
-    const periods: Array<"daily" | "weekly" | "monthly" | "all_time"> = [
-      "daily",
-      "weekly",
-      "monthly",
-      "all_time",
+    const periods: Array<'daily' | 'weekly' | 'monthly' | 'all_time'> = [
+      'daily',
+      'weekly',
+      'monthly',
+      'all_time',
     ];
 
     for (const period of periods) {
@@ -445,7 +437,7 @@ describe("useLeaderboard", () => {
     }
   });
 
-  it("should return stable function references", async () => {
+  it('should return stable function references', async () => {
     const { result, rerender } = renderHook(() => useLeaderboard());
 
     await waitFor(() => {

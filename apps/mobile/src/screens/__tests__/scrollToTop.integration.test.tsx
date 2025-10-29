@@ -71,9 +71,18 @@ const Tab = createBottomTabNavigator();
 const TestNavigator = () => (
   <NavigationContainer>
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Matches" component={MatchesScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+      />
+      <Tab.Screen
+        name="Matches"
+        component={MatchesScreen}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+      />
     </Tab.Navigator>
   </NavigationContainer>
 );
@@ -86,7 +95,7 @@ describe('Scroll-to-Top Integration Tests', () => {
   describe('HomeScreen', () => {
     it('should scroll to top when tab is pressed', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       // Navigate to Home tab
       const homeTab = getByText('Home');
       fireEvent.press(homeTab);
@@ -99,10 +108,10 @@ describe('Scroll-to-Top Integration Tests', () => {
 
     it('should refresh content on double-tap', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       // Navigate to Home tab
       const homeTab = getByText('Home');
-      
+
       // Double tap
       fireEvent.press(homeTab);
       fireEvent.press(homeTab);
@@ -116,7 +125,7 @@ describe('Scroll-to-Top Integration Tests', () => {
   describe('MatchesScreen', () => {
     it('should scroll to top when tab is pressed', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       // Navigate to Matches tab
       const matchesTab = getByText('Matches');
       fireEvent.press(matchesTab);
@@ -128,9 +137,9 @@ describe('Scroll-to-Top Integration Tests', () => {
 
     it('should refresh content on double-tap', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       const matchesTab = getByText('Matches');
-      
+
       // Double tap
       fireEvent.press(matchesTab);
       fireEvent.press(matchesTab);
@@ -144,7 +153,7 @@ describe('Scroll-to-Top Integration Tests', () => {
   describe('ProfileScreen', () => {
     it('should scroll to top when tab is pressed', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       // Navigate to Profile tab
       const profileTab = getByText('Profile');
       fireEvent.press(profileTab);
@@ -156,9 +165,9 @@ describe('Scroll-to-Top Integration Tests', () => {
 
     it('should scroll to top on double-tap', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       const profileTab = getByText('Profile');
-      
+
       // Double tap
       fireEvent.press(profileTab);
       fireEvent.press(profileTab);
@@ -172,7 +181,7 @@ describe('Scroll-to-Top Integration Tests', () => {
   describe('Cross-tab navigation', () => {
     it('should handle navigation between tabs with scroll-to-top', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       const homeTab = getByText('Home');
       const matchesTab = getByText('Matches');
       const profileTab = getByText('Profile');
@@ -196,7 +205,7 @@ describe('Scroll-to-Top Integration Tests', () => {
 
     it('should maintain scroll position when switching tabs', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       const homeTab = getByText('Home');
       const matchesTab = getByText('Matches');
 
@@ -215,7 +224,7 @@ describe('Scroll-to-Top Integration Tests', () => {
   describe('Edge cases', () => {
     it('should handle rapid tab switching', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       const homeTab = getByText('Home');
       const matchesTab = getByText('Matches');
 
@@ -231,7 +240,7 @@ describe('Scroll-to-Top Integration Tests', () => {
 
     it('should handle double-tap during navigation', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       const homeTab = getByText('Home');
       const matchesTab = getByText('Matches');
 
@@ -251,9 +260,9 @@ describe('Scroll-to-Top Integration Tests', () => {
   describe('Accessibility', () => {
     it('should maintain accessibility labels during scroll-to-top', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       const homeTab = getByText('Home');
-      
+
       fireEvent.press(homeTab);
       fireEvent.press(homeTab);
 
@@ -269,7 +278,7 @@ describe('Scroll-to-Top Integration Tests', () => {
   describe('Performance', () => {
     it('should handle multiple scroll-to-top actions efficiently', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       const homeTab = getByText('Home');
 
       // Perform multiple scroll-to-top actions
@@ -283,7 +292,7 @@ describe('Scroll-to-Top Integration Tests', () => {
 
     it('should not cause memory leaks with multiple tab presses', async () => {
       const { getByText, unmount } = render(<TestNavigator />);
-      
+
       const homeTab = getByText('Home');
 
       for (let i = 0; i < 20; i++) {
@@ -299,9 +308,9 @@ describe('Scroll-to-Top Integration Tests', () => {
   describe('Integration with navigation events', () => {
     it('should work correctly with tabPress events', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       const homeTab = getByText('Home');
-      
+
       // Simulate tab press event
       fireEvent.press(homeTab);
 
@@ -312,9 +321,9 @@ describe('Scroll-to-Top Integration Tests', () => {
 
     it('should handle tabLongPress events separately', async () => {
       const { getByText } = render(<TestNavigator />);
-      
+
       const homeTab = getByText('Home');
-      
+
       // Long press should not trigger scroll-to-top
       fireEvent(homeTab, 'onLongPress');
 
@@ -324,4 +333,3 @@ describe('Scroll-to-Top Integration Tests', () => {
     });
   });
 });
-

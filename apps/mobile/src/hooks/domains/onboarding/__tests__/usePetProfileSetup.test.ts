@@ -23,7 +23,7 @@ describe('usePetProfileSetup', () => {
         photos: [],
         personality: '',
         medicalInfo: '',
-        specialNeeds: ''
+        specialNeeds: '',
       });
       expect(result.current.isLoading).toBe(false);
       expect(result.current.errors).toEqual({});
@@ -37,7 +37,7 @@ describe('usePetProfileSetup', () => {
         photos: [],
         personality: 'Friendly',
         medicalInfo: '',
-        specialNeeds: ''
+        specialNeeds: '',
       };
 
       const { result } = renderHook(() => usePetProfileSetup(initialData));
@@ -113,7 +113,7 @@ describe('usePetProfileSetup', () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       act(() => {
@@ -129,7 +129,7 @@ describe('usePetProfileSetup', () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       act(() => {
@@ -339,12 +339,12 @@ describe('usePetProfileSetup', () => {
         const promises = [
           result.current.saveProfile(),
           result.current.saveProfile(),
-          result.current.saveProfile()
+          result.current.saveProfile(),
         ];
 
         const results = await Promise.all(promises);
         // Should handle concurrent requests gracefully
-        expect(results.some(r => r === true)).toBe(true);
+        expect(results.some((r) => r === true)).toBe(true);
       });
     });
   });

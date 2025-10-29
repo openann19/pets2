@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react";
-import { logger } from "../../services/logger";
+import { useCallback, useState } from 'react';
+import { logger } from '../../services/logger';
 
 export interface FormFieldState<T> {
   value: T;
@@ -77,12 +77,9 @@ export function useFormState<T extends Record<string, any>>({
     });
   }, []);
 
-  const setFieldTouched = useCallback(
-    (name: keyof T, touchedValue: boolean = true) => {
-      setTouched((prev) => ({ ...prev, [name]: touchedValue }));
-    },
-    [],
-  );
+  const setFieldTouched = useCallback((name: keyof T, touchedValue: boolean = true) => {
+    setTouched((prev) => ({ ...prev, [name]: touchedValue }));
+  }, []);
 
   const validate = useCallback((): boolean => {
     if (!validateFn) return true;
@@ -118,7 +115,7 @@ export function useFormState<T extends Record<string, any>>({
         await onSubmit(values);
       } catch (error) {
         const errorObj = error instanceof Error ? error : new Error('Form submission failed');
-        logger.error("Form submission error", { error: errorObj });
+        logger.error('Form submission error', { error: errorObj });
       }
     },
     [values, validate],

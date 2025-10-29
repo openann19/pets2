@@ -1,35 +1,31 @@
-import React, { useEffect } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect } from 'react';
 import {
-  View,
+  ActivityIndicator,
   Text,
   TouchableOpacity,
-  ActivityIndicator,
+  View,
   type TouchableOpacityProps,
-  StyleSheet,
   type ViewStyle,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import {
-  useSharedValue,
+} from 'react-native';
+import Animated, {
+  runOnJS,
   useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSequence,
   withSpring,
   withTiming,
-  withSequence,
-  withDelay,
-  runOnJS,
   type AnimatedStyleProp,
-} from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
-import Animated from "react-native-reanimated";
+} from 'react-native-reanimated';
 
-import {
-  SPRING,
-} from "../../../animation";
-import { Colors, Spacing, BorderRadius, GlobalStyles } from "../../../styles/GlobalStyles";
-import { getPremiumGradients } from "../constants/gradients";
-import { PREMIUM_SHADOWS } from "../constants/shadows";
-import { useTheme } from "@/theme";
+import { useTheme } from '@mobile/src/theme';
+import { SPRING } from '../../../animation';
+import { BorderRadius, Colors, GlobalStyles, Spacing } from '../../../styles/GlobalStyles';
+import { getPremiumGradients } from '../constants/gradients';
+import { PREMIUM_SHADOWS } from '../constants/shadows';
 
 /**
  * EliteButton Component
@@ -38,14 +34,8 @@ import { useTheme } from "@/theme";
 
 interface EliteButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?:
-    | "primary"
-    | "secondary"
-    | "ghost"
-    | "glass"
-    | "holographic"
-    | "neon";
-  size?: "sm" | "md" | "lg" | "xl";
+  variant?: 'primary' | 'secondary' | 'ghost' | 'glass' | 'holographic' | 'neon';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   icon?: string;
   loading?: boolean;
   gradient?: string[];
@@ -58,8 +48,8 @@ interface EliteButtonProps extends TouchableOpacityProps {
 
 export const EliteButton: React.FC<EliteButtonProps> = ({
   title,
-  variant = "primary",
-  size = "md",
+  variant = 'primary',
+  size = 'md',
   icon,
   loading = false,
   gradient,
@@ -127,49 +117,49 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
 
   const getButtonStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
-      borderRadius: Number(BorderRadius["2xl"]) || 16,
-      overflow: "hidden",
-      position: "relative",
+      borderRadius: Number(BorderRadius['2xl']) || 16,
+      overflow: 'hidden',
+      position: 'relative',
     };
 
     switch (variant) {
-      case "secondary":
-        return { ...baseStyle, ...GlobalStyles.buttonSecondary as ViewStyle };
-      case "ghost":
-        return { ...baseStyle, ...GlobalStyles.buttonGhost as ViewStyle };
-      case "glass":
+      case 'secondary':
+        return { ...baseStyle, ...(GlobalStyles.buttonSecondary as ViewStyle) };
+      case 'ghost':
+        return { ...baseStyle, ...(GlobalStyles.buttonGhost as ViewStyle) };
+      case 'glass':
         return {
           ...baseStyle,
-          backgroundColor: "rgba(255,255,255,0.1)",
+          backgroundColor: 'rgba(255,255,255,0.1)',
           borderWidth: 1,
-          borderColor: "rgba(255,255,255,0.2)",
+          borderColor: 'rgba(255,255,255,0.2)',
         };
-      case "holographic":
+      case 'holographic':
         return { ...baseStyle, ...PREMIUM_SHADOWS.holographicGlow };
-      case "neon":
+      case 'neon':
         return { ...baseStyle, ...PREMIUM_SHADOWS.neonGlow };
       default:
         return {
           ...baseStyle,
-          ...GlobalStyles.buttonPrimary as ViewStyle,
-          ...(glow ? PREMIUM_SHADOWS.primaryGlow as ViewStyle : {} as ViewStyle),
+          ...(GlobalStyles.buttonPrimary as ViewStyle),
+          ...(glow ? (PREMIUM_SHADOWS.primaryGlow as ViewStyle) : ({} as ViewStyle)),
         };
     }
   };
 
   const getTextStyle = () => {
     switch (variant) {
-      case "secondary":
+      case 'secondary':
         return GlobalStyles.buttonTextSecondary as ViewStyle;
-      case "ghost":
-      case "glass":
-        return { ...GlobalStyles.buttonTextSecondary as ViewStyle, color: Colors.white };
-      case "holographic":
-      case "neon":
+      case 'ghost':
+      case 'glass':
+        return { ...(GlobalStyles.buttonTextSecondary as ViewStyle), color: Colors.white };
+      case 'holographic':
+      case 'neon':
         return {
-          ...GlobalStyles.buttonTextPrimary as ViewStyle,
+          ...(GlobalStyles.buttonTextPrimary as ViewStyle),
           color: Colors.white,
-          fontWeight: "bold",
+          fontWeight: 'bold',
         };
       default:
         return GlobalStyles.buttonTextPrimary as ViewStyle;
@@ -178,42 +168,42 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
 
   const getSizeStyle = () => {
     switch (size) {
-      case "sm":
+      case 'sm':
         return {
           paddingHorizontal: Spacing.lg,
           paddingVertical: Spacing.sm,
           minHeight: 36,
         } as ViewStyle;
-      case "lg":
+      case 'lg':
         return {
-          paddingHorizontal: Spacing["3xl"],
+          paddingHorizontal: Spacing['3xl'],
           paddingVertical: Spacing.lg,
           minHeight: 56,
         } as ViewStyle;
-      case "xl":
+      case 'xl':
         return {
-          paddingHorizontal: Spacing["4xl"],
+          paddingHorizontal: Spacing['4xl'],
           paddingVertical: Spacing.xl,
           minHeight: 64,
         } as ViewStyle;
       default:
-        return { ...GlobalStyles.buttonContent as ViewStyle, minHeight: 48 };
+        return { ...(GlobalStyles.buttonContent as ViewStyle), minHeight: 48 };
     }
   };
 
   const getGradientColors = (): string[] => {
     if (gradient) return gradient;
-    
+
     const gradients = getPremiumGradients(theme);
 
     switch (variant) {
-      case "secondary":
+      case 'secondary':
         return [...gradients.secondary];
-      case "glass":
+      case 'glass':
         return [...gradients.glass];
-      case "holographic":
+      case 'holographic':
         return [...gradients.holographic];
-      case "neon":
+      case 'neon':
         return [...gradients.neon];
       default:
         return [...gradients.primary];
@@ -221,36 +211,31 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
   };
 
   const ButtonContent = (
-    <View
-      style={[
-        getSizeStyle(),
-        { opacity: (disabled ?? false) ? 0.6 : 1 },
-      ] as ViewStyle[]}
-    >
+    <View style={[getSizeStyle(), { opacity: (disabled ?? false) ? 0.6 : 1 }] as ViewStyle[]}>
       {loading ? (
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <ActivityIndicator
             color={
-              variant === "primary" ||
-              variant === "holographic" ||
-              variant === "neon"
+              variant === 'primary' || variant === 'holographic' || variant === 'neon'
                 ? Colors.white
                 : Colors.primary
             }
             size="small"
           />
           <Text
-            style={[
-              GlobalStyles.buttonText as ViewStyle,
-              getTextStyle(),
-              { marginLeft: Spacing.sm },
-            ] as ViewStyle[]}
+            style={
+              [
+                GlobalStyles.buttonText as ViewStyle,
+                getTextStyle(),
+                { marginLeft: Spacing.sm },
+              ] as ViewStyle[]
+            }
           >
             Loading...
           </Text>
@@ -260,31 +245,16 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
           {icon && (
             <Ionicons
               name={icon}
-              size={
-                size === "sm"
-                  ? 16
-                  : size === "lg"
-                    ? 24
-                    : size === "xl"
-                      ? 28
-                      : 20
-              }
+              size={size === 'sm' ? 16 : size === 'lg' ? 24 : size === 'xl' ? 28 : 20}
               color={
-                variant === "primary" ||
-                variant === "holographic" ||
-                variant === "neon"
+                variant === 'primary' || variant === 'holographic' || variant === 'neon'
                   ? Colors.white
                   : Colors.primary
               }
               style={{ marginRight: Spacing.xs }}
             />
           )}
-          <Text
-            style={[
-              GlobalStyles.buttonText as ViewStyle,
-              getTextStyle(),
-            ] as ViewStyle[]}
-          >
+          <Text style={[GlobalStyles.buttonText as ViewStyle, getTextStyle()] as ViewStyle[]}>
             {title}
           </Text>
         </>
@@ -295,11 +265,7 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
   return (
     <Animated.View style={animatedStyle as AnimatedStyleProp<ViewStyle>}>
       <TouchableOpacity
-        style={[
-          getButtonStyle(),
-          glow ? glowStyle : undefined,
-          style ?? undefined,
-        ] as ViewStyle[]}
+        style={[getButtonStyle(), glow ? glowStyle : undefined, style ?? undefined] as ViewStyle[]}
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
@@ -311,13 +277,13 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
           <Animated.View
             style={[
               {
-                position: "absolute",
-                top: "50%",
-                left: "50%",
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
                 width: 100,
                 height: 100,
                 borderRadius: 50,
-                backgroundColor: "rgba(255,255,255,0.3)",
+                backgroundColor: 'rgba(255,255,255,0.3)',
                 marginTop: -50,
                 marginLeft: -50,
               } as ViewStyle,
@@ -331,12 +297,12 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
           <Animated.View
             style={[
               {
-                position: "absolute",
+                position: 'absolute',
                 top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: "rgba(255,255,255,0.1)",
+                backgroundColor: 'rgba(255,255,255,0.1)',
               } as ViewStyle,
               shimmerStyle as AnimatedStyleProp<ViewStyle>,
             ]}
@@ -347,10 +313,10 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
         <LinearGradient
           colors={getGradientColors()}
           style={{
-            borderRadius: Number(BorderRadius["2xl"]) || 16,
+            borderRadius: Number(BorderRadius['2xl']) || 16,
             flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}

@@ -90,9 +90,7 @@ describe('useStaggeredAnimation', () => {
     });
 
     it('should initialize with custom stagger delay', () => {
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(3, { staggerDelay: 200 })
-      );
+      const { result } = renderHook(() => useStaggeredAnimation(3, { staggerDelay: 200 }));
 
       expect(result.current.config.staggerDelay).toBe(200);
     });
@@ -103,9 +101,7 @@ describe('useStaggeredAnimation', () => {
         easing: 'ease-in-out',
       };
 
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(2, {}, customConfig)
-      );
+      const { result } = renderHook(() => useStaggeredAnimation(2, {}, customConfig));
 
       expect(result.current.animationConfig).toEqual(customConfig);
     });
@@ -138,9 +134,7 @@ describe('useStaggeredAnimation', () => {
     });
 
     it('should animate with spring instead of timing', () => {
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(2, {}, { useSpring: true })
-      );
+      const { result } = renderHook(() => useStaggeredAnimation(2, {}, { useSpring: true }));
 
       act(() => {
         result.current.startAnimation();
@@ -196,10 +190,9 @@ describe('useStaggeredAnimation', () => {
 
   describe('Dynamic Item Management', () => {
     it('should add new items dynamically', () => {
-      const { result, rerender } = renderHook(
-        ({ count }) => useStaggeredAnimation(count),
-        { initialProps: { count: 2 } }
-      );
+      const { result, rerender } = renderHook(({ count }) => useStaggeredAnimation(count), {
+        initialProps: { count: 2 },
+      });
 
       expect(result.current.items).toHaveLength(2);
 
@@ -211,10 +204,9 @@ describe('useStaggeredAnimation', () => {
     });
 
     it('should remove items dynamically', () => {
-      const { result, rerender } = renderHook(
-        ({ count }) => useStaggeredAnimation(count),
-        { initialProps: { count: 4 } }
-      );
+      const { result, rerender } = renderHook(({ count }) => useStaggeredAnimation(count), {
+        initialProps: { count: 4 },
+      });
 
       expect(result.current.items).toHaveLength(4);
 
@@ -282,9 +274,7 @@ describe('useStaggeredAnimation', () => {
   describe('Animation Callbacks', () => {
     it('should execute onStart callback', () => {
       const onStart = jest.fn();
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(2, {}, { onStart })
-      );
+      const { result } = renderHook(() => useStaggeredAnimation(2, {}, { onStart }));
 
       act(() => {
         result.current.startAnimation();
@@ -295,9 +285,7 @@ describe('useStaggeredAnimation', () => {
 
     it('should execute onComplete callback', () => {
       const onComplete = jest.fn();
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(2, {}, { onComplete })
-      );
+      const { result } = renderHook(() => useStaggeredAnimation(2, {}, { onComplete }));
 
       act(() => {
         result.current.startAnimation();
@@ -309,9 +297,7 @@ describe('useStaggeredAnimation', () => {
 
     it('should execute onItemComplete callback', () => {
       const onItemComplete = jest.fn();
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(3, {}, { onItemComplete })
-      );
+      const { result } = renderHook(() => useStaggeredAnimation(3, {}, { onItemComplete }));
 
       act(() => {
         result.current.startAnimation();
@@ -326,9 +312,7 @@ describe('useStaggeredAnimation', () => {
         throw new Error('Callback error');
       });
 
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(2, {}, { onStart: errorCallback })
-      );
+      const { result } = renderHook(() => useStaggeredAnimation(2, {}, { onStart: errorCallback }));
 
       // Should not crash
       act(() => {
@@ -345,7 +329,7 @@ describe('useStaggeredAnimation', () => {
         useStaggeredAnimation(4, {
           staggerDelay: 150,
           staggerPattern: 'ease-in',
-        })
+        }),
       );
 
       expect(result.current.config.staggerDelay).toBe(150);
@@ -356,7 +340,7 @@ describe('useStaggeredAnimation', () => {
       const { result } = renderHook(() =>
         useStaggeredAnimation(3, {
           reverseOrder: true,
-        })
+        }),
       );
 
       act(() => {
@@ -366,7 +350,7 @@ describe('useStaggeredAnimation', () => {
       // Should animate in reverse order (last item first)
       expect(mockWithDelay).toHaveBeenNthCalledWith(1, 200, 'timing-animation'); // 2 * 100ms delay
       expect(mockWithDelay).toHaveBeenNthCalledWith(2, 100, 'timing-animation'); // 1 * 100ms delay
-      expect(mockWithDelay).toHaveBeenNthCalledWith(3, 0, 'timing-animation');   // 0ms delay
+      expect(mockWithDelay).toHaveBeenNthCalledWith(3, 0, 'timing-animation'); // 0ms delay
     });
 
     it('should support random stagger delays', () => {
@@ -374,7 +358,7 @@ describe('useStaggeredAnimation', () => {
         useStaggeredAnimation(3, {
           randomDelay: true,
           maxRandomDelay: 200,
-        })
+        }),
       );
 
       expect(result.current.config.randomDelay).toBe(true);
@@ -384,9 +368,9 @@ describe('useStaggeredAnimation', () => {
     it('should support different animation directions', () => {
       const directions = ['horizontal', 'vertical', 'scale', 'fade'];
 
-      directions.forEach(direction => {
+      directions.forEach((direction) => {
         const { result } = renderHook(() =>
-          useStaggeredAnimation(2, { direction: direction as any })
+          useStaggeredAnimation(2, { direction: direction as any }),
         );
 
         expect(result.current.config.direction).toBe(direction);
@@ -398,9 +382,9 @@ describe('useStaggeredAnimation', () => {
     it('should memoize animated styles', () => {
       const { result, rerender } = renderHook(() => useStaggeredAnimation(3));
 
-      const firstStyles = result.current.items.map(item => item.animatedStyle);
+      const firstStyles = result.current.items.map((item) => item.animatedStyle);
       rerender();
-      const secondStyles = result.current.items.map(item => item.animatedStyle);
+      const secondStyles = result.current.items.map((item) => item.animatedStyle);
 
       // Styles should be stable
       firstStyles.forEach((style, index) => {
@@ -410,7 +394,7 @@ describe('useStaggeredAnimation', () => {
 
     it('should minimize re-renders', () => {
       const { result, rerender } = renderHook(() =>
-        useStaggeredAnimation(2, { staggerDelay: 100 })
+        useStaggeredAnimation(2, { staggerDelay: 100 }),
       );
 
       const firstConfig = result.current.config;
@@ -443,9 +427,7 @@ describe('useStaggeredAnimation', () => {
     });
 
     it('should animate items on scroll', () => {
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(5, { animateOnScroll: true })
-      );
+      const { result } = renderHook(() => useStaggeredAnimation(5, { animateOnScroll: true }));
 
       const listProps = result.current.getListAnimationProps();
 
@@ -504,8 +486,8 @@ describe('useStaggeredAnimation', () => {
     });
 
     it('should handle extreme stagger delays', () => {
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(3, { staggerDelay: 10000 }) // Very long delay
+      const { result } = renderHook(
+        () => useStaggeredAnimation(3, { staggerDelay: 10000 }), // Very long delay
       );
 
       act(() => {
@@ -534,9 +516,7 @@ describe('useStaggeredAnimation', () => {
     it('should support custom easing functions', () => {
       const customEasing = (t: number) => t * t; // Quadratic ease in
 
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(2, {}, { easing: customEasing })
-      );
+      const { result } = renderHook(() => useStaggeredAnimation(2, {}, { easing: customEasing }));
 
       act(() => {
         result.current.startAnimation();
@@ -546,13 +526,13 @@ describe('useStaggeredAnimation', () => {
         expect.anything(),
         expect.objectContaining({
           easing: customEasing,
-        })
+        }),
       );
     });
 
     it('should support loop animations', () => {
       const { result } = renderHook(() =>
-        useStaggeredAnimation(3, { loop: true, loopDelay: 1000 })
+        useStaggeredAnimation(3, { loop: true, loopDelay: 1000 }),
       );
 
       expect(result.current.config.loop).toBe(true);
@@ -560,9 +540,7 @@ describe('useStaggeredAnimation', () => {
     });
 
     it('should support bounce animations', () => {
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(2, { bounce: true })
-      );
+      const { result } = renderHook(() => useStaggeredAnimation(2, { bounce: true }));
 
       act(() => {
         result.current.startAnimation();
@@ -573,9 +551,13 @@ describe('useStaggeredAnimation', () => {
 
     it('should support custom animation curves', () => {
       const { result } = renderHook(() =>
-        useStaggeredAnimation(2, {}, {
-          animationCurve: 'ease-in-out-back',
-        })
+        useStaggeredAnimation(
+          2,
+          {},
+          {
+            animationCurve: 'ease-in-out-back',
+          },
+        ),
       );
 
       expect(result.current.animationConfig.animationCurve).toBe('ease-in-out-back');
@@ -584,10 +566,9 @@ describe('useStaggeredAnimation', () => {
 
   describe('Edge Cases', () => {
     it('should handle empty item arrays', () => {
-      const { result, rerender } = renderHook(
-        ({ count }) => useStaggeredAnimation(count),
-        { initialProps: { count: 3 } }
-      );
+      const { result, rerender } = renderHook(({ count }) => useStaggeredAnimation(count), {
+        initialProps: { count: 3 },
+      });
 
       rerender({ count: 0 });
 
@@ -614,7 +595,7 @@ describe('useStaggeredAnimation', () => {
 
     it('should handle very large stagger delays', () => {
       const { result } = renderHook(() =>
-        useStaggeredAnimation(2, { staggerDelay: Number.MAX_SAFE_INTEGER })
+        useStaggeredAnimation(2, { staggerDelay: Number.MAX_SAFE_INTEGER }),
       );
 
       act(() => {
@@ -625,9 +606,7 @@ describe('useStaggeredAnimation', () => {
     });
 
     it('should handle zero stagger delay', () => {
-      const { result } = renderHook(() =>
-        useStaggeredAnimation(3, { staggerDelay: 0 })
-      );
+      const { result } = renderHook(() => useStaggeredAnimation(3, { staggerDelay: 0 }));
 
       act(() => {
         result.current.startAnimation();
@@ -658,7 +637,7 @@ describe('useStaggeredAnimation', () => {
         useStaggeredAnimation(2, {
           staggerDelay: -100, // Invalid negative delay
           staggerPattern: 'invalid-pattern',
-        })
+        }),
       );
 
       // Should still work with potentially corrected values

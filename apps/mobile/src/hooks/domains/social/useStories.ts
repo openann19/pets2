@@ -2,17 +2,17 @@
  * useStories Hook
  * Manages stories feed, navigation, progress tracking, and viewing interactions
  */
-import { useCallback, useEffect, useRef, useState } from "react";
-import * as Haptics from "expo-haptics";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { logger } from "@pawfectmatch/core";
-import { useSocket } from "../../useSocket";
-import apiClient from "../../../services/apiClient";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import * as Haptics from 'expo-haptics';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { logger } from '@pawfectmatch/core';
+import { useSocket } from '../../useSocket';
+import apiClient from '../../../services/apiClient';
 
 interface Story {
   _id: string;
   userId: string;
-  mediaType: "photo" | "video";
+  mediaType: 'photo' | 'video';
   mediaUrl: string;
   caption?: string;
   duration: number;
@@ -99,9 +99,9 @@ export const useStories = (initialGroupIndex: number = 0): UseStoriesReturn => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["stories-feed"],
+    queryKey: ['stories-feed'],
     queryFn: async () => {
-      const response = await apiClient.get<StoriesFeedResponse>("/stories");
+      const response = await apiClient.get<StoriesFeedResponse>('/stories');
       return response.stories;
     },
   });
@@ -118,9 +118,7 @@ export const useStories = (initialGroupIndex: number = 0): UseStoriesReturn => {
   // Mark story as viewed mutation
   const viewStoryMutation = useMutation({
     mutationFn: async (storyId: string) => {
-      const response = await apiClient.post<ViewStoryResponse>(
-        `/stories/${storyId}/view`,
-      );
+      const response = await apiClient.post<ViewStoryResponse>(`/stories/${storyId}/view`);
       return response;
     },
     onSuccess: (data: ViewStoryResponse) => {
@@ -143,7 +141,7 @@ export const useStories = (initialGroupIndex: number = 0): UseStoriesReturn => {
       setProgress(0);
     } else {
       // End of stories - could emit event for parent to handle navigation
-      logger.info("Reached end of stories");
+      logger.info('Reached end of stories');
     }
   }, [currentGroup, currentStoryIndex, currentGroupIndex, storyGroups]);
 
@@ -210,8 +208,7 @@ export const useStories = (initialGroupIndex: number = 0): UseStoriesReturn => {
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      if (progressIntervalRef.current)
-        clearInterval(progressIntervalRef.current);
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
     };
   }, [currentStory, isPaused, goToNextStory]);
 
@@ -226,18 +223,15 @@ export const useStories = (initialGroupIndex: number = 0): UseStoriesReturn => {
   useEffect(() => {
     if (!socket || !currentStory) return;
 
-    const handleStoryViewed = (data: {
-      storyId: string;
-      viewCount: number;
-    }) => {
+    const handleStoryViewed = (data: { storyId: string; viewCount: number }) => {
       if (data.storyId === currentStory._id) {
         setViewCount(data.viewCount);
       }
     };
 
-    socket.on("story:viewed", handleStoryViewed);
+    socket.on('story:viewed', handleStoryViewed);
     return () => {
-      socket.off("story:viewed", handleStoryViewed);
+      socket.off('story:viewed', handleStoryViewed);
     };
   }, [socket, currentStory?._id]);
 
@@ -246,7 +240,7 @@ export const useStories = (initialGroupIndex: number = 0): UseStoriesReturn => {
       try {
         await viewStoryMutation.mutateAsync(storyId);
       } catch (error) {
-        logger.error("Failed to mark story as viewed", { error, storyId });
+        logger.error('Failed to mark story as viewed', { error, storyId });
       }
     },
     [viewStoryMutation],

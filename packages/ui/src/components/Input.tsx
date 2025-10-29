@@ -45,7 +45,11 @@ const InputField = forwardRef<HTMLInputElement, InputProps>(
     return (
       <label style={containerStyle}>
         {hasLabel ? <span style={{ ...labelStyle, color: theme.colors.text }}>{label}</span> : null}
-        <input ref={ref} style={fieldStyle} {...rest} />
+        <input
+          ref={ref}
+          style={fieldStyle}
+          {...rest}
+        />
         {hasError ? (
           <span style={{ ...hintStyle, color: theme.colors.danger }}>{error}</span>
         ) : hasHint ? (

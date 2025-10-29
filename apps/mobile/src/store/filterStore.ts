@@ -1,5 +1,5 @@
-import type { PetFilters } from "@pawfectmatch/core";
-import { create } from "zustand";
+import type { PetFilters } from '@pawfectmatch/core';
+import { create } from 'zustand';
 
 export const DEFAULT_FILTERS: PetFilters = {};
 

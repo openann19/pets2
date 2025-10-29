@@ -1,6 +1,6 @@
-import { logger } from "@pawfectmatch/core";
-import { useCallback, useState } from "react";
-import { Alert } from "react-native";
+import { logger } from '@pawfectmatch/core';
+import { useCallback, useState } from 'react';
+import { Alert } from 'react-native';
 
 interface PhotoItem {
   id: string;
@@ -39,30 +39,30 @@ interface FormData {
 
 export function useCreatePetScreen() {
   const [formData, setFormData] = useState<FormData>({
-    name: "",
-    species: "",
-    breed: "",
-    age: "",
-    gender: "",
-    size: "",
-    description: "",
-    intent: "",
+    name: '',
+    species: '',
+    breed: '',
+    age: '',
+    gender: '',
+    size: '',
+    description: '',
+    intent: '',
     personalityTags: [],
     healthInfo: {
       vaccinated: false,
       spayedNeutered: false,
       microchipped: false,
-      specialNeeds: "",
+      specialNeeds: '',
     },
     location: {
-      city: "",
-      state: "",
-      zipCode: "",
+      city: '',
+      state: '',
+      zipCode: '',
     },
     contactInfo: {
-      email: "",
-      phone: "",
-      preferredContact: "email",
+      email: '',
+      phone: '',
+      preferredContact: 'email',
     },
   });
 
@@ -95,13 +95,13 @@ export function useCreatePetScreen() {
   const validateForm = useCallback((): string[] => {
     const errors: string[] = [];
 
-    if (!formData.name.trim()) errors.push("Pet name is required");
-    if (!formData.species) errors.push("Species is required");
-    if (!formData.breed.trim()) errors.push("Breed is required");
-    if (!formData.age) errors.push("Age is required");
-    if (!formData.description.trim()) errors.push("Description is required");
-    if (photos.length === 0) errors.push("At least one photo is required");
-    if (!formData.contactInfo.email.trim()) errors.push("Email is required");
+    if (!formData.name.trim()) errors.push('Pet name is required');
+    if (!formData.species) errors.push('Species is required');
+    if (!formData.breed.trim()) errors.push('Breed is required');
+    if (!formData.age) errors.push('Age is required');
+    if (!formData.description.trim()) errors.push('Description is required');
+    if (photos.length === 0) errors.push('At least one photo is required');
+    if (!formData.contactInfo.email.trim()) errors.push('Email is required');
 
     return errors;
   }, [formData, photos]);
@@ -109,18 +109,18 @@ export function useCreatePetScreen() {
   const handleSubmit = useCallback(async () => {
     const errors = validateForm();
     if (errors.length > 0) {
-      Alert.alert("Validation Error", errors.join("\n"));
+      Alert.alert('Validation Error', errors.join('\n'));
       return { success: false };
     }
 
     setIsSubmitting(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      logger.info("Pet profile created successfully");
+      logger.info('Pet profile created successfully');
       return { success: true };
     } catch (error) {
-      logger.error("Failed to create pet profile:", { error });
-      Alert.alert("Error", "Failed to create pet profile. Please try again.");
+      logger.error('Failed to create pet profile:', { error });
+      Alert.alert('Error', 'Failed to create pet profile. Please try again.');
       return { success: false };
     } finally {
       setIsSubmitting(false);
@@ -147,4 +147,3 @@ export function useCreatePetScreen() {
     togglePersonalityTag,
   };
 }
-

@@ -3,10 +3,10 @@
  * Handles chat features: reactions, attachments, voice notes
  */
 
-import { logger } from "@pawfectmatch/core";
-import type { Message } from "@pawfectmatch/core";
-import { request } from "./api";
-import * as FileSystem from "expo-file-system";
+import { logger } from '@pawfectmatch/core';
+import type { Message } from '@pawfectmatch/core';
+import { request } from './api';
+import * as FileSystem from 'expo-file-system';
 
 export interface ChatReaction {
   emoji: string;
@@ -19,7 +19,7 @@ export interface MessageWithReactions extends Message {
 }
 
 export interface ChatAttachment {
-  type: "image" | "video" | "file";
+  type: 'image' | 'video' | 'file';
   url: string;
   name?: string;
   size?: number;
@@ -39,7 +39,7 @@ interface SendReactionParams {
 
 interface SendAttachmentParams {
   matchId: string;
-  attachmentType: "image" | "video" | "file";
+  attachmentType: 'image' | 'video' | 'file';
   file: File | Blob;
   name?: string;
 }
@@ -60,7 +60,7 @@ class ChatService {
   async sendReaction(
     matchId: string,
     messageId: string,
-    reaction: string
+    reaction: string,
   ): Promise<{
     success: boolean;
     messageId: string;
@@ -71,8 +71,8 @@ class ChatService {
         success: boolean;
         messageId: string;
         reactions: ChatReaction[];
-      }>("/chat/reactions", {
-        method: "POST",
+      }>('/chat/reactions', {
+        method: 'POST',
         body: {
           matchId,
           messageId,
@@ -80,11 +80,11 @@ class ChatService {
         },
       });
 
-      logger.info("Reaction sent successfully", { matchId, messageId, reaction });
+      logger.info('Reaction sent successfully', { matchId, messageId, reaction });
 
       return response;
     } catch (error) {
-      logger.error("Failed to send reaction", { error, matchId, messageId, reaction });
+      logger.error('Failed to send reaction', { error, matchId, messageId, reaction });
       throw error;
     }
   }
@@ -99,30 +99,30 @@ class ChatService {
   }> {
     try {
       const formData = new FormData();
-      formData.append("file", params.file);
-      formData.append("matchId", params.matchId);
-      formData.append("type", params.attachmentType);
+      formData.append('file', params.file);
+      formData.append('matchId', params.matchId);
+      formData.append('type', params.attachmentType);
       if (params.name) {
-        formData.append("name", params.name);
+        formData.append('name', params.name);
       }
 
       const response = await request<{
         success: boolean;
         url: string;
         type: string;
-      }>("/chat/attachments", {
-        method: "POST",
+      }>('/chat/attachments', {
+        method: 'POST',
         body: formData,
         headers: {
           // Don't set Content-Type - FormData sets it automatically
         },
       });
 
-      logger.info("Attachment sent successfully", { params });
+      logger.info('Attachment sent successfully', { params });
 
       return response;
     } catch (error) {
-      logger.error("Failed to send attachment", { error, params });
+      logger.error('Failed to send attachment', { error, params });
       throw error;
     }
   }
@@ -131,12 +131,8 @@ class ChatService {
    * Send a voice note
    * Supports both FormData (native) and Blob (web)
    */
-  async sendVoiceNote(
-    matchId: string,
-    file: FormData | Blob,
-    duration?: number
-  ): Promise<void>;
-  
+  async sendVoiceNote(matchId: string, file: FormData | Blob, duration?: number): Promise<void>;
+
   /**
    * Send a voice note (legacy signature)
    */
@@ -145,11 +141,11 @@ class ChatService {
     url: string;
     duration: number;
   }>;
-  
+
   async sendVoiceNote(
     matchIdOrParams: string | SendVoiceNoteParams,
     file?: FormData | Blob,
-    duration?: number
+    duration?: number,
   ): Promise<void | {
     success: boolean;
     url: string;
@@ -160,24 +156,24 @@ class ChatService {
       let formData: FormData;
       let matchId: string;
       let voiceDuration: number;
-      
-      if (typeof matchIdOrParams === "string") {
+
+      if (typeof matchIdOrParams === 'string') {
         // New signature: sendVoiceNote(matchId, file, duration?)
         matchId = matchIdOrParams;
         if (file instanceof FormData) {
           // Native: FormData already has the file wrapped
           formData = file;
-          formData.append("matchId", matchId);
+          formData.append('matchId', matchId);
         } else if (file instanceof Blob) {
           // Web: wrap Blob in FormData
           formData = new FormData();
-          const audioFile = new File([file], "voice-note.webm", {
-            type: "audio/webm",
+          const audioFile = new File([file], 'voice-note.webm', {
+            type: 'audio/webm',
           });
-          formData.append("audioBlob", audioFile);
-          formData.append("matchId", matchId);
+          formData.append('audioBlob', audioFile);
+          formData.append('matchId', matchId);
         } else {
-          throw new Error("Invalid file type");
+          throw new Error('Invalid file type');
         }
         voiceDuration = duration || 0;
       } else {
@@ -185,12 +181,12 @@ class ChatService {
         const params = matchIdOrParams;
         matchId = params.matchId;
         formData = new FormData();
-        const audioFile = new File([params.audioBlob], "voice-note.m4a", {
-          type: "audio/m4a",
+        const audioFile = new File([params.audioBlob], 'voice-note.m4a', {
+          type: 'audio/m4a',
         });
-        formData.append("audioBlob", audioFile);
-        formData.append("matchId", matchId);
-        formData.append("duration", String(params.duration));
+        formData.append('audioBlob', audioFile);
+        formData.append('matchId', matchId);
+        formData.append('duration', String(params.duration));
         voiceDuration = params.duration;
       }
 
@@ -198,22 +194,22 @@ class ChatService {
         success: boolean;
         url: string;
         duration: number;
-      }>("/api/chat/voice", {
-        method: "POST",
+      }>('/api/chat/voice', {
+        method: 'POST',
         body: formData,
         headers: {
           // Don't set Content-Type - FormData sets it automatically
         },
       });
 
-      logger.info("Voice note sent successfully", { matchId, duration: voiceDuration });
-      
+      logger.info('Voice note sent successfully', { matchId, duration: voiceDuration });
+
       // Return result for legacy signature
-      if (typeof matchIdOrParams !== "string") {
+      if (typeof matchIdOrParams !== 'string') {
         return response;
       }
     } catch (error) {
-      logger.error("Failed to send voice note", { error, matchIdOrParams });
+      logger.error('Failed to send voice note', { error, matchIdOrParams });
       throw error;
     }
   }
@@ -222,24 +218,27 @@ class ChatService {
 export const chatService = new ChatService();
 
 // Native voice note upload helper
-export async function sendVoiceNoteNative(matchId: string, p: { fileUri: string; duration: number }) {
+export async function sendVoiceNoteNative(
+  matchId: string,
+  p: { fileUri: string; duration: number },
+) {
   // presign
-  const presign = await request<{ url: string; key: string }>("/api/chat/voice/presign", {
-    method: "POST",
-    body: { contentType: "audio/webm" },
+  const presign = await request<{ url: string; key: string }>('/api/chat/voice/presign', {
+    method: 'POST',
+    body: { contentType: 'audio/webm' },
   });
   const { url, key } = presign;
 
   // PUT to S3
   await FileSystem.uploadAsync(url, p.fileUri, {
-    httpMethod: "PUT",
-    headers: { "Content-Type": "audio/webm" },
+    httpMethod: 'PUT',
+    headers: { 'Content-Type': 'audio/webm' },
     uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
   });
 
   // register message
   await request(`/api/chat/${matchId}/voice-note`, {
-    method: "POST",
+    method: 'POST',
     body: { key, duration: p.duration, waveform: [] },
   });
 }

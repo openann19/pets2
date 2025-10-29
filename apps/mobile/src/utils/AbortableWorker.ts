@@ -24,7 +24,7 @@ export class AbortableWorker<T> {
   constructor(options: AbortableWorkerOptions = {}) {
     this.concurrency = options.concurrency ?? 2;
     this.timeout = options.timeout ?? 30000;
-  this.aborted = false;
+    this.aborted = false;
   }
 
   /**
@@ -34,7 +34,7 @@ export class AbortableWorker<T> {
    */
   add(task: Task<T>): Promise<T> {
     if (this.aborted) {
-      return Promise.reject(new Error("Worker has been aborted"));
+      return Promise.reject(new Error('Worker has been aborted'));
     }
 
     return new Promise((resolve, reject) => {
@@ -49,7 +49,7 @@ export class AbortableWorker<T> {
   abort(): void {
     this.aborted = true;
     this.queue.forEach(({ reject }) => {
-      reject(new Error("Worker aborted"));
+      reject(new Error('Worker aborted'));
     });
     this.queue = [];
     this.abortController?.abort();
@@ -87,12 +87,14 @@ export class AbortableWorker<T> {
     try {
       // Create timeout promise
       const timeoutPromise = new Promise<T>((_, timeoutReject) => {
-        setTimeout(() => { timeoutReject(new Error("Task timeout")); }, this.timeout);
+        setTimeout(() => {
+          timeoutReject(new Error('Task timeout'));
+        }, this.timeout);
       });
 
       // Race between task and timeout
       const result = await Promise.race([task(), timeoutPromise]);
-      
+
       resolve(result);
     } catch (error) {
       // Ensure error is always an Error instance
@@ -120,13 +122,13 @@ export class AbortableWorker<T> {
  */
 export function createImageWorker<T>(
   tasks: Task<T>[],
-  options: AbortableWorkerOptions = {}
+  options: AbortableWorkerOptions = {},
 ): AbortableWorker<T> {
   const worker = new AbortableWorker<T>(options);
-  
+
   // Add all tasks to queue
   const promises = tasks.map((task) => worker.add(task));
-  
+
   return worker;
 }
 
@@ -136,19 +138,20 @@ export function createImageWorker<T>(
  */
 export async function processWithAbort<T>(
   operation: () => Promise<T>,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<T> {
   if (signal?.aborted) {
-    throw new Error("Operation aborted");
+    throw new Error('Operation aborted');
   }
 
   const result = await Promise.race([
     operation(),
     new Promise<never>((_, reject) => {
-      signal?.addEventListener("abort", () => { reject(new Error("Aborted")); });
+      signal?.addEventListener('abort', () => {
+        reject(new Error('Aborted'));
+      });
     }),
   ]);
 
   return result;
 }
-

@@ -1,11 +1,11 @@
 /**
  * Zod Schemas for API Runtime Validation
- * 
+ *
  * Provides runtime validation for all API requests and responses.
  * These schemas ensure type safety at runtime, not just compile time.
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // ============================================================================
 // Common Schemas
@@ -66,7 +66,7 @@ export const UpdateUserProfileSchema = UserSchema.partial();
 export const PetSchema = z.object({
   _id: z.string(),
   name: z.string(),
-  type: z.enum(["dog", "cat", "other"]),
+  type: z.enum(['dog', 'cat', 'other']),
   breed: z.string().optional(),
   age: z.number().int().positive(),
   photos: z.array(z.string().url()),
@@ -122,11 +122,13 @@ export const MessageSchema = z.object({
 
 export const SendMessageSchema = z.object({
   content: z.string().min(1).max(5000),
-  replyTo: z.object({
-    _id: z.string(),
-    author: z.string().optional(),
-    text: z.string().optional(),
-  }).optional(),
+  replyTo: z
+    .object({
+      _id: z.string(),
+      author: z.string().optional(),
+      text: z.string().optional(),
+    })
+    .optional(),
 });
 
 // ============================================================================
@@ -136,8 +138,8 @@ export const SendMessageSchema = z.object({
 export const GenerateBioRequestSchema = z.object({
   petName: z.string().min(1).max(50),
   keywords: z.array(z.string()).min(1),
-  tone: z.enum(["playful", "professional", "casual", "romantic", "funny"]).optional(),
-  length: z.enum(["short", "medium", "long"]).optional(),
+  tone: z.enum(['playful', 'professional', 'casual', 'romantic', 'funny']).optional(),
+  length: z.enum(['short', 'medium', 'long']).optional(),
   petType: z.string().optional(),
   age: z.number().int().positive().optional(),
   breed: z.string().optional(),
@@ -160,10 +162,14 @@ export const AnalyzePhotosRequestSchema = z.object({
 export const BreedAnalysisSchema = z.object({
   primary_breed: z.string(),
   confidence: z.number().min(0).max(1),
-  secondary_breeds: z.array(z.object({
-    breed: z.string(),
-    confidence: z.number().min(0).max(1),
-  })).optional(),
+  secondary_breeds: z
+    .array(
+      z.object({
+        breed: z.string(),
+        confidence: z.number().min(0).max(1),
+      }),
+    )
+    .optional(),
 });
 
 export const HealthAssessmentSchema = z.object({
@@ -235,7 +241,7 @@ export const DeleteAccountResponseSchema = z.object({
 
 export const AccountStatusResponseSchema = z.object({
   success: z.boolean(),
-  status: z.enum(["not-found", "pending", "processing", "completed"]),
+  status: z.enum(['not-found', 'pending', 'processing', 'completed']),
   scheduledDeletionDate: z.string().datetime().optional(),
   daysRemaining: z.number().int().nonnegative().optional(),
   canCancel: z.boolean().optional(),
@@ -243,7 +249,7 @@ export const AccountStatusResponseSchema = z.object({
 });
 
 export const DataExportRequestSchema = z.object({
-  format: z.enum(["json", "csv"]).optional(),
+  format: z.enum(['json', 'csv']).optional(),
   includeMessages: z.boolean().optional(),
   includeMatches: z.boolean().optional(),
   includeProfileData: z.boolean().optional(),
@@ -255,26 +261,28 @@ export const DataExportResponseSchema = z.object({
   exportId: z.string().optional(),
   estimatedTime: z.string().optional(),
   message: z.string().optional(),
-  exportData: z.object({
-    profile: UserSchema,
-    pets: z.array(PetSchema),
-    matches: z.array(MatchSchema),
-    messages: z.array(MessageSchema),
-    preferences: z.object({
-      ageRange: z.object({
-        min: z.number().int().nonnegative(),
-        max: z.number().int().nonnegative(),
+  exportData: z
+    .object({
+      profile: UserSchema,
+      pets: z.array(PetSchema),
+      matches: z.array(MatchSchema),
+      messages: z.array(MessageSchema),
+      preferences: z.object({
+        ageRange: z.object({
+          min: z.number().int().nonnegative(),
+          max: z.number().int().nonnegative(),
+        }),
+        breedPreferences: z.array(z.string()),
+        distance: z.number().positive(),
+        showMeInDiscover: z.boolean(),
+        notifications: z.object({
+          newMatch: z.boolean(),
+          message: z.boolean(),
+          like: z.boolean(),
+        }),
       }),
-      breedPreferences: z.array(z.string()),
-      distance: z.number().positive(),
-      showMeInDiscover: z.boolean(),
-      notifications: z.object({
-        newMatch: z.boolean(),
-        message: z.boolean(),
-        like: z.boolean(),
-      }),
-    }),
-  }).optional(),
+    })
+    .optional(),
   error: z.string().optional(),
 });
 
@@ -309,26 +317,30 @@ export const CommunityPostSchema = z.object({
   createdAt: z.string().datetime(),
   packId: z.string().optional(),
   packName: z.string().optional(),
-  type: z.enum(["post", "activity"]),
-  activityDetails: z.object({
-    date: z.string().datetime(),
-    location: z.string(),
-    maxAttendees: z.number().int().positive(),
-    currentAttendees: z.number().int().nonnegative(),
-    attending: z.boolean(),
-  }).optional(),
+  type: z.enum(['post', 'activity']),
+  activityDetails: z
+    .object({
+      date: z.string().datetime(),
+      location: z.string(),
+      maxAttendees: z.number().int().positive(),
+      currentAttendees: z.number().int().nonnegative(),
+      attending: z.boolean(),
+    })
+    .optional(),
 });
 
 export const CreatePostRequestSchema = z.object({
   content: z.string().min(1).max(5000),
   images: z.array(z.string().url()).optional(),
   packId: z.string().optional(),
-  type: z.enum(["post", "activity"]).optional(),
-  activityDetails: z.object({
-    date: z.string().datetime(),
-    location: z.string(),
-    maxAttendees: z.number().int().positive(),
-  }).optional(),
+  type: z.enum(['post', 'activity']).optional(),
+  activityDetails: z
+    .object({
+      date: z.string().datetime(),
+      location: z.string(),
+      maxAttendees: z.number().int().positive(),
+    })
+    .optional(),
 });
 
 export const CreateCommentRequestSchema = z.object({
@@ -344,7 +356,7 @@ export const PremiumFeaturesResponseSchema = z.object({
 });
 
 export const SubscribeToPremiumRequestSchema = z.object({
-  plan: z.enum(["basic", "premium", "gold"]),
+  plan: z.enum(['basic', 'premium', 'gold']),
   paymentMethodId: z.string(),
 });
 
@@ -394,10 +406,6 @@ export function parseResponse<T>(
 /**
  * Assert a value matches a schema (throws on error)
  */
-export function assertSchema<T>(
-  schema: z.ZodType<T>,
-  data: unknown,
-): asserts data is T {
+export function assertSchema<T>(schema: z.ZodType<T>, data: unknown): asserts data is T {
   schema.parse(data);
 }
-

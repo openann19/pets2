@@ -113,7 +113,7 @@ describe('ApiClient', () => {
       expect(mockAxios.create).toHaveBeenCalledWith(
         expect.objectContaining({
           timeout: 30000,
-        })
+        }),
       );
     });
 
@@ -148,7 +148,7 @@ describe('ApiClient', () => {
 
       // Create new instance to test initialization
       const newClient = new ApiClient({ baseURL: 'https://api.test.com' });
-      await new Promise(resolve => setTimeout(resolve, 0)); // Allow async initialization
+      await new Promise((resolve) => setTimeout(resolve, 0)); // Allow async initialization
 
       expect(mockAsyncStorage.getItem).toHaveBeenCalledWith('authToken');
     });
@@ -382,7 +382,7 @@ describe('ApiClient', () => {
       // Create new instance to test initial state
       new ApiClient({ baseURL: 'https://api.test.com' });
 
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockUnifiedClientInstance.setOnlineStatus).toHaveBeenCalledWith(false);
     });
@@ -456,7 +456,7 @@ describe('ApiClient', () => {
 
       // Should not crash during initialization
       const newClient = new ApiClient({ baseURL: 'https://api.test.com' });
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(newClient).toBeDefined();
     });
@@ -482,7 +482,7 @@ describe('ApiClient', () => {
         expect.objectContaining({
           baseURL: expect.stringContaining('localhost:3001/api'),
           timeout: 30000,
-        })
+        }),
       );
     });
   });
@@ -536,10 +536,7 @@ describe('ApiClient', () => {
     it('should maintain authentication across concurrent requests', async () => {
       await client.setToken('shared-token');
 
-      const promises = [
-        client.get('/protected1'),
-        client.get('/protected2'),
-      ];
+      const promises = [client.get('/protected1'), client.get('/protected2')];
 
       const requestInterceptor = mockAxiosInstance.interceptors.request.use.mock.calls[0][0];
 
@@ -623,7 +620,7 @@ describe('ApiClient', () => {
       expect(mockAxios.create).toHaveBeenCalledWith(
         expect.objectContaining({
           timeout: 0,
-        })
+        }),
       );
     });
   });

@@ -1,29 +1,29 @@
-import React, { useMemo } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useMemo } from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import { Body, Heading2, EliteButtonPresets } from "@/components";
-import { ShimmerPlaceholder } from "@/components/ShimmerPlaceholder";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import { Body, EliteButtonPresets, Heading2 } from '@mobile/src/components';
+import { ShimmerPlaceholder } from '@mobile/src/components/ShimmerPlaceholder';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: theme.spacing["4xl"],
+      padding: theme.spacing['4xl'],
       backgroundColor: theme.colors.layer1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       gap: theme.spacing.lg,
     },
     skeletonImage: {
-      width: "100%",
+      width: '100%',
       height: 320,
-      borderRadius: theme.radii["3xl"],
+      borderRadius: theme.radii['3xl'],
     },
     skeletonRow: {
-      flexDirection: "row",
-      width: "100%",
+      flexDirection: 'row',
+      width: '100%',
       gap: theme.spacing.md,
     },
     skeletonBlock: {
@@ -32,12 +32,12 @@ const createStyles = (theme: AppTheme) =>
       borderRadius: theme.radii.xl,
     },
     textBlock: {
-      width: "100%",
+      width: '100%',
       height: 20,
       borderRadius: theme.radii.lg,
     },
     actions: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: theme.spacing.md,
       marginTop: theme.spacing.xl,
     },
@@ -46,7 +46,7 @@ const createStyles = (theme: AppTheme) =>
 export const PetDetailsSkeleton: React.FC = () => {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const imageRadius = theme.radii["3xl"];
+  const imageRadius = theme.radii['3xl'];
 
   return (
     <View style={styles.container}>
@@ -55,8 +55,11 @@ export const PetDetailsSkeleton: React.FC = () => {
         borderRadius={imageRadius}
         height={320}
       />
-      <ShimmerPlaceholder style={styles.textBlock} height={28} />
-      <ShimmerPlaceholder style={[styles.textBlock, { width: "60%" }]} />
+      <ShimmerPlaceholder
+        style={styles.textBlock}
+        height={28}
+      />
+      <ShimmerPlaceholder style={[styles.textBlock, { width: '60%' }]} />
       <View style={styles.skeletonRow}>
         <ShimmerPlaceholder style={styles.skeletonBlock} />
         <ShimmerPlaceholder style={styles.skeletonBlock} />
@@ -79,7 +82,11 @@ export const PetDetailsErrorState: React.FC<ErrorStateProps> = ({ error, onRetry
     <View style={styles.container}>
       <Heading2 accessibilityRole="header">Unable to load pet</Heading2>
       <Body accessibilityRole="text">{error}</Body>
-      <EliteButtonPresets.premium title="Retry" leftIcon="refresh" onPress={onRetry} />
+      <EliteButtonPresets.premium
+        title="Retry"
+        leftIcon="refresh"
+        onPress={onRetry}
+      />
     </View>
   );
 };
@@ -106,5 +113,3 @@ export const PetDetailsEmptyState: React.FC<EmptyStateProps> = ({ onDismiss }) =
     </View>
   );
 };
-
-

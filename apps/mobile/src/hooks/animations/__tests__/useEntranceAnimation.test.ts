@@ -1,6 +1,6 @@
 /**
  * Tests for useEntranceAnimation hook
- * 
+ *
  * Covers:
  * - Different entrance animation types (fadeIn, slideIn, scaleIn, bounceIn)
  * - Delay handling
@@ -53,4 +53,3 @@ describe('useEntranceAnimation', () => {
     expect(result.current.entranceStyle).toBe(result.current.animatedStyle);
   });
 });
-

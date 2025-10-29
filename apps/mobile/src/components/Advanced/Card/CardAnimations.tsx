@@ -3,33 +3,33 @@
  * Extracts animation logic from AdvancedCard
  */
 
-import { useRef, useState, useCallback, useMemo } from "react";
-import { Animated } from "react-native";
-import * as Haptics from "expo-haptics";
-import { logger } from "@pawfectmatch/core";
+import { useRef, useState, useCallback, useMemo } from 'react';
+import { Animated } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { logger } from '@pawfectmatch/core';
 
 export type CardInteraction =
-  | "hover"
-  | "press"
-  | "longPress"
-  | "swipe"
-  | "tilt"
-  | "glow"
-  | "bounce"
-  | "elastic";
+  | 'hover'
+  | 'press'
+  | 'longPress'
+  | 'swipe'
+  | 'tilt'
+  | 'glow'
+  | 'bounce'
+  | 'elastic';
 
 export type CardInteractionType = CardInteraction;
 
 interface UseCardAnimationsProps {
   interactions?: CardInteraction[];
-  haptic?: "light" | "medium" | "heavy";
+  haptic?: 'light' | 'medium' | 'heavy';
   disabled?: boolean;
   loading?: boolean;
 }
 
 export function useCardAnimations({
-  interactions = ["hover", "press"],
-  haptic = "light",
+  interactions = ['hover', 'press'],
+  haptic = 'light',
   disabled = false,
   loading = false,
 }: UseCardAnimationsProps) {
@@ -50,19 +50,19 @@ export function useCardAnimations({
 
   // Haptic Feedback
   const triggerHaptic = useCallback(
-    async (type: "light" | "medium" | "heavy" = haptic) => {
+    async (type: 'light' | 'medium' | 'heavy' = haptic) => {
       if (disabled) return;
 
       try {
         await Haptics.impactAsync(
-          type === "light"
+          type === 'light'
             ? Haptics.ImpactFeedbackStyle.Light
-            : type === "medium"
+            : type === 'medium'
               ? Haptics.ImpactFeedbackStyle.Medium
               : Haptics.ImpactFeedbackStyle.Heavy,
         );
       } catch (error) {
-        logger.debug("Haptic feedback not available");
+        logger.debug('Haptic feedback not available');
       }
     },
     [disabled, haptic],
@@ -77,7 +77,7 @@ export function useCardAnimations({
 
       const animations: Animated.CompositeAnimation[] = [];
 
-      if (interactions.includes("press")) {
+      if (interactions.includes('press')) {
         animations.push(
           Animated.spring(scale, {
             toValue: pressed ? 0.98 : 1,
@@ -88,7 +88,7 @@ export function useCardAnimations({
         );
       }
 
-      if (interactions.includes("glow")) {
+      if (interactions.includes('glow')) {
         animations.push(
           Animated.timing(glow, {
             toValue: pressed ? 1 : 0,
@@ -98,7 +98,7 @@ export function useCardAnimations({
         );
       }
 
-      if (interactions.includes("bounce")) {
+      if (interactions.includes('bounce')) {
         animations.push(
           Animated.spring(elevation, {
             toValue: pressed ? 12 : 4,
@@ -114,19 +114,10 @@ export function useCardAnimations({
       }
 
       if (pressed) {
-        triggerHaptic("light");
+        triggerHaptic('light');
       }
     },
-    [
-      disabled,
-      loading,
-      isLoading,
-      interactions,
-      scale,
-      glow,
-      elevation,
-      triggerHaptic,
-    ],
+    [disabled, loading, isLoading, interactions, scale, glow, elevation, triggerHaptic],
   );
 
   // Hover Animation
@@ -138,7 +129,7 @@ export function useCardAnimations({
 
       const animations: Animated.CompositeAnimation[] = [];
 
-      if (interactions.includes("hover")) {
+      if (interactions.includes('hover')) {
         animations.push(
           Animated.spring(scale, {
             toValue: hovered ? 1.02 : 1,
@@ -149,7 +140,7 @@ export function useCardAnimations({
         );
       }
 
-      if (interactions.includes("glow")) {
+      if (interactions.includes('glow')) {
         animations.push(
           Animated.timing(glow, {
             toValue: hovered ? 0.5 : 0,

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -7,9 +7,9 @@ import {
   withTiming,
   interpolate,
   Extrapolate,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
-import { prefersReducedMotion } from "./configs/accessibility";
+import { prefersReducedMotion } from './configs/accessibility';
 
 /**
  * Hook for glow animations
@@ -20,7 +20,7 @@ interface UseGlowAnimationReturn {
 }
 
 export function useGlowAnimation(
-  color: string = "#ec4899",
+  color: string = '#ec4899',
   intensity: number = 1,
   duration: number = 2000,
 ): UseGlowAnimationReturn {
@@ -47,24 +47,9 @@ export function useGlowAnimation(
   const animatedStyle = useAnimatedStyle(() => ({
     shadowColor: color,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: interpolate(
-      glowIntensity.value,
-      [0, 1],
-      [0.1, 0.8],
-      Extrapolate.CLAMP,
-    ),
-    shadowRadius: interpolate(
-      glowIntensity.value,
-      [0, 1],
-      [4, 16],
-      Extrapolate.CLAMP,
-    ),
-    elevation: interpolate(
-      glowIntensity.value,
-      [0, 1],
-      [2, 12],
-      Extrapolate.CLAMP,
-    ),
+    shadowOpacity: interpolate(glowIntensity.value, [0, 1], [0.1, 0.8], Extrapolate.CLAMP),
+    shadowRadius: interpolate(glowIntensity.value, [0, 1], [4, 16], Extrapolate.CLAMP),
+    elevation: interpolate(glowIntensity.value, [0, 1], [2, 12], Extrapolate.CLAMP),
   }));
 
   return {

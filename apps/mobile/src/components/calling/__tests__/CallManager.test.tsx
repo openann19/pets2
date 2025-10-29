@@ -1,16 +1,16 @@
-import { act, fireEvent, render } from "@testing-library/react-native";
-import React from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { act, fireEvent, render } from '@testing-library/react-native';
+import React from 'react';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 
-import { useSocket } from "../../../hooks/useSocket";
-import WebRTCService from "../../../services/WebRTCService";
-import CallManager, { useCallManager } from "../CallManager";
+import { useSocket } from '../../../hooks/useSocket';
+import WebRTCService from '../../../services/WebRTCService';
+import CallManager, { useCallManager } from '../CallManager';
 
 // Mock dependencies
-jest.mock("../../../services/WebRTCService");
-jest.mock("../../../hooks/useSocket");
+jest.mock('../../../services/WebRTCService');
+jest.mock('../../../hooks/useSocket');
 // React Native is already mocked in jest.setup.ts
-jest.mock("react-native", () => ({
+jest.mock('react-native', () => ({
   Alert: {
     alert: jest.fn(),
   },
@@ -28,7 +28,7 @@ const mockSocket = {
 const mockWebRTCService = WebRTCService as jest.Mocked<typeof WebRTCService>;
 const mockUseSocket = useSocket as jest.MockedFunction<typeof useSocket>;
 
-describe("CallManager", () => {
+describe('CallManager', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseSocket.mockReturnValue(mockSocket as any);
@@ -45,7 +45,7 @@ describe("CallManager", () => {
     mockWebRTCService.initialize = jest.fn();
   });
 
-  it("should render children correctly", () => {
+  it('should render children correctly', () => {
     const TestChild = () => <Text testID="test-child">Test Child</Text>;
 
     const { getByTestId } = render(
@@ -54,10 +54,10 @@ describe("CallManager", () => {
       </CallManager>,
     );
 
-    expect(getByTestId("test-child")).toBeTruthy();
+    expect(getByTestId('test-child')).toBeTruthy();
   });
 
-  it("should initialize WebRTC service with socket", () => {
+  it('should initialize WebRTC service with socket', () => {
     render(
       <CallManager>
         <div>Test</div>
@@ -67,30 +67,24 @@ describe("CallManager", () => {
     expect(mockWebRTCService.initialize).toHaveBeenCalledWith(mockSocket);
   });
 
-  it("should set up event listeners for call state changes", () => {
+  it('should set up event listeners for call state changes', () => {
     render(
       <CallManager>
         <div>Test</div>
       </CallManager>,
     );
 
-    expect(mockWebRTCService.on).toHaveBeenCalledWith(
-      "callStateChanged",
-      expect.any(Function),
-    );
-    expect(mockWebRTCService.on).toHaveBeenCalledWith(
-      "callError",
-      expect.any(Function),
-    );
+    expect(mockWebRTCService.on).toHaveBeenCalledWith('callStateChanged', expect.any(Function));
+    expect(mockWebRTCService.on).toHaveBeenCalledWith('callError', expect.any(Function));
   });
 
-  it("should show incoming call modal when receiving incoming call", async () => {
+  it('should show incoming call modal when receiving incoming call', async () => {
     const mockCallData = {
-      callId: "test-call-id",
-      matchId: "test-match-id",
-      callerId: "test-caller-id",
-      callerName: "Test Caller",
-      callType: "voice" as const,
+      callId: 'test-call-id',
+      matchId: 'test-match-id',
+      callerId: 'test-caller-id',
+      callerName: 'Test Caller',
+      callType: 'voice' as const,
       timestamp: Date.now(),
     };
 
@@ -112,7 +106,7 @@ describe("CallManager", () => {
 
     // Simulate call state change
     const callStateHandler = mockWebRTCService.on.mock.calls.find(
-      (call) => call[0] === "callStateChanged",
+      (call) => call[0] === 'callStateChanged',
     )?.[1];
 
     if (callStateHandler) {
@@ -133,8 +127,8 @@ describe("CallManager", () => {
     expect(mockWebRTCService.on).toHaveBeenCalled();
   });
 
-  it("should handle call errors correctly", async () => {
-    const mockError = new Error("Test call error");
+  it('should handle call errors correctly', async () => {
+    const mockError = new Error('Test call error');
 
     render(
       <CallManager>
@@ -143,7 +137,7 @@ describe("CallManager", () => {
     );
 
     const errorHandler = mockWebRTCService.on.mock.calls.find(
-      (call) => call[0] === "callError",
+      (call) => call[0] === 'callError',
     )?.[1];
 
     if (errorHandler) {
@@ -153,13 +147,13 @@ describe("CallManager", () => {
     }
 
     expect(Alert.alert).toHaveBeenCalledWith(
-      "Call Error",
-      "There was an issue with the call. Please try again.",
-      [{ text: "OK" }],
+      'Call Error',
+      'There was an issue with the call. Please try again.',
+      [{ text: 'OK' }],
     );
   });
 
-  it("should clean up event listeners on unmount", () => {
+  it('should clean up event listeners on unmount', () => {
     const { unmount } = render(
       <CallManager>
         <div>Test</div>
@@ -168,18 +162,12 @@ describe("CallManager", () => {
 
     unmount();
 
-    expect(mockWebRTCService.off).toHaveBeenCalledWith(
-      "callStateChanged",
-      expect.any(Function),
-    );
-    expect(mockWebRTCService.off).toHaveBeenCalledWith(
-      "callError",
-      expect.any(Function),
-    );
+    expect(mockWebRTCService.off).toHaveBeenCalledWith('callStateChanged', expect.any(Function));
+    expect(mockWebRTCService.off).toHaveBeenCalledWith('callError', expect.any(Function));
   });
 });
 
-describe("useCallManager hook", () => {
+describe('useCallManager hook', () => {
   const TestComponent = () => {
     const { startCall, endCall, isCallActive, getCallState } = useCallManager();
 
@@ -187,22 +175,23 @@ describe("useCallManager hook", () => {
       <View>
         <TouchableOpacity
           testID="start-voice-call"
-          onPress={() => startCall("test-match", "voice")}
+          onPress={() => startCall('test-match', 'voice')}
         >
           <Text>Start Voice Call</Text>
         </TouchableOpacity>
         <TouchableOpacity
           testID="start-video-call"
-          onPress={() => startCall("test-match", "video")}
+          onPress={() => startCall('test-match', 'video')}
         >
           <Text>Start Video Call</Text>
         </TouchableOpacity>
-        <TouchableOpacity testID="end-call" onPress={endCall}>
+        <TouchableOpacity
+          testID="end-call"
+          onPress={endCall}
+        >
           <Text>End Call</Text>
         </TouchableOpacity>
-        <Text testID="call-active">
-          {isCallActive() ? "Active" : "Inactive"}
-        </Text>
+        <Text testID="call-active">{isCallActive() ? 'Active' : 'Inactive'}</Text>
       </View>
     );
   };
@@ -215,64 +204,58 @@ describe("useCallManager hook", () => {
     mockWebRTCService.getCallState = jest.fn();
   });
 
-  it("should start voice call successfully", async () => {
+  it('should start voice call successfully', async () => {
     mockWebRTCService.startCall.mockResolvedValue(true);
 
     const { getByTestId } = render(<TestComponent />);
 
     await act(async () => {
-      fireEvent.press(getByTestId("start-voice-call"));
+      fireEvent.press(getByTestId('start-voice-call'));
     });
 
-    expect(mockWebRTCService.startCall).toHaveBeenCalledWith(
-      "test-match",
-      "voice",
-    );
+    expect(mockWebRTCService.startCall).toHaveBeenCalledWith('test-match', 'voice');
   });
 
-  it("should start video call successfully", async () => {
+  it('should start video call successfully', async () => {
     mockWebRTCService.startCall.mockResolvedValue(true);
 
     const { getByTestId } = render(<TestComponent />);
 
     await act(async () => {
-      fireEvent.press(getByTestId("start-video-call"));
+      fireEvent.press(getByTestId('start-video-call'));
     });
 
-    expect(mockWebRTCService.startCall).toHaveBeenCalledWith(
-      "test-match",
-      "video",
-    );
+    expect(mockWebRTCService.startCall).toHaveBeenCalledWith('test-match', 'video');
   });
 
-  it("should handle call start failure", async () => {
+  it('should handle call start failure', async () => {
     mockWebRTCService.startCall.mockResolvedValue(false);
 
     const { getByTestId } = render(<TestComponent />);
 
     await act(async () => {
-      fireEvent.press(getByTestId("start-voice-call"));
+      fireEvent.press(getByTestId('start-voice-call'));
     });
 
     expect(Alert.alert).toHaveBeenCalledWith(
-      "Error",
-      "Failed to start call. Please check your permissions and try again.",
+      'Error',
+      'Failed to start call. Please check your permissions and try again.',
     );
   });
 
-  it("should end call", () => {
+  it('should end call', () => {
     const { getByTestId } = render(<TestComponent />);
 
-    fireEvent.press(getByTestId("end-call"));
+    fireEvent.press(getByTestId('end-call'));
 
     expect(mockWebRTCService.endCall).toHaveBeenCalled();
   });
 
-  it("should check if call is active", () => {
+  it('should check if call is active', () => {
     mockWebRTCService.isCallActive.mockReturnValue(true);
 
     const { getByTestId } = render(<TestComponent />);
 
-    expect(getByTestId("call-active")).toHaveTextContent("Active");
+    expect(getByTestId('call-active')).toHaveTextContent('Active');
   });
 });

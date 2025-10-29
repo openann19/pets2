@@ -1,6 +1,6 @@
-import React from "react";
-import { InteractionManager, Platform } from "react-native";
-import { logger } from "@pawfectmatch/core";
+import React from 'react';
+import { InteractionManager, Platform } from 'react-native';
+import { logger } from '@pawfectmatch/core';
 
 // Declare global __DEV__ variable
 declare const __DEV__: boolean;
@@ -80,7 +80,7 @@ class PerformanceMonitor {
 
           // Log low FPS warnings
           if (this.currentFPS < 30) {
-            logger.warn("Low FPS detected", { fps: this.currentFPS });
+            logger.warn('Low FPS detected', { fps: this.currentFPS });
           }
 
           this.recordMetrics();
@@ -124,7 +124,7 @@ class PerformanceMonitor {
 
     const interaction = this.interactions.get(name);
     if (interaction === undefined) {
-      logger.warn("Interaction was not started", { interactionName: name });
+      logger.warn('Interaction was not started', { interactionName: name });
       return null;
     }
 
@@ -136,7 +136,7 @@ class PerformanceMonitor {
 
     // Log slow interactions
     if (duration > 100) {
-      logger.warn("Slow interaction detected", {
+      logger.warn('Slow interaction detected', {
         interactionName: name,
         duration,
       });
@@ -149,10 +149,7 @@ class PerformanceMonitor {
   /**
    * Measure interaction with automatic timing
    */
-  public async measureInteraction<T>(
-    name: string,
-    fn: () => Promise<T> | T,
-  ): Promise<T> {
+  public async measureInteraction<T>(name: string, fn: () => Promise<T> | T): Promise<T> {
     if (!this.isEnabled) {
       return await fn();
     }
@@ -173,7 +170,7 @@ class PerformanceMonitor {
   private getMemoryUsage(): number {
     // Note: React Native doesn't provide direct memory access
     // This is a placeholder for native module implementation
-    if (Platform.OS === "ios") {
+    if (Platform.OS === 'ios') {
       // On iOS, you could use a native module to get memory info
       return 0;
     } else {
@@ -214,8 +211,7 @@ class PerformanceMonitor {
     if (recentInteractions.length === 0) return 0;
 
     const totalTime = recentInteractions.reduce(
-      (sum, interaction) =>
-        sum + (interaction.duration !== undefined ? interaction.duration : 0),
+      (sum, interaction) => sum + (interaction.duration !== undefined ? interaction.duration : 0),
       0,
     );
 
@@ -262,7 +258,7 @@ class PerformanceMonitor {
     if (!this.isEnabled) return;
 
     const summary = this.getPerformanceSummary();
-    logger.warn("Performance Summary", summary);
+    logger.warn('Performance Summary', summary);
   }
 
   /**
@@ -299,8 +295,7 @@ export const usePerformanceMonitor = () => {
   const measureInteraction = <T>(name: string, fn: () => Promise<T> | T) =>
     performanceMonitor.measureInteraction(name, fn);
   const getCurrentFPS = () => performanceMonitor.getCurrentFPS();
-  const getPerformanceSummary = () =>
-    performanceMonitor.getPerformanceSummary();
+  const getPerformanceSummary = () => performanceMonitor.getPerformanceSummary();
 
   return {
     startInteraction,
@@ -315,11 +310,7 @@ export const usePerformanceMonitor = () => {
  * Performance monitoring decorator for class methods
  */
 export const withPerformanceMonitoring = (_name: string) => {
-  return (
-    target: Record<string, unknown>,
-    propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ) => {
+  return (target: Record<string, unknown>, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value as (...args: unknown[]) => unknown;
 
     descriptor.value = async function (...args: unknown[]): Promise<unknown> {
@@ -354,7 +345,7 @@ export const withComponentPerformanceMonitoring = <P extends object>(
     return React.createElement(Component, props);
   };
 
-  WrappedComponent.displayName = `withPerformanceMonitoring(${Component.displayName !== undefined && Component.displayName !== "" ? Component.displayName : Component.name})`;
+  WrappedComponent.displayName = `withPerformanceMonitoring(${Component.displayName !== undefined && Component.displayName !== '' ? Component.displayName : Component.name})`;
 
   return WrappedComponent;
 };

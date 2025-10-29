@@ -3,78 +3,75 @@
  * Comprehensive testing following Rule 09 (Testing Quality Gates)
  */
 
-import React from "react";
-import { render, fireEvent, screen } from "@testing-library/react-native";
-import { AccessibilityInfo } from "react-native";
-import { toHaveNoViolations, axe } from "jest-axe";
+import React from 'react';
+import { render, fireEvent, screen } from '@testing-library/react-native';
+import { AccessibilityInfo } from 'react-native';
+import { toHaveNoViolations, axe } from 'jest-axe';
 
 // Extend Jest matchers for accessibility
 expect.extend(toHaveNoViolations);
 
 // Mock AccessibilityInfo
-jest.mock(
-  "react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo",
-  () => ({
-    isScreenReaderEnabled: jest.fn(() => Promise.resolve(true)),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    setAccessibilityFocus: jest.fn(),
-    announceForAccessibility: jest.fn(),
-  }),
-);
+jest.mock('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo', () => ({
+  isScreenReaderEnabled: jest.fn(() => Promise.resolve(true)),
+  addEventListener: jest.fn(),
+  removeEventListener: jest.fn(),
+  setAccessibilityFocus: jest.fn(),
+  announceForAccessibility: jest.fn(),
+}));
 
 // Mock Haptics for testing
-jest.mock("expo-haptics", () => ({
+jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(() => Promise.resolve()),
   ImpactFeedbackStyle: {
-    Light: "light",
-    Medium: "medium",
-    Heavy: "heavy",
+    Light: 'light',
+    Medium: 'medium',
+    Heavy: 'heavy',
   },
 }));
 
 // Mock theme context
-jest.mock("../../theme/Provider", () => ({
+jest.mock('../../theme/Provider', () => ({
   useTheme: () => ({
     isDark: false,
     colors: {
-      primary: "#007AFF",
-      surface: "Theme.colors.neutral[0]",
-      surfaceElevated: "#F8F9FA",
-      text: "Theme.colors.neutral[950]",
-      textSecondary: "#666666",
-      border: "#E5E5E5",
-      shadow: "Theme.colors.neutral[950]",
+      primary: '#007AFF',
+      surface: 'Theme.colors.neutral[0]',
+      surfaceElevated: '#F8F9FA',
+      text: 'Theme.colors.neutral[950]',
+      textSecondary: '#666666',
+      border: '#E5E5E5',
+      shadow: 'Theme.colors.neutral[950]',
     },
   }),
 }));
 
 // Mock global styles
-jest.mock("../../animation", () => ({
+jest.mock('../../animation', () => ({
   Colors: {
-    primary: "#007AFF",
-    surface: "Theme.colors.neutral[0]",
-    surfaceElevated: "#F8F9FA",
-    text: "Theme.colors.neutral[950]",
-    textSecondary: "#666666",
-    border: "#E5E5E5",
-    borderLight: "#F0F0F0",
-    shadow: "Theme.colors.neutral[950]",
+    primary: '#007AFF',
+    surface: 'Theme.colors.neutral[0]',
+    surfaceElevated: '#F8F9FA',
+    text: 'Theme.colors.neutral[950]',
+    textSecondary: '#666666',
+    border: '#E5E5E5',
+    borderLight: '#F0F0F0',
+    shadow: 'Theme.colors.neutral[950]',
   },
   Spacing: {
-    xs: 4,
-    sm: 8,
-    md: 16,
-    lg: 24,
-    xl: 32,
-    "2xl": 48,
+    'xs': 4,
+    'sm': 8,
+    'md': 16,
+    'lg': 24,
+    'xl': 32,
+    '2xl': 48,
   },
   BorderRadius: {
-    sm: 4,
-    md: 8,
-    lg: 12,
-    xl: 16,
-    "2xl": 24,
+    'sm': 4,
+    'md': 8,
+    'lg': 12,
+    'xl': 16,
+    '2xl': 24,
   },
   AnimationConfigs: {
     spring: { damping: 15, stiffness: 300, mass: 1 },
@@ -82,7 +79,7 @@ jest.mock("../../animation", () => ({
   },
   PREMIUM_SHADOWS: {
     medium: {
-      shadowColor: "Theme.colors.neutral[950]",
+      shadowColor: 'Theme.colors.neutral[950]',
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
       shadowRadius: 8,
@@ -91,15 +88,15 @@ jest.mock("../../animation", () => ({
   },
 }));
 
-import { PhoenixCard } from "../phoenix/PhoenixCard";
+import { PhoenixCard } from '../phoenix/PhoenixCard';
 
-describe("PhoenixCard Component", () => {
+describe('PhoenixCard Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("TypeScript Standards (Rule 07)", () => {
-    it("should accept all required props with proper typing", () => {
+  describe('TypeScript Standards (Rule 07)', () => {
+    it('should accept all required props with proper typing', () => {
       const onPressMock = jest.fn();
 
       render(
@@ -118,22 +115,27 @@ describe("PhoenixCard Component", () => {
         </PhoenixCard>,
       );
 
-      expect(screen.getByTestId("test-card")).toBeTruthy();
+      expect(screen.getByTestId('test-card')).toBeTruthy();
     });
 
-    it("should have no implicit any types", () => {
+    it('should have no implicit any types', () => {
       // This test ensures TypeScript strict mode compliance
       // If there were any implicit any types, this would fail at compile time
       const onPressMock = jest.fn();
 
       expect(() => {
-        render(<PhoenixCard title="Test" onPress={onPressMock} />);
+        render(
+          <PhoenixCard
+            title="Test"
+            onPress={onPressMock}
+          />,
+        );
       }).not.toThrow();
     });
   });
 
-  describe("Accessibility Compliance (Rule 05 - WCAG AA+)", () => {
-    it("should have proper accessibility attributes for interactive cards", () => {
+  describe('Accessibility Compliance (Rule 05 - WCAG AA+)', () => {
+    it('should have proper accessibility attributes for interactive cards', () => {
       const onPressMock = jest.fn();
 
       render(
@@ -146,21 +148,26 @@ describe("PhoenixCard Component", () => {
         />,
       );
 
-      const card = screen.getByLabelText("Custom label");
+      const card = screen.getByLabelText('Custom label');
       expect(card).toBeTruthy();
-      expect(card).toHaveAccessibilityHint("Custom hint");
-      expect(card).toHaveAccessibilityRole("button");
+      expect(card).toHaveAccessibilityHint('Custom hint');
+      expect(card).toHaveAccessibilityRole('button');
     });
 
-    it("should have proper accessibility attributes for non-interactive cards", () => {
-      render(<PhoenixCard title="Non-interactive Card" interactive={false} />);
+    it('should have proper accessibility attributes for non-interactive cards', () => {
+      render(
+        <PhoenixCard
+          title="Non-interactive Card"
+          interactive={false}
+        />,
+      );
 
-      const card = screen.getByLabelText("Non-interactive Card");
+      const card = screen.getByLabelText('Non-interactive Card');
       expect(card).toBeTruthy();
-      expect(card).toHaveAccessibilityRole("none");
+      expect(card).toHaveAccessibilityRole('none');
     });
 
-    it("should pass axe accessibility audit", async () => {
+    it('should pass axe accessibility audit', async () => {
       const onPressMock = jest.fn();
 
       const { container } = render(
@@ -177,13 +184,13 @@ describe("PhoenixCard Component", () => {
 
       // Note: In a real implementation, this would use axe to test accessibility
       // For now, we test that the component renders without accessibility violations
-      const card = screen.getByLabelText("Accessible card");
+      const card = screen.getByLabelText('Accessible card');
       expect(card).toBeTruthy();
     });
   });
 
-  describe("Motion Implementation (Rule 04)", () => {
-    it("should have proper spring animations on press", () => {
+  describe('Motion Implementation (Rule 04)', () => {
+    it('should have proper spring animations on press', () => {
       const onPressMock = jest.fn();
 
       render(
@@ -195,17 +202,17 @@ describe("PhoenixCard Component", () => {
         />,
       );
 
-      const card = screen.getByLabelText("Animated Card");
+      const card = screen.getByLabelText('Animated Card');
 
       // Test press interactions
-      fireEvent(card, "pressIn");
-      fireEvent(card, "pressOut");
+      fireEvent(card, 'pressIn');
+      fireEvent(card, 'pressOut');
       fireEvent.press(card);
 
       expect(onPressMock).toHaveBeenCalledTimes(1);
     });
 
-    it("should respect animation timing within 120-320ms range", () => {
+    it('should respect animation timing within 120-320ms range', () => {
       // This test would verify animation timing in a real implementation
       // For now, we test that animations are configured
       const onPressMock = jest.fn();
@@ -218,46 +225,57 @@ describe("PhoenixCard Component", () => {
         />,
       );
 
-      const card = screen.getByLabelText("Timing Test");
+      const card = screen.getByLabelText('Timing Test');
       expect(card).toBeTruthy();
     });
   });
 
-  describe("Design System Integration (Rule 02)", () => {
-    it("should support all variant types", () => {
-      const variants = ["elevated", "glass", "neon", "minimal"] as const;
+  describe('Design System Integration (Rule 02)', () => {
+    it('should support all variant types', () => {
+      const variants = ['elevated', 'glass', 'neon', 'minimal'] as const;
 
       variants.forEach((variant) => {
         const { rerender } = render(
-          <PhoenixCard title={`${variant} Card`} variant={variant} />,
+          <PhoenixCard
+            title={`${variant} Card`}
+            variant={variant}
+          />,
         );
 
         expect(screen.getByLabelText(`${variant} Card`)).toBeTruthy();
       });
     });
 
-    it("should support all size variants", () => {
-      const sizes = ["sm", "md", "lg", "xl"] as const;
+    it('should support all size variants', () => {
+      const sizes = ['sm', 'md', 'lg', 'xl'] as const;
 
       sizes.forEach((size) => {
         const { rerender } = render(
-          <PhoenixCard title={`${size} Card`} size={size} />,
+          <PhoenixCard
+            title={`${size} Card`}
+            size={size}
+          />,
         );
 
         expect(screen.getByLabelText(`${size} Card`)).toBeTruthy();
       });
     });
 
-    it("should use theme colors correctly", () => {
-      render(<PhoenixCard title="Themed Card" variant="elevated" />);
+    it('should use theme colors correctly', () => {
+      render(
+        <PhoenixCard
+          title="Themed Card"
+          variant="elevated"
+        />,
+      );
 
-      const card = screen.getByLabelText("Themed Card");
+      const card = screen.getByLabelText('Themed Card');
       expect(card).toBeTruthy();
     });
   });
 
-  describe("Performance Compliance (Rule 06)", () => {
-    it("should not cause unnecessary re-renders", () => {
+  describe('Performance Compliance (Rule 06)', () => {
+    it('should not cause unnecessary re-renders', () => {
       const onPressMock = jest.fn();
 
       const { rerender } = render(
@@ -277,10 +295,10 @@ describe("PhoenixCard Component", () => {
         />,
       );
 
-      expect(screen.getByLabelText("Performance Test")).toBeTruthy();
+      expect(screen.getByLabelText('Performance Test')).toBeTruthy();
     });
 
-    it("should handle disabled state correctly", () => {
+    it('should handle disabled state correctly', () => {
       const onPressMock = jest.fn();
 
       render(
@@ -292,31 +310,36 @@ describe("PhoenixCard Component", () => {
         />,
       );
 
-      const card = screen.getByLabelText("Disabled Card");
+      const card = screen.getByLabelText('Disabled Card');
       expect(card).toHaveAccessibilityState({ disabled: true });
     });
   });
 
-  describe("Component API Compliance", () => {
-    it("should render title and subtitle correctly", () => {
-      render(<PhoenixCard title="Test Title" subtitle="Test Subtitle" />);
+  describe('Component API Compliance', () => {
+    it('should render title and subtitle correctly', () => {
+      render(
+        <PhoenixCard
+          title="Test Title"
+          subtitle="Test Subtitle"
+        />,
+      );
 
-      expect(screen.getByText("Test Title")).toBeTruthy();
-      expect(screen.getByText("Test Subtitle")).toBeTruthy();
+      expect(screen.getByText('Test Title')).toBeTruthy();
+      expect(screen.getByText('Test Subtitle')).toBeTruthy();
     });
 
-    it("should render children content", () => {
+    it('should render children content', () => {
       render(
         <PhoenixCard title="Card with Children">
           <div>Child content</div>
         </PhoenixCard>,
       );
 
-      const card = screen.getByLabelText("Card with Children");
+      const card = screen.getByLabelText('Card with Children');
       expect(card).toBeTruthy();
     });
 
-    it("should handle onPress events correctly", () => {
+    it('should handle onPress events correctly', () => {
       const onPressMock = jest.fn();
 
       render(
@@ -327,25 +350,32 @@ describe("PhoenixCard Component", () => {
         />,
       );
 
-      const card = screen.getByLabelText("Pressable Card");
+      const card = screen.getByLabelText('Pressable Card');
       fireEvent.press(card);
 
       expect(onPressMock).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe("Error Handling & Resilience", () => {
-    it("should handle missing props gracefully", () => {
-      render(<PhoenixCard pet={undefined as any} onSwipeLeft={() => {}} onSwipeRight={() => {}} onSwipeUp={() => {}} />);
+  describe('Error Handling & Resilience', () => {
+    it('should handle missing props gracefully', () => {
+      render(
+        <PhoenixCard
+          pet={undefined as any}
+          onSwipeLeft={() => {}}
+          onSwipeRight={() => {}}
+          onSwipeUp={() => {}}
+        />,
+      );
 
       // Should still render without crashing
-      expect(screen.getByLabelText("Card")).toBeTruthy();
+      expect(screen.getByLabelText('Card')).toBeTruthy();
     });
 
-    it("should handle empty content gracefully", () => {
+    it('should handle empty content gracefully', () => {
       render(<PhoenixCard title="" />);
 
-      const card = screen.getByLabelText("Card");
+      const card = screen.getByLabelText('Card');
       expect(card).toBeTruthy();
     });
   });

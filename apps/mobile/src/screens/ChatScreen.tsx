@@ -1,26 +1,17 @@
-import React from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 
-import { ScreenShell } from "../ui/layout/ScreenShell";
-import {
-  AdvancedHeader,
-  HeaderConfigs,
-} from "../components/Advanced/AdvancedHeader";
-import { MessageList } from "../components/chat/MessageList";
-import { MessageInput } from "../components/chat/MessageInput";
-import { QuickReplies } from "../components/chat/QuickReplies";
-import ReactionBarMagnetic from "../components/chat/ReactionBarMagnetic";
-import { useChatScreen } from "../hooks/screens/useChatScreen";
-import { useTheme } from "@/theme";
-import type { RootStackScreenProps } from "../navigation/types";
+import { useTheme } from '@mobile/src/theme';
 import { useTranslation } from 'react-i18next';
+import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
+import { MessageInput } from '../components/chat/MessageInput';
+import { MessageList } from '../components/chat/MessageList';
+import { QuickReplies } from '../components/chat/QuickReplies';
+import ReactionBarMagnetic from '../components/chat/ReactionBarMagnetic';
+import { useChatScreen } from '../hooks/screens/useChatScreen';
+import type { RootStackScreenProps } from '../navigation/types';
+import { ScreenShell } from '../ui/layout/ScreenShell';
 
-type ChatScreenProps = RootStackScreenProps<"Chat">;
+type ChatScreenProps = RootStackScreenProps<'Chat'>;
 
 export default function ChatScreen({ navigation, route }: ChatScreenProps) {
   const { matchId, petName } = route.params;
@@ -60,27 +51,27 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
             onBackPress: () => navigation.goBack(),
             rightButtons: [
               {
-                type: "custom",
-                icon: "call-outline",
+                type: 'custom',
+                icon: 'call-outline',
                 onPress: handleVoiceCall,
-                variant: "glass",
-                haptic: "medium",
+                variant: 'glass',
+                haptic: 'medium',
                 customComponent: undefined,
               },
               {
-                type: "custom",
-                icon: "videocam-outline",
+                type: 'custom',
+                icon: 'videocam-outline',
                 onPress: handleVideoCall,
-                variant: "glass",
-                haptic: "medium",
+                variant: 'glass',
+                haptic: 'medium',
                 customComponent: undefined,
               },
               {
-                type: "custom",
-                icon: "ellipsis-vertical-outline",
+                type: 'custom',
+                icon: 'ellipsis-vertical-outline',
                 onPress: handleMoreOptions,
-                variant: "glass",
-                haptic: "light",
+                variant: 'glass',
+                haptic: 'light',
                 customComponent: undefined,
               },
             ],
@@ -91,7 +82,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
       {/* Messages */}
       <KeyboardAvoidingView
         style={styles.chatContainer}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <MessageList
           messages={data.messages}
@@ -133,8 +124,8 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
             onCancel={handleReactionCancel}
             influenceRadius={100}
             baseSize={32}
-            backgroundColor={isDark ? "#2a2a2a" : "#ffffff"}
-            borderColor={isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
+            backgroundColor={isDark ? '#2a2a2a' : '#ffffff'}
+            borderColor={isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}
           />
         </View>
       )}

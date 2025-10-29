@@ -8,19 +8,18 @@
  * Median denoise filter
  * Removes noise by replacing each pixel with the median value in a window
  * Preserves edges better than Gaussian blur
- * 
+ *
  * @param canvas - Canvas to denoise (mutated)
  * @param radius - Window radius (default: 1)
  */
 export function medianDenoise(canvas: HTMLCanvasElement, radius = 1) {
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext('2d')!;
   const { width: w, height: h } = canvas;
   const src = ctx.getImageData(0, 0, w, h);
   const dst = ctx.createImageData(w, h);
   const win = (2 * radius + 1) * (2 * radius + 1);
 
-  const clamp = (v: number, min: number, max: number) =>
-    v < min ? min : v > max ? max : v;
+  const clamp = (v: number, min: number, max: number) => (v < min ? min : v > max ? max : v);
 
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
@@ -62,29 +61,24 @@ export function medianDenoise(canvas: HTMLCanvasElement, radius = 1) {
  * Unsharp mask sharpening filter
  * Classic sharpening algorithm: result = original + amount * (original - blurred)
  * Only applies when difference exceeds threshold to avoid amplifying noise
- * 
+ *
  * @param canvas - Canvas to sharpen (mutated)
  * @param radiusPx - Blur radius in pixels (default: 2)
  * @param amount - Sharpening strength 0-2 (default: 0.6)
  * @param threshold - Minimum difference to apply sharpening (default: 3)
  */
-export function unsharpMask(
-  canvas: HTMLCanvasElement,
-  radiusPx = 2,
-  amount = 0.6,
-  threshold = 3
-) {
+export function unsharpMask(canvas: HTMLCanvasElement, radiusPx = 2, amount = 0.6, threshold = 3) {
   const { width: w, height: h } = canvas;
 
   // Blur pass using canvas filter -> offscreen copy
-  const blur = document.createElement("canvas");
+  const blur = document.createElement('canvas');
   blur.width = w;
   blur.height = h;
-  const bctx = blur.getContext("2d")!;
+  const bctx = blur.getContext('2d')!;
   bctx.filter = `blur(${radiusPx}px)`;
   bctx.drawImage(canvas, 0, 0);
 
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext('2d')!;
   const src = ctx.getImageData(0, 0, w, h);
   const blr = bctx.getImageData(0, 0, w, h);
   const out = ctx.createImageData(w, h);
@@ -104,4 +98,3 @@ export function unsharpMask(
 }
 
 const clampByte = (v: number) => (v < 0 ? 0 : v > 255 ? 255 : v);
-

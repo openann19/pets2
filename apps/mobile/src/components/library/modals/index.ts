@@ -13,4 +13,4 @@
 // - FullScreenModal
 
 // Export placeholder to avoid import errors
-export const ModalsPlaceholder = "Modal components coming soon";
+export const ModalsPlaceholder = 'Modal components coming soon';

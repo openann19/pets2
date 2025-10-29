@@ -1,6 +1,6 @@
-import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { EliteButton, FadeInUp } from "../EliteComponents";
+import React from 'react';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { EliteButton, FadeInUp } from '../EliteComponents';
 
 interface QuickRepliesProps {
   replies: string[];
@@ -9,10 +9,10 @@ interface QuickRepliesProps {
 }
 
 export const DEFAULT_REPLIES = [
-  "Sounds good! 👍",
-  "When works for you?",
+  'Sounds good! 👍',
+  'When works for you?',
   "Let's do it! 🎾",
-  "Perfect! 😊",
+  'Perfect! 😊',
 ];
 
 export function QuickReplies({

@@ -1,7 +1,7 @@
-import { useCallback } from "react";
-import type { Message } from "../useChatData";
-import { matchesAPI } from "../../services/api";
-import { logger } from "@pawfectmatch/core";
+import { useCallback } from 'react';
+import type { Message } from '../useChatData';
+import { matchesAPI } from '../../services/api';
+import { logger } from '@pawfectmatch/core';
 
 export interface UseMessageActionsOptions {
   matchId: string;
@@ -10,10 +10,7 @@ export interface UseMessageActionsOptions {
 }
 
 export interface UseMessageActionsReturn {
-  retryMessage: (
-    messageId: string,
-    currentMessages: Message[],
-  ) => Promise<void>;
+  retryMessage: (messageId: string, currentMessages: Message[]) => Promise<void>;
   deleteMessage: (messageId: string) => Promise<void>;
 }
 
@@ -32,10 +29,10 @@ export function useMessageActions({
 
       try {
         await matchesAPI.sendMessage(matchId, message.content);
-        logger.info("Message retried", { messageId, matchId });
+        logger.info('Message retried', { messageId, matchId });
         onMessageRetried?.(messageId);
       } catch (error) {
-        logger.error("Failed to retry message", { error, messageId });
+        logger.error('Failed to retry message', { error, messageId });
         throw error;
       }
     },
@@ -46,10 +43,10 @@ export function useMessageActions({
     async (messageId: string) => {
       try {
         await matchesAPI.deleteMessage(matchId, messageId);
-        logger.info("Message deleted", { messageId, matchId });
+        logger.info('Message deleted', { messageId, matchId });
         onMessageDeleted?.(messageId);
       } catch (error) {
-        logger.error("Failed to delete message", { error, messageId });
+        logger.error('Failed to delete message', { error, messageId });
         throw error;
       }
     },

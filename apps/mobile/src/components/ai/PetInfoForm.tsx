@@ -4,11 +4,10 @@
  * Features: Form validation, accessibility, responsive design
  */
 
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import type { ColorValue } from "react-native";
-import { TextInput } from "react-native";
-
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import type { ColorValue } from 'react-native';
+import { TextInput } from 'react-native';
 
 interface PetInfoFormProps {
   petName: string;
@@ -36,18 +35,13 @@ export function PetInfoForm({
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Pet Information</Text>
-      <Text style={styles.sectionSubtitle}>
-        Tell us about your furry friend
-      </Text>
+      <Text style={styles.sectionSubtitle}>Tell us about your furry friend</Text>
 
       {/* Pet Name Input */}
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Name *</Text>
         <TextInput
-          style={[
-            styles.input,
-            validationErrors.petName ? styles.inputError : undefined,
-          ]}
+          style={[styles.input, validationErrors.petName ? styles.inputError : undefined]}
           value={petName}
           onChangeText={setPetName}
           placeholder="Enter your pet's name"
@@ -63,10 +57,7 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Breed *</Text>
         <TextInput
-          style={[
-            styles.input,
-            validationErrors.petBreed ? styles.inputError : undefined,
-          ]}
+          style={[styles.input, validationErrors.petBreed ? styles.inputError : undefined]}
           value={petBreed}
           onChangeText={setPetBreed}
           placeholder="e.g., Golden Retriever, Mixed Breed"
@@ -82,29 +73,21 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Age *</Text>
         <TextInput
-          style={[
-            styles.input,
-            validationErrors.petAge ? styles.inputError : undefined,
-          ]}
+          style={[styles.input, validationErrors.petAge ? styles.inputError : undefined]}
           value={petAge}
           onChangeText={setPetAge}
           placeholder="e.g., 2 years old, 6 months"
           placeholderTextColor={Theme.colors.text.secondary as ColorValue}
           maxLength={50}
         />
-        {validationErrors.petAge && (
-          <Text style={styles.errorText}>{validationErrors.petAge}</Text>
-        )}
+        {validationErrors.petAge && <Text style={styles.errorText}>{validationErrors.petAge}</Text>}
       </View>
 
       {/* Pet Personality Input */}
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Personality *</Text>
         <TextInput
-          style={[
-            styles.textarea,
-            validationErrors.petPersonality ? styles.inputError : undefined,
-          ]}
+          style={[styles.textarea, validationErrors.petPersonality ? styles.inputError : undefined]}
           value={petPersonality}
           onChangeText={setPetPersonality}
           placeholder="Describe your pet's personality, habits, and quirks (e.g., energetic, loves belly rubs, afraid of thunderstorms)"
@@ -115,13 +98,9 @@ export function PetInfoForm({
           textAlignVertical="top"
         />
         {validationErrors.petPersonality && (
-          <Text style={styles.errorText}>
-            {validationErrors.petPersonality}
-          </Text>
+          <Text style={styles.errorText}>{validationErrors.petPersonality}</Text>
         )}
-        <Text style={styles.characterCount}>
-          {petPersonality.length}/500 characters
-        </Text>
+        <Text style={styles.characterCount}>{petPersonality.length}/500 characters</Text>
       </View>
     </View>
   );
@@ -132,7 +111,7 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: Theme.typography.fontSize["2xl"],
+    fontSize: Theme.typography.fontSize['2xl'],
     fontWeight: Theme.typography.fontWeight.bold,
     color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.sm,
@@ -183,7 +162,7 @@ const styles = StyleSheet.create({
   characterCount: {
     fontSize: Theme.typography.fontSize.xs,
     color: Theme.colors.text.secondary,
-    textAlign: "right",
+    textAlign: 'right',
     marginTop: Theme.spacing.xs,
   },
 });

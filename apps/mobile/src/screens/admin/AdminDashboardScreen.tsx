@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@/theme'";
+import { useTheme } from '@mobile/src/theme'";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 import { getExtendedColors, type ExtendedColors } from '../../theme/adapters';

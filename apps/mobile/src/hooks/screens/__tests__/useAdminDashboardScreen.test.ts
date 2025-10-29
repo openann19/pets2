@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { useAdminDashboardScreen } from "../useAdminDashboardScreen";
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { useAdminDashboardScreen } from '../useAdminDashboardScreen';
 
 // Mock navigation
 const mockNavigate = jest.fn();
@@ -13,7 +13,7 @@ const mockNavigation = {
 } as any;
 
 // Mock error handler
-jest.mock("../../useErrorHandler", () => ({
+jest.mock('../../useErrorHandler', () => ({
   useErrorHandler: () => ({
     handleNetworkError: jest.fn(),
     handleOfflineError: jest.fn(),
@@ -21,7 +21,7 @@ jest.mock("../../useErrorHandler", () => ({
 }));
 
 // Mock logger
-jest.mock("@pawfectmatch/core", () => ({
+jest.mock('@pawfectmatch/core', () => ({
   logger: {
     info: jest.fn(),
     error: jest.fn(),
@@ -29,24 +29,22 @@ jest.mock("@pawfectmatch/core", () => ({
 }));
 
 // Mock Haptics
-jest.mock("expo-haptics", () => ({
+jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(() => Promise.resolve()),
   ImpactFeedbackStyle: {
-    Light: "light",
-    Medium: "medium",
-    Heavy: "heavy",
+    Light: 'light',
+    Medium: 'medium',
+    Heavy: 'heavy',
   },
 }));
 
-describe("useAdminDashboardScreen", () => {
+describe('useAdminDashboardScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should initialize with loading state", () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should initialize with loading state', () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.isRefreshing).toBe(false);
@@ -54,10 +52,8 @@ describe("useAdminDashboardScreen", () => {
     expect(result.current.recentActivity).toEqual([]);
   });
 
-  it("should load dashboard data on mount", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should load dashboard data on mount', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -69,10 +65,8 @@ describe("useAdminDashboardScreen", () => {
     expect(result.current.lastUpdated).toBeInstanceOf(Date);
   });
 
-  it("should provide metrics data", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should provide metrics data', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -83,13 +77,11 @@ describe("useAdminDashboardScreen", () => {
     expect(metrics.activeUsers).toBe(12890);
     expect(metrics.totalPets).toBe(8760);
     expect(metrics.totalMatches).toBe(45230);
-    expect(metrics.systemHealth).toBe("healthy");
+    expect(metrics.systemHealth).toBe('healthy');
   });
 
-  it("should handle refresh", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should handle refresh', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -106,10 +98,8 @@ describe("useAdminDashboardScreen", () => {
     });
   });
 
-  it("should navigate to users screen", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should navigate to users screen', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -119,13 +109,11 @@ describe("useAdminDashboardScreen", () => {
       result.current.onNavigateToUsers();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("AdminUsers");
+    expect(mockNavigate).toHaveBeenCalledWith('AdminUsers');
   });
 
-  it("should navigate to chats screen", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should navigate to chats screen', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -135,13 +123,11 @@ describe("useAdminDashboardScreen", () => {
       result.current.onNavigateToChats();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("AdminChats");
+    expect(mockNavigate).toHaveBeenCalledWith('AdminChats');
   });
 
-  it("should navigate to verifications screen", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should navigate to verifications screen', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -151,13 +137,11 @@ describe("useAdminDashboardScreen", () => {
       result.current.onNavigateToVerifications();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("AdminVerifications");
+    expect(mockNavigate).toHaveBeenCalledWith('AdminVerifications');
   });
 
-  it("should navigate to uploads screen", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should navigate to uploads screen', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -167,13 +151,11 @@ describe("useAdminDashboardScreen", () => {
       result.current.onNavigateToUploads();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("AdminUploads");
+    expect(mockNavigate).toHaveBeenCalledWith('AdminUploads');
   });
 
-  it("should navigate to analytics screen", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should navigate to analytics screen', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -183,13 +165,11 @@ describe("useAdminDashboardScreen", () => {
       result.current.onNavigateToAnalytics();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("AdminAnalytics");
+    expect(mockNavigate).toHaveBeenCalledWith('AdminAnalytics');
   });
 
-  it("should navigate to security screen", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should navigate to security screen', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -199,13 +179,11 @@ describe("useAdminDashboardScreen", () => {
       result.current.onNavigateToSecurity();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("AdminSecurity");
+    expect(mockNavigate).toHaveBeenCalledWith('AdminSecurity');
   });
 
-  it("should navigate to billing screen", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should navigate to billing screen', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -215,27 +193,23 @@ describe("useAdminDashboardScreen", () => {
       result.current.onNavigateToBilling();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("AdminBilling");
+    expect(mockNavigate).toHaveBeenCalledWith('AdminBilling');
   });
 
-  it("should provide quick actions", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should provide quick actions', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
     expect(result.current.quickActions).toHaveLength(4);
-    expect(result.current.quickActions[0].id).toBe("moderate_reports");
-    expect(result.current.quickActions[1].id).toBe("verify_pets");
+    expect(result.current.quickActions[0].id).toBe('moderate_reports');
+    expect(result.current.quickActions[1].id).toBe('verify_pets');
   });
 
-  it("should handle quick action execution", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should handle quick action execution', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -243,16 +217,14 @@ describe("useAdminDashboardScreen", () => {
 
     // Execute quick action
     act(() => {
-      result.current.onQuickAction("verify_pets");
+      result.current.onQuickAction('verify_pets');
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("AdminVerifications");
+    expect(mockNavigate).toHaveBeenCalledWith('AdminVerifications');
   });
 
-  it("should update last updated timestamp", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should update last updated timestamp', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -272,25 +244,21 @@ describe("useAdminDashboardScreen", () => {
     );
   });
 
-  it("should provide recent activity data", async () => {
-    const { result } = renderHook(() =>
-      useAdminDashboardScreen({ navigation: mockNavigation }),
-    );
+  it('should provide recent activity data', async () => {
+    const { result } = renderHook(() => useAdminDashboardScreen({ navigation: mockNavigation }));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
     expect(result.current.recentActivity).toHaveLength(4);
-    expect(result.current.recentActivity[0].type).toBe(
-      "verification_submitted",
-    );
-    expect(result.current.recentActivity[0].priority).toBe("medium");
-    expect(result.current.recentActivity[1].type).toBe("report_filed");
-    expect(result.current.recentActivity[1].priority).toBe("high");
+    expect(result.current.recentActivity[0].type).toBe('verification_submitted');
+    expect(result.current.recentActivity[0].priority).toBe('medium');
+    expect(result.current.recentActivity[1].type).toBe('report_filed');
+    expect(result.current.recentActivity[1].priority).toBe('high');
   });
 
-  it("should return stable function references", async () => {
+  it('should return stable function references', async () => {
     const { result, rerender } = renderHook(() =>
       useAdminDashboardScreen({ navigation: mockNavigation }),
     );

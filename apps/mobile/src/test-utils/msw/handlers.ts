@@ -10,7 +10,7 @@ import { API_BASE_URL } from '../../config/environment';
 export const handlers = [
   // Auth endpoints
   http.post(`${API_BASE_URL}/auth/login`, async ({ request }) => {
-    const body = await request.json() as { email: string; password: string };
+    const body = (await request.json()) as { email: string; password: string };
     if (body.email === 'test@example.com' && body.password === 'password') {
       return HttpResponse.json({
         token: 'mock-jwt-token',
@@ -21,10 +21,7 @@ export const handlers = [
         },
       });
     }
-    return HttpResponse.json(
-      { error: 'Invalid credentials' },
-      { status: 401 }
-    );
+    return HttpResponse.json({ error: 'Invalid credentials' }, { status: 401 });
   }),
 
   http.post(`${API_BASE_URL}/auth/register`, async () => {
@@ -78,7 +75,7 @@ export const handlers = [
   http.get(`${API_BASE_URL}/pets`, async ({ request }) => {
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '1');
-    
+
     return HttpResponse.json({
       pets: [
         {
@@ -112,10 +109,13 @@ export const handlers = [
 
   http.post(`${API_BASE_URL}/pets`, async ({ request }) => {
     const body = await request.json();
-    return HttpResponse.json({
-      _id: 'new-pet-id',
-      ...(body as Record<string, unknown>),
-    }, { status: 201 });
+    return HttpResponse.json(
+      {
+        _id: 'new-pet-id',
+        ...(body as Record<string, unknown>),
+      },
+      { status: 201 },
+    );
   }),
 
   http.put(`${API_BASE_URL}/pets/:id`, async ({ request, params }) => {
@@ -147,9 +147,9 @@ export const handlers = [
   }),
 
   http.post(`${API_BASE_URL}/matches/like`, async ({ request }) => {
-    const body = await request.json() as { petId: string; likedPetId: string };
+    const body = (await request.json()) as { petId: string; likedPetId: string };
     const isMatch = Math.random() > 0.5; // 50% chance of match
-    
+
     return HttpResponse.json({
       liked: true,
       matched: isMatch,
@@ -193,10 +193,6 @@ export const handlers = [
   // Default catch-all handler
   http.all('*', async ({ request }) => {
     console.warn(`Unhandled MSW request: ${request.method} ${request.url}`);
-    return HttpResponse.json(
-      { error: 'No handler defined for this request' },
-      { status: 500 }
-    );
+    return HttpResponse.json({ error: 'No handler defined for this request' }, { status: 500 });
   }),
 ];
-

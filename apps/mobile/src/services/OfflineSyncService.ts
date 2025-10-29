@@ -2,21 +2,21 @@
  * Offline Sync Service for PawfectMatch Mobile App
  * Handles offline data persistence, background sync, and conflict resolution
  */
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import NetInfo from "@react-native-community/netinfo";
-import type { NetInfoState } from "@react-native-community/netinfo";
-import { logger } from "@pawfectmatch/core";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
+import type { NetInfoState } from '@react-native-community/netinfo';
+import { logger } from '@pawfectmatch/core';
 
 interface OfflineQueueItem {
   id: string;
-  type: "api" | "user_action";
+  type: 'api' | 'user_action';
   endpoint: string;
-  method: "GET" | "POST" | "PUT" | "DELETE";
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
   data?: Record<string, unknown>;
   timestamp: number;
   retryCount: number;
-  priority: "low" | "normal" | "high" | "critical";
-  onConflict: "overwrite" | "merge" | "skip";
+  priority: 'low' | 'normal' | 'high' | 'critical';
+  onConflict: 'overwrite' | 'merge' | 'skip';
 }
 
 interface SyncStatus {
@@ -35,8 +35,8 @@ class OfflineSyncService {
   private syncInProgress = false;
   private syncListeners: ((status: SyncStatus) => void)[] = [];
 
-  private readonly QUEUE_KEY = "@pawfectmatch_offline_queue";
-  private readonly SYNC_STATUS_KEY = "@pawfectmatch_sync_status";
+  private readonly QUEUE_KEY = '@pawfectmatch_offline_queue';
+  private readonly SYNC_STATUS_KEY = '@pawfectmatch_sync_status';
   private readonly MAX_RETRY_COUNT = 3;
   private readonly SYNC_INTERVAL = 30000; // 30 seconds
 
@@ -66,9 +66,9 @@ class OfflineSyncService {
       this.startBackgroundSync();
 
       this.isInitialized = true;
-      logger.info("Offline sync service initialized");
+      logger.info('Offline sync service initialized');
     } catch (error) {
-      logger.error("Failed to initialize offline sync service", { error });
+      logger.error('Failed to initialize offline sync service', { error });
     }
   }
 
@@ -77,14 +77,14 @@ class OfflineSyncService {
    */
   async queueApiCall(
     endpoint: string,
-    method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
     data?: Record<string, unknown>,
-    priority: OfflineQueueItem["priority"] = "normal",
-    onConflict: OfflineQueueItem["onConflict"] = "overwrite",
+    priority: OfflineQueueItem['priority'] = 'normal',
+    onConflict: OfflineQueueItem['onConflict'] = 'overwrite',
   ): Promise<string> {
     const queueItem: OfflineQueueItem = {
       id: `${String(Date.now())}_${Math.random().toString(36).substring(2, 11)}`,
-      type: "api",
+      type: 'api',
       endpoint,
       method,
       data: data ?? {},
@@ -97,7 +97,7 @@ class OfflineSyncService {
     this.queue.push(queueItem);
     await this.persistQueue();
 
-    logger.info("API call queued for offline sync", {
+    logger.info('API call queued for offline sync', {
       id: queueItem.id,
       endpoint,
       method,
@@ -119,24 +119,24 @@ class OfflineSyncService {
   async queueUserAction(
     actionType: string,
     data: Record<string, unknown>,
-    priority: OfflineQueueItem["priority"] = "normal",
+    priority: OfflineQueueItem['priority'] = 'normal',
   ): Promise<string> {
     const queueItem: OfflineQueueItem = {
       id: `${String(Date.now())}_${Math.random().toString(36).substring(2, 11)}`,
-      type: "user_action",
+      type: 'user_action',
       endpoint: `/actions/${actionType}`,
-      method: "POST",
+      method: 'POST',
       data,
       timestamp: Date.now(),
       retryCount: 0,
       priority,
-      onConflict: "overwrite", // Default conflict resolution for user actions
+      onConflict: 'overwrite', // Default conflict resolution for user actions
     };
 
     this.queue.push(queueItem);
     await this.persistQueue();
 
-    logger.info("User action queued for offline sync", {
+    logger.info('User action queued for offline sync', {
       id: queueItem.id,
       actionType,
       priority,
@@ -158,9 +158,7 @@ class OfflineSyncService {
       isOnline: this.isOnline,
       lastSyncTime: this.getLastSyncTime(),
       pendingItems: this.queue.length,
-      failedItems: this.queue.filter(
-        (item) => item.retryCount >= this.MAX_RETRY_COUNT,
-      ).length,
+      failedItems: this.queue.filter((item) => item.retryCount >= this.MAX_RETRY_COUNT).length,
       isSyncing: this.syncInProgress,
     };
   }
@@ -170,7 +168,7 @@ class OfflineSyncService {
    */
   async syncNow(): Promise<void> {
     if (!this.isOnline) {
-      throw new Error("Cannot sync while offline");
+      throw new Error('Cannot sync while offline');
     }
 
     await this.processQueue();
@@ -180,12 +178,10 @@ class OfflineSyncService {
    * Clear failed items from queue
    */
   async clearFailedItems(): Promise<void> {
-    this.queue = this.queue.filter(
-      (item) => item.retryCount < this.MAX_RETRY_COUNT,
-    );
+    this.queue = this.queue.filter((item) => item.retryCount < this.MAX_RETRY_COUNT);
     await this.persistQueue();
     this.notifyListeners();
-    logger.info("Failed items cleared from offline queue");
+    logger.info('Failed items cleared from offline queue');
   }
 
   /**
@@ -208,12 +204,12 @@ class OfflineSyncService {
   private async loadQueue(): Promise<void> {
     try {
       const storedQueue = await AsyncStorage.getItem(this.QUEUE_KEY);
-      if (storedQueue !== null && storedQueue !== "") {
+      if (storedQueue !== null && storedQueue !== '') {
         this.queue = JSON.parse(storedQueue) as OfflineQueueItem[];
-        logger.info("Offline queue loaded", { itemCount: this.queue.length });
+        logger.info('Offline queue loaded', { itemCount: this.queue.length });
       }
     } catch (error) {
-      logger.error("Failed to load offline queue", { error });
+      logger.error('Failed to load offline queue', { error });
       this.queue = [];
     }
   }
@@ -222,7 +218,7 @@ class OfflineSyncService {
     try {
       await AsyncStorage.setItem(this.QUEUE_KEY, JSON.stringify(this.queue));
     } catch (error) {
-      logger.error("Failed to persist offline queue", { error });
+      logger.error('Failed to persist offline queue', { error });
     }
   }
 
@@ -232,10 +228,10 @@ class OfflineSyncService {
       this.isOnline = state.isConnected ?? false;
 
       if (!wasOnline && this.isOnline) {
-        logger.info("Network connection restored, starting sync");
+        logger.info('Network connection restored, starting sync');
         void this.processQueue();
       } else if (wasOnline && !this.isOnline) {
-        logger.info("Network connection lost");
+        logger.info('Network connection lost');
       }
 
       this.notifyListeners();
@@ -267,9 +263,7 @@ class OfflineSyncService {
     try {
       // Sort queue by priority (critical > high > normal > low)
       const priorityOrder = { critical: 4, high: 3, normal: 2, low: 1 };
-      this.queue.sort(
-        (a, b) => priorityOrder[b.priority] - priorityOrder[a.priority],
-      );
+      this.queue.sort((a, b) => priorityOrder[b.priority] - priorityOrder[a.priority]);
 
       const itemsToProcess = [...this.queue];
       const successfulItems: string[] = [];
@@ -280,7 +274,7 @@ class OfflineSyncService {
           await this.processQueueItem(item);
           successfulItems.push(item.id);
         } catch (error) {
-          logger.error("Failed to process queue item", {
+          logger.error('Failed to process queue item', {
             itemId: item.id,
             endpoint: item.endpoint,
             error,
@@ -295,27 +289,23 @@ class OfflineSyncService {
       }
 
       // Remove successful items from queue
-      this.queue = this.queue.filter(
-        (item) => !successfulItems.includes(item.id),
-      );
+      this.queue = this.queue.filter((item) => !successfulItems.includes(item.id));
 
       // Keep failed items for manual retry
       this.queue = this.queue.filter(
-        (item) =>
-          !failedItems.includes(item.id) ||
-          item.retryCount < this.MAX_RETRY_COUNT,
+        (item) => !failedItems.includes(item.id) || item.retryCount < this.MAX_RETRY_COUNT,
       );
 
       await this.persistQueue();
       await this.updateLastSyncTime();
 
-      logger.info("Queue processing completed", {
+      logger.info('Queue processing completed', {
         processed: successfulItems.length,
         failed: failedItems.length,
         remaining: this.queue.length,
       });
     } catch (error) {
-      logger.error("Queue processing failed", { error });
+      logger.error('Queue processing failed', { error });
     } finally {
       this.syncInProgress = false;
       this.notifyListeners();
@@ -323,30 +313,30 @@ class OfflineSyncService {
   }
 
   private async processQueueItem(item: OfflineQueueItem): Promise<void> {
-    const { api } = await import("./api");
+    const { api } = await import('./api');
 
     // Import the API service dynamically to avoid circular dependencies
     const apiService = api;
 
     switch (item.method) {
-      case "GET":
+      case 'GET':
         await apiService.request(item.endpoint);
         break;
-      case "POST":
+      case 'POST':
         await apiService.request(item.endpoint, {
-          method: "POST",
+          method: 'POST',
           body: JSON.stringify(item.data),
         });
         break;
-      case "PUT":
+      case 'PUT':
         await apiService.request(item.endpoint, {
-          method: "PUT",
+          method: 'PUT',
           body: JSON.stringify(item.data),
         });
         break;
-      case "DELETE":
+      case 'DELETE':
         await apiService.request(item.endpoint, {
-          method: "DELETE",
+          method: 'DELETE',
         });
         break;
       default:
@@ -360,17 +350,12 @@ class OfflineSyncService {
         isOnline: this.isOnline,
         lastSyncTime: Date.now(),
         pendingItems: this.queue.length,
-        failedItems: this.queue.filter(
-          (item) => item.retryCount >= this.MAX_RETRY_COUNT,
-        ).length,
+        failedItems: this.queue.filter((item) => item.retryCount >= this.MAX_RETRY_COUNT).length,
         isSyncing: this.syncInProgress,
       };
-      await AsyncStorage.setItem(
-        this.SYNC_STATUS_KEY,
-        JSON.stringify(syncStatus),
-      );
+      await AsyncStorage.setItem(this.SYNC_STATUS_KEY, JSON.stringify(syncStatus));
     } catch (error) {
-      logger.error("Failed to update last sync time", { error });
+      logger.error('Failed to update last sync time', { error });
     }
   }
 
@@ -390,7 +375,7 @@ class OfflineSyncService {
       try {
         listener(status);
       } catch (error) {
-        logger.error("Error notifying sync listener", { error });
+        logger.error('Error notifying sync listener', { error });
       }
     });
   }

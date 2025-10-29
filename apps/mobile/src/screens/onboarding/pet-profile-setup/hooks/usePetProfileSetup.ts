@@ -2,10 +2,10 @@
  * Hook for managing Pet Profile Setup form state and navigation
  */
 
-import { logger } from "@pawfectmatch/core";
-import { useState } from "react";
-import { Alert } from "react-native";
-import type { PetFormData } from "../types";
+import { logger } from '@pawfectmatch/core';
+import { useState } from 'react';
+import { Alert } from 'react-native';
+import type { PetFormData } from '../types';
 
 interface UsePetProfileSetupOptions {
   userIntent: string;
@@ -31,14 +31,14 @@ export function usePetProfileSetup({
 }: UsePetProfileSetupOptions): UsePetProfileSetupReturn {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<PetFormData>({
-    name: "",
-    species: "",
-    breed: "",
-    age: "",
-    gender: "",
-    size: "",
-    description: "",
-    intent: userIntent === "list" ? "adoption" : "all",
+    name: '',
+    species: '',
+    breed: '',
+    age: '',
+    gender: '',
+    size: '',
+    description: '',
+    intent: userIntent === 'list' ? 'adoption' : 'all',
     personalityTags: [],
     healthInfo: {
       vaccinated: false,
@@ -90,10 +90,7 @@ export function usePetProfileSetup({
 
   const nextStep = () => {
     if (!validateStep(currentStep)) {
-      Alert.alert(
-        "Missing Information",
-        "Please fill in all required fields to continue.",
-      );
+      Alert.alert('Missing Information', 'Please fill in all required fields to continue.');
       return;
     }
 
@@ -114,10 +111,10 @@ export function usePetProfileSetup({
 
   const handleComplete = async () => {
     try {
-      logger.info("Creating pet profile:", { formData });
+      logger.info('Creating pet profile:', { formData });
       onComplete(formData);
     } catch (error) {
-      Alert.alert("Error", "Failed to create pet profile. Please try again.");
+      Alert.alert('Error', 'Failed to create pet profile. Please try again.');
     }
   };
 

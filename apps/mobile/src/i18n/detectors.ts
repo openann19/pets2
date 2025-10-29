@@ -35,7 +35,10 @@ export const getInitialLanguage = async (): Promise<Lang> => {
 /** Persist and switch language (explicit user override). */
 export const changeLanguage = async (lang: Lang): Promise<void> => {
   const next = normalize(lang);
-  await AsyncStorage.multiSet([[STORAGE_KEY, next], [STORAGE_OVERRIDE_KEY, '1']]);
+  await AsyncStorage.multiSet([
+    [STORAGE_KEY, next],
+    [STORAGE_OVERRIDE_KEY, '1'],
+  ]);
   await i18n.changeLanguage(next);
 };
 

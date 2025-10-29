@@ -1,7 +1,7 @@
 /// <reference lib="dom" />
 /**
  * Environment detection helpers to safely access browser-only APIs.
- * 
+ *
  * Note: This file uses DOM types via triple-slash reference
  * but guards all DOM access with runtime checks for Node safety
  */
@@ -12,18 +12,19 @@ type EventListenerTarget = {
   addEventListener: (
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ) => void;
   removeEventListener: (
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ) => void;
 };
 
 const isWindowAvailable = (): boolean => typeof window !== 'undefined';
 
-export const isBrowserEnvironment = (): boolean => isWindowAvailable() && typeof document !== 'undefined';
+export const isBrowserEnvironment = (): boolean =>
+  isWindowAvailable() && typeof document !== 'undefined';
 
 export const getWindowObject = (): BrowserWindow | null => (isWindowAvailable() ? window : null);
 
@@ -32,7 +33,8 @@ export const getDocumentObject = (): Document | null => {
   return browserWindow?.document ?? null;
 };
 
-export const getDocumentElement = (): HTMLElement | null => getDocumentObject()?.documentElement ?? null;
+export const getDocumentElement = (): HTMLElement | null =>
+  getDocumentObject()?.documentElement ?? null;
 
 export const getNavigatorObject = (): Navigator | null => {
   const browserWindow = getWindowObject();
@@ -65,7 +67,7 @@ export const addEventListenerSafely = (
   target: unknown,
   type: string,
   listener: EventListenerOrEventListenerObject,
-  options?: boolean | AddEventListenerOptions
+  options?: boolean | AddEventListenerOptions,
 ): void => {
   if (isEventListenerTarget(target)) {
     target.addEventListener(type, listener, options);
@@ -76,7 +78,7 @@ export const removeEventListenerSafely = (
   target: unknown,
   type: string,
   listener: EventListenerOrEventListenerObject,
-  options?: boolean | EventListenerOptions
+  options?: boolean | EventListenerOptions,
 ): void => {
   if (isEventListenerTarget(target)) {
     target.removeEventListener(type, listener, options);

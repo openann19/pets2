@@ -1,9 +1,8 @@
-import React from "react";
-import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
-import Animated from "react-native-reanimated";
+import React from 'react';
+import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import Animated from 'react-native-reanimated';
 
-
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 interface ConnectionPathProps {
   memories: Array<any>;
@@ -31,12 +30,9 @@ export const ConnectionPath: React.FC<ConnectionPathProps> = ({
         if (!nextPoint) return null;
 
         const distance = Math.sqrt(
-          Math.pow(nextPoint.x - point.x, 2) +
-            Math.pow(nextPoint.y - point.y, 2),
+          Math.pow(nextPoint.x - point.x, 2) + Math.pow(nextPoint.y - point.y, 2),
         );
-        const angle =
-          (Math.atan2(nextPoint.y - point.y, nextPoint.x - point.x) * 180) /
-          Math.PI;
+        const angle = (Math.atan2(nextPoint.y - point.y, nextPoint.x - point.x) * 180) / Math.PI;
 
         return (
           <View
@@ -63,11 +59,13 @@ export const ConnectionPath: React.FC<ConnectionPathProps> = ({
             {
               left: point.x - 6,
               top: point.y - 6,
-              backgroundColor: index === currentIndex ? "#FF69B4" : Theme.colors.neutral[0],
+              backgroundColor: index === currentIndex ? '#FF69B4' : Theme.colors.neutral[0],
               transform: [{ scale: index === currentIndex ? 1.2 : 1 }],
             },
           ])}
-          onPress={() => { onDotPress(index); }}
+          onPress={() => {
+            onDotPress(index);
+          }}
         />
       ))}
     </View>
@@ -77,15 +75,15 @@ export const ConnectionPath: React.FC<ConnectionPathProps> = ({
 const styles = StyleSheet.create({
   connectionPath: {
     flex: 1,
-    position: "relative",
+    position: 'relative',
   },
   pathSegment: {
-    position: "absolute",
+    position: 'absolute',
     height: 2,
-    backgroundColor: "rgba(255,255,255,0.3)",
+    backgroundColor: 'rgba(255,255,255,0.3)',
   },
   pathDot: {
-    position: "absolute",
+    position: 'absolute',
     width: 12,
     height: 12,
     borderRadius: 6,

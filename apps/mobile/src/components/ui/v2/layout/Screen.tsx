@@ -7,12 +7,7 @@ export interface ScreenProps extends ViewProps {
   children?: React.ReactNode;
 }
 
-export function Screen({
-  edges,
-  style,
-  children,
-  ...rest
-}: ScreenProps) {
+export function Screen({ edges, style, children, ...rest }: ScreenProps) {
   const insets = useSafeAreaInsets();
 
   const safeAreaStyle = {

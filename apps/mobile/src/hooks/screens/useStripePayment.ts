@@ -2,13 +2,10 @@
  * useStripePayment Hook
  * Handles Stripe payment processing and integration
  */
-import { useCallback, useState } from "react";
-import { Alert, Linking } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import {
-  premiumService,
-  type SubscriptionPlan,
-} from "../../services/PremiumService";
+import { useCallback, useState } from 'react';
+import { Alert, Linking } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import { premiumService, type SubscriptionPlan } from '../../services/PremiumService';
 
 interface PaymentState {
   isProcessing: boolean;
@@ -60,8 +57,8 @@ export const useStripePayment = (): UseStripePaymentReturn => {
 
         const session = await premiumService.createCheckoutSession(
           plan.stripePriceId,
-          successUrl || "pawfectmatch://subscription/success",
-          cancelUrl || "pawfectmatch://subscription/cancel",
+          successUrl || 'pawfectmatch://subscription/success',
+          cancelUrl || 'pawfectmatch://subscription/cancel',
         );
 
         setState((prev) => ({
@@ -70,7 +67,7 @@ export const useStripePayment = (): UseStripePaymentReturn => {
           lastPaymentIntentId: session.sessionId,
         }));
 
-        logger.info("Stripe checkout session created", {
+        logger.info('Stripe checkout session created', {
           planId,
           sessionId: session.sessionId,
         });
@@ -82,20 +79,18 @@ export const useStripePayment = (): UseStripePaymentReturn => {
         };
       } catch (error) {
         const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to create checkout session";
+          error instanceof Error ? error.message : 'Failed to create checkout session';
         setState((prev) => ({
           ...prev,
           isProcessing: false,
           error: errorMessage,
         }));
-        logger.error("Failed to create Stripe checkout session", {
+        logger.error('Failed to create Stripe checkout session', {
           error,
           planId,
         });
 
-        Alert.alert("Payment Error", errorMessage);
+        Alert.alert('Payment Error', errorMessage);
         return null;
       }
     },
@@ -109,7 +104,7 @@ export const useStripePayment = (): UseStripePaymentReturn => {
 
         // In a real implementation, this would call Stripe's API directly
         // For now, we'll simulate the payment processing
-        logger.info("Processing payment", { paymentMethodId, amount });
+        logger.info('Processing payment', { paymentMethodId, amount });
 
         // Simulate API call delay
         await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -119,87 +114,77 @@ export const useStripePayment = (): UseStripePaymentReturn => {
 
         if (success) {
           setState((prev) => ({ ...prev, isProcessing: false }));
-          logger.info("Payment processed successfully", {
+          logger.info('Payment processed successfully', {
             paymentMethodId,
             amount,
           });
           return true;
         } else {
-          throw new Error("Payment failed - insufficient funds");
+          throw new Error('Payment failed - insufficient funds');
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Payment processing failed";
+        const errorMessage = error instanceof Error ? error.message : 'Payment processing failed';
         setState((prev) => ({
           ...prev,
           isProcessing: false,
           error: errorMessage,
         }));
-        logger.error("Payment processing failed", {
+        logger.error('Payment processing failed', {
           error,
           paymentMethodId,
           amount,
         });
 
-        Alert.alert("Payment Failed", errorMessage);
+        Alert.alert('Payment Failed', errorMessage);
         return false;
       }
     },
     [],
   );
 
-  const confirmPayment = useCallback(
-    async (paymentIntentId: string): Promise<boolean> => {
-      try {
-        setState((prev) => ({ ...prev, isProcessing: true, error: null }));
+  const confirmPayment = useCallback(async (paymentIntentId: string): Promise<boolean> => {
+    try {
+      setState((prev) => ({ ...prev, isProcessing: true, error: null }));
 
-        // In real implementation, this would confirm with Stripe
-        logger.info("Confirming payment", { paymentIntentId });
+      // In real implementation, this would confirm with Stripe
+      logger.info('Confirming payment', { paymentIntentId });
 
-        // Simulate confirmation
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Simulate confirmation
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          lastPaymentIntentId: paymentIntentId,
-        }));
+      setState((prev) => ({
+        ...prev,
+        isProcessing: false,
+        lastPaymentIntentId: paymentIntentId,
+      }));
 
-        return true;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Payment confirmation failed";
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          error: errorMessage,
-        }));
-        logger.error("Payment confirmation failed", { error, paymentIntentId });
-        return false;
-      }
-    },
-    [],
-  );
+      return true;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Payment confirmation failed';
+      setState((prev) => ({
+        ...prev,
+        isProcessing: false,
+        error: errorMessage,
+      }));
+      logger.error('Payment confirmation failed', { error, paymentIntentId });
+      return false;
+    }
+  }, []);
 
-  const handlePaymentSuccess = useCallback(
-    async (sessionId: string): Promise<void> => {
-      try {
-        // Refresh premium status after successful payment
-        // This would typically be handled by the success screen
-        logger.info("Payment success handled", { sessionId });
+  const handlePaymentSuccess = useCallback(async (sessionId: string): Promise<void> => {
+    try {
+      // Refresh premium status after successful payment
+      // This would typically be handled by the success screen
+      logger.info('Payment success handled', { sessionId });
 
-        setState((prev) => ({ ...prev, error: null }));
-      } catch (error) {
-        logger.error("Failed to handle payment success", { error, sessionId });
-      }
-    },
-    [],
-  );
+      setState((prev) => ({ ...prev, error: null }));
+    } catch (error) {
+      logger.error('Failed to handle payment success', { error, sessionId });
+    }
+  }, []);
 
   const handlePaymentCancel = useCallback((sessionId: string) => {
-    logger.info("Payment cancelled", { sessionId });
+    logger.info('Payment cancelled', { sessionId });
     setState((prev) => ({ ...prev, error: null }));
   }, []);
 

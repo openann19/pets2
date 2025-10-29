@@ -5,16 +5,16 @@
 
 export const QualityTargets = {
   // Instagram-grade + story/reel safe
-  "1:1": { minW: 1080, minH: 1080 }, // 1080 x 1080
-  "4:5": { minW: 1080, minH: 1350 }, // portrait feed
-  "9:16": { minW: 1080, minH: 1920 }, // story/reel
-  "3:4": { minW: 1080, minH: 1440 }, // alt portrait
-  "16:9": { minW: 1920, minH: 1080 }, // landscape
+  '1:1': { minW: 1080, minH: 1080 }, // 1080 x 1080
+  '4:5': { minW: 1080, minH: 1350 }, // portrait feed
+  '9:16': { minW: 1080, minH: 1920 }, // story/reel
+  '3:4': { minW: 1080, minH: 1440 }, // alt portrait
+  '16:9': { minW: 1920, minH: 1080 }, // landscape
 } as const;
 
 export type KnownRatio = keyof typeof QualityTargets;
 
-export const DEFAULT_RATIOS: KnownRatio[] = ["1:1", "4:5", "9:16"];
+export const DEFAULT_RATIOS: KnownRatio[] = ['1:1', '4:5', '9:16'];
 
 /**
  * Get target dimensions for a given aspect ratio
@@ -37,10 +37,9 @@ export function calculateUpscaleFactor(
   currentW: number,
   currentH: number,
   targetW: number,
-  targetH: number
+  targetH: number,
 ): number {
   const scaleW = targetW / currentW;
   const scaleH = targetH / currentH;
   return Math.max(scaleW, scaleH);
 }
-

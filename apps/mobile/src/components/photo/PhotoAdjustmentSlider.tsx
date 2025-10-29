@@ -3,7 +3,12 @@ import { View, StyleSheet, Text } from 'react-native';
 import type { LayoutChangeEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 interface PhotoAdjustmentSliderProps {
@@ -11,8 +16,8 @@ interface PhotoAdjustmentSliderProps {
   value: number;
   min: number;
   max: number;
-  step?: number;           // default 1
-  defaultValue?: number;   // for double-tap reset
+  step?: number; // default 1
+  defaultValue?: number; // for double-tap reset
   icon: string;
   onValueChange: (value: number) => void;
 }
@@ -100,7 +105,7 @@ export const PhotoAdjustmentSlider: React.FC<PhotoAdjustmentSliderProps> = ({
       left: `${pos.value * 100}%` as any,
     };
   });
-  
+
   return (
     <View
       accessible
@@ -112,19 +117,28 @@ export const PhotoAdjustmentSlider: React.FC<PhotoAdjustmentSliderProps> = ({
         { name: 'decrement', label: 'Decrease' },
       ]}
       onAccessibilityAction={(e) => {
-        if (e.nativeEvent.actionName === 'increment') setFromPct(Math.min(1, pct + step / (max - min)));
-        if (e.nativeEvent.actionName === 'decrement') setFromPct(Math.max(0, pct - step / (max - min)));
+        if (e.nativeEvent.actionName === 'increment')
+          setFromPct(Math.min(1, pct + step / (max - min)));
+        if (e.nativeEvent.actionName === 'decrement')
+          setFromPct(Math.max(0, pct - step / (max - min)));
       }}
       style={styles.container}
     >
       <View style={styles.header}>
-        <Ionicons name={icon} size={18} color="white" />
+        <Ionicons
+          name={icon}
+          size={18}
+          color="white"
+        />
         <Text style={styles.label}>{label}</Text>
         <Text style={styles.value}>{Math.round(value)}</Text>
       </View>
 
       <GestureDetector gesture={composed}>
-        <View style={styles.sliderTrack} onLayout={onLayoutTrack}>
+        <View
+          style={styles.sliderTrack}
+          onLayout={onLayoutTrack}
+        >
           <View style={styles.sliderBackground}>
             <Animated.View style={[styles.sliderFill, fillStyle]} />
           </View>
@@ -139,16 +153,31 @@ const styles = StyleSheet.create({
   container: { marginBottom: 24 },
   header: { flexDirection: 'row', alignItems: 'center', columnGap: 12, marginBottom: 12 },
   label: { flex: 1, fontSize: 14, fontWeight: '600', color: 'white' },
-  value: { fontSize: 14, fontWeight: '600', color: Theme.colors.primary[500], minWidth: 50, textAlign: 'right' },
+  value: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Theme.colors.primary[500],
+    minWidth: 50,
+    textAlign: 'right',
+  },
 
   sliderTrack: { height: 40, justifyContent: 'center' },
-  sliderBackground: { height: 6, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 3, overflow: 'hidden' },
+  sliderBackground: {
+    height: 6,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
   sliderFill: { height: '100%', backgroundColor: Theme.colors.primary[500], borderRadius: 3 },
 
   sliderThumb: {
-    position: 'absolute', width: 24, height: 24, borderRadius: 12,
+    position: 'absolute',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: Theme.colors.primary[500],
-    borderWidth: 3, borderColor: 'white',
+    borderWidth: 3,
+    borderColor: 'white',
     top: 8, // centers thumb on 6px track
   },
 });

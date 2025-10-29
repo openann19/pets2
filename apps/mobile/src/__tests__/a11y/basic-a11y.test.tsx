@@ -10,25 +10,26 @@ import { describe, it, expect } from '@jest/globals';
 describe('Basic Accessibility', () => {
   describe('Semantic roles and labels', () => {
     it('should render accessible buttons', () => {
-      const Button = ({ title }: { title: string }) => (
-        <button aria-label={title}>{title}</button>
-      );
-      
+      const Button = ({ title }: { title: string }) => <button aria-label={title}>{title}</button>;
+
       const { getByLabelText } = render(<Button title="Submit" />);
       const button = getByLabelText('Submit');
-      
+
       expect(button).toBeTruthy();
       expect(button.getAttribute('role')).toBe('button');
     });
 
     it('should provide accessible names for images', () => {
       const Image = ({ alt }: { alt: string }) => (
-        <img src="test.jpg" alt={alt} />
+        <img
+          src="test.jpg"
+          alt={alt}
+        />
       );
-      
+
       const { getByAltText } = render(<Image alt="Pet photo" />);
       const image = getByAltText('Pet photo');
-      
+
       expect(image).toBeTruthy();
     });
   });
@@ -80,4 +81,3 @@ describe('Basic Accessibility', () => {
     });
   });
 });
-

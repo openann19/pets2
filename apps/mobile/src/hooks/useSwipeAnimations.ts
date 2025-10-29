@@ -1,9 +1,9 @@
 /**
  * useSwipeAnimations Hook
- * 
+ *
  * Extracts animation logic from SwipeScreen for improved modularity and testability.
  * Manages position, rotation, and swipe animations with spring physics.
- * 
+ *
  * @example
  * ```typescript
  * const {
@@ -13,10 +13,10 @@
  *   swipeLeft,
  *   snapBack,
  * } = useSwipeAnimations();
- * 
+ *
  * // Apply animations to card
  * <Animated.View style={{ transform: [{ translateX: position.x }] }} />
- * 
+ *
  * // Trigger swipe right
  * await swipeRight(async () => {
  *   await handleSwipe("like");
@@ -24,29 +24,29 @@
  * ```
  */
 
-import { useState, useCallback } from "react";
-import { Animated, Easing } from "react-native";
-import { Dimensions } from "react-native";
-import { useReducedMotion } from "./useReducedMotion";
+import { useState, useCallback } from 'react';
+import { Animated, Easing } from 'react-native';
+import { Dimensions } from 'react-native';
+import { useReducedMotion } from './useReducedMotion';
 
-const { width: screenWidth } = Dimensions.get("window");
+const { width: screenWidth } = Dimensions.get('window');
 
 export interface UseSwipeAnimationsParams {
   /**
    * Animation duration for swipe actions (default: 300ms)
    */
   duration?: number;
-  
+
   /**
    * Rotation range in degrees (default: ["-10deg", "0deg", "10deg"])
    */
   rotationRange?: [string, string, string];
-  
+
   /**
    * Use native driver for animations (default: false for position animations)
    */
   useNativeDriver?: boolean;
-  
+
   /**
    * Callback when animation completes
    */
@@ -58,35 +58,35 @@ export interface UseSwipeAnimationsReturn {
    * Position animation value (XY)
    */
   position: Animated.ValueXY;
-  
+
   /**
    * Rotation interpolation based on X position
    */
   rotate: Animated.AnimatedInterpolation<string>;
-  
+
   /**
    * Execute swipe right animation
    * @param onComplete - Optional callback when animation completes
    */
   swipeRight: (onComplete?: () => Promise<void> | void) => Promise<void>;
-  
+
   /**
    * Execute swipe left animation
    * @param onComplete - Optional callback when animation completes
    */
   swipeLeft: (onComplete?: () => Promise<void> | void) => Promise<void>;
-  
+
   /**
    * Snap back to center with spring animation
    * @param onComplete - Optional callback when animation completes
    */
   snapBack: (onComplete?: () => void) => void;
-  
+
   /**
    * Reset position to zero
    */
   resetPosition: () => void;
-  
+
   /**
    * Apply offset to position (for gesture tracking)
    * @param dx - X offset
@@ -97,16 +97,14 @@ export interface UseSwipeAnimationsReturn {
 
 /**
  * Creates animated values and helper functions for swipe card animations.
- * 
+ *
  * @param params - Configuration for animations
  * @returns Animated values and animation functions
  */
-export const useSwipeAnimations = (
-  params?: UseSwipeAnimationsParams
-): UseSwipeAnimationsReturn => {
+export const useSwipeAnimations = (params?: UseSwipeAnimationsParams): UseSwipeAnimationsReturn => {
   const {
     duration = 300,
-    rotationRange = ["-10deg", "0deg", "10deg"],
+    rotationRange = ['-10deg', '0deg', '10deg'],
     useNativeDriver = false,
     onAnimationComplete,
   } = params ?? {};
@@ -120,7 +118,7 @@ export const useSwipeAnimations = (
   const rotate = position.x.interpolate({
     inputRange: [-screenWidth / 2, 0, screenWidth / 2],
     outputRange: rotationRange,
-    extrapolate: "clamp",
+    extrapolate: 'clamp',
   });
 
   /**
@@ -130,7 +128,7 @@ export const useSwipeAnimations = (
     async (onComplete?: () => Promise<void> | void): Promise<void> => {
       const direction = screenWidth;
       const animDuration = reducedMotion ? 0 : duration;
-      
+
       return new Promise((resolve) => {
         Animated.timing(position, {
           toValue: { x: direction, y: 0 },
@@ -144,7 +142,7 @@ export const useSwipeAnimations = (
         });
       });
     },
-    [position, duration, useNativeDriver, onAnimationComplete, reducedMotion]
+    [position, duration, useNativeDriver, onAnimationComplete, reducedMotion],
   );
 
   /**
@@ -154,7 +152,7 @@ export const useSwipeAnimations = (
     async (onComplete?: () => Promise<void> | void): Promise<void> => {
       const direction = -screenWidth;
       const animDuration = reducedMotion ? 0 : duration;
-      
+
       return new Promise((resolve) => {
         Animated.timing(position, {
           toValue: { x: direction, y: 0 },
@@ -168,7 +166,7 @@ export const useSwipeAnimations = (
         });
       });
     },
-    [position, duration, useNativeDriver, onAnimationComplete, reducedMotion]
+    [position, duration, useNativeDriver, onAnimationComplete, reducedMotion],
   );
 
   /**
@@ -197,7 +195,7 @@ export const useSwipeAnimations = (
         });
       }
     },
-    [position, useNativeDriver, onAnimationComplete, reducedMotion]
+    [position, useNativeDriver, onAnimationComplete, reducedMotion],
   );
 
   /**
@@ -214,7 +212,7 @@ export const useSwipeAnimations = (
     (dx: number, dy: number): void => {
       position.setOffset({ x: dx, y: dy });
     },
-    [position]
+    [position],
   );
 
   return {
@@ -227,4 +225,3 @@ export const useSwipeAnimations = (
     setOffset,
   };
 };
-

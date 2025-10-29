@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { Easing, Dimensions, Platform } from "react-native";
+import { useEffect, useRef, useState } from 'react';
+import { Easing, Dimensions, Platform } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -12,7 +12,7 @@ import Animated, {
   interpolate,
   Extrapolate,
   type SharedValue,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
 // Simplified MotionSystem and Accessibility definitions
 const MotionSystem = {
@@ -48,7 +48,7 @@ const Accessibility = {
 // Custom hook for spring animations with physics
 export const useSpring = (
   initialValue = 0,
-  config: keyof typeof MotionSystem.springs = "standard",
+  config: keyof typeof MotionSystem.springs = 'standard',
 ) => {
   const animatedValue = useSharedValue(initialValue);
 
@@ -57,7 +57,7 @@ export const useSpring = (
     customConfig?: Partial<{ tension: number; friction: number }>,
   ) => {
     const { prefersReducedMotion } = Accessibility.motion;
-    
+
     if (prefersReducedMotion) {
       animatedValue.value = withTiming(toValue, { duration: 200 });
       return { start: () => {} };
@@ -84,35 +84,15 @@ export const useSpring = (
 // Hook for transform animations
 export const useTransform = (
   initialValue = 0,
-  config: keyof typeof MotionSystem.springs = "gentle",
+  config: keyof typeof MotionSystem.springs = 'gentle',
 ) => {
   const { value, animatedValue, animate } = useSpring(initialValue, config);
 
   const transforms = useAnimatedStyle(() => ({
-    translateX: interpolate(
-      animatedValue.value,
-      [0, 1],
-      [0, 50],
-      Extrapolate.CLAMP,
-    ),
-    translateY: interpolate(
-      animatedValue.value,
-      [0, 1],
-      [0, 20],
-      Extrapolate.CLAMP,
-    ),
-    scale: interpolate(
-      animatedValue.value,
-      [0, 1],
-      [0.8, 1],
-      Extrapolate.CLAMP,
-    ),
-    opacity: interpolate(
-      animatedValue.value,
-      [0, 1],
-      [0, 1],
-      Extrapolate.CLAMP,
-    ),
+    translateX: interpolate(animatedValue.value, [0, 1], [0, 50], Extrapolate.CLAMP),
+    translateY: interpolate(animatedValue.value, [0, 1], [0, 20], Extrapolate.CLAMP),
+    scale: interpolate(animatedValue.value, [0, 1], [0.8, 1], Extrapolate.CLAMP),
+    opacity: interpolate(animatedValue.value, [0, 1], [0, 1], Extrapolate.CLAMP),
   }));
 
   return { value, animatedValue, animate, transforms };
@@ -122,11 +102,9 @@ export const useTransform = (
 export const useStaggeredFadeIn = (
   itemCount: number,
   delay = 100,
-  config: keyof typeof MotionSystem.springs = "gentle",
+  config: keyof typeof MotionSystem.springs = 'gentle',
 ) => {
-  const animatedValues = useRef(
-    Array.from({ length: itemCount }, () => useSharedValue(0)),
-  ).current;
+  const animatedValues = useRef(Array.from({ length: itemCount }, () => useSharedValue(0))).current;
 
   const [values, setValues] = useState(new Array(itemCount).fill(0));
 
@@ -150,20 +128,10 @@ export const useStaggeredFadeIn = (
 
   const transforms = animatedValues.map((animatedValue) => {
     return useAnimatedStyle(() => ({
-      opacity: interpolate(
-        animatedValue.value,
-        [0, 1],
-        [0, 1],
-        Extrapolate.CLAMP,
-      ),
+      opacity: interpolate(animatedValue.value, [0, 1], [0, 1], Extrapolate.CLAMP),
       transform: [
         {
-          translateY: interpolate(
-            animatedValue.value,
-            [0, 1],
-            [20, 0],
-            Extrapolate.CLAMP,
-          ),
+          translateY: interpolate(animatedValue.value, [0, 1], [20, 0], Extrapolate.CLAMP),
         },
       ],
     }));
@@ -188,79 +156,44 @@ export const useStaggeredFadeIn = (
 
 // Hook for entrance animations with different effects
 export const useEntranceAnimation = (
-  type: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn" = "slideIn",
-  config: keyof typeof MotionSystem.springs = "standard",
+  type: 'fadeIn' | 'slideIn' | 'scaleIn' | 'bounceIn' = 'slideIn',
+  config: keyof typeof MotionSystem.springs = 'standard',
 ) => {
   const { value, animatedValue, animate } = useSpring(0, config);
 
   const animatedStyle = useAnimatedStyle(() => {
     switch (type) {
-      case "slideIn":
+      case 'slideIn':
         return {
-          opacity: interpolate(
-            animatedValue.value,
-            [0, 1],
-            [0, 1],
-            Extrapolate.CLAMP,
-          ),
+          opacity: interpolate(animatedValue.value, [0, 1], [0, 1], Extrapolate.CLAMP),
           transform: [
             {
-              translateY: interpolate(
-                animatedValue.value,
-                [0, 1],
-                [30, 0],
-                Extrapolate.CLAMP,
-              ),
+              translateY: interpolate(animatedValue.value, [0, 1], [30, 0], Extrapolate.CLAMP),
             },
           ],
         };
-      case "scaleIn":
+      case 'scaleIn':
         return {
-          opacity: interpolate(
-            animatedValue.value,
-            [0, 1],
-            [0, 1],
-            Extrapolate.CLAMP,
-          ),
+          opacity: interpolate(animatedValue.value, [0, 1], [0, 1], Extrapolate.CLAMP),
           transform: [
             {
-              scale: interpolate(
-                animatedValue.value,
-                [0, 1],
-                [0.8, 1],
-                Extrapolate.CLAMP,
-              ),
+              scale: interpolate(animatedValue.value, [0, 1], [0.8, 1], Extrapolate.CLAMP),
             },
           ],
         };
-      case "bounceIn":
+      case 'bounceIn':
         return {
-          opacity: interpolate(
-            animatedValue.value,
-            [0, 1],
-            [0, 1],
-            Extrapolate.CLAMP,
-          ),
+          opacity: interpolate(animatedValue.value, [0, 1], [0, 1], Extrapolate.CLAMP),
           transform: [
             {
-              scale: interpolate(
-                animatedValue.value,
-                [0, 1],
-                [0.7, 1],
-                Extrapolate.CLAMP,
-              ),
+              scale: interpolate(animatedValue.value, [0, 1], [0.7, 1], Extrapolate.CLAMP),
             },
           ],
         };
-      case "fadeIn":
+      case 'fadeIn':
       default:
         return {
-          opacity: interpolate(
-            animatedValue.value,
-            [0, 1],
-            [0, 1],
-            Extrapolate.CLAMP,
-          ),
+          opacity: interpolate(animatedValue.value, [0, 1], [0, 1], Extrapolate.CLAMP),
           transform: [{ translateY: 0 }],
         };
     }
@@ -283,22 +216,12 @@ export const useMagneticEffect = (sensitivity = 0.3, maxDistance = 50) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isActive, setIsActive] = useState(false);
 
-  const handleTouchStart = (
-    touchX: number,
-    touchY: number,
-    centerX: number,
-    centerY: number,
-  ) => {
+  const handleTouchStart = (touchX: number, touchY: number, centerX: number, centerY: number) => {
     setIsActive(true);
     calculatePosition(touchX, touchY, centerX, centerY);
   };
 
-  const handleTouchMove = (
-    touchX: number,
-    touchY: number,
-    centerX: number,
-    centerY: number,
-  ) => {
+  const handleTouchMove = (touchX: number, touchY: number, centerX: number, centerY: number) => {
     if (isActive) {
       calculatePosition(touchX, touchY, centerX, centerY);
     }
@@ -309,12 +232,7 @@ export const useMagneticEffect = (sensitivity = 0.3, maxDistance = 50) => {
     setPosition({ x: 0, y: 0 });
   };
 
-  const calculatePosition = (
-    touchX: number,
-    touchY: number,
-    centerX: number,
-    centerY: number,
-  ) => {
+  const calculatePosition = (touchX: number, touchY: number, centerX: number, centerY: number) => {
     const deltaX = touchX - centerX;
     const deltaY = touchY - centerY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -381,17 +299,12 @@ export const useGyroscopeTilt = (sensitivity = 0.5, maxTilt = 15) => {
 };
 
 // Hook for ripple effects on press
-export const useRippleEffect = (
-  duration: number = MotionSystem.timings.standard,
-) => {
+export const useRippleEffect = (duration: number = MotionSystem.timings.standard) => {
   const scaleAnim = useSharedValue(0);
   const opacityAnim = useSharedValue(1);
 
   const startRipple = (callback?: () => void) => {
-    scaleAnim.value = withSequence(
-      withTiming(2, { duration }),
-      withTiming(0, { duration: 0 }),
-    );
+    scaleAnim.value = withSequence(withTiming(2, { duration }), withTiming(0, { duration: 0 }));
     opacityAnim.value = withSequence(
       withTiming(1, { duration: 0 }),
       withTiming(0, { duration }),
@@ -425,18 +338,8 @@ export const useGlowEffect = (intensity = 1, duration = 2000) => {
   }, [glowAnim, intensity, duration]);
 
   const glowStyle = useAnimatedStyle(() => ({
-    shadowOpacity: interpolate(
-      glowAnim.value,
-      [0, 1],
-      [0.1, 0.8],
-      Extrapolate.CLAMP,
-    ),
-    shadowRadius: interpolate(
-      glowAnim.value,
-      [0, 1],
-      [4, 16],
-      Extrapolate.CLAMP,
-    ),
+    shadowOpacity: interpolate(glowAnim.value, [0, 1], [0.1, 0.8], Extrapolate.CLAMP),
+    shadowRadius: interpolate(glowAnim.value, [0, 1], [4, 16], Extrapolate.CLAMP),
   }));
 
   return { glowStyle, glowValue: glowAnim };
@@ -445,17 +348,13 @@ export const useGlowEffect = (intensity = 1, duration = 2000) => {
 // Hook for scroll-triggered animations
 export const useScrollAnimation = (
   triggerPoint = 0.8,
-  config: keyof typeof MotionSystem.springs = "gentle",
+  config: keyof typeof MotionSystem.springs = 'gentle',
 ) => {
   const [isVisible, setIsVisible] = useState(false);
   const { value, animatedValue, animate } = useSpring(0, config);
 
-  const checkVisibility = (
-    scrollY: number,
-    elementY: number,
-    elementHeight: number,
-  ) => {
-    const windowHeight = Dimensions.get("window").height;
+  const checkVisibility = (scrollY: number, elementY: number, elementHeight: number) => {
+    const windowHeight = Dimensions.get('window').height;
     const triggerY = elementY + elementHeight * triggerPoint;
 
     if (scrollY + windowHeight > triggerY && !isVisible) {

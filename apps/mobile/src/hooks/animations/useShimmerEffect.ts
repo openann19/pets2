@@ -3,7 +3,7 @@
  * Shimmer animation effect
  */
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -11,7 +11,7 @@ import {
   withSequence,
   withTiming,
   withDelay,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
 export const useShimmerEffect = (enabled = true) => {
   const shimmerOffset = useSharedValue(-100);

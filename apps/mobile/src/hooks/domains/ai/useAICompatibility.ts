@@ -2,10 +2,10 @@
  * useAICompatibility Hook
  * Manages AI-powered pet compatibility analysis
  */
-import { useCallback, useState } from "react";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import { api, matchesAPI } from "../../../services/api";
+import { useCallback, useState } from 'react';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import { api, matchesAPI } from '../../../services/api';
 
 interface Pet {
   _id: string;
@@ -39,10 +39,7 @@ interface CompatibilityResult {
 }
 
 interface UseAICompatibilityReturn {
-  analyzeCompatibility: (
-    pet1Id: string,
-    pet2Id: string,
-  ) => Promise<CompatibilityResult>;
+  analyzeCompatibility: (pet1Id: string, pet2Id: string) => Promise<CompatibilityResult>;
   isAnalyzing: boolean;
   compatibilityResult: CompatibilityResult | null;
   error: string | null;
@@ -59,8 +56,7 @@ interface UseAICompatibilityReturn {
 
 export const useAICompatibility = (): UseAICompatibilityReturn => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [compatibilityResult, setCompatibilityResult] =
-    useState<CompatibilityResult | null>(null);
+  const [compatibilityResult, setCompatibilityResult] = useState<CompatibilityResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [availablePets, setAvailablePets] = useState<Pet[]>([]);
   const [isLoadingPets, setIsLoadingPets] = useState(false);
@@ -82,12 +78,12 @@ export const useAICompatibility = (): UseAICompatibilityReturn => {
 
       setAvailablePets(filteredPets as unknown as Pet[]);
 
-      logger.info("Available pets loaded", { count: filteredPets.length });
+      logger.info('Available pets loaded', { count: filteredPets.length });
       return filteredPets as unknown as Pet[];
     } catch (err) {
-      const errorMessage = "Failed to load pets. Please try again.";
+      const errorMessage = 'Failed to load pets. Please try again.';
       setError(errorMessage);
-      logger.error("Error loading pets", { error: err });
+      logger.error('Error loading pets', { error: err });
       throw new Error(errorMessage);
     } finally {
       setIsLoadingPets(false);
@@ -97,13 +93,13 @@ export const useAICompatibility = (): UseAICompatibilityReturn => {
   const analyzeCompatibility = useCallback(
     async (pet1Id: string, pet2Id: string): Promise<CompatibilityResult> => {
       if (!pet1Id || !pet2Id) {
-        const errorMsg = "Please select two pets to analyze compatibility.";
+        const errorMsg = 'Please select two pets to analyze compatibility.';
         setError(errorMsg);
         throw new Error(errorMsg);
       }
 
       if (pet1Id === pet2Id) {
-        const errorMsg = "Please select two different pets.";
+        const errorMsg = 'Please select two different pets.';
         setError(errorMsg);
         throw new Error(errorMsg);
       }
@@ -119,7 +115,7 @@ export const useAICompatibility = (): UseAICompatibilityReturn => {
 
         setCompatibilityResult(result);
 
-        logger.info("Compatibility analysis completed", {
+        logger.info('Compatibility analysis completed', {
           pet1Id,
           pet2Id,
           score: result.compatibility_score,
@@ -128,11 +124,9 @@ export const useAICompatibility = (): UseAICompatibilityReturn => {
         return result;
       } catch (err) {
         const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "Failed to analyze compatibility. Please try again.";
+          err instanceof Error ? err.message : 'Failed to analyze compatibility. Please try again.';
         setError(errorMessage);
-        logger.error("Compatibility analysis error", {
+        logger.error('Compatibility analysis error', {
           error: err,
           pet1Id,
           pet2Id,
@@ -142,7 +136,7 @@ export const useAICompatibility = (): UseAICompatibilityReturn => {
         const mockResult: CompatibilityResult = {
           compatibility_score: 85,
           ai_analysis:
-            "These pets show excellent compatibility! Both are energetic and social, making them perfect playmates.",
+            'These pets show excellent compatibility! Both are energetic and social, making them perfect playmates.',
           breakdown: {
             personality_compatibility: 90,
             lifestyle_compatibility: 85,
@@ -152,26 +146,26 @@ export const useAICompatibility = (): UseAICompatibilityReturn => {
           },
           recommendations: {
             meeting_suggestions: [
-              "Introduce them in a neutral outdoor space",
-              "Keep initial meetings short (15-20 minutes)",
-              "Have both owners present for supervision",
+              'Introduce them in a neutral outdoor space',
+              'Keep initial meetings short (15-20 minutes)',
+              'Have both owners present for supervision',
             ],
             activity_recommendations: [
-              "Daily walks together",
-              "Joint play sessions in the park",
-              "Shared grooming sessions",
+              'Daily walks together',
+              'Joint play sessions in the park',
+              'Shared grooming sessions',
             ],
             supervision_requirements: [
-              "Monitor for signs of stress",
-              "Separate if either shows discomfort",
-              "Gradually increase interaction time",
+              'Monitor for signs of stress',
+              'Separate if either shows discomfort',
+              'Gradually increase interaction time',
             ],
             success_probability: 85,
           },
         };
 
         setCompatibilityResult(mockResult);
-        logger.info("Using mock compatibility result");
+        logger.info('Using mock compatibility result');
         return mockResult;
       } finally {
         setIsAnalyzing(false);

@@ -2,11 +2,11 @@
  * usePetProfileSetup Hook
  * Manages pet profile creation during onboarding
  */
-import { useCallback, useState } from "react";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import { api } from "../../../services/api";
-import type { Pet, PetPhoto } from "@pawfectmatch/core";
+import { useCallback, useState } from 'react';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import { api } from '../../../services/api';
+import type { Pet, PetPhoto } from '@pawfectmatch/core';
 
 // Interface for pet profile creation during onboarding
 interface PetProfileCreationData {
@@ -62,12 +62,12 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
   const updateProfile = useCallback((updates: Partial<PetProfileCreationData>) => {
     setProfile((prev) => ({ ...prev, ...updates }));
     setState((prev) => ({ ...prev, error: null }));
-    logger.info("Pet profile updated", { updates });
+    logger.info('Pet profile updated', { updates });
   }, []);
 
   const setCurrentStep = useCallback((step: number) => {
     setState((prev) => ({ ...prev, currentStep: step }));
-    logger.info("Pet profile setup step changed", { step });
+    logger.info('Pet profile setup step changed', { step });
   }, []);
 
   const uploadPhoto = useCallback(async (uri: string) => {
@@ -75,7 +75,7 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
 
     try {
       // In a real implementation, this would upload to a server
-      logger.info("Uploading pet photo", { uri });
+      logger.info('Uploading pet photo', { uri });
 
       // Simulate upload delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -85,17 +85,17 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
         publicId: `photo-${Date.now()}`,
         isPrimary: (profile.photos?.length ?? 0) === 0, // First photo is primary
       };
-      
+
       setProfile((prev) => ({
         ...prev,
         photos: [...(prev.photos || []), newPhoto],
       }));
 
-      logger.info("Pet photo uploaded successfully");
+      logger.info('Pet photo uploaded successfully');
     } catch (error) {
-      const errorMessage = "Failed to upload photo";
+      const errorMessage = 'Failed to upload photo';
       setState((prev) => ({ ...prev, error: errorMessage }));
-      logger.error("Failed to upload pet photo", { error, uri });
+      logger.error('Failed to upload pet photo', { error, uri });
       throw new Error(errorMessage);
     } finally {
       setState((prev) => ({ ...prev, isUploading: false }));
@@ -107,12 +107,12 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
       ...prev,
       photos: prev.photos?.filter((_, i) => i !== index) || [],
     }));
-    logger.info("Pet photo removed", { index });
+    logger.info('Pet photo removed', { index });
   }, []);
 
   const submitProfile = useCallback(async (): Promise<Pet> => {
     if (!validateCurrentStep()) {
-      throw new Error("Please complete all required fields");
+      throw new Error('Please complete all required fields');
     }
 
     setState((prev) => ({ ...prev, isSubmitting: true, error: null }));
@@ -122,15 +122,15 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
         name: profile.name!,
         breed: profile.breed!,
         age: profile.age!,
-        species: profile.species || "dog",
-        gender: profile.gender || "male",
-        size: profile.size || "medium",
+        species: profile.species || 'dog',
+        gender: profile.gender || 'male',
+        size: profile.size || 'medium',
         description: profile.description,
         photos: profile.photos || [],
       };
 
       // In a real implementation, this would submit to the API
-      logger.info("Submitting pet profile", { profile: completeProfile });
+      logger.info('Submitting pet profile', { profile: completeProfile });
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -147,17 +147,16 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
         description: completeProfile.description,
         photos: completeProfile.photos,
       };
-      
+
       // Call actual API
       const result = await api.createPet(petData);
 
-      logger.info("Pet profile created successfully", { petId: result.id });
+      logger.info('Pet profile created successfully', { petId: result.id });
       return result;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to create pet profile";
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create pet profile';
       setState((prev) => ({ ...prev, error: errorMessage }));
-      logger.error("Failed to submit pet profile", { error });
+      logger.error('Failed to submit pet profile', { error });
       throw new Error(errorMessage);
     } finally {
       setState((prev) => ({ ...prev, isSubmitting: false }));
@@ -172,7 +171,7 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
       isSubmitting: false,
       error: null,
     });
-    logger.info("Pet profile setup reset");
+    logger.info('Pet profile setup reset');
   }, []);
 
   const validateCurrentStep = useCallback((): boolean => {
@@ -198,8 +197,7 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
 
   const canProceed = validateCurrentStep();
 
-  const progressPercentage =
-    ((state.currentStep + (canProceed ? 1 : 0)) / 3) * 100;
+  const progressPercentage = ((state.currentStep + (canProceed ? 1 : 0)) / 3) * 100;
 
   return {
     // State

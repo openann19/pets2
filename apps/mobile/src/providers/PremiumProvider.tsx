@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { Platform } from "react-native";
-import { logger } from "../services/logger";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Platform } from 'react-native';
+import { logger } from '../services/logger';
 
 // Type aliases for React Native Purchases
 type PurchasesOffering = {
@@ -16,21 +16,29 @@ type PurchasesPackage = {
 
 // Conditional import for react-native-purchases
 let Purchases: {
-  getCustomerInfo: () => Promise<{ customerInfo: { entitlements: { active: Record<string, unknown> } } }>;
+  getCustomerInfo: () => Promise<{
+    customerInfo: { entitlements: { active: Record<string, unknown> } };
+  }>;
   getOfferings: () => Promise<PurchasesOffering>;
-  purchasePackage: (pkg: PurchasesPackage) => Promise<{ customerInfo: { entitlements: { active: Record<string, unknown> } } }>;
-  restorePurchases: () => Promise<{ customerInfo: { entitlements: { active: Record<string, unknown> } } }>;
+  purchasePackage: (
+    pkg: PurchasesPackage,
+  ) => Promise<{ customerInfo: { entitlements: { active: Record<string, unknown> } } }>;
+  restorePurchases: () => Promise<{
+    customerInfo: { entitlements: { active: Record<string, unknown> } };
+  }>;
 };
 
 try {
-  Purchases = require("react-native-purchases").default;
+  Purchases = require('react-native-purchases').default;
 } catch {
   // Mock for when package is not installed
-  const mockPackage: PurchasesPackage = { identifier: "", packageType: "" };
+  const mockPackage: PurchasesPackage = { identifier: '', packageType: '' };
   Purchases = {
     getCustomerInfo: async () => ({ customerInfo: { entitlements: { active: {} } } }),
     getOfferings: async (): Promise<PurchasesOffering> => ({ current: null }),
-    purchasePackage: async () => { throw new Error("Purchases not configured"); },
+    purchasePackage: async () => {
+      throw new Error('Purchases not configured');
+    },
     restorePurchases: async () => ({ customerInfo: { entitlements: { active: {} } } }),
   };
 }
@@ -61,10 +69,10 @@ export function PremiumProvider({ children }: PremiumProviderProps) {
   const refresh = async () => {
     try {
       const { customerInfo } = await Purchases.getCustomerInfo();
-      setIsPremium(!!customerInfo.entitlements.active["pro"]);
+      setIsPremium(!!customerInfo.entitlements.active['pro']);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error("Failed to refresh premium status", { error: err });
+      logger.error('Failed to refresh premium status', { error: err });
     }
   };
 
@@ -72,12 +80,12 @@ export function PremiumProvider({ children }: PremiumProviderProps) {
     try {
       const offerings: PurchasesOffering | null = await Purchases.getOfferings();
       const pkg: PurchasesPackage | undefined = offerings?.current?.availablePackages[0];
-      if (!pkg) throw new Error("No package available");
+      if (!pkg) throw new Error('No package available');
       const { customerInfo } = await Purchases.purchasePackage(pkg);
-      setIsPremium(!!customerInfo.entitlements.active["pro"]);
+      setIsPremium(!!customerInfo.entitlements.active['pro']);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error("Failed to purchase", { error: err });
+      logger.error('Failed to purchase', { error: err });
       throw err;
     }
   };
@@ -85,10 +93,10 @@ export function PremiumProvider({ children }: PremiumProviderProps) {
   const restore = async () => {
     try {
       const { customerInfo } = await Purchases.restorePurchases();
-      setIsPremium(!!customerInfo.entitlements.active["pro"]);
+      setIsPremium(!!customerInfo.entitlements.active['pro']);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error("Failed to restore purchases", { error: err });
+      logger.error('Failed to restore purchases', { error: err });
       throw err;
     }
   };
@@ -104,4 +112,3 @@ export function usePremiumGate() {
   const { isPremium } = usePremium();
   return { canUsePremium: isPremium };
 }
-

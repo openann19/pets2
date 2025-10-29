@@ -2,7 +2,9 @@
 
 ## Overview
 
-This test suite provides comprehensive coverage for all 48+ custom hooks in the PawfectMatch mobile application. The tests are organized by category and include unit tests, integration tests, and performance tests.
+This test suite provides comprehensive coverage for all 48+ custom hooks in the
+PawfectMatch mobile application. The tests are organized by category and include
+unit tests, integration tests, and performance tests.
 
 ## Test Organization
 
@@ -11,6 +13,7 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/animations/`
 
 #### Hooks Tested:
+
 - `useEntranceAnimation` - Entrance animations (fadeIn, slideIn, scaleIn)
 - `useFloatingEffect` - Floating/bobbing animations
 - `useGlowAnimation` - Glow effect animations
@@ -29,6 +32,7 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 - `useSwipeGesture` - Swipe gesture detection
 
 **Test Coverage**:
+
 - ✅ Animation initialization
 - ✅ Configuration options
 - ✅ Animation lifecycle
@@ -41,11 +45,13 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/chat/`
 
 #### Hooks Tested:
+
 - `useChatInput` - Chat input management
 - `useChatScroll` - Chat scroll position management
 - `useMessageActions` - Message reactions, edits, deletes
 
 **Test Coverage**:
+
 - ✅ Input validation
 - ✅ Message sending
 - ✅ Scroll behavior
@@ -58,11 +64,13 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/domains/ai/`
 
 #### Hooks Tested:
+
 - `useAIBio` - AI bio generation
 - `useAICompatibility` - Compatibility scoring
 - `useAIPhotoAnalyzer` - Photo quality analysis
 
 **Test Coverage**:
+
 - ✅ API calls
 - ✅ Loading states
 - ✅ Error handling
@@ -75,11 +83,13 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/domains/gdpr/`
 
 #### Hooks Tested:
+
 - `useAccountDeletion` - Account deletion workflow
 - `useDataExport` - User data export
 - `useGDPRStatus` - GDPR status tracking
 
 **Test Coverage**:
+
 - ✅ Deletion initiation
 - ✅ Grace period management
 - ✅ Cancellation during grace period
@@ -92,12 +102,14 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/domains/onboarding/`
 
 #### Hooks Tested:
+
 - `usePetProfileSetup` - Pet profile creation
 - `usePreferencesSetup` - User preferences
 - `useUserIntent` - User intent determination
 - `useWelcome` - Welcome flow management
 
 **Test Coverage**:
+
 - ✅ Form validation
 - ✅ Photo upload
 - ✅ Data persistence
@@ -110,11 +122,13 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/domains/premium/`
 
 #### Hooks Tested:
+
 - `useFeatureGating` - Premium feature access
 - `usePremiumStatus` - Premium subscription status
 - `useSubscriptionState` - Subscription state management
 
 **Test Coverage**:
+
 - ✅ Feature availability
 - ✅ Subscription validation
 - ✅ Expiration tracking
@@ -127,11 +141,13 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/domains/profile/`
 
 #### Hooks Tested:
+
 - `usePhotoManagement` - Profile photo management
 - `useProfileData` - Profile data fetching
 - `useProfileUpdate` - Profile updates
 
 **Test Coverage**:
+
 - ✅ Photo upload/delete
 - ✅ Photo reordering
 - ✅ Data caching
@@ -144,11 +160,13 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/domains/safety/`
 
 #### Hooks Tested:
+
 - `useBlockedUsers` - Blocked users management
 - `useModerationTools` - Moderation tools
 - `useSafetyCenter` - Safety information
 
 **Test Coverage**:
+
 - ✅ Block/unblock users
 - ✅ Report content
 - ✅ Safety settings
@@ -161,10 +179,12 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/domains/settings/`
 
 #### Hooks Tested:
+
 - `useSettingsPersistence` - Local settings persistence
 - `useSettingsSync` - Server settings sync
 
 **Test Coverage**:
+
 - ✅ Local storage
 - ✅ Server sync
 - ✅ Conflict resolution
@@ -177,11 +197,13 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/domains/social/`
 
 #### Hooks Tested:
+
 - `useLeaderboard` - Leaderboard data
 - `useMemoryWeave` - Memory entries
 - `useStories` - Stories management
 
 **Test Coverage**:
+
 - ✅ Data fetching
 - ✅ Pagination
 - ✅ Filtering
@@ -194,11 +216,13 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/navigation/`
 
 #### Hooks Tested:
+
 - `useScrollOffsetTracker` - Scroll position tracking
 - `useTabDoublePress` - Tab double-press detection
 - `useTabReselectRefresh` - Tab reselection refresh
 
 **Test Coverage**:
+
 - ✅ Scroll persistence
 - ✅ Double-tap detection
 - ✅ Timing validation
@@ -211,9 +235,11 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/performance/`
 
 #### Hooks Tested:
+
 - `useOptimizedListConfig` - List optimization
 
 **Test Coverage**:
+
 - ✅ Batch size optimization
 - ✅ Device capability detection
 - ✅ Performance metrics
@@ -225,6 +251,7 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 **Location**: `/hooks/` (root level)
 
 #### Hooks Tested:
+
 - `useInteractionMetrics` - Interaction tracking
 - `useNotifications` - Notification management
 - `usePhotoEditor` - Photo editing
@@ -235,6 +262,7 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 - `useUploadQueue` - Upload queue management
 
 **Test Coverage**:
+
 - ✅ State management
 - ✅ Event handling
 - ✅ Error recovery
@@ -245,7 +273,9 @@ This test suite provides comprehensive coverage for all 48+ custom hooks in the 
 ## Test Patterns
 
 ### Unit Tests
+
 Each hook has unit tests covering:
+
 - Initialization
 - State updates
 - Event handling
@@ -253,21 +283,27 @@ Each hook has unit tests covering:
 - Edge cases
 
 ### Integration Tests
+
 Tests for:
+
 - Multiple hooks working together
 - State synchronization
 - Data flow between hooks
 - Complex user scenarios
 
 ### Performance Tests
+
 Tests for:
+
 - Unnecessary re-renders
 - Memory leaks
 - Dependency optimization
 - Large data handling
 
 ### Accessibility Tests
+
 Tests for:
+
 - Reduced motion support
 - Screen reader compatibility
 - Keyboard navigation
@@ -276,11 +312,13 @@ Tests for:
 ## Running Tests
 
 ### Run All Hook Tests
+
 ```bash
 pnpm test -- hooks
 ```
 
 ### Run Specific Category
+
 ```bash
 pnpm test -- hooks/animations
 pnpm test -- hooks/chat
@@ -297,17 +335,20 @@ pnpm test -- hooks/performance
 ```
 
 ### Run Specific Hook
+
 ```bash
 pnpm test -- useEntranceAnimation.test.ts
 pnpm test -- useChatInput.test.ts
 ```
 
 ### Run with Coverage
+
 ```bash
 pnpm test -- --coverage hooks
 ```
 
 ### Watch Mode
+
 ```bash
 pnpm test -- --watch hooks
 ```
@@ -326,6 +367,7 @@ pnpm test -- --watch hooks
 ## Mocking Strategy
 
 ### External Dependencies
+
 - React Native APIs (Animated, PanResponder, etc.)
 - AsyncStorage
 - WebSocket
@@ -333,6 +375,7 @@ pnpm test -- --watch hooks
 - Navigation
 
 ### API Mocks
+
 - AI service endpoints
 - GDPR endpoints
 - Chat service
@@ -340,6 +383,7 @@ pnpm test -- --watch hooks
 - Settings service
 
 ### State Mocks
+
 - Redux store
 - Context providers
 - Local state
@@ -347,6 +391,7 @@ pnpm test -- --watch hooks
 ## Best Practices
 
 ### 1. Hook Testing
+
 - ✅ Test hooks in isolation
 - ✅ Mock external dependencies
 - ✅ Test state transitions
@@ -354,6 +399,7 @@ pnpm test -- --watch hooks
 - ✅ Test cleanup/unmount
 
 ### 2. Async Testing
+
 - ✅ Use `waitFor()` for async operations
 - ✅ Handle promises correctly
 - ✅ Test loading states
@@ -361,12 +407,14 @@ pnpm test -- --watch hooks
 - ✅ Test success states
 
 ### 3. Performance Testing
+
 - ✅ Measure render counts
 - ✅ Check dependency arrays
 - ✅ Test memory usage
 - ✅ Verify cleanup
 
 ### 4. Accessibility Testing
+
 - ✅ Test reduced motion
 - ✅ Verify keyboard support
 - ✅ Check screen reader compatibility
@@ -375,6 +423,7 @@ pnpm test -- --watch hooks
 ## Common Test Scenarios
 
 ### Loading States
+
 ```typescript
 it('should handle loading state', () => {
   // Test initial loading
@@ -384,6 +433,7 @@ it('should handle loading state', () => {
 ```
 
 ### Error Handling
+
 ```typescript
 it('should handle errors gracefully', () => {
   // Test error state
@@ -393,6 +443,7 @@ it('should handle errors gracefully', () => {
 ```
 
 ### State Updates
+
 ```typescript
 it('should update state correctly', () => {
   // Test state change
@@ -402,6 +453,7 @@ it('should update state correctly', () => {
 ```
 
 ### Cleanup
+
 ```typescript
 it('should cleanup on unmount', () => {
   // Test resource cleanup
@@ -413,16 +465,19 @@ it('should cleanup on unmount', () => {
 ## Debugging Tests
 
 ### Enable Debug Output
+
 ```bash
 DEBUG=* pnpm test -- hooks
 ```
 
 ### Run Single Test
+
 ```bash
 pnpm test -- --testNamePattern="specific test name"
 ```
 
 ### Run with Verbose Output
+
 ```bash
 pnpm test -- --verbose hooks
 ```
@@ -430,6 +485,7 @@ pnpm test -- --verbose hooks
 ## Continuous Integration
 
 All hook tests run on:
+
 - ✅ Every commit (pre-commit hook)
 - ✅ Every PR (CI pipeline)
 - ✅ Before release (pre-release check)
@@ -437,6 +493,7 @@ All hook tests run on:
 ## Performance Benchmarks
 
 Target metrics:
+
 - **Hook initialization**: < 1ms
 - **State update**: < 5ms
 - **Re-render**: < 16ms (60fps)
@@ -453,6 +510,7 @@ Target metrics:
 ## Contributing
 
 When adding new hooks:
+
 1. Create corresponding test file
 2. Write unit tests
 3. Add integration tests if needed

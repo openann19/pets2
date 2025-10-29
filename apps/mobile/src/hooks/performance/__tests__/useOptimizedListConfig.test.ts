@@ -25,10 +25,12 @@ describe('useOptimizedListConfig', () => {
     });
 
     it('should accept custom configuration options', () => {
-      const { result } = renderHook(() => useOptimizedListConfig({
-        estimatedItemSize: 100,
-        enableDebugLogging: true
-      }));
+      const { result } = renderHook(() =>
+        useOptimizedListConfig({
+          estimatedItemSize: 100,
+          enableDebugLogging: true,
+        }),
+      );
 
       expect(result.current.estimatedItemSize).toBe(100);
       expect(result.current.enableDebugLogging).toBe(true);
@@ -63,10 +65,12 @@ describe('useOptimizedListConfig', () => {
 
   describe('Memory Optimization', () => {
     it('should optimize memory usage for large lists', () => {
-      const { result } = renderHook(() => useOptimizedListConfig({
-        estimatedItemSize: 200,
-        maxItems: 1000
-      }));
+      const { result } = renderHook(() =>
+        useOptimizedListConfig({
+          estimatedItemSize: 200,
+          maxItems: 1000,
+        }),
+      );
 
       expect(result.current.maxToRenderPerBatch).toBeLessThanOrEqual(10);
       expect(result.current.windowSize).toBeGreaterThan(5);
@@ -120,9 +124,11 @@ describe('useOptimizedListConfig', () => {
     });
 
     it('should calculate item layout correctly', () => {
-      const { result } = renderHook(() => useOptimizedListConfig({
-        estimatedItemSize: 80
-      }));
+      const { result } = renderHook(() =>
+        useOptimizedListConfig({
+          estimatedItemSize: 80,
+        }),
+      );
 
       const layout = result.current.getItemLayout(null, 5);
       expect(layout).toHaveProperty('length', 80);
@@ -131,9 +137,11 @@ describe('useOptimizedListConfig', () => {
     });
 
     it('should handle variable item sizes', () => {
-      const { result } = renderHook(() => useOptimizedListConfig({
-        getItemHeight: (index) => index % 2 === 0 ? 60 : 90
-      }));
+      const { result } = renderHook(() =>
+        useOptimizedListConfig({
+          getItemHeight: (index) => (index % 2 === 0 ? 60 : 90),
+        }),
+      );
 
       const layout1 = result.current.getItemLayout(null, 0); // Even index
       const layout2 = result.current.getItemLayout(null, 1); // Odd index
@@ -185,18 +193,22 @@ describe('useOptimizedListConfig', () => {
 
   describe('Debug Features', () => {
     it('should provide debug information when enabled', () => {
-      const { result } = renderHook(() => useOptimizedListConfig({
-        enableDebugLogging: true
-      }));
+      const { result } = renderHook(() =>
+        useOptimizedListConfig({
+          enableDebugLogging: true,
+        }),
+      );
 
       expect(result.current.enableDebugLogging).toBe(true);
       expect(result.current.debugInfo).toBeDefined();
     });
 
     it('should track performance metrics', () => {
-      const { result } = renderHook(() => useOptimizedListConfig({
-        enableDebugLogging: true
-      }));
+      const { result } = renderHook(() =>
+        useOptimizedListConfig({
+          enableDebugLogging: true,
+        }),
+      );
 
       expect(result.current.debugInfo).toHaveProperty('renderTime');
       expect(result.current.debugInfo).toHaveProperty('memoryUsage');
@@ -212,33 +224,41 @@ describe('useOptimizedListConfig', () => {
 
   describe('Edge Cases', () => {
     it('should handle zero estimated item size', () => {
-      const { result } = renderHook(() => useOptimizedListConfig({
-        estimatedItemSize: 0
-      }));
+      const { result } = renderHook(() =>
+        useOptimizedListConfig({
+          estimatedItemSize: 0,
+        }),
+      );
 
       expect(result.current.estimatedItemSize).toBeGreaterThan(0);
     });
 
     it('should handle negative values', () => {
-      const { result } = renderHook(() => useOptimizedListConfig({
-        estimatedItemSize: -10
-      }));
+      const { result } = renderHook(() =>
+        useOptimizedListConfig({
+          estimatedItemSize: -10,
+        }),
+      );
 
       expect(result.current.estimatedItemSize).toBeGreaterThan(0);
     });
 
     it('should handle very large item sizes', () => {
-      const { result } = renderHook(() => useOptimizedListConfig({
-        estimatedItemSize: 10000
-      }));
+      const { result } = renderHook(() =>
+        useOptimizedListConfig({
+          estimatedItemSize: 10000,
+        }),
+      );
 
       expect(result.current.maxToRenderPerBatch).toBeLessThanOrEqual(2);
     });
 
     it('should handle empty lists', () => {
-      const { result } = renderHook(() => useOptimizedListConfig({
-        maxItems: 0
-      }));
+      const { result } = renderHook(() =>
+        useOptimizedListConfig({
+          maxItems: 0,
+        }),
+      );
 
       expect(result.current.initialNumToRender).toBe(0);
     });
@@ -272,17 +292,21 @@ describe('useOptimizedListConfig', () => {
 
   describe('Dynamic Optimization', () => {
     it('should adjust configuration based on list size', () => {
-      const { result: smallList } = renderHook(() => useOptimizedListConfig({
-        maxItems: 10
-      }));
+      const { result: smallList } = renderHook(() =>
+        useOptimizedListConfig({
+          maxItems: 10,
+        }),
+      );
 
-      const { result: largeList } = renderHook(() => useOptimizedListConfig({
-        maxItems: 1000
-      }));
+      const { result: largeList } = renderHook(() =>
+        useOptimizedListConfig({
+          maxItems: 1000,
+        }),
+      );
 
       // Large lists should have more conservative settings
       expect(largeList.current.maxToRenderPerBatch).toBeLessThanOrEqual(
-        smallList.current.maxToRenderPerBatch
+        smallList.current.maxToRenderPerBatch,
       );
     });
 
@@ -346,9 +370,11 @@ describe('useOptimizedListConfig', () => {
     });
 
     it('should cleanup performance monitors', () => {
-      const { unmount } = renderHook(() => useOptimizedListConfig({
-        enableDebugLogging: true
-      }));
+      const { unmount } = renderHook(() =>
+        useOptimizedListConfig({
+          enableDebugLogging: true,
+        }),
+      );
 
       unmount();
       // Should cleanup performance monitoring

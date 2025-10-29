@@ -55,18 +55,14 @@ describe('useChatInput', () => {
         expect(result.current.inputText).toBe(draftText);
       });
 
-      expect(mockAsyncStorage.getItem).toHaveBeenCalledWith(
-        `mobile_chat_draft_${matchId}`,
-      );
+      expect(mockAsyncStorage.getItem).toHaveBeenCalledWith(`mobile_chat_draft_${matchId}`);
     });
 
     it('should not load draft when disabled', async () => {
       const draftText = 'Draft text';
       mockAsyncStorage.getItem.mockResolvedValue(draftText);
 
-      const { result } = renderHook(() =>
-        useChatInput({ matchId, enabled: false }),
-      );
+      const { result } = renderHook(() => useChatInput({ matchId, enabled: false }));
 
       await waitFor(() => {
         expect(result.current.inputText).toBe('');
@@ -88,9 +84,7 @@ describe('useChatInput', () => {
     });
 
     it('should respect maxLength limit', () => {
-      const { result } = renderHook(() =>
-        useChatInput({ matchId, maxLength: 10 }),
-      );
+      const { result } = renderHook(() => useChatInput({ matchId, maxLength: 10 }));
 
       act(() => {
         result.current.setInputText('This is too long');
@@ -150,16 +144,12 @@ describe('useChatInput', () => {
       });
 
       await waitFor(() => {
-        expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith(
-          `mobile_chat_draft_${matchId}`,
-        );
+        expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith(`mobile_chat_draft_${matchId}`);
       });
     });
 
     it('should not persist when disabled', async () => {
-      const { result } = renderHook(() =>
-        useChatInput({ matchId, enabled: false }),
-      );
+      const { result } = renderHook(() => useChatInput({ matchId, enabled: false }));
 
       act(() => {
         result.current.setInputText('Test');
@@ -318,12 +308,8 @@ describe('useChatInput', () => {
     });
 
     it('should work with different matchIds', () => {
-      const { result: result1 } = renderHook(() =>
-        useChatInput({ matchId: 'match-1' }),
-      );
-      const { result: result2 } = renderHook(() =>
-        useChatInput({ matchId: 'match-2' }),
-      );
+      const { result: result1 } = renderHook(() => useChatInput({ matchId: 'match-1' }));
+      const { result: result2 } = renderHook(() => useChatInput({ matchId: 'match-2' }));
 
       act(() => {
         result1.current.setInputText('Match 1 text');
@@ -338,4 +324,3 @@ describe('useChatInput', () => {
     });
   });
 });
-

@@ -1,7 +1,12 @@
-import React, { useEffect } from "react";
-import { View, Switch, StyleSheet } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
+import React, { useEffect } from 'react';
+import { View, Switch, StyleSheet } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 
 type Props = {
   value: boolean;
@@ -31,11 +36,11 @@ export default function HapticSwitch({ value, onValueChange, disabled }: Props) 
       <Switch
         value={value}
         disabled={disabled}
-        onValueChange={v => {
+        onValueChange={(v) => {
           Haptics.selectionAsync();
           onValueChange(v);
         }}
-        trackColor={{ false: Theme.colors.neutral[200], true: "#fce7f3" }}
+        trackColor={{ false: Theme.colors.neutral[200], true: '#fce7f3' }}
         thumbColor={value ? Theme.colors.primary[500] : Theme.colors.neutral[400]}
       />
     </View>
@@ -43,13 +48,12 @@ export default function HapticSwitch({ value, onValueChange, disabled }: Props) 
 }
 
 const styles = StyleSheet.create({
-  wrap: { alignItems: "center", justifyContent: "center" },
+  wrap: { alignItems: 'center', justifyContent: 'center' },
   ring: {
-    position: "absolute",
+    position: 'absolute',
     width: 52,
     height: 32,
     borderRadius: 20,
     borderWidth: 2,
   },
 });
-

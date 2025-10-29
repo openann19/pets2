@@ -4,19 +4,16 @@
  * Extracts all form state, validation, and submission logic
  */
 
-import { useState, useCallback } from "react";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useState, useCallback } from 'react';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type AdoptionStackParamList = {
   AdoptionApplication: { petId: string; petName: string };
 };
 
-type AdoptionScreenProps = NativeStackScreenProps<
-  AdoptionStackParamList,
-  "AdoptionApplication"
->;
+type AdoptionScreenProps = NativeStackScreenProps<AdoptionStackParamList, 'AdoptionApplication'>;
 
 export interface ApplicationData {
   experience: string;
@@ -34,52 +31,53 @@ interface UseAdoptionApplicationScreenReturn {
   // State
   currentStep: number;
   formData: ApplicationData;
-  
+
   // Actions
   setCurrentStep: (step: number) => void;
-  updateFormData: (field: string, value: import("../../types/forms").FormFieldValue) => void;
+  updateFormData: (field: string, value: import('../../types/forms').FormFieldValue) => void;
   updateReference: (index: number, field: string, value: string) => void;
   updateVeterinarian: (field: string, value: string) => void;
-  
+
   // Validation & Navigation
   validateStep: () => boolean;
   handleNext: () => void;
   handleSubmit: () => Promise<void>;
-  
+
   // Step rendering helpers
   renderStep: () => React.ReactNode;
   renderExperienceStep: () => React.ReactNode;
   renderLifestyleStep: () => React.ReactNode;
   renderReferencesStep: () => React.ReactNode;
   renderCommitmentStep: () => React.ReactNode;
-  
+
   // Computed
   petId: string;
   petName: string;
 }
 
-export const useAdoptionApplicationScreen = (
-  { navigation, route }: AdoptionScreenProps,
-): UseAdoptionApplicationScreenReturn => {
+export const useAdoptionApplicationScreen = ({
+  navigation,
+  route,
+}: AdoptionScreenProps): UseAdoptionApplicationScreenReturn => {
   const { petId, petName } = route.params;
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<ApplicationData>({
-    experience: "",
-    livingSpace: "",
+    experience: '',
+    livingSpace: '',
     hasYard: false,
-    otherPets: "",
-    workSchedule: "",
+    otherPets: '',
+    workSchedule: '',
     references: [
-      { name: "", phone: "", relationship: "" },
-      { name: "", phone: "", relationship: "" },
+      { name: '', phone: '', relationship: '' },
+      { name: '', phone: '', relationship: '' },
     ],
-    veterinarian: { name: "", clinic: "", phone: "" },
-    reason: "",
-    commitment: "",
+    veterinarian: { name: '', clinic: '', phone: '' },
+    reason: '',
+    commitment: '',
   });
 
   const updateFormData = useCallback(
-    (field: string, value: import("../../types/forms").FormFieldValue) => {
+    (field: string, value: import('../../types/forms').FormFieldValue) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
     },
     [],
@@ -88,9 +86,7 @@ export const useAdoptionApplicationScreen = (
   const updateReference = useCallback((index: number, field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
-      references: prev.references.map((ref, i) =>
-        i === index ? { ...ref, [field]: value } : ref,
-      ),
+      references: prev.references.map((ref, i) => (i === index ? { ...ref, [field]: value } : ref)),
     }));
   }, []);
 
@@ -118,7 +114,7 @@ export const useAdoptionApplicationScreen = (
 
   const handleNext = useCallback(() => {
     if (!validateStep()) {
-      Alert.alert("Missing Information", "Please fill in all required fields.");
+      Alert.alert('Missing Information', 'Please fill in all required fields.');
       return;
     }
     if (currentStep < 3) {
@@ -130,27 +126,27 @@ export const useAdoptionApplicationScreen = (
 
   const handleSubmit = useCallback(async () => {
     try {
-      logger.info("Submitting application:", { petId, ...formData });
+      logger.info('Submitting application:', { petId, ...formData });
       Alert.alert(
-        "Application Submitted!",
+        'Application Submitted!',
         `Your application for ${petName} has been submitted. The owner will review it and get back to you soon.`,
-        [{ text: "OK", onPress: () => navigation.goBack() }],
+        [{ text: 'OK', onPress: () => navigation.goBack() }],
       );
     } catch (error) {
-      Alert.alert("Error", "Failed to submit application. Please try again.");
+      Alert.alert('Error', 'Failed to submit application. Please try again.');
     }
   }, [petId, petName, formData, navigation]);
 
   const renderStep = useCallback(() => {
     switch (currentStep) {
       case 0:
-        return "experience"; // Will be rendered by parent
+        return 'experience'; // Will be rendered by parent
       case 1:
-        return "lifestyle"; // Will be rendered by parent
+        return 'lifestyle'; // Will be rendered by parent
       case 2:
-        return "references"; // Will be rendered by parent
+        return 'references'; // Will be rendered by parent
       case 3:
-        return "commitment"; // Will be rendered by parent
+        return 'commitment'; // Will be rendered by parent
       default:
         return null;
     }
@@ -181,4 +177,3 @@ export const useAdoptionApplicationScreen = (
     petName,
   };
 };
-

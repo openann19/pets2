@@ -1,27 +1,27 @@
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useTheme } from '@mobile/src/theme';
+import { useTranslation } from 'react-i18next';
 import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRegisterScreen } from "../hooks/screens/useRegisterScreen";
-import type { RootStackScreenProps } from "../navigation/types";
-import { useTheme } from "@/theme";
-import { useTranslation } from 'react-i18next';
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRegisterScreen } from '../hooks/screens/useRegisterScreen';
+import type { RootStackScreenProps } from '../navigation/types';
 
-type RegisterScreenProps = RootStackScreenProps<"Register">;
+type RegisterScreenProps = RootStackScreenProps<'Register'>;
 
 const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const theme = useTheme();
   const { t } = useTranslation('auth');
-  const { values, errors, setValue, handleSubmit, navigateToLogin } =
-    useRegisterScreen({ navigation });
+  const { values, errors, setValue, handleSubmit, navigateToLogin } = useRegisterScreen({
+    navigation,
+  });
 
   const styles = StyleSheet.create({
     container: {
@@ -47,9 +47,9 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     },
     title: {
       fontSize: 28,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       marginBottom: 8,
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
     },
     subtitle: {
       fontSize: 16,
@@ -63,18 +63,18 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     },
     label: {
       fontSize: 14,
-      fontWeight: "600",
+      fontWeight: '600',
       marginBottom: 6,
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
     },
     input: {
-      backgroundColor: theme.colors.bgElevated,
+      backgroundColor: theme.colors.surface,
       borderWidth: 1,
       borderColor: theme.colors.border,
       borderRadius: 8,
       padding: 12,
       fontSize: 16,
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
     },
     errorText: {
       color: theme.colors.danger,
@@ -85,13 +85,13 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       backgroundColor: theme.colors.primary as string,
       borderRadius: 8,
       padding: 15,
-      alignItems: "center",
+      alignItems: 'center',
       marginVertical: 16,
     },
     buttonText: {
       color: theme.colors.bg,
       fontSize: 16,
-      fontWeight: "bold",
+      fontWeight: 'bold',
     },
     termsContainer: {
       marginTop: 16,
@@ -100,26 +100,30 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     termsText: {
       color: theme.colors.onMuted,
       fontSize: 12,
-      textAlign: "center",
+      textAlign: 'center',
     },
   });
 
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <TouchableOpacity style={styles.backButton}  testID="RegisterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={navigateToLogin}>
+          <TouchableOpacity
+            style={styles.backButton}
+            testID="RegisterScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={navigateToLogin}
+          >
             <Text style={styles.backButtonText}>{t('back_to_login')}</Text>
           </TouchableOpacity>
 
           <View style={styles.header}>
             <Text style={styles.title}>{t('create_account')}</Text>
-            <Text style={styles.subtitle}>
-              {t('create_account_subtitle')}
-            </Text>
+            <Text style={styles.subtitle}>{t('create_account_subtitle')}</Text>
           </View>
 
           <View style={styles.form}>
@@ -128,15 +132,15 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               <TextInput
                 style={styles.input}
                 value={values.email}
-                onChangeText={(text) => { setValue("email", text); }}
+                onChangeText={(text) => {
+                  setValue('email', text);
+                }}
                 placeholder={t('email_placeholder')}
                 autoCapitalize="none"
                 keyboardType="email-address"
                 autoCorrect={false}
               />
-              {errors.email && (
-                <Text style={styles.errorText}>{errors.email}</Text>
-              )}
+              {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
@@ -144,12 +148,12 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               <TextInput
                 style={styles.input}
                 value={values.firstName}
-                onChangeText={(text) => { setValue("firstName", text); }}
+                onChangeText={(text) => {
+                  setValue('firstName', text);
+                }}
                 placeholder={t('first_name_placeholder')}
               />
-              {errors.firstName && (
-                <Text style={styles.errorText}>{errors.firstName}</Text>
-              )}
+              {errors.firstName && <Text style={styles.errorText}>{errors.firstName}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
@@ -157,12 +161,12 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               <TextInput
                 style={styles.input}
                 value={values.lastName}
-                onChangeText={(text) => { setValue("lastName", text); }}
+                onChangeText={(text) => {
+                  setValue('lastName', text);
+                }}
                 placeholder={t('last_name_placeholder')}
               />
-              {errors.lastName && (
-                <Text style={styles.errorText}>{errors.lastName}</Text>
-              )}
+              {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
@@ -170,13 +174,13 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               <TextInput
                 style={styles.input}
                 value={values.dateOfBirth}
-                onChangeText={(text) => { setValue("dateOfBirth", text); }}
+                onChangeText={(text) => {
+                  setValue('dateOfBirth', text);
+                }}
                 placeholder={t('date_of_birth_placeholder')}
                 keyboardType="numbers-and-punctuation"
               />
-              {errors.dateOfBirth && (
-                <Text style={styles.errorText}>{errors.dateOfBirth}</Text>
-              )}
+              {errors.dateOfBirth && <Text style={styles.errorText}>{errors.dateOfBirth}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
@@ -184,13 +188,13 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               <TextInput
                 style={styles.input}
                 value={values.password}
-                onChangeText={(text) => { setValue("password", text); }}
+                onChangeText={(text) => {
+                  setValue('password', text);
+                }}
                 placeholder={t('password_placeholder')}
                 secureTextEntry
               />
-              {errors.password && (
-                <Text style={styles.errorText}>{errors.password}</Text>
-              )}
+              {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
@@ -198,7 +202,9 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               <TextInput
                 style={styles.input}
                 value={values.confirmPassword}
-                onChangeText={(text) => { setValue("confirmPassword", text); }}
+                onChangeText={(text) => {
+                  setValue('confirmPassword', text);
+                }}
                 placeholder={t('confirm_password_placeholder')}
                 secureTextEntry
               />
@@ -207,14 +213,18 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               )}
             </View>
 
-            <TouchableOpacity style={styles.button}  testID="RegisterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleSubmit}>
+            <TouchableOpacity
+              style={styles.button}
+              testID="RegisterScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={handleSubmit}
+            >
               <Text style={styles.buttonText}>{t('create_account_button')}</Text>
             </TouchableOpacity>
 
             <View style={styles.termsContainer}>
-              <Text style={styles.termsText}>
-                {t('terms_agreement')}
-              </Text>
+              <Text style={styles.termsText}>{t('terms_agreement')}</Text>
             </View>
           </View>
         </ScrollView>

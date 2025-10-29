@@ -2,10 +2,10 @@
  * useBlockedUsersScreen Hook
  * Manages Blocked Users screen state and interactions
  */
-import { useCallback, useState } from "react";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import { matchesAPI } from "../../services/api";
+import { useCallback, useState } from 'react';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import { matchesAPI } from '../../services/api';
 
 interface BlockedUser {
   id: string;
@@ -40,19 +40,20 @@ export const useBlockedUsersScreen = (): UseBlockedUsersScreenReturn => {
 
       // Transform API response to BlockedUser format
       const transformedUsers: BlockedUser[] = users.map((user) => ({
-        id: user._id || user.id || "",
-        name: user.firstName && user.lastName 
-          ? `${user.firstName} ${user.lastName}`.trim() 
-          : user.firstName || "Unknown",
-        email: user.email || "",
+        id: user._id || user.id || '',
+        name:
+          user.firstName && user.lastName
+            ? `${user.firstName} ${user.lastName}`.trim()
+            : user.firstName || 'Unknown',
+        email: user.email || '',
         blockedAt: user.createdAt || new Date().toISOString(),
-        reason: "User blocked",
+        reason: 'User blocked',
       }));
 
       setBlockedUsers(transformedUsers);
     } catch (error) {
-      logger.error("Failed to load blocked users:", { error });
-      Alert.alert("Error", "Failed to load blocked users. Please try again.");
+      logger.error('Failed to load blocked users:', { error });
+      Alert.alert('Error', 'Failed to load blocked users. Please try again.');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -66,15 +67,15 @@ export const useBlockedUsersScreen = (): UseBlockedUsersScreenReturn => {
   const unblockUser = useCallback(async (userId: string) => {
     try {
       await matchesAPI.unblockUser(userId);
-      
+
       // Remove user from list
-      setBlockedUsers(prev => prev.filter(user => user.id !== userId));
-      
-      logger.info("User unblocked successfully", { userId });
-      Alert.alert("Success", "User has been unblocked");
+      setBlockedUsers((prev) => prev.filter((user) => user.id !== userId));
+
+      logger.info('User unblocked successfully', { userId });
+      Alert.alert('Success', 'User has been unblocked');
     } catch (error) {
-      logger.error("Failed to unblock user:", { error, userId });
-      Alert.alert("Error", "Failed to unblock user. Please try again.");
+      logger.error('Failed to unblock user:', { error, userId });
+      Alert.alert('Error', 'Failed to unblock user. Please try again.');
     }
   }, []);
 

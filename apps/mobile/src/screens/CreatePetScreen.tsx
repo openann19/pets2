@@ -1,35 +1,26 @@
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { PetBasicInfoSection } from "../components/create-pet/PetBasicInfoSection";
-import { PetFormSubmit } from "../components/create-pet/PetFormSubmit";
-import { PetIntentHealthSection } from "../components/create-pet/PetIntentHealthSection";
-import { PetPersonalitySection } from "../components/create-pet/PetPersonalitySection";
-import { PetPhotosSection } from "../components/create-pet/PetPhotosSection";
-import { usePetForm } from "../hooks/usePetForm";
-import { usePhotoManager } from "../hooks/usePhotoManager";
-import type { RootStackScreenProps } from "../navigation/types";
-import { useTheme } from "@/theme";
-import { ScreenShell } from '../ui/layout/ScreenShell';
+import { useTheme } from '@mobile/src/theme';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
+import { PetBasicInfoSection } from '../components/create-pet/PetBasicInfoSection';
+import { PetFormSubmit } from '../components/create-pet/PetFormSubmit';
+import { PetIntentHealthSection } from '../components/create-pet/PetIntentHealthSection';
+import { PetPersonalitySection } from '../components/create-pet/PetPersonalitySection';
+import { PetPhotosSection } from '../components/create-pet/PetPhotosSection';
+import { usePetForm } from '../hooks/usePetForm';
+import { usePhotoManager } from '../hooks/usePhotoManager';
+import type { RootStackScreenProps } from '../navigation/types';
 import { haptic } from '../ui/haptics';
+import { ScreenShell } from '../ui/layout/ScreenShell';
 
-type CreatePetScreenProps = RootStackScreenProps<"CreatePet">;
+type CreatePetScreenProps = RootStackScreenProps<'CreatePet'>;
 
 export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
   const theme = useTheme();
   const styles = makeStyles(theme);
-  
-  const { formData, errors, isSubmitting, updateFormData, handleSubmit } =
-    usePetForm();
+
+  const { formData, errors, isSubmitting, updateFormData, handleSubmit } = usePetForm();
 
   const { photos, pickImage, removePhoto, setPrimaryPhoto } = usePhotoManager();
 
@@ -56,7 +47,7 @@ export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
       }
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoid}
       >
         <ScrollView
@@ -99,7 +90,10 @@ export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
           </Animated.View>
 
           <Animated.View entering={FadeInDown.duration(300).delay(200)}>
-            <PetFormSubmit isSubmitting={isSubmitting} onSubmit={onSubmit} />
+            <PetFormSubmit
+              isSubmitting={isSubmitting}
+              onSubmit={onSubmit}
+            />
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -107,18 +101,19 @@ export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
   );
 }
 
-const makeStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.bg,
-  },
-  keyboardAvoid: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: theme.spacing.lg,
-  },
-});
+const makeStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    keyboardAvoid: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      padding: theme.spacing.lg,
+    },
+  });

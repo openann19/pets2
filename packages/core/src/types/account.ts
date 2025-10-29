@@ -76,7 +76,14 @@ export interface ReportedUser {
   reportId: string;
   reportedUserId: string;
   reportedBy: string;
-  reason: 'spam' | 'harassment' | 'fake_profile' | 'inappropriate_content' | 'scam' | 'underage' | 'other';
+  reason:
+    | 'spam'
+    | 'harassment'
+    | 'fake_profile'
+    | 'inappropriate_content'
+    | 'scam'
+    | 'underage'
+    | 'other';
   description?: string;
   evidence?: string[]; // URLs to screenshots
   reportedAt: string;

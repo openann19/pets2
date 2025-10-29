@@ -2,15 +2,15 @@
  * useHomeScreen Hook
  * Manages HomeScreen state and business logic
  */
-import { useCallback, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore } from "@pawfectmatch/core";
-import { matchesAPI } from "../../services/api";
-import { authService } from "../../services/AuthService";
-import type { RootStackParamList } from "../../navigation/types";
-import { haptic } from "../../ui/haptics";
+import { useCallback, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { logger } from '@pawfectmatch/core';
+import { useAuthStore } from '@pawfectmatch/core';
+import { matchesAPI } from '../../services/api';
+import { authService } from '../../services/AuthService';
+import type { RootStackParamList } from '../../navigation/types';
+import { haptic } from '../../ui/haptics';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -51,23 +51,23 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
     try {
       // Get access token from AuthService
       const accessToken = await authService.getAccessToken();
-      
+
       // Use real home stats API endpoint
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/home/stats`, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       });
       const data = await response.json();
-      
+
       setStats({
         matches: data.matches || 0,
         messages: data.messages || 0,
         pets: 0, // Not included in new API
       });
     } catch (error) {
-      logger.error("Failed to refresh data:", { error });
+      logger.error('Failed to refresh data:', { error });
     } finally {
       setRefreshing(false);
     }
@@ -77,38 +77,38 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
     (action: string) => {
       try {
         switch (action) {
-          case "swipe":
-            navigation.navigate("Swipe");
+          case 'swipe':
+            navigation.navigate('Swipe');
             break;
-          case "matches":
-            navigation.navigate("Matches");
+          case 'matches':
+            navigation.navigate('Matches');
             break;
-          case "messages":
-            navigation.navigate("Matches");
+          case 'messages':
+            navigation.navigate('Matches');
             break;
-          case "profile":
-            navigation.navigate("Profile");
+          case 'profile':
+            navigation.navigate('Profile');
             break;
-          case "settings":
-            navigation.navigate("Settings");
+          case 'settings':
+            navigation.navigate('Settings');
             break;
-          case "my-pets":
-            navigation.navigate("MyPets");
+          case 'my-pets':
+            navigation.navigate('MyPets');
             break;
-          case "create-pet":
-            navigation.navigate("CreatePet");
+          case 'create-pet':
+            navigation.navigate('CreatePet');
             break;
-          case "community":
-            navigation.navigate("Community");
+          case 'community':
+            navigation.navigate('Community');
             break;
-          case "premium":
-            navigation.navigate("Profile");
+          case 'premium':
+            navigation.navigate('Profile');
             break;
           default:
             logger.warn(`Unknown action: ${action}`);
         }
       } catch (error) {
-        logger.error("Navigation error:", { error });
+        logger.error('Navigation error:', { error });
       }
     },
     [navigation],
@@ -116,42 +116,42 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
 
   const handleProfilePress = useCallback(() => {
     haptic.tap();
-    handleQuickAction("profile");
+    handleQuickAction('profile');
   }, [handleQuickAction]);
 
   const handleSettingsPress = useCallback(() => {
     haptic.tap();
-    handleQuickAction("settings");
+    handleQuickAction('settings');
   }, [handleQuickAction]);
 
   const handleSwipePress = useCallback(() => {
     haptic.confirm();
-    handleQuickAction("swipe");
+    handleQuickAction('swipe');
   }, [handleQuickAction]);
 
   const handleMatchesPress = useCallback(() => {
     haptic.confirm();
-    handleQuickAction("matches");
+    handleQuickAction('matches');
   }, [handleQuickAction]);
 
   const handleMessagesPress = useCallback(() => {
     haptic.confirm();
-    handleQuickAction("messages");
+    handleQuickAction('messages');
   }, [handleQuickAction]);
 
   const handleMyPetsPress = useCallback(() => {
     haptic.confirm();
-    handleQuickAction("my-pets");
+    handleQuickAction('my-pets');
   }, [handleQuickAction]);
 
   const handleCreatePetPress = useCallback(() => {
     haptic.confirm();
-    handleQuickAction("create-pet");
+    handleQuickAction('create-pet');
   }, [handleQuickAction]);
 
   const handleCommunityPress = useCallback(() => {
     haptic.confirm();
-    handleQuickAction("community");
+    handleQuickAction('community');
   }, [handleQuickAction]);
 
   return {

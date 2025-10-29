@@ -27,7 +27,7 @@ import {
   EliteEmptyState,
   PREMIUM_GRADIENTS,
   PREMIUM_SHADOWS,
-} from "./elite";
+} from './elite';
 
 // Re-export all elite components for named imports
 export {

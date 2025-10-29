@@ -205,7 +205,9 @@ describe('AIService - Core Tests', () => {
     it('should handle API errors during compatibility computation', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Compatibility calculation failed'));
 
-      await expect(computeCompatibility('pet1', 'pet2')).rejects.toThrow('Compatibility calculation failed');
+      await expect(computeCompatibility('pet1', 'pet2')).rejects.toThrow(
+        'Compatibility calculation failed',
+      );
     });
   });
 
@@ -213,13 +215,17 @@ describe('AIService - Core Tests', () => {
     it('should handle network timeouts', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Network timeout'));
 
-      await expect(generateBio({ petName: 'Test', keywords: ['test'] })).rejects.toThrow('Network timeout');
+      await expect(generateBio({ petName: 'Test', keywords: ['test'] })).rejects.toThrow(
+        'Network timeout',
+      );
     });
 
     it('should handle service unavailability', async () => {
       mockRequest.mockRejectedValueOnce(new Error('AI service is temporarily unavailable'));
 
-      await expect(analyzePhoto('test.jpg')).rejects.toThrow('AI service is temporarily unavailable');
+      await expect(analyzePhoto('test.jpg')).rejects.toThrow(
+        'AI service is temporarily unavailable',
+      );
     });
 
     it('should handle malformed API responses', async () => {

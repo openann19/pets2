@@ -35,9 +35,7 @@ describe('Navigation System Integration', () => {
       let scrollTracker: any;
 
       // Setup scroll tracking
-      const { result: scrollResult } = renderHook(() =>
-        useScrollOffsetTracker(),
-      );
+      const { result: scrollResult } = renderHook(() => useScrollOffsetTracker());
 
       // Setup tab reselect
       mockNavigation.addListener.mockImplementation((event, handler) => {
@@ -83,9 +81,7 @@ describe('Navigation System Integration', () => {
       const onRefresh = jest.fn();
       let tabPressHandler: any;
 
-      const { result: scrollResult } = renderHook(() =>
-        useScrollOffsetTracker(),
-      );
+      const { result: scrollResult } = renderHook(() => useScrollOffsetTracker());
 
       mockNavigation.addListener.mockImplementation((event, handler) => {
         if (event === 'tabPress') tabPressHandler = handler;
@@ -157,9 +153,7 @@ describe('Navigation System Integration', () => {
       const onRefresh = jest.fn();
       const onDoublePress = jest.fn();
 
-      const { result: scrollResult } = renderHook(() =>
-        useScrollOffsetTracker(),
-      );
+      const { result: scrollResult } = renderHook(() => useScrollOffsetTracker());
 
       renderHook(() =>
         useTabReselectRefresh({
@@ -192,9 +186,7 @@ describe('Navigation System Integration', () => {
       const onRefresh = jest.fn();
       let tabPressHandler: any;
 
-      const { result: scrollResult } = renderHook(() =>
-        useScrollOffsetTracker(),
-      );
+      const { result: scrollResult } = renderHook(() => useScrollOffsetTracker());
 
       mockNavigation.addListener.mockImplementation((event, handler) => {
         if (event === 'tabPress') tabPressHandler = handler;
@@ -296,9 +288,7 @@ describe('Navigation System Integration', () => {
     });
 
     it('should handle cleanup and re-initialization', () => {
-      const { result, unmount, rerender } = renderHook(() =>
-        useScrollOffsetTracker(),
-      );
+      const { result, unmount, rerender } = renderHook(() => useScrollOffsetTracker());
 
       act(() => {
         result.current.onScroll({
@@ -358,4 +348,3 @@ describe('Navigation System Integration', () => {
     });
   });
 });
-

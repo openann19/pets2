@@ -24,21 +24,25 @@ describe('useWelcome', () => {
     it('should initialize with custom steps', () => {
       const customSteps = [
         { id: 'welcome', title: 'Welcome!', content: 'Welcome content' },
-        { id: 'features', title: 'Features', content: 'Features content' }
+        { id: 'features', title: 'Features', content: 'Features content' },
       ];
 
-      const { result } = renderHook(() => useWelcome({
-        steps: customSteps
-      }));
+      const { result } = renderHook(() =>
+        useWelcome({
+          steps: customSteps,
+        }),
+      );
 
       expect(result.current.totalSteps).toBe(2);
       expect(result.current.steps).toEqual(customSteps);
     });
 
     it('should accept initial step', () => {
-      const { result } = renderHook(() => useWelcome({
-        initialStep: 1
-      }));
+      const { result } = renderHook(() =>
+        useWelcome({
+          initialStep: 1,
+        }),
+      );
       expect(result.current.currentStep).toBe(1);
     });
   });
@@ -128,9 +132,11 @@ describe('useWelcome', () => {
 
     it('should call onComplete callback', async () => {
       const onComplete = jest.fn();
-      const { result } = renderHook(() => useWelcome({
-        onComplete
-      }));
+      const { result } = renderHook(() =>
+        useWelcome({
+          onComplete,
+        }),
+      );
 
       await act(async () => {
         await result.current.completeWelcome();
@@ -178,9 +184,11 @@ describe('useWelcome', () => {
 
     it('should call onSkip callback', async () => {
       const onSkip = jest.fn();
-      const { result } = renderHook(() => useWelcome({
-        onSkip
-      }));
+      const { result } = renderHook(() =>
+        useWelcome({
+          onSkip,
+        }),
+      );
 
       await act(async () => {
         await result.current.skipWelcome();
@@ -190,9 +198,11 @@ describe('useWelcome', () => {
     });
 
     it('should disable skip when configured', () => {
-      const { result } = renderHook(() => useWelcome({
-        canSkip: false
-      }));
+      const { result } = renderHook(() =>
+        useWelcome({
+          canSkip: false,
+        }),
+      );
 
       expect(result.current.canSkip).toBe(false);
     });
@@ -330,13 +340,15 @@ describe('useWelcome', () => {
           id: 'custom1',
           title: 'Custom Title',
           content: 'Custom content',
-          image: 'custom-image.png'
-        }
+          image: 'custom-image.png',
+        },
       ];
 
-      const { result } = renderHook(() => useWelcome({
-        steps: customSteps
-      }));
+      const { result } = renderHook(() =>
+        useWelcome({
+          steps: customSteps,
+        }),
+      );
 
       expect(result.current.steps[0].title).toBe('Custom Title');
       expect(result.current.steps[0].content).toBe('Custom content');
@@ -346,20 +358,24 @@ describe('useWelcome', () => {
       const customStyles = {
         container: { backgroundColor: '#FF0000' },
         title: { fontSize: 24 },
-        content: { color: '#00FF00' }
+        content: { color: '#00FF00' },
       };
 
-      const { result } = renderHook(() => useWelcome({
-        styles: customStyles
-      }));
+      const { result } = renderHook(() =>
+        useWelcome({
+          styles: customStyles,
+        }),
+      );
 
       expect(result.current.styles).toEqual(customStyles);
     });
 
     it('should support custom animations', () => {
-      const { result } = renderHook(() => useWelcome({
-        animationType: 'slide'
-      }));
+      const { result } = renderHook(() =>
+        useWelcome({
+          animationType: 'slide',
+        }),
+      );
 
       expect(result.current.animationType).toBe('slide');
     });
@@ -519,7 +535,7 @@ describe('useWelcome', () => {
       act(() => {
         result.current.setUserPreferences({
           theme: 'dark',
-          language: 'bg'
+          language: 'bg',
         });
       });
 
@@ -541,9 +557,11 @@ describe('useWelcome', () => {
 
   describe('Edge Cases', () => {
     it('should handle empty steps', () => {
-      const { result } = renderHook(() => useWelcome({
-        steps: []
-      }));
+      const { result } = renderHook(() =>
+        useWelcome({
+          steps: [],
+        }),
+      );
 
       expect(result.current.totalSteps).toBe(0);
       expect(result.current.isComplete).toBe(true);
@@ -551,9 +569,11 @@ describe('useWelcome', () => {
 
     it('should handle single step', () => {
       const singleStep = [{ id: 'only', title: 'Only Step', content: 'Content' }];
-      const { result } = renderHook(() => useWelcome({
-        steps: singleStep
-      }));
+      const { result } = renderHook(() =>
+        useWelcome({
+          steps: singleStep,
+        }),
+      );
 
       expect(result.current.totalSteps).toBe(1);
 
@@ -565,10 +585,12 @@ describe('useWelcome', () => {
     });
 
     it('should handle invalid callbacks', () => {
-      const { result } = renderHook(() => useWelcome({
-        onComplete: null as any,
-        onSkip: undefined as any
-      }));
+      const { result } = renderHook(() =>
+        useWelcome({
+          onComplete: null as any,
+          onSkip: undefined as any,
+        }),
+      );
 
       expect(result.current.onComplete).toBeDefined();
       expect(result.current.onSkip).toBeDefined();

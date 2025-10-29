@@ -3,12 +3,12 @@
  * Manages business logic for compatibility analysis
  */
 
-import { useAuthStore } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
-import { Alert } from "react-native";
-import { aiAPI, matchesAPI } from "../../../../services/api";
-import { logger } from "../../../../services/logger";
+import { useAuthStore } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
+import { aiAPI, matchesAPI } from '../../../../services/api';
+import { logger } from '../../../../services/logger';
 
 export interface Pet {
   id: string;
@@ -80,7 +80,7 @@ export const useCompatibilityAnalysis = () => {
       setPets(pets as unknown as Pet[]);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error("Failed to load pets:", { error: err });
+      logger.error('Failed to load pets:', { error: err });
     } finally {
       setLoading(false);
     }
@@ -102,12 +102,12 @@ export const useCompatibilityAnalysis = () => {
 
   const handleAnalyze = async () => {
     if (!selectedPetA || !selectedPetB) {
-      Alert.alert("Selection Required", "Please select both pets to analyze compatibility");
+      Alert.alert('Selection Required', 'Please select both pets to analyze compatibility');
       return;
     }
 
     if (selectedPetA.id === selectedPetB.id) {
-      Alert.alert("Invalid Selection", "Please select two different pets");
+      Alert.alert('Invalid Selection', 'Please select two different pets');
       return;
     }
 
@@ -165,12 +165,12 @@ export const useCompatibilityAnalysis = () => {
 
       setAnalysisResult(analysis);
       setAnalysisHistory((prev) => [analysis, ...prev.slice(0, 4)]); // Keep last 5
-      logger.info("Compatibility analysis completed", {
+      logger.info('Compatibility analysis completed', {
         score: analysis.score.overall,
       });
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error("Compatibility analysis failed:", { error: err });
+      logger.error('Compatibility analysis failed:', { error: err });
 
       // Fallback analysis for demo
       const fallbackAnalysis: CompatibilityAnalysis = {
@@ -187,9 +187,9 @@ export const useCompatibilityAnalysis = () => {
             lifestyle: 80,
           },
           factors: {
-            strengths: ["Compatible personalities", "Similar activity levels"],
-            concerns: ["Age gap", "Different play preferences"],
-            recommendations: ["Supervised introduction", "Gradual socialization"],
+            strengths: ['Compatible personalities', 'Similar activity levels'],
+            concerns: ['Age gap', 'Different play preferences'],
+            recommendations: ['Supervised introduction', 'Gradual socialization'],
           },
           interaction: {
             playdate: 85,
@@ -199,12 +199,11 @@ export const useCompatibilityAnalysis = () => {
         },
         analysis: {
           summary: `${petA.name} and ${petB.name} have good compatibility potential.`,
-          detailed:
-            "These pets show promising compatibility with some areas that need attention.",
+          detailed: 'These pets show promising compatibility with some areas that need attention.',
           tips: [
-            "Start with short supervised interactions",
-            "Pay attention to body language",
-            "Respect their individual boundaries",
+            'Start with short supervised interactions',
+            'Pay attention to body language',
+            'Respect their individual boundaries',
           ],
         },
         generatedAt: new Date().toISOString(),
@@ -230,4 +229,3 @@ export const useCompatibilityAnalysis = () => {
     loadPets,
   };
 };
-

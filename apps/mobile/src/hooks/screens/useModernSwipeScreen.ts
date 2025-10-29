@@ -2,11 +2,11 @@
  * useModernSwipeScreen Hook
  * Manages ModernSwipeScreen state and business logic
  */
-import { useCallback, useEffect, useState } from "react";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore, type Pet, type PetFilters } from "@pawfectmatch/core";
-import { matchesAPI } from "../../services/api";
+import { useCallback, useEffect, useState } from 'react';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import { useAuthStore, type Pet, type PetFilters } from '@pawfectmatch/core';
+import { matchesAPI } from '../../services/api';
 
 interface UseModernSwipeScreenReturn {
   // Data
@@ -28,11 +28,11 @@ interface UseModernSwipeScreenReturn {
   setShowFilters: (show: boolean) => void;
   setFilters: (filters: PetFilters) => void;
   loadPets: () => Promise<void>;
-  swipePet: (petId: string, action: "like" | "pass" | "superlike") => Promise<any>;
+  swipePet: (petId: string, action: 'like' | 'pass' | 'superlike') => Promise<any>;
   handleSwipeRight: (pet: Pet) => void;
   handleSwipeLeft: (pet: Pet) => void;
   handleSwipeUp: (pet: Pet) => void;
-  handleButtonSwipe: (action: "like" | "pass" | "superlike") => void;
+  handleButtonSwipe: (action: 'like' | 'pass' | 'superlike') => void;
 }
 
 export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
@@ -47,9 +47,9 @@ export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
   const [showFilters, setShowFilters] = useState(false);
 
   const [filters, setFilters] = useState<PetFilters>({
-    breed: "",
-    species: "",
-    size: "",
+    breed: '',
+    species: '',
+    size: '',
     maxDistance: 25,
   });
 
@@ -62,9 +62,7 @@ export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
       setPets(realPets);
     } catch (err) {
       const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Failed to load pets. Please check your connection.";
+        err instanceof Error ? err.message : 'Failed to load pets. Please check your connection.';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -88,7 +86,7 @@ export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
         }
         return null;
       } catch (error) {
-        logger.error("Error liking pet", { error });
+        logger.error('Error liking pet', { error });
         return null;
       }
     },
@@ -98,10 +96,10 @@ export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
   // Handle pass action
   const handlePass = useCallback(async (pet: Pet) => {
     try {
-      logger.info("Pet passed", { petId: pet._id });
+      logger.info('Pet passed', { petId: pet._id });
       return null;
     } catch (error) {
-      logger.error("Error passing pet", { error });
+      logger.error('Error passing pet', { error });
       return null;
     }
   }, []);
@@ -113,12 +111,12 @@ export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
         const result = await handleLike(pet);
 
         if (result) {
-          Alert.alert("Super Like Sent!", `${pet.name} will see that you super liked them!`);
+          Alert.alert('Super Like Sent!', `${pet.name} will see that you super liked them!`);
         }
 
         return result;
       } catch (error) {
-        logger.error("Error super liking pet", { error });
+        logger.error('Error super liking pet', { error });
         return null;
       }
     },
@@ -127,24 +125,24 @@ export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
 
   // Swipe pet function
   const swipePet = useCallback(
-    async (petId: string, action: "like" | "pass" | "superlike") => {
+    async (petId: string, action: 'like' | 'pass' | 'superlike') => {
       try {
         const pet = pets.find((p) => p._id === petId);
         if (!pet) return null;
 
         switch (action) {
-          case "like":
+          case 'like':
             return await handleLike(pet);
-          case "pass":
+          case 'pass':
             return await handlePass(pet);
-          case "superlike":
+          case 'superlike':
             return await handleSuperLike(pet);
           default:
             return null;
         }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-        Alert.alert("Error", `Failed to process swipe: ${errorMessage}`);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        Alert.alert('Error', `Failed to process swipe: ${errorMessage}`);
         return null;
       }
     },
@@ -154,7 +152,7 @@ export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
   // Swipe handlers
   const handleSwipeRight = useCallback(
     (pet: Pet) => {
-      swipePet(pet._id, "like");
+      swipePet(pet._id, 'like');
       setCurrentIndex((prev) => Math.min(prev + 1, pets.length - 1));
     },
     [swipePet, pets.length],
@@ -162,7 +160,7 @@ export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
 
   const handleSwipeLeft = useCallback(
     (pet: Pet) => {
-      swipePet(pet._id, "pass");
+      swipePet(pet._id, 'pass');
       setCurrentIndex((prev) => Math.min(prev + 1, pets.length - 1));
     },
     [swipePet, pets.length],
@@ -170,7 +168,7 @@ export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
 
   const handleSwipeUp = useCallback(
     (pet: Pet) => {
-      swipePet(pet._id, "superlike");
+      swipePet(pet._id, 'superlike');
       setCurrentIndex((prev) => Math.min(prev + 1, pets.length - 1));
     },
     [swipePet, pets.length],
@@ -178,18 +176,18 @@ export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
 
   // Handle button swipe
   const handleButtonSwipe = useCallback(
-    (action: "like" | "pass" | "superlike") => {
+    (action: 'like' | 'pass' | 'superlike') => {
       const currentPet = pets[currentIndex];
       if (!currentPet) return;
 
       switch (action) {
-        case "like":
+        case 'like':
           handleSwipeRight(currentPet);
           break;
-        case "pass":
+        case 'pass':
           handleSwipeLeft(currentPet);
           break;
-        case "superlike":
+        case 'superlike':
           handleSwipeUp(currentPet);
           break;
       }

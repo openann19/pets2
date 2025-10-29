@@ -3,9 +3,9 @@
  * Manages AI Photo Analyzer screen state and interactions
  * Adapted for single-image photo analysis with transformation between formats
  */
-import { useNavigation } from "@react-navigation/native";
-import { useAIPhotoAnalyzer } from "../domains/ai/useAIPhotoAnalyzer";
-import { useCallback, useState } from "react";
+import { useNavigation } from '@react-navigation/native';
+import { useAIPhotoAnalyzer } from '../domains/ai/useAIPhotoAnalyzer';
+import { useCallback, useState } from 'react';
 
 interface UseAIPhotoAnalyzerScreenReturn {
   // State
@@ -26,7 +26,7 @@ interface UseAIPhotoAnalyzerScreenReturn {
 export const useAIPhotoAnalyzerScreen = (): UseAIPhotoAnalyzerScreenReturn => {
   const navigation = useNavigation();
   const domain = useAIPhotoAnalyzer();
-  
+
   // Single image state (UI-specific)
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -47,7 +47,7 @@ export const useAIPhotoAnalyzerScreen = (): UseAIPhotoAnalyzerScreenReturn => {
 
   const analyzePhoto = useCallback(async (): Promise<void> => {
     if (!selectedImage) return;
-    
+
     try {
       await domain.analyzePhotos([selectedImage]);
     } catch (error) {

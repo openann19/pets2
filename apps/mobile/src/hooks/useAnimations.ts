@@ -1,8 +1,8 @@
 // Mobile Animations for PawfectMatch Premium
 // High-impact micro-interactions for React Native
 
-import * as Haptics from "expo-haptics";
-import { logger } from "@pawfectmatch/core";
+import * as Haptics from 'expo-haptics';
+import { logger } from '@pawfectmatch/core';
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -13,8 +13,8 @@ import {
   interpolate,
   Extrapolate,
   runOnJS,
-} from "react-native-reanimated";
-import { SPRING, DUR } from "../animation/index";
+} from 'react-native-reanimated';
+import { SPRING, DUR } from '../animation/index';
 
 // Re-export animation constants for direct use
 // No longer wrapping in AnimationConfigs object - import SPRING and DUR directly
@@ -36,12 +36,7 @@ export function useHoverLift(): UseHoverLiftReturn {
     return {
       transform: [{ scale: scale.value }, { translateY: translateY.value }],
       shadowOpacity: shadowOpacity.value,
-      shadowRadius: interpolate(
-        shadowOpacity.value,
-        [0.1, 0.3],
-        [4, 20],
-        Extrapolate.CLAMP,
-      ),
+      shadowRadius: interpolate(shadowOpacity.value, [0.1, 0.3], [4, 20], Extrapolate.CLAMP),
     };
   });
 
@@ -101,20 +96,14 @@ export function useSwipeAnimations(): UseSwipeAnimationsReturn {
 
   const swipeRightStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { translateX: translateX.value },
-        { rotate: `${rotate.value}deg` },
-      ],
+      transform: [{ translateX: translateX.value }, { rotate: `${rotate.value}deg` }],
       opacity: opacity.value,
     };
   });
 
   const swipeLeftStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { translateX: translateX.value },
-        { rotate: `${rotate.value}deg` },
-      ],
+      transform: [{ translateX: translateX.value }, { rotate: `${rotate.value}deg` }],
       opacity: opacity.value,
     };
   });
@@ -330,9 +319,7 @@ export function useHoverScale(): UseHoverScaleReturn {
 }
 
 // Enhanced haptic feedback
-export function triggerHaptic(
-  type: "light" | "medium" | "heavy" = "medium",
-): void {
+export function triggerHaptic(type: 'light' | 'medium' | 'heavy' = 'medium'): void {
   const hapticTypes = {
     light: Haptics.ImpactFeedbackStyle.Light,
     medium: Haptics.ImpactFeedbackStyle.Medium,
@@ -343,7 +330,7 @@ export function triggerHaptic(
 }
 
 // Sound feedback (if available)
-export function triggerSound(type: "hover" | "press" = "press"): void {
+export function triggerSound(type: 'hover' | 'press' = 'press'): void {
   // Note: Sound feedback would require additional audio setup
   // This is a placeholder for future implementation
   logger.info(`Sound feedback: ${type}`);

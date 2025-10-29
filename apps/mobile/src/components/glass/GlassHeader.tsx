@@ -1,12 +1,7 @@
-import React, { type ReactNode } from "react";
-import { type ViewProps, type ViewStyle, StyleSheet } from "react-native";
-import { GlassContainer } from "./GlassContainer";
-import {
-  BLUR_CONFIGS,
-  TRANSPARENCY_CONFIGS,
-  BORDER_CONFIGS,
-  SHADOW_CONFIGS,
-} from "./configs";
+import React, { type ReactNode } from 'react';
+import { type ViewProps, type ViewStyle, StyleSheet } from 'react-native';
+import { GlassContainer } from './GlassContainer';
+import { BLUR_CONFIGS, TRANSPARENCY_CONFIGS, BORDER_CONFIGS, SHADOW_CONFIGS } from './configs';
 
 /**
  * GlassHeader Component
@@ -21,7 +16,7 @@ interface GlassHeaderProps extends ViewProps {
 
 export const GlassHeader: React.FC<GlassHeaderProps> = ({
   children,
-  intensity = "heavy",
+  intensity = 'heavy',
   style,
   ...props
 }) => {
@@ -34,7 +29,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
       borderRadius="none"
       style={StyleSheet.flatten([
         {
-          position: "absolute" as const,
+          position: 'absolute' as const,
           top: 0,
           left: 0,
           right: 0,

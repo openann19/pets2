@@ -4,37 +4,31 @@
  * Cross-platform consistency with web premium experience
  */
 
-import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useState, useEffect, useRef } from "react";
-import type { ViewStyle } from "react-native";
+import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useState } from 'react';
+import type { ViewStyle } from 'react-native';
 import {
-  View,
-  StyleSheet,
   Animated,
-  PanResponder,
   Dimensions,
+  PanResponder,
+  StyleSheet,
   TouchableOpacity,
-} from "react-native";
+  View,
+} from 'react-native';
 
-import { useTheme } from "@/theme";
+import { useTheme } from '@mobile/src/theme';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface PremiumCardProps {
   children: React.ReactNode;
-  variant?:
-    | "default"
-    | "glass"
-    | "elevated"
-    | "gradient"
-    | "neon"
-    | "holographic";
+  variant?: 'default' | 'glass' | 'elevated' | 'gradient' | 'neon' | 'holographic';
   hover?: boolean;
   tilt?: boolean;
   glow?: boolean;
-  padding?: "none" | "sm" | "md" | "lg" | "xl";
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   style?: ViewStyle;
   onPress?: () => void;
   disabled?: boolean;
@@ -43,19 +37,19 @@ interface PremiumCardProps {
 
 export const PremiumCard: React.FC<PremiumCardProps> = ({
   children,
-  variant = "default",
+  variant = 'default',
   hover = true,
   tilt = false,
   glow = false,
-  padding = "md",
+  padding = 'md',
   style,
   onPress,
   disabled = false,
   haptic = true,
 }) => {
   const theme = useTheme();
-  const isDark = theme.scheme === "dark";
-  
+  const isDark = theme.scheme === 'dark';
+
   // Animation values (useState pattern to avoid refs during render)
   const [animatedScale] = useState(() => new Animated.Value(1));
   const [animatedRotateX] = useState(() => new Animated.Value(0));
@@ -79,14 +73,8 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
         const maxTilt = 15;
 
         // Calculate tilt based on gesture
-        const tiltX = Math.max(
-          -maxTilt,
-          Math.min(maxTilt, (dy / 100) * maxTilt),
-        );
-        const tiltY = Math.max(
-          -maxTilt,
-          Math.min(maxTilt, -(dx / 100) * maxTilt),
-        );
+        const tiltX = Math.max(-maxTilt, Math.min(maxTilt, (dy / 100) * maxTilt));
+        const tiltY = Math.max(-maxTilt, Math.min(maxTilt, -(dx / 100) * maxTilt));
 
         animatedRotateX.setValue(tiltX);
         animatedRotateY.setValue(tiltY);
@@ -120,7 +108,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
           }),
         ]).start();
       },
-    })
+    }),
   );
 
   // Enhanced press handling
@@ -190,27 +178,37 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   const getVariantStyles = () => {
     const variants = {
       default: {
-        colors: isDark ? [theme.colors.text.primary, theme.colors.text.primary + "80"] : [theme.colors.background.primary, theme.colors.background.secondary],
-        shadowColor: theme.colors.text.primary,
+        colors: isDark
+          ? [theme.colors.onSurface.primary, theme.colors.onSurface.primary + '80']
+          : [theme.colors.bg.primary, theme.colors.bg.secondary],
+        shadowColor: theme.colors.onSurface.primary,
       },
       glass: {
-        colors: ["transparent", "transparent"],
-        shadowColor: theme.colors.text.primary,
+        colors: ['transparent', 'transparent'],
+        shadowColor: theme.colors.onSurface.primary,
       },
       elevated: {
-        colors: isDark ? [theme.colors.text.primary, theme.colors.text.primary + "80"] : [theme.colors.background.primary, theme.colors.background.secondary],
-        shadowColor: theme.colors.text.primary,
+        colors: isDark
+          ? [theme.colors.onSurface.primary, theme.colors.onSurface.primary + '80']
+          : [theme.colors.bg.primary, theme.colors.bg.secondary],
+        shadowColor: theme.colors.onSurface.primary,
       },
       gradient: {
-        colors: [theme.colors.primary[500], theme.colors.primary[600]],
-        shadowColor: theme.colors.primary[500],
+        colors: [theme.colors.primary, theme.colors.primary],
+        shadowColor: theme.colors.primary,
       },
       neon: {
-        colors: [theme.colors.text.primary, theme.colors.text.primary],
-        shadowColor: theme.colors.primary[500],
+        colors: [theme.colors.onSurface.primary, theme.colors.onSurface.primary],
+        shadowColor: theme.colors.primary,
       },
       holographic: {
-        colors: [theme.colors.danger, theme.colors.status.success, theme.colors.status.success, theme.colors.status.success, theme.colors.status.warning],
+        colors: [
+          theme.colors.danger,
+          theme.colors.success,
+          theme.colors.success,
+          theme.colors.success,
+          theme.colors.warning,
+        ],
         shadowColor: theme.colors.danger,
       },
     };
@@ -239,7 +237,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   const getVariantContainerStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
       borderRadius: 16,
-      overflow: "hidden",
+      overflow: 'hidden',
     };
 
     const paddingValues = {
@@ -251,11 +249,11 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
     };
 
     switch (variant) {
-      case "elevated":
+      case 'elevated':
         return {
           ...baseStyle,
-          backgroundColor: isDark ? theme.colors.text.primary : theme.colors.background.primary,
-          shadowColor: theme.colors.text.primary,
+          backgroundColor: isDark ? theme.colors.onSurface.primary : theme.colors.bg.primary,
+          shadowColor: theme.colors.onSurface.primary,
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.15,
           shadowRadius: 16,
@@ -263,10 +261,10 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
           padding: paddingValues[padding],
         };
 
-      case "neon":
+      case 'neon':
         return {
           ...baseStyle,
-          backgroundColor: theme.colors.text.primary,
+          backgroundColor: theme.colors.onSurface.primary,
           borderWidth: 2,
           borderColor: theme.colors.primary,
           shadowColor: theme.colors.primary,
@@ -277,10 +275,10 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
           padding: paddingValues[padding],
         };
 
-      case "gradient":
+      case 'gradient':
         return {
           ...baseStyle,
-          shadowColor: theme.colors.primary[500],
+          shadowColor: theme.colors.primary,
           shadowOffset: { width: 0, height: 6 },
           shadowOpacity: 0.3,
           shadowRadius: 12,
@@ -291,8 +289,8 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       default:
         return {
           ...baseStyle,
-          backgroundColor: isDark ? theme.colors.text.primary : theme.colors.background.primary,
-          shadowColor: theme.colors.text.primary,
+          backgroundColor: isDark ? theme.colors.onSurface.primary : theme.colors.bg.primary,
+          shadowColor: theme.colors.onSurface.primary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
@@ -305,7 +303,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   const containerStyle = getVariantContainerStyle();
 
   // Glass morphism implementation
-  if (variant === "glass") {
+  if (variant === 'glass') {
     return (
       <Animated.View
         style={StyleSheet.flatten([
@@ -316,13 +314,13 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
               {
                 rotateX: animatedRotateX.interpolate({
                   inputRange: [-15, 15],
-                  outputRange: ["-15deg", "15deg"],
+                  outputRange: ['-15deg', '15deg'],
                 }),
               },
               {
                 rotateY: animatedRotateY.interpolate({
                   inputRange: [-15, 15],
-                  outputRange: ["-15deg", "15deg"],
+                  outputRange: ['-15deg', '15deg'],
                 }),
               },
             ],
@@ -331,11 +329,14 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
         ])}
         {...(tilt ? panResponder.panHandlers : {})}
       >
-        <BlurView intensity={30} style={StyleSheet.absoluteFillObject} />
+        <BlurView
+          intensity={30}
+          style={StyleSheet.absoluteFillObject}
+        />
         <View
           style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
-            { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+            { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
           ])}
         />
 
@@ -358,10 +359,16 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   }
 
   // Gradient implementation
-  if (variant === "gradient" || variant === "holographic") {
+  if (variant === 'gradient' || variant === 'holographic') {
     const gradientColors =
-      variant === "holographic"
-        ? [theme.colors.danger, theme.colors.status.success, theme.colors.status.success, theme.colors.status.success, theme.colors.status.warning]
+      variant === 'holographic'
+        ? [
+            theme.colors.danger,
+            theme.colors.success,
+            theme.colors.success,
+            theme.colors.success,
+            theme.colors.warning,
+          ]
         : getVariantStyles().colors;
 
     return (
@@ -374,13 +381,13 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
               {
                 rotateX: animatedRotateX.interpolate({
                   inputRange: [-15, 15],
-                  outputRange: ["-15deg", "15deg"],
+                  outputRange: ['-15deg', '15deg'],
                 }),
               },
               {
                 rotateY: animatedRotateY.interpolate({
                   inputRange: [-15, 15],
-                  outputRange: ["-15deg", "15deg"],
+                  outputRange: ['-15deg', '15deg'],
                 }),
               },
             ],
@@ -446,13 +453,13 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
             {
               rotateX: animatedRotateX.interpolate({
                 inputRange: [-15, 15],
-                outputRange: ["-15deg", "15deg"],
+                outputRange: ['-15deg', '15deg'],
               }),
             },
             {
               rotateY: animatedRotateY.interpolate({
                 inputRange: [-15, 15],
-                outputRange: ["-15deg", "15deg"],
+                outputRange: ['-15deg', '15deg'],
               }),
             },
           ],

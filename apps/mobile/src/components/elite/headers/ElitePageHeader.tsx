@@ -1,9 +1,9 @@
-import React from "react";
-import { Text, type TextStyle, type ViewStyle } from "react-native";
-import Animated from "react-native-reanimated";
-import { BlurView } from "expo-blur";
+import React from 'react';
+import { Text, type TextStyle, type ViewStyle } from 'react-native';
+import Animated from 'react-native-reanimated';
+import { BlurView } from 'expo-blur';
 
-import { GlobalStyles } from "../../../styles/GlobalStyles";
+import { GlobalStyles } from '../../../styles/GlobalStyles';
 
 /**
  * ElitePageHeader Component
@@ -24,7 +24,10 @@ export const ElitePageHeader: React.FC<ElitePageHeaderProps> = ({
   return (
     <Animated.View style={GlobalStyles.header as never}>
       {showLogo && (
-        <BlurView intensity={20} style={GlobalStyles.logoContainer}>
+        <BlurView
+          intensity={20}
+          style={GlobalStyles.logoContainer}
+        >
           <Text style={GlobalStyles.logo}>🐾 PawfectMatch</Text>
         </BlurView>
       )}

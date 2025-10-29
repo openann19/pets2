@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo } from "react";
-import { StyleSheet, Text } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import React, { useCallback, useMemo } from 'react';
+import { StyleSheet, Text } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   cancelAnimation,
   runOnJS,
@@ -9,10 +9,10 @@ import Animated, {
   withDelay,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 
-type HapticStyle = "light" | "medium" | "heavy";
+type HapticStyle = 'light' | 'medium' | 'heavy';
 
 export interface DoubleTapLikePlusProps {
   children: React.ReactNode;
@@ -36,9 +36,9 @@ export function DoubleTapLikePlus({
   style,
   disabled = false,
   heartSize = 64,
-  heartColor = "#ff3b5c",
+  heartColor = '#ff3b5c',
   particles = 8,
-  haptics = { enabled: true, style: "medium" },
+  haptics = { enabled: true, style: 'medium' },
 }: DoubleTapLikePlusProps) {
   // base scale micro-bounce
   const scale = useSharedValue(1);
@@ -54,16 +54,16 @@ export function DoubleTapLikePlus({
   const triggerHaptic = useCallback(() => {
     if (!haptics.enabled) return;
     const style =
-      haptics.style === "light"
+      haptics.style === 'light'
         ? Haptics.ImpactFeedbackStyle.Light
-        : haptics.style === "heavy"
-        ? Haptics.ImpactFeedbackStyle.Heavy
-        : Haptics.ImpactFeedbackStyle.Medium;
+        : haptics.style === 'heavy'
+          ? Haptics.ImpactFeedbackStyle.Heavy
+          : Haptics.ImpactFeedbackStyle.Medium;
     Haptics.impactAsync(style);
   }, [haptics]);
 
   const explode = useCallback(() => {
-    "worklet";
+    'worklet';
     // cancel any ongoing
     items.forEach((i) => {
       cancelAnimation(pScale[i]!);
@@ -93,16 +93,13 @@ export function DoubleTapLikePlus({
       pRotate[i]!.value = withSpring((Math.random() > 0.5 ? 1 : -1) * 40);
 
       // fade away
-      pOpacity[i]!.value = withDelay(
-        220,
-        withTiming(0, { duration: 160 })
-      );
+      pOpacity[i]!.value = withDelay(220, withTiming(0, { duration: 160 }));
       pScale[i]!.value = withDelay(220, withTiming(0.2, { duration: 160 }));
     });
   }, [items, pOpacity, pRotate, pScale, pX, pY]);
 
   const bounce = useCallback(() => {
-    "worklet";
+    'worklet';
     scale.value = 0.96;
     scale.value = withSpring(1, { damping: 14, stiffness: 400 });
   }, [scale]);
@@ -122,7 +119,7 @@ export function DoubleTapLikePlus({
     .enabled(!disabled)
     .maxDuration(220)
     .onEnd((_e, ok) => {
-      "worklet";
+      'worklet';
       if (!ok) return;
       bounce();
       if (onSingleTap) runOnJS(onSingleTap)();
@@ -133,7 +130,7 @@ export function DoubleTapLikePlus({
     .numberOfTaps(2)
     .maxDelay(maxDelay)
     .onEnd((_e, ok) => {
-      "worklet";
+      'worklet';
       if (!ok) return;
       onDouble();
     });
@@ -159,9 +156,9 @@ export function DoubleTapLikePlus({
         {/* particle burst */}
         {items.map((i) => {
           const s = useAnimatedStyle(() => ({
-            position: "absolute" as const,
-            left: "50%" as const,
-            top: "50%" as const,
+            position: 'absolute' as const,
+            left: '50%' as const,
+            top: '50%' as const,
             transform: [
               { translateX: -heartSize / 2 + (pX[i]?.value ?? 0) },
               { translateY: -heartSize / 2 + (pY[i]?.value ?? 0) },
@@ -171,7 +168,10 @@ export function DoubleTapLikePlus({
             opacity: pOpacity[i]?.value ?? 0,
           }));
           return (
-            <Animated.Text key={i} style={[styles.particle, s, { fontSize: heartSize * 0.45, color: heartColor }]}>
+            <Animated.Text
+              key={i}
+              style={[styles.particle, s, { fontSize: heartSize * 0.45, color: heartColor }]}
+            >
               ❤️
             </Animated.Text>
           );
@@ -182,14 +182,14 @@ export function DoubleTapLikePlus({
 }
 
 const styles = StyleSheet.create({
-  wrap: { position: "relative" },
+  wrap: { position: 'relative' },
   heart: {
     // placeholder (you can show a brief big heart if you want)
     width: 0,
     height: 0,
   },
   particle: {
-    textShadowColor: "rgba(0,0,0,0.25)",
+    textShadowColor: 'rgba(0,0,0,0.25)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
   },

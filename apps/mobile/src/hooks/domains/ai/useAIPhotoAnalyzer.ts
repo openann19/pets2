@@ -2,10 +2,10 @@
  * useAIPhotoAnalyzer Hook
  * Manages AI-powered photo analysis for pet profiles
  */
-import { useCallback, useState } from "react";
-import * as ImagePicker from "expo-image-picker";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
+import { useCallback, useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
 
 interface PhotoAnalysisResult {
   breed_analysis: {
@@ -44,18 +44,17 @@ interface UseAIPhotoAnalyzerReturn {
 
 export const useAIPhotoAnalyzer = (): UseAIPhotoAnalyzerReturn => {
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
-  const [analysisResult, setAnalysisResult] =
-    useState<PhotoAnalysisResult | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<PhotoAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const requestPermissions = useCallback(async (): Promise<boolean> => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
+    if (status !== 'granted') {
       Alert.alert(
-        "Permission Required",
-        "We need access to your photo library to analyze pet photos.",
-        [{ text: "OK" }],
+        'Permission Required',
+        'We need access to your photo library to analyze pet photos.',
+        [{ text: 'OK' }],
       );
       return false;
     }
@@ -80,19 +79,17 @@ export const useAIPhotoAnalyzer = (): UseAIPhotoAnalyzerReturn => {
         setError(null);
       }
     } catch (err) {
-      logger.error("Error picking images:", { error: err });
-      setError("Failed to select images. Please try again.");
+      logger.error('Error picking images:', { error: err });
+      setError('Failed to select images. Please try again.');
     }
   }, [requestPermissions]);
 
   const takePhoto = useCallback(async (): Promise<void> => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission Required",
-        "We need access to your camera to take pet photos.",
-        [{ text: "OK" }],
-      );
+    if (status !== 'granted') {
+      Alert.alert('Permission Required', 'We need access to your camera to take pet photos.', [
+        { text: 'OK' },
+      ]);
       return;
     }
 
@@ -109,89 +106,84 @@ export const useAIPhotoAnalyzer = (): UseAIPhotoAnalyzerReturn => {
         setError(null);
       }
     } catch (err) {
-      logger.error("Error taking photo:", { error: err });
-      setError("Failed to take photo. Please try again.");
+      logger.error('Error taking photo:', { error: err });
+      setError('Failed to take photo. Please try again.');
     }
   }, []);
 
-  const analyzePhotos = useCallback(
-    async (photoUris: string[]): Promise<PhotoAnalysisResult> => {
-      if (photoUris.length === 0) {
-        const errorMsg = "Please select at least one photo to analyze.";
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      }
+  const analyzePhotos = useCallback(async (photoUris: string[]): Promise<PhotoAnalysisResult> => {
+    if (photoUris.length === 0) {
+      const errorMsg = 'Please select at least one photo to analyze.';
+      setError(errorMsg);
+      throw new Error(errorMsg);
+    }
 
-      setIsAnalyzing(true);
-      setError(null);
+    setIsAnalyzing(true);
+    setError(null);
 
-      try {
-        // Import api dynamically to avoid circular dependencies
-        const { api } = await import("../../../services/api");
-        const result = await api.ai.analyzePhotos(photoUris);
-        setAnalysisResult(result);
+    try {
+      // Import api dynamically to avoid circular dependencies
+      const { api } = await import('../../../services/api');
+      const result = await api.ai.analyzePhotos(photoUris);
+      setAnalysisResult(result);
 
-        logger.info("Photo analysis completed", {
-          photoCount: photoUris.length,
-          primaryBreed: result.breed_analysis.primary_breed,
-          matchabilityScore: result.matchability_score,
-        });
+      logger.info('Photo analysis completed', {
+        photoCount: photoUris.length,
+        primaryBreed: result.breed_analysis.primary_breed,
+        matchabilityScore: result.matchability_score,
+      });
 
-        return result;
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "Failed to analyze photos. Please try again.";
-        setError(errorMessage);
-        logger.error("Photo analysis error:", {
-          error: err,
-          photoCount: photoUris.length,
-        });
+      return result;
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to analyze photos. Please try again.';
+      setError(errorMessage);
+      logger.error('Photo analysis error:', {
+        error: err,
+        photoCount: photoUris.length,
+      });
 
-        // For demo purposes, return mock analysis
-        const mockResult: PhotoAnalysisResult = {
-          breed_analysis: {
-            primary_breed: "Golden Retriever",
-            confidence: 0.92,
-            secondary_breeds: [
-              { breed: "Labrador Retriever", confidence: 0.15 },
-              { breed: "Bernese Mountain Dog", confidence: 0.08 },
-            ],
-          },
-          health_assessment: {
-            age_estimate: 2.5,
-            health_score: 88,
-            recommendations: [
-              "Regular exercise is important",
-              "Maintain healthy weight",
-              "Annual veterinary checkups",
-            ],
-          },
-          photo_quality: {
-            overall_score: 85,
-            lighting_score: 90,
-            composition_score: 80,
-            clarity_score: 88,
-          },
-          matchability_score: 92,
-          ai_insights: [
-            "Friendly and approachable expression",
-            "Well-groomed coat suggests good care",
-            "Energetic pose indicates playful personality",
-            "Clear, high-quality image enhances visibility",
+      // For demo purposes, return mock analysis
+      const mockResult: PhotoAnalysisResult = {
+        breed_analysis: {
+          primary_breed: 'Golden Retriever',
+          confidence: 0.92,
+          secondary_breeds: [
+            { breed: 'Labrador Retriever', confidence: 0.15 },
+            { breed: 'Bernese Mountain Dog', confidence: 0.08 },
           ],
-        };
+        },
+        health_assessment: {
+          age_estimate: 2.5,
+          health_score: 88,
+          recommendations: [
+            'Regular exercise is important',
+            'Maintain healthy weight',
+            'Annual veterinary checkups',
+          ],
+        },
+        photo_quality: {
+          overall_score: 85,
+          lighting_score: 90,
+          composition_score: 80,
+          clarity_score: 88,
+        },
+        matchability_score: 92,
+        ai_insights: [
+          'Friendly and approachable expression',
+          'Well-groomed coat suggests good care',
+          'Energetic pose indicates playful personality',
+          'Clear, high-quality image enhances visibility',
+        ],
+      };
 
-        setAnalysisResult(mockResult);
-        logger.info("Using mock photo analysis result");
-        return mockResult;
-      } finally {
-        setIsAnalyzing(false);
-      }
-    },
-    [],
-  );
+      setAnalysisResult(mockResult);
+      logger.info('Using mock photo analysis result');
+      return mockResult;
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }, []);
 
   const removePhoto = useCallback((index: number) => {
     setSelectedPhotos((prev) => prev.filter((_, i) => i !== index));

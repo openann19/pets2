@@ -1,6 +1,6 @@
 /**
  * Comprehensive tests for BiometricService
- * 
+ *
  * Coverage:
  * - Biometric authentication (Face ID, Touch ID, Fingerprint)
  * - Secure storage integration
@@ -41,7 +41,7 @@ describe('BiometricService', () => {
         LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
       ]);
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
 
       const capabilities = await biometricService.checkBiometricSupport();
@@ -49,7 +49,7 @@ describe('BiometricService', () => {
       expect(capabilities.hasHardware).toBe(true);
       expect(capabilities.isEnrolled).toBe(true);
       expect(capabilities.supportedTypes).toContain(
-        LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
+        LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
       );
       expect(capabilities.securityLevel).toBe(LocalAuthentication.SecurityLevel.STRONG);
     });
@@ -61,14 +61,14 @@ describe('BiometricService', () => {
         LocalAuthentication.AuthenticationType.FINGERPRINT,
       ]);
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
 
       const capabilities = await biometricService.checkBiometricSupport();
 
       expect(capabilities.hasHardware).toBe(true);
       expect(capabilities.supportedTypes).toContain(
-        LocalAuthentication.AuthenticationType.FINGERPRINT
+        LocalAuthentication.AuthenticationType.FINGERPRINT,
       );
     });
 
@@ -77,7 +77,7 @@ describe('BiometricService', () => {
       mockLocalAuth.isEnrolledAsync.mockResolvedValueOnce(false);
       mockLocalAuth.supportedAuthenticationTypesAsync.mockResolvedValueOnce([]);
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.NONE
+        LocalAuthentication.SecurityLevel.NONE,
       );
 
       const capabilities = await biometricService.checkBiometricSupport();
@@ -101,7 +101,7 @@ describe('BiometricService', () => {
         warning: undefined,
       });
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
 
       const result = await biometricService.authenticate('Authenticate to access your account');
@@ -128,7 +128,7 @@ describe('BiometricService', () => {
         warning: undefined,
       });
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
 
       const result = await biometricService.authenticate();
@@ -149,7 +149,7 @@ describe('BiometricService', () => {
         warning: undefined,
       });
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
 
       const result = await biometricService.authenticate();
@@ -173,7 +173,7 @@ describe('BiometricService', () => {
         warning: undefined,
       });
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValue(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
 
       // Mock secure storage
@@ -183,10 +183,7 @@ describe('BiometricService', () => {
 
       expect(result).toBe(true);
       expect(mockSecureStore.setItemAsync).toHaveBeenCalledTimes(2);
-      expect(mockSecureStore.setItemAsync).toHaveBeenCalledWith(
-        'biometric_enabled',
-        'true'
-      );
+      expect(mockSecureStore.setItemAsync).toHaveBeenCalledWith('biometric_enabled', 'true');
     });
   });
 
@@ -252,7 +249,7 @@ describe('BiometricService', () => {
       mockLocalAuth.isEnrolledAsync.mockResolvedValueOnce(false);
       mockLocalAuth.supportedAuthenticationTypesAsync.mockResolvedValueOnce([]);
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.NONE
+        LocalAuthentication.SecurityLevel.NONE,
       );
 
       const result = await biometricService.authenticate();
@@ -266,7 +263,7 @@ describe('BiometricService', () => {
       mockLocalAuth.isEnrolledAsync.mockResolvedValueOnce(false);
       mockLocalAuth.supportedAuthenticationTypesAsync.mockResolvedValueOnce([]);
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.NONE
+        LocalAuthentication.SecurityLevel.NONE,
       );
 
       const result = await biometricService.authenticate();
@@ -287,7 +284,7 @@ describe('BiometricService', () => {
         warning: undefined,
       });
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
 
       const result = await biometricService.authenticate();
@@ -315,9 +312,7 @@ describe('BiometricService', () => {
         error: 'Authentication failed',
         warning: undefined,
       });
-      mockLocalAuth.getEnrolledLevelAsync.mockResolvedValue(
-        LocalAuthentication.SecurityLevel.NONE
-      );
+      mockLocalAuth.getEnrolledLevelAsync.mockResolvedValue(LocalAuthentication.SecurityLevel.NONE);
 
       const result = await biometricService.enableBiometric();
 
@@ -354,7 +349,7 @@ describe('BiometricService', () => {
         warning: undefined,
       });
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValue(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
       mockSecureStore.setItemAsync.mockRejectedValueOnce(new Error('Storage failed'));
 
@@ -377,7 +372,7 @@ describe('BiometricService', () => {
         warning: undefined,
       });
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
 
       const result = await biometricService.authenticate('');
@@ -386,7 +381,7 @@ describe('BiometricService', () => {
       expect(mockLocalAuth.authenticateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           promptMessage: 'Authenticate to access PawfectMatch',
-        })
+        }),
       );
     });
 
@@ -400,7 +395,7 @@ describe('BiometricService', () => {
         warning: undefined,
       });
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.NONE
+        LocalAuthentication.SecurityLevel.NONE,
       );
 
       const result = await biometricService.authenticate();
@@ -421,7 +416,7 @@ describe('BiometricService', () => {
         warning: undefined,
       });
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
 
       const capabilities = await biometricService.checkBiometricSupport();
@@ -453,7 +448,7 @@ describe('BiometricService', () => {
         warning: undefined,
       });
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValue(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
       mockSecureStore.setItemAsync.mockResolvedValue();
 
@@ -477,7 +472,7 @@ describe('BiometricService', () => {
         warning: undefined,
       });
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
 
       const result = await biometricService.authenticate();
@@ -491,7 +486,7 @@ describe('BiometricService', () => {
       mockLocalAuth.isEnrolledAsync.mockResolvedValueOnce(true);
       mockLocalAuth.supportedAuthenticationTypesAsync.mockResolvedValueOnce([]);
       mockLocalAuth.getEnrolledLevelAsync.mockResolvedValueOnce(
-        LocalAuthentication.SecurityLevel.STRONG
+        LocalAuthentication.SecurityLevel.STRONG,
       );
 
       const capabilities = await biometricService.checkBiometricSupport();

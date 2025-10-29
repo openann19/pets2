@@ -1,10 +1,9 @@
-import { useCallback, useState } from "react";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore } from "../../../stores/useAuthStore";
-import { matchesAPI } from "../../../services/api";
-import type { User } from "@pawfectmatch/core";
-
+import { useCallback, useState } from 'react';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import { useAuthStore } from '../../../stores/useAuthStore';
+import { matchesAPI } from '../../../services/api';
+import type { User } from '@pawfectmatch/core';
 
 export interface UseProfileUpdateReturn {
   isUpdating: boolean;
@@ -23,7 +22,7 @@ export function useProfileUpdate(): UseProfileUpdateReturn {
   const updateProfile = useCallback(
     async (data: Partial<User>): Promise<boolean> => {
       if (!user) {
-        setError("User not authenticated");
+        setError('User not authenticated');
         return false;
       }
 
@@ -33,15 +32,14 @@ export function useProfileUpdate(): UseProfileUpdateReturn {
       try {
         const updatedUser = await matchesAPI.updateUserProfile(data);
         updateUser(updatedUser);
-        logger.info("Profile updated successfully", { userId: user._id });
-        Alert.alert("Success", "Profile updated successfully!");
+        logger.info('Profile updated successfully', { userId: user._id });
+        Alert.alert('Success', 'Profile updated successfully!');
         return true;
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to update profile";
+        const errorMessage = err instanceof Error ? err.message : 'Failed to update profile';
         setError(errorMessage);
-        logger.error("Failed to update profile", { error: errorMessage });
-        Alert.alert("Error", errorMessage);
+        logger.error('Failed to update profile', { error: errorMessage });
+        Alert.alert('Error', errorMessage);
         return false;
       } finally {
         setIsUpdating(false);

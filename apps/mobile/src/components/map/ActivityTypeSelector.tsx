@@ -1,7 +1,7 @@
-import React from "react";
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from 'react';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 
 export interface ActivityType {
   id: string;
@@ -34,7 +34,7 @@ export function ActivityTypeSelector({
               {
                 backgroundColor: selectedActivities.includes(activity.id)
                   ? activity.color
-                  : "Theme.colors.neutral[100]",
+                  : 'Theme.colors.neutral[100]',
               },
             ]}
             onPress={() => {
@@ -47,8 +47,8 @@ export function ActivityTypeSelector({
                 styles.label,
                 {
                   color: selectedActivities.includes(activity.id)
-                    ? "Theme.colors.neutral[0]"
-                    : "Theme.colors.neutral[700]",
+                    ? 'Theme.colors.neutral[0]'
+                    : 'Theme.colors.neutral[700]',
                 },
               ]}
             >
@@ -67,20 +67,20 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "Theme.colors.neutral[700]",
+    fontWeight: '600',
+    color: 'Theme.colors.neutral[700]',
     marginBottom: 12,
   },
   grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
   },
   button: {
     width: (width - 64) / 3,
     padding: 12,
     borderRadius: 12,
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 8,
   },
   emoji: {
@@ -89,6 +89,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: '500',
   },
 });

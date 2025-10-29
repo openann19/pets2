@@ -53,7 +53,12 @@ export const Grouped: Story = {
   render: () => (
     <Card>
       <Stack spacing="md">
-        <ListItem title="Profile" subtitle="View your profile" icon="person-outline" onPress={() => {}} />
+        <ListItem
+          title="Profile"
+          subtitle="View your profile"
+          icon="person-outline"
+          onPress={() => {}}
+        />
         <ListItem
           title="Push Notifications"
           subtitle="Receive activity updates"

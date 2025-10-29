@@ -40,7 +40,7 @@ export const mockBioPlayful: GeneratedBio = {
  * Mock generated bio - Professional tone
  */
 export const mockBioProfessional: GeneratedBio = {
-  bio: "Max is a well-mannered 2-year-old Golden Retriever with an impressive pedigree and impeccable temperament. He has undergone professional training and demonstrates excellent obedience skills. Max exhibits a calm, composed demeanor suitable for various professional environments.\n\nHis balanced personality makes him an ideal companion for individuals seeking a reliable, disciplined pet. Max maintains a consistent daily routine and responds well to structured activities. His health records are maintained with the utmost care, and he has received all standard vaccinations and regular veterinary check-ups.\n\nMax represents the ideal combination of loyalty, discipline, and companionship - perfect for those who appreciate the refined qualities of a well-trained companion animal.",
+  bio: 'Max is a well-mannered 2-year-old Golden Retriever with an impressive pedigree and impeccable temperament. He has undergone professional training and demonstrates excellent obedience skills. Max exhibits a calm, composed demeanor suitable for various professional environments.\n\nHis balanced personality makes him an ideal companion for individuals seeking a reliable, disciplined pet. Max maintains a consistent daily routine and responds well to structured activities. His health records are maintained with the utmost care, and he has received all standard vaccinations and regular veterinary check-ups.\n\nMax represents the ideal combination of loyalty, discipline, and companionship - perfect for those who appreciate the refined qualities of a well-trained companion animal.',
   keywords: ['professional', 'well-trained', 'disciplined', 'reliable', 'obedience'],
   sentiment: {
     score: 0.65,
@@ -133,4 +133,3 @@ export const mockFormData = {
     photoUri: 'file:///photo.jpg',
   },
 };
-

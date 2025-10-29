@@ -1,9 +1,9 @@
 /**
  * SwipeActions Component
- * 
+ *
  * Presentational component for swipe action buttons.
  * Displays pass, superlike, and like buttons.
- * 
+ *
  * @example
  * ```typescript
  * <SwipeActions
@@ -14,31 +14,31 @@
  * ```
  */
 
-import React from "react";
-import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
-import type { StyleProp, ViewStyle } from "react-native";
+import React from 'react';
+import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 
 export interface SwipeActionsProps {
   /**
    * Callback when pass button is pressed
    */
   onPass: () => void;
-  
+
   /**
    * Callback when like button is pressed
    */
   onLike: () => void;
-  
+
   /**
    * Callback when superlike button is pressed
    */
   onSuperlike: () => void;
-  
+
   /**
    * Container style override
    */
   style?: StyleProp<ViewStyle>;
-  
+
   /**
    * Disable all buttons
    */
@@ -89,31 +89,31 @@ export const SwipeActions: React.FC<SwipeActionsProps> = ({
 
 const styles = StyleSheet.create({
   actions: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     paddingHorizontal: 40,
     paddingVertical: 30,
-    backgroundColor: "white",
+    backgroundColor: 'white',
   },
   actionButton: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   passButton: {
-    backgroundColor: "#ff4458",
+    backgroundColor: '#ff4458',
   },
   likeButton: {
-    backgroundColor: "#42c767",
+    backgroundColor: '#42c767',
   },
   superLikeButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: '#007AFF',
   },
   actionButtonText: {
-    color: "white",
+    color: 'white',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });

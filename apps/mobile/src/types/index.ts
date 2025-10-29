@@ -7,16 +7,16 @@ export type {
   SwipeAction,
   SwipeResult,
   PetFilters,
-} from "@pawfectmatch/core";
+} from '@pawfectmatch/core';
 
 // Export API response types
-export * from "./api-responses";
+export * from './api-responses';
 
 // Export navigation types
-export * from "./navigation";
+export * from './navigation';
 
 // Export Reanimated types
-export * from "./reanimated";
+export * from './reanimated';
 
 // Mobile-specific type extensions (if needed in future)
 export interface MobileUserPreferences {

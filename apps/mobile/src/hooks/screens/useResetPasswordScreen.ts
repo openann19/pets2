@@ -2,13 +2,13 @@
  * useResetPasswordScreen Hook
  * Manages Reset Password screen state and interactions
  */
-import { useCallback, useState } from "react";
-import { Alert } from "react-native";
-import * as Haptics from "expo-haptics";
-import { logger } from "@pawfectmatch/core";
-import { authService, AuthError } from "../../services/AuthService";
-import { useFormState } from "../utils/useFormState";
-import type { RootStackScreenProps } from "../../navigation/types";
+import { useCallback, useState } from 'react';
+import { Alert } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { logger } from '@pawfectmatch/core';
+import { authService, AuthError } from '../../services/AuthService';
+import { useFormState } from '../utils/useFormState';
+import type { RootStackScreenProps } from '../../navigation/types';
 
 interface ResetPasswordFormValues {
   password: string;
@@ -16,8 +16,8 @@ interface ResetPasswordFormValues {
 }
 
 interface UseResetPasswordScreenOptions {
-  navigation: RootStackScreenProps<"ResetPassword">["navigation"];
-  route: RootStackScreenProps<"ResetPassword">["route"];
+  navigation: RootStackScreenProps<'ResetPassword'>['navigation'];
+  route: RootStackScreenProps<'ResetPassword'>['route'];
 }
 
 interface UseResetPasswordScreenReturn {
@@ -38,27 +38,25 @@ export function useResetPasswordScreen({
 
   // Form validation rules
   const validateForm = useCallback(
-    (
-      values: ResetPasswordFormValues,
-    ): Partial<Record<keyof ResetPasswordFormValues, string>> => {
+    (values: ResetPasswordFormValues): Partial<Record<keyof ResetPasswordFormValues, string>> => {
       const errors: Partial<Record<keyof ResetPasswordFormValues, string>> = {};
 
       if (!values.password) {
-        errors.password = "Password is required";
+        errors.password = 'Password is required';
       } else if (values.password.length < 8) {
-        errors.password = "Password must be at least 8 characters";
+        errors.password = 'Password must be at least 8 characters';
       } else if (!/(?=.*[a-z])/.test(values.password)) {
-        errors.password = "Password must contain at least one lowercase letter";
+        errors.password = 'Password must contain at least one lowercase letter';
       } else if (!/(?=.*[A-Z])/.test(values.password)) {
-        errors.password = "Password must contain at least one uppercase letter";
+        errors.password = 'Password must contain at least one uppercase letter';
       } else if (!/(?=.*\d)/.test(values.password)) {
-        errors.password = "Password must contain at least one number";
+        errors.password = 'Password must contain at least one number';
       }
 
       if (!values.confirmPassword) {
-        errors.confirmPassword = "Please confirm your password";
+        errors.confirmPassword = 'Please confirm your password';
       } else if (values.password !== values.confirmPassword) {
-        errors.confirmPassword = "Passwords do not match";
+        errors.confirmPassword = 'Passwords do not match';
       }
 
       return errors;
@@ -76,8 +74,8 @@ export function useResetPasswordScreen({
     handleSubmit: handleSubmitForm,
   } = useFormState<ResetPasswordFormValues>({
     initialValues: {
-      password: "",
-      confirmPassword: "",
+      password: '',
+      confirmPassword: '',
     },
     validate: validateForm,
   });
@@ -88,7 +86,7 @@ export function useResetPasswordScreen({
     setLoading(true);
 
     try {
-      logger.info("Password reset attempt", { token });
+      logger.info('Password reset attempt', { token });
 
       await authService.resetPassword({
         token,
@@ -97,36 +95,32 @@ export function useResetPasswordScreen({
       });
 
       // Success haptic feedback
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
-        () => {},
-      );
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
 
       Alert.alert(
-        "Password Reset Successful",
-        "Your password has been reset successfully. You can now log in with your new password.",
+        'Password Reset Successful',
+        'Your password has been reset successfully. You can now log in with your new password.',
         [
           {
-            text: "Go to Login",
-            onPress: () => navigation.navigate("Login"),
-            style: "default",
+            text: 'Go to Login',
+            onPress: () => navigation.navigate('Login'),
+            style: 'default',
           },
         ],
         { cancelable: false },
       );
     } catch (error) {
       // Error haptic feedback
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(
-        () => {},
-      );
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
 
-      logger.error("Password reset failed", { error });
+      logger.error('Password reset failed', { error });
 
       const errorMessage =
         error instanceof AuthError
           ? error.message
-          : "Unable to reset password. The reset link may have expired. Please request a new one.";
+          : 'Unable to reset password. The reset link may have expired. Please request a new one.';
 
-      Alert.alert("Error", errorMessage, [{ text: "OK" }]);
+      Alert.alert('Error', errorMessage, [{ text: 'OK' }]);
     } finally {
       setLoading(false);
     }
@@ -148,4 +142,3 @@ export function useResetPasswordScreen({
     navigateBack,
   };
 }
-

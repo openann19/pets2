@@ -37,9 +37,7 @@ describe('useChatScroll', () => {
         expect(result.current.initialOffset).toBe(0);
       });
 
-      expect(mockAsyncStorage.getItem).toHaveBeenCalledWith(
-        `mobile_chat_scroll_${matchId}`,
-      );
+      expect(mockAsyncStorage.getItem).toHaveBeenCalledWith(`mobile_chat_scroll_${matchId}`);
     });
 
     it('should restore saved scroll position', async () => {
@@ -53,9 +51,7 @@ describe('useChatScroll', () => {
     });
 
     it('should not restore when disabled', async () => {
-      const { result } = renderHook(() =>
-        useChatScroll({ matchId, enabled: false }),
-      );
+      const { result } = renderHook(() => useChatScroll({ matchId, enabled: false }));
 
       await waitFor(() => {
         expect(result.current.initialOffset).toBe(0);
@@ -135,9 +131,7 @@ describe('useChatScroll', () => {
     });
 
     it('should not persist scroll when disabled', async () => {
-      const { result } = renderHook(() =>
-        useChatScroll({ matchId, enabled: false }),
-      );
+      const { result } = renderHook(() => useChatScroll({ matchId, enabled: false }));
 
       act(() => {
         result.current.handleScroll(100);
@@ -185,12 +179,8 @@ describe('useChatScroll', () => {
     });
 
     it('should work with different matchIds', async () => {
-      const { result: result1 } = renderHook(() =>
-        useChatScroll({ matchId: 'match-1' }),
-      );
-      const { result: result2 } = renderHook(() =>
-        useChatScroll({ matchId: 'match-2' }),
-      );
+      const { result: result1 } = renderHook(() => useChatScroll({ matchId: 'match-1' }));
+      const { result: result2 } = renderHook(() => useChatScroll({ matchId: 'match-2' }));
 
       act(() => {
         result1.current.handleScroll(100);
@@ -239,9 +229,7 @@ describe('useChatScroll', () => {
       mockAsyncStorage.setItem.mockClear();
       mockAsyncStorage.getItem.mockResolvedValue('250');
 
-      const { result: result2 } = renderHook(() =>
-        useChatScroll({ matchId }),
-      );
+      const { result: result2 } = renderHook(() => useChatScroll({ matchId }));
 
       await waitFor(() => {
         expect(result2.current.initialOffset).toBe(250);
@@ -249,4 +237,3 @@ describe('useChatScroll', () => {
     });
   });
 });
-

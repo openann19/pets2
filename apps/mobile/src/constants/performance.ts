@@ -1,4 +1,4 @@
-import { Dimensions } from "react-native";
+import { Dimensions } from 'react-native';
 
 /**
  * Centralized performance-oriented constants used across motion and list rendering.
@@ -6,7 +6,7 @@ import { Dimensions } from "react-native";
  * thresholds when perf regressions are detected in CI.
  */
 
-const { width: DEVICE_WIDTH } = Dimensions.get("window");
+const { width: DEVICE_WIDTH } = Dimensions.get('window');
 
 export const SPRING_CONFIG = Object.freeze({
   damping: 18,
@@ -38,5 +38,3 @@ export const IMAGE_PREFETCH_CONFIG = Object.freeze({
 });
 
 export type ListVirtualizationConfig = typeof LIST_VIRTUALIZATION_CONFIG;
-
-

@@ -30,7 +30,7 @@ describe('Photo Editing Components Integration', () => {
           imageUri="file://test.jpg"
           onSave={jest.fn()}
           onCancel={jest.fn()}
-        />
+        />,
       );
 
       expect(getByText('Adjust')).toBeTruthy();
@@ -47,7 +47,7 @@ describe('Photo Editing Components Integration', () => {
           max={200}
           icon="sunny"
           onValueChange={mockOnValueChange}
-        />
+        />,
       );
 
       expect(container).toBeTruthy();
@@ -65,7 +65,7 @@ describe('Photo Editing Workflow', () => {
         imageUri="file://test.jpg"
         onSave={mockOnSave}
         onCancel={mockOnCancel}
-      />
+      />,
     );
 
     // Switch to adjust tab
@@ -82,7 +82,7 @@ describe('Photo Editing Workflow', () => {
 
     // Save
     const saveButton = getByText('Save');
-    
+
     await waitFor(async () => {
       fireEvent.press(saveButton);
     });
@@ -97,7 +97,7 @@ describe('Photo Editing Workflow', () => {
         imageUri="file://test.jpg"
         onSave={jest.fn()}
         onCancel={jest.fn()}
-      />
+      />,
     );
 
     // Switch to filters tab
@@ -118,4 +118,3 @@ describe('Photo Editing Workflow', () => {
     });
   });
 });
-

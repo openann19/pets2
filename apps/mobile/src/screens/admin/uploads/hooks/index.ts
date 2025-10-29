@@ -2,5 +2,4 @@
  * Uploads Hooks Index
  */
 
-export { useAdminUploads } from "./useAdminUploads";
-
+export { useAdminUploads } from './useAdminUploads';

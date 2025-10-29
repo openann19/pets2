@@ -140,10 +140,9 @@ describe('ObservabilityService', () => {
 
       expect(() => service.initialize()).not.toThrow();
 
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to initialize observability service',
-        { error: expect.any(Error) }
-      );
+      expect(mockLogger.error).toHaveBeenCalledWith('Failed to initialize observability service', {
+        error: expect.any(Error),
+      });
     });
 
     it('should not initialize twice', () => {
@@ -174,7 +173,7 @@ describe('ObservabilityService', () => {
           memoryUsage: 0,
           interactionTime: 150,
           timestamp: expect.any(String),
-        })
+        }),
       );
     });
 
@@ -200,7 +199,7 @@ describe('ObservabilityService', () => {
           fps: 60,
           memoryUsage: 0,
           ...metadata,
-        })
+        }),
       );
     });
 
@@ -213,7 +212,7 @@ describe('ObservabilityService', () => {
         expect.objectContaining({
           screen: 'unknown',
           component: 'unknown',
-        })
+        }),
       );
     });
   });
@@ -236,7 +235,7 @@ describe('ObservabilityService', () => {
           action: 'like',
           ...metadata,
           timestamp: expect.any(String),
-        })
+        }),
       );
     });
 
@@ -250,7 +249,7 @@ describe('ObservabilityService', () => {
           component: 'Avatar',
           action: 'tap',
           timestamp: expect.any(String),
-        })
+        }),
       );
     });
   });
@@ -282,7 +281,7 @@ describe('ObservabilityService', () => {
             name: 'Error',
           }),
           ...context,
-        })
+        }),
       );
 
       expect(mockSentry.captureException).toHaveBeenCalledWith(error, {
@@ -365,7 +364,7 @@ describe('ObservabilityService', () => {
           attempts: 3,
           success: false,
           timestamp: expect.any(String),
-        })
+        }),
       );
     });
 
@@ -381,7 +380,7 @@ describe('ObservabilityService', () => {
 
       expect(mockSentry.captureMessage).toHaveBeenCalledWith(
         'Critical security event: data_breach_attempt',
-        'fatal'
+        'fatal',
       );
     });
 
@@ -416,7 +415,7 @@ describe('ObservabilityService', () => {
           severity: 'low',
           userId: undefined,
           ip: '10.0.0.1',
-        })
+        }),
       );
     });
   });
@@ -442,7 +441,7 @@ describe('ObservabilityService', () => {
           event: 'user_scroll',
           properties,
           timestamp: expect.any(Number),
-        })
+        }),
       );
     });
 
@@ -463,7 +462,7 @@ describe('ObservabilityService', () => {
           analytics: true,
           event: 'simple_event',
           properties: {},
-        })
+        }),
       );
     });
   });
@@ -492,7 +491,7 @@ describe('ObservabilityService', () => {
           totalSteps: 4,
           completedSteps: 2,
           totalSteps: 4,
-        })
+        }),
       );
     });
 
@@ -510,7 +509,7 @@ describe('ObservabilityService', () => {
           currentStep,
           stepIndex: 0,
           totalSteps: 1,
-        })
+        }),
       );
     });
   });
@@ -536,7 +535,7 @@ describe('ObservabilityService', () => {
           userId: 'user123',
           ...metadata,
           timestamp: expect.any(String),
-        })
+        }),
       );
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -548,7 +547,7 @@ describe('ObservabilityService', () => {
             feature: 'super_like',
             ...metadata,
           }),
-        })
+        }),
       );
     });
 
@@ -561,7 +560,7 @@ describe('ObservabilityService', () => {
           feature: 'basic_like',
           userId: 'user789',
           timestamp: expect.any(String),
-        })
+        }),
       );
     });
   });
@@ -585,7 +584,7 @@ describe('ObservabilityService', () => {
       expect(mockLogger.performance).toHaveBeenCalledWith(
         'Performance: api_call',
         expect.any(Number), // Duration around 100ms
-        expect.objectContaining(metadata)
+        expect.objectContaining(metadata),
       );
     });
 
@@ -598,7 +597,7 @@ describe('ObservabilityService', () => {
       expect(mockLogger.performance).toHaveBeenCalledWith(
         'Performance: render_component',
         expect.any(Number),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -682,7 +681,7 @@ describe('ObservabilityService', () => {
         expect.objectContaining({
           category,
           ...metadata,
-        })
+        }),
       );
     });
 
@@ -710,14 +709,11 @@ describe('ObservabilityService', () => {
         isInternetReachable: true,
       } as NetInfoState);
 
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        'Network status changed',
-        {
-          isConnected: true,
-          type: 'wifi',
-          isInternetReachable: true,
-        }
-      );
+      expect(mockLogger.info).toHaveBeenCalledWith('Network status changed', {
+        isConnected: true,
+        type: 'wifi',
+        isInternetReachable: true,
+      });
 
       // Simulate network disconnection
       networkListener({
@@ -726,14 +722,11 @@ describe('ObservabilityService', () => {
         isInternetReachable: false,
       } as NetInfoState);
 
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        'Network status changed',
-        {
-          isConnected: false,
-          type: 'none',
-          isInternetReachable: false,
-        }
-      );
+      expect(mockLogger.info).toHaveBeenCalledWith('Network status changed', {
+        isConnected: false,
+        type: 'none',
+        isInternetReachable: false,
+      });
     });
 
     it('should handle network monitoring initialization errors', () => {
@@ -743,10 +736,9 @@ describe('ObservabilityService', () => {
 
       expect(() => service.initialize()).not.toThrow();
 
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to initialize network monitoring',
-        { error: expect.any(Error) }
-      );
+      expect(mockLogger.error).toHaveBeenCalledWith('Failed to initialize network monitoring', {
+        error: expect.any(Error),
+      });
     });
   });
 
@@ -841,7 +833,7 @@ describe('ObservabilityService', () => {
       expect(mockLogger.performance).not.toHaveBeenCalled();
       expect(mockLogger.info).not.toHaveBeenCalledWith(
         expect.stringContaining('Analytics:'),
-        expect.anything()
+        expect.anything(),
       );
       expect(mockSentry.captureException).not.toHaveBeenCalled();
       expect(mockLogger.security).not.toHaveBeenCalled();

@@ -13,7 +13,7 @@ import { useAIBio } from "../hooks/useAIBio";
 import { PetInfoForm } from "../components/ai/PetInfoForm";
 import { ToneSelector } from "../components/ai/ToneSelector";
 import { BioResults } from "../components/ai/BioResults";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 import { getExtendedColors } from "../theme/adapters";
 
 interface AIBioScreenProps {

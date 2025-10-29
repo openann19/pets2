@@ -25,7 +25,7 @@ import {
 import { GlobalStyles, BorderRadius, Shadows } from "../../../styles/GlobalStyles";
 import { getPremiumGradients } from "../constants/gradients";
 import { PREMIUM_SHADOWS } from "../constants/shadows";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 
 /**
  * EliteCard Component

@@ -1,6 +1,6 @@
 /**
  * Comprehensive tests for Storage Service
- * 
+ *
  * Coverage:
  * - AsyncStorage integration
  * - JSON serialization
@@ -57,7 +57,10 @@ describe('Storage Service', () => {
     it('should handle complex nested objects', async () => {
       const complexData = {
         user: { id: '123', profile: { name: 'John', age: 30 } },
-        pets: [{ id: '1', name: 'Fluffy' }, { id: '2', name: 'Max' }],
+        pets: [
+          { id: '1', name: 'Fluffy' },
+          { id: '2', name: 'Max' },
+        ],
         settings: { notifications: true, theme: 'dark' },
       };
       mockAsyncStorage.getItem.mockResolvedValueOnce(JSON.stringify(complexData));
@@ -102,10 +105,7 @@ describe('Storage Service', () => {
       const data = { name: 'test', count: 42 };
       await writeJSON('test_key', data);
 
-      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        'test_key',
-        JSON.stringify(data)
-      );
+      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith('test_key', JSON.stringify(data));
     });
 
     it('should write complex nested object', async () => {
@@ -191,9 +191,9 @@ describe('Storage Service', () => {
   describe('Edge Cases', () => {
     it('should handle empty strings', async () => {
       mockAsyncStorage.getItem.mockResolvedValueOnce('');
-      
+
       const result = await readJSON('empty_key', { default: true });
-      
+
       expect(result).toEqual({ default: true });
     });
 
@@ -246,7 +246,7 @@ describe('Storage Service', () => {
   describe('Integration', () => {
     it('should read and write data correctly', async () => {
       const data = { name: 'test', version: '1.0' };
-      
+
       mockAsyncStorage.setItem.mockResolvedValueOnce();
       mockAsyncStorage.getItem.mockResolvedValueOnce(JSON.stringify(data));
 
@@ -256,7 +256,7 @@ describe('Storage Service', () => {
       expect(result).toEqual(data);
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         'integration_key',
-        JSON.stringify(data)
+        JSON.stringify(data),
       );
       expect(mockAsyncStorage.getItem).toHaveBeenCalledWith('integration_key');
     });
@@ -312,7 +312,7 @@ describe('Storage Service', () => {
 
       const callArgs = mockAsyncStorage.setItem.mock.calls[0];
       const written = JSON.parse(callArgs[1] as string);
-      
+
       expect(typeof written.id).toBe('string');
       expect(typeof written.value).toBe('number');
     });

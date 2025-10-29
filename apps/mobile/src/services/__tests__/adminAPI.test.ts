@@ -137,7 +137,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockUsersResponse);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/users?page=1&limit=20',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -156,7 +156,7 @@ describe('AdminAPIService', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('search=john&status=active&role=user&verified=true'),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -183,7 +183,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockUserDetails);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/users/user1',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -206,7 +206,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'PUT',
           body: JSON.stringify({ reason: 'Violation of terms', duration: 7 }),
-        })
+        }),
       );
     });
 
@@ -229,7 +229,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'PUT',
           body: JSON.stringify({ reason: 'Severe violation' }),
-        })
+        }),
       );
     });
 
@@ -252,7 +252,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'PUT',
           body: JSON.stringify({ reason: 'Appeal approved' }),
-        })
+        }),
       );
     });
 
@@ -292,7 +292,7 @@ describe('AdminAPIService', () => {
             action: 'suspend',
             reason: 'Bulk moderation',
           }),
-        })
+        }),
       );
     });
   });
@@ -305,7 +305,12 @@ describe('AdminAPIService', () => {
           {
             _id: 'chat1',
             user1: { _id: 'user1', firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
-            user2: { _id: 'user2', firstName: 'Jane', lastName: 'Smith', email: 'jane@example.com' },
+            user2: {
+              _id: 'user2',
+              firstName: 'Jane',
+              lastName: 'Smith',
+              email: 'jane@example.com',
+            },
             pet1: { _id: 'pet1', name: 'Buddy', species: 'dog' },
             pet2: { _id: 'pet2', name: 'Luna', species: 'cat' },
             status: 'active',
@@ -334,7 +339,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockChatsResponse);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/chats?page=1&limit=20&status=active',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -385,7 +390,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'PUT',
           body: JSON.stringify({ reason: 'Inappropriate content', duration: 7 }),
-        })
+        }),
       );
     });
 
@@ -408,7 +413,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'PUT',
           body: JSON.stringify({ reason: 'Appeal approved' }),
-        })
+        }),
       );
     });
 
@@ -431,7 +436,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'DELETE',
           body: JSON.stringify({ reason: 'Violation of terms' }),
-        })
+        }),
       );
     });
 
@@ -477,7 +482,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockMessagesResponse);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/chats/messages?filter=flagged&search=inappropriate&page=1&limit=20',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -512,7 +517,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify({ action: 'approve' }),
-        })
+        }),
       );
     });
   });
@@ -560,7 +565,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockUploadsResponse);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/uploads?filter=pending&status=pending&search=profile&page=1&limit=20',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -601,7 +606,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'PUT',
           body: JSON.stringify({ notes: 'Looks good' }),
-        })
+        }),
       );
     });
 
@@ -616,7 +621,11 @@ describe('AdminAPIService', () => {
         json: jest.fn().mockResolvedValue(mockResponse),
       });
 
-      const result = await adminAPI.rejectUpload('upload1', 'Inappropriate content', 'Please upload a different photo');
+      const result = await adminAPI.rejectUpload(
+        'upload1',
+        'Inappropriate content',
+        'Please upload a different photo',
+      );
 
       expect(result).toEqual(mockResponse);
       expect(mockFetch).toHaveBeenCalledWith(
@@ -627,7 +636,7 @@ describe('AdminAPIService', () => {
             reason: 'Inappropriate content',
             notes: 'Please upload a different photo',
           }),
-        })
+        }),
       );
     });
 
@@ -650,7 +659,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'DELETE',
           body: JSON.stringify({ reason: 'Content violation' }),
-        })
+        }),
       );
     });
 
@@ -677,7 +686,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify({ action: 'approve', reason: 'Good content' }),
-        })
+        }),
       );
     });
 
@@ -704,7 +713,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'DELETE',
           body: JSON.stringify({ reason: 'Violation' }),
-        })
+        }),
       );
     });
   });
@@ -720,7 +729,12 @@ describe('AdminAPIService', () => {
             type: 'identity',
             status: 'pending',
             documents: [
-              { type: 'id_front', url: 'id-front.jpg', publicId: 'id1', uploadedAt: '2024-01-01T00:00:00Z' },
+              {
+                type: 'id_front',
+                url: 'id-front.jpg',
+                publicId: 'id1',
+                uploadedAt: '2024-01-01T00:00:00Z',
+              },
             ],
             submittedAt: '2024-01-01T00:00:00Z',
           },
@@ -745,7 +759,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockVerificationsResponse);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/verifications/pending?page=1&limit=20&status=pending',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -786,7 +800,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'PUT',
           body: JSON.stringify({ notes: 'All documents verified' }),
-        })
+        }),
       );
     });
 
@@ -801,7 +815,11 @@ describe('AdminAPIService', () => {
         json: jest.fn().mockResolvedValue(mockResponse),
       });
 
-      const result = await adminAPI.rejectVerification('verification1', 'Documents unclear', 'Please resubmit clearer images');
+      const result = await adminAPI.rejectVerification(
+        'verification1',
+        'Documents unclear',
+        'Please resubmit clearer images',
+      );
 
       expect(result).toEqual(mockResponse);
       expect(mockFetch).toHaveBeenCalledWith(
@@ -812,7 +830,7 @@ describe('AdminAPIService', () => {
             reason: 'Documents unclear',
             notes: 'Please resubmit clearer images',
           }),
-        })
+        }),
       );
     });
   });
@@ -859,7 +877,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockAnalytics);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/analytics?period=24h',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -925,7 +943,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockAuditLogs);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/security/audit-logs?page=1&limit=20',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });
@@ -953,12 +971,17 @@ describe('AdminAPIService', () => {
         json: jest.fn().mockResolvedValue(mockAlerts),
       });
 
-      const result = await adminAPI.getSecurityAlerts({ page: 1, limit: 20, sort: 'timestamp', order: 'desc' });
+      const result = await adminAPI.getSecurityAlerts({
+        page: 1,
+        limit: 20,
+        sort: 'timestamp',
+        order: 'desc',
+      });
 
       expect(result).toEqual(mockAlerts);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/security/alerts?page=1&limit=20&sort=timestamp&order=desc',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -985,7 +1008,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'PUT',
           body: JSON.stringify({ action: 'resolved', notes: 'False positive' }),
-        })
+        }),
       );
     });
 
@@ -1016,7 +1039,7 @@ describe('AdminAPIService', () => {
             reason: 'Suspicious activity',
             duration: 3600,
           }),
-        })
+        }),
       );
     });
 
@@ -1059,12 +1082,16 @@ describe('AdminAPIService', () => {
         json: jest.fn().mockResolvedValue(mockSafetyQueue),
       });
 
-      const result = await adminAPI.getSafetyModerationQueue({ status: 'pending', page: 1, limit: 20 });
+      const result = await adminAPI.getSafetyModerationQueue({
+        status: 'pending',
+        page: 1,
+        limit: 20,
+      });
 
       expect(result).toEqual(mockSafetyQueue);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/safety-moderation/queue?status=pending&page=1&limit=20',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -1117,7 +1144,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify({ decision: 'approve', notes: 'Safe content' }),
-        })
+        }),
       );
     });
 
@@ -1154,7 +1181,7 @@ describe('AdminAPIService', () => {
             decision: 'approve',
             notes: 'Batch approval',
           }),
-        })
+        }),
       );
     });
 
@@ -1217,12 +1244,17 @@ describe('AdminAPIService', () => {
         json: jest.fn().mockResolvedValue(mockSubscriptions),
       });
 
-      const result = await adminAPI.getSubscriptions({ page: 1, limit: 20, sort: 'created', order: 'desc' });
+      const result = await adminAPI.getSubscriptions({
+        page: 1,
+        limit: 20,
+        sort: 'created',
+        order: 'desc',
+      });
 
       expect(result).toEqual(mockSubscriptions);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/subscriptions?page=1&limit=20&sort=created&order=desc',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -1233,7 +1265,7 @@ describe('AdminAPIService', () => {
           totalRevenue: 15000,
           monthlyRecurringRevenue: 12000,
           churnRate: 0.05,
-          averageRevenuePerUser: 12.50,
+          averageRevenuePerUser: 12.5,
           paymentSuccessRate: 0.98,
         },
       };
@@ -1270,7 +1302,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'PUT',
           body: JSON.stringify({ reason: 'User requested cancellation' }),
-        })
+        }),
       );
     });
 
@@ -1293,7 +1325,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'PUT',
           body: JSON.stringify({}),
-        })
+        }),
       );
     });
   });
@@ -1353,7 +1385,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockServicesAnalytics);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/services/analytics?period=24h',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -1413,7 +1445,7 @@ describe('AdminAPIService', () => {
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify({ service: 'background-jobs', enabled: false }),
-        })
+        }),
       );
     });
   });
@@ -1465,7 +1497,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockResponse);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/users',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -1508,17 +1540,19 @@ describe('AdminAPIService', () => {
       const mockResponse = {
         success: true,
         data: {
-          users: [{
-            _id: 'user1',
-            firstName: 'Café',
-            lastName: 'User',
-            email: 'cafe@example.com',
-            role: 'user',
-            status: 'active',
-            isVerified: true,
-            createdAt: '2024-01-01T00:00:00Z',
-            pets: [],
-          }],
+          users: [
+            {
+              _id: 'user1',
+              firstName: 'Café',
+              lastName: 'User',
+              email: 'cafe@example.com',
+              role: 'user',
+              status: 'active',
+              isVerified: true,
+              createdAt: '2024-01-01T00:00:00Z',
+              pets: [],
+            },
+          ],
           pagination: { page: 1, limit: 20, total: 1, pages: 1 },
         },
       };
@@ -1533,7 +1567,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockResponse);
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('search=caf%C3%A9%20%26%20na%C3%AFve%20r%C3%A9sum%C3%A9'),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -1563,7 +1597,7 @@ describe('AdminAPIService', () => {
       expect(result).toEqual(mockResponse);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3001/api/admin/users',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -1585,7 +1619,7 @@ describe('AdminAPIService', () => {
       const results = await Promise.all(promises);
 
       expect(results).toHaveLength(4);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.success).toBe(true);
       });
     });

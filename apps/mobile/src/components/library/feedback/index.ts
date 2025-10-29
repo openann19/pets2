@@ -13,4 +13,4 @@
 // - NotificationBadge
 
 // Export placeholder to avoid import errors
-export const FeedbackPlaceholder = "Feedback components coming soon";
+export const FeedbackPlaceholder = 'Feedback components coming soon';

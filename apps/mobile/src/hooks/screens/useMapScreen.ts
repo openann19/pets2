@@ -2,17 +2,17 @@
  * useMapScreen Hook
  * Manages MapScreen state and business logic
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Alert, Animated, Platform } from "react-native";
-import Geolocation from "@react-native-community/geolocation";
-import { PERMISSIONS, RESULTS, request } from "react-native-permissions";
-import type { Region } from "react-native-maps";
-import type { Socket } from "socket.io-client";
-import io from "socket.io-client";
-import { SOCKET_URL } from "../../config/environment";
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Alert, Animated, Platform } from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
+import { PERMISSIONS, RESULTS, request } from 'react-native-permissions';
+import type { Region } from 'react-native-maps';
+import type { Socket } from 'socket.io-client';
+import io from 'socket.io-client';
+import { SOCKET_URL } from '../../config/environment';
+import { logger } from '@pawfectmatch/core';
+import { useAuthStore } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
 
 export interface MapFilters {
   showMyPets: boolean;
@@ -106,7 +106,7 @@ export const useMapScreen = (): UseMapScreenReturn => {
     showMyPets: true,
     showMatches: true,
     showNearby: true,
-    activityTypes: ["walking", "playing", "feeding"],
+    activityTypes: ['walking', 'playing', 'feeding'],
     radius: 5,
   });
 
@@ -121,45 +121,47 @@ export const useMapScreen = (): UseMapScreenReturn => {
   const [filterPanelHeight] = useState(new Animated.Value(0));
   const [statsOpacity] = useState(new Animated.Value(1));
   const socketRef = useRef<Socket | null>(null);
-  const [heatmapPoints, setHeatmapPoints] = useState<{ latitude: number; longitude: number; weight?: number }[]>([]);
+  const [heatmapPoints, setHeatmapPoints] = useState<
+    { latitude: number; longitude: number; weight?: number }[]
+  >([]);
 
   // Activity types configuration
   const activityTypes = useMemo<ActivityType[]>(
     () => [
       {
-        id: "walking",
-        name: "Walking",
-        label: "Walking",
-        emoji: "🚶‍♂️",
-        color: "#4CAF50",
+        id: 'walking',
+        name: 'Walking',
+        label: 'Walking',
+        emoji: '🚶‍♂️',
+        color: '#4CAF50',
       },
       {
-        id: "playing",
-        name: "Playing",
-        label: "Playing",
-        emoji: "🎾",
-        color: "#FF9800",
+        id: 'playing',
+        name: 'Playing',
+        label: 'Playing',
+        emoji: '🎾',
+        color: '#FF9800',
       },
       {
-        id: "feeding",
-        name: "Feeding",
-        label: "Feeding",
-        emoji: "🍽️",
-        color: "#9C27B0",
+        id: 'feeding',
+        name: 'Feeding',
+        label: 'Feeding',
+        emoji: '🍽️',
+        color: '#9C27B0',
       },
       {
-        id: "resting",
-        name: "Resting",
-        label: "Resting",
-        emoji: "😴",
-        color: "#607D8B",
+        id: 'resting',
+        name: 'Resting',
+        label: 'Resting',
+        emoji: '😴',
+        color: '#607D8B',
       },
       {
-        id: "training",
-        name: "Training",
-        label: "Training",
-        emoji: "🎯",
-        color: "#E91E63",
+        id: 'training',
+        name: 'Training',
+        label: 'Training',
+        emoji: '🎯',
+        color: '#E91E63',
       },
     ],
     [],
@@ -179,8 +181,8 @@ export const useMapScreen = (): UseMapScreenReturn => {
         });
       },
       (error: unknown) => {
-        logger.error("Location error:", { error });
-        Alert.alert("Location Error", "Unable to get your current location.");
+        logger.error('Location error:', { error });
+        Alert.alert('Location Error', 'Unable to get your current location.');
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
     );
@@ -190,7 +192,7 @@ export const useMapScreen = (): UseMapScreenReturn => {
   const requestLocationPermission = useCallback(async () => {
     try {
       const permission = await request(
-        Platform.OS === "ios"
+        Platform.OS === 'ios'
           ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
           : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
       );
@@ -198,13 +200,10 @@ export const useMapScreen = (): UseMapScreenReturn => {
       if (permission === RESULTS.GRANTED) {
         getCurrentLocation();
       } else {
-        Alert.alert(
-          "Location Permission",
-          "Please enable location access to see nearby pets.",
-        );
+        Alert.alert('Location Permission', 'Please enable location access to see nearby pets.');
       }
     } catch (error: unknown) {
-      logger.error("Location permission error:", { error });
+      logger.error('Location permission error:', { error });
     }
   }, [getCurrentLocation]);
 
@@ -259,24 +258,21 @@ export const useMapScreen = (): UseMapScreenReturn => {
   }, [pins, filters, userLocation, calculateDistance]);
 
   // Toggle activity filter
-  const toggleActivity = useCallback(
-    (activityId: string) => {
-      setFilters((prev) => ({
-        ...prev,
-        activityTypes: prev.activityTypes.includes(activityId)
-          ? prev.activityTypes.filter((a) => a !== activityId)
-          : [...prev.activityTypes, activityId],
-      }));
-    },
-    [],
-  );
+  const toggleActivity = useCallback((activityId: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      activityTypes: prev.activityTypes.includes(activityId)
+        ? prev.activityTypes.filter((a) => a !== activityId)
+        : [...prev.activityTypes, activityId],
+    }));
+  }, []);
 
   // Get marker color based on activity
   const getMarkerColor = useCallback(
     (activity: string, isMatch = false): string => {
-      if (isMatch) return "#EC4899";
+      if (isMatch) return '#EC4899';
       const activityType = activityTypes.find((a) => a.id === activity);
-      return activityType?.color || "#6B7280";
+      return activityType?.color || '#6B7280';
     },
     [activityTypes],
   );
@@ -312,14 +308,14 @@ export const useMapScreen = (): UseMapScreenReturn => {
     if (!user) return;
 
     const socket = io(SOCKET_URL, {
-      transports: ["websocket"],
+      transports: ['websocket'],
       reconnection: true,
     });
 
-    socket.on("connect", () => {
-      logger.info("MapSocket connected");
+    socket.on('connect', () => {
+      logger.info('MapSocket connected');
       if (user?._id) {
-        socket.emit("join_map", { userId: user._id });
+        socket.emit('join_map', { userId: user._id });
       }
     });
 
@@ -335,25 +331,25 @@ export const useMapScreen = (): UseMapScreenReturn => {
         return [pin, ...prev];
       });
     }
-    socket.on("pin:update", onPinUpdate);
+    socket.on('pin:update', onPinUpdate);
 
     // Heatmap updates
     function onHeatmapUpdate(data: { lat: number; lng: number; w?: number }[]) {
       setHeatmapPoints(data.map((d) => ({ latitude: d.lat, longitude: d.lng, weight: d.w ?? 1 })));
     }
-    socket.on("heatmap:update", onHeatmapUpdate);
+    socket.on('heatmap:update', onHeatmapUpdate);
 
-    socket.on("disconnect", () => {
-      logger.info("MapSocket disconnected");
+    socket.on('disconnect', () => {
+      logger.info('MapSocket disconnected');
     });
 
     socketRef.current = socket;
 
     return () => {
-      socket.off("pin:update", onPinUpdate);
-      socket.off("heatmap:update", onHeatmapUpdate);
+      socket.off('pin:update', onPinUpdate);
+      socket.off('heatmap:update', onHeatmapUpdate);
       if (user?._id) {
-        socket.emit("leave_map", { userId: user._id });
+        socket.emit('leave_map', { userId: user._id });
       }
       socket.disconnect();
     };

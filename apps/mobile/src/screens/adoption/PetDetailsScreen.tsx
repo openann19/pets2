@@ -1,27 +1,29 @@
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
-import { useState, useMemo, useEffect } from "react";
-import {
-  Alert,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { request } from "../../services/api";
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+import { Ionicons } from '@expo/vector-icons';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { logger } from '@pawfectmatch/core';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useMemo, useState } from 'react';
+import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { request } from '../../services/api';
 
 // Runtime theme has radius (not radii) and bgAlt/surfaceAlt in colors
-type RuntimeTheme = AppTheme & { 
-  radius: { xs: number; sm: number; md: number; lg: number; xl: number; '2xl': number; full: number; pill: number; none: number };
+type RuntimeTheme = AppTheme & {
+  radius: {
+    'xs': number;
+    'sm': number;
+    'md': number;
+    'lg': number;
+    'xl': number;
+    '2xl': number;
+    'full': number;
+    'pill': number;
+    'none': number;
+  };
   colors: AppTheme['colors'] & { bgAlt?: string; surfaceAlt?: string };
   palette?: {
     gradients?: {
@@ -37,10 +39,7 @@ type AdoptionStackParamList = {
   PetDetails: { petId: string };
 };
 
-type PetDetailsScreenProps = NativeStackScreenProps<
-  AdoptionStackParamList,
-  "PetDetails"
->;
+type PetDetailsScreenProps = NativeStackScreenProps<AdoptionStackParamList, 'PetDetails'>;
 
 interface PetDetails {
   id: string;
@@ -58,7 +57,7 @@ interface PetDetails {
     spayedNeutered: boolean;
     microchipped: boolean;
   };
-  status: "active" | "pending" | "adopted" | "paused";
+  status: 'active' | 'pending' | 'adopted' | 'paused';
   applications: number;
   views: number;
   featured: boolean;
@@ -78,17 +77,14 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
       try {
         setIsLoading(true);
         // Fetch pet details from API
-        const petData = await request<PetDetails>(
-          `/api/adoption/pets/${petId}`,
-          {
-            method: "GET",
-          },
-        );
+        const petData = await request<PetDetails>(`/api/adoption/pets/${petId}`, {
+          method: 'GET',
+        });
 
         setPet(petData);
       } catch (error) {
-        logger.error("Failed to load pet details:", { error });
-        Alert.alert("Error", "Failed to load pet details");
+        logger.error('Failed to load pet details:', { error });
+        Alert.alert('Error', 'Failed to load pet details');
       } finally {
         setIsLoading(false);
       }
@@ -99,33 +95,29 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
 
   const handleStatusChange = (newStatus: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    Alert.alert(
-      "Change Status",
-      `Change ${pet?.name}'s status to ${newStatus}?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Confirm",
-          onPress: () => {
-            if (pet) {
-              setPet({ ...pet, status: newStatus as PetDetails["status"] });
-              Alert.alert("Success", `Status updated to ${newStatus}`);
-            }
-          },
+    Alert.alert('Change Status', `Change ${pet?.name}'s status to ${newStatus}?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Confirm',
+        onPress: () => {
+          if (pet) {
+            setPet({ ...pet, status: newStatus as PetDetails['status'] });
+            Alert.alert('Success', `Status updated to ${newStatus}`);
+          }
         },
-      ],
-    );
+      },
+    ]);
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active":
+      case 'active':
         return theme.colors.success;
-      case "pending":
+      case 'pending':
         return theme.colors.warning;
-      case "adopted":
+      case 'adopted':
         return theme.colors.info;
-      case "paused":
+      case 'paused':
         return theme.colors.onMuted;
       default:
         return theme.colors.onMuted;
@@ -134,16 +126,16 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "active":
-        return "✅";
-      case "pending":
-        return "⏳";
-      case "adopted":
-        return "🏠";
-      case "paused":
-        return "⏸️";
+      case 'active':
+        return '✅';
+      case 'pending':
+        return '⏳';
+      case 'adopted':
+        return '🏠';
+      case 'paused':
+        return '⏸️';
       default:
-        return "❓";
+        return '❓';
     }
   };
 
@@ -161,12 +153,19 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.emptyContainer}>
-          <Ionicons name="alert-circle-outline" size={80} color={theme.colors.danger} />
+          <Ionicons
+            name="alert-circle-outline"
+            size={80}
+            color={theme.colors.danger}
+          />
           <Text style={styles.emptyTitle}>Pet Not Found</Text>
           <Text style={styles.emptySubtitle}>Unable to load pet details</Text>
           <TouchableOpacity
             style={styles.backButton}
-             testID="PetDetailsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
+            testID="PetDetailsScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => navigation.goBack()}
           >
             <Text style={styles.backButtonText}>Go Back</Text>
           </TouchableOpacity>
@@ -185,24 +184,47 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-             testID="PetDetailsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
+            testID="PetDetailsScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color={theme.colors.onSurface}
+            />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Pet Details</Text>
           <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.headerButton} testID="PetDetailsScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
-              <Ionicons name="share-outline" size={20} color={theme.colors.onSurface} />
+            <TouchableOpacity
+              style={styles.headerButton}
+              testID="PetDetailsScreen-button-1"
+              accessibilityLabel="Button"
+              accessibilityRole="button"
+            >
+              <Ionicons
+                name="share-outline"
+                size={20}
+                color={theme.colors.onSurface}
+              />
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Main Photo */}
         <View style={styles.photoSection}>
-          <Image source={{ uri: pet.photos[0] }} style={styles.mainPhoto} />
+          <Image
+            source={{ uri: pet.photos[0] }}
+            style={styles.mainPhoto}
+          />
           {pet.featured && (
             <View style={styles.featuredBadge}>
-              <Ionicons name="star" size={16} color={theme.colors.onSurface} />
+              <Ionicons
+                name="star"
+                size={16}
+                color={theme.colors.onSurface}
+              />
               <Text style={styles.featuredText}>Featured</Text>
             </View>
           )}
@@ -224,7 +246,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
                   { color: getStatusColor(pet.status) },
                 ])}
               >
-                {getStatusIcon(pet.status)}{" "}
+                {getStatusIcon(pet.status)}{' '}
                 {pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
               </Text>
             </View>
@@ -242,7 +264,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
               <Text style={styles.statLabel}>Views</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{pet.featured ? "⭐" : "—"}</Text>
+              <Text style={styles.statNumber}>{pet.featured ? '⭐' : '—'}</Text>
               <Text style={styles.statLabel}>Featured</Text>
             </View>
           </View>
@@ -251,7 +273,10 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
         {/* Description */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About {pet.name}</Text>
-          <BlurView intensity={20} style={styles.sectionCard}>
+          <BlurView
+            intensity={20}
+            style={styles.sectionCard}
+          >
             <Text style={styles.description}>{pet.description}</Text>
           </BlurView>
         </View>
@@ -259,10 +284,16 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
         {/* Personality Tags */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Personality</Text>
-          <BlurView intensity={20} style={styles.sectionCard}>
+          <BlurView
+            intensity={20}
+            style={styles.sectionCard}
+          >
             <View style={styles.tagsContainer}>
               {pet.personalityTags.map((tag, index) => (
-                <View key={index} style={styles.tag}>
+                <View
+                  key={index}
+                  style={styles.tag}
+                >
                   <Text style={styles.tagText}>{tag}</Text>
                 </View>
               ))}
@@ -273,15 +304,14 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
         {/* Health Info */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Health Information</Text>
-          <BlurView intensity={20} style={styles.sectionCard}>
+          <BlurView
+            intensity={20}
+            style={styles.sectionCard}
+          >
             <View style={styles.healthInfo}>
               <View style={styles.healthItem}>
                 <Ionicons
-                  name={
-                    pet.healthInfo.vaccinated
-                      ? "checkmark-circle"
-                      : "close-circle"
-                  }
+                  name={pet.healthInfo.vaccinated ? 'checkmark-circle' : 'close-circle'}
                   size={20}
                   color={pet.healthInfo.vaccinated ? theme.colors.success : theme.colors.danger}
                 />
@@ -289,11 +319,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
               </View>
               <View style={styles.healthItem}>
                 <Ionicons
-                  name={
-                    pet.healthInfo.spayedNeutered
-                      ? "checkmark-circle"
-                      : "close-circle"
-                  }
+                  name={pet.healthInfo.spayedNeutered ? 'checkmark-circle' : 'close-circle'}
                   size={20}
                   color={pet.healthInfo.spayedNeutered ? theme.colors.success : theme.colors.danger}
                 />
@@ -301,11 +327,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
               </View>
               <View style={styles.healthItem}>
                 <Ionicons
-                  name={
-                    pet.healthInfo.microchipped
-                      ? "checkmark-circle"
-                      : "close-circle"
-                  }
+                  name={pet.healthInfo.microchipped ? 'checkmark-circle' : 'close-circle'}
                   size={20}
                   color={pet.healthInfo.microchipped ? theme.colors.success : theme.colors.danger}
                 />
@@ -321,11 +343,11 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
           <View style={styles.actionsGrid}>
             <TouchableOpacity
               style={styles.actionButton}
-               testID="PetDetailsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                Alert.alert(
-                  "Coming Soon",
-                  "Application review feature coming soon!",
-                );
+              testID="PetDetailsScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => {
+                Alert.alert('Coming Soon', 'Application review feature coming soon!');
               }}
             >
               <LinearGradient
@@ -334,7 +356,11 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="document-text" size={24} color={theme.colors.onSurface} />
+                <Ionicons
+                  name="document-text"
+                  size={24}
+                  color={theme.colors.onSurface}
+                />
                 <Text style={styles.actionText}>Review Applications</Text>
                 <Text style={styles.actionCount}>({pet.applications})</Text>
               </LinearGradient>
@@ -342,17 +368,26 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
 
             <TouchableOpacity
               style={styles.actionButton}
-               testID="PetDetailsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                Alert.alert("Edit", "Edit pet details coming soon!");
+              testID="PetDetailsScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => {
+                Alert.alert('Edit', 'Edit pet details coming soon!');
               }}
             >
               <LinearGradient
-                colors={theme.palette?.gradients?.success ?? [theme.colors.success, theme.colors.success]}
+                colors={
+                  theme.palette?.gradients?.success ?? [theme.colors.success, theme.colors.success]
+                }
                 style={styles.actionGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="create" size={24} color={theme.colors.onSurface} />
+                <Ionicons
+                  name="create"
+                  size={24}
+                  color={theme.colors.onSurface}
+                />
                 <Text style={styles.actionText}>Edit Details</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -362,16 +397,22 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
         {/* Status Management */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Manage Status</Text>
-          <BlurView intensity={20} style={styles.sectionCard}>
+          <BlurView
+            intensity={20}
+            style={styles.sectionCard}
+          >
             <View style={styles.statusOptions}>
-              {["active", "pending", "adopted", "paused"].map((status) => (
+              {['active', 'pending', 'adopted', 'paused'].map((status) => (
                 <TouchableOpacity
                   key={status}
                   style={StyleSheet.flatten([
                     styles.statusOption,
                     pet.status === status && styles.statusOptionActive,
                   ])}
-                   testID="PetDetailsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+                  testID="PetDetailsScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
+                  onPress={() => {
                     handleStatusChange(status);
                   }}
                 >
@@ -381,8 +422,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
                       pet.status === status && styles.statusOptionTextActive,
                     ])}
                   >
-                    {getStatusIcon(status)}{" "}
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                    {getStatusIcon(status)} {status.charAt(0).toUpperCase() + status.slice(1)}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -396,7 +436,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
 
 function makeStyles(theme: AppTheme) {
   const themeRuntime = theme as RuntimeTheme;
-  
+
   return {
     container: {
       flex: 1,
@@ -407,8 +447,8 @@ function makeStyles(theme: AppTheme) {
     },
     loadingContainer: {
       flex: 1,
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
     },
     loadingText: {
       fontSize: 18,
@@ -416,26 +456,26 @@ function makeStyles(theme: AppTheme) {
     },
     emptyContainer: {
       flex: 1,
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
       paddingHorizontal: theme.spacing.xl,
     },
     emptyTitle: {
       fontSize: 24,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
       marginTop: theme.spacing.lg,
     },
     emptySubtitle: {
       fontSize: 16,
       color: theme.colors.onMuted,
-      textAlign: "center" as const,
+      textAlign: 'center' as const,
       marginTop: theme.spacing.sm,
     },
     header: {
-      flexDirection: "row" as const,
-      justifyContent: "space-between" as const,
-      alignItems: "center" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const,
       padding: theme.spacing.lg,
       backgroundColor: theme.colors.surface,
       borderBottomWidth: 1,
@@ -443,30 +483,30 @@ function makeStyles(theme: AppTheme) {
     },
     headerTitle: {
       fontSize: 20,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
     },
     headerActions: {
-      flexDirection: "row" as const,
+      flexDirection: 'row' as const,
       gap: theme.spacing.sm,
     },
     headerButton: {
       padding: theme.spacing.xs,
     },
     photoSection: {
-      position: "relative" as const,
+      position: 'relative' as const,
     },
     mainPhoto: {
-      width: "100%" as const,
+      width: '100%' as const,
       height: 300,
-      resizeMode: "cover" as const,
+      resizeMode: 'cover' as const,
     },
     featuredBadge: {
-      position: "absolute" as const,
+      position: 'absolute' as const,
       top: theme.spacing.lg,
       left: theme.spacing.lg,
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
       backgroundColor: theme.colors.warning,
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
@@ -475,7 +515,7 @@ function makeStyles(theme: AppTheme) {
     featuredText: {
       color: theme.colors.onSurface,
       fontSize: 12,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       marginLeft: theme.spacing.xs,
     },
     infoSection: {
@@ -483,14 +523,14 @@ function makeStyles(theme: AppTheme) {
       backgroundColor: theme.colors.surface,
     },
     nameRow: {
-      flexDirection: "row" as const,
-      justifyContent: "space-between" as const,
-      alignItems: "center" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const,
       marginBottom: theme.spacing.xs,
     },
     petName: {
       fontSize: 28,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
     },
     statusBadge: {
@@ -500,7 +540,7 @@ function makeStyles(theme: AppTheme) {
     },
     statusText: {
       fontSize: 12,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
     },
     petBreed: {
       fontSize: 18,
@@ -508,19 +548,19 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.md,
     },
     statsRow: {
-      flexDirection: "row" as const,
-      justifyContent: "space-around" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-around' as const,
       paddingVertical: theme.spacing.md,
       borderTopWidth: 1,
       borderBottomWidth: 1,
       borderColor: theme.colors.border,
     },
     statItem: {
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
     },
     statNumber: {
       fontSize: 20,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.primary,
       marginBottom: theme.spacing.xs,
     },
@@ -533,13 +573,13 @@ function makeStyles(theme: AppTheme) {
     },
     sectionTitle: {
       fontSize: 18,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.sm,
     },
     sectionCard: {
       borderRadius: themeRuntime.radius.md,
-      overflow: "hidden" as const,
+      overflow: 'hidden' as const,
       padding: theme.spacing.md,
     },
     description: {
@@ -548,8 +588,8 @@ function makeStyles(theme: AppTheme) {
       color: theme.colors.onSurface,
     },
     tagsContainer: {
-      flexDirection: "row" as const,
-      flexWrap: "wrap" as const,
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
       gap: theme.spacing.xs,
     },
     tag: {
@@ -561,36 +601,36 @@ function makeStyles(theme: AppTheme) {
     tagText: {
       fontSize: 14,
       color: theme.colors.onMuted,
-      fontWeight: "500" as const,
+      fontWeight: '500' as const,
     },
     healthInfo: {
       gap: theme.spacing.sm,
     },
     healthItem: {
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
       gap: theme.spacing.sm,
     },
     healthText: {
       fontSize: 16,
       color: theme.colors.onSurface,
-      fontWeight: "500" as const,
+      fontWeight: '500' as const,
     },
     actionsGrid: {
       gap: theme.spacing.sm,
     },
     actionButton: {
       borderRadius: themeRuntime.radius.md,
-      overflow: "hidden" as const,
+      overflow: 'hidden' as const,
     },
     actionGradient: {
       padding: theme.spacing.lg,
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
     },
     actionText: {
       color: theme.colors.onSurface,
       fontSize: 16,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
       marginTop: theme.spacing.xs,
     },
     actionCount: {
@@ -616,12 +656,12 @@ function makeStyles(theme: AppTheme) {
     statusOptionText: {
       fontSize: 16,
       color: theme.colors.onMuted,
-      fontWeight: "500" as const,
-      textAlign: "center" as const,
+      fontWeight: '500' as const,
+      textAlign: 'center' as const,
     },
     statusOptionTextActive: {
       color: theme.colors.onSurface,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
     },
     backButton: {
       padding: theme.spacing.xs,
@@ -629,7 +669,7 @@ function makeStyles(theme: AppTheme) {
     backButtonText: {
       fontSize: 16,
       color: theme.colors.primary,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
     },
   };
 }

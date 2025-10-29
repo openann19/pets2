@@ -2,14 +2,14 @@
  * useLeaderboard Hook
  * Manages leaderboard data, filtering, pagination, and user ranking
  */
-import { useCallback, useEffect, useState } from "react";
-import { logger } from "@pawfectmatch/core";
+import { useCallback, useEffect, useState } from 'react';
+import { logger } from '@pawfectmatch/core';
 import type {
   LeaderboardCategory,
   LeaderboardEntry,
   LeaderboardFilter,
-} from "../../../services/LeaderboardService";
-import LeaderboardService from "../../../services/LeaderboardService";
+} from '../../../services/LeaderboardService';
+import LeaderboardService from '../../../services/LeaderboardService';
 
 interface UseLeaderboardReturn {
   // Data
@@ -27,13 +27,11 @@ interface UseLeaderboardReturn {
 
   // Filters
   selectedCategory: string;
-  selectedPeriod: "daily" | "weekly" | "monthly" | "all_time";
+  selectedPeriod: 'daily' | 'weekly' | 'monthly' | 'all_time';
 
   // Actions
   setSelectedCategory: (category: string) => void;
-  setSelectedPeriod: (
-    period: "daily" | "weekly" | "monthly" | "all_time",
-  ) => void;
+  setSelectedPeriod: (period: 'daily' | 'weekly' | 'monthly' | 'all_time') => void;
   setShowFilters: (show: boolean) => void;
   refreshData: () => Promise<void>;
   loadMore: () => Promise<void>;
@@ -43,10 +41,10 @@ interface UseLeaderboardReturn {
 export const useLeaderboard = (): UseLeaderboardReturn => {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [categories, setCategories] = useState<LeaderboardCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedPeriod, setSelectedPeriod] = useState<
-    "daily" | "weekly" | "monthly" | "all_time"
-  >("weekly");
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedPeriod, setSelectedPeriod] = useState<'daily' | 'weekly' | 'monthly' | 'all_time'>(
+    'weekly',
+  );
   const [userRank, setUserRank] = useState<number | null>(null);
   const [userEntry, setUserEntry] = useState<LeaderboardEntry | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,7 +58,7 @@ export const useLeaderboard = (): UseLeaderboardReturn => {
       const categoriesData = await LeaderboardService.getCategories();
       setCategories(categoriesData);
     } catch (error) {
-      logger.error("Failed to load categories:", { error });
+      logger.error('Failed to load categories:', { error });
       throw error;
     }
   }, []);
@@ -69,15 +67,11 @@ export const useLeaderboard = (): UseLeaderboardReturn => {
     async (pageNum = 1) => {
       try {
         const filter: LeaderboardFilter =
-          selectedCategory === "all"
+          selectedCategory === 'all'
             ? { period: selectedPeriod }
             : { category: selectedCategory, period: selectedPeriod };
 
-        const response = await LeaderboardService.getLeaderboard(
-          filter,
-          pageNum,
-          20,
-        );
+        const response = await LeaderboardService.getLeaderboard(filter, pageNum, 20);
 
         if (pageNum === 1) {
           setEntries(response.entries);
@@ -88,7 +82,7 @@ export const useLeaderboard = (): UseLeaderboardReturn => {
         setHasMore(response.hasMore);
         setPage(pageNum);
       } catch (error) {
-        logger.error("Failed to load leaderboard:", { error });
+        logger.error('Failed to load leaderboard:', { error });
         throw error;
       }
     },
@@ -98,12 +92,12 @@ export const useLeaderboard = (): UseLeaderboardReturn => {
   const loadUserRank = useCallback(async () => {
     try {
       const rankData = await LeaderboardService.getUserRank(
-        selectedCategory === "all" ? undefined : selectedCategory,
+        selectedCategory === 'all' ? undefined : selectedCategory,
       );
       setUserRank(rankData.rank);
       setUserEntry(rankData.entry);
     } catch (error) {
-      logger.error("Failed to load user rank:", { error });
+      logger.error('Failed to load user rank:', { error });
       throw error;
     }
   }, [selectedCategory]);
@@ -113,7 +107,7 @@ export const useLeaderboard = (): UseLeaderboardReturn => {
       setLoading(true);
       await Promise.all([loadCategories(), loadLeaderboard(), loadUserRank()]);
     } catch (error) {
-      logger.error("Failed to load initial data:", { error });
+      logger.error('Failed to load initial data:', { error });
       throw error;
     } finally {
       setLoading(false);
@@ -125,7 +119,7 @@ export const useLeaderboard = (): UseLeaderboardReturn => {
       setRefreshing(true);
       await Promise.all([loadLeaderboard(1), loadUserRank()]);
     } catch (error) {
-      logger.error("Failed to refresh data:", { error });
+      logger.error('Failed to refresh data:', { error });
       throw error;
     } finally {
       setRefreshing(false);
@@ -138,7 +132,7 @@ export const useLeaderboard = (): UseLeaderboardReturn => {
     try {
       await loadLeaderboard(page + 1);
     } catch (error) {
-      logger.error("Failed to load more entries:", { error });
+      logger.error('Failed to load more entries:', { error });
       throw error;
     }
   }, [hasMore, loading, loadLeaderboard, page]);

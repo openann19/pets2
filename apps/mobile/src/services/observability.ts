@@ -3,11 +3,11 @@
  * Advanced monitoring, logging, and analytics following Rule 13 (Observability)
  */
 
-import { logger } from "./logger";
-import { performanceMonitor } from "../utils/PerformanceMonitor";
-import * as Sentry from "@sentry/react-native";
-import { Platform } from "react-native";
-import NetInfo from "@react-native-community/netinfo";
+import { logger } from './logger';
+import { performanceMonitor } from '../utils/PerformanceMonitor';
+import * as Sentry from '@sentry/react-native';
+import { Platform } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 
 interface ObservabilityConfig {
   enablePerformanceTracking: boolean;
@@ -37,12 +37,8 @@ interface ErrorContext {
 }
 
 interface SecurityEvent {
-  type:
-    | "auth_attempt"
-    | "rate_limit"
-    | "suspicious_activity"
-    | "data_breach_attempt";
-  severity: "low" | "medium" | "high" | "critical";
+  type: 'auth_attempt' | 'rate_limit' | 'suspicious_activity' | 'data_breach_attempt';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   userId?: string;
   ip?: string;
   details: Record<string, unknown>;
@@ -70,7 +66,7 @@ class ObservabilityService {
       enableAnalytics: true,
       enableSecurityMonitoring: true,
       sampleRate: 1.0, // Sample 100% in development
-      environment: __DEV__ ? "development" : "production",
+      environment: __DEV__ ? 'development' : 'production',
     };
   }
 
@@ -99,22 +95,22 @@ class ObservabilityService {
             return this.sanitizeSentryEvent(event);
           },
         });
-        logger.info("Sentry error tracking initialized");
+        logger.info('Sentry error tracking initialized');
       }
 
       // Initialize performance monitoring (constructor already starts it in dev)
       if (this.config.enablePerformanceTracking) {
-        logger.info("Performance monitoring enabled");
+        logger.info('Performance monitoring enabled');
       }
 
       // Initialize network monitoring
       this.initializeNetworkMonitoring();
 
       this.isInitialized = true;
-      logger.info("Observability service initialized successfully");
+      logger.info('Observability service initialized successfully');
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error("Failed to initialize observability service", {
+      logger.error('Failed to initialize observability service', {
         error: err,
       });
     }
@@ -135,8 +131,8 @@ class ObservabilityService {
       memoryUsage: this.getMemoryUsage(),
       interactionTime: duration,
       timestamp: Date.now(),
-      screen: (metadata.screen as string) || "unknown",
-      component: (metadata.component as string) || "unknown",
+      screen: (metadata.screen as string) || 'unknown',
+      component: (metadata.component as string) || 'unknown',
     };
 
     logger.performance(`Performance: ${operation}`, duration, {
@@ -147,7 +143,7 @@ class ObservabilityService {
 
     // Send to analytics if enabled
     if (this.config.enableAnalytics) {
-      this.trackAnalytics("performance_metric", {
+      this.trackAnalytics('performance_metric', {
         operation,
         duration,
         fps: metrics.fps,
@@ -224,8 +220,8 @@ class ObservabilityService {
     });
 
     // Send critical security events to Sentry
-    if (event.severity === "critical") {
-      Sentry.captureMessage(`Critical security event: ${event.type}`, "fatal");
+    if (event.severity === 'critical') {
+      Sentry.captureMessage(`Critical security event: ${event.type}`, 'fatal');
     }
   }
 
@@ -260,7 +256,7 @@ class ObservabilityService {
     currentStep: string,
     metadata: Record<string, unknown> = {},
   ): void {
-    logger.info(`User journey: ${journey.join(" → ")}`, {
+    logger.info(`User journey: ${journey.join(' → ')}`, {
       userId,
       journey,
       currentStep,
@@ -273,11 +269,7 @@ class ObservabilityService {
   /**
    * Track feature usage
    */
-  trackFeatureUsage(
-    feature: string,
-    userId: string,
-    metadata: Record<string, unknown> = {},
-  ): void {
+  trackFeatureUsage(feature: string, userId: string, metadata: Record<string, unknown> = {}): void {
     logger.info(`Feature usage: ${feature}`, {
       feature,
       userId,
@@ -285,7 +277,7 @@ class ObservabilityService {
       timestamp: new Date().toISOString(),
     });
 
-    this.trackAnalytics("feature_used", {
+    this.trackAnalytics('feature_used', {
       feature,
       ...metadata,
     });
@@ -310,10 +302,7 @@ class ObservabilityService {
   /**
    * Set user context for all future logging
    */
-  setUserContext(
-    userId: string,
-    properties: Record<string, unknown> = {},
-  ): void {
+  setUserContext(userId: string, properties: Record<string, unknown> = {}): void {
     Sentry.setUser({
       id: userId,
       ...properties,
@@ -333,15 +322,11 @@ class ObservabilityService {
   /**
    * Add breadcrumb for debugging
    */
-  addBreadcrumb(
-    message: string,
-    category: string,
-    metadata: Record<string, unknown> = {},
-  ): void {
+  addBreadcrumb(message: string, category: string, metadata: Record<string, unknown> = {}): void {
     Sentry.addBreadcrumb({
       message,
       category,
-      level: "info",
+      level: 'info',
       ...metadata,
     });
 
@@ -355,7 +340,7 @@ class ObservabilityService {
     // Store metrics for analysis
     // In a real implementation, this might send to a monitoring service
     if (metrics.fps < 30) {
-      logger.warn("Low FPS detected", {
+      logger.warn('Low FPS detected', {
         ...metrics,
         timestamp: new Date(metrics.timestamp).toISOString(),
       });
@@ -371,13 +356,17 @@ class ObservabilityService {
   private sanitizeSentryEvent<T extends Sentry.ErrorEvent>(event: T): T {
     // Remove sensitive data from Sentry events
     const sentryEvent = event as Record<string, unknown>;
-    if (sentryEvent.request && typeof sentryEvent.request === 'object' && 'data' in sentryEvent.request) {
+    if (
+      sentryEvent.request &&
+      typeof sentryEvent.request === 'object' &&
+      'data' in sentryEvent.request
+    ) {
       const request = sentryEvent.request as { data?: Record<string, unknown> };
       if (request.data) {
         // Remove passwords, tokens, etc.
         const sanitized = { ...request.data };
-        if ('password' in sanitized) sanitized.password = "[REDACTED]";
-        if ('token' in sanitized) sanitized.token = "[REDACTED]";
+        if ('password' in sanitized) sanitized.password = '[REDACTED]';
+        if ('token' in sanitized) sanitized.token = '[REDACTED]';
         request.data = sanitized;
       }
     }
@@ -388,7 +377,7 @@ class ObservabilityService {
   private async initializeNetworkMonitoring(): Promise<void> {
     try {
       const unsubscribe = NetInfo.addEventListener((state) => {
-        logger.info("Network status changed", {
+        logger.info('Network status changed', {
           isConnected: state.isConnected,
           type: state.type,
           isInternetReachable: state.isInternetReachable,
@@ -399,7 +388,7 @@ class ObservabilityService {
       this.networkUnsubscribe = unsubscribe;
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error("Failed to initialize network monitoring", { error: err });
+      logger.error('Failed to initialize network monitoring', { error: err });
     }
   }
 

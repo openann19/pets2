@@ -11,7 +11,7 @@
  * - Offline support
  */
 
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useState, useRef } from 'react';
 import {
   FlatList,
   View,
@@ -22,22 +22,26 @@ import {
   ActivityIndicator,
   Alert,
   RefreshControl,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
-import { AdvancedHeader, HeaderConfigs } from "../components/Advanced/AdvancedHeader";
-import { DoubleTapLikePlus } from "../components/Gestures/DoubleTapLikePlus";
-import { PinchZoomPro } from "../components/Gestures/PinchZoomPro";
-import { ReactionBarMagnetic } from "../components/chat";
-import { useCommunityFeed } from "../hooks/useCommunityFeed";
-import { useTheme } from "@/theme";
-import { useDoubleTapMetrics, usePinchMetrics, useReactionMetrics } from "../hooks/useInteractionMetrics";
-import { useScrollOffsetTracker } from "../hooks/navigation/useScrollOffsetTracker";
-import { useTabReselectRefresh } from "../hooks/navigation/useTabReselectRefresh";
-import type { CommunityPost } from "../services/communityAPI";
-import { logger } from "../services/logger";
-import type { FlatList as FlatListType } from "react-native";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
+import { DoubleTapLikePlus } from '../components/Gestures/DoubleTapLikePlus';
+import { PinchZoomPro } from '../components/Gestures/PinchZoomPro';
+import { ReactionBarMagnetic } from '../components/chat';
+import { useCommunityFeed } from '../hooks/useCommunityFeed';
+import { useTheme } from '@/theme';
+import {
+  useDoubleTapMetrics,
+  usePinchMetrics,
+  useReactionMetrics,
+} from '../hooks/useInteractionMetrics';
+import { useScrollOffsetTracker } from '../hooks/navigation/useScrollOffsetTracker';
+import { useTabReselectRefresh } from '../hooks/navigation/useTabReselectRefresh';
+import type { CommunityPost } from '../services/communityAPI';
+import { logger } from '../services/logger';
+import type { FlatList as FlatListType } from 'react-native';
 
 interface CommunityScreenProps {
   navigation: {
@@ -51,7 +55,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
   const colors: ExtendedColors = getExtendedColors(theme);
   const listRef = useRef<FlatListType<CommunityPost>>(null);
   const { onScroll, getOffset } = useScrollOffsetTracker();
-  
+
   const {
     posts,
     isLoading,
@@ -75,7 +79,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
   const [likingPosts, setLikingPosts] = useState<Record<string, boolean>>({});
   const [commentingPosts, setCommentingPosts] = useState<Record<string, boolean>>({});
   const [showReactions, setShowReactions] = useState<Record<string, boolean>>({});
-  
+
   const { startInteraction: startDoubleTap, endInteraction: endDoubleTap } = useDoubleTapMetrics();
   const { startInteraction: startPinch, endInteraction: endPinch } = usePinchMetrics();
   const { startInteraction: startReaction, endInteraction: endReaction } = useReactionMetrics();
@@ -101,7 +105,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
         await likePost(postId);
         endDoubleTap('postLike', true);
       } catch (error) {
-        logger.error("Error liking post:", { error: error as Error, postId });
+        logger.error('Error liking post:', { error: error as Error, postId });
         endDoubleTap('postLike', false);
       } finally {
         setLikingPosts((prev) => ({ ...prev, [postId]: false }));
@@ -136,11 +140,11 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
 
       try {
         await addComment(postId, { content });
-        setCommentInputs((prev) => ({ ...prev, [postId]: "" }));
+        setCommentInputs((prev) => ({ ...prev, [postId]: '' }));
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch (error) {
-        logger.error("Error adding comment:", { error: error as Error, postId });
-        Alert.alert("Error", "Failed to add comment. Please try again.");
+        logger.error('Error adding comment:', { error: error as Error, postId });
+        Alert.alert('Error', 'Failed to add comment. Please try again.');
       } finally {
         setCommentingPosts((prev) => ({ ...prev, [postId]: false }));
       }
@@ -151,25 +155,21 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
   // Handle report post
   const handleReport = useCallback(
     (post: CommunityPost) => {
-      Alert.alert(
-        "Report Post",
-        "Why are you reporting this post?",
-        [
-          { text: "Cancel", style: "cancel" },
-          {
-            text: "Spam",
-            onPress: () => reportPost(post._id, "spam"),
-          },
-          {
-            text: "Inappropriate",
-            onPress: () => reportPost(post._id, "inappropriate"),
-          },
-          {
-            text: "Harassment",
-            onPress: () => reportPost(post._id, "harassment"),
-          },
-        ],
-      );
+      Alert.alert('Report Post', 'Why are you reporting this post?', [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Spam',
+          onPress: () => reportPost(post._id, 'spam'),
+        },
+        {
+          text: 'Inappropriate',
+          onPress: () => reportPost(post._id, 'inappropriate'),
+        },
+        {
+          text: 'Harassment',
+          onPress: () => reportPost(post._id, 'harassment'),
+        },
+      ]);
     },
     [reportPost],
   );
@@ -177,25 +177,21 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
   // Handle block user
   const handleBlockUser = useCallback(
     (userId: string, userName: string) => {
-      Alert.alert(
-        "Block User",
-        `Are you sure you want to block ${userName}?`,
-        [
-          { text: "Cancel", style: "cancel" },
-          {
-            text: "Block",
-            style: "destructive",
-            onPress: async () => {
-              try {
-                await blockUser(userId);
-                Alert.alert("Success", "User has been blocked.");
-              } catch (error) {
-                Alert.alert("Error", "Failed to block user.");
-              }
-            },
+      Alert.alert('Block User', `Are you sure you want to block ${userName}?`, [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Block',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await blockUser(userId);
+              Alert.alert('Success', 'User has been blocked.');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to block user.');
+            }
           },
-        ],
-      );
+        },
+      ]);
     },
     [blockUser],
   );
@@ -206,9 +202,9 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
       try {
         await joinActivity(postId);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert("Success", "You've joined this activity!");
+        Alert.alert('Success', "You've joined this activity!");
       } catch (error) {
-        Alert.alert("Error", "Failed to join activity.");
+        Alert.alert('Error', 'Failed to join activity.');
       }
     },
     [joinActivity],
@@ -220,7 +216,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
     const date = new Date(dateString);
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-    if (diffInSeconds < 60) return "now";
+    if (diffInSeconds < 60) return 'now';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
     if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d`;
@@ -240,47 +236,63 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
         <View style={styles.postHeader}>
           <TouchableOpacity
             style={styles.authorInfo}
-             testID="CommunityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+            testID="CommunityScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
               // Navigate to user profile
             }}
           >
             <Image
-              source={{ uri: post.author.avatar || "https://i.pravatar.cc/150" }}
+              source={{ uri: post.author.avatar || 'https://i.pravatar.cc/150' }}
               style={styles.avatar}
             />
             <View>
-              <Text style={StyleSheet.flatten([styles.authorName, { color: colors.onSurface}])}>
+              <Text style={StyleSheet.flatten([styles.authorName, { color: colors.onSurface }])}>
                 {post.author.name}
               </Text>
-              <Text style={StyleSheet.flatten([styles.timeAgo, { color: colors.onSurfaceecondary }])}>
+              <Text
+                style={StyleSheet.flatten([styles.timeAgo, { color: colors.onSurfaceecondary }])}
+              >
                 {formatTimeAgo(post.createdAt)}
               </Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
-             testID="CommunityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-              Alert.alert(
-                "Options",
-                "",
-                [
-                  { text: "Cancel", style: "cancel" },
-                  { text: "Report", style: "destructive", onPress: () => { handleReport(post); } },
-                  {
-                    text: "Block User",
-                    style: "destructive",
-                    onPress: () => { handleBlockUser(post.author._id, post.author.name); },
+            testID="CommunityScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
+              Alert.alert('Options', '', [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'Report',
+                  style: 'destructive',
+                  onPress: () => {
+                    handleReport(post);
                   },
-                ],
-              );
+                },
+                {
+                  text: 'Block User',
+                  style: 'destructive',
+                  onPress: () => {
+                    handleBlockUser(post.author._id, post.author.name);
+                  },
+                },
+              ]);
             }}
           >
-            <Ionicons name="ellipsis-horizontal" size={20} color={colors.onSurfaceecondary} />
+            <Ionicons
+              name="ellipsis-horizontal"
+              size={20}
+              color={colors.onSurfaceecondary}
+            />
           </TouchableOpacity>
         </View>
 
         {/* Content */}
-        <Text style={StyleSheet.flatten([styles.postContent, { color: colors.onSurface}])}>
+        <Text style={StyleSheet.flatten([styles.postContent, { color: colors.onSurface }])}>
           {post.content}
         </Text>
 
@@ -291,10 +303,12 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
               <DoubleTapLikePlus
                 key={idx}
                 onDoubleTap={() => handleLike(post._id)}
-                onSingleTap={() => { handlePostLongPress(post._id); }}
+                onSingleTap={() => {
+                  handlePostLongPress(post._id);
+                }}
                 heartColor="#ff3b5c"
                 particles={6}
-                haptics={{ enabled: true, style: "medium" }}
+                haptics={{ enabled: true, style: 'medium' }}
               >
                 <PinchZoomPro
                   source={{ uri: image }}
@@ -315,17 +329,21 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
                 />
               </DoubleTapLikePlus>
             ))}
-            
+
             {/* Reaction Bar Overlay */}
             {showReactions[post._id] && (
               <View style={styles.reactionOverlay}>
                 <ReactionBarMagnetic
-                  onSelect={(emoji) => { handlePostReaction(post._id, emoji); }}
-                  onCancel={() => { setShowReactions((prev) => ({ ...prev, [post._id]: false })); }}
+                  onSelect={(emoji) => {
+                    handlePostReaction(post._id, emoji);
+                  }}
+                  onCancel={() => {
+                    setShowReactions((prev) => ({ ...prev, [post._id]: false }));
+                  }}
                   influenceRadius={80}
                   baseSize={28}
-                  backgroundColor={colors.card || "#ffffff"}
-                  borderColor={colors.border || "rgba(0,0,0,0.1)"}
+                  backgroundColor={colors.card || '#ffffff'}
+                  borderColor={colors.border || 'rgba(0,0,0,0.1)'}
                 />
               </View>
             )}
@@ -333,27 +351,40 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
         )}
 
         {/* Activity Details */}
-        {post.type === "activity" && post.activityDetails && (
+        {post.type === 'activity' && post.activityDetails && (
           <View
             style={StyleSheet.flatten([
               styles.activityBanner,
               { backgroundColor: colors.accentLight },
             ])}
           >
-            <Ionicons name="calendar" size={20} color={colors.accent} />
+            <Ionicons
+              name="calendar"
+              size={20}
+              color={colors.accent}
+            />
             <View style={{ flex: 1, marginLeft: 8 }}>
               <Text style={StyleSheet.flatten([styles.activityText, { color: colors.accent }])}>
-                {new Date(post.activityDetails.date).toLocaleDateString()} at{" "}
+                {new Date(post.activityDetails.date).toLocaleDateString()} at{' '}
                 {post.activityDetails.location}
               </Text>
-              <Text style={StyleSheet.flatten([styles.activityTextSmall, { color: colors.onSurfaceecondary }])}>
-                {post.activityDetails.currentAttendees} of {post.activityDetails.maxAttendees} attending
+              <Text
+                style={StyleSheet.flatten([
+                  styles.activityTextSmall,
+                  { color: colors.onSurfaceecondary },
+                ])}
+              >
+                {post.activityDetails.currentAttendees} of {post.activityDetails.maxAttendees}{' '}
+                attending
               </Text>
             </View>
             {!post.activityDetails.attending && (
               <TouchableOpacity
                 style={StyleSheet.flatten([styles.joinButton, { backgroundColor: colors.accent }])}
-                 testID="CommunityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleJoinActivity(post._id)}
+                testID="CommunityScreen-button-2"
+                accessibilityLabel="Interactive element"
+                accessibilityRole="button"
+                onPress={() => handleJoinActivity(post._id)}
               >
                 <Text style={styles.joinButtonText}>Join</Text>
               </TouchableOpacity>
@@ -365,11 +396,14 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
         <View style={styles.actions}>
           <TouchableOpacity
             style={styles.actionButton}
-             testID="CommunityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleLike(post._id)}
+            testID="CommunityScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => handleLike(post._id)}
             disabled={likingPosts[post._id]}
           >
             <Ionicons
-              name={post.liked ? "heart" : "heart-outline"}
+              name={post.liked ? 'heart' : 'heart-outline'}
               size={24}
               color={post.liked ? theme.colors.primary : colors.onSurfaceecondary}
             />
@@ -385,16 +419,36 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
 
           <TouchableOpacity
             style={styles.actionButton}
-             testID="CommunityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { setSelectedPost(post); }}
+            testID="CommunityScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
+              setSelectedPost(post);
+            }}
           >
-            <Ionicons name="chatbubble-outline" size={24} color={colors.onSurfaceecondary} />
-            <Text style={StyleSheet.flatten([styles.actionText, { color: colors.onSurfaceecondary }])}>
+            <Ionicons
+              name="chatbubble-outline"
+              size={24}
+              color={colors.onSurfaceecondary}
+            />
+            <Text
+              style={StyleSheet.flatten([styles.actionText, { color: colors.onSurfaceecondary }])}
+            >
               {post.comments.length}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionButton} testID="CommunityScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
-            <Ionicons name="share-outline" size={24} color={colors.onSurfaceecondary} />
+          <TouchableOpacity
+            style={styles.actionButton}
+            testID="CommunityScreen-button-1"
+            accessibilityLabel="Button"
+            accessibilityRole="button"
+          >
+            <Ionicons
+              name="share-outline"
+              size={24}
+              color={colors.onSurfaceecondary}
+            />
           </TouchableOpacity>
         </View>
 
@@ -402,11 +456,21 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
         {post.comments.length > 0 && (
           <View style={styles.commentsSection}>
             {post.comments.slice(0, 3).map((comment) => (
-              <View key={comment._id} style={styles.comment}>
-                <Text style={StyleSheet.flatten([styles.commentAuthor, { color: colors.onSurface}])}>
+              <View
+                key={comment._id}
+                style={styles.comment}
+              >
+                <Text
+                  style={StyleSheet.flatten([styles.commentAuthor, { color: colors.onSurface }])}
+                >
                   {comment.author.name}
                 </Text>
-                <Text style={StyleSheet.flatten([styles.commentText, { color: colors.onSurfaceecondary }])}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.commentText,
+                    { color: colors.onSurfaceecondary },
+                  ])}
+                >
                   {comment.content}
                 </Text>
               </View>
@@ -432,7 +496,10 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
 
     return (
       <View style={styles.footerLoader}>
-        <ActivityIndicator size="small" color={colors.primary} />
+        <ActivityIndicator
+          size="small"
+          color={colors.primary}
+        />
       </View>
     );
   };
@@ -440,8 +507,12 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
   // Render empty state
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Ionicons name="people-outline" size={64} color={colors.onSurfaceecondary} />
-      <Text style={StyleSheet.flatten([styles.emptyTitle, { color: colors.onSurface}])}>
+      <Ionicons
+        name="people-outline"
+        size={64}
+        color={colors.onSurfaceecondary}
+      />
+      <Text style={StyleSheet.flatten([styles.emptyTitle, { color: colors.onSurface }])}>
         No posts yet
       </Text>
       <Text style={StyleSheet.flatten([styles.emptyText, { color: colors.onSurfaceecondary }])}>
@@ -453,11 +524,18 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
   // Render loading state
   if (isLoading && posts.length === 0) {
     return (
-      <SafeAreaView style={StyleSheet.flatten([styles.container, { backgroundColor: colors.background }])}>
-        <AdvancedHeader {...HeaderConfigs.glass({ title: "Community" })} />
+      <SafeAreaView
+        style={StyleSheet.flatten([styles.container, { backgroundColor: colors.background }])}
+      >
+        <AdvancedHeader {...HeaderConfigs.glass({ title: 'Community' })} />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={StyleSheet.flatten([styles.loadingText, { color: colors.onSurfaceecondary }])}>
+          <ActivityIndicator
+            size="large"
+            color={colors.primary}
+          />
+          <Text
+            style={StyleSheet.flatten([styles.loadingText, { color: colors.onSurfaceecondary }])}
+          >
             Loading community...
           </Text>
         </View>
@@ -466,20 +544,22 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
   }
 
   return (
-    <SafeAreaView style={StyleSheet.flatten([styles.container, { backgroundColor: colors.background }])}>
+    <SafeAreaView
+      style={StyleSheet.flatten([styles.container, { backgroundColor: colors.background }])}
+    >
       {/* Header */}
       <AdvancedHeader
         {...HeaderConfigs.glass({
-          title: "Community",
+          title: 'Community',
           rightButtons: [
             {
-              type: "add",
+              type: 'add',
               onPress: () => {
                 // TODO: Open create post modal
-                logger.info("Create post button pressed");
+                logger.info('Create post button pressed');
               },
-              variant: "primary",
-              haptic: "light",
+              variant: 'primary',
+              haptic: 'light',
             },
           ],
         })}
@@ -534,14 +614,14 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   postHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 12,
   },
   authorInfo: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
   },
   avatar: {
@@ -552,7 +632,7 @@ const styles = StyleSheet.create({
   },
   authorName: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   timeAgo: {
     fontSize: 12,
@@ -567,7 +647,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   postImage: {
-    width: "100%",
+    width: '100%',
     height: 200,
     borderRadius: 8,
     marginBottom: 8,
@@ -581,15 +661,15 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   activityBanner: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 12,
     borderRadius: 8,
     marginBottom: 12,
   },
   activityText: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   activityTextSmall: {
     fontSize: 12,
@@ -602,22 +682,22 @@ const styles = StyleSheet.create({
   },
   joinButtonText: {
     color: theme.colors.neutral[0],
-    fontWeight: "600",
+    fontWeight: '600',
   },
   actions: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 12,
   },
   actionButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginRight: 24,
   },
   actionText: {
     marginLeft: 6,
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   commentsSection: {
     marginTop: 12,
@@ -625,11 +705,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
   },
   comment: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: 8,
   },
   commentAuthor: {
-    fontWeight: "600",
+    fontWeight: '600',
     marginRight: 6,
   },
   commentText: {
@@ -637,13 +717,13 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 60,
   },
   emptyTitle: {
     fontSize: 20,
-    fontWeight: "600",
+    fontWeight: '600',
     marginTop: 16,
   },
   emptyText: {
@@ -652,8 +732,8 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loadingText: {
     marginTop: 12,
@@ -661,7 +741,6 @@ const styles = StyleSheet.create({
   },
   footerLoader: {
     paddingVertical: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
 });
-

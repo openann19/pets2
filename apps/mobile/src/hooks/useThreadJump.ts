@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import type { FlatList } from "react-native";
+import { useMemo } from 'react';
+import type { FlatList } from 'react-native';
 
 export function useThreadJump<T extends { _id: string }>(
   listRef: React.RefObject<FlatList<T>>,
@@ -31,4 +31,3 @@ export function useThreadJump<T extends { _id: string }>(
 
   return { jumpTo };
 }
-

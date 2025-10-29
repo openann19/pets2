@@ -20,7 +20,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 import { getExtendedColors } from "../../theme/adapters";
 import type { AIScreenProps } from "../../navigation/types";
 import { logger } from "../../services/logger";
@@ -274,7 +274,7 @@ export default function AIPhotoAnalyzerScreen({
       case "poor":
         return theme.colors.danger;
       default:
-        return theme.colors.neutral[500];
+        return theme.palette.neutral[500];
     }
   };
 
@@ -944,7 +944,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.palette.neutral,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -972,7 +972,7 @@ const styles = StyleSheet.create({
   },
   confidenceBar: {
     height: 8,
-    backgroundColor: theme.colors.neutral[200],
+    backgroundColor: theme.palette.neutral[200],
     borderRadius: 4,
     overflow: "hidden",
   },
@@ -1036,7 +1036,7 @@ const styles = StyleSheet.create({
   qualityFactorBar: {
     flex: 1,
     height: 8,
-    backgroundColor: theme.colors.neutral[200],
+    backgroundColor: theme.palette.neutral[200],
     borderRadius: 4,
     overflow: "hidden",
   },

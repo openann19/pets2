@@ -12,10 +12,7 @@ export const testPets = {
     gender: 'male',
     size: 'large',
     ownerId: 'user-1',
-    photos: [
-      'https://example.com/pets/buddy1.jpg',
-      'https://example.com/pets/buddy2.jpg',
-    ],
+    photos: ['https://example.com/pets/buddy1.jpg', 'https://example.com/pets/buddy2.jpg'],
     bio: 'Friendly and loves to play fetch!',
     vaccinated: true,
     neutered: true,
@@ -34,9 +31,7 @@ export const testPets = {
     gender: 'female',
     size: 'small',
     ownerId: 'user-1',
-    photos: [
-      'https://example.com/pets/whiskers1.jpg',
-    ],
+    photos: ['https://example.com/pets/whiskers1.jpg'],
     bio: 'Loves naps and gentle pets',
     vaccinated: true,
     neutered: true,

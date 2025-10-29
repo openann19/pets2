@@ -4,31 +4,30 @@
  * Extracts all local state, refs, animations, and handlers from ChatScreen component
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useTheme } from '@mobile/src/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Animated,
   Easing,
   InteractionManager,
-  Platform,
+  LayoutAnimation,
   StatusBar,
-  type NativeSyntheticEvent,
   type NativeScrollEvent,
-} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { LayoutAnimation } from "react-native";
-import type { RootStackScreenProps } from "../../navigation/types";
-import { useChatData } from "../useChatData";
-import { useReactionMetrics } from "../useInteractionMetrics";
-import { useTheme } from "@/theme";
-import { api } from "../../services/api";
-import { haptic } from "../../ui/haptics";
-import { logger } from "../../services/logger";
+  type NativeSyntheticEvent,
+} from 'react-native';
+import type { RootStackScreenProps } from '../../navigation/types';
+import { api } from '../../services/api';
+import { logger } from '../../services/logger';
+import { haptic } from '../../ui/haptics';
+import { useChatData } from '../useChatData';
+import { useReactionMetrics } from '../useInteractionMetrics';
 
 interface UseChatScreenParams {
   matchId: string;
   petName: string;
-  navigation: RootStackScreenProps<"Chat">["navigation"];
+  navigation: RootStackScreenProps<'Chat'>['navigation'];
 }
 
 interface UseChatScreenReturn {
@@ -38,15 +37,15 @@ interface UseChatScreenReturn {
   isTyping: boolean;
   showReactions: boolean;
   selectedMessageId: string | null;
-  
+
   // Data from useChatData
-  data: ReturnType<typeof useChatData>["data"];
-  actions: ReturnType<typeof useChatData>["actions"];
-  
+  data: ReturnType<typeof useChatData>['data'];
+  actions: ReturnType<typeof useChatData>['actions'];
+
   // Refs
   flatListRef: React.RefObject<any>;
   inputRef: React.RefObject<any>;
-  
+
   // Handlers
   handleSendMessage: () => Promise<void>;
   handleTypingChange: (typing: boolean) => void;
@@ -58,7 +57,7 @@ interface UseChatScreenReturn {
   handleVoiceCall: () => Promise<void>;
   handleVideoCall: () => Promise<void>;
   handleMoreOptions: () => void;
-  
+
   // Constants
   quickReplies: string[];
 }
@@ -70,12 +69,12 @@ export const useChatScreen = ({
 }: UseChatScreenParams): UseChatScreenReturn => {
   const { isDark } = useTheme();
   const { startInteraction, endInteraction } = useReactionMetrics();
-  
+
   // Use the extracted chat data hook
   const { data, actions } = useChatData(matchId);
 
   // Local state for UI interactions
-  const [inputText, setInputText] = useState("");
+  const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showReactions, setShowReactions] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
@@ -92,7 +91,7 @@ export const useChatScreen = ({
 
   // Initialize component
   useEffect(() => {
-    StatusBar.setBarStyle(isDark ? "light-content" : "dark-content");
+    StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content');
 
     InteractionManager.runAfterInteractions(() => {
       startTypingAnimation();
@@ -110,9 +109,7 @@ export const useChatScreen = ({
   useEffect(() => {
     const loadDraft = async () => {
       try {
-        const draft = await AsyncStorage.getItem(
-          `mobile_chat_draft_${matchId}`,
-        );
+        const draft = await AsyncStorage.getItem(`mobile_chat_draft_${matchId}`);
         if (draft) {
           setInputText(draft);
         }
@@ -144,9 +141,7 @@ export const useChatScreen = ({
     const tryRestore = async () => {
       if (didRestoreRef.current) return;
       try {
-        const saved = await AsyncStorage.getItem(
-          `mobile_chat_scroll_${matchId}`,
-        );
+        const saved = await AsyncStorage.getItem(`mobile_chat_scroll_${matchId}`);
         const offset = saved ? Number(saved) : 0;
         if (offset > 0) {
           savedOffsetRef.current = offset;
@@ -196,7 +191,7 @@ export const useChatScreen = ({
     haptic.confirm();
 
     // Clear input immediately for better UX
-    setInputText("");
+    setInputText('');
 
     // Add message with animation
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -211,34 +206,34 @@ export const useChatScreen = ({
   }, [inputText, actions]);
 
   // Handle typing changes
-  const handleTypingChange = useCallback((typing: boolean) => {
-    setIsTyping(typing);
+  const handleTypingChange = useCallback(
+    (typing: boolean) => {
+      setIsTyping(typing);
 
-    // Debounced typing indicator
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
+      // Debounced typing indicator
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
 
-    if (typing) {
-      // Emit typing event to server
-      api.chat.sendTypingIndicator(matchId, true);
-      typingTimeoutRef.current = setTimeout(() => {
-        setIsTyping(false);
-        // Emit stop typing event to server
-        api.chat.sendTypingIndicator(matchId, false);
-      }, 1000);
-    }
-  }, [matchId]);
+      if (typing) {
+        // Emit typing event to server
+        api.chat.sendTypingIndicator(matchId, true);
+        typingTimeoutRef.current = setTimeout(() => {
+          setIsTyping(false);
+          // Emit stop typing event to server
+          api.chat.sendTypingIndicator(matchId, false);
+        }, 1000);
+      }
+    },
+    [matchId],
+  );
 
   // Handle scroll events
   const handleScroll = useCallback(
     async (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       try {
         const offset = event.nativeEvent.contentOffset.y;
-        await AsyncStorage.setItem(
-          `mobile_chat_scroll_${matchId}`,
-          String(offset),
-        );
+        await AsyncStorage.setItem(`mobile_chat_scroll_${matchId}`, String(offset));
       } catch {
         // Ignore errors
       }
@@ -261,17 +256,20 @@ export const useChatScreen = ({
   }, []);
 
   // Handle reaction selection
-  const handleReactionSelect = useCallback((emoji: string) => {
-    if (selectedMessageId) {
-      haptic.confirm();
-      startInteraction('reaction', { messageId: selectedMessageId, emoji });
-      // TODO: Send reaction to server
-      logger.info("Reacted with emoji", { emoji, messageId: selectedMessageId });
-      endInteraction('reaction', true);
-    }
-    setShowReactions(false);
-    setSelectedMessageId(null);
-  }, [selectedMessageId, startInteraction, endInteraction]);
+  const handleReactionSelect = useCallback(
+    (emoji: string) => {
+      if (selectedMessageId) {
+        haptic.confirm();
+        startInteraction('reaction', { messageId: selectedMessageId, emoji });
+        // TODO: Send reaction to server
+        logger.info('Reacted with emoji', { emoji, messageId: selectedMessageId });
+        endInteraction('reaction', true);
+      }
+      setShowReactions(false);
+      setSelectedMessageId(null);
+    },
+    [selectedMessageId, startInteraction, endInteraction],
+  );
 
   // Handle reaction cancel
   const handleReactionCancel = useCallback(() => {
@@ -282,40 +280,35 @@ export const useChatScreen = ({
 
   // Call handlers
   const handleVoiceCall = useCallback(async () => {
-    Alert.alert("Voice Call", `Start a voice call with ${petName}?`, [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert('Voice Call', `Start a voice call with ${petName}?`, [
+      { text: 'Cancel', style: 'cancel' },
       {
-        text: "Call",
+        text: 'Call',
         onPress: async () => {
-          Alert.alert("Call Feature", "Voice calling feature coming soon!");
+          Alert.alert('Call Feature', 'Voice calling feature coming soon!');
         },
       },
     ]);
   }, [petName]);
 
   const handleVideoCall = useCallback(async () => {
-    Alert.alert("Video Call", `Start a video call with ${petName}?`, [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert('Video Call', `Start a video call with ${petName}?`, [
+      { text: 'Cancel', style: 'cancel' },
       {
-        text: "Call",
+        text: 'Call',
         onPress: async () => {
-          Alert.alert("Call Feature", "Video calling feature coming soon!");
+          Alert.alert('Call Feature', 'Video calling feature coming soon!');
         },
       },
     ]);
   }, [petName]);
 
   const handleMoreOptions = useCallback(() => {
-    Alert.alert("More Options", "Additional options coming soon!");
+    Alert.alert('More Options', 'Additional options coming soon!');
   }, []);
 
   // Quick replies
-  const quickReplies = [
-    "Sounds good! 👍",
-    "When works for you?",
-    "Let's do it! 🎾",
-    "Perfect! 😊",
-  ];
+  const quickReplies = ['Sounds good! 👍', 'When works for you?', "Let's do it! 🎾", 'Perfect! 😊'];
 
   return {
     // State
@@ -324,15 +317,15 @@ export const useChatScreen = ({
     isTyping,
     showReactions,
     selectedMessageId,
-    
+
     // Data
     data,
     actions,
-    
+
     // Refs
     flatListRef,
     inputRef,
-    
+
     // Handlers
     handleSendMessage,
     handleTypingChange,
@@ -344,9 +337,8 @@ export const useChatScreen = ({
     handleVoiceCall,
     handleVideoCall,
     handleMoreOptions,
-    
+
     // Constants
     quickReplies,
   };
 };
-

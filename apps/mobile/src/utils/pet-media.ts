@@ -1,7 +1,7 @@
-import type { Pet } from "@pawfectmatch/core";
+import type { Pet } from '@pawfectmatch/core';
 
 const isNonEmptyString = (value: unknown): value is string =>
-  typeof value === "string" && value.trim().length > 0;
+  typeof value === 'string' && value.trim().length > 0;
 
 export const extractPetImageUrls = (pet: Pet | Record<string, unknown>): string[] => {
   const photos = (pet as any)?.photos;
@@ -12,7 +12,7 @@ export const extractPetImageUrls = (pet: Pet | Record<string, unknown>): string[
   const urls = photos
     .map((photo: unknown) => {
       if (isNonEmptyString(photo)) return photo;
-      if (photo && typeof photo === "object") {
+      if (photo && typeof photo === 'object') {
         const candidate =
           (photo as { url?: string }).url ??
           (photo as { secureUrl?: string }).secureUrl ??
@@ -42,5 +42,3 @@ export const extractPetTags = (pet: Pet | Record<string, unknown>): string[] => 
   }
   return [];
 };
-
-

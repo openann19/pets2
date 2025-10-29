@@ -1,14 +1,14 @@
-import { useAuthStore } from "@pawfectmatch/core";
-import "@testing-library/jest-native/extend-expect";
-import { render, waitFor, fireEvent } from "@testing-library/react-native";
-import * as Haptics from "expo-haptics";
-import React from "react";
-import ManageSubscriptionScreen from "../screens/ManageSubscriptionScreen";
-import premiumAPI from "../services/api";
+import { useAuthStore } from '@pawfectmatch/core';
+import '@testing-library/jest-native/extend-expect';
+import { render, waitFor, fireEvent } from '@testing-library/react-native';
+import * as Haptics from 'expo-haptics';
+import React from 'react';
+import ManageSubscriptionScreen from '../screens/ManageSubscriptionScreen';
+import premiumAPI from '../services/api';
 
 // Mock dependencies
-jest.mock("@pawfectmatch/core");
-jest.mock("../services/api", () => ({
+jest.mock('@pawfectmatch/core');
+jest.mock('../services/api', () => ({
   premiumAPI: {
     getSubscription: jest.fn(),
     cancelSubscription: jest.fn(),
@@ -17,16 +17,16 @@ jest.mock("../services/api", () => ({
     openBillingPortal: jest.fn(),
   },
 }));
-jest.mock("expo-haptics", () => ({
+jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   ImpactFeedbackStyle: {
-    Medium: "medium",
+    Medium: 'medium',
   },
 }));
-jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
+jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
 // Mock Alert
-jest.mock("react-native/Libraries/Alert/Alert", () => ({
+jest.mock('react-native/Libraries/Alert/Alert', () => ({
   alert: jest.fn((title, message, buttons) => {
     // Simulate pressing the last button (usually confirm)
     if (buttons && buttons.length > 0) {
@@ -41,26 +41,26 @@ const mockNavigation = {
   goBack: jest.fn(),
 };
 
-describe("ManageSubscriptionScreen", () => {
+describe('ManageSubscriptionScreen', () => {
   const mockUser = {
-    id: "user-123",
-    firstName: "Test",
-    lastName: "User",
+    id: 'user-123',
+    firstName: 'Test',
+    lastName: 'User',
     premium: {
       isActive: true,
-      plan: "premium",
+      plan: 'premium',
     },
   };
 
   const mockSubscription = {
     plan: {
-      id: "premium",
-      name: "Premium",
+      id: 'premium',
+      name: 'Premium',
       price: 9.99,
-      interval: "monthly",
+      interval: 'monthly',
     },
-    currentPeriodStart: "2025-10-01T00:00:00Z",
-    currentPeriodEnd: "2025-11-01T00:00:00Z",
+    currentPeriodStart: '2025-10-01T00:00:00Z',
+    currentPeriodEnd: '2025-11-01T00:00:00Z',
     cancelAtPeriodEnd: false,
   };
 
@@ -71,39 +71,33 @@ describe("ManageSubscriptionScreen", () => {
       user: mockUser,
     });
 
-    (premiumAPI.getSubscription as jest.Mock).mockResolvedValue(
-      mockSubscription,
-    );
+    (premiumAPI.getSubscription as jest.Mock).mockResolvedValue(mockSubscription);
   });
 
-  it("displays subscription details correctly", async () => {
-    const { getByText } = render(
-      <ManageSubscriptionScreen navigation={mockNavigation} />,
-    );
+  it('displays subscription details correctly', async () => {
+    const { getByText } = render(<ManageSubscriptionScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
-      expect(getByText("Premium")).toBeTruthy();
-      expect(getByText("$9.99/month")).toBeTruthy();
-      expect(getByText("Next billing date: November 1, 2025")).toBeTruthy();
+      expect(getByText('Premium')).toBeTruthy();
+      expect(getByText('$9.99/month')).toBeTruthy();
+      expect(getByText('Next billing date: November 1, 2025')).toBeTruthy();
     });
   });
 
-  it("handles subscription cancellation", async () => {
+  it('handles subscription cancellation', async () => {
     (premiumAPI.cancelSubscription as jest.Mock).mockResolvedValue({
       success: true,
-      message: "Subscription cancelled",
+      message: 'Subscription cancelled',
     });
 
-    const { getByText } = render(
-      <ManageSubscriptionScreen navigation={mockNavigation} />,
-    );
+    const { getByText } = render(<ManageSubscriptionScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
-      expect(getByText("Cancel Subscription")).toBeTruthy();
+      expect(getByText('Cancel Subscription')).toBeTruthy();
     });
 
     // Click cancel button
-    fireEvent.press(getByText("Cancel Subscription"));
+    fireEvent.press(getByText('Cancel Subscription'));
 
     // Should show success message
     await waitFor(() => {
@@ -112,24 +106,22 @@ describe("ManageSubscriptionScreen", () => {
     });
   });
 
-  it("displays cancelled status when subscription is set to cancel", async () => {
+  it('displays cancelled status when subscription is set to cancel', async () => {
     // Mock subscription as cancelled at period end
     (premiumAPI.getSubscription as jest.Mock).mockResolvedValue({
       ...mockSubscription,
       cancelAtPeriodEnd: true,
     });
 
-    const { getByText } = render(
-      <ManageSubscriptionScreen navigation={mockNavigation} />,
-    );
+    const { getByText } = render(<ManageSubscriptionScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
-      expect(getByText("Cancels on November 1, 2025")).toBeTruthy();
-      expect(getByText("Reactivate Subscription")).toBeTruthy();
+      expect(getByText('Cancels on November 1, 2025')).toBeTruthy();
+      expect(getByText('Reactivate Subscription')).toBeTruthy();
     });
   });
 
-  it("handles subscription reactivation", async () => {
+  it('handles subscription reactivation', async () => {
     // Mock subscription as cancelled at period end
     (premiumAPI.getSubscription as jest.Mock).mockResolvedValue({
       ...mockSubscription,
@@ -138,19 +130,17 @@ describe("ManageSubscriptionScreen", () => {
 
     (premiumAPI.reactivateSubscription as jest.Mock).mockResolvedValue({
       success: true,
-      message: "Subscription reactivated",
+      message: 'Subscription reactivated',
     });
 
-    const { getByText } = render(
-      <ManageSubscriptionScreen navigation={mockNavigation} />,
-    );
+    const { getByText } = render(<ManageSubscriptionScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
-      expect(getByText("Reactivate Subscription")).toBeTruthy();
+      expect(getByText('Reactivate Subscription')).toBeTruthy();
     });
 
     // Click reactivate button
-    fireEvent.press(getByText("Reactivate Subscription"));
+    fireEvent.press(getByText('Reactivate Subscription'));
 
     // Should reactivate subscription
     await waitFor(() => {
@@ -159,46 +149,42 @@ describe("ManageSubscriptionScreen", () => {
     });
   });
 
-  it("opens billing portal when update payment is clicked", async () => {
+  it('opens billing portal when update payment is clicked', async () => {
     (premiumAPI.openBillingPortal as jest.Mock).mockResolvedValue({
       success: true,
-      url: "https://billing.stripe.com/portal",
+      url: 'https://billing.stripe.com/portal',
     });
 
-    const { getByText } = render(
-      <ManageSubscriptionScreen navigation={mockNavigation} />,
-    );
+    const { getByText } = render(<ManageSubscriptionScreen navigation={mockNavigation} />);
 
     await waitFor(() => {
-      expect(getByText("Update Payment Method")).toBeTruthy();
+      expect(getByText('Update Payment Method')).toBeTruthy();
     });
 
     // Click update payment button
-    fireEvent.press(getByText("Update Payment Method"));
+    fireEvent.press(getByText('Update Payment Method'));
 
     // Should open billing portal
     await waitFor(() => {
       expect(premiumAPI.openBillingPortal).toHaveBeenCalled();
-      expect(mockNavigation.navigate).toHaveBeenCalledWith("WebView", {
-        url: "https://billing.stripe.com/portal",
-        title: "Billing Portal",
+      expect(mockNavigation.navigate).toHaveBeenCalledWith('WebView', {
+        url: 'https://billing.stripe.com/portal',
+        title: 'Billing Portal',
       });
     });
   });
 
-  it("handles API errors gracefully", async () => {
+  it('handles API errors gracefully', async () => {
     // Mock API error
     (premiumAPI.getSubscription as jest.Mock).mockRejectedValue(
-      new Error("Failed to load subscription data"),
+      new Error('Failed to load subscription data'),
     );
 
-    const { getByText } = render(
-      <ManageSubscriptionScreen navigation={mockNavigation} />,
-    );
+    const { getByText } = render(<ManageSubscriptionScreen navigation={mockNavigation} />);
 
     // Should display error message
     await waitFor(() => {
-      expect(getByText("Error loading subscription")).toBeTruthy();
+      expect(getByText('Error loading subscription')).toBeTruthy();
     });
   });
 });

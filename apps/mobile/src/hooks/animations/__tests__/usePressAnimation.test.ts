@@ -103,7 +103,7 @@ describe('usePressAnimation', () => {
       const { result } = renderHook(() =>
         usePressAnimation({
           scaleRange: [1, 0.9],
-        })
+        }),
       );
 
       expect(result.current.config.scaleRange).toEqual([1, 0.9]);
@@ -113,7 +113,7 @@ describe('usePressAnimation', () => {
       const { result } = renderHook(() =>
         usePressAnimation({
           opacityRange: [1, 0.7],
-        })
+        }),
       );
 
       expect(result.current.config.opacityRange).toEqual([1, 0.7]);
@@ -124,7 +124,7 @@ describe('usePressAnimation', () => {
         usePressAnimation({
           enableHaptics: true,
           hapticStyle: 'medium',
-        })
+        }),
       );
 
       expect(result.current.config.enableHaptics).toBe(true);
@@ -147,7 +147,7 @@ describe('usePressAnimation', () => {
         expect.objectContaining({
           damping: 15,
           stiffness: 400,
-        })
+        }),
       );
     });
 
@@ -166,10 +166,7 @@ describe('usePressAnimation', () => {
 
       expect(result.current.isPressed).toBe(false);
       expect(mockSharedValue.set).toHaveBeenCalledWith(0);
-      expect(mockWithSpring).toHaveBeenCalledWith(
-        0,
-        expect.any(Object)
-      );
+      expect(mockWithSpring).toHaveBeenCalledWith(0, expect.any(Object));
     });
 
     it('should handle press out with custom animation config', () => {
@@ -181,7 +178,7 @@ describe('usePressAnimation', () => {
               stiffness: 300,
             },
           },
-        })
+        }),
       );
 
       act(() => {
@@ -193,7 +190,7 @@ describe('usePressAnimation', () => {
         expect.objectContaining({
           damping: 20,
           stiffness: 300,
-        })
+        }),
       );
     });
   });
@@ -204,7 +201,7 @@ describe('usePressAnimation', () => {
         usePressAnimation({
           enableHaptics: true,
           hapticStyle: 'light',
-        })
+        }),
       );
 
       act(() => {
@@ -220,7 +217,7 @@ describe('usePressAnimation', () => {
           enableHaptics: true,
           hapticStyle: 'medium',
           hapticOnRelease: true,
-        })
+        }),
       );
 
       act(() => {
@@ -234,7 +231,7 @@ describe('usePressAnimation', () => {
       const { result } = renderHook(() =>
         usePressAnimation({
           enableHaptics: false,
-        })
+        }),
       );
 
       act(() => {
@@ -250,7 +247,7 @@ describe('usePressAnimation', () => {
       const { result } = renderHook(() =>
         usePressAnimation({
           enableHaptics: true,
-        })
+        }),
       );
 
       // Should not throw
@@ -278,13 +275,13 @@ describe('usePressAnimation', () => {
       const { result } = renderHook(() =>
         usePressAnimation({
           scaleRange: [1, 0.85],
-        })
+        }),
       );
 
       expect(mockInterpolate).toHaveBeenCalledWith(
         expect.anything(),
         expect.arrayContaining([0, 1]),
-        expect.arrayContaining([1, 0.85])
+        expect.arrayContaining([1, 0.85]),
       );
     });
 
@@ -292,13 +289,13 @@ describe('usePressAnimation', () => {
       const { result } = renderHook(() =>
         usePressAnimation({
           opacityRange: [1, 0.6],
-        })
+        }),
       );
 
       expect(mockInterpolate).toHaveBeenCalledWith(
         expect.anything(),
         expect.arrayContaining([0, 1]),
-        expect.arrayContaining([1, 0.6])
+        expect.arrayContaining([1, 0.6]),
       );
     });
 
@@ -309,7 +306,7 @@ describe('usePressAnimation', () => {
         expect.anything(),
         expect.any(Array),
         expect.any(Array),
-        'clamp'
+        'clamp',
       );
     });
   });
@@ -375,7 +372,7 @@ describe('usePressAnimation', () => {
               stiffness: 500,
             },
           },
-        })
+        }),
       );
 
       act(() => {
@@ -387,7 +384,7 @@ describe('usePressAnimation', () => {
         expect.objectContaining({
           damping: 10,
           stiffness: 500,
-        })
+        }),
       );
     });
 
@@ -400,7 +397,7 @@ describe('usePressAnimation', () => {
               duration: 300,
             },
           },
-        })
+        }),
       );
 
       act(() => {
@@ -411,7 +408,7 @@ describe('usePressAnimation', () => {
         0,
         expect.objectContaining({
           duration: 300,
-        })
+        }),
       );
     });
 
@@ -419,7 +416,7 @@ describe('usePressAnimation', () => {
       const { result } = renderHook(() =>
         usePressAnimation({
           useTiming: true,
-        })
+        }),
       );
 
       act(() => {
@@ -533,9 +530,7 @@ describe('usePressAnimation', () => {
     });
 
     it('should memoize configuration', () => {
-      const { result, rerender } = renderHook(() =>
-        usePressAnimation({ scaleRange: [1, 0.9] })
-      );
+      const { result, rerender } = renderHook(() => usePressAnimation({ scaleRange: [1, 0.9] }));
 
       const firstConfig = result.current.config;
       rerender();
@@ -579,7 +574,7 @@ describe('usePressAnimation', () => {
         usePressAnimation({
           scaleRange: [1, 1.5], // Invalid: pressed scale larger than default
           opacityRange: [0.5, 1.5], // Invalid: opacity > 1
-        })
+        }),
       );
 
       // Should still work with potentially corrected values
@@ -628,10 +623,7 @@ describe('usePressAnimation', () => {
       expect(pressableProps.onPressIn).toBeDefined();
       expect(pressableProps.onPressOut).toBeDefined();
       expect(pressableProps.style).toEqual(
-        expect.arrayContaining([
-          { backgroundColor: 'blue' },
-          mockAnimatedStyle,
-        ])
+        expect.arrayContaining([{ backgroundColor: 'blue' }, mockAnimatedStyle]),
       );
     });
 
@@ -647,7 +639,7 @@ describe('usePressAnimation', () => {
           usePressAnimation({
             enableHaptics: true,
             hapticStyle: style as any,
-          })
+          }),
         );
 
         act(() => {
@@ -664,7 +656,7 @@ describe('usePressAnimation', () => {
       const { result } = renderHook(() =>
         usePressAnimation({
           scaleRange: [1, 0.1], // Very small pressed scale
-        })
+        }),
       );
 
       act(() => {
@@ -675,7 +667,7 @@ describe('usePressAnimation', () => {
         expect.anything(),
         expect.any(Array),
         [1, 0.1],
-        'clamp'
+        'clamp',
       );
     });
 
@@ -683,7 +675,7 @@ describe('usePressAnimation', () => {
       const { result } = renderHook(() =>
         usePressAnimation({
           opacityRange: [1, 0], // Fade to invisible
-        })
+        }),
       );
 
       act(() => {
@@ -694,7 +686,7 @@ describe('usePressAnimation', () => {
         expect.anything(),
         expect.any(Array),
         [1, 0],
-        'clamp'
+        'clamp',
       );
     });
 
@@ -737,7 +729,7 @@ describe('usePressAnimation', () => {
               stiffness: -100, // Invalid
             },
           },
-        })
+        }),
       );
 
       // Should still work

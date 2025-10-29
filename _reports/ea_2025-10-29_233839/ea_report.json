@@ -1,0 +1,4400 @@
+{
+  "changedFiles": 180,
+  "reports": [
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/App.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/ErrorFallback.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/Footer.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/HolographicEffects.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 705
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[400]",
+          "to": "theme.colors.primary",
+          "pos": 733
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 761
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 789
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 849
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 929
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 957
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 985
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[400]",
+          "to": "theme.colors.primary",
+          "pos": 1013
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[700]",
+          "to": "theme.colors.primary",
+          "pos": 1041
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 1117
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 1145
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1205
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 1260
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[400]",
+          "to": "theme.colors.primary",
+          "pos": 1308
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 1336
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[300]",
+          "to": "theme.colors.primary",
+          "pos": 1364
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1392
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 1484
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1563
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 1591
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 1619
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[400]",
+          "to": "theme.colors.primary",
+          "pos": 1647
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[700]",
+          "to": "theme.colors.primary",
+          "pos": 1675
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 1735
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 1784
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1812
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 1872
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 1900
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 1955
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/ImmersiveCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 5958
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 6163
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 7430
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 7452
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 7474
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 7551
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 7573
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 7595
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/LazyScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/ModernSwipeCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/OptimizedImage.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/PawPullToRefresh.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/PerformanceTestSuite.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.neutral[50]",
+          "to": "theme.palette.neutral[50]",
+          "pos": 11919
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.neutral[200]",
+          "to": "theme.palette.neutral[200]",
+          "pos": 12371
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.neutral[50]",
+          "to": "theme.palette.neutral[50]",
+          "pos": 13115
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.border.light",
+          "to": "theme.colors.border",
+          "pos": 13602
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.lg",
+          "to": "theme.radii.lg",
+          "pos": 11964
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 12914
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.lg",
+          "to": "theme.radii.lg",
+          "pos": 13158
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/PremiumTypography.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 683
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[400]",
+          "to": "theme.colors.primary",
+          "pos": 705
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[300]",
+          "to": "theme.colors.primary",
+          "pos": 727
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 764
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 851
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[400]",
+          "to": "theme.colors.primary",
+          "pos": 873
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[300]",
+          "to": "theme.colors.primary",
+          "pos": 895
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 929
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 951
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 973
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1006
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1097
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 1119
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[400]",
+          "to": "theme.colors.primary",
+          "pos": 1141
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1163
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1247
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 1269
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 1301
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 1323
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 1345
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 1410
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 1436
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 1462
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[700]",
+          "to": "theme.colors.primary",
+          "pos": 1488
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1514
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 1540
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1702
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1837
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1974
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 2240
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/SwipeFilters.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/useExtendedTheme.ts",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/useThemeToggle.ts",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/navigation/AdminNavigator.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/AdvancedFiltersScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/AIBioScreen.refactored.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/AIBioScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 1002
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 11033
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 13055
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 13523
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 14510
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 15129
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/AICompatibilityScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/BlockedUsersScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ChatScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ComponentTestScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/CreatePetScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/CreateReelScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 9733
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/DeactivateAccountScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/EditProfileScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ForgotPasswordScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 1641
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 2072
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 2641
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/GoLiveScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/HomeScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 3554
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/LiveViewerScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/LoginScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 1536
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 2120
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ManageSubscriptionScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/MapScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/MatchesScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/MemoryWeaveScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/MigrationExampleScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 5205
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.sm",
+          "to": "theme.radii.sm",
+          "pos": 5423
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 6150
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.sm",
+          "to": "theme.radii.sm",
+          "pos": 6554
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ModernCreatePetScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 2276
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.lg",
+          "to": "theme.radii.lg",
+          "pos": 2318
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ModernSwipeScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/MyPetsScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 5570
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 12348
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 12477
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 12562
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 13006
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 13169
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 13349
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 13653
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 13852
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 14016
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 14147
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 14411
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 15245
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 15291
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 16232
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/NewComponentsTestScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/NotificationPreferencesScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.surfaceAlt",
+          "to": "theme.colors.overlay",
+          "pos": 4674
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.surfaceAlt",
+          "to": "theme.colors.overlay",
+          "pos": 5591
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.surfaceAlt",
+          "to": "theme.colors.overlay",
+          "pos": 9502
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/PremiumCancelScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/PremiumDemoScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 822
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 844
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 904
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 941
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 963
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 1020
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 1055
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 1077
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1776
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 1877
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 2375
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 2411
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 2511
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 2548
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 2598
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 2645
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 2692
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 2751
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 2791
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 2828
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/PremiumSuccessScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/PrivacySettingsScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.neutral[950]",
+          "to": "theme.palette.neutral",
+          "pos": 14666
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.neutral[200]",
+          "to": "theme.palette.neutral[200]",
+          "pos": 15199
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ProfileScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/RegisterScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 1709
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ResetPasswordScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 1650
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 2081
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 2650
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/SafetyCenterScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/SettingsScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 2461
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 11600
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 11626
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/SwipeScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/TemplateScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/UIDemoScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 1235
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 1379
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/VerificationCenterScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/styles/DarkTheme.ts",
+      "edits": [
+        {
+          "kind": "spacing-token",
+          "from": "Spacing[\"6xl\"]",
+          "to": "theme.spacing[\"4xl\"]",
+          "pos": 3994
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/styles/GlobalStyles.ts",
+      "edits": [
+        {
+          "kind": "spacing-token",
+          "from": "Spacing[\"6xl\"]",
+          "to": "theme.spacing[\"4xl\"]",
+          "pos": 6700
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/test-utils/index.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/test-utils/render.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/admin/AdminUserListItem.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/adoption/PetDetailsStates.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/components",
+          "to": "@mobile/src/components"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/components/ShimmerPlaceholder",
+          "to": "@mobile/src/components/ShimmerPlaceholder"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/AttachmentPreview.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/EnhancedMessageBubble.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/MessageBubble.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 2825
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 2983
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 3054
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 3226
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 3383
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 3514
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 3648
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.textMuted",
+          "to": "theme.colors.onMuted",
+          "pos": 3796
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.textMuted",
+          "to": "theme.colors.onMuted",
+          "pos": 3896
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.textMuted",
+          "to": "theme.colors.onMuted",
+          "pos": 4193
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.textMuted",
+          "to": "theme.colors.onMuted",
+          "pos": 4268
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.textMuted",
+          "to": "theme.colors.onMuted",
+          "pos": 4515
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.textMuted",
+          "to": "theme.colors.onMuted",
+          "pos": 4587
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5124
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 5283
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 14454
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.textMuted",
+          "to": "theme.colors.onMuted",
+          "pos": 15992
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.textMuted",
+          "to": "theme.colors.onMuted",
+          "pos": 16046
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 16797
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 16874
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.textMuted",
+          "to": "theme.colors.onMuted",
+          "pos": 16913
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 16991
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/MessageBubbleEnhanced.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 3988
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 4156
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 4237
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 4409
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 4496
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 4582
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 4718
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 4857
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5010
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5122
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5431
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5517
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5776
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5860
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 6256
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 6537
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 6623
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 6712
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 7218
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 7513
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 7562
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 7725
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 7960
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 8071
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 8193
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 8372
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 8496
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 13608
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 13634
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 13702
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 13742
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 13821
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 13861
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 15837
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 15863
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 17123
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 17149
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 17219
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 17259
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 17340
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 17380
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18050
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 18083
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 18139
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18165
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18231
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18265
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18332
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18372
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18676
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 18709
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18767
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18807
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 18877
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18903
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18965
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 18999
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 19064
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 19097
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 19162
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 19195
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/MessageInput.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/MessageItem.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.lg",
+          "to": "theme.radii.lg",
+          "pos": 9842
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.xl",
+          "to": "theme.radii.xl",
+          "pos": 10924
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 11071
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 11138
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.lg",
+          "to": "theme.radii.lg",
+          "pos": 11353
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.lg",
+          "to": "theme.radii.lg",
+          "pos": 11730
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/MessageTimestampBadge.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/MessageWithEnhancements.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/MobileVoiceRecorder.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/ReactionBarMagnetic.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.lg",
+          "to": "theme.radii.lg",
+          "pos": 5119
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/ReactionPicker.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/ReplyPreviewBar.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgAlt",
+          "to": "theme.colors.surface",
+          "pos": 3727
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 3831
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.sm",
+          "to": "theme.radii.sm",
+          "pos": 3952
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.sm",
+          "to": "theme.radii.sm",
+          "pos": 4359
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/RetryBadge.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/chat/TypingIndicator.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/compatibility/AnalysisFactorsCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/compatibility/CompatibilityBreakdownCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/compatibility/CompatibilityScoreCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/compatibility/DetailedAnalysisCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/compatibility/InteractionCompatibilityCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/compatibility/PetSelectionCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/compatibility/PetSelectionSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/compatibility/TipsCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/Gestures/PinchZoomPro.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@mobile/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 1241
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 4885
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/home/QuickActionCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/i18n/LanguageSwitcher.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 3885
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 4520
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/map/MapScreenStates.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/components",
+          "to": "@mobile/src/components"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/components/ShimmerPlaceholder",
+          "to": "@mobile/src/components/ShimmerPlaceholder"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/matches/EmptyState.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/matches/ErrorState.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/matches/MatchCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/matches/MatchesTabs.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/phoenix/PhoenixCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/photo/AdvancedPhotoEditor.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@mobile/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 10987
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 11103
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 11444
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 11552
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 11865
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 11942
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 12017
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 12287
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 12515
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 12758
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 12901
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 13220
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 13303
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 13413
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 14465
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 15929
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 15992
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 16610
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 16633
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 16712
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 16735
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 20149
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 20172
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 20811
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 20834
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 21459
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 21482
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 22383
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 22406
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 22523
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 22842
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 22865
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 22986
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 23299
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 23322
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 23440
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 23763
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 23786
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 23907
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 24243
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 24269
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 28683
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 30467
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/Premium/PremiumCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 4671
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 4703
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 4745
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 4770
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 4819
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 4944
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5029
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5061
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 5103
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 5128
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5177
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 5253
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 5275
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 5319
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5381
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5413
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 5467
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 5557
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 5579
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 5601
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 5623
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 6537
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 6570
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 6618
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 6924
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 7345
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 7645
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 7678
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 7726
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 9653
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 9675
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 9697
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 9719
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/Premium/PremiumGate.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/premium/BillingToggle.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/shortcuts/QuickActions.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/shortcuts/SiriShortcuts.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/swipe/FilterPanel.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/swipe/SwipeDeck.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/widgets/EventWidget.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/widgets/MatchWidget.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/widgets/SwipeWidget.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/screens/useChatScreen.ts",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/screens/useMemoryWeaveScreen.ts",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/screens/useSafetyCenterScreen.ts",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/screens/useWelcomeScreen.ts",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminAnalyticsScreen.refactored.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminAnalyticsScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 12226
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminBillingScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminChatsScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminDashboardScreen.refactored.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminDashboardScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminSecurityScreen.refactored.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminSecurityScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminServicesScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminUploadsScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminUsersScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/AdminVerificationsScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/adoption/AdoptionApplicationScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.sm",
+          "to": "theme.radii.sm",
+          "pos": 17475
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 18564
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 18904
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.sm",
+          "to": "theme.radii.sm",
+          "pos": 19395
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.sm",
+          "to": "theme.radii.sm",
+          "pos": 20208
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 20833
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.md",
+          "to": "theme.radii.md",
+          "pos": 21229
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.sm",
+          "to": "theme.radii.sm",
+          "pos": 22035
+        },
+        {
+          "kind": "radii-token",
+          "from": "theme.radius.sm",
+          "to": "theme.radii.sm",
+          "pos": 22460
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/adoption/AdoptionContractScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/adoption/AdoptionManagerScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.surfaceAlt",
+          "to": "theme.colors.overlay",
+          "pos": 22471
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.surfaceAlt",
+          "to": "theme.colors.overlay",
+          "pos": 23830
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.surfaceAlt",
+          "to": "theme.colors.overlay",
+          "pos": 25064
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/adoption/ApplicationReviewScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/adoption/CreateListingScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/adoption/PetDetailsScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/AICompatibilityScreen.original.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/AICompatibilityScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/AIPhotoAnalyzerScreen.original.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.neutral[500]",
+          "to": "theme.palette.neutral[500]",
+          "pos": 8014
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.neutral[950]",
+          "to": "theme.palette.neutral",
+          "pos": 30223
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.neutral[200]",
+          "to": "theme.palette.neutral[200]",
+          "pos": 30734
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.neutral[200]",
+          "to": "theme.palette.neutral[200]",
+          "pos": 31799
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/AIPhotoAnalyzerScreen.refactored.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/AIPhotoAnalyzerScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/onboarding/PetProfileSetupScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/onboarding/PreferencesSetupScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/onboarding/UserIntentScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/onboarding/WelcomeScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/premium/PremiumScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/premium/SubscriptionManagerScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/premium/SubscriptionSuccessScreen.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/settings/AccountSettingsSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/settings/DangerZoneSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/settings/LanguageSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.bgElevated",
+          "to": "theme.colors.surface",
+          "pos": 691
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/ui/layout/ScreenShell.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.neutral[50]",
+          "to": "theme.palette.neutral[50]",
+          "pos": 933
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 963
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/elite/buttons/EliteButton.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/elite/cards/EliteCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/elite/constants/gradients.ts",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 314
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 336
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 358
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 393
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 415
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 437
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 471
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 493
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 515
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 548
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 570
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 592
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 631
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 653
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.success",
+          "to": "theme.colors.success",
+          "pos": 717
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[600]",
+          "to": "theme.colors.primary",
+          "pos": 775
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.status.warning",
+          "to": "theme.colors.warning",
+          "pos": 797
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/elite/containers/EliteContainer.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/ui/v2/AppBar.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/ui/v2/FAB.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/ui/v2/ListItem.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/ui/v2/showcase-demos.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@mobile/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 1348
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 1405
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 1513
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 2889
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.neutral[700]",
+          "to": "theme.palette.neutral[700]",
+          "pos": 3073
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 3201
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.neutral[600]",
+          "to": "theme.palette.neutral[600]",
+          "pos": 3408
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 3536
+        },
+        {
+          "kind": "color-shade-collapse",
+          "from": "theme.colors.primary[500]",
+          "to": "theme.colors.primary",
+          "pos": 4171
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 4365
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 4593
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 4676
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.text",
+          "to": "theme.colors.onSurface",
+          "pos": 5248
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 5427
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 5522
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 7421
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 7613
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.background",
+          "to": "theme.colors.bg",
+          "pos": 7993
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/ui/v2/Tabs.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/photoanalyzer/PhotoUploadSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/profile/components/ProfileHeaderSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/profile/components/ProfileMenuSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/profile/components/ProfileSettingsSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/profile/components/ProfileStatsSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "color-map",
+          "from": "theme.colors.neutral[500]",
+          "to": "theme.palette.neutral[500]",
+          "pos": 2147
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/components/ui/v2/layout/Spacer.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/analytics/components/EngagementMetricsSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/analytics/components/KeyMetricsSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/analytics/components/RevenueMetricsSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/analytics/components/SecurityMetricsSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/analytics/components/TopPerformersSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/billing/components/BillingMetricsSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/dashboard/components/DashboardMetricsSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/dashboard/components/QuickActionsSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/dashboard/components/SystemHealthSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/security/components/SecurityAlertCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/security/components/SecurityFiltersComponent.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/security/components/SecurityMetricsSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/admin/verifications/components/VerificationList.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/adoption/manager/components/ApplicationCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/adoption/manager/components/PetListingCard.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/compatibility/components/AnalysisDetails.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/compatibility/components/CompatibilityFactors.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/compatibility/components/CompatibilityInteractions.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/compatibility/components/CompatibilityScoreDisplay.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/ai/compatibility/components/PetSelectionSection.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/onboarding/pet-profile-setup/components/BasicInfoStep.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        },
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/onboarding/pet-profile-setup/components/HealthInfoStep.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/onboarding/pet-profile-setup/components/PersonalityStep.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    },
+    {
+      "file": "/home/ben/Downloads/pets-fresh/apps/mobile/src/screens/onboarding/pet-profile-setup/components/PhysicalInfoStep.tsx",
+      "edits": [
+        {
+          "kind": "import-alias",
+          "from": "@/theme",
+          "to": "@mobile/src/theme"
+        }
+      ]
+    }
+  ]
+}

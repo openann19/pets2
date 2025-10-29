@@ -136,7 +136,7 @@ describe('usePremiumStatus', () => {
 
     it('should handle loading state during status check', async () => {
       let resolveCheck: (value: boolean) => void;
-      const checkPromise = new Promise<boolean>(resolve => {
+      const checkPromise = new Promise<boolean>((resolve) => {
         resolveCheck = resolve;
       });
 
@@ -211,7 +211,7 @@ describe('usePremiumStatus', () => {
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         'premium_status_cache',
-        expect.any(String)
+        expect.any(String),
       );
 
       const cachedData = JSON.parse(mockAsyncStorage.setItem.mock.calls[0][1]);
@@ -224,7 +224,7 @@ describe('usePremiumStatus', () => {
       const recentCache = {
         isPremium: true,
         subscriptionDetails: mockSubscriptionDetails,
-        lastChecked: Date.now() - (5 * 60 * 1000), // 5 minutes ago (within cache limit)
+        lastChecked: Date.now() - 5 * 60 * 1000, // 5 minutes ago (within cache limit)
       };
 
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(recentCache));
@@ -243,7 +243,7 @@ describe('usePremiumStatus', () => {
       const expiredCache = {
         isPremium: true,
         subscriptionDetails: mockSubscriptionDetails,
-        lastChecked: Date.now() - (20 * 60 * 1000), // 20 minutes ago (expired)
+        lastChecked: Date.now() - 20 * 60 * 1000, // 20 minutes ago (expired)
       };
 
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(expiredCache));
@@ -280,7 +280,9 @@ describe('usePremiumStatus', () => {
 
   describe('Auto Refresh', () => {
     it('should auto-refresh status periodically', async () => {
-      const { result } = renderHook(() => usePremiumStatus({ autoRefresh: true, refreshInterval: 1000 }));
+      const { result } = renderHook(() =>
+        usePremiumStatus({ autoRefresh: true, refreshInterval: 1000 }),
+      );
 
       // Initial check
       await waitFor(() => {
@@ -313,7 +315,9 @@ describe('usePremiumStatus', () => {
     it('should handle auto-refresh errors gracefully', async () => {
       mockPremiumService.hasActiveSubscription.mockRejectedValue(new Error('Refresh error'));
 
-      const { result } = renderHook(() => usePremiumStatus({ autoRefresh: true, refreshInterval: 1000 }));
+      const { result } = renderHook(() =>
+        usePremiumStatus({ autoRefresh: true, refreshInterval: 1000 }),
+      );
 
       // Initial check fails
       await waitFor(() => {
@@ -487,7 +491,7 @@ describe('usePremiumStatus', () => {
       const veryOldCache = {
         isPremium: false,
         subscriptionDetails: null,
-        lastChecked: Date.now() - (7 * 24 * 60 * 60 * 1000), // 7 days ago
+        lastChecked: Date.now() - 7 * 24 * 60 * 60 * 1000, // 7 days ago
       };
 
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(veryOldCache));
@@ -537,9 +541,7 @@ describe('usePremiumStatus', () => {
 
   describe('Hook Configuration', () => {
     it('should accept custom cache key', async () => {
-      const { result } = renderHook(() =>
-        usePremiumStatus({ cacheKey: 'custom_premium_cache' })
-      );
+      const { result } = renderHook(() => usePremiumStatus({ cacheKey: 'custom_premium_cache' }));
 
       await act(async () => {
         await result.current.checkStatus();
@@ -547,13 +549,13 @@ describe('usePremiumStatus', () => {
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         'custom_premium_cache',
-        expect.any(String)
+        expect.any(String),
       );
     });
 
     it('should accept custom cache expiration', async () => {
-      const { result } = renderHook(() =>
-        usePremiumStatus({ cacheExpirationMs: 1000 }) // Very short cache
+      const { result } = renderHook(
+        () => usePremiumStatus({ cacheExpirationMs: 1000 }), // Very short cache
       );
 
       await act(async () => {
@@ -561,7 +563,7 @@ describe('usePremiumStatus', () => {
       });
 
       // Wait for cache to expire
-      await new Promise(resolve => setTimeout(resolve, 1100));
+      await new Promise((resolve) => setTimeout(resolve, 1100));
 
       await act(async () => {
         await result.current.checkStatus(); // Should refresh

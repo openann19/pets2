@@ -1,9 +1,9 @@
 /**
  * useSwipeGestures Hook
- * 
+ *
  * Extracts pan responder logic from SwipeScreen for improved modularity and testability.
  * Handles swipe gesture detection and triggers appropriate actions.
- * 
+ *
  * @example
  * ```typescript
  * const { panResponder, gestureState } = useSwipeGestures({
@@ -17,43 +17,43 @@
  * ```
  */
 
-import { useRef, useCallback } from "react";
-import { PanResponder, Dimensions } from "react-native";
-import type { GestureResponderEvent, PanResponderGestureState } from "react-native";
+import { useRef, useCallback } from 'react';
+import { PanResponder, Dimensions } from 'react-native';
+import type { GestureResponderEvent, PanResponderGestureState } from 'react-native';
 
-const { width: screenWidth } = Dimensions.get("window");
+const { width: screenWidth } = Dimensions.get('window');
 
 export interface UseSwipeGesturesParams {
   /**
    * Threshold for detecting a swipe (default: 120px)
    */
   swipeThreshold?: number;
-  
+
   /**
    * Current pet ID
    */
   currentPetId: string | undefined;
-  
+
   /**
    * Current index in the pets array
    */
   currentIndex: number;
-  
+
   /**
    * Callback when user swipes right (like)
    */
   onSwipeRight?: (petId: string, index: number) => Promise<void> | void;
-  
+
   /**
    * Callback when user swipes left (pass)
    */
   onSwipeLeft?: (petId: string, index: number) => Promise<void> | void;
-  
+
   /**
    * Callback when gesture starts (optional)
    */
   onGestureStart?: () => void;
-  
+
   /**
    * Callback when gesture ends (optional)
    */
@@ -64,20 +64,20 @@ export interface UseSwipeGesturesReturn {
   /**
    * Pan responder handler props to spread on animated view
    */
-  panHandlers: ReturnType<typeof PanResponder.create>["panHandlers"];
-  
+  panHandlers: ReturnType<typeof PanResponder.create>['panHandlers'];
+
   /**
    * Determine if a gesture should trigger based on delta
    */
   shouldTriggerSwipe: (
     gestureState: PanResponderGestureState,
-    direction: "left" | "right"
+    direction: 'left' | 'right',
   ) => boolean;
 }
 
 /**
  * Creates a pan responder for swipe gestures with configurable thresholds and callbacks.
- * 
+ *
  * @param params - Configuration for swipe gestures
  * @returns Pan responder handlers and utility functions
  */
@@ -99,12 +99,12 @@ export const useSwipeGestures = (params: UseSwipeGesturesParams): UseSwipeGestur
    * Check if gesture state indicates a swipe in specified direction
    */
   const shouldTriggerSwipe = useCallback(
-    (gestureState: PanResponderGestureState, direction: "left" | "right"): boolean => {
-      if (gestureState.dx > swipeThreshold) return direction === "right";
-      if (gestureState.dx < -swipeThreshold) return direction === "left";
+    (gestureState: PanResponderGestureState, direction: 'left' | 'right'): boolean => {
+      if (gestureState.dx > swipeThreshold) return direction === 'right';
+      if (gestureState.dx < -swipeThreshold) return direction === 'left';
       return false;
     },
-    [swipeThreshold]
+    [swipeThreshold],
   );
 
   /**
@@ -126,16 +126,16 @@ export const useSwipeGestures = (params: UseSwipeGesturesParams): UseSwipeGestur
       if (!currentPetId) return;
 
       // Swipe right - like
-      if (shouldTriggerSwipe(gestureState, "right")) {
+      if (shouldTriggerSwipe(gestureState, 'right')) {
         await onSwipeRight?.(currentPetId, currentIndex);
       }
       // Swipe left - pass
-      else if (shouldTriggerSwipe(gestureState, "left")) {
+      else if (shouldTriggerSwipe(gestureState, 'left')) {
         await onSwipeLeft?.(currentPetId, currentIndex);
       }
       // Else: cancel gesture (handled by animation hook)
     },
-    [currentPetId, currentIndex, shouldTriggerSwipe, onSwipeRight, onSwipeLeft, onGestureEnd]
+    [currentPetId, currentIndex, shouldTriggerSwipe, onSwipeRight, onSwipeLeft, onGestureEnd],
   );
 
   // Create pan responder with gesture handlers
@@ -148,7 +148,7 @@ export const useSwipeGestures = (params: UseSwipeGesturesParams): UseSwipeGestur
       onPanResponderTerminate: () => {
         gestureInProgress.current = false;
       },
-    })
+    }),
   ).current;
 
   return {
@@ -156,4 +156,3 @@ export const useSwipeGestures = (params: UseSwipeGesturesParams): UseSwipeGestur
     shouldTriggerSwipe,
   };
 };
-

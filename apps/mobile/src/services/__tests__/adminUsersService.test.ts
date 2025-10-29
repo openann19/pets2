@@ -336,19 +336,21 @@ describe('AdminUsersService', () => {
       // Pre-populate cache
       const cache = (global as any).cache;
       const cachedData: AdminUsersResult = {
-        users: [{
-          id: 'cached-user',
-          firstName: 'Cached',
-          lastName: 'User',
-          email: 'cached@example.com',
-          role: 'user',
-          status: 'active',
-          verified: true,
-          createdAt: '2024-01-01T00:00:00Z',
-          petsCount: 1,
-          matchesCount: 2,
-          messagesCount: 3,
-        }],
+        users: [
+          {
+            id: 'cached-user',
+            firstName: 'Cached',
+            lastName: 'User',
+            email: 'cached@example.com',
+            role: 'user',
+            status: 'active',
+            verified: true,
+            createdAt: '2024-01-01T00:00:00Z',
+            petsCount: 1,
+            matchesCount: 2,
+            messagesCount: 3,
+          },
+        ],
         pagination: { page: 1, limit: 20, total: 1, pages: 1 },
       };
       cache.set('{"page":"1","limit":"20"}', {
@@ -462,11 +464,7 @@ describe('AdminUsersService', () => {
         durationDays: 7,
       });
 
-      expect(mockAdminAPI.suspendUser).toHaveBeenCalledWith(
-        'user123',
-        'Violation of terms',
-        7
-      );
+      expect(mockAdminAPI.suspendUser).toHaveBeenCalledWith('user123', 'Violation of terms', 7);
 
       // Should invalidate cache
       const cache = (global as any).cache;
@@ -480,10 +478,7 @@ describe('AdminUsersService', () => {
         reason: 'Appeal approved',
       });
 
-      expect(mockAdminAPI.activateUser).toHaveBeenCalledWith(
-        'user123',
-        'Appeal approved'
-      );
+      expect(mockAdminAPI.activateUser).toHaveBeenCalledWith('user123', 'Appeal approved');
     });
 
     it('should ban user successfully', async () => {
@@ -493,10 +488,7 @@ describe('AdminUsersService', () => {
         reason: 'Severe violation',
       });
 
-      expect(mockAdminAPI.banUser).toHaveBeenCalledWith(
-        'user123',
-        'Severe violation'
-      );
+      expect(mockAdminAPI.banUser).toHaveBeenCalledWith('user123', 'Severe violation');
     });
 
     it('should handle unban action (same as activate)', async () => {
@@ -506,10 +498,7 @@ describe('AdminUsersService', () => {
         reason: 'Reinstated',
       });
 
-      expect(mockAdminAPI.activateUser).toHaveBeenCalledWith(
-        'user123',
-        'Reinstated'
-      );
+      expect(mockAdminAPI.activateUser).toHaveBeenCalledWith('user123', 'Reinstated');
     });
 
     it('should use default reasons when not provided', async () => {
@@ -524,17 +513,17 @@ describe('AdminUsersService', () => {
       expect(mockAdminAPI.suspendUser).toHaveBeenCalledWith(
         'user123',
         'User suspended via mobile admin controls',
-        undefined
+        undefined,
       );
 
       expect(mockAdminAPI.activateUser).toHaveBeenCalledWith(
         'user456',
-        'User reactivated via mobile admin controls'
+        'User reactivated via mobile admin controls',
       );
 
       expect(mockAdminAPI.banUser).toHaveBeenCalledWith(
         'user789',
-        'User banned via mobile admin controls'
+        'User banned via mobile admin controls',
       );
     });
 
@@ -852,7 +841,7 @@ describe('AdminUsersService', () => {
       const cacheOperations = Array.from({ length: 50 }, async (_, i) => {
         const cache = (global as any).cache;
         cache.set(`concurrent${i}`, { timestamp: Date.now(), data: { users: [], pagination: {} } });
-        await new Promise(resolve => setTimeout(resolve, 1)); // Small delay
+        await new Promise((resolve) => setTimeout(resolve, 1)); // Small delay
         invalidateAdminUsersCache();
       });
 

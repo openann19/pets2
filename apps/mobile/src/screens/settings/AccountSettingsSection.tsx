@@ -3,17 +3,16 @@
  * Extracted from SettingsScreen
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React, { type ComponentProps } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@/theme";
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/src/theme';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface SettingItem {
   id: string;
   title: string;
   subtitle?: string;
   icon: string;
-  type: "toggle" | "navigation" | "action";
+  type: 'toggle' | 'navigation' | 'action';
   value?: boolean;
   destructive?: boolean;
 }
@@ -23,12 +22,9 @@ interface AccountSettingsSectionProps {
   onNavigate: (id: string) => void;
 }
 
-export function AccountSettingsSection({
-  settings,
-  onNavigate,
-}: AccountSettingsSectionProps) {
+export function AccountSettingsSection({ settings, onNavigate }: AccountSettingsSectionProps) {
   const theme = useTheme();
-  
+
   const styles = StyleSheet.create({
     section: {
       marginTop: 24,
@@ -36,9 +32,9 @@ export function AccountSettingsSection({
     },
     sectionTitle: {
       fontSize: 14,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       color: theme.colors.onMuted,
-      textTransform: "uppercase",
+      textTransform: 'uppercase',
       letterSpacing: 0.5,
       marginBottom: 12,
     },
@@ -52,19 +48,19 @@ export function AccountSettingsSection({
       elevation: 2,
     },
     settingItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
       padding: 16,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
     settingItemDestructive: {
-      borderBottomColor: "#FEF2F2",
+      borderBottomColor: '#FEF2F2',
     },
     settingLeft: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       flex: 1,
     },
     settingIcon: {
@@ -72,19 +68,19 @@ export function AccountSettingsSection({
       height: 40,
       borderRadius: 8,
       backgroundColor: theme.colors.border,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       marginRight: 12,
     },
     settingIconDestructive: {
-      backgroundColor: "#FEF2F2",
+      backgroundColor: '#FEF2F2',
     },
     settingText: {
       flex: 1,
     },
     settingTitle: {
       fontSize: 16,
-      fontWeight: "500",
+      fontWeight: '500',
       color: theme.colors.onSurface,
       marginBottom: 2,
     },
@@ -96,13 +92,13 @@ export function AccountSettingsSection({
       color: theme.colors.onMuted,
     },
     settingSubtitleDestructive: {
-      color: "#FCA5A5",
+      color: '#FCA5A5',
     },
     settingRight: {
       marginLeft: 12,
     },
   });
-  
+
   const renderSettingItem = (item: SettingItem) => (
     <TouchableOpacity
       key={item.id}
@@ -114,7 +110,7 @@ export function AccountSettingsSection({
       accessibilityLabel="Interactive element"
       accessibilityRole="button"
       onPress={() => {
-        if (item.type === "navigation") {
+        if (item.type === 'navigation') {
           onNavigate(item.id);
         }
       }}
@@ -154,8 +150,12 @@ export function AccountSettingsSection({
         </View>
       </View>
       <View style={styles.settingRight}>
-        {item.type === "navigation" && (
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.onMuted} />
+        {item.type === 'navigation' && (
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme.colors.onMuted}
+          />
         )}
       </View>
     </TouchableOpacity>
@@ -164,9 +164,7 @@ export function AccountSettingsSection({
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>ACCOUNT</Text>
-      <View style={styles.sectionContent}>
-        {settings.map(renderSettingItem)}
-      </View>
+      <View style={styles.sectionContent}>{settings.map(renderSettingItem)}</View>
     </View>
   );
 }

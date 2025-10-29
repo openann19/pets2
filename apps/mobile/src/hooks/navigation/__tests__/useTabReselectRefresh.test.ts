@@ -40,7 +40,10 @@ describe('useTabReselectRefresh', () => {
       );
 
       expect(mockNavigation.addListener).toHaveBeenCalledWith('tabPress', expect.any(Function));
-      expect(mockNavigation.addListener).toHaveBeenCalledWith('tabDoublePress', expect.any(Function));
+      expect(mockNavigation.addListener).toHaveBeenCalledWith(
+        'tabDoublePress',
+        expect.any(Function),
+      );
     });
 
     it('should cleanup subscriptions on unmount', () => {
@@ -198,7 +201,7 @@ describe('useTabReselectRefresh', () => {
         }),
       );
 
-      const [,, doubleTapHandler] = mockNavigation.addListener.mock.calls[1];
+      const [, , doubleTapHandler] = mockNavigation.addListener.mock.calls[1];
       act(() => {
         doubleTapHandler({ target: 'Home' });
       });
@@ -227,7 +230,7 @@ describe('useTabReselectRefresh', () => {
       );
 
       const [, tabPressHandler] = mockNavigation.addListener.mock.calls[0];
-      
+
       // First trigger
       act(() => {
         tabPressHandler({ target: 'Home' });
@@ -284,7 +287,7 @@ describe('useTabReselectRefresh', () => {
         }),
       );
 
-      const [,, doubleTapHandler] = mockNavigation.addListener.mock.calls[1];
+      const [, , doubleTapHandler] = mockNavigation.addListener.mock.calls[1];
       act(() => {
         doubleTapHandler({ target: 'Home' });
       });
@@ -412,7 +415,7 @@ describe('useTabReselectRefresh', () => {
         }),
       );
 
-      const [,, doubleTapHandler] = mockNavigation.addListener.mock.calls[1];
+      const [, , doubleTapHandler] = mockNavigation.addListener.mock.calls[1];
       await act(async () => {
         await doubleTapHandler({ target: 'Home' });
       });
@@ -474,4 +477,3 @@ describe('useTabReselectRefresh', () => {
     });
   });
 });
-

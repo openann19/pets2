@@ -20,4 +20,3 @@ declare module 'expo-haptics' {
   export function notificationAsync(type?: NotificationFeedbackType): Promise<void>;
   export function selectionAsync(): Promise<void>;
 }
-

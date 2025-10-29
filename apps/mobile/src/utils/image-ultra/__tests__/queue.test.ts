@@ -19,7 +19,7 @@ describe('AbortableQueue', () => {
       return 2;
     });
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     expect(results).toEqual([1, 2]);
   });
@@ -43,7 +43,7 @@ describe('AbortableQueue', () => {
       return 3;
     });
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     expect(results.slice(0, 2).sort()).toEqual([1, 2]);
     expect(queue.active).toBeLessThanOrEqual(2);
@@ -51,9 +51,9 @@ describe('AbortableQueue', () => {
 
   it('should cancel tasks', async () => {
     const queue = new AbortableQueue(1);
-    
+
     const { cancel, promise } = queue.enqueue('task-1', async () => {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
       return 'done';
     });
 
@@ -64,12 +64,12 @@ describe('AbortableQueue', () => {
 
   it('should handle abort signals', async () => {
     const queue = new AbortableQueue(1);
-    
+
     const { promise } = queue.enqueue('task-1', async (signal) => {
       if (signal.aborted) {
         throw new Error('aborted');
       }
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
       return 'done';
     });
 
@@ -80,22 +80,21 @@ describe('AbortableQueue', () => {
 
   it('should track queue size', () => {
     const queue = new AbortableQueue(1);
-    
+
     queue.enqueue('task-1', async () => 1);
     queue.enqueue('task-2', async () => 2);
-    
+
     expect(queue.size).toBeGreaterThan(0);
   });
 
   it('should clear queue', async () => {
     const queue = new AbortableQueue(1);
-    
+
     queue.enqueue('task-1', async () => 1);
     queue.enqueue('task-2', async () => 2);
-    
+
     queue.clear();
-    
+
     expect(queue.size).toBe(0);
   });
 });
-

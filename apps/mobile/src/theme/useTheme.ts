@@ -3,7 +3,7 @@
  * Hook for accessing theme in components
  */
 
-import { useTheme } from "./Provider";
+import { useTheme } from './Provider';
 
 // Re-export from Provider - single source of truth
 export { useTheme };

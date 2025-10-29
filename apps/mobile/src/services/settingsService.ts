@@ -31,4 +31,3 @@ export async function saveSettings(settings: Settings): Promise<Settings> {
   });
   return response;
 }
-

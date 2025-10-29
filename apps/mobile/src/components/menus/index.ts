@@ -1,2 +1,1 @@
-export { default as MorphingContextMenu, type ContextAction } from "./MorphingContextMenu";
-
+export { default as MorphingContextMenu, type ContextAction } from './MorphingContextMenu';

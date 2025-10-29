@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { Alert } from "react-native";
-import { useAICompatibilityScreen } from "../useAICompatibilityScreen";
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { Alert } from 'react-native';
+import { useAICompatibilityScreen } from '../useAICompatibilityScreen';
 
 // Mock navigation
 const mockGoBack = jest.fn();
@@ -12,7 +12,7 @@ const mockNavigation = {
   navigate: jest.fn(),
 };
 
-jest.mock("@react-navigation/native", () => ({
+jest.mock('@react-navigation/native', () => ({
   useNavigation: () => mockNavigation,
 }));
 
@@ -24,7 +24,7 @@ const mockSetSelectedPet2 = jest.fn();
 const mockResetAnalysis = jest.fn();
 const mockClearError = jest.fn();
 
-jest.mock("../../domains/ai/useAICompatibility", () => ({
+jest.mock('../../domains/ai/useAICompatibility', () => ({
   useAICompatibility: () => ({
     analyzeCompatibility: mockAnalyzeCompatibility,
     isAnalyzing: false,
@@ -43,7 +43,7 @@ jest.mock("../../domains/ai/useAICompatibility", () => ({
 }));
 
 // Mock logger
-jest.mock("@pawfectmatch/core", () => ({
+jest.mock('@pawfectmatch/core', () => ({
   logger: {
     info: jest.fn(),
     error: jest.fn(),
@@ -51,9 +51,9 @@ jest.mock("@pawfectmatch/core", () => ({
 }));
 
 // Mock Alert
-jest.spyOn(Alert, "alert");
+jest.spyOn(Alert, 'alert');
 
-describe("useAICompatibilityScreen", () => {
+describe('useAICompatibilityScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
@@ -64,13 +64,13 @@ describe("useAICompatibilityScreen", () => {
     jest.useRealTimers();
   });
 
-  it("should initialize and load available pets", () => {
+  it('should initialize and load available pets', () => {
     renderHook(() => useAICompatibilityScreen());
 
     expect(mockLoadAvailablePets).toHaveBeenCalled();
   });
 
-  it("should provide state from domain hook", () => {
+  it('should provide state from domain hook', () => {
     const { result } = renderHook(() => useAICompatibilityScreen());
 
     expect(result.current.isAnalyzing).toBe(false);
@@ -80,18 +80,18 @@ describe("useAICompatibilityScreen", () => {
     expect(result.current.isLoadingPets).toBe(false);
   });
 
-  it("should provide action methods", () => {
+  it('should provide action methods', () => {
     const { result } = renderHook(() => useAICompatibilityScreen());
 
-    expect(typeof result.current.setSelectedPet1).toBe("function");
-    expect(typeof result.current.setSelectedPet2).toBe("function");
-    expect(typeof result.current.analyzeCompatibility).toBe("function");
-    expect(typeof result.current.resetAnalysis).toBe("function");
-    expect(typeof result.current.handleGoBack).toBe("function");
-    expect(typeof result.current.clearError).toBe("function");
+    expect(typeof result.current.setSelectedPet1).toBe('function');
+    expect(typeof result.current.setSelectedPet2).toBe('function');
+    expect(typeof result.current.analyzeCompatibility).toBe('function');
+    expect(typeof result.current.resetAnalysis).toBe('function');
+    expect(typeof result.current.handleGoBack).toBe('function');
+    expect(typeof result.current.clearError).toBe('function');
   });
 
-  it("should handle go back navigation", () => {
+  it('should handle go back navigation', () => {
     const { result } = renderHook(() => useAICompatibilityScreen());
 
     act(() => {
@@ -101,7 +101,7 @@ describe("useAICompatibilityScreen", () => {
     expect(mockGoBack).toHaveBeenCalled();
   });
 
-  it("should show alert when analyzing without both pets selected", async () => {
+  it('should show alert when analyzing without both pets selected', async () => {
     const { result } = renderHook(() => useAICompatibilityScreen());
 
     await act(async () => {
@@ -109,33 +109,31 @@ describe("useAICompatibilityScreen", () => {
     });
 
     expect(Alert.alert).toHaveBeenCalledWith(
-      "Selection Required",
-      "Please select two pets to analyze compatibility.",
+      'Selection Required',
+      'Please select two pets to analyze compatibility.',
     );
     expect(mockAnalyzeCompatibility).not.toHaveBeenCalled();
   });
 
-  it("should call analyzeCompatibility when both pets selected", async () => {
-    const mockPet1 = { _id: "pet1", name: "Buddy" };
-    const mockPet2 = { _id: "pet2", name: "Max" };
+  it('should call analyzeCompatibility when both pets selected', async () => {
+    const mockPet1 = { _id: 'pet1', name: 'Buddy' };
+    const mockPet2 = { _id: 'pet2', name: 'Max' };
 
-    jest
-      .mocked(require("../../domains/ai/useAICompatibility").useAICompatibility)
-      .mockReturnValue({
-        analyzeCompatibility: mockAnalyzeCompatibility,
-        isAnalyzing: false,
-        compatibilityResult: null,
-        error: null,
-        loadAvailablePets: mockLoadAvailablePets,
-        availablePets: [mockPet1, mockPet2],
-        isLoadingPets: false,
-        selectedPet1: mockPet1,
-        selectedPet2: mockPet2,
-        setSelectedPet1: mockSetSelectedPet1,
-        setSelectedPet2: mockSetSelectedPet2,
-        resetAnalysis: mockResetAnalysis,
-        clearError: mockClearError,
-      });
+    jest.mocked(require('../../domains/ai/useAICompatibility').useAICompatibility).mockReturnValue({
+      analyzeCompatibility: mockAnalyzeCompatibility,
+      isAnalyzing: false,
+      compatibilityResult: null,
+      error: null,
+      loadAvailablePets: mockLoadAvailablePets,
+      availablePets: [mockPet1, mockPet2],
+      isLoadingPets: false,
+      selectedPet1: mockPet1,
+      selectedPet2: mockPet2,
+      setSelectedPet1: mockSetSelectedPet1,
+      setSelectedPet2: mockSetSelectedPet2,
+      resetAnalysis: mockResetAnalysis,
+      clearError: mockClearError,
+    });
 
     const { result } = renderHook(() => useAICompatibilityScreen());
 
@@ -143,35 +141,33 @@ describe("useAICompatibilityScreen", () => {
       await result.current.analyzeCompatibility();
     });
 
-    expect(mockAnalyzeCompatibility).toHaveBeenCalledWith("pet1", "pet2");
+    expect(mockAnalyzeCompatibility).toHaveBeenCalledWith('pet1', 'pet2');
   });
 
-  it("should load specific pets from route params", async () => {
-    const mockPet1 = { _id: "pet-a", name: "Buddy" };
-    const mockPet2 = { _id: "pet-b", name: "Max" };
+  it('should load specific pets from route params', async () => {
+    const mockPet1 = { _id: 'pet-a', name: 'Buddy' };
+    const mockPet2 = { _id: 'pet-b', name: 'Max' };
 
-    jest
-      .mocked(require("../../domains/ai/useAICompatibility").useAICompatibility)
-      .mockReturnValue({
-        analyzeCompatibility: mockAnalyzeCompatibility,
-        isAnalyzing: false,
-        compatibilityResult: null,
-        error: null,
-        loadAvailablePets: mockLoadAvailablePets.mockResolvedValue(undefined),
-        availablePets: [mockPet1, mockPet2],
-        isLoadingPets: false,
-        selectedPet1: null,
-        selectedPet2: null,
-        setSelectedPet1: mockSetSelectedPet1,
-        setSelectedPet2: mockSetSelectedPet2,
-        resetAnalysis: mockResetAnalysis,
-        clearError: mockClearError,
-      });
+    jest.mocked(require('../../domains/ai/useAICompatibility').useAICompatibility).mockReturnValue({
+      analyzeCompatibility: mockAnalyzeCompatibility,
+      isAnalyzing: false,
+      compatibilityResult: null,
+      error: null,
+      loadAvailablePets: mockLoadAvailablePets.mockResolvedValue(undefined),
+      availablePets: [mockPet1, mockPet2],
+      isLoadingPets: false,
+      selectedPet1: null,
+      selectedPet2: null,
+      setSelectedPet1: mockSetSelectedPet1,
+      setSelectedPet2: mockSetSelectedPet2,
+      resetAnalysis: mockResetAnalysis,
+      clearError: mockClearError,
+    });
 
     const route = {
       params: {
-        petAId: "pet-a",
-        petBId: "pet-b",
+        petAId: 'pet-a',
+        petBId: 'pet-b',
       },
     };
 
@@ -181,30 +177,28 @@ describe("useAICompatibilityScreen", () => {
     expect(mockLoadAvailablePets).toHaveBeenCalled();
   });
 
-  it("should handle error when analyzing compatibility fails", async () => {
-    const error = new Error("Analysis failed");
+  it('should handle error when analyzing compatibility fails', async () => {
+    const error = new Error('Analysis failed');
     mockAnalyzeCompatibility.mockRejectedValue(error);
 
-    const mockPet1 = { _id: "pet1", name: "Buddy" };
-    const mockPet2 = { _id: "pet2", name: "Max" };
+    const mockPet1 = { _id: 'pet1', name: 'Buddy' };
+    const mockPet2 = { _id: 'pet2', name: 'Max' };
 
-    jest
-      .mocked(require("../../domains/ai/useAICompatibility").useAICompatibility)
-      .mockReturnValue({
-        analyzeCompatibility: mockAnalyzeCompatibility,
-        isAnalyzing: false,
-        compatibilityResult: null,
-        error: null,
-        loadAvailablePets: mockLoadAvailablePets,
-        availablePets: [mockPet1, mockPet2],
-        isLoadingPets: false,
-        selectedPet1: mockPet1,
-        selectedPet2: mockPet2,
-        setSelectedPet1: mockSetSelectedPet1,
-        setSelectedPet2: mockSetSelectedPet2,
-        resetAnalysis: mockResetAnalysis,
-        clearError: mockClearError,
-      });
+    jest.mocked(require('../../domains/ai/useAICompatibility').useAICompatibility).mockReturnValue({
+      analyzeCompatibility: mockAnalyzeCompatibility,
+      isAnalyzing: false,
+      compatibilityResult: null,
+      error: null,
+      loadAvailablePets: mockLoadAvailablePets,
+      availablePets: [mockPet1, mockPet2],
+      isLoadingPets: false,
+      selectedPet1: mockPet1,
+      selectedPet2: mockPet2,
+      setSelectedPet1: mockSetSelectedPet1,
+      setSelectedPet2: mockSetSelectedPet2,
+      resetAnalysis: mockResetAnalysis,
+      clearError: mockClearError,
+    });
 
     const { result } = renderHook(() => useAICompatibilityScreen());
 
@@ -215,27 +209,25 @@ describe("useAICompatibilityScreen", () => {
     expect(mockAnalyzeCompatibility).toHaveBeenCalled();
   });
 
-  it("should expose selected pets from domain hook", () => {
-    const mockPet1 = { _id: "pet1", name: "Buddy" };
-    const mockPet2 = { _id: "pet2", name: "Max" };
+  it('should expose selected pets from domain hook', () => {
+    const mockPet1 = { _id: 'pet1', name: 'Buddy' };
+    const mockPet2 = { _id: 'pet2', name: 'Max' };
 
-    jest
-      .mocked(require("../../domains/ai/useAICompatibility").useAICompatibility)
-      .mockReturnValue({
-        analyzeCompatibility: mockAnalyzeCompatibility,
-        isAnalyzing: false,
-        compatibilityResult: null,
-        error: null,
-        loadAvailablePets: mockLoadAvailablePets,
-        availablePets: [mockPet1, mockPet2],
-        isLoadingPets: false,
-        selectedPet1: mockPet1,
-        selectedPet2: mockPet2,
-        setSelectedPet1: mockSetSelectedPet1,
-        setSelectedPet2: mockSetSelectedPet2,
-        resetAnalysis: mockResetAnalysis,
-        clearError: mockClearError,
-      });
+    jest.mocked(require('../../domains/ai/useAICompatibility').useAICompatibility).mockReturnValue({
+      analyzeCompatibility: mockAnalyzeCompatibility,
+      isAnalyzing: false,
+      compatibilityResult: null,
+      error: null,
+      loadAvailablePets: mockLoadAvailablePets,
+      availablePets: [mockPet1, mockPet2],
+      isLoadingPets: false,
+      selectedPet1: mockPet1,
+      selectedPet2: mockPet2,
+      setSelectedPet1: mockSetSelectedPet1,
+      setSelectedPet2: mockSetSelectedPet2,
+      resetAnalysis: mockResetAnalysis,
+      clearError: mockClearError,
+    });
 
     const { result } = renderHook(() => useAICompatibilityScreen());
 
@@ -243,99 +235,90 @@ describe("useAICompatibilityScreen", () => {
     expect(result.current.selectedPet2).toEqual(mockPet2);
   });
 
-  it("should expose compatibility result from domain hook", () => {
+  it('should expose compatibility result from domain hook', () => {
     const mockResult = {
       score: 85,
-      traits: ["playful", "friendly"],
-      analysis: "Great match!",
+      traits: ['playful', 'friendly'],
+      analysis: 'Great match!',
     };
 
-    jest
-      .mocked(require("../../domains/ai/useAICompatibility").useAICompatibility)
-      .mockReturnValue({
-        analyzeCompatibility: mockAnalyzeCompatibility,
-        isAnalyzing: false,
-        compatibilityResult: mockResult,
-        error: null,
-        loadAvailablePets: mockLoadAvailablePets,
-        availablePets: [],
-        isLoadingPets: false,
-        selectedPet1: null,
-        selectedPet2: null,
-        setSelectedPet1: mockSetSelectedPet1,
-        setSelectedPet2: mockSetSelectedPet2,
-        resetAnalysis: mockResetAnalysis,
-        clearError: mockClearError,
-      });
+    jest.mocked(require('../../domains/ai/useAICompatibility').useAICompatibility).mockReturnValue({
+      analyzeCompatibility: mockAnalyzeCompatibility,
+      isAnalyzing: false,
+      compatibilityResult: mockResult,
+      error: null,
+      loadAvailablePets: mockLoadAvailablePets,
+      availablePets: [],
+      isLoadingPets: false,
+      selectedPet1: null,
+      selectedPet2: null,
+      setSelectedPet1: mockSetSelectedPet1,
+      setSelectedPet2: mockSetSelectedPet2,
+      resetAnalysis: mockResetAnalysis,
+      clearError: mockClearError,
+    });
 
     const { result } = renderHook(() => useAICompatibilityScreen());
 
     expect(result.current.compatibilityResult).toEqual(mockResult);
   });
 
-  it("should expose error state from domain hook", () => {
-    jest
-      .mocked(require("../../domains/ai/useAICompatibility").useAICompatibility)
-      .mockReturnValue({
-        analyzeCompatibility: mockAnalyzeCompatibility,
-        isAnalyzing: false,
-        compatibilityResult: null,
-        error: "Failed to analyze",
-        loadAvailablePets: mockLoadAvailablePets,
-        availablePets: [],
-        isLoadingPets: false,
-        selectedPet1: null,
-        selectedPet2: null,
-        setSelectedPet1: mockSetSelectedPet1,
-        setSelectedPet2: mockSetSelectedPet2,
-        resetAnalysis: mockResetAnalysis,
-        clearError: mockClearError,
-      });
+  it('should expose error state from domain hook', () => {
+    jest.mocked(require('../../domains/ai/useAICompatibility').useAICompatibility).mockReturnValue({
+      analyzeCompatibility: mockAnalyzeCompatibility,
+      isAnalyzing: false,
+      compatibilityResult: null,
+      error: 'Failed to analyze',
+      loadAvailablePets: mockLoadAvailablePets,
+      availablePets: [],
+      isLoadingPets: false,
+      selectedPet1: null,
+      selectedPet2: null,
+      setSelectedPet1: mockSetSelectedPet1,
+      setSelectedPet2: mockSetSelectedPet2,
+      resetAnalysis: mockResetAnalysis,
+      clearError: mockClearError,
+    });
 
     const { result } = renderHook(() => useAICompatibilityScreen());
 
-    expect(result.current.error).toBe("Failed to analyze");
+    expect(result.current.error).toBe('Failed to analyze');
   });
 
-  it("should expose analyzing state from domain hook", () => {
-    jest
-      .mocked(require("../../domains/ai/useAICompatibility").useAICompatibility)
-      .mockReturnValue({
-        analyzeCompatibility: mockAnalyzeCompatibility,
-        isAnalyzing: true,
-        compatibilityResult: null,
-        error: null,
-        loadAvailablePets: mockLoadAvailablePets,
-        availablePets: [],
-        isLoadingPets: false,
-        selectedPet1: null,
-        selectedPet2: null,
-        setSelectedPet1: mockSetSelectedPet1,
-        setSelectedPet2: mockSetSelectedPet2,
-        resetAnalysis: mockResetAnalysis,
-        clearError: mockClearError,
-      });
+  it('should expose analyzing state from domain hook', () => {
+    jest.mocked(require('../../domains/ai/useAICompatibility').useAICompatibility).mockReturnValue({
+      analyzeCompatibility: mockAnalyzeCompatibility,
+      isAnalyzing: true,
+      compatibilityResult: null,
+      error: null,
+      loadAvailablePets: mockLoadAvailablePets,
+      availablePets: [],
+      isLoadingPets: false,
+      selectedPet1: null,
+      selectedPet2: null,
+      setSelectedPet1: mockSetSelectedPet1,
+      setSelectedPet2: mockSetSelectedPet2,
+      resetAnalysis: mockResetAnalysis,
+      clearError: mockClearError,
+    });
 
     const { result } = renderHook(() => useAICompatibilityScreen());
 
     expect(result.current.isAnalyzing).toBe(true);
   });
 
-  it("should reload pets when route params change", () => {
-    const { rerender } = renderHook(
-      ({ route }) => useAICompatibilityScreen(route),
-      {
-        initialProps: { route: undefined },
-      },
-    );
+  it('should reload pets when route params change', () => {
+    const { rerender } = renderHook(({ route }) => useAICompatibilityScreen(route), {
+      initialProps: { route: undefined },
+    });
 
     expect(mockLoadAvailablePets).toHaveBeenCalledTimes(1);
 
     rerender({
       route: {
         params: {
-          petAId: "new-pet-a",
-          petBId: "new-pet-b",
+          petAId: 'new-pet-a',
+          petBId: 'new-pet-b',
         },
       },
     });

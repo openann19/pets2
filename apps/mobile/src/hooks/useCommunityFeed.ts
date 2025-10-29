@@ -10,15 +10,15 @@
  * - Offline queue support
  */
 
-import { useCallback, useEffect, useState } from "react";
-import { logger } from "@pawfectmatch/core";
+import { useCallback, useEffect, useState } from 'react';
+import { logger } from '@pawfectmatch/core';
 import type {
   CommunityPost,
   CommunityComment,
   CreatePostRequest,
   CreateCommentRequest,
-} from "../services/communityAPI";
-import { communityAPI } from "../services/communityAPI";
+} from '../services/communityAPI';
+import { communityAPI } from '../services/communityAPI';
 
 interface UseCommunityFeedReturn {
   // State
@@ -83,10 +83,9 @@ export const useCommunityFeed = (): UseCommunityFeedReturn => {
         setCurrentPage(page);
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to load community feed";
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load community feed';
       setError(errorMessage);
-      logger.error("Error loading feed:", { error: err });
+      logger.error('Error loading feed:', { error: err });
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -107,21 +106,18 @@ export const useCommunityFeed = (): UseCommunityFeedReturn => {
   }, [isLoadingMore, isLoading, hasNextPage, currentPage, loadFeed]);
 
   // Create post
-  const createPost = useCallback(
-    async (data: CreatePostRequest) => {
-      try {
-        const response = await communityAPI.createPost(data);
-        if (response.success) {
-          // Add new post to the beginning of the feed
-          setPosts((prev) => [response.post, ...prev]);
-        }
-      } catch (err) {
-        logger.error("Error creating post:", { error: err });
-        throw err;
+  const createPost = useCallback(async (data: CreatePostRequest) => {
+    try {
+      const response = await communityAPI.createPost(data);
+      if (response.success) {
+        // Add new post to the beginning of the feed
+        setPosts((prev) => [response.post, ...prev]);
       }
-    },
-    [],
-  );
+    } catch (err) {
+      logger.error('Error creating post:', { error: err });
+      throw err;
+    }
+  }, []);
 
   // Like/unlike post
   const likePost = useCallback(async (postId: string) => {
@@ -137,34 +133,31 @@ export const useCommunityFeed = (): UseCommunityFeedReturn => {
         );
       }
     } catch (err) {
-      logger.error("Error liking post:", { error: err });
+      logger.error('Error liking post:', { error: err });
     }
   }, []);
 
   // Add comment
-  const addComment = useCallback(
-    async (postId: string, data: CreateCommentRequest) => {
-      try {
-        const response = await communityAPI.addComment(postId, data);
-        if (response.success) {
-          setPosts((prev) =>
-            prev.map((post) =>
-              post._id === postId
-                ? {
-                    ...post,
-                    comments: [...post.comments, response.comment],
-                  }
-                : post,
-            ),
-          );
-        }
-      } catch (err) {
-        logger.error("Error adding comment:", { error: err });
-        throw err;
+  const addComment = useCallback(async (postId: string, data: CreateCommentRequest) => {
+    try {
+      const response = await communityAPI.addComment(postId, data);
+      if (response.success) {
+        setPosts((prev) =>
+          prev.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  comments: [...post.comments, response.comment],
+                }
+              : post,
+          ),
+        );
       }
-    },
-    [],
-  );
+    } catch (err) {
+      logger.error('Error adding comment:', { error: err });
+      throw err;
+    }
+  }, []);
 
   // Delete post
   const deletePost = useCallback(async (postId: string) => {
@@ -172,28 +165,25 @@ export const useCommunityFeed = (): UseCommunityFeedReturn => {
       await communityAPI.deletePost(postId);
       setPosts((prev) => prev.filter((post) => post._id !== postId));
     } catch (err) {
-      logger.error("Error deleting post:", { error: err });
+      logger.error('Error deleting post:', { error: err });
       throw err;
     }
   }, []);
 
   // Report post
-  const reportPost = useCallback(
-    async (postId: string, reason: string, description?: string) => {
-      try {
-        await communityAPI.reportContent({
-          type: "post",
-          targetId: postId,
-          reason,
-          description,
-        });
-      } catch (err) {
-        logger.error("Error reporting post:", { error: err });
-        throw err;
-      }
-    },
-    [],
-  );
+  const reportPost = useCallback(async (postId: string, reason: string, description?: string) => {
+    try {
+      await communityAPI.reportContent({
+        type: 'post',
+        targetId: postId,
+        reason,
+        description,
+      });
+    } catch (err) {
+      logger.error('Error reporting post:', { error: err });
+      throw err;
+    }
+  }, []);
 
   // Block user
   const blockUser = useCallback(async (userId: string) => {
@@ -202,7 +192,7 @@ export const useCommunityFeed = (): UseCommunityFeedReturn => {
       // Remove posts from blocked user
       setPosts((prev) => prev.filter((post) => post.author._id !== userId));
     } catch (err) {
-      logger.error("Error blocking user:", { error: err });
+      logger.error('Error blocking user:', { error: err });
       throw err;
     }
   }, []);
@@ -224,7 +214,7 @@ export const useCommunityFeed = (): UseCommunityFeedReturn => {
         );
       }
     } catch (err) {
-      logger.error("Error joining activity:", { error: err });
+      logger.error('Error joining activity:', { error: err });
       throw err;
     }
   }, []);
@@ -246,7 +236,7 @@ export const useCommunityFeed = (): UseCommunityFeedReturn => {
         );
       }
     } catch (err) {
-      logger.error("Error leaving activity:", { error: err });
+      logger.error('Error leaving activity:', { error: err });
       throw err;
     }
   }, []);
@@ -278,4 +268,3 @@ export const useCommunityFeed = (): UseCommunityFeedReturn => {
 };
 
 export default useCommunityFeed;
-

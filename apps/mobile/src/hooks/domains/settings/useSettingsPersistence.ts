@@ -1,6 +1,6 @@
-import { useCallback } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { logger } from "@pawfectmatch/core";
+import { useCallback } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '@pawfectmatch/core';
 
 export interface SettingsData {
   [key: string]: string | number | boolean | null;

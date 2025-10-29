@@ -26,21 +26,25 @@ describe('useSwipeGesture', () => {
       const onSwipeUp = jest.fn();
       const onSwipeDown = jest.fn();
 
-      const { result } = renderHook(() => useSwipeGesture({
-        onSwipeLeft,
-        onSwipeRight,
-        onSwipeUp,
-        onSwipeDown
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          onSwipeLeft,
+          onSwipeRight,
+          onSwipeUp,
+          onSwipeDown,
+        }),
+      );
 
       expect(result.current.panHandlers).toBeDefined();
     });
 
     it('should accept configuration options', () => {
-      const { result } = renderHook(() => useSwipeGesture({
-        velocityThreshold: 0.3,
-        directionalOffsetThreshold: 80
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          velocityThreshold: 0.3,
+          directionalOffsetThreshold: 80,
+        }),
+      );
       expect(result.current.panHandlers).toBeDefined();
     });
   });
@@ -50,10 +54,12 @@ describe('useSwipeGesture', () => {
       const onSwipeLeft = jest.fn();
       const onSwipeRight = jest.fn();
 
-      const { result } = renderHook(() => useSwipeGesture({
-        onSwipeLeft,
-        onSwipeRight
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          onSwipeLeft,
+          onSwipeRight,
+        }),
+      );
 
       expect(result.current.panHandlers).toBeDefined();
       // Note: Full gesture testing would require PanResponder mocking
@@ -64,10 +70,12 @@ describe('useSwipeGesture', () => {
       const onSwipeUp = jest.fn();
       const onSwipeDown = jest.fn();
 
-      const { result } = renderHook(() => useSwipeGesture({
-        onSwipeUp,
-        onSwipeDown
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          onSwipeUp,
+          onSwipeDown,
+        }),
+      );
 
       expect(result.current.panHandlers).toBeDefined();
     });
@@ -76,10 +84,12 @@ describe('useSwipeGesture', () => {
       const onSwipeLeft = jest.fn();
       const onSwipeUp = jest.fn();
 
-      const { result } = renderHook(() => useSwipeGesture({
-        onSwipeLeft,
-        onSwipeUp
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          onSwipeLeft,
+          onSwipeUp,
+        }),
+      );
 
       expect(result.current.panHandlers).toBeDefined();
     });
@@ -87,23 +97,29 @@ describe('useSwipeGesture', () => {
 
   describe('Configuration', () => {
     it('should accept custom velocity threshold', () => {
-      const { result } = renderHook(() => useSwipeGesture({
-        velocityThreshold: 0.5
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          velocityThreshold: 0.5,
+        }),
+      );
       expect(result.current.panHandlers).toBeDefined();
     });
 
     it('should accept custom directional offset threshold', () => {
-      const { result } = renderHook(() => useSwipeGesture({
-        directionalOffsetThreshold: 100
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          directionalOffsetThreshold: 100,
+        }),
+      );
       expect(result.current.panHandlers).toBeDefined();
     });
 
     it('should accept custom gesture state tracking', () => {
-      const { result } = renderHook(() => useSwipeGesture({
-        enabled: true
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          enabled: true,
+        }),
+      );
       expect(result.current.gestureState).toBeDefined();
     });
   });
@@ -117,7 +133,7 @@ describe('useSwipeGesture', () => {
         isSwipeUp: false,
         isSwipeDown: false,
         velocity: 0,
-        direction: null
+        direction: null,
       });
     });
 
@@ -157,7 +173,7 @@ describe('useSwipeGesture', () => {
       const { result } = renderHook(() => useSwipeGesture());
 
       // Handlers should be functions
-      Object.values(result.current.panHandlers).forEach(handler => {
+      Object.values(result.current.panHandlers).forEach((handler) => {
         expect(typeof handler).toBe('function');
       });
     });
@@ -166,9 +182,11 @@ describe('useSwipeGesture', () => {
   describe('Callback Integration', () => {
     it('should call onSwipeLeft callback', () => {
       const onSwipeLeft = jest.fn();
-      const { result } = renderHook(() => useSwipeGesture({
-        onSwipeLeft
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          onSwipeLeft,
+        }),
+      );
 
       // Simulate left swipe (would need PanResponder mocking for full test)
       expect(onSwipeLeft).not.toHaveBeenCalled();
@@ -176,36 +194,44 @@ describe('useSwipeGesture', () => {
 
     it('should call onSwipeRight callback', () => {
       const onSwipeRight = jest.fn();
-      const { result } = renderHook(() => useSwipeGesture({
-        onSwipeRight
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          onSwipeRight,
+        }),
+      );
 
       expect(onSwipeRight).not.toHaveBeenCalled();
     });
 
     it('should call onSwipeUp callback', () => {
       const onSwipeUp = jest.fn();
-      const { result } = renderHook(() => useSwipeGesture({
-        onSwipeUp
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          onSwipeUp,
+        }),
+      );
 
       expect(onSwipeUp).not.toHaveBeenCalled();
     });
 
     it('should call onSwipeDown callback', () => {
       const onSwipeDown = jest.fn();
-      const { result } = renderHook(() => useSwipeGesture({
-        onSwipeDown
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          onSwipeDown,
+        }),
+      );
 
       expect(onSwipeDown).not.toHaveBeenCalled();
     });
 
     it('should pass velocity and distance to callbacks', () => {
       const onSwipeLeft = jest.fn();
-      const { result } = renderHook(() => useSwipeGesture({
-        onSwipeLeft
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          onSwipeLeft,
+        }),
+      );
 
       // Callback should accept velocity and distance parameters
       expect(onSwipeLeft).toBeInstanceOf(Function);
@@ -236,25 +262,31 @@ describe('useSwipeGesture', () => {
 
   describe('Edge Cases', () => {
     it('should handle disabled gestures', () => {
-      const { result } = renderHook(() => useSwipeGesture({
-        enabled: false
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          enabled: false,
+        }),
+      );
       expect(result.current.panHandlers).toBeDefined();
     });
 
     it('should handle zero thresholds', () => {
-      const { result } = renderHook(() => useSwipeGesture({
-        velocityThreshold: 0,
-        directionalOffsetThreshold: 0
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          velocityThreshold: 0,
+          directionalOffsetThreshold: 0,
+        }),
+      );
       expect(result.current.panHandlers).toBeDefined();
     });
 
     it('should handle very high thresholds', () => {
-      const { result } = renderHook(() => useSwipeGesture({
-        velocityThreshold: 1000,
-        directionalOffsetThreshold: 1000
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          velocityThreshold: 1000,
+          directionalOffsetThreshold: 1000,
+        }),
+      );
       expect(result.current.panHandlers).toBeDefined();
     });
   });
@@ -284,10 +316,12 @@ describe('useSwipeGesture', () => {
       const onSwipeLeft = jest.fn();
       const onSwipeUp = jest.fn();
 
-      const { result } = renderHook(() => useSwipeGesture({
-        onSwipeLeft,
-        onSwipeUp
-      }));
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          onSwipeLeft,
+          onSwipeUp,
+        }),
+      );
 
       // Should handle multiple directions
       expect(result.current.panHandlers).toBeDefined();

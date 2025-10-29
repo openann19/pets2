@@ -19,9 +19,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@/theme'";
+import { useTheme } from '@mobile/src/theme'";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
+import { getExtendedColors } from "@/theme";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface AnalyticsData {
@@ -403,7 +404,7 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="heart" size={20} color={theme.colors.primary[500]} }/>
+                    <Ionicons name="heart" size={20} color={theme.colors.primary} }/>
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,

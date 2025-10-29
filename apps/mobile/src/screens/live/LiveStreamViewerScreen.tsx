@@ -28,7 +28,7 @@ export function LiveStreamViewerScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { streamId } = route.params as { streamId: string };
-  
+
   const {
     room,
     isConnected,
@@ -75,7 +75,12 @@ export function LiveStreamViewerScreen() {
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.backButton}
-             testID="LiveStreamViewerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { navigation.goBack(); }}
+            testID="LiveStreamViewerScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
+              navigation.goBack();
+            }}
           >
             <Text style={styles.backButtonText}>Go Back</Text>
           </TouchableOpacity>
@@ -98,10 +103,17 @@ export function LiveStreamViewerScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
+
       {/* Header with live indicator */}
       <View style={styles.header}>
-        <TouchableOpacity  testID="LiveStreamViewerScreen-button-2" accessibilityLabel="navigation.goBack();" accessibilityRole="button" onPress={() => { navigation.goBack(); }}>
+        <TouchableOpacity
+          testID="LiveStreamViewerScreen-button-2"
+          accessibilityLabel="navigation.goBack();"
+          accessibilityRole="button"
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
           <Text style={styles.closeButton}>✕</Text>
         </TouchableOpacity>
         <View style={styles.liveIndicator}>
@@ -116,18 +128,19 @@ export function LiveStreamViewerScreen() {
         {participants.length > 0 ? (
           participants.map((participant: RemoteParticipant) => {
             const videoTrack = participant.videoTrackPublications.values().next().value?.track;
-            return (
-              videoTrack && videoTrack.kind === 'video' ? (
-                <VideoView
-                  key={participant.sid}
-                  style={styles.videoStream}
-                  videoTrack={videoTrack as any}
-                />
-              ) : (
-                <View key={participant.sid} style={styles.noStreamView}>
-                  <Text style={styles.noStreamText}>No video</Text>
-                </View>
-              )
+            return videoTrack && videoTrack.kind === 'video' ? (
+              <VideoView
+                key={participant.sid}
+                style={styles.videoStream}
+                videoTrack={videoTrack as any}
+              />
+            ) : (
+              <View
+                key={participant.sid}
+                style={styles.noStreamView}
+              >
+                <Text style={styles.noStreamText}>No video</Text>
+              </View>
             );
           })
         ) : (
@@ -160,7 +173,12 @@ export function LiveStreamViewerScreen() {
           <TouchableOpacity
             key={emoji}
             style={styles.reactionButton}
-             testID="LiveStreamViewerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { handleReaction(emoji); }}
+            testID="LiveStreamViewerScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
+              handleReaction(emoji);
+            }}
           >
             <Text style={styles.reactionEmoji}>{emoji}</Text>
           </TouchableOpacity>
@@ -184,7 +202,10 @@ export function LiveStreamViewerScreen() {
           />
           <TouchableOpacity
             style={styles.sendButton}
-             testID="LiveStreamViewerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleSendMessage}
+            testID="LiveStreamViewerScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={handleSendMessage}
           >
             <Text style={styles.sendButtonText}>Send</Text>
           </TouchableOpacity>
@@ -371,4 +392,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-

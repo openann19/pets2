@@ -80,7 +80,7 @@ describe('VerificationService - Core Tests', () => {
       expect(result).toEqual(mockResponse);
       expect(mockRequest).toHaveBeenCalledWith('/verification/identity', {
         method: 'POST',
-        body: mockIdentityData
+        body: mockIdentityData,
       });
     });
 
@@ -88,7 +88,7 @@ describe('VerificationService - Core Tests', () => {
       mockRequest.mockRejectedValueOnce(new Error('Submission failed'));
 
       await expect(
-        verificationService.submitIdentityVerification(mockIdentityData)
+        verificationService.submitIdentityVerification(mockIdentityData),
       ).rejects.toThrow('Submission failed');
     });
   });
@@ -102,7 +102,9 @@ describe('VerificationService - Core Tests', () => {
       const result = await verificationService.getRequirements('tier2');
 
       expect(result).toEqual(mockRequirements);
-      expect(mockRequest).toHaveBeenCalledWith('/verification/requirements/tier2', { method: 'GET' });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/requirements/tier2', {
+        method: 'GET',
+      });
     });
   });
 
@@ -138,9 +140,9 @@ describe('VerificationService - Core Tests', () => {
     });
 
     it('should handle empty file uploads', async () => {
-      await expect(
-        verificationService.uploadDocument('', 'document')
-      ).rejects.toThrow('Empty file');
+      await expect(verificationService.uploadDocument('', 'document')).rejects.toThrow(
+        'Empty file',
+      );
     });
   });
 
@@ -149,10 +151,12 @@ describe('VerificationService - Core Tests', () => {
       mockRequest.mockResolvedValueOnce({ success: true });
 
       await expect(
-        verificationService.cancelVerification('verification-123')
+        verificationService.cancelVerification('verification-123'),
       ).resolves.not.toThrow();
 
-      expect(mockRequest).toHaveBeenCalledWith('/verification/verification-123/cancel', { method: 'POST' });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/verification-123/cancel', {
+        method: 'POST',
+      });
     });
   });
 });

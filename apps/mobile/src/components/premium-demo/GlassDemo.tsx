@@ -1,38 +1,38 @@
-import React from "react";
-import { View, Text } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { BlurView } from "expo-blur";
+import React from 'react';
+import { View, Text } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 
 // Project Hyperion Components
-import { ScrollTrigger } from "../MotionPrimitives";
+import { ScrollTrigger } from '../MotionPrimitives';
 
 // Design tokens
 const SemanticColors = {
   text: {
-    primary: "#1f2937",
-    secondary: "#6b7280",
+    primary: '#1f2937',
+    secondary: '#6b7280',
   },
 };
 
 const DynamicColors = {
   gradients: {
-    premium: ["#FFD700", "#FFA500"],
+    premium: ['#FFD700', '#FFA500'],
   },
   glass: {
     locations: [0, 1],
     subtle: {
-      backgroundColor: "rgba(255, 255, 255, 0.05)",
-      borderColor: "rgba(255, 255, 255, 0.1)",
+      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+      borderColor: 'rgba(255, 255, 255, 0.1)',
       borderWidth: 1,
     },
     medium: {
-      backgroundColor: "rgba(255, 255, 255, 0.1)",
-      borderColor: "rgba(255, 255, 255, 0.2)",
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      borderColor: 'rgba(255, 255, 255, 0.2)',
       borderWidth: 1,
     },
     strong: {
-      backgroundColor: "rgba(255, 255, 255, 0.15)",
-      borderColor: "rgba(255, 255, 255, 0.3)",
+      backgroundColor: 'rgba(255, 255, 255, 0.15)',
+      borderColor: 'rgba(255, 255, 255, 0.3)',
       borderWidth: 1,
     },
   },
@@ -40,13 +40,16 @@ const DynamicColors = {
 
 export default function GlassDemo() {
   return (
-    <ScrollTrigger animation="slideIn" triggerPoint={0.8}>
+    <ScrollTrigger
+      animation="slideIn"
+      triggerPoint={0.8}
+    >
       <View style={{ padding: 20 }}>
         <Text
           style={{
             fontSize: 24,
-            fontWeight: "700",
-            textAlign: "center",
+            fontWeight: '700',
+            textAlign: 'center',
             marginBottom: 30,
             color: SemanticColors.text.primary,
           }}
@@ -76,9 +79,9 @@ export default function GlassDemo() {
             <Text
               style={{
                 fontSize: 18,
-                fontWeight: "600",
+                fontWeight: '600',
                 color: SemanticColors.text.primary,
-                textAlign: "center",
+                textAlign: 'center',
                 marginBottom: 10,
               }}
             >
@@ -88,22 +91,22 @@ export default function GlassDemo() {
               style={{
                 fontSize: 14,
                 color: SemanticColors.text.secondary,
-                textAlign: "center",
+                textAlign: 'center',
                 lineHeight: 20,
               }}
             >
-              Experience layered transparency with backdrop blur effects and
-              subtle border styling for a modern, premium look.
+              Experience layered transparency with backdrop blur effects and subtle border styling
+              for a modern, premium look.
             </Text>
           </BlurView>
         </LinearGradient>
 
         {/* Multiple glass tiers */}
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          {(["subtle", "medium", "strong"] as const).map((tier) => (
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          {(['subtle', 'medium', 'strong'] as const).map((tier) => (
             <BlurView
               key={tier}
-              intensity={tier === "subtle" ? 10 : tier === "medium" ? 20 : 30}
+              intensity={tier === 'subtle' ? 10 : tier === 'medium' ? 20 : 30}
               tint="light"
               style={{
                 flex: 1,
@@ -111,13 +114,13 @@ export default function GlassDemo() {
                 borderRadius: 12,
                 padding: 15,
                 ...DynamicColors.glass[tier],
-                alignItems: "center",
+                alignItems: 'center',
               }}
             >
               <Text
                 style={{
                   fontSize: 12,
-                  fontWeight: "600",
+                  fontWeight: '600',
                   color: SemanticColors.text.primary,
                   marginBottom: 5,
                 }}
@@ -128,7 +131,7 @@ export default function GlassDemo() {
                 style={{
                   fontSize: 10,
                   color: SemanticColors.text.secondary,
-                  textAlign: "center",
+                  textAlign: 'center',
                 }}
               >
                 Glass Tier

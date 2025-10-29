@@ -2,7 +2,7 @@
  * Accessibility Configuration
  */
 
-import { AccessibilityInfo } from "react-native";
+import { AccessibilityInfo } from 'react-native';
 
 let _prefersReducedMotion = false;
 

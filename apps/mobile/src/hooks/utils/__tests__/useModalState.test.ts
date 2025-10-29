@@ -1,16 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from "@testing-library/react-native";
-import { useModalState } from "../useModalState";
+import { renderHook, act } from '@testing-library/react-native';
+import { useModalState } from '../useModalState';
 
-describe("useModalState", () => {
-  it("should initialize with false", () => {
+describe('useModalState', () => {
+  it('should initialize with false', () => {
     const { result } = renderHook(() => useModalState());
     expect(result.current.isOpen).toBe(false);
   });
 
-  it("should open modal", () => {
+  it('should open modal', () => {
     const { result } = renderHook(() => useModalState());
     act(() => {
       result.current.open();
@@ -18,7 +18,7 @@ describe("useModalState", () => {
     expect(result.current.isOpen).toBe(true);
   });
 
-  it("should close modal", () => {
+  it('should close modal', () => {
     const { result } = renderHook(() => useModalState());
     act(() => {
       result.current.open();
@@ -27,7 +27,7 @@ describe("useModalState", () => {
     expect(result.current.isOpen).toBe(false);
   });
 
-  it("should toggle modal state", () => {
+  it('should toggle modal state', () => {
     const { result } = renderHook(() => useModalState());
 
     act(() => result.current.toggle());
@@ -37,7 +37,7 @@ describe("useModalState", () => {
     expect(result.current.isOpen).toBe(false);
   });
 
-  it("should return stable function references", () => {
+  it('should return stable function references', () => {
     const { result } = renderHook(() => useModalState());
     const firstOpen = result.current.open;
     const firstClose = result.current.close;

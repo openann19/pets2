@@ -11,7 +11,7 @@ export async function pickAndUpload(): Promise<string | null> {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.9,
     });
-    
+
     if (result.canceled || !result.assets[0]) return null;
 
     const asset = result.assets[0];
@@ -27,15 +27,14 @@ export async function pickAndUpload(): Promise<string | null> {
       body: formData,
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    
+
     return data.url;
   } catch (error: unknown) {
     const { logger } = await import('./logger');
     const err = error instanceof Error ? error : new Error(String(error));
-    logger.error('Upload error', { 
-      error: err
+    logger.error('Upload error', {
+      error: err,
     });
     throw err;
   }
 }
-

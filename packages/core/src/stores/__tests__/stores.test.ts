@@ -98,15 +98,15 @@ describe('Zustand Stores', () => {
         result.current.showToast({
           type: 'success',
           message: 'Test toast',
-          duration: 3000
+          duration: 3000,
         });
       });
 
-  expect(result.current.toasts).toHaveLength(1);
-  const toast = result.current.toasts[0];
-  expect(toast.message).toBe('Test toast');
+      expect(result.current.toasts).toHaveLength(1);
+      const toast = result.current.toasts[0];
+      expect(toast.message).toBe('Test toast');
 
-  const toastId = toast.id;
+      const toastId = toast.id;
       act(() => {
         result.current.removeToast(toastId);
       });
@@ -126,12 +126,12 @@ describe('Zustand Stores', () => {
       expect(result.current.paginationInfo).toEqual({
         page: 1,
         hasMore: true,
-        isLoading: false
+        isLoading: false,
       });
       expect(result.current.swipeHistory).toEqual({
         likes: [],
         passes: [],
-        superlikes: []
+        superlikes: [],
       });
     });
 

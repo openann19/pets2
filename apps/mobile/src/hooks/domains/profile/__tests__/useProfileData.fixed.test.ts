@@ -31,10 +31,10 @@ jest.mock('@pawfectmatch/design-tokens', () => ({
 jest.mock('@pawfectmatch/core', () => ({
   useAuthStore: () => ({
     user: {
-      _id: "user123",
-      firstName: "John",
-      lastName: "Doe",
-      email: "john@example.com",
+      _id: 'user123',
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john@example.com',
     },
   }),
   logger: {
@@ -57,10 +57,10 @@ describe('useProfileData', () => {
       const { result } = renderHook(() => useProfileData());
 
       expect(result.current.user).toEqual({
-        _id: "user123",
-        firstName: "John",
-        lastName: "Doe",
-        email: "john@example.com",
+        _id: 'user123',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
       });
       expect(result.current.pets).toEqual([]);
       expect(result.current.isLoading).toBe(false);
@@ -77,9 +77,9 @@ describe('useProfileData', () => {
   describe('Profile Refresh', () => {
     it('should refresh profile data successfully', async () => {
       // Mock successful API response
-      const spy = jest.spyOn(apiModule.matchesAPI, 'getUserPets').mockResolvedValue([
-        { _id: 'pet1', name: 'Buddy', species: 'dog' }
-      ]);
+      const spy = jest
+        .spyOn(apiModule.matchesAPI, 'getUserPets')
+        .mockResolvedValue([{ _id: 'pet1', name: 'Buddy', species: 'dog' }]);
 
       const { result } = renderHook(() => useProfileData());
 
@@ -87,9 +87,7 @@ describe('useProfileData', () => {
         await result.current.refreshProfile();
       });
 
-      expect(result.current.pets).toEqual([
-        { _id: 'pet1', name: 'Buddy', species: 'dog' }
-      ]);
+      expect(result.current.pets).toEqual([{ _id: 'pet1', name: 'Buddy', species: 'dog' }]);
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBeNull();
 
@@ -98,7 +96,9 @@ describe('useProfileData', () => {
 
     it('should handle API errors during refresh', async () => {
       // Mock API error
-      const spy = jest.spyOn(apiModule.matchesAPI, 'getUserPets').mockRejectedValue(new Error('API Error'));
+      const spy = jest
+        .spyOn(apiModule.matchesAPI, 'getUserPets')
+        .mockRejectedValue(new Error('API Error'));
 
       const { result } = renderHook(() => useProfileData());
 

@@ -12,7 +12,7 @@ import {
   useGyroscopeTilt,
   useEntranceAnimation,
 } from "../hooks/useMotionSystem";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 
 // === PROJECT HYPERION: IMMERSIVE CARD COMPONENT ===
 
@@ -229,14 +229,14 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
       // Simple glow shadows
       const glowShadows: Record<string, ViewStyle> = {
         blue: {
-          shadowColor: theme.colors.primary[500],
+          shadowColor: theme.colors.primary,
           shadowOffset: { width: 0, height: 0 },
           shadowOpacity: 0.8,
           shadowRadius: 16,
           elevation: 8,
         },
         purple: {
-          shadowColor: theme.colors.primary[600],
+          shadowColor: theme.colors.primary,
           shadowOffset: { width: 0, height: 0 },
           shadowOpacity: 0.8,
           shadowRadius: 16,
@@ -280,8 +280,8 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
       if (variant === "holographic" && gradientName) {
         const gradients: Record<string, { colors: string[]; locations: number[] }> = {
           primary: { colors: [theme.colors.danger, theme.colors.danger, theme.colors.danger], locations: [0, 0.5, 1] },
-          sunset: { colors: [theme.colors.status.warning, theme.colors.status.warning, theme.colors.status.warning], locations: [0, 0.5, 1] },
-          ocean: { colors: [theme.colors.status.success, theme.colors.status.success, theme.colors.status.success], locations: [0, 0.5, 1] },
+          sunset: { colors: [theme.colors.warning, theme.colors.warning, theme.colors.warning], locations: [0, 0.5, 1] },
+          ocean: { colors: [theme.colors.success, theme.colors.success, theme.colors.success], locations: [0, 0.5, 1] },
         };
         const gradient = gradients[gradientName] ?? gradients.primary;
         if (gradient) {

@@ -1,13 +1,8 @@
-import React, { type ReactNode } from "react";
-import { View, type ViewProps, type ViewStyle, StyleSheet } from "react-native";
-import { GlassContainer } from "./GlassContainer";
-import {
-  BLUR_CONFIGS,
-  TRANSPARENCY_CONFIGS,
-  BORDER_CONFIGS,
-  SHADOW_CONFIGS,
-} from "./configs";
-import { BorderRadius, Spacing } from "../../animation";
+import React, { type ReactNode } from 'react';
+import { View, type ViewProps, type ViewStyle, StyleSheet } from 'react-native';
+import { GlassContainer } from './GlassContainer';
+import { BLUR_CONFIGS, TRANSPARENCY_CONFIGS, BORDER_CONFIGS, SHADOW_CONFIGS } from './configs';
+import { BorderRadius, Spacing } from '../../animation';
 
 /**
  * GlassCard Component
@@ -16,8 +11,8 @@ import { BorderRadius, Spacing } from "../../animation";
 
 interface GlassCardProps extends ViewProps {
   children: ReactNode;
-  variant?: "default" | "premium" | "frosted" | "crystal";
-  size?: "sm" | "md" | "lg" | "xl";
+  variant?: 'default' | 'premium' | 'frosted' | 'crystal';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   animated?: boolean;
   hover?: boolean;
   style?: ViewStyle;
@@ -25,8 +20,8 @@ interface GlassCardProps extends ViewProps {
 
 export const GlassCard: React.FC<GlassCardProps> = ({
   children,
-  variant = "default",
-  size = "md",
+  variant = 'default',
+  size = 'md',
   animated = true,
   hover = true,
   style,
@@ -34,45 +29,45 @@ export const GlassCard: React.FC<GlassCardProps> = ({
 }) => {
   const getVariantConfig = () => {
     switch (variant) {
-      case "premium":
+      case 'premium':
         return {
-          intensity: "heavy" as const,
-          transparency: "heavy" as const,
-          border: "heavy" as const,
-          shadow: "heavy" as const,
+          intensity: 'heavy' as const,
+          transparency: 'heavy' as const,
+          border: 'heavy' as const,
+          shadow: 'heavy' as const,
         };
-      case "frosted":
+      case 'frosted':
         return {
-          intensity: "ultra" as const,
-          transparency: "ultra" as const,
-          border: "medium" as const,
-          shadow: "medium" as const,
+          intensity: 'ultra' as const,
+          transparency: 'ultra' as const,
+          border: 'medium' as const,
+          shadow: 'medium' as const,
         };
-      case "crystal":
+      case 'crystal':
         return {
-          intensity: "light" as const,
-          transparency: "light" as const,
-          border: "light" as const,
-          shadow: "light" as const,
+          intensity: 'light' as const,
+          transparency: 'light' as const,
+          border: 'light' as const,
+          shadow: 'light' as const,
         };
       default:
         return {
-          intensity: "medium" as const,
-          transparency: "medium" as const,
-          border: "light" as const,
-          shadow: "medium" as const,
+          intensity: 'medium' as const,
+          transparency: 'medium' as const,
+          border: 'light' as const,
+          shadow: 'medium' as const,
         };
     }
   };
 
   const getSizeConfig = () => {
     switch (size) {
-      case "sm":
+      case 'sm':
         return { padding: Spacing.md };
-      case "lg":
+      case 'lg':
         return { padding: Spacing.xl };
-      case "xl":
-        return { padding: Spacing["2xl"] };
+      case 'xl':
+        return { padding: Spacing['2xl'] };
       default:
         return { padding: Spacing.lg };
     }

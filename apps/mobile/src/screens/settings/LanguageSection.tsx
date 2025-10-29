@@ -3,10 +3,9 @@
  * Language switcher component for settings
  */
 
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { LanguageSwitcher } from "../../components/i18n/LanguageSwitcher";
-import { useTheme } from "@/theme";
+import { useTheme } from '@mobile/src/theme';
+import { StyleSheet, Text, View } from 'react-native';
+import { LanguageSwitcher } from '../../components/i18n/LanguageSwitcher';
 
 export function LanguageSection() {
   const theme = useTheme();
@@ -18,14 +17,14 @@ export function LanguageSection() {
     },
     sectionTitle: {
       fontSize: 14,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       color: theme.colors.onMuted,
-      textTransform: "uppercase",
+      textTransform: 'uppercase',
       letterSpacing: 0.5,
       marginBottom: 12,
     },
     sectionContent: {
-      backgroundColor: theme.colors.bgElevated,
+      backgroundColor: theme.colors.surface,
       borderRadius: 12,
       padding: 16,
       shadowColor: theme.colors.border,
@@ -45,4 +44,3 @@ export function LanguageSection() {
     </View>
   );
 }
-

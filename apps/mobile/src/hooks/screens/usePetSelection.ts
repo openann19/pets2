@@ -1,9 +1,9 @@
 /**
  * usePetSelection Hook
- * 
+ *
  * Manages pet selection logic for compatibility analysis.
  * Handles selection state, validation, and reset functionality.
- * 
+ *
  * @example
  * ```typescript
  * const {
@@ -17,7 +17,7 @@
  * ```
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 
 export interface Pet {
   _id: string;
@@ -34,37 +34,37 @@ export interface UsePetSelectionReturn {
    * First selected pet
    */
   selectedPet1: Pet | null;
-  
+
   /**
    * Second selected pet
    */
   selectedPet2: Pet | null;
-  
+
   /**
    * Select a pet (auto-assigns to first or second slot)
    */
   selectPet: (pet: Pet) => void;
-  
+
   /**
    * Deselect a pet
    */
   deselectPet: (petId: string) => void;
-  
+
   /**
    * Reset both selections
    */
   reset: () => void;
-  
+
   /**
    * Check if a pet can be selected
    */
   canSelectPet: (pet: Pet) => boolean;
-  
+
   /**
    * Check if both pets are selected
    */
   isReadyForAnalysis: boolean;
-  
+
   /**
    * Get selection validation error message
    */
@@ -81,63 +81,75 @@ export const usePetSelection = (): UsePetSelectionReturn => {
   /**
    * Check if a pet can be selected based on current selections
    */
-  const canSelectPet = useCallback((pet: Pet): boolean => {
-    // If both slots are filled, can't select more
-    if (selectedPet1 && selectedPet2) return false;
-    
-    // If trying to select the same pet twice, can't
-    if (selectedPet1?._id === pet._id || selectedPet2?._id === pet._id) return false;
-    
-    // If trying to select two pets from same owner, can't
-    if (selectedPet1 && selectedPet1.owner._id === pet.owner._id) return false;
-    
-    return true;
-  }, [selectedPet1, selectedPet2]);
+  const canSelectPet = useCallback(
+    (pet: Pet): boolean => {
+      // If both slots are filled, can't select more
+      if (selectedPet1 && selectedPet2) return false;
+
+      // If trying to select the same pet twice, can't
+      if (selectedPet1?._id === pet._id || selectedPet2?._id === pet._id) return false;
+
+      // If trying to select two pets from same owner, can't
+      if (selectedPet1 && selectedPet1.owner._id === pet.owner._id) return false;
+
+      return true;
+    },
+    [selectedPet1, selectedPet2],
+  );
 
   /**
    * Get validation error message for a pet selection attempt
    */
-  const getValidationError = useCallback((pet: Pet): string | null => {
-    if (selectedPet1 && selectedPet2) {
-      return "Both slots are already filled. Please deselect one pet first.";
-    }
-    
-    if (selectedPet1?._id === pet._id || selectedPet2?._id === pet._id) {
-      return "This pet is already selected.";
-    }
-    
-    if (selectedPet1 && selectedPet1.owner._id === pet.owner._id) {
-      return "Cannot select two pets from the same owner.";
-    }
-    
-    return null;
-  }, [selectedPet1, selectedPet2]);
+  const getValidationError = useCallback(
+    (pet: Pet): string | null => {
+      if (selectedPet1 && selectedPet2) {
+        return 'Both slots are already filled. Please deselect one pet first.';
+      }
+
+      if (selectedPet1?._id === pet._id || selectedPet2?._id === pet._id) {
+        return 'This pet is already selected.';
+      }
+
+      if (selectedPet1 && selectedPet1.owner._id === pet.owner._id) {
+        return 'Cannot select two pets from the same owner.';
+      }
+
+      return null;
+    },
+    [selectedPet1, selectedPet2],
+  );
 
   /**
    * Select a pet (auto-assigns to first or second slot)
    */
-  const selectPet = useCallback((pet: Pet) => {
-    if (!canSelectPet(pet)) return;
-    
-    if (!selectedPet1) {
-      // Assign to first slot
-      setSelectedPet1(pet);
-    } else if (!selectedPet2) {
-      // Assign to second slot
-      setSelectedPet2(pet);
-    }
-  }, [selectedPet1, selectedPet2, canSelectPet]);
+  const selectPet = useCallback(
+    (pet: Pet) => {
+      if (!canSelectPet(pet)) return;
+
+      if (!selectedPet1) {
+        // Assign to first slot
+        setSelectedPet1(pet);
+      } else if (!selectedPet2) {
+        // Assign to second slot
+        setSelectedPet2(pet);
+      }
+    },
+    [selectedPet1, selectedPet2, canSelectPet],
+  );
 
   /**
    * Deselect a pet
    */
-  const deselectPet = useCallback((petId: string) => {
-    if (selectedPet1?._id === petId) {
-      setSelectedPet1(null);
-    } else if (selectedPet2?._id === petId) {
-      setSelectedPet2(null);
-    }
-  }, [selectedPet1, selectedPet2]);
+  const deselectPet = useCallback(
+    (petId: string) => {
+      if (selectedPet1?._id === petId) {
+        setSelectedPet1(null);
+      } else if (selectedPet2?._id === petId) {
+        setSelectedPet2(null);
+      }
+    },
+    [selectedPet1, selectedPet2],
+  );
 
   /**
    * Reset both selections
@@ -160,4 +172,3 @@ export const usePetSelection = (): UsePetSelectionReturn => {
     getValidationError,
   };
 };
-

@@ -112,14 +112,17 @@ describe('VerificationService', () => {
       const result = await verificationService.submitIdentityVerification(mockIdentityData);
 
       expect(result).toEqual(mockResponse);
-      expect(mockRequest).toHaveBeenCalledWith('/verification/identity', { method: 'POST', body: mockIdentityData });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/identity', {
+        method: 'POST',
+        body: mockIdentityData,
+      });
     });
 
     it('should handle submission errors', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Submission failed'));
 
       await expect(
-        verificationService.submitIdentityVerification(mockIdentityData)
+        verificationService.submitIdentityVerification(mockIdentityData),
       ).rejects.toThrow('Submission failed');
     });
 
@@ -134,9 +137,9 @@ describe('VerificationService', () => {
 
       mockRequest.mockRejectedValueOnce(new Error('Validation failed'));
 
-      await expect(
-        verificationService.submitIdentityVerification(invalidData)
-      ).rejects.toThrow('Validation failed');
+      await expect(verificationService.submitIdentityVerification(invalidData)).rejects.toThrow(
+        'Validation failed',
+      );
     });
   });
 
@@ -172,7 +175,10 @@ describe('VerificationService', () => {
       const result = await verificationService.submitPetOwnershipVerification(mockPetOwnershipData);
 
       expect(result).toEqual(mockResponse);
-      expect(mockRequest).toHaveBeenCalledWith('/verification/pet-ownership', { method: 'POST', body: mockPetOwnershipData });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/pet-ownership', {
+        method: 'POST',
+        body: mockPetOwnershipData,
+      });
     });
 
     it('should handle different proof types', async () => {
@@ -202,7 +208,7 @@ describe('VerificationService', () => {
       mockRequest.mockRejectedValueOnce(new Error('Pet verification failed'));
 
       await expect(
-        verificationService.submitPetOwnershipVerification(mockPetOwnershipData)
+        verificationService.submitPetOwnershipVerification(mockPetOwnershipData),
       ).rejects.toThrow('Pet verification failed');
     });
   });
@@ -237,7 +243,10 @@ describe('VerificationService', () => {
       const result = await verificationService.submitVeterinaryVerification(mockVeterinaryData);
 
       expect(result).toEqual(mockResponse);
-      expect(mockRequest).toHaveBeenCalledWith('/verification/veterinary', { method: 'POST', body: mockVeterinaryData });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/veterinary', {
+        method: 'POST',
+        body: mockVeterinaryData,
+      });
     });
 
     it('should handle minimal veterinary data', async () => {
@@ -264,14 +273,17 @@ describe('VerificationService', () => {
       const result = await verificationService.submitVeterinaryVerification(minimalData);
 
       expect(result.tier).toBe('tier3');
-      expect(mockRequest).toHaveBeenCalledWith('/verification/veterinary', { method: 'POST', body: minimalData });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/veterinary', {
+        method: 'POST',
+        body: minimalData,
+      });
     });
 
     it('should handle veterinary submission errors', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Veterinary verification failed'));
 
       await expect(
-        verificationService.submitVeterinaryVerification(mockVeterinaryData)
+        verificationService.submitVeterinaryVerification(mockVeterinaryData),
       ).rejects.toThrow('Veterinary verification failed');
     });
   });
@@ -302,7 +314,10 @@ describe('VerificationService', () => {
       const result = await verificationService.submitOrganizationVerification(mockOrganizationData);
 
       expect(result).toEqual(mockResponse);
-      expect(mockRequest).toHaveBeenCalledWith('/verification/organization', { method: 'POST', body: mockOrganizationData });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/organization', {
+        method: 'POST',
+        body: mockOrganizationData,
+      });
     });
 
     it('should handle different organization types', async () => {
@@ -323,7 +338,10 @@ describe('VerificationService', () => {
       const result = await verificationService.submitOrganizationVerification(breederData);
 
       expect(result.badges).toContain('breeder_verified');
-      expect(mockRequest).toHaveBeenCalledWith('/verification/organization', { method: 'POST', body: breederData });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/organization', {
+        method: 'POST',
+        body: breederData,
+      });
     });
 
     it('should handle minimal organization data', async () => {
@@ -345,14 +363,17 @@ describe('VerificationService', () => {
       const result = await verificationService.submitOrganizationVerification(minimalData);
 
       expect(result.tier).toBe('tier4');
-      expect(mockRequest).toHaveBeenCalledWith('/verification/organization', { method: 'POST', body: minimalData });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/organization', {
+        method: 'POST',
+        body: minimalData,
+      });
     });
 
     it('should handle organization submission errors', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Organization verification failed'));
 
       await expect(
-        verificationService.submitOrganizationVerification(mockOrganizationData)
+        verificationService.submitOrganizationVerification(mockOrganizationData),
       ).rejects.toThrow('Organization verification failed');
     });
   });
@@ -370,13 +391,17 @@ describe('VerificationService', () => {
       const result = await verificationService.getRequirements('tier1');
 
       expect(result).toEqual(mockRequirements);
-      expect(mockRequest).toHaveBeenCalledWith('/verification/requirements/tier1', { method: 'GET' });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/requirements/tier1', {
+        method: 'GET',
+      });
     });
 
     it('should handle requirements retrieval errors', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Requirements not found'));
 
-      await expect(verificationService.getRequirements('tier5')).rejects.toThrow('Requirements not found');
+      await expect(verificationService.getRequirements('tier5')).rejects.toThrow(
+        'Requirements not found',
+      );
     });
   });
 
@@ -385,18 +410,20 @@ describe('VerificationService', () => {
       mockRequest.mockResolvedValueOnce({ success: true });
 
       await expect(
-        verificationService.cancelVerification('verification-123')
+        verificationService.cancelVerification('verification-123'),
       ).resolves.not.toThrow();
 
-      expect(mockRequest).toHaveBeenCalledWith('/verification/verification-123/cancel', { method: 'POST' });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/verification-123/cancel', {
+        method: 'POST',
+      });
     });
 
     it('should handle cancellation errors', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Cannot cancel completed verification'));
 
-      await expect(
-        verificationService.cancelVerification('verification-123')
-      ).rejects.toThrow('Cannot cancel completed verification');
+      await expect(verificationService.cancelVerification('verification-123')).rejects.toThrow(
+        'Cannot cancel completed verification',
+      );
     });
   });
 
@@ -467,7 +494,7 @@ describe('VerificationService', () => {
       const result = await verificationService.uploadDocument(
         'file://document.jpg',
         'identity_document',
-        'tier1'
+        'tier1',
       );
 
       expect(result).toBe('uploaded-doc-url');
@@ -514,7 +541,7 @@ describe('VerificationService', () => {
       mockRequest.mockRejectedValueOnce(new Error('Upload failed'));
 
       await expect(
-        verificationService.uploadDocument('file://document.jpg', 'identity_document')
+        verificationService.uploadDocument('file://document.jpg', 'identity_document'),
       ).rejects.toThrow('Upload failed');
     });
 
@@ -528,7 +555,7 @@ describe('VerificationService', () => {
       mockRequest.mockResolvedValueOnce({ url: 'uploaded-doc-url' });
 
       await expect(
-        verificationService.uploadDocument('file://document.jpg', 'document')
+        verificationService.uploadDocument('file://document.jpg', 'document'),
       ).rejects.toThrow('FormData not available');
     });
   });
@@ -545,7 +572,9 @@ describe('VerificationService', () => {
     it('should handle status update request errors', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Status update failed'));
 
-      await expect(verificationService.requestStatusUpdate()).rejects.toThrow('Status update failed');
+      await expect(verificationService.requestStatusUpdate()).rejects.toThrow(
+        'Status update failed',
+      );
     });
   });
 
@@ -571,9 +600,9 @@ describe('VerificationService', () => {
     it('should handle server errors', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Internal server error'));
 
-      await expect(
-        verificationService.submitIdentityVerification({} as any)
-      ).rejects.toThrow('Internal server error');
+      await expect(verificationService.submitIdentityVerification({} as any)).rejects.toThrow(
+        'Internal server error',
+      );
     });
 
     it('should handle concurrent requests', async () => {
@@ -581,7 +610,7 @@ describe('VerificationService', () => {
         tier: 'tier0' as const,
         verified: false,
         badges: [],
-        status: 'not_started' as const
+        status: 'not_started' as const,
       });
 
       const promises = [
@@ -618,7 +647,11 @@ describe('VerificationService', () => {
         consentToDataProcessing: true,
       };
 
-      mockRequest.mockResolvedValueOnce({ tier: 'tier1', verified: false, status: 'pending_review' });
+      mockRequest.mockResolvedValueOnce({
+        tier: 'tier1',
+        verified: false,
+        status: 'pending_review',
+      });
 
       const result = await verificationService.submitIdentityVerification(largeIdentityData);
 
@@ -630,28 +663,32 @@ describe('VerificationService', () => {
     it('should handle invalid tier names', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Invalid tier'));
 
-      await expect(verificationService.getRequirements('invalid-tier')).rejects.toThrow('Invalid tier');
+      await expect(verificationService.getRequirements('invalid-tier')).rejects.toThrow(
+        'Invalid tier',
+      );
     });
 
     it('should handle invalid verification IDs', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Invalid verification ID'));
 
-      await expect(verificationService.cancelVerification('invalid-id')).rejects.toThrow('Invalid verification ID');
+      await expect(verificationService.cancelVerification('invalid-id')).rejects.toThrow(
+        'Invalid verification ID',
+      );
     });
 
     it('should handle empty file uploads', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Empty file'));
 
-      await expect(
-        verificationService.uploadDocument('', 'document')
-      ).rejects.toThrow('Empty file');
+      await expect(verificationService.uploadDocument('', 'document')).rejects.toThrow(
+        'Empty file',
+      );
     });
 
     it('should handle unsupported document types', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Unsupported document type'));
 
       await expect(
-        verificationService.uploadDocument('file://document.exe', 'executable')
+        verificationService.uploadDocument('file://document.exe', 'executable'),
       ).rejects.toThrow('Unsupported document type');
     });
   });
@@ -663,7 +700,7 @@ describe('VerificationService', () => {
         tier: 'tier0' as const,
         verified: false,
         badges: [],
-        status: 'not_started' as const
+        status: 'not_started' as const,
       });
 
       let status = await verificationService.getStatus();
@@ -674,7 +711,7 @@ describe('VerificationService', () => {
         tier: 'tier1' as const,
         verified: false,
         badges: ['identity_verified'],
-        status: 'approved' as const
+        status: 'approved' as const,
       });
 
       status = await verificationService.submitIdentityVerification({} as any);
@@ -688,7 +725,7 @@ describe('VerificationService', () => {
         verified: false,
         badges: [],
         status: 'rejected' as const,
-        rejectionReason: 'Document unclear'
+        rejectionReason: 'Document unclear',
       });
 
       const status = await verificationService.submitIdentityVerification({} as any);
@@ -704,7 +741,7 @@ describe('VerificationService', () => {
         verified: false,
         badges: ['pet_owner'],
         status: 'pending_review' as const,
-        submittedAt
+        submittedAt,
       });
 
       const status = await verificationService.submitPetOwnershipVerification({} as any);
@@ -721,7 +758,7 @@ describe('VerificationService', () => {
         tier: 'tier0' as const,
         verified: false,
         badges: [],
-        status: 'not_started' as const
+        status: 'not_started' as const,
       });
 
       let status = await verificationService.getStatus();
@@ -732,7 +769,7 @@ describe('VerificationService', () => {
         tier: 'tier1' as const,
         verified: true,
         badges: ['identity_verified'],
-        status: 'approved' as const
+        status: 'approved' as const,
       });
 
       status = await verificationService.submitIdentityVerification({} as any);
@@ -741,7 +778,7 @@ describe('VerificationService', () => {
 
       // 3. Check badges
       mockRequest.mockResolvedValueOnce({
-        badges: ['identity_verified']
+        badges: ['identity_verified'],
       });
 
       const badges = await verificationService.getBadges();
@@ -749,7 +786,7 @@ describe('VerificationService', () => {
 
       // 4. Check tier availability
       mockRequest.mockResolvedValueOnce({
-        hasTier: true
+        hasTier: true,
       });
 
       const hasTier = await verificationService.hasTier('tier1');
@@ -765,7 +802,7 @@ describe('VerificationService', () => {
       const identityUrl = await verificationService.uploadDocument(
         'file://identity.jpg',
         'identity_document',
-        'tier1'
+        'tier1',
       );
       expect(identityUrl).toBe('uploaded-identity-url');
 
@@ -775,7 +812,7 @@ describe('VerificationService', () => {
       const petUrl = await verificationService.uploadDocument(
         'file://pet-registration.pdf',
         'pet_registration',
-        'tier2'
+        'tier2',
       );
       expect(petUrl).toBe('uploaded-pet-url');
     });

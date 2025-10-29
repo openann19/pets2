@@ -53,14 +53,19 @@ describe('ConfettiBurst', () => {
           expect.objectContaining({
             zIndex: 9999,
           }),
-        ])
+        ]),
       );
     });
   });
 
   describe('Intensity Levels', () => {
     it('should create correct number of particles for light intensity', () => {
-      render(<ConfettiBurst {...defaultProps} intensity="light" />);
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          intensity="light"
+        />,
+      );
       // Light intensity should create 40 particles
       act(() => {
         jest.advanceTimersByTime(100);
@@ -69,7 +74,12 @@ describe('ConfettiBurst', () => {
     });
 
     it('should create correct number of particles for medium intensity', () => {
-      render(<ConfettiBurst {...defaultProps} intensity="medium" />);
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          intensity="medium"
+        />,
+      );
       // Medium intensity should create 80 particles
       act(() => {
         jest.advanceTimersByTime(100);
@@ -77,7 +87,12 @@ describe('ConfettiBurst', () => {
     });
 
     it('should create correct number of particles for heavy intensity', () => {
-      render(<ConfettiBurst {...defaultProps} intensity="heavy" />);
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          intensity="heavy"
+        />,
+      );
       // Heavy intensity should create 150 particles
       act(() => {
         jest.advanceTimersByTime(100);
@@ -88,32 +103,28 @@ describe('ConfettiBurst', () => {
   describe('Animation', () => {
     it('should trigger haptic feedback on show', () => {
       render(<ConfettiBurst {...defaultProps} />);
-      
+
       act(() => {
         jest.advanceTimersByTime(10);
       });
 
-      expect(Haptics.impactAsync).toHaveBeenCalledWith(
-        Haptics.ImpactFeedbackStyle.Heavy
-      );
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Heavy);
     });
 
     it('should trigger second haptic feedback after delay', async () => {
       render(<ConfettiBurst {...defaultProps} />);
-      
+
       act(() => {
         jest.advanceTimersByTime(210); // Past 200ms delay
       });
 
       expect(Haptics.impactAsync).toHaveBeenCalledTimes(2);
-      expect(Haptics.impactAsync).toHaveBeenLastCalledWith(
-        Haptics.ImpactFeedbackStyle.Medium
-      );
+      expect(Haptics.impactAsync).toHaveBeenLastCalledWith(Haptics.ImpactFeedbackStyle.Medium);
     });
 
     it('should animate particles with correct properties', () => {
       const { UNSAFE_getAllByType } = render(<ConfettiBurst {...defaultProps} />);
-      
+
       act(() => {
         jest.advanceTimersByTime(100);
       });
@@ -123,8 +134,13 @@ describe('ConfettiBurst', () => {
     });
 
     it('should call onComplete after duration', async () => {
-      render(<ConfettiBurst {...defaultProps} duration={1000} />);
-      
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          duration={1000}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(1000);
       });
@@ -135,8 +151,13 @@ describe('ConfettiBurst', () => {
     });
 
     it('should stop confetti after completion', async () => {
-      const { rerender } = render(<ConfettiBurst {...defaultProps} duration={1000} />);
-      
+      const { rerender } = render(
+        <ConfettiBurst
+          {...defaultProps}
+          duration={1000}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(1000);
       });
@@ -145,7 +166,12 @@ describe('ConfettiBurst', () => {
         expect(mockOnComplete).toHaveBeenCalled();
       });
 
-      rerender(<ConfettiBurst {...defaultProps} show={false} />);
+      rerender(
+        <ConfettiBurst
+          {...defaultProps}
+          show={false}
+        />,
+      );
       const container = render(<View />);
       expect(container).toBeTruthy();
     });
@@ -153,8 +179,13 @@ describe('ConfettiBurst', () => {
 
   describe('Particle Bursts', () => {
     it('should trigger periodic bursts during animation', () => {
-      render(<ConfettiBurst {...defaultProps} duration={5000} />);
-      
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          duration={5000}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(400); // Past initial 350ms interval
       });
@@ -164,8 +195,14 @@ describe('ConfettiBurst', () => {
     });
 
     it('should handle multiple burst cycles', () => {
-      render(<ConfettiBurst {...defaultProps} intensity="heavy" duration={5000} />);
-      
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          intensity="heavy"
+          duration={5000}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(1000);
       });
@@ -179,24 +216,39 @@ describe('ConfettiBurst', () => {
   describe('Custom Colors', () => {
     it('should use provided colors for particles', () => {
       const customColors = ['#FF0000', '#00FF00', '#0000FF'];
-      render(<ConfettiBurst {...defaultProps} colors={customColors} />);
-      
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          colors={customColors}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(100);
       });
     });
 
     it('should handle single color array', () => {
-      render(<ConfettiBurst {...defaultProps} colors={['#FF6B6B']} />);
-      
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          colors={['#FF6B6B']}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(100);
       });
     });
 
     it('should handle empty colors array', () => {
-      render(<ConfettiBurst {...defaultProps} colors={[]} />);
-      
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          colors={[]}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(100);
       });
@@ -206,7 +258,12 @@ describe('ConfettiBurst', () => {
   describe('Edge Cases', () => {
     it('should handle undefined onComplete', () => {
       expect(() => {
-        render(<ConfettiBurst {...defaultProps} onComplete={undefined} />);
+        render(
+          <ConfettiBurst
+            {...defaultProps}
+            onComplete={undefined}
+          />,
+        );
         act(() => {
           jest.advanceTimersByTime(100);
         });
@@ -214,18 +271,38 @@ describe('ConfettiBurst', () => {
     });
 
     it('should handle rapid show/hide toggles', () => {
-      const { rerender } = render(<ConfettiBurst {...defaultProps} show={false} />);
-      
+      const { rerender } = render(
+        <ConfettiBurst
+          {...defaultProps}
+          show={false}
+        />,
+      );
+
       act(() => {
-        rerender(<ConfettiBurst {...defaultProps} show={true} />);
+        rerender(
+          <ConfettiBurst
+            {...defaultProps}
+            show={true}
+          />,
+        );
       });
-      
+
       act(() => {
-        rerender(<ConfettiBurst {...defaultProps} show={false} />);
+        rerender(
+          <ConfettiBurst
+            {...defaultProps}
+            show={false}
+          />,
+        );
       });
-      
+
       act(() => {
-        rerender(<ConfettiBurst {...defaultProps} show={true} />);
+        rerender(
+          <ConfettiBurst
+            {...defaultProps}
+            show={true}
+          />,
+        );
       });
 
       expect(() => {
@@ -237,13 +314,13 @@ describe('ConfettiBurst', () => {
 
     it('should cleanup intervals on unmount', () => {
       const { unmount } = render(<ConfettiBurst {...defaultProps} />);
-      
+
       act(() => {
         jest.advanceTimersByTime(100);
       });
 
       unmount();
-      
+
       act(() => {
         jest.advanceTimersByTime(1000);
       });
@@ -254,20 +331,33 @@ describe('ConfettiBurst', () => {
     });
 
     it('should handle very short duration', async () => {
-      render(<ConfettiBurst {...defaultProps} duration={100} />);
-      
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          duration={100}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(150);
       });
 
-      await waitFor(() => {
-        expect(mockOnComplete).toHaveBeenCalled();
-      }, { timeout: 200 });
+      await waitFor(
+        () => {
+          expect(mockOnComplete).toHaveBeenCalled();
+        },
+        { timeout: 200 },
+      );
     });
 
     it('should handle very long duration', () => {
-      render(<ConfettiBurst {...defaultProps} duration={10000} />);
-      
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          duration={10000}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(5000);
       });
@@ -277,14 +367,24 @@ describe('ConfettiBurst', () => {
     });
 
     it('should not create particles when show becomes false mid-animation', () => {
-      const { rerender } = render(<ConfettiBurst {...defaultProps} show={true} />);
-      
+      const { rerender } = render(
+        <ConfettiBurst
+          {...defaultProps}
+          show={true}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(100);
       });
 
-      rerender(<ConfettiBurst {...defaultProps} show={false} />);
-      
+      rerender(
+        <ConfettiBurst
+          {...defaultProps}
+          show={false}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(100);
       });
@@ -300,8 +400,13 @@ describe('ConfettiBurst', () => {
 
   describe('Performance', () => {
     it('should not create excessive particles for light intensity', () => {
-      render(<ConfettiBurst {...defaultProps} intensity="light" />);
-      
+      render(
+        <ConfettiBurst
+          {...defaultProps}
+          intensity="light"
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(100);
       });
@@ -311,14 +416,19 @@ describe('ConfettiBurst', () => {
     });
 
     it('should efficiently clean up completed animations', () => {
-      const { unmount } = render(<ConfettiBurst {...defaultProps} duration={1000} />);
-      
+      const { unmount } = render(
+        <ConfettiBurst
+          {...defaultProps}
+          duration={1000}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(1100);
       });
 
       unmount();
-      
+
       // Should not have memory leaks
       expect(() => {
         act(() => {
@@ -332,7 +442,7 @@ describe('ConfettiBurst', () => {
     it('should have pointerEvents="none" to not block interactions', () => {
       const { UNSAFE_getByType } = render(<ConfettiBurst {...defaultProps} />);
       const container = UNSAFE_getByType(View);
-      
+
       expect(container.props.pointerEvents).toBe('none');
     });
   });
@@ -340,7 +450,7 @@ describe('ConfettiBurst', () => {
   describe('Props Validation', () => {
     it('should work with minimal props', () => {
       render(<ConfettiBurst show={true} />);
-      
+
       act(() => {
         jest.advanceTimersByTime(100);
       });
@@ -356,9 +466,9 @@ describe('ConfettiBurst', () => {
           intensity="heavy"
           duration={4000}
           colors={['#FF0000', '#00FF00', '#0000FF']}
-        />
+        />,
       );
-      
+
       act(() => {
         jest.advanceTimersByTime(100);
       });
@@ -376,11 +486,21 @@ describe('ConfettiBurst', () => {
         duration: 4000,
       };
 
-      const { rerender } = render(<ConfettiBurst {...matchProps} show={false} />);
-      
+      const { rerender } = render(
+        <ConfettiBurst
+          {...matchProps}
+          show={false}
+        />,
+      );
+
       // Match occurs
-      rerender(<ConfettiBurst {...matchProps} show={true} />);
-      
+      rerender(
+        <ConfettiBurst
+          {...matchProps}
+          show={true}
+        />,
+      );
+
       act(() => {
         jest.advanceTimersByTime(4100);
       });
@@ -391,4 +511,3 @@ describe('ConfettiBurst', () => {
     });
   });
 });
-

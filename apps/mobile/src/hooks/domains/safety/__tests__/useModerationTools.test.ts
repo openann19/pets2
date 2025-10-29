@@ -24,7 +24,7 @@ describe('useModerationTools', () => {
         totalReports: 0,
         pendingReports: 0,
         resolvedReports: 0,
-        blockedUsers: 0
+        blockedUsers: 0,
       });
     });
 
@@ -148,7 +148,7 @@ describe('useModerationTools', () => {
         await result.current.fetchReports({ status: 'pending' });
       });
 
-      expect(result.current.reports.every(report => report.status === 'pending')).toBe(true);
+      expect(result.current.reports.every((report) => report.status === 'pending')).toBe(true);
     });
 
     it('should filter reports by type', async () => {
@@ -158,7 +158,7 @@ describe('useModerationTools', () => {
         await result.current.fetchReports({ type: 'harassment' });
       });
 
-      expect(result.current.reports.every(report => report.type === 'harassment')).toBe(true);
+      expect(result.current.reports.every((report) => report.type === 'harassment')).toBe(true);
     });
   });
 
@@ -239,7 +239,9 @@ describe('useModerationTools', () => {
       });
 
       // Stats should be updated
-      expect(result.current.moderationStats.blockedUsers).toBeGreaterThanOrEqual(initialStats.blockedUsers);
+      expect(result.current.moderationStats.blockedUsers).toBeGreaterThanOrEqual(
+        initialStats.blockedUsers,
+      );
     });
   });
 
@@ -252,7 +254,7 @@ describe('useModerationTools', () => {
       await act(async () => {
         const results = await result.current.bulkApproveContent(contentIds);
         expect(results).toHaveLength(contentIds.length);
-        expect(results.every(r => r.success)).toBe(true);
+        expect(results.every((r) => r.success)).toBe(true);
       });
     });
 
@@ -265,7 +267,7 @@ describe('useModerationTools', () => {
       await act(async () => {
         const results = await result.current.bulkRejectContent(contentIds, reason);
         expect(results).toHaveLength(contentIds.length);
-        expect(results.every(r => r.success)).toBe(true);
+        expect(results.every((r) => r.success)).toBe(true);
       });
     });
 
@@ -278,7 +280,7 @@ describe('useModerationTools', () => {
       await act(async () => {
         const results = await result.current.bulkResolveReports(reportIds, action);
         expect(results).toHaveLength(reportIds.length);
-        expect(results.every(r => r.success)).toBe(true);
+        expect(results.every((r) => r.success)).toBe(true);
       });
     });
   });
@@ -381,7 +383,7 @@ describe('useModerationTools', () => {
       const initialState = {
         isLoading: result.current.isLoading,
         reports: result.current.reports,
-        blockedUsers: result.current.blockedUsers
+        blockedUsers: result.current.blockedUsers,
       };
 
       rerender();

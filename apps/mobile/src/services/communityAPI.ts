@@ -5,9 +5,9 @@
  * Includes offline queue support, retry logic, and comprehensive error handling.
  */
 
-import { logger } from "@pawfectmatch/core";
-import apiClient from "./apiClient";
-import type { AxiosError } from "axios";
+import { logger } from '@pawfectmatch/core';
+import apiClient from './apiClient';
+import type { AxiosError } from 'axios';
 
 // ============================================================================
 // Type Definitions
@@ -28,7 +28,7 @@ export interface CommunityPost {
   createdAt: string;
   packId?: string;
   packName?: string;
-  type: "post" | "activity";
+  type: 'post' | 'activity';
   activityDetails?: ActivityDetails;
 }
 
@@ -56,7 +56,7 @@ export interface CreatePostRequest {
   content: string;
   images?: string[];
   packId?: string;
-  type?: "post" | "activity";
+  type?: 'post' | 'activity';
   activityDetails?: ActivityDetails;
 }
 
@@ -114,7 +114,7 @@ export interface GetFeedParams {
   limit?: number;
   packId?: string;
   userId?: string;
-  type?: "post" | "activity";
+  type?: 'post' | 'activity';
 }
 
 export interface GetCommentsParams {
@@ -146,18 +146,18 @@ export const communityAPI = {
   getFeed: async (params?: GetFeedParams): Promise<CommunityFeedResponse> => {
     try {
       const queryParams = new URLSearchParams();
-      if (params?.page) queryParams.set("page", params.page.toString());
-      if (params?.limit) queryParams.set("limit", params.limit.toString());
-      if (params?.packId) queryParams.set("packId", params.packId);
-      if (params?.userId) queryParams.set("userId", params.userId);
-      if (params?.type) queryParams.set("type", params.type);
+      if (params?.page) queryParams.set('page', params.page.toString());
+      if (params?.limit) queryParams.set('limit', params.limit.toString());
+      if (params?.packId) queryParams.set('packId', params.packId);
+      if (params?.userId) queryParams.set('userId', params.userId);
+      if (params?.type) queryParams.set('type', params.type);
 
       const response = await apiClient.get<CommunityFeedResponse>(
         `/community/posts?${queryParams.toString()}`,
       );
       return response;
     } catch (error) {
-      return handleApiError(error, "Failed to fetch community feed");
+      return handleApiError(error, 'Failed to fetch community feed');
     }
   },
 
@@ -173,18 +173,18 @@ export const communityAPI = {
   }> => {
     try {
       if (!data.content || !data.content.trim()) {
-        throw new Error("Post content is required");
+        throw new Error('Post content is required');
       }
 
       const response = await apiClient.post<{
         success: boolean;
         post: CommunityPost;
         message: string;
-      }>("/community/posts", data);
+      }>('/community/posts', data);
 
       return response;
     } catch (error) {
-      return handleApiError(error, "Failed to create community post");
+      return handleApiError(error, 'Failed to create community post');
     }
   },
 
@@ -193,12 +193,10 @@ export const communityAPI = {
    */
   likePost: async (postId: string): Promise<LikeResponse> => {
     try {
-      const response = await apiClient.post<LikeResponse>(
-        `/community/posts/${postId}/like`,
-      );
+      const response = await apiClient.post<LikeResponse>(`/community/posts/${postId}/like`);
       return response;
     } catch (error) {
-      return handleApiError(error, "Failed to like/unlike community post");
+      return handleApiError(error, 'Failed to like/unlike community post');
     }
   },
 
@@ -211,30 +209,25 @@ export const communityAPI = {
   ): Promise<CommentsListResponse> => {
     try {
       const queryParams = new URLSearchParams();
-      if (params?.page)
-        queryParams.set("page", params.page.toString());
-      if (params?.limit)
-        queryParams.set("limit", params.limit.toString());
+      if (params?.page) queryParams.set('page', params.page.toString());
+      if (params?.limit) queryParams.set('limit', params.limit.toString());
 
       const response = await apiClient.get<CommentsListResponse>(
         `/community/posts/${postId}/comments?${queryParams.toString()}`,
       );
       return response;
     } catch (error) {
-      return handleApiError(error, "Failed to fetch post comments");
+      return handleApiError(error, 'Failed to fetch post comments');
     }
   },
 
   /**
    * Add a comment to a post
    */
-  addComment: async (
-    postId: string,
-    data: CreateCommentRequest,
-  ): Promise<CommentResponse> => {
+  addComment: async (postId: string, data: CreateCommentRequest): Promise<CommentResponse> => {
     try {
       if (!data.content || !data.content.trim()) {
-        throw new Error("Comment content is required");
+        throw new Error('Comment content is required');
       }
 
       const response = await apiClient.post<CommentResponse>(
@@ -243,7 +236,7 @@ export const communityAPI = {
       );
       return response;
     } catch (error) {
-      return handleApiError(error, "Failed to add comment to post");
+      return handleApiError(error, 'Failed to add comment to post');
     }
   },
 
@@ -251,7 +244,7 @@ export const communityAPI = {
    * Report a post or comment
    */
   reportContent: async (data: {
-    type: "post" | "comment";
+    type: 'post' | 'comment';
     targetId: string;
     reason: string;
     description?: string;
@@ -260,27 +253,25 @@ export const communityAPI = {
       const response = await apiClient.post<{
         success: boolean;
         message: string;
-      }>("/community/report", data);
+      }>('/community/report', data);
       return response;
     } catch (error) {
-      return handleApiError(error, "Failed to report content");
+      return handleApiError(error, 'Failed to report content');
     }
   },
 
   /**
    * Block a user from community
    */
-  blockUser: async (
-    userId: string,
-  ): Promise<{ success: boolean; message: string }> => {
+  blockUser: async (userId: string): Promise<{ success: boolean; message: string }> => {
     try {
       const response = await apiClient.post<{
         success: boolean;
         message: string;
-      }>("/community/block", { userId });
+      }>('/community/block', { userId });
       return response;
     } catch (error) {
-      return handleApiError(error, "Failed to block user");
+      return handleApiError(error, 'Failed to block user');
     }
   },
 
@@ -303,7 +294,7 @@ export const communityAPI = {
 
       return response;
     } catch (error) {
-      return handleApiError(error, "Failed to join activity");
+      return handleApiError(error, 'Failed to join activity');
     }
   },
 
@@ -326,16 +317,14 @@ export const communityAPI = {
 
       return response;
     } catch (error) {
-      return handleApiError(error, "Failed to leave activity");
+      return handleApiError(error, 'Failed to leave activity');
     }
   },
 
   /**
    * Delete a user's own post
    */
-  deletePost: async (
-    postId: string,
-  ): Promise<{ success: boolean; message: string }> => {
+  deletePost: async (postId: string): Promise<{ success: boolean; message: string }> => {
     try {
       const response = await apiClient.delete<{
         success: boolean;
@@ -344,7 +333,7 @@ export const communityAPI = {
 
       return response;
     } catch (error) {
-      return handleApiError(error, "Failed to delete post");
+      return handleApiError(error, 'Failed to delete post');
     }
   },
 
@@ -368,10 +357,9 @@ export const communityAPI = {
 
       return response;
     } catch (error) {
-      return handleApiError(error, "Failed to update post");
+      return handleApiError(error, 'Failed to update post');
     }
   },
 };
 
 export default communityAPI;
-

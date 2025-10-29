@@ -13,7 +13,16 @@
  * These tests ensure the core business flows work correctly across all layers.
  */
 
-import { describe, it, expect, jest, beforeEach, afterEach, beforeAll, afterAll } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  jest,
+  beforeEach,
+  afterEach,
+  beforeAll,
+  afterAll,
+} from '@jest/globals';
 import { render, fireEvent, waitFor, screen, act } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -94,7 +103,7 @@ describe('Critical User Journey Integration Tests', () => {
       const { getByText, getByPlaceholderText } = render(
         <NavigationContainer>
           <AuthNavigator />
-        </NavigationContainer>
+        </NavigationContainer>,
       );
 
       await waitFor(() => {
@@ -219,7 +228,7 @@ describe('Critical User Journey Integration Tests', () => {
       fireEvent.press(getByText('Like'));
 
       await waitFor(() => {
-        expect(getByText('It\'s a Match!')).toBeTruthy();
+        expect(getByText("It's a Match!")).toBeTruthy();
       });
 
       fireEvent.press(getByText('Send a Message'));
@@ -230,11 +239,11 @@ describe('Critical User Journey Integration Tests', () => {
       });
 
       const messageInput = getByPlaceholderText('Type a message...');
-      fireEvent.changeText(messageInput, 'Hi Max! I\'m Alex and this is Luna 🐱');
+      fireEvent.changeText(messageInput, "Hi Max! I'm Alex and this is Luna 🐱");
       fireEvent.press(getByText('Send'));
 
       await waitFor(() => {
-        expect(getByText('Hi Max! I\'m Alex and this is Luna 🐱')).toBeTruthy();
+        expect(getByText("Hi Max! I'm Alex and this is Luna 🐱")).toBeTruthy();
       });
 
       // Verify onboarding completion
@@ -252,7 +261,7 @@ describe('Critical User Journey Integration Tests', () => {
       const { getByText } = render(
         <NavigationContainer>
           <MainNavigator />
-        </NavigationContainer>
+        </NavigationContainer>,
       );
 
       // Navigate to premium
@@ -329,10 +338,12 @@ describe('Critical User Journey Integration Tests', () => {
 
     it('should handle payment failures and retries', async () => {
       // Mock payment failure
-      mockApi.post.mockImplementationOnce(() => Promise.reject({
-        status: 402,
-        data: { error: 'card_declined' }
-      }));
+      mockApi.post.mockImplementationOnce(() =>
+        Promise.reject({
+          status: 402,
+          data: { error: 'card_declined' },
+        }),
+      );
 
       const { getByText } = render(<PremiumScreen />);
 
@@ -470,7 +481,7 @@ describe('Critical User Journey Integration Tests', () => {
       // Perform swipes
       for (let i = 0; i < 5; i++) {
         fireEvent.press(getByText('Like'));
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
       // Get match
@@ -478,20 +489,20 @@ describe('Critical User Journey Integration Tests', () => {
       fireEvent.press(getByText('Like'));
 
       await waitFor(() => {
-        expect(getByText('It\'s a Match!')).toBeTruthy();
+        expect(getByText("It's a Match!")).toBeTruthy();
       });
 
       fireEvent.press(getByText('Send Message'));
 
       // Chat interface
       await waitFor(() => {
-        expect(getByText('Chat with Luna\'s Owner')).toBeTruthy();
+        expect(getByText("Chat with Luna's Owner")).toBeTruthy();
       });
 
       // Send messages
       const messageInput = getByPlaceholderText('Type a message...');
 
-      fireEvent.changeText(messageInput, 'Hi! I loved Luna\'s photos!');
+      fireEvent.changeText(messageInput, "Hi! I loved Luna's photos!");
       fireEvent.press(getByText('Send'));
 
       fireEvent.changeText(messageInput, 'Would you like to meet up for a playdate?');
@@ -531,12 +542,12 @@ describe('Critical User Journey Integration Tests', () => {
       // View conversation list
       await waitFor(() => {
         expect(getByText('Messages')).toBeTruthy();
-        expect(getByText('Luna\'s Owner')).toBeTruthy();
+        expect(getByText("Luna's Owner")).toBeTruthy();
         expect(getByText('2 unread messages')).toBeTruthy();
       });
 
       // Open conversation
-      fireEvent.press(getByText('Luna\'s Owner'));
+      fireEvent.press(getByText("Luna's Owner"));
 
       // Mark as read
       await waitFor(() => {
@@ -545,7 +556,7 @@ describe('Critical User Journey Integration Tests', () => {
 
       // Send reply
       const messageInput = screen.getByPlaceholderText('Type a message...');
-      fireEvent.changeText(messageInput, 'Sounds perfect! Let\'s meet at the park tomorrow!');
+      fireEvent.changeText(messageInput, "Sounds perfect! Let's meet at the park tomorrow!");
       fireEvent.press(screen.getByText('Send'));
 
       // Archive conversation
@@ -558,7 +569,7 @@ describe('Critical User Journey Integration Tests', () => {
 
       // Unarchive
       fireEvent.press(getByText('Archived'));
-      fireEvent.press(getByText('Luna\'s Owner'));
+      fireEvent.press(getByText("Luna's Owner"));
       fireEvent.press(getByText('Unarchive'));
 
       await waitFor(() => {
@@ -686,7 +697,7 @@ describe('Critical User Journey Integration Tests', () => {
       await mockNetworkOffline();
 
       await waitFor(() => {
-        expect(getByText('You\'re offline')).toBeTruthy();
+        expect(getByText("You're offline")).toBeTruthy();
         expect(getByText('Limited functionality available')).toBeTruthy();
       });
 
@@ -704,14 +715,14 @@ describe('Critical User Journey Integration Tests', () => {
 
       // Send offline message
       fireEvent.press(getByText('Messages'));
-      fireEvent.press(getByText('Luna\'s Owner'));
+      fireEvent.press(getByText("Luna's Owner"));
 
       const messageInput = screen.getByPlaceholderText('Type a message...');
       fireEvent.changeText(messageInput, 'Offline message - will send when online!');
       fireEvent.press(screen.getByText('Send'));
 
       await waitFor(() => {
-        expect(getByText('Message saved for when you\'re back online')).toBeTruthy();
+        expect(getByText("Message saved for when you're back online")).toBeTruthy();
       });
 
       // Come back online
@@ -922,12 +933,14 @@ async function setupMatchesAndConversations() {
   mockApi.get.mockImplementation((endpoint) => {
     if (endpoint.includes('/matches')) {
       return Promise.resolve({
-        data: [{
-          id: 'match1',
-          pet: { name: 'Max', photos: ['max.jpg'] },
-          compatibility: 85,
-          lastMessage: 'Hi there!',
-        }],
+        data: [
+          {
+            id: 'match1',
+            pet: { name: 'Max', photos: ['max.jpg'] },
+            compatibility: 85,
+            lastMessage: 'Hi there!',
+          },
+        ],
       });
     }
     return Promise.resolve({ data: [] });

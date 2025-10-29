@@ -37,7 +37,9 @@ jest.mock('../../../services/api', () => ({
 
 const mockUseAuthStore = useAuthStore as jest.MockedFunction<typeof useAuthStore>;
 const mockGetPets = matchesAPI.getPets as jest.MockedFunction<typeof matchesAPI.getPets>;
-const mockCreateMatch = matchesAPI.createMatch as jest.MockedFunction<typeof matchesAPI.createMatch>;
+const mockCreateMatch = matchesAPI.createMatch as jest.MockedFunction<
+  typeof matchesAPI.createMatch
+>;
 const mockSwipePet = matchesAPI.swipePet as jest.MockedFunction<typeof matchesAPI.swipePet>;
 
 const mockPets = [
@@ -106,7 +108,9 @@ describe('useModernSwipeScreen Hook', () => {
     });
 
     it('should handle loading state correctly', async () => {
-      mockGetPets.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve(mockPets), 100)));
+      mockGetPets.mockImplementation(
+        () => new Promise((resolve) => setTimeout(() => resolve(mockPets), 100)),
+      );
 
       const { result } = renderHook(() => useModernSwipeScreen());
 
@@ -540,4 +544,3 @@ describe('useModernSwipeScreen Hook', () => {
     });
   });
 });
-

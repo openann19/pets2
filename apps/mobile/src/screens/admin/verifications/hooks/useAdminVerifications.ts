@@ -1,33 +1,28 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-import { _adminAPI } from "../../../../services/api";
-import { errorHandler } from "../../../../services/errorHandler";
+import { _adminAPI } from '../../../../services/api';
+import { errorHandler } from '../../../../services/errorHandler';
 
 export interface Verification {
   id: string;
   userId: string;
   userName: string;
   userEmail: string;
-  type: "identity" | "pet_ownership" | "veterinary" | "breeder";
-  status: "pending" | "approved" | "rejected" | "requires_info";
+  type: 'identity' | 'pet_ownership' | 'veterinary' | 'breeder';
+  status: 'pending' | 'approved' | 'rejected' | 'requires_info';
   submittedAt: string;
   reviewedAt?: string;
   reviewedBy?: string;
   documents: {
     id: string;
-    type:
-      | "photo_id"
-      | "pet_registration"
-      | "vet_certificate"
-      | "breeder_license"
-      | "other";
+    type: 'photo_id' | 'pet_registration' | 'vet_certificate' | 'breeder_license' | 'other';
     url: string;
     name: string;
   }[];
   notes?: string;
   rejectionReason?: string;
   additionalInfoRequested?: string;
-  priority: "low" | "medium" | "high";
+  priority: 'low' | 'medium' | 'high';
   expiresAt?: string;
 }
 
@@ -35,12 +30,9 @@ export const useAdminVerifications = () => {
   const [verifications, setVerifications] = useState<Verification[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filter, setFilter] = useState<"pending" | "high_priority" | "all">(
-    "pending",
-  );
-  const [selectedVerification, setSelectedVerification] =
-    useState<Verification | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filter, setFilter] = useState<'pending' | 'high_priority' | 'all'>('pending');
+  const [selectedVerification, setSelectedVerification] = useState<Verification | null>(null);
 
   const loadVerifications = useCallback(
     async (refresh = false) => {
@@ -59,12 +51,10 @@ export const useAdminVerifications = () => {
         }
       } catch (error) {
         errorHandler.handleError(
-          error instanceof Error
-            ? error
-            : new Error("Failed to load verifications"),
+          error instanceof Error ? error : new Error('Failed to load verifications'),
           {
-            component: "AdminVerificationsScreen",
-            action: "loadVerifications",
+            component: 'AdminVerificationsScreen',
+            action: 'loadVerifications',
           },
         );
       } finally {
@@ -87,7 +77,7 @@ export const useAdminVerifications = () => {
     setSearchQuery(query);
   }, []);
 
-  const handleFilterChange = useCallback((newFilter: "pending" | "high_priority" | "all") => {
+  const handleFilterChange = useCallback((newFilter: 'pending' | 'high_priority' | 'all') => {
     setFilter(newFilter);
   }, []);
 
@@ -105,10 +95,10 @@ export const useAdminVerifications = () => {
         }
       } catch (error) {
         errorHandler.handleError(
-          error instanceof Error ? error : new Error("Failed to approve verification"),
+          error instanceof Error ? error : new Error('Failed to approve verification'),
           {
-            component: "AdminVerificationsScreen",
-            action: "approveVerification",
+            component: 'AdminVerificationsScreen',
+            action: 'approveVerification',
           },
         );
       }
@@ -126,10 +116,10 @@ export const useAdminVerifications = () => {
         }
       } catch (error) {
         errorHandler.handleError(
-          error instanceof Error ? error : new Error("Failed to reject verification"),
+          error instanceof Error ? error : new Error('Failed to reject verification'),
           {
-            component: "AdminVerificationsScreen",
-            action: "rejectVerification",
+            component: 'AdminVerificationsScreen',
+            action: 'rejectVerification',
           },
         );
       }
@@ -148,10 +138,10 @@ export const useAdminVerifications = () => {
         }
       } catch (error) {
         errorHandler.handleError(
-          error instanceof Error ? error : new Error("Failed to request info"),
+          error instanceof Error ? error : new Error('Failed to request info'),
           {
-            component: "AdminVerificationsScreen",
-            action: "requestVerificationInfo",
+            component: 'AdminVerificationsScreen',
+            action: 'requestVerificationInfo',
           },
         );
       }
@@ -160,11 +150,11 @@ export const useAdminVerifications = () => {
   );
 
   const filteredVerifications = verifications.filter((v) => {
-    if (filter === "pending") {
-      return v.status === "pending";
+    if (filter === 'pending') {
+      return v.status === 'pending';
     }
-    if (filter === "high_priority") {
-      return v.priority === "high";
+    if (filter === 'high_priority') {
+      return v.priority === 'high';
     }
     return true;
   });
@@ -187,4 +177,3 @@ export const useAdminVerifications = () => {
     setSelectedVerification,
   };
 };
-

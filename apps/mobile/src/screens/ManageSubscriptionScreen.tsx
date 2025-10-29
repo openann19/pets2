@@ -1,37 +1,24 @@
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import * as Haptics from "expo-haptics";
-import { useEffect, useMemo, useState } from "react";
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@/theme";
-import type { RootStackParamList } from "../navigation/types";
-import { premiumAPI } from "../services/api";
-import type { AppTheme } from "@/theme";
+import { Ionicons } from '@expo/vector-icons';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { logger } from '@pawfectmatch/core';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as Haptics from 'expo-haptics';
+import { useEffect, useMemo, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import type { RootStackParamList } from '../navigation/types';
+import { premiumAPI } from '../services/api';
 
 type ManageSubscriptionScreenProps = NativeStackScreenProps<
   RootStackParamList,
-  "ManageSubscription"
+  'ManageSubscription'
 >;
 
 interface SubscriptionData {
   id?: string;
-  status?:
-    | "active"
-    | "inactive"
-    | "canceled"
-    | "past_due"
-    | "unpaid"
-    | "incomplete";
+  status?: 'active' | 'inactive' | 'canceled' | 'past_due' | 'unpaid' | 'incomplete';
   plan?:
     | string
     | {
@@ -47,9 +34,7 @@ const ManageSubscriptionScreen = ({
 }: ManageSubscriptionScreenProps): React.JSX.Element => {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const [subscription, setSubscription] = useState<SubscriptionData | null>(
-    null,
-  );
+  const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,23 +46,31 @@ const ManageSubscriptionScreen = ({
       const data = await premiumAPI.getCurrentSubscription();
       // Map API response to local format
       if (data) {
-        const validStatuses: Array<"active" | "canceled" | "past_due" | "unpaid" | "incomplete" | "inactive"> = ["active", "inactive", "canceled", "past_due", "unpaid", "incomplete"];
-        const status = (data.status && validStatuses.includes(data.status as any)) ? data.status as "active" | "canceled" | "past_due" | "unpaid" | "incomplete" | "inactive" : undefined;
+        const validStatuses: Array<
+          'active' | 'canceled' | 'past_due' | 'unpaid' | 'incomplete' | 'inactive'
+        > = ['active', 'inactive', 'canceled', 'past_due', 'unpaid', 'incomplete'];
+        const status =
+          data.status && validStatuses.includes(data.status as any)
+            ? (data.status as
+                | 'active'
+                | 'canceled'
+                | 'past_due'
+                | 'unpaid'
+                | 'incomplete'
+                | 'inactive')
+            : undefined;
         setSubscription({
           id: data.id,
           status,
-          plan:
-            typeof data.plan === "string"
-              ? { name: data.plan }
-              : (data.plan as any),
+          plan: typeof data.plan === 'string' ? { name: data.plan } : (data.plan as any),
           nextBillingDate: data.currentPeriodEnd,
         });
       } else {
         setSubscription(null);
       }
     } catch (error) {
-      logger.error("Error loading subscription data:", { error });
-      Alert.alert("Error", "Failed to load subscription data");
+      logger.error('Error loading subscription data:', { error });
+      Alert.alert('Error', 'Failed to load subscription data');
     } finally {
       setLoading(false);
     }
@@ -85,23 +78,23 @@ const ManageSubscriptionScreen = ({
 
   const handleCancelSubscription = (): void => {
     Alert.alert(
-      "Cancel Subscription",
-      "Are you sure you want to cancel your premium subscription? You will lose access to premium features at the end of your billing period.",
+      'Cancel Subscription',
+      'Are you sure you want to cancel your premium subscription? You will lose access to premium features at the end of your billing period.',
       [
-        { text: "Cancel", style: "cancel" },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: "Confirm",
-          style: "destructive",
+          text: 'Confirm',
+          style: 'destructive',
           onPress: async () => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
             try {
               // Call the backend to cancel the subscription
-              const response = await fetch("/api/subscription/cancel", {
-                method: "POST",
+              const response = await fetch('/api/subscription/cancel', {
+                method: 'POST',
                 headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${await AsyncStorage.getItem("authToken")}`,
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${await AsyncStorage.getItem('authToken')}`,
                 },
                 body: JSON.stringify({
                   subscriptionId: subscription?.id,
@@ -110,19 +103,19 @@ const ManageSubscriptionScreen = ({
 
               if (response.ok) {
                 Alert.alert(
-                  "Success",
-                  "Your subscription has been canceled. You will retain access until the end of your current billing period.",
+                  'Success',
+                  'Your subscription has been canceled. You will retain access until the end of your current billing period.',
                 );
                 navigation.goBack();
               } else {
-                throw new Error("Failed to cancel subscription");
+                throw new Error('Failed to cancel subscription');
               }
             } catch (error) {
               Alert.alert(
-                "Error",
-                "Failed to cancel subscription. Please try again or contact support.",
+                'Error',
+                'Failed to cancel subscription. Please try again or contact support.',
               );
-              logger.error("Cancel subscription error:", { error });
+              logger.error('Cancel subscription error:', { error });
             }
           },
         },
@@ -133,9 +126,9 @@ const ManageSubscriptionScreen = ({
   const handleRestorePurchases = async () => {
     try {
       // Restore purchases logic
-      Alert.alert("Restore Purchases", "No previous purchases found.");
+      Alert.alert('Restore Purchases', 'No previous purchases found.');
     } catch (error) {
-      Alert.alert("Error", "Failed to restore purchases.");
+      Alert.alert('Error', 'Failed to restore purchases.');
     }
   };
 
@@ -168,7 +161,10 @@ const ManageSubscriptionScreen = ({
         { backgroundColor: theme.colors.bg }, // Replaced theme.colors.background
       ])}
     >
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header */}
         <View
           style={StyleSheet.flatten([
@@ -177,13 +173,20 @@ const ManageSubscriptionScreen = ({
           ])}
         >
           <TouchableOpacity
-             testID="ManageSubscriptionScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+            testID="ManageSubscriptionScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.goBack();
             }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color={theme.colors.onSurface}
+            />
           </TouchableOpacity>
           <Text
             style={StyleSheet.flatten([
@@ -213,7 +216,11 @@ const ManageSubscriptionScreen = ({
           </Text>
 
           <View style={styles.planInfo}>
-            <Ionicons name="star" size={30} color={theme.colors.primary} />
+            <Ionicons
+              name="star"
+              size={30}
+              color={theme.colors.primary}
+            />
             <View style={styles.planDetails}>
               <Text
                 style={StyleSheet.flatten([
@@ -221,27 +228,27 @@ const ManageSubscriptionScreen = ({
                   { color: theme.colors.onSurface }, // Replaced theme.colors.text
                 ])}
               >
-                {typeof subscription?.plan === "object"
+                {typeof subscription?.plan === 'object'
                   ? subscription.plan.name
-                  : subscription?.plan || "Free Plan"}
+                  : subscription?.plan || 'Free Plan'}
               </Text>
               <Text
                 style={StyleSheet.flatten([
                   styles.planStatus,
                   {
                     color:
-                      subscription?.status === "active"
+                      subscription?.status === 'active'
                         ? theme.colors.success
                         : theme.colors.danger, // Replaced theme.colors.error
                   },
                 ])}
               >
-                {subscription?.status === "active" ? "Active" : "Inactive"}
+                {subscription?.status === 'active' ? 'Active' : 'Inactive'}
               </Text>
             </View>
           </View>
 
-          {subscription?.status === "active" && (
+          {subscription?.status === 'active' && (
             <>
               <View style={styles.billingInfo}>
                 <Text
@@ -258,9 +265,7 @@ const ManageSubscriptionScreen = ({
                     { color: theme.colors.onSurface }, // Replaced theme.colors.text
                   ])}
                 >
-                  {typeof subscription?.plan === "object"
-                    ? subscription.plan.duration
-                    : "monthly"}
+                  {typeof subscription?.plan === 'object' ? subscription.plan.duration : 'monthly'}
                 </Text>
               </View>
 
@@ -279,7 +284,7 @@ const ManageSubscriptionScreen = ({
                     { color: theme.colors.onSurface }, // Replaced theme.colors.text
                   ])}
                 >
-                  {subscription?.nextBillingDate || "N/A"}
+                  {subscription?.nextBillingDate || 'N/A'}
                 </Text>
               </View>
 
@@ -298,10 +303,7 @@ const ManageSubscriptionScreen = ({
                     { color: theme.colors.onSurface }, // Replaced theme.colors.text
                   ])}
                 >
-                  $
-                  {typeof subscription?.plan === "object"
-                    ? subscription.plan.price
-                    : "0.00"}
+                  ${typeof subscription?.plan === 'object' ? subscription.plan.price : '0.00'}
                 </Text>
               </View>
             </>
@@ -324,13 +326,13 @@ const ManageSubscriptionScreen = ({
             Actions
           </Text>
 
-          {subscription?.status === "active" ? (
+          {subscription?.status === 'active' ? (
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.actionButton,
-                styles.cancelButton,
-              ])}
-               testID="ManageSubscriptionScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleCancelSubscription}
+              style={StyleSheet.flatten([styles.actionButton, styles.cancelButton])}
+              testID="ManageSubscriptionScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={handleCancelSubscription}
             >
               <Text
                 style={StyleSheet.flatten([
@@ -347,18 +349,21 @@ const ManageSubscriptionScreen = ({
                 styles.actionButton,
                 { backgroundColor: theme.colors.primary },
               ])}
-               testID="ManageSubscriptionScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.navigate("Premium")}
+              testID="ManageSubscriptionScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => navigation.navigate('Premium')}
             >
               <Text style={styles.actionButtonText}>Upgrade to Premium</Text>
             </TouchableOpacity>
           )}
 
           <TouchableOpacity
-            style={StyleSheet.flatten([
-              styles.actionButton,
-              styles.restoreButton,
-            ])}
-             testID="ManageSubscriptionScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleRestorePurchases}
+            style={StyleSheet.flatten([styles.actionButton, styles.restoreButton])}
+            testID="ManageSubscriptionScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={handleRestorePurchases}
           >
             <Text
               style={StyleSheet.flatten([
@@ -516,16 +521,16 @@ function makeStyles(theme: AppTheme) {
     },
     loadingContainer: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     loadingText: {
       fontSize: 16,
     },
     header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       paddingHorizontal: theme.spacing.lg ?? 20,
       paddingVertical: theme.spacing.md ?? 15,
       borderBottomWidth: 1,
@@ -533,7 +538,7 @@ function makeStyles(theme: AppTheme) {
     },
     headerTitle: {
       fontSize: 20,
-      fontWeight: "700",
+      fontWeight: '700',
     },
     section: {
       margin: theme.spacing.lg ?? 20,
@@ -547,12 +552,12 @@ function makeStyles(theme: AppTheme) {
     },
     sectionTitle: {
       fontSize: 18,
-      fontWeight: "700",
+      fontWeight: '700',
       marginBottom: theme.spacing.lg ?? 20,
     },
     planInfo: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       marginBottom: theme.spacing.lg ?? 20,
     },
     planDetails: {
@@ -560,16 +565,16 @@ function makeStyles(theme: AppTheme) {
     },
     planName: {
       fontSize: 20,
-      fontWeight: "700",
+      fontWeight: '700',
       marginBottom: theme.spacing.xs ?? 5,
     },
     planStatus: {
       fontSize: 16,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     billingInfo: {
-      flexDirection: "row",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       paddingVertical: theme.spacing.md ?? 10,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
@@ -579,33 +584,33 @@ function makeStyles(theme: AppTheme) {
     },
     billingValue: {
       fontSize: 16,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     actionButton: {
       padding: theme.spacing.md ?? 15,
       borderRadius: theme.radii?.sm ?? theme.radius?.sm ?? 10,
-      alignItems: "center",
+      alignItems: 'center',
       marginBottom: theme.spacing.md ?? 15,
       borderWidth: 1,
       borderColor: theme.colors.border,
     },
     cancelButton: {
-      backgroundColor: theme.colors.danger + "1A",
-      borderColor: theme.colors.danger + "4D",
+      backgroundColor: theme.colors.danger + '1A',
+      borderColor: theme.colors.danger + '4D',
     },
     restoreButton: {
-      backgroundColor: theme.colors.bg + "0D",
+      backgroundColor: theme.colors.bg + '0D',
     },
     actionButtonText: {
       fontSize: 16,
-      fontWeight: "700",
+      fontWeight: '700',
     },
     featuresList: {
       gap: theme.spacing.md ?? 15,
     },
     featureItem: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: theme.spacing.sm ?? 10,
     },
     featureText: {

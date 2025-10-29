@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
-import { request } from "../services/api";
+import { useEffect, useMemo, useState } from 'react';
+import { request } from '../services/api';
 
 export type PremiumStatus = {
   active: boolean;
-  plan?: "free" | "pro" | "elite";
+  plan?: 'free' | 'pro' | 'elite';
   renewsAt?: string | null;
   trialEndsAt?: string | null;
 };
@@ -16,16 +16,18 @@ export function usePremiumStatus(pollMs = 0) {
   async function fetchStatus() {
     try {
       setLoading(true);
-      const data = await request<{ subscription?: PremiumStatus }>("/api/premium/status", { method: "GET" });
-      setStatus({ 
-        active: !!data?.subscription?.active, 
-        plan: data?.subscription?.plan ?? "free",
+      const data = await request<{ subscription?: PremiumStatus }>('/api/premium/status', {
+        method: 'GET',
+      });
+      setStatus({
+        active: !!data?.subscription?.active,
+        plan: data?.subscription?.plan ?? 'free',
         renewsAt: data?.subscription?.renewsAt,
         trialEndsAt: data?.subscription?.trialEndsAt,
       });
       setError(null);
     } catch (e: unknown) {
-      const errorMessage = e instanceof Error ? e.message : "Failed to load premium status";
+      const errorMessage = e instanceof Error ? e.message : 'Failed to load premium status';
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -36,14 +38,16 @@ export function usePremiumStatus(pollMs = 0) {
     fetchStatus();
     if (pollMs > 0) {
       const id = setInterval(fetchStatus, pollMs);
-      return () => { clearInterval(id); };
+      return () => {
+        clearInterval(id);
+      };
     }
   }, [pollMs]);
 
   const can = useMemo(() => {
     // central feature map – tweak as needed
-    const isPro = status.plan === "pro" || status.plan === "elite";
-    const isElite = status.plan === "elite";
+    const isPro = status.plan === 'pro' || status.plan === 'elite';
+    const isElite = status.plan === 'elite';
     return {
       superLike: isPro,
       rewind: isPro,
@@ -56,4 +60,3 @@ export function usePremiumStatus(pollMs = 0) {
 
   return { status, can, loading, error, refresh: fetchStatus };
 }
-

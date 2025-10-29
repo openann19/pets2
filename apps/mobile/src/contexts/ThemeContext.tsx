@@ -3,12 +3,12 @@
  * This file is kept for backward compatibility during migration
  */
 
-export { ThemeProvider, useTheme } from "@/theme";
+export { ThemeProvider, useTheme } from '@/theme';
 
 let warned = false;
 if (!warned) {
-  void import("../services/logger").then(({ logger }) => {
-    logger.warn("[DEPRECATION] theme/Provider → use theme/Provider instead.");
+  void import('../services/logger').then(({ logger }) => {
+    logger.warn('[DEPRECATION] theme/Provider → use theme/Provider instead.');
   });
   warned = true;
 }
@@ -67,10 +67,10 @@ export interface ThemeColors {
 
 export interface ThemeContextType {
   isDark: boolean;
-  themeMode: "light" | "dark" | "system";
+  themeMode: 'light' | 'dark' | 'system';
   colors: ThemeColors;
   styles: Record<string, unknown>;
   shadows: Record<string, unknown>;
-  setThemeMode: (mode: "light" | "dark" | "system") => void;
+  setThemeMode: (mode: 'light' | 'dark' | 'system') => void;
   toggleTheme: () => void;
 }

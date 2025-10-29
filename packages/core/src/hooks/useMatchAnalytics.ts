@@ -40,9 +40,7 @@ interface UseMatchAnalyticsReturn {
 /**
  * Hook to fetch match analytics and insights
  */
-export function useMatchAnalytics(
-  options: UseMatchAnalyticsOptions = {}
-): UseMatchAnalyticsReturn {
+export function useMatchAnalytics(options: UseMatchAnalyticsOptions = {}): UseMatchAnalyticsReturn {
   const { userId, timeframe = 'weekly' } = options;
 
   const [insights, setInsights] = useState<MatchInsights | null>(null);
@@ -60,14 +58,11 @@ export function useMatchAnalytics(
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch(
-        `/api/analytics/matches/${userId}?timeframe=${timeframe}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${getLocalStorageItem('accessToken') ?? ''}`,
-          },
-        }
-      );
+      const response = await fetch(`/api/analytics/matches/${userId}?timeframe=${timeframe}`, {
+        headers: {
+          Authorization: `Bearer ${getLocalStorageItem('accessToken') ?? ''}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to fetch match analytics: ${response.statusText}`);

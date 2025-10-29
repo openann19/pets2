@@ -3,10 +3,10 @@
  * React hook for managing biometric authentication state and operations
  */
 
-import { useCallback, useEffect, useState } from "react";
-import { Alert } from "react-native";
-import type { BiometricAuthResult as BiometricResult } from "../services/BiometricService";
-import BiometricService from "../services/BiometricService";
+import { useCallback, useEffect, useState } from 'react';
+import { Alert } from 'react-native';
+import type { BiometricAuthResult as BiometricResult } from '../services/BiometricService';
+import BiometricService from '../services/BiometricService';
 
 export interface BiometricState {
   isAvailable: boolean;
@@ -66,7 +66,7 @@ export const useBiometric = (): BiometricState & BiometricActions => {
       setState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : "Initialization failed",
+        error: error instanceof Error ? error.message : 'Initialization failed',
       }));
     }
   };
@@ -83,8 +83,7 @@ export const useBiometric = (): BiometricState & BiometricActions => {
         setState((prev) => ({ ...prev, isLoading: false }));
         return result;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Authentication failed";
+        const errorMessage = error instanceof Error ? error.message : 'Authentication failed';
         setState((prev) => ({
           ...prev,
           isLoading: false,
@@ -114,22 +113,21 @@ export const useBiometric = (): BiometricState & BiometricActions => {
         }));
 
         Alert.alert(
-          "Biometric Enabled",
+          'Biometric Enabled',
           `${state.biometryType} has been enabled for secure authentication.`,
-          [{ text: "OK" }],
+          [{ text: 'OK' }],
         );
       } else {
         setState((prev) => ({
           ...prev,
           isLoading: false,
-          error: "Failed to enable biometric authentication",
+          error: 'Failed to enable biometric authentication',
         }));
       }
 
       return success;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to enable biometric";
+      const errorMessage = error instanceof Error ? error.message : 'Failed to enable biometric';
       setState((prev) => ({ ...prev, isLoading: false, error: errorMessage }));
       return false;
     }
@@ -150,23 +148,20 @@ export const useBiometric = (): BiometricState & BiometricActions => {
           error: null,
         }));
 
-        Alert.alert(
-          "Biometric Disabled",
-          `${state.biometryType} has been disabled.`,
-          [{ text: "OK" }],
-        );
+        Alert.alert('Biometric Disabled', `${state.biometryType} has been disabled.`, [
+          { text: 'OK' },
+        ]);
       } else {
         setState((prev) => ({
           ...prev,
           isLoading: false,
-          error: "Failed to disable biometric authentication",
+          error: 'Failed to disable biometric authentication',
         }));
       }
 
       return success;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to disable biometric";
+      const errorMessage = error instanceof Error ? error.message : 'Failed to disable biometric';
       setState((prev) => ({ ...prev, isLoading: false, error: errorMessage }));
       return false;
     }
@@ -176,13 +171,12 @@ export const useBiometric = (): BiometricState & BiometricActions => {
     try {
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-      const result = await BiometricService.authenticate("Quick authenticate");
+      const result = await BiometricService.authenticate('Quick authenticate');
 
       setState((prev) => ({ ...prev, isLoading: false }));
       return result;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Quick authentication failed";
+      const errorMessage = error instanceof Error ? error.message : 'Quick authentication failed';
       setState((prev) => ({ ...prev, isLoading: false, error: errorMessage }));
       return {
         success: false,
@@ -201,91 +195,73 @@ export const useBiometric = (): BiometricState & BiometricActions => {
       setState((prev) => ({ ...prev, isLoading: false }));
       return success;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Setup prompt failed";
+      const errorMessage = error instanceof Error ? error.message : 'Setup prompt failed';
       setState((prev) => ({ ...prev, isLoading: false, error: errorMessage }));
       return false;
     }
   }, []);
 
-  const storeSecureData = useCallback(
-    async (_key: string, data: string): Promise<boolean> => {
-      try {
-        setState((prev) => ({ ...prev, isLoading: true, error: null }));
+  const storeSecureData = useCallback(async (_key: string, data: string): Promise<boolean> => {
+    try {
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-        await BiometricService.encryptWithBiometric(data, _key);
-        // Persist encrypted if needed via app storage (omitted here)
-        const success = true;
+      await BiometricService.encryptWithBiometric(data, _key);
+      // Persist encrypted if needed via app storage (omitted here)
+      const success = true;
 
-        setState((prev) => ({ ...prev, isLoading: false }));
-        return success;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to store secure data";
-        setState((prev) => ({
-          ...prev,
-          isLoading: false,
-          error: errorMessage,
-        }));
-        return false;
-      }
-    },
-    [],
-  );
+      setState((prev) => ({ ...prev, isLoading: false }));
+      return success;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to store secure data';
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: errorMessage,
+      }));
+      return false;
+    }
+  }, []);
 
-  const getSecureData = useCallback(
-    async (_key: string): Promise<string | null> => {
-      try {
-        setState((prev) => ({ ...prev, isLoading: true, error: null }));
+  const getSecureData = useCallback(async (_key: string): Promise<string | null> => {
+    try {
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-        // Retrieve and decrypt via app storage (omitted here)
-        const data = null;
+      // Retrieve and decrypt via app storage (omitted here)
+      const data = null;
 
-        setState((prev) => ({ ...prev, isLoading: false }));
-        return data;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to retrieve secure data";
-        setState((prev) => ({
-          ...prev,
-          isLoading: false,
-          error: errorMessage,
-        }));
-        return null;
-      }
-    },
-    [],
-  );
+      setState((prev) => ({ ...prev, isLoading: false }));
+      return data;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to retrieve secure data';
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: errorMessage,
+      }));
+      return null;
+    }
+  }, []);
 
-  const removeSecureData = useCallback(
-    async (_key: string): Promise<boolean> => {
-      try {
-        setState((prev) => ({ ...prev, isLoading: true, error: null }));
+  const removeSecureData = useCallback(async (_key: string): Promise<boolean> => {
+    try {
+      setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-        // Remove via app storage (omitted here)
-        const success = true;
+      // Remove via app storage (omitted here)
+      const success = true;
 
-        setState((prev) => ({ ...prev, isLoading: false }));
-        return success;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to remove secure data";
-        setState((prev) => ({
-          ...prev,
-          isLoading: false,
-          error: errorMessage,
-        }));
-        return false;
-      }
-    },
-    [],
-  );
+      setState((prev) => ({ ...prev, isLoading: false }));
+      return success;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to remove secure data';
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        error: errorMessage,
+      }));
+      return false;
+    }
+  }, []);
 
   const refreshState = useCallback(async (): Promise<void> => {
     await initializeBiometric();

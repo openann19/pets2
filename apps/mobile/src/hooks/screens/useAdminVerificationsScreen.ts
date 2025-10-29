@@ -3,20 +3,20 @@
  * Manages pet verification requests and approvals
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
-import type { AdminScreenProps } from "../../navigation/types";
-import { useErrorHandler } from "../useErrorHandler";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import type { AdminScreenProps } from '../../navigation/types';
+import { useErrorHandler } from '../useErrorHandler';
 
 interface VerificationDocument {
   id: string;
-  type: "vaccination" | "license" | "ownership" | "vet_record" | "other";
+  type: 'vaccination' | 'license' | 'ownership' | 'vet_record' | 'other';
   url: string;
   uploadedAt: Date;
   verifiedAt?: Date;
-  status: "pending" | "approved" | "rejected";
+  status: 'pending' | 'approved' | 'rejected';
   rejectionReason?: string;
 }
 
@@ -31,8 +31,8 @@ interface VerificationRequest {
   ownerEmail: string;
   submittedAt: Date;
   documents: VerificationDocument[];
-  status: "pending" | "under_review" | "approved" | "rejected";
-  priority: "low" | "medium" | "high";
+  status: 'pending' | 'under_review' | 'approved' | 'rejected';
+  priority: 'low' | 'medium' | 'high';
   assignedAdmin?: string;
   reviewedAt?: Date;
   reviewNotes?: string;
@@ -47,7 +47,7 @@ interface VerificationStats {
 }
 
 interface UseAdminVerificationsScreenParams {
-  navigation: AdminScreenProps<"AdminVerifications">["navigation"];
+  navigation: AdminScreenProps<'AdminVerifications'>['navigation'];
 }
 
 export interface AdminVerificationsScreenState {
@@ -57,8 +57,8 @@ export interface AdminVerificationsScreenState {
   stats: VerificationStats;
 
   // Filters
-  statusFilter: "all" | "pending" | "under_review" | "approved" | "rejected";
-  priorityFilter: "all" | "high" | "medium" | "low";
+  statusFilter: 'all' | 'pending' | 'under_review' | 'approved' | 'rejected';
+  priorityFilter: 'all' | 'high' | 'medium' | 'low';
   searchQuery: string;
 
   // UI State
@@ -68,17 +68,15 @@ export interface AdminVerificationsScreenState {
 
   // Actions
   onRefresh: () => Promise<void>;
-  onStatusFilterChange: (status: "all" | "pending" | "under_review" | "approved" | "rejected") => void;
-  onPriorityFilterChange: (priority: "all" | "high" | "medium" | "low") => void;
+  onStatusFilterChange: (
+    status: 'all' | 'pending' | 'under_review' | 'approved' | 'rejected',
+  ) => void;
+  onPriorityFilterChange: (priority: 'all' | 'high' | 'medium' | 'low') => void;
   onSearchChange: (query: string) => void;
   onRequestSelect: (request: VerificationRequest) => void;
   onRequestClose: () => void;
   onApproveRequest: (requestId: string, notes?: string) => Promise<void>;
-  onRejectRequest: (
-    requestId: string,
-    reason: string,
-    notes?: string,
-  ) => Promise<void>;
+  onRejectRequest: (requestId: string, reason: string, notes?: string) => Promise<void>;
   onAssignToMe: (requestId: string) => Promise<void>;
   onBackPress: () => void;
 }
@@ -93,8 +91,7 @@ export function useAdminVerificationsScreen({
   const { handleNetworkError, handleOfflineError } = useErrorHandler();
 
   const [requests, setRequests] = useState<VerificationRequest[]>([]);
-  const [selectedRequest, setSelectedRequest] =
-    useState<VerificationRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<VerificationRequest | null>(null);
   const [stats, setStats] = useState<VerificationStats>({
     totalPending: 0,
     highPriority: 0,
@@ -104,12 +101,10 @@ export function useAdminVerificationsScreen({
   });
 
   const [statusFilter, setStatusFilter] = useState<
-    "all" | "pending" | "under_review" | "approved" | "rejected"
-  >("pending");
-  const [priorityFilter, setPriorityFilter] = useState<
-    "all" | "high" | "medium" | "low"
-  >("all");
-  const [searchQuery, setSearchQuery] = useState("");
+    'all' | 'pending' | 'under_review' | 'approved' | 'rejected'
+  >('pending');
+  const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -128,57 +123,57 @@ export function useAdminVerificationsScreen({
 
         const mockRequests: VerificationRequest[] = [
           {
-            id: "ver1",
-            petId: "pet1",
-            petName: "Buddy",
-            petBreed: "Golden Retriever",
-            petSpecies: "dog",
-            ownerId: "user1",
-            ownerName: "Alice Johnson",
-            ownerEmail: "alice@example.com",
+            id: 'ver1',
+            petId: 'pet1',
+            petName: 'Buddy',
+            petBreed: 'Golden Retriever',
+            petSpecies: 'dog',
+            ownerId: 'user1',
+            ownerName: 'Alice Johnson',
+            ownerEmail: 'alice@example.com',
             documents: [
               {
-                id: "doc1",
-                type: "vaccination",
-                url: "vaccination.pdf",
+                id: 'doc1',
+                type: 'vaccination',
+                url: 'vaccination.pdf',
                 uploadedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-                status: "pending",
+                status: 'pending',
               },
               {
-                id: "doc2",
-                type: "ownership",
-                url: "ownership.jpg",
+                id: 'doc2',
+                type: 'ownership',
+                url: 'ownership.jpg',
                 uploadedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-                status: "pending",
+                status: 'pending',
               },
             ],
-            status: "pending",
-            priority: "high",
+            status: 'pending',
+            priority: 'high',
             submittedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
           },
           {
-            id: "ver2",
-            petId: "pet2",
-            petName: "Whiskers",
-            petBreed: "Persian Cat",
-            petSpecies: "cat",
-            ownerId: "user2",
-            ownerName: "Bob Smith",
-            ownerEmail: "bob@example.com",
+            id: 'ver2',
+            petId: 'pet2',
+            petName: 'Whiskers',
+            petBreed: 'Persian Cat',
+            petSpecies: 'cat',
+            ownerId: 'user2',
+            ownerName: 'Bob Smith',
+            ownerEmail: 'bob@example.com',
             submittedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
             documents: [
               {
-                id: "doc3",
-                type: "vet_record",
-                url: "vet_record.pdf",
+                id: 'doc3',
+                type: 'vet_record',
+                url: 'vet_record.pdf',
                 uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-                status: "approved",
+                status: 'approved',
                 verifiedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
               },
             ],
-            status: "under_review",
-            priority: "medium",
-            assignedAdmin: "admin1",
+            status: 'under_review',
+            priority: 'medium',
+            assignedAdmin: 'admin1',
           },
         ];
 
@@ -193,17 +188,15 @@ export function useAdminVerificationsScreen({
         setRequests(mockRequests);
         setStats(mockStats);
 
-        logger.info("Verification requests loaded", {
+        logger.info('Verification requests loaded', {
           count: mockRequests.length,
           stats: mockStats,
         });
       } catch (error) {
         const err =
-          error instanceof Error
-            ? error
-            : new Error("Failed to load verification requests");
-        logger.error("Failed to load verification requests", { error: err });
-        handleNetworkError(err, "admin.verifications.load");
+          error instanceof Error ? error : new Error('Failed to load verification requests');
+        logger.error('Failed to load verification requests', { error: err });
+        handleNetworkError(err, 'admin.verifications.load');
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -220,12 +213,10 @@ export function useAdminVerificationsScreen({
     const query = searchQuery.trim().toLowerCase();
     return requests.filter((request) => {
       // Status filter
-      if (statusFilter !== "all" && request.status !== statusFilter)
-        return false;
+      if (statusFilter !== 'all' && request.status !== statusFilter) return false;
 
       // Priority filter
-      if (priorityFilter !== "all" && request.priority !== priorityFilter)
-        return false;
+      if (priorityFilter !== 'all' && request.priority !== priorityFilter) return false;
 
       // Search filter
       if (query.length > 0) {
@@ -235,7 +226,7 @@ export function useAdminVerificationsScreen({
           request.ownerName,
           request.ownerEmail,
         ]
-          .join(" ")
+          .join(' ')
           .toLowerCase();
         return searchableText.includes(query);
       }
@@ -253,12 +244,9 @@ export function useAdminVerificationsScreen({
     setStatusFilter(status);
   }, []);
 
-  const onPriorityFilterChange = useCallback(
-    (priority: typeof priorityFilter) => {
-      setPriorityFilter(priority);
-    },
-    [],
-  );
+  const onPriorityFilterChange = useCallback((priority: typeof priorityFilter) => {
+    setPriorityFilter(priority);
+  }, []);
 
   const onSearchChange = useCallback((query: string) => {
     setSearchQuery(query);
@@ -285,7 +273,7 @@ export function useAdminVerificationsScreen({
             req.id === requestId
               ? {
                   ...req,
-                  status: "approved" as const,
+                  status: 'approved' as const,
                   reviewedAt: new Date(),
                   reviewNotes: notes,
                 }
@@ -298,7 +286,7 @@ export function useAdminVerificationsScreen({
             prev
               ? {
                   ...prev,
-                  status: "approved",
+                  status: 'approved',
                   reviewedAt: new Date(),
                   reviewNotes: notes,
                 }
@@ -313,20 +301,15 @@ export function useAdminVerificationsScreen({
           reviewedToday: prev.reviewedToday + 1,
         }));
 
-        void Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Success,
-        ).catch(() => {});
-        logger.info("Verification request approved", { requestId, notes });
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        logger.info('Verification request approved', { requestId, notes });
       } catch (error) {
-        const err =
-          error instanceof Error
-            ? error
-            : new Error("Failed to approve request");
-        logger.error("Failed to approve verification request", {
+        const err = error instanceof Error ? error : new Error('Failed to approve request');
+        logger.error('Failed to approve verification request', {
           error: err,
           requestId,
         });
-        handleNetworkError(err, "admin.verifications.approve");
+        handleNetworkError(err, 'admin.verifications.approve');
       } finally {
         setIsProcessingAction(false);
       }
@@ -346,12 +329,12 @@ export function useAdminVerificationsScreen({
             req.id === requestId
               ? {
                   ...req,
-                  status: "rejected" as const,
+                  status: 'rejected' as const,
                   reviewedAt: new Date(),
                   reviewNotes: notes,
                   documents: req.documents.map((doc) => ({
                     ...doc,
-                    status: "rejected" as const,
+                    status: 'rejected' as const,
                     rejectionReason: reason,
                   })),
                 }
@@ -364,12 +347,12 @@ export function useAdminVerificationsScreen({
             prev
               ? {
                   ...prev,
-                  status: "rejected",
+                  status: 'rejected',
                   reviewedAt: new Date(),
                   reviewNotes: notes,
                   documents: prev.documents.map((doc) => ({
                     ...doc,
-                    status: "rejected",
+                    status: 'rejected',
                     rejectionReason: reason,
                   })),
                 }
@@ -384,24 +367,19 @@ export function useAdminVerificationsScreen({
           reviewedToday: prev.reviewedToday + 1,
         }));
 
-        void Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Warning,
-        ).catch(() => {});
-        logger.info("Verification request rejected", {
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        logger.info('Verification request rejected', {
           requestId,
           reason,
           notes,
         });
       } catch (error) {
-        const err =
-          error instanceof Error
-            ? error
-            : new Error("Failed to reject request");
-        logger.error("Failed to reject verification request", {
+        const err = error instanceof Error ? error : new Error('Failed to reject request');
+        logger.error('Failed to reject verification request', {
           error: err,
           requestId,
         });
-        handleNetworkError(err, "admin.verifications.reject");
+        handleNetworkError(err, 'admin.verifications.reject');
       } finally {
         setIsProcessingAction(false);
       }
@@ -420,24 +398,21 @@ export function useAdminVerificationsScreen({
             req.id === requestId
               ? {
                   ...req,
-                  assignedAdmin: "current-admin",
-                  status: "under_review" as const,
+                  assignedAdmin: 'current-admin',
+                  status: 'under_review' as const,
                 }
               : req,
           ),
         );
 
-        logger.info("Verification request assigned", { requestId });
+        logger.info('Verification request assigned', { requestId });
       } catch (error) {
-        const err =
-          error instanceof Error
-            ? error
-            : new Error("Failed to assign request");
-        logger.error("Failed to assign verification request", {
+        const err = error instanceof Error ? error : new Error('Failed to assign request');
+        logger.error('Failed to assign verification request', {
           error: err,
           requestId,
         });
-        handleNetworkError(err, "admin.verifications.assign");
+        handleNetworkError(err, 'admin.verifications.assign');
       }
     },
     [handleNetworkError],

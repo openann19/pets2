@@ -1,6 +1,5 @@
-import React from 'react';
+import { useTheme } from '@mobile/src/theme';
 import { View } from 'react-native';
-import { useTheme } from "@/theme";
 
 export interface SpacerProps {
   size?: number | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
@@ -9,7 +8,7 @@ export interface SpacerProps {
 
 export function Spacer({ size = 'md', horizontal = false }: SpacerProps) {
   const theme = useTheme();
-  
+
   const getSize = () => {
     if (typeof size === 'number') return size;
     return theme.spacing[size];

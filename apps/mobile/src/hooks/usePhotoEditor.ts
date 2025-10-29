@@ -51,12 +51,9 @@ export function usePhotoEditor(
   const [flipVertical, setFlipVertical] = useState(false);
   const manipulationHistoryRef = useRef<string[]>([initialUri]);
 
-  const updateAdjustment = useCallback(
-    (key: keyof PhotoAdjustments, value: number) => {
-      setAdjustments((prev) => ({ ...prev, [key]: value }));
-    },
-    [],
-  );
+  const updateAdjustment = useCallback((key: keyof PhotoAdjustments, value: number) => {
+    setAdjustments((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
   const rotateLeft = useCallback(() => {
     setRotation((prev) => {
@@ -107,17 +104,15 @@ export function usePhotoEditor(
 
       let result;
       if (actions.length > 0) {
-        result = await ImageManipulator.manipulateAsync(
-          uri,
-          actions,
-          { compress: quality, format: ImageManipulator.SaveFormat.JPEG },
-        );
+        result = await ImageManipulator.manipulateAsync(uri, actions, {
+          compress: quality,
+          format: ImageManipulator.SaveFormat.JPEG,
+        });
       } else {
-        result = await ImageManipulator.manipulateAsync(
-          uri,
-          [],
-          { compress: quality, format: ImageManipulator.SaveFormat.JPEG },
-        );
+        result = await ImageManipulator.manipulateAsync(uri, [], {
+          compress: quality,
+          format: ImageManipulator.SaveFormat.JPEG,
+        });
       }
 
       // Apply advanced adjustments using Cloudinary transformations
@@ -156,4 +151,3 @@ export function usePhotoEditor(
     rotateRight,
   };
 }
-

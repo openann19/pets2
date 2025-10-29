@@ -4,19 +4,12 @@
  * Features: Rich display, copy functionality, save options, match scoring
  */
 
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Alert,
-  ScrollView,
-} from "react-native";
-import * as Clipboard from "expo-clipboard";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, Alert, ScrollView } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import { Ionicons } from '@expo/vector-icons';
 
-import type { GeneratedBio } from "../../hooks/useAIBio";
+import type { GeneratedBio } from '../../hooks/useAIBio';
 
 interface BioResultsProps {
   generatedBio: GeneratedBio;
@@ -24,11 +17,7 @@ interface BioResultsProps {
   onRegenerate?: () => void;
 }
 
-export function BioResults({
-  generatedBio,
-  onSave,
-  onRegenerate,
-}: BioResultsProps) {
+export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -39,14 +28,14 @@ export function BioResults({
         setCopied(false);
       }, 2000);
     } catch (error) {
-      Alert.alert("Error", "Failed to copy bio to clipboard");
+      Alert.alert('Error', 'Failed to copy bio to clipboard');
     }
   };
 
   const handleSave = () => {
     if (onSave) {
       onSave(generatedBio);
-      Alert.alert("Success", "Bio saved to history!");
+      Alert.alert('Success', 'Bio saved to history!');
     }
   };
 
@@ -83,11 +72,9 @@ export function BioResults({
             accessibilityLabel="Copy bio to clipboard"
           >
             <Ionicons
-              name={copied ? "checkmark-circle" : "copy-outline"}
+              name={copied ? 'checkmark-circle' : 'copy-outline'}
               size={20}
-              color={
-                copied ? Theme.colors.status.success : Theme.colors.text.primary
-              }
+              color={copied ? Theme.colors.status.success : Theme.colors.text.primary}
             />
             <Text
               style={StyleSheet.flatten([
@@ -95,7 +82,7 @@ export function BioResults({
                 copied && { color: Theme.colors.status.success },
               ])}
             >
-              {copied ? "Copied!" : "Copy"}
+              {copied ? 'Copied!' : 'Copy'}
             </Text>
           </TouchableOpacity>
 
@@ -153,9 +140,7 @@ export function BioResults({
                   styles.progressFill,
                   {
                     width: `${generatedBio.matchScore}%`,
-                    backgroundColor: getMatchScoreColor(
-                      generatedBio.matchScore,
-                    ),
+                    backgroundColor: getMatchScoreColor(generatedBio.matchScore),
                   },
                 ])}
               />
@@ -185,7 +170,10 @@ export function BioResults({
             <Text style={styles.keywordsTitle}>Key Traits</Text>
             <View style={styles.keywordsContainer}>
               {generatedBio.keywords.map((keyword, index) => (
-                <View key={index} style={styles.keywordChip}>
+                <View
+                  key={index}
+                  style={styles.keywordChip}
+                >
                   <Text style={styles.keywordText}>{keyword}</Text>
                 </View>
               ))}
@@ -202,7 +190,7 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: Theme.typography.fontSize["2xl"],
+    fontSize: Theme.typography.fontSize['2xl'],
     fontWeight: Theme.typography.fontWeight.bold,
     color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.xl,
@@ -212,7 +200,7 @@ const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: 'Theme.colors.neutral[950]',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -227,16 +215,16 @@ const styles = StyleSheet.create({
     lineHeight: Theme.typography.lineHeight.relaxed,
   },
   actionButtons: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     marginTop: Theme.spacing.lg,
     paddingTop: Theme.spacing.lg,
     borderTopWidth: 1,
     borderTopColor: Theme.colors.border.light,
   },
   actionButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: Theme.spacing.sm,
     borderRadius: Theme.borderRadius.md,
   },
@@ -258,7 +246,7 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.lg,
   },
   metricsGrid: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
   },
@@ -267,7 +255,7 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.colors.background.primary,
     borderRadius: Theme.borderRadius.md,
     padding: Theme.spacing.md,
-    alignItems: "center",
+    alignItems: 'center',
   },
   metricLabel: {
     fontSize: Theme.typography.fontSize.sm,
@@ -275,7 +263,7 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
-    fontSize: Theme.typography.fontSize["2xl"],
+    fontSize: Theme.typography.fontSize['2xl'],
     fontWeight: Theme.typography.fontWeight.bold,
     marginBottom: Theme.spacing.xs,
   },
@@ -284,14 +272,14 @@ const styles = StyleSheet.create({
     color: Theme.colors.text.secondary,
   },
   progressBar: {
-    width: "100%",
+    width: '100%',
     height: 4,
     backgroundColor: Theme.colors.border.light,
     borderRadius: Theme.borderRadius.full,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   progressFill: {
-    height: "100%",
+    height: '100%',
     borderRadius: Theme.borderRadius.full,
   },
   keywordsSection: {
@@ -306,8 +294,8 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.md,
   },
   keywordsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Theme.spacing.sm,
   },
   keywordChip: {

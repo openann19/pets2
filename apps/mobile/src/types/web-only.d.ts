@@ -11,7 +11,7 @@ declare class AudioBuffer {
 }
 
 // Storybook declarations for mobile
-declare module "@storybook/react-native" {
+declare module '@storybook/react-native' {
   export const storiesOf: any;
   export const addDecorator: any;
   export const configure: any;

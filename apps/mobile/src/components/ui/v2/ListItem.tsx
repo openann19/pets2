@@ -1,33 +1,32 @@
-import React, { useMemo } from 'react';
-import { View, TouchableOpacity, Switch as RNSwitch, StyleSheet, Pressable } from 'react-native';
-import type { ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Text } from './Text';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import type { Theme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { useMemo } from 'react';
+import type { ViewStyle } from 'react-native';
+import { Pressable, Switch as RNSwitch, StyleSheet, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { springs } from '../../MotionPrimitives';
-import { useTheme } from "@/theme";
-import type { Theme } from "@/theme";
+import { Text } from './Text';
 
 function createStyles(theme: Theme) {
   return StyleSheet.create({
-  container: {
-    minHeight: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-  },
-  left: { width: 48, alignItems: 'center', justifyContent: 'center' },
-  body: { flex: 1, justifyContent: 'center' },
-  right: { marginLeft: 12 },
-  leftIcon: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    container: {
+      minHeight: 56,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+    },
+    left: { width: 48, alignItems: 'center', justifyContent: 'center' },
+    body: { flex: 1, justifyContent: 'center' },
+    right: { marginLeft: 12 },
+    leftIcon: {
+      width: 40,
+      height: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });
 }
-
 
 export type ListItemType = 'navigation' | 'action' | 'toggle';
 
@@ -62,17 +61,22 @@ export function ListItem({
   const styles = useMemo(() => createStyles(theme), [theme]);
   const scale = useSharedValue(1);
   const aStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
-  const onPressIn = () => { scale.value = withSpring(0.98, springs.snappy); };
-  const onPressOut = () => { scale.value = withSpring(1, springs.snappy); };
+  const onPressIn = () => {
+    scale.value = withSpring(0.98, springs.snappy);
+  };
+  const onPressOut = () => {
+    scale.value = withSpring(1, springs.snappy);
+  };
 
   const LeftIcon = icon ? (
-    <View style={StyleSheet.flatten([
-      styles.leftIcon,
-      {
-        backgroundColor: destructive ? `${theme.colors.danger}22` : theme.colors.surface,
-        borderRadius: theme.radii.md,
-      },
-    ])}
+    <View
+      style={StyleSheet.flatten([
+        styles.leftIcon,
+        {
+          backgroundColor: destructive ? `${theme.colors.danger}22` : theme.colors.surface,
+          borderRadius: theme.radii.md,
+        },
+      ])}
     >
       <Ionicons
         name={icon as any}
@@ -82,20 +86,31 @@ export function ListItem({
     </View>
   ) : null;
 
-  const Right = type === 'toggle' ? (
-    <RNSwitch
-      value={!!value}
-      onValueChange={(v) => onValueChange?.(v)}
-      trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-      thumbColor={value ? theme.colors.onPrimary : '#f1f1f1'}
-      accessibilityRole="switch"
-      accessibilityLabel={`${title} toggle`}
-    />
-  ) : rightIcon ? (
-    <Ionicons name={rightIcon as any} size={18} color={theme.colors.onMuted} />
-  ) : (
-    type === 'navigation' && <Ionicons name="chevron-forward" size={18} color={theme.colors.onMuted} />
-  );
+  const Right =
+    type === 'toggle' ? (
+      <RNSwitch
+        value={!!value}
+        onValueChange={(v) => onValueChange?.(v)}
+        trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+        thumbColor={value ? theme.colors.onPrimary : '#f1f1f1'}
+        accessibilityRole="switch"
+        accessibilityLabel={`${title} toggle`}
+      />
+    ) : rightIcon ? (
+      <Ionicons
+        name={rightIcon as any}
+        size={18}
+        color={theme.colors.onMuted}
+      />
+    ) : (
+      type === 'navigation' && (
+        <Ionicons
+          name="chevron-forward"
+          size={18}
+          color={theme.colors.onMuted}
+        />
+      )
+    );
 
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
   const Container = type === 'toggle' ? View : AnimatedPressable;
@@ -119,11 +134,18 @@ export function ListItem({
     >
       <View style={styles.left}>{LeftIcon}</View>
       <View style={styles.body}>
-        <Text variant="label" tone={destructive ? 'danger' : 'text'} style={{ marginBottom: subtitle ? 2 : 0 }}>
+        <Text
+          variant="label"
+          tone={destructive ? 'danger' : 'text'}
+          style={{ marginBottom: subtitle ? 2 : 0 }}
+        >
           {title}
         </Text>
         {subtitle ? (
-          <Text variant="caption" tone={destructive ? 'danger' : 'muted'}>
+          <Text
+            variant="caption"
+            tone={destructive ? 'danger' : 'muted'}
+          >
             {subtitle}
           </Text>
         ) : null}

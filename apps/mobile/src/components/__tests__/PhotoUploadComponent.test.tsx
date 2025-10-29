@@ -150,7 +150,7 @@ describe('PhotoUploadComponent', () => {
 
     const { getByText } = render(<PhotoUploadComponent petId={mockPetId} />);
 
-    errors.forEach(error => {
+    errors.forEach((error) => {
       expect(getByText(error)).toBeTruthy();
     });
   });
@@ -358,7 +358,9 @@ describe('PhotoUploadComponent', () => {
   });
 
   it('should handle empty state correctly', () => {
-    const { getByText, getByLabelText, queryByTestId } = render(<PhotoUploadComponent petId={mockPetId} />);
+    const { getByText, getByLabelText, queryByTestId } = render(
+      <PhotoUploadComponent petId={mockPetId} />,
+    );
 
     expect(getByText('0 of 6 photos added')).toBeTruthy();
     expect(getByLabelText('Add photo to pet profile')).toBeTruthy();
@@ -462,14 +464,16 @@ describe('PhotoUploadComponent', () => {
   it('should show photo preview before upload', () => {
     mockImagePicker.launchImageLibraryAsync.mockResolvedValue({
       cancelled: false,
-      assets: [{
-        uri: 'file://preview-image.jpg',
-        width: 1024,
-        height: 768,
-        fileSize: 204800,
-        mimeType: 'image/jpeg',
-        fileName: 'preview-image.jpg',
-      }],
+      assets: [
+        {
+          uri: 'file://preview-image.jpg',
+          width: 1024,
+          height: 768,
+          fileSize: 204800,
+          mimeType: 'image/jpeg',
+          fileName: 'preview-image.jpg',
+        },
+      ],
     });
 
     const { getByText, getByTestId } = render(<PhotoUploadComponent petId={mockPetId} />);
@@ -484,7 +488,12 @@ describe('PhotoUploadComponent', () => {
 
   it('should handle RTL layout correctly', () => {
     // Mock RTL layout
-    const { getByTestId } = render(<PhotoUploadComponent petId={mockPetId} isRTL />);
+    const { getByTestId } = render(
+      <PhotoUploadComponent
+        petId={mockPetId}
+        isRTL
+      />,
+    );
 
     const photoGrid = getByTestId('photo-grid');
     expect(photoGrid).toHaveStyle({ flexDirection: 'row-reverse' });
@@ -504,7 +513,12 @@ describe('PhotoUploadComponent', () => {
   });
 
   it('should show helpful tooltips for new users', () => {
-    const { getByText } = render(<PhotoUploadComponent petId={mockPetId} showTooltips />);
+    const { getByText } = render(
+      <PhotoUploadComponent
+        petId={mockPetId}
+        showTooltips
+      />,
+    );
 
     expect(getByText('Tip: First photo becomes your primary photo')).toBeTruthy();
     expect(getByText('Tip: You can reorder photos by dragging')).toBeTruthy();

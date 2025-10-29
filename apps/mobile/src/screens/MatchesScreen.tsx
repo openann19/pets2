@@ -1,31 +1,23 @@
-import { FlatList, RefreshControl, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import type { FlatList as FlatListType } from "react-native";
-import { useRef, useState } from "react";
-import { ScreenShell } from '../ui/layout/ScreenShell';
+import { useRef, useState } from 'react';
+import type { FlatList as FlatListType } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet } from 'react-native';
 import { haptic } from '../ui/haptics';
+import { ScreenShell } from '../ui/layout/ScreenShell';
 
-import {
-  AdvancedHeader,
-  HeaderConfigs,
-} from "../components/Advanced/AdvancedHeader";
-import { MatchCard } from "../components/matches/MatchCard";
-import { MatchesTabs } from "../components/matches/MatchesTabs";
-import MatchesFilterModal from "../components/matches/MatchesFilterModal";
-import { useMatchesData } from "../hooks/useMatchesData";
-import { logger } from "../services/logger";
-import type { Match } from "../hooks/useMatchesData";
-import { useTheme } from "@/theme";
-import { useScrollOffsetTracker } from "../hooks/navigation/useScrollOffsetTracker";
-import { useTabReselectRefresh } from "../hooks/navigation/useTabReselectRefresh";
+import { useTheme } from '@mobile/src/theme';
 import { useTranslation } from 'react-i18next';
+import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
+import { MatchCard } from '../components/matches/MatchCard';
+import { MatchesTabs } from '../components/matches/MatchesTabs';
+import { useScrollOffsetTracker } from '../hooks/navigation/useScrollOffsetTracker';
+import { useTabReselectRefresh } from '../hooks/navigation/useTabReselectRefresh';
+import type { Match } from '../hooks/useMatchesData';
+import { useMatchesData } from '../hooks/useMatchesData';
+import { logger } from '../services/logger';
 
 interface MatchesScreenProps {
   navigation: {
-    navigate: (
-      screen: string,
-      params: { matchId: string; petName: string },
-    ) => void;
+    navigate: (screen: string, params: { matchId: string; petName: string }) => void;
   };
 }
 
@@ -58,18 +50,18 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
 
   const handleMatchPress = (matchId: string, petName: string) => {
     haptic.confirm();
-    navigation.navigate("Chat", { matchId, petName });
+    navigation.navigate('Chat', { matchId, petName });
   };
-  
+
   const handleFilterPress = () => {
     haptic.tap();
     setFilterOpen(true);
-    logger.info("Filter matches button pressed");
+    logger.info('Filter matches button pressed');
   };
-  
+
   const handleSearchPress = () => {
     haptic.tap();
-    logger.info("Search matches button pressed");
+    logger.info('Search matches button pressed');
   };
 
   return (
@@ -80,35 +72,38 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
             title: t('matches.title'),
             rightButtons: [
               {
-                type: "filter",
+                type: 'filter',
                 onPress: handleFilterPress,
-                variant: "glass",
-                haptic: "light",
+                variant: 'glass',
+                haptic: 'light',
               },
               {
-                type: "search",
+                type: 'search',
                 onPress: handleSearchPress,
-                variant: "minimal",
-                haptic: "light",
+                variant: 'minimal',
+                haptic: 'light',
               },
             ],
             apiActions: {
               filter: async () => {
-                logger.info("Filter API action triggered");
+                logger.info('Filter API action triggered');
               },
               search: async () => {
-                logger.info("Search API action triggered");
+                logger.info('Search API action triggered');
               },
             },
           })}
         />
       }
     >
-      <MatchesTabs selectedTab={selectedTab} onTabChange={setSelectedTab} />
+      <MatchesTabs
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+      />
 
       <FlatList
         ref={listRef}
-        data={selectedTab === "matches" ? matches : likedYou}
+        data={selectedTab === 'matches' ? matches : likedYou}
         renderItem={({ item }) => (
           <MatchCard
             match={item}
@@ -121,7 +116,7 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
         style={styles.list}
         contentContainerStyle={styles.listContent}
         onScroll={(e) => {
-          onScroll(e);       // track offset for smart reselect
+          onScroll(e); // track offset for smart reselect
           handleScroll(e.nativeEvent.contentOffset.y); // persistence
         }}
         scrollEventThrottle={120}

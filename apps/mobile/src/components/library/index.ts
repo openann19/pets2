@@ -12,4 +12,4 @@
 // export * from "./charts";
 
 // Export placeholders to avoid import errors
-export const ComponentLibraryPlaceholder = "Component library under development";
+export const ComponentLibraryPlaceholder = 'Component library under development';

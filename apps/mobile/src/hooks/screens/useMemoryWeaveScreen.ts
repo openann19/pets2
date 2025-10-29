@@ -2,26 +2,25 @@
  * useMemoryWeaveScreen Hook
  * Manages Memory Weave screen state and interactions
  */
-import { useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
-import { StatusBar } from "react-native";
-import * as Haptics from "expo-haptics";
-import type { Animated } from "react-native";
-import type { ScrollView } from "react-native";
-import { useTheme } from "@/theme";
-import { useMemoryWeave } from "../domains/social/useMemoryWeave";
-import type { SemanticColors } from "../../theme/types";
+import { useTheme } from '@mobile/src/theme';
+import { useNavigation } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
+import { useEffect } from 'react';
+import type { Animated, ScrollView } from 'react-native';
+import { StatusBar } from 'react-native';
+import type { SemanticColors } from '../../theme/types';
+import { useMemoryWeave } from '../domains/social/useMemoryWeave';
 
 interface MemoryNode {
   id: string;
-  type: "text" | "image" | "video" | "location";
+  type: 'text' | 'image' | 'video' | 'location';
   content: string;
   title: string;
   timestamp: string;
   metadata?: {
     location?: string;
     participants?: string[];
-    emotion?: "happy" | "excited" | "love" | "playful";
+    emotion?: 'happy' | 'excited' | 'love' | 'playful';
   };
 }
 
@@ -43,7 +42,7 @@ interface UseMemoryWeaveScreenReturn {
   petName: string;
   matchId: string;
 
-  // Screen-specific  
+  // Screen-specific
   isDark: boolean;
   colors: SemanticColors;
   handleGoBack: () => void;
@@ -60,12 +59,16 @@ export const useMemoryWeaveScreen = (route: {
 }): UseMemoryWeaveScreenReturn => {
   const navigation = useNavigation();
   const theme = useTheme();
-  const isDark = theme.isDark ?? theme.scheme === "dark";
+  const isDark = theme.isDark ?? theme.scheme === 'dark';
   const colors = theme.colors;
   const params = route.params ?? {};
   const matchId = params.matchId ?? '';
   const petName = params.petName ?? '';
-  const initialMemories = (params.memories ? (Array.isArray(params.memories) ? params.memories as MemoryNode[] : []) : []);
+  const initialMemories = params.memories
+    ? Array.isArray(params.memories)
+      ? (params.memories as MemoryNode[])
+      : []
+    : [];
 
   const {
     memories,
@@ -85,9 +88,9 @@ export const useMemoryWeaveScreen = (route: {
 
   // Status bar management
   useEffect(() => {
-    StatusBar.setBarStyle("light-content");
+    StatusBar.setBarStyle('light-content');
     return () => {
-      StatusBar.setBarStyle(isDark ? "light-content" : "dark-content");
+      StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content');
     };
   }, [isDark]);
 

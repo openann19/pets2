@@ -3,19 +3,19 @@
  * Defines card variants and their styling
  */
 
-import type { ViewStyle } from "react-native";
+import type { ViewStyle } from 'react-native';
 
 export type CardVariant =
-  | "default"
-  | "glass"
-  | "gradient"
-  | "premium"
-  | "minimal"
-  | "neon"
-  | "holographic"
-  | "floating";
+  | 'default'
+  | 'glass'
+  | 'gradient'
+  | 'premium'
+  | 'minimal'
+  | 'neon'
+  | 'holographic'
+  | 'floating';
 
-export type CardSize = "xs" | "sm" | "md" | "lg" | "xl";
+export type CardSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 interface GetCardStylesOptions {
   variant: CardVariant;
@@ -36,58 +36,58 @@ interface GetMarginValueOptions {
 
 export function getCardStyles({
   variant,
-  glowColor = "Theme.colors.primary[500]",
+  glowColor = 'Theme.colors.primary[500]',
 }: GetCardStylesOptions): ViewStyle {
   const baseStyles: ViewStyle = {
     borderRadius: 12,
-    overflow: "hidden",
-    backgroundColor: "Theme.colors.neutral[0]",
+    overflow: 'hidden',
+    backgroundColor: 'Theme.colors.neutral[0]',
   };
 
   switch (variant) {
-    case "glass":
+    case 'glass':
       return {
         ...baseStyles,
-        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
         borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.2)",
+        borderColor: 'rgba(255, 255, 255, 0.2)',
       };
-    case "gradient":
+    case 'gradient':
       return {
         ...baseStyles,
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
       };
-    case "premium":
+    case 'premium':
       return {
         ...baseStyles,
-        backgroundColor: "rgba(139, 92, 246, 0.1)",
+        backgroundColor: 'rgba(139, 92, 246, 0.1)',
         borderWidth: 1,
-        borderColor: "rgba(139, 92, 246, 0.3)",
+        borderColor: 'rgba(139, 92, 246, 0.3)',
       };
-    case "minimal":
+    case 'minimal':
       return {
         ...baseStyles,
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
         borderWidth: 1,
-        borderColor: "Theme.colors.neutral[200]",
+        borderColor: 'Theme.colors.neutral[200]',
       };
-    case "neon":
+    case 'neon':
       return {
         ...baseStyles,
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
         borderWidth: 2,
         borderColor: glowColor,
       };
-    case "holographic":
+    case 'holographic':
       return {
         ...baseStyles,
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
       };
-    case "floating":
+    case 'floating':
       return {
         ...baseStyles,
-        backgroundColor: "Theme.colors.neutral[0]",
-        shadowColor: "Theme.colors.neutral[950]",
+        backgroundColor: 'Theme.colors.neutral[0]',
+        shadowColor: 'Theme.colors.neutral[950]',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 12,
@@ -96,8 +96,8 @@ export function getCardStyles({
     default:
       return {
         ...baseStyles,
-        backgroundColor: "Theme.colors.neutral[0]",
-        shadowColor: "Theme.colors.neutral[950]",
+        backgroundColor: 'Theme.colors.neutral[0]',
+        shadowColor: 'Theme.colors.neutral[950]',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -108,15 +108,15 @@ export function getCardStyles({
 
 export function getSizeStyles({ size }: GetSizeStylesOptions): ViewStyle {
   switch (size) {
-    case "xs":
+    case 'xs':
       return { minHeight: 80 };
-    case "sm":
+    case 'sm':
       return { minHeight: 120 };
-    case "md":
+    case 'md':
       return { minHeight: 160 };
-    case "lg":
+    case 'lg':
       return { minHeight: 200 };
-    case "xl":
+    case 'xl':
       return { minHeight: 240 };
     default:
       return { minHeight: 160 };
@@ -125,15 +125,15 @@ export function getSizeStyles({ size }: GetSizeStylesOptions): ViewStyle {
 
 export function getPaddingValue({ padding }: GetPaddingValueOptions): number {
   switch (padding) {
-    case "xs":
+    case 'xs':
       return 8;
-    case "sm":
+    case 'sm':
       return 12;
-    case "md":
+    case 'md':
       return 16;
-    case "lg":
+    case 'lg':
       return 20;
-    case "xl":
+    case 'xl':
       return 24;
     default:
       return 16;
@@ -142,15 +142,15 @@ export function getPaddingValue({ padding }: GetPaddingValueOptions): number {
 
 export function getMarginValue({ margin }: GetMarginValueOptions): number {
   switch (margin) {
-    case "xs":
+    case 'xs':
       return 4;
-    case "sm":
+    case 'sm':
       return 8;
-    case "md":
+    case 'md':
       return 12;
-    case "lg":
+    case 'lg':
       return 16;
-    case "xl":
+    case 'xl':
       return 20;
     default:
       return 8;

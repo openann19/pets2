@@ -255,7 +255,7 @@ describe('useSubscriptionState', () => {
     });
 
     it('should remove payment method', async () => {
-      const filteredMethods = mockPaymentMethods.filter(pm => pm.id !== 'pm_456');
+      const filteredMethods = mockPaymentMethods.filter((pm) => pm.id !== 'pm_456');
       mockPremiumService.removePaymentMethod.mockResolvedValue(filteredMethods);
 
       const { result } = renderHook(() => useSubscriptionState());
@@ -409,7 +409,7 @@ describe('useSubscriptionState', () => {
   describe('Processing States', () => {
     it('should show processing state during operations', async () => {
       let resolveOperation: (value: any) => void;
-      const operationPromise = new Promise(resolve => {
+      const operationPromise = new Promise((resolve) => {
         resolveOperation = resolve;
       });
 
@@ -436,7 +436,7 @@ describe('useSubscriptionState', () => {
 
     it('should prevent concurrent operations', async () => {
       mockPremiumService.createSubscription.mockImplementation(
-        () => new Promise(resolve => setTimeout(() => resolve(mockSubscriptionDetails), 100))
+        () => new Promise((resolve) => setTimeout(() => resolve(mockSubscriptionDetails), 100)),
       );
 
       const { result } = renderHook(() => useSubscriptionState());
@@ -533,7 +533,7 @@ describe('useSubscriptionState', () => {
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         'subscription_state_cache',
-        expect.any(String)
+        expect.any(String),
       );
     });
 

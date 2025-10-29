@@ -1,41 +1,35 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-import { EliteButton } from "../EliteComponents";
-import { GlowContainer } from "../GlowShadowSystem";
-import PremiumTypography from "../PremiumTypography";
+import { EliteButton } from '../EliteComponents';
+import { GlowContainer } from '../GlowShadowSystem';
+import PremiumTypography from '../PremiumTypography';
 
 const { PremiumHeading, PremiumBody } = PremiumTypography;
 
 interface EmptyStateProps {
-  type: "error" | "empty";
+  type: 'error' | 'empty';
   title: string;
   subtitle: string;
   buttonTitle: string;
   onButtonPress: () => void;
 }
 
-export function EmptyState({
-  type,
-  title,
-  subtitle,
-  buttonTitle,
-  onButtonPress,
-}: EmptyStateProps) {
-  const isError = type === "error";
+export function EmptyState({ type, title, subtitle, buttonTitle, onButtonPress }: EmptyStateProps) {
+  const isError = type === 'error';
 
   return (
     <View style={styles.emptyContainer}>
       <GlowContainer
-        color={isError ? "error" : "primary"}
-        intensity={isError ? "medium" : "light"}
+        color={isError ? 'error' : 'primary'}
+        intensity={isError ? 'medium' : 'light'}
         animated={true}
       >
         <Ionicons
-          name={isError ? "alert-circle-outline" : "heart-outline"}
+          name={isError ? 'alert-circle-outline' : 'heart-outline'}
           size={80}
-          color={isError ? "#ff6b6b" : "Theme.colors.primary[500]"}
+          color={isError ? '#ff6b6b' : 'Theme.colors.primary[500]'}
         />
       </GlowContainer>
       <PremiumHeading
@@ -45,12 +39,15 @@ export function EmptyState({
       >
         {title}
       </PremiumHeading>
-      <PremiumBody size="base" weight="regular">
+      <PremiumBody
+        size="base"
+        weight="regular"
+      >
         {subtitle}
       </PremiumBody>
       <EliteButton
         title={buttonTitle}
-        variant={isError ? "primary" : "secondary"}
+        variant={isError ? 'primary' : 'secondary'}
         size="lg"
         icon="refresh"
         magnetic={true}
@@ -65,8 +62,8 @@ export function EmptyState({
 const styles = StyleSheet.create({
   emptyContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 40,
   },
 });

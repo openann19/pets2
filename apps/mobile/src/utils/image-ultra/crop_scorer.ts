@@ -9,12 +9,9 @@ export type Rect = { x: number; y: number; w: number; h: number };
  * Tenengrad sharpness score (gradient magnitude squared)
  * Higher = sharper, more detailed region
  */
-export function tenengradScore(
-  canvas: HTMLCanvasElement,
-  rect?: Rect
-): number {
+export function tenengradScore(canvas: HTMLCanvasElement, rect?: Rect): number {
   const c = cut(canvas, rect);
-  const ctx = c.getContext("2d")!;
+  const ctx = c.getContext('2d')!;
   const { width: w, height: h } = c;
   const data = ctx.getImageData(0, 0, w, h).data;
 
@@ -65,7 +62,7 @@ export function tenengradScore(
  */
 export function entropyScore(canvas: HTMLCanvasElement, rect?: Rect): number {
   const c = cut(canvas, rect);
-  const ctx = c.getContext("2d")!;
+  const ctx = c.getContext('2d')!;
   const { width: w, height: h } = c;
   const data = ctx.getImageData(0, 0, w, h).data;
   const hist = new Float32Array(256);
@@ -74,9 +71,7 @@ export function entropyScore(canvas: HTMLCanvasElement, rect?: Rect): number {
     const r = data[i] ?? 0;
     const g = data[i + 1] ?? 0;
     const b = data[i + 2] ?? 0;
-    const l = Math.round(
-      0.2126 * r + 0.7152 * g + 0.0722 * b
-    );
+    const l = Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b);
     const idx = Math.min(Math.max(l, 0), 255);
     hist[idx] = (hist[idx] ?? 0) + 1;
   }
@@ -100,7 +95,7 @@ export function entropyScore(canvas: HTMLCanvasElement, rect?: Rect): number {
 /**
  * Combined composition score
  * Mix of sharpness (60%), entropy (20%), eye-line alignment (20%)
- * 
+ *
  * @param canvas - Source canvas
  * @param rect - Crop region
  * @param opts - Options including eye-line % from top (default: 0.28 = top third)
@@ -109,7 +104,7 @@ export function entropyScore(canvas: HTMLCanvasElement, rect?: Rect): number {
 export function compositionScore(
   canvas: HTMLCanvasElement,
   rect: Rect,
-  opts?: { eyeLine?: number }
+  opts?: { eyeLine?: number },
 ): number {
   const s = tenengradScore(canvas, rect);
   const e = entropyScore(canvas, rect);
@@ -119,7 +114,7 @@ export function compositionScore(
   comp += norm(s, 2e3, 2e5) * 0.6;
   // Entropy (max ~7.5 for real images)
   comp += Math.min(1, e / 7.5) * 0.2;
-  
+
   // Eye-line alignment bonus
   const eye = opts?.eyeLine ?? 0.28; // % from top
   const centerY = rect.y + rect.h * eye;
@@ -135,20 +130,10 @@ export function compositionScore(
  */
 export function cut(src: HTMLCanvasElement, rect?: Rect): HTMLCanvasElement {
   if (!rect) return clone(src);
-  const c = document.createElement("canvas");
+  const c = document.createElement('canvas');
   c.width = Math.round(rect.w);
   c.height = Math.round(rect.h);
-  c.getContext("2d")!.drawImage(
-    src,
-    rect.x,
-    rect.y,
-    rect.w,
-    rect.h,
-    0,
-    0,
-    c.width,
-    c.height
-  );
+  c.getContext('2d')!.drawImage(src, rect.x, rect.y, rect.w, rect.h, 0, 0, c.width, c.height);
   return c;
 }
 
@@ -156,10 +141,10 @@ export function cut(src: HTMLCanvasElement, rect?: Rect): HTMLCanvasElement {
  * Clone canvas
  */
 export function clone(src: HTMLCanvasElement): HTMLCanvasElement {
-  const c = document.createElement("canvas");
+  const c = document.createElement('canvas');
   c.width = src.width;
   c.height = src.height;
-  c.getContext("2d")!.drawImage(src, 0, 0);
+  c.getContext('2d')!.drawImage(src, 0, 0);
   return c;
 }
 
@@ -167,4 +152,3 @@ const norm = (v: number, min: number, max: number) => {
   const t = (v - min) / (max - min);
   return Math.max(0, Math.min(1, t));
 };
-

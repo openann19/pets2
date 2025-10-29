@@ -13,4 +13,4 @@
 // - DataTable
 
 // Export placeholder to avoid import errors
-export const ChartsPlaceholder = "Chart components coming soon";
+export const ChartsPlaceholder = 'Chart components coming soon';

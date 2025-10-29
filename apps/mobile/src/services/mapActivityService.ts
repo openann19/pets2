@@ -46,9 +46,9 @@ export async function startActivity(params: CreateActivityParams): Promise<MapPi
     method: 'POST',
     body: {
       ...params,
-      location: { 
-        latitude: location.coords.latitude, 
-        longitude: location.coords.longitude 
+      location: {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
       },
     },
   });
@@ -67,7 +67,7 @@ export async function endActivity(activityId: string): Promise<void> {
 export async function getNearbyPins(
   latitude: number,
   longitude: number,
-  maxDistance?: number
+  maxDistance?: number,
 ): Promise<MapPin[]> {
   const { request } = await import('./api');
   const params: Record<string, number> = { latitude, longitude };
@@ -96,4 +96,3 @@ export async function commentOnPin(pinId: string, text: string): Promise<{ comme
   });
   return response;
 }
-

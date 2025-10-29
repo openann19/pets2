@@ -19,7 +19,6 @@ function splitName(name: string): { firstName: string; lastName: string } {
   return { firstName, lastName };
 }
 
-
 export function toCoreUser(legacy: LegacyWebUser): User {
   const { firstName, lastName } = splitName(legacy.name);
   const now = new Date().toISOString();

@@ -12,7 +12,15 @@ export interface StackProps extends HTMLAttributes<HTMLDivElement> {
 
 export const Stack = forwardRef<HTMLDivElement, StackProps>(
   (
-    { direction = 'vertical', gap = 16, wrap = false, align = 'stretch', justify = 'flex-start', style, ...rest },
+    {
+      direction = 'vertical',
+      gap = 16,
+      wrap = false,
+      align = 'stretch',
+      justify = 'flex-start',
+      style,
+      ...rest
+    },
     ref,
   ) => {
     const flexDirection = direction === 'horizontal' ? 'row' : 'column';
@@ -27,7 +35,13 @@ export const Stack = forwardRef<HTMLDivElement, StackProps>(
       ...style,
     };
 
-    return <div ref={ref} style={computedStyle} {...rest} />;
+    return (
+      <div
+        ref={ref}
+        style={computedStyle}
+        {...rest}
+      />
+    );
   },
 );
 

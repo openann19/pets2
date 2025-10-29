@@ -1,20 +1,11 @@
-import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
-import { useCallback, useState } from "react";
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@/theme";
-import type { AppTheme } from '@/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/src/theme';
+import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useCallback, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface NotificationPreferencesScreenProps {
   navigation: {
@@ -27,7 +18,7 @@ interface NotificationSetting {
   title: string;
   description: string;
   enabled: boolean;
-  category: "matches" | "messages" | "general" | "marketing";
+  category: 'matches' | 'messages' | 'general' | 'marketing';
 }
 
 function NotificationPreferencesScreen({
@@ -36,60 +27,60 @@ function NotificationPreferencesScreen({
   const theme = useTheme();
   const [settings, setSettings] = useState<NotificationSetting[]>([
     {
-      id: "new_matches",
-      title: "New Matches",
-      description: "Get notified when you have new matches",
+      id: 'new_matches',
+      title: 'New Matches',
+      description: 'Get notified when you have new matches',
       enabled: true,
-      category: "matches",
+      category: 'matches',
     },
     {
-      id: "messages",
-      title: "New Messages",
-      description: "Receive notifications for new messages",
+      id: 'messages',
+      title: 'New Messages',
+      description: 'Receive notifications for new messages',
       enabled: true,
-      category: "messages",
+      category: 'messages',
     },
     {
-      id: "likes",
-      title: "Profile Likes",
-      description: "Notifications when someone likes your profile",
+      id: 'likes',
+      title: 'Profile Likes',
+      description: 'Notifications when someone likes your profile',
       enabled: false,
-      category: "matches",
+      category: 'matches',
     },
     {
-      id: "super_likes",
-      title: "Super Likes",
-      description: "Special notifications for Super Likes",
+      id: 'super_likes',
+      title: 'Super Likes',
+      description: 'Special notifications for Super Likes',
       enabled: true,
-      category: "matches",
+      category: 'matches',
     },
     {
-      id: "premium_features",
-      title: "Premium Features",
-      description: "Updates about premium features and benefits",
+      id: 'premium_features',
+      title: 'Premium Features',
+      description: 'Updates about premium features and benefits',
       enabled: false,
-      category: "general",
+      category: 'general',
     },
     {
-      id: "safety_alerts",
-      title: "Safety Alerts",
-      description: "Important safety and security notifications",
+      id: 'safety_alerts',
+      title: 'Safety Alerts',
+      description: 'Important safety and security notifications',
       enabled: true,
-      category: "general",
+      category: 'general',
     },
     {
-      id: "marketing",
-      title: "Marketing & Updates",
-      description: "News, promotions, and app updates",
+      id: 'marketing',
+      title: 'Marketing & Updates',
+      description: 'News, promotions, and app updates',
       enabled: false,
-      category: "marketing",
+      category: 'marketing',
     },
     {
-      id: "events",
-      title: "Events & Activities",
-      description: "Notifications about events and group activities",
+      id: 'events',
+      title: 'Events & Activities',
+      description: 'Notifications about events and group activities',
       enabled: true,
-      category: "general",
+      category: 'general',
     },
   ]);
 
@@ -97,9 +88,7 @@ function NotificationPreferencesScreen({
     Haptics.selectionAsync().catch(() => {});
     setSettings((prev) =>
       prev.map((setting) =>
-        setting.id === settingId
-          ? { ...setting, enabled: !setting.enabled }
-          : setting,
+        setting.id === settingId ? { ...setting, enabled: !setting.enabled } : setting,
       ),
     );
   }, []);
@@ -119,11 +108,9 @@ function NotificationPreferencesScreen({
   }, []);
 
   const saveSettings = useCallback(() => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
-      () => {},
-    );
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     // In a real app, this would save to backend
-    Alert.alert("Success", "Notification preferences saved successfully!");
+    Alert.alert('Success', 'Notification preferences saved successfully!');
   }, []);
 
   const getCategorySettings = useCallback(
@@ -146,10 +133,16 @@ function NotificationPreferencesScreen({
       const categoryEnabled = isCategoryEnabled(category);
 
       return (
-        <View key={category} style={styles.categorySection}>
+        <View
+          key={category}
+          style={styles.categorySection}
+        >
           <TouchableOpacity
             style={styles.categoryHeader}
-             testID="NotificationPreferencesScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+            testID="NotificationPreferencesScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
               toggleCategory(category);
             }}
           >
@@ -160,7 +153,7 @@ function NotificationPreferencesScreen({
                 toggleCategory(category);
               }}
               trackColor={{ false: theme.colors.inactive, true: theme.colors.primary }}
-              thumbColor={categoryEnabled ? theme.colors.surface : theme.colors.surfaceAlt}
+              thumbColor={categoryEnabled ? theme.colors.surface : theme.colors.overlay}
             />
           </TouchableOpacity>
 
@@ -173,9 +166,7 @@ function NotificationPreferencesScreen({
               <View style={styles.settingContent}>
                 <View style={styles.settingText}>
                   <Text style={styles.settingTitle}>{setting.title}</Text>
-                  <Text style={styles.settingDescription}>
-                    {setting.description}
-                  </Text>
+                  <Text style={styles.settingDescription}>{setting.description}</Text>
                 </View>
                 <Switch
                   value={setting.enabled}
@@ -183,7 +174,7 @@ function NotificationPreferencesScreen({
                     toggleSetting(setting.id);
                   }}
                   trackColor={{ false: theme.colors.inactive, true: theme.colors.primary }}
-                  thumbColor={setting.enabled ? theme.colors.surface : theme.colors.surfaceAlt}
+                  thumbColor={setting.enabled ? theme.colors.surface : theme.colors.overlay}
                 />
               </View>
             </BlurView>
@@ -206,46 +197,69 @@ function NotificationPreferencesScreen({
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-             testID="NotificationPreferencesScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
-                () => {},
-              );
+            testID="NotificationPreferencesScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
               navigation.goBack();
             }}
           >
-            <BlurView intensity={20} style={styles.backButtonBlur}>
-              <Ionicons name="arrow-back" size={24} color={theme.colors.onPrimary} />
+            <BlurView
+              intensity={20}
+              style={styles.backButtonBlur}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color={theme.colors.onPrimary}
+              />
             </BlurView>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Notifications</Text>
-          <TouchableOpacity style={styles.saveButton}  testID="NotificationPreferencesScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={saveSettings}>
+          <TouchableOpacity
+            style={styles.saveButton}
+            testID="NotificationPreferencesScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={saveSettings}
+          >
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
         </View>
 
         {/* Content */}
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <BlurView intensity={10} style={styles.infoCard}>
+        <ScrollView
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+          <BlurView
+            intensity={10}
+            style={styles.infoCard}
+          >
             <Ionicons
               name="information-circle-outline"
               size={24}
               color={theme.colors.info}
             />
             <Text style={styles.infoText}>
-              Choose which notifications you'd like to receive. You can always
-              change these settings later.
+              Choose which notifications you'd like to receive. You can always change these settings
+              later.
             </Text>
           </BlurView>
 
-          {renderCategory("matches", "Matches & Likes")}
-          {renderCategory("messages", "Messages")}
-          {renderCategory("general", "General")}
-          {renderCategory("marketing", "Marketing")}
+          {renderCategory('matches', 'Matches & Likes')}
+          {renderCategory('messages', 'Messages')}
+          {renderCategory('general', 'General')}
+          {renderCategory('marketing', 'Marketing')}
 
           {/* Push Notification Settings */}
           <Text style={styles.sectionTitle}>Push Notification Settings</Text>
 
-          <BlurView intensity={15} style={styles.pushSettingsCard}>
+          <BlurView
+            intensity={15}
+            style={styles.pushSettingsCard}
+          >
             <View style={styles.pushSetting}>
               <View style={styles.pushSettingText}>
                 <Text style={styles.pushSettingTitle}>Push Notifications</Text>
@@ -257,8 +271,8 @@ function NotificationPreferencesScreen({
                 value={true}
                 onValueChange={() => {
                   Alert.alert(
-                    "Push Notifications",
-                    "Push notification settings would be managed by device settings.",
+                    'Push Notifications',
+                    'Push notification settings would be managed by device settings.',
                   );
                 }}
                 trackColor={{ false: theme.colors.inactive, true: theme.colors.success }}
@@ -276,13 +290,10 @@ function NotificationPreferencesScreen({
               <Switch
                 value={false}
                 onValueChange={() => {
-                  Alert.alert(
-                    "Quiet Hours",
-                    "Quiet hours feature coming soon!",
-                  );
+                  Alert.alert('Quiet Hours', 'Quiet hours feature coming soon!');
                 }}
                 trackColor={{ false: theme.colors.inactive, true: theme.colors.primary }}
-                thumbColor={theme.colors.surfaceAlt}
+                thumbColor={theme.colors.overlay}
               />
             </View>
           </BlurView>
@@ -290,16 +301,23 @@ function NotificationPreferencesScreen({
           {/* Test Notification */}
           <TouchableOpacity
             style={styles.testButton}
-             testID="NotificationPreferencesScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+            testID="NotificationPreferencesScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
               Haptics.selectionAsync().catch(() => {});
-              Alert.alert(
-                "Test Notification",
-                "A test notification would be sent to your device.",
-              );
+              Alert.alert('Test Notification', 'A test notification would be sent to your device.');
             }}
           >
-            <BlurView intensity={20} style={styles.testButtonBlur}>
-              <Ionicons name="notifications-outline" size={20} color={theme.colors.onPrimary} />
+            <BlurView
+              intensity={20}
+              style={styles.testButtonBlur}
+            >
+              <Ionicons
+                name="notifications-outline"
+                size={20}
+                color={theme.colors.onPrimary}
+              />
               <Text style={styles.testButtonText}>Send Test Notification</Text>
             </BlurView>
           </TouchableOpacity>
@@ -317,9 +335,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
@@ -327,44 +345,44 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   backButtonBlur: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: theme.colors.onPrimary,
   },
   saveButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: theme.colors.primary + "33",
+    backgroundColor: theme.colors.primary + '33',
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: theme.colors.primary + "80",
+    borderColor: theme.colors.primary + '80',
   },
   saveButtonText: {
     color: theme.colors.onPrimary,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   content: {
     flex: 1,
     paddingHorizontal: 20,
   },
   infoCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: theme.colors.surface + "1A",
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.surface + '1A',
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: theme.colors.border + "33",
+    borderColor: theme.colors.border + '33',
   },
   infoText: {
     flex: 1,
@@ -377,24 +395,24 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   categoryHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 12,
   },
   categoryTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: theme.colors.onPrimary,
   },
   settingCard: {
     borderRadius: 12,
     marginBottom: 8,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   settingContent: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 16,
   },
   settingText: {
@@ -402,7 +420,7 @@ const styles = StyleSheet.create({
   },
   settingTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     color: theme.colors.onPrimary,
     marginBottom: 4,
   },
@@ -413,29 +431,29 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: theme.colors.onPrimary,
     marginBottom: 16,
     marginTop: 8,
   },
   pushSettingsCard: {
     borderRadius: 16,
-    overflow: "hidden",
+    overflow: 'hidden',
     marginBottom: 24,
   },
   pushSetting: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border + "1A",
+    borderBottomColor: theme.colors.border + '1A',
   },
   pushSettingText: {
     flex: 1,
   },
   pushSettingTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     color: theme.colors.onPrimary,
     marginBottom: 4,
   },
@@ -446,20 +464,20 @@ const styles = StyleSheet.create({
   },
   testButton: {
     borderRadius: 16,
-    overflow: "hidden",
+    overflow: 'hidden',
     marginBottom: 32,
   },
   testButtonBlur: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 16,
     gap: 8,
   },
   testButtonText: {
     color: theme.colors.onPrimary,
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });
 

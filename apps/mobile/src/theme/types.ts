@@ -3,7 +3,7 @@
  * Single source of truth for theme types across the mobile app
  */
 
-export type ColorScheme = "light" | "dark";
+export type ColorScheme = 'light' | 'dark';
 
 export interface SemanticColors {
   // Core semantic colors
@@ -17,14 +17,14 @@ export interface SemanticColors {
   success: string;
   warning: string;
   danger: string;
-  
+
   // Extended semantic colors for backward compatibility
   background: string;
   surface: string;
   surfaceElevated: string;
   card: string;
   textSecondary: string;
-  
+
   // Monochrome palette
   white: string;
   black: string;
@@ -39,21 +39,21 @@ export interface SemanticColors {
   gray800: string;
   gray900: string;
   gray950: string;
-  
+
   // Primary variants
   primaryLight: string;
   primaryDark: string;
-  
+
   // Secondary variants
   secondary: string;
   secondaryLight: string;
   secondaryDark: string;
-  
+
   // Accent variants
   accent: string;
   accentLight: string;
   accentDark: string;
-  
+
   // Glass effects
   glass: string;
   glassLight: string;
@@ -63,18 +63,18 @@ export interface SemanticColors {
   glassDark: string;
   glassDarkMedium: string;
   glassDarkStrong: string;
-  
+
   // Status colors
   info: string;
   error: string;
-  
+
   // Additional properties
   tertiary: string;
   inverse: string;
   shadow: string;
   interactive: string;
   feedback: string;
-  
+
   // Gradient properties (optional)
   gradientPrimary?: string[];
   gradientSecondary?: string[];
@@ -82,7 +82,7 @@ export interface SemanticColors {
   gradientSuccess?: string[];
   gradientWarning?: string[];
   gradientError?: string[];
-  
+
   // Nested properties for theme access (optional)
   neutral?: Record<number | string, string>;
   status?: {
@@ -125,26 +125,26 @@ export interface Spacing {
   readonly 80: string;
   readonly 96: string;
   // Named spacing helpers
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
-  "3xl": number;
-  "4xl": number;
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
+  '2xl': number;
+  '3xl': number;
+  '4xl': number;
 }
 
 export interface Radius {
-  none: number;
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
-  full: number;
-  pill: number;
+  'none': number;
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
+  '2xl': number;
+  'full': number;
+  'pill': number;
 }
 
 export interface Motion {
@@ -159,7 +159,7 @@ export interface Theme {
   spacing: Spacing;
   radius: Radius;
   motion: Motion;
-  
+
   // Backward compatibility helpers
   isDark?: boolean; // Use scheme === 'dark' instead
   styles?: Record<string, unknown>; // For legacy component support
@@ -167,7 +167,7 @@ export interface Theme {
 }
 
 // Additional types for theme providers
-export type ThemeMode = "light" | "dark" | "system";
+export type ThemeMode = 'light' | 'dark' | 'system';
 
 export interface ThemeContextValue {
   theme: Theme;
@@ -195,14 +195,14 @@ export interface TypographyScale {
 // Spacing Scale type for backward compatibility
 export interface SpacingScale {
   [key: string]: number;
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
-  "3xl": number;
-  "4xl": number;
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
+  '2xl': number;
+  '3xl': number;
+  '4xl': number;
 }
 
 // Shadow Scale type for backward compatibility
@@ -219,15 +219,15 @@ export interface ShadowScale {
 // Radius Scale type for backward compatibility
 export interface RadiusScale {
   [key: string]: number;
-  none: number;
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
-  full: number;
-  pill: number;
+  'none': number;
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
+  '2xl': number;
+  'full': number;
+  'pill': number;
 }
 
 // Opacity Scale type
@@ -254,12 +254,12 @@ export interface BorderWidthScale {
 // Icon Size Scale type
 export interface IconSizeScale {
   [key: string]: number;
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
+  '2xl': number;
 }
 
 // Animation Scale type

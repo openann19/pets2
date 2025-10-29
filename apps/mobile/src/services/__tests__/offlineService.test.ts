@@ -99,13 +99,21 @@ describe('OfflineService', () => {
         matches: [{ id: 'match1' }],
         messages: [{ id: 'msg1' }],
         lastSync: '2024-01-01T00:00:00Z',
-        pendingActions: [{ id: 'action1', type: 'swipe', data: {}, timestamp: '2024-01-01T00:00:00Z', retryCount: 0 }],
+        pendingActions: [
+          {
+            id: 'action1',
+            type: 'swipe',
+            data: {},
+            timestamp: '2024-01-01T00:00:00Z',
+            retryCount: 0,
+          },
+        ],
       };
 
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(storedData));
 
       const newService = new OfflineService();
-      await new Promise(resolve => setTimeout(resolve, 0)); // Allow async initialization
+      await new Promise((resolve) => setTimeout(resolve, 0)); // Allow async initialization
 
       const offlineData = (newService as any).offlineData;
       expect(offlineData.pets).toEqual(storedData.pets);
@@ -117,7 +125,7 @@ describe('OfflineService', () => {
       mockAsyncStorage.getItem.mockResolvedValue('invalid json');
 
       const newService = new OfflineService();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       const offlineData = (newService as any).offlineData;
       expect(offlineData.pets).toEqual([]); // Should use defaults
@@ -171,7 +179,7 @@ describe('OfflineService', () => {
         { isConnected: true, type: 'wifi', isInternetReachable: false }, // Edge case
       ];
 
-      states.forEach(state => {
+      states.forEach((state) => {
         networkListener(state);
         expect((offlineService as any).isOnline).toBe(state.isConnected === true);
       });
@@ -303,7 +311,10 @@ describe('OfflineService', () => {
 
   describe('Offline-First Data Access', () => {
     it('should get pets with online preference', async () => {
-      const onlinePets = [{ id: 'pet1', name: 'Buddy' }, { id: 'pet2', name: 'Luna' }];
+      const onlinePets = [
+        { id: 'pet1', name: 'Buddy' },
+        { id: 'pet2', name: 'Luna' },
+      ];
       mockApi.getPets.mockResolvedValue(onlinePets);
 
       const result = await offlineService.getPets();
@@ -324,7 +335,7 @@ describe('OfflineService', () => {
       expect(result).toEqual(offlinePets);
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'Failed to fetch pets online, using offline data',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -369,7 +380,7 @@ describe('OfflineService', () => {
       const result = await offlineService.getMessages('match1');
 
       expect(result).toHaveLength(2);
-      expect(result.every(msg => msg.matchId === 'match1')).toBe(true);
+      expect(result.every((msg) => msg.matchId === 'match1')).toBe(true);
     });
 
     it('should cache messages when fetching online', async () => {
@@ -419,7 +430,7 @@ describe('OfflineService', () => {
       expect((offlineService as any).offlineData.pendingActions[0].type).toBe('message');
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'Failed to send message online, queuing for offline',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -447,7 +458,7 @@ describe('OfflineService', () => {
       expect((offlineService as any).offlineData.pendingActions[0].type).toBe('match_action');
       expect((offlineService as any).offlineData.pendingActions[0].data).toEqual({
         matchId: 'match1',
-        action: 'unmatch'
+        action: 'unmatch',
       });
     });
   });
@@ -497,7 +508,7 @@ describe('OfflineService', () => {
       const syncPendingActionsSpy = jest.spyOn(offlineService as any, 'syncPendingActions');
       syncPendingActionsSpy.mockImplementation(async () => {
         // Simulate some work
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
       });
 
       const promise = offlineService.triggerSync();
@@ -519,10 +530,7 @@ describe('OfflineService', () => {
 
       await (offlineService as any).saveOfflineData();
 
-      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        'offline_data',
-        expect.any(String)
-      );
+      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith('offline_data', expect.any(String));
 
       const savedData = JSON.parse(mockAsyncStorage.setItem.mock.calls[0][1]);
       expect(savedData.pets).toEqual([{ id: 'pet1' }]);
@@ -537,7 +545,7 @@ describe('OfflineService', () => {
       // Should not throw, should log error
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Failed to save offline data',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -560,7 +568,7 @@ describe('OfflineService', () => {
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Failed to clear offline data',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });
@@ -590,7 +598,7 @@ describe('OfflineService', () => {
       expect(size).toBe(0);
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Failed to get storage size',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -696,18 +704,18 @@ describe('OfflineService', () => {
     it('should handle multiple listeners', () => {
       const listeners = [jest.fn(), jest.fn(), jest.fn()];
 
-      const unsubscribes = listeners.map(listener =>
-        offlineService.addSyncStatusListener(listener)
+      const unsubscribes = listeners.map((listener) =>
+        offlineService.addSyncStatusListener(listener),
       );
 
       (offlineService as any).notifyListeners();
 
-      listeners.forEach(listener => {
+      listeners.forEach((listener) => {
         expect(listener).toHaveBeenCalledTimes(1);
       });
 
       // Unsubscribe all
-      unsubscribes.forEach(unsubscribe => unsubscribe());
+      unsubscribes.forEach((unsubscribe) => unsubscribe());
 
       expect((offlineService as any).syncListeners).toHaveLength(0);
     });
@@ -748,7 +756,7 @@ describe('OfflineService', () => {
         { type: 'swipe', data: null },
       ];
 
-      invalidActions.forEach(invalidAction => {
+      invalidActions.forEach((invalidAction) => {
         // Should not crash when processing
         expect(() => offlineService.addPendingAction('swipe', invalidAction as any)).not.toThrow();
       });

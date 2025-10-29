@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { useStories } from "../useStories";
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { useStories } from '../useStories';
 
 // Mock dependencies
 const mockRefetch = jest.fn();
@@ -13,7 +13,7 @@ const mockSocket = {
   emit: jest.fn(),
 };
 
-jest.mock("@tanstack/react-query", () => ({
+jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(() => ({
     data: mockStoryGroups,
     isLoading: false,
@@ -26,19 +26,19 @@ jest.mock("@tanstack/react-query", () => ({
   })),
 }));
 
-jest.mock("../../../useSocket", () => ({
+jest.mock('../../../useSocket', () => ({
   useSocket: () => mockSocket,
 }));
 
-jest.mock("expo-haptics", () => ({
+jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(() => Promise.resolve()),
   ImpactFeedbackStyle: {
-    Light: "light",
-    Medium: "medium",
+    Light: 'light',
+    Medium: 'medium',
   },
 }));
 
-jest.mock("@pawfectmatch/core", () => ({
+jest.mock('@pawfectmatch/core', () => ({
   logger: {
     info: jest.fn(),
     error: jest.fn(),
@@ -47,27 +47,27 @@ jest.mock("@pawfectmatch/core", () => ({
 
 const mockStoryGroups = [
   {
-    userId: "user1",
+    userId: 'user1',
     user: {
-      _id: "user1",
-      username: "alice",
-      profilePhoto: "photo1.jpg",
+      _id: 'user1',
+      username: 'alice',
+      profilePhoto: 'photo1.jpg',
     },
     stories: [
       {
-        _id: "story1",
-        userId: "user1",
-        mediaType: "photo" as const,
-        mediaUrl: "story1.jpg",
+        _id: 'story1',
+        userId: 'user1',
+        mediaType: 'photo' as const,
+        mediaUrl: 'story1.jpg',
         duration: 5,
         viewCount: 10,
         createdAt: new Date().toISOString(),
       },
       {
-        _id: "story2",
-        userId: "user1",
-        mediaType: "video" as const,
-        mediaUrl: "story2.mp4",
+        _id: 'story2',
+        userId: 'user1',
+        mediaType: 'video' as const,
+        mediaUrl: 'story2.mp4',
         duration: 10,
         viewCount: 5,
         createdAt: new Date().toISOString(),
@@ -76,17 +76,17 @@ const mockStoryGroups = [
     storyCount: 2,
   },
   {
-    userId: "user2",
+    userId: 'user2',
     user: {
-      _id: "user2",
-      username: "bob",
+      _id: 'user2',
+      username: 'bob',
     },
     stories: [
       {
-        _id: "story3",
-        userId: "user2",
-        mediaType: "photo" as const,
-        mediaUrl: "story3.jpg",
+        _id: 'story3',
+        userId: 'user2',
+        mediaType: 'photo' as const,
+        mediaUrl: 'story3.jpg',
         duration: 5,
         viewCount: 20,
         createdAt: new Date().toISOString(),
@@ -96,7 +96,7 @@ const mockStoryGroups = [
   },
 ];
 
-describe("useStories", () => {
+describe('useStories', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
@@ -107,7 +107,7 @@ describe("useStories", () => {
     jest.useRealTimers();
   });
 
-  it("should initialize with default state", () => {
+  it('should initialize with default state', () => {
     const { result } = renderHook(() => useStories());
 
     expect(result.current.currentGroupIndex).toBe(0);
@@ -117,7 +117,7 @@ describe("useStories", () => {
     expect(result.current.progress).toBe(0);
   });
 
-  it("should provide story data", () => {
+  it('should provide story data', () => {
     const { result } = renderHook(() => useStories());
 
     expect(result.current.storyGroups).toEqual(mockStoryGroups);
@@ -125,7 +125,7 @@ describe("useStories", () => {
     expect(result.current.currentStory).toEqual(mockStoryGroups[0].stories[0]);
   });
 
-  it("should navigate to next story in same group", () => {
+  it('should navigate to next story in same group', () => {
     const { result } = renderHook(() => useStories());
 
     act(() => {
@@ -137,7 +137,7 @@ describe("useStories", () => {
     expect(result.current.currentStory).toEqual(mockStoryGroups[0].stories[1]);
   });
 
-  it("should navigate to next group when stories end", () => {
+  it('should navigate to next group when stories end', () => {
     const { result } = renderHook(() => useStories(0));
 
     // Go to last story of first group
@@ -157,7 +157,7 @@ describe("useStories", () => {
     expect(result.current.currentStory).toEqual(mockStoryGroups[1].stories[0]);
   });
 
-  it("should navigate to previous story", () => {
+  it('should navigate to previous story', () => {
     const { result } = renderHook(() => useStories());
 
     // Go to second story
@@ -175,7 +175,7 @@ describe("useStories", () => {
     expect(result.current.currentStoryIndex).toBe(0);
   });
 
-  it("should navigate to previous group when at start of stories", () => {
+  it('should navigate to previous group when at start of stories', () => {
     const { result } = renderHook(() => useStories(1));
 
     expect(result.current.currentGroupIndex).toBe(1);
@@ -189,7 +189,7 @@ describe("useStories", () => {
     expect(result.current.currentStoryIndex).toBe(1); // Last story of previous group
   });
 
-  it("should navigate to specific group", () => {
+  it('should navigate to specific group', () => {
     const { result } = renderHook(() => useStories());
 
     act(() => {
@@ -201,7 +201,7 @@ describe("useStories", () => {
     expect(result.current.currentGroup).toEqual(mockStoryGroups[1]);
   });
 
-  it("should navigate to specific story", () => {
+  it('should navigate to specific story', () => {
     const { result } = renderHook(() => useStories());
 
     act(() => {
@@ -213,7 +213,7 @@ describe("useStories", () => {
     expect(result.current.currentStory).toEqual(mockStoryGroups[0].stories[1]);
   });
 
-  it("should pause and unpause playback", () => {
+  it('should pause and unpause playback', () => {
     const { result } = renderHook(() => useStories());
 
     act(() => {
@@ -229,7 +229,7 @@ describe("useStories", () => {
     expect(result.current.isPaused).toBe(false);
   });
 
-  it("should toggle mute state", () => {
+  it('should toggle mute state', () => {
     const { result } = renderHook(() => useStories());
 
     act(() => {
@@ -245,19 +245,19 @@ describe("useStories", () => {
     expect(result.current.isMuted).toBe(false);
   });
 
-  it("should mark story as viewed", async () => {
+  it('should mark story as viewed', async () => {
     mockMutateAsync.mockResolvedValue({ success: true, viewCount: 15 });
 
     const { result } = renderHook(() => useStories());
 
     await act(async () => {
-      await result.current.markAsViewed("story1");
+      await result.current.markAsViewed('story1');
     });
 
-    expect(mockMutateAsync).toHaveBeenCalledWith("story1");
+    expect(mockMutateAsync).toHaveBeenCalledWith('story1');
   });
 
-  it("should refresh stories", async () => {
+  it('should refresh stories', async () => {
     mockRefetch.mockResolvedValue({ data: mockStoryGroups });
 
     const { result } = renderHook(() => useStories());
@@ -269,16 +269,13 @@ describe("useStories", () => {
     expect(mockRefetch).toHaveBeenCalled();
   });
 
-  it("should handle socket events for view updates", () => {
+  it('should handle socket events for view updates', () => {
     const { result } = renderHook(() => useStories());
 
-    expect(mockSocket.on).toHaveBeenCalledWith(
-      "story:viewed",
-      expect.any(Function),
-    );
+    expect(mockSocket.on).toHaveBeenCalledWith('story:viewed', expect.any(Function));
   });
 
-  it("should reset progress when navigating", () => {
+  it('should reset progress when navigating', () => {
     const { result } = renderHook(() => useStories());
 
     // Set some progress
@@ -294,7 +291,7 @@ describe("useStories", () => {
     expect(result.current.progress).toBe(0);
   });
 
-  it("should provide timer refs", () => {
+  it('should provide timer refs', () => {
     const { result } = renderHook(() => useStories());
 
     expect(result.current.timerRef).toBeDefined();
@@ -302,7 +299,7 @@ describe("useStories", () => {
     expect(result.current.longPressTimer).toBeDefined();
   });
 
-  it("should not navigate beyond last story", () => {
+  it('should not navigate beyond last story', () => {
     const { result } = renderHook(() => useStories(1));
 
     // Go to last story of last group
@@ -318,7 +315,7 @@ describe("useStories", () => {
     expect(result.current.currentStoryIndex).toBe(0);
   });
 
-  it("should return stable function references", () => {
+  it('should return stable function references', () => {
     const { result, rerender } = renderHook(() => useStories());
 
     const firstGoToNextStory = result.current.goToNextStory;

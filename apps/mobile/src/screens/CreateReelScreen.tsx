@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Pressable, ActivityIndicator, StyleSheet, ScrollView, Image, Alert } from 'react-native';
-import { useTheme } from '@/theme';
+import { useTheme } from '@mobile/src/theme';
 import { useTranslation } from 'react-i18next';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
@@ -270,7 +270,7 @@ export default function CreateReelScreen() {
 
 const makeStyles = (theme: any) =>
   StyleSheet.create({
-    root: { flex: 1, backgroundColor: theme.colors.background },
+    root: { flex: 1, backgroundColor: theme.colors.bg },
     header: { padding: 16, paddingTop: 48, borderBottomWidth: 1, borderBottomColor: theme.colors.border },
     headerText: { fontSize: 24, fontWeight: 'bold', color: theme.colors.onSurface marginBottom: 12 },
     progressBar: { height: 4, backgroundColor: theme.colors.border, borderRadius: 2, overflow: 'hidden' },

@@ -1,15 +1,15 @@
-import { logger, useAuthStore } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
-import { useCallback, useState, useEffect } from "react";
-import { Alert } from "react-native";
-import { request } from "../../services/api";
+import { logger, useAuthStore } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import { useCallback, useState, useEffect } from 'react';
+import { Alert } from 'react-native';
+import { request } from '../../services/api';
 
 export interface PrivacySettings {
-  profileVisibility: "public" | "friends" | "nobody";
+  profileVisibility: 'public' | 'friends' | 'nobody';
   showOnlineStatus: boolean;
   showDistance: boolean;
   showLastActive: boolean;
-  allowMessages: "everyone" | "matches" | "nobody";
+  allowMessages: 'everyone' | 'matches' | 'nobody';
   showReadReceipts: boolean;
   incognitoMode: boolean;
   shareLocation: boolean;
@@ -20,11 +20,11 @@ export interface PrivacySettings {
 export function usePrivacySettingsScreen() {
   const { user: _user } = useAuthStore();
   const [settings, setSettings] = useState<PrivacySettings>({
-    profileVisibility: "nobody",
+    profileVisibility: 'nobody',
     showOnlineStatus: true,
     showDistance: true,
     showLastActive: true,
-    allowMessages: "nobody",
+    allowMessages: 'nobody',
     showReadReceipts: true,
     incognitoMode: false,
     shareLocation: true,
@@ -36,20 +36,17 @@ export function usePrivacySettingsScreen() {
   const loadPrivacySettings = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await request<PrivacySettings>(
-        "/api/profile/privacy",
-        {
-          method: "GET",
-        },
-      );
+      const response = await request<PrivacySettings>('/api/profile/privacy', {
+        method: 'GET',
+      });
 
       if (response) {
         setSettings(response);
       }
 
-      logger.info("Privacy settings loaded");
+      logger.info('Privacy settings loaded');
     } catch (error) {
-      logger.error("Failed to load privacy settings:", error);
+      logger.error('Failed to load privacy settings:', error);
     } finally {
       setLoading(false);
     }
@@ -60,10 +57,7 @@ export function usePrivacySettingsScreen() {
   }, [loadPrivacySettings]);
 
   const updateSetting = useCallback(
-    async <K extends keyof PrivacySettings>(
-      key: K,
-      value: PrivacySettings[K],
-    ) => {
+    async <K extends keyof PrivacySettings>(key: K, value: PrivacySettings[K]) => {
       try {
         setLoading(true);
         await Haptics.selectionAsync();
@@ -71,15 +65,15 @@ export function usePrivacySettingsScreen() {
         const newSettings = { ...settings, [key]: value };
         setSettings(newSettings);
 
-        await request("/api/profile/privacy", {
-          method: "PUT",
+        await request('/api/profile/privacy', {
+          method: 'PUT',
           body: newSettings,
         });
 
-        logger.info("Privacy setting updated", { key, value });
+        logger.info('Privacy setting updated', { key, value });
       } catch (error) {
-        logger.error("Failed to update privacy setting:", error);
-        Alert.alert("Error", "Failed to update setting");
+        logger.error('Failed to update privacy setting:', error);
+        Alert.alert('Error', 'Failed to update setting');
       } finally {
         setLoading(false);
       }
@@ -93,4 +87,3 @@ export function usePrivacySettingsScreen() {
     updateSetting,
   };
 }
-

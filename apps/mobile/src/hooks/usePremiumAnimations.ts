@@ -26,10 +26,10 @@ export {
   usePageTransition,
   useLoadingAnimation,
   useParallaxEffect,
-} from "./animations/index";
+} from './animations/index';
 
 // Export PREMIUM_ANIMATIONS constants if needed (consider importing from animation/index.ts)
-export { PREMIUM_ANIMATIONS } from "./animations/constants";
+export { PREMIUM_ANIMATIONS } from './animations/constants';
 
 // Default export for backward compatibility
 import {
@@ -46,7 +46,7 @@ import {
   usePageTransition,
   useLoadingAnimation,
   useParallaxEffect,
-} from "./animations";
+} from './animations';
 
 export default {
   PREMIUM_ANIMATIONS,

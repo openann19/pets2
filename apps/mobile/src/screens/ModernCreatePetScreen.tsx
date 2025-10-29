@@ -32,7 +32,7 @@ import {
   Label,
   useStaggeredAnimation,
 } from "../components";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 
 // Import legacy components for gradual migration
 import { EliteContainer, EliteHeader } from "../components";
@@ -93,8 +93,8 @@ export default function ModernCreatePetScreen({
       marginBottom: theme.spacing.lg,
     },
     input: {
-      backgroundColor: theme.colors.bgElevated,
-      borderRadius: theme.radius.lg,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.lg,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
       fontSize: 16,

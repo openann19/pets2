@@ -1,6 +1,6 @@
 /**
  * HomeScreen Theme Integration Tests
- * 
+ *
  * Verifies that HomeScreen properly uses the unified theming system
  * and that all theme-dependent styles are correctly applied.
  */
@@ -8,7 +8,7 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { View, Text, StyleSheet } from 'react-native';
-import { ThemeProvider, useTheme } from "@/theme";
+import { ThemeProvider, useTheme } from '@/theme';
 import { createTheme } from '../../theme/rnTokens';
 
 describe('HomeScreen - Theme Integration', () => {
@@ -16,7 +16,7 @@ describe('HomeScreen - Theme Integration', () => {
     it('should create styles inside component with theme access', () => {
       const TestComponent = () => {
         const theme = useTheme();
-        
+
         const styles = StyleSheet.create({
           container: {
             flex: 1,
@@ -34,7 +34,10 @@ describe('HomeScreen - Theme Integration', () => {
         });
 
         return (
-          <View style={styles.container} testID="home-container">
+          <View
+            style={styles.container}
+            testID="home-container"
+          >
             <Text style={styles.text}>Test</Text>
           </View>
         );
@@ -43,7 +46,7 @@ describe('HomeScreen - Theme Integration', () => {
       const { getByTestId } = render(
         <ThemeProvider scheme="light">
           <TestComponent />
-        </ThemeProvider>
+        </ThemeProvider>,
       );
 
       expect(getByTestId('home-container')).toBeTruthy();
@@ -53,7 +56,7 @@ describe('HomeScreen - Theme Integration', () => {
   describe('Color References', () => {
     it('should use semantic color names correctly', () => {
       const theme = createTheme('light');
-      
+
       // HomeScreen uses these color references
       expect(theme.colors.primary).toBeTruthy();
       expect(theme.colors.bg).toBeTruthy();
@@ -63,7 +66,7 @@ describe('HomeScreen - Theme Integration', () => {
 
     it('should use correct icon color references', () => {
       const theme = createTheme('light');
-      
+
       // Icons use these colors
       expect(theme.colors.primary).toBeTruthy();
       expect(theme.colors.success).toBeTruthy();
@@ -73,11 +76,11 @@ describe('HomeScreen - Theme Integration', () => {
 
     it('should use bg instead of neutral[0]', () => {
       const theme = createTheme('light');
-      
+
       // Correct: use theme.colors.bg
       expect(theme.colors.bg).toBeDefined();
       expect(typeof theme.colors.bg).toBe('string');
-      
+
       // Incorrect pattern should not exist
       expect((theme.colors as any).neutral).toBeUndefined();
     });
@@ -86,7 +89,7 @@ describe('HomeScreen - Theme Integration', () => {
   describe('Spacing Usage', () => {
     it('should use spacing values for padding and margins', () => {
       const theme = createTheme('light');
-      
+
       const styles = StyleSheet.create({
         section: {
           padding: theme.spacing.lg,
@@ -105,7 +108,7 @@ describe('HomeScreen - Theme Integration', () => {
   describe('Radius Usage', () => {
     it('should use radius values for border radius', () => {
       const theme = createTheme('light');
-      
+
       const styles = StyleSheet.create({
         card: {
           borderRadius: theme.radius.lg,
@@ -134,7 +137,7 @@ describe('HomeScreen - Theme Integration', () => {
       const { getByTestId } = render(
         <ThemeProvider scheme="light">
           <TestComponent />
-        </ThemeProvider>
+        </ThemeProvider>,
       );
 
       expect(getByTestId('light-test')).toBeTruthy();
@@ -153,7 +156,7 @@ describe('HomeScreen - Theme Integration', () => {
       const { getByTestId } = render(
         <ThemeProvider scheme="dark">
           <TestComponent />
-        </ThemeProvider>
+        </ThemeProvider>,
       );
 
       expect(getByTestId('dark-test')).toBeTruthy();
@@ -163,7 +166,7 @@ describe('HomeScreen - Theme Integration', () => {
   describe('Badge Styling', () => {
     it('should use correct colors for badges', () => {
       const theme = createTheme('light');
-      
+
       const styles = StyleSheet.create({
         badge: {
           backgroundColor: theme.colors.danger,
@@ -179,7 +182,7 @@ describe('HomeScreen - Theme Integration', () => {
   describe('Activity Item Styling', () => {
     it('should use correct colors for activity items', () => {
       const theme = createTheme('light');
-      
+
       const styles = StyleSheet.create({
         activityItem: {
           borderBottomColor: theme.colors.border,
@@ -203,9 +206,9 @@ describe('HomeScreen - No Static Theme Imports', () => {
   it('should not import Theme from unified-theme', () => {
     // This test verifies the refactoring was done correctly
     // The component should use useTheme hook instead
-    
+
     const theme = createTheme('light');
-    
+
     // Verify theme structure is available
     expect(theme).toHaveProperty('colors');
     expect(theme).toHaveProperty('spacing');

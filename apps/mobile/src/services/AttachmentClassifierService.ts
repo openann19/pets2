@@ -4,23 +4,23 @@
  * Uses ML-based content analysis for smart categorization
  */
 
-import { logger } from "@pawfectmatch/core";
-import { request } from "./api";
+import { logger } from '@pawfectmatch/core';
+import { request } from './api';
 
-export type AttachmentType = "image" | "video" | "document" | "audio" | "unknown";
+export type AttachmentType = 'image' | 'video' | 'document' | 'audio' | 'unknown';
 
 export type AttachmentCategory =
-  | "photo"
-  | "selfie"
-  | "screenshot"
-  | "memes"
-  | "video_message"
-  | "voice_note"
-  | "document"
-  | "spreadsheet"
-  | "presentation"
-  | "archive"
-  | "other";
+  | 'photo'
+  | 'selfie'
+  | 'screenshot'
+  | 'memes'
+  | 'video_message'
+  | 'voice_note'
+  | 'document'
+  | 'spreadsheet'
+  | 'presentation'
+  | 'archive'
+  | 'other';
 
 export interface AttachmentMetadata {
   type: AttachmentType;
@@ -53,17 +53,17 @@ class AttachmentClassifierService {
     metadata?: Record<string, unknown>;
   }): Promise<ClassificationResult> {
     try {
-      logger.info("Classifying attachment", {
+      logger.info('Classifying attachment', {
         mimeType: params.mimeType,
         size: params.size,
       });
 
       // Determine base type from MIME type
       const type = this.inferTypeFromMime(params.mimeType);
-      
+
       // Detect category based on heuristics
       const category = this.inferCategory(type, params.metadata);
-      
+
       // Build metadata object
       const attachmentMetadata: AttachmentMetadata = {
         type,
@@ -101,14 +101,14 @@ class AttachmentClassifierService {
         warnings: warnings.length > 0 ? warnings : undefined,
       };
 
-      logger.info("Attachment classified successfully", {
+      logger.info('Attachment classified successfully', {
         classification: result.classification,
         confidence: result.confidence,
       });
 
       return result;
     } catch (error) {
-      logger.error("Failed to classify attachment", { error, params });
+      logger.error('Failed to classify attachment', { error, params });
       throw error;
     }
   }
@@ -117,19 +117,19 @@ class AttachmentClassifierService {
    * Infer attachment type from MIME type
    */
   private inferTypeFromMime(mimeType: string): AttachmentType {
-    if (mimeType.startsWith("image/")) return "image";
-    if (mimeType.startsWith("video/")) return "video";
-    if (mimeType.startsWith("audio/")) return "audio";
+    if (mimeType.startsWith('image/')) return 'image';
+    if (mimeType.startsWith('video/')) return 'video';
+    if (mimeType.startsWith('audio/')) return 'audio';
     if (
-      mimeType.includes("document") ||
-      mimeType.includes("text") ||
-      mimeType.includes("application/pdf") ||
-      mimeType.includes("spreadsheet") ||
-      mimeType.includes("presentation")
+      mimeType.includes('document') ||
+      mimeType.includes('text') ||
+      mimeType.includes('application/pdf') ||
+      mimeType.includes('spreadsheet') ||
+      mimeType.includes('presentation')
     ) {
-      return "document";
+      return 'document';
     }
-    return "unknown";
+    return 'unknown';
   }
 
   /**
@@ -140,80 +140,73 @@ class AttachmentClassifierService {
     metadata?: Record<string, unknown>,
   ): AttachmentCategory {
     switch (type) {
-      case "image": {
+      case 'image': {
         // Heuristics for image categories
         const width = metadata?.width as number | undefined;
         const height = metadata?.height as number | undefined;
-        
+
         if (width && height) {
           const aspectRatio = width / height;
           // Square-ish images might be selfies or photos
           if (aspectRatio > 0.8 && aspectRatio < 1.2) {
             // Check if dimensions suggest a phone selfie
             if (width > 800 && width < 4000) {
-              return "selfie";
+              return 'selfie';
             }
-            return "photo";
+            return 'photo';
           }
           // Very wide images might be screenshots
           if (aspectRatio > 2) {
-            return "screenshot";
+            return 'screenshot';
           }
         }
-        return "photo";
+        return 'photo';
       }
 
-      case "video":
-        return "video_message";
+      case 'video':
+        return 'video_message';
 
-      case "audio":
-        return "voice_note";
+      case 'audio':
+        return 'voice_note';
 
-      case "document": {
+      case 'document': {
         const mimeType = metadata?.mimeType as string | undefined;
         if (mimeType) {
-          if (mimeType.includes("spreadsheet")) return "spreadsheet";
-          if (mimeType.includes("presentation")) return "presentation";
-          if (
-            mimeType.includes("zip") ||
-            mimeType.includes("rar") ||
-            mimeType.includes("tar")
-          ) {
-            return "archive";
+          if (mimeType.includes('spreadsheet')) return 'spreadsheet';
+          if (mimeType.includes('presentation')) return 'presentation';
+          if (mimeType.includes('zip') || mimeType.includes('rar') || mimeType.includes('tar')) {
+            return 'archive';
           }
         }
-        return "document";
+        return 'document';
       }
 
       default:
-        return "other";
+        return 'other';
     }
   }
 
   /**
    * Calculate confidence score for classification
    */
-  private calculateConfidence(
-    type: AttachmentType,
-    category: AttachmentCategory,
-  ): number {
+  private calculateConfidence(type: AttachmentType, category: AttachmentCategory): number {
     // Base confidence on how well type and category align
     let confidence = 0.7; // Base confidence
 
     // Higher confidence for well-defined categories
-    if (category === "photo" || category === "selfie") {
+    if (category === 'photo' || category === 'selfie') {
       confidence = 0.9;
     }
-    if (category === "video_message") {
+    if (category === 'video_message') {
       confidence = 0.95;
     }
-    if (category === "voice_note") {
+    if (category === 'voice_note') {
       confidence = 0.9;
     }
-    if (category === "document") {
+    if (category === 'document') {
       confidence = 0.85;
     }
-    if (category === "other") {
+    if (category === 'other') {
       confidence = 0.6;
     }
 
@@ -234,21 +227,21 @@ class AttachmentClassifierService {
     const size = metadata?.size as number | undefined;
     if (size) {
       if (size > 5 * 1024 * 1024) {
-        tags.push("large-file");
+        tags.push('large-file');
       } else if (size > 1024 * 1024) {
-        tags.push("medium-file");
+        tags.push('medium-file');
       } else {
-        tags.push("small-file");
+        tags.push('small-file');
       }
     }
 
     // Add quality tags for images/videos
-    if (type === "image" || type === "video") {
+    if (type === 'image' || type === 'video') {
       const width = metadata?.width as number | undefined;
       const height = metadata?.height as number | undefined;
       if (width && height) {
         if (width > 2000 || height > 2000) {
-          tags.push("high-resolution");
+          tags.push('high-resolution');
         }
       }
     }
@@ -259,23 +252,20 @@ class AttachmentClassifierService {
   /**
    * Detect potential issues with attachment
    */
-  private detectWarnings(params: {
-    size: number;
-    mimeType: string;
-  }): string[] {
+  private detectWarnings(params: { size: number; mimeType: string }): string[] {
     const warnings: string[] = [];
 
     // File size warnings
     if (params.size > 25 * 1024 * 1024) {
-      warnings.push("large-file");
+      warnings.push('large-file');
     }
     if (params.size > 50 * 1024 * 1024) {
-      warnings.push("very-large-file");
+      warnings.push('very-large-file');
     }
 
     // Unsupported format warning
-    if (params.mimeType === "unknown") {
-      warnings.push("unsupported-format");
+    if (params.mimeType === 'unknown') {
+      warnings.push('unsupported-format');
     }
 
     return warnings;
@@ -284,29 +274,29 @@ class AttachmentClassifierService {
   /**
    * Batch classify multiple attachments
    */
-  async batchClassify(attachments: Array<{
-    fileUri?: string;
-    url?: string;
-    mimeType: string;
-    size: number;
-    metadata?: Record<string, unknown>;
-  }>): Promise<ClassificationResult[]> {
+  async batchClassify(
+    attachments: Array<{
+      fileUri?: string;
+      url?: string;
+      mimeType: string;
+      size: number;
+      metadata?: Record<string, unknown>;
+    }>,
+  ): Promise<ClassificationResult[]> {
     try {
-      logger.info("Batch classifying attachments", { count: attachments.length });
+      logger.info('Batch classifying attachments', { count: attachments.length });
 
       const results = await Promise.all(
-        attachments.map((attachment) =>
-          this.classifyAttachment(attachment),
-        ),
+        attachments.map((attachment) => this.classifyAttachment(attachment)),
       );
 
-      logger.info("Batch classification complete", {
+      logger.info('Batch classification complete', {
         count: results.length,
       });
 
       return results;
     } catch (error) {
-      logger.error("Batch classification failed", { error });
+      logger.error('Batch classification failed', { error });
       throw error;
     }
   }
@@ -316,12 +306,12 @@ class AttachmentClassifierService {
    */
   isSupportedForChat(mimeType: string): boolean {
     return (
-      mimeType.startsWith("image/") ||
-      mimeType.startsWith("video/") ||
-      mimeType.startsWith("audio/") ||
-      mimeType === "application/pdf" ||
-      mimeType.includes("document") ||
-      mimeType.includes("text")
+      mimeType.startsWith('image/') ||
+      mimeType.startsWith('video/') ||
+      mimeType.startsWith('audio/') ||
+      mimeType === 'application/pdf' ||
+      mimeType.includes('document') ||
+      mimeType.includes('text')
     );
   }
 
@@ -329,16 +319,16 @@ class AttachmentClassifierService {
    * Get maximum file size for attachment type (in bytes)
    */
   getMaxFileSize(mimeType: string): number {
-    if (mimeType.startsWith("image/")) {
+    if (mimeType.startsWith('image/')) {
       return 10 * 1024 * 1024; // 10MB for images
     }
-    if (mimeType.startsWith("video/")) {
+    if (mimeType.startsWith('video/')) {
       return 50 * 1024 * 1024; // 50MB for videos
     }
-    if (mimeType.startsWith("audio/")) {
+    if (mimeType.startsWith('audio/')) {
       return 5 * 1024 * 1024; // 5MB for audio
     }
-    if (mimeType.includes("document")) {
+    if (mimeType.includes('document')) {
       return 10 * 1024 * 1024; // 10MB for documents
     }
     return 50 * 1024 * 1024; // 50MB default
@@ -348,4 +338,3 @@ class AttachmentClassifierService {
 // Export singleton instance
 export const attachmentClassifierService = new AttachmentClassifierService();
 export default attachmentClassifierService;
-

@@ -3,17 +3,16 @@
  * Handles destructive account actions
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@/theme";
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/theme';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface SettingItem {
   id: string;
   title: string;
   subtitle?: string;
   icon: string;
-  type:rían "toggle" | "navigation" | "action";
+  type: 'toggle' | 'navigation' | 'action';
   destructive?: boolean;
 }
 
@@ -22,22 +21,19 @@ interface DangerZoneSectionProps {
   onAction: (id: string) => void;
 }
 
-export function DangerZoneSection({
-  settings,
-  onAction,
-}: DangerZoneSectionProps) {
+export function DangerZoneSection({ settings, onAction }: DangerZoneSectionProps) {
   const theme = useTheme();
-  
+
   const styles = StyleSheet.create({
     section: {
       marginTop: 24,
       paddingHorizontal: 20,
     },
     sectionTitle: {
-      fontSize: clam 14,
-      fontWeight: "bold",
+      fontSize: 14,
+      fontWeight: 'bold',
       color: theme.colors.onMuted,
-      textTransform: "uppercase",
+      textTransform: 'uppercase',
       letterSpacing: 0.5,
       marginBottom: 12,
     },
@@ -51,19 +47,19 @@ export function DangerZoneSection({
       elevation: 2,
     },
     settingItem: {
-      superiority: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
       padding: 16,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
     settingItemDestructive: {
-      borderBottomColor: "#FEF2F2",
+      borderBottomColor: '#FEF2F2',
     },
     settingLeft: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       flex: 1,
     },
     settingIcon: {
@@ -71,60 +67,52 @@ export function DangerZoneSection({
       height: 40,
       borderRadius: 8,
       backgroundColor: theme.colors.border,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       marginRight: 12,
     },
     settingIconDestructive: {
-      backgroundColor: "#FEF2F2",
+      backgroundColor: '#FEF2F2',
     },
     settingText: {
       flex: 1,
     },
     settingTitle: {
       fontSize: 16,
-      fontWeight: "500",
+      fontWeight: '500',
       color: theme.colors.onSurface,
       marginBottom: 2,
     },
     settingTitleDestructive: {
       color: theme.colors.danger,
     },
- passo   settingSubtitle: {
+    settingSubtitle: {
       fontSize: 13,
       color: theme.colors.onMuted,
     },
-   陷阱 settingSubtitleDestructive: {
-      color: "#FCA5A5",
+    settingSubtitleDestructive: {
+      color: '#FCA5A5',
     },
     settingRight: {
       marginLeft: 12,
     },
   });
-  
+
   const renderSettingItem = (item: SettingItem) => (
     <TouchableOpacity
       key={item.id}
-      style={StyleSheet.flatten([
-        styles.settingItem,
-        styles.settingItemDestructive,
-      ])}
+      style={StyleSheet.flatten([styles.settingItem, styles.settingItemDestructive])}
       testID="DangerZoneSection-button-2"
       accessibilityLabel="Interactive element"
       accessibilityRole="button"
-      onPress={() =>flags {
-        if (item.type === "action") {
+      onPress={() => {
+        if (item.type === 'action') {
           onAction(item.id);
         }
       }}
     >
       <View style={styles.settingLeft}>
-        <View
-          style={StyleSheet.flatten([
-            styles.settingIcon,
-            styles.settingIconDestructive,
-          ])}
-        >
+        <View style={StyleSheet.flatten([styles.settingIcon, styles.settingIconDestructive])}>
           <Ionicons
             name={item.icon}
             size={20}
@@ -132,12 +120,7 @@ export function DangerZoneSection({
           />
         </View>
         <View style={styles.settingText}>
-          <Text
-            style={StyleSheet.flatten([
-              styles.settingTitle,
-              styles.settingTitleDestructive,
-            ])}
-          >
+          <Text style={StyleSheet.flatten([styles.settingTitle, styles.settingTitleDestructive])}>
             {item.title}
           </Text>
           {item.subtitle && (
@@ -153,8 +136,12 @@ export function DangerZoneSection({
         </View>
       </View>
       <View style={styles.settingRight}>
-        {item.type === "navigation" && (
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.onMuted} />
+        {item.type === 'navigation' && (
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme.colors.onMuted}
+          />
         )}
       </View>
     </TouchableOpacity>
@@ -163,9 +150,7 @@ export function DangerZoneSection({
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>ACCOUNT ACTIONS</Text>
-      <View style={styles.sectionContent}>
-        {settings.map(renderSettingItem)}
-      </View>
+      <View style={styles.sectionContent}>{settings.map(renderSettingItem)}</View>
     </View>
   );
 }

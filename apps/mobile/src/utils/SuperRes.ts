@@ -3,11 +3,11 @@
  * Supports multiple backends with graceful fallback to bicubic
  */
 
-import * as ImageManipulator from "expo-image-manipulator";
-import { Platform } from "react-native";
-import { tileUpscaleAuto } from "./TiledUpscaler";
-import { unsharpMask } from "./Unsharp";
-import { logger } from "../services/logger";
+import * as ImageManipulator from 'expo-image-manipulator';
+import { Platform } from 'react-native';
+import { tileUpscaleAuto } from './TiledUpscaler';
+import { unsharpMask } from './Unsharp';
+import { logger } from '../services/logger';
 
 export interface SuperResAdapter {
   name: string;
@@ -29,16 +29,16 @@ export interface SuperResOptions {
  * This uses expo-image-manipulator's resize which implements decent bicubic interpolation
  */
 const BicubicAdapter: SuperResAdapter = {
-  name: "bicubic",
+  name: 'bicubic',
   async available() {
     return true;
   },
   async upscale(uri, targetW, targetH, opts = {}) {
     const { sharpen = true, useTiles, pickBest = false } = opts;
-    
+
     // Use tile-based upscaling for large images (4K+)
     const shouldUseTiles = useTiles ?? (targetW >= 1920 || targetH >= 1920);
-    
+
     let result: string;
     if (shouldUseTiles) {
       result = await tileUpscaleAuto(uri, {
@@ -47,17 +47,17 @@ const BicubicAdapter: SuperResAdapter = {
         tile: 1024,
         overlap: 12,
         quality: 1,
-        format: "jpg",
+        format: 'jpg',
       });
     } else {
       const manipResult = await ImageManipulator.manipulateAsync(
         uri,
         [{ resize: { width: Math.round(targetW), height: Math.round(targetH) } }],
-        { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+        { compress: 1, format: ImageManipulator.SaveFormat.JPEG },
       );
       result = manipResult.uri;
     }
-    
+
     // Apply unsharp mask if requested
     if (sharpen) {
       try {
@@ -66,7 +66,7 @@ const BicubicAdapter: SuperResAdapter = {
           radius: 1.2,
           threshold: 0.02,
           quality: 1,
-          format: "jpg",
+          format: 'jpg',
         });
       } catch (error: unknown) {
         const err = error instanceof Error ? error : new Error(String(error));
@@ -74,7 +74,7 @@ const BicubicAdapter: SuperResAdapter = {
         logger.warn('SuperRes: Unsharp mask failed', { error: err });
       }
     }
-    
+
     return result;
   },
 };
@@ -85,7 +85,7 @@ const BicubicAdapter: SuperResAdapter = {
  * Toggle available() return value when backend is ready
  */
 const ServerAdapter: SuperResAdapter = {
-  name: "server-esrgan",
+  name: 'server-esrgan',
   async available() {
     // Flip to true when your backend upscaler endpoint is ready
     // You can also check environment variables, feature flags, etc.
@@ -125,7 +125,7 @@ const ServerAdapter: SuperResAdapter = {
  * Requires react-native-tflite or similar bridge
  */
 const LocalTFLiteAdapter: SuperResAdapter = {
-  name: "tflite-esrgan",
+  name: 'tflite-esrgan',
   async available() {
     // Set to true when TFLite bridge is integrated
     try {
@@ -162,12 +162,20 @@ export const SuperRes = {
    * @param opts - Super-resolution options
    * @returns URI of upscaled image
    */
-  async upscale(uri: string, targetW: number, targetH: number, opts?: SuperResOptions): Promise<string> {
+  async upscale(
+    uri: string,
+    targetW: number,
+    targetH: number,
+    opts?: SuperResOptions,
+  ): Promise<string> {
     for (const adapter of ADAPTERS) {
       if (await adapter.available()) {
         try {
           const { logger } = await import('../services/logger');
-        logger.info('SuperRes: Using adapter for upscaling', { adapter: adapter.name, dimensions: `${targetW}x${targetH}` });
+          logger.info('SuperRes: Using adapter for upscaling', {
+            adapter: adapter.name,
+            dimensions: `${targetW}x${targetH}`,
+          });
           const result = await adapter.upscale(uri, targetW, targetH, opts);
           return result;
         } catch (error: unknown) {
@@ -178,9 +186,9 @@ export const SuperRes = {
         }
       }
     }
-    
+
     // This should never be reached since BicubicAdapter is always available
-    logger.error("[SuperRes] All adapters failed, returning original URI");
+    logger.error('[SuperRes] All adapters failed, returning original URI');
     return uri;
   },
 
@@ -199,7 +207,6 @@ export const SuperRes = {
         return adapter.name;
       }
     }
-    return "none";
+    return 'none';
   },
 };
-

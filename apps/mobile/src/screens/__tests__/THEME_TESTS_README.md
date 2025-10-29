@@ -2,12 +2,16 @@
 
 ## Overview
 
-This comprehensive test suite verifies that all refactored screens properly use the unified theming system via the `useTheme` hook instead of static Theme imports.
+This comprehensive test suite verifies that all refactored screens properly use
+the unified theming system via the `useTheme` hook instead of static Theme
+imports.
 
 ## Test Files Created
 
 ### 1. **theme-refactoring.test.tsx**
+
 Core theme system tests covering:
+
 - Theme hook usage and context provision
 - Theme structure validation (colors, spacing, radius, motion)
 - Light and dark theme color verification
@@ -18,6 +22,7 @@ Core theme system tests covering:
 - Motion system configuration
 
 **Key Tests:**
+
 - ✅ Theme context availability
 - ✅ Complete color property set
 - ✅ Numeric spacing values
@@ -30,7 +35,9 @@ Core theme system tests covering:
 - ✅ Spring configuration validity
 
 ### 2. **HomeScreen.theme.test.tsx**
+
 HomeScreen-specific theme integration tests:
+
 - Dynamic styles creation pattern
 - Color reference correctness
 - Semantic color usage
@@ -41,6 +48,7 @@ HomeScreen-specific theme integration tests:
 - Activity item styling
 
 **Key Tests:**
+
 - ✅ Dynamic styles inside component
 - ✅ Correct semantic color names
 - ✅ No deprecated color patterns
@@ -52,7 +60,9 @@ HomeScreen-specific theme integration tests:
 - ✅ Activity item color correctness
 
 ### 3. **ModernSwipeScreen.theme.test.tsx**
+
 ModernSwipeScreen-specific theme integration tests:
+
 - Dynamic styles pattern verification
 - Spacing scale usage
 - Color reference correctness
@@ -63,6 +73,7 @@ ModernSwipeScreen-specific theme integration tests:
 - Theme consistency
 
 **Key Tests:**
+
 - ✅ Theme-dependent style values
 - ✅ All spacing values used correctly
 - ✅ Ascending spacing order
@@ -75,7 +86,9 @@ ModernSwipeScreen-specific theme integration tests:
 - ✅ Match modal dimensions
 
 ### 4. **useTheme.test.ts**
+
 Comprehensive theme hook and system tests:
+
 - Theme creation (light and dark)
 - Color system validation
 - Spacing system validation
@@ -86,6 +99,7 @@ Comprehensive theme hook and system tests:
 - Backward compatibility
 
 **Key Tests:**
+
 - ✅ Valid light theme creation
 - ✅ Valid dark theme creation
 - ✅ All required color properties
@@ -105,7 +119,9 @@ Comprehensive theme hook and system tests:
 - ✅ Backward compatibility
 
 ### 5. **theme-refactoring-integration.test.tsx**
+
 Integration tests verifying all refactored screens:
+
 - Refactored screens compliance
 - Color property mapping (old → new)
 - Spacing property mapping
@@ -119,6 +135,7 @@ Integration tests verifying all refactored screens:
 - Migration checklist
 
 **Key Tests:**
+
 - ✅ All refactored screens listed
 - ✅ Color property mapping correct
 - ✅ No deprecated color properties
@@ -139,7 +156,9 @@ Integration tests verifying all refactored screens:
 - ✅ Proper theme structure
 
 ### 6. **ProfileMenuSection.theme.test.tsx**
+
 ProfileMenuSection component theme tests:
+
 - Menu item color usage
 - Dynamic styles pattern
 - Background and text colors
@@ -153,6 +172,7 @@ ProfileMenuSection component theme tests:
 - No deprecated patterns
 
 **Key Tests:**
+
 - ✅ Semantic colors for menu items
 - ✅ No deprecated status properties
 - ✅ Dynamic styles inside component
@@ -213,6 +233,7 @@ ProfileMenuSection component theme tests:
 ## Test Execution
 
 ### Run All Theme Tests
+
 ```bash
 pnpm test -- theme-refactoring
 pnpm test -- HomeScreen.theme
@@ -223,6 +244,7 @@ pnpm test -- ProfileMenuSection.theme
 ```
 
 ### Run Specific Test Suite
+
 ```bash
 pnpm test -- theme-refactoring.test.tsx
 pnpm test -- HomeScreen.theme.test.tsx
@@ -233,6 +255,7 @@ pnpm test -- ProfileMenuSection.theme.test.tsx
 ```
 
 ### Run with Coverage
+
 ```bash
 pnpm test -- --coverage theme-refactoring
 ```
@@ -240,6 +263,7 @@ pnpm test -- --coverage theme-refactoring
 ## Key Testing Patterns
 
 ### 1. Theme Creation
+
 ```typescript
 const theme = createTheme('light');
 expect(theme.colors.primary).toBeTruthy();
@@ -247,30 +271,34 @@ expect(theme.spacing.lg).toBeGreaterThan(0);
 ```
 
 ### 2. Dynamic Styles
+
 ```typescript
 const theme = useTheme();
 const styles = makeStyles(theme);
 
-const makeStyles = (theme: any) => StyleSheet.create({
-  container: {
-    backgroundColor: theme.colors.bg,
-    padding: theme.spacing.md,
-    borderRadius: theme.radius.lg,
-  },
-});
+const makeStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: theme.colors.bg,
+      padding: theme.spacing.md,
+      borderRadius: theme.radius.lg,
+    },
+  });
 ```
 
 ### 3. Color Mapping Verification
+
 ```typescript
 // Old → New mappings
 const mappings = {
-  'bg': 'bg', // was neutral[0]
-  'text': 'text', // was text.primary
-  'success': 'success', // was status.success
+  bg: 'bg', // was neutral[0]
+  text: 'text', // was text.primary
+  success: 'success', // was status.success
 };
 ```
 
 ### 4. Type Casting
+
 ```typescript
 const styles = StyleSheet.create({
   container: {
@@ -294,10 +322,10 @@ const styles = StyleSheet.create({
 - ✅ Remove static Theme imports
 - ✅ Add useTheme hook
 - ✅ Convert StyleSheet.create to makeStyles(theme) factory
-- ✅ Replace Theme.colors.* with theme.colors.*
-- ✅ Replace Theme.spacing.* with theme.spacing.*
+- ✅ Replace Theme.colors._ with theme.colors._
+- ✅ Replace Theme.spacing._ with theme.spacing._
 - ✅ Replace Theme.borderRadius with theme.radius
-- ✅ Replace Theme.colors.status.* with theme.colors.*
+- ✅ Replace Theme.colors.status._ with theme.colors._
 - ✅ Replace Theme.colors.neutral[0] with theme.colors.bg
 - ✅ Replace Theme.colors.text.secondary with theme.colors.textMuted
 - ✅ Add theme to dependency arrays

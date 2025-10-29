@@ -5,16 +5,19 @@ Smart tab bar interactions with intelligent scroll-to-top and refresh behavior.
 ## Features
 
 ✨ **Smart Reselect Behavior**
+
 - Single tap when far from top → scroll to top
 - Single tap when near top → refresh content
 - Double tap → always scroll to top + refresh
 
 ✨ **Visual Feedback**
+
 - Icon pulse animation on reselect
 - Ripple effect on double tap
 - Haptic feedback for all interactions
 
 ✨ **Zero Configuration**
+
 - Works with any ScrollView, FlatList, or SectionList
 - Automatic cooldown to prevent spam
 - Configurable thresholds per screen
@@ -22,7 +25,10 @@ Smart tab bar interactions with intelligent scroll-to-top and refresh behavior.
 ## Quick Start
 
 ```tsx
-import { useScrollOffsetTracker, useTabReselectRefresh } from '../hooks/navigation';
+import {
+  useScrollOffsetTracker,
+  useTabReselectRefresh,
+} from '../hooks/navigation';
 
 function MyScreen() {
   const listRef = useRef<FlatList>(null);
@@ -32,8 +38,8 @@ function MyScreen() {
     listRef,
     onRefresh,
     getOffset,
-    topThreshold: 120,  // pixels before scrolling instead of refreshing
-    cooldownMs: 700,      // prevent spam
+    topThreshold: 120, // pixels before scrolling instead of refreshing
+    cooldownMs: 700, // prevent spam
   });
 
   return (
@@ -54,6 +60,7 @@ function MyScreen() {
 Tracks the current scroll offset.
 
 **Returns:**
+
 - `onScroll` - Handler to pass to scroll components
 - `getOffset` - Function that returns current Y offset
 
@@ -62,17 +69,22 @@ Tracks the current scroll offset.
 Main hook that handles tab reselect/refresh logic.
 
 **Options:**
-- `listRef` *(required)* - Ref to your scrollable component (ScrollView, FlatList, etc.)
-- `onRefresh` *(required)* - Callback when refresh should occur
-- `getOffset` *(optional)* - Function to get current offset (from tracker)
-- `topThreshold` *(optional)* - Default: 120px. Distance from top that determines behavior
-- `cooldownMs` *(optional)* - Default: 700ms. Cooldown between triggers
-- `haptics` *(optional)* - Default: true. Enable haptic feedback
-- `nearTopAction` *(optional)* - Default: "refresh". What to do when near top: "refresh" or "none"
+
+- `listRef` _(required)_ - Ref to your scrollable component (ScrollView,
+  FlatList, etc.)
+- `onRefresh` _(required)_ - Callback when refresh should occur
+- `getOffset` _(optional)_ - Function to get current offset (from tracker)
+- `topThreshold` _(optional)_ - Default: 120px. Distance from top that
+  determines behavior
+- `cooldownMs` _(optional)_ - Default: 700ms. Cooldown between triggers
+- `haptics` _(optional)_ - Default: true. Enable haptic feedback
+- `nearTopAction` _(optional)_ - Default: "refresh". What to do when near top:
+  "refresh" or "none"
 
 ## Usage by Screen Type
 
 ### FlatList
+
 ```tsx
 const { onScroll, getOffset } = useScrollOffsetTracker();
 
@@ -92,6 +104,7 @@ useTabReselectRefresh({
 ```
 
 ### ScrollView
+
 ```tsx
 const { onScroll, getOffset } = useScrollOffsetTracker();
 
@@ -110,7 +123,9 @@ useTabReselectRefresh({
 ```
 
 ### Custom Behavior (Map Screen)
-MapScreen has special behavior (center on location), so it uses the old `useTabDoublePress`:
+
+MapScreen has special behavior (center on location), so it uses the old
+`useTabDoublePress`:
 
 ```tsx
 useTabDoublePress(() => {
@@ -145,4 +160,3 @@ useTabDoublePress(() => {
 - Use higher `topThreshold` (120-150px) for screens with headers
 - Set `nearTopAction: "none"` if you don't want refresh behavior
 - Use `cooldownMs: 1000` for slower refreshes or expensive operations
-

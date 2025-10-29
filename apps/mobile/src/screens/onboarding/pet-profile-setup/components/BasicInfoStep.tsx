@@ -6,8 +6,8 @@ import React, { useMemo } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import type { PetFormData } from "../types";
 import { SPECIES_OPTIONS } from "../types";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
+import type { AppTheme } from "@mobile/src/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
@@ -75,13 +75,13 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ formData, updateFo
 
   return (
     <View style={styles.stepContainer}>
-      <Text style={[styles.stepTitle, { color: colors.onSurface }]>Basic Information</Text>
-      <Text style={[styles.stepSubtitle, { color: colors.onMuted }]>Tell us about your pet</Text>
+      <Text style={[styles.stepTitle, { color: colors.onSurface }]}>Basic Information</Text>
+      <Text style={[styles.stepSubtitle, { color: colors.onMuted }]}>Tell us about your pet</Text>
 
       <View style={styles.inputGroup}>
-        <Text style={[styles.label, { color: colors.onSurface }]>Pet Name *</Text>
+        <Text style={[styles.label, { color: colors.onSurface }]}>Pet Name *</Text>
         <TextInput
-          style={[styles.input, { color: colors.onSurface, borderColor: colors.border }]
+          style={[styles.input, { color: colors.onSurface, borderColor: colors.border }]}
           value={formData.name}
           onChangeText={(text) => updateFormData("name", text)}
           placeholder="e.g., Buddy, Luna, Max"
@@ -90,7 +90,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ formData, updateFo
       </View>
 
       <View style={styles.inputGroup}>
-        <Text style={[styles.label, { color: colors.onSurface }]>Species *</Text>
+        <Text style={[styles.label, { color: colors.onSurface }]}>Species *</Text>
         <View style={styles.optionsGrid}>
           {SPECIES_OPTIONS.map((option) => (
             <TouchableOpacity
@@ -120,9 +120,9 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ formData, updateFo
       </View>
 
       <View style={styles.inputGroup}>
-        <Text style={[styles.label, { color: colors.onSurface }]>Breed *</Text>
+        <Text style={[styles.label, { color: colors.onSurface }]}>Breed *</Text>
         <TextInput
-          style={[styles.input, { color: colors.onSurface, borderColor: colors.border }]
+          style={[styles.input, { color: colors.onSurface, borderColor: colors.border }]}
           value={formData.breed}
           onChangeText={(text) => updateFormData("breed", text)}
           placeholder="e.g., Golden Retriever, Persian Cat"

@@ -3,9 +3,9 @@
  * Fire-and-forget batch export for multiple images
  */
 
-import { exportUltraVariants } from "./UltraPublish";
-import type { UltraVariant } from "./UltraPublish";
-import type { KnownRatio } from "./QualityTargets";
+import { exportUltraVariants } from './UltraPublish';
+import type { UltraVariant } from './UltraPublish';
+import type { KnownRatio } from './QualityTargets';
 
 export interface UltraOptions {
   /** Post-upscale unsharp mask */
@@ -28,7 +28,7 @@ export interface BatchResult {
 /**
  * Batch export ultra variants for multiple images
  * Processes images sequentially to avoid memory pressure
- * 
+ *
  * @param uris - Array of source image URIs
  * @param ratios - Aspect ratios to generate
  * @param options - Export options
@@ -36,8 +36,8 @@ export interface BatchResult {
  */
 export async function exportUltraBatch(
   uris: string[],
-  ratios: KnownRatio[] = ["1:1", "4:5", "9:16"],
-  options: UltraOptions = {}
+  ratios: KnownRatio[] = ['1:1', '4:5', '9:16'],
+  options: UltraOptions = {},
 ): Promise<BatchResult[]> {
   const results: BatchResult[] = [];
 
@@ -71,7 +71,7 @@ export async function exportUltraBatch(
 /**
  * Export with progress callback
  * Useful for UI progress indicators during batch operations
- * 
+ *
  * @param uris - Array of source image URIs
  * @param ratios - Aspect ratios to generate
  * @param options - Export options
@@ -80,9 +80,9 @@ export async function exportUltraBatch(
  */
 export async function exportUltraBatchWithProgress(
   uris: string[],
-  ratios: KnownRatio[] = ["1:1", "4:5", "9:16"],
+  ratios: KnownRatio[] = ['1:1', '4:5', '9:16'],
   options: UltraOptions = {},
-  onProgress?: (current: number, total: number, uri: string) => void
+  onProgress?: (current: number, total: number, uri: string) => void,
 ): Promise<BatchResult[]> {
   const results: BatchResult[] = [];
   const total = uris.length;
@@ -115,7 +115,6 @@ export async function exportUltraBatchWithProgress(
     }
   }
 
-  onProgress?.(total, total, "");
+  onProgress?.(total, total, '');
   return results;
 }
-

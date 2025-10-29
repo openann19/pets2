@@ -1,18 +1,18 @@
 // src/navigation/transitions.ts
-import { Platform } from "react-native";
-import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
+import { Platform } from 'react-native';
+import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
 export const screenTransitions = {
   iosModal: {
     presentation: 'modal' as const,
     gestureEnabled: true,
   } as NativeStackNavigationOptions,
-  
+
   iosPush: {
     gestureEnabled: true,
     animation: 'slide_from_right' as const,
   } as NativeStackNavigationOptions,
-  
+
   androidFade: {
     animation: 'fade_from_bottom' as const,
   } as NativeStackNavigationOptions,

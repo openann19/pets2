@@ -1,6 +1,6 @@
 /**
  * Upload Hygiene Service - Client-Side Pre-Upload Processing
- * 
+ *
  * Implements professional-grade upload hygiene as per blueprint:
  * - File type validation (MIME sniffing)
  * - EXIF orientation fix
@@ -73,11 +73,14 @@ async function validateMimeType(uri: string): Promise<{ valid: boolean; mimeType
       if (typeof ext === 'string') {
         const normalizedExt = ext.toLowerCase();
         if ((validExtensions as readonly string[]).includes(normalizedExt)) {
-          return { valid: true, mimeType: mimeTypes[normalizedExt as (typeof validExtensions)[number]] };
+          return {
+            valid: true,
+            mimeType: mimeTypes[normalizedExt as (typeof validExtensions)[number]],
+          };
         }
       }
     }
-    
+
     return { valid: false, mimeType: 'unknown' };
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error));
@@ -92,11 +95,10 @@ async function validateMimeType(uri: string): Promise<{ valid: boolean; mimeType
 async function fixOrientation(imageUri: string): Promise<string> {
   try {
     // Get image metadata to check orientation
-    const result = await ImageManipulator.manipulateAsync(
-      imageUri,
-      [],
-      { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
-    );
+    const result = await ImageManipulator.manipulateAsync(imageUri, [], {
+      compress: 1,
+      format: ImageManipulator.SaveFormat.JPEG,
+    });
 
     return result.uri;
   } catch (error: unknown) {
@@ -111,15 +113,14 @@ async function fixOrientation(imageUri: string): Promise<string> {
  */
 async function resizeImage(
   imageUri: string,
-  maxDimension: number
+  maxDimension: number,
 ): Promise<ImageManipulator.ImageResult> {
   try {
     // Get original dimensions
-    const manipulateResult = await ImageManipulator.manipulateAsync(
-      imageUri,
-      [],
-      { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
-    );
+    const manipulateResult = await ImageManipulator.manipulateAsync(imageUri, [], {
+      compress: 1,
+      format: ImageManipulator.SaveFormat.JPEG,
+    });
 
     const { width, height } = manipulateResult;
 
@@ -142,7 +143,7 @@ async function resizeImage(
       return await ImageManipulator.manipulateAsync(
         imageUri,
         [{ resize: { width: newWidth, height: newHeight } }],
-        { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+        { compress: 1, format: ImageManipulator.SaveFormat.JPEG },
       );
     }
 
@@ -161,14 +162,16 @@ async function cropToAspectRatio(
   imageUri: string,
   aspectRatio: [number, number],
   width: number,
-  height: number
+  height: number,
 ): Promise<ImageManipulator.ImageResult> {
   try {
     const [targetWidth, targetHeight] = aspectRatio;
     const targetAspect = targetWidth / targetHeight;
     const imageAspect = width / height;
 
-    let cropRegion: ImageManipulator.ActionCrop = { crop: { originX: 0, originY: 0, width, height } };
+    let cropRegion: ImageManipulator.ActionCrop = {
+      crop: { originX: 0, originY: 0, width, height },
+    };
 
     if (Math.abs(imageAspect - targetAspect) > 0.01) {
       // Needs cropping
@@ -189,11 +192,10 @@ async function cropToAspectRatio(
       }
     }
 
-    return await ImageManipulator.manipulateAsync(
-      imageUri,
-      [cropRegion],
-      { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
-    );
+    return await ImageManipulator.manipulateAsync(imageUri, [cropRegion], {
+      compress: 1,
+      format: ImageManipulator.SaveFormat.JPEG,
+    });
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error));
     logger.error('Crop error', { error: err });
@@ -206,19 +208,15 @@ async function cropToAspectRatio(
  */
 async function compressImage(
   imageUri: string,
-  quality: number
+  quality: number,
 ): Promise<ImageManipulator.ImageResult> {
   try {
-    return await ImageManipulator.manipulateAsync(
-      imageUri,
-      [],
-      {
-        compress: quality,
-        format: ImageManipulator.SaveFormat.JPEG,
-        // NOTE: expo-image-manipulator doesn't fully strip EXIF
-        // For complete EXIF stripping, you'd need a native module or backend processing
-      }
-    );
+    return await ImageManipulator.manipulateAsync(imageUri, [], {
+      compress: quality,
+      format: ImageManipulator.SaveFormat.JPEG,
+      // NOTE: expo-image-manipulator doesn't fully strip EXIF
+      // For complete EXIF stripping, you'd need a native module or backend processing
+    });
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error));
     logger.error('Compress error', { error: err });
@@ -248,10 +246,10 @@ async function getFileInfo(uri: string): Promise<{ size: number; exists: boolean
  */
 export async function processImageForUpload(
   imageUri: string,
-  options: UploadHygieneOptions = {}
+  options: UploadHygieneOptions = {},
 ): Promise<ProcessedImage> {
   const opts = { ...DEFAULT_OPTIONS, ...options };
-  
+
   try {
     logger.info('Starting upload hygiene processing', { uri: imageUri });
 
@@ -267,12 +265,11 @@ export async function processImageForUpload(
     logger.debug('Orientation fixed');
 
     // 3. Get initial dimensions
-    const initialManipulate = await ImageManipulator.manipulateAsync(
-      orientationFixed,
-      [],
-      { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
-    );
-    
+    const initialManipulate = await ImageManipulator.manipulateAsync(orientationFixed, [], {
+      compress: 1,
+      format: ImageManipulator.SaveFormat.JPEG,
+    });
+
     const originalWidth = initialManipulate.width;
     const originalHeight = initialManipulate.height;
     logger.debug('Original dimensions', { width: originalWidth, height: originalHeight });
@@ -288,7 +285,7 @@ export async function processImageForUpload(
         resized.uri,
         opts.aspectRatio!,
         resized.width,
-        resized.height
+        resized.height,
       );
       logger.debug('Image cropped', { aspectRatio: opts.aspectRatio });
     }
@@ -334,7 +331,7 @@ export async function processImageForUpload(
  */
 export async function pickAndProcessImage(
   allowEditing = true,
-  options: UploadHygieneOptions = {}
+  options: UploadHygieneOptions = {},
 ): Promise<ProcessedImage | null> {
   try {
     // Request camera roll permissions
@@ -356,7 +353,7 @@ export async function pickAndProcessImage(
     }
 
     const asset = result.assets[0];
-    
+
     // Process with upload hygiene
     return await processImageForUpload(asset.uri, options);
   } catch (error: unknown) {
@@ -370,7 +367,7 @@ export async function pickAndProcessImage(
  * Camera capture with hygiene processing
  */
 export async function captureAndProcessImage(
-  options: UploadHygieneOptions = {}
+  options: UploadHygieneOptions = {},
 ): Promise<ProcessedImage | null> {
   try {
     // Request camera permissions
@@ -391,7 +388,7 @@ export async function captureAndProcessImage(
     }
 
     const asset = result.assets[0];
-    
+
     // Process with upload hygiene
     return await processImageForUpload(asset.uri, options);
   } catch (error: unknown) {
@@ -414,7 +411,7 @@ export interface QuotaCheck {
 export async function checkUploadQuota(userId: string): Promise<QuotaCheck> {
   // This would call your backend API to check user quotas
   // Implementation depends on your rate limiting strategy
-  
+
   try {
     // TODO: Integrate with actual rate limit API
     // For now, return a mock response
@@ -437,7 +434,7 @@ export async function checkUploadQuota(userId: string): Promise<QuotaCheck> {
 export async function uploadWithRetry<T>(
   uploadFn: () => Promise<T>,
   maxRetries = 3,
-  backoffMs = 1000
+  backoffMs = 1000,
 ): Promise<T> {
   let lastError: Error | null = null;
 
@@ -446,15 +443,14 @@ export async function uploadWithRetry<T>(
       return await uploadFn();
     } catch (error: unknown) {
       lastError = error instanceof Error ? error : new Error(String(error));
-      
+
       if (attempt < maxRetries) {
         const delay = backoffMs * Math.pow(2, attempt - 1);
         logger.warn('Upload failed, retrying', { delay, attempt, maxRetries, error: lastError });
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   }
 
   throw lastError || new Error('Upload failed after retries');
 }
-

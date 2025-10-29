@@ -294,7 +294,7 @@ describe('useProfileScreen', () => {
         expect(success).toBe(true);
       });
 
-      expect(result.current.profile?.photos.find(p => p.id === 'photo2')).toBeUndefined();
+      expect(result.current.profile?.photos.find((p) => p.id === 'photo2')).toBeUndefined();
     });
 
     it('should set primary photo', async () => {
@@ -311,8 +311,8 @@ describe('useProfileScreen', () => {
         expect(success).toBe(true);
       });
 
-      const primaryPhoto = result.current.profile?.photos.find(p => p.id === 'photo2');
-      const oldPrimary = result.current.profile?.photos.find(p => p.id === 'photo1');
+      const primaryPhoto = result.current.profile?.photos.find((p) => p.id === 'photo2');
+      const oldPrimary = result.current.profile?.photos.find((p) => p.id === 'photo1');
 
       expect(primaryPhoto?.isPrimary).toBe(true);
       expect(oldPrimary?.isPrimary).toBe(false);
@@ -399,7 +399,7 @@ describe('useProfileScreen', () => {
         expect(success).toBe(true);
       });
 
-      const updatedPet = result.current.pets.find(p => p.id === 'pet1');
+      const updatedPet = result.current.pets.find((p) => p.id === 'pet1');
       expect(updatedPet?.name).toBe('Buddy Jr.');
       expect(updatedPet?.age).toBe(3);
     });
@@ -419,7 +419,7 @@ describe('useProfileScreen', () => {
       });
 
       expect(result.current.pets).toHaveLength(1);
-      expect(result.current.pets.find(p => p.id === 'pet2')).toBeUndefined();
+      expect(result.current.pets.find((p) => p.id === 'pet2')).toBeUndefined();
     });
 
     it('should get active pets only', async () => {
@@ -547,7 +547,7 @@ describe('useProfileScreen', () => {
       expect(mockAnalyticsService.trackEvent).toHaveBeenCalledWith(
         'profile_view',
         { profileId: 'user123' },
-        'user123'
+        'user123',
       );
     });
   });
@@ -562,7 +562,7 @@ describe('useProfileScreen', () => {
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         'profile_screen_cache',
-        expect.any(String)
+        expect.any(String),
       );
     });
 
@@ -673,7 +673,7 @@ describe('useProfileScreen', () => {
         result.current.handlePetUpdate(updatedPet);
       });
 
-      const pet = result.current.pets.find(p => p.id === 'pet1');
+      const pet = result.current.pets.find((p) => p.id === 'pet1');
       expect(pet?.name).toBe('Buddy Updated');
     });
   });
@@ -775,7 +775,7 @@ describe('useProfileScreen', () => {
       const results = await Promise.all(updates);
 
       // Should handle all operations
-      expect(results.some(r => r === true)).toBe(true);
+      expect(results.some((r) => r === true)).toBe(true);
     });
   });
 });

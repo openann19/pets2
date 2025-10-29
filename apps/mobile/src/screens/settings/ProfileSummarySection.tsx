@@ -3,35 +3,33 @@
  * Extracted from SettingsScreen
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, Text, View } from 'react-native';
 
-import {
-  AdvancedCard,
-  CardConfigs,
-} from "../../components/Advanced/AdvancedCard";
+import { AdvancedCard, CardConfigs } from '../../components/Advanced/AdvancedCard';
 
-import { useTheme } from "@/theme";
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 interface ProfileSummarySectionProps {
   onEditProfile: () => void;
 }
 
-export function ProfileSummarySection({
-  onEditProfile,
-}: ProfileSummarySectionProps) {
+export function ProfileSummarySection({ onEditProfile }: ProfileSummarySectionProps) {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
   return (
     <View style={styles.profileSection}>
       <AdvancedCard
         {...CardConfigs.glass({
-          interactions: ["hover", "press", "glow"],
-          haptic: "light",
+          interactions: ['hover', 'press', 'glow'],
+          haptic: 'light',
           actions: [
             {
-              icon: "pencil",
-              title: "Edit",
-              variant: "minimal",
+              icon: 'pencil',
+              title: 'Edit',
+              variant: 'minimal',
               onPress: onEditProfile,
             },
           ],
@@ -40,7 +38,11 @@ export function ProfileSummarySection({
       >
         <View style={styles.profileCardContent}>
           <View style={styles.profileAvatar}>
-            <Ionicons name="person" size={32} color={theme.colors.neutral[400]} />
+            <Ionicons
+              name="person"
+              size={32}
+              color={theme.colors.onMuted}
+            />
           </View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>John Doe</Text>
@@ -56,34 +58,35 @@ export function ProfileSummarySection({
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
   profileSection: {
     padding: 20,
     paddingBottom: 0,
   },
   profileCard: {
-    backgroundColor: theme.colors.neutral[0],
+    backgroundColor: theme.colors.surface,
     borderRadius: 16,
     padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    shadowColor: theme.colors.neutral[950],
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: theme.colors.bg,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
   },
   profileCardContent: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   profileAvatar: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: theme.colors.neutral[100],
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: theme.colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 16,
   },
   profileInfo: {
@@ -91,18 +94,18 @@ const styles = StyleSheet.create({
   },
   profileName: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: theme.colors.neutral[900],
+    fontWeight: 'bold',
+    color: theme.colors.onSurface,
     marginBottom: 2,
   },
   profileEmail: {
     fontSize: 14,
-    color: theme.colors.neutral[500],
+    color: theme.colors.onMuted,
     marginBottom: 4,
   },
   profileStatus: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   statusDot: {
     width: 8,
@@ -113,7 +116,9 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 12,
-    color: theme.colors.neutral[500],
-    fontWeight: "500",
+    color: theme.colors.onMuted,
+    fontWeight: '500',
   },
-});
+  });
+}
+

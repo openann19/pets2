@@ -2,8 +2,8 @@
  * useUserIntent Hook
  * Manages user intent collection and validation during onboarding
  */
-import { useCallback, useState } from "react";
-import { logger } from "@pawfectmatch/core";
+import { useCallback, useState } from 'react';
+import { logger } from '@pawfectmatch/core';
 
 interface UserIntent {
   id: string;
@@ -30,26 +30,25 @@ interface UseUserIntentReturn {
 
 const AVAILABLE_INTENTS: UserIntent[] = [
   {
-    id: "adopt",
-    title: "Find My Perfect Pet",
-    description:
-      "I'm looking to adopt and find the perfect companion for my lifestyle",
-    icon: "heart",
-    color: "#FF6B6B",
+    id: 'adopt',
+    title: 'Find My Perfect Pet',
+    description: "I'm looking to adopt and find the perfect companion for my lifestyle",
+    icon: 'heart',
+    color: '#FF6B6B',
   },
   {
-    id: "connect",
-    title: "Connect with Pet Lovers",
-    description: "I want to meet other pet owners and build a community",
-    icon: "people",
-    color: "#4ECDC4",
+    id: 'connect',
+    title: 'Connect with Pet Lovers',
+    description: 'I want to meet other pet owners and build a community',
+    icon: 'people',
+    color: '#4ECDC4',
   },
   {
-    id: "both",
-    title: "Both Adoption & Community",
+    id: 'both',
+    title: 'Both Adoption & Community',
     description: "I'm open to adoption and connecting with the pet community",
-    icon: "sparkles",
-    color: "#8B5CF6",
+    icon: 'sparkles',
+    color: '#8B5CF6',
   },
 ];
 
@@ -59,24 +58,24 @@ export const useUserIntent = (): UseUserIntentReturn => {
 
   const selectIntent = useCallback((intentId: string) => {
     setSelectedIntent(intentId);
-    logger.info("User selected intent", { intentId });
+    logger.info('User selected intent', { intentId });
   }, []);
 
   const confirmIntent = useCallback(async (): Promise<string> => {
     if (!selectedIntent) {
-      throw new Error("No intent selected");
+      throw new Error('No intent selected');
     }
 
     setIsNavigating(true);
     try {
-      logger.info("User confirmed intent", { intentId: selectedIntent });
+      logger.info('User confirmed intent', { intentId: selectedIntent });
 
       // Simulate API call or validation
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       return selectedIntent;
     } catch (error) {
-      logger.error("Failed to confirm user intent", {
+      logger.error('Failed to confirm user intent', {
         error,
         intentId: selectedIntent,
       });
@@ -88,7 +87,7 @@ export const useUserIntent = (): UseUserIntentReturn => {
 
   const resetSelection = useCallback(() => {
     setSelectedIntent(null);
-    logger.info("User intent selection reset");
+    logger.info('User intent selection reset');
   }, []);
 
   const isValidSelection = selectedIntent !== null;

@@ -32,7 +32,7 @@ jest.mock('../logger', () => ({
     clearUserInfo: jest.fn(),
     getSessionId: jest.fn().mockReturnValue('test-session'),
     destroy: jest.fn(),
-  }
+  },
 }));
 
 const mockImagePicker = ImagePicker as any;
@@ -42,7 +42,7 @@ const mockFileSystem = FileSystem as any;
 describe('UploadHygiene Service - Simplified Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Setup minimal mocks
     mockImageManipulator.manipulateAsync.mockResolvedValue({
       uri: 'processed-image.jpg',
@@ -50,7 +50,7 @@ describe('UploadHygiene Service - Simplified Tests', () => {
       height: 768,
       base64: undefined,
     });
-    
+
     mockFileSystem.getInfoAsync.mockResolvedValue({
       exists: true,
       isDirectory: false,
@@ -58,52 +58,56 @@ describe('UploadHygiene Service - Simplified Tests', () => {
       uri: 'test-image.jpg',
       modificationTime: Date.now(),
     });
-    
+
     mockImagePicker.requestMediaLibraryPermissionsAsync.mockResolvedValue({
       status: 'granted' as any,
       granted: true,
       canAskAgain: true,
     } as any);
-    
+
     mockImagePicker.requestCameraPermissionsAsync.mockResolvedValue({
       status: 'granted' as any,
       granted: true,
       canAskAgain: true,
     } as any);
-    
+
     mockImagePicker.launchImageLibraryAsync.mockResolvedValue({
       canceled: false,
-      assets: [{
-        uri: 'picked-image.jpg',
-        width: 2048,
-        height: 1536,
-        type: 'image',
-        fileName: 'test.jpg',
-        fileSize: 1024000,
-        // mimeType is not part of ImagePickerAsset type
-        exif: {},
-      }],
+      assets: [
+        {
+          uri: 'picked-image.jpg',
+          width: 2048,
+          height: 1536,
+          type: 'image',
+          fileName: 'test.jpg',
+          fileSize: 1024000,
+          // mimeType is not part of ImagePickerAsset type
+          exif: {},
+        },
+      ],
     } as any);
-    
+
     mockImagePicker.launchCameraAsync.mockResolvedValue({
       canceled: false,
-      assets: [{
-        uri: 'captured-image.jpg',
-        width: 2048,
-        height: 1536,
-        type: 'image',
-        fileName: 'capture.jpg',
-        fileSize: 1024000,
-        // mimeType is not part of ImagePickerAsset type
-        exif: {},
-      }],
+      assets: [
+        {
+          uri: 'captured-image.jpg',
+          width: 2048,
+          height: 1536,
+          type: 'image',
+          fileName: 'capture.jpg',
+          fileSize: 1024000,
+          // mimeType is not part of ImagePickerAsset type
+          exif: {},
+        },
+      ],
     } as any);
   });
 
   describe('processImageForUpload', () => {
     it('should process image successfully', async () => {
       const result = await processImageForUpload('test.jpg');
-      
+
       expect(result).toBeDefined();
       expect(result.uri).toBe('processed-image.jpg');
       expect(result.width).toBe(1024);
@@ -111,7 +115,7 @@ describe('UploadHygiene Service - Simplified Tests', () => {
       expect(result.fileSize).toBe(512000);
       expect(result.mimeType).toBe('image/jpeg');
     });
-    
+
     it('should reject invalid file types', async () => {
       mockFileSystem.getInfoAsync.mockResolvedValue({
         exists: true,
@@ -120,68 +124,68 @@ describe('UploadHygiene Service - Simplified Tests', () => {
         uri: 'test.txt',
         modificationTime: Date.now(),
       });
-      
+
       await expect(processImageForUpload('test.txt')).rejects.toThrow('Invalid file type');
     });
   });
-  
+
   describe('pickAndProcessImage', () => {
     it('should pick and process image successfully', async () => {
       const result = await pickAndProcessImage();
-      
+
       expect(mockImagePicker.requestMediaLibraryPermissionsAsync).toHaveBeenCalled();
       expect(mockImagePicker.launchImageLibraryAsync).toHaveBeenCalled();
       expect(result).toBeDefined();
       expect(result!.uri).toBe('processed-image.jpg');
     });
-    
+
     it('should handle permission denial', async () => {
       mockImagePicker.requestMediaLibraryPermissionsAsync.mockResolvedValue({
         status: 'denied' as any,
         granted: false,
         canAskAgain: true,
       } as any);
-      
+
       await expect(pickAndProcessImage()).rejects.toThrow('Camera roll permissions not granted');
     });
-    
+
     it('should handle user cancellation', async () => {
       mockImagePicker.launchImageLibraryAsync.mockResolvedValue({
         canceled: true,
         assets: null,
       } as any);
-      
+
       const result = await pickAndProcessImage();
-      
+
       expect(result).toBeNull();
     });
   });
-  
+
   describe('captureAndProcessImage', () => {
     it('should capture and process image successfully', async () => {
       const result = await captureAndProcessImage();
-      
+
       expect(mockImagePicker.requestCameraPermissionsAsync).toHaveBeenCalled();
       expect(mockImagePicker.launchCameraAsync).toHaveBeenCalled();
       expect(result).toBeDefined();
       expect(result!.uri).toBe('processed-image.jpg');
     });
-    
+
     it('should handle camera permission denial', async () => {
       mockImagePicker.requestCameraPermissionsAsync.mockResolvedValue({
         status: 'denied' as any,
         granted: false,
         canAskAgain: false,
       } as any);
-      
+
       await expect(captureAndProcessImage()).rejects.toThrow('Camera permissions not granted');
     });
   });
-  
+
   describe('checkUploadQuota', () => {
     it('should return quota information', async () => {
       const result = await checkUploadQuota('user123');
-      
+
       expect(result).toBeDefined();
       expect(result.allowed).toBe(true);
       expect(result.remaining).toBe(10);
@@ -189,19 +193,19 @@ describe('UploadHygiene Service - Simplified Tests', () => {
       expect(result.resetAt).toBeInstanceOf(Date);
     });
   });
-  
+
   describe('uploadWithRetry', () => {
     it('should succeed on first attempt', async () => {
       // Give the mock a shape so TS doesn't infer `never`
       type UploadFn = (...args: any[]) => Promise<string>;
       const uploadFn: jest.MockedFunction<UploadFn> = jest.fn().mockResolvedValue('success');
-      
+
       const result = await uploadWithRetry(uploadFn);
-      
+
       expect(result).toBe('success');
       expect(uploadFn).toHaveBeenCalledTimes(1);
     });
-    
+
     it('should retry on failure and succeed', async () => {
       // Give the mock a shape so TS doesn't infer `never`
       type UploadFn = (...args: any[]) => Promise<string>;
@@ -209,9 +213,9 @@ describe('UploadHygiene Service - Simplified Tests', () => {
       (uploadFn as jest.Mock)
         .mockRejectedValueOnce(new Error('Attempt 1 failed'))
         .mockResolvedValueOnce('success');
-      
+
       const result = await uploadWithRetry(uploadFn, 3, 100);
-      
+
       expect(result).toBe('success');
       expect(uploadFn).toHaveBeenCalledTimes(2);
     });

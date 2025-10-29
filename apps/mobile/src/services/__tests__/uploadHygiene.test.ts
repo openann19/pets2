@@ -89,30 +89,34 @@ describe('UploadHygiene Service', () => {
 
     mockImagePicker.launchImageLibraryAsync.mockResolvedValue({
       canceled: false,
-      assets: [{
-        uri: 'picked-image.jpg',
-        width: 2048,
-        height: 1536,
-        type: 'image',
-        fileName: 'test.jpg',
-        fileSize: 1024000,
-        mimeType: 'image/jpeg',
-        exif: {},
-      }],
+      assets: [
+        {
+          uri: 'picked-image.jpg',
+          width: 2048,
+          height: 1536,
+          type: 'image',
+          fileName: 'test.jpg',
+          fileSize: 1024000,
+          mimeType: 'image/jpeg',
+          exif: {},
+        },
+      ],
     });
 
     mockImagePicker.launchCameraAsync.mockResolvedValue({
       canceled: false,
-      assets: [{
-        uri: 'captured-image.jpg',
-        width: 2048,
-        height: 1536,
-        type: 'image',
-        fileName: 'capture.jpg',
-        fileSize: 1024000,
-        mimeType: 'image/jpeg',
-        exif: {},
-      }],
+      assets: [
+        {
+          uri: 'captured-image.jpg',
+          width: 2048,
+          height: 1536,
+          type: 'image',
+          fileName: 'capture.jpg',
+          fileSize: 1024000,
+          mimeType: 'image/jpeg',
+          exif: {},
+        },
+      ],
     });
   });
 
@@ -221,11 +225,10 @@ describe('UploadHygiene Service', () => {
 
       const result = await (global as any).fixOrientation(inputUri);
 
-      expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
-        inputUri,
-        [],
-        { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
-      );
+      expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(inputUri, [], {
+        compress: 1,
+        format: ImageManipulator.SaveFormat.JPEG,
+      });
       expect(result).toBe(outputUri);
     });
 
@@ -356,15 +359,17 @@ describe('UploadHygiene Service', () => {
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         imageUri,
-        [{
-          crop: {
-            originX: 200, // (1600 - 1200) / 2
-            originY: 0,
-            width: 1200,
-            height: 900,
+        [
+          {
+            crop: {
+              originX: 200, // (1600 - 1200) / 2
+              originY: 0,
+              width: 1200,
+              height: 900,
+            },
           },
-        }],
-        { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+        ],
+        { compress: 1, format: ImageManipulator.SaveFormat.JPEG },
       );
       expect(result.uri).toBe('cropped.jpg');
     });
@@ -386,15 +391,17 @@ describe('UploadHygiene Service', () => {
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         imageUri,
-        [{
-          crop: {
-            originX: 0,
-            originY: 462.5, // (1600 - 675) / 2 ≈ 462.5
-            width: 900,
-            height: 675,
+        [
+          {
+            crop: {
+              originX: 0,
+              originY: 462.5, // (1600 - 675) / 2 ≈ 462.5
+              width: 900,
+              height: 675,
+            },
           },
-        }],
-        { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+        ],
+        { compress: 1, format: ImageManipulator.SaveFormat.JPEG },
       );
     });
 
@@ -415,17 +422,21 @@ describe('UploadHygiene Service', () => {
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         imageUri,
-        [{
-          crop: { originX: 0, originY: 0, width: 1600, height: 1200 },
-        }],
-        { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+        [
+          {
+            crop: { originX: 0, originY: 0, width: 1600, height: 1200 },
+          },
+        ],
+        { compress: 1, format: ImageManipulator.SaveFormat.JPEG },
       );
     });
 
     it('should handle crop errors', async () => {
       mockImageManipulator.manipulateAsync.mockRejectedValue(new Error('Crop failed'));
 
-      await expect((global as any).cropToAspectRatio('test.jpg', [4, 3], 1000, 800)).rejects.toThrow('Crop failed');
+      await expect(
+        (global as any).cropToAspectRatio('test.jpg', [4, 3], 1000, 800),
+      ).rejects.toThrow('Crop failed');
       expect(console.error).toHaveBeenCalled();
     });
   });
@@ -444,14 +455,10 @@ describe('UploadHygiene Service', () => {
 
       const result = await (global as any).compressImage(imageUri, quality);
 
-      expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
-        imageUri,
-        [],
-        {
-          compress: quality,
-          format: ImageManipulator.SaveFormat.JPEG,
-        }
-      );
+      expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(imageUri, [], {
+        compress: quality,
+        format: ImageManipulator.SaveFormat.JPEG,
+      });
       expect(result.uri).toBe('compressed.jpg');
     });
 
@@ -471,7 +478,7 @@ describe('UploadHygiene Service', () => {
         expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
           'input.jpg',
           [],
-          expect.objectContaining({ compress: quality })
+          expect.objectContaining({ compress: quality }),
         );
         expect(result.uri).toBe(`compressed-q${quality}.jpg`);
       }
@@ -480,7 +487,9 @@ describe('UploadHygiene Service', () => {
     it('should handle compression errors', async () => {
       mockImageManipulator.manipulateAsync.mockRejectedValue(new Error('Compression failed'));
 
-      await expect((global as any).compressImage('test.jpg', 0.8)).rejects.toThrow('Compression failed');
+      await expect((global as any).compressImage('test.jpg', 0.8)).rejects.toThrow(
+        'Compression failed',
+      );
       expect(console.error).toHaveBeenCalled();
     });
   });
@@ -708,7 +717,10 @@ describe('UploadHygiene Service', () => {
       mockFileSystem.getInfoAsync.mockRejectedValue(new Error('Processing failed'));
 
       await expect(processImageForUpload(inputUri)).rejects.toThrow('Processing failed');
-      expect(console.error).toHaveBeenCalledWith('Upload hygiene processing failed:', expect.any(Error));
+      expect(console.error).toHaveBeenCalledWith(
+        'Upload hygiene processing failed:',
+        expect.any(Error),
+      );
     });
   });
 
@@ -864,9 +876,13 @@ describe('UploadHygiene Service', () => {
     it('should handle quota check errors', async () => {
       // Mock implementation that throws
       const originalCheckUploadQuota = checkUploadQuota;
-      (global as any).checkUploadQuota = jest.fn().mockRejectedValue(new Error('Quota check failed'));
+      (global as any).checkUploadQuota = jest
+        .fn()
+        .mockRejectedValue(new Error('Quota check failed'));
 
-      await expect((global as any).checkUploadQuota('user123')).rejects.toThrow('Quota check failed');
+      await expect((global as any).checkUploadQuota('user123')).rejects.toThrow(
+        'Quota check failed',
+      );
 
       // Restore
       (global as any).checkUploadQuota = originalCheckUploadQuota;
@@ -886,7 +902,8 @@ describe('UploadHygiene Service', () => {
     });
 
     it('should retry on failure and succeed', async () => {
-      const uploadFn = jest.fn()
+      const uploadFn = jest
+        .fn()
         .mockRejectedValueOnce(new Error('Attempt 1 failed'))
         .mockRejectedValueOnce(new Error('Attempt 2 failed'))
         .mockResolvedValueOnce('success');
@@ -1049,15 +1066,17 @@ describe('UploadHygiene Service', () => {
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         'square.jpg',
-        [{
-          crop: {
-            originX: 0,
-            originY: 125, // (1000 - 750) / 2 = 125
-            width: 1000,
-            height: 750,
+        [
+          {
+            crop: {
+              originX: 0,
+              originY: 125, // (1000 - 750) / 2 = 125
+              width: 1000,
+              height: 750,
+            },
           },
-        }],
-        { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+        ],
+        { compress: 1, format: ImageManipulator.SaveFormat.JPEG },
       );
     });
 
@@ -1127,11 +1146,11 @@ describe('UploadHygiene Service', () => {
         });
       });
 
-      const promises = uris.map(uri => processImageForUpload(uri));
+      const promises = uris.map((uri) => processImageForUpload(uri));
       const results = await Promise.all(promises);
 
       expect(results).toHaveLength(3);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.width).toBe(1024);
         expect(result.height).toBe(768);
       });
@@ -1151,13 +1170,15 @@ describe('UploadHygiene Service', () => {
     it('should handle image picker results with missing URI', async () => {
       mockImagePicker.launchImageLibraryAsync.mockResolvedValue({
         canceled: false,
-        assets: [{
-          uri: '', // Empty URI
-          width: 1000,
-          height: 800,
-          type: 'image',
-          fileName: 'test.jpg',
-        }],
+        assets: [
+          {
+            uri: '', // Empty URI
+            width: 1000,
+            height: 800,
+            type: 'image',
+            fileName: 'test.jpg',
+          },
+        ],
       });
 
       await expect(pickAndProcessImage()).rejects.toThrow();

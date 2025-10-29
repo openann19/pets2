@@ -2,12 +2,9 @@
  * usePremiumStatus Hook
  * Manages premium subscription status and provides reactive status updates
  */
-import { useCallback, useEffect, useState } from "react";
-import { logger } from "@pawfectmatch/core";
-import {
-  premiumService,
-  type SubscriptionStatus,
-} from "../../../services/PremiumService";
+import { useCallback, useEffect, useState } from 'react';
+import { logger } from '@pawfectmatch/core';
+import { premiumService, type SubscriptionStatus } from '../../../services/PremiumService';
 
 interface UsePremiumStatusReturn {
   subscriptionStatus: SubscriptionStatus | null;
@@ -21,8 +18,7 @@ interface UsePremiumStatusReturn {
 }
 
 export const usePremiumStatus = (): UsePremiumStatusReturn => {
-  const [subscriptionStatus, setSubscriptionStatus] =
-    useState<SubscriptionStatus | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,15 +28,14 @@ export const usePremiumStatus = (): UsePremiumStatusReturn => {
       setError(null);
       const status = await premiumService.getSubscriptionStatus();
       setSubscriptionStatus(status);
-      logger.info("Premium status refreshed", {
+      logger.info('Premium status refreshed', {
         isActive: status.isActive,
         plan: status.plan,
       });
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to fetch premium status";
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch premium status';
       setError(errorMessage);
-      logger.error("Failed to refresh premium status", { error: err });
+      logger.error('Failed to refresh premium status', { error: err });
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +58,7 @@ export const usePremiumStatus = (): UsePremiumStatusReturn => {
     isLoading,
     error,
     isPremium: subscriptionStatus?.isActive ?? false,
-    plan: subscriptionStatus?.plan ?? "free",
+    plan: subscriptionStatus?.plan ?? 'free',
     features: subscriptionStatus?.features ?? [],
     refreshStatus,
     hasFeature,

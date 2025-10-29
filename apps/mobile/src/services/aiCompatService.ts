@@ -1,4 +1,4 @@
-import { request } from "./api";
+import { request } from './api';
 
 export interface CompatibilityResult {
   value: number;
@@ -12,8 +12,13 @@ export interface CompatibilityResult {
   };
 }
 
-export async function getCompatibility(petAId: string, petBId: string): Promise<CompatibilityResult> {
-  const result = await request<{ data: CompatibilityResult }>("/ai/compatibility", { method: 'POST', body: { petAId, petBId } });
+export async function getCompatibility(
+  petAId: string,
+  petBId: string,
+): Promise<CompatibilityResult> {
+  const result = await request<{ data: CompatibilityResult }>('/ai/compatibility', {
+    method: 'POST',
+    body: { petAId, petBId },
+  });
   return result.data;
 }
-

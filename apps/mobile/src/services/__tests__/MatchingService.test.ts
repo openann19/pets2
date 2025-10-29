@@ -266,11 +266,7 @@ describe('MatchingService', () => {
 
       const mockCompatibility = {
         score: 78,
-        reasons: [
-          'Similar energy levels',
-          'Compatible sizes',
-          'Shared personality traits',
-        ],
+        reasons: ['Similar energy levels', 'Compatible sizes', 'Shared personality traits'],
         breakdown: {
           personalityMatch: 80,
           sizeCompatibility: 85,
@@ -291,9 +287,9 @@ describe('MatchingService', () => {
       const mockError = new Error('Pets not found');
       mockApi.get.mockRejectedValue(mockError);
 
-      await expect(
-        matchingService.getCompatibilityScore('invalid1', 'invalid2')
-      ).rejects.toThrow('Pets not found');
+      await expect(matchingService.getCompatibilityScore('invalid1', 'invalid2')).rejects.toThrow(
+        'Pets not found',
+      );
     });
   });
 
@@ -327,7 +323,9 @@ describe('MatchingService', () => {
       const mockError = new Error('Invalid species filter');
       mockApi.post.mockRejectedValue(mockError);
 
-      await expect(matchingService.updateFilters(filters)).rejects.toThrow('Invalid species filter');
+      await expect(matchingService.updateFilters(filters)).rejects.toThrow(
+        'Invalid species filter',
+      );
     });
   });
 

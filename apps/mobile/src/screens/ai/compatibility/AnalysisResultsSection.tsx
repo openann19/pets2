@@ -3,9 +3,9 @@
  * Extracted from AICompatibilityScreen
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface Breakdown {
   personality_compatibility: number;
@@ -45,52 +45,32 @@ export function AnalysisResultsSection({
   const renderCompatibilityScore = () => {
     const score = Math.round(compatibilityResult.compatibility_score);
     const getScoreColor = (score: number) => {
-      if (score >= 80) return "#4CAF50";
-      if (score >= 60) return "#FF9800";
-      return "#F44336";
+      if (score >= 80) return '#4CAF50';
+      if (score >= 60) return '#FF9800';
+      return '#F44336';
     };
 
     const getScoreLabel = (score: number) => {
-      if (score >= 80) return "Excellent Match!";
-      if (score >= 60) return "Good Compatibility";
-      if (score >= 40) return "Moderate Compatibility";
-      return "Low Compatibility";
+      if (score >= 80) return 'Excellent Match!';
+      if (score >= 60) return 'Good Compatibility';
+      if (score >= 40) return 'Moderate Compatibility';
+      return 'Low Compatibility';
     };
 
     return (
       <View style={styles.scoreSection}>
-        <Text
-          style={StyleSheet.flatten([
-            styles.sectionTitle,
-            { color: colors.onSurface},
-          ])}
-        >
+        <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
           💕 Compatibility Score
         </Text>
 
         <View style={styles.scoreCard}>
-          <Text
-            style={StyleSheet.flatten([
-              styles.scoreValue,
-              { color: getScoreColor(score) },
-            ])}
-          >
+          <Text style={StyleSheet.flatten([styles.scoreValue, { color: getScoreColor(score) }])}>
             {score}/100
           </Text>
-          <Text
-            style={StyleSheet.flatten([
-              styles.scoreLabel,
-              { color: getScoreColor(score) },
-            ])}
-          >
+          <Text style={StyleSheet.flatten([styles.scoreLabel, { color: getScoreColor(score) }])}>
             {getScoreLabel(score)}
           </Text>
-          <Text
-            style={StyleSheet.flatten([
-              styles.scoreDescription,
-              { color: colors.onMuted },
-            ])}
-          >
+          <Text style={StyleSheet.flatten([styles.scoreDescription, { color: colors.onMuted }])}>
             {compatibilityResult.ai_analysis}
           </Text>
         </View>
@@ -101,21 +81,16 @@ export function AnalysisResultsSection({
   const renderBreakdown = () => {
     const breakdown = compatibilityResult.breakdown;
     const categories = [
-      { key: "personality_compatibility", label: "Personality", icon: "😊" },
-      { key: "lifestyle_compatibility", label: "Lifestyle", icon: "🏠" },
-      { key: "activity_compatibility", label: "Activity Level", icon: "⚡" },
-      { key: "social_compatibility", label: "Social Behavior", icon: "👥" },
-      { key: "environment_compatibility", label: "Environment", icon: "🌍" },
+      { key: 'personality_compatibility', label: 'Personality', icon: '😊' },
+      { key: 'lifestyle_compatibility', label: 'Lifestyle', icon: '🏠' },
+      { key: 'activity_compatibility', label: 'Activity Level', icon: '⚡' },
+      { key: 'social_compatibility', label: 'Social Behavior', icon: '👥' },
+      { key: 'environment_compatibility', label: 'Environment', icon: '🌍' },
     ];
 
     return (
       <View style={styles.breakdownSection}>
-        <Text
-          style={StyleSheet.flatten([
-            styles.sectionTitle,
-            { color: colors.onSurface},
-          ])}
-        >
+        <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
           📊 Detailed Breakdown
         </Text>
 
@@ -123,20 +98,20 @@ export function AnalysisResultsSection({
           {categories.map((category) => {
             const score = Math.round((breakdown as any)[category.key] * 100);
             const getBarColor = (score: number) => {
-              if (score >= 80) return "#4CAF50";
-              if (score >= 60) return "#FF9800";
-              return "#F44336";
+              if (score >= 80) return '#4CAF50';
+              if (score >= 60) return '#FF9800';
+              return '#F44336';
             };
 
             return (
-              <View key={category.key} style={styles.breakdownItem}>
+              <View
+                key={category.key}
+                style={styles.breakdownItem}
+              >
                 <View style={styles.breakdownHeader}>
                   <Text style={styles.breakdownIcon}>{category.icon}</Text>
                   <Text
-                    style={StyleSheet.flatten([
-                      styles.breakdownLabel,
-                      { color: colors.onSurface},
-                    ])}
+                    style={StyleSheet.flatten([styles.breakdownLabel, { color: colors.onSurface }])}
                   >
                     {category.label}
                   </Text>
@@ -173,12 +148,7 @@ export function AnalysisResultsSection({
 
     return (
       <View style={styles.recommendationsSection}>
-        <Text
-          style={StyleSheet.flatten([
-            styles.sectionTitle,
-            { color: colors.onSurface},
-          ])}
-        >
+        <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
           💡 Recommendations
         </Text>
 
@@ -188,7 +158,7 @@ export function AnalysisResultsSection({
               <Text
                 style={StyleSheet.flatten([
                   styles.recommendationTitle,
-                  { color: colors.onSurface},
+                  { color: colors.onSurface },
                 ])}
               >
                 🎯 Meeting Suggestions
@@ -196,10 +166,7 @@ export function AnalysisResultsSection({
               {recommendations.meeting_suggestions.map((suggestion, index) => (
                 <Text
                   key={index}
-                  style={StyleSheet.flatten([
-                    styles.recommendation,
-                    { color: colors.onMuted },
-                  ])}
+                  style={StyleSheet.flatten([styles.recommendation, { color: colors.onMuted }])}
                 >
                   • {suggestion}
                 </Text>
@@ -212,24 +179,19 @@ export function AnalysisResultsSection({
               <Text
                 style={StyleSheet.flatten([
                   styles.recommendationTitle,
-                  { color: colors.onSurface},
+                  { color: colors.onSurface },
                 ])}
               >
                 🎾 Activity Recommendations
               </Text>
-              {recommendations.activity_recommendations.map(
-                (activity, index) => (
-                  <Text
-                    key={index}
-                    style={StyleSheet.flatten([
-                      styles.recommendation,
-                      { color: colors.onMuted },
-                    ])}
-                  >
-                    • {activity}
-                  </Text>
-                ),
-              )}
+              {recommendations.activity_recommendations.map((activity, index) => (
+                <Text
+                  key={index}
+                  style={StyleSheet.flatten([styles.recommendation, { color: colors.onMuted }])}
+                >
+                  • {activity}
+                </Text>
+              ))}
             </View>
           )}
 
@@ -238,42 +200,27 @@ export function AnalysisResultsSection({
               <Text
                 style={StyleSheet.flatten([
                   styles.recommendationTitle,
-                  { color: colors.onSurface},
+                  { color: colors.onSurface },
                 ])}
               >
                 ⚠️ Supervision Requirements
               </Text>
-              {recommendations.supervision_requirements.map(
-                (requirement, index) => (
-                  <Text
-                    key={index}
-                    style={StyleSheet.flatten([
-                      styles.recommendation,
-                      { color: colors.onMuted },
-                    ])}
-                  >
-                    • {requirement}
-                  </Text>
-                ),
-              )}
+              {recommendations.supervision_requirements.map((requirement, index) => (
+                <Text
+                  key={index}
+                  style={StyleSheet.flatten([styles.recommendation, { color: colors.onMuted }])}
+                >
+                  • {requirement}
+                </Text>
+              ))}
             </View>
           )}
 
           <View style={styles.successProbability}>
-            <Text
-              style={StyleSheet.flatten([
-                styles.successLabel,
-                { color: colors.onSurface},
-              ])}
-            >
+            <Text style={StyleSheet.flatten([styles.successLabel, { color: colors.onSurface }])}>
               Success Probability:
             </Text>
-            <Text
-              style={StyleSheet.flatten([
-                styles.successValue,
-                { color: colors.primary },
-              ])}
-            >
+            <Text style={StyleSheet.flatten([styles.successValue, { color: colors.primary }])}>
               {Math.round(recommendations.success_probability * 100)}%
             </Text>
           </View>
@@ -285,22 +232,22 @@ export function AnalysisResultsSection({
   return (
     <View style={styles.resultsSection}>
       <View style={styles.resultsHeader}>
-        <Text
-          style={StyleSheet.flatten([
-            styles.resultsTitle,
-            { color: colors.onSurface},
-          ])}
-        >
+        <Text style={StyleSheet.flatten([styles.resultsTitle, { color: colors.onSurface }])}>
           🎯 Compatibility Results
         </Text>
-        <TouchableOpacity style={styles.resetButton}  testID="AnalysisResultsSection-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onReset}>
-          <Ionicons name="refresh" size={20} color={colors.primary} />
-          <Text
-            style={StyleSheet.flatten([
-              styles.resetButtonText,
-              { color: colors.primary },
-            ])}
-          >
+        <TouchableOpacity
+          style={styles.resetButton}
+          testID="AnalysisResultsSection-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={onReset}
+        >
+          <Ionicons
+            name="refresh"
+            size={20}
+            color={colors.primary}
+          />
+          <Text style={StyleSheet.flatten([styles.resetButtonText, { color: colors.primary }])}>
             New Analysis
           </Text>
         </TouchableOpacity>
@@ -318,57 +265,57 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   resultsHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 20,
   },
   resultsTitle: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   resetButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   resetButtonText: {
     marginLeft: 5,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   scoreSection: {
     marginBottom: 25,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   scoreCard: {
-    backgroundColor: "#f8f9fa",
+    backgroundColor: '#f8f9fa',
     padding: 25,
     borderRadius: 15,
-    alignItems: "center",
+    alignItems: 'center',
   },
   scoreValue: {
     fontSize: 48,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 5,
   },
   scoreLabel: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   scoreDescription: {
     fontSize: 16,
-    textAlign: "center",
+    textAlign: 'center',
     lineHeight: 22,
   },
   breakdownSection: {
     marginBottom: 25,
   },
   breakdownCard: {
-    backgroundColor: "#f8f9fa",
+    backgroundColor: '#f8f9fa',
     padding: 20,
     borderRadius: 15,
   },
@@ -376,8 +323,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   breakdownHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 8,
   },
   breakdownIcon: {
@@ -390,23 +337,23 @@ const styles = StyleSheet.create({
   },
   breakdownScore: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   progressBar: {
     height: 8,
-    backgroundColor: "#e0e0e0",
+    backgroundColor: '#e0e0e0',
     borderRadius: 4,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   progressFill: {
-    height: "100%",
+    height: '100%',
     borderRadius: 4,
   },
   recommendationsSection: {
     marginBottom: 25,
   },
   recommendationsCard: {
-    backgroundColor: "#f8f9fa",
+    backgroundColor: '#f8f9fa',
     padding: 20,
     borderRadius: 15,
   },
@@ -415,7 +362,7 @@ const styles = StyleSheet.create({
   },
   recommendationTitle: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   recommendation: {
@@ -424,19 +371,19 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   successProbability: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingTop: 15,
     borderTopWidth: 1,
-    borderTopColor: "#e0e0e0",
+    borderTopColor: '#e0e0e0',
   },
   successLabel: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   successValue: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });

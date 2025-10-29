@@ -29,7 +29,7 @@ export interface UseEventTrackingReturn {
  */
 export function useEventTracking(): UseEventTrackingReturn {
   const eventQueue = useRef<TrackEventOptions[]>([]);
-  const flushTimeout = useRef<NodeJS.Timeout | null>(null);
+  const flushTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Flush events to server
   const flushEvents = useCallback(async () => {
@@ -81,7 +81,7 @@ export function useEventTracking(): UseEventTrackingReturn {
 
       logger.info('Event tracked', { category: options.category, action: options.action });
     },
-    [flushEvents]
+    [flushEvents],
   );
 
   // Track page view
@@ -94,7 +94,7 @@ export function useEventTracking(): UseEventTrackingReturn {
         ...(metadata !== undefined && { metadata }),
       });
     },
-    [trackEvent]
+    [trackEvent],
   );
 
   // Track swipe action
@@ -107,7 +107,7 @@ export function useEventTracking(): UseEventTrackingReturn {
         value: action === 'superlike' ? 2 : action === 'like' ? 1 : 0,
       });
     },
-    [trackEvent]
+    [trackEvent],
   );
 
   // Track match creation
@@ -120,7 +120,7 @@ export function useEventTracking(): UseEventTrackingReturn {
         metadata: { petId },
       });
     },
-    [trackEvent]
+    [trackEvent],
   );
 
   // Track message sent
@@ -133,7 +133,7 @@ export function useEventTracking(): UseEventTrackingReturn {
         value: messageLength,
       });
     },
-    [trackEvent]
+    [trackEvent],
   );
 
   // Track profile view
@@ -146,7 +146,7 @@ export function useEventTracking(): UseEventTrackingReturn {
         ...(duration !== undefined && { value: duration }),
       });
     },
-    [trackEvent]
+    [trackEvent],
   );
 
   return {

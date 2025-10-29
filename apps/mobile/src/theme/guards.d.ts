@@ -5,4 +5,3 @@ declare module './Provider' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface __ThemeGuard extends Pick<ThemeLike['colors'], 'primary'> {}
 }
-

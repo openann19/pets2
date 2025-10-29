@@ -2,21 +2,15 @@
  * useWelcome Hook
  * Manages welcome screen state, animations, and navigation
  */
-import { useCallback, useEffect } from "react";
-import { InteractionManager, StatusBar } from "react-native";
-import {
-  useSharedValue,
-  withSpring,
-  withTiming,
-  withDelay,
-} from "react-native-reanimated";
-import { logger } from "@pawfectmatch/core";
-import { SPRING, DUR } from "../../../animation";
+import { useCallback, useEffect } from 'react';
+import { InteractionManager, StatusBar } from 'react-native';
+import { useSharedValue, withSpring, withTiming, withDelay } from 'react-native-reanimated';
+import { logger } from '@pawfectmatch/core';
+import { SPRING, DUR } from '../../../animation';
 
 import type { WelcomeAnimationValues } from '../../../types/animations';
 
 interface UseWelcomeReturn extends WelcomeAnimationValues {
-
   // State
   isReady: boolean;
 
@@ -43,7 +37,7 @@ export const useWelcome = (): UseWelcomeReturn => {
   const isReady = false; // Will be set to true after animations complete
 
   const initializeAnimations = useCallback(() => {
-    StatusBar.setBarStyle("dark-content");
+    StatusBar.setBarStyle('dark-content');
 
     // Elite staggered entrance animations
     InteractionManager.runAfterInteractions(() => {
@@ -53,65 +47,38 @@ export const useWelcome = (): UseWelcomeReturn => {
         logoOpacity.value = withTiming(1, { duration: DUR.normal });
 
         // Title with elegant slide-up
-        titleOpacity.value = withDelay(
-          300,
-          withTiming(1, { duration: DUR.normal }),
-        );
-        titleTranslateY.value = withDelay(
-          300,
-          withSpring(0, SPRING.soft),
-        );
+        titleOpacity.value = withDelay(300, withTiming(1, { duration: DUR.normal }));
+        titleTranslateY.value = withDelay(300, withSpring(0, SPRING.soft));
 
         // Subtitle follows smoothly
-        subtitleOpacity.value = withDelay(
-          600,
-          withTiming(1, { duration: DUR.normal }),
-        );
-        subtitleTranslateY.value = withDelay(
-          600,
-          withSpring(0, SPRING.soft),
-        );
+        subtitleOpacity.value = withDelay(600, withTiming(1, { duration: DUR.normal }));
+        subtitleTranslateY.value = withDelay(600, withSpring(0, SPRING.soft));
 
         // Features with subtle delay
-        featuresOpacity.value = withDelay(
-          900,
-          withTiming(1, { duration: DUR.normal }),
-        );
-        featuresTranslateY.value = withDelay(
-          900,
-          withSpring(0, SPRING.soft),
-        );
+        featuresOpacity.value = withDelay(900, withTiming(1, { duration: DUR.normal }));
+        featuresTranslateY.value = withDelay(900, withSpring(0, SPRING.soft));
 
         // Button with scale animation
-        buttonOpacity.value = withDelay(
-          1200,
-          withTiming(1, { duration: DUR.normal }),
-        );
-        buttonScale.value = withDelay(
-          1200,
-          withSpring(1, SPRING.soft),
-        );
+        buttonOpacity.value = withDelay(1200, withTiming(1, { duration: DUR.normal }));
+        buttonScale.value = withDelay(1200, withSpring(1, SPRING.soft));
 
         // Confetti effect
-        confettiScale.value = withDelay(
-          1500,
-          withSpring(1, SPRING.soft),
-        );
+        confettiScale.value = withDelay(1500, withSpring(1, SPRING.soft));
 
-        logger.info("Welcome screen animations initialized");
+        logger.info('Welcome screen animations initialized');
       } catch (error) {
-        logger.error("Failed to initialize welcome animations", { error });
+        logger.error('Failed to initialize welcome animations', { error });
       }
     });
   }, []);
 
   const handleGetStarted = useCallback(() => {
-    logger.info("User started onboarding flow");
+    logger.info('User started onboarding flow');
     // Navigation will be handled by parent component
   }, []);
 
   const handleSkipOnboarding = useCallback(() => {
-    logger.info("User skipped onboarding");
+    logger.info('User skipped onboarding');
     // Navigation will be handled by parent component
   }, []);
 

@@ -3,17 +3,17 @@
  * Displays emoji reactions for messages
  */
 
-import React, { useRef, useState } from "react";
+import { useTheme } from '@mobile/src/theme';
+import { useState } from 'react';
 import {
-  View,
-  Text,
+  FlatList,
   Modal,
   StyleSheet,
+  Text,
   TouchableOpacity,
-  FlatList,
+  View,
   type ListRenderItem,
-} from "react-native";
-import { useTheme } from "@/theme";
+} from 'react-native';
 
 export interface Reaction {
   emoji: string;
@@ -21,14 +21,14 @@ export interface Reaction {
 }
 
 const REACTIONS: Reaction[] = [
-  { emoji: "❤️", label: "Love" },
-  { emoji: "😂", label: "Laugh" },
-  { emoji: "😮", label: "Wow" },
-  { emoji: "😢", label: "Sad" },
-  { emoji: "🔥", label: "Fire" },
-  { emoji: "🎉", label: "Party" },
-  { emoji: "👍", label: "Like" },
-  { emoji: "👏", label: "Clap" },
+  { emoji: '❤️', label: 'Love' },
+  { emoji: '😂', label: 'Laugh' },
+  { emoji: '😮', label: 'Wow' },
+  { emoji: '😢', label: 'Sad' },
+  { emoji: '🔥', label: 'Fire' },
+  { emoji: '🎉', label: 'Party' },
+  { emoji: '👍', label: 'Like' },
+  { emoji: '👏', label: 'Clap' },
 ];
 
 interface ReactionPickerProps {
@@ -63,7 +63,9 @@ export function ReactionPicker({
         styles.reactionButton,
         selectedReaction === item.emoji && styles.selectedReaction,
       ])}
-      onPress={() => { handleSelect(item.emoji); }}
+      onPress={() => {
+        handleSelect(item.emoji);
+      }}
       accessibilityLabel={`React with ${item.label}`}
       accessibilityRole="button"
     >
@@ -87,7 +89,7 @@ export function ReactionPicker({
           style={StyleSheet.flatten([
             styles.container,
             position && {
-              position: "absolute",
+              position: 'absolute',
               top: position.y,
               left: position.x,
             },
@@ -110,14 +112,14 @@ export function ReactionPicker({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   container: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderRadius: 20,
     paddingVertical: 10,
     paddingHorizontal: 5,
-    shadowColor: "#0a0a0a",
+    shadowColor: '#0a0a0a',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -131,12 +133,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
   },
   selectedReaction: {
-    backgroundColor: "#e3f2fd",
+    backgroundColor: '#e3f2fd',
     transform: [{ scale: 1.1 }],
   },
   emoji: {

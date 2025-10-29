@@ -1,6 +1,6 @@
 /**
  * Comprehensive tests for Home API Service
- * 
+ *
  * Coverage:
  * - Home stats retrieval
  * - Activity feed fetching
@@ -173,7 +173,7 @@ describe('Home API Service', () => {
 
     it('should handle timeout errors', async () => {
       mockFetch.mockImplementation(
-        () => new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 1))
+        () => new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 1)),
       );
 
       await expect(getHomeStats()).rejects.toThrow('Timeout');

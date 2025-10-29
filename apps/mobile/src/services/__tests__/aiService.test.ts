@@ -58,7 +58,9 @@ describe('AIService', () => {
         method: 'POST',
         body: params,
       });
-      expect(result).toBe('Meet Buddy, a friendly and playful pup who loves to run and play all day!');
+      expect(result).toBe(
+        'Meet Buddy, a friendly and playful pup who loves to run and play all day!',
+      );
     });
 
     it('should generate a bio with all parameters', async () => {
@@ -89,7 +91,11 @@ describe('AIService', () => {
 
     it('should handle different tones', async () => {
       const tones: Array<'playful' | 'professional' | 'casual' | 'romantic' | 'funny'> = [
-        'playful', 'professional', 'casual', 'romantic', 'funny'
+        'playful',
+        'professional',
+        'casual',
+        'romantic',
+        'funny',
       ];
 
       for (const tone of tones) {
@@ -127,22 +133,28 @@ describe('AIService', () => {
 
     it('should validate required parameters', async () => {
       // Missing petName
-      await expect(generateBio({
-        petName: '',
-        keywords: ['test'],
-      } as any)).rejects.toThrow();
+      await expect(
+        generateBio({
+          petName: '',
+          keywords: ['test'],
+        } as any),
+      ).rejects.toThrow();
 
       // Missing keywords
-      await expect(generateBio({
-        petName: 'Test',
-        keywords: [],
-      } as any)).rejects.toThrow();
+      await expect(
+        generateBio({
+          petName: 'Test',
+          keywords: [],
+        } as any),
+      ).rejects.toThrow();
 
       // Empty keywords
-      await expect(generateBio({
-        petName: 'Test',
-        keywords: [''],
-      } as any)).rejects.toThrow();
+      await expect(
+        generateBio({
+          petName: 'Test',
+          keywords: [''],
+        } as any),
+      ).rejects.toThrow();
     });
 
     it('should handle API errors gracefully', async () => {
@@ -292,7 +304,7 @@ describe('AIService', () => {
     it('should handle extreme analysis scores', async () => {
       const extremeResults: PhotoAnalysisResult[] = [
         { labels: ['perfect'], lighting: 1.0, sharpness: 1.0, score: 1.0 }, // Perfect
-        { labels: ['poor'], lighting: 0.0, sharpness: 0.0, score: 0.0 },   // Terrible
+        { labels: ['poor'], lighting: 0.0, sharpness: 0.0, score: 0.0 }, // Terrible
         { labels: ['average'], lighting: 0.5, sharpness: 0.5, score: 0.5 }, // Average
       ];
 
@@ -448,7 +460,9 @@ describe('AIService', () => {
     it('should handle API errors during compatibility computation', async () => {
       mockRequest.mockRejectedValue(new Error('Compatibility computation failed'));
 
-      await expect(computeCompatibility({}, {})).rejects.toThrow('Compatibility computation failed');
+      await expect(computeCompatibility({}, {})).rejects.toThrow(
+        'Compatibility computation failed',
+      );
     });
 
     it('should handle empty pet objects', async () => {
@@ -507,13 +521,17 @@ describe('AIService', () => {
     it('should handle network timeouts', async () => {
       mockRequest.mockRejectedValue(new Error('Request timeout'));
 
-      await expect(generateBio({ petName: 'Test', keywords: ['test'] })).rejects.toThrow('Request timeout');
+      await expect(generateBio({ petName: 'Test', keywords: ['test'] })).rejects.toThrow(
+        'Request timeout',
+      );
     });
 
     it('should handle service unavailability', async () => {
       mockRequest.mockRejectedValue(new Error('AI service is temporarily unavailable'));
 
-      await expect(analyzePhoto('test-url')).rejects.toThrow('AI service is temporarily unavailable');
+      await expect(analyzePhoto('test-url')).rejects.toThrow(
+        'AI service is temporarily unavailable',
+      );
     });
 
     it('should handle rate limiting', async () => {
@@ -547,13 +565,9 @@ describe('AIService', () => {
         generateBio({ petName: 'Max', keywords: ['energetic'] }),
       ];
 
-      const mockResponses = [
-        { bio: 'Buddy bio' },
-        { bio: 'Luna bio' },
-        { bio: 'Max bio' },
-      ];
+      const mockResponses = [{ bio: 'Buddy bio' }, { bio: 'Luna bio' }, { bio: 'Max bio' }];
 
-      mockResponses.forEach(response => {
+      mockResponses.forEach((response) => {
         mockRequest.mockResolvedValueOnce(response);
       });
 
@@ -578,7 +592,7 @@ describe('AIService', () => {
         { bio: 'Bio 2' },
       ];
 
-      mockResponses.forEach(response => {
+      mockResponses.forEach((response) => {
         mockRequest.mockResolvedValueOnce(response);
       });
 
@@ -711,7 +725,7 @@ describe('AIService', () => {
 
     it('should handle rapid successive calls', async () => {
       const calls = Array.from({ length: 10 }, (_, i) =>
-        generateBio({ petName: `Pet${i}`, keywords: [`keyword${i}`] })
+        generateBio({ petName: `Pet${i}`, keywords: [`keyword${i}`] }),
       );
 
       calls.forEach((_, i) => {

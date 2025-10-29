@@ -4,11 +4,12 @@
  * REFACTORED: Extracted components to reduce complexity
  */
 
-import React, { useMemo } from "react";
-import { Ionicons } from "@expo/vector-icons";
-import { logger, useAuthStore } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import type { AppTheme } from '@mobile/src/theme';
+import { getExtendedColors, useTheme } from '@mobile/src/theme';
+import { logger, useAuthStore } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -18,82 +19,79 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import type { AdminScreenProps } from "../../navigation/types";
-import { _adminAPI as adminAPI } from "../../services/api";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import type { AdminScreenProps } from '../../navigation/types';
+import { _adminAPI as adminAPI } from '../../services/api';
 import {
-  KeyMetricsSection,
   EngagementMetricsSection,
+  KeyMetricsSection,
   RevenueMetricsSection,
   SecurityMetricsSection,
   TopPerformersSection,
-} from "./analytics/components";
-import { useTheme, getExtendedColors } from "@/theme";
-import type { AppTheme } from "@/theme";
+} from './analytics/components';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  header: {
-    paddingVertical: 24,
-    paddingHorizontal: 4,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  backButton: {
-    padding: 8,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    flex: 1,
-    textAlign: "center",
-  },
-  periodSelector: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  periodButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  periodButtonActive: {
-    // Active state handled by backgroundColor
-  },
-  periodText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 16,
-  },
-});
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+      paddingHorizontal: 16,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: 16,
+      fontWeight: '500',
+    },
+    header: {
+      paddingVertical: 24,
+      paddingHorizontal: 4,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    backButton: {
+      padding: 8,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      flex: 1,
+      textAlign: 'center',
+    },
+    periodSelector: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    periodButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+    },
+    periodButtonActive: {
+      // Active state handled by backgroundColor
+    },
+    periodText: {
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    section: {
+      marginBottom: 24,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      marginBottom: 16,
+    },
+  });
 }
-
 
 interface AnalyticsData {
   users: {
@@ -104,14 +102,14 @@ interface AnalyticsData {
     verified: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   pets: {
     total: number;
     active: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   matches: {
     total: number;
@@ -119,14 +117,14 @@ interface AnalyticsData {
     blocked: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   messages: {
     total: number;
     deleted: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   engagement: {
     dailyActiveUsers: number;
@@ -168,17 +166,15 @@ interface AnalyticsData {
 
 export default function AdminAnalyticsScreen({
   navigation,
-}: AdminScreenProps<"AdminAnalytics">): React.JSX.Element {
-    const theme = useTheme();
+}: AdminScreenProps<'AdminAnalytics'>): React.JSX.Element {
+  const theme = useTheme();
   const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
   const colors = getExtendedColors(theme);
   const { user: _user } = useAuthStore();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState<"7d" | "30d" | "90d">(
-    "30d",
-  );
+  const [selectedPeriod, setSelectedPeriod] = useState<'7d' | '30d' | '90d'>('30d');
 
   useEffect(() => {
     void loadAnalyticsData();
@@ -198,14 +194,14 @@ export default function AdminAnalyticsScreen({
           verified: responseData.users?.verified || 0,
           recent24h: responseData.users?.recent24h || 0,
           growth: (responseData.users as any)?.growth || 0,
-          trend: ((responseData.users as any)?.trend as "up" | "down" | "stable") || "stable",
+          trend: ((responseData.users as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
         },
         pets: {
           total: responseData.pets?.total || 0,
           active: responseData.pets?.active || 0,
           recent24h: responseData.pets?.recent24h || 0,
           growth: (responseData.pets as any)?.growth || 0,
-          trend: ((responseData.pets as any)?.trend as "up" | "down" | "stable") || "stable",
+          trend: ((responseData.pets as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
         },
         matches: {
           total: responseData.matches?.total || 0,
@@ -213,14 +209,14 @@ export default function AdminAnalyticsScreen({
           blocked: responseData.matches?.blocked || 0,
           recent24h: responseData.matches?.recent24h || 0,
           growth: (responseData.matches as any)?.growth || 0,
-          trend: ((responseData.matches as any)?.trend as "up" | "down" | "stable") || "stable",
+          trend: ((responseData.matches as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
         },
         messages: {
           total: responseData.messages?.total || 0,
           deleted: responseData.messages?.deleted || 0,
           recent24h: responseData.messages?.recent24h || 0,
           growth: (responseData.messages as any)?.growth || 0,
-          trend: ((responseData.messages as any)?.trend as "up" | "down" | "stable") || "stable",
+          trend: ((responseData.messages as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
         },
         engagement: {
           dailyActiveUsers: 0,
@@ -250,8 +246,8 @@ export default function AdminAnalyticsScreen({
       };
       setAnalytics(fullData);
     } catch (error: unknown) {
-      logger.error("Error loading analytics data:", { error });
-      Alert.alert("Error", "Failed to load analytics data");
+      logger.error('Error loading analytics data:', { error });
+      Alert.alert('Error', 'Failed to load analytics data');
     } finally {
       setLoading(false);
     }
@@ -263,7 +259,7 @@ export default function AdminAnalyticsScreen({
     setRefreshing(false);
   };
 
-  const handlePeriodChange = (period: "7d" | "30d" | "90d"): void => {
+  const handlePeriodChange = (period: '7d' | '30d' | '90d'): void => {
     if (Haptics) {
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
@@ -272,20 +268,13 @@ export default function AdminAnalyticsScreen({
 
   if (loading) {
     return (
-      <SafeAreaView
-        style={StyleSheet.flatten([
-          styles.container,
-          { backgroundColor: colors.bg },
-        ])}
-      >
+      <SafeAreaView style={StyleSheet.flatten([styles.container, { backgroundColor: colors.bg }])}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text
-            style={StyleSheet.flatten([
-              styles.loadingText,
-              { color: colors.onSurface },
-            ])}
-          >
+          <ActivityIndicator
+            size="large"
+            color={colors.primary}
+          />
+          <Text style={StyleSheet.flatten([styles.loadingText, { color: colors.onSurface }])}>
             Loading analytics...
           </Text>
         </View>
@@ -294,12 +283,7 @@ export default function AdminAnalyticsScreen({
   }
 
   return (
-    <SafeAreaView
-      style={StyleSheet.flatten([
-        styles.container,
-        { backgroundColor: colors.bg },
-      ])}
-    >
+    <SafeAreaView style={StyleSheet.flatten([styles.container, { backgroundColor: colors.bg }])}>
       <ScrollView
         style={styles.scrollView}
         refreshControl={
@@ -320,23 +304,24 @@ export default function AdminAnalyticsScreen({
             }}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color={colors.onSurface}
+            />
           </TouchableOpacity>
-          <Text
-            style={StyleSheet.flatten([styles.title, { color: colors.onSurface }])}
-          >
+          <Text style={StyleSheet.flatten([styles.title, { color: colors.onSurface }])}>
             Analytics Dashboard
           </Text>
           <View style={styles.periodSelector}>
-            {(["7d", "30d", "90d"] as const).map((period) => (
+            {(['7d', '30d', '90d'] as const).map((period) => (
               <TouchableOpacity
                 key={period}
                 style={StyleSheet.flatten([
                   styles.periodButton,
                   selectedPeriod === period && styles.periodButtonActive,
                   {
-                    backgroundColor:
-                      selectedPeriod === period ? colors.primary : colors.surface,
+                    backgroundColor: selectedPeriod === period ? colors.primary : colors.surface,
                   },
                 ])}
                 testID="AdminAnalyticsScreen-button-2"
@@ -350,8 +335,7 @@ export default function AdminAnalyticsScreen({
                   style={StyleSheet.flatten([
                     styles.periodText,
                     {
-                      color:
-                        selectedPeriod === period ? theme.colors.onPrimary : colors.onSurface,
+                      color: selectedPeriod === period ? theme.colors.onPrimary : colors.onSurface,
                     },
                   ])}
                 >
@@ -365,12 +349,7 @@ export default function AdminAnalyticsScreen({
         {analytics ? (
           <>
             <View style={styles.section}>
-              <Text
-                style={StyleSheet.flatten([
-                  styles.sectionTitle,
-                  { color: colors.onSurface },
-                ])}
-              >
+              <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
                 Key Metrics
               </Text>
               <KeyMetricsSection
@@ -399,24 +378,14 @@ export default function AdminAnalyticsScreen({
             </View>
 
             <View style={styles.section}>
-              <Text
-                style={StyleSheet.flatten([
-                  styles.sectionTitle,
-                  { color: colors.onSurface },
-                ])}
-              >
+              <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
                 Engagement
               </Text>
               <EngagementMetricsSection engagement={analytics.engagement} />
             </View>
 
             <View style={styles.section}>
-              <Text
-                style={StyleSheet.flatten([
-                  styles.sectionTitle,
-                  { color: colors.onSurface },
-                ])}
-              >
+              <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
                 Revenue Analytics
               </Text>
               <RevenueMetricsSection
@@ -429,24 +398,14 @@ export default function AdminAnalyticsScreen({
             </View>
 
             <View style={styles.section}>
-              <Text
-                style={StyleSheet.flatten([
-                  styles.sectionTitle,
-                  { color: colors.onSurface },
-                ])}
-              >
+              <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
                 Security Overview
               </Text>
               <SecurityMetricsSection security={analytics.security} />
             </View>
 
             <View style={styles.section}>
-              <Text
-                style={StyleSheet.flatten([
-                  styles.sectionTitle,
-                  { color: colors.onSurface },
-                ])}
-              >
+              <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
                 Top Performers
               </Text>
               <TopPerformersSection topPerformers={analytics.topPerformers} />

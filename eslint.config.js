@@ -18,6 +18,15 @@ export default [
       '**/ios/**',
       '**/android/**',
       '**/.expo/**',
+      // Generated files
+      '**/.next/**',
+      '**/apps/admin/.next/**',
+      '**/apps/admin/next-env.d.ts',
+      '**/apps/admin/out/**',
+      // Webpack/build artifacts
+      '**/*.config.{js,cjs,mjs}',
+      '**/postcss.config.{js,cjs}',
+      '**/tailwind.config.{js,cjs}',
     ],
   },
 
@@ -42,6 +51,13 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
+        NodeJS: 'readonly',
+        RequestInit: 'readonly',
+        EventListener: 'readonly',
+        EventListenerOptions: 'readonly',
+        AddEventListenerOptions: 'readonly',
+        EventListenerOrEventListenerObject: 'readonly',
+        FrameRequestCallback: 'readonly',
       },
     },
     rules: {
@@ -123,21 +139,82 @@ export default [
     },
   },
 
+  // Server-side JavaScript files (CommonJS)
+  {
+    files: ['server/**/*.{js,cjs,mjs}'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'commonjs',
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      'no-console': 'off', // Allow console in server code
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
+
+  // Server-side TypeScript files - must come after global TypeScript config to override rules
+  {
+    files: ['server/**/*.{ts}'],
+    plugins: {
+      '@typescript-eslint': typescriptPlugin,
+    },
+    languageOptions: {
+      parser: typescriptParser,
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      'no-console': 'off', // Allow console in server code
+      '@typescript-eslint/no-explicit-any': 'off', // Off for server - Express routes commonly use any for req/res
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
+
   // Test files configuration
   // EXCEPTION: Tests and mocks are allowed to use 'any' and relaxed rules for pragmatic testing.
   // This is the ONLY exception to strict rules per AGENTS.md "strict defaults" principle.
   {
     files: [
-      '**/*.test.{ts,tsx}',
-      '**/__tests__/**/*.{ts,tsx}',
-      '**/*.spec.{ts,tsx}',
-      '**/__mocks__/**/*.{ts,tsx,js}',
+      '**/*.test.{ts,tsx,js,cjs,mjs}',
+      '**/__tests__/**/*.{ts,tsx,js,cjs,mjs}',
+      '**/tests/**/*.{ts,tsx,js,cjs,mjs}',
+      '**/*.spec.{ts,tsx,js,cjs,mjs}',
+      '**/__mocks__/**/*.{ts,tsx,js,cjs,mjs}',
       '**/.storybook/**/*.{ts,tsx}', // Storybook mocks need relaxed rules
     ],
     languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       globals: {
         ...globals.jest,
+        ...globals.node,
         jest: 'readonly',
+        describe: 'readonly',
+        test: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
       },
     },
     rules: {
@@ -150,6 +227,32 @@ export default [
       '@typescript-eslint/no-unsafe-argument': 'off',
       'no-console': 'off', // Console is useful in tests
       'no-undef': 'off', // Jest globals are defined
+      'no-unused-vars': 'off', // Jest/TypeScript handle this
+      '@typescript-eslint/no-unused-vars': 'off', // Jest handles test setup
+    },
+  },
+
+  // Admin package - Next.js generated files and browser globals
+  {
+    files: ['apps/admin/**/*.{ts,tsx,js}'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        React: 'readonly',
+        JSX: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      '@typescript-eslint/no-explicit-any': 'warn', // Warn for admin (can be more lenient)
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
     },
   },
 ];

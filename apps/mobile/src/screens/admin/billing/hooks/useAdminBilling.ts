@@ -1,7 +1,7 @@
-import { logger, useAuthStore } from "@pawfectmatch/core";
-import { useEffect, useState } from "react";
+import { logger, useAuthStore } from '@pawfectmatch/core';
+import { useEffect, useState } from 'react';
 
-import { _adminAPI as adminAPI } from "../../../../services/api";
+import { _adminAPI as adminAPI } from '../../../../services/api';
 
 export interface Subscription {
   id: string;
@@ -10,14 +10,14 @@ export interface Subscription {
   userName: string;
   planId: string;
   planName: string;
-  status: "active" | "canceled" | "past_due" | "trialing" | "incomplete";
+  status: 'active' | 'canceled' | 'past_due' | 'trialing' | 'incomplete';
   currentPeriodStart: string;
   currentPeriodEnd: string;
   cancelAtPeriodEnd: boolean;
   trialEnd?: string;
   amount: number;
   currency: string;
-  interval: "monthly" | "yearly";
+  interval: 'monthly' | 'yearly';
   stripeSubscriptionId: string;
   stripeCustomerId: string;
   createdAt: string;
@@ -49,11 +49,9 @@ export const useAdminBilling = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<
-    "all" | "active" | "canceled" | "past_due" | "trialing" | "incomplete"
-  >("all");
-  const [selectedPlan, setSelectedPlan] = useState<"all" | "basic" | "premium" | "ultimate">(
-    "all",
-  );
+    'all' | 'active' | 'canceled' | 'past_due' | 'trialing' | 'incomplete'
+  >('all');
+  const [selectedPlan, setSelectedPlan] = useState<'all' | 'basic' | 'premium' | 'ultimate'>('all');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   useEffect(() => {
@@ -72,8 +70,8 @@ export const useAdminBilling = () => {
         adminAPI.getSubscriptions({
           page: 1,
           limit: 100,
-          sort: "createdAt",
-          order: "desc",
+          sort: 'createdAt',
+          order: 'desc',
         }),
         adminAPI.getBillingMetrics(),
       ]);
@@ -81,7 +79,7 @@ export const useAdminBilling = () => {
       setSubscriptions(subscriptionsResponse.data.subscriptions as Subscription[]);
       setMetrics(metricsResponse.data as BillingMetrics);
     } catch (error: unknown) {
-      logger.error("Error loading billing data:", { error });
+      logger.error('Error loading billing data:', { error });
     } finally {
       setLoading(false);
     }
@@ -96,11 +94,11 @@ export const useAdminBilling = () => {
   const filterSubscriptions = (): void => {
     let filtered = subscriptions;
 
-    if (selectedStatus !== "all") {
+    if (selectedStatus !== 'all') {
       filtered = filtered.filter((sub) => sub.status === selectedStatus);
     }
 
-    if (selectedPlan !== "all") {
+    if (selectedPlan !== 'all') {
       filtered = filtered.filter((sub) => sub.planId === selectedPlan);
     }
 
@@ -113,7 +111,7 @@ export const useAdminBilling = () => {
       await adminAPI.cancelSubscription({ userId: subscriptionId });
       await loadBillingData();
     } catch (error: unknown) {
-      logger.error("Error canceling subscription:", { error });
+      logger.error('Error canceling subscription:', { error });
     } finally {
       setActionLoading(null);
     }
@@ -125,24 +123,21 @@ export const useAdminBilling = () => {
       await adminAPI.reactivateSubscription({ userId: subscriptionId });
       await loadBillingData();
     } catch (error: unknown) {
-      logger.error("Error reactivating subscription:", { error });
+      logger.error('Error reactivating subscription:', { error });
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleRefundPayment = async (
-    subscriptionId: string,
-    paymentId: string,
-  ): Promise<void> => {
+  const handleRefundPayment = async (subscriptionId: string, paymentId: string): Promise<void> => {
     try {
       setActionLoading(paymentId);
       // TODO: Implement refundPayment API
       // await adminAPI.refundPayment(paymentId);
-      logger.info("Refund payment not yet implemented:", { paymentId });
+      logger.info('Refund payment not yet implemented:', { paymentId });
       await loadBillingData();
     } catch (error: unknown) {
-      logger.error("Error refunding payment:", { error });
+      logger.error('Error refunding payment:', { error });
     } finally {
       setActionLoading(null);
     }
@@ -164,4 +159,3 @@ export const useAdminBilling = () => {
     handleRefundPayment,
   };
 };
-

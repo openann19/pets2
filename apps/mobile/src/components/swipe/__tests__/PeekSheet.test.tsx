@@ -28,24 +28,40 @@ describe('PeekSheet', () => {
   describe('Rendering', () => {
     it('should render nothing when show is false', () => {
       const { container } = render(
-        <PeekSheet nextPet={mockPet} show={false} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={false}
+        />,
       );
       expect(container).toBeTruthy();
     });
 
     it('should render nothing when nextPet is undefined', () => {
-      const { container } = render(<PeekSheet nextPet={undefined} show={true} />);
+      const { container } = render(
+        <PeekSheet
+          nextPet={undefined}
+          show={true}
+        />,
+      );
       expect(container).toBeTruthy();
     });
 
     it('should render nothing when nextPet is null', () => {
-      const { container } = render(<PeekSheet nextPet={null} show={true} />);
+      const { container } = render(
+        <PeekSheet
+          nextPet={null}
+          show={true}
+        />,
+      );
       expect(container).toBeTruthy();
     });
 
     it('should render when show is true and nextPet is provided', () => {
       const { UNSAFE_getByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
       const container = UNSAFE_getByType('Animated.View');
       expect(container).toBeTruthy();
@@ -55,13 +71,21 @@ describe('PeekSheet', () => {
   describe('Animation', () => {
     it('should animate scale on show', async () => {
       jest.useFakeTimers();
-      
+
       const { UNSAFE_getByType, rerender } = render(
-        <PeekSheet nextPet={mockPet} show={false} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={false}
+        />,
       );
 
-      rerender(<PeekSheet nextPet={mockPet} show={true} />);
-      
+      rerender(
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
+      );
+
       await waitFor(() => {
         const animatedView = UNSAFE_getByType('Animated.View');
         expect(animatedView).toBeTruthy();
@@ -72,13 +96,21 @@ describe('PeekSheet', () => {
 
     it('should animate opacity on show', async () => {
       jest.useFakeTimers();
-      
+
       const { UNSAFE_getByType, rerender } = render(
-        <PeekSheet nextPet={mockPet} show={false} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={false}
+        />,
       );
 
-      rerender(<PeekSheet nextPet={mockPet} show={true} />);
-      
+      rerender(
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
+      );
+
       await waitFor(() => {
         const animatedView = UNSAFE_getByType('Animated.View');
         expect(animatedView).toBeTruthy();
@@ -89,9 +121,12 @@ describe('PeekSheet', () => {
 
     it('should use spring animation', async () => {
       jest.useFakeTimers();
-      
+
       const { UNSAFE_getByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
 
       const animatedView = UNSAFE_getByType('Animated.View');
@@ -103,8 +138,13 @@ describe('PeekSheet', () => {
 
   describe('Pet Data Display', () => {
     it('should display next pet name', async () => {
-      const { findByText } = render(<PeekSheet nextPet={mockPet} show={true} />);
-      
+      const { findByText } = render(
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
+      );
+
       await waitFor(async () => {
         // Pet name should be in the card
         const card = await findByText('Buddy');
@@ -119,7 +159,10 @@ describe('PeekSheet', () => {
       };
 
       const { container } = render(
-        <PeekSheet nextPet={petWithoutPhotos} show={true} />
+        <PeekSheet
+          nextPet={petWithoutPhotos}
+          show={true}
+        />,
       );
       expect(container).toBeTruthy();
     });
@@ -131,7 +174,10 @@ describe('PeekSheet', () => {
       };
 
       const { container } = render(
-        <PeekSheet nextPet={petWithOnePhoto} show={true} />
+        <PeekSheet
+          nextPet={petWithOnePhoto}
+          show={true}
+        />,
       );
       expect(container).toBeTruthy();
     });
@@ -146,7 +192,10 @@ describe('PeekSheet', () => {
       };
 
       const { container } = render(
-        <PeekSheet nextPet={petWithManyPhotos} show={true} />
+        <PeekSheet
+          nextPet={petWithManyPhotos}
+          show={true}
+        />,
       );
       expect(container).toBeTruthy();
     });
@@ -155,7 +204,10 @@ describe('PeekSheet', () => {
   describe('Positioning', () => {
     it('should position at bottom of screen', () => {
       const { UNSAFE_getByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
       const container = UNSAFE_getByType('Animated.View');
       expect(container).toBeTruthy();
@@ -163,7 +215,10 @@ describe('PeekSheet', () => {
 
     it('should have correct z-index for layering', () => {
       const { UNSAFE_getByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
       const container = UNSAFE_getByType('Animated.View');
       expect(container).toBeTruthy();
@@ -171,7 +226,10 @@ describe('PeekSheet', () => {
 
     it('should center horizontally', () => {
       const { UNSAFE_getByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
       const animatedView = UNSAFE_getByType('Animated.View');
       expect(animatedView).toBeTruthy();
@@ -181,20 +239,26 @@ describe('PeekSheet', () => {
   describe('Interaction', () => {
     it('should not be interactive (pointerEvents="none")', () => {
       const { UNSAFE_getByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
       const container = UNSAFE_getByType('View');
       const hasPointerEvents = container.props.style.some(
-        (style: any) => style && style.pointerEvents === 'none'
+        (style: any) => style && style.pointerEvents === 'none',
       );
       expect(hasPointerEvents).toBeTruthy();
     });
 
     it('should disable card interactions', async () => {
       const { UNSAFE_getByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
-      
+
       await waitFor(() => {
         const animatedView = UNSAFE_getByType('Animated.View');
         expect(animatedView).toBeTruthy();
@@ -205,14 +269,15 @@ describe('PeekSheet', () => {
   describe('Visual Indicator', () => {
     it('should show peek indicator', () => {
       const { UNSAFE_getAllByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
-      
+
       const indicators = UNSAFE_getAllByType('View');
-      const hasIndicator = indicators.some(
-        (view) => view.props.style?.some(
-          (style: any) => style?.position === 'absolute'
-        )
+      const hasIndicator = indicators.some((view) =>
+        view.props.style?.some((style: any) => style?.position === 'absolute'),
       );
       expect(hasIndicator).toBeTruthy();
     });
@@ -221,7 +286,12 @@ describe('PeekSheet', () => {
   describe('Edge Cases', () => {
     it('should handle undefined pet gracefully', () => {
       expect(() => {
-        render(<PeekSheet nextPet={undefined as any} show={true} />);
+        render(
+          <PeekSheet
+            nextPet={undefined as any}
+            show={true}
+          />,
+        );
       }).not.toThrow();
     });
 
@@ -232,18 +302,41 @@ describe('PeekSheet', () => {
       } as any;
 
       expect(() => {
-        render(<PeekSheet nextPet={incompletePet} show={true} />);
+        render(
+          <PeekSheet
+            nextPet={incompletePet}
+            show={true}
+          />,
+        );
       }).not.toThrow();
     });
 
     it('should handle rapid show/hide toggles', () => {
       const { rerender } = render(
-        <PeekSheet nextPet={mockPet} show={false} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={false}
+        />,
       );
 
-      rerender(<PeekSheet nextPet={mockPet} show={true} />);
-      rerender(<PeekSheet nextPet={mockPet} show={false} />);
-      rerender(<PeekSheet nextPet={mockPet} show={true} />);
+      rerender(
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
+      );
+      rerender(
+        <PeekSheet
+          nextPet={mockPet}
+          show={false}
+        />,
+      );
+      rerender(
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
+      );
 
       expect(() => {}).not.toThrow();
     });
@@ -256,19 +349,40 @@ describe('PeekSheet', () => {
       };
 
       const { rerender } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
 
-      rerender(<PeekSheet nextPet={newPet} show={true} />);
-      rerender(<PeekSheet nextPet={undefined} show={true} />);
-      rerender(<PeekSheet nextPet={mockPet} show={true} />);
+      rerender(
+        <PeekSheet
+          nextPet={newPet}
+          show={true}
+        />,
+      );
+      rerender(
+        <PeekSheet
+          nextPet={undefined}
+          show={true}
+        />,
+      );
+      rerender(
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
+      );
 
       expect(() => {}).not.toThrow();
     });
 
     it('should unmount cleanly', () => {
       const { unmount } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
 
       expect(() => {
@@ -280,10 +394,18 @@ describe('PeekSheet', () => {
   describe('Performance', () => {
     it('should not re-render unnecessarily', () => {
       const { rerender } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
 
-      rerender(<PeekSheet nextPet={mockPet} show={true} />);
+      rerender(
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
+      );
 
       // Should handle redundant updates efficiently
       expect(() => {}).not.toThrow();
@@ -292,9 +414,15 @@ describe('PeekSheet', () => {
     it('should handle multiple peek sheets simultaneously', () => {
       const { container } = render(
         <>
-          <PeekSheet nextPet={mockPet} show={true} />
-          <PeekSheet nextPet={mockPet} show={false} />
-        </>
+          <PeekSheet
+            nextPet={mockPet}
+            show={true}
+          />
+          <PeekSheet
+            nextPet={mockPet}
+            show={false}
+          />
+        </>,
       );
 
       expect(container).toBeTruthy();
@@ -304,7 +432,10 @@ describe('PeekSheet', () => {
   describe('Integration', () => {
     it('should work within swipe screen context', () => {
       const { container } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
 
       expect(container).toBeTruthy();
@@ -314,8 +445,11 @@ describe('PeekSheet', () => {
       const { container } = render(
         <>
           <View testID="card-stack" />
-          <PeekSheet nextPet={mockPet} show={true} />
-        </>
+          <PeekSheet
+            nextPet={mockPet}
+            show={true}
+          />
+        </>,
       );
 
       expect(container).toBeTruthy();
@@ -325,12 +459,15 @@ describe('PeekSheet', () => {
   describe('Accessibility', () => {
     it('should have pointerEvents="none" for accessibility', () => {
       const { UNSAFE_getAllByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
 
       const views = UNSAFE_getAllByType('View');
       const mainContainer = views.find((view) =>
-        view.props.style?.some((style: any) => style?.pointerEvents === 'none')
+        view.props.style?.some((style: any) => style?.pointerEvents === 'none'),
       );
 
       expect(mainContainer).toBeTruthy();
@@ -340,7 +477,10 @@ describe('PeekSheet', () => {
   describe('Styling', () => {
     it('should have correct card dimensions', () => {
       const { UNSAFE_getByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
 
       const container = UNSAFE_getByType('View');
@@ -349,7 +489,10 @@ describe('PeekSheet', () => {
 
     it('should apply correct border radius', () => {
       const { UNSAFE_getAllByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
 
       const views = UNSAFE_getAllByType('View');
@@ -358,7 +501,10 @@ describe('PeekSheet', () => {
 
     it('should have shadow/elevation effects', () => {
       const { UNSAFE_getAllByType } = render(
-        <PeekSheet nextPet={mockPet} show={true} />
+        <PeekSheet
+          nextPet={mockPet}
+          show={true}
+        />,
       );
 
       const views = UNSAFE_getAllByType('View');
@@ -368,4 +514,3 @@ describe('PeekSheet', () => {
 });
 
 const View = ({ testID, children }: any) => children;
-

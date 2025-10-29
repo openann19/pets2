@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
-import { useAuthStore } from "@pawfectmatch/core";
-import { matchesAPI } from "../../../services/api";
-import { logger } from "@pawfectmatch/core";
-import type { Pet } from "@pawfectmatch/core";
+import { useCallback, useEffect, useState } from 'react';
+import { useAuthStore } from '@pawfectmatch/core';
+import { matchesAPI } from '../../../services/api';
+import { logger } from '@pawfectmatch/core';
+import type { Pet } from '@pawfectmatch/core';
 
 export interface UseProfileDataOptions {
   enabled?: boolean;
@@ -36,14 +36,13 @@ export function useProfileData({
     try {
       const userPets = await matchesAPI.getUserPets();
       setPets(userPets || []);
-      logger.info("Profile data refreshed", {
+      logger.info('Profile data refreshed', {
         petCount: userPets?.length,
       });
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to load profile";
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load profile';
       setError(errorMessage);
-      logger.error("Failed to refresh profile", { error: errorMessage });
+      logger.error('Failed to refresh profile', { error: errorMessage });
     } finally {
       setIsLoading(false);
     }

@@ -68,7 +68,8 @@ class ApiClient {
 
         return config;
       },
-      (error: unknown) => Promise.reject(new Error(extractErrorMessage(error, 'Request interceptor failed')))
+      (error: unknown) =>
+        Promise.reject(new Error(extractErrorMessage(error, 'Request interceptor failed'))),
     );
 
     // Response interceptor for error handling
@@ -85,10 +86,12 @@ class ApiClient {
           }
 
           const statusCode = error.response?.status;
-          return Promise.reject(new Error(`API request failed: ${statusCode?.toString() ?? 'Unknown error'}`));
+          return Promise.reject(
+            new Error(`API request failed: ${statusCode?.toString() ?? 'Unknown error'}`),
+          );
         }
         return Promise.reject(new Error(extractErrorMessage(error, 'Response interceptor failed')));
-      }
+      },
     );
   }
 
@@ -102,7 +105,11 @@ class ApiClient {
     }
   }
 
-  async post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> {
+  async post<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<ApiClientResponse<T>> {
     try {
       const response = await this.client.post<ApiClientResponse<T>>(url, data, config);
       return response.data;
@@ -111,7 +118,11 @@ class ApiClient {
     }
   }
 
-  async put<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> {
+  async put<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<ApiClientResponse<T>> {
     try {
       const response = await this.client.put<ApiClientResponse<T>>(url, data, config);
       return response.data;
@@ -120,7 +131,11 @@ class ApiClient {
     }
   }
 
-  async patch<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> {
+  async patch<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<ApiClientResponse<T>> {
     try {
       const response = await this.client.patch<ApiClientResponse<T>>(url, data, config);
       return response.data;
@@ -129,7 +144,10 @@ class ApiClient {
     }
   }
 
-  async delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<ApiClientResponse<T>> {
+  async delete<T = unknown>(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<ApiClientResponse<T>> {
     try {
       const response = await this.client.delete<ApiClientResponse<T>>(url, config);
       return response.data;
@@ -141,7 +159,7 @@ class ApiClient {
   // File upload helper with proper typing
   async uploadFile<T = unknown>(
     url: string,
-    config: FileUploadConfig
+    config: FileUploadConfig,
   ): Promise<ApiClientResponse<T>> {
     try {
       const formData = new FormData();

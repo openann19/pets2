@@ -5,6 +5,7 @@ Copy-paste ready snippets for common patterns.
 ## Basic Replacements
 
 ### Button
+
 ```tsx
 // ❌ Before
 <TouchableOpacity onPress={handlePress} style={styles.btn}>
@@ -18,6 +19,7 @@ Copy-paste ready snippets for common patterns.
 ```
 
 ### Switch
+
 ```tsx
 // ❌ Before
 <Switch value={enabled} onValueChange={setEnabled} />
@@ -27,6 +29,7 @@ Copy-paste ready snippets for common patterns.
 ```
 
 ### Image Loading
+
 ```tsx
 // ❌ Before
 <Image source={{ uri }} />
@@ -38,6 +41,7 @@ Copy-paste ready snippets for common patterns.
 ## Advanced Patterns
 
 ### Custom Ripple Color
+
 ```tsx
 <MicroPressable
   onPress={handlePress}
@@ -49,6 +53,7 @@ Copy-paste ready snippets for common patterns.
 ```
 
 ### Disable Haptics (Silent Mode)
+
 ```tsx
 <MicroPressable
   onPress={handlePress}
@@ -59,6 +64,7 @@ Copy-paste ready snippets for common patterns.
 ```
 
 ### Custom Scale
+
 ```tsx
 <MicroPressable
   onPress={handlePress}
@@ -69,6 +75,7 @@ Copy-paste ready snippets for common patterns.
 ```
 
 ### Switch with Disabled State
+
 ```tsx
 <HapticSwitch
   value={enabled}
@@ -78,19 +85,36 @@ Copy-paste ready snippets for common patterns.
 ```
 
 ### Shimmer Skeleton
+
 ```tsx
 // For loading states
 <View>
-  <Shimmer width={200} height={20} radius={8} />
-  <Shimmer width={150} height={20} radius={8} />
-  <Shimmer width={180} height={120} radius={12} />
+  <Shimmer
+    width={200}
+    height={20}
+    radius={8}
+  />
+  <Shimmer
+    width={150}
+    height={20}
+    radius={8}
+  />
+  <Shimmer
+    width={180}
+    height={120}
+    radius={12}
+  />
 </View>
 ```
 
 ### Parallax Card
+
 ```tsx
 // Wrap any card for 3D tilt effect
-<ParallaxCard intensity={0.5} glow={false}>
+<ParallaxCard
+  intensity={0.5}
+  glow={false}
+>
   <YourCard />
 </ParallaxCard>
 ```
@@ -98,6 +122,7 @@ Copy-paste ready snippets for common patterns.
 ## Theme Integration
 
 ### Using Theme Colors
+
 ```tsx
 <MicroPressable
   onPress={handlePress}
@@ -108,6 +133,7 @@ Copy-paste ready snippets for common patterns.
 ```
 
 ### Status Colors
+
 ```tsx
 // Success button
 <MicroPressable
@@ -124,19 +150,22 @@ Use this when migrating screens:
 
 - [ ] Find all `<Switch` → Replace with `<HapticSwitch`
 - [ ] Find all `<TouchableOpacity` → Replace with `<MicroPressable`
-- [ ] Find all `<Pressable` → Replace with `<MicroPressable` (if custom ripples desired)
+- [ ] Find all `<Pressable` → Replace with `<MicroPressable` (if custom ripples
+      desired)
 - [ ] Add `useShimmer` prop to `<Image` → Convert to `<SmartImage`
 - [ ] Update string literals: `"Theme.colors.X"` → `{Theme.colors.X}`
 
 ## Common Pitfalls
 
 ### ❌ Don't
+
 ```tsx
 // Type mismatch
 <Shimmer width="100%" /> // String not allowed
 ```
 
 ### ✅ Do
+
 ```tsx
 // Don't pass width for full width
 <Shimmer /> // Defaults to full width
@@ -145,12 +174,14 @@ Use this when migrating screens:
 ```
 
 ### ❌ Don't
+
 ```tsx
 // String literal Theme reference
 style={{ color: "Theme.colors.primary[500]" }}
 ```
 
 ### ✅ Do
+
 ```tsx
 // Actual Theme value
 style={{ color: Theme.colors.primary[500] }}
@@ -159,6 +190,7 @@ style={{ color: Theme.colors.primary[500] }}
 ## Performance Tips
 
 1. **Use Memo for Lists**
+
 ```tsx
 const PressableItem = React.memo(({ item, onPress }) => (
   <MicroPressable onPress={() => onPress(item)}>
@@ -168,21 +200,27 @@ const PressableItem = React.memo(({ item, onPress }) => (
 ```
 
 2. **Disable Haptics in Long Lists**
+
 ```tsx
-<MicroPressable haptics={false}> // Reduce CPU
+<MicroPressable haptics={false}>
+  {' '}
+  // Reduce CPU
   <ListItem />
 </MicroPressable>
 ```
 
 3. **Shimmer for Lists**
+
 ```tsx
-{isLoading && (
-  <>
-    <Shimmer />
-    <Shimmer />
-    <Shimmer />
-  </>
-)}
+{
+  isLoading && (
+    <>
+      <Shimmer />
+      <Shimmer />
+      <Shimmer />
+    </>
+  );
+}
 ```
 
 ## Accessibility
@@ -205,4 +243,3 @@ Quick visual test checklist:
 - [ ] Press card → See tilt effect
 
 All good? Ship it! 🚀
-

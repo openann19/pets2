@@ -21,25 +21,33 @@ export class AbortableQueue {
     this.maxConcurrent = maxConcurrent;
   }
 
-  enqueue<T>(
-    id: string,
-    run: Task<T>
-  ): { id: string; cancel: () => void; promise: Promise<T> } {
+  enqueue<T>(id: string, run: Task<T>): { id: string; cancel: () => void; promise: Promise<T> } {
     const ctrl = new AbortController();
     const p = new Promise<T>((resolve, reject) => {
       this.q.push({ id, run, resolve, reject, ctrl });
       this.pump();
     });
-    return { id, cancel: () => { ctrl.abort(); }, promise: p };
+    return {
+      id,
+      cancel: () => {
+        ctrl.abort();
+      },
+      promise: p,
+    };
   }
 
   private pump() {
     while (this.running < this.maxConcurrent && this.q.length) {
       const job = this.q.shift()!;
       this.running++;
-      job.run(job.ctrl.signal)
-        .then((v) => { job.resolve(v); })
-        .catch((e) => { job.reject(e); })
+      job
+        .run(job.ctrl.signal)
+        .then((v) => {
+          job.resolve(v);
+        })
+        .catch((e) => {
+          job.reject(e);
+        })
         .finally(() => {
           this.running--;
           this.pump();
@@ -73,4 +81,3 @@ export class AbortableQueue {
     return this.running;
   }
 }
-

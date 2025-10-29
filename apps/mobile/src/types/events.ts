@@ -3,12 +3,12 @@
  * Provides type safety for React Native events and handlers
  */
 
-import type { 
-  NativeSyntheticEvent, 
+import type {
+  NativeSyntheticEvent,
   NativeScrollEvent,
   LayoutChangeEvent,
   PressableStateCallbackType,
-  GestureResponderEvent
+  GestureResponderEvent,
 } from 'react-native';
 
 /**
@@ -39,9 +39,7 @@ export interface FormSubmitEvent extends Event {
   preventDefault(): void;
 }
 
-export type FormSubmitHandler<T = Record<string, unknown>> = (
-  values: T
-) => void | Promise<void>;
+export type FormSubmitHandler<T = Record<string, unknown>> = (values: T) => void | Promise<void>;
 
 export type FormEventHandler<T = FormSubmitEvent> = (event?: T) => void | Promise<void>;
 

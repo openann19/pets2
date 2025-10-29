@@ -100,7 +100,9 @@ describe('PawfectMatch Regression Test Suite', () => {
       fireEvent.press(biometricButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Biometric authentication failed. Please use password.')).toBeTruthy();
+        expect(
+          screen.getByText('Biometric authentication failed. Please use password.'),
+        ).toBeTruthy();
       });
     });
 
@@ -312,10 +314,13 @@ describe('PawfectMatch Regression Test Suite', () => {
         result.current.syncLargeDataset();
       });
 
-      await waitFor(() => {
-        expect(result.current.getProgress()).toBe(100);
-        expect(result.current.getData().length).toBe(10000);
-      }, { timeout: 10000 });
+      await waitFor(
+        () => {
+          expect(result.current.getProgress()).toBe(100);
+          expect(result.current.getData().length).toBe(10000);
+        },
+        { timeout: 10000 },
+      );
     });
   });
 
@@ -485,7 +490,7 @@ describe('PawfectMatch Regression Test Suite', () => {
 
       mockApi.get.mockImplementation(async (endpoint) => {
         callOrder.push(endpoint as string);
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
         callOrder.push(`${endpoint}-done`);
         return { data: [] };
       });
@@ -497,7 +502,7 @@ describe('PawfectMatch Regression Test Suite', () => {
       });
 
       await waitFor(() => {
-        expect(callOrder.filter(call => call.includes('-done')).length).toBe(3);
+        expect(callOrder.filter((call) => call.includes('-done')).length).toBe(3);
       });
 
       // All calls should complete without interference
@@ -565,7 +570,7 @@ describe('PawfectMatch Regression Test Suite', () => {
 
       fireEvent(input, 'focus');
       fireEvent(input, 'keyboardDidShow', {
-        endCoordinates: { height: 300, screenX: 0, screenY: 500, width: 375 }
+        endCoordinates: { height: 300, screenX: 0, screenY: 500, width: 375 },
       });
 
       await waitFor(() => {
@@ -629,7 +634,7 @@ describe('PawfectMatch Regression Test Suite', () => {
   describe('Third-Party Integration Failures', () => {
     it('should handle push notification failures', async () => {
       mockNotificationService.registerForPushNotifications.mockRejectedValue(
-        new Error('Push notification registration failed')
+        new Error('Push notification registration failed'),
       );
 
       const { result } = renderHook(() => usePushNotifications());
@@ -804,10 +809,12 @@ describe('PawfectMatch Regression Test Suite', () => {
 
     it('should handle storage migration issues', async () => {
       // Old format data
-      mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify({
-        version: 1,
-        data: { oldFormat: true },
-      }));
+      mockAsyncStorage.getItem.mockResolvedValue(
+        JSON.stringify({
+          version: 1,
+          data: { oldFormat: true },
+        }),
+      );
 
       const { result } = renderHook(() => useDataMigration());
 
@@ -979,24 +986,60 @@ function renderHook(hookFn: () => any) {
 }
 
 // Mock components for testing
-function LoginScreen() { return null; }
-function SwipeScreen() { return null; }
-function ChatScreen() { return null; }
-function ProfileScreen() { return null; }
-function SettingsScreen() { return null; }
-function LargeListScreen() { return null; }
-function CameraComponent() { return null; }
-function LocationComponent() { return null; }
-function PaymentScreen() { return null; }
-function ButtonComponent() { return null; }
-function InteractiveElement() { return null; }
-function SwipeableCard() { return null; }
-function ZoomableImage() { return null; }
-function AccessibleButton() { return null; }
-function WebSpecificComponent() { return null; }
-function ResponsiveComponent() { return null; }
-function StatusBarComponent() { return null; }
-function ActionButton() { return null; }
+function LoginScreen() {
+  return null;
+}
+function SwipeScreen() {
+  return null;
+}
+function ChatScreen() {
+  return null;
+}
+function ProfileScreen() {
+  return null;
+}
+function SettingsScreen() {
+  return null;
+}
+function LargeListScreen() {
+  return null;
+}
+function CameraComponent() {
+  return null;
+}
+function LocationComponent() {
+  return null;
+}
+function PaymentScreen() {
+  return null;
+}
+function ButtonComponent() {
+  return null;
+}
+function InteractiveElement() {
+  return null;
+}
+function SwipeableCard() {
+  return null;
+}
+function ZoomableImage() {
+  return null;
+}
+function AccessibleButton() {
+  return null;
+}
+function WebSpecificComponent() {
+  return null;
+}
+function ResponsiveComponent() {
+  return null;
+}
+function StatusBarComponent() {
+  return null;
+}
+function ActionButton() {
+  return null;
+}
 
 // Additional mocks
 const mockCamera = { requestCameraPermissionsAsync: jest.fn() };

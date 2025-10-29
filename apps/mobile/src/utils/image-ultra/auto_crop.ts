@@ -3,14 +3,14 @@
  * Generates trio (tight/medium/loose) and scores them for optimal composition
  */
 
-import type { Rect } from "./crop_scorer";
-import { compositionScore } from "./crop_scorer";
+import type { Rect } from './crop_scorer';
+import { compositionScore } from './crop_scorer';
 
-export type TrioMode = "tight" | "medium" | "loose";
+export type TrioMode = 'tight' | 'medium' | 'loose';
 
 /**
  * Propose three crop candidates (tight/medium/loose) around subject or center
- * 
+ *
  * @param canvas - Source canvas
  * @param ratio - Target aspect ratio (e.g., 4/5 for 4:5)
  * @param subject - Optional subject bounding box
@@ -19,14 +19,14 @@ export type TrioMode = "tight" | "medium" | "loose";
 export function proposeTrioCrops(
   canvas: HTMLCanvasElement,
   ratio: number,
-  subject?: Rect | null
+  subject?: Rect | null,
 ): Record<TrioMode, Rect> {
   const W = canvas.width;
   const H = canvas.height;
-  
+
   const boxW = Math.min(W, H * ratio);
   const boxH = boxW / ratio;
-  
+
   // Subject center or default position
   const cx = subject ? subject.x + subject.w / 2 : W / 2;
   const cy = subject ? subject.y + subject.h / 2 : H * 0.38; // slight eye-line bias
@@ -46,7 +46,7 @@ export function proposeTrioCrops(
 
 /**
  * Score all three crops and return best
- * 
+ *
  * @param canvas - Source canvas
  * @param trio - Three crop candidates
  * @param opts - Options for scoring
@@ -54,13 +54,13 @@ export function proposeTrioCrops(
  */
 export function bestOf3(
   canvas: HTMLCanvasElement,
-  trio: Record<"tight" | "medium" | "loose", Rect>,
-  opts?: { eyeLine?: number }
-): { key: "tight" | "medium" | "loose"; rect: Rect; score: number } {
-  let bestKey: "tight" | "medium" | "loose" = "medium";
+  trio: Record<'tight' | 'medium' | 'loose', Rect>,
+  opts?: { eyeLine?: number },
+): { key: 'tight' | 'medium' | 'loose'; rect: Rect; score: number } {
+  let bestKey: 'tight' | 'medium' | 'loose' = 'medium';
   let bestV = -1;
 
-  (["tight", "medium", "loose"] as const).forEach((k) => {
+  (['tight', 'medium', 'loose'] as const).forEach((k) => {
     const v = compositionScore(canvas, trio[k], {
       eyeLine: opts?.eyeLine ?? 0.28,
     });
@@ -98,4 +98,3 @@ export function clampRect(r: Rect, W: number, H: number): Rect {
 
   return { x, y, w, h };
 }
-

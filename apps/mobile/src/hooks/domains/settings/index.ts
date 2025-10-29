@@ -1,2 +1,2 @@
-export * from "./useSettingsPersistence";
-export * from "./useSettingsSync";
+export * from './useSettingsPersistence';
+export * from './useSettingsSync';

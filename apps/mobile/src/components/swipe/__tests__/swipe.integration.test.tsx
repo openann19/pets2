@@ -88,9 +88,7 @@ describe('Swipe Screen Integration', () => {
         handleSwipeUp: jest.fn(),
       });
 
-      const { getByText } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
-      );
+      const { getByText } = render(<ModernSwipeScreen navigation={mockNavigation as any} />);
 
       expect(getByText('Discover')).toBeTruthy();
     });
@@ -117,9 +115,7 @@ describe('Swipe Screen Integration', () => {
         handleSwipeUp: jest.fn(),
       });
 
-      const { findByText } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
-      );
+      const { findByText } = render(<ModernSwipeScreen navigation={mockNavigation as any} />);
 
       await waitFor(async () => {
         const hint = await findByText('Swipe left to pass');
@@ -149,9 +145,7 @@ describe('Swipe Screen Integration', () => {
         handleSwipeUp: jest.fn(),
       });
 
-      const { container } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
-      );
+      const { container } = render(<ModernSwipeScreen navigation={mockNavigation as any} />);
 
       expect(container).toBeTruthy();
     });
@@ -181,18 +175,18 @@ describe('Swipe Screen Integration', () => {
       });
 
       const { UNSAFE_getAllByType, getByText } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
+        <ModernSwipeScreen navigation={mockNavigation as any} />,
       );
 
       expect(getByText("It's a Match! 🎉")).toBeTruthy();
-      
+
       const views = UNSAFE_getAllByType('View');
       expect(views.length).toBeGreaterThan(0);
     });
 
     it('should call onSendMessage to navigate to chat', () => {
       const mockSetShowMatchModal = jest.fn();
-      
+
       (useModernSwipeScreen as jest.Mock).mockReturnValue({
         pets: [mockPet1, mockPet2],
         currentPet: mockPet1,
@@ -214,9 +208,7 @@ describe('Swipe Screen Integration', () => {
         handleSwipeUp: jest.fn(),
       });
 
-      const { getByText } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
-      );
+      const { getByText } = render(<ModernSwipeScreen navigation={mockNavigation as any} />);
 
       const sendMessageButton = getByText('Send Message');
       fireEvent.press(sendMessageButton);
@@ -230,7 +222,7 @@ describe('Swipe Screen Integration', () => {
 
     it('should call onKeepSwiping to dismiss modal', () => {
       const mockSetShowMatchModal = jest.fn();
-      
+
       (useModernSwipeScreen as jest.Mock).mockReturnValue({
         pets: [mockPet1, mockPet2],
         currentPet: mockPet1,
@@ -252,9 +244,7 @@ describe('Swipe Screen Integration', () => {
         handleSwipeUp: jest.fn(),
       });
 
-      const { getByText } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
-      );
+      const { getByText } = render(<ModernSwipeScreen navigation={mockNavigation as any} />);
 
       const keepSwipingButton = getByText('Keep Swiping');
       fireEvent.press(keepSwipingButton);
@@ -266,7 +256,7 @@ describe('Swipe Screen Integration', () => {
   describe('Swipe Actions', () => {
     it('should call handleButtonSwipe on like button press', () => {
       const mockHandleButtonSwipe = jest.fn();
-      
+
       (useModernSwipeScreen as jest.Mock).mockReturnValue({
         pets: [mockPet1, mockPet2],
         currentPet: mockPet1,
@@ -289,7 +279,7 @@ describe('Swipe Screen Integration', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
+        <ModernSwipeScreen navigation={mockNavigation as any} />,
       );
 
       const buttons = UNSAFE_getAllByType('Pressable');
@@ -320,9 +310,7 @@ describe('Swipe Screen Integration', () => {
         handleSwipeUp: jest.fn(),
       });
 
-      const { getByText } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
-      );
+      const { getByText } = render(<ModernSwipeScreen navigation={mockNavigation as any} />);
 
       expect(getByText('Finding Matches')).toBeTruthy();
     });
@@ -349,9 +337,7 @@ describe('Swipe Screen Integration', () => {
         handleSwipeUp: jest.fn(),
       });
 
-      const { getByText } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
-      );
+      const { getByText } = render(<ModernSwipeScreen navigation={mockNavigation as any} />);
 
       expect(getByText('Error loading pets')).toBeTruthy();
     });
@@ -378,9 +364,7 @@ describe('Swipe Screen Integration', () => {
         handleSwipeUp: jest.fn(),
       });
 
-      const { getByText } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
-      );
+      const { getByText } = render(<ModernSwipeScreen navigation={mockNavigation as any} />);
 
       expect(getByText('No more pets!')).toBeTruthy();
     });
@@ -409,9 +393,7 @@ describe('Swipe Screen Integration', () => {
         handleSwipeUp: jest.fn(),
       });
 
-      const { container } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
-      );
+      const { container } = render(<ModernSwipeScreen navigation={mockNavigation as any} />);
 
       expect(container).toBeTruthy();
     });
@@ -444,12 +426,9 @@ describe('Swipe Screen Integration', () => {
         handleSwipeUp: jest.fn(),
       });
 
-      const { container } = render(
-        <ModernSwipeScreen navigation={mockNavigation as any} />
-      );
+      const { container } = render(<ModernSwipeScreen navigation={mockNavigation as any} />);
 
       expect(container).toBeTruthy();
     });
   });
 });
-

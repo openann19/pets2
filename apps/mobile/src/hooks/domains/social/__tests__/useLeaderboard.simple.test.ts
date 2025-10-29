@@ -3,7 +3,7 @@
  */
 
 // Mock logger
-jest.mock("@pawfectmatch/core", () => ({
+jest.mock('@pawfectmatch/core', () => ({
   logger: {
     error: jest.fn(),
     info: jest.fn(),
@@ -15,7 +15,7 @@ const mockGetCategories = jest.fn();
 const mockGetLeaderboard = jest.fn();
 const mockGetUserRank = jest.fn();
 
-jest.mock("../../../../services/LeaderboardService", () => ({
+jest.mock('../../../../services/LeaderboardService', () => ({
   __esModule: true,
   default: {
     getCategories: mockGetCategories,
@@ -25,34 +25,34 @@ jest.mock("../../../../services/LeaderboardService", () => ({
 }));
 
 const mockCategories = [
-  { id: "all", name: "All", icon: "🏆" },
-  { id: "matches", name: "Matches", icon: "💕" },
-  { id: "chats", name: "Chats", icon: "💬" },
+  { id: 'all', name: 'All', icon: '🏆' },
+  { id: 'matches', name: 'Matches', icon: '💕' },
+  { id: 'chats', name: 'Chats', icon: '💬' },
 ];
 
 const mockLeaderboardEntries = [
   {
-    id: "1",
-    userId: "user1",
-    username: "alice",
+    id: '1',
+    userId: 'user1',
+    username: 'alice',
     score: 1000,
     rank: 1,
-    avatar: "avatar1.jpg",
+    avatar: 'avatar1.jpg',
   },
   {
-    id: "2",
-    userId: "user2",
-    username: "bob",
+    id: '2',
+    userId: 'user2',
+    username: 'bob',
     score: 900,
     rank: 2,
-    avatar: "avatar2.jpg",
+    avatar: 'avatar2.jpg',
   },
 ];
 
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { useLeaderboard } from "../useLeaderboard";
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { useLeaderboard } from '../useLeaderboard';
 
-describe("useLeaderboard", () => {
+describe('useLeaderboard', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -66,25 +66,25 @@ describe("useLeaderboard", () => {
     mockGetUserRank.mockResolvedValue({
       rank: 5,
       entry: {
-        id: "3",
-        userId: "currentUser",
-        username: "currentuser",
+        id: '3',
+        userId: 'currentUser',
+        username: 'currentuser',
         score: 800,
         rank: 5,
-        avatar: "current.jpg",
+        avatar: 'current.jpg',
       },
     });
   });
 
-  describe("Initialization", () => {
-    it("should initialize with default state", async () => {
+  describe('Initialization', () => {
+    it('should initialize with default state', async () => {
       const { result } = renderHook(() => useLeaderboard());
 
       // Initial state before data loads
       expect(result.current.entries).toEqual([]);
       expect(result.current.categories).toEqual([]);
-      expect(result.current.selectedCategory).toBe("all");
-      expect(result.current.selectedPeriod).toBe("weekly");
+      expect(result.current.selectedCategory).toBe('all');
+      expect(result.current.selectedPeriod).toBe('weekly');
       expect(result.current.page).toBe(1);
       expect(result.current.hasMore).toBe(false);
       expect(result.current.showFilters).toBe(false);
@@ -99,7 +99,7 @@ describe("useLeaderboard", () => {
       expect(result.current.userRank).toBe(5);
     });
 
-    it("should provide all required functions", () => {
+    it('should provide all required functions', () => {
       const { result } = renderHook(() => useLeaderboard());
 
       expect(typeof result.current.setSelectedCategory).toBe('function');
@@ -111,28 +111,28 @@ describe("useLeaderboard", () => {
     });
   });
 
-  describe("Category and Period Filtering", () => {
-    it("should change selected category", () => {
+  describe('Category and Period Filtering', () => {
+    it('should change selected category', () => {
       const { result } = renderHook(() => useLeaderboard());
 
       act(() => {
-        result.current.setSelectedCategory("matches");
+        result.current.setSelectedCategory('matches');
       });
 
-      expect(result.current.selectedCategory).toBe("matches");
+      expect(result.current.selectedCategory).toBe('matches');
     });
 
-    it("should change selected period", () => {
+    it('should change selected period', () => {
       const { result } = renderHook(() => useLeaderboard());
 
       act(() => {
-        result.current.setSelectedPeriod("monthly");
+        result.current.setSelectedPeriod('monthly');
       });
 
-      expect(result.current.selectedPeriod).toBe("monthly");
+      expect(result.current.selectedPeriod).toBe('monthly');
     });
 
-    it("should toggle filter visibility", () => {
+    it('should toggle filter visibility', () => {
       const { result } = renderHook(() => useLeaderboard());
 
       act(() => {
@@ -143,8 +143,8 @@ describe("useLeaderboard", () => {
     });
   });
 
-  describe("Data Loading", () => {
-    it("should load categories successfully", async () => {
+  describe('Data Loading', () => {
+    it('should load categories successfully', async () => {
       const { result } = renderHook(() => useLeaderboard());
 
       await act(async () => {
@@ -155,7 +155,7 @@ describe("useLeaderboard", () => {
       expect(result.current.categories).toEqual(mockCategories);
     });
 
-    it("should load leaderboard data successfully", async () => {
+    it('should load leaderboard data successfully', async () => {
       const { result } = renderHook(() => useLeaderboard());
 
       await act(async () => {
@@ -163,14 +163,14 @@ describe("useLeaderboard", () => {
       });
 
       expect(mockGetLeaderboard).toHaveBeenCalledWith({
-        category: "all",
-        period: "weekly",
+        category: 'all',
+        period: 'weekly',
         page: 1,
       });
       expect(result.current.entries).toEqual(mockLeaderboardEntries);
     });
 
-    it("should load user rank successfully", async () => {
+    it('should load user rank successfully', async () => {
       const { result } = renderHook(() => useLeaderboard());
 
       await act(async () => {
@@ -182,9 +182,9 @@ describe("useLeaderboard", () => {
     });
   });
 
-  describe("Error Handling", () => {
-    it("should handle category loading errors", async () => {
-      mockGetCategories.mockRejectedValueOnce(new Error("API Error"));
+  describe('Error Handling', () => {
+    it('should handle category loading errors', async () => {
+      mockGetCategories.mockRejectedValueOnce(new Error('API Error'));
 
       const { result } = renderHook(() => useLeaderboard());
 
@@ -197,8 +197,8 @@ describe("useLeaderboard", () => {
       expect(result.current.categories).toEqual([]);
     });
 
-    it("should handle leaderboard loading errors", async () => {
-      mockGetLeaderboard.mockRejectedValueOnce(new Error("API Error"));
+    it('should handle leaderboard loading errors', async () => {
+      mockGetLeaderboard.mockRejectedValueOnce(new Error('API Error'));
 
       const { result } = renderHook(() => useLeaderboard());
 

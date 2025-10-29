@@ -2,8 +2,8 @@
  * Performance Optimization Utilities
  * React hooks and utilities for preventing unnecessary re-renders
  */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { logger } from "../services/logger";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { logger } from '../services/logger';
 
 /**
  * Hook for stable callback references
@@ -14,7 +14,7 @@ export function useStableCallback<T extends (...args: never[]) => unknown>(
   deps: React.DependencyList = [],
 ): T {
   const callbackRef = useRef<T>(callback);
-  
+
   useEffect(() => {
     callbackRef.current = callback;
   }, [callback]);
@@ -135,10 +135,7 @@ export function usePrevious<T>(value: T): T | undefined {
  * Performance monitoring hook
  * Logs render counts and performance metrics
  */
-export function usePerformanceMonitor(
-  componentName: string,
-  enabled: boolean = __DEV__,
-) {
+export function usePerformanceMonitor(componentName: string, enabled: boolean = __DEV__) {
   const renderCountRef = useRef(0);
   const lastRenderTimeRef = useRef(Date.now());
 
@@ -151,14 +148,10 @@ export function usePerformanceMonitor(
     const timeSinceLastRender = now - lastRenderTimeRef.current;
 
     if (renderCountRef.current > 1) {
-      logger.performance(
-        `Component Render: ${componentName}`,
-        timeSinceLastRender,
-        {
-          renderCount: renderCountRef.current,
-          componentName,
-        },
-      );
+      logger.performance(`Component Render: ${componentName}`, timeSinceLastRender, {
+        renderCount: renderCountRef.current,
+        componentName,
+      });
     }
 
     lastRenderTimeRef.current = now;
@@ -181,10 +174,7 @@ export function usePerformanceMonitor(
  * Context selector hook for optimized context consumption
  * Only triggers re-renders when selected values change
  */
-export function useContextSelector<T, R>(
-  context: React.Context<T>,
-  selector: (value: T) => R,
-): R {
+export function useContextSelector<T, R>(context: React.Context<T>, selector: (value: T) => R): R {
   const [, forceUpdate] = useState({});
   const selectedRef = useRef<R | undefined>(undefined);
   const selectorRef = useRef(selector);
@@ -249,22 +239,19 @@ export function useVirtualization<T>(
       item,
       index: startIndex + index,
       style: {
-        position: "absolute" as const,
+        position: 'absolute' as const,
         top: (startIndex + index) * itemHeight,
         height: itemHeight,
-        width: "100%",
+        width: '100%',
       },
     }));
   }, [items, startIndex, endIndex, itemHeight]);
 
   const totalHeight = items.length * itemHeight;
 
-  const handleScroll = useThrottle(
-    (event: { nativeEvent: { contentOffset: { y: number } } }) => {
-      setScrollTop(event.nativeEvent.contentOffset.y);
-    },
-    16,
-  ); // ~60fps
+  const handleScroll = useThrottle((event: { nativeEvent: { contentOffset: { y: number } } }) => {
+    setScrollTop(event.nativeEvent.contentOffset.y);
+  }, 16); // ~60fps
 
   return {
     visibleItems,

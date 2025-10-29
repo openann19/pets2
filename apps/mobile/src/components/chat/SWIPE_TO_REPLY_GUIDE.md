@@ -2,7 +2,9 @@
 
 ## Overview
 
-This guide covers the new swipe-to-reply gesture and morphing context menu features integrated into `MessageBubbleEnhanced`. These features provide a modern, intuitive chat experience with gesture-based interactions.
+This guide covers the new swipe-to-reply gesture and morphing context menu
+features integrated into `MessageBubbleEnhanced`. These features provide a
+modern, intuitive chat experience with gesture-based interactions.
 
 ## Features
 
@@ -38,19 +40,20 @@ This guide covers the new swipe-to-reply gesture and morphing context menu featu
 ### `useSwipeToReply` Hook
 
 ```typescript
-import { useSwipeToReply } from "@/hooks/useSwipeToReply";
+import { useSwipeToReply } from '@/hooks/useSwipeToReply';
 
 const { gesture, bubbleStyle, progressX } = useSwipeToReply({
   enabled: true,
-  threshold: 56,        // px to trigger (default: 56)
-  maxPull: 84,           // max translation (default: 84)
-  onReply: (payload) => console.log("Reply to:", payload),
-  payload: message,      // message object to pass back
+  threshold: 56, // px to trigger (default: 56)
+  maxPull: 84, // max translation (default: 84)
+  onReply: (payload) => console.log('Reply to:', payload),
+  payload: message, // message object to pass back
   onProgress: (p) => setProgress(p), // 0..1 callback
 });
 ```
 
 **Returns:**
+
 - `gesture`: The Pan gesture to wire into GestureDetector
 - `bubbleStyle`: Animated style for the bubble (translateX)
 - `progressX`: Shared value for progress tracking
@@ -72,11 +75,11 @@ import ReplySwipeHint from "@/components/chat/ReplySwipeHint";
 import MorphingContextMenu, { type ContextAction } from "@/components/menus/MorphingContextMenu";
 
 const actions: ContextAction[] = [
-  { 
-    key: "reply", 
-    label: "Reply", 
-    icon: "arrow-undo", 
-    onPress: () => handleReply() 
+  {
+    key: "reply",
+    label: "Reply",
+    icon: "arrow-undo",
+    onPress: () => handleReply()
   },
   // ... more actions
 ];
@@ -99,14 +102,14 @@ The enhanced bubble component now includes:
   message={message}
   isOwnMessage={isOwn}
   currentUserId={userId}
-  
+
   // New action callbacks:
   onReply={(msg) => handleReply(msg)}
   onCopy={(msg) => Clipboard.setString(msg.content)}
   onReact={(msg) => showReactionPicker(msg)}
   onDelete={(msg) => deleteMessage(msg._id)}
   onShowReadBy={(msg) => showReadReceipts(msg.readBy)}
-  
+
   // Existing props:
   showStatus={true}
   messageIndex={index}
@@ -148,7 +151,7 @@ function ChatScreen() {
       onSendMessage={sendMessage}
       currentUserId={currentUserId}
       otherUserName="Buddy"
-      
+
       // Wire up action handlers:
       onReply={handleReply}
       onCopy={handleCopy}
@@ -172,17 +175,14 @@ The component uses `Gesture.Exclusive` to prioritize gestures:
 ```typescript
 const composed = Gesture.Exclusive(
   swipeGesture,
-  Gesture.Simultaneous(tap, longPress)
+  Gesture.Simultaneous(tap, longPress),
 );
 ```
 
 To prioritize long-press over swipe, swap the order:
 
 ```typescript
-const composed = Gesture.Exclusive(
-  longPress,
-  swipeGesture
-);
+const composed = Gesture.Exclusive(longPress, swipeGesture);
 ```
 
 ## Customization
@@ -191,8 +191,8 @@ const composed = Gesture.Exclusive(
 
 ```typescript
 const { gesture, bubbleStyle } = useSwipeToReply({
-  threshold: 80,  // Increase for harder trigger
-  maxPull: 120,   // Increase for more pull distance
+  threshold: 80, // Increase for harder trigger
+  maxPull: 120, // Increase for more pull distance
 });
 ```
 
@@ -201,15 +201,15 @@ const { gesture, bubbleStyle } = useSwipeToReply({
 ```typescript
 const customActions: ContextAction[] = [
   {
-    key: "forward",
-    label: "Forward",
-    icon: "arrow-forward",
+    key: 'forward',
+    label: 'Forward',
+    icon: 'arrow-forward',
     onPress: () => forwardMessage(),
   },
   {
-    key: "pin",
-    label: "Pin message",
-    icon: "pin",
+    key: 'pin',
+    label: 'Pin message',
+    icon: 'pin',
     onPress: () => pinMessage(),
   },
 ];
@@ -283,16 +283,21 @@ All components are fully accessible:
 For RTL (right-to-left) layouts:
 
 ```typescript
-import { I18nManager } from "react-native";
+import { I18nManager } from 'react-native';
 
-const align = I18nManager.isRTL 
-  ? (isOwnMessage ? "left" : "right")
-  : (isOwnMessage ? "right" : "left");
+const align = I18nManager.isRTL
+  ? isOwnMessage
+    ? 'left'
+    : 'right'
+  : isOwnMessage
+    ? 'right'
+    : 'left';
 ```
 
 ## Examples
 
-See `apps/mobile/src/components/chat/MessageBubbleEnhanced.tsx` for full implementation.
+See `apps/mobile/src/components/chat/MessageBubbleEnhanced.tsx` for full
+implementation.
 
 ## Related Files
 
@@ -300,4 +305,3 @@ See `apps/mobile/src/components/chat/MessageBubbleEnhanced.tsx` for full impleme
 - `apps/mobile/src/components/chat/ReplySwipeHint.tsx`
 - `apps/mobile/src/components/menus/MorphingContextMenu.tsx`
 - `apps/mobile/src/components/chat/MessageBubbleEnhanced.tsx`
-

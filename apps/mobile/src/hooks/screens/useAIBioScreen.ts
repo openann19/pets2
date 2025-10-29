@@ -2,14 +2,14 @@
  * useAIBioScreen Hook
  * Manages AI Bio Generator screen state and interactions
  */
-import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
-import * as ImagePicker from "expo-image-picker";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore } from "@pawfectmatch/core";
-import { api } from "../../services/api";
-import { useAIBio } from "../domains/ai/useAIBio";
+import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import { useAuthStore } from '@pawfectmatch/core';
+import { api } from '../../services/api';
+import { useAIBio } from '../domains/ai/useAIBio';
 
 interface UseAIBioScreenReturn {
   // Form state
@@ -41,11 +41,11 @@ interface UseAIBioScreenReturn {
 }
 
 const TONES = [
-  { id: "playful", label: "Playful", icon: "🎾", color: "#ff6b6b" },
-  { id: "professional", label: "Professional", icon: "💼", color: "#4dabf7" },
-  { id: "casual", label: "Casual", icon: "😊", color: "#69db7c" },
-  { id: "romantic", label: "Romantic", icon: "💕", color: "#f783ac" },
-  { id: "funny", label: "Funny", icon: "😄", color: "#ffd43b" },
+  { id: 'playful', label: 'Playful', icon: '🎾', color: '#ff6b6b' },
+  { id: 'professional', label: 'Professional', icon: '💼', color: '#4dabf7' },
+  { id: 'casual', label: 'Casual', icon: '😊', color: '#69db7c' },
+  { id: 'romantic', label: 'Romantic', icon: '💕', color: '#f783ac' },
+  { id: 'funny', label: 'Funny', icon: '😄', color: '#ffd43b' },
 ];
 
 export const useAIBioScreen = (): UseAIBioScreenReturn => {
@@ -61,20 +61,17 @@ export const useAIBioScreen = (): UseAIBioScreenReturn => {
   } = useAIBio();
 
   // Form state
-  const [petName, setPetName] = useState("");
-  const [petBreed, setPetBreed] = useState("");
-  const [petAge, setPetAge] = useState("");
-  const [petPersonality, setPetPersonality] = useState("");
-  const [selectedTone, setSelectedTone] = useState("playful");
+  const [petName, setPetName] = useState('');
+  const [petBreed, setPetBreed] = useState('');
+  const [petAge, setPetAge] = useState('');
+  const [petPersonality, setPetPersonality] = useState('');
+  const [selectedTone, setSelectedTone] = useState('playful');
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission needed",
-        "We need camera roll permissions to analyze your pet photo",
-      );
+    if (status !== 'granted') {
+      Alert.alert('Permission needed', 'We need camera roll permissions to analyze your pet photo');
       return;
     }
 
@@ -92,7 +89,7 @@ export const useAIBioScreen = (): UseAIBioScreenReturn => {
 
   const generateBio = async () => {
     if (!petName.trim()) {
-      Alert.alert("Missing Information", "Please enter your pet's name");
+      Alert.alert('Missing Information', "Please enter your pet's name");
       return;
     }
 
@@ -101,24 +98,19 @@ export const useAIBioScreen = (): UseAIBioScreenReturn => {
         petName: petName.trim(),
         keywords: petPersonality
           .trim()
-          .split(",")
+          .split(',')
           .map((p) => p.trim())
           .filter((p) => p.length > 0),
-        tone: selectedTone as
-          | "playful"
-          | "professional"
-          | "casual"
-          | "romantic"
-          | "funny",
-        length: "medium" as const,
-        petType: "dog" as const, // Could be made dynamic
+        tone: selectedTone as 'playful' | 'professional' | 'casual' | 'romantic' | 'funny',
+        length: 'medium' as const,
+        petType: 'dog' as const, // Could be made dynamic
         age: parseInt(petAge.trim()) || 1,
         breed: petBreed.trim(),
       };
 
       await generateAIBio(params);
     } catch (error) {
-      logger.error("Bio generation failed", { error });
+      logger.error('Bio generation failed', { error });
       // Error handling is done in the useAIBio hook
     }
   };
@@ -136,16 +128,16 @@ export const useAIBioScreen = (): UseAIBioScreenReturn => {
             description: lastGeneratedBio.bio,
           });
 
-          Alert.alert("Success", "Pet profile updated successfully!");
+          Alert.alert('Success', 'Pet profile updated successfully!');
           navigation.goBack();
         } else {
-          Alert.alert("Saved Locally", "Bio has been saved to your device");
+          Alert.alert('Saved Locally', 'Bio has been saved to your device');
         }
       } else {
-        Alert.alert("Saved Locally", "Bio has been saved to your device");
+        Alert.alert('Saved Locally', 'Bio has been saved to your device');
       }
     } catch (error) {
-      Alert.alert("Saved Locally", "Bio has been saved to your device");
+      Alert.alert('Saved Locally', 'Bio has been saved to your device');
     }
   };
 
@@ -154,11 +146,11 @@ export const useAIBioScreen = (): UseAIBioScreenReturn => {
   };
 
   const clearForm = () => {
-    setPetName("");
-    setPetBreed("");
-    setPetAge("");
-    setPetPersonality("");
-    setSelectedTone("playful");
+    setPetName('');
+    setPetBreed('');
+    setPetAge('');
+    setPetPersonality('');
+    setSelectedTone('playful');
     setSelectedPhoto(null);
     clearHistory();
   };

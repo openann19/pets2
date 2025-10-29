@@ -28,8 +28,4 @@ export interface SSLResponse {
 /**
  * SSL Fetch function signature
  */
-export type SSLFetch = (
-  url: string,
-  config: SSLPinningConfig
-) => Promise<SSLResponse>;
-
+export type SSLFetch = (url: string, config: SSLPinningConfig) => Promise<SSLResponse>;

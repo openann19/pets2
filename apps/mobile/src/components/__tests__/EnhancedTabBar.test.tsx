@@ -104,7 +104,10 @@ describe('EnhancedTabBar', () => {
       };
 
       const { container } = render(
-        <EnhancedTabBar {...defaultProps} state={emptyState} />,
+        <EnhancedTabBar
+          {...defaultProps}
+          state={emptyState}
+        />,
       );
 
       expect(container).toBeTruthy();
@@ -151,9 +154,7 @@ describe('EnhancedTabBar', () => {
       const calls = mockNavigation.emit.mock.calls;
 
       // Should not have emitted tabDoublePress
-      const doublePressCalls = calls.filter(
-        (call) => call[0].type === 'tabDoublePress',
-      );
+      const doublePressCalls = calls.filter((call) => call[0].type === 'tabDoublePress');
       expect(doublePressCalls.length).toBe(0);
     });
 
@@ -221,9 +222,7 @@ describe('EnhancedTabBar', () => {
 
       fireEvent.press(homeTab);
 
-      expect(Haptics.impactAsync).toHaveBeenCalledWith(
-        Haptics.ImpactFeedbackStyle.Light,
-      );
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Light);
     });
 
     it('should not trigger haptics on Android', () => {
@@ -314,9 +313,7 @@ describe('EnhancedTabBar', () => {
 
   describe('Tab State Changes', () => {
     it('should update when active tab changes', () => {
-      const { rerender, getByText } = render(
-        <EnhancedTabBar {...defaultProps} />,
-      );
+      const { rerender, getByText } = render(<EnhancedTabBar {...defaultProps} />);
 
       const homeTab = getByText('Home');
       expect(homeTab).toBeTruthy();
@@ -327,7 +324,12 @@ describe('EnhancedTabBar', () => {
         index: 1,
       };
 
-      rerender(<EnhancedTabBar {...defaultProps} state={newState} />);
+      rerender(
+        <EnhancedTabBar
+          {...defaultProps}
+          state={newState}
+        />,
+      );
 
       const swipeTab = getByText('Swipe');
       expect(swipeTab).toBeTruthy();
@@ -340,7 +342,12 @@ describe('EnhancedTabBar', () => {
       };
 
       expect(() => {
-        render(<EnhancedTabBar {...defaultProps} state={invalidState} />);
+        render(
+          <EnhancedTabBar
+            {...defaultProps}
+            state={invalidState}
+          />,
+        );
       }).not.toThrow();
     });
   });
@@ -363,7 +370,12 @@ describe('EnhancedTabBar', () => {
       const brokenNavigation = {} as any;
 
       expect(() => {
-        render(<EnhancedTabBar {...defaultProps} navigation={brokenNavigation} />);
+        render(
+          <EnhancedTabBar
+            {...defaultProps}
+            navigation={brokenNavigation}
+          />,
+        );
       }).not.toThrow();
     });
 
@@ -394,16 +406,19 @@ describe('EnhancedTabBar', () => {
     });
 
     it('should update animations on state changes', () => {
-      const { rerender, container } = render(
-        <EnhancedTabBar {...defaultProps} />,
-      );
+      const { rerender, container } = render(<EnhancedTabBar {...defaultProps} />);
 
       const newState = {
         ...mockState,
         index: 2,
       };
 
-      rerender(<EnhancedTabBar {...defaultProps} state={newState} />);
+      rerender(
+        <EnhancedTabBar
+          {...defaultProps}
+          state={newState}
+        />,
+      );
 
       expect(container).toBeTruthy();
     });
@@ -488,7 +503,10 @@ describe('EnhancedTabBar', () => {
       ];
 
       const { container } = render(
-        <EnhancedTabBar {...defaultProps} state={{ ...mockState, routes }} />,
+        <EnhancedTabBar
+          {...defaultProps}
+          state={{ ...mockState, routes }}
+        />,
       );
 
       expect(container).toBeTruthy();
@@ -498,7 +516,10 @@ describe('EnhancedTabBar', () => {
       const routes = [{ key: 'route1', name: 'UnknownRoute' }];
 
       const { container } = render(
-        <EnhancedTabBar {...defaultProps} state={{ ...mockState, routes }} />,
+        <EnhancedTabBar
+          {...defaultProps}
+          state={{ ...mockState, routes }}
+        />,
       );
 
       expect(container).toBeTruthy();

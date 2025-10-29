@@ -3,7 +3,7 @@
  * Fixes type issues with Animated values in styles
  */
 
-declare module "react-native" {
+declare module 'react-native' {
   namespace Animated {
     // Value types
     interface AnimatedValue {
@@ -30,15 +30,15 @@ declare module "react-native" {
     interface InterpolationConfig {
       inputRange: number[];
       outputRange: number[] | string[];
-      extrapolate?: "clamp" | "identity" | "extend";
-      extrapolateLeft?: "clamp" | "identity" | "extend";
-      extrapolateRight?: "clamp" | "identity" | "extend";
+      extrapolate?: 'clamp' | 'identity' | 'extend';
+      extrapolateLeft?: 'clamp' | 'identity' | 'extend';
+      extrapolateRight?: 'clamp' | 'identity' | 'extend';
     }
 
     interface InterpolationConfigXY {
       inputRange: number[];
       outputRange: Array<{ x: number; y: number }>;
-      extrapolate?: "clamp" | "identity" | "extend";
+      extrapolate?: 'clamp' | 'identity' | 'extend';
     }
 
     // Animation configurations
@@ -81,10 +81,7 @@ declare module "react-native" {
 
     function sequence(animations: CompositeAnimation[]): CompositeAnimation;
 
-    function stagger(
-      delay: number,
-      animations: CompositeAnimation[],
-    ): CompositeAnimation;
+    function stagger(delay: number, animations: CompositeAnimation[]): CompositeAnimation;
 
     function delay(time: number): CompositeAnimation;
 

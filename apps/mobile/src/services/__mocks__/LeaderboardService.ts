@@ -35,13 +35,13 @@ const mockLeaderboardService = {
     { id: 'matches', name: 'Matches', icon: '💕' },
     { id: 'likes', name: 'Likes', icon: '❤️' },
   ]),
-  
+
   getLeaderboard: jest.fn().mockResolvedValue([]),
-  
+
   getUserRank: jest.fn().mockResolvedValue(null),
-  
+
   refreshLeaderboard: jest.fn().mockResolvedValue(undefined),
-  
+
   clearCache: jest.fn(),
 };
 

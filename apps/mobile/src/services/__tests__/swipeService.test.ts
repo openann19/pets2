@@ -1,6 +1,6 @@
 /**
  * Comprehensive tests for Swipe Service
- * 
+ *
  * Coverage:
  * - Like, pass, superlike functionality
  * - Rewind last swipe
@@ -37,7 +37,7 @@ describe('Swipe Service', () => {
         expect.objectContaining({
           method: 'POST',
           body: expect.objectContaining({ petId: 'pet123' }),
-        })
+        }),
       );
     });
 
@@ -68,7 +68,7 @@ describe('Swipe Service', () => {
         expect.objectContaining({
           method: 'POST',
           body: expect.objectContaining({ petId: 'pet456' }),
-        })
+        }),
       );
     });
 
@@ -98,7 +98,7 @@ describe('Swipe Service', () => {
         expect.objectContaining({
           method: 'POST',
           body: expect.objectContaining({ petId: 'pet789' }),
-        })
+        }),
       );
     });
 
@@ -139,7 +139,7 @@ describe('Swipe Service', () => {
       expect(result).toEqual(mockPet);
       expect(mockRequest).toHaveBeenCalledWith(
         '/api/swipe/rewind',
-        expect.objectContaining({ method: 'POST' })
+        expect.objectContaining({ method: 'POST' }),
       );
     });
 
@@ -204,7 +204,7 @@ describe('Swipe Service', () => {
         '/api/pets/like',
         expect.objectContaining({
           body: expect.objectContaining({ petId: '' }),
-        })
+        }),
       );
     });
 
@@ -219,10 +219,10 @@ describe('Swipe Service', () => {
 
     it('should handle concurrent likes', async () => {
       mockRequest.mockImplementation(
-        () => new Promise(resolve => setTimeout(() => resolve({ success: true }), 10))
+        () => new Promise((resolve) => setTimeout(() => resolve({ success: true }), 10)),
       );
 
-      const promises = ['pet1', 'pet2', 'pet3'].map(id => likePet(id));
+      const promises = ['pet1', 'pet2', 'pet3'].map((id) => likePet(id));
       const results = await Promise.all(promises);
 
       expect(results).toHaveLength(3);
@@ -234,7 +234,7 @@ describe('Swipe Service', () => {
 
       const results = await Promise.all([rewindLast(), rewindLast(), rewindLast()]);
 
-      expect(results.every(r => r === null)).toBe(true);
+      expect(results.every((r) => r === null)).toBe(true);
     });
 
     it('should handle pet with missing fields', async () => {
@@ -264,17 +264,17 @@ describe('Swipe Service', () => {
       expect(mockRequest).toHaveBeenNthCalledWith(
         1,
         '/api/pets/like',
-        expect.objectContaining({ method: 'POST' })
+        expect.objectContaining({ method: 'POST' }),
       );
       expect(mockRequest).toHaveBeenNthCalledWith(
         2,
         '/api/pets/pass',
-        expect.objectContaining({ method: 'POST' })
+        expect.objectContaining({ method: 'POST' }),
       );
       expect(mockRequest).toHaveBeenNthCalledWith(
         3,
         '/api/pets/super-like',
-        expect.objectContaining({ method: 'POST' })
+        expect.objectContaining({ method: 'POST' }),
       );
     });
 

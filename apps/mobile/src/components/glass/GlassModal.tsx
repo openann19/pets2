@@ -1,14 +1,9 @@
-import React, { type ReactNode } from "react";
-import { View, type ViewProps, type ViewStyle, StyleSheet } from "react-native";
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSpring,
-} from "react-native-reanimated";
-import Animated from "react-native-reanimated";
+import React, { type ReactNode } from 'react';
+import { View, type ViewProps, type ViewStyle, StyleSheet } from 'react-native';
+import { useSharedValue, useAnimatedStyle, withTiming, withSpring } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
-import { GlassCard } from "./GlassCard";
+import { GlassCard } from './GlassCard';
 
 /**
  * GlassModal Component
@@ -53,14 +48,14 @@ export const GlassModal: React.FC<GlassModalProps> = ({
     <Animated.View
       style={StyleSheet.flatten([
         {
-          position: "absolute" as const,
+          position: 'absolute' as const,
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          justifyContent: "center",
-          alignItems: "center",
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: 'center',
+          alignItems: 'center',
           zIndex: 9999,
         },
         animatedStyle,
@@ -72,8 +67,8 @@ export const GlassModal: React.FC<GlassModalProps> = ({
         size="lg"
         style={StyleSheet.flatten([
           {
-            maxWidth: "90%",
-            maxHeight: "80%",
+            maxWidth: '90%',
+            maxHeight: '80%',
           },
           style,
         ])}

@@ -65,7 +65,7 @@ describe('useInteractionMetrics', () => {
           trackAccessibility: true,
           debounceMs: 100,
           maxHistorySize: 1000,
-        })
+        }),
       );
 
       expect(result.current.config.trackGestures).toBe(true);
@@ -95,14 +95,12 @@ describe('useInteractionMetrics', () => {
           buttonId: 'like_button',
           screen: 'profile',
         }),
-        undefined
+        undefined,
       );
     });
 
     it('should track gesture interactions', () => {
-      const { result } = renderHook(() =>
-        useInteractionMetrics({ trackGestures: true })
-      );
+      const { result } = renderHook(() => useInteractionMetrics({ trackGestures: true }));
 
       const gestureData = {
         gestureType: 'swipe',
@@ -120,9 +118,7 @@ describe('useInteractionMetrics', () => {
     });
 
     it('should track accessibility interactions', () => {
-      const { result } = renderHook(() =>
-        useInteractionMetrics({ trackAccessibility: true })
-      );
+      const { result } = renderHook(() => useInteractionMetrics({ trackAccessibility: true }));
 
       act(() => {
         result.current.trackAccessibilityInteraction('screen_reader', {
@@ -207,9 +203,7 @@ describe('useInteractionMetrics', () => {
     });
 
     it('should limit stored coordinates for performance', () => {
-      const { result } = renderHook(() =>
-        useInteractionMetrics({ maxHeatmapPoints: 2 })
-      );
+      const { result } = renderHook(() => useInteractionMetrics({ maxHeatmapPoints: 2 }));
 
       act(() => {
         result.current.trackTouch({ x: 100, y: 200, screen: 'home', element: 'button' });
@@ -333,9 +327,7 @@ describe('useInteractionMetrics', () => {
 
   describe('Configuration and Customization', () => {
     it('should allow disabling tracking', () => {
-      const { result } = renderHook(() =>
-        useInteractionMetrics({ enabled: false })
-      );
+      const { result } = renderHook(() => useInteractionMetrics({ enabled: false }));
 
       act(() => {
         result.current.trackInteraction('test', {});
@@ -349,7 +341,7 @@ describe('useInteractionMetrics', () => {
       const { result } = renderHook(() =>
         useInteractionMetrics({
           eventFilter: (event) => event.type !== 'debug',
-        })
+        }),
       );
 
       act(() => {
@@ -364,7 +356,7 @@ describe('useInteractionMetrics', () => {
       const { result } = renderHook(() =>
         useInteractionMetrics({
           dataTransformer: (data) => ({ ...data, transformed: true }),
-        })
+        }),
       );
 
       act(() => {
@@ -378,7 +370,7 @@ describe('useInteractionMetrics', () => {
           original: true,
           transformed: true,
         }),
-        undefined
+        undefined,
       );
     });
   });
@@ -439,9 +431,7 @@ describe('useInteractionMetrics', () => {
 
   describe('Memory Management', () => {
     it('should limit interaction history size', () => {
-      const { result } = renderHook(() =>
-        useInteractionMetrics({ maxHistorySize: 2 })
-      );
+      const { result } = renderHook(() => useInteractionMetrics({ maxHistorySize: 2 }));
 
       act(() => {
         result.current.trackInteraction('event1', {});
@@ -503,9 +493,7 @@ describe('useInteractionMetrics', () => {
 
   describe('Accessibility Integration', () => {
     it('should track accessibility features usage', () => {
-      const { result } = renderHook(() =>
-        useInteractionMetrics({ trackAccessibility: true })
-      );
+      const { result } = renderHook(() => useInteractionMetrics({ trackAccessibility: true }));
 
       act(() => {
         result.current.trackAccessibilityUsage('voice_over', {
@@ -522,7 +510,7 @@ describe('useInteractionMetrics', () => {
           feature: 'screen_reader',
           elementsAccessed: 5,
         }),
-        undefined
+        undefined,
       );
     });
 
@@ -618,7 +606,7 @@ describe('useInteractionMetrics', () => {
         useInteractionMetrics({
           maxHistorySize: -1, // Invalid
           debounceMs: 'invalid' as any, // Invalid type
-        } as any)
+        } as any),
       );
 
       // Should not crash, should use defaults

@@ -160,7 +160,7 @@ describe('useSettingsScreen', () => {
     it('should load cached data when available', async () => {
       const cachedData = {
         settings: mockSettingsData,
-        lastUpdated: Date.now() - (5 * 60 * 1000), // 5 minutes ago (fresh)
+        lastUpdated: Date.now() - 5 * 60 * 1000, // 5 minutes ago (fresh)
       };
 
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(cachedData));
@@ -376,7 +376,7 @@ describe('useSettingsScreen', () => {
           success: true,
           message: 'Account deletion requested',
           deletionId: 'del-123',
-        }
+        },
       });
 
       await act(async () => {
@@ -407,7 +407,7 @@ describe('useSettingsScreen', () => {
           success: true,
           exportId: 'export-123',
           data: mockExportedData,
-        }
+        },
       });
 
       await act(async () => {
@@ -541,7 +541,9 @@ describe('useSettingsScreen', () => {
       };
 
       await act(async () => {
-        const success = await result.current.updatePushNotifications(invalidNotifications.push as any);
+        const success = await result.current.updatePushNotifications(
+          invalidNotifications.push as any,
+        );
         expect(success).toBe(false);
       });
 
@@ -559,7 +561,7 @@ describe('useSettingsScreen', () => {
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         'settings_screen_cache',
-        expect.any(String)
+        expect.any(String),
       );
     });
 
@@ -720,7 +722,7 @@ describe('useSettingsScreen', () => {
           action: 'toggle',
           setting: 'profileVisible',
         },
-        'user123'
+        'user123',
       );
     });
 
@@ -741,7 +743,7 @@ describe('useSettingsScreen', () => {
           category: 'privacy',
           changes: { profileVisible: false },
         },
-        'user123'
+        'user123',
       );
     });
   });
@@ -845,7 +847,7 @@ describe('useSettingsScreen', () => {
       const results = await Promise.all(updates);
 
       // Should handle all operations
-      expect(results.some(r => r === true)).toBe(true);
+      expect(results.some((r) => r === true)).toBe(true);
     });
 
     it('should handle rapid preference toggles', async () => {

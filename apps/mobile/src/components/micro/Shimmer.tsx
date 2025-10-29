@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { View, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import React, { useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 type Props = {
   width?: number;
@@ -11,11 +11,13 @@ type Props = {
 
 export default function Shimmer({ width = undefined, height = 16, radius = 8 }: Props) {
   const t = useSharedValue(0);
-  
+
   useEffect(() => {
     const loop = () => {
       t.value = 0;
-      t.value = withTiming(1, { duration: 1100 }, () => { loop(); });
+      t.value = withTiming(1, { duration: 1100 }, () => {
+        loop();
+      });
     };
     loop();
   }, []);
@@ -30,7 +32,7 @@ export default function Shimmer({ width = undefined, height = 16, radius = 8 }: 
     <View style={[styles.base, { height, borderRadius: radius }, dynamicStyle]}>
       <Animated.View style={[styles.stripe, stripe]}>
         <LinearGradient
-          colors={["rgba(255,255,255,0)", "rgba(255,255,255,0.4)", "rgba(255,255,255,0)"]}
+          colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']}
           start={{ x: 0, y: 0.5 }}
           end={{ x: 1, y: 0.5 }}
           style={StyleSheet.absoluteFillObject}
@@ -41,7 +43,6 @@ export default function Shimmer({ width = undefined, height = 16, radius = 8 }: 
 }
 
 const styles = StyleSheet.create({
-  base: { backgroundColor: "rgba(0,0,0,0.06)", overflow: "hidden" },
-  stripe: { position: "absolute", top: 0, bottom: 0, width: "50%" },
+  base: { backgroundColor: 'rgba(0,0,0,0.06)', overflow: 'hidden' },
+  stripe: { position: 'absolute', top: 0, bottom: 0, width: '50%' },
 });
-

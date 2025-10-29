@@ -2,14 +2,14 @@
  * useStoriesScreen Hook
  * Manages Stories screen state and gesture handling
  */
-import { useNavigation } from "@react-navigation/native";
-import { useEffect, useRef } from "react";
-import { Dimensions, PanResponder } from "react-native";
-import * as Haptics from "expo-haptics";
-import { useStories } from "../domains/social/useStories";
-import { useReducedMotion } from "../useReducedMotion";
+import { useNavigation } from '@react-navigation/native';
+import { useEffect, useRef } from 'react';
+import { Dimensions, PanResponder } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { useStories } from '../domains/social/useStories';
+import { useReducedMotion } from '../useReducedMotion';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface UseStoriesScreenReturn {
   // From domain hook
@@ -41,9 +41,7 @@ interface UseStoriesScreenReturn {
   setMuted: (muted: boolean) => void;
 }
 
-export const useStoriesScreen = (
-  initialGroupIndex: number = 0,
-): UseStoriesScreenReturn => {
+export const useStoriesScreen = (initialGroupIndex: number = 0): UseStoriesScreenReturn => {
   const navigation = useNavigation();
   const reducedMotion = useReducedMotion();
 
@@ -136,8 +134,7 @@ export const useStoriesScreen = (
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      if (progressIntervalRef.current)
-        clearInterval(progressIntervalRef.current);
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
       if (longPressTimer.current) clearTimeout(longPressTimer.current);
     };
   }, []);

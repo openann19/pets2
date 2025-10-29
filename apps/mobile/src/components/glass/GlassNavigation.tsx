@@ -1,7 +1,7 @@
-import React, { type ReactNode } from "react";
-import { type ViewProps, type ViewStyle, StyleSheet } from "react-native";
-import { GlassContainer } from "./GlassContainer";
-import { BLUR_CONFIGS } from "./configs";
+import React, { type ReactNode } from 'react';
+import { type ViewProps, type ViewStyle, StyleSheet } from 'react-native';
+import { GlassContainer } from './GlassContainer';
+import { BLUR_CONFIGS } from './configs';
 
 /**
  * GlassNavigation Component
@@ -13,11 +13,7 @@ interface GlassNavigationProps extends ViewProps {
   style?: ViewStyle;
 }
 
-export const GlassNavigation: React.FC<GlassNavigationProps> = ({
-  children,
-  style,
-  ...props
-}) => {
+export const GlassNavigation: React.FC<GlassNavigationProps> = ({ children, style, ...props }) => {
   return (
     <GlassContainer
       intensity="heavy"
@@ -27,7 +23,7 @@ export const GlassNavigation: React.FC<GlassNavigationProps> = ({
       borderRadius="none"
       style={StyleSheet.flatten([
         {
-          position: "absolute" as const,
+          position: 'absolute' as const,
           bottom: 0,
           left: 0,
           right: 0,

@@ -1,7 +1,7 @@
-import { useRef, useState, useEffect } from "react";
-import type { FlatList } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { logger } from "../../services/logger";
+import { useRef, useState, useEffect } from 'react';
+import type { FlatList } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '../../services/logger';
 
 export interface UseChatScrollOptions {
   matchId: string;
@@ -31,15 +31,13 @@ export function useChatScroll({
       if (!enabled) return;
 
       try {
-        const saved = await AsyncStorage.getItem(
-          `mobile_chat_scroll_${matchId}`,
-        );
+        const saved = await AsyncStorage.getItem(`mobile_chat_scroll_${matchId}`);
         if (saved) {
           setInitialOffset(Number(saved));
         }
       } catch (error: unknown) {
         const err = error instanceof Error ? error : new Error(String(error));
-        logger.error("Failed to restore scroll position for chat", { matchId, error: err });
+        logger.error('Failed to restore scroll position for chat', { matchId, error: err });
       }
     };
 

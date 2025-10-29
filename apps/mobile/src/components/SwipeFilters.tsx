@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 
 interface SwipeFiltersProps {
   visible: boolean;

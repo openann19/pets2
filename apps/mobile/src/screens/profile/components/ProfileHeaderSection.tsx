@@ -1,13 +1,13 @@
-import React, { useCallback } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import { AdvancedCard, CardConfigs } from "../../../components/Advanced/AdvancedCard";
-import { DoubleTapLikePlus } from "../../../components/Gestures/DoubleTapLikePlus";
-import { useDoubleTapMetrics } from "../../../hooks/useInteractionMetrics";
-import { matchesAPI } from "../../../services/api";
-import SmartImage from "../../../components/common/SmartImage";
-import { useTheme } from "@/theme";
-import * as Haptics from "expo-haptics";
+import { useTheme } from '@mobile/src/theme';
+import { logger } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import React, { useCallback } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { AdvancedCard, CardConfigs } from '../../../components/Advanced/AdvancedCard';
+import SmartImage from '../../../components/common/SmartImage';
+import { DoubleTapLikePlus } from '../../../components/Gestures/DoubleTapLikePlus';
+import { useDoubleTapMetrics } from '../../../hooks/useInteractionMetrics';
+import { matchesAPI } from '../../../services/api';
 
 interface User {
   _id: string;
@@ -35,7 +35,7 @@ export const ProfileHeaderSection: React.FC<ProfileHeaderSectionProps> = React.m
 
   const handleCardPress = useCallback(async () => {
     const userProfile = await matchesAPI.getUserProfile();
-    logger.info("Loaded user profile:", { userProfile });
+    logger.info('Loaded user profile:', { userProfile });
   }, []);
 
   const styles = StyleSheet.create({
@@ -43,8 +43,8 @@ export const ProfileHeaderSection: React.FC<ProfileHeaderSectionProps> = React.m
       padding: 20,
     },
     profileSection: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     profileImage: {
       width: 80,
@@ -57,7 +57,7 @@ export const ProfileHeaderSection: React.FC<ProfileHeaderSectionProps> = React.m
     },
     userName: {
       fontSize: 24,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       marginBottom: 4,
     },
     userEmail: {
@@ -72,8 +72,8 @@ export const ProfileHeaderSection: React.FC<ProfileHeaderSectionProps> = React.m
   return (
     <AdvancedCard
       {...CardConfigs.glass({
-        interactions: ["hover", "press", "glow"],
-        haptic: "light",
+        interactions: ['hover', 'press', 'glow'],
+        haptic: 'light',
         apiAction: handleCardPress,
       })}
       style={styles.header}
@@ -83,11 +83,12 @@ export const ProfileHeaderSection: React.FC<ProfileHeaderSectionProps> = React.m
           onDoubleTap={handleProfileLike}
           heartColor="#ff69b4"
           particles={5}
-          haptics={{ enabled: true, style: "light" }}
+          haptics={{ enabled: true, style: 'light' }}
         >
           <SmartImage
             source={{
-              uri: user?.avatar ?? "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=150",
+              uri:
+                user?.avatar ?? 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=150',
             }}
             style={styles.profileImage}
             useShimmer={true}
@@ -96,10 +97,10 @@ export const ProfileHeaderSection: React.FC<ProfileHeaderSectionProps> = React.m
         </DoubleTapLikePlus>
         <View style={styles.profileInfo}>
           <Text style={[styles.userName, { color: theme.colors.onSurface }]}>
-            {user?.firstName ?? "User"} {user?.lastName ?? ""}
+            {user?.firstName ?? 'User'} {user?.lastName ?? ''}
           </Text>
           <Text style={[styles.userEmail, { color: theme.colors.onMuted }]}>
-            {user?.email ?? "user@example.com"}
+            {user?.email ?? 'user@example.com'}
           </Text>
           <Text style={[styles.memberSince, { color: theme.colors.onMuted }]}>
             Member since {new Date().getFullYear()}

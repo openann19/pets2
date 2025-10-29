@@ -1,19 +1,23 @@
 # Advanced Interaction Components - Integration Guide
 
-This guide shows how to integrate the new advanced interaction components (LikeArbitrator, UndoPill, SendSparkle, MessageStatusTicks, etc.) into your app.
+This guide shows how to integrate the new advanced interaction components
+(LikeArbitrator, UndoPill, SendSparkle, MessageStatusTicks, etc.) into your app.
 
 ## Components Overview
 
 ### 1. LikeArbitrator + UndoPill + useLikeWithUndo
 
-Combines double-tap to like with long-press for reactions, plus an undo mechanism.
+Combines double-tap to like with long-press for reactions, plus an undo
+mechanism.
 
 **Usage Example:**
 
 ```tsx
-import LikeArbitrator, { type LikeArbitratorProps } from "@/components/Gestures/LikeArbitrator";
-import UndoPill from "@/components/feedback/UndoPill";
-import { useLikeWithUndo } from "@/hooks/useLikeWithUndo";
+import LikeArbitrator, {
+  type LikeArbitratorProps,
+} from '@/components/Gestures/LikeArbitrator';
+import UndoPill from '@/components/feedback/UndoPill';
+import { useLikeWithUndo } from '@/hooks/useLikeWithUndo';
 
 function PostCard({ post }: { post: { id: string } }) {
   const { likeNow, triggerUndoPill, undoNow } = useLikeWithUndo({
@@ -122,10 +126,12 @@ Show message status (sending → sent → delivered → read) with retry capabil
 **Usage Example:**
 
 ```tsx
-import Animated from "react-native-reanimated";
-import MessageStatusTicks, { type MessageStatus } from "@/components/chat/MessageStatusTicks";
-import RetryBadge from "@/components/chat/RetryBadge";
-import { useBubbleRetryShake } from "@/hooks/useBubbleRetryShake";
+import Animated from 'react-native-reanimated';
+import MessageStatusTicks, {
+  type MessageStatus,
+} from '@/components/chat/MessageStatusTicks';
+import RetryBadge from '@/components/chat/RetryBadge';
+import { useBubbleRetryShake } from '@/hooks/useBubbleRetryShake';
 
 function MessageBubble({ message, onRetry }) {
   const { style: bubbleShakeStyle, shake } = useBubbleRetryShake();
@@ -141,7 +147,11 @@ function MessageBubble({ message, onRetry }) {
 
   return (
     <Animated.View
-      style={[styles.bubble, isOwnMessage ? styles.own : styles.other, bubbleShakeStyle]}
+      style={[
+        styles.bubble,
+        isOwnMessage ? styles.own : styles.other,
+        bubbleShakeStyle,
+      ]}
     >
       <Text style={styles.text}>{message.content}</Text>
 
@@ -156,7 +166,7 @@ function MessageBubble({ message, onRetry }) {
             readColor="#3b82f6"
             failedColor="#ef4444"
           />
-          {message.status === "failed" ? (
+          {message.status === 'failed' ? (
             <RetryBadge onPress={tryRetry} />
           ) : null}
         </View>
@@ -169,18 +179,23 @@ function MessageBubble({ message, onRetry }) {
 ## Message Status Flow
 
 When you enqueue the message:
+
 - `status = "sending"` (shows pulsing clock icon)
 
 If the POST succeeds:
+
 - `status = "sent"` (shows single checkmark)
 
 On delivery receipt:
+
 - `status = "delivered"` (shows double checkmark)
 
 On read receipt:
+
 - `status = "read"` (shows blue double checkmark)
 
 If the send fails:
+
 - `status = "failed"` (shows red alert icon + retry badge appears)
 
 ## Features
@@ -197,5 +212,5 @@ If the send fails:
 
 1. **Posts/Media Cards**: Use `LikeArbitrator` + `UndoPill`
 2. **Chat Input**: Use `SendSparkle` + `useShake`
-3. **Message Bubbles**: Use `MessageStatusTicks` + `RetryBadge` + `useBubbleRetryShake`
-
+3. **Message Bubbles**: Use `MessageStatusTicks` + `RetryBadge` +
+   `useBubbleRetryShake`

@@ -148,8 +148,6 @@ export const Interactive: Story = {
     );
   },
   parameters: {
-    notes:
-      'Fully interactive selector - click different tones to see selection change',
+    notes: 'Fully interactive selector - click different tones to see selection change',
   },
 };
-

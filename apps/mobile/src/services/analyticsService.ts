@@ -77,4 +77,3 @@ export function trackScreenView(screenName: string, props?: Record<string, any>)
 export function trackUserAction(action: string, props?: Record<string, any>): void {
   track('user_action', { action, ...props });
 }
-

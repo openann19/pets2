@@ -1,30 +1,30 @@
 // utils/AutoCropEngine.ts
-import { Image as RNImage } from "react-native";
-import * as ImageManipulator from "expo-image-manipulator";
+import { Image as RNImage } from 'react-native';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 export type Rect = { x: number; y: number; width: number; height: number };
 type Suggestion = {
-  ratio: string;            // "1:1" | "4:5" | "9:16" | etc.
-  focus: Rect;              // the subject focus rect (after padding/weighting)
-  crop: Rect;               // final crop rect to apply for this ratio
-  thumbUri?: string;        // small preview (optional, generated via makeThumbnails)
-  method: "eyes" | "face" | "fallback";
+  ratio: string; // "1:1" | "4:5" | "9:16" | etc.
+  focus: Rect; // the subject focus rect (after padding/weighting)
+  crop: Rect; // final crop rect to apply for this ratio
+  thumbUri?: string; // small preview (optional, generated via makeThumbnails)
+  method: 'eyes' | 'face' | 'fallback';
 };
 
 type DetectOpts = {
-  eyeWeight?: number;       // 0..1 (how much to bias toward eyes)
-  padPct?: number;          // extra space around subject focus
+  eyeWeight?: number; // 0..1 (how much to bias toward eyes)
+  padPct?: number; // extra space around subject focus
 };
 
 type ThumbOpts = {
-  size?: number;            // width of thumbnail (px)
-  quality?: number;         // 0..1
+  size?: number; // width of thumbnail (px)
+  quality?: number; // 0..1
 };
 
 let FaceDetector: any = null;
 try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  FaceDetector = require("expo-face-detector");
+  FaceDetector = require('expo-face-detector');
 } catch {
   FaceDetector = null;
 }
@@ -50,8 +50,8 @@ const biggestRect = (rects: Rect[]) =>
   rects.slice().sort((a, b) => b.width * b.height - a.width * a.height)[0];
 
 const ratioToNumber = (r: string): number => {
-  if (r === "FREE") return NaN;
-  const parts = r.split(":");
+  if (r === 'FREE') return NaN;
+  const parts = r.split(':');
   if (parts.length !== 2) return NaN;
   const a = Number(parts[0]);
   const b = Number(parts[1]);
@@ -63,8 +63,12 @@ async function getImageSize(uri: string): Promise<{ w: number; h: number }> {
   return new Promise((resolve) => {
     RNImage.getSize(
       uri,
-      (w, h) => { resolve({ w, h }); },
-      () => { resolve({ w: 0, h: 0 }); },
+      (w, h) => {
+        resolve({ w, h });
+      },
+      () => {
+        resolve({ w: 0, h: 0 });
+      },
     );
   });
 }
@@ -107,7 +111,12 @@ function cropForRatio(focus: Rect, imgW: number, imgH: number, ratio: string, pa
 }
 
 /** Eye-weighted focus from faces (if landmarks available). Falls back to face bounds union. */
-function buildEyeWeightedFocus(faces: any[], imgW: number, imgH: number, eyeWeight = 0.55): { rect: Rect; method: "eyes" | "face" } {
+function buildEyeWeightedFocus(
+  faces: any[],
+  imgW: number,
+  imgH: number,
+  eyeWeight = 0.55,
+): { rect: Rect; method: 'eyes' | 'face' } {
   const faceRects: Rect[] = faces.map((f: any) => ({
     x: f.bounds.origin.x,
     y: f.bounds.origin.y,
@@ -116,7 +125,9 @@ function buildEyeWeightedFocus(faces: any[], imgW: number, imgH: number, eyeWeig
   }));
 
   // landmarks present?
-  const haveLandmarks = faces.every((f) => f.LEFT_EYE || f.RIGHT_EYE || f.landmarks?.leftEye || f.landmarks?.rightEye);
+  const haveLandmarks = faces.every(
+    (f) => f.LEFT_EYE || f.RIGHT_EYE || f.landmarks?.leftEye || f.landmarks?.rightEye,
+  );
 
   if (haveLandmarks) {
     const points: { x: number; y: number }[] = [];
@@ -137,15 +148,15 @@ function buildEyeWeightedFocus(faces: any[], imgW: number, imgH: number, eyeWeig
       if (isNaN(minX) || isNaN(maxX) || isNaN(minY) || isNaN(maxY)) {
         // Fallback to merged face bounds
         const merged = padRect(unionRects(faceRects), imgW, imgH, 0.18);
-        return { rect: merged, method: "face" };
+        return { rect: merged, method: 'face' };
       }
       const eyesRect: Rect = { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
 
       // Expand to include a bit of muzzle/forehead (pets) or nose/forehead (humans)
       const base = unionRects(faceRects);
       // Blend eyesRect with faceRect center using eyeWeight
-      const targetW = base.width * (0.55);            // natural head framing
-      const targetH = base.height * (0.55);
+      const targetW = base.width * 0.55; // natural head framing
+      const targetH = base.height * 0.55;
       const cx = eyesRect.x + eyesRect.width / 2;
       const cy = eyesRect.y + eyesRect.height / 2;
       const baseCx = base.x + base.width / 2;
@@ -163,13 +174,13 @@ function buildEyeWeightedFocus(faces: any[], imgW: number, imgH: number, eyeWeig
         height: Math.min(targetH, imgH),
       };
 
-      return { rect: padRect(rect, imgW, imgH, 0.18), method: "eyes" };
+      return { rect: padRect(rect, imgW, imgH, 0.18), method: 'eyes' };
     }
   }
 
   // Fallback to merged face bounds
   const merged = padRect(unionRects(faceRects), imgW, imgH, 0.18);
-  return { rect: merged, method: "face" };
+  return { rect: merged, method: 'face' };
 }
 
 async function detectFaces(uri: string): Promise<any[] | null> {
@@ -189,7 +200,7 @@ async function detectFaces(uri: string): Promise<any[] | null> {
 
 export type AutoCropResult = {
   focus: Rect;
-  method: "eyes" | "face" | "fallback";
+  method: 'eyes' | 'face' | 'fallback';
   size: { w: number; h: number };
 };
 
@@ -217,11 +228,19 @@ export const AutoCropEngine = {
       width: w,
       height: h,
     };
-    return { focus: padRect(focus, imgW, imgH, opts.padPct ?? 0.18), method: "fallback", size: { w: imgW, h: imgH } };
+    return {
+      focus: padRect(focus, imgW, imgH, opts.padPct ?? 0.18),
+      method: 'fallback',
+      size: { w: imgW, h: imgH },
+    };
   },
 
   /** Build multi-ratio **suggested crops** (1:1, 4:5, 9:16, etc.) from the focus. */
-  suggestCrops: async (uri: string, ratios: string[] = ["1:1", "4:5", "9:16"], opts: DetectOpts = {}): Promise<Suggestion[]> => {
+  suggestCrops: async (
+    uri: string,
+    ratios: string[] = ['1:1', '4:5', '9:16'],
+    opts: DetectOpts = {},
+  ): Promise<Suggestion[]> => {
     const res = await AutoCropEngine.detect(uri, opts);
     if (!res) return [];
     const { focus, method, size } = res;
@@ -235,15 +254,28 @@ export const AutoCropEngine = {
   },
 
   /** Generate thumbnails for suggestions (optional UI candy). */
-  makeThumbnails: async (uri: string, suggestions: Suggestion[], thumbOpts: ThumbOpts = {}): Promise<Suggestion[]> => {
+  makeThumbnails: async (
+    uri: string,
+    suggestions: Suggestion[],
+    thumbOpts: ThumbOpts = {},
+  ): Promise<Suggestion[]> => {
     const { size = 240, quality = 0.9 } = thumbOpts;
     const withThumbs: Suggestion[] = [];
 
     for (const s of suggestions) {
       const result = await ImageManipulator.manipulateAsync(
         uri,
-        [{ crop: { originX: Math.round(s.crop.x), originY: Math.round(s.crop.y), width: Math.round(s.crop.width), height: Math.round(s.crop.height) } },
-         { resize: { width: size } }],
+        [
+          {
+            crop: {
+              originX: Math.round(s.crop.x),
+              originY: Math.round(s.crop.y),
+              width: Math.round(s.crop.width),
+              height: Math.round(s.crop.height),
+            },
+          },
+          { resize: { width: size } },
+        ],
         { compress: quality, format: ImageManipulator.SaveFormat.JPEG },
       );
       withThumbs.push({ ...s, thumbUri: result.uri });
@@ -255,10 +287,18 @@ export const AutoCropEngine = {
   applyCrop: async (uri: string, rect: Rect, quality = 1): Promise<string> => {
     const result = await ImageManipulator.manipulateAsync(
       uri,
-      [{ crop: { originX: Math.round(rect.x), originY: Math.round(rect.y), width: Math.round(rect.width), height: Math.round(rect.height) } }],
+      [
+        {
+          crop: {
+            originX: Math.round(rect.x),
+            originY: Math.round(rect.y),
+            width: Math.round(rect.width),
+            height: Math.round(rect.height),
+          },
+        },
+      ],
       { compress: quality, format: ImageManipulator.SaveFormat.JPEG },
     );
     return result.uri;
   },
 };
-

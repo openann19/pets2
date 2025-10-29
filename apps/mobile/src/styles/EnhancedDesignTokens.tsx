@@ -3,16 +3,12 @@
  * Provides React Native compatible design tokens and utilities
  */
 
-import type {
-  ViewStyle,
-  TextStyle,
-  ColorValue,
-} from "react-native";
-import { StyleSheet, Text } from "react-native";
-import { Easing } from "react-native";
-import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
-import MaskedView from "@react-native-masked-view/masked-view";
+import type { ViewStyle, TextStyle, ColorValue } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
+import { Easing } from 'react-native';
+import React from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 // Import base tokens from design-tokens package (React Native optimized)
 import {
@@ -25,8 +21,7 @@ import {
   Z_INDEX,
   VARIANTS,
   utils,
-} from "@pawfectmatch/design-tokens";
-
+} from '@pawfectmatch/design-tokens';
 
 // ===== RN-SAFE FACADE WRAPPERS =====
 
@@ -34,19 +29,19 @@ import {
 export const DynamicColors = {
   gradients: {
     primary: {
-      colors: ["#ec4899", "#db2777"] as ColorValue[],
+      colors: ['#ec4899', '#db2777'] as ColorValue[],
       locations: [0, 1],
       start: { x: 0, y: 0 },
       end: { x: 1, y: 1 },
     },
     secondary: {
-      colors: ["#0ea5e9", "#9333ea"] as ColorValue[],
+      colors: ['#0ea5e9', '#9333ea'] as ColorValue[],
       locations: [0, 1],
       start: { x: 0, y: 0 },
       end: { x: 1, y: 1 },
     },
     premium: {
-      colors: ["#ec4899", "#0ea5e9", "#3b82f6"] as ColorValue[],
+      colors: ['#ec4899', '#0ea5e9', '#3b82f6'] as ColorValue[],
       locations: [0, 0.5, 1],
       start: { x: 0, y: 0 },
       end: { x: 1, y: 1 },
@@ -57,25 +52,25 @@ export const DynamicColors = {
     light: {
       blurIntensity: 10,
       overlayStyle: {
-        backgroundColor: "rgba(255,255,255,0.7)",
+        backgroundColor: 'rgba(255,255,255,0.7)',
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.3)",
+        borderColor: 'rgba(255,255,255,0.3)',
       } as ViewStyle,
     },
     medium: {
       blurIntensity: 20,
       overlayStyle: {
-        backgroundColor: "rgba(255,255,255,0.5)",
+        backgroundColor: 'rgba(255,255,255,0.5)',
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.2)",
+        borderColor: 'rgba(255,255,255,0.2)',
       } as ViewStyle,
     },
     strong: {
       blurIntensity: 30,
       overlayStyle: {
-        backgroundColor: "rgba(255,255,255,0.3)",
+        backgroundColor: 'rgba(255,255,255,0.3)',
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.1)",
+        borderColor: 'rgba(255,255,255,0.1)',
       } as ViewStyle,
     },
   },
@@ -85,35 +80,35 @@ export const DynamicColors = {
 export const EnhancedShadows = {
   depth: {
     sm: {
-      shadowColor: "#030712",
+      shadowColor: '#030712',
       shadowOffset: { width: 0, height: 1 },
       shadowOpacity: 0.05,
       shadowRadius: 2,
       elevation: 2,
     } as ViewStyle,
     md: {
-      shadowColor: "#030712",
+      shadowColor: '#030712',
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
       shadowRadius: 6,
       elevation: 4,
     } as ViewStyle,
     lg: {
-      shadowColor: "#030712",
+      shadowColor: '#030712',
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.15,
       shadowRadius: 12,
       elevation: 8,
     } as ViewStyle,
     xl: {
-      shadowColor: "#030712",
+      shadowColor: '#030712',
       shadowOffset: { width: 0, height: 12 },
       shadowOpacity: 0.18,
       shadowRadius: 16,
       elevation: 12,
     } as ViewStyle,
     xxl: {
-      shadowColor: "#030712",
+      shadowColor: '#030712',
       shadowOffset: { width: 0, height: 20 },
       shadowOpacity: 0.22,
       shadowRadius: 24,
@@ -192,7 +187,7 @@ export const SemanticColors = {
   surface: {
     default: COLORS.neutral[0],
     elevated: COLORS.neutral[50],
-    overlay: "rgba(0,0,0,0.5)",
+    overlay: 'rgba(0,0,0,0.5)',
   },
 } as const;
 
@@ -206,12 +201,12 @@ export const EnhancedTypography = {
         textShadowRadius: 10,
       } as TextStyle,
       subtle: {
-        textShadowColor: "rgba(0,0,0,0.1)",
+        textShadowColor: 'rgba(0,0,0,0.1)',
         textShadowOffset: { width: 0, height: 2 },
         textShadowRadius: 4,
       } as TextStyle,
       strong: {
-        textShadowColor: "rgba(0,0,0,0.3)",
+        textShadowColor: 'rgba(0,0,0,0.3)',
         textShadowOffset: { width: 0, height: 4 },
         textShadowRadius: 8,
       } as TextStyle,
@@ -225,29 +220,26 @@ export const EnhancedTypography = {
 /** GradientText — helper for gradient-filled text (MaskedView + LinearGradient) */
 export function GradientText(props: {
   children: string;
-  variant?: keyof (typeof DynamicColors)["gradients"];
+  variant?: keyof (typeof DynamicColors)['gradients'];
   textStyle?: TextStyle;
 }) {
-  const v = props.variant ?? "primary";
+  const v = props.variant ?? 'primary';
   const g = DynamicColors.gradients[v];
   return (
     <MaskedView
       maskElement={
-        <Text
-          style={StyleSheet.flatten([
-            { backgroundColor: "transparent" },
-            props.textStyle,
-          ])}
-        >
+        <Text style={StyleSheet.flatten([{ backgroundColor: 'transparent' }, props.textStyle])}>
           {props.children}
         </Text>
       }
     >
-      <LinearGradient colors={g.colors as string[]} start={g.start} end={g.end}>
+      <LinearGradient
+        colors={g.colors as string[]}
+        start={g.start}
+        end={g.end}
+      >
         {/* Match text bounding box with some filler view */}
-        <Text style={StyleSheet.flatten([{ opacity: 0 }, props.textStyle])}>
-          {props.children}
-        </Text>
+        <Text style={StyleSheet.flatten([{ opacity: 0 }, props.textStyle])}>{props.children}</Text>
       </LinearGradient>
     </MaskedView>
   );

@@ -66,18 +66,46 @@ export interface SwipeCardStyle {
   };
   infoContainer?: {
     flex?: number;
-    justifyContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    justifyContent?:
+      | 'flex-start'
+      | 'flex-end'
+      | 'center'
+      | 'space-between'
+      | 'space-around'
+      | 'space-evenly';
     padding?: number;
   };
   name?: {
     fontSize?: number;
-    fontWeight?: '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900' | 'normal' | 'bold';
+    fontWeight?:
+      | '100'
+      | '200'
+      | '300'
+      | '400'
+      | '500'
+      | '600'
+      | '700'
+      | '800'
+      | '900'
+      | 'normal'
+      | 'bold';
     color?: string;
     marginRight?: number;
   };
   age?: {
     fontSize?: number;
-    fontWeight?: '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900' | 'normal' | 'bold';
+    fontWeight?:
+      | '100'
+      | '200'
+      | '300'
+      | '400'
+      | '500'
+      | '600'
+      | '700'
+      | '800'
+      | '900'
+      | 'normal'
+      | 'bold';
     color?: string;
   };
   breed?: {

@@ -3,7 +3,7 @@
  * Tracks hook usage patterns for performance monitoring and debugging
  */
 
-import { logger } from "@pawfectmatch/core";
+import { logger } from '@pawfectmatch/core';
 
 interface HookUsageEvent {
   hookName: string;
@@ -31,7 +31,7 @@ class HookAnalytics {
     }
 
     // Log to analytics service
-    logger.info("Hook Usage", {
+    logger.info('Hook Usage', {
       hook: event.hookName,
       screen: event.screenName,
       action: event.action,
@@ -45,7 +45,7 @@ class HookAnalytics {
     this.track({
       hookName,
       screenName,
-      action: "performance",
+      action: 'performance',
       duration,
     });
   }
@@ -54,7 +54,7 @@ class HookAnalytics {
     this.track({
       hookName,
       screenName,
-      action: "error",
+      action: 'error',
       error,
     });
   }
@@ -84,39 +84,35 @@ export const hookAnalytics = new HookAnalytics();
 export function withAnalytics<T extends (...args: any[]) => any>(
   hook: T,
   hookName: string,
-  screenName: string
+  screenName: string,
 ): T {
   return ((...args: Parameters<T>) => {
     const startTime = performance.now();
-    
+
     try {
       const result = hook(...args);
       const duration = performance.now() - startTime;
 
-      if (result && typeof result === "object") {
+      if (result && typeof result === 'object') {
         // Track hook initialization
         hookAnalytics.trackPerformance(hookName, screenName, duration);
 
         // Wrap methods with analytics
         const wrappedResult = { ...result };
-        
+
         for (const key in wrappedResult) {
-          if (typeof wrappedResult[key] === "function") {
+          if (typeof wrappedResult[key] === 'function') {
             const originalMethod = wrappedResult[key];
             wrappedResult[key] = (...methodArgs: any[]) => {
-              hookAnalytics.trackAction(
-                hookName,
-                screenName,
-                `${hookName}.${key}`
-              );
-              
+              hookAnalytics.trackAction(hookName, screenName, `${hookName}.${key}`);
+
               try {
                 return originalMethod(...methodArgs);
               } catch (error) {
                 hookAnalytics.trackError(
                   hookName,
                   screenName,
-                  error instanceof Error ? error.message : String(error)
+                  error instanceof Error ? error.message : String(error),
                 );
                 throw error;
               }
@@ -133,10 +129,9 @@ export function withAnalytics<T extends (...args: any[]) => any>(
       hookAnalytics.trackError(
         hookName,
         screenName,
-        error instanceof Error ? error.message : String(error)
+        error instanceof Error ? error.message : String(error),
       );
       throw error;
     }
   }) as T;
 }
-

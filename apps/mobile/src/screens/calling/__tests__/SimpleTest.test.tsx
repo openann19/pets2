@@ -1,6 +1,6 @@
-import { render } from "@testing-library/react-native";
-import React from "react";
-import { Text, View } from "react-native";
+import { render } from '@testing-library/react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 
 // Simple test component
 const TestComponent = () => {
@@ -11,9 +11,9 @@ const TestComponent = () => {
   );
 };
 
-describe("Simple Test", () => {
-  it("should render a simple component", () => {
+describe('Simple Test', () => {
+  it('should render a simple component', () => {
     const { getByText } = render(<TestComponent />);
-    expect(getByText("Test")).toBeTruthy();
+    expect(getByText('Test')).toBeTruthy();
   });
 });

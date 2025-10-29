@@ -44,7 +44,7 @@ describe('MapActivityService', () => {
     mockLocation.getCurrentPositionAsync.mockResolvedValue({
       coords: {
         latitude: 40.7128,
-        longitude: -74.0060,
+        longitude: -74.006,
         altitude: 10,
         accuracy: 5,
         altitudeAccuracy: 1,
@@ -79,7 +79,7 @@ describe('MapActivityService', () => {
         message: 'Enjoying a walk in the park!',
         location: {
           type: 'Point',
-          coordinates: [-74.0060, 40.7128], // [lng, lat]
+          coordinates: [-74.006, 40.7128], // [lng, lat]
         },
         radiusMeters: 500,
         shareToMap: true,
@@ -103,7 +103,7 @@ describe('MapActivityService', () => {
           ...params,
           location: {
             latitude: 40.7128,
-            longitude: -74.0060,
+            longitude: -74.006,
           },
         },
       });
@@ -113,7 +113,7 @@ describe('MapActivityService', () => {
 
     it('should handle location permission denied', async () => {
       mockLocation.getCurrentPositionAsync.mockRejectedValue(
-        new Error('Location permission denied')
+        new Error('Location permission denied'),
       );
 
       const params: CreateActivityParams = {
@@ -126,7 +126,7 @@ describe('MapActivityService', () => {
 
     it('should handle location services unavailable', async () => {
       mockLocation.getCurrentPositionAsync.mockRejectedValue(
-        new Error('Location services are disabled')
+        new Error('Location services are disabled'),
       );
 
       const params: CreateActivityParams = {
@@ -150,7 +150,7 @@ describe('MapActivityService', () => {
         activity: 'eating',
         location: {
           type: 'Point',
-          coordinates: [-74.0060, 40.7128],
+          coordinates: [-74.006, 40.7128],
         },
         radiusMeters: 100, // default
         shareToMap: false, // default
@@ -253,7 +253,7 @@ describe('MapActivityService', () => {
   describe('getNearbyPins', () => {
     it('should get nearby pins with coordinates', async () => {
       const latitude = 40.7128;
-      const longitude = -74.0060;
+      const longitude = -74.006;
       const maxDistance = 1000;
 
       const mockPins: MapPin[] = [
@@ -265,7 +265,7 @@ describe('MapActivityService', () => {
           message: 'Nice walk!',
           location: {
             type: 'Point',
-            coordinates: [-74.0050, 40.7130],
+            coordinates: [-74.005, 40.713],
           },
           radiusMeters: 500,
           shareToMap: true,
@@ -281,7 +281,7 @@ describe('MapActivityService', () => {
           activity: 'playing',
           location: {
             type: 'Point',
-            coordinates: [-74.0070, 40.7120],
+            coordinates: [-74.007, 40.712],
           },
           radiusMeters: 300,
           shareToMap: true,
@@ -317,7 +317,7 @@ describe('MapActivityService', () => {
           activity: 'park_visit',
           location: {
             type: 'Point',
-            coordinates: [-0.1270, 51.5080],
+            coordinates: [-0.127, 51.508],
           },
           radiusMeters: 200,
           shareToMap: true,
@@ -352,12 +352,12 @@ describe('MapActivityService', () => {
     it('should handle API errors when fetching pins', async () => {
       mockRequest.mockRejectedValue(new Error('Pins fetch failed'));
 
-      await expect(getNearbyPins(40.7128, -74.0060)).rejects.toThrow('Pins fetch failed');
+      await expect(getNearbyPins(40.7128, -74.006)).rejects.toThrow('Pins fetch failed');
     });
 
     it('should handle extreme coordinates', async () => {
       const extremeLat = 85.0511; // Near north pole
-      const extremeLng = 180.0000; // International date line
+      const extremeLng = 180.0; // International date line
 
       mockRequest.mockResolvedValue([]);
 
@@ -374,11 +374,11 @@ describe('MapActivityService', () => {
 
       mockRequest.mockResolvedValue([]);
 
-      await getNearbyPins(40.7128, -74.0060, hugeDistance);
+      await getNearbyPins(40.7128, -74.006, hugeDistance);
 
       expect(mockRequest).toHaveBeenCalledWith('/map/pins', {
         method: 'GET',
-        params: { latitude: 40.7128, longitude: -74.0060, maxDistance: hugeDistance },
+        params: { latitude: 40.7128, longitude: -74.006, maxDistance: hugeDistance },
       });
     });
   });
@@ -472,7 +472,9 @@ describe('MapActivityService', () => {
     it('should handle comment moderation rejection', async () => {
       mockRequest.mockRejectedValue(new Error('Comment contains inappropriate content'));
 
-      await expect(commentOnPin('pin123', 'bad comment')).rejects.toThrow('Comment contains inappropriate content');
+      await expect(commentOnPin('pin123', 'bad comment')).rejects.toThrow(
+        'Comment contains inappropriate content',
+      );
     });
 
     it('should handle special characters in comments', async () => {
@@ -493,7 +495,9 @@ describe('MapActivityService', () => {
     it('should handle network connectivity issues', async () => {
       mockRequest.mockRejectedValue(new Error('Network request failed'));
 
-      await expect(startActivity({ petId: 'pet123', activity: 'walking' })).rejects.toThrow('Network request failed');
+      await expect(startActivity({ petId: 'pet123', activity: 'walking' })).rejects.toThrow(
+        'Network request failed',
+      );
     });
 
     it('should handle malformed API responses', async () => {
@@ -507,7 +511,7 @@ describe('MapActivityService', () => {
       const operations = [
         startActivity({ petId: 'pet1', activity: 'walking' }),
         startActivity({ petId: 'pet2', activity: 'playing' }),
-        getNearbyPins(40.7128, -74.0060),
+        getNearbyPins(40.7128, -74.006),
         likePin('pin1'),
         commentOnPin('pin2', 'Nice!'),
       ];
@@ -527,7 +531,7 @@ describe('MapActivityService', () => {
       const operations = [
         startActivity({ petId: 'pet1', activity: 'walking' }),
         startActivity({ petId: 'pet2', activity: 'playing' }), // This will fail
-        getNearbyPins(40.7128, -74.0060),
+        getNearbyPins(40.7128, -74.006),
       ];
 
       mockRequest.mockResolvedValueOnce({ _id: 'activity1' });
@@ -553,7 +557,7 @@ describe('MapActivityService', () => {
       mockLocation.getCurrentPositionAsync.mockResolvedValue({
         coords: {
           latitude: 40.7128,
-          longitude: -74.0060,
+          longitude: -74.006,
           altitude: null,
           accuracy: 100, // Low accuracy
           altitudeAccuracy: null,
@@ -575,7 +579,7 @@ describe('MapActivityService', () => {
         activity: 'walking',
         location: {
           type: 'Point',
-          coordinates: [-74.0060, 40.7128],
+          coordinates: [-74.006, 40.7128],
         },
         radiusMeters: 100,
         shareToMap: false,
@@ -589,7 +593,7 @@ describe('MapActivityService', () => {
 
       const result = await startActivity(params);
 
-      expect(result.location.coordinates).toEqual([-74.0060, 40.7128]);
+      expect(result.location.coordinates).toEqual([-74.006, 40.7128]);
     });
 
     it('should handle zero coordinates', async () => {
@@ -649,7 +653,7 @@ describe('MapActivityService', () => {
         activity: 'exploring',
         location: {
           type: 'Point',
-          coordinates: [-74.0060, 40.7128],
+          coordinates: [-74.006, 40.7128],
         },
         radiusMeters: 50000,
         shareToMap: false,
@@ -679,7 +683,7 @@ describe('MapActivityService', () => {
         activity: 'popular_activity',
         location: {
           type: 'Point',
-          coordinates: [-74.0060, 40.7128],
+          coordinates: [-74.006, 40.7128],
         },
         radiusMeters: 200,
         shareToMap: true,
@@ -691,7 +695,7 @@ describe('MapActivityService', () => {
 
       mockRequest.mockResolvedValue([mockPin]);
 
-      const result = await getNearbyPins(40.7128, -74.0060);
+      const result = await getNearbyPins(40.7128, -74.006);
 
       expect(result[0].likes).toHaveLength(100);
     });
@@ -707,7 +711,7 @@ describe('MapActivityService', () => {
         message: longMessage,
         location: {
           type: 'Point',
-          coordinates: [-74.0060, 40.7128],
+          coordinates: [-74.006, 40.7128],
         },
         radiusMeters: 100,
         shareToMap: true,
@@ -719,7 +723,7 @@ describe('MapActivityService', () => {
 
       mockRequest.mockResolvedValue([mockPin]);
 
-      const result = await getNearbyPins(40.7128, -74.0060);
+      const result = await getNearbyPins(40.7128, -74.006);
 
       expect(result[0].message).toBe(longMessage);
       expect(result[0].message?.length).toBe(2000);
@@ -734,13 +738,15 @@ describe('MapActivityService', () => {
     it('should handle authentication errors', async () => {
       mockRequest.mockRejectedValue(new Error('Unauthorized'));
 
-      await expect(startActivity({ petId: 'pet123', activity: 'walking' })).rejects.toThrow('Unauthorized');
+      await expect(startActivity({ petId: 'pet123', activity: 'walking' })).rejects.toThrow(
+        'Unauthorized',
+      );
     });
 
     it('should handle server errors', async () => {
       mockRequest.mockRejectedValue(new Error('Internal server error'));
 
-      await expect(getNearbyPins(40.7128, -74.0060)).rejects.toThrow('Internal server error');
+      await expect(getNearbyPins(40.7128, -74.006)).rejects.toThrow('Internal server error');
     });
   });
 
@@ -791,7 +797,7 @@ describe('MapActivityService', () => {
         message: 'Type-safe message',
         location: {
           type: 'Point',
-          coordinates: [-74.0060, 40.7128],
+          coordinates: [-74.006, 40.7128],
         },
         radiusMeters: 500,
         shareToMap: true,
@@ -806,7 +812,7 @@ describe('MapActivityService', () => {
 
       mockRequest.mockResolvedValue([mockPin]);
 
-      const result = await getNearbyPins(40.7128, -74.0060);
+      const result = await getNearbyPins(40.7128, -74.006);
 
       expect(result[0]._id).toBe('typed-pin');
       expect(result[0].location.type).toBe('Point');

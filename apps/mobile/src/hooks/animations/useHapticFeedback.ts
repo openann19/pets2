@@ -3,18 +3,18 @@
  * Haptic feedback utilities
  */
 
-import * as Haptics from "expo-haptics";
+import * as Haptics from 'expo-haptics';
 
 export const useHapticFeedback = () => {
-  const triggerHaptic = (type: "light" | "medium" | "heavy" = "light") => {
+  const triggerHaptic = (type: 'light' | 'medium' | 'heavy' = 'light') => {
     switch (type) {
-      case "light":
+      case 'light':
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         break;
-      case "medium":
+      case 'medium':
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         break;
-      case "heavy":
+      case 'heavy':
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         break;
     }

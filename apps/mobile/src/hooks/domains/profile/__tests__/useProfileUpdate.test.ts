@@ -26,10 +26,12 @@ describe('useProfileUpdate', () => {
       const onSuccess = jest.fn();
       const onError = jest.fn();
 
-      const { result } = renderHook(() => useProfileUpdate({
-        onSuccess,
-        onError
-      }));
+      const { result } = renderHook(() =>
+        useProfileUpdate({
+          onSuccess,
+          onError,
+        }),
+      );
 
       expect(result.current.onSuccess).toBe(onSuccess);
       expect(result.current.onError).toBe(onError);
@@ -43,7 +45,7 @@ describe('useProfileUpdate', () => {
       const updateData = {
         firstName: 'John',
         lastName: 'Doe',
-        bio: 'Pet lover and developer'
+        bio: 'Pet lover and developer',
       };
 
       await act(async () => {
@@ -61,8 +63,8 @@ describe('useProfileUpdate', () => {
       const contactUpdate = {
         contactInfo: {
           email: 'john@example.com',
-          phone: '+1234567890'
-        }
+          phone: '+1234567890',
+        },
       };
 
       await act(async () => {
@@ -80,8 +82,8 @@ describe('useProfileUpdate', () => {
         preferences: {
           notifications: true,
           locationSharing: false,
-          theme: 'dark'
-        }
+          theme: 'dark',
+        },
       };
 
       await act(async () => {
@@ -100,8 +102,8 @@ describe('useProfileUpdate', () => {
       const photoUpdate = {
         photos: [
           { uri: 'file://photo1.jpg', width: 800, height: 600 },
-          { uri: 'file://photo2.jpg', width: 800, height: 600 }
-        ]
+          { uri: 'file://photo2.jpg', width: 800, height: 600 },
+        ],
       };
 
       await act(async () => {
@@ -116,7 +118,7 @@ describe('useProfileUpdate', () => {
       const { result } = renderHook(() => useProfileUpdate());
 
       const removePhotoUpdate = {
-        removePhotos: ['photo1.jpg', 'photo2.jpg']
+        removePhotos: ['photo1.jpg', 'photo2.jpg'],
       };
 
       await act(async () => {
@@ -131,7 +133,7 @@ describe('useProfileUpdate', () => {
       const { result } = renderHook(() => useProfileUpdate());
 
       const reorderUpdate = {
-        photoOrder: ['photo3.jpg', 'photo1.jpg', 'photo2.jpg']
+        photoOrder: ['photo3.jpg', 'photo1.jpg', 'photo2.jpg'],
       };
 
       await act(async () => {
@@ -200,8 +202,8 @@ describe('useProfileUpdate', () => {
 
       const invalidEmailUpdate = {
         contactInfo: {
-          email: 'invalid-email'
-        }
+          email: 'invalid-email',
+        },
       };
 
       await act(async () => {
@@ -217,8 +219,8 @@ describe('useProfileUpdate', () => {
 
       const invalidPhoneUpdate = {
         contactInfo: {
-          phone: 'invalid-phone'
-        }
+          phone: 'invalid-phone',
+        },
       };
 
       await act(async () => {
@@ -247,7 +249,7 @@ describe('useProfileUpdate', () => {
       const { result } = renderHook(() => useProfileUpdate());
 
       const invalidUpdate = {
-        firstName: 'A'.repeat(100) // Too long
+        firstName: 'A'.repeat(100), // Too long
       };
 
       await act(async () => {
@@ -331,7 +333,7 @@ describe('useProfileUpdate', () => {
 
       await act(async () => {
         const success = await result.current.updateProfile(updateData, {
-          optimistic: true
+          optimistic: true,
         });
         expect(success).toBe(true);
       });
@@ -349,7 +351,7 @@ describe('useProfileUpdate', () => {
       // Simulate optimistic update that fails
       await act(async () => {
         const success = await result.current.updateProfile(failedUpdate, {
-          optimistic: true
+          optimistic: true,
         });
         expect(success).toBe(false);
       });
@@ -365,7 +367,7 @@ describe('useProfileUpdate', () => {
       const initialState = {
         isUpdating: result.current.isUpdating,
         error: result.current.error,
-        lastUpdate: result.current.lastUpdate
+        lastUpdate: result.current.lastUpdate,
       };
 
       rerender();

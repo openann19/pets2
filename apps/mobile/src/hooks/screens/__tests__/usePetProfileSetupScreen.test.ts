@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { usePetProfileSetupScreen } from "../usePetProfileSetupScreen";
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { usePetProfileSetupScreen } from '../usePetProfileSetupScreen';
 
 // Mock navigation
 const mockNavigate = jest.fn();
@@ -14,11 +14,11 @@ const mockNavigation = {
 
 const mockRoute = {
   params: {
-    userIntent: "find_playmate",
+    userIntent: 'find_playmate',
   },
 };
 
-jest.mock("@react-navigation/native", () => ({
+jest.mock('@react-navigation/native', () => ({
   useNavigation: () => mockNavigation,
   useRoute: () => mockRoute,
 }));
@@ -33,10 +33,10 @@ const mockSubmitProfile = jest.fn();
 
 const mockDomainHook = {
   profile: {
-    name: "",
-    breed: "",
-    age: "",
-    bio: "",
+    name: '',
+    breed: '',
+    age: '',
+    bio: '',
     photos: [],
   },
   state: {
@@ -54,17 +54,17 @@ const mockDomainHook = {
   submitProfile: mockSubmitProfile,
 };
 
-jest.mock("../../domains/onboarding/usePetProfileSetup", () => ({
+jest.mock('../../domains/onboarding/usePetProfileSetup', () => ({
   usePetProfileSetup: () => mockDomainHook,
 }));
 
-describe("usePetProfileSetupScreen", () => {
+describe('usePetProfileSetupScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockValidateCurrentStep.mockReturnValue(true);
   });
 
-  it("should initialize with data from domain hook", () => {
+  it('should initialize with data from domain hook', () => {
     const { result } = renderHook(() => usePetProfileSetupScreen());
 
     expect(result.current.profile).toEqual(mockDomainHook.profile);
@@ -73,27 +73,24 @@ describe("usePetProfileSetupScreen", () => {
     expect(result.current.progressPercentage).toBe(0);
   });
 
-  it("should expose userIntent from route params", () => {
+  it('should expose userIntent from route params', () => {
     const { result } = renderHook(() => usePetProfileSetupScreen());
 
-    expect(result.current.userIntent).toBe("find_playmate");
+    expect(result.current.userIntent).toBe('find_playmate');
   });
 
-  it("should provide all navigation handlers", () => {
+  it('should provide all navigation handlers', () => {
     const { result } = renderHook(() => usePetProfileSetupScreen());
 
-    expect(typeof result.current.handleNext).toBe("function");
-    expect(typeof result.current.handlePrevious).toBe("function");
-    expect(typeof result.current.handleComplete).toBe("function");
-    expect(typeof result.current.handleGoBack).toBe("function");
+    expect(typeof result.current.handleNext).toBe('function');
+    expect(typeof result.current.handlePrevious).toBe('function');
+    expect(typeof result.current.handleComplete).toBe('function');
+    expect(typeof result.current.handleGoBack).toBe('function');
   });
 
-  it("should handle next step when can proceed", () => {
+  it('should handle next step when can proceed', () => {
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         canProceed: true,
@@ -109,12 +106,9 @@ describe("usePetProfileSetupScreen", () => {
     expect(mockSetCurrentStep).toHaveBeenCalledWith(1);
   });
 
-  it("should not proceed to next step when cannot proceed", () => {
+  it('should not proceed to next step when cannot proceed', () => {
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         canProceed: false,
@@ -130,12 +124,9 @@ describe("usePetProfileSetupScreen", () => {
     expect(mockSetCurrentStep).not.toHaveBeenCalled();
   });
 
-  it("should not exceed max step (step 2)", () => {
+  it('should not exceed max step (step 2)', () => {
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         canProceed: true,
@@ -151,12 +142,9 @@ describe("usePetProfileSetupScreen", () => {
     expect(mockSetCurrentStep).not.toHaveBeenCalled();
   });
 
-  it("should handle previous step", () => {
+  it('should handle previous step', () => {
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         state: { currentStep: 1, isSubmitting: false, error: null },
@@ -171,12 +159,9 @@ describe("usePetProfileSetupScreen", () => {
     expect(mockSetCurrentStep).toHaveBeenCalledWith(0);
   });
 
-  it("should not go below step 0", () => {
+  it('should not go below step 0', () => {
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         state: { currentStep: 0, isSubmitting: false, error: null },
@@ -191,14 +176,11 @@ describe("usePetProfileSetupScreen", () => {
     expect(mockSetCurrentStep).not.toHaveBeenCalled();
   });
 
-  it("should handle complete and navigate to preferences", async () => {
+  it('should handle complete and navigate to preferences', async () => {
     mockSubmitProfile.mockResolvedValue(undefined);
 
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         canProceed: true,
@@ -211,17 +193,14 @@ describe("usePetProfileSetupScreen", () => {
     });
 
     expect(mockSubmitProfile).toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith("PreferencesSetup", {
-      userIntent: "find_playmate",
+    expect(mockNavigate).toHaveBeenCalledWith('PreferencesSetup', {
+      userIntent: 'find_playmate',
     });
   });
 
-  it("should not complete when cannot proceed", async () => {
+  it('should not complete when cannot proceed', async () => {
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         canProceed: false,
@@ -237,15 +216,12 @@ describe("usePetProfileSetupScreen", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("should handle error during completion", async () => {
-    const error = new Error("Submission failed");
+  it('should handle error during completion', async () => {
+    const error = new Error('Submission failed');
     mockSubmitProfile.mockRejectedValue(error);
 
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         canProceed: true,
@@ -261,7 +237,7 @@ describe("usePetProfileSetupScreen", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("should handle go back navigation", () => {
+  it('should handle go back navigation', () => {
     const { result } = renderHook(() => usePetProfileSetupScreen());
 
     act(() => {
@@ -271,7 +247,7 @@ describe("usePetProfileSetupScreen", () => {
     expect(mockGoBack).toHaveBeenCalled();
   });
 
-  it("should expose domain hook methods", () => {
+  it('should expose domain hook methods', () => {
     const { result } = renderHook(() => usePetProfileSetupScreen());
 
     expect(result.current.updateProfile).toBe(mockUpdateProfile);
@@ -281,12 +257,9 @@ describe("usePetProfileSetupScreen", () => {
     expect(result.current.validateCurrentStep).toBe(mockValidateCurrentStep);
   });
 
-  it("should track progress percentage from domain hook", () => {
+  it('should track progress percentage from domain hook', () => {
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         progressPercentage: 66,
@@ -297,20 +270,17 @@ describe("usePetProfileSetupScreen", () => {
     expect(result.current.progressPercentage).toBe(66);
   });
 
-  it("should expose profile data from domain hook", () => {
+  it('should expose profile data from domain hook', () => {
     const mockProfile = {
-      name: "Buddy",
-      breed: "Golden Retriever",
-      age: "3",
-      bio: "Friendly dog",
-      photos: ["photo1.jpg", "photo2.jpg"],
+      name: 'Buddy',
+      breed: 'Golden Retriever',
+      age: '3',
+      bio: 'Friendly dog',
+      photos: ['photo1.jpg', 'photo2.jpg'],
     };
 
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         profile: mockProfile,
@@ -321,18 +291,15 @@ describe("usePetProfileSetupScreen", () => {
     expect(result.current.profile).toEqual(mockProfile);
   });
 
-  it("should expose state from domain hook", () => {
+  it('should expose state from domain hook', () => {
     const mockState = {
       currentStep: 2,
       isSubmitting: true,
-      error: "Validation error",
+      error: 'Validation error',
     };
 
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         state: mockState,
@@ -343,15 +310,12 @@ describe("usePetProfileSetupScreen", () => {
     expect(result.current.state).toEqual(mockState);
   });
 
-  it("should handle multi-step navigation flow", () => {
+  it('should handle multi-step navigation flow', () => {
     const { result, rerender } = renderHook(() => usePetProfileSetupScreen());
 
     // Step 0 -> Step 1
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         canProceed: true,
@@ -368,10 +332,7 @@ describe("usePetProfileSetupScreen", () => {
 
     // Step 1 -> Step 2
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         canProceed: true,
@@ -387,24 +348,19 @@ describe("usePetProfileSetupScreen", () => {
     expect(mockSetCurrentStep).toHaveBeenCalledWith(2);
   });
 
-  it("should pass userIntent to PreferencesSetup on complete", async () => {
+  it('should pass userIntent to PreferencesSetup on complete', async () => {
     mockSubmitProfile.mockResolvedValue(undefined);
 
     const customRoute = {
       params: {
-        userIntent: "find_companion",
+        userIntent: 'find_companion',
       },
     };
 
-    jest
-      .mocked(require("@react-navigation/native").useRoute)
-      .mockReturnValue(customRoute);
+    jest.mocked(require('@react-navigation/native').useRoute).mockReturnValue(customRoute);
 
     jest
-      .mocked(
-        require("../../domains/onboarding/usePetProfileSetup")
-          .usePetProfileSetup,
-      )
+      .mocked(require('../../domains/onboarding/usePetProfileSetup').usePetProfileSetup)
       .mockReturnValue({
         ...mockDomainHook,
         canProceed: true,
@@ -416,8 +372,8 @@ describe("usePetProfileSetupScreen", () => {
       await result.current.handleComplete();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("PreferencesSetup", {
-      userIntent: "find_companion",
+    expect(mockNavigate).toHaveBeenCalledWith('PreferencesSetup', {
+      userIntent: 'find_companion',
     });
   });
 });

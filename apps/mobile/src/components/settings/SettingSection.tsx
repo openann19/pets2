@@ -1,13 +1,13 @@
-import React from "react";
-import { View, StyleSheet, Text } from "react-native";
-import { SettingItemComponent } from "./SettingItemComponent";
+import React from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import { SettingItemComponent } from './SettingItemComponent';
 
 interface SettingItem {
   id: string;
   title: string;
   subtitle?: string;
   icon: string;
-  type: "toggle" | "navigation" | "action";
+  type: 'toggle' | 'navigation' | 'action';
   value?: boolean;
   destructive?: boolean;
 }
@@ -15,7 +15,7 @@ interface SettingItem {
 interface SettingSectionProps {
   title: string;
   items: SettingItem[];
-  category?: "notifications" | "preferences";
+  category?: 'notifications' | 'preferences';
   onItemPress?: (id: string) => void;
   onToggle?: (id: string, value: boolean) => void;
 }
@@ -50,9 +50,9 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: Theme.colors.neutral[500],
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 12,
   },

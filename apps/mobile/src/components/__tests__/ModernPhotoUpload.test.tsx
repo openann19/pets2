@@ -21,7 +21,10 @@ jest.mock('../containers/FXContainer', () => {
 
 jest.mock('../buttons/EliteButton', () => {
   return ({ title, onPress, children }: any) => (
-    <button onPress={onPress} title={title}>
+    <button
+      onPress={onPress}
+      title={title}
+    >
       {children}
     </button>
   );
@@ -32,8 +35,18 @@ jest.mock('expo-haptics');
 jest.mock('../photo/AdvancedPhotoEditor', () => ({
   AdvancedPhotoEditor: ({ onSave, onCancel }: any) => (
     <div>
-      <button onPress={onSave} testID="editor-save">Save</button>
-      <button onPress={onCancel} testID="editor-cancel">Cancel</button>
+      <button
+        onPress={onSave}
+        testID="editor-save"
+      >
+        Save
+      </button>
+      <button
+        onPress={onCancel}
+        testID="editor-cancel"
+      >
+        Cancel
+      </button>
     </div>
   ),
 }));
@@ -41,14 +54,11 @@ jest.mock('../photo/AdvancedPhotoEditor', () => ({
 const mockRequestMediaLibraryPermissions = jest.fn();
 const mockLaunchImageLibraryAsync = jest.fn();
 
-(ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock) =
-  mockRequestMediaLibraryPermissions;
+(ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock) = mockRequestMediaLibraryPermissions;
 (ImagePicker.launchImageLibraryAsync as jest.Mock) = mockLaunchImageLibraryAsync;
 
 describe('ModernPhotoUpload', () => {
-  const mockPhotos = [
-    { id: '1', uri: 'file://photo1.jpg', isUploading: false },
-  ];
+  const mockPhotos = [{ id: '1', uri: 'file://photo1.jpg', isUploading: false }];
   const mockOnPhotosChange = jest.fn();
 
   beforeEach(() => {
@@ -68,7 +78,7 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={mockPhotos}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       expect(getByText('Pet Photos')).toBeTruthy();
@@ -81,7 +91,7 @@ describe('ModernPhotoUpload', () => {
           photos={mockPhotos}
           onPhotosChange={mockOnPhotosChange}
           maxPhotos={6}
-        />
+        />,
       );
 
       expect(getByText(/1\/6/)).toBeTruthy();
@@ -93,25 +103,27 @@ describe('ModernPhotoUpload', () => {
           photos={mockPhotos}
           onPhotosChange={mockOnPhotosChange}
           maxPhotos={6}
-        />
+        />,
       );
 
       expect(getByText('Add Photo')).toBeTruthy();
     });
 
     it('should hide add photo button when at max', () => {
-      const maxPhotos = Array(6).fill(null).map((_, i) => ({
-        id: String(i),
-        uri: `file://photo${i}.jpg`,
-        isUploading: false,
-      }));
+      const maxPhotos = Array(6)
+        .fill(null)
+        .map((_, i) => ({
+          id: String(i),
+          uri: `file://photo${i}.jpg`,
+          isUploading: false,
+        }));
 
       const { queryByText } = render(
         <ModernPhotoUpload
           photos={maxPhotos}
           onPhotosChange={mockOnPhotosChange}
           maxPhotos={6}
-        />
+        />,
       );
 
       expect(queryByText('Add Photo')).toBeNull();
@@ -122,7 +134,7 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       expect(getByText('No photos yet')).toBeTruthy();
@@ -135,7 +147,7 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       const addButton = getByText('Add Photo');
@@ -156,7 +168,7 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       const addButton = getByText('Add Photo');
@@ -175,7 +187,7 @@ describe('ModernPhotoUpload', () => {
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
           disabled={true}
-        />
+        />,
       );
 
       const addButton = getByText('Add Photo');
@@ -185,11 +197,13 @@ describe('ModernPhotoUpload', () => {
     });
 
     it('should limit photos to maxPhotos', async () => {
-      const nearMaxPhotos = Array(5).fill(null).map((_, i) => ({
-        id: String(i),
-        uri: `file://photo${i}.jpg`,
-        isUploading: false,
-      }));
+      const nearMaxPhotos = Array(5)
+        .fill(null)
+        .map((_, i) => ({
+          id: String(i),
+          uri: `file://photo${i}.jpg`,
+          isUploading: false,
+        }));
 
       mockLaunchImageLibraryAsync.mockResolvedValue({
         canceled: false,
@@ -201,7 +215,7 @@ describe('ModernPhotoUpload', () => {
           photos={nearMaxPhotos}
           onPhotosChange={mockOnPhotosChange}
           maxPhotos={6}
-        />
+        />,
       );
 
       const addButton = getByText('Add Photo');
@@ -215,11 +229,13 @@ describe('ModernPhotoUpload', () => {
     });
 
     it('should show photo limit alert', async () => {
-      const maxPhotos = Array(6).fill(null).map((_, i) => ({
-        id: String(i),
-        uri: `file://photo${i}.jpg`,
-        isUploading: false,
-      }));
+      const maxPhotos = Array(6)
+        .fill(null)
+        .map((_, i) => ({
+          id: String(i),
+          uri: `file://photo${i}.jpg`,
+          isUploading: false,
+        }));
 
       Alert.alert = jest.fn();
 
@@ -228,7 +244,7 @@ describe('ModernPhotoUpload', () => {
           photos={maxPhotos}
           onPhotosChange={mockOnPhotosChange}
           maxPhotos={6}
-        />
+        />,
       );
 
       // Try to add 7th photo
@@ -244,11 +260,11 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       const addButton = getByText('Add Photo');
-      
+
       await act(async () => {
         fireEvent.press(addButton);
       });
@@ -263,7 +279,7 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       const addButton = getByText('Add Photo');
@@ -287,7 +303,7 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       const addButton = getByText('Add Photo');
@@ -313,7 +329,7 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={mockPhotos}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       // Mock remove button
@@ -321,7 +337,7 @@ describe('ModernPhotoUpload', () => {
       removeButton.onclick = () => {
         mockOnPhotosChange([]);
       };
-      
+
       fireEvent(removeButton, { press: jest.fn() });
 
       // Photo should be removed
@@ -331,15 +347,13 @@ describe('ModernPhotoUpload', () => {
 
   describe('Uploading State', () => {
     it('should show uploading overlay', () => {
-      const uploadingPhoto = [
-        { id: '1', uri: 'file://photo1.jpg', isUploading: true },
-      ];
+      const uploadingPhoto = [{ id: '1', uri: 'file://photo1.jpg', isUploading: true }];
 
       const { getByText } = render(
         <ModernPhotoUpload
           photos={uploadingPhoto}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       expect(getByText('Uploading...')).toBeTruthy();
@@ -361,23 +375,21 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={errorPhoto}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       expect(getByText('Failed')).toBeTruthy();
     });
 
     it('should handle picker error', async () => {
-      mockLaunchImageLibraryAsync.mockRejectedValue(
-        new Error('Picker failed')
-      );
+      mockLaunchImageLibraryAsync.mockRejectedValue(new Error('Picker failed'));
       Alert.alert = jest.fn();
 
       const { getByText } = render(
         <ModernPhotoUpload
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       const addButton = getByText('Add Photo');
@@ -397,7 +409,7 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       const addButton = getByText('Add Photo');
@@ -413,7 +425,7 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       const addButton = getByText('Add Photo');
@@ -429,7 +441,7 @@ describe('ModernPhotoUpload', () => {
       });
 
       expect(Haptics.notificationAsync).toHaveBeenCalledWith(
-        Haptics.NotificationFeedbackType.Success
+        Haptics.NotificationFeedbackType.Success,
       );
     });
   });
@@ -440,7 +452,7 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       expect(true).toBeTruthy();
@@ -451,25 +463,27 @@ describe('ModernPhotoUpload', () => {
         <ModernPhotoUpload
           photos={mockPhotos}
           onPhotosChange={mockOnPhotosChange}
-        />
+        />,
       );
 
       expect(true).toBeTruthy();
     });
 
     it('should handle max photos', () => {
-      const maxPhotos = Array(6).fill(null).map((_, i) => ({
-        id: String(i),
-        uri: `file://photo${i}.jpg`,
-        isUploading: false,
-      }));
+      const maxPhotos = Array(6)
+        .fill(null)
+        .map((_, i) => ({
+          id: String(i),
+          uri: `file://photo${i}.jpg`,
+          isUploading: false,
+        }));
 
       render(
         <ModernPhotoUpload
           photos={maxPhotos}
           onPhotosChange={mockOnPhotosChange}
           maxPhotos={6}
-        />
+        />,
       );
 
       expect(true).toBeTruthy();
@@ -481,11 +495,10 @@ describe('ModernPhotoUpload', () => {
           photos={[]}
           onPhotosChange={mockOnPhotosChange}
           disabled={true}
-        />
+        />,
       );
 
       expect(true).toBeTruthy();
     });
   });
 });
-

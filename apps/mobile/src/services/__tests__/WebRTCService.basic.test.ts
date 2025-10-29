@@ -9,12 +9,8 @@ jest.mock('react-native-incall-manager');
 jest.mock('react-native-webrtc', () => ({
   mediaDevices: {
     getUserMedia: jest.fn().mockResolvedValue({
-      getAudioTracks: jest.fn().mockReturnValue([
-        { enabled: true, _switchCamera: jest.fn() }
-      ]),
-      getVideoTracks: jest.fn().mockReturnValue([
-        { enabled: true, _switchCamera: jest.fn() }
-      ]),
+      getAudioTracks: jest.fn().mockReturnValue([{ enabled: true, _switchCamera: jest.fn() }]),
+      getVideoTracks: jest.fn().mockReturnValue([{ enabled: true, _switchCamera: jest.fn() }]),
       getTracks: jest.fn().mockReturnValue([]),
       addTrack: jest.fn(),
       removeTrack: jest.fn(),
@@ -104,12 +100,8 @@ describe('WebRTCService - Basic Tests', () => {
     beforeEach(() => {
       // Mock the localStream on the service
       (WebRTCService as any).localStream = {
-        getAudioTracks: jest.fn().mockReturnValue([
-          { enabled: true, _switchCamera: jest.fn() }
-        ]),
-        getVideoTracks: jest.fn().mockReturnValue([
-          { enabled: true, _switchCamera: jest.fn() }
-        ]),
+        getAudioTracks: jest.fn().mockReturnValue([{ enabled: true, _switchCamera: jest.fn() }]),
+        getVideoTracks: jest.fn().mockReturnValue([{ enabled: true, _switchCamera: jest.fn() }]),
         getTracks: jest.fn().mockReturnValue([]),
       };
 

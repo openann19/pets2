@@ -1,4 +1,3 @@
-
 // Auto-generated type definitions for bulk fixes
 export interface ApiResponse<T = unknown> {
   data: T;

@@ -1,10 +1,10 @@
-import React, { useCallback } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import React, { useCallback } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { EliteButton, FadeInUp } from "../EliteComponents";
-import { GlassContainer } from "../GlassMorphism";
-import PremiumTypography from "../PremiumTypography";
-import type { SwipeFilters as SwipeFiltersType } from "../../hooks/useSwipeData";
+import { EliteButton, FadeInUp } from '../EliteComponents';
+import { GlassContainer } from '../GlassMorphism';
+import PremiumTypography from '../PremiumTypography';
+import type { SwipeFilters as SwipeFiltersType } from '../../hooks/useSwipeData';
 
 const { PremiumBody } = PremiumTypography;
 
@@ -14,17 +14,13 @@ interface SwipeFiltersProps {
   onApplyFilters: () => void;
 }
 
-export function SwipeFilters({
-  filters,
-  onFiltersChange,
-  onApplyFilters,
-}: SwipeFiltersProps) {
+export function SwipeFilters({ filters, onFiltersChange, onApplyFilters }: SwipeFiltersProps) {
   const handleBreedPress = useCallback(
     (breed: string) => {
       onFiltersChange({
         ...filters,
-        breed: filters.breed === breed ? "" : breed,
-        species: "dog",
+        breed: filters.breed === breed ? '' : breed,
+        species: 'dog',
       });
     },
     [filters, onFiltersChange],
@@ -34,7 +30,7 @@ export function SwipeFilters({
     (species: string) => {
       onFiltersChange({
         ...filters,
-        species: species === "All" ? "" : species.toLowerCase(),
+        species: species === 'All' ? '' : species.toLowerCase(),
       });
     },
     [filters, onFiltersChange],
@@ -48,23 +44,25 @@ export function SwipeFilters({
         border="light"
         shadow="medium"
       >
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
           <View style={styles.filterContent}>
             {/* Quick Breed Filters */}
-            <PremiumBody size="sm" weight="semibold" gradient="primary">
+            <PremiumBody
+              size="sm"
+              weight="semibold"
+              gradient="primary"
+            >
               Popular Breeds:
             </PremiumBody>
             <View style={styles.breedFilters}>
-              {[
-                "Shiba Inu",
-                "Golden Retriever",
-                "Labrador",
-                "Border Collie",
-              ].map((breed) => (
+              {['Shiba Inu', 'Golden Retriever', 'Labrador', 'Border Collie'].map((breed) => (
                 <EliteButton
                   key={breed}
                   title={breed}
-                  variant={filters.breed === breed ? "primary" : "glass"}
+                  variant={filters.breed === breed ? 'primary' : 'glass'}
                   size="sm"
                   magnetic={true}
                   ripple={true}
@@ -78,23 +76,19 @@ export function SwipeFilters({
 
             {/* Species Filter */}
             <View style={styles.speciesFilters}>
-              {["All", "Dogs", "Cats", "Birds"].map((species) => (
+              {['All', 'Dogs', 'Cats', 'Birds'].map((species) => (
                 <EliteButton
                   key={species}
                   title={species}
                   variant={
-                    (species === "All" ? "" : species.toLowerCase()) ===
-                    filters.species
-                      ? "secondary"
-                      : "glass"
+                    (species === 'All' ? '' : species.toLowerCase()) === filters.species
+                      ? 'secondary'
+                      : 'glass'
                   }
                   size="sm"
                   magnetic={true}
                   ripple={true}
-                  glow={
-                    (species === "All" ? "" : species.toLowerCase()) ===
-                    filters.species
-                  }
+                  glow={(species === 'All' ? '' : species.toLowerCase()) === filters.species}
                   onPress={() => {
                     handleSpeciesPress(species);
                   }}
@@ -124,15 +118,15 @@ export function SwipeFilters({
 const styles = StyleSheet.create({
   filterContent: {
     paddingHorizontal: 20,
-    alignItems: "flex-start",
+    alignItems: 'flex-start',
   },
   breedFilters: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: 12,
     gap: 8,
   },
   speciesFilters: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: 12,
     gap: 6,
   },

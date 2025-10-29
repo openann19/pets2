@@ -1,7 +1,7 @@
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useMemo, useState } from "react";
-import type { ViewStyle } from "react-native";
-import { Animated, StyleSheet, View } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useMemo, useState } from 'react';
+import type { ViewStyle } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 
 interface ShimmerPlaceholderProps {
   width?: number | string;
@@ -12,7 +12,7 @@ interface ShimmerPlaceholderProps {
 }
 
 export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
-  width = "100%",
+  width = '100%',
   height = 20,
   borderRadius = 4,
   style,
@@ -57,8 +57,8 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
       animatedValue.interpolate({
         inputRange: [0, 1],
         outputRange: [
-          typeof width === "number" ? -width : -100,
-          typeof width === "number" ? width : 100,
+          typeof width === 'number' ? -width : -100,
+          typeof width === 'number' ? width : 100,
         ],
       }),
     [animatedValue, width],
@@ -78,7 +78,7 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
             width,
             height,
             borderRadius,
-            backgroundColor: "#E5E5E5",
+            backgroundColor: '#E5E5E5',
           },
           style as any,
         ] as any
@@ -95,7 +95,7 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
         }
       >
         <LinearGradient
-          colors={["transparent", "rgba(255,255,255,0.8)", "transparent"]}
+          colors={['transparent', 'rgba(255,255,255,0.8)', 'transparent']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradient}
@@ -107,11 +107,11 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   shimmer: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
   },
   gradient: {
     flex: 1,
@@ -128,7 +128,11 @@ export const ShimmerCard: React.FC<{ delay?: number }> = ({ delay }) => (
       delay={delay ?? 0}
     />
     <View style={{ marginTop: 12 }}>
-      <ShimmerPlaceholder width="80%" height={16} delay={delay ?? 0} />
+      <ShimmerPlaceholder
+        width="80%"
+        height={16}
+        delay={delay ?? 0}
+      />
       <ShimmerPlaceholder
         width="60%"
         height={14}
@@ -142,7 +146,10 @@ export const ShimmerCard: React.FC<{ delay?: number }> = ({ delay }) => (
 export const ShimmerList: React.FC<{ count?: number }> = ({ count = 5 }) => (
   <View>
     {Array.from({ length: count }).map((_, index) => (
-      <ShimmerCard key={index} delay={index * 50} />
+      <ShimmerCard
+        key={index}
+        delay={index * 50}
+      />
     ))}
   </View>
 );

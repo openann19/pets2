@@ -7,7 +7,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { ActivityIndicator, Alert, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 import { getExtendedColors } from "../../theme/adapters";
 import type { AIScreenProps } from "../../navigation/types";
 import { useAIPhotoAnalyzerScreen } from "../../hooks/screens/useAIPhotoAnalyzerScreen";

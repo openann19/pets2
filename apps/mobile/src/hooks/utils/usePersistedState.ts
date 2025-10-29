@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { logger } from "../../services/logger";
+import { useCallback, useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '../../services/logger';
 
 export interface UsePersistedStateOptions<T> {
   key: string;

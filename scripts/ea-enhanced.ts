@@ -1,6 +1,6 @@
 // scripts/ea-enhanced.ts
 import { globby } from 'globby';
-import { execa } from 'execa';
+import { execSync } from 'child_process';
 import { Project, SyntaxKind, Node, SourceFile } from 'ts-morph';
 import { mkdir, writeFile } from 'fs/promises';
 import path from 'node:path';
@@ -105,14 +105,15 @@ function applyColorMap(sf: SourceFile, report: FileReport) {
         const expr = e.getExpression().getText(); // e.g., theme.colors.secondary
         const literal = e.getArgumentExpression()?.getText() ?? '';
         if (/^theme\.colors\.[A-Za-z0-9_]+$/.test(expr) && /^\d{2,3}$/.test(literal)) {
+          const pos = e.getStart();
           const explicit = COLOR_MAP[`${expr}[${literal.replaceAll("'", '').replaceAll('"', '')}]`];
           if (explicit) {
             e.replaceWithText(explicit);
-            recordEdit(report, { kind: 'color-shade-explicit', from: `${expr}[${literal}]`, to: explicit, pos: e.getStart() });
+            recordEdit(report, { kind: 'color-shade-explicit', from: `${expr}[${literal}]`, to: explicit, pos });
           } else {
             const mappedBase = COLOR_MAP[expr] ?? expr.replace(/^theme\.colors\./, 'theme.colors.');
             e.replaceWithText(mappedBase);
-            recordEdit(report, { kind: 'color-shade-collapse', from: `${expr}[${literal}]`, to: mappedBase, pos: e.getStart() });
+            recordEdit(report, { kind: 'color-shade-collapse', from: `${expr}[${literal}]`, to: mappedBase, pos });
           }
         }
       }
@@ -153,8 +154,8 @@ function applySpacingAndRadii(sf: SourceFile, report: FileReport) {
   });
 }
 
-async function run(cmd: string, args: string[]) {
-  await execa(cmd, args, { stdio: 'inherit' });
+function run(cmd: string, args: string[]) {
+  execSync(`${cmd} ${args.join(' ')}`, { stdio: 'inherit' });
 }
 
 (async () => {
@@ -164,7 +165,7 @@ async function run(cmd: string, args: string[]) {
 
   // Fast wins before AST work
   try {
-    await run('pnpm', ['-s', 'lint:fix']);
+    run('pnpm', ['-s', 'lint:fix']);
   } catch {
     // continue; we still want to proceed
   }
@@ -184,25 +185,30 @@ async function run(cmd: string, args: string[]) {
   for (const sf of project.getSourceFiles()) {
     const report: FileReport = { file: sf.getFilePath(), edits: [] };
 
-    // Import alias normalization
-    replaceModuleSpecifierIfAliased(sf, report);
-
-    // Theme/color conversions
-    applyColorMap(sf, report);
-
-    // Spacing/radii conversions
-    applySpacingAndRadii(sf, report);
-
-    // Imports cleanup
     try {
-      sf.fixMissingImports();
-      sf.organizeImports();
-    } catch {}
+      // Import alias normalization
+      replaceModuleSpecifierIfAliased(sf, report);
 
-    if (report.edits.length > 0) {
-      changed++;
-      reports.push(report);
-      if (WRITE) await sf.save();
+      // Theme/color conversions
+      applyColorMap(sf, report);
+
+      // Spacing/radii conversions
+      applySpacingAndRadii(sf, report);
+
+      // Imports cleanup
+      try {
+        sf.fixMissingImports();
+        sf.organizeImports();
+      } catch {}
+
+      if (report.edits.length > 0) {
+        changed++;
+        reports.push(report);
+        if (WRITE) await sf.save();
+      }
+    } catch (err) {
+      log(`⚠️ Error processing ${sf.getFilePath()}: ${err instanceof Error ? err.message : String(err)}`);
+      // Continue with next file
     }
   }
 
@@ -221,9 +227,9 @@ async function run(cmd: string, args: string[]) {
 
   // Final format + typecheck (non-fatal)
   if (WRITE) {
-    try { await run('pnpm', ['-s', 'format']); } catch {}
+    try { run('pnpm', ['-s', 'format']); } catch {}
   }
-  try { await run('pnpm', ['-s', 'mobile:tsc']); } catch {}
+  try { run('pnpm', ['-s', 'mobile:tsc']); } catch {}
 
   log('Done.');
 })();

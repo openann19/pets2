@@ -1,13 +1,9 @@
-import { useCallback } from "react";
-import {
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import { useCallback } from 'react';
+import { useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 
-import { SPRING_CONFIGS } from "./configs/springConfigs";
-import { TIMING_CONFIGS } from "./configs/timingConfigs";
-import { prefersReducedMotion } from "./configs/accessibility";
+import { SPRING_CONFIGS } from './configs/springConfigs';
+import { TIMING_CONFIGS } from './configs/timingConfigs';
+import { prefersReducedMotion } from './configs/accessibility';
 
 /**
  * Hook for spring animations
@@ -15,24 +11,18 @@ import { prefersReducedMotion } from "./configs/accessibility";
 
 interface UseSpringAnimationReturn {
   value: ReturnType<typeof useSharedValue<number>>;
-  animate: (
-    toValue: number,
-    customConfig?: Partial<typeof SPRING_CONFIGS.standard>,
-  ) => void;
+  animate: (toValue: number, customConfig?: Partial<typeof SPRING_CONFIGS.standard>) => void;
   reset: () => void;
 }
 
 export function useSpringAnimation(
   initialValue: number = 0,
-  config: keyof typeof SPRING_CONFIGS = "standard",
+  config: keyof typeof SPRING_CONFIGS = 'standard',
 ): UseSpringAnimationReturn {
   const animatedValue = useSharedValue(initialValue);
 
   const animate = useCallback(
-    (
-      toValue: number,
-      customConfig?: Partial<typeof SPRING_CONFIGS.standard>,
-    ) => {
+    (toValue: number, customConfig?: Partial<typeof SPRING_CONFIGS.standard>) => {
       const springConfig = {
         ...SPRING_CONFIGS[config],
         ...customConfig,

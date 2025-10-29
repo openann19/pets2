@@ -3,7 +3,6 @@ const detector = {
   async: false,
   detect: () => 'en',
   init: () => {},
-  cacheUserLanguage: () => {}
+  cacheUserLanguage: () => {},
 };
 export default detector;
-

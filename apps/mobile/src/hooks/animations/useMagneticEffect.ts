@@ -9,8 +9,8 @@ import {
   withSpring,
   interpolate,
   Extrapolate,
-} from "react-native-reanimated";
-import { PREMIUM_ANIMATIONS } from "./constants";
+} from 'react-native-reanimated';
+import { PREMIUM_ANIMATIONS } from './constants';
 
 export const useMagneticEffect = (enabled = true) => {
   const rotateX = useSharedValue(0);

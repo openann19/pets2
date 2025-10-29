@@ -1,19 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
-import * as Haptics from "expo-haptics";
-import { useDeactivateAccountScreen } from "../hooks/screens/useDeactivateAccountScreen";
-import { useTheme } from '@/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/src/theme';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDeactivateAccountScreen } from '../hooks/screens/useDeactivateAccountScreen';
 
 interface DeactivateAccountScreenProps {
   navigation: {
@@ -21,9 +12,7 @@ interface DeactivateAccountScreenProps {
   };
 }
 
-function DeactivateAccountScreen({
-  navigation,
-}: DeactivateAccountScreenProps): JSX.Element {
+function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): JSX.Element {
   const {
     reason,
     confirmText,
@@ -38,7 +27,7 @@ function DeactivateAccountScreen({
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={[theme.colors.danger, theme.colors.danger + "40", theme.colors.danger]}
+        colors={[theme.colors.danger, theme.colors.danger + '40', theme.colors.danger]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -47,10 +36,20 @@ function DeactivateAccountScreen({
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-             testID="DeactivateAccountScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleGoBack}
+            testID="DeactivateAccountScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={handleGoBack}
           >
-            <BlurView intensity={20} style={styles.backButtonBlur}>
-              <Ionicons name="arrow-back" size={24} color="white" />
+            <BlurView
+              intensity={20}
+              style={styles.backButtonBlur}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color="white"
+              />
             </BlurView>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Deactivate Account</Text>
@@ -58,13 +57,23 @@ function DeactivateAccountScreen({
         </View>
 
         {/* Content */}
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Warning */}
-          <BlurView intensity={15} style={styles.warningCard}>
-            <Ionicons name="warning-outline" size={24} color={theme.colors.warning} />
+          <BlurView
+            intensity={15}
+            style={styles.warningCard}
+          >
+            <Ionicons
+              name="warning-outline"
+              size={24}
+              color={theme.colors.warning}
+            />
             <Text style={styles.warningText}>
-              Deactivating your account will temporarily hide your profile and
-              pause all activity. You can reactivate anytime by logging back in.
+              Deactivating your account will temporarily hide your profile and pause all activity.
+              You can reactivate anytime by logging back in.
             </Text>
           </BlurView>
 
@@ -78,7 +87,10 @@ function DeactivateAccountScreen({
                 styles.reasonCard,
                 reason === item && styles.reasonCardSelected,
               ])}
-               testID="DeactivateAccountScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+              testID="DeactivateAccountScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => {
                 selectReason(item);
               }}
             >
@@ -95,15 +107,22 @@ function DeactivateAccountScreen({
                   {item}
                 </Text>
                 {reason === item && (
-                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={20}
+                    color={theme.colors.success}
+                  />
                 )}
               </BlurView>
             </TouchableOpacity>
           ))}
 
           {/* Custom Reason */}
-          {reason === "Other" && (
-            <BlurView intensity={15} style={styles.customReasonCard}>
+          {reason === 'Other' && (
+            <BlurView
+              intensity={15}
+              style={styles.customReasonCard}
+            >
               <TextInput
                 style={styles.customReasonInput}
                 placeholder="Please tell us more..."
@@ -119,10 +138,11 @@ function DeactivateAccountScreen({
           {/* Confirmation */}
           <Text style={styles.sectionTitle}>Confirm Deactivation</Text>
 
-          <BlurView intensity={15} style={styles.confirmationCard}>
-            <Text style={styles.confirmationText}>
-              Type "deactivate" to confirm:
-            </Text>
+          <BlurView
+            intensity={15}
+            style={styles.confirmationCard}
+          >
+            <Text style={styles.confirmationText}>Type "deactivate" to confirm:</Text>
             <TextInput
               style={styles.confirmationInput}
               placeholder="deactivate"
@@ -137,7 +157,10 @@ function DeactivateAccountScreen({
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={StyleSheet.flatten([styles.button, styles.cancelButton])}
-               testID="DeactivateAccountScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+              testID="DeactivateAccountScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => {
                 navigation.goBack();
               }}
             >
@@ -148,18 +171,17 @@ function DeactivateAccountScreen({
               style={StyleSheet.flatten([
                 styles.button,
                 styles.deactivateButton,
-                (!reason ||
-                  confirmText.toLowerCase() !== "deactivate" ||
-                  loading) &&
+                (!reason || confirmText.toLowerCase() !== 'deactivate' || loading) &&
                   styles.buttonDisabled,
               ])}
-               testID="DeactivateAccountScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleDeactivate}
-              disabled={
-                !reason || confirmText.toLowerCase() !== "deactivate" || loading
-              }
+              testID="DeactivateAccountScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={handleDeactivate}
+              disabled={!reason || confirmText.toLowerCase() !== 'deactivate' || loading}
             >
               <Text style={styles.deactivateButtonText}>
-                {loading ? "Deactivating..." : "Deactivate Account"}
+                {loading ? 'Deactivating...' : 'Deactivate Account'}
               </Text>
             </TouchableOpacity>
           </View>
@@ -182,9 +204,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
@@ -192,17 +214,17 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   backButtonBlur: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
+    fontWeight: 'bold',
+    color: 'white',
   },
   headerSpacer: {
     width: 40,
@@ -212,50 +234,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   warningCard: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    backgroundColor: "rgba(245, 158, 11, 0.2)",
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: 'rgba(245, 158, 11, 0.2)',
     borderRadius: 16,
     padding: 16,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.3)",
+    borderColor: 'rgba(245, 158, 11, 0.3)',
   },
   warningText: {
     flex: 1,
     marginLeft: 12,
     fontSize: 14,
-    color: "white",
+    color: 'white',
     lineHeight: 20,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
+    fontWeight: 'bold',
+    color: 'white',
     marginBottom: 16,
     marginTop: 8,
   },
   reasonCard: {
     borderRadius: 12,
     marginBottom: 8,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   reasonCardSelected: {
     transform: [{ scale: 1.02 }],
   },
   reasonBlur: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 16,
   },
   reasonText: {
     fontSize: 16,
-    color: "white",
+    color: 'white',
     flex: 1,
   },
   reasonTextSelected: {
-    fontWeight: "600",
+    fontWeight: '600',
   },
   customReasonCard: {
     borderRadius: 12,
@@ -264,14 +286,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   customReasonInput: {
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 8,
     padding: 12,
-    color: "white",
+    color: 'white',
     fontSize: 16,
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
+    borderColor: 'rgba(255,255,255,0.2)',
   },
   confirmationCard: {
     borderRadius: 12,
@@ -280,21 +302,21 @@ const styles = StyleSheet.create({
   },
   confirmationText: {
     fontSize: 16,
-    color: "white",
+    color: 'white',
     marginBottom: 12,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   confirmationInput: {
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 8,
     padding: 12,
-    color: "white",
+    color: 'white',
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
+    borderColor: 'rgba(255,255,255,0.2)',
   },
   buttonContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 12,
     marginBottom: 24,
   },
@@ -302,33 +324,33 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 16,
     borderRadius: 12,
-    alignItems: "center",
+    alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: 'rgba(255,255,255,0.2)',
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
+    borderColor: 'rgba(255,255,255,0.3)',
   },
   cancelButtonText: {
-    color: "white",
+    color: 'white',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   deactivateButton: {
     backgroundColor: theme.colors.danger,
   },
   deactivateButtonText: {
-    color: "white",
+    color: 'white',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   buttonDisabled: {
     opacity: 0.5,
   },
   helpText: {
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 14,
-    color: "rgba(255,255,255,0.7)",
+    color: 'rgba(255,255,255,0.7)',
     marginBottom: 32,
   },
 });

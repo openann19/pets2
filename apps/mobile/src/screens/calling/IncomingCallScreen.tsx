@@ -201,8 +201,8 @@ export default function IncomingCallScreen({
               <Ionicons
                 name="call"
                 size={32}
-                color={theme.colors.neutral[0]
-                style={{ transform: [{ rotate: "135deg"} }] }}
+                color={theme.colors.onSurface}
+                style={{ transform: [{ rotate: "135deg" }] }}
               />
             </LinearGradient>
           </TouchableOpacity>
@@ -223,7 +223,7 @@ export default function IncomingCallScreen({
               colors={["#2ed573", "#1dd1a1"]}
               style={styles.buttonGradient}
             >
-              <Ionicons name="call" size={32} color={theme.colors.neutral[0]} }/>
+              <Ionicons name="call" size={32} color={theme.colors.onSurface} />
             </LinearGradient>
           </TouchableOpacity>
         </Animated.View>
@@ -238,12 +238,12 @@ export default function IncomingCallScreen({
           ])}
         >
           <TouchableOpacity style={styles.additionalButton} testID="IncomingCallScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
-            <Ionicons name="chatbubble" size={24} color={theme.colors.neutral[0]} }/>
+            <Ionicons name="chatbubble" size={24} color={theme.colors.onSurface} />
             <Text style={styles.additionalButtonText}>Message</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.additionalButton} testID="IncomingCallScreen-button-2" accessibilityLabel="Button" accessibilityRole="button">
-            <Ionicons name="person" size={24} color={theme.colors.neutral[0]} }/>
+            <Ionicons name="person" size={24} color={theme.colors.onSurface} />
             <Text style={styles.additionalButtonText}>Profile</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -255,7 +255,7 @@ export default function IncomingCallScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral[950],
+    backgroundColor: theme.colors.bg,
   },
   backgroundGradient: {
     position: "absolute",
@@ -282,13 +282,13 @@ const styles = StyleSheet.create({
   },
   incomingCallText: {
     fontSize: 18,
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
     opacity: 0.8,
     marginBottom: 5,
   },
   callTypeText: {
     fontSize: 16,
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
     opacity: 0.6,
   },
   callerInfo: {
@@ -317,13 +317,13 @@ const styles = StyleSheet.create({
   callerName: {
     fontSize: 32,
     fontWeight: "bold",
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
     marginBottom: 8,
     textAlign: "center",
   },
   callerSubtext: {
     fontSize: 18,
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
     opacity: 0.7,
   },
   actionsContainer: {
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     elevation: 8,
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.bg,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   additionalButtonText: {
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
     fontSize: 12,
     marginTop: 5,
     opacity: 0.8,

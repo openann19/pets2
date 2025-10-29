@@ -2,13 +2,13 @@
  * @jest-environment jsdom
  * Integration tests for tab reselect/refresh flow
  */
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { render } from "@testing-library/react-native";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
-import { useScrollOffsetTracker } from "../../navigation/useScrollOffsetTracker";
-import { useTabReselectRefresh } from "../../navigation/useTabReselectRefresh";
-import { useTabDoublePress } from "../../navigation/useTabDoublePress";
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
+import { useScrollOffsetTracker } from '../../navigation/useScrollOffsetTracker';
+import { useTabReselectRefresh } from '../../navigation/useTabReselectRefresh';
+import { useTabDoublePress } from '../../navigation/useTabDoublePress';
 
 // Mock React Navigation
 const mockEmit = jest.fn();
@@ -23,21 +23,21 @@ const mockAddListener = jest.fn((event: string, callback: Function) => {
   };
 });
 
-jest.mock("@react-navigation/native", () => ({
+jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
   useIsFocused: jest.fn(),
 }));
 
-jest.mock("expo-haptics", () => ({
+jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: {
-    Light: "light",
-    Medium: "medium",
-    Heavy: "heavy",
+    Light: 'light',
+    Medium: 'medium',
+    Heavy: 'heavy',
   },
   impactAsync: jest.fn(),
 }));
 
-describe("Tab Reselect Integration Tests", () => {
+describe('Tab Reselect Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useNavigation as jest.Mock).mockReturnValue({
@@ -48,16 +48,14 @@ describe("Tab Reselect Integration Tests", () => {
     Haptics.impactAsync = jest.fn();
   });
 
-  describe("Complete Flow", () => {
-    it("should handle scroll far from top → tap → scroll to top", () => {
+  describe('Complete Flow', () => {
+    it('should handle scroll far from top → tap → scroll to top', () => {
       const mockListRef = {
         current: { scrollToOffset: jest.fn() },
       };
       const mockOnRefresh = jest.fn();
 
-      const { result: trackerResult } = renderHook(() =>
-        useScrollOffsetTracker(),
-      );
+      const { result: trackerResult } = renderHook(() => useScrollOffsetTracker());
 
       renderHook(() =>
         useTabReselectRefresh({
@@ -76,7 +74,7 @@ describe("Tab Reselect Integration Tests", () => {
       });
 
       // Trigger tab press
-      mockListeners.tabPress?.[0]({ target: "testRoute" });
+      mockListeners.tabPress?.[0]({ target: 'testRoute' });
 
       expect(mockListRef.current.scrollToOffset).toHaveBeenCalledWith({
         offset: 0,
@@ -84,15 +82,13 @@ describe("Tab Reselect Integration Tests", () => {
       });
     });
 
-    it("should handle scroll near top → tap → refresh", async () => {
+    it('should handle scroll near top → tap → refresh', async () => {
       const mockListRef = {
         current: { scrollToOffset: jest.fn() },
       };
       const mockOnRefresh = jest.fn();
 
-      const { result: trackerResult } = renderHook(() =>
-        useScrollOffsetTracker(),
-      );
+      const { result: trackerResult } = renderHook(() => useScrollOffsetTracker());
 
       renderHook(() =>
         useTabReselectRefresh({
@@ -111,14 +107,14 @@ describe("Tab Reselect Integration Tests", () => {
       });
 
       // Trigger tab press
-      mockListeners.tabPress?.[0]({ target: "testRoute" });
+      mockListeners.tabPress?.[0]({ target: 'testRoute' });
 
       await waitFor(() => {
         expect(mockOnRefresh).toHaveBeenCalled();
       });
     });
 
-    it("should handle double tap → scroll to top + refresh", async () => {
+    it('should handle double tap → scroll to top + refresh', async () => {
       const mockListRef = {
         current: { scrollToOffset: jest.fn() },
       };
@@ -134,7 +130,7 @@ describe("Tab Reselect Integration Tests", () => {
       );
 
       // Trigger double press
-      mockListeners.tabDoublePress?.[0]({ target: "testRoute" });
+      mockListeners.tabDoublePress?.[0]({ target: 'testRoute' });
 
       expect(mockListRef.current.scrollToOffset).toHaveBeenCalledWith({
         offset: 0,
@@ -146,7 +142,7 @@ describe("Tab Reselect Integration Tests", () => {
       });
     });
 
-    it("should respect cooldown across rapid taps", async () => {
+    it('should respect cooldown across rapid taps', async () => {
       const mockListRef = {
         current: { scrollToOffset: jest.fn() },
       };
@@ -162,15 +158,15 @@ describe("Tab Reselect Integration Tests", () => {
       );
 
       // First tap
-      mockListeners.tabPress?.[0]({ target: "testRoute" });
+      mockListeners.tabPress?.[0]({ target: 'testRoute' });
       expect(mockOnRefresh).toHaveBeenCalledTimes(1);
 
       // Immediate second tap should be ignored
-      mockListeners.tabPress?.[0]({ target: "testRoute" });
+      mockListeners.tabPress?.[0]({ target: 'testRoute' });
       expect(mockOnRefresh).toHaveBeenCalledTimes(1);
     });
 
-    it("should provide haptic feedback on all actions", () => {
+    it('should provide haptic feedback on all actions', () => {
       const mockListRef = {
         current: { scrollToOffset: jest.fn() },
       };
@@ -186,19 +182,15 @@ describe("Tab Reselect Integration Tests", () => {
       );
 
       // Single tap
-      mockListeners.tabPress?.[0]({ target: "testRoute" });
-      expect(Haptics.impactAsync).toHaveBeenCalledWith(
-        Haptics.ImpactFeedbackStyle.Medium,
-      );
+      mockListeners.tabPress?.[0]({ target: 'testRoute' });
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Medium);
 
       // Double tap
-      mockListeners.tabDoublePress?.[0]({ target: "testRoute" });
-      expect(Haptics.impactAsync).toHaveBeenCalledWith(
-        Haptics.ImpactFeedbackStyle.Heavy,
-      );
+      mockListeners.tabDoublePress?.[0]({ target: 'testRoute' });
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Heavy);
     });
 
-    it("should work with multiple screens simultaneously", () => {
+    it('should work with multiple screens simultaneously', () => {
       const mockListRef1 = { current: { scrollToOffset: jest.fn() } };
       const mockListRef2 = { current: { scrollToOffset: jest.fn() } };
       const mockOnRefresh1 = jest.fn();
@@ -229,12 +221,12 @@ describe("Tab Reselect Integration Tests", () => {
       unmount1();
 
       // Trigger event should call correct screen
-      mockListeners.tabPress?.[0]({ target: "testRoute" });
+      mockListeners.tabPress?.[0]({ target: 'testRoute' });
     });
   });
 
-  describe("Edge Cases", () => {
-    it("should handle zero offset correctly", () => {
+  describe('Edge Cases', () => {
+    it('should handle zero offset correctly', () => {
       const mockListRef = {
         current: { scrollToOffset: jest.fn() },
       };
@@ -259,11 +251,11 @@ describe("Tab Reselect Integration Tests", () => {
       });
 
       // Should treat as near top (0 < 50)
-      mockListeners.tabPress?.[0]({ target: "testRoute" });
+      mockListeners.tabPress?.[0]({ target: 'testRoute' });
       expect(mockOnRefresh).toHaveBeenCalled();
     });
 
-    it("should handle exactly at threshold", () => {
+    it('should handle exactly at threshold', () => {
       const mockListRef = {
         current: { scrollToOffset: jest.fn() },
       };
@@ -278,13 +270,13 @@ describe("Tab Reselect Integration Tests", () => {
         }),
       );
 
-      mockListeners.tabPress?.[0]({ target: "testRoute" });
+      mockListeners.tabPress?.[0]({ target: 'testRoute' });
 
       // Exactly at threshold should trigger refresh
       expect(mockOnRefresh).toHaveBeenCalled();
     });
 
-    it("should handle missing listRef gracefully", () => {
+    it('should handle missing listRef gracefully', () => {
       const mockOnRefresh = jest.fn();
 
       renderHook(() =>
@@ -297,11 +289,11 @@ describe("Tab Reselect Integration Tests", () => {
 
       // Should not crash
       expect(() => {
-        mockListeners.tabPress?.[0]({ target: "testRoute" });
+        mockListeners.tabPress?.[0]({ target: 'testRoute' });
       }).not.toThrow();
     });
 
-    it("should handle scrollToOffset missing gracefully", () => {
+    it('should handle scrollToOffset missing gracefully', () => {
       const mockListRef = {
         current: { scrollTo: jest.fn() },
       };
@@ -314,14 +306,14 @@ describe("Tab Reselect Integration Tests", () => {
         }),
       );
 
-      mockListeners.tabPress?.[0]({ target: "testRoute" });
+      mockListeners.tabPress?.[0]({ target: 'testRoute' });
 
       expect(mockListRef.current.scrollTo).toHaveBeenCalled();
     });
   });
 
-  describe("Navigation Events", () => {
-    it("should emit correct navigation events", () => {
+  describe('Navigation Events', () => {
+    it('should emit correct navigation events', () => {
       const mockListRef = {
         current: { scrollToOffset: jest.fn() },
       };
@@ -336,25 +328,25 @@ describe("Tab Reselect Integration Tests", () => {
       );
 
       // Single tap near top
-      mockListeners.tabPress?.[0]({ target: "HomeTab" });
+      mockListeners.tabPress?.[0]({ target: 'HomeTab' });
 
       expect(mockEmit).toHaveBeenCalledWith({
-        type: "tabReselect",
-        target: "HomeTab",
+        type: 'tabReselect',
+        target: 'HomeTab',
       });
 
       // Double tap
-      mockListeners.tabDoublePress?.[0]({ target: "MatchesTab" });
+      mockListeners.tabDoublePress?.[0]({ target: 'MatchesTab' });
 
       expect(mockEmit).toHaveBeenCalledWith({
-        type: "tabDoublePulse",
-        target: "MatchesTab",
+        type: 'tabDoublePulse',
+        target: 'MatchesTab',
       });
     });
   });
 
-  describe("Performance", () => {
-    it("should handle 1000 rapid scroll events efficiently", () => {
+  describe('Performance', () => {
+    it('should handle 1000 rapid scroll events efficiently', () => {
       const { result } = renderHook(() => useScrollOffsetTracker());
 
       const startTime = Date.now();
@@ -373,7 +365,7 @@ describe("Tab Reselect Integration Tests", () => {
       expect(result.current.getOffset()).toBe(9990);
     });
 
-    it("should debounce rapid tab presses correctly", async () => {
+    it('should debounce rapid tab presses correctly', async () => {
       const mockOnRefresh = jest.fn();
 
       renderHook(() =>
@@ -387,7 +379,7 @@ describe("Tab Reselect Integration Tests", () => {
 
       // Rapid presses
       for (let i = 0; i < 10; i++) {
-        mockListeners.tabPress?.[0]({ target: "testRoute" });
+        mockListeners.tabPress?.[0]({ target: 'testRoute' });
       }
 
       await waitFor(() => {
@@ -397,4 +389,3 @@ describe("Tab Reselect Integration Tests", () => {
     });
   });
 });
-

@@ -16,7 +16,7 @@ export function LiveStreamPublisherScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { streamId } = route.params as { streamId: string };
-  
+
   const {
     room,
     isConnected,
@@ -45,21 +45,17 @@ export function LiveStreamPublisherScreen() {
   }, [streamId]);
 
   const handleEndStream = () => {
-    Alert.alert(
-      'End Live Stream',
-      'Are you sure you want to end the stream?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'End',
-          style: 'destructive',
-          onPress: () => {
-            endStream();
-            navigation.goBack();
-          },
+    Alert.alert('End Live Stream', 'Are you sure you want to end the stream?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'End',
+        style: 'destructive',
+        onPress: () => {
+          endStream();
+          navigation.goBack();
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleToggleCamera = async () => {
@@ -84,7 +80,12 @@ export function LiveStreamPublisherScreen() {
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
-             testID="LiveStreamPublisherScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { navigation.goBack(); }}
+            testID="LiveStreamPublisherScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
+              navigation.goBack();
+            }}
           >
             <Text style={styles.retryButtonText}>Go Back</Text>
           </TouchableOpacity>
@@ -107,7 +108,7 @@ export function LiveStreamPublisherScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
+
       {/* Live indicator */}
       <View style={styles.liveIndicator}>
         <View style={styles.liveDot} />
@@ -125,39 +126,41 @@ export function LiveStreamPublisherScreen() {
       {/* Controls */}
       <View style={styles.controlsContainer}>
         <TouchableOpacity
-          style={[
-            styles.controlButton,
-            !cameraEnabled && styles.controlButtonDisabled,
-          ]}
-           testID="LiveStreamPublisherScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleToggleCamera}
+          style={[styles.controlButton, !cameraEnabled && styles.controlButtonDisabled]}
+          testID="LiveStreamPublisherScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={handleToggleCamera}
         >
-          <Text style={styles.controlButtonText}>
-            {cameraEnabled ? '📷' : '🚫'}
-          </Text>
+          <Text style={styles.controlButtonText}>{cameraEnabled ? '📷' : '🚫'}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[
-            styles.controlButton,
-            !microphoneEnabled && styles.controlButtonDisabled,
-          ]}
-           testID="LiveStreamPublisherScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleToggleMicrophone}
+          style={[styles.controlButton, !microphoneEnabled && styles.controlButtonDisabled]}
+          testID="LiveStreamPublisherScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={handleToggleMicrophone}
         >
-          <Text style={styles.controlButtonText}>
-            {microphoneEnabled ? '🎤' : '🔇'}
-          </Text>
+          <Text style={styles.controlButtonText}>{microphoneEnabled ? '🎤' : '🔇'}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.controlButton}
-           testID="LiveStreamPublisherScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleSwitchCamera}
+          testID="LiveStreamPublisherScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={handleSwitchCamera}
         >
           <Text style={styles.controlButtonText}>🔄</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.controlButton, styles.endButton]}
-           testID="LiveStreamPublisherScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleEndStream}
+          testID="LiveStreamPublisherScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={handleEndStream}
         >
           <Text style={styles.controlButtonText}>End</Text>
         </TouchableOpacity>
@@ -266,4 +269,3 @@ const styles = StyleSheet.create({
     width: 80,
   },
 });
-

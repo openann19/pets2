@@ -1,5 +1,5 @@
-import "@testing-library/jest-native/extend-expect";
-import type { ReactNode } from "react";
+import '@testing-library/jest-native/extend-expect';
+import type { ReactNode } from 'react';
 
 // Jest globals are available in test environment
 declare const beforeAll: (fn: () => void) => void;

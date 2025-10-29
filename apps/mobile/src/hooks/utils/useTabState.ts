@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
 export interface UseTabStateReturn<T extends string> {
   activeTab: T;
@@ -11,9 +11,7 @@ export interface UseTabStateReturn<T extends string> {
  * @example
  * const { activeTab, setActiveTab } = useTabState('matches');
  */
-export function useTabState<T extends string>(
-  initialTab: T,
-): UseTabStateReturn<T> {
+export function useTabState<T extends string>(initialTab: T): UseTabStateReturn<T> {
   const [activeTab, setActiveTabState] = useState<T>(initialTab);
 
   const setActiveTab = useCallback((tab: T) => {

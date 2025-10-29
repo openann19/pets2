@@ -20,10 +20,7 @@ export const checkReducedMotion = async (): Promise<boolean> => {
 /**
  * Get animation duration based on motion preference
  */
-export const getAnimationDuration = (
-  preference: boolean,
-  defaultDuration: number
-): number => {
+export const getAnimationDuration = (preference: boolean, defaultDuration: number): number => {
   return preference ? 0 : defaultDuration;
 };
 
@@ -32,7 +29,7 @@ export const getAnimationDuration = (
  */
 export const getAnimationConfig = (
   preference: boolean,
-  defaultConfig: { duration: number; damping?: number; stiffness?: number }
+  defaultConfig: { duration: number; damping?: number; stiffness?: number },
 ) => {
   if (preference) {
     return {
@@ -55,10 +52,7 @@ export const getTestId = (screenName: string, componentName: string): string => 
 /**
  * Get accessibility label from text content
  */
-export const getAccessibilityLabel = (
-  text: string,
-  role?: string
-): string => {
+export const getAccessibilityLabel = (text: string, role?: string): string => {
   return role ? `${text} ${role}` : text;
 };
 
@@ -68,7 +62,7 @@ export const getAccessibilityLabel = (
 export const getAccessibilityProps = (
   label: string,
   role: 'button' | 'link' | 'text' | 'none' | 'header',
-  testID?: string
+  testID?: string,
 ) => ({
   accessible: true,
   accessibilityLabel: label,
@@ -82,11 +76,10 @@ export const getAccessibilityProps = (
 export const getImageAccessibilityProps = (
   description: string,
   decorative: boolean = false,
-  testID?: string
+  testID?: string,
 ) => ({
   accessible: !decorative,
   accessibilityLabel: decorative ? undefined : description,
   accessibilityRole: 'image' as const,
   testID,
 });
-

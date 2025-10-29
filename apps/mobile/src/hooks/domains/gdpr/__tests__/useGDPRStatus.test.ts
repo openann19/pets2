@@ -1,27 +1,27 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { useGDPRStatus } from "../useGDPRStatus";
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { useGDPRStatus } from '../useGDPRStatus';
 
 // Mock AsyncStorage
-jest.mock("@react-native-async-storage/async-storage", () => ({
+jest.mock('@react-native-async-storage/async-storage', () => ({
   getItem: jest.fn(),
   setItem: jest.fn(),
   removeItem: jest.fn(),
 }));
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
 
-describe("useGDPRStatus", () => {
+describe('useGDPRStatus', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockAsyncStorage.getItem.mockResolvedValue(null);
   });
 
-  it("should initialize with default state", () => {
+  it('should initialize with default state', () => {
     const { result } = renderHook(() => useGDPRStatus());
 
     expect(result.current.status.isPending).toBe(false);
@@ -31,13 +31,11 @@ describe("useGDPRStatus", () => {
     expect(result.current.isLoading).toBe(true);
   });
 
-  it("should load pending deletion status", async () => {
+  it('should load pending deletion status', async () => {
     mockAsyncStorage.getItem.mockResolvedValue(
       JSON.stringify({
         deletionRequested: true,
-        gracePeriodEndsAt: new Date(
-          Date.now() + 30 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
+        gracePeriodEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         daysRemaining: 25,
       }),
     );
@@ -53,8 +51,8 @@ describe("useGDPRStatus", () => {
     expect(result.current.status.canCancel).toBe(true);
   });
 
-  it("should handle AsyncStorage errors gracefully", async () => {
-    mockAsyncStorage.getItem.mockRejectedValue(new Error("Storage error"));
+  it('should handle AsyncStorage errors gracefully', async () => {
+    mockAsyncStorage.getItem.mockRejectedValue(new Error('Storage error'));
 
     const { result } = renderHook(() => useGDPRStatus());
 
@@ -66,7 +64,7 @@ describe("useGDPRStatus", () => {
     expect(result.current.status.daysRemaining).toBe(null);
   });
 
-  it("should refresh status when called", async () => {
+  it('should refresh status when called', async () => {
     mockAsyncStorage.getItem.mockResolvedValue(null);
 
     const { result } = renderHook(() => useGDPRStatus());
@@ -97,7 +95,7 @@ describe("useGDPRStatus", () => {
     expect(result.current.status.daysRemaining).toBe(15);
   });
 
-  it("should return stable refresh function reference", () => {
+  it('should return stable refresh function reference', () => {
     const { result } = renderHook(() => useGDPRStatus());
 
     const firstRefresh = result.current.refresh;

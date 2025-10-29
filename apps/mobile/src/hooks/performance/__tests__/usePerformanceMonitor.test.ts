@@ -25,14 +25,16 @@ describe('usePerformanceMonitor', () => {
     });
 
     it('should accept custom configuration', () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        enableMemoryMonitoring: false,
-        enableNetworkMonitoring: true,
-        alertThresholds: {
-          memoryUsage: 100 * 1024 * 1024, // 100MB
-          renderTime: 16, // 16ms
-        }
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          enableMemoryMonitoring: false,
+          enableNetworkMonitoring: true,
+          alertThresholds: {
+            memoryUsage: 100 * 1024 * 1024, // 100MB
+            renderTime: 16, // 16ms
+          },
+        }),
+      );
 
       expect(result.current.enableMemoryMonitoring).toBe(false);
       expect(result.current.enableNetworkMonitoring).toBe(true);
@@ -64,22 +66,24 @@ describe('usePerformanceMonitor', () => {
         }
       });
 
-      expect(result.current.alerts.some(alert => alert.type === 'memory-leak')).toBeDefined();
+      expect(result.current.alerts.some((alert) => alert.type === 'memory-leak')).toBeDefined();
     });
 
     it('should alert on high memory usage', async () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        alertThresholds: {
-          memoryUsage: 50 * 1024 * 1024 // 50MB threshold
-        }
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          alertThresholds: {
+            memoryUsage: 50 * 1024 * 1024, // 50MB threshold
+          },
+        }),
+      );
 
       // Simulate high memory usage
       await act(async () => {
         await result.current.measureMemoryUsage();
       });
 
-      const memoryAlerts = result.current.alerts.filter(alert => alert.type === 'high-memory');
+      const memoryAlerts = result.current.alerts.filter((alert) => alert.type === 'high-memory');
       expect(memoryAlerts.length).toBeGreaterThan(0);
     });
   });
@@ -99,11 +103,13 @@ describe('usePerformanceMonitor', () => {
     });
 
     it('should track slow renders', () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        alertThresholds: {
-          renderTime: 8 // 8ms threshold
-        }
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          alertThresholds: {
+            renderTime: 8, // 8ms threshold
+          },
+        }),
+      );
 
       act(() => {
         result.current.startRenderMeasurement('SlowComponent');
@@ -134,9 +140,11 @@ describe('usePerformanceMonitor', () => {
 
   describe('Network Monitoring', () => {
     it('should track network requests', async () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        enableNetworkMonitoring: true
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          enableNetworkMonitoring: true,
+        }),
+      );
 
       await act(async () => {
         await result.current.measureNetworkRequest('/api/test', 'GET', 200);
@@ -148,39 +156,49 @@ describe('usePerformanceMonitor', () => {
     });
 
     it('should detect slow network requests', async () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        enableNetworkMonitoring: true,
-        alertThresholds: {
-          networkLatency: 1000 // 1 second
-        }
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          enableNetworkMonitoring: true,
+          alertThresholds: {
+            networkLatency: 1000, // 1 second
+          },
+        }),
+      );
 
       await act(async () => {
         await result.current.measureNetworkRequest('/api/slow', 'GET', 200, 2000); // 2 seconds
       });
 
-      const slowNetworkAlerts = result.current.alerts.filter(alert => alert.type === 'slow-network');
+      const slowNetworkAlerts = result.current.alerts.filter(
+        (alert) => alert.type === 'slow-network',
+      );
       expect(slowNetworkAlerts.length).toBeGreaterThan(0);
     });
 
     it('should track failed network requests', async () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        enableNetworkMonitoring: true
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          enableNetworkMonitoring: true,
+        }),
+      );
 
       await act(async () => {
         await result.current.measureNetworkRequest('/api/error', 'POST', 500, 500);
       });
 
       expect(result.current.metrics.network.failedRequests).toBeGreaterThan(0);
-      const failedRequestAlerts = result.current.alerts.filter(alert => alert.type === 'network-error');
+      const failedRequestAlerts = result.current.alerts.filter(
+        (alert) => alert.type === 'network-error',
+      );
       expect(failedRequestAlerts.length).toBeGreaterThan(0);
     });
 
     it('should calculate network metrics', async () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        enableNetworkMonitoring: true
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          enableNetworkMonitoring: true,
+        }),
+      );
 
       await act(async () => {
         await result.current.measureNetworkRequest('/api/fast', 'GET', 200, 100);
@@ -195,17 +213,19 @@ describe('usePerformanceMonitor', () => {
 
   describe('Performance Alerts', () => {
     it('should generate memory alerts', async () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        alertThresholds: {
-          memoryUsage: 10 * 1024 * 1024 // 10MB
-        }
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          alertThresholds: {
+            memoryUsage: 10 * 1024 * 1024, // 10MB
+          },
+        }),
+      );
 
       await act(async () => {
         await result.current.checkMemoryThreshold();
       });
 
-      const memoryAlerts = result.current.alerts.filter(alert => alert.type.startsWith('memory'));
+      const memoryAlerts = result.current.alerts.filter((alert) => alert.type.startsWith('memory'));
       expect(memoryAlerts.length).toBeGreaterThan(0);
       expect(memoryAlerts[0]).toHaveProperty('severity');
       expect(memoryAlerts[0]).toHaveProperty('message');
@@ -213,17 +233,19 @@ describe('usePerformanceMonitor', () => {
     });
 
     it('should generate render performance alerts', () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        alertThresholds: {
-          renderTime: 16 // 16ms (60fps threshold)
-        }
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          alertThresholds: {
+            renderTime: 16, // 16ms (60fps threshold)
+          },
+        }),
+      );
 
       act(() => {
         result.current.checkRenderPerformance();
       });
 
-      const renderAlerts = result.current.alerts.filter(alert => alert.type === 'slow-render');
+      const renderAlerts = result.current.alerts.filter((alert) => alert.type === 'slow-render');
       // May or may not trigger depending on actual performance
       expect(Array.isArray(renderAlerts)).toBe(true);
     });
@@ -236,7 +258,7 @@ describe('usePerformanceMonitor', () => {
         result.current.generateAlert('critical-memory', 'Critical memory issue', 'high');
       });
 
-      const criticalAlerts = result.current.alerts.filter(alert => alert.severity === 'high');
+      const criticalAlerts = result.current.alerts.filter((alert) => alert.severity === 'high');
       expect(criticalAlerts.length).toBeGreaterThan(0);
       expect(criticalAlerts[0].type).toBe('critical-memory');
     });
@@ -254,7 +276,7 @@ describe('usePerformanceMonitor', () => {
         result.current.clearAlerts('test-alert');
       });
 
-      const testAlerts = result.current.alerts.filter(alert => alert.type === 'test-alert');
+      const testAlerts = result.current.alerts.filter((alert) => alert.type === 'test-alert');
       expect(testAlerts.length).toBe(0);
     });
   });
@@ -268,7 +290,7 @@ describe('usePerformanceMonitor', () => {
       });
 
       const memoryRecommendations = result.current.recommendations.filter(
-        rec => rec.category === 'memory'
+        (rec) => rec.category === 'memory',
       );
       expect(memoryRecommendations.length).toBeGreaterThan(0);
       expect(memoryRecommendations[0]).toHaveProperty('title');
@@ -284,22 +306,24 @@ describe('usePerformanceMonitor', () => {
       });
 
       const renderRecommendations = result.current.recommendations.filter(
-        rec => rec.category === 'render'
+        (rec) => rec.category === 'render',
       );
       expect(Array.isArray(renderRecommendations)).toBe(true);
     });
 
     it('should generate network optimization recommendations', async () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        enableNetworkMonitoring: true
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          enableNetworkMonitoring: true,
+        }),
+      );
 
       await act(async () => {
         await result.current.analyzeNetworkPerformance();
       });
 
       const networkRecommendations = result.current.recommendations.filter(
-        rec => rec.category === 'network'
+        (rec) => rec.category === 'network',
       );
       expect(Array.isArray(networkRecommendations)).toBe(true);
     });
@@ -312,7 +336,7 @@ describe('usePerformanceMonitor', () => {
       });
 
       const highImpactRecommendations = result.current.recommendations.filter(
-        rec => rec.impact === 'high'
+        (rec) => rec.impact === 'high',
       );
       expect(highImpactRecommendations.length).toBeGreaterThan(0);
     });
@@ -435,13 +459,15 @@ describe('usePerformanceMonitor', () => {
     });
 
     it('should handle performance thresholds', () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        alertThresholds: {
-          memoryUsage: 50 * 1024 * 1024,
-          renderTime: 16,
-          networkLatency: 1000
-        }
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          alertThresholds: {
+            memoryUsage: 50 * 1024 * 1024,
+            renderTime: 16,
+            networkLatency: 1000,
+          },
+        }),
+      );
 
       expect(result.current.alertThresholds.memoryUsage).toBe(50 * 1024 * 1024);
       expect(result.current.alertThresholds.renderTime).toBe(16);
@@ -451,9 +477,11 @@ describe('usePerformanceMonitor', () => {
 
   describe('Integration', () => {
     it('should integrate with React DevTools', () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        enableDevToolsIntegration: true
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          enableDevToolsIntegration: true,
+        }),
+      );
 
       expect(result.current.devToolsIntegrationEnabled).toBe(true);
     });
@@ -467,15 +495,17 @@ describe('usePerformanceMonitor', () => {
 
       expect(result.current.errors).toContainEqual(
         expect.objectContaining({
-          message: 'Test error'
-        })
+          message: 'Test error',
+        }),
       );
     });
 
     it('should integrate with analytics', () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        enableAnalytics: true
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          enableAnalytics: true,
+        }),
+      );
 
       act(() => {
         result.current.trackPerformanceEvent('render_complete', { duration: 10 });
@@ -485,8 +515,8 @@ describe('usePerformanceMonitor', () => {
       expect(result.current.performanceEvents).toContainEqual(
         expect.objectContaining({
           type: 'render_complete',
-          duration: 10
-        })
+          duration: 10,
+        }),
       );
     });
   });
@@ -520,16 +550,20 @@ describe('usePerformanceMonitor', () => {
     });
 
     it('should handle network timeouts', async () => {
-      const { result } = renderHook(() => usePerformanceMonitor({
-        enableNetworkMonitoring: true
-      }));
+      const { result } = renderHook(() =>
+        usePerformanceMonitor({
+          enableNetworkMonitoring: true,
+        }),
+      );
 
       await act(async () => {
         // Simulate timeout (no response within reasonable time)
         await result.current.measureNetworkRequest('/api/timeout', 'GET', 408, 30000);
       });
 
-      const timeoutAlerts = result.current.alerts.filter(alert => alert.type === 'network-timeout');
+      const timeoutAlerts = result.current.alerts.filter(
+        (alert) => alert.type === 'network-timeout',
+      );
       expect(timeoutAlerts.length).toBeGreaterThan(0);
     });
 
@@ -581,9 +615,11 @@ describe('usePerformanceMonitor', () => {
     });
 
     it('should clear intervals and timers', () => {
-      const { unmount } = renderHook(() => usePerformanceMonitor({
-        enablePeriodicMonitoring: true
-      }));
+      const { unmount } = renderHook(() =>
+        usePerformanceMonitor({
+          enablePeriodicMonitoring: true,
+        }),
+      );
 
       unmount();
 

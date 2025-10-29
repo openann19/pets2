@@ -1,10 +1,12 @@
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
-import { useState, useMemo } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { logger } from '@pawfectmatch/core';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useMemo, useState } from 'react';
 import {
   Alert,
   ScrollView,
@@ -13,15 +15,23 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { request } from "../../services/api";
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { request } from '../../services/api';
 
 // Runtime theme has radius (not radii) and bgAlt/surfaceAlt in colors
-type RuntimeTheme = AppTheme & { 
-  radius: { xs: number; sm: number; md: number; lg: number; xl: number; '2xl': number; full: number; pill: number; none: number };
+type RuntimeTheme = AppTheme & {
+  radius: {
+    'xs': number;
+    'sm': number;
+    'md': number;
+    'lg': number;
+    'xl': number;
+    '2xl': number;
+    'full': number;
+    'pill': number;
+    'none': number;
+  };
   colors: AppTheme['colors'] & { bgAlt?: string; surfaceAlt?: string };
 };
 
@@ -29,10 +39,7 @@ type AdoptionStackParamList = {
   CreateListing: undefined;
 };
 
-type CreateListingScreenProps = NativeStackScreenProps<
-  AdoptionStackParamList,
-  "CreateListing"
->;
+type CreateListingScreenProps = NativeStackScreenProps<AdoptionStackParamList, 'CreateListing'>;
 
 interface PetFormData {
   name: string;
@@ -55,15 +62,15 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
   const theme = useTheme();
   const themeRuntime = theme as RuntimeTheme;
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  
+
   const [formData, setFormData] = useState<PetFormData>({
-    name: "",
-    species: "dog",
-    breed: "",
-    age: "",
-    gender: "",
-    size: "",
-    description: "",
+    name: '',
+    species: 'dog',
+    breed: '',
+    age: '',
+    gender: '',
+    size: '',
+    description: '',
     personalityTags: [],
     healthInfo: {
       vaccinated: false,
@@ -75,16 +82,16 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const personalityOptions = [
-    "Friendly",
-    "Playful",
-    "Calm",
-    "Energetic",
-    "Shy",
-    "Confident",
-    "Good with kids",
-    "Good with other pets",
-    "Independent",
-    "Affectionate",
+    'Friendly',
+    'Playful',
+    'Calm',
+    'Energetic',
+    'Shy',
+    'Confident',
+    'Good with kids',
+    'Good with other pets',
+    'Independent',
+    'Affectionate',
   ];
 
   const handleInputChange = (field: string, value: string) => {
@@ -117,7 +124,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.breed || !formData.description) {
-      Alert.alert("Missing Information", "Please fill in all required fields.");
+      Alert.alert('Missing Information', 'Please fill in all required fields.');
       return;
     }
 
@@ -137,31 +144,27 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
         photos: formData.photos,
       };
 
-      await request("/api/adoption/listings", {
-        method: "POST",
+      await request('/api/adoption/listings', {
+        method: 'POST',
         body: listingData,
       });
 
-      Alert.alert(
-        "Success!",
-        "Your pet listing has been created successfully.",
-        [
-          {
-            text: "OK",
-            onPress: () => navigation.goBack(),
-          },
-        ],
-      );
+      Alert.alert('Success!', 'Your pet listing has been created successfully.', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
     } catch (error) {
-      logger.error("Failed to create listing:", { error });
-      Alert.alert("Error", "Failed to create listing. Please try again.");
+      logger.error('Failed to create listing:', { error });
+      Alert.alert('Error', 'Failed to create listing. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const addPhoto = () => {
-    Alert.alert("Add Photo", "Photo upload feature coming soon!");
+    Alert.alert('Add Photo', 'Photo upload feature coming soon!');
   };
 
   return (
@@ -174,14 +177,30 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-             testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
+            testID="CreateListingScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color={theme.colors.onSurface}
+            />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Create Pet Listing</Text>
           <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.headerButton} testID="CreateListingScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
-              <Ionicons name="help-circle-outline" size={20} color={theme.colors.onSurface} />
+            <TouchableOpacity
+              style={styles.headerButton}
+              testID="CreateListingScreen-button-1"
+              accessibilityLabel="Button"
+              accessibilityRole="button"
+            >
+              <Ionicons
+                name="help-circle-outline"
+                size={20}
+                color={theme.colors.onSurface}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -189,24 +208,35 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
         {/* Photo Upload */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Photos *</Text>
-          <BlurView intensity={20} style={styles.sectionCard}>
-            <TouchableOpacity style={styles.photoUpload}  testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={addPhoto}>
+          <BlurView
+            intensity={20}
+            style={styles.sectionCard}
+          >
+            <TouchableOpacity
+              style={styles.photoUpload}
+              testID="CreateListingScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={addPhoto}
+            >
               <LinearGradient
                 colors={[themeRuntime.colors.bgAlt ?? theme.colors.surface, theme.colors.surface]}
                 style={styles.photoUploadGradient}
               >
-                <Ionicons name="camera" size={32} color={theme.colors.onMuted} />
+                <Ionicons
+                  name="camera"
+                  size={32}
+                  color={theme.colors.onMuted}
+                />
                 <Text style={styles.photoUploadText}>Add Photos</Text>
-                <Text style={styles.photoUploadHint}>
-                  Tap to upload pet photos
-                </Text>
+                <Text style={styles.photoUploadHint}>Tap to upload pet photos</Text>
               </LinearGradient>
             </TouchableOpacity>
             {formData.photos.length > 0 && (
               <View style={styles.photoPreview}>
                 <Text style={styles.photoCount}>
                   {formData.photos.length} photo
-                  {formData.photos.length !== 1 ? "s" : ""} selected
+                  {formData.photos.length !== 1 ? 's' : ''} selected
                 </Text>
               </View>
             )}
@@ -216,14 +246,17 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
         {/* Basic Information */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Basic Information</Text>
-          <BlurView intensity={20} style={styles.sectionCard}>
+          <BlurView
+            intensity={20}
+            style={styles.sectionCard}
+          >
             <View style={styles.formGroup}>
               <Text style={styles.label}>Pet Name *</Text>
               <TextInput
                 style={styles.textInput}
                 value={formData.name}
                 onChangeText={(value) => {
-                  handleInputChange("name", value);
+                  handleInputChange('name', value);
                 }}
                 placeholder="Enter pet's name"
                 placeholderTextColor={theme.colors.onMuted}
@@ -234,23 +267,24 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
               <View style={styles.formGroup}>
                 <Text style={styles.label}>Species *</Text>
                 <View style={styles.radioGroup}>
-                  {["dog", "cat"].map((species) => (
+                  {['dog', 'cat'].map((species) => (
                     <TouchableOpacity
                       key={species}
                       style={StyleSheet.flatten([
                         styles.radioButton,
-                        formData.species === species &&
-                          styles.radioButtonActive,
+                        formData.species === species && styles.radioButtonActive,
                       ])}
-                       testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                        handleInputChange("species", species);
+                      testID="CreateListingScreen-button-2"
+                      accessibilityLabel="Interactive element"
+                      accessibilityRole="button"
+                      onPress={() => {
+                        handleInputChange('species', species);
                       }}
                     >
                       <Text
                         style={StyleSheet.flatten([
                           styles.radioText,
-                          formData.species === species &&
-                            styles.radioTextActive,
+                          formData.species === species && styles.radioTextActive,
                         ])}
                       >
                         {species.charAt(0).toUpperCase() + species.slice(1)}
@@ -263,15 +297,18 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
               <View style={styles.formGroup}>
                 <Text style={styles.label}>Gender</Text>
                 <View style={styles.radioGroup}>
-                  {["male", "female"].map((gender) => (
+                  {['male', 'female'].map((gender) => (
                     <TouchableOpacity
                       key={gender}
                       style={StyleSheet.flatten([
                         styles.radioButton,
                         formData.gender === gender && styles.radioButtonActive,
                       ])}
-                       testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                        handleInputChange("gender", gender);
+                      testID="CreateListingScreen-button-2"
+                      accessibilityLabel="Interactive element"
+                      accessibilityRole="button"
+                      onPress={() => {
+                        handleInputChange('gender', gender);
                       }}
                     >
                       <Text
@@ -294,7 +331,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                 style={styles.textInput}
                 value={formData.breed}
                 onChangeText={(value) => {
-                  handleInputChange("breed", value);
+                  handleInputChange('breed', value);
                 }}
                 placeholder="Enter breed"
                 placeholderTextColor={theme.colors.onMuted}
@@ -308,7 +345,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   style={styles.textInput}
                   value={formData.age}
                   onChangeText={(value) => {
-                    handleInputChange("age", value);
+                    handleInputChange('age', value);
                   }}
                   placeholder="e.g., 2 years"
                   placeholderTextColor={theme.colors.onMuted}
@@ -319,15 +356,18 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
               <View style={styles.formGroup}>
                 <Text style={styles.label}>Size</Text>
                 <View style={styles.radioGroup}>
-                  {["small", "medium", "large"].map((size) => (
+                  {['small', 'medium', 'large'].map((size) => (
                     <TouchableOpacity
                       key={size}
                       style={StyleSheet.flatten([
                         styles.radioButton,
                         formData.size === size && styles.radioButtonActive,
                       ])}
-                       testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                        handleInputChange("size", size);
+                      testID="CreateListingScreen-button-2"
+                      accessibilityLabel="Interactive element"
+                      accessibilityRole="button"
+                      onPress={() => {
+                        handleInputChange('size', size);
                       }}
                     >
                       <Text
@@ -349,12 +389,15 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
         {/* Description */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Description *</Text>
-          <BlurView intensity={20} style={styles.sectionCard}>
+          <BlurView
+            intensity={20}
+            style={styles.sectionCard}
+          >
             <TextInput
               style={StyleSheet.flatten([styles.textInput, styles.textArea])}
               value={formData.description}
               onChangeText={(value) => {
-                handleInputChange("description", value);
+                handleInputChange('description', value);
               }}
               placeholder="Tell potential adopters about your pet's personality, habits, and what makes them special..."
               placeholderTextColor={theme.colors.onMuted}
@@ -368,10 +411,11 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
         {/* Personality Tags */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Personality</Text>
-          <BlurView intensity={20} style={styles.sectionCard}>
-            <Text style={styles.sectionSubtitle}>
-              Select traits that describe your pet
-            </Text>
+          <BlurView
+            intensity={20}
+            style={styles.sectionCard}
+          >
+            <Text style={styles.sectionSubtitle}>Select traits that describe your pet</Text>
             <View style={styles.tagsContainer}>
               {personalityOptions.map((tag) => (
                 <TouchableOpacity
@@ -380,15 +424,17 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                     styles.tag,
                     formData.personalityTags.includes(tag) && styles.tagActive,
                   ])}
-                   testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+                  testID="CreateListingScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
+                  onPress={() => {
                     handlePersonalityToggle(tag);
                   }}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.tagText,
-                      formData.personalityTags.includes(tag) &&
-                        styles.tagTextActive,
+                      formData.personalityTags.includes(tag) && styles.tagTextActive,
                     ])}
                   >
                     {tag}
@@ -402,13 +448,19 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
         {/* Health Information */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Health Information</Text>
-          <BlurView intensity={20} style={styles.sectionCard}>
+          <BlurView
+            intensity={20}
+            style={styles.sectionCard}
+          >
             <View style={styles.healthGrid}>
               {Object.entries(formData.healthInfo).map(([key, value]) => (
                 <TouchableOpacity
                   key={key}
                   style={styles.healthItem}
-                   testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+                  testID="CreateListingScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
+                  onPress={() => {
                     handleHealthToggle(key as keyof typeof formData.healthInfo);
                   }}
                 >
@@ -419,7 +471,11 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                     ])}
                   >
                     {value && (
-                      <Ionicons name="checkmark" size={16} color={theme.colors.onSurface} />
+                      <Ionicons
+                        name="checkmark"
+                        size={16}
+                        color={theme.colors.onSurface}
+                      />
                     )}
                   </View>
                   <Text style={styles.healthText}>
@@ -438,25 +494,39 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
               styles.submitButton,
               isSubmitting && styles.submitButtonDisabled,
             ])}
-             testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleSubmit}
+            testID="CreateListingScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={handleSubmit}
             disabled={isSubmitting}
           >
             <LinearGradient
               colors={
-                isSubmitting 
-                  ? [theme.colors.onMuted, theme.colors.onMuted] 
-                  : (theme as any).palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary]
+                isSubmitting
+                  ? [theme.colors.onMuted, theme.colors.onMuted]
+                  : ((theme as any).palette?.gradients?.primary ?? [
+                      theme.colors.primary,
+                      theme.colors.primary,
+                    ])
               }
               style={styles.submitGradient}
             >
               {isSubmitting ? (
                 <>
-                  <Ionicons name="hourglass" size={20} color={theme.colors.onSurface} />
+                  <Ionicons
+                    name="hourglass"
+                    size={20}
+                    color={theme.colors.onSurface}
+                  />
                   <Text style={styles.submitText}>Creating Listing...</Text>
                 </>
               ) : (
                 <>
-                  <Ionicons name="paw" size={20} color={theme.colors.onSurface} />
+                  <Ionicons
+                    name="paw"
+                    size={20}
+                    color={theme.colors.onSurface}
+                  />
                   <Text style={styles.submitText}>Create Listing</Text>
                 </>
               )}
@@ -471,7 +541,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
 function makeStyles(theme: AppTheme) {
   // Type assertion for runtime theme structure (radius exists at runtime, but types mismatch)
   const themeRuntime = theme as RuntimeTheme;
-  
+
   return {
     container: {
       flex: 1,
@@ -481,9 +551,9 @@ function makeStyles(theme: AppTheme) {
       flex: 1,
     },
     header: {
-      flexDirection: "row" as const,
-      justifyContent: "space-between" as const,
-      alignItems: "center" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const,
       padding: theme.spacing.lg,
       backgroundColor: theme.colors.surface,
       borderBottomWidth: 1,
@@ -491,11 +561,11 @@ function makeStyles(theme: AppTheme) {
     },
     headerTitle: {
       fontSize: 20,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
     },
     headerActions: {
-      flexDirection: "row" as const,
+      flexDirection: 'row' as const,
       gap: theme.spacing.sm,
     },
     headerButton: {
@@ -509,7 +579,7 @@ function makeStyles(theme: AppTheme) {
     },
     sectionTitle: {
       fontSize: 18,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.sm,
     },
@@ -520,19 +590,19 @@ function makeStyles(theme: AppTheme) {
     },
     sectionCard: {
       borderRadius: themeRuntime.radius.md,
-      overflow: "hidden" as const,
+      overflow: 'hidden' as const,
       padding: theme.spacing.md,
     },
     formGroup: {
       marginBottom: theme.spacing.md,
     },
     formRow: {
-      flexDirection: "row" as const,
+      flexDirection: 'row' as const,
       gap: theme.spacing.sm,
     },
     label: {
       fontSize: 14,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
@@ -548,10 +618,10 @@ function makeStyles(theme: AppTheme) {
     },
     textArea: {
       minHeight: 120,
-      textAlignVertical: "top" as const,
+      textAlignVertical: 'top' as const,
     },
     radioGroup: {
-      flexDirection: "row" as const,
+      flexDirection: 'row' as const,
       gap: theme.spacing.xs,
     },
     radioButton: {
@@ -562,7 +632,7 @@ function makeStyles(theme: AppTheme) {
       borderRadius: themeRuntime.radius.sm,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
     },
     radioButtonActive: {
       backgroundColor: theme.colors.primary,
@@ -570,7 +640,7 @@ function makeStyles(theme: AppTheme) {
     },
     radioText: {
       fontSize: 14,
-      fontWeight: "500" as const,
+      fontWeight: '500' as const,
       color: theme.colors.onMuted,
     },
     radioTextActive: {
@@ -578,16 +648,16 @@ function makeStyles(theme: AppTheme) {
     },
     photoUpload: {
       borderRadius: themeRuntime.radius.md,
-      overflow: "hidden" as const,
+      overflow: 'hidden' as const,
     },
     photoUploadGradient: {
-      padding: theme.spacing["2xl"],
-      alignItems: "center" as const,
-      justifyContent: "center" as const,
+      padding: theme.spacing['2xl'],
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
     },
     photoUploadText: {
       fontSize: 18,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
       color: theme.colors.onSurface,
       marginTop: theme.spacing.sm,
     },
@@ -607,11 +677,11 @@ function makeStyles(theme: AppTheme) {
     photoCount: {
       fontSize: 14,
       color: theme.colors.onSurface,
-      fontWeight: "500" as const,
+      fontWeight: '500' as const,
     },
     tagsContainer: {
-      flexDirection: "row" as const,
-      flexWrap: "wrap" as const,
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
       gap: theme.spacing.xs,
     },
     tag: {
@@ -629,7 +699,7 @@ function makeStyles(theme: AppTheme) {
     tagText: {
       fontSize: 14,
       color: theme.colors.onMuted,
-      fontWeight: "500" as const,
+      fontWeight: '500' as const,
     },
     tagTextActive: {
       color: theme.colors.onSurface,
@@ -638,8 +708,8 @@ function makeStyles(theme: AppTheme) {
       gap: theme.spacing.sm,
     },
     healthItem: {
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
       gap: theme.spacing.sm,
     },
     healthCheckbox: {
@@ -648,8 +718,8 @@ function makeStyles(theme: AppTheme) {
       borderRadius: themeRuntime.radius.xs,
       borderWidth: 2,
       borderColor: theme.colors.border,
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
     },
     healthCheckboxActive: {
       backgroundColor: theme.colors.success,
@@ -658,11 +728,11 @@ function makeStyles(theme: AppTheme) {
     healthText: {
       fontSize: 16,
       color: theme.colors.onSurface,
-      fontWeight: "500" as const,
+      fontWeight: '500' as const,
     },
     submitButton: {
       borderRadius: themeRuntime.radius.md,
-      overflow: "hidden" as const,
+      overflow: 'hidden' as const,
       shadowColor: theme.colors.border,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
@@ -674,15 +744,15 @@ function makeStyles(theme: AppTheme) {
     },
     submitGradient: {
       padding: theme.spacing.lg,
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
-      justifyContent: "center" as const,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
       gap: theme.spacing.xs,
     },
     submitText: {
       color: theme.colors.onSurface,
       fontSize: 18,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
     },
   };
 }

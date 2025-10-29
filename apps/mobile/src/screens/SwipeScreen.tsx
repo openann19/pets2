@@ -30,7 +30,7 @@ import { SwipeCard, SwipeActions } from "../components/swipe";
 import { ScreenShell } from "../ui/layout/ScreenShell";
 import { AdvancedHeader, HeaderConfigs } from "../components/Advanced/AdvancedHeader";
 import { haptic } from "../ui/haptics";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 import { useTranslation } from 'react-i18next';
 
 const { width: screenWidth } = Dimensions.get("window");

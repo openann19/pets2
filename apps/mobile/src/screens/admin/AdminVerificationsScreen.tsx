@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@/theme'";
+import { useTheme } from '@mobile/src/theme'";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
 

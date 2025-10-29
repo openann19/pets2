@@ -1,15 +1,15 @@
 /**
  * Enhanced Upload Service - Mobile
- * 
+ *
  * Integrates uploadHygiene with API uploads, providing a complete
  * upload-to-moderation pipeline with progress tracking and error handling.
  */
 
-import { 
-  processImageForUpload, 
+import {
+  processImageForUpload,
   type ProcessedImage,
   checkUploadQuota,
-  uploadWithRetry 
+  uploadWithRetry,
 } from './uploadHygiene';
 import { api, request } from './api';
 import { logger } from './logger';
@@ -79,7 +79,7 @@ export class EnhancedUploadService {
     processedImage: ProcessedImage,
     type: 'profile' | 'pet' | 'verification' = 'pet',
     petId?: string,
-    onProgress?: (progress: UploadProgress) => void
+    onProgress?: (progress: UploadProgress) => void,
   ): Promise<UploadResult> {
     try {
       // 1. Presign
@@ -140,8 +140,8 @@ export class EnhancedUploadService {
             s3Key?: string;
             url?: string;
             status?: string;
-          }
-        }
+          };
+        };
       }>('/uploads', {
         method: 'POST',
         body: {
@@ -201,7 +201,7 @@ export class EnhancedUploadService {
       allowEditing?: boolean;
       useCamera?: boolean;
     },
-    onProgress?: (progress: UploadProgress) => void
+    onProgress?: (progress: UploadProgress) => void,
   ): Promise<UploadResult> {
     const opts = {
       maxDimension: options?.maxDimension || 2048,
@@ -220,9 +220,9 @@ export class EnhancedUploadService {
 
       // Process image
       const { pickAndProcessImage, captureAndProcessImage } = await import('./uploadHygiene');
-      
+
       const processed = opts.useCamera
-        ? await captureAndProcessImage({ 
+        ? await captureAndProcessImage({
             maxDimension: opts.maxDimension,
             quality: opts.quality,
           })
@@ -236,12 +236,7 @@ export class EnhancedUploadService {
       }
 
       // Upload
-      return await this.uploadProcessedImage(
-        processed,
-        opts.type,
-        options?.petId,
-        onProgress
-      );
+      return await this.uploadProcessedImage(processed, opts.type, options?.petId, onProgress);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
       logger.error('Upload from picker failed', { error: err });
@@ -255,7 +250,7 @@ export class EnhancedUploadService {
   async pollUploadStatus(
     uploadId: string,
     maxAttempts = 10,
-    intervalMs = 1000
+    intervalMs = 1000,
   ): Promise<UploadResult> {
     for (let i = 0; i < maxAttempts; i++) {
       const response = await request<{
@@ -267,9 +262,9 @@ export class EnhancedUploadService {
             flagReason?: string;
           };
           analysis?: PhotoUploadAnalysis;
-        }
+        };
       }>(`/uploads/${uploadId}`, {
-        method: 'GET'
+        method: 'GET',
       });
       const { upload, analysis } = response.data;
 
@@ -288,7 +283,7 @@ export class EnhancedUploadService {
       }
 
       // Still processing
-      await new Promise(resolve => setTimeout(resolve, intervalMs));
+      await new Promise((resolve) => setTimeout(resolve, intervalMs));
     }
 
     throw new Error('Upload status polling timeout');
@@ -301,28 +296,27 @@ export class EnhancedUploadService {
     photos: ProcessedImage[],
     type: 'profile' | 'pet' | 'verification' = 'pet',
     petId?: string,
-    onProgress?: (index: number, progress: UploadProgress) => void
+    onProgress?: (index: number, progress: UploadProgress) => void,
   ): Promise<UploadResult[]> {
     const results: UploadResult[] = [];
 
     for (let i = 0; i < photos.length; i++) {
       const photo = photos[i];
-      
+
       if (onProgress) {
-        onProgress(i, { phase: 'presign', percent: 0, message: `Processing photo ${i + 1}/${photos.length}` });
+        onProgress(i, {
+          phase: 'presign',
+          percent: 0,
+          message: `Processing photo ${i + 1}/${photos.length}`,
+        });
       }
 
       try {
-      const result = await this.uploadProcessedImage(
-        photo!,
-        type,
-        petId,
-        (progress) => {
+        const result = await this.uploadProcessedImage(photo!, type, petId, (progress) => {
           if (onProgress) {
             onProgress(i, progress);
           }
-        }
-      );
+        });
         results.push(result);
       } catch (error: unknown) {
         const err = error instanceof Error ? error : new Error(String(error));
@@ -337,18 +331,20 @@ export class EnhancedUploadService {
   /**
    * Check if upload is duplicate
    */
-  async checkDuplicate(uploadId: string): Promise<{ isDuplicate: boolean; similarImages?: string[] }> {
+  async checkDuplicate(
+    uploadId: string,
+  ): Promise<{ isDuplicate: boolean; similarImages?: string[] }> {
     try {
       const response = await request<{ data: { isDuplicate: boolean; similarImages?: string[] } }>(
         `/uploads/${uploadId}/duplicate-check`,
-        { method: 'GET' }
+        { method: 'GET' },
       );
-      
+
       // Validate response data is the expected format
       if (response.data && typeof response.data === 'object' && 'isDuplicate' in response.data) {
         return response.data;
       }
-      
+
       // Malformed response - return safe default
       logger.warn('Duplicate check returned malformed response', { data: response.data });
       return { isDuplicate: false };
@@ -391,15 +387,14 @@ export class EnhancedUploadService {
     processedImage: ProcessedImage,
     type: 'profile' | 'pet' | 'verification' = 'pet',
     petId?: string,
-    maxRetries = 3
+    maxRetries = 3,
   ): Promise<UploadResult> {
     return uploadWithRetry(
       () => this.uploadProcessedImage(processedImage, type, petId),
       maxRetries,
-      1000
+      1000,
     );
   }
 }
 
 export default EnhancedUploadService.getInstance();
-

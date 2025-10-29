@@ -1,22 +1,22 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { Alert } from "react-native";
-import { useBlockedUsers } from "../useBlockedUsers";
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { Alert } from 'react-native';
+import { useBlockedUsers } from '../useBlockedUsers';
 
 // Mock Alert
-jest.spyOn(Alert, "alert");
+jest.spyOn(Alert, 'alert');
 
 // Mock logger
-jest.mock("@pawfectmatch/core", () => ({
+jest.mock('@pawfectmatch/core', () => ({
   logger: {
     info: jest.fn(),
     error: jest.fn(),
   },
 }));
 
-describe("useBlockedUsers", () => {
+describe('useBlockedUsers', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
@@ -27,7 +27,7 @@ describe("useBlockedUsers", () => {
     jest.useRealTimers();
   });
 
-  it("should initialize with loading state", () => {
+  it('should initialize with loading state', () => {
     const { result } = renderHook(() => useBlockedUsers());
 
     expect(result.current.isLoading).toBe(true);
@@ -35,7 +35,7 @@ describe("useBlockedUsers", () => {
     expect(result.current.isRefreshing).toBe(false);
   });
 
-  it("should load blocked users manually", async () => {
+  it('should load blocked users manually', async () => {
     const { result } = renderHook(() => useBlockedUsers());
 
     // Manually load users
@@ -51,7 +51,7 @@ describe("useBlockedUsers", () => {
     expect(result.current.totalBlocked).toBe(2);
   });
 
-  it("should load blocked users on mount with timer", async () => {
+  it('should load blocked users on mount with timer', async () => {
     const { result } = renderHook(() => useBlockedUsers());
 
     // Wait for the useEffect to trigger loadBlockedUsers
@@ -66,7 +66,7 @@ describe("useBlockedUsers", () => {
     expect(result.current.blockedUsers).toHaveLength(2);
   });
 
-  it("should refresh blocked users", async () => {
+  it('should refresh blocked users', async () => {
     const { result } = renderHook(() => useBlockedUsers());
 
     // Initial load
@@ -86,7 +86,7 @@ describe("useBlockedUsers", () => {
     expect(result.current.isRefreshing).toBe(false);
   });
 
-  it("should unblock a user", async () => {
+  it('should unblock a user', async () => {
     const { result } = renderHook(() => useBlockedUsers());
 
     // Load users first
@@ -103,42 +103,42 @@ describe("useBlockedUsers", () => {
     // Mock the alert confirmation by calling the onPress directly
     await act(async () => {
       // Simulate user confirming unblock
-      await result.current.unblockUser("user1", "John Doe");
+      await result.current.unblockUser('user1', 'John Doe');
     });
 
     // Since Alert.alert is mocked, we need to simulate the confirmation
     // In a real scenario, the alert callback would be called
     // For testing, we'll just verify the alert was shown
     expect(Alert.alert).toHaveBeenCalledWith(
-      "Unblock User",
-      "Are you sure you want to unblock John Doe?",
+      'Unblock User',
+      'Are you sure you want to unblock John Doe?',
       expect.arrayContaining([
-        expect.objectContaining({ text: "Cancel", style: "cancel" }),
-        expect.objectContaining({ text: "Unblock", style: "destructive" }),
+        expect.objectContaining({ text: 'Cancel', style: 'cancel' }),
+        expect.objectContaining({ text: 'Unblock', style: 'destructive' }),
       ]),
     );
   });
 
-  it("should block a user", async () => {
+  it('should block a user', async () => {
     const { result } = renderHook(() => useBlockedUsers());
 
     await act(async () => {
-      const success = await result.current.blockUser("user3", "Spam");
+      const success = await result.current.blockUser('user3', 'Spam');
       expect(success).toBe(true);
     });
   });
 
-  it("should handle blocking user failure", async () => {
+  it('should handle blocking user failure', async () => {
     // Mock logger to throw error
-    const mockLogger = require("@pawfectmatch/core").logger;
+    const mockLogger = require('@pawfectmatch/core').logger;
     mockLogger.info.mockImplementationOnce(() => {
-      throw new Error("Network error");
+      throw new Error('Network error');
     });
 
     const { result } = renderHook(() => useBlockedUsers());
 
     await act(async () => {
-      const success = await result.current.blockUser("user3", "Spam");
+      const success = await result.current.blockUser('user3', 'Spam');
       expect(success).toBe(false);
     });
 
@@ -147,15 +147,15 @@ describe("useBlockedUsers", () => {
     });
 
     const firstUser = result.current.blockedUsers[0];
-    expect(firstUser).toHaveProperty("id");
-    expect(firstUser).toHaveProperty("name");
-    expect(firstUser).toHaveProperty("email");
-    expect(firstUser).toHaveProperty("blockedAt");
-    expect(firstUser).toHaveProperty("reason");
-    expect(firstUser.reason).toBe("Inappropriate behavior");
+    expect(firstUser).toHaveProperty('id');
+    expect(firstUser).toHaveProperty('name');
+    expect(firstUser).toHaveProperty('email');
+    expect(firstUser).toHaveProperty('blockedAt');
+    expect(firstUser).toHaveProperty('reason');
+    expect(firstUser.reason).toBe('Inappropriate behavior');
   });
 
-  it("should track blocked timestamp", async () => {
+  it('should track blocked timestamp', async () => {
     const { result } = renderHook(() => useBlockedUsers());
 
     act(() => {
@@ -171,7 +171,7 @@ describe("useBlockedUsers", () => {
     expect(new Date(firstUser.blockedAt)).toBeInstanceOf(Date);
   });
 
-  it("should return stable function references", () => {
+  it('should return stable function references', () => {
     const { result } = renderHook(() => useBlockedUsers());
 
     act(() => {

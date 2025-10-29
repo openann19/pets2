@@ -60,10 +60,7 @@ export class DeepSeekService {
   /**
    * Analyze pet photo using DeepSeek Vision
    */
-  public async analyzePetPhoto(
-    imageBase64: string,
-    prompt?: string
-  ): Promise<DeepSeekResponse> {
+  public async analyzePetPhoto(imageBase64: string, prompt?: string): Promise<DeepSeekResponse> {
     const defaultPrompt = `
     Analyze this pet photo and provide detailed information in JSON format:
     {
@@ -91,7 +88,7 @@ export class DeepSeekService {
     }
     `;
 
-  const response = await this.makeRequest<DeepSeekResponse>('/chat/completions', {
+    const response = await this.makeRequest<DeepSeekResponse>('/chat/completions', {
       model: 'deepseek-vision',
       messages: [
         {
@@ -123,7 +120,7 @@ export class DeepSeekService {
   public async analyzeCompatibility(
     pet1: unknown,
     pet2: unknown,
-    userPreferences: unknown
+    userPreferences: unknown,
   ): Promise<DeepSeekResponse> {
     const prompt = `
     Analyze the compatibility between these two pets and provide a detailed assessment:
@@ -149,7 +146,7 @@ export class DeepSeekService {
     }
     `;
 
-  const response = await this.makeRequest<DeepSeekResponse>('/chat/completions', {
+    const response = await this.makeRequest<DeepSeekResponse>('/chat/completions', {
       model: this.config.model,
       messages: [
         {
@@ -184,7 +181,7 @@ export class DeepSeekService {
     Return only the bio text, no additional formatting.
     `;
 
-  const response = await this.makeRequest<DeepSeekResponse>('/chat/completions', {
+    const response = await this.makeRequest<DeepSeekResponse>('/chat/completions', {
       model: this.config.model,
       messages: [
         {
@@ -202,10 +199,7 @@ export class DeepSeekService {
   /**
    * Analyze pet behavior patterns
    */
-  public async analyzeBehavior(
-    behaviorData: unknown,
-    context: string
-  ): Promise<DeepSeekResponse> {
+  public async analyzeBehavior(behaviorData: unknown, context: string): Promise<DeepSeekResponse> {
     const prompt = `
     Analyze this pet's behavior patterns and provide insights:
 
@@ -277,8 +271,8 @@ export class DeepSeekService {
         max_tokens: 10,
       });
 
-  const result = response as DeepSeekResponse;
-  return Array.isArray(result.choices) && result.choices.length > 0;
+      const result = response as DeepSeekResponse;
+      return Array.isArray(result.choices) && result.choices.length > 0;
     } catch (_error) {
       // Surface as boolean false without logging to console
       return false;
@@ -292,7 +286,7 @@ export class DeepSeekService {
     const response = await fetch(`${this.baseUrl}/usage`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${this.config.apiKey}`,
+        Authorization: `Bearer ${this.config.apiKey}`,
       },
     });
 

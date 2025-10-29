@@ -1,8 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import { Ionicons } from '@expo/vector-icons';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import React, { useMemo } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface EventWidgetProps {
   event: {
@@ -30,26 +30,26 @@ export function EventWidget({
 
   const getCategoryEmoji = (category: string) => {
     const emojis = {
-      playdate: "🐾",
-      training: "🎓",
-      social: "👥",
-      adoption: "🏠",
-      health: "🏥",
+      playdate: '🐾',
+      training: '🎓',
+      social: '👥',
+      adoption: '🏠',
+      health: '🏥',
     };
-    return emojis[category as keyof typeof emojis] || "🎉";
+    return emojis[category as keyof typeof emojis] || '🎉';
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "playdate":
+      case 'playdate':
         return theme.colors.success;
-      case "training":
+      case 'training':
         return theme.colors.info;
-      case "social":
+      case 'social':
         return theme.colors.primary;
-      case "adoption":
+      case 'adoption':
         return theme.colors.warning;
-      case "health":
+      case 'health':
         return theme.colors.danger;
       default:
         return theme.colors.onMuted;
@@ -60,53 +60,94 @@ export function EventWidget({
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Upcoming Event</Text>
-        <TouchableOpacity onPress={onEventPress} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Ionicons name="open-outline" size={20} color={theme.colors.primary} />
+        <TouchableOpacity
+          onPress={onEventPress}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Ionicons
+            name="open-outline"
+            size={20}
+            color={theme.colors.primary}
+          />
         </TouchableOpacity>
       </View>
 
       <View style={styles.eventCard}>
         {event.image ? (
-          <Image source={{ uri: event.image }} style={styles.eventImage} resizeMode="cover" />
+          <Image
+            source={{ uri: event.image }}
+            style={styles.eventImage}
+            resizeMode="cover"
+          />
         ) : null}
 
         <View style={styles.eventInfo}>
           <View style={styles.eventHeader}>
-            <Text style={styles.eventTitle} numberOfLines={2}>
+            <Text
+              style={styles.eventTitle}
+              numberOfLines={2}
+            >
               {event.title}
             </Text>
-            <View style={StyleSheet.flatten([styles.categoryBadge, { backgroundColor: getCategoryColor(event.category) }])}>
+            <View
+              style={StyleSheet.flatten([
+                styles.categoryBadge,
+                { backgroundColor: getCategoryColor(event.category) },
+              ])}
+            >
               <Text style={styles.categoryEmoji}>{getCategoryEmoji(event.category)}</Text>
             </View>
           </View>
 
           <View style={styles.eventDetails}>
             <View style={styles.detailRow}>
-              <Ionicons name="calendar-outline" size={14} color={theme.colors.border} />
+              <Ionicons
+                name="calendar-outline"
+                size={14}
+                color={theme.colors.border}
+              />
               <Text style={styles.detailText}>{event.date}</Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="time-outline" size={14} color={theme.colors.border} />
+              <Ionicons
+                name="time-outline"
+                size={14}
+                color={theme.colors.border}
+              />
               <Text style={styles.detailText}>{event.time}</Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="location-outline" size={14} color={theme.colors.border} />
-              <Text style={styles.detailText} numberOfLines={1}>
+              <Ionicons
+                name="location-outline"
+                size={14}
+                color={theme.colors.border}
+              />
+              <Text
+                style={styles.detailText}
+                numberOfLines={1}
+              >
                 {event.location}
               </Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="people-outline" size={14} color={theme.colors.border} />
+              <Ionicons
+                name="people-outline"
+                size={14}
+                color={theme.colors.border}
+              />
               <Text style={styles.detailText}>
                 {event.attendees}/{event.maxAttendees} attending
               </Text>
             </View>
           </View>
 
-          <TouchableOpacity style={styles.joinButton} onPress={onJoinEvent}>
+          <TouchableOpacity
+            style={styles.joinButton}
+            onPress={onJoinEvent}
+          >
             <Text style={styles.joinButtonText}>Join Event</Text>
           </TouchableOpacity>
         </View>
@@ -129,37 +170,37 @@ function makeStyles(theme: AppTheme) {
       elevation: 4,
     },
     header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginBottom: theme.spacing.sm,
     },
     title: {
       fontSize: 16,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
     },
     eventCard: {
       backgroundColor: theme.colors.surface,
       borderRadius: theme.radii.sm ?? 12,
-      overflow: "hidden",
+      overflow: 'hidden',
     },
     eventImage: {
-      width: "100%",
+      width: '100%',
       height: 100,
     },
     eventInfo: {
       padding: theme.spacing.sm,
     },
     eventHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "flex-start",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
       marginBottom: theme.spacing.xs,
     },
     eventTitle: {
       fontSize: 14,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
       flex: 1,
       marginRight: theme.spacing.xs,
@@ -168,8 +209,8 @@ function makeStyles(theme: AppTheme) {
       width: 24,
       height: 24,
       borderRadius: 12,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     categoryEmoji: {
       fontSize: 12,
@@ -178,8 +219,8 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.sm,
     },
     detailRow: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       marginBottom: theme.spacing.xs,
     },
     detailText: {
@@ -193,12 +234,12 @@ function makeStyles(theme: AppTheme) {
       borderRadius: theme.radii.xs ?? 8,
       paddingVertical: theme.spacing.xs,
       paddingHorizontal: theme.spacing.md,
-      alignItems: "center",
+      alignItems: 'center',
     },
     joinButtonText: {
       color: theme.colors.onSurface,
       fontSize: 12,
-      fontWeight: "600",
+      fontWeight: '600',
     },
   });
 }

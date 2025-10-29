@@ -1,30 +1,30 @@
-import { useTheme } from "@/theme";
+import { useTheme } from '@/theme';
 /**
  * @jest-environment node
  */
-import React from "react";
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { render } from "@testing-library/react-native";
-import MatchesScreen from "../MatchesScreen";
-import { useMatchesData } from "../../hooks/useMatchesData";
-import { useScrollOffsetTracker } from "../../hooks/navigation/useScrollOffsetTracker";
-import { useTabReselectRefresh } from "../../hooks/navigation/useTabReselectRefresh";
+import React from 'react';
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
+import MatchesScreen from '../MatchesScreen';
+import { useMatchesData } from '../../hooks/useMatchesData';
+import { useScrollOffsetTracker } from '../../hooks/navigation/useScrollOffsetTracker';
+import { useTabReselectRefresh } from '../../hooks/navigation/useTabReselectRefresh';
 
-jest.mock("../../hooks/useMatchesData");
-jest.mock("../../hooks/navigation/useScrollOffsetTracker");
-jest.mock("../../hooks/navigation/useTabReselectRefresh");
-jest.mock("@react-navigation/native", () => ({
+jest.mock('../../hooks/useMatchesData');
+jest.mock('../../hooks/navigation/useScrollOffsetTracker');
+jest.mock('../../hooks/navigation/useTabReselectRefresh');
+jest.mock('@react-navigation/native', () => ({
   useNavigation: () => ({
     navigate: jest.fn(),
   }),
 }));
 
-describe("MatchesScreen Tab Reselect Integration", () => {
+describe('MatchesScreen Tab Reselect Integration', () => {
   const mockMatches = [
     {
-      _id: "1",
-      petName: "Bella",
-      petPhoto: "https://example.com/bella.jpg",
+      _id: '1',
+      petName: 'Bella',
+      petPhoto: 'https://example.com/bella.jpg',
     },
   ];
 
@@ -34,7 +34,7 @@ describe("MatchesScreen Tab Reselect Integration", () => {
     (useMatchesData as jest.Mock).mockReturnValue({
       matches: mockMatches,
       likedYou: [],
-      selectedTab: "matches" as const,
+      selectedTab: 'matches' as const,
       refreshing: false,
       isLoading: false,
       initialOffset: 0,
@@ -52,7 +52,7 @@ describe("MatchesScreen Tab Reselect Integration", () => {
     (useTabReselectRefresh as jest.Mock).mockReturnValue(undefined);
   });
 
-  it("should initialize with all required hooks", () => {
+  it('should initialize with all required hooks', () => {
     render(<MatchesScreen navigation={{ navigate: jest.fn() } as any} />);
 
     expect(useMatchesData).toHaveBeenCalled();
@@ -60,11 +60,10 @@ describe("MatchesScreen Tab Reselect Integration", () => {
     expect(useTabReselectRefresh).toHaveBeenCalled();
   });
 
-  it("should configure useTabReselectRefresh correctly", () => {
+  it('should configure useTabReselectRefresh correctly', () => {
     render(<MatchesScreen navigation={{ navigate: jest.fn() } as any} />);
 
-    const useTabReselectRefreshCall = (useTabReselectRefresh as jest.Mock).mock
-      .calls[0][0];
+    const useTabReselectRefreshCall = (useTabReselectRefresh as jest.Mock).mock.calls[0][0];
 
     expect(useTabReselectRefreshCall).toMatchObject({
       topThreshold: 120,
@@ -75,7 +74,7 @@ describe("MatchesScreen Tab Reselect Integration", () => {
     expect(useTabReselectRefreshCall.getOffset).toBeDefined();
   });
 
-  it("should pass correct props to FlatList", () => {
+  it('should pass correct props to FlatList', () => {
     const { UNSAFE_getByType } = render(
       <MatchesScreen navigation={{ navigate: jest.fn() } as any} />,
     );
@@ -84,7 +83,7 @@ describe("MatchesScreen Tab Reselect Integration", () => {
     expect(UNSAFE_getByType).toBeDefined();
   });
 
-  it("should handle scroll events", () => {
+  it('should handle scroll events', () => {
     const mockOnScroll = jest.fn();
     (useScrollOffsetTracker as jest.Mock).mockReturnValue({
       onScroll: mockOnScroll,
@@ -97,12 +96,12 @@ describe("MatchesScreen Tab Reselect Integration", () => {
     expect(mockOnScroll).toBeDefined();
   });
 
-  it("should trigger refresh when tab is reselected near top", async () => {
+  it('should trigger refresh when tab is reselected near top', async () => {
     const mockOnRefresh = jest.fn();
     (useMatchesData as jest.Mock).mockReturnValue({
       matches: mockMatches,
       likedYou: [],
-      selectedTab: "matches" as const,
+      selectedTab: 'matches' as const,
       refreshing: false,
       isLoading: false,
       initialOffset: 0,
@@ -119,8 +118,7 @@ describe("MatchesScreen Tab Reselect Integration", () => {
 
     render(<MatchesScreen navigation={{ navigate: jest.fn() } as any} />);
 
-    const useTabReselectRefreshCall = (useTabReselectRefresh as jest.Mock).mock
-      .calls[0][0];
+    const useTabReselectRefreshCall = (useTabReselectRefresh as jest.Mock).mock.calls[0][0];
 
     // Simulate refresh call
     act(() => {
@@ -132,19 +130,19 @@ describe("MatchesScreen Tab Reselect Integration", () => {
     });
   });
 
-  it("should pass correct theme colors to RefreshControl", () => {
+  it('should pass correct theme colors to RefreshControl', () => {
     render(<MatchesScreen navigation={{ navigate: jest.fn() } as any} />);
 
     // theme.colors.primary[500] should be used
     expect(useMatchesData).toHaveBeenCalled();
   });
 
-  it("should handle tab switching", () => {
+  it('should handle tab switching', () => {
     const mockSetSelectedTab = jest.fn();
     (useMatchesData as jest.Mock).mockReturnValue({
       matches: mockMatches,
       likedYou: [],
-      selectedTab: "matches" as const,
+      selectedTab: 'matches' as const,
       refreshing: false,
       isLoading: false,
       initialOffset: 0,
@@ -159,7 +157,7 @@ describe("MatchesScreen Tab Reselect Integration", () => {
     expect(mockSetSelectedTab).toBeDefined();
   });
 
-  it("should track scroll position for reselect logic", () => {
+  it('should track scroll position for reselect logic', () => {
     const mockGetOffset = jest.fn(() => 150);
     (useScrollOffsetTracker as jest.Mock).mockReturnValue({
       onScroll: jest.fn(),
@@ -168,18 +166,17 @@ describe("MatchesScreen Tab Reselect Integration", () => {
 
     render(<MatchesScreen navigation={{ navigate: jest.fn() } as any} />);
 
-    const useTabReselectRefreshCall = (useTabReselectRefresh as jest.Mock).mock
-      .calls[0][0];
+    const useTabReselectRefreshCall = (useTabReselectRefresh as jest.Mock).mock.calls[0][0];
 
     // getOffset should return current position
     expect(useTabReselectRefreshCall.getOffset()).toBe(150);
   });
 
-  it("should handle empty matches list", () => {
+  it('should handle empty matches list', () => {
     (useMatchesData as jest.Mock).mockReturnValue({
       matches: [],
       likedYou: [],
-      selectedTab: "matches" as const,
+      selectedTab: 'matches' as const,
       refreshing: false,
       isLoading: false,
       initialOffset: 0,
@@ -194,11 +191,11 @@ describe("MatchesScreen Tab Reselect Integration", () => {
     }).not.toThrow();
   });
 
-  it("should persist scroll position", () => {
+  it('should persist scroll position', () => {
     (useMatchesData as jest.Mock).mockReturnValue({
       matches: mockMatches,
       likedYou: [],
-      selectedTab: "matches" as const,
+      selectedTab: 'matches' as const,
       refreshing: false,
       isLoading: false,
       initialOffset: 200,
@@ -214,4 +211,3 @@ describe("MatchesScreen Tab Reselect Integration", () => {
     expect(useMatchesData).toHaveBeenCalled();
   });
 });
-

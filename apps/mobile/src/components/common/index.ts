@@ -4,4 +4,3 @@
  */
 
 export { SmartImage } from './SmartImage';
-

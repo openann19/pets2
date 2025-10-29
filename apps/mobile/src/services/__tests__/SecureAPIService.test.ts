@@ -1,6 +1,6 @@
 /**
  * Comprehensive tests for SecureAPIService
- * 
+ *
  * Coverage:
  * - SSL pinning and certificate validation
  * - Secure HTTP requests
@@ -35,7 +35,7 @@ describe('SecureAPIService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     process.env = { ...originalEnv };
-    
+
     // Mock successful response
     mockSslFetch.mockResolvedValueOnce({
       status: 200,
@@ -80,7 +80,7 @@ describe('SecureAPIService', () => {
   describe('Happy Path - POST Request', () => {
     it('should make secure POST request', async () => {
       const data = { name: 'test', value: 123 };
-      
+
       mockSslFetch.mockResolvedValueOnce({
         status: 201,
         ok: true,
@@ -96,7 +96,7 @@ describe('SecureAPIService', () => {
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify(data),
-        })
+        }),
       );
     });
 
@@ -122,7 +122,7 @@ describe('SecureAPIService', () => {
       expect(result).toEqual({ updated: true });
       expect(mockSslFetch).toHaveBeenCalledWith(
         expect.stringContaining('/test'),
-        expect.objectContaining({ method: 'PUT' })
+        expect.objectContaining({ method: 'PUT' }),
       );
     });
   });
@@ -141,7 +141,7 @@ describe('SecureAPIService', () => {
       expect(result).toEqual({});
       expect(mockSslFetch).toHaveBeenCalledWith(
         expect.stringContaining('/test'),
-        expect.objectContaining({ method: 'DELETE' })
+        expect.objectContaining({ method: 'DELETE' }),
       );
     });
   });
@@ -198,14 +198,14 @@ describe('SecureAPIService', () => {
     it('should use exponential backoff for retries', async () => {
       let callTimes: number[] = [];
       const originalSetTimeout = setTimeout;
-      
+
       jest.spyOn(global, 'setTimeout').mockImplementation((fn: Function, delay: number) => {
         callTimes.push(delay);
         return originalSetTimeout(fn, delay);
       });
 
       mockSslFetch.mockRejectedValue(new Error('Network error'));
-      
+
       try {
         await secureAPI.get('/test', { retries: 2, retryDelay: 1000 });
       } catch {
@@ -260,7 +260,7 @@ describe('SecureAPIService', () => {
 
     it('should handle large response bodies', async () => {
       const largeData = { data: 'x'.repeat(100000) };
-      
+
       mockSslFetch.mockResolvedValueOnce({
         status: 200,
         ok: true,
@@ -289,10 +289,8 @@ describe('SecureAPIService', () => {
     });
 
     it('should handle timeout errors', async () => {
-      mockSslFetch.mockImplementation(() => 
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 1)
-        )
+      mockSslFetch.mockImplementation(
+        () => new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 1)),
       );
 
       await expect(secureAPI.get('/slow')).rejects.toThrow();
@@ -329,7 +327,7 @@ describe('SecureAPIService', () => {
       mockSslFetch.mockResolvedValueOnce({
         status: 200,
         ok: true,
-        json: async () => ({ id: '123', name: 'test' } as ResponseType),
+        json: async () => ({ id: '123', name: 'test' }) as ResponseType,
         statusText: 'OK',
       } as any);
 
@@ -341,7 +339,7 @@ describe('SecureAPIService', () => {
 
     it('should handle SecureAPIError properly', async () => {
       const originalError = new Error('Original error');
-      
+
       try {
         throw new SecureAPIError('Wrapper error', originalError);
       } catch (error) {

@@ -8,7 +8,7 @@ import { ScrollView, View, StyleSheet, Switch, Alert } from 'react-native';
 import { Stack } from '../components/ui/v2/layout/Stack';
 import { Text } from '../components/ui/v2/Text';
 import { Button } from '../components/ui/v2/Button';
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 import { useTranslation } from 'react-i18next';
 import { showcaseRegistry } from '../components/ui/v2/registry';
 
@@ -31,13 +31,13 @@ export default function UIDemoScreen(): React.ReactElement {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]>
+    <View style={[styles.container, { backgroundColor: theme.colors.bg }]>
       {/* Controls Bar */}
       <View
         style={[
           styles.controls,
           {
-            backgroundColor: theme.colors.bgElevated || theme.colors.bg,
+            backgroundColor: theme.colors.surface || theme.colors.bg,
             borderBottomColor: theme.colors.border,
           },
         ]}

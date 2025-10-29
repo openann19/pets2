@@ -3,23 +3,11 @@
  * Integrates chatService for reactions functionality
  */
 
-import type { Message } from "@pawfectmatch/core";
-import {
-  chatService,
-  type MessageWithReactions,
-} from "../../services/chatService";
-import React, { useState, useCallback } from "react";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Modal,
-  Pressable,
-  Alert,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { useTheme } from "@/theme";
+import { useTheme } from '@mobile/src/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useCallback, useState } from 'react';
+import { Alert, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { chatService, type MessageWithReactions } from '../../services/chatService';
 
 interface EnhancedMessageBubbleProps {
   message: MessageWithReactions;
@@ -33,11 +21,11 @@ interface EnhancedMessageBubbleProps {
   petInfo?: {
     name: string;
     species: string;
-    mood?: "happy" | "excited" | "curious" | "sleepy" | "playful";
+    mood?: 'happy' | 'excited' | 'curious' | 'sleepy' | 'playful';
   };
 }
 
-const REACTION_EMOJIS = ["👍", "❤️", "😂", "😊", "🎉", "🔥"];
+const REACTION_EMOJIS = ['👍', '❤️', '😂', '😊', '🎉', '🔥'];
 
 export function EnhancedMessageBubble({
   message,
@@ -57,8 +45,8 @@ export function EnhancedMessageBubble({
 
   const formatTime = (timestamp: string) =>
     new Date(timestamp).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
+      hour: '2-digit',
+      minute: '2-digit',
     });
 
   const handleLongPress = useCallback(() => {
@@ -90,7 +78,7 @@ export function EnhancedMessageBubble({
       } catch (error) {
         // Rollback optimistic update
         setLocalReactions(message.reactions || {});
-        Alert.alert("Error", "Failed to send reaction. Please try again.");
+        Alert.alert('Error', 'Failed to send reaction. Please try again.');
       } finally {
         setIsReacting(false);
       }
@@ -100,11 +88,9 @@ export function EnhancedMessageBubble({
 
   const getStatusIcon = () => {
     if (!showStatus) return null;
-    const isRead = message.readBy.some(
-      (receipt) => receipt.user === currentUserId,
-    );
-    if (isRead) return "✓✓";
-    return "✓";
+    const isRead = message.readBy.some((receipt) => receipt.user === currentUserId);
+    if (isRead) return '✓✓';
+    return '✓';
   };
 
   const getBubbleStyle = () => {
@@ -114,8 +100,7 @@ export function EnhancedMessageBubble({
     return isDark ? styles.otherMessageDark : styles.otherMessageLight;
   };
 
-  const getTextStyle = () =>
-    isDark ? styles.messageTextDark : styles.messageTextLight;
+  const getTextStyle = () => (isDark ? styles.messageTextDark : styles.messageTextLight);
 
   return (
     <>
@@ -129,25 +114,17 @@ export function EnhancedMessageBubble({
           {/* Avatar placeholder */}
           {showAvatars && petInfo ? (
             <View style={styles.avatarContainer}>
-              <Text style={styles.avatarText}>
-                {petInfo.species === "dog" ? "🐕" : "🐱"}
-              </Text>
+              <Text style={styles.avatarText}>{petInfo.species === 'dog' ? '🐕' : '🐱'}</Text>
             </View>
           ) : null}
 
           <LinearGradient
-            colors={
-              isOwnMessage
-                ? ["#FF6B6B", "#FF8E8E"]
-                : [colors.bgElevated, colors.bg]
-            }
+            colors={isOwnMessage ? ['#FF6B6B', '#FF8E8E'] : [colors.bgElevated, colors.bg]}
             style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
-            <Text
-              style={StyleSheet.flatten([styles.messageText, getTextStyle()])}
-            >
+            <Text style={StyleSheet.flatten([styles.messageText, getTextStyle()])}>
               {message.content}
             </Text>
           </LinearGradient>
@@ -162,9 +139,7 @@ export function EnhancedMessageBubble({
                   onPress={() => handleReactionPress(emoji)}
                 >
                   <Text style={styles.reactionEmoji}>{emoji}</Text>
-                  {count > 1 && (
-                    <Text style={styles.reactionCount}>{count}</Text>
-                  )}
+                  {count > 1 && <Text style={styles.reactionCount}>{count}</Text>}
                 </TouchableOpacity>
               ))}
             </View>
@@ -198,11 +173,15 @@ export function EnhancedMessageBubble({
         visible={showReactionPicker}
         transparent
         animationType="fade"
-        onRequestClose={() => { setShowReactionPicker(false); }}
+        onRequestClose={() => {
+          setShowReactionPicker(false);
+        }}
       >
         <Pressable
           style={styles.modalOverlay}
-          onPress={() => { setShowReactionPicker(false); }}
+          onPress={() => {
+            setShowReactionPicker(false);
+          }}
         >
           <View style={styles.reactionPicker}>
             {REACTION_EMOJIS.map((emoji) => (
@@ -225,23 +204,23 @@ const styles = StyleSheet.create({
   messageContainer: {
     marginVertical: 4,
     paddingHorizontal: 12,
-    flexDirection: "row",
-    alignItems: "flex-end",
+    flexDirection: 'row',
+    alignItems: 'flex-end',
   },
   ownContainer: {
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
   },
   otherContainer: {
-    justifyContent: "flex-start",
+    justifyContent: 'flex-start',
   },
   avatarContainer: {
     width: 32,
     height: 32,
     borderRadius: 16,
     marginRight: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "Theme.colors.neutral[100]",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'Theme.colors.neutral[100]',
   },
   avatarText: {
     fontSize: 16,
@@ -249,43 +228,43 @@ const styles = StyleSheet.create({
   bubble: {
     borderRadius: 16,
     padding: 12,
-    maxWidth: "80%",
+    maxWidth: '80%',
   },
   ownMessageDark: {
-    backgroundColor: "Theme.colors.secondary[500]",
+    backgroundColor: 'Theme.colors.secondary[500]',
   },
   ownMessageLight: {
-    backgroundColor: "#FF6B6B",
+    backgroundColor: '#FF6B6B',
   },
   otherMessageDark: {
-    backgroundColor: "Theme.colors.neutral[700]",
+    backgroundColor: 'Theme.colors.neutral[700]',
   },
   otherMessageLight: {
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: 'Theme.colors.neutral[0]',
   },
   messageText: {
     fontSize: 16,
     lineHeight: 20,
   },
   messageTextDark: {
-    color: "Theme.colors.neutral[0]",
+    color: 'Theme.colors.neutral[0]',
   },
   messageTextLight: {
-    color: "Theme.colors.neutral[900]",
+    color: 'Theme.colors.neutral[900]',
   },
   reactionsContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 4,
-    flexWrap: "wrap",
+    flexWrap: 'wrap',
     gap: 4,
   },
   reactionBadge: {
-    backgroundColor: "rgba(0,0,0,0.1)",
+    backgroundColor: 'rgba(0,0,0,0.1)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
   },
   reactionEmoji: {
@@ -293,49 +272,49 @@ const styles = StyleSheet.create({
   },
   reactionCount: {
     fontSize: 12,
-    color: "#666",
-    fontWeight: "600",
+    color: '#666',
+    fontWeight: '600',
   },
   messageMeta: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 2,
     marginLeft: 4,
   },
   timestamp: {
     fontSize: 11,
-    color: "Theme.colors.neutral[400]",
+    color: 'Theme.colors.neutral[400]',
   },
   timestampDark: {
-    color: "Theme.colors.neutral[400]",
+    color: 'Theme.colors.neutral[400]',
   },
   timestampLight: {
-    color: "Theme.colors.neutral[400]",
+    color: 'Theme.colors.neutral[400]',
   },
   status: {
     fontSize: 11,
     marginLeft: 4,
   },
   statusDark: {
-    color: "Theme.colors.neutral[400]",
+    color: 'Theme.colors.neutral[400]',
   },
   statusLight: {
-    color: "Theme.colors.neutral[400]",
+    color: 'Theme.colors.neutral[400]',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "flex-end",
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
     paddingBottom: 100,
   },
   reactionPicker: {
-    flexDirection: "row",
-    justifyContent: "center",
-    backgroundColor: "Theme.colors.neutral[0]",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    backgroundColor: 'Theme.colors.neutral[0]',
     padding: 16,
     borderRadius: 24,
     marginHorizontal: 40,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: 'Theme.colors.neutral[950]',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

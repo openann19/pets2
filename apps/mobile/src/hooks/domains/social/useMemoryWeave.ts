@@ -2,23 +2,23 @@
  * useMemoryWeave Hook
  * Manages memory weave display, navigation, and animations
  */
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Animated } from "react-native";
-import * as Haptics from "expo-haptics";
-import { Dimensions } from "react-native";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Animated } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { Dimensions } from 'react-native';
 
-const { width: screenWidth } = Dimensions.get("window");
+const { width: screenWidth } = Dimensions.get('window');
 
 interface MemoryNode {
   id: string;
-  type: "text" | "image" | "video" | "location";
+  type: 'text' | 'image' | 'video' | 'location';
   content: string;
   title: string;
   timestamp: string;
   metadata?: {
     location?: string;
     participants?: string[];
-    emotion?: "happy" | "excited" | "love" | "playful";
+    emotion?: 'happy' | 'excited' | 'love' | 'playful';
   };
 }
 
@@ -47,9 +47,7 @@ interface UseMemoryWeaveReturn {
   formatTimestamp: (timestamp: string) => string;
 }
 
-export const useMemoryWeave = (
-  initialMemories: MemoryNode[] = [],
-): UseMemoryWeaveReturn => {
+export const useMemoryWeave = (initialMemories: MemoryNode[] = []): UseMemoryWeaveReturn => {
   const [memories] = useState<MemoryNode[]>(initialMemories);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -108,45 +106,43 @@ export const useMemoryWeave = (
 
   const getEmotionColor = useCallback((emotion?: string): string => {
     switch (emotion) {
-      case "happy":
-        return "#FFD700";
-      case "excited":
-        return "#FF6B6B";
-      case "love":
-        return "#FF69B4";
-      case "playful":
-        return "#4ECDC4";
+      case 'happy':
+        return '#FFD700';
+      case 'excited':
+        return '#FF6B6B';
+      case 'love':
+        return '#FF69B4';
+      case 'playful':
+        return '#4ECDC4';
       default:
-        return "#8B5CF6";
+        return '#8B5CF6';
     }
   }, []);
 
   const getEmotionEmoji = useCallback((emotion?: string): string => {
     switch (emotion) {
-      case "happy":
-        return "😊";
-      case "excited":
-        return "🎉";
-      case "love":
-        return "💕";
-      case "playful":
-        return "🎾";
+      case 'happy':
+        return '😊';
+      case 'excited':
+        return '🎉';
+      case 'love':
+        return '💕';
+      case 'playful':
+        return '🎾';
       default:
-        return "✨";
+        return '✨';
     }
   }, []);
 
   const formatTimestamp = useCallback((timestamp: string): string => {
     const date = new Date(timestamp);
     const now = new Date();
-    const diffInDays = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
-    );
+    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 
-    if (diffInDays === 0) return "Today";
-    if (diffInDays === 1) return "Yesterday";
+    if (diffInDays === 0) return 'Today';
+    if (diffInDays === 1) return 'Yesterday';
     if (diffInDays < 7) return `${diffInDays} days ago`;
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }, []);
 
   return {

@@ -4,43 +4,37 @@
  * Features glass morphism, spring animations, and accessibility
  */
 
-import React, { useCallback } from "react";
+import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useCallback } from 'react';
 import {
-  View,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  type ViewStyle,
   type TouchableOpacityProps,
-  type NativeSyntheticEvent,
-  type NativeTouchEvent,
-  StyleSheet,
-} from "react-native";
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
+  View,
+  type ViewStyle,
+} from 'react-native';
+import Animated, {
   runOnJS,
-} from "react-native-reanimated";
-import Animated from "react-native-reanimated";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
-import * as Haptics from "expo-haptics";
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 
-import {
-  SPRING,
-} from "../../animation";
-import { Colors, Spacing, BorderRadius } from "../../styles/GlobalStyles";
-import { PREMIUM_SHADOWS } from "../elite/constants";
-import { useTheme } from "@/theme";
+import { useTheme } from '@mobile/src/theme';
+import { SPRING } from '../../animation';
+import { BorderRadius, Colors, Spacing } from '../../styles/GlobalStyles';
+import { PREMIUM_SHADOWS } from '../elite/constants';
 
 // TypeScript strict interface - no any, no implicit any
 interface PhoenixCardProps extends TouchableOpacityProps {
   readonly title?: string;
   readonly subtitle?: string;
   readonly children?: React.ReactNode;
-  readonly variant?: "elevated" | "glass" | "neon" | "minimal";
-  readonly size?: "sm" | "md" | "lg" | "xl";
+  readonly variant?: 'elevated' | 'glass' | 'neon' | 'minimal';
+  readonly size?: 'sm' | 'md' | 'lg' | 'xl';
   readonly interactive?: boolean;
   readonly glowOnPress?: boolean;
   readonly testID?: string;
@@ -53,8 +47,8 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
   title,
   subtitle,
   children,
-  variant = "elevated",
-  size = "md",
+  variant = 'elevated',
+  size = 'md',
   interactive = false,
   glowOnPress = true,
   style,
@@ -112,7 +106,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
       sm: { padding: Spacing.md, minHeight: 80 },
       md: { padding: Spacing.lg, minHeight: 120 },
       lg: { padding: Spacing.xl, minHeight: 160 },
-      xl: { padding: Spacing["2xl"], minHeight: 200 },
+      xl: { padding: Spacing['2xl'], minHeight: 200 },
     };
 
     return sizes[size];
@@ -126,18 +120,18 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
         ...PREMIUM_SHADOWS.primaryGlow,
       },
       glass: {
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
       },
       neon: {
-        backgroundColor: Colors.primary + "10",
+        backgroundColor: Colors.primary + '10',
         borderWidth: 1,
-        borderColor: Colors.primary + "30",
+        borderColor: Colors.primary + '30',
         shadowColor: Colors.primary,
         shadowOpacity: 0.3,
         shadowRadius: 12,
       },
       minimal: {
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
         borderWidth: 1,
         borderColor: isDark ? Colors.border : Colors.borderLight,
       },
@@ -149,10 +143,9 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
   // WCAG AA+ accessibility compliance
   const accessibilityProps = {
     accessible: true,
-    accessibilityRole: (interactive ? "button" : "none") as "button" | "none",
-    accessibilityLabel: accessibilityLabel || title || "Card",
-    accessibilityHint:
-      accessibilityHint || (interactive ? "Double tap to interact" : undefined),
+    accessibilityRole: (interactive ? 'button' : 'none') as 'button' | 'none',
+    accessibilityLabel: accessibilityLabel || title || 'Card',
+    accessibilityHint: accessibilityHint || (interactive ? 'Double tap to interact' : undefined),
     accessibilityState: {
       disabled: props.disabled || false,
     },
@@ -165,7 +158,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
         <Text
           style={{
             fontSize: 18,
-            fontWeight: "600",
+            fontWeight: '600',
             color: isDark ? Colors.text : Colors.text,
             marginBottom: subtitle ? Spacing.xs : 0,
           }}
@@ -198,7 +191,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
           testID={testID}
           style={{
             borderRadius: Number(BorderRadius.lg) || 8,
-            overflow: "hidden",
+            overflow: 'hidden',
           }}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
@@ -207,13 +200,16 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
           {...accessibilityProps}
           {...props}
         >
-          {variant === "glass" ? (
-            <BlurView intensity={20} style={{ borderRadius: Number(BorderRadius.lg) || 8 }}>
+          {variant === 'glass' ? (
+            <BlurView
+              intensity={20}
+              style={{ borderRadius: Number(BorderRadius.lg) || 8 }}
+            >
               <CardContent />
             </BlurView>
-          ) : variant === "neon" ? (
+          ) : variant === 'neon' ? (
             <LinearGradient
-              colors={[Colors.primary + "05", Colors.primary + "10"]}
+              colors={[Colors.primary + '05', Colors.primary + '10']}
               style={{ borderRadius: Number(BorderRadius.lg) || 8 }}
             >
               <CardContent />
@@ -234,19 +230,22 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
         animatedStyle,
         {
           borderRadius: Number(BorderRadius.lg) || 8,
-          overflow: "hidden",
+          overflow: 'hidden',
         },
         style,
       ])}
       {...accessibilityProps}
     >
-      {variant === "glass" ? (
-        <BlurView intensity={20} style={{ borderRadius: BorderRadius.lg }}>
+      {variant === 'glass' ? (
+        <BlurView
+          intensity={20}
+          style={{ borderRadius: BorderRadius.lg }}
+        >
           <CardContent />
         </BlurView>
-      ) : variant === "neon" ? (
+      ) : variant === 'neon' ? (
         <LinearGradient
-          colors={[Colors.primary + "05", Colors.primary + "10"]}
+          colors={[Colors.primary + '05', Colors.primary + '10']}
           style={{ borderRadius: BorderRadius.lg }}
         >
           <CardContent />

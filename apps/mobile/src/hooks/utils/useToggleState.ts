@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
 export interface UseToggleStateReturn {
   isOn: boolean;
@@ -13,9 +13,7 @@ export interface UseToggleStateReturn {
  * @example
  * const { isOn, toggle, setOn, setOff } = useToggleState();
  */
-export function useToggleState(
-  initialValue: boolean = false,
-): UseToggleStateReturn {
+export function useToggleState(initialValue: boolean = false): UseToggleStateReturn {
   const [isOn, setIsOn] = useState(initialValue);
 
   const toggle = useCallback(() => {

@@ -18,7 +18,10 @@ export interface CrossPlatformStorage {
  * Web storage implementation using localStorage with encryption
  */
 class WebStorageImpl implements CrossPlatformStorage {
-  constructor(private readonly getStorage = getLocalStorage, private readonly getNavigator = getNavigatorObject) {}
+  constructor(
+    private readonly getStorage = getLocalStorage,
+    private readonly getNavigator = getNavigatorObject,
+  ) {}
 
   private encryptData(data: string, key: string): string {
     try {
@@ -64,7 +67,7 @@ class WebStorageImpl implements CrossPlatformStorage {
     try {
       const item = storage.getItem(key);
       if (item == null) return Promise.resolve(null);
-      
+
       const storageKey = this.generateStorageKey();
       const decrypted = this.decryptData(item, storageKey);
       return Promise.resolve(decrypted);
@@ -77,7 +80,7 @@ class WebStorageImpl implements CrossPlatformStorage {
   public setItem(key: string, value: string): Promise<void> {
     const storage = this.getStorage();
     if (storage == null) return Promise.resolve();
-    
+
     try {
       const storageKey = this.generateStorageKey();
       const encrypted = this.encryptData(value, storageKey);
@@ -92,7 +95,7 @@ class WebStorageImpl implements CrossPlatformStorage {
   removeItem(key: string): Promise<void> {
     const storage = this.getStorage();
     if (storage == null) return Promise.resolve();
-    
+
     try {
       storage.removeItem(key);
       return Promise.resolve();

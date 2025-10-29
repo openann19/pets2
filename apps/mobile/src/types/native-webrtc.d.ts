@@ -3,7 +3,7 @@
  * Extends native WebRTC types with RN-specific methods
  */
 
-import type { MediaStreamTrack } from "react-native-webrtc";
+import type { MediaStreamTrack } from 'react-native-webrtc';
 
 /**
  * Extended MediaStreamTrack with React Native specific methods
@@ -27,7 +27,11 @@ export interface RTCSessionDescriptionNative extends RTCSessionDescriptionInit {
 /**
  * Type guard to check if a MediaStreamTrack has native methods
  */
-export function hasNativeCameraSwitch(track: MediaStreamTrack): track is MediaStreamTrackWithNativeMethods {
-  return '_switchCamera' in track && typeof (track as MediaStreamTrackWithNativeMethods)._switchCamera === 'function';
+export function hasNativeCameraSwitch(
+  track: MediaStreamTrack,
+): track is MediaStreamTrackWithNativeMethods {
+  return (
+    '_switchCamera' in track &&
+    typeof (track as MediaStreamTrackWithNativeMethods)._switchCamera === 'function'
+  );
 }
-

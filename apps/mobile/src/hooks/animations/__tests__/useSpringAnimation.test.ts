@@ -22,9 +22,11 @@ describe('useSpringAnimation', () => {
     });
 
     it('should accept initial value', () => {
-      const { result } = renderHook(() => useSpringAnimation({
-        initialValue: 100
-      }));
+      const { result } = renderHook(() =>
+        useSpringAnimation({
+          initialValue: 100,
+        }),
+      );
       expect(result.current.animatedValue).toBeDefined();
     });
 
@@ -32,12 +34,14 @@ describe('useSpringAnimation', () => {
       const customConfig = {
         damping: 12,
         stiffness: 150,
-        mass: 1
+        mass: 1,
       };
 
-      const { result } = renderHook(() => useSpringAnimation({
-        config: customConfig
-      }));
+      const { result } = renderHook(() =>
+        useSpringAnimation({
+          config: customConfig,
+        }),
+      );
       expect(result.current.springConfig).toEqual(customConfig);
     });
   });
@@ -54,9 +58,11 @@ describe('useSpringAnimation', () => {
     });
 
     it('should animate from custom start value', () => {
-      const { result } = renderHook(() => useSpringAnimation({
-        initialValue: 0.5
-      }));
+      const { result } = renderHook(() =>
+        useSpringAnimation({
+          initialValue: 0.5,
+        }),
+      );
 
       act(() => {
         result.current.springTo(1);
@@ -92,23 +98,29 @@ describe('useSpringAnimation', () => {
 
   describe('Spring Configuration', () => {
     it('should use bouncy spring config', () => {
-      const { result } = renderHook(() => useSpringAnimation({
-        config: 'bouncy'
-      }));
+      const { result } = renderHook(() =>
+        useSpringAnimation({
+          config: 'bouncy',
+        }),
+      );
       expect(result.current.springConfig).toBeDefined();
     });
 
     it('should use gentle spring config', () => {
-      const { result } = renderHook(() => useSpringAnimation({
-        config: 'gentle'
-      }));
+      const { result } = renderHook(() =>
+        useSpringAnimation({
+          config: 'gentle',
+        }),
+      );
       expect(result.current.springConfig).toBeDefined();
     });
 
     it('should use stiff spring config', () => {
-      const { result } = renderHook(() => useSpringAnimation({
-        config: 'stiff'
-      }));
+      const { result } = renderHook(() =>
+        useSpringAnimation({
+          config: 'stiff',
+        }),
+      );
       expect(result.current.springConfig).toBeDefined();
     });
 
@@ -116,12 +128,14 @@ describe('useSpringAnimation', () => {
       const customConfig = {
         damping: 20,
         stiffness: 300,
-        mass: 0.8
+        mass: 0.8,
       };
 
-      const { result } = renderHook(() => useSpringAnimation({
-        config: customConfig
-      }));
+      const { result } = renderHook(() =>
+        useSpringAnimation({
+          config: customConfig,
+        }),
+      );
       expect(result.current.springConfig).toEqual(customConfig);
     });
   });
@@ -169,9 +183,11 @@ describe('useSpringAnimation', () => {
 
   describe('Animation States', () => {
     it('should provide current animation value', () => {
-      const { result } = renderHook(() => useSpringAnimation({
-        initialValue: 0
-      }));
+      const { result } = renderHook(() =>
+        useSpringAnimation({
+          initialValue: 0,
+        }),
+      );
 
       // Initial value should be accessible
       expect(result.current.animatedValue).toBeDefined();
@@ -213,10 +229,9 @@ describe('useSpringAnimation', () => {
     });
 
     it('should handle rapid config changes', () => {
-      const { result, rerender } = renderHook(
-        ({ config }) => useSpringAnimation({ config }),
-        { initialProps: { config: 'gentle' } }
-      );
+      const { result, rerender } = renderHook(({ config }) => useSpringAnimation({ config }), {
+        initialProps: { config: 'gentle' },
+      });
 
       rerender({ config: 'stiff' });
       expect(result.current.springConfig).toBeDefined();
@@ -225,9 +240,11 @@ describe('useSpringAnimation', () => {
 
   describe('Edge Cases', () => {
     it('should handle invalid config gracefully', () => {
-      const { result } = renderHook(() => useSpringAnimation({
-        config: 'invalid' as any
-      }));
+      const { result } = renderHook(() =>
+        useSpringAnimation({
+          config: 'invalid' as any,
+        }),
+      );
       expect(result.current.springConfig).toBeDefined();
     });
 

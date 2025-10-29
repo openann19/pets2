@@ -81,7 +81,14 @@ export function AdminDashboard() {
   );
 }
 
-function StatsCard({ icon: Icon, title, value, change }: any) {
+interface StatsCardProps {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  value: string;
+  change: string;
+}
+
+function StatsCard({ icon: Icon, title, value, change }: StatsCardProps) {
   return (
     <div className="bg-admin-dark-light rounded-lg p-6 border border-gray-700">
       <div className="flex items-center justify-between mb-4">
@@ -94,7 +101,14 @@ function StatsCard({ icon: Icon, title, value, change }: any) {
   );
 }
 
-function ActivityItem({ icon, action, target, time }: any) {
+interface ActivityItemProps {
+  icon: React.ComponentType<{ className?: string }>;
+  action: string;
+  target: string;
+  time: string;
+}
+
+function ActivityItem({ icon, action, target, time }: ActivityItemProps) {
   return (
     <div className="flex items-center gap-3 p-3 bg-admin-dark rounded-lg">
       <span className="text-xl">{icon}</span>

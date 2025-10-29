@@ -1,34 +1,34 @@
-import React from "react";
-import {} from "@testing-library/react-native";
-import "@testing-library/jest-native/extend-expect";
-import PremiumCard from "../../Premium/PremiumCard";
-import {} from "@/theme";
-import * as Haptics from "expo-haptics";
+import React from 'react';
+import {} from '@testing-library/react-native';
+import '@testing-library/jest-native/extend-expect';
+import PremiumCard from '../../Premium/PremiumCard';
+import {} from '@/theme';
+import * as Haptics from 'expo-haptics';
 
 // Mock dependencies
-jest.mock("../../../theme/Provider");
-jest.mock("expo-haptics", () => ({
+jest.mock('../../../theme/Provider');
+jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   ImpactFeedbackStyle: {
-    Medium: "medium",
+    Medium: 'medium',
   },
 }));
 
-describe("PremiumCard", () => {
+describe('PremiumCard', () => {
   const mockPlan = {
-    id: "premium",
-    name: "Premium",
+    id: 'premium',
+    name: 'Premium',
     price: 9.99,
-    duration: "month",
-    features: ["Unlimited swipes", "See who liked you", "Advanced filters"],
+    duration: 'month',
+    features: ['Unlimited swipes', 'See who liked you', 'Advanced filters'],
     popular: true,
   };
 
   const mockYearlyPlan = {
     ...mockPlan,
     price: 99.99,
-    duration: "year",
-    savings: "15%",
+    duration: 'year',
+    savings: '15%',
   };
 
   const mockOnSubscribe = jest.fn();
@@ -39,111 +39,124 @@ describe("PremiumCard", () => {
     // Mock theme context
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
-        primary: "#7c3aed",
-        secondary: "Theme.colors.primary[500]",
-        background: "Theme.colors.neutral[0]",
-        text: "Theme.colors.neutral[950]",
-        card: "Theme.colors.neutral[0]",
-        accent: "Theme.colors.secondary[500]",
+        primary: '#7c3aed',
+        secondary: 'Theme.colors.primary[500]',
+        background: 'Theme.colors.neutral[0]',
+        text: 'Theme.colors.neutral[950]',
+        card: 'Theme.colors.neutral[0]',
+        accent: 'Theme.colors.secondary[500]',
       },
       isDark: false,
     });
   });
 
-  it("renders plan details correctly", () => {
+  it('renders plan details correctly', () => {
     const { getByText, getByTestId } = render(
-      <PremiumCard plan={mockPlan} onSubscribe={mockOnSubscribe} />,
+      <PremiumCard
+        plan={mockPlan}
+        onSubscribe={mockOnSubscribe}
+      />,
     );
 
     // Check plan details
-    expect(getByText("Premium")).toBeTruthy();
-    expect(getByText("$9.99/month")).toBeTruthy();
+    expect(getByText('Premium')).toBeTruthy();
+    expect(getByText('$9.99/month')).toBeTruthy();
 
     // Check features
-    expect(getByText("Unlimited swipes")).toBeTruthy();
-    expect(getByText("See who liked you")).toBeTruthy();
-    expect(getByText("Advanced filters")).toBeTruthy();
+    expect(getByText('Unlimited swipes')).toBeTruthy();
+    expect(getByText('See who liked you')).toBeTruthy();
+    expect(getByText('Advanced filters')).toBeTruthy();
 
     // Check popular badge
-    expect(getByTestId("popular-badge")).toBeTruthy();
+    expect(getByTestId('popular-badge')).toBeTruthy();
   });
 
-  it("renders yearly plan with savings correctly", () => {
+  it('renders yearly plan with savings correctly', () => {
     const { getByText, getByTestId } = render(
-      <PremiumCard plan={mockYearlyPlan} onSubscribe={mockOnSubscribe} />,
+      <PremiumCard
+        plan={mockYearlyPlan}
+        onSubscribe={mockOnSubscribe}
+      />,
     );
 
     // Check yearly price
-    expect(getByText("$99.99/year")).toBeTruthy();
+    expect(getByText('$99.99/year')).toBeTruthy();
 
     // Check savings badge
-    expect(getByTestId("savings-badge")).toBeTruthy();
-    expect(getByText("Save 15%")).toBeTruthy();
+    expect(getByTestId('savings-badge')).toBeTruthy();
+    expect(getByText('Save 15%')).toBeTruthy();
   });
 
-  it("calls onSubscribe when subscribe button is pressed", () => {
+  it('calls onSubscribe when subscribe button is pressed', () => {
     const { getByText } = render(
-      <PremiumCard plan={mockPlan} onSubscribe={mockOnSubscribe} />,
+      <PremiumCard
+        plan={mockPlan}
+        onSubscribe={mockOnSubscribe}
+      />,
     );
 
     // Press subscribe button
-    fireEvent.press(getByText("Subscribe"));
+    fireEvent.press(getByText('Subscribe'));
 
     // Check if onSubscribe was called with correct plan
     expect(mockOnSubscribe).toHaveBeenCalledWith(mockPlan);
 
     // Check if haptic feedback was triggered
-    expect(Haptics.impactAsync).toHaveBeenCalledWith(
-      Haptics.ImpactFeedbackStyle.Medium,
-    );
+    expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Medium);
   });
 
-  it("renders with dark theme style", () => {
+  it('renders with dark theme style', () => {
     // Mock dark theme
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
-        primary: "#7c3aed",
-        secondary: "Theme.colors.primary[500]",
-        background: "Theme.colors.neutral[800]",
-        text: "Theme.colors.neutral[0]",
-        card: "Theme.colors.neutral[700]",
-        accent: "Theme.colors.secondary[500]",
+        primary: '#7c3aed',
+        secondary: 'Theme.colors.primary[500]',
+        background: 'Theme.colors.neutral[800]',
+        text: 'Theme.colors.neutral[0]',
+        card: 'Theme.colors.neutral[700]',
+        accent: 'Theme.colors.secondary[500]',
       },
       isDark: true,
     });
 
     const { getByTestId } = render(
-      <PremiumCard plan={mockPlan} onSubscribe={mockOnSubscribe} />,
+      <PremiumCard
+        plan={mockPlan}
+        onSubscribe={mockOnSubscribe}
+      />,
     );
 
     // Should have dark theme style
-    const card = getByTestId("premium-plan-card");
+    const card = getByTestId('premium-plan-card');
     expect(card.props.style).toBeDefined();
   });
 
-  it("renders free plan correctly", () => {
+  it('renders free plan correctly', () => {
     const freePlan = {
-      id: "basic",
-      name: "Basic",
+      id: 'basic',
+      name: 'Basic',
       price: 0,
-      duration: "month",
-      features: ["Limited swipes per day", "Basic matching"],
+      duration: 'month',
+      features: ['Limited swipes per day', 'Basic matching'],
     };
 
     const { getByText, queryByTestId } = render(
-      <PremiumCard plan={freePlan} onSubscribe={mockOnSubscribe} />,
+      <PremiumCard
+        plan={freePlan}
+        onSubscribe={mockOnSubscribe}
+      />,
     );
 
     // Check free plan details
-    expect(getByText("Basic")).toBeTruthy();
-    expect(getByText("Free")).toBeTruthy();
+    expect(getByText('Basic')).toBeTruthy();
+    expect(getByText('Free')).toBeTruthy();
 
     // Should not have popular or savings badge
-    expect(queryByTestId("popular-badge")).toBeNull();
-    expect(queryByTestId("savings-badge")).toBeNull();
+    expect(queryByTestId('popular-badge')).toBeNull();
+    expect(queryByTestId('savings-badge')).toBeNull();
   });
 
-  it("renders with custom styles when provided", () => {
+  it('renders with custom styles when provided', () => {
     const customStyle = { marginTop: 20 };
     const { getByTestId } = render(
       <PremiumCard
@@ -153,7 +166,7 @@ describe("PremiumCard", () => {
       />,
     );
 
-    const card = getByTestId("premium-plan-card");
+    const card = getByTestId('premium-plan-card');
     expect(card.props.style).toBeDefined();
     // Additional style-specific assertions could be added here
   });

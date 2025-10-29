@@ -18,8 +18,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+import { useTheme } from '@mobile/src/theme';
+import type { AppTheme } from '@mobile/src/theme';
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 
@@ -831,58 +831,7 @@ function makeStyles(theme: AppTheme) {
       fontWeight: "600" as const,
       marginBottom: theme.spacing.md,
     },
-      container: {
-        flex: 1,
-      },
-      loadingContainer: {
-        flex: 1,
-        justifyContent: "center" as const,
-        alignItems: "center" as const,
-      },
-      loadingText: {
-        marginTop: theme.spacing.md,
-        fontSize: 16,
-        fontWeight: "500" as const,
-      },
-      header: {
-        flexDirection: "row" as const,
-        alignItems: "center" as const,
-        paddingHorizontal: theme.spacing.md,
-        paddingVertical: theme.spacing.md,
-        borderBottomWidth: 1,
-        borderBottomColor: theme.colors.border,
-        backgroundColor: theme.colors.surface,
-      },
-      backButton: {
-        padding: theme.spacing.sm,
-      },
-      title: {
-        fontSize: 20,
-        fontWeight: "bold" as const,
-        flex: 1,
-        marginLeft: theme.spacing.sm,
-      },
-      headerActions: {
-        flexDirection: "row" as const,
-        gap: theme.spacing.sm,
-      },
-      refreshButton: {
-        width: 40,
-        height: 40,
-        borderRadius: themeRuntime.radius.full,
-        justifyContent: "center" as const,
-        alignItems: "center" as const,
-      },
-      metricsContainer: {
-        paddingHorizontal: theme.spacing.md,
-        paddingVertical: theme.spacing.md,
-      },
-      sectionTitle: {
-        fontSize: 18,
-        fontWeight: "600" as const,
-        marginBottom: theme.spacing.md,
-      },
-      metricsGrid: {
+    metricsGrid: {
         flexDirection: "row" as const,
         flexWrap: "wrap" as const,
         gap: theme.spacing.md,

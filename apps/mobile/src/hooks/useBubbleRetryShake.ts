@@ -1,10 +1,10 @@
-import { useCallback } from "react";
+import { useCallback } from 'react';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withTiming,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
 export function useBubbleRetryShake(amplitude: number = 10, totalMs: number = 260) {
   const x = useSharedValue(0);
@@ -14,7 +14,7 @@ export function useBubbleRetryShake(amplitude: number = 10, totalMs: number = 26
   }));
 
   const shake = useCallback(() => {
-    "worklet";
+    'worklet';
     x.value = withSequence(
       withTiming(-amplitude, { duration: totalMs * 0.2 }),
       withTiming(amplitude, { duration: totalMs * 0.35 }),
@@ -25,4 +25,3 @@ export function useBubbleRetryShake(amplitude: number = 10, totalMs: number = 26
 
   return { style, shake };
 }
-

@@ -1,12 +1,12 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, fireEvent, waitFor, act } from "@testing-library/react-native";
-import React from "react";
-import { Alert } from "react-native";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
+import React from 'react';
+import { Alert } from 'react-native';
 
-import { matchesAPI } from "../../services/api";
-import type { Pet } from "../../types/api";
-import MyPetsScreen from "../MyPetsScreen";
+import { matchesAPI } from '../../services/api';
+import type { Pet } from '../../types/api';
+import MyPetsScreen from '../MyPetsScreen';
 
 // Mock createStackNavigator
 const createStackNavigator = jest.fn(() => ({
@@ -15,7 +15,7 @@ const createStackNavigator = jest.fn(() => ({
 }));
 
 // Mock the API service
-jest.mock("../../services/api", () => ({
+jest.mock('../../services/api', () => ({
   matchesAPI: {
     getMyPets: jest.fn(),
     deletePet: jest.fn(),
@@ -23,7 +23,7 @@ jest.mock("../../services/api", () => ({
 }));
 
 // Mock Alert
-jest.spyOn(Alert, "alert");
+jest.spyOn(Alert, 'alert');
 
 // Mock navigation
 const mockNavigate = jest.fn();
@@ -79,24 +79,24 @@ const mockNavigation = {
 };
 
 const mockRoute = {
-  key: "test-key",
-  name: "MyPets",
+  key: 'test-key',
+  name: 'MyPets',
   params: undefined,
 };
 
-describe("MyPetsScreen", () => {
+describe('MyPetsScreen', () => {
   const mockPets: Pet[] = [
     {
-      _id: "1",
-      name: "Buddy",
-      species: "dog",
-      breed: "Golden Retriever",
+      _id: '1',
+      name: 'Buddy',
+      species: 'dog',
+      breed: 'Golden Retriever',
       age: 3,
-      gender: "male",
-      size: "large",
-      intent: "playdate",
-      photos: [{ url: "https://example.com/buddy.jpg", isPrimary: true }],
-      personalityTags: ["friendly", "energetic"],
+      gender: 'male',
+      size: 'large',
+      intent: 'playdate',
+      photos: [{ url: 'https://example.com/buddy.jpg', isPrimary: true }],
+      personalityTags: ['friendly', 'energetic'],
       healthInfo: {
         vaccinated: true,
         spayedNeutered: true,
@@ -104,12 +104,12 @@ describe("MyPetsScreen", () => {
         specialNeeds: false,
       },
       location: {
-        type: "Point",
+        type: 'Point',
         coordinates: [0, 0],
         address: {
-          city: "New York",
-          state: "NY",
-          country: "US",
+          city: 'New York',
+          state: 'NY',
+          country: 'US',
         },
       },
       analytics: {
@@ -119,26 +119,26 @@ describe("MyPetsScreen", () => {
         messages: 1,
       },
       isActive: true,
-      status: "active",
+      status: 'active',
       owner: {
-        _id: "owner1",
-        name: "John Doe",
-        email: "john@example.com",
+        _id: 'owner1',
+        name: 'John Doe',
+        email: 'john@example.com',
       },
-      listedAt: "2024-01-01T00:00:00.000Z",
-      createdAt: "2024-01-01T00:00:00.000Z",
+      listedAt: '2024-01-01T00:00:00.000Z',
+      createdAt: '2024-01-01T00:00:00.000Z',
     },
     {
-      _id: "2",
-      name: "Luna",
-      species: "cat",
-      breed: "Siamese",
+      _id: '2',
+      name: 'Luna',
+      species: 'cat',
+      breed: 'Siamese',
       age: 2,
-      gender: "female",
-      size: "small",
-      intent: "adoption",
-      photos: [{ url: "https://example.com/luna.jpg", isPrimary: true }],
-      personalityTags: ["calm", "gentle"],
+      gender: 'female',
+      size: 'small',
+      intent: 'adoption',
+      photos: [{ url: 'https://example.com/luna.jpg', isPrimary: true }],
+      personalityTags: ['calm', 'gentle'],
       healthInfo: {
         vaccinated: true,
         spayedNeutered: true,
@@ -146,12 +146,12 @@ describe("MyPetsScreen", () => {
         specialNeeds: false,
       },
       location: {
-        type: "Point",
+        type: 'Point',
         coordinates: [0, 0],
         address: {
-          city: "New York",
-          state: "NY",
-          country: "US",
+          city: 'New York',
+          state: 'NY',
+          country: 'US',
         },
       },
       analytics: {
@@ -161,14 +161,14 @@ describe("MyPetsScreen", () => {
         messages: 0,
       },
       isActive: true,
-      status: "active",
+      status: 'active',
       owner: {
-        _id: "owner1",
-        name: "John Doe",
-        email: "john@example.com",
+        _id: 'owner1',
+        name: 'John Doe',
+        email: 'john@example.com',
       },
-      listedAt: "2024-01-15T00:00:00.000Z",
-      createdAt: "2024-01-15T00:00:00.000Z",
+      listedAt: '2024-01-15T00:00:00.000Z',
+      createdAt: '2024-01-15T00:00:00.000Z',
     },
   ];
 
@@ -178,7 +178,7 @@ describe("MyPetsScreen", () => {
     (matchesAPI.deletePet as jest.Mock).mockResolvedValue(true);
   });
 
-  it("renders correctly with pets", async () => {
+  it('renders correctly with pets', async () => {
     const { getByText, getByTestId, debug } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -193,17 +193,17 @@ describe("MyPetsScreen", () => {
 
     // Wait for data to load
     await waitFor(() => {
-      expect(getByText("My Pets")).toBeTruthy();
+      expect(getByText('My Pets')).toBeTruthy();
     });
 
     // Check if pets are rendered
     await waitFor(() => {
-      expect(getByText("Buddy")).toBeTruthy();
-      expect(getByText("Luna")).toBeTruthy();
+      expect(getByText('Buddy')).toBeTruthy();
+      expect(getByText('Luna')).toBeTruthy();
     });
   });
 
-  it("displays loading state initially", () => {
+  it('displays loading state initially', () => {
     const { getByText } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -213,10 +213,10 @@ describe("MyPetsScreen", () => {
       </TestNavigator>,
     );
 
-    expect(getByText("Loading pets...")).toBeTruthy();
+    expect(getByText('Loading pets...')).toBeTruthy();
   });
 
-  it("shows empty state when no pets", async () => {
+  it('shows empty state when no pets', async () => {
     (matchesAPI.getMyPets as jest.Mock).mockResolvedValue([]);
 
     const { getByText, getByTestId, queryByText, queryByTestId } = render(
@@ -229,16 +229,14 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      expect(getByText("No Pets Yet")).toBeTruthy();
+      expect(getByText('No Pets Yet')).toBeTruthy();
       expect(
-        getByText(
-          "Start building your pet's profile to find amazing matches and new friends!",
-        ),
+        getByText("Start building your pet's profile to find amazing matches and new friends!"),
       ).toBeTruthy();
     });
   });
 
-  it("navigates to CreatePet when add button is pressed", async () => {
+  it('navigates to CreatePet when add button is pressed', async () => {
     const { getByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -249,13 +247,13 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      const addButton = getByTestId("add-button");
+      const addButton = getByTestId('add-button');
       fireEvent.press(addButton);
-      expect(mockNavigate).toHaveBeenCalledWith("CreatePet");
+      expect(mockNavigate).toHaveBeenCalledWith('CreatePet');
     });
   });
 
-  it("navigates to CreatePet when empty state button is pressed", async () => {
+  it('navigates to CreatePet when empty state button is pressed', async () => {
     (matchesAPI.getMyPets as jest.Mock).mockResolvedValue([]);
 
     const { getByText, getByTestId, queryByText, queryByTestId } = render(
@@ -268,13 +266,13 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      const createButton = getByText("Create Your First Pet Profile");
+      const createButton = getByText('Create Your First Pet Profile');
       fireEvent.press(createButton);
-      expect(mockNavigate).toHaveBeenCalledWith("CreatePet");
+      expect(mockNavigate).toHaveBeenCalledWith('CreatePet');
     });
   });
 
-  it("navigates to PetDetail when pet card is pressed", async () => {
+  it('navigates to PetDetail when pet card is pressed', async () => {
     const { getByText, getByTestId, queryByText, queryByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -285,13 +283,13 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      const petCard = getByText("Buddy");
+      const petCard = getByText('Buddy');
       fireEvent.press(petCard);
-      expect(mockNavigate).toHaveBeenCalledWith("PetDetail", { petId: "1" });
+      expect(mockNavigate).toHaveBeenCalledWith('PetDetail', { petId: '1' });
     });
   });
 
-  it("navigates to EditPet when edit button is pressed", async () => {
+  it('navigates to EditPet when edit button is pressed', async () => {
     const { getByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -302,13 +300,13 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      const editButton = getByTestId("edit-button-1");
+      const editButton = getByTestId('edit-button-1');
       fireEvent.press(editButton);
-      expect(mockNavigate).toHaveBeenCalledWith("EditPet", { petId: "1" });
+      expect(mockNavigate).toHaveBeenCalledWith('EditPet', { petId: '1' });
     });
   });
 
-  it("shows delete confirmation dialog when delete button is pressed", async () => {
+  it('shows delete confirmation dialog when delete button is pressed', async () => {
     const { getByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -319,18 +317,18 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      const deleteButton = getByTestId("delete-button-1");
+      const deleteButton = getByTestId('delete-button-1');
       fireEvent.press(deleteButton);
     });
 
     expect(Alert.alert).toHaveBeenCalledWith(
-      "Delete Pet Profile",
-      "Are you sure you want to delete this pet profile? This action cannot be undone.",
+      'Delete Pet Profile',
+      'Are you sure you want to delete this pet profile? This action cannot be undone.',
       expect.any(Array),
     );
   });
 
-  it("deletes pet when confirmation is accepted", async () => {
+  it('deletes pet when confirmation is accepted', async () => {
     const { getByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -341,7 +339,7 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      const deleteButton = getByTestId("delete-button-1");
+      const deleteButton = getByTestId('delete-button-1');
       fireEvent.press(deleteButton);
     });
 
@@ -352,14 +350,12 @@ describe("MyPetsScreen", () => {
       confirmAction.onPress();
     });
 
-    expect(matchesAPI.deletePet).toHaveBeenCalledWith("1");
+    expect(matchesAPI.deletePet).toHaveBeenCalledWith('1');
   });
 
-  it("handles API error gracefully", async () => {
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
-    (matchesAPI.getMyPets as jest.Mock).mockRejectedValue(
-      new Error("Network error"),
-    );
+  it('handles API error gracefully', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    (matchesAPI.getMyPets as jest.Mock).mockRejectedValue(new Error('Network error'));
 
     const { getByText, getByTestId, queryByText, queryByTestId } = render(
       <TestNavigator>
@@ -372,8 +368,8 @@ describe("MyPetsScreen", () => {
 
     await waitFor(() => {
       expect(Alert.alert).toHaveBeenCalledWith(
-        "Connection Error",
-        "Network error",
+        'Connection Error',
+        'Network error',
         expect.any(Array),
       );
     });
@@ -381,7 +377,7 @@ describe("MyPetsScreen", () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it("refreshes data when pull-to-refresh is triggered", async () => {
+  it('refreshes data when pull-to-refresh is triggered', async () => {
     const { getByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -396,15 +392,15 @@ describe("MyPetsScreen", () => {
     });
 
     // Trigger pull-to-refresh
-    const flatList = getByTestId("pets-flatlist");
-    fireEvent(flatList, "onRefresh");
+    const flatList = getByTestId('pets-flatlist');
+    fireEvent(flatList, 'onRefresh');
 
     await waitFor(() => {
       expect(matchesAPI.getMyPets).toHaveBeenCalledTimes(2);
     });
   });
 
-  it("displays correct pet information", async () => {
+  it('displays correct pet information', async () => {
     const { getByText, getByTestId, queryByText, queryByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -416,20 +412,20 @@ describe("MyPetsScreen", () => {
 
     await waitFor(() => {
       // Check pet names
-      expect(getByText("Buddy")).toBeTruthy();
-      expect(getByText("Luna")).toBeTruthy();
+      expect(getByText('Buddy')).toBeTruthy();
+      expect(getByText('Luna')).toBeTruthy();
 
       // Check breeds
-      expect(getByText("Golden Retriever")).toBeTruthy();
-      expect(getByText("Siamese")).toBeTruthy();
+      expect(getByText('Golden Retriever')).toBeTruthy();
+      expect(getByText('Siamese')).toBeTruthy();
 
       // Check ages and details
-      expect(getByText("3 years • male • large")).toBeTruthy();
-      expect(getByText("2 years • female • small")).toBeTruthy();
+      expect(getByText('3 years • male • large')).toBeTruthy();
+      expect(getByText('2 years • female • small')).toBeTruthy();
     });
   });
 
-  it("displays correct species emojis", async () => {
+  it('displays correct species emojis', async () => {
     const { getByText, getByTestId, queryByText, queryByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -441,13 +437,13 @@ describe("MyPetsScreen", () => {
 
     await waitFor(() => {
       // Check for dog emoji (Buddy)
-      expect(getByText("🐕")).toBeTruthy();
+      expect(getByText('🐕')).toBeTruthy();
       // Check for cat emoji (Luna)
-      expect(getByText("🐱")).toBeTruthy();
+      expect(getByText('🐱')).toBeTruthy();
     });
   });
 
-  it("displays intent badges correctly", async () => {
+  it('displays intent badges correctly', async () => {
     const { getByText, getByTestId, queryByText, queryByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -458,24 +454,22 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      expect(getByText("Playdates")).toBeTruthy(); // Buddy's intent
-      expect(getByText("For Adoption")).toBeTruthy(); // Luna's intent
+      expect(getByText('Playdates')).toBeTruthy(); // Buddy's intent
+      expect(getByText('For Adoption')).toBeTruthy(); // Luna's intent
     });
   });
 
-  it("shows photo count badge when pet has multiple photos", async () => {
+  it('shows photo count badge when pet has multiple photos', async () => {
     const petWithMultiplePhotos = {
       ...mockPets[0],
       photos: [
-        { url: "https://example.com/buddy1.jpg", isPrimary: true },
-        { url: "https://example.com/buddy2.jpg", isPrimary: false },
-        { url: "https://example.com/buddy3.jpg", isPrimary: false },
+        { url: 'https://example.com/buddy1.jpg', isPrimary: true },
+        { url: 'https://example.com/buddy2.jpg', isPrimary: false },
+        { url: 'https://example.com/buddy3.jpg', isPrimary: false },
       ],
     };
 
-    (matchesAPI.getMyPets as jest.Mock).mockResolvedValue([
-      petWithMultiplePhotos,
-    ]);
+    (matchesAPI.getMyPets as jest.Mock).mockResolvedValue([petWithMultiplePhotos]);
 
     const { getByText, getByTestId, queryByText, queryByTestId } = render(
       <TestNavigator>
@@ -487,11 +481,11 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      expect(getByText("3")).toBeTruthy(); // Photo count
+      expect(getByText('3')).toBeTruthy(); // Photo count
     });
   });
 
-  it("displays placeholder when pet has no photos", async () => {
+  it('displays placeholder when pet has no photos', async () => {
     const petWithoutPhotos = {
       ...mockPets[0],
       photos: [],
@@ -509,11 +503,11 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      expect(getByText("🐕")).toBeTruthy(); // Species emoji as placeholder
+      expect(getByText('🐕')).toBeTruthy(); // Species emoji as placeholder
     });
   });
 
-  it("handles back button press", async () => {
+  it('handles back button press', async () => {
     const { getByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -524,13 +518,13 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      const backButton = getByTestId("back-button");
+      const backButton = getByTestId('back-button');
       fireEvent.press(backButton);
       expect(mockGoBack).toHaveBeenCalled();
     });
   });
 
-  it("displays correct pet count in header", async () => {
+  it('displays correct pet count in header', async () => {
     const { getByText, getByTestId, queryByText, queryByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -541,11 +535,11 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      expect(getByText("2 pets profiles")).toBeTruthy();
+      expect(getByText('2 pets profiles')).toBeTruthy();
     });
   });
 
-  it("displays singular form for single pet", async () => {
+  it('displays singular form for single pet', async () => {
     (matchesAPI.getMyPets as jest.Mock).mockResolvedValue([mockPets[0]]);
 
     const { getByText, getByTestId, queryByText, queryByTestId } = render(
@@ -558,15 +552,13 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      expect(getByText("1 pet profile")).toBeTruthy();
+      expect(getByText('1 pet profile')).toBeTruthy();
     });
   });
 
-  it("handles delete error gracefully", async () => {
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
-    (matchesAPI.deletePet as jest.Mock).mockRejectedValue(
-      new Error("Delete failed"),
-    );
+  it('handles delete error gracefully', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    (matchesAPI.deletePet as jest.Mock).mockRejectedValue(new Error('Delete failed'));
 
     const { getByTestId } = render(
       <TestNavigator>
@@ -578,7 +570,7 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      const deleteButton = getByTestId("delete-button-1");
+      const deleteButton = getByTestId('delete-button-1');
       fireEvent.press(deleteButton);
     });
 
@@ -591,16 +583,16 @@ describe("MyPetsScreen", () => {
 
     await waitFor(() => {
       expect(Alert.alert).toHaveBeenCalledWith(
-        "Error",
-        "Failed to delete pet profile. Please check your connection and try again.",
-        [{ text: "OK" }],
+        'Error',
+        'Failed to delete pet profile. Please check your connection and try again.',
+        [{ text: 'OK' }],
       );
     });
 
     consoleErrorSpy.mockRestore();
   });
 
-  it("cancels delete when user cancels confirmation", async () => {
+  it('cancels delete when user cancels confirmation', async () => {
     const { getByTestId } = render(
       <TestNavigator>
         <MyPetsScreen
@@ -611,7 +603,7 @@ describe("MyPetsScreen", () => {
     );
 
     await waitFor(() => {
-      const deleteButton = getByTestId("delete-button-1");
+      const deleteButton = getByTestId('delete-button-1');
       fireEvent.press(deleteButton);
     });
 

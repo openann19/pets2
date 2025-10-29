@@ -1,9 +1,11 @@
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import type { NavigationProp } from "@react-navigation/native";
-import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useMemo, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { logger } from '@pawfectmatch/core';
+import type { NavigationProp } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -14,21 +16,19 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { _subscriptionAPI as subscriptionApi } from "../../services/api";
-import type { RootStackParamList } from "../../navigation/types";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+} from 'react-native';
+import type { RootStackParamList } from '../../navigation/types';
+import { _subscriptionAPI as subscriptionApi } from '../../services/api';
 
 type SubscriptionManagerNavigationProp = NavigationProp<RootStackParamList>;
 
 interface Subscription {
   id: string;
-  status: "active" | "canceled" | "past_due" | "trialing";
+  status: 'active' | 'canceled' | 'past_due' | 'trialing';
   plan: {
     id: string;
     name: string;
-    interval: "month" | "year";
+    interval: 'month' | 'year';
     amount: number;
     currency: string;
   };
@@ -60,16 +60,16 @@ const createCheckoutSession = async <T extends { url: string }>(payload: {
   metadata?: Record<string, unknown>;
 }): Promise<T> => {
   const response = await fetch(
-    `${String(process.env["EXPO_PUBLIC_API_BASE_URL"])}/subscriptions/checkout-session`,
+    `${String(process.env['EXPO_PUBLIC_API_BASE_URL'])}/subscriptions/checkout-session`,
     {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     },
   );
 
   if (!response.ok) {
-    throw new Error("Failed to create checkout session");
+    throw new Error('Failed to create checkout session');
   }
 
   return response.json() as Promise<T>;
@@ -83,12 +83,12 @@ function makeStyles(theme: AppTheme) {
     },
     contentContainer: {
       padding: theme.spacing.md,
-      paddingBottom: theme.spacing["2xl"],
+      paddingBottom: theme.spacing['2xl'],
     },
     loadingContainer: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       backgroundColor: theme.colors.surface,
     },
     loadingText: {
@@ -103,19 +103,19 @@ function makeStyles(theme: AppTheme) {
     },
     headerTitle: {
       fontSize: 24,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onPrimary,
     },
     errorContainer: {
       padding: theme.spacing.lg,
-      backgroundColor: theme.colors.danger + "15",
+      backgroundColor: theme.colors.danger + '15',
       borderRadius: theme.radii.md,
-      alignItems: "center",
+      alignItems: 'center',
     },
     errorText: {
       fontSize: 16,
       color: theme.colors.danger,
-      textAlign: "center",
+      textAlign: 'center',
       marginTop: theme.spacing.sm,
       marginBottom: theme.spacing.md,
     },
@@ -127,13 +127,13 @@ function makeStyles(theme: AppTheme) {
     },
     retryButtonText: {
       color: theme.colors.onPrimary,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     noSubscriptionContainer: {
       padding: theme.spacing.lg,
       backgroundColor: theme.colors.surface,
       borderRadius: theme.radii.md,
-      alignItems: "center",
+      alignItems: 'center',
       elevation: 2,
       shadowColor: theme.colors.border,
       shadowOffset: { width: 0, height: 1 },
@@ -142,7 +142,7 @@ function makeStyles(theme: AppTheme) {
     },
     noSubscriptionTitle: {
       fontSize: 20,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onSurface,
       marginTop: theme.spacing.md,
       marginBottom: theme.spacing.sm,
@@ -150,7 +150,7 @@ function makeStyles(theme: AppTheme) {
     noSubscriptionText: {
       fontSize: 16,
       color: theme.colors.onMuted,
-      textAlign: "center",
+      textAlign: 'center',
       marginBottom: theme.spacing.lg,
     },
     upgradeButton: {
@@ -161,7 +161,7 @@ function makeStyles(theme: AppTheme) {
     },
     upgradeButtonText: {
       color: theme.colors.onPrimary,
-      fontWeight: "600",
+      fontWeight: '600',
       fontSize: 16,
     },
     card: {
@@ -176,14 +176,14 @@ function makeStyles(theme: AppTheme) {
       shadowRadius: 2,
     },
     cardHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginBottom: theme.spacing.md,
     },
     cardTitle: {
       fontSize: 18,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onSurface,
     },
     statusBadge: {
@@ -193,21 +193,21 @@ function makeStyles(theme: AppTheme) {
     },
     statusText: {
       fontSize: 14,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     planDetails: {
       marginBottom: theme.spacing.md,
     },
     planName: {
       fontSize: 22,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
     planPrice: {
       fontSize: 16,
       color: theme.colors.primary,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     divider: {
       height: 1,
@@ -215,9 +215,9 @@ function makeStyles(theme: AppTheme) {
       marginVertical: theme.spacing.md,
     },
     detailRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginBottom: theme.spacing.sm,
     },
     detailLabel: {
@@ -227,12 +227,12 @@ function makeStyles(theme: AppTheme) {
     detailValue: {
       fontSize: 16,
       color: theme.colors.onSurface,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     detailValueHighlight: {
       fontSize: 16,
       color: theme.colors.warning,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     usageItem: {
       marginBottom: theme.spacing.md,
@@ -246,11 +246,11 @@ function makeStyles(theme: AppTheme) {
       height: 8,
       backgroundColor: theme.colors.border,
       borderRadius: theme.radii.xs,
-      overflow: "hidden",
+      overflow: 'hidden',
       marginBottom: theme.spacing.xs,
     },
     usageProgress: {
-      height: "100%",
+      height: '100%',
       borderRadius: theme.radii.xs,
     },
     usageText: {
@@ -260,12 +260,12 @@ function makeStyles(theme: AppTheme) {
     usageResetText: {
       fontSize: 14,
       color: theme.colors.onMuted,
-      textAlign: "center",
+      textAlign: 'center',
       marginTop: theme.spacing.sm,
     },
     actionButton: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       paddingVertical: theme.spacing.sm,
       paddingHorizontal: theme.spacing.md,
       backgroundColor: theme.colors.surface,
@@ -277,7 +277,7 @@ function makeStyles(theme: AppTheme) {
     },
     actionButtonText: {
       fontSize: 16,
-      fontWeight: "500",
+      fontWeight: '500',
       marginLeft: theme.spacing.sm,
       color: theme.colors.onSurface,
     },
@@ -309,16 +309,16 @@ export const SubscriptionManagerScreen = () => {
 
       // Fetch usage stats
       const usageData = (await fetch(
-        `${String(process.env["EXPO_PUBLIC_API_BASE_URL"])}/subscriptions/usage`,
+        `${String(process.env['EXPO_PUBLIC_API_BASE_URL'])}/subscriptions/usage`,
         {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
         },
       ).then((res) => res.json())) as UsageStats;
       setUsageStats(usageData);
     } catch (err) {
-      logger.error("Failed to fetch subscription data:", { error: err });
-      setError("Failed to load subscription data. Please try again.");
+      logger.error('Failed to fetch subscription data:', { error: err });
+      setError('Failed to load subscription data. Please try again.');
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -336,39 +336,36 @@ export const SubscriptionManagerScreen = () => {
 
   const handleCancelSubscription = () => {
     Alert.alert(
-      "Cancel Subscription",
-      "Are you sure you want to cancel your subscription? You can continue to use premium features until the end of your billing period.",
+      'Cancel Subscription',
+      'Are you sure you want to cancel your subscription? You can continue to use premium features until the end of your billing period.',
       [
-        { text: "No", style: "cancel" },
+        { text: 'No', style: 'cancel' },
         {
-          text: "Yes, Cancel",
-          style: "destructive",
+          text: 'Yes, Cancel',
+          style: 'destructive',
           onPress: () => {
             void (async () => {
               try {
                 setIsLoading(true);
-                if (subscription?.id !== undefined && subscription.id !== "") {
+                if (subscription?.id !== undefined && subscription.id !== '') {
                   await fetch(
-                    `${String(process.env["EXPO_PUBLIC_API_BASE_URL"])}/subscriptions/cancel`,
+                    `${String(process.env['EXPO_PUBLIC_API_BASE_URL'])}/subscriptions/cancel`,
                     {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ subscriptionId: subscription.id }),
                     },
                   );
                   Alert.alert(
-                    "Subscription Canceled",
-                    "Your subscription has been canceled. You can continue using premium features until the end of your current billing period.",
+                    'Subscription Canceled',
+                    'Your subscription has been canceled. You can continue using premium features until the end of your current billing period.',
                   );
                   // Refresh data to show updated status
                   void fetchSubscriptionData();
                 }
               } catch (err) {
-                logger.error("Failed to cancel subscription:", { error: err });
-                Alert.alert(
-                  "Error",
-                  "Failed to cancel your subscription. Please try again later.",
-                );
+                logger.error('Failed to cancel subscription:', { error: err });
+                Alert.alert('Error', 'Failed to cancel your subscription. Please try again later.');
               } finally {
                 setIsLoading(false);
               }
@@ -382,28 +379,22 @@ export const SubscriptionManagerScreen = () => {
   const handleReactivateSubscription = async () => {
     try {
       setIsLoading(true);
-      if (subscription?.id !== undefined && subscription.id !== "") {
-        await fetch(
-          `${String(process.env["EXPO_PUBLIC_API_BASE_URL"])}/subscriptions/reactivate`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ subscriptionId: subscription.id }),
-          },
-        );
+      if (subscription?.id !== undefined && subscription.id !== '') {
+        await fetch(`${String(process.env['EXPO_PUBLIC_API_BASE_URL'])}/subscriptions/reactivate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subscriptionId: subscription.id }),
+        });
         Alert.alert(
-          "Subscription Reactivated",
-          "Your subscription has been successfully reactivated.",
+          'Subscription Reactivated',
+          'Your subscription has been successfully reactivated.',
         );
         // Refresh data to show updated status
         void fetchSubscriptionData();
       }
     } catch (err) {
-      logger.error("Failed to reactivate subscription:", { error: err });
-      Alert.alert(
-        "Error",
-        "Failed to reactivate your subscription. Please try again later.",
-      );
+      logger.error('Failed to reactivate subscription:', { error: err });
+      Alert.alert('Error', 'Failed to reactivate your subscription. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -416,28 +407,24 @@ export const SubscriptionManagerScreen = () => {
       // Create checkout session for updating payment method
       const session = await createCheckoutSession<{ url: string }>({
         priceId:
-          subscription?.plan.id !== undefined && subscription.plan.id !== ""
+          subscription?.plan.id !== undefined && subscription.plan.id !== ''
             ? subscription.plan.id
-            : "",
-        successUrl: "pawfectmatch://subscription/update-success",
-        cancelUrl: "pawfectmatch://subscription/update-cancel",
+            : '',
+        successUrl: 'pawfectmatch://subscription/update-success',
+        cancelUrl: 'pawfectmatch://subscription/update-cancel',
         metadata: {
-          action: "update_payment",
-          subscriptionId:
-            subscription?.id !== undefined ? subscription.id : undefined,
+          action: 'update_payment',
+          subscriptionId: subscription?.id !== undefined ? subscription.id : undefined,
         },
       });
 
       // Open Stripe checkout in browser
-      if (session.url !== "") {
+      if (session.url !== '') {
         await Linking.openURL(session.url);
       }
     } catch (err) {
-      logger.error("Failed to update payment method:", { error: err });
-      Alert.alert(
-        "Error",
-        "Failed to update payment method. Please try again later.",
-      );
+      logger.error('Failed to update payment method:', { error: err });
+      Alert.alert('Error', 'Failed to update payment method. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -445,27 +432,25 @@ export const SubscriptionManagerScreen = () => {
 
   // Format date string
   const formatDate = (dateString?: string): string => {
-    if (dateString === undefined || dateString === "") return "N/A";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    if (dateString === undefined || dateString === '') return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
   // Get status badge color using theme colors
-  const getStatusColor = (
-    status?: Subscription["status"],
-  ): { bg: string; text: string } => {
+  const getStatusColor = (status?: Subscription['status']): { bg: string; text: string } => {
     switch (status) {
-      case "active":
-        return { bg: theme.colors.success + "20", text: theme.colors.success };
-      case "canceled":
-        return { bg: theme.colors.danger + "20", text: theme.colors.danger };
-      case "past_due":
-        return { bg: theme.colors.warning + "20", text: theme.colors.warning };
-      case "trialing":
-        return { bg: theme.colors.info + "20", text: theme.colors.info };
+      case 'active':
+        return { bg: theme.colors.success + '20', text: theme.colors.success };
+      case 'canceled':
+        return { bg: theme.colors.danger + '20', text: theme.colors.danger };
+      case 'past_due':
+        return { bg: theme.colors.warning + '20', text: theme.colors.warning };
+      case 'trialing':
+        return { bg: theme.colors.info + '20', text: theme.colors.info };
       default:
         return { bg: theme.colors.border, text: theme.colors.onMuted };
     }
@@ -473,13 +458,18 @@ export const SubscriptionManagerScreen = () => {
 
   // Get gradient colors from theme palette
   const gradientColors = useMemo(() => {
-    return (theme as any).palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary];
+    return (
+      (theme as any).palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary]
+    );
   }, [theme]);
 
   if (isLoading && !isRefreshing) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <ActivityIndicator
+          size="large"
+          color={theme.colors.primary}
+        />
         <Text style={styles.loadingText}>Loading subscription details...</Text>
       </View>
     );
@@ -492,7 +482,10 @@ export const SubscriptionManagerScreen = () => {
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       refreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={handleRefresh}
+        />
       }
     >
       <LinearGradient
@@ -504,9 +497,13 @@ export const SubscriptionManagerScreen = () => {
         <Text style={styles.headerTitle}>Subscription Details</Text>
       </LinearGradient>
 
-      {error !== null && error !== "" ? (
+      {error !== null && error !== '' ? (
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={24} color={theme.colors.danger} />
+          <Ionicons
+            name="alert-circle-outline"
+            size={24}
+            color={theme.colors.danger}
+          />
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
@@ -527,8 +524,8 @@ export const SubscriptionManagerScreen = () => {
           />
           <Text style={styles.noSubscriptionTitle}>No Active Subscription</Text>
           <Text style={styles.noSubscriptionText}>
-            You don&apos;t have an active subscription. Upgrade to Premium to
-            unlock exclusive features!
+            You don&apos;t have an active subscription. Upgrade to Premium to unlock exclusive
+            features!
           </Text>
           <TouchableOpacity
             style={styles.upgradeButton}
@@ -536,7 +533,7 @@ export const SubscriptionManagerScreen = () => {
             accessibilityLabel="Interactive element"
             accessibilityRole="button"
             onPress={() => {
-              navigation.navigate("Premium");
+              navigation.navigate('Premium');
             }}
           >
             <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
@@ -554,14 +551,8 @@ export const SubscriptionManagerScreen = () => {
                   { backgroundColor: statusColors.bg },
                 ])}
               >
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.statusText,
-                    { color: statusColors.text },
-                  ])}
-                >
-                  {subscription.status.charAt(0).toUpperCase() +
-                    subscription.status.slice(1)}
+                <Text style={StyleSheet.flatten([styles.statusText, { color: statusColors.text }])}>
+                  {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
                 </Text>
               </View>
             </View>
@@ -578,7 +569,7 @@ export const SubscriptionManagerScreen = () => {
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Current Period</Text>
               <Text style={styles.detailValue}>
-                {formatDate(subscription.currentPeriodStart)} to{" "}
+                {formatDate(subscription.currentPeriodStart)} to{' '}
                 {formatDate(subscription.currentPeriodEnd)}
               </Text>
             </View>
@@ -595,9 +586,7 @@ export const SubscriptionManagerScreen = () => {
             {subscription.trialEnd !== undefined ? (
               <View style={styles.detailRow}>
                 <Text style={styles.detailLabel}>Trial Ends</Text>
-                <Text style={styles.detailValueHighlight}>
-                  {formatDate(subscription.trialEnd)}
-                </Text>
+                <Text style={styles.detailValueHighlight}>{formatDate(subscription.trialEnd)}</Text>
               </View>
             ) : null}
           </View>
@@ -621,8 +610,7 @@ export const SubscriptionManagerScreen = () => {
                   />
                 </View>
                 <Text style={styles.usageText}>
-                  {usageStats.swipesRemaining} / {usageStats.totalSwipes}{" "}
-                  remaining
+                  {usageStats.swipesRemaining} / {usageStats.totalSwipes} remaining
                 </Text>
               </View>
 
@@ -640,8 +628,7 @@ export const SubscriptionManagerScreen = () => {
                   />
                 </View>
                 <Text style={styles.usageText}>
-                  {usageStats.superLikesRemaining} /{" "}
-                  {usageStats.totalSuperLikes} remaining
+                  {usageStats.superLikesRemaining} / {usageStats.totalSuperLikes} remaining
                 </Text>
               </View>
 
@@ -659,8 +646,7 @@ export const SubscriptionManagerScreen = () => {
                   />
                 </View>
                 <Text style={styles.usageText}>
-                  {usageStats.boostsRemaining} / {usageStats.totalBoosts}{" "}
-                  remaining
+                  {usageStats.boostsRemaining} / {usageStats.totalBoosts} remaining
                 </Text>
               </View>
 
@@ -674,46 +660,45 @@ export const SubscriptionManagerScreen = () => {
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Manage Subscription</Text>
 
-            {subscription.status === "active" &&
-              !subscription.cancelAtPeriodEnd && (
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  testID="SubscriptionManagerScreen-button-2"
-                  accessibilityLabel="Interactive element"
-                  accessibilityRole="button"
-                  onPress={() => {
-                    handleCancelSubscription();
-                  }}
-                >
-                  <Ionicons
-                    name="close-circle-outline"
-                    size={24}
-                    color={theme.colors.danger}
-                  />
-                  <Text
-                    style={StyleSheet.flatten([
-                      styles.actionButtonText,
-                      { color: theme.colors.danger },
-                    ])}
-                  >
-                    Cancel Subscription
-                  </Text>
-                </TouchableOpacity>
-              )}
-
-            {subscription.status === "canceled" ||
-            subscription.cancelAtPeriodEnd ? (
+            {subscription.status === 'active' && !subscription.cancelAtPeriodEnd && (
               <TouchableOpacity
-                style={StyleSheet.flatten([
-                  styles.actionButton,
-                  styles.reactivateButton,
-                ])}
+                style={styles.actionButton}
+                testID="SubscriptionManagerScreen-button-2"
+                accessibilityLabel="Interactive element"
+                accessibilityRole="button"
+                onPress={() => {
+                  handleCancelSubscription();
+                }}
+              >
+                <Ionicons
+                  name="close-circle-outline"
+                  size={24}
+                  color={theme.colors.danger}
+                />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.actionButtonText,
+                    { color: theme.colors.danger },
+                  ])}
+                >
+                  Cancel Subscription
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            {subscription.status === 'canceled' || subscription.cancelAtPeriodEnd ? (
+              <TouchableOpacity
+                style={StyleSheet.flatten([styles.actionButton, styles.reactivateButton])}
                 testID="SubscriptionManagerScreen-button-2"
                 accessibilityLabel="Interactive element"
                 accessibilityRole="button"
                 onPress={() => void handleReactivateSubscription()}
               >
-                <Ionicons name="refresh-outline" size={24} color={theme.colors.onPrimary} />
+                <Ionicons
+                  name="refresh-outline"
+                  size={24}
+                  color={theme.colors.onPrimary}
+                />
                 <Text
                   style={StyleSheet.flatten([
                     styles.actionButtonText,
@@ -732,7 +717,11 @@ export const SubscriptionManagerScreen = () => {
               accessibilityRole="button"
               onPress={() => void handleUpdatePaymentMethod()}
             >
-              <Ionicons name="card-outline" size={24} color={theme.colors.primary} />
+              <Ionicons
+                name="card-outline"
+                size={24}
+                color={theme.colors.primary}
+              />
               <Text
                 style={StyleSheet.flatten([
                   styles.actionButtonText,
@@ -749,10 +738,14 @@ export const SubscriptionManagerScreen = () => {
               accessibilityLabel="Interactive element"
               accessibilityRole="button"
               onPress={() => {
-                navigation.navigate("Premium");
+                navigation.navigate('Premium');
               }}
             >
-              <Ionicons name="pricetag-outline" size={24} color={theme.colors.primary} />
+              <Ionicons
+                name="pricetag-outline"
+                size={24}
+                color={theme.colors.primary}
+              />
               <Text
                 style={StyleSheet.flatten([
                   styles.actionButtonText,

@@ -8,7 +8,7 @@ export type WebProcessingReport = {
  * Mobile-safe: returns false if window is not available
  */
 export function canProcessOnWeb(): boolean {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return false;
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,13 +36,16 @@ const dbToLinear = (db: number) => Math.pow(10, db / 20);
  * Process audio on web platform using Web Audio API
  * Mobile-safe: This function should only be called if canProcessOnWeb() returns true
  */
-export async function processAudioWeb(input: Blob, opts: Options): Promise<{ blob: Blob; report: WebProcessingReport }> {
+export async function processAudioWeb(
+  input: Blob,
+  opts: Options,
+): Promise<{ blob: Blob; report: WebProcessingReport }> {
   if (!canProcessOnWeb()) {
-    throw new Error("Web audio processing is not available on this platform");
+    throw new Error('Web audio processing is not available on this platform');
   }
-  
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const AC = (window.AudioContext || (window as any).webkitAudioContext);
+  const AC = window.AudioContext || (window as any).webkitAudioContext;
   const ctx = new AC();
   const arrayBuf = await input.arrayBuffer();
   const decoded = await ctx.decodeAudioData(arrayBuf);
@@ -72,7 +75,7 @@ export async function processAudioWeb(input: Blob, opts: Options): Promise<{ blo
 
   // Export WAV
   const wav = encodeWav(normalized);
-  const blob = new Blob([wav], { type: "audio/wav" });
+  const blob = new Blob([wav], { type: 'audio/wav' });
 
   ctx.close();
   return {
@@ -100,20 +103,33 @@ function detectBounds(data: Float32Array, th: number, win: number) {
   for (let i = 0; i < data.length - win; i += win) {
     let mx = 0;
     for (let j = 0; j < win; j++) mx = Math.max(mx, abs(i + j));
-    if (mx > th) { start = i; break; }
+    if (mx > th) {
+      start = i;
+      break;
+    }
   }
   for (let i = data.length - win; i >= 0; i -= win) {
     let mx = 0;
     for (let j = 0; j < win; j++) mx = Math.max(mx, abs(i + j));
-    if (mx > th) { end = i + win; break; }
+    if (mx > th) {
+      end = i + win;
+      break;
+    }
   }
-  if (end <= start) { start = 0; end = data.length; }
+  if (end <= start) {
+    start = 0;
+    end = data.length;
+  }
   return { startIdx: start, endIdx: end };
 }
 
 function sliceBuffer(buf: AudioBuffer, from: number, to: number) {
   const len = to - from;
-  const out = new AudioBuffer({ length: len, sampleRate: buf.sampleRate, numberOfChannels: buf.numberOfChannels });
+  const out = new AudioBuffer({
+    length: len,
+    sampleRate: buf.sampleRate,
+    numberOfChannels: buf.numberOfChannels,
+  });
   for (let ch = 0; ch < buf.numberOfChannels; ch++) {
     const src = buf.getChannelData(ch).subarray(from, to);
     out.copyToChannel(src, ch, 0);
@@ -144,7 +160,11 @@ function mixdown(buf: AudioBuffer) {
 }
 
 function applyGain(buf: AudioBuffer, g: number) {
-  const out = new AudioBuffer({ length: buf.length, sampleRate: buf.sampleRate, numberOfChannels: buf.numberOfChannels });
+  const out = new AudioBuffer({
+    length: buf.length,
+    sampleRate: buf.sampleRate,
+    numberOfChannels: buf.numberOfChannels,
+  });
   for (let ch = 0; ch < buf.numberOfChannels; ch++) {
     const src = buf.getChannelData(ch);
     const dst = new Float32Array(src.length);
@@ -167,10 +187,10 @@ function encodeWav(buf: AudioBuffer) {
   const buffer = new ArrayBuffer(44 + bytes);
   const view = new DataView(buffer);
 
-  writeStr(view, 0, "RIFF");
+  writeStr(view, 0, 'RIFF');
   view.setUint32(4, 36 + bytes, true);
-  writeStr(view, 8, "WAVE");
-  writeStr(view, 12, "fmt ");
+  writeStr(view, 8, 'WAVE');
+  writeStr(view, 12, 'fmt ');
   view.setUint32(16, 16, true);
   view.setUint16(20, 1, true);
   view.setUint16(22, nCh, true);
@@ -178,7 +198,7 @@ function encodeWav(buf: AudioBuffer) {
   view.setUint32(28, sr * nCh * 2, true);
   view.setUint16(32, nCh * 2, true);
   view.setUint16(34, 16, true);
-  writeStr(view, 36, "data");
+  writeStr(view, 36, 'data');
   view.setUint32(40, bytes, true);
 
   let offset = 44;
@@ -197,4 +217,3 @@ function encodeWav(buf: AudioBuffer) {
 function writeStr(view: DataView, at: number, s: string) {
   for (let i = 0; i < s.length; i++) view.setUint8(at + i, s.charCodeAt(i));
 }
-

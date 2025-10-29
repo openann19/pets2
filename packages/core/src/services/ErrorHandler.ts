@@ -45,10 +45,12 @@ export interface ErrorNotification {
   title: string;
   message: string;
   type: 'error' | 'warning' | 'info';
-  action?: {
-    label: string;
-    handler: () => void;
-  } | undefined;
+  action?:
+    | {
+        label: string;
+        handler: () => void;
+      }
+    | undefined;
   dismissible?: boolean;
   autoHide?: boolean;
   duration?: number;
@@ -107,10 +109,10 @@ class ErrorHandlerService {
       showNotification?: boolean;
       logError?: boolean;
       severity?: 'low' | 'medium' | 'high' | 'critical';
-    } = {}
+    } = {},
   ): ProcessedError {
     const processedError = this.processError(error, context, options);
-    
+
     // Add to queue
     this.addToQueue(processedError);
 
@@ -138,7 +140,7 @@ class ErrorHandlerService {
       method?: string;
       statusCode?: number;
       showNotification?: boolean;
-    } = {}
+    } = {},
   ): ProcessedError {
     const apiContext: ErrorContext = {
       ...context,
@@ -171,7 +173,7 @@ class ErrorHandlerService {
     options: {
       authMethod?: string;
       showNotification?: boolean;
-    } = {}
+    } = {},
   ): ProcessedError {
     const authContext: ErrorContext = {
       ...context,
@@ -209,7 +211,7 @@ class ErrorHandlerService {
       amount?: number;
       currency?: string;
       showNotification?: boolean;
-    } = {}
+    } = {},
   ): ProcessedError {
     const paymentContext: ErrorContext = {
       ...context,
@@ -247,7 +249,7 @@ class ErrorHandlerService {
     options: {
       showNotification?: boolean;
       retryable?: boolean;
-    } = {}
+    } = {},
   ): ProcessedError {
     const networkContext: ErrorContext = {
       ...context,
@@ -285,9 +287,9 @@ class ErrorHandlerService {
   } {
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-    
-    const recent = this.errorQueue.filter(error => error.timestamp >= oneHourAgo);
-    
+
+    const recent = this.errorQueue.filter((error) => error.timestamp >= oneHourAgo);
+
     const bySeverity = this.errorQueue.reduce<Record<string, number>>((acc, error) => {
       const severity = error.context.severity ?? 'medium';
       acc[severity] = (acc[severity] ?? 0) + 1;
@@ -323,11 +325,11 @@ class ErrorHandlerService {
     context: ErrorContext,
     options: {
       severity?: 'low' | 'medium' | 'high' | 'critical';
-    } = {}
+    } = {},
   ): ProcessedError {
     const errorMessage = typeof error === 'string' ? error : error.message;
     const errorStack = typeof error === 'string' ? undefined : error.stack;
-    
+
     const processedError: ProcessedError = {
       id: this.generateErrorId(),
       message: errorMessage,
@@ -358,7 +360,7 @@ class ErrorHandlerService {
    */
   private addToQueue(error: ProcessedError): void {
     this.errorQueue.push(error);
-    
+
     // Maintain queue size
     if (this.errorQueue.length > this.maxQueueSize) {
       this.errorQueue = this.errorQueue.slice(-this.maxQueueSize);
@@ -369,7 +371,7 @@ class ErrorHandlerService {
    * Log error to registered loggers
    */
   private logError(error: ProcessedError): void {
-    this.errorLoggers.forEach(logger => {
+    this.errorLoggers.forEach((logger) => {
       try {
         logger(error);
       } catch (logError) {
@@ -389,7 +391,7 @@ class ErrorHandlerService {
    * Show notification to user
    */
   private showNotification(notification: ErrorNotification): void {
-    this.notificationHandlers.forEach(handler => {
+    this.notificationHandlers.forEach((handler) => {
       try {
         handler(notification);
       } catch (handlerError) {
@@ -411,7 +413,7 @@ class ErrorHandlerService {
    */
   private createErrorNotification(error: ProcessedError): ErrorNotification {
     const severity = error.context.severity ?? 'medium';
-    
+
     switch (severity) {
       case 'critical':
         return {
@@ -456,10 +458,10 @@ class ErrorHandlerService {
    */
   private createApiErrorNotification(
     error: Error,
-    options: { statusCode?: number; endpoint?: string }
+    options: { statusCode?: number; endpoint?: string },
   ): ErrorNotification {
     const statusCode = options.statusCode ?? 500;
-    
+
     if (!isNaN(statusCode) && statusCode >= 500) {
       return {
         title: 'Server Error',
@@ -499,7 +501,10 @@ class ErrorHandlerService {
     } else {
       return {
         title: 'Request Failed',
-        message: (error.message.trim() !== '') ? error.message : 'An error occurred while processing your request.',
+        message:
+          error.message.trim() !== ''
+            ? error.message
+            : 'An error occurred while processing your request.',
         type: 'error',
       };
     }
@@ -533,12 +538,12 @@ class ErrorHandlerService {
    */
   private getApiErrorSeverity(statusCode?: number): 'low' | 'medium' | 'high' | 'critical' {
     if (statusCode == null) return 'medium';
-    
+
     if (statusCode >= 500) return 'high';
     if (statusCode === 404) return 'low';
     if (statusCode === 403 || statusCode === 401) return 'high';
     if (statusCode >= 400) return 'medium';
-    
+
     return 'low';
   }
 
@@ -547,7 +552,7 @@ class ErrorHandlerService {
    */
   private getAuthErrorMessage(error: Error): string {
     const message = error.message.toLowerCase();
-    
+
     if (message.includes('invalid') || message.includes('incorrect')) {
       return 'Invalid credentials. Please check your username and password.';
     } else if (message.includes('expired')) {
@@ -564,7 +569,7 @@ class ErrorHandlerService {
    */
   private getPaymentErrorMessage(error: Error): string {
     const message = error.message.toLowerCase();
-    
+
     if (message.includes('card') || message.includes('payment')) {
       return 'Payment failed. Please check your payment method and try again.';
     } else if (message.includes('insufficient') || message.includes('funds')) {
@@ -580,15 +585,15 @@ class ErrorHandlerService {
    * Determine if error can be recovered from
    */
   private canRecover(error: ProcessedError): boolean {
-    const {component} = error.context;
+    const { component } = error.context;
     const severity = error.context.severity ?? 'medium';
-    
+
     // Critical errors usually can't be recovered
     if (severity === 'critical') return false;
-    
+
     // Network and API errors can usually be retried
     if (component === 'Network' || component === 'API') return true;
-    
+
     // Authentication errors can be retried
     if (component === 'Authentication') return true;
 
@@ -599,8 +604,8 @@ class ErrorHandlerService {
    * Create recovery options
    */
   private createRecoveryOptions(error: ProcessedError): ErrorRecovery {
-    const {component} = error.context;
-    
+    const { component } = error.context;
+
     switch (component) {
       case 'Network':
         return {
@@ -669,17 +674,14 @@ class ErrorHandlerService {
 
       const message = this.extractErrorMessage(event.reason, 'Unhandled Promise Rejection');
 
-      this.handleError(
-        new Error(message),
-        {
-          component: 'Global',
-          action: 'unhandled_promise_rejection',
-          severity: 'high',
-          metadata: {
-            reason: stringifyUnknown(event.reason),
-          },
-        }
-      );
+      this.handleError(new Error(message), {
+        component: 'Global',
+        action: 'unhandled_promise_rejection',
+        severity: 'high',
+        metadata: {
+          reason: stringifyUnknown(event.reason),
+        },
+      });
     };
 
     const handleGlobalError = (event: Event): void => {
@@ -689,20 +691,17 @@ class ErrorHandlerService {
 
       const message = this.extractErrorMessage(event.error, 'Global Error');
 
-      this.handleError(
-        new Error(message),
-        {
-          component: 'Global',
-          action: 'global_error',
-          severity: 'high',
-          metadata: {
-            filename: event.filename,
-            lineno: event.lineno,
-            colno: event.colno,
-            error: stringifyUnknown(event.error),
-          },
-        }
-      );
+      this.handleError(new Error(message), {
+        component: 'Global',
+        action: 'global_error',
+        severity: 'high',
+        metadata: {
+          filename: event.filename,
+          lineno: event.lineno,
+          colno: event.colno,
+          error: stringifyUnknown(event.error),
+        },
+      });
     };
 
     addEventListenerSafely(browserWindow, 'unhandledrejection', handleUnhandledRejection);

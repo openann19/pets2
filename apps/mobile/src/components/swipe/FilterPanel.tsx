@@ -4,12 +4,11 @@
  * Extracted from ModernSwipeScreen for better modularity
  */
 
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { EliteButton } from '../elite/buttons/EliteButton';
+import { useTheme } from '@mobile/src/theme';
+import { StyleSheet, View } from 'react-native';
+import { BodySmall, FXContainerPresets, Heading2 } from '../';
 import { EliteButtonPresets } from '../buttons/EliteButton';
-import { FXContainerPresets, Heading2, BodySmall } from '../';
-import { useTheme } from "@/theme";
+import { EliteButton } from '../elite/buttons/EliteButton';
 
 export interface FilterPanelProps {
   filters: {
@@ -26,7 +25,7 @@ const SPECIES_OPTIONS = ['All', 'Dogs', 'Cats', 'Birds'];
 
 export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.Element {
   const theme = useTheme();
-  
+
   const handleBreedChange = (breed: string) => {
     onFilterChange({
       ...filters,
@@ -43,7 +42,7 @@ export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.
   };
 
   const styles = createStyles(theme);
-  
+
   return (
     <View style={styles.container}>
       <FXContainerPresets.glass style={styles.panel}>
@@ -59,7 +58,9 @@ export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.
                 title={breed}
                 variant={filters.breed === breed ? 'primary' : 'ghost'}
                 size="sm"
-                onPress={() => { handleBreedChange(breed); }}
+                onPress={() => {
+                  handleBreedChange(breed);
+                }}
               />
             ))}
           </View>
@@ -79,7 +80,9 @@ export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.
                     : 'ghost'
                 }
                 size="sm"
-                onPress={() => { handleSpeciesChange(species); }}
+                onPress={() => {
+                  handleSpeciesChange(species);
+                }}
               />
             ))}
           </View>
@@ -88,35 +91,37 @@ export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.
         <EliteButtonPresets.holographic
           title="Apply Filters"
           leftIcon="checkmark"
-          onPress={() => {/* Apply filters */}}
+          onPress={() => {
+            /* Apply filters */
+          }}
         />
       </FXContainerPresets.glass>
     </View>
   );
 }
 
-const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
-  container: {
-    padding: theme.spacing.lg || 32,
-  },
-  panel: {
-    padding: theme.spacing.xl || 48,
-  },
-  title: {
-    marginBottom: theme.spacing.lg || 32,
-    textAlign: 'center',
-  },
-  section: {
-    marginBottom: theme.spacing.lg || 32,
-  },
-  label: {
-    marginBottom: theme.spacing.sm || 8,
-    fontWeight: '600',
-  },
-  buttons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.sm || 8,
-  },
-});
-
+const createStyles = (theme: ReturnType<typeof useTheme>) =>
+  StyleSheet.create({
+    container: {
+      padding: theme.spacing.lg || 32,
+    },
+    panel: {
+      padding: theme.spacing.xl || 48,
+    },
+    title: {
+      marginBottom: theme.spacing.lg || 32,
+      textAlign: 'center',
+    },
+    section: {
+      marginBottom: theme.spacing.lg || 32,
+    },
+    label: {
+      marginBottom: theme.spacing.sm || 8,
+      fontWeight: '600',
+    },
+    buttons: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.sm || 8,
+    },
+  });

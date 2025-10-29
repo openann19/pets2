@@ -34,7 +34,11 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
           accessibilityLabel="Close preview"
           accessibilityRole="button"
         >
-          <Ionicons name="close-circle" size={20} color={Theme.colors.text.secondary} />
+          <Ionicons
+            name="close-circle"
+            size={20}
+            color={Theme.colors.text.secondary}
+          />
         </TouchableOpacity>
       )}
 
@@ -49,18 +53,28 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
         />
       ) : (
         <View style={styles.imagePlaceholder}>
-          <Ionicons name="link" size={32} color={Theme.colors.text.tertiary} />
+          <Ionicons
+            name="link"
+            size={32}
+            color={Theme.colors.text.tertiary}
+          />
         </View>
       )}
 
       {/* Content */}
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={2}>
+        <Text
+          style={styles.title}
+          numberOfLines={2}
+        >
           {title || 'Link'}
         </Text>
-        
+
         {description && (
-          <Text style={styles.description} numberOfLines={2}>
+          <Text
+            style={styles.description}
+            numberOfLines={2}
+          >
             {description}
           </Text>
         )}
@@ -77,8 +91,11 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
               <Text style={styles.siteName}>{siteName}</Text>
             </View>
           )}
-          
-          <Text style={styles.url} numberOfLines={1}>
+
+          <Text
+            style={styles.url}
+            numberOfLines={1}
+          >
             {url}
           </Text>
         </View>
@@ -109,13 +126,26 @@ export function LinkPreviewCardLoading(): JSX.Element {
   );
 }
 
-export function LinkPreviewCardError({ url, onRetry }: { url: string; onRetry?: () => void }): JSX.Element {
+export function LinkPreviewCardError({
+  url,
+  onRetry,
+}: {
+  url: string;
+  onRetry?: () => void;
+}): JSX.Element {
   return (
     <View style={[styles.container, styles.errorContainer]}>
-      <Ionicons name="alert-circle-outline" size={24} color={Theme.colors.status.error} />
+      <Ionicons
+        name="alert-circle-outline"
+        size={24}
+        color={Theme.colors.status.error}
+      />
       <View style={styles.errorContent}>
         <Text style={styles.errorTitle}>Failed to load preview</Text>
-        <Text style={styles.errorUrl} numberOfLines={1}>
+        <Text
+          style={styles.errorUrl}
+          numberOfLines={1}
+        >
           {url}
         </Text>
       </View>
@@ -125,7 +155,11 @@ export function LinkPreviewCardError({ url, onRetry }: { url: string; onRetry?: 
           style={styles.retryButton}
           accessibilityLabel="Retry loading preview"
         >
-          <Ionicons name="refresh" size={16} color={Theme.colors.primary[500]} />
+          <Ionicons
+            name="refresh"
+            size={16}
+            color={Theme.colors.primary[500]}
+          />
         </TouchableOpacity>
       )}
     </View>
@@ -261,4 +295,3 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.xs,
   },
 });
-

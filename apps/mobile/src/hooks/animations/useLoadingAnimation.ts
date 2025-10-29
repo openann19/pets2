@@ -3,14 +3,14 @@
  * Loading spinner animation
  */
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   useSharedValue,
   useAnimatedStyle,
   withRepeat,
   withSequence,
   withTiming,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
 export const useLoadingAnimation = () => {
   const rotation = useSharedValue(0);
@@ -20,10 +20,7 @@ export const useLoadingAnimation = () => {
     rotation.value = withRepeat(withTiming(360, { duration: 1000 }), -1, false);
 
     scale.value = withRepeat(
-      withSequence(
-        withTiming(1.1, { duration: 500 }),
-        withTiming(1, { duration: 500 }),
-      ),
+      withSequence(withTiming(1.1, { duration: 500 }), withTiming(1, { duration: 500 })),
       -1,
       false,
     );

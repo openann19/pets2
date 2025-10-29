@@ -5,35 +5,35 @@
 
 export const PREMIUM_SHADOWS = {
   primaryGlow: {
-    shadowColor: "#ec4899",
+    shadowColor: '#ec4899',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 20,
     elevation: 15,
   },
   secondaryGlow: {
-    shadowColor: "#0ea5e9",
+    shadowColor: '#0ea5e9',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 20,
     elevation: 15,
   },
   holographicGlow: {
-    shadowColor: "#667eea",
+    shadowColor: '#667eea',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.6,
     shadowRadius: 25,
     elevation: 20,
   },
   neonGlow: {
-    shadowColor: "#00f5ff",
+    shadowColor: '#00f5ff',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 30,
     elevation: 25,
   },
   medium: {
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 10,

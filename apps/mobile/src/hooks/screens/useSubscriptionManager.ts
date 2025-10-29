@@ -2,20 +2,20 @@
  * useSubscriptionManager Hook
  * Manages subscription management screen state and operations
  */
-import { useNavigation } from "@react-navigation/native";
-import { useCallback, useEffect, useState } from "react";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import { usePremiumStatus } from "../domains/premium/usePremiumStatus";
-import { useSubscriptionState } from "../domains/premium/useSubscriptionState";
+import { useNavigation } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from 'react';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import { usePremiumStatus } from '../domains/premium/usePremiumStatus';
+import { useSubscriptionState } from '../domains/premium/useSubscriptionState';
 
 interface Subscription {
   id: string;
-  status: "active" | "canceled" | "past_due" | "trialing";
+  status: 'active' | 'canceled' | 'past_due' | 'trialing';
   plan: {
     id: string;
     name: string;
-    interval: "month" | "year";
+    interval: 'month' | 'year';
     amount: number;
     currency: string;
   };
@@ -76,26 +76,22 @@ export const useSubscriptionManager = (): UseSubscriptionManagerReturn => {
 
       // Mock subscription data - in real app this would come from API
       const mockSubscription: Subscription = {
-        id: "sub_mock123",
-        status: subscriptionStatus?.isActive ? "active" : "canceled",
+        id: 'sub_mock123',
+        status: subscriptionStatus?.isActive ? 'active' : 'canceled',
         plan: {
-          id: subscriptionStatus?.plan ?? "free",
-          name: subscriptionStatus?.plan ?? "Free",
-          interval: "month",
+          id: subscriptionStatus?.plan ?? 'free',
+          name: subscriptionStatus?.plan ?? 'Free',
+          interval: 'month',
           amount:
-            subscriptionStatus?.plan === "premium"
+            subscriptionStatus?.plan === 'premium'
               ? 999
-              : subscriptionStatus?.plan === "ultimate"
+              : subscriptionStatus?.plan === 'ultimate'
                 ? 1999
                 : 0,
-          currency: "usd",
+          currency: 'usd',
         },
-        currentPeriodStart: new Date(
-          Date.now() - 30 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
-        currentPeriodEnd: new Date(
-          Date.now() + 30 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
+        currentPeriodStart: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         cancelAtPeriodEnd: false,
       };
 
@@ -114,17 +110,14 @@ export const useSubscriptionManager = (): UseSubscriptionManagerReturn => {
 
       setUsageStats(mockUsageStats);
 
-      logger.info("Subscription data fetched", {
+      logger.info('Subscription data fetched', {
         hasSubscription: !!mockSubscription,
         plan: mockSubscription.plan.name,
       });
     } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Failed to fetch subscription data";
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch subscription data';
       setError(errorMessage);
-      logger.error("Failed to fetch subscription data", { error: err });
+      logger.error('Failed to fetch subscription data', { error: err });
     }
   }, [subscriptionStatus, refreshStatus]);
 
@@ -136,18 +129,18 @@ export const useSubscriptionManager = (): UseSubscriptionManagerReturn => {
 
   const handleCancelSubscription = useCallback(async () => {
     Alert.alert(
-      "Cancel Subscription",
+      'Cancel Subscription',
       "Are you sure you want to cancel your subscription? You'll lose access to premium features at the end of your billing period.",
       [
-        { text: "Keep Subscription", style: "cancel" },
+        { text: 'Keep Subscription', style: 'cancel' },
         {
-          text: "Cancel",
-          style: "destructive",
+          text: 'Cancel',
+          style: 'destructive',
           onPress: async () => {
             const success = await cancelSubscription();
             if (success) {
               await refreshData();
-              Alert.alert("Success", "Your subscription has been cancelled.");
+              Alert.alert('Success', 'Your subscription has been cancelled.');
             }
           },
         },
@@ -160,8 +153,8 @@ export const useSubscriptionManager = (): UseSubscriptionManagerReturn => {
     if (success) {
       // In real implementation, this would redirect to Stripe customer portal
       Alert.alert(
-        "Success",
-        "Payment method update initiated. Check your email for the secure link.",
+        'Success',
+        'Payment method update initiated. Check your email for the secure link.',
       );
     }
   }, [updatePaymentMethod]);
@@ -172,7 +165,9 @@ export const useSubscriptionManager = (): UseSubscriptionManagerReturn => {
 
   // Initial data fetch
   useEffect(() => {
-    void fetchSubscriptionData().finally(() => { setIsLoading(false); });
+    void fetchSubscriptionData().finally(() => {
+      setIsLoading(false);
+    });
   }, [fetchSubscriptionData]);
 
   return {

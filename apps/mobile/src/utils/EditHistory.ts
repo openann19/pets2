@@ -124,4 +124,3 @@ export class EditHistory {
     return this.history.length - this.currentIndex - 1;
   }
 }
-

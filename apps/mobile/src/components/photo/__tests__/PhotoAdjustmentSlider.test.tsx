@@ -1,23 +1,23 @@
 /**
  * @jest-environment jsdom
  */
-import React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
-import { View, Text } from "react-native";
-import { PhotoAdjustmentSlider } from "../PhotoAdjustmentSlider";
-import * as Haptics from "expo-haptics";
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+import { View, Text } from 'react-native';
+import { PhotoAdjustmentSlider } from '../PhotoAdjustmentSlider';
+import * as Haptics from 'expo-haptics';
 
 // Mock Haptics
-jest.mock("expo-haptics", () => ({
+jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   ImpactFeedbackStyle: {
-    Light: "light",
-    Medium: "medium",
-    Heavy: "heavy",
+    Light: 'light',
+    Medium: 'medium',
+    Heavy: 'heavy',
   },
 }));
 
-describe("PhotoAdjustmentSlider", () => {
+describe('PhotoAdjustmentSlider', () => {
   const mockOnValueChange = jest.fn();
 
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe("PhotoAdjustmentSlider", () => {
     (Haptics.impactAsync as jest.Mock).mockResolvedValue(undefined);
   });
 
-  it("renders with all required props", () => {
+  it('renders with all required props', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Brightness"
@@ -37,11 +37,11 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    expect(getByText("Brightness")).toBeTruthy();
-    expect(getByText("100")).toBeTruthy();
+    expect(getByText('Brightness')).toBeTruthy();
+    expect(getByText('100')).toBeTruthy();
   });
 
-  it("displays correct label", () => {
+  it('displays correct label', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Contrast"
@@ -53,10 +53,10 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    expect(getByText("Contrast")).toBeTruthy();
+    expect(getByText('Contrast')).toBeTruthy();
   });
 
-  it("displays correct value", () => {
+  it('displays correct value', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Saturation"
@@ -68,10 +68,10 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    expect(getByText("85")).toBeTruthy();
+    expect(getByText('85')).toBeTruthy();
   });
 
-  it("renders icon correctly", () => {
+  it('renders icon correctly', () => {
     const { UNSAFE_getByType } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -86,7 +86,7 @@ describe("PhotoAdjustmentSlider", () => {
     expect(UNSAFE_getByType).toBeDefined();
   });
 
-  it("provides haptic feedback on gesture start", () => {
+  it('provides haptic feedback on gesture start', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -98,15 +98,13 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    const slider = getByText("Test").parent;
-    if (slider) fireEvent(slider, "touchStart");
+    const slider = getByText('Test').parent;
+    if (slider) fireEvent(slider, 'touchStart');
 
-    expect(Haptics.impactAsync).toHaveBeenCalledWith(
-      Haptics.ImpactFeedbackStyle.Light,
-    );
+    expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Light);
   });
 
-  it("provides haptic feedback on gesture release", () => {
+  it('provides haptic feedback on gesture release', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -118,18 +116,16 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    const slider = getByText("Test").parent;
+    const slider = getByText('Test').parent;
     if (slider) {
-      fireEvent(slider, "touchStart");
-      fireEvent(slider, "touchEnd");
+      fireEvent(slider, 'touchStart');
+      fireEvent(slider, 'touchEnd');
     }
 
-    expect(Haptics.impactAsync).toHaveBeenCalledWith(
-      Haptics.ImpactFeedbackStyle.Medium,
-    );
+    expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Medium);
   });
 
-  it("calls onValueChange when dragging", () => {
+  it('calls onValueChange when dragging', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -141,13 +137,13 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    const slider = getByText("Test").parent;
-    if (slider) fireEvent(slider, "touchStart");
+    const slider = getByText('Test').parent;
+    if (slider) fireEvent(slider, 'touchStart');
 
     expect(mockOnValueChange).toHaveBeenCalled();
   });
 
-  it("clamps values to min/max range", () => {
+  it('clamps values to min/max range', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -159,8 +155,8 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    const slider = getByText("Test").parent;
-    if (slider) fireEvent(slider, "touchStart");
+    const slider = getByText('Test').parent;
+    if (slider) fireEvent(slider, 'touchStart');
 
     // onValueChange should receive a value within min/max
     const calls = mockOnValueChange.mock.calls;
@@ -171,7 +167,7 @@ describe("PhotoAdjustmentSlider", () => {
     }
   });
 
-  it("handles minimum value correctly", () => {
+  it('handles minimum value correctly', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -183,10 +179,10 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    expect(getByText("0")).toBeTruthy();
+    expect(getByText('0')).toBeTruthy();
   });
 
-  it("handles maximum value correctly", () => {
+  it('handles maximum value correctly', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -198,10 +194,10 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    expect(getByText("200")).toBeTruthy();
+    expect(getByText('200')).toBeTruthy();
   });
 
-  it("handles negative min values", () => {
+  it('handles negative min values', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Warmth"
@@ -213,10 +209,10 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    expect(getByText("-20")).toBeTruthy();
+    expect(getByText('-20')).toBeTruthy();
   });
 
-  it("displays positive values with plus sign when appropriate", () => {
+  it('displays positive values with plus sign when appropriate', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Warmth"
@@ -228,10 +224,10 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    expect(getByText("30")).toBeTruthy();
+    expect(getByText('30')).toBeTruthy();
   });
 
-  it("uses active state style when dragging", () => {
+  it('uses active state style when dragging', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -243,14 +239,14 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    const slider = getByText("Test").parent;
-    if (slider) fireEvent(slider, "touchStart");
+    const slider = getByText('Test').parent;
+    if (slider) fireEvent(slider, 'touchStart');
 
     // Component should have active visual state
     expect(slider).toBeTruthy();
   });
 
-  it("resets to normal state after drag", () => {
+  it('resets to normal state after drag', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -262,16 +258,16 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    const slider = getByText("Test").parent;
+    const slider = getByText('Test').parent;
     if (slider) {
-      fireEvent(slider, "touchStart");
-      fireEvent(slider, "touchEnd");
+      fireEvent(slider, 'touchStart');
+      fireEvent(slider, 'touchEnd');
     }
 
     expect(slider).toBeTruthy();
   });
 
-  it("calculates correct percentage for value", () => {
+  it('calculates correct percentage for value', () => {
     const value = 75;
     const min = 0;
     const max = 100;
@@ -288,12 +284,12 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    const slider = getByText("Test").parent;
+    const slider = getByText('Test').parent;
     expect(slider).toBeTruthy();
     expect(expectedPercentage).toBe(75);
   });
 
-  it("handles rapid drag gestures", () => {
+  it('handles rapid drag gestures', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -305,20 +301,20 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    const slider = getByText("Test").parent;
+    const slider = getByText('Test').parent;
     if (slider) {
-      fireEvent(slider, "touchStart");
-      fireEvent(slider, "touchMove");
-      fireEvent(slider, "touchMove");
-      fireEvent(slider, "touchEnd");
+      fireEvent(slider, 'touchStart');
+      fireEvent(slider, 'touchMove');
+      fireEvent(slider, 'touchMove');
+      fireEvent(slider, 'touchEnd');
     }
 
     expect(slider).toBeTruthy();
   });
 
-  it("uses different icons for different adjustments", () => {
-    const icons = ["sunny", "contrast", "color-palette", "flame"];
-    const labels = ["Brightness", "Contrast", "Saturation", "Warmth"];
+  it('uses different icons for different adjustments', () => {
+    const icons = ['sunny', 'contrast', 'color-palette', 'flame'];
+    const labels = ['Brightness', 'Contrast', 'Saturation', 'Warmth'];
 
     icons.forEach((icon, index) => {
       const { getByText } = render(
@@ -336,7 +332,7 @@ describe("PhotoAdjustmentSlider", () => {
     });
   });
 
-  it("maintains value precision for floating point values", () => {
+  it('maintains value precision for floating point values', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -348,10 +344,10 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    expect(getByText("50")).toBeTruthy();
+    expect(getByText('50')).toBeTruthy();
   });
 
-  it("handles disabled state gracefully", () => {
+  it('handles disabled state gracefully', () => {
     const { getByText } = render(
       <PhotoAdjustmentSlider
         label="Test"
@@ -363,7 +359,7 @@ describe("PhotoAdjustmentSlider", () => {
       />,
     );
 
-    const slider = getByText("Test").parent;
+    const slider = getByText('Test').parent;
     expect(slider).toBeTruthy();
   });
 });

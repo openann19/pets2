@@ -4,12 +4,7 @@
  */
 
 import React from 'react';
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-} from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import { BioResults } from '../BioResults';
 import type { GeneratedBio } from '../../../hooks/useAIBio';
 
@@ -38,7 +33,7 @@ jest.mock('../../../theme/unified-theme', () => ({
     },
     spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
     typography: {
-      fontSize: { xs: 12, sm: 14, base: 16, xl: 20, '2xl': 24 },
+      fontSize: { 'xs': 12, 'sm': 14, 'base': 16, 'xl': 20, '2xl': 24 },
       fontWeight: { medium: '500', semibold: '600', bold: '700' },
       lineHeight: { relaxed: 1.625, normal: 1.5 },
     },
@@ -176,7 +171,10 @@ describe('BioResults Component', () => {
   describe('Save Functionality', () => {
     it('calls onSave when save button is pressed', () => {
       render(
-        <BioResults generatedBio={mockBio} onSave={mockOnSave} />,
+        <BioResults
+          generatedBio={mockBio}
+          onSave={mockOnSave}
+        />,
       );
 
       const saveButton = screen.getByText('Save');
@@ -189,7 +187,10 @@ describe('BioResults Component', () => {
       const Alert = require('react-native').Alert;
 
       render(
-        <BioResults generatedBio={mockBio} onSave={mockOnSave} />,
+        <BioResults
+          generatedBio={mockBio}
+          onSave={mockOnSave}
+        />,
       );
 
       const saveButton = screen.getByText('Save');
@@ -208,7 +209,10 @@ describe('BioResults Component', () => {
   describe('Regenerate Functionality', () => {
     it('calls onRegenerate when regenerate button is pressed', () => {
       render(
-        <BioResults generatedBio={mockBio} onRegenerate={mockOnRegenerate} />,
+        <BioResults
+          generatedBio={mockBio}
+          onRegenerate={mockOnRegenerate}
+        />,
       );
 
       const regenerateButton = screen.getByText('Regenerate');
@@ -462,4 +466,3 @@ describe('BioResults Component', () => {
     });
   });
 });
-

@@ -3,7 +3,7 @@
  * Parallax scrolling effect
  */
 
-import { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
 
 export const useParallaxEffect = (speed = 0.5) => {
   const translateY = useSharedValue(0);

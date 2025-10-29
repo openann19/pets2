@@ -1,6 +1,17 @@
-import React, { useRef, useState } from "react";
-import { View, StyleSheet, type ViewStyle, type LayoutChangeEvent, type GestureResponderEvent } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, interpolate } from "react-native-reanimated";
+import React, { useRef, useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  type ViewStyle,
+  type LayoutChangeEvent,
+  type GestureResponderEvent,
+} from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  interpolate,
+} from 'react-native-reanimated';
 
 type Props = {
   children: React.ReactNode;
@@ -22,8 +33,8 @@ export default function ParallaxCard({ children, style, intensity = 0.6, glow = 
 
   const onPressIn = (e: GestureResponderEvent) => {
     const { locationX, locationY } = e.nativeEvent;
-    const dx = (locationX / Math.max(box.w, 1)) - 0.5;
-    const dy = (locationY / Math.max(box.h, 1)) - 0.5;
+    const dx = locationX / Math.max(box.w, 1) - 0.5;
+    const dy = locationY / Math.max(box.h, 1) - 0.5;
     rx.value = withSpring(interpolate(dy, [-0.5, 0.5], [6, -6]) * intensity);
     ry.value = withSpring(interpolate(dx, [-0.5, 0.5], [-6, 6]) * intensity);
     s.value = withSpring(0.995);
@@ -36,14 +47,21 @@ export default function ParallaxCard({ children, style, intensity = 0.6, glow = 
   };
 
   const a = useAnimatedStyle(() => ({
-    transform: [{ perspective: 800 }, { rotateX: `${rx.value}deg` }, { rotateY: `${ry.value}deg` }, { scale: s.value }],
+    transform: [
+      { perspective: 800 },
+      { rotateX: `${rx.value}deg` },
+      { rotateY: `${ry.value}deg` },
+      { scale: s.value },
+    ],
     shadowOpacity: glow ? 0.2 : 0.1,
     shadowRadius: glow ? 24 : 12,
     shadowColor: Theme.colors.primary[500],
   }));
 
   return (
-    <View onLayout={onLayout} style={style}
+    <View
+      onLayout={onLayout}
+      style={style}
       onStartShouldSetResponder={() => true}
       onResponderGrant={onPressIn}
       onResponderMove={onPressIn}
@@ -56,6 +74,5 @@ export default function ParallaxCard({ children, style, intensity = 0.6, glow = 
 }
 
 const styles = StyleSheet.create({
-  radius: { borderRadius: Theme.borderRadius["2xl"], overflow: "visible" },
+  radius: { borderRadius: Theme.borderRadius['2xl'], overflow: 'visible' },
 });
-

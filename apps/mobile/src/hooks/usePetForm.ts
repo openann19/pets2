@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { logger, type Pet } from "@pawfectmatch/core";
-import { Alert } from "react-native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { matchesAPI } from "../services/api";
-import type { RootStackParamList } from "../navigation/types";
-import type { FormFieldValue } from "../types/forms";
+import { useState } from 'react';
+import { logger, type Pet } from '@pawfectmatch/core';
+import { Alert } from 'react-native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { matchesAPI } from '../services/api';
+import type { RootStackParamList } from '../navigation/types';
+import type { FormFieldValue } from '../types/forms';
 
 export interface PetPhoto {
   uri: string;
@@ -52,14 +52,14 @@ export interface UsePetFormReturn {
 
 export const usePetForm = (): UsePetFormReturn => {
   const [formData, setFormData] = useState<PetFormData>({
-    name: "",
-    species: "",
-    breed: "",
-    age: "",
-    gender: "",
-    size: "",
-    description: "",
-    intent: "",
+    name: '',
+    species: '',
+    breed: '',
+    age: '',
+    gender: '',
+    size: '',
+    description: '',
+    intent: '',
     personalityTags: [],
     healthInfo: {
       vaccinated: false,
@@ -72,20 +72,17 @@ export const usePetForm = (): UsePetFormReturn => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const updateFormData = (
-    field: string,
-    value: FormFieldValue,
-  ) => {
+  const updateFormData = (field: string, value: FormFieldValue) => {
     // Handle null values by ignoring them
     if (value === null) {
       return;
     }
 
-    if (field.includes(".")) {
-      const [parent, child] = field.split(".");
+    if (field.includes('.')) {
+      const [parent, child] = field.split('.');
       const parentKey = parent as keyof typeof formData;
       const childKey = child as string;
-      
+
       setFormData((prev) => ({
         ...prev,
         [parentKey]: {
@@ -100,27 +97,27 @@ export const usePetForm = (): UsePetFormReturn => {
 
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) newErrors.name = "Pet name is required";
-    if (!formData.species) newErrors.species = "Species is required";
-    if (!formData.breed.trim()) newErrors.breed = "Breed is required";
+    if (!formData.name.trim()) newErrors.name = 'Pet name is required';
+    if (!formData.species) newErrors.species = 'Species is required';
+    if (!formData.breed.trim()) newErrors.breed = 'Breed is required';
     if (
       !formData.age ||
       isNaN(Number(formData.age)) ||
       Number(formData.age) < 0 ||
       Number(formData.age) > 30
     ) {
-      newErrors.age = "Age must be between 0 and 30 years";
+      newErrors.age = 'Age must be between 0 and 30 years';
     }
-    if (!formData.gender) newErrors.gender = "Gender is required";
-    if (!formData.size) newErrors.size = "Size is required";
-    if (!formData.intent) newErrors.intent = "Intent is required";
+    if (!formData.gender) newErrors.gender = 'Gender is required';
+    if (!formData.size) newErrors.size = 'Size is required';
+    if (!formData.intent) newErrors.intent = 'Intent is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -131,12 +128,12 @@ export const usePetForm = (): UsePetFormReturn => {
     navigation: NativeStackNavigationProp<RootStackParamList>,
   ) => {
     if (!validateForm()) {
-      Alert.alert("Validation Error", "Please fill in all required fields");
+      Alert.alert('Validation Error', 'Please fill in all required fields');
       return;
     }
 
     if (photos.length === 0) {
-      Alert.alert("Photos Required", "Please add at least one photo");
+      Alert.alert('Photos Required', 'Please add at least one photo');
       return;
     }
 
@@ -146,18 +143,18 @@ export const usePetForm = (): UsePetFormReturn => {
       // Create pet data
       const petData: Partial<Pet> = {
         name: formData.name,
-        species: formData.species as "dog" | "cat" | "bird" | "rabbit" | "other",
+        species: formData.species as 'dog' | 'cat' | 'bird' | 'rabbit' | 'other',
         breed: formData.breed,
         age: Number(formData.age),
-        gender: formData.gender as "male" | "female",
-        size: formData.size as "tiny" | "small" | "medium" | "large" | "extra-large",
+        gender: formData.gender as 'male' | 'female',
+        size: formData.size as 'tiny' | 'small' | 'medium' | 'large' | 'extra-large',
         description: formData.description,
-        intent: formData.intent as "adoption" | "mating" | "playdate" | "all",
+        intent: formData.intent as 'adoption' | 'mating' | 'playdate' | 'all',
         personalityTags: formData.personalityTags,
         healthInfo: formData.healthInfo as any,
       };
 
-      logger.info("Creating pet:", { petData });
+      logger.info('Creating pet:', { petData });
 
       // Create pet profile via API
       const createdPet = await matchesAPI.createPet(petData);
@@ -168,16 +165,16 @@ export const usePetForm = (): UsePetFormReturn => {
 
       if (uploadingPhotos.length > 0) {
         Alert.alert(
-          "Upload in Progress",
-          "Please wait for all photos to finish uploading before submitting."
+          'Upload in Progress',
+          'Please wait for all photos to finish uploading before submitting.',
         );
         return;
       }
 
       if (unuploadedPhotos.length > 0) {
         Alert.alert(
-          "Photos Not Uploaded",
-          "Some photos failed to upload. Please remove them and try again."
+          'Photos Not Uploaded',
+          'Some photos failed to upload. Please remove them and try again.',
         );
         return;
       }
@@ -192,20 +189,20 @@ export const usePetForm = (): UsePetFormReturn => {
         }));
 
         // Update pet with photo URLs
-        await matchesAPI.updatePet(createdPet._id, { 
-          photos: photoUrls 
+        await matchesAPI.updatePet(createdPet._id, {
+          photos: photoUrls,
         } as any);
       }
 
-      Alert.alert("Success!", "Pet profile created successfully!", [
+      Alert.alert('Success!', 'Pet profile created successfully!', [
         {
-          text: "OK",
-          onPress: () => navigation.navigate("MyPets"),
+          text: 'OK',
+          onPress: () => navigation.navigate('MyPets'),
         },
       ]);
     } catch (error) {
-      logger.error("Error creating pet:", { error });
-      Alert.alert("Error", "Failed to create pet profile. Please try again.");
+      logger.error('Error creating pet:', { error });
+      Alert.alert('Error', 'Failed to create pet profile. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

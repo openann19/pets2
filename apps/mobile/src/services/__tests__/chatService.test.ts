@@ -34,9 +34,7 @@ describe('Chat Service', () => {
       const mockResponse = {
         success: true,
         messageId: 'msg-123',
-        reactions: [
-          { emoji: '😍', userId: 'user-1', timestamp: '2024-01-01T00:00:00Z' },
-        ],
+        reactions: [{ emoji: '😍', userId: 'user-1', timestamp: '2024-01-01T00:00:00Z' }],
       };
 
       (request as jest.Mock).mockResolvedValueOnce(mockResponse);
@@ -57,9 +55,9 @@ describe('Chat Service', () => {
     it('should throw error on failed reaction', async () => {
       (request as jest.Mock).mockRejectedValueOnce(new Error('Failed to send reaction'));
 
-      await expect(
-        chatService.sendReaction('match-123', 'msg-123', '😍')
-      ).rejects.toThrow('Failed to send reaction');
+      await expect(chatService.sendReaction('match-123', 'msg-123', '😍')).rejects.toThrow(
+        'Failed to send reaction',
+      );
     });
 
     it('should handle multiple reactions', async () => {
@@ -155,7 +153,7 @@ describe('Chat Service', () => {
           matchId: 'match-123',
           attachmentType: 'file',
           file: mockFile,
-        })
+        }),
       ).rejects.toThrow('Upload failed');
     });
   });
@@ -215,9 +213,9 @@ describe('Chat Service', () => {
     });
 
     it('should throw error for invalid file type', async () => {
-      await expect(
-        chatService.sendVoiceNote('match-123', {} as FormData, 5)
-      ).rejects.toThrow('Invalid file type');
+      await expect(chatService.sendVoiceNote('match-123', {} as FormData, 5)).rejects.toThrow(
+        'Invalid file type',
+      );
     });
 
     it('should handle voice note upload errors', async () => {
@@ -225,9 +223,9 @@ describe('Chat Service', () => {
 
       (request as jest.Mock).mockRejectedValueOnce(new Error('Upload failed'));
 
-      await expect(
-        chatService.sendVoiceNote('match-123', formData, 5)
-      ).rejects.toThrow('Upload failed');
+      await expect(chatService.sendVoiceNote('match-123', formData, 5)).rejects.toThrow(
+        'Upload failed',
+      );
     });
   });
 
@@ -265,7 +263,7 @@ describe('Chat Service', () => {
           httpMethod: 'PUT',
           headers: { 'Content-Type': 'audio/webm' },
           uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-        }
+        },
       );
 
       expect(request).toHaveBeenCalledWith('/chat/match-123/voice-note', {
@@ -290,7 +288,7 @@ describe('Chat Service', () => {
         sendVoiceNoteNative('match-123', {
           fileUri: 'file://voice.webm',
           duration: 10,
-        })
+        }),
       ).rejects.toThrow('S3 upload failed');
     });
 
@@ -301,7 +299,7 @@ describe('Chat Service', () => {
         sendVoiceNoteNative('match-123', {
           fileUri: 'file://voice.webm',
           duration: 10,
-        })
+        }),
       ).rejects.toThrow('Presign failed');
     });
   });
@@ -332,17 +330,17 @@ describe('Chat Service', () => {
     it('should handle network errors during reaction', async () => {
       (request as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
 
-      await expect(
-        chatService.sendReaction('match-123', 'msg-123', '❤️')
-      ).rejects.toThrow('Network error');
+      await expect(chatService.sendReaction('match-123', 'msg-123', '❤️')).rejects.toThrow(
+        'Network error',
+      );
     });
 
     it('should handle invalid match ID', async () => {
       (request as jest.Mock).mockRejectedValueOnce(new Error('Match not found'));
 
-      await expect(
-        chatService.sendReaction('invalid-match', 'msg-123', '😍')
-      ).rejects.toThrow('Match not found');
+      await expect(chatService.sendReaction('invalid-match', 'msg-123', '😍')).rejects.toThrow(
+        'Match not found',
+      );
     });
 
     it('should handle concurrent reactions', async () => {

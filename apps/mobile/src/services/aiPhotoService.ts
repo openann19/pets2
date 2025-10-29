@@ -1,5 +1,5 @@
-import * as FileSystem from "expo-file-system";
-import { request } from "./api";
+import * as FileSystem from 'expo-file-system';
+import { request } from './api';
 
 export interface PhotoAnalysisResult {
   labels: Array<{ name: string | undefined; confidence: number | undefined }>;
@@ -15,22 +15,27 @@ export interface PhotoAnalysisResult {
   suggestions: string[];
 }
 
-export async function analyzePhotoFromUri(localUri: string, contentType = "image/jpeg"): Promise<PhotoAnalysisResult> {
+export async function analyzePhotoFromUri(
+  localUri: string,
+  contentType = 'image/jpeg',
+): Promise<PhotoAnalysisResult> {
   // Upload photo to S3
-  const data = await request<{ key: string; url: string }>("/uploads/photos/presign", { method: 'POST', body: { contentType } });
-  
+  const data = await request<{ key: string; url: string }>('/uploads/photos/presign', {
+    method: 'POST',
+    body: { contentType },
+  });
+
   await FileSystem.uploadAsync(data.url, localUri, {
-    httpMethod: "PUT",
-    headers: { "Content-Type": contentType },
+    httpMethod: 'PUT',
+    headers: { 'Content-Type': contentType },
     uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
   });
 
   // Analyze the uploaded photo
-  const analysis = await request<{ data: PhotoAnalysisResult }>("/ai/analyze-photo", { 
-    method: 'POST', 
-    body: { s3Key: data.key }
+  const analysis = await request<{ data: PhotoAnalysisResult }>('/ai/analyze-photo', {
+    method: 'POST',
+    body: { s3Key: data.key },
   });
-  
+
   return analysis.data;
 }
-

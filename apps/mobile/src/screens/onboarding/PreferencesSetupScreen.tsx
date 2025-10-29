@@ -1,26 +1,18 @@
-import { INTENT_OPTIONS, SPECIES_OPTIONS } from "../../constants/options";
-import { logger } from "@pawfectmatch/core";
-import Slider from "@react-native-community/slider";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, useMemo } from "react";
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { logger } from '@pawfectmatch/core';
+import Slider from '@react-native-community/slider';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useMemo, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+} from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { INTENT_OPTIONS, SPECIES_OPTIONS } from '../../constants/options';
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -31,7 +23,7 @@ type OnboardingStackParamList = {
 
 type PreferencesSetupScreenProps = NativeStackScreenProps<
   OnboardingStackParamList,
-  "PreferencesSetup"
+  'PreferencesSetup'
 >;
 
 interface PreferencesData {
@@ -56,10 +48,7 @@ const SPRING_CONFIG = {
   mass: 1,
 };
 
-const PreferencesSetupScreen = ({
-  navigation,
-  route,
-}: PreferencesSetupScreenProps) => {
+const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenProps) => {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { userIntent } = route.params;
@@ -70,7 +59,7 @@ const PreferencesSetupScreen = ({
       max: 15,
     },
     species: [],
-    intents: userIntent === "adopt" ? ["adoption"] : ["adoption", "playdate"],
+    intents: userIntent === 'adopt' ? ['adoption'] : ['adoption', 'playdate'],
     notifications: {
       email: true,
       push: true,
@@ -91,10 +80,7 @@ const PreferencesSetupScreen = ({
     transform: [{ scale: scaleValue.value }],
   }));
 
-  const updatePreferences = (
-    field: string,
-    value: import("../../types/forms").FormFieldValue,
-  ) => {
+  const updatePreferences = (field: string, value: import('../../types/forms').FormFieldValue) => {
     setPreferences((prev) => ({
       ...prev,
       [field]: value,
@@ -132,20 +118,20 @@ const PreferencesSetupScreen = ({
   const handleComplete = async () => {
     if (preferences.species.length === 0) {
       Alert.alert(
-        "Missing Information",
+        'Missing Information',
         "Please select at least one species you're interested in.",
       );
       return;
     }
 
     if (preferences.intents.length === 0) {
-      Alert.alert("Missing Information", "Please select at least one intent.");
+      Alert.alert('Missing Information', 'Please select at least one intent.');
       return;
     }
 
     try {
       // Save preferences to backend
-      logger.info("Saving preferences:", { preferences });
+      logger.info('Saving preferences:', { preferences });
 
       // Animate completion
       scaleValue.value = withSpring(0.95, SPRING_CONFIG, () => {
@@ -154,33 +140,31 @@ const PreferencesSetupScreen = ({
 
       // Navigate to welcome screen
       setTimeout(() => {
-        navigation.navigate("Welcome");
+        navigation.navigate('Welcome');
       }, 500);
     } catch (error) {
-      Alert.alert("Error", "Failed to save preferences. Please try again.");
+      Alert.alert('Error', 'Failed to save preferences. Please try again.');
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Animated.View
-          style={StyleSheet.flatten([styles.animatedContainer, animatedStyle])}
-        >
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <Animated.View style={StyleSheet.flatten([styles.animatedContainer, animatedStyle])}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.title}>Set Your Preferences</Text>
-            <Text style={styles.subtitle}>
-              Help us find the perfect matches for you
-            </Text>
+            <Text style={styles.subtitle}>Help us find the perfect matches for you</Text>
           </View>
 
           {/* Distance Preference */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>📍 Search Distance</Text>
             <Text style={styles.sectionSubtitle}>
-              How far are you willing to travel? ({preferences.maxDistance}{" "}
-              miles)
+              How far are you willing to travel? ({preferences.maxDistance} miles)
             </Text>
             <View style={styles.sliderContainer}>
               <Slider
@@ -189,7 +173,7 @@ const PreferencesSetupScreen = ({
                 maximumValue={100}
                 value={preferences.maxDistance}
                 onValueChange={(value) => {
-                  updatePreferences("maxDistance", Math.round(value));
+                  updatePreferences('maxDistance', Math.round(value));
                 }}
                 minimumTrackTintColor={theme.colors.primary}
                 maximumTrackTintColor={theme.colors.border}
@@ -205,8 +189,8 @@ const PreferencesSetupScreen = ({
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>🎂 Pet Age Range</Text>
             <Text style={styles.sectionSubtitle}>
-              What age range interests you? ({preferences.ageRange.min} -{" "}
-              {preferences.ageRange.max} years)
+              What age range interests you? ({preferences.ageRange.min} - {preferences.ageRange.max}{' '}
+              years)
             </Text>
             <View style={styles.ageRangeContainer}>
               <View style={styles.ageSlider}>
@@ -217,7 +201,7 @@ const PreferencesSetupScreen = ({
                   maximumValue={15}
                   value={preferences.ageRange?.min || 1}
                   onValueChange={(value) => {
-                    updatePreferences("ageRange", {
+                    updatePreferences('ageRange', {
                       ...preferences.ageRange,
                       min: Math.round(value),
                     });
@@ -234,7 +218,7 @@ const PreferencesSetupScreen = ({
                   maximumValue={20}
                   value={preferences.ageRange?.max || 10}
                   onValueChange={(value) => {
-                    updatePreferences("ageRange", {
+                    updatePreferences('ageRange', {
                       ...preferences.ageRange,
                       max: Math.round(value),
                     });
@@ -258,18 +242,19 @@ const PreferencesSetupScreen = ({
                   key={option.value}
                   style={StyleSheet.flatten([
                     styles.optionButton,
-                    preferences.species.includes(option.value) &&
-                      styles.selectedOption,
+                    preferences.species.includes(option.value) && styles.selectedOption,
                   ])}
-                   testID="PreferencesSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+                  testID="PreferencesSetupScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
+                  onPress={() => {
                     toggleSpecies(option.value);
                   }}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.optionText,
-                      preferences.species.includes(option.value) &&
-                        styles.selectedOptionText,
+                      preferences.species.includes(option.value) && styles.selectedOptionText,
                     ])}
                   >
                     {option.label}
@@ -282,27 +267,26 @@ const PreferencesSetupScreen = ({
           {/* Intent Preference */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>💝 What You're Looking For</Text>
-            <Text style={styles.sectionSubtitle}>
-              Select all that interest you
-            </Text>
+            <Text style={styles.sectionSubtitle}>Select all that interest you</Text>
             <View style={styles.optionsGrid}>
               {INTENT_OPTIONS.map((option) => (
                 <TouchableOpacity
                   key={option.value}
                   style={StyleSheet.flatten([
                     styles.optionButton,
-                    preferences.intents.includes(option.value) &&
-                      styles.selectedOption,
+                    preferences.intents.includes(option.value) && styles.selectedOption,
                   ])}
-                   testID="PreferencesSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+                  testID="PreferencesSetupScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
+                  onPress={() => {
                     toggleIntent(option.value);
                   }}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.optionText,
-                      preferences.intents.includes(option.value) &&
-                        styles.selectedOptionText,
+                      preferences.intents.includes(option.value) && styles.selectedOptionText,
                     ])}
                   >
                     {option.label}
@@ -315,38 +299,37 @@ const PreferencesSetupScreen = ({
           {/* Notifications */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>🔔 Notifications</Text>
-            <Text style={styles.sectionSubtitle}>
-              Stay updated with your matches and messages
-            </Text>
+            <Text style={styles.sectionSubtitle}>Stay updated with your matches and messages</Text>
             <View style={styles.notificationOptions}>
               {[
                 {
-                  key: "push",
-                  label: "Push Notifications",
-                  description: "Get notified instantly",
+                  key: 'push',
+                  label: 'Push Notifications',
+                  description: 'Get notified instantly',
                 },
                 {
-                  key: "email",
-                  label: "Email Updates",
-                  description: "Weekly summaries and important updates",
+                  key: 'email',
+                  label: 'Email Updates',
+                  description: 'Weekly summaries and important updates',
                 },
                 {
-                  key: "matches",
-                  label: "New Matches",
-                  description: "When you get a new match",
+                  key: 'matches',
+                  label: 'New Matches',
+                  description: 'When you get a new match',
                 },
                 {
-                  key: "messages",
-                  label: "New Messages",
-                  description: "When someone messages you",
+                  key: 'messages',
+                  label: 'New Messages',
+                  description: 'When someone messages you',
                 },
               ].map((option) => (
-                <View key={option.key} style={styles.notificationOption}>
+                <View
+                  key={option.key}
+                  style={styles.notificationOption}
+                >
                   <View style={styles.notificationInfo}>
                     <Text style={styles.notificationLabel}>{option.label}</Text>
-                    <Text style={styles.notificationDescription}>
-                      {option.description}
-                    </Text>
+                    <Text style={styles.notificationDescription}>{option.description}</Text>
                   </View>
                   <Switch
                     value={
@@ -357,7 +340,7 @@ const PreferencesSetupScreen = ({
                     onValueChange={(value) => {
                       updateNotifications(option.key, value);
                     }}
-                    trackColor={{ false: theme.colors.border, true: theme.colors.primary + "33" }}
+                    trackColor={{ false: theme.colors.border, true: theme.colors.primary + '33' }}
                     thumbColor={
                       preferences.notifications[
                         option.key as keyof typeof preferences.notifications
@@ -374,8 +357,8 @@ const PreferencesSetupScreen = ({
           {/* Privacy Note */}
           <View style={styles.privacyNote}>
             <Text style={styles.privacyText}>
-              🔒 Your privacy is important to us. You can change these
-              preferences anytime in settings.
+              🔒 Your privacy is important to us. You can change these preferences anytime in
+              settings.
             </Text>
           </View>
         </Animated.View>
@@ -385,14 +368,20 @@ const PreferencesSetupScreen = ({
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.backButton}
-           testID="PreferencesSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
+          testID="PreferencesSetupScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={() => navigation.goBack()}
         >
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.completeButton}
-           testID="PreferencesSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleComplete}
+          testID="PreferencesSetupScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={handleComplete}
         >
           <Text style={styles.completeButtonText}>Complete Setup</Text>
         </TouchableOpacity>
@@ -415,26 +404,26 @@ function makeStyles(theme: AppTheme) {
       flex: 1,
     },
     header: {
-      alignItems: "center" as const,
-      marginBottom: theme.spacing["2xl"],
+      alignItems: 'center' as const,
+      marginBottom: theme.spacing['2xl'],
     },
     title: {
       fontSize: 28,
-      fontWeight: "700" as const,
+      fontWeight: '700' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
     subtitle: {
       fontSize: 16,
       color: theme.colors.onMuted,
-      textAlign: "center" as const,
+      textAlign: 'center' as const,
     },
     section: {
-      marginBottom: theme.spacing["2xl"],
+      marginBottom: theme.spacing['2xl'],
     },
     sectionTitle: {
       fontSize: 20,
-      fontWeight: "700" as const,
+      fontWeight: '700' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
@@ -448,7 +437,7 @@ function makeStyles(theme: AppTheme) {
       paddingHorizontal: theme.spacing.md,
     },
     slider: {
-      width: "100%" as const,
+      width: '100%' as const,
       height: 40,
     },
     sliderThumb: {
@@ -457,8 +446,8 @@ function makeStyles(theme: AppTheme) {
       height: 20,
     },
     sliderLabels: {
-      flexDirection: "row" as const,
-      justifyContent: "space-between" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
       marginTop: theme.spacing.xs,
     },
     sliderLabel: {
@@ -473,13 +462,13 @@ function makeStyles(theme: AppTheme) {
     },
     ageLabel: {
       fontSize: 14,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
     optionsGrid: {
-      flexDirection: "row" as const,
-      flexWrap: "wrap" as const,
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
       gap: theme.spacing.sm,
     },
     optionButton: {
@@ -490,7 +479,7 @@ function makeStyles(theme: AppTheme) {
       paddingVertical: theme.spacing.sm,
       paddingHorizontal: theme.spacing.md,
       minWidth: 100,
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
     },
     selectedOption: {
       backgroundColor: theme.colors.surface,
@@ -500,20 +489,20 @@ function makeStyles(theme: AppTheme) {
     optionText: {
       fontSize: 14,
       color: theme.colors.onMuted,
-      fontWeight: "500" as const,
-      textAlign: "center" as const,
+      fontWeight: '500' as const,
+      textAlign: 'center' as const,
     },
     selectedOptionText: {
       color: theme.colors.primary,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
     },
     notificationOptions: {
       gap: theme.spacing.md,
     },
     notificationOption: {
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
-      justifyContent: "space-between" as const,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'space-between' as const,
       backgroundColor: theme.colors.surface,
       borderRadius: theme.radii.md,
       padding: theme.spacing.md,
@@ -524,7 +513,7 @@ function makeStyles(theme: AppTheme) {
     },
     notificationLabel: {
       fontSize: 16,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
@@ -533,21 +522,21 @@ function makeStyles(theme: AppTheme) {
       color: theme.colors.onMuted,
     },
     privacyNote: {
-      backgroundColor: theme.colors.info + "1A",
+      backgroundColor: theme.colors.info + '1A',
       borderRadius: theme.radii.md,
       padding: theme.spacing.md,
       marginTop: theme.spacing.md,
-      marginBottom: theme.spacing["2xl"],
+      marginBottom: theme.spacing['2xl'],
     },
     privacyText: {
       fontSize: 14,
       color: theme.colors.info,
       lineHeight: 20,
-      textAlign: "center" as const,
+      textAlign: 'center' as const,
     },
     footer: {
-      flexDirection: "row" as const,
-      justifyContent: "space-between" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
       padding: theme.spacing.lg,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
@@ -562,7 +551,7 @@ function makeStyles(theme: AppTheme) {
     backButtonText: {
       fontSize: 16,
       color: theme.colors.onSurface,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
     },
     completeButton: {
       backgroundColor: theme.colors.primary,
@@ -570,12 +559,12 @@ function makeStyles(theme: AppTheme) {
       paddingHorizontal: theme.spacing.lg,
       borderRadius: theme.radii.sm,
       minWidth: 140,
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
     },
     completeButtonText: {
       fontSize: 16,
       color: theme.colors.onPrimary,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
     },
   };
 }

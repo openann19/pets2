@@ -1,12 +1,12 @@
 /**
  * CompatibilityResults Component
- * 
+ *
  * Displays AI compatibility analysis results in an organized format.
  * Shows score, breakdown, recommendations, and analysis text.
  */
 
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 export interface AnalysisResult {
   compatibility_score: number;
@@ -42,7 +42,7 @@ export const CompatibilityResults: React.FC<CompatibilityResultsProps> = ({
     <ScrollView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>🎯 Compatibility Results</Text>
-        
+
         {/* Score */}
         <View style={styles.scoreContainer}>
           <Text style={styles.scoreValue}>{scorePercentage}/100</Text>
@@ -55,12 +55,27 @@ export const CompatibilityResults: React.FC<CompatibilityResultsProps> = ({
         {/* Breakdown */}
         <View style={styles.breakdownSection}>
           <Text style={styles.breakdownTitle}>📊 Detailed Breakdown</Text>
-          
-          <BreakdownItem label="Personality" value={result.breakdown.personality_compatibility} />
-          <BreakdownItem label="Lifestyle" value={result.breakdown.lifestyle_compatibility} />
-          <BreakdownItem label="Activity Level" value={result.breakdown.activity_compatibility} />
-          <BreakdownItem label="Social Behavior" value={result.breakdown.social_compatibility} />
-          <BreakdownItem label="Environment" value={result.breakdown.environment_compatibility} />
+
+          <BreakdownItem
+            label="Personality"
+            value={result.breakdown.personality_compatibility}
+          />
+          <BreakdownItem
+            label="Lifestyle"
+            value={result.breakdown.lifestyle_compatibility}
+          />
+          <BreakdownItem
+            label="Activity Level"
+            value={result.breakdown.activity_compatibility}
+          />
+          <BreakdownItem
+            label="Social Behavior"
+            value={result.breakdown.social_compatibility}
+          />
+          <BreakdownItem
+            label="Environment"
+            value={result.breakdown.environment_compatibility}
+          />
         </View>
 
         {/* Recommendations */}
@@ -83,36 +98,34 @@ const BreakdownItem: React.FC<BreakdownItemProps> = ({ label, value }) => (
 );
 
 interface RecommendationsSectionProps {
-  recommendations: AnalysisResult["recommendations"];
+  recommendations: AnalysisResult['recommendations'];
 }
 
-const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
-  recommendations,
-}) => (
+const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({ recommendations }) => (
   <View style={styles.recommendationsSection}>
     <Text style={styles.recommendationsTitle}>💡 Recommendations</Text>
-    
+
     {recommendations.meeting_suggestions?.length > 0 && (
       <RecommendationGroup
         title="🎯 Meeting Suggestions"
         items={recommendations.meeting_suggestions}
       />
     )}
-    
+
     {recommendations.activity_recommendations?.length > 0 && (
       <RecommendationGroup
         title="🎾 Activity Recommendations"
         items={recommendations.activity_recommendations}
       />
     )}
-    
+
     {recommendations.supervision_requirements?.length > 0 && (
       <RecommendationGroup
         title="⚠️ Supervision Requirements"
         items={recommendations.supervision_requirements}
       />
     )}
-    
+
     <View style={styles.probabilityGroup}>
       <Text style={styles.probabilityLabel}>Success Probability:</Text>
       <Text style={styles.probabilityValue}>
@@ -131,7 +144,12 @@ const RecommendationGroup: React.FC<RecommendationGroupProps> = ({ title, items 
   <View style={styles.recommendationGroup}>
     <Text style={styles.recommendationGroupTitle}>{title}</Text>
     {items.map((item, index) => (
-      <Text key={index} style={styles.recommendationItem}>• {item}</Text>
+      <Text
+        key={index}
+        style={styles.recommendationItem}
+      >
+        • {item}
+      </Text>
     ))}
   </View>
 );
@@ -141,34 +159,34 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 12,
     marginBottom: 24,
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: 'bold',
+    color: '#333',
     marginBottom: 16,
   },
   scoreContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 16,
   },
   scoreValue: {
     fontSize: 48,
-    fontWeight: "bold",
-    color: "#007AFF",
+    fontWeight: 'bold',
+    color: '#007AFF',
     marginBottom: 8,
   },
   scoreLabel: {
     fontSize: 18,
-    color: "#666",
+    color: '#666',
   },
   analysisText: {
     fontSize: 16,
-    color: "#333",
+    color: '#333',
     marginBottom: 20,
     lineHeight: 24,
   },
@@ -177,35 +195,35 @@ const styles = StyleSheet.create({
   },
   breakdownTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
+    fontWeight: '600',
+    color: '#333',
     marginBottom: 12,
   },
   breakdownItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: '#eee',
   },
   breakdownLabel: {
     fontSize: 14,
-    color: "#666",
-    textTransform: "capitalize",
+    color: '#666',
+    textTransform: 'capitalize',
   },
   breakdownValue: {
     fontSize: 14,
-    fontWeight: "600",
-    color: "#333",
+    fontWeight: '600',
+    color: '#333',
   },
   recommendationsSection: {
     marginTop: 20,
   },
   recommendationsTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
+    fontWeight: '600',
+    color: '#333',
     marginBottom: 16,
   },
   recommendationGroup: {
@@ -213,13 +231,13 @@ const styles = StyleSheet.create({
   },
   recommendationGroupTitle: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
+    fontWeight: '600',
+    color: '#333',
     marginBottom: 8,
   },
   recommendationItem: {
     fontSize: 14,
-    color: "#666",
+    color: '#666',
     marginLeft: 8,
     marginBottom: 4,
   },
@@ -228,14 +246,13 @@ const styles = StyleSheet.create({
   },
   probabilityLabel: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
+    fontWeight: '600',
+    color: '#333',
   },
   probabilityValue: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#007AFF",
+    fontWeight: 'bold',
+    color: '#007AFF',
     marginTop: 4,
   },
 });
-

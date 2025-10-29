@@ -16,7 +16,7 @@ export interface StaggerListProps<T> {
 
 /**
  * StaggerList - Animated list with card stagger effect
- * 
+ *
  * Usage:
  * ```tsx
  * <StaggerList
@@ -25,10 +25,10 @@ export interface StaggerListProps<T> {
  * />
  * ```
  */
-export function StaggerList<T extends { _id?: string }>({ 
-  data, 
+export function StaggerList<T extends { _id?: string }>({
+  data,
   renderItem,
-  keyExtractor = (_, i) => i.toString()
+  keyExtractor = (_, i) => i.toString(),
 }: StaggerListProps<T>) {
   const m = useMotion('cardStagger');
 
@@ -46,4 +46,3 @@ export function StaggerList<T extends { _id?: string }>({
     </>
   );
 }
-

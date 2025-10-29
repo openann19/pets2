@@ -1,6 +1,6 @@
 /**
  * Comprehensive tests for Photo Upload Service
- * 
+ *
  * Coverage:
  * - Photo upload to S3 via presign
  * - FileSystem integration
@@ -47,15 +47,11 @@ describe('Photo Upload Service', () => {
       expect(mockApi.post).toHaveBeenCalledWith('/uploads/photos/presign', {
         contentType: 'image/jpeg',
       });
-      expect(mockFileSystem.uploadAsync).toHaveBeenCalledWith(
-        presignData.url,
-        'file://photo.jpg',
-        {
-          httpMethod: 'PUT',
-          headers: { 'Content-Type': 'image/jpeg' },
-          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-        }
-      );
+      expect(mockFileSystem.uploadAsync).toHaveBeenCalledWith(presignData.url, 'file://photo.jpg', {
+        httpMethod: 'PUT',
+        headers: { 'Content-Type': 'image/jpeg' },
+        uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+      });
     });
 
     it('should handle different content types', async () => {
@@ -78,7 +74,7 @@ describe('Photo Upload Service', () => {
         contentType: 'video/mp4',
       });
       expect(mockFileSystem.uploadAsync.mock.calls[0]?.[2]?.headers?.['Content-Type']).toBe(
-        'video/mp4'
+        'video/mp4',
       );
     });
 
@@ -157,7 +153,7 @@ describe('Photo Upload Service', () => {
 
     it('should handle network timeouts', async () => {
       mockApi.post.mockImplementation(
-        () => new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 1))
+        () => new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 1)),
       );
 
       await expect(uploadPhoto('file://photo.jpg', 'image/jpeg')).rejects.toThrow('Timeout');
@@ -185,7 +181,7 @@ describe('Photo Upload Service', () => {
 
     it('should handle very long file URIs', async () => {
       const longUri = `file://${'x'.repeat(10000)}.jpg`;
-      
+
       mockApi.post.mockResolvedValueOnce({
         data: {
           url: 'https://s3.amazonaws.com/bucket/key',
@@ -266,10 +262,7 @@ describe('Photo Upload Service', () => {
 
       await uploadPhoto('file://photo.jpg', 'image/jpeg');
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/uploads/photos/presign',
-        expect.any(Object)
-      );
+      expect(mockApi.post).toHaveBeenCalledWith('/uploads/photos/presign', expect.any(Object));
     });
 
     it('should integrate with FileSystem', async () => {
@@ -293,7 +286,7 @@ describe('Photo Upload Service', () => {
         expect.objectContaining({
           httpMethod: 'PUT',
           uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-        })
+        }),
       );
     });
   });
@@ -333,10 +326,9 @@ describe('Photo Upload Service', () => {
 
       await uploadPhoto('file://photo.jpg', 'image/jpeg');
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/uploads/photos/presign',
-        { contentType: expect.any(String) }
-      );
+      expect(mockApi.post).toHaveBeenCalledWith('/uploads/photos/presign', {
+        contentType: expect.any(String),
+      });
     });
   });
 });

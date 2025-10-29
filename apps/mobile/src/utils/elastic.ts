@@ -13,12 +13,7 @@ export function rubberClamp(
 }
 
 // Elastic mapping for scale (apply during pinch updates)
-export function rubberScale(
-  raw: number,
-  min: number,
-  max: number,
-  coeff = 0.55,
-) {
+export function rubberScale(raw: number, min: number, max: number, coeff = 0.55) {
   if (raw < min) return min - (min - raw) * coeff;
   if (raw > max) return max + (raw - max) * coeff;
   return raw;

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 
 interface BillingToggleProps {
   billingPeriod: "monthly" | "yearly";

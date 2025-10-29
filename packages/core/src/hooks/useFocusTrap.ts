@@ -10,7 +10,7 @@ export function useFocusTrap() {
     if (containerRef.current == null) return;
 
     const focusableElements = containerRef.current.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
 
     if (focusableElements.length === 0) return;
@@ -37,11 +37,14 @@ export function useFocusTrap() {
     }
   }, []);
 
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.key === 'Tab') {
-      handleTabKey(event);
-    }
-  }, [handleTabKey]);
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Tab') {
+        handleTabKey(event);
+      }
+    },
+    [handleTabKey],
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -51,9 +54,9 @@ export function useFocusTrap() {
 
     // Focus first element when trap is activated
     const focusableElements = container.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
-    
+
     if (focusableElements.length > 0) {
       const initialElement = focusableElements[0] as HTMLElement | undefined;
       if (initialElement != null) {

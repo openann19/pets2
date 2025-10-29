@@ -24,10 +24,12 @@ describe('useMemoryWeave', () => {
     });
 
     it('should accept configuration options', () => {
-      const { result } = renderHook(() => useMemoryWeave({
-        enableRealTime: true,
-        maxMemories: 50
-      }));
+      const { result } = renderHook(() =>
+        useMemoryWeave({
+          enableRealTime: true,
+          maxMemories: 50,
+        }),
+      );
 
       expect(result.current.enableRealTime).toBe(true);
       expect(result.current.maxMemories).toBe(50);
@@ -53,7 +55,7 @@ describe('useMemoryWeave', () => {
         title: 'First Pet Memory',
         content: 'The day I brought home my puppy',
         tags: ['puppy', 'first-day'],
-        media: [{ uri: 'file://photo.jpg', type: 'image' }]
+        media: [{ uri: 'file://photo.jpg', type: 'image' }],
       };
 
       await act(async () => {
@@ -75,9 +77,9 @@ describe('useMemoryWeave', () => {
         content: 'Beautiful day at the park',
         location: {
           latitude: 40.7128,
-          longitude: -74.0060,
-          address: 'Central Park, NY'
-        }
+          longitude: -74.006,
+          address: 'Central Park, NY',
+        },
       };
 
       await act(async () => {
@@ -92,7 +94,7 @@ describe('useMemoryWeave', () => {
       const memoryData = {
         title: 'Joyful Moment',
         content: 'So happy today!',
-        emotions: ['joy', 'excitement']
+        emotions: ['joy', 'excitement'],
       };
 
       await act(async () => {
@@ -106,7 +108,7 @@ describe('useMemoryWeave', () => {
 
       const invalidMemoryData = {
         title: '',
-        content: ''
+        content: '',
       };
 
       await act(async () => {
@@ -141,9 +143,9 @@ describe('useMemoryWeave', () => {
         await result.current.fetchMemoriesByTags(tags);
       });
 
-      expect(result.current.memories.every(memory =>
-        memory.tags.some(tag => tags.includes(tag))
-      )).toBe(true);
+      expect(
+        result.current.memories.every((memory) => memory.tags.some((tag) => tags.includes(tag))),
+      ).toBe(true);
     });
 
     it('should fetch memories by location', async () => {
@@ -151,8 +153,8 @@ describe('useMemoryWeave', () => {
 
       const location = {
         latitude: 40.7128,
-        longitude: -74.0060,
-        radius: 1000 // 1km radius
+        longitude: -74.006,
+        radius: 1000, // 1km radius
       };
 
       await act(async () => {
@@ -171,10 +173,13 @@ describe('useMemoryWeave', () => {
         await result.current.searchMemories(query);
       });
 
-      expect(result.current.memories.every(memory =>
-        memory.title.toLowerCase().includes(query.toLowerCase()) ||
-        memory.content.toLowerCase().includes(query.toLowerCase())
-      )).toBe(true);
+      expect(
+        result.current.memories.every(
+          (memory) =>
+            memory.title.toLowerCase().includes(query.toLowerCase()) ||
+            memory.content.toLowerCase().includes(query.toLowerCase()),
+        ),
+      ).toBe(true);
     });
   });
 
@@ -277,8 +282,9 @@ describe('useMemoryWeave', () => {
       expect(Array.isArray(result.current.memories)).toBe(true);
       // Should be sorted by date
       for (let i = 1; i < result.current.memories.length; i++) {
-        expect(result.current.memories[i-1].createdAt.getTime())
-          .toBeGreaterThanOrEqual(result.current.memories[i].createdAt.getTime());
+        expect(result.current.memories[i - 1].createdAt.getTime()).toBeGreaterThanOrEqual(
+          result.current.memories[i].createdAt.getTime(),
+        );
       }
     });
 
@@ -312,7 +318,7 @@ describe('useMemoryWeave', () => {
       const memoryId = 'memory-123';
       const updates = {
         title: 'Updated Title',
-        content: 'Updated content'
+        content: 'Updated content',
       };
 
       await act(async () => {
@@ -326,7 +332,7 @@ describe('useMemoryWeave', () => {
 
       const memoryId = 'memory-456';
       const updates = {
-        tags: ['updated', 'tags']
+        tags: ['updated', 'tags'],
       };
 
       await act(async () => {
@@ -349,18 +355,22 @@ describe('useMemoryWeave', () => {
 
   describe('Real-time Updates', () => {
     it('should handle real-time memory updates', () => {
-      const { result } = renderHook(() => useMemoryWeave({
-        enableRealTime: true
-      }));
+      const { result } = renderHook(() =>
+        useMemoryWeave({
+          enableRealTime: true,
+        }),
+      );
 
       expect(result.current.enableRealTime).toBe(true);
       // Real-time functionality would be tested with WebSocket mocking
     });
 
     it('should receive memory notifications', () => {
-      const { result } = renderHook(() => useMemoryWeave({
-        enableRealTime: true
-      }));
+      const { result } = renderHook(() =>
+        useMemoryWeave({
+          enableRealTime: true,
+        }),
+      );
 
       // Should have notification handling
       expect(result.current.notifications).toBeDefined();
@@ -373,7 +383,7 @@ describe('useMemoryWeave', () => {
 
       const memoryData = {
         title: 'Network Error Test',
-        content: 'This should fail'
+        content: 'This should fail',
       };
 
       // Simulate network failure
@@ -416,7 +426,7 @@ describe('useMemoryWeave', () => {
       const initialState = {
         memories: result.current.memories,
         isLoading: result.current.isLoading,
-        error: result.current.error
+        error: result.current.error,
       };
 
       rerender();
@@ -445,9 +455,11 @@ describe('useMemoryWeave', () => {
     });
 
     it('should handle large memory lists', async () => {
-      const { result } = renderHook(() => useMemoryWeave({
-        maxMemories: 1000
-      }));
+      const { result } = renderHook(() =>
+        useMemoryWeave({
+          maxMemories: 1000,
+        }),
+      );
 
       await act(async () => {
         await result.current.loadMemories();
@@ -464,7 +476,7 @@ describe('useMemoryWeave', () => {
       await act(async () => {
         const newMemory = await result.current.createMemory({
           title: '',
-          content: ''
+          content: '',
         });
         expect(newMemory).toBeNull();
       });
@@ -478,7 +490,7 @@ describe('useMemoryWeave', () => {
       await act(async () => {
         const newMemory = await result.current.createMemory({
           title: 'Long Memory',
-          content: longContent
+          content: longContent,
         });
         expect(newMemory).toBeDefined();
         expect(newMemory.content).toBe(longContent);
@@ -493,7 +505,7 @@ describe('useMemoryWeave', () => {
       await act(async () => {
         const newMemory = await result.current.createMemory({
           title: 'Special Memory',
-          content: specialContent
+          content: specialContent,
         });
         expect(newMemory.content).toBe(specialContent);
       });
@@ -518,9 +530,11 @@ describe('useMemoryWeave', () => {
     });
 
     it('should cleanup real-time subscriptions', () => {
-      const { unmount } = renderHook(() => useMemoryWeave({
-        enableRealTime: true
-      }));
+      const { unmount } = renderHook(() =>
+        useMemoryWeave({
+          enableRealTime: true,
+        }),
+      );
 
       unmount();
       // Should cleanup WebSocket subscriptions

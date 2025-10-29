@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from "react";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
+import { useEffect, useMemo } from 'react';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
 
 type AnyScrollRef =
   | React.RefObject<{ scrollToOffset?: (p: { offset: number; animated: boolean }) => void }>
@@ -15,25 +15,25 @@ export interface UseTabReselectRefreshOptions {
   /** Optional: return current Y offset */
   getOffset?: () => number;
   /** Pixels above which single-tap reselect will scroll-to-top instead of refreshing */
-  topThreshold?: number;            // default 120
+  topThreshold?: number; // default 120
   /** Double-tap window (ms) – handled by TabBar, exposed for docs */
-  doubleTapMs?: number;             // default 300
+  doubleTapMs?: number; // default 300
   /** Prevent spam triggering (ms) */
-  cooldownMs?: number;              // default 700
+  cooldownMs?: number; // default 700
   /** Haptics toggle */
-  haptics?: boolean;                // default true
+  haptics?: boolean; // default true
   /** What to do on single reselect when near top */
-  nearTopAction?: "refresh" | "none"; // default "refresh"
+  nearTopAction?: 'refresh' | 'none'; // default "refresh"
 }
 
 function scrollToTop(listRef: AnyScrollRef) {
   const node = listRef.current as any;
   if (!node) return;
-  if (typeof node.scrollToOffset === "function") {
+  if (typeof node.scrollToOffset === 'function') {
     node.scrollToOffset({ offset: 0, animated: true });
-  } else if (typeof node.scrollTo === "function") {
+  } else if (typeof node.scrollTo === 'function') {
     node.scrollTo({ y: 0, animated: true });
-  } else if (typeof node.scrollToIndex === "function") {
+  } else if (typeof node.scrollToIndex === 'function') {
     node.scrollToIndex({ index: 0, animated: true });
   }
 }
@@ -46,7 +46,7 @@ export function useTabReselectRefresh(opts: UseTabReselectRefreshOptions) {
     topThreshold = 120,
     cooldownMs = 700,
     haptics = true,
-    nearTopAction = "refresh",
+    nearTopAction = 'refresh',
   } = opts;
 
   const navigation = useNavigation();
@@ -66,7 +66,7 @@ export function useTabReselectRefresh(opts: UseTabReselectRefreshOptions) {
   useEffect(() => {
     // SINGLE TAP on active tab → reselect
     const handleTabPress = () => {
-      if (!isFocused) return;           // only the active screen handles "reselect"
+      if (!isFocused) return; // only the active screen handles "reselect"
       if (!canTrigger()) return;
 
       const offset = getOffset?.() ?? 0;
@@ -75,7 +75,7 @@ export function useTabReselectRefresh(opts: UseTabReselectRefreshOptions) {
       if (farFromTop) {
         if (haptics) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         scrollToTop(listRef);
-      } else if (nearTopAction === "refresh") {
+      } else if (nearTopAction === 'refresh') {
         if (haptics) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         onRefresh();
       }
@@ -91,12 +91,26 @@ export function useTabReselectRefresh(opts: UseTabReselectRefreshOptions) {
     };
 
     // Try to subscribe to events, but handle if types don't exist
-    const sub1 = (navigation as unknown as { addListener?: (name: string, handler: () => void) => () => void }).addListener?.("tabPress", handleTabPress);
-    const sub2 = (navigation as unknown as { addListener?: (name: string, handler: () => void) => () => void }).addListener?.("tabDoublePress", handleTabDoublePress);
+    const sub1 = (
+      navigation as unknown as { addListener?: (name: string, handler: () => void) => () => void }
+    ).addListener?.('tabPress', handleTabPress);
+    const sub2 = (
+      navigation as unknown as { addListener?: (name: string, handler: () => void) => () => void }
+    ).addListener?.('tabDoublePress', handleTabDoublePress);
 
     return () => {
       if (sub1) sub1();
       if (sub2) sub2();
     };
-  }, [navigation, isFocused, listRef, onRefresh, getOffset, topThreshold, canTrigger, haptics, nearTopAction]);
+  }, [
+    navigation,
+    isFocused,
+    listRef,
+    onRefresh,
+    getOffset,
+    topThreshold,
+    canTrigger,
+    haptics,
+    nearTopAction,
+  ]);
 }

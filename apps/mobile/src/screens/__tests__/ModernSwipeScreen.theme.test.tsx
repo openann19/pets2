@@ -1,7 +1,7 @@
-import { useTheme } from "@/theme";
+import { useTheme } from '@/theme';
 /**
  * ModernSwipeScreen Theme Integration Tests
- * 
+ *
  * Verifies that ModernSwipeScreen properly uses the unified theming system
  * with dynamic styles created inside the component.
  */
@@ -14,7 +14,7 @@ describe('ModernSwipeScreen - Theme Integration', () => {
   describe('Dynamic Styles Pattern', () => {
     it('should create styles with theme-dependent values', () => {
       const theme = createTheme('light');
-      
+
       // Simulate the pattern used in ModernSwipeScreen
       const styles = StyleSheet.create({
         loadingContainer: {
@@ -46,20 +46,20 @@ describe('ModernSwipeScreen - Theme Integration', () => {
   describe('Spacing Scale Usage', () => {
     it('should use all spacing values correctly', () => {
       const theme = createTheme('light');
-      
+
       const spacingValues = {
-        xs: theme.spacing.xs,
-        sm: theme.spacing.sm,
-        md: theme.spacing.md,
-        lg: theme.spacing.lg,
-        xl: theme.spacing.xl,
+        'xs': theme.spacing.xs,
+        'sm': theme.spacing.sm,
+        'md': theme.spacing.md,
+        'lg': theme.spacing.lg,
+        'xl': theme.spacing.xl,
         '2xl': theme.spacing['2xl'],
         '3xl': theme.spacing['3xl'],
         '4xl': theme.spacing['4xl'],
       };
 
       // All spacing values should be numbers
-      Object.values(spacingValues).forEach(value => {
+      Object.values(spacingValues).forEach((value) => {
         expect(typeof value).toBe('number');
         expect(value).toBeGreaterThan(0);
       });
@@ -75,7 +75,7 @@ describe('ModernSwipeScreen - Theme Integration', () => {
   describe('Color References', () => {
     it('should use correct color properties', () => {
       const theme = createTheme('light');
-      
+
       const styles = StyleSheet.create({
         errorTitle: {
           color: theme.colors.danger,
@@ -97,7 +97,7 @@ describe('ModernSwipeScreen - Theme Integration', () => {
 
     it('should not use deprecated status property', () => {
       const theme = createTheme('light');
-      
+
       // These should not exist
       expect((theme.colors as any).status).toBeUndefined();
       expect((theme.colors as any).status?.error).toBeUndefined();
@@ -108,7 +108,7 @@ describe('ModernSwipeScreen - Theme Integration', () => {
   describe('Type Casting for String Literals', () => {
     it('should use as const for flexDirection and alignItems', () => {
       const theme = createTheme('light');
-      
+
       const styles = StyleSheet.create({
         container: {
           flexDirection: 'row' as const,
@@ -127,7 +127,7 @@ describe('ModernSwipeScreen - Theme Integration', () => {
   describe('Filter Panel Styling', () => {
     it('should use correct colors for filter panel', () => {
       const theme = createTheme('light');
-      
+
       const styles = StyleSheet.create({
         filterPlaceholder: {
           padding: theme.spacing.lg,
@@ -145,7 +145,7 @@ describe('ModernSwipeScreen - Theme Integration', () => {
   describe('Action Buttons Styling', () => {
     it('should use correct spacing for action buttons', () => {
       const theme = createTheme('light');
-      
+
       const styles = StyleSheet.create({
         actionButtons: {
           flexDirection: 'row' as const,
@@ -171,7 +171,7 @@ describe('ModernSwipeScreen - Theme Integration', () => {
     it('should use correct dimensions for match modal', () => {
       const theme = createTheme('light');
       const screenWidth = 375; // Mock screen width
-      
+
       const styles = StyleSheet.create({
         matchModalContent: {
           width: screenWidth - theme.spacing['4xl'],
@@ -188,7 +188,7 @@ describe('ModernSwipeScreen - Theme Integration', () => {
   describe('Hints Placeholder Styling', () => {
     it('should use correct spacing for hints placeholder', () => {
       const theme = createTheme('light');
-      
+
       const styles = StyleSheet.create({
         hintsPlaceholder: {
           padding: theme.spacing.sm,
@@ -204,12 +204,12 @@ describe('ModernSwipeScreen - Theme Integration', () => {
     it('should have consistent values across light and dark themes', () => {
       const lightTheme = createTheme('light');
       const darkTheme = createTheme('dark');
-      
+
       // Spacing should be identical
       expect(lighttheme.spacing.xl).toBe(darktheme.spacing.xl);
       expect(lighttheme.spacing.lg).toBe(darktheme.spacing.lg);
       expect(lighttheme.spacing['4xl']).toBe(darktheme.spacing['4xl']);
-      
+
       // Semantic colors should be identical
       expect(lighttheme.colors.danger).toBe(darktheme.colors.danger);
       expect(lighttheme.colors.success).toBe(darktheme.colors.success);

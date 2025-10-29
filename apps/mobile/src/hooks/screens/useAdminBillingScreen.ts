@@ -3,23 +3,23 @@
  * Manages subscription billing, payments, and financial operations
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
-import type { AdminScreenProps } from "../../navigation/types";
-import { useErrorHandler } from "../useErrorHandler";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import type { AdminScreenProps } from '../../navigation/types';
+import { useErrorHandler } from '../useErrorHandler';
 
 interface BillingTransaction {
   id: string;
   userId: string;
   userName: string;
   userEmail: string;
-  type: "subscription" | "one_time" | "refund";
+  type: 'subscription' | 'one_time' | 'refund';
   amount: number;
   currency: string;
-  status: "pending" | "completed" | "failed" | "refunded" | "disputed";
-  paymentMethod: "card" | "paypal" | "apple_pay" | "google_pay";
+  status: 'pending' | 'completed' | 'failed' | 'refunded' | 'disputed';
+  paymentMethod: 'card' | 'paypal' | 'apple_pay' | 'google_pay';
   description: string;
   createdAt: Date;
   processedAt?: Date;
@@ -45,8 +45,8 @@ interface SubscriptionData {
   userId: string;
   userName: string;
   userEmail: string;
-  plan: "basic" | "premium" | "ultimate";
-  status: "active" | "canceled" | "past_due" | "unpaid" | "trialing";
+  plan: 'basic' | 'premium' | 'ultimate';
+  status: 'active' | 'canceled' | 'past_due' | 'unpaid' | 'trialing';
   currentPeriodStart: Date;
   currentPeriodEnd: Date;
   cancelAtPeriodEnd: boolean;
@@ -56,7 +56,7 @@ interface SubscriptionData {
 }
 
 interface UseAdminBillingScreenParams {
-  navigation: AdminScreenProps<"AdminBilling">["navigation"];
+  navigation: AdminScreenProps<'AdminBilling'>['navigation'];
 }
 
 export interface AdminBillingScreenState {
@@ -66,11 +66,11 @@ export interface AdminBillingScreenState {
   metrics: BillingMetrics;
 
   // Filters
-  transactionStatusFilter: "all" | BillingTransaction["status"];
-  transactionTypeFilter: "all" | BillingTransaction["type"];
-  subscriptionStatusFilter: "all" | SubscriptionData["status"];
-  subscriptionPlanFilter: "all" | SubscriptionData["plan"];
-  dateRange: "7d" | "30d" | "90d" | "1y";
+  transactionStatusFilter: 'all' | BillingTransaction['status'];
+  transactionTypeFilter: 'all' | BillingTransaction['type'];
+  subscriptionStatusFilter: 'all' | SubscriptionData['status'];
+  subscriptionPlanFilter: 'all' | SubscriptionData['plan'];
+  dateRange: '7d' | '30d' | '90d' | '1y';
   searchQuery: string;
 
   // UI State
@@ -80,30 +80,22 @@ export interface AdminBillingScreenState {
 
   // Actions
   onRefresh: () => Promise<void>;
-  onTransactionStatusFilterChange: (
-    status: "all" | BillingTransaction["status"],
-  ) => void;
-  onTransactionTypeFilterChange: (type: "all" | BillingTransaction["type"]) => void;
-  onSubscriptionStatusFilterChange: (
-    status: "all" | SubscriptionData["status"],
-  ) => void;
-  onSubscriptionPlanFilterChange: (plan: "all" | SubscriptionData["plan"]) => void;
-  onDateRangeChange: (range: "7d" | "30d" | "90d" | "1y") => void;
+  onTransactionStatusFilterChange: (status: 'all' | BillingTransaction['status']) => void;
+  onTransactionTypeFilterChange: (type: 'all' | BillingTransaction['type']) => void;
+  onSubscriptionStatusFilterChange: (status: 'all' | SubscriptionData['status']) => void;
+  onSubscriptionPlanFilterChange: (plan: 'all' | SubscriptionData['plan']) => void;
+  onDateRangeChange: (range: '7d' | '30d' | '90d' | '1y') => void;
   onSearchChange: (query: string) => void;
   onTransactionSelect: (transaction: BillingTransaction) => void;
   onSubscriptionSelect: (subscription: SubscriptionData) => void;
-  onRefundTransaction: (
-    transactionId: string,
-    amount: number,
-    reason: string,
-  ) => Promise<void>;
+  onRefundTransaction: (transactionId: string, amount: number, reason: string) => Promise<void>;
   onCancelSubscription: (subscriptionId: string) => Promise<void>;
   onReactivateSubscription: (subscriptionId: string) => Promise<void>;
   onUpdateSubscriptionPlan: (
     subscriptionId: string,
-    newPlan: SubscriptionData["plan"],
+    newPlan: SubscriptionData['plan'],
   ) => Promise<void>;
-  onExportBillingData: (format: "csv" | "pdf") => Promise<void>;
+  onExportBillingData: (format: 'csv' | 'pdf') => Promise<void>;
   onBackPress: () => void;
 }
 
@@ -133,21 +125,19 @@ export function useAdminBillingScreen({
   });
 
   const [transactionStatusFilter, setTransactionStatusFilter] = useState<
-    "all" | BillingTransaction["status"]
-  >("all");
+    'all' | BillingTransaction['status']
+  >('all');
   const [transactionTypeFilter, setTransactionTypeFilter] = useState<
-    "all" | BillingTransaction["type"]
-  >("all");
+    'all' | BillingTransaction['type']
+  >('all');
   const [subscriptionStatusFilter, setSubscriptionStatusFilter] = useState<
-    "all" | SubscriptionData["status"]
-  >("active");
+    'all' | SubscriptionData['status']
+  >('active');
   const [subscriptionPlanFilter, setSubscriptionPlanFilter] = useState<
-    "all" | SubscriptionData["plan"]
-  >("all");
-  const [dateRange, setDateRange] = useState<"7d" | "30d" | "90d" | "1y">(
-    "30d",
-  );
-  const [searchQuery, setSearchQuery] = useState("");
+    'all' | SubscriptionData['plan']
+  >('all');
+  const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -166,79 +156,79 @@ export function useAdminBillingScreen({
 
         const mockTransactions: BillingTransaction[] = [
           {
-            id: "txn1",
-            userId: "user1",
-            userName: "Alice Johnson",
-            userEmail: "alice@example.com",
-            type: "subscription",
+            id: 'txn1',
+            userId: 'user1',
+            userName: 'Alice Johnson',
+            userEmail: 'alice@example.com',
+            type: 'subscription',
             amount: 9.99,
-            currency: "USD",
-            status: "completed",
-            paymentMethod: "card",
-            description: "Premium Plan - Monthly",
+            currency: 'USD',
+            status: 'completed',
+            paymentMethod: 'card',
+            description: 'Premium Plan - Monthly',
             createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
             processedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-            stripePaymentId: "pi_1234567890",
+            stripePaymentId: 'pi_1234567890',
           },
           {
-            id: "txn2",
-            userId: "user2",
-            userName: "Bob Smith",
-            userEmail: "bob@example.com",
-            type: "one_time",
+            id: 'txn2',
+            userId: 'user2',
+            userName: 'Bob Smith',
+            userEmail: 'bob@example.com',
+            type: 'one_time',
             amount: 4.99,
-            currency: "USD",
-            status: "failed",
-            paymentMethod: "card",
-            description: "Super Like Boost",
+            currency: 'USD',
+            status: 'failed',
+            paymentMethod: 'card',
+            description: 'Super Like Boost',
             createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
-            failureReason: "Card declined",
+            failureReason: 'Card declined',
           },
           {
-            id: "txn3",
-            userId: "user3",
-            userName: "Charlie Brown",
-            userEmail: "charlie@example.com",
-            type: "refund",
+            id: 'txn3',
+            userId: 'user3',
+            userName: 'Charlie Brown',
+            userEmail: 'charlie@example.com',
+            type: 'refund',
             amount: -9.99,
-            currency: "USD",
-            status: "completed",
-            paymentMethod: "card",
-            description: "Subscription refund",
+            currency: 'USD',
+            status: 'completed',
+            paymentMethod: 'card',
+            description: 'Subscription refund',
             createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
             processedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-            stripePaymentId: "rf_0987654321",
+            stripePaymentId: 'rf_0987654321',
           },
         ];
 
         const mockSubscriptions: SubscriptionData[] = [
           {
-            id: "sub1",
-            userId: "user1",
-            userName: "Alice Johnson",
-            userEmail: "alice@example.com",
-            plan: "premium",
-            status: "active",
+            id: 'sub1',
+            userId: 'user1',
+            userName: 'Alice Johnson',
+            userEmail: 'alice@example.com',
+            plan: 'premium',
+            status: 'active',
             currentPeriodStart: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
             currentPeriodEnd: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
             cancelAtPeriodEnd: false,
             amount: 9.99,
-            currency: "USD",
-            stripeSubscriptionId: "sub_1234567890",
+            currency: 'USD',
+            stripeSubscriptionId: 'sub_1234567890',
           },
           {
-            id: "sub2",
-            userId: "user4",
-            userName: "Diana Wilson",
-            userEmail: "diana@example.com",
-            plan: "basic",
-            status: "canceled",
+            id: 'sub2',
+            userId: 'user4',
+            userName: 'Diana Wilson',
+            userEmail: 'diana@example.com',
+            plan: 'basic',
+            status: 'canceled',
             currentPeriodStart: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
             currentPeriodEnd: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
             cancelAtPeriodEnd: true,
             amount: 4.99,
-            currency: "USD",
-            stripeSubscriptionId: "sub_0987654321",
+            currency: 'USD',
+            stripeSubscriptionId: 'sub_0987654321',
           },
         ];
 
@@ -259,18 +249,15 @@ export function useAdminBillingScreen({
         setSubscriptions(mockSubscriptions);
         setMetrics(mockMetrics);
 
-        logger.info("Billing data loaded", {
+        logger.info('Billing data loaded', {
           transactionsCount: mockTransactions.length,
           subscriptionsCount: mockSubscriptions.length,
           metrics: mockMetrics,
         });
       } catch (error) {
-        const err =
-          error instanceof Error
-            ? error
-            : new Error("Failed to load billing data");
-        logger.error("Failed to load admin billing data", { error: err });
-        handleNetworkError(err, "admin.billing.load");
+        const err = error instanceof Error ? error : new Error('Failed to load billing data');
+        logger.error('Failed to load admin billing data', { error: err });
+        handleNetworkError(err, 'admin.billing.load');
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -287,17 +274,11 @@ export function useAdminBillingScreen({
     const query = searchQuery.trim().toLowerCase();
     return transactions.filter((transaction) => {
       // Status filter
-      if (
-        transactionStatusFilter !== "all" &&
-        transaction.status !== transactionStatusFilter
-      )
+      if (transactionStatusFilter !== 'all' && transaction.status !== transactionStatusFilter)
         return false;
 
       // Type filter
-      if (
-        transactionTypeFilter !== "all" &&
-        transaction.type !== transactionTypeFilter
-      )
+      if (transactionTypeFilter !== 'all' && transaction.type !== transactionTypeFilter)
         return false;
 
       // Search filter
@@ -308,35 +289,24 @@ export function useAdminBillingScreen({
           transaction.description,
           transaction.stripePaymentId,
         ]
-          .join(" ")
+          .join(' ')
           .toLowerCase();
         return searchableText.includes(query);
       }
 
       return true;
     });
-  }, [
-    transactions,
-    transactionStatusFilter,
-    transactionTypeFilter,
-    searchQuery,
-  ]);
+  }, [transactions, transactionStatusFilter, transactionTypeFilter, searchQuery]);
 
   const filteredSubscriptions = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     return subscriptions.filter((subscription) => {
       // Status filter
-      if (
-        subscriptionStatusFilter !== "all" &&
-        subscription.status !== subscriptionStatusFilter
-      )
+      if (subscriptionStatusFilter !== 'all' && subscription.status !== subscriptionStatusFilter)
         return false;
 
       // Plan filter
-      if (
-        subscriptionPlanFilter !== "all" &&
-        subscription.plan !== subscriptionPlanFilter
-      )
+      if (subscriptionPlanFilter !== 'all' && subscription.plan !== subscriptionPlanFilter)
         return false;
 
       // Search filter
@@ -346,38 +316,27 @@ export function useAdminBillingScreen({
           subscription.userEmail,
           subscription.stripeSubscriptionId,
         ]
-          .join(" ")
+          .join(' ')
           .toLowerCase();
         return searchableText.includes(query);
       }
 
       return true;
     });
-  }, [
-    subscriptions,
-    subscriptionStatusFilter,
-    subscriptionPlanFilter,
-    searchQuery,
-  ]);
+  }, [subscriptions, subscriptionStatusFilter, subscriptionPlanFilter, searchQuery]);
 
   const onRefresh = useCallback(async () => {
     setIsRefreshing(true);
     await loadBillingData({ force: true });
   }, [loadBillingData]);
 
-  const onTransactionStatusFilterChange = useCallback(
-    (status: typeof transactionStatusFilter) => {
-      setTransactionStatusFilter(status);
-    },
-    [],
-  );
+  const onTransactionStatusFilterChange = useCallback((status: typeof transactionStatusFilter) => {
+    setTransactionStatusFilter(status);
+  }, []);
 
-  const onTransactionTypeFilterChange = useCallback(
-    (type: typeof transactionTypeFilter) => {
-      setTransactionTypeFilter(type);
-    },
-    [],
-  );
+  const onTransactionTypeFilterChange = useCallback((type: typeof transactionTypeFilter) => {
+    setTransactionTypeFilter(type);
+  }, []);
 
   const onSubscriptionStatusFilterChange = useCallback(
     (status: typeof subscriptionStatusFilter) => {
@@ -386,12 +345,9 @@ export function useAdminBillingScreen({
     [],
   );
 
-  const onSubscriptionPlanFilterChange = useCallback(
-    (plan: typeof subscriptionPlanFilter) => {
-      setSubscriptionPlanFilter(plan);
-    },
-    [],
-  );
+  const onSubscriptionPlanFilterChange = useCallback((plan: typeof subscriptionPlanFilter) => {
+    setSubscriptionPlanFilter(plan);
+  }, []);
 
   const onDateRangeChange = useCallback((range: typeof dateRange) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
@@ -405,18 +361,18 @@ export function useAdminBillingScreen({
   const onTransactionSelect = useCallback((transaction: BillingTransaction) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     Alert.alert(
-      "Transaction Details",
-      `${transaction.description}\nAmount: $${transaction.amount}\nStatus: ${transaction.status}\nPayment ID: ${transaction.stripePaymentId || "N/A"}`,
-      [{ text: "OK" }],
+      'Transaction Details',
+      `${transaction.description}\nAmount: $${transaction.amount}\nStatus: ${transaction.status}\nPayment ID: ${transaction.stripePaymentId || 'N/A'}`,
+      [{ text: 'OK' }],
     );
   }, []);
 
   const onSubscriptionSelect = useCallback((subscription: SubscriptionData) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     Alert.alert(
-      "Subscription Details",
+      'Subscription Details',
       `${subscription.userName} - ${subscription.plan.toUpperCase()}\nStatus: ${subscription.status}\nAmount: $${subscription.amount}/month\nEnds: ${subscription.currentPeriodEnd.toLocaleDateString()}`,
-      [{ text: "OK" }],
+      [{ text: 'OK' }],
     );
   }, []);
 
@@ -425,22 +381,22 @@ export function useAdminBillingScreen({
       setIsProcessingAction(true);
       try {
         const confirmed = await new Promise<boolean>((resolve) => {
-          Alert.alert(
-            "Process Refund",
-            `Refund $${amount} for reason: ${reason}?`,
-            [
-              {
-                text: "Cancel",
-                style: "cancel",
-                onPress: () => { resolve(false); },
+          Alert.alert('Process Refund', `Refund $${amount} for reason: ${reason}?`, [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+              onPress: () => {
+                resolve(false);
               },
-              {
-                text: "Refund",
-                style: "destructive",
-                onPress: () => { resolve(true); },
+            },
+            {
+              text: 'Refund',
+              style: 'destructive',
+              onPress: () => {
+                resolve(true);
               },
-            ],
-          );
+            },
+          ]);
         });
 
         if (!confirmed) return;
@@ -450,9 +406,7 @@ export function useAdminBillingScreen({
 
         setTransactions((prev) =>
           prev.map((txn) =>
-            txn.id === transactionId
-              ? { ...txn, status: "refunded" as const }
-              : txn,
+            txn.id === transactionId ? { ...txn, status: 'refunded' as const } : txn,
           ),
         );
 
@@ -461,20 +415,15 @@ export function useAdminBillingScreen({
           refundAmount: prev.refundAmount + amount,
         }));
 
-        void Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Warning,
-        ).catch(() => {});
-        logger.info("Transaction refunded", { transactionId, amount, reason });
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        logger.info('Transaction refunded', { transactionId, amount, reason });
       } catch (error) {
-        const err =
-          error instanceof Error
-            ? error
-            : new Error("Failed to process refund");
-        logger.error("Failed to refund transaction", {
+        const err = error instanceof Error ? error : new Error('Failed to process refund');
+        logger.error('Failed to refund transaction', {
           error: err,
           transactionId,
         });
-        handleNetworkError(err, "admin.billing.refund");
+        handleNetworkError(err, 'admin.billing.refund');
       } finally {
         setIsProcessingAction(false);
       }
@@ -488,18 +437,22 @@ export function useAdminBillingScreen({
       try {
         const confirmed = await new Promise<boolean>((resolve) => {
           Alert.alert(
-            "Cancel Subscription",
-            "This will cancel the subscription at the end of the current billing period. The user will retain access until then.",
+            'Cancel Subscription',
+            'This will cancel the subscription at the end of the current billing period. The user will retain access until then.',
             [
               {
-                text: "Cancel",
-                style: "cancel",
-                onPress: () => { resolve(false); },
+                text: 'Cancel',
+                style: 'cancel',
+                onPress: () => {
+                  resolve(false);
+                },
               },
               {
-                text: "Confirm",
-                style: "destructive",
-                onPress: () => { resolve(true); },
+                text: 'Confirm',
+                style: 'destructive',
+                onPress: () => {
+                  resolve(true);
+                },
               },
             ],
           );
@@ -512,26 +465,19 @@ export function useAdminBillingScreen({
 
         setSubscriptions((prev) =>
           prev.map((sub) =>
-            sub.id === subscriptionId
-              ? { ...sub, cancelAtPeriodEnd: true }
-              : sub,
+            sub.id === subscriptionId ? { ...sub, cancelAtPeriodEnd: true } : sub,
           ),
         );
 
-        void Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Warning,
-        ).catch(() => {});
-        logger.info("Subscription cancelled", { subscriptionId });
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        logger.info('Subscription cancelled', { subscriptionId });
       } catch (error) {
-        const err =
-          error instanceof Error
-            ? error
-            : new Error("Failed to cancel subscription");
-        logger.error("Failed to cancel subscription", {
+        const err = error instanceof Error ? error : new Error('Failed to cancel subscription');
+        logger.error('Failed to cancel subscription', {
           error: err,
           subscriptionId,
         });
-        handleNetworkError(err, "admin.billing.cancel-subscription");
+        handleNetworkError(err, 'admin.billing.cancel-subscription');
       } finally {
         setIsProcessingAction(false);
       }
@@ -549,25 +495,20 @@ export function useAdminBillingScreen({
         setSubscriptions((prev) =>
           prev.map((sub) =>
             sub.id === subscriptionId
-              ? { ...sub, cancelAtPeriodEnd: false, status: "active" as const }
+              ? { ...sub, cancelAtPeriodEnd: false, status: 'active' as const }
               : sub,
           ),
         );
 
-        void Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Success,
-        ).catch(() => {});
-        logger.info("Subscription reactivated", { subscriptionId });
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        logger.info('Subscription reactivated', { subscriptionId });
       } catch (error) {
-        const err =
-          error instanceof Error
-            ? error
-            : new Error("Failed to reactivate subscription");
-        logger.error("Failed to reactivate subscription", {
+        const err = error instanceof Error ? error : new Error('Failed to reactivate subscription');
+        logger.error('Failed to reactivate subscription', {
           error: err,
           subscriptionId,
         });
-        handleNetworkError(err, "admin.billing.reactivate-subscription");
+        handleNetworkError(err, 'admin.billing.reactivate-subscription');
       } finally {
         setIsProcessingAction(false);
       }
@@ -576,33 +517,27 @@ export function useAdminBillingScreen({
   );
 
   const onUpdateSubscriptionPlan = useCallback(
-    async (subscriptionId: string, newPlan: SubscriptionData["plan"]) => {
+    async (subscriptionId: string, newPlan: SubscriptionData['plan']) => {
       setIsProcessingAction(true);
       try {
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 700));
 
         setSubscriptions((prev) =>
-          prev.map((sub) =>
-            sub.id === subscriptionId ? { ...sub, plan: newPlan } : sub,
-          ),
+          prev.map((sub) => (sub.id === subscriptionId ? { ...sub, plan: newPlan } : sub)),
         );
 
-        void Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Success,
-        ).catch(() => {});
-        logger.info("Subscription plan updated", { subscriptionId, newPlan });
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        logger.info('Subscription plan updated', { subscriptionId, newPlan });
       } catch (error) {
         const err =
-          error instanceof Error
-            ? error
-            : new Error("Failed to update subscription plan");
-        logger.error("Failed to update subscription plan", {
+          error instanceof Error ? error : new Error('Failed to update subscription plan');
+        logger.error('Failed to update subscription plan', {
           error: err,
           subscriptionId,
           newPlan,
         });
-        handleNetworkError(err, "admin.billing.update-plan");
+        handleNetworkError(err, 'admin.billing.update-plan');
       } finally {
         setIsProcessingAction(false);
       }
@@ -611,28 +546,23 @@ export function useAdminBillingScreen({
   );
 
   const onExportBillingData = useCallback(
-    async (format: "csv" | "pdf") => {
+    async (format: 'csv' | 'pdf') => {
       try {
-        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(
-          () => {},
-        );
+        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
 
         // Simulate export process
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         Alert.alert(
-          "Export Complete",
+          'Export Complete',
           `Billing data exported as ${format.toUpperCase()}. Check your downloads folder.`,
         );
 
-        logger.info("Billing data exported", { format, dateRange });
+        logger.info('Billing data exported', { format, dateRange });
       } catch (error) {
-        const err =
-          error instanceof Error
-            ? error
-            : new Error("Failed to export billing data");
-        logger.error("Failed to export billing data", { error: err, format });
-        handleNetworkError(err, "admin.billing.export");
+        const err = error instanceof Error ? error : new Error('Failed to export billing data');
+        logger.error('Failed to export billing data', { error: err, format });
+        handleNetworkError(err, 'admin.billing.export');
       }
     },
     [dateRange, handleNetworkError],

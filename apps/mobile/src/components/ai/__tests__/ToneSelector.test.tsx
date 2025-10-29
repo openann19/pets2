@@ -18,7 +18,7 @@ jest.mock('../../../theme/unified-theme', () => ({
     },
     spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
     typography: {
-      fontSize: { xs: 12, sm: 14, base: 16, xl: 20, '2xl': 24 },
+      fontSize: { 'xs': 12, 'sm': 14, 'base': 16, 'xl': 20, '2xl': 24 },
       fontWeight: { medium: '500', semibold: '600', bold: '700' },
       lineHeight: { normal: 1.5 },
     },
@@ -36,13 +36,14 @@ describe('ToneSelector Component', () => {
   describe('Rendering', () => {
     it('renders all tone options', () => {
       render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('Bio Tone')).toBeTruthy();
-      expect(
-        screen.getByText('Choose the personality for your pet\'s bio'),
-      ).toBeTruthy();
+      expect(screen.getByText("Choose the personality for your pet's bio")).toBeTruthy();
       expect(screen.getByText('Playful')).toBeTruthy();
       expect(screen.getByText('Professional')).toBeTruthy();
       expect(screen.getByText('Casual')).toBeTruthy();
@@ -52,7 +53,10 @@ describe('ToneSelector Component', () => {
 
     it('renders descriptions for all tones', () => {
       render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('Fun and energetic personality')).toBeTruthy();
@@ -64,7 +68,10 @@ describe('ToneSelector Component', () => {
 
     it('renders tone icons', () => {
       render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('🎾')).toBeTruthy(); // Playful
@@ -78,7 +85,10 @@ describe('ToneSelector Component', () => {
   describe('Selection Functionality', () => {
     it('calls onToneSelect when playful tone is pressed', () => {
       render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       const playfulCard = screen.getByText('Fun and energetic personality').parent?.parent;
@@ -92,7 +102,10 @@ describe('ToneSelector Component', () => {
 
     it('calls onToneSelect when professional tone is pressed', () => {
       render(
-        <ToneSelector selectedTone="professional" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="professional"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       const professionalCard = screen.getByText('Polite and well-mannered').parent?.parent;
@@ -105,7 +118,10 @@ describe('ToneSelector Component', () => {
 
     it('calls onToneSelect when casual tone is pressed', () => {
       render(
-        <ToneSelector selectedTone="casual" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="casual"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       const casualCard = screen.getByText('Relaxed and friendly').parent?.parent;
@@ -118,7 +134,10 @@ describe('ToneSelector Component', () => {
 
     it('calls onToneSelect when romantic tone is pressed', () => {
       render(
-        <ToneSelector selectedTone="romantic" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="romantic"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       const romanticCard = screen.getByText('Sweet and affectionate').parent?.parent;
@@ -131,7 +150,10 @@ describe('ToneSelector Component', () => {
 
     it('calls onToneSelect when mysterious tone is pressed', () => {
       render(
-        <ToneSelector selectedTone="mysterious" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="mysterious"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       const mysteriousCard = screen.getByText('Intriguing and enigmatic').parent?.parent;
@@ -146,7 +168,10 @@ describe('ToneSelector Component', () => {
   describe('Selected State', () => {
     it('shows checkmark indicator for selected playful tone', () => {
       render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('✓')).toBeTruthy();
@@ -154,7 +179,10 @@ describe('ToneSelector Component', () => {
 
     it('shows checkmark indicator for selected professional tone', () => {
       render(
-        <ToneSelector selectedTone="professional" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="professional"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('✓')).toBeTruthy();
@@ -162,7 +190,10 @@ describe('ToneSelector Component', () => {
 
     it('shows checkmark indicator for selected casual tone', () => {
       render(
-        <ToneSelector selectedTone="casual" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="casual"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('✓')).toBeTruthy();
@@ -170,7 +201,10 @@ describe('ToneSelector Component', () => {
 
     it('shows checkmark indicator for selected romantic tone', () => {
       render(
-        <ToneSelector selectedTone="romantic" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="romantic"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('✓')).toBeTruthy();
@@ -178,7 +212,10 @@ describe('ToneSelector Component', () => {
 
     it('shows checkmark indicator for selected mysterious tone', () => {
       render(
-        <ToneSelector selectedTone="mysterious" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="mysterious"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('✓')).toBeTruthy();
@@ -188,7 +225,10 @@ describe('ToneSelector Component', () => {
   describe('Accessibility', () => {
     it('has accessible labels for tone selection', () => {
       render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       // Verify accessible elements exist
@@ -198,7 +238,10 @@ describe('ToneSelector Component', () => {
 
     it('indicates selected state for accessibility', () => {
       render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       // Check that selected indicator is visible
@@ -209,7 +252,10 @@ describe('ToneSelector Component', () => {
   describe('Edge Cases', () => {
     it('handles rapid tone switching', () => {
       render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       // Simulate rapid switching
@@ -232,11 +278,17 @@ describe('ToneSelector Component', () => {
   describe('Visual Feedback', () => {
     it('applies selected border color to active tone', () => {
       const { rerender } = render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       rerender(
-        <ToneSelector selectedTone="professional" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="professional"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('✓')).toBeTruthy();
@@ -244,13 +296,19 @@ describe('ToneSelector Component', () => {
 
     it('updates visual state when selection changes', () => {
       const { rerender } = render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('✓')).toBeTruthy();
 
       rerender(
-        <ToneSelector selectedTone="casual" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="casual"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('✓')).toBeTruthy();
@@ -260,7 +318,10 @@ describe('ToneSelector Component', () => {
   describe('Layout', () => {
     it('renders tones in a grid layout', () => {
       render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       // All tones should be visible
@@ -273,7 +334,10 @@ describe('ToneSelector Component', () => {
 
     it('displays all tone cards with proper spacing', () => {
       const { container } = render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(container).toBeTruthy();
@@ -283,19 +347,28 @@ describe('ToneSelector Component', () => {
   describe('Integration', () => {
     it('works with multiple tone selections sequentially', () => {
       const { rerender } = render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('✓')).toBeTruthy();
 
       rerender(
-        <ToneSelector selectedTone="professional" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="professional"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('✓')).toBeTruthy();
 
       rerender(
-        <ToneSelector selectedTone="casual" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="casual"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('✓')).toBeTruthy();
@@ -303,7 +376,10 @@ describe('ToneSelector Component', () => {
 
     it('maintains selection state across re-renders', () => {
       render(
-        <ToneSelector selectedTone="romantic" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="romantic"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('Romantic')).toBeTruthy();
@@ -314,15 +390,20 @@ describe('ToneSelector Component', () => {
   describe('Performance', () => {
     it('does not re-render unnecessarily with same props', () => {
       const { rerender } = render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       rerender(
-        <ToneSelector selectedTone="playful" onToneSelect={mockOnToneSelect} />,
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockOnToneSelect}
+        />,
       );
 
       expect(screen.getByText('Playful')).toBeTruthy();
     });
   });
 });
-

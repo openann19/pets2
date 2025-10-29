@@ -15,16 +15,21 @@ jest.mock('axios');
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-type RequestInterceptorHandler = (config: InternalAxiosRequestConfig) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>;
+type RequestInterceptorHandler = (
+  config: InternalAxiosRequestConfig,
+) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>;
 
 let registeredRequestInterceptors: RequestInterceptorHandler[] = [];
 
 const createInterceptorManagerMock = <T>(
-  onRegister?: (onFulfilled?: (value: T) => T | Promise<T>, onRejected?: (error: unknown) => unknown) => void
+  onRegister?: (
+    onFulfilled?: (value: T) => T | Promise<T>,
+    onRejected?: (error: unknown) => unknown,
+  ) => void,
 ): jest.Mocked<AxiosInterceptorManager<T>> => {
   const registerHandler = (
     onFulfilled?: (value: T) => T | Promise<T>,
-    onRejected?: (error: unknown) => unknown
+    onRejected?: (error: unknown) => unknown,
   ): number => {
     onRegister?.(onFulfilled, onRejected);
     return 0;
@@ -105,7 +110,7 @@ describe('API Client', () => {
   describe('HTTP Methods', () => {
     it('should make GET request successfully', async () => {
       const mockResponse = {
-        data: { success: true, data: { id: 1, name: 'Test' } }
+        data: { success: true, data: { id: 1, name: 'Test' } },
       };
       axiosInstanceMock.get.mockResolvedValue(mockResponse as never);
 
@@ -116,7 +121,7 @@ describe('API Client', () => {
 
     it('should handle GET request error', async () => {
       const mockError = {
-        response: { data: { message: 'Not found' } }
+        response: { data: { message: 'Not found' } },
       };
       axiosInstanceMock.get.mockRejectedValue(mockError as never);
 
@@ -125,7 +130,7 @@ describe('API Client', () => {
 
     it('should make POST request successfully', async () => {
       const mockResponse = {
-        data: { success: true, data: { id: 1 } }
+        data: { success: true, data: { id: 1 } },
       };
       axiosInstanceMock.post.mockResolvedValue(mockResponse as never);
 
@@ -150,7 +155,7 @@ describe('API Client', () => {
     it('should handle file upload successfully', async () => {
       const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
       const mockResponse = {
-        data: { success: true, data: { url: 'https://example.com/image.jpg' } }
+        data: { success: true, data: { url: 'https://example.com/image.jpg' } },
       };
 
       axiosInstanceMock.post.mockResolvedValue(mockResponse as never);
@@ -161,13 +166,13 @@ describe('API Client', () => {
       });
 
       expect(result).toEqual(mockResponse.data);
-  const postMock = Reflect.get(axiosInstanceMock, 'post') as jest.Mock;
+      const postMock = Reflect.get(axiosInstanceMock, 'post') as jest.Mock;
       expect(postMock).toHaveBeenCalled();
       const [url, formData, config] = postMock.mock.calls[0] ?? [];
       expect(url).toBe('/upload');
       expect(formData).toBeInstanceOf(FormData);
       expect(config).toMatchObject({
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
     });
   });
@@ -190,10 +195,7 @@ describe('API Hooks', () => {
       const mockResponse = { success: true, data: { id: 1, name: 'Test' } };
       axiosInstanceMock.get.mockResolvedValue({ data: mockResponse } as never);
 
-      const { result } = renderHook(
-        () => useApiQuery(['test'], '/test'),
-        { wrapper }
-      );
+      const { result } = renderHook(() => useApiQuery(['test'], '/test'), { wrapper });
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
@@ -205,23 +207,17 @@ describe('API Hooks', () => {
     it('should handle loading state', () => {
       axiosInstanceMock.get.mockImplementation(() => new Promise(() => {}));
 
-      const { result } = renderHook(
-        () => useApiQuery(['test'], '/test'),
-        { wrapper }
-      );
+      const { result } = renderHook(() => useApiQuery(['test'], '/test'), { wrapper });
 
       expect(result.current.isLoading).toBe(true);
       expect(result.current.data).toBeUndefined();
     });
 
     it('should handle error state', async () => {
-  const mockError = { response: { data: { message: 'Error' } } } as const;
+      const mockError = { response: { data: { message: 'Error' } } } as const;
       axiosInstanceMock.get.mockRejectedValue(mockError as never);
 
-      const { result } = renderHook(
-        () => useApiQuery(['test'], '/test'),
-        { wrapper }
-      );
+      const { result } = renderHook(() => useApiQuery(['test'], '/test'), { wrapper });
 
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
@@ -237,13 +233,10 @@ describe('API Hooks', () => {
 
   describe('useApiMutation', () => {
     it('should mutate data successfully', async () => {
-  const mockResponse = { success: true, data: { id: 1 } } as const;
+      const mockResponse = { success: true, data: { id: 1 } } as const;
       axiosInstanceMock.post.mockResolvedValue({ data: mockResponse } as never);
 
-      const { result } = renderHook(
-        () => useApiMutation<any, any, any>('/test'),
-        { wrapper }
-      );
+      const { result } = renderHook(() => useApiMutation<any, any, any>('/test'), { wrapper });
 
       result.current.mutate({ name: 'Test' });
 
@@ -251,16 +244,13 @@ describe('API Hooks', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-  expect(result.current.data).toEqual(mockResponse);
+      expect(result.current.data).toEqual(mockResponse);
     });
 
     it('should handle mutation loading state', () => {
       axiosInstanceMock.post.mockImplementation(() => new Promise(() => {}));
 
-      const { result } = renderHook(
-        () => useApiMutation<any, any, any>('/test'),
-        { wrapper }
-      );
+      const { result } = renderHook(() => useApiMutation<any, any, any>('/test'), { wrapper });
 
       result.current.mutate({ name: 'Test' });
 
@@ -268,13 +258,10 @@ describe('API Hooks', () => {
     });
 
     it('should handle mutation error', async () => {
-  const mockError = { response: { data: { message: 'Mutation failed' } } } as const;
+      const mockError = { response: { data: { message: 'Mutation failed' } } } as const;
       axiosInstanceMock.post.mockRejectedValue(mockError as never);
 
-      const { result } = renderHook(
-        () => useApiMutation<any, any, any>('/test'),
-        { wrapper }
-      );
+      const { result } = renderHook(() => useApiMutation<any, any, any>('/test'), { wrapper });
 
       result.current.mutate({ name: 'Test' });
 

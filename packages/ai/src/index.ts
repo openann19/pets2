@@ -11,11 +11,6 @@ export { createPetPhotoAnalysis, PetPhotoAnalysis } from './vision/petAnalysis';
 export type { MatchResult, PetProfile, UserPreferences } from './matching/algorithm';
 export type { AnalysisResult, PetPhotoAnalysisData } from './vision/petAnalysis';
 
-export type {
-  DeepSeekConfig, DeepSeekError, DeepSeekResponse
-} from './services/deepSeekService';
+export type { DeepSeekConfig, DeepSeekError, DeepSeekResponse } from './services/deepSeekService';
 
-export type {
-  MatchingServiceConfig
-} from './services/matchingService';
-
+export type { MatchingServiceConfig } from './services/matchingService';

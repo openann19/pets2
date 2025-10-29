@@ -3,5 +3,5 @@
  * Barrel export for split components
  */
 
-export { PetSelectionSection } from "./PetSelectionSection";
-export { AnalysisResultsSection } from "./AnalysisResultsSection";
+export { PetSelectionSection } from './PetSelectionSection';
+export { AnalysisResultsSection } from './AnalysisResultsSection';

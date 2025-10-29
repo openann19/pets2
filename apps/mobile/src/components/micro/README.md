@@ -1,10 +1,12 @@
 # Micro-UX Components
 
-Premium micro-interaction components that make your app feel ultra-responsive and polished.
+Premium micro-interaction components that make your app feel ultra-responsive
+and polished.
 
 ## Overview
 
 These lightweight components add that "jaw-dropping" factor through:
+
 - **Buttery haptics** on every meaningful interaction
 - **Ripple + scale animations** for visual feedback
 - **Shimmer loading** for graceful image placeholders
@@ -14,7 +16,8 @@ These lightweight components add that "jaw-dropping" factor through:
 
 ### MicroPressable
 
-A drop-in replacement for `TouchableOpacity` or `Pressable` with ripple effects and haptic feedback.
+A drop-in replacement for `TouchableOpacity` or `Pressable` with ripple effects
+and haptic feedback.
 
 ```tsx
 import MicroPressable from '../components/micro/MicroPressable';
@@ -26,10 +29,11 @@ import MicroPressable from '../components/micro/MicroPressable';
   scaleFrom={0.98}
 >
   <YourContent />
-</MicroPressable>
+</MicroPressable>;
 ```
 
 **Props:**
+
 - `children` - React.ReactNode
 - `onPress` - () => void | Promise<void>
 - `style?` - ViewStyle | ViewStyle[]
@@ -49,10 +53,11 @@ import HapticSwitch from '../components/micro/HapticSwitch';
   value={enabled}
   onValueChange={setEnabled}
   disabled={false}
-/>
+/>;
 ```
 
 **Props:**
+
 - `value` - boolean
 - `onValueChange` - (v: boolean) => void
 - `disabled?` - boolean
@@ -64,10 +69,15 @@ Skeleton loader with animated shimmer effect for loading states.
 ```tsx
 import Shimmer from '../components/micro/Shimmer';
 
-<Shimmer width={200} height={150} radius={12} />
+<Shimmer
+  width={200}
+  height={150}
+  radius={12}
+/>;
 ```
 
 **Props:**
+
 - `width?` - number (default: full width if not specified)
 - `height?` - number (default: 16)
 - `radius?` - number (default: 8)
@@ -94,6 +104,7 @@ import { SmartImage } from '../components/common/SmartImage';
 ```
 
 **New Props:**
+
 - `useShimmer?` - boolean (use shimmer instead of blur placeholder)
 - `rounded?` - number (border radius, default: 12)
 - `onError?` - callback for error handling
@@ -105,12 +116,16 @@ Tilting/parallax effect for cards that works seamlessly with swipe gestures.
 ```tsx
 import ParallaxCard from '../components/micro/ParallaxCard';
 
-<ParallaxCard intensity={0.6} glow={true}>
+<ParallaxCard
+  intensity={0.6}
+  glow={true}
+>
   <YourCardContent />
-</ParallaxCard>
+</ParallaxCard>;
 ```
 
 **Props:**
+
 - `children` - React.ReactNode
 - `style?` - ViewStyle | ViewStyle[]
 - `intensity?` - number (0-1, default: 0.6)
@@ -162,11 +177,11 @@ import ParallaxCard from '../components/micro/ParallaxCard';
 
 ## Integration Checklist
 
-✅ Replace `Switch` → `HapticSwitch` for haptic feedback
-✅ Replace `TouchableOpacity` → `MicroPressable` for ripple effects
-✅ Add `useShimmer` to image loads for graceful loading
-✅ Wrap top swipe cards with `ParallaxCard` for premium feel
-✅ Fix all Theme string literals (e.g., `"Theme.colors.primary[500]"` → `Theme.colors.primary[500]`)
+✅ Replace `Switch` → `HapticSwitch` for haptic feedback ✅ Replace
+`TouchableOpacity` → `MicroPressable` for ripple effects ✅ Add `useShimmer` to
+image loads for graceful loading ✅ Wrap top swipe cards with `ParallaxCard` for
+premium feel ✅ Fix all Theme string literals (e.g.,
+`"Theme.colors.primary[500]"` → `Theme.colors.primary[500]`)
 
 ## Performance
 
@@ -178,20 +193,24 @@ import ParallaxCard from '../components/micro/ParallaxCard';
 ## Theming
 
 All components respect the unified Theme system:
+
 - Colors from `Theme.colors`
 - Radius from `Theme.borderRadius`
 - Haptic intensities tuned for common UX patterns
 
 ## Migration Example
 
-See `apps/mobile/src/screens/ProfileScreen.tsx` for a complete integration example:
+See `apps/mobile/src/screens/ProfileScreen.tsx` for a complete integration
+example:
+
 - Switch replacements
 - MicroPressable integration
 - Proper haptic timing
 
 ## Notes
 
-- **ParallaxCard** doesn't interfere with swipe gestures - it only tilts on press
+- **ParallaxCard** doesn't interfere with swipe gestures - it only tilts on
+  press
 - **Shimmer** loops continuously - use sparingly for loading states
 - **MicroPressable** adds ~2KB per usage - consider memoization for lists
 - All haptics respect system preferences automatically

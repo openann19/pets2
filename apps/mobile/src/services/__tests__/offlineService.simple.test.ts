@@ -74,13 +74,15 @@ describe('OfflineService - Core Tests', () => {
         matches: [{ id: 'match1' }],
         messages: [{ id: 'msg1' }],
         lastSync: '2024-01-01T00:00:00Z',
-        pendingActions: [{
-          id: 'action1',
-          type: 'swipe' as const,
-          data: {},
-          timestamp: '2024-01-01T00:00:00Z',
-          retryCount: 0
-        }],
+        pendingActions: [
+          {
+            id: 'action1',
+            type: 'swipe' as const,
+            data: {},
+            timestamp: '2024-01-01T00:00:00Z',
+            retryCount: 0,
+          },
+        ],
       };
 
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(storedData));
@@ -88,7 +90,7 @@ describe('OfflineService - Core Tests', () => {
       // Create new instance to test loading
       const newService = new OfflineService();
       // Wait for initialization
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       const offlineData = (newService as any).offlineData;
       expect(offlineData.pets).toEqual(storedData.pets);

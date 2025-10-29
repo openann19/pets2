@@ -17,7 +17,11 @@
 
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import * as FileSystem from 'expo-file-system';
-import { EnhancedUploadService, type ProcessedImage, type UploadProgress } from '../enhancedUploadService';
+import {
+  EnhancedUploadService,
+  type ProcessedImage,
+  type UploadProgress,
+} from '../enhancedUploadService';
 
 // Mock dependencies
 jest.mock('../uploadHygiene', () => ({
@@ -43,16 +47,28 @@ jest.mock('expo-file-system', () => ({
   readAsStringAsync: jest.fn(),
 }));
 
-import { processImageForUpload, checkUploadQuota, uploadWithRetry, pickAndProcessImage, captureAndProcessImage } from '../uploadHygiene';
+import {
+  processImageForUpload,
+  checkUploadQuota,
+  uploadWithRetry,
+  pickAndProcessImage,
+  captureAndProcessImage,
+} from '../uploadHygiene';
 import { api, request } from '../api';
 
 const mockApi = api as jest.Mocked<typeof api>;
 const mockRequest = request as jest.MockedFunction<typeof request>;
-const mockProcessImageForUpload = processImageForUpload as jest.MockedFunction<typeof processImageForUpload>;
+const mockProcessImageForUpload = processImageForUpload as jest.MockedFunction<
+  typeof processImageForUpload
+>;
 const mockCheckUploadQuota = checkUploadQuota as jest.MockedFunction<typeof checkUploadQuota>;
 const mockUploadWithRetry = uploadWithRetry as jest.MockedFunction<typeof uploadWithRetry>;
-const mockPickAndProcessImage = pickAndProcessImage as jest.MockedFunction<typeof pickAndProcessImage>;
-const mockCaptureAndProcessImage = captureAndProcessImage as jest.MockedFunction<typeof captureAndProcessImage>;
+const mockPickAndProcessImage = pickAndProcessImage as jest.MockedFunction<
+  typeof pickAndProcessImage
+>;
+const mockCaptureAndProcessImage = captureAndProcessImage as jest.MockedFunction<
+  typeof captureAndProcessImage
+>;
 const mockFileSystem = FileSystem as jest.Mocked<typeof FileSystem>;
 
 // Mock fetch globally
@@ -137,7 +153,7 @@ describe('EnhancedUploadService', () => {
         mockProcessedImage,
         'pet',
         'pet-123',
-        mockProgressCallback
+        mockProgressCallback,
       );
 
       expect(result).toEqual({
@@ -216,7 +232,9 @@ describe('EnhancedUploadService', () => {
     it('should handle presign failure', async () => {
       mockApi.presignPhoto.mockRejectedValue(new Error('Presign failed'));
 
-      await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow('Presign failed');
+      await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow(
+        'Presign failed',
+      );
     });
 
     it('should handle S3 upload failure', async () => {
@@ -226,13 +244,17 @@ describe('EnhancedUploadService', () => {
         statusText: 'Forbidden',
       } as any);
 
-      await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow('S3 upload failed');
+      await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow(
+        'S3 upload failed',
+      );
     });
 
     it('should handle registration failure', async () => {
       mockRequest.mockRejectedValue(new Error('Registration failed'));
 
-      await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow('Registration failed');
+      await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow(
+        'Registration failed',
+      );
     });
 
     it('should handle file URI to blob conversion', async () => {
@@ -240,17 +262,16 @@ describe('EnhancedUploadService', () => {
       // The fileUriToBlob method should be called during upload
       await service.uploadProcessedImage(mockProcessedImage);
 
-      expect(mockFileSystem.readAsStringAsync).toHaveBeenCalledWith(
-        mockProcessedImage.uri,
-        { encoding: FileSystem.EncodingType.Base64 }
-      );
+      expect(mockFileSystem.readAsStringAsync).toHaveBeenCalledWith(mockProcessedImage.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
           method: 'PUT',
           body: expect.any(Blob),
-        })
+        }),
       );
     });
 
@@ -306,7 +327,7 @@ describe('EnhancedUploadService', () => {
           allowEditing: false,
           useCamera: false,
         },
-        mockProgressCallback
+        mockProgressCallback,
       );
 
       expect(mockCheckUploadQuota).toHaveBeenCalledWith('current-user-id');
@@ -428,7 +449,7 @@ describe('EnhancedUploadService', () => {
       });
 
       await expect(service.pollUploadStatus('upload-123')).rejects.toThrow(
-        'Upload rejected: Inappropriate content'
+        'Upload rejected: Inappropriate content',
       );
     });
 
@@ -464,10 +485,10 @@ describe('EnhancedUploadService', () => {
       });
 
       // Use real timers with fast intervals
-      await expect(
-        service.pollUploadStatus('upload-123', 3, 10)
-      ).rejects.toThrow('Upload status polling timeout');
-      
+      await expect(service.pollUploadStatus('upload-123', 3, 10)).rejects.toThrow(
+        'Upload status polling timeout',
+      );
+
       expect(mockRequest).toHaveBeenCalledTimes(3);
     }, 10000);
 
@@ -623,7 +644,8 @@ describe('EnhancedUploadService', () => {
   describe('File URI to Blob Conversion', () => {
     it('should convert file URI to blob', async () => {
       const uri = 'file://test-image.jpg';
-      const base64Data = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
+      const base64Data =
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
 
       mockFileSystem.readAsStringAsync.mockResolvedValue(base64Data);
 
@@ -637,7 +659,9 @@ describe('EnhancedUploadService', () => {
     it('should handle file read errors', async () => {
       mockFileSystem.readAsStringAsync.mockRejectedValue(new Error('File read failed'));
 
-      await expect((service as any).fileUriToBlob('invalid-uri')).rejects.toThrow('File read failed');
+      await expect((service as any).fileUriToBlob('invalid-uri')).rejects.toThrow(
+        'File read failed',
+      );
     });
 
     it('should handle empty base64 data', async () => {
@@ -657,11 +681,7 @@ describe('EnhancedUploadService', () => {
 
       const result = await service.retryUpload(mockProcessedImage, 'pet', 'pet-123', 3);
 
-      expect(mockUploadWithRetry).toHaveBeenCalledWith(
-        expect.any(Function),
-        3,
-        1000
-      );
+      expect(mockUploadWithRetry).toHaveBeenCalledWith(expect.any(Function), 3, 1000);
 
       expect(result).toEqual(expectedResult);
     });
@@ -674,7 +694,7 @@ describe('EnhancedUploadService', () => {
       expect(mockUploadWithRetry).toHaveBeenCalledWith(
         expect.any(Function),
         3, // default maxRetries
-        1000 // default backoffMs
+        1000, // default backoffMs
       );
     });
 
@@ -709,7 +729,9 @@ describe('EnhancedUploadService', () => {
     it('should handle network timeouts during upload', async () => {
       mockFetch.mockRejectedValue(new Error('Network timeout'));
 
-      await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow('Network timeout');
+      await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow(
+        'Network timeout',
+      );
     });
 
     it('should handle malformed presign responses', async () => {
@@ -731,7 +753,7 @@ describe('EnhancedUploadService', () => {
       const results = await Promise.all(uploadPromises);
 
       expect(results).toHaveLength(3);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.uploadId).toBe('upload-123');
       });
     });
@@ -752,7 +774,7 @@ describe('EnhancedUploadService', () => {
         expect.any(String),
         expect.objectContaining({
           body: expect.any(Blob),
-        })
+        }),
       );
     });
 
@@ -789,13 +811,17 @@ describe('EnhancedUploadService', () => {
       });
 
       // Should not fail the upload due to progress callback error
-      await expect(service.uploadProcessedImage(mockProcessedImage, 'pet', undefined, errorCallback)).resolves.toBeDefined();
+      await expect(
+        service.uploadProcessedImage(mockProcessedImage, 'pet', undefined, errorCallback),
+      ).resolves.toBeDefined();
     });
 
     it('should handle file system read errors during blob conversion', async () => {
       mockFileSystem.readAsStringAsync.mockRejectedValue(new Error('File system error'));
 
-      await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow('File system error');
+      await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow(
+        'File system error',
+      );
     });
 
     it('should handle invalid base64 data', async () => {
@@ -835,7 +861,9 @@ describe('EnhancedUploadService', () => {
     it('should handle retry with invalid parameters', async () => {
       mockUploadWithRetry.mockRejectedValue(new Error('Invalid retry params'));
 
-      await expect(service.retryUpload(mockProcessedImage, 'invalid' as any)).rejects.toThrow('Invalid retry params');
+      await expect(service.retryUpload(mockProcessedImage, 'invalid' as any)).rejects.toThrow(
+        'Invalid retry params',
+      );
     });
   });
 });

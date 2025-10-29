@@ -158,7 +158,7 @@ describe('OfflineSyncService', () => {
 
       expect(mockSetInterval).toHaveBeenCalledWith(
         expect.any(Function),
-        30000 // SYNC_INTERVAL
+        30000, // SYNC_INTERVAL
       );
     });
   });
@@ -189,19 +189,13 @@ describe('OfflineSyncService', () => {
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         '@pawfectmatch_offline_queue',
-        expect.any(String)
+        expect.any(String),
       );
     });
 
     it('should queue API call with custom parameters', async () => {
       const testData = { key: 'value' };
-      const id = await service.queueApiCall(
-        '/test-endpoint',
-        'POST',
-        testData,
-        'high',
-        'merge'
-      );
+      const id = await service.queueApiCall('/test-endpoint', 'POST', testData, 'high', 'merge');
 
       const queuedItem = (service as any).queue[0];
       expect(queuedItem.method).toBe('POST');
@@ -217,7 +211,7 @@ describe('OfflineSyncService', () => {
       await service.queueApiCall('/test-endpoint');
 
       // Wait for async processing
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockApi.request).toHaveBeenCalledWith('/test-endpoint');
       expect((service as any).queue).toHaveLength(0);
@@ -369,7 +363,19 @@ describe('OfflineSyncService', () => {
 
     it('should start queue processing when coming online', () => {
       (service as any).isOnline = false;
-      (service as any).queue = [{ id: 'test', type: 'api', endpoint: '/test', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'normal', onConflict: 'overwrite' }];
+      (service as any).queue = [
+        {
+          id: 'test',
+          type: 'api',
+          endpoint: '/test',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
+      ];
       mockApi.request.mockResolvedValue({ success: true });
 
       mockNetInfoListener({
@@ -390,7 +396,19 @@ describe('OfflineSyncService', () => {
 
     it('should not process queue when offline', async () => {
       (service as any).isOnline = false;
-      (service as any).queue = [{ id: 'test', type: 'api', endpoint: '/test', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'normal', onConflict: 'overwrite' }];
+      (service as any).queue = [
+        {
+          id: 'test',
+          type: 'api',
+          endpoint: '/test',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
+      ];
 
       await (service as any).processQueue();
 
@@ -399,7 +417,19 @@ describe('OfflineSyncService', () => {
 
     it('should not process queue when already syncing', async () => {
       (service as any).syncInProgress = true;
-      (service as any).queue = [{ id: 'test', type: 'api', endpoint: '/test', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'normal', onConflict: 'overwrite' }];
+      (service as any).queue = [
+        {
+          id: 'test',
+          type: 'api',
+          endpoint: '/test',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
+      ];
 
       await (service as any).processQueue();
 
@@ -416,9 +446,39 @@ describe('OfflineSyncService', () => {
 
     it('should process queue items by priority', async () => {
       (service as any).queue = [
-        { id: 'low', type: 'api', endpoint: '/low', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'low', onConflict: 'overwrite' },
-        { id: 'critical', type: 'api', endpoint: '/critical', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'critical', onConflict: 'overwrite' },
-        { id: 'normal', type: 'api', endpoint: '/normal', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'normal', onConflict: 'overwrite' },
+        {
+          id: 'low',
+          type: 'api',
+          endpoint: '/low',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'low',
+          onConflict: 'overwrite',
+        },
+        {
+          id: 'critical',
+          type: 'api',
+          endpoint: '/critical',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'critical',
+          onConflict: 'overwrite',
+        },
+        {
+          id: 'normal',
+          type: 'api',
+          endpoint: '/normal',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
       ];
 
       mockApi.request.mockResolvedValue({ success: true });
@@ -432,7 +492,17 @@ describe('OfflineSyncService', () => {
 
     it('should handle successful item processing', async () => {
       (service as any).queue = [
-        { id: 'success', type: 'api', endpoint: '/success', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'normal', onConflict: 'overwrite' },
+        {
+          id: 'success',
+          type: 'api',
+          endpoint: '/success',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
       ];
 
       mockApi.request.mockResolvedValue({ success: true });
@@ -442,13 +512,23 @@ describe('OfflineSyncService', () => {
       expect((service as any).queue).toHaveLength(0);
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         '@pawfectmatch_sync_status',
-        expect.any(String)
+        expect.any(String),
       );
     });
 
     it('should handle failed items with retry', async () => {
       (service as any).queue = [
-        { id: 'fail', type: 'api', endpoint: '/fail', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'normal', onConflict: 'overwrite' },
+        {
+          id: 'fail',
+          type: 'api',
+          endpoint: '/fail',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
       ];
 
       mockApi.request.mockRejectedValue(new Error('API Error'));
@@ -461,7 +541,17 @@ describe('OfflineSyncService', () => {
 
     it('should remove items that exceed max retry count', async () => {
       (service as any).queue = [
-        { id: 'max-retries', type: 'api', endpoint: '/fail', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 2, priority: 'normal', onConflict: 'overwrite' },
+        {
+          id: 'max-retries',
+          type: 'api',
+          endpoint: '/fail',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 2,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
       ];
 
       mockApi.request.mockRejectedValue(new Error('API Error'));
@@ -569,7 +659,7 @@ describe('OfflineSyncService', () => {
       };
 
       await expect((service as any).processQueueItem(item)).rejects.toThrow(
-        'Unsupported HTTP method: PATCH'
+        'Unsupported HTTP method: PATCH',
       );
     });
   });
@@ -624,7 +714,19 @@ describe('OfflineSyncService', () => {
     it('should trigger sync when online and queue not empty', () => {
       (service as any).isOnline = true;
       (service as any).syncInProgress = false;
-      (service as any).queue = [{ id: 'test', type: 'api', endpoint: '/test', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'normal', onConflict: 'overwrite' }];
+      (service as any).queue = [
+        {
+          id: 'test',
+          type: 'api',
+          endpoint: '/test',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
+      ];
 
       mockApi.request.mockResolvedValue({ success: true });
 
@@ -636,7 +738,19 @@ describe('OfflineSyncService', () => {
 
     it('should not trigger sync when offline', () => {
       (service as any).isOnline = false;
-      (service as any).queue = [{ id: 'test', type: 'api', endpoint: '/test', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'normal', onConflict: 'overwrite' }];
+      (service as any).queue = [
+        {
+          id: 'test',
+          type: 'api',
+          endpoint: '/test',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
+      ];
 
       jest.runOnlyPendingTimers();
 
@@ -646,7 +760,19 @@ describe('OfflineSyncService', () => {
     it('should not trigger sync when already syncing', () => {
       (service as any).isOnline = true;
       (service as any).syncInProgress = true;
-      (service as any).queue = [{ id: 'test', type: 'api', endpoint: '/test', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'normal', onConflict: 'overwrite' }];
+      (service as any).queue = [
+        {
+          id: 'test',
+          type: 'api',
+          endpoint: '/test',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
+      ];
 
       jest.runOnlyPendingTimers();
 
@@ -705,7 +831,7 @@ describe('OfflineSyncService', () => {
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         '@pawfectmatch_offline_queue',
-        expect.any(String)
+        expect.any(String),
       );
     });
 
@@ -731,7 +857,7 @@ describe('OfflineSyncService', () => {
           endpoint: '/test-endpoint',
           method: 'GET',
           priority: 'normal',
-        })
+        }),
       );
     });
 
@@ -739,7 +865,17 @@ describe('OfflineSyncService', () => {
       const { logger } = require('@pawfectmatch/core');
       (service as any).isOnline = true;
       (service as any).queue = [
-        { id: 'test', type: 'api', endpoint: '/test', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'normal', onConflict: 'overwrite' },
+        {
+          id: 'test',
+          type: 'api',
+          endpoint: '/test',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
       ];
 
       mockApi.request.mockResolvedValue({ success: true });
@@ -752,7 +888,7 @@ describe('OfflineSyncService', () => {
           processed: 1,
           failed: 0,
           remaining: 0,
-        })
+        }),
       );
     });
 
@@ -780,7 +916,7 @@ describe('OfflineSyncService', () => {
           itemId: 'fail-test',
           endpoint: '/fail',
           error: expect.any(Error),
-        })
+        }),
       );
     });
   });
@@ -798,7 +934,17 @@ describe('OfflineSyncService', () => {
     it('should handle network state changes during processing', async () => {
       (service as any).isOnline = true;
       (service as any).queue = [
-        { id: 'test', type: 'api', endpoint: '/test', method: 'GET', data: {}, timestamp: Date.now(), retryCount: 0, priority: 'normal', onConflict: 'overwrite' },
+        {
+          id: 'test',
+          type: 'api',
+          endpoint: '/test',
+          method: 'GET',
+          data: {},
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority: 'normal',
+          onConflict: 'overwrite',
+        },
       ];
 
       // Go offline during processing

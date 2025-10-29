@@ -43,4 +43,3 @@ export interface SystemHealth {
   };
   environment: string;
 }
-

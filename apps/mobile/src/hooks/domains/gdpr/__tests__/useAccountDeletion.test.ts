@@ -1,52 +1,48 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { useAccountDeletion } from "../useAccountDeletion";
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { useAccountDeletion } from '../useAccountDeletion';
 
 // Mock the GDPR service
-jest.mock("../../../../services/gdprService", () => ({
+jest.mock('../../../../services/gdprService', () => ({
   gdprService: {
     requestAccountDeletion: jest.fn(),
     cancelDeletion: jest.fn(),
   },
 }));
 
-import { gdprService } from "../../../../services/gdprService";
+import { gdprService } from '../../../../services/gdprService';
 
 const mockGdprService = gdprService as jest.Mocked<typeof gdprService>;
 
-describe("useAccountDeletion", () => {
+describe('useAccountDeletion', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGdprService.requestAccountDeletion.mockResolvedValue({
       success: true,
-      message: "Deletion requested successfully",
-      gracePeriodEndsAt: "2024-12-26T00:00:00.000Z",
-      deletionId: "test-deletion-id",
+      message: 'Deletion requested successfully',
+      gracePeriodEndsAt: '2024-12-26T00:00:00.000Z',
+      deletionId: 'test-deletion-id',
     });
     mockGdprService.cancelDeletion.mockResolvedValue({
       success: true,
-      message: "Deletion cancelled successfully",
+      message: 'Deletion cancelled successfully',
     });
   });
 
-  it("should initialize with correct default state", () => {
+  it('should initialize with correct default state', () => {
     const { result } = renderHook(() => useAccountDeletion());
 
     expect(result.current.isDeleting).toBe(false);
     expect(result.current.error).toBe(null);
   });
 
-  it("should request account deletion successfully", async () => {
+  it('should request account deletion successfully', async () => {
     const { result } = renderHook(() => useAccountDeletion());
 
     act(() => {
-      result.current.requestDeletion(
-        "password123",
-        "Privacy concerns",
-        "Detailed feedback",
-      );
+      result.current.requestDeletion('password123', 'Privacy concerns', 'Detailed feedback');
     });
 
     expect(result.current.isDeleting).toBe(true);
@@ -56,32 +52,30 @@ describe("useAccountDeletion", () => {
     });
 
     expect(mockGdprService.requestAccountDeletion).toHaveBeenCalledWith(
-      "password123",
-      "Privacy concerns",
-      "Detailed feedback",
+      'password123',
+      'Privacy concerns',
+      'Detailed feedback',
     );
     expect(result.current.error).toBe(null);
   });
 
-  it("should handle request deletion failure", async () => {
-    mockGdprService.requestAccountDeletion.mockRejectedValue(
-      new Error("Invalid password"),
-    );
+  it('should handle request deletion failure', async () => {
+    mockGdprService.requestAccountDeletion.mockRejectedValue(new Error('Invalid password'));
 
     const { result } = renderHook(() => useAccountDeletion());
 
     act(() => {
-      result.current.requestDeletion("wrongpassword");
+      result.current.requestDeletion('wrongpassword');
     });
 
     await waitFor(() => {
       expect(result.current.isDeleting).toBe(false);
     });
 
-    expect(result.current.error).toBe("Invalid password");
+    expect(result.current.error).toBe('Invalid password');
   });
 
-  it("should cancel account deletion successfully", async () => {
+  it('should cancel account deletion successfully', async () => {
     const { result } = renderHook(() => useAccountDeletion());
 
     act(() => {
@@ -98,10 +92,8 @@ describe("useAccountDeletion", () => {
     expect(result.current.error).toBe(null);
   });
 
-  it("should handle cancel deletion failure", async () => {
-    mockGdprService.cancelDeletion.mockRejectedValue(
-      new Error("Cancellation failed"),
-    );
+  it('should handle cancel deletion failure', async () => {
+    mockGdprService.cancelDeletion.mockRejectedValue(new Error('Cancellation failed'));
 
     const { result } = renderHook(() => useAccountDeletion());
 
@@ -113,14 +105,14 @@ describe("useAccountDeletion", () => {
       expect(result.current.isDeleting).toBe(false);
     });
 
-    expect(result.current.error).toBe("Cancellation failed");
+    expect(result.current.error).toBe('Cancellation failed');
   });
 
-  it("should request deletion with minimal parameters", async () => {
+  it('should request deletion with minimal parameters', async () => {
     const { result } = renderHook(() => useAccountDeletion());
 
     act(() => {
-      result.current.requestDeletion("password123");
+      result.current.requestDeletion('password123');
     });
 
     await waitFor(() => {
@@ -128,13 +120,13 @@ describe("useAccountDeletion", () => {
     });
 
     expect(mockGdprService.requestAccountDeletion).toHaveBeenCalledWith(
-      "password123",
+      'password123',
       undefined,
       undefined,
     );
   });
 
-  it("should return stable function references", () => {
+  it('should return stable function references', () => {
     const { result } = renderHook(() => useAccountDeletion());
 
     const firstRequest = result.current.requestDeletion;

@@ -19,7 +19,11 @@ describe('DeepSeekService', () => {
       created: Date.now(),
       model: 'deepseek-vision',
       choices: [
-        { index: 0, message: { role: 'assistant', content: '{"species":"dog"}' }, finish_reason: 'stop' },
+        {
+          index: 0,
+          message: { role: 'assistant', content: '{"species":"dog"}' },
+          finish_reason: 'stop',
+        },
       ],
       usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 },
     };
@@ -37,7 +41,7 @@ describe('DeepSeekService', () => {
       expect.objectContaining({
         method: 'POST',
         headers: expect.objectContaining({ Authorization: `Bearer ${apiKey}` }),
-      })
+      }),
     );
     const content = res.choices[0]!.message?.content ?? '';
     expect(content).toContain('species');
@@ -55,7 +59,8 @@ describe('DeepSeekService', () => {
   });
 
   test('testConnection returns boolean based on API result', async () => {
-    jest.mocked(globalThis.fetch)
+    jest
+      .mocked(globalThis.fetch)
       .mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ choices: [{}, {}] }),

@@ -1,6 +1,6 @@
-import React from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface MapControlsProps {
   onLocatePress: () => void;
@@ -43,7 +43,11 @@ export const MapControls: React.FC<MapControlsProps> = ({
       accessibilityRole="button"
       onPress={onCreatePress}
     >
-      <Ionicons name="add" size={20} color="#fff" />
+      <Ionicons
+        name="add"
+        size={20}
+        color="#fff"
+      />
     </TouchableOpacity>
 
     <TouchableOpacity
@@ -59,24 +63,24 @@ export const MapControls: React.FC<MapControlsProps> = ({
 );
 
 const styles = StyleSheet.create({
-  fabs: { 
-    position: "absolute", 
-    right: 12, 
-    bottom: 24, 
-    gap: 10 
+  fabs: {
+    position: 'absolute',
+    right: 12,
+    bottom: 24,
+    gap: 10,
   },
   fab: {
-    width: 44, 
-    height: 44, 
-    borderRadius: 22, 
-    alignItems: "center", 
-    justifyContent: "center",
-    shadowColor: "#000", 
-    shadowOpacity: 0.15, 
-    shadowRadius: 8, 
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
     elevation: 6,
   },
-  fabLocate: { backgroundColor: "#fff" },
+  fabLocate: { backgroundColor: '#fff' },
   fabAR: { backgroundColor: Theme.colors.primary[500] },
   fabCreate: { backgroundColor: Theme.colors.status.success },
   fabFilters: { backgroundColor: Theme.colors.secondary[500] },

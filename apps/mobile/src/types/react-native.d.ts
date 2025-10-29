@@ -11,4 +11,3 @@ declare module 'react-native' {
     edges?: ('top' | 'right' | 'bottom' | 'left')[];
   }
 }
-

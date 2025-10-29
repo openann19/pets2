@@ -2,8 +2,8 @@
  * useModerationToolsScreen Hook
  * Manages Moderation Tools screen state and interactions
  */
-import { useNavigation } from "@react-navigation/native";
-import { useModerationTools } from "../domains/safety/useModerationTools";
+import { useNavigation } from '@react-navigation/native';
+import { useModerationTools } from '../domains/safety/useModerationTools';
 
 interface UseModerationToolsScreenReturn {
   // From domain hook
@@ -20,13 +20,8 @@ interface UseModerationToolsScreenReturn {
 export const useModerationToolsScreen = (): UseModerationToolsScreenReturn => {
   const navigation = useNavigation();
 
-  const {
-    moderationTools,
-    moderationStats,
-    isRefreshing,
-    handleModerationTool,
-    refreshStats,
-  } = useModerationTools();
+  const { moderationTools, moderationStats, isRefreshing, handleModerationTool, refreshStats } =
+    useModerationTools();
 
   const handleGoBack = () => {
     navigation.goBack();

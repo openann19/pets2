@@ -13,10 +13,10 @@ import { renderHook, act } from '@testing-library/react-native';
 jest.mock('@pawfectmatch/core', () => ({
   useAuthStore: () => ({
     user: {
-      _id: "user123",
-      firstName: "John",
-      lastName: "Doe",
-      email: "john@example.com",
+      _id: 'user123',
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john@example.com',
     },
   }),
   logger: {
@@ -35,14 +35,14 @@ describe('useProfileData', () => {
       // Wait for any async initialization to complete
       await act(async () => {
         // Allow time for useEffect to run
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(result.current.user).toEqual({
-        _id: "user123",
-        firstName: "John",
-        lastName: "Doe",
-        email: "john@example.com",
+        _id: 'user123',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
       });
       expect(result.current.pets).toEqual([]);
       expect(result.current.isLoading).toBe(false);

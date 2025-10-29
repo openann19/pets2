@@ -1,8 +1,8 @@
-import React from "react";
-import { BlurView } from "expo-blur";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { ActivityTypeSelector } from "./ActivityTypeSelector";
-import type { ActivityType } from "./ActivityTypeSelector";
+import React from 'react';
+import { BlurView } from 'expo-blur';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityTypeSelector } from './ActivityTypeSelector';
+import type { ActivityType } from './ActivityTypeSelector';
 
 export interface MapFilters {
   showMyPets: boolean;
@@ -32,7 +32,12 @@ export function MapFiltersModal({
   }, [filters.radius]);
 
   return (
-    <BlurView testID="filters-modal" style={styles.filterBlur} intensity={50} tint="light">
+    <BlurView
+      testID="filters-modal"
+      style={styles.filterBlur}
+      intensity={50}
+      tint="light"
+    >
       <ScrollView style={styles.filterContent}>
         <Text style={styles.filterTitle}>Map Filters</Text>
 
@@ -42,17 +47,10 @@ export function MapFiltersModal({
           onToggleActivity={onToggleActivity}
         />
 
-        <Text style={styles.filterSectionTitle}>
-          Search Radius: {filters.radius} km
-        </Text>
+        <Text style={styles.filterSectionTitle}>Search Radius: {filters.radius} km</Text>
         <View style={styles.sliderContainer}>
           <View style={styles.sliderTrack}>
-            <View
-              style={[
-                styles.sliderThumb,
-                { left: `${sliderPosition}%` },
-              ]}
-            />
+            <View style={[styles.sliderThumb, { left: `${sliderPosition}%` }]} />
           </View>
         </View>
       </ScrollView>
@@ -69,14 +67,14 @@ const styles = StyleSheet.create({
   },
   filterTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    fontWeight: 'bold',
+    color: 'Theme.colors.neutral[800]',
     marginBottom: 20,
   },
   filterSectionTitle: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "Theme.colors.neutral[700]",
+    fontWeight: '600',
+    color: 'Theme.colors.neutral[700]',
     marginBottom: 12,
     marginTop: 16,
   },
@@ -85,16 +83,16 @@ const styles = StyleSheet.create({
   },
   sliderTrack: {
     height: 4,
-    backgroundColor: "Theme.colors.neutral[200]",
+    backgroundColor: 'Theme.colors.neutral[200]',
     borderRadius: 2,
-    position: "relative",
+    position: 'relative',
   },
   sliderThumb: {
     width: 20,
     height: 20,
-    backgroundColor: "Theme.colors.primary[500]",
+    backgroundColor: 'Theme.colors.primary[500]',
     borderRadius: 10,
-    position: "absolute",
+    position: 'absolute',
     top: -8,
   },
 });

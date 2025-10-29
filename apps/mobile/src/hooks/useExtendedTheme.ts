@@ -1,11 +1,11 @@
 /**
  * Extended Theme Hook
  * Provides backward compatibility for components using extended color properties
- * 
+ *
  * Usage:
  * ```tsx
  * import { useExtendedTheme } from "../hooks/useExtendedTheme";
- * 
+ *
  * function MyComponent() {
  *   const { colors } = useExtendedTheme();
  *   // theme.palette.neutral[500], colors.onPrimary, etc. now work
@@ -13,10 +13,10 @@
  * ```
  */
 
-import { useTheme } from "@/theme";
-import { getExtendedColors, getIsDark } from "../theme/adapters";
-import type { Theme } from "../theme/types";
-import type { ExtendedColors } from "../theme/adapters";
+import { useTheme } from '@mobile/src/theme';
+import type { ExtendedColors } from '../theme/adapters';
+import { getExtendedColors, getIsDark } from '../theme/adapters';
+import type { Theme } from '../theme/types';
 
 export interface ExtendedTheme extends Theme {
   colors: ExtendedColors;
@@ -29,7 +29,7 @@ export interface ExtendedTheme extends Theme {
  */
 export function useExtendedTheme(): ExtendedTheme {
   const theme = useTheme();
-  
+
   return {
     ...theme,
     colors: getExtendedColors(theme),

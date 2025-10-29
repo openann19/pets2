@@ -6,7 +6,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import type { ViewStyle } from 'react-native';
-import Animated, { useAnimatedStyle, withTiming, withSequence, withRepeat, withDelay, useSharedValue } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+  withSequence,
+  withRepeat,
+  withDelay,
+  useSharedValue,
+} from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { logger } from '@pawfectmatch/core';
 
@@ -33,10 +40,7 @@ function AnimatedParticle({ particle }: { particle: Particle }) {
     left: particle.left.value,
     top: particle.top.value,
     opacity: particle.opacity.value,
-    transform: [
-      { rotate: `${particle.rotation.value}deg` },
-      { scale: particle.scale.value },
-    ],
+    transform: [{ rotate: `${particle.rotation.value}deg` }, { scale: particle.scale.value }],
   }));
 
   return (
@@ -108,11 +112,19 @@ export function ConfettiBurst({
         const endY = startY + Math.random() * SCREEN_HEIGHT;
 
         // Create shared values properly - not using hooks inside loop
-        const leftSV: Animated.SharedValue<number> = { value: startX } as Animated.SharedValue<number>;
-        const topSV: Animated.SharedValue<number> = { value: startY } as Animated.SharedValue<number>;
-        const rotationSV: Animated.SharedValue<number> = { value: 0 } as Animated.SharedValue<number>;
+        const leftSV: Animated.SharedValue<number> = {
+          value: startX,
+        } as Animated.SharedValue<number>;
+        const topSV: Animated.SharedValue<number> = {
+          value: startY,
+        } as Animated.SharedValue<number>;
+        const rotationSV: Animated.SharedValue<number> = {
+          value: 0,
+        } as Animated.SharedValue<number>;
         const scaleSV: Animated.SharedValue<number> = { value: 1 } as Animated.SharedValue<number>;
-        const opacitySV: Animated.SharedValue<number> = { value: 1 } as Animated.SharedValue<number>;
+        const opacitySV: Animated.SharedValue<number> = {
+          value: 1,
+        } as Animated.SharedValue<number>;
 
         const animationDelay = (i / particleCount) * 100;
         const rotationTarget = (Math.random() * 720 - 360) * 2;
@@ -120,34 +132,25 @@ export function ConfettiBurst({
         // Animate left
         leftSV.value = withDelay(
           animationDelay,
-          withTiming(
-            endX,
-            { duration: duration + Math.random() * 1000 }
-          )
+          withTiming(endX, { duration: duration + Math.random() * 1000 }),
         );
 
         // Animate top
         topSV.value = withDelay(
           animationDelay,
-          withTiming(
-            SCREEN_HEIGHT + 200,
-            { duration: duration + Math.random() * 1000 }
-          )
+          withTiming(SCREEN_HEIGHT + 200, { duration: duration + Math.random() * 1000 }),
         );
 
         // Animate rotation
         rotationSV.value = withDelay(
           animationDelay,
-          withTiming(
-            rotationTarget,
-            { duration: duration + Math.random() * 1000 }
-          )
+          withTiming(rotationTarget, { duration: duration + Math.random() * 1000 }),
         );
 
         // Animate opacity
         opacitySV.value = withDelay(
           animationDelay + duration * 0.7,
-          withTiming(0, { duration: duration + Math.random() * 500 })
+          withTiming(0, { duration: duration + Math.random() * 500 }),
         );
 
         newParticles.push({
@@ -157,7 +160,7 @@ export function ConfettiBurst({
           rotation: rotationSV,
           scale: scaleSV,
           opacity: opacitySV,
-          color: (colors[Math.floor(Math.random() * colors.length)] ?? colors[0] ?? '#FF6B6B'),
+          color: colors[Math.floor(Math.random() * colors.length)] ?? colors[0] ?? '#FF6B6B',
           size: particleSize + Math.random() * 4,
           startX,
           startY,
@@ -178,11 +181,21 @@ export function ConfettiBurst({
           const startY = SCREEN_HEIGHT * 0.3;
           const endX = startX + (Math.random() - 0.5) * 300;
 
-          const leftSV: Animated.SharedValue<number> = { value: startX } as Animated.SharedValue<number>;
-          const topSV: Animated.SharedValue<number> = { value: startY } as Animated.SharedValue<number>;
-          const rotationSV: Animated.SharedValue<number> = { value: 0 } as Animated.SharedValue<number>;
-          const scaleSV: Animated.SharedValue<number> = { value: 0 } as Animated.SharedValue<number>;
-          const opacitySV: Animated.SharedValue<number> = { value: 1 } as Animated.SharedValue<number>;
+          const leftSV: Animated.SharedValue<number> = {
+            value: startX,
+          } as Animated.SharedValue<number>;
+          const topSV: Animated.SharedValue<number> = {
+            value: startY,
+          } as Animated.SharedValue<number>;
+          const rotationSV: Animated.SharedValue<number> = {
+            value: 0,
+          } as Animated.SharedValue<number>;
+          const scaleSV: Animated.SharedValue<number> = {
+            value: 0,
+          } as Animated.SharedValue<number>;
+          const opacitySV: Animated.SharedValue<number> = {
+            value: 1,
+          } as Animated.SharedValue<number>;
 
           leftSV.value = withTiming(endX, { duration: 2000 });
           topSV.value = withTiming(SCREEN_HEIGHT + 200, { duration: 2000 });
@@ -195,7 +208,7 @@ export function ConfettiBurst({
             rotation: rotationSV,
             scale: scaleSV,
             opacity: opacitySV,
-            color: (colors[Math.floor(Math.random() * colors.length)] ?? colors[0] ?? '#FF6B6B'),
+            color: colors[Math.floor(Math.random() * colors.length)] ?? colors[0] ?? '#FF6B6B',
             size: particleSize + Math.random() * 4,
             startX,
             startY,
@@ -204,7 +217,7 @@ export function ConfettiBurst({
           });
         }
 
-        setParticles(prev => [...prev, ...burstParticles]);
+        setParticles((prev) => [...prev, ...burstParticles]);
       }, 350);
 
       return () => {
@@ -223,9 +236,16 @@ export function ConfettiBurst({
   if (!show) return <View />;
 
   return (
-    <View style={styles.container} pointerEvents="none" testID="confetti-container">
-      {particles.map(particle => (
-        <AnimatedParticle key={particle.id} particle={particle} />
+    <View
+      style={styles.container}
+      pointerEvents="none"
+      testID="confetti-container"
+    >
+      {particles.map((particle) => (
+        <AnimatedParticle
+          key={particle.id}
+          particle={particle}
+        />
       ))}
     </View>
   );

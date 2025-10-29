@@ -25,7 +25,7 @@ describe('usePreferencesSetup', () => {
         experience: '',
         allergies: false,
         children: false,
-        otherPets: false
+        otherPets: false,
       });
       expect(result.current.currentStep).toBe(0);
       expect(result.current.isComplete).toBe(false);
@@ -36,7 +36,7 @@ describe('usePreferencesSetup', () => {
       const initialPrefs = {
         petTypes: ['dog', 'cat'],
         petSizes: ['medium'],
-        activityLevel: 'moderate'
+        activityLevel: 'moderate',
       };
 
       const { result } = renderHook(() => usePreferencesSetup(initialPrefs));
@@ -117,7 +117,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          petTypes: ['dog', 'cat']
+          petTypes: ['dog', 'cat'],
         });
       });
 
@@ -129,7 +129,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          petSizes: ['small', 'large']
+          petSizes: ['small', 'large'],
         });
       });
 
@@ -141,7 +141,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          activityLevel: 'high'
+          activityLevel: 'high',
         });
       });
 
@@ -153,7 +153,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          location: 'urban'
+          location: 'urban',
         });
       });
 
@@ -165,7 +165,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          budget: 'high'
+          budget: 'high',
         });
       });
 
@@ -177,7 +177,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          experience: 'experienced'
+          experience: 'experienced',
         });
       });
 
@@ -191,7 +191,7 @@ describe('usePreferencesSetup', () => {
         result.current.updatePreferences({
           allergies: true,
           children: true,
-          otherPets: false
+          otherPets: false,
         });
       });
 
@@ -230,7 +230,7 @@ describe('usePreferencesSetup', () => {
           activityLevel: 'moderate',
           location: 'suburban',
           budget: 'medium',
-          experience: 'some'
+          experience: 'some',
         });
       });
 
@@ -266,7 +266,7 @@ describe('usePreferencesSetup', () => {
       act(() => {
         result.current.updatePreferences({
           petTypes: ['dog'],
-          petSizes: ['medium']
+          petSizes: ['medium'],
         });
       });
 
@@ -281,7 +281,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          petTypes: []
+          petTypes: [],
         });
       });
 
@@ -292,7 +292,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          petTypes: ['dog']
+          petTypes: ['dog'],
         });
       });
 
@@ -325,7 +325,7 @@ describe('usePreferencesSetup', () => {
       act(() => {
         result.current.updatePreferences({
           petTypes: ['dog', 'cat'],
-          activityLevel: 'moderate'
+          activityLevel: 'moderate',
         });
       });
 
@@ -342,7 +342,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          petTypes: ['dog']
+          petTypes: ['dog'],
         });
       });
 
@@ -362,7 +362,7 @@ describe('usePreferencesSetup', () => {
         result.current.updatePreferences({
           petTypes: ['dog', 'cat'],
           activityLevel: 'high',
-          location: 'urban'
+          location: 'urban',
         });
         result.current.goToStep(3);
       });
@@ -383,14 +383,14 @@ describe('usePreferencesSetup', () => {
     it('should reset to initial preferences', () => {
       const initialPrefs = {
         petTypes: ['bird'],
-        activityLevel: 'low'
+        activityLevel: 'low',
       };
 
       const { result } = renderHook(() => usePreferencesSetup(initialPrefs));
 
       act(() => {
         result.current.updatePreferences({
-          petTypes: ['dog', 'cat']
+          petTypes: ['dog', 'cat'],
         });
         result.current.reset();
       });
@@ -405,7 +405,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          petTypes: ['dog']
+          petTypes: ['dog'],
         });
       });
 
@@ -427,7 +427,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          petTypes: []
+          petTypes: [],
         });
       });
 
@@ -444,7 +444,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          petTypes: ['dog']
+          petTypes: ['dog'],
         });
       });
 
@@ -530,7 +530,7 @@ describe('usePreferencesSetup', () => {
       act(() => {
         result.current.updatePreferences({
           petTypes: null as any,
-          activityLevel: undefined as any
+          activityLevel: undefined as any,
         });
       });
 
@@ -545,7 +545,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          petTypes: ['dog']
+          petTypes: ['dog'],
         });
       });
 
@@ -560,7 +560,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          petTypes: ['dog', 'cat']
+          petTypes: ['dog', 'cat'],
         });
         result.current.nextStep();
         result.current.nextStep();
@@ -583,7 +583,7 @@ describe('usePreferencesSetup', () => {
 
       act(() => {
         result.current.updatePreferences({
-          petTypes: ['dog']
+          petTypes: ['dog'],
         });
       });
 

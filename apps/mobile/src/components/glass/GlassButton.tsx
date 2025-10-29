@@ -1,20 +1,11 @@
-import React, { type ReactNode } from "react";
-import { View, type ViewProps, type ViewStyle, StyleSheet } from "react-native";
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
-import Animated from "react-native-reanimated";
+import React, { type ReactNode } from 'react';
+import { View, type ViewProps, type ViewStyle, StyleSheet } from 'react-native';
+import { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
-import { Spacing } from "../../animation";
-import { GlassContainer } from "./GlassContainer";
-import {
-  BLUR_CONFIGS,
-  TRANSPARENCY_CONFIGS,
-  BORDER_CONFIGS,
-  SHADOW_CONFIGS,
-} from "./configs";
+import { Spacing } from '../../animation';
+import { GlassContainer } from './GlassContainer';
+import { BLUR_CONFIGS, TRANSPARENCY_CONFIGS, BORDER_CONFIGS, SHADOW_CONFIGS } from './configs';
 
 /**
  * GlassButton Component
@@ -23,8 +14,8 @@ import {
 
 interface GlassButtonProps extends ViewProps {
   children: ReactNode;
-  variant?: "primary" | "secondary" | "ghost";
-  size?: "sm" | "md" | "lg";
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   onPress?: () => void;
   style?: ViewStyle;
@@ -32,8 +23,8 @@ interface GlassButtonProps extends ViewProps {
 
 export const GlassButton: React.FC<GlassButtonProps> = ({
   children,
-  variant = "primary",
-  size = "md",
+  variant = 'primary',
+  size = 'md',
   disabled = false,
   onPress,
   style,
@@ -44,48 +35,48 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
 
   const getVariantConfig = () => {
     switch (variant) {
-      case "primary":
+      case 'primary':
         return {
-          intensity: "medium" as const,
-          transparency: "medium" as const,
-          border: "medium" as const,
-          shadow: "medium" as const,
+          intensity: 'medium' as const,
+          transparency: 'medium' as const,
+          border: 'medium' as const,
+          shadow: 'medium' as const,
         };
-      case "secondary":
+      case 'secondary':
         return {
-          intensity: "light" as const,
-          transparency: "light" as const,
-          border: "light" as const,
-          shadow: "light" as const,
+          intensity: 'light' as const,
+          transparency: 'light' as const,
+          border: 'light' as const,
+          shadow: 'light' as const,
         };
-      case "ghost":
+      case 'ghost':
         return {
-          intensity: "light" as const,
-          transparency: "light" as const,
-          border: "light" as const,
-          shadow: "light" as const,
+          intensity: 'light' as const,
+          transparency: 'light' as const,
+          border: 'light' as const,
+          shadow: 'light' as const,
         };
       default:
         return {
-          intensity: "medium" as const,
-          transparency: "medium" as const,
-          border: "medium" as const,
-          shadow: "medium" as const,
+          intensity: 'medium' as const,
+          transparency: 'medium' as const,
+          border: 'medium' as const,
+          shadow: 'medium' as const,
         };
     }
   };
 
   const getSizeConfig = () => {
     switch (size) {
-      case "sm":
+      case 'sm':
         return {
           paddingHorizontal: Spacing.lg,
           paddingVertical: Spacing.sm,
           minHeight: 36,
         };
-      case "lg":
+      case 'lg':
         return {
-          paddingHorizontal: Spacing["2xl"],
+          paddingHorizontal: Spacing['2xl'],
           paddingVertical: Spacing.lg,
           minHeight: 56,
         };
@@ -132,8 +123,8 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
         style={StyleSheet.flatten([
           { ...sizeConfig },
           {
-            justifyContent: "center",
-            alignItems: "center",
+            justifyContent: 'center',
+            alignItems: 'center',
             opacity: disabled ? 0.5 : 1,
           },
         ])}

@@ -1,34 +1,32 @@
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useRef, useCallback } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ScreenShell } from '../ui/layout/ScreenShell';
-import { haptic } from '../ui/haptics';
+import { Ionicons } from '@expo/vector-icons';
+import { logger } from '@pawfectmatch/core';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useCallback, useRef } from 'react';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import { getAccessibilityProps } from '../utils/accessibilityUtils';
+import { haptic } from '../ui/haptics';
+import { ScreenShell } from '../ui/layout/ScreenShell';
 
-import { AdvancedHeader, HeaderConfigs } from "../components/Advanced/AdvancedHeader";
-import { matchesAPI } from "../services/api";
-import { useProfileScreen } from "../hooks/screens/useProfileScreen";
-import { useScrollOffsetTracker, useTabReselectRefresh } from "../hooks/navigation";
+import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
+import { useScrollOffsetTracker, useTabReselectRefresh } from '../hooks/navigation';
+import { useProfileScreen } from '../hooks/screens/useProfileScreen';
+import { matchesAPI } from '../services/api';
 
-import type { RootStackScreenProps } from "../navigation/types";
-import { useTheme } from "@/theme";
-import MicroPressable from "../components/micro/MicroPressable";
+import { useTheme } from '@mobile/src/theme';
 import { useTranslation } from 'react-i18next';
+import MicroPressable from '../components/micro/MicroPressable';
+import type { RootStackScreenProps } from '../navigation/types';
 
 // Import decomposed components
 import {
   ProfileHeaderSection,
-  ProfileStatsSection,
   ProfileMenuSection,
   ProfileSettingsSection,
-} from "./profile/components";
+  ProfileStatsSection,
+} from './profile/components';
 
-type ProfileScreenProps = RootStackScreenProps<"Profile">;
+type ProfileScreenProps = RootStackScreenProps<'Profile'>;
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const theme = useTheme();
@@ -37,14 +35,8 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const { onScroll, getOffset } = useScrollOffsetTracker();
   const reducedMotion = useReducedMotion();
 
-  const {
-    user,
-    notifications,
-    privacy,
-    handleLogout,
-    handleSettingToggle,
-    handlePrivacyToggle,
-  } = useProfileScreen();
+  const { user, notifications, privacy, handleLogout, handleSettingToggle, handlePrivacyToggle } =
+    useProfileScreen();
 
   useTabReselectRefresh({
     listRef: scrollRef,
@@ -54,39 +46,45 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     getOffset,
     topThreshold: 100,
     cooldownMs: 700,
-    nearTopAction: "none", // Just scroll to top, no refresh
+    nearTopAction: 'none', // Just scroll to top, no refresh
   });
 
-  const handleNotificationToggle = useCallback((key: string) => () => {
-    handleSettingToggle(key);
-  }, [handleSettingToggle]);
+  const handleNotificationToggle = useCallback(
+    (key: string) => () => {
+      handleSettingToggle(key);
+    },
+    [handleSettingToggle],
+  );
 
-  const handlePrivacySettingToggle = useCallback((key: string) => () => {
-    handlePrivacyToggle(key);
-  }, [handlePrivacyToggle]);
+  const handlePrivacySettingToggle = useCallback(
+    (key: string) => () => {
+      handlePrivacyToggle(key);
+    },
+    [handlePrivacyToggle],
+  );
 
   const onLogout = useCallback(() => {
     haptic.error();
     handleLogout();
     navigation.reset({
       index: 0,
-      routes: [{ name: "Login" }],
+      routes: [{ name: 'Login' }],
     });
   }, [handleLogout, navigation]);
 
   const onNavigateToMyPets = useCallback(() => {
     haptic.tap();
-    navigation.navigate("MyPets");
+    navigation.navigate('MyPets');
   }, [navigation]);
 
   const onNavigateToSettings = useCallback(() => {
     haptic.tap();
-    navigation.navigate("Settings");
+    navigation.navigate('Settings');
   }, [navigation]);
 
   const onNavigateToCreatePet = useCallback(() => {
     haptic.confirm();
-    navigation.navigate("CreatePet");
+    navigation.navigate('CreatePet');
   }, [navigation]);
 
   const styles = StyleSheet.create({
@@ -101,7 +99,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       marginHorizontal: 20,
       marginBottom: 40,
       borderRadius: 12,
-      overflow: "hidden",
+      overflow: 'hidden',
       shadowColor: theme.colors.bg,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
@@ -109,16 +107,16 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       elevation: 3,
     },
     logoutGradient: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
       paddingVertical: 16,
       paddingHorizontal: 24,
     },
     logoutText: {
       color: theme.colors.bg,
       fontSize: 16,
-      fontWeight: "600",
+      fontWeight: '600',
       marginLeft: 8,
     },
   });
@@ -131,35 +129,34 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             title: t('profile.title'),
             rightButtons: [
               {
-                type: "edit",
+                type: 'edit',
                 onPress: () => {
                   haptic.tap();
-                  logger.info("Edit profile");
+                  logger.info('Edit profile');
                 },
-                variant: "glass",
-                haptic: "light",
+                variant: 'glass',
+                haptic: 'light',
               },
               {
-                type: "settings",
+                type: 'settings',
                 onPress: () => {
                   haptic.tap();
-                  navigation.navigate("Settings");
+                  navigation.navigate('Settings');
                 },
-                variant: "minimal",
-                haptic: "light",
+                variant: 'minimal',
+                haptic: 'light',
               },
             ],
             apiActions: {
               edit: async () => {
                 const userProfile = await matchesAPI.getUserProfile();
-                logger.info("Loaded user profile for editing:", { userProfile });
+                logger.info('Loaded user profile for editing:', { userProfile });
               },
             },
           })}
         />
       }
     >
-
       <ScrollView
         ref={scrollRef}
         style={styles.scrollView}
@@ -198,21 +195,21 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
         {/* Logout Button */}
         <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(300).delay(200)}>
-          <MicroPressable 
-            style={styles.logoutButton} 
+          <MicroPressable
+            style={styles.logoutButton}
             onPress={onLogout}
           >
             <LinearGradient
               colors={[theme.colors.danger, theme.colors.danger]}
               style={styles.logoutGradient}
             >
-              <Ionicons 
-                name="log-out" 
-                size={20} 
+              <Ionicons
+                name="log-out"
+                size={20}
                 color={theme.colors.bg}
                 accessibilityLabel="Logout icon"
               />
-              <Text 
+              <Text
                 style={styles.logoutText}
                 accessibilityRole="text"
                 accessibilityLabel="Logout text"

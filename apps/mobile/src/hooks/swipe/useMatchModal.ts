@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import type { Pet } from "../../types";
+import { useState, useCallback } from 'react';
+import type { Pet } from '../../types';
 
 export interface UseMatchModalOptions {
   onSendMessage: (matchId: string, petName: string) => void;
@@ -17,9 +17,7 @@ export interface UseMatchModalReturn {
 /**
  * Hook for managing match modal state and actions
  */
-export function useMatchModal({
-  onSendMessage,
-}: UseMatchModalOptions): UseMatchModalReturn {
+export function useMatchModal({ onSendMessage }: UseMatchModalOptions): UseMatchModalReturn {
   const [isOpen, setIsOpen] = useState(false);
   const [matchedPet, setMatchedPet] = useState<Pet | null>(null);
 
@@ -31,7 +29,9 @@ export function useMatchModal({
   const closeModal = useCallback(() => {
     setIsOpen(false);
     // Delay clearing matched pet to allow exit animation
-    setTimeout(() => { setMatchedPet(null); }, 300);
+    setTimeout(() => {
+      setMatchedPet(null);
+    }, 300);
   }, []);
 
   const handleKeepSwiping = useCallback(() => {

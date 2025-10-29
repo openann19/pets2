@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { FlatList } from "react-native";
-import { logger } from "../../services/logger";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { FlatList } from 'react-native';
+import { logger } from '../../services/logger';
 
 export interface UseScrollPersistenceOptions {
   key: string;

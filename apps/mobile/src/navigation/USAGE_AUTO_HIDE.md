@@ -1,11 +1,14 @@
 # Auto-Hide Tab Bar Usage
 
-The Ultra Tab Bar now supports automatic hiding on scroll for a more immersive experience.
+The Ultra Tab Bar now supports automatic hiding on scroll for a more immersive
+experience.
 
 ## Features
 
-- **Auto-hide on scroll**: Tab bar slides down when scrolling down, reappears when scrolling up
-- **Magnetic scrub**: Swipe horizontally across the tab bar to quickly switch tabs
+- **Auto-hide on scroll**: Tab bar slides down when scrolling down, reappears
+  when scrolling up
+- **Magnetic scrub**: Swipe horizontally across the tab bar to quickly switch
+  tabs
 - **Parallax shimmer**: Beautiful glass effect with animated shimmer
 - **Spotlight ripples**: Visual feedback when pressing tabs
 - **Breathing underline**: Animated indicator that "breathes" for the active tab
@@ -72,11 +75,13 @@ const onScroll = React.useMemo(() => createAutoHideOnScroll(8), []);
 
 ### 4. Magnetic Scrub Gesture
 
-Simply swipe horizontally across the tab bar to smoothly switch tabs with magnetic snapping. The active indicator follows your finger.
+Simply swipe horizontally across the tab bar to smoothly switch tabs with
+magnetic snapping. The active indicator follows your finger.
 
 ### 5. Disable Auto-Hide for Specific Screens
 
-If a screen should not trigger auto-hide (e.g., a full-screen modal), simply don't add the `onScroll` prop to your ScrollView/FlatList.
+If a screen should not trigger auto-hide (e.g., a full-screen modal), simply
+don't add the `onScroll` prop to your ScrollView/FlatList.
 
 ## Technical Details
 
@@ -88,7 +93,8 @@ If a screen should not trigger auto-hide (e.g., a full-screen modal), simply don
 
 ## Best Practices
 
-1. Always set `scrollEventThrottle={16}` when using auto-hide for smooth animations
+1. Always set `scrollEventThrottle={16}` when using auto-hide for smooth
+   animations
 2. Use `React.useMemo` to prevent re-creating the handler on every render
 3. Keep default threshold (16px) unless you have specific UX requirements
 4. Test haptic feedback on physical devices for best results
@@ -102,4 +108,3 @@ Consider adding auto-hide to:
 - `MatchesScreen` - Chat list scroll
 - `MapScreen` - Location list scroll
 - `ProfileScreen` - Settings scroll
-

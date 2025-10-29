@@ -37,7 +37,12 @@ describe('AIMatchingAlgorithm', () => {
     locationRadius: 50,
     experienceLevel: 'intermediate',
     timeCommitment: 'medium',
-    lifestyleFactors: { hasOtherPets: true, hasChildren: true, apartmentLiving: false, hasYard: true },
+    lifestyleFactors: {
+      hasOtherPets: true,
+      hasChildren: true,
+      apartmentLiving: false,
+      hasYard: true,
+    },
   };
 
   test('calculates match score with detailed breakdown and insights', () => {
@@ -48,7 +53,16 @@ describe('AIMatchingAlgorithm', () => {
 
     // Breakdown has all categories
     expect(Object.keys(result.breakdown)).toEqual(
-      expect.arrayContaining(['species', 'breed', 'age', 'temperament', 'activity', 'location', 'lifestyle', 'specialNeeds'])
+      expect.arrayContaining([
+        'species',
+        'breed',
+        'age',
+        'temperament',
+        'activity',
+        'location',
+        'lifestyle',
+        'specialNeeds',
+      ]),
     );
 
     // Each breakdown value is in a reasonable number range

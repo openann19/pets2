@@ -1,27 +1,25 @@
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import type { NavigationProp } from "@react-navigation/native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useMemo, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { logger } from '@pawfectmatch/core';
+import type { NavigationProp } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useMemo, useRef } from 'react';
+import { Animated, Easing, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import type { RootStackParamList } from "../../navigation/types";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import type { RootStackParamList } from '../../navigation/types';
 
 type SubscriptionSuccessNavigationProp = NavigationProp<RootStackParamList>;
 
-const AnimatedCheckmark = ({ styles, theme }: { styles: ReturnType<typeof makeStyles>; theme: AppTheme }) => {
+const AnimatedCheckmark = ({
+  styles,
+  theme,
+}: {
+  styles: ReturnType<typeof makeStyles>;
+  theme: AppTheme;
+}) => {
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -47,7 +45,7 @@ const AnimatedCheckmark = ({ styles, theme }: { styles: ReturnType<typeof makeSt
       }),
     ]).start(() => {
       // Provide haptic feedback when animation completes
-      if (Platform.OS !== "web") {
+      if (Platform.OS !== 'web') {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
     });
@@ -63,7 +61,10 @@ const AnimatedCheckmark = ({ styles, theme }: { styles: ReturnType<typeof makeSt
     outputRange: [0, 0.9, 1],
   });
 
-  const gradientColors = (theme as any).palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary];
+  const gradientColors = (theme as any).palette?.gradients?.primary ?? [
+    theme.colors.primary,
+    theme.colors.primary,
+  ];
 
   return (
     <View style={styles.checkmarkContainer}>
@@ -83,7 +84,11 @@ const AnimatedCheckmark = ({ styles, theme }: { styles: ReturnType<typeof makeSt
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
-          <Ionicons name="checkmark" size={64} color={theme.colors.onPrimary} />
+          <Ionicons
+            name="checkmark"
+            size={64}
+            color={theme.colors.onPrimary}
+          />
         </LinearGradient>
       </Animated.View>
     </View>
@@ -104,12 +109,12 @@ export function SubscriptionSuccessScreen(): JSX.Element {
         // TODO: Add analyticsAPI to services/api.ts
         // const { analyticsAPI } = await import("../../services/api");
         // await analyticsAPI.trackUserEvent("subscription_success", {
-        logger.info("Subscription success tracked", {
+        logger.info('Subscription success tracked', {
           sessionId,
           timestamp: new Date().toISOString(),
         });
       } catch (error) {
-        logger.error("Failed to track subscription success:", { error });
+        logger.error('Failed to track subscription success:', { error });
       }
     };
 
@@ -121,33 +126,52 @@ export function SubscriptionSuccessScreen(): JSX.Element {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        <AnimatedCheckmark styles={styles} theme={theme} />
+        <AnimatedCheckmark
+          styles={styles}
+          theme={theme}
+        />
 
         <Text style={styles.title}>Subscription Successful!</Text>
 
         <Text style={styles.message}>
-          Thank you for your purchase. Your premium subscription is now active,
-          and you can enjoy all the exclusive features.
+          Thank you for your purchase. Your premium subscription is now active, and you can enjoy
+          all the exclusive features.
         </Text>
 
         <View style={styles.featuresContainer}>
           <View style={styles.featureItem}>
-            <Ionicons name="infinite-outline" size={24} color={theme.colors.primary} />
+            <Ionicons
+              name="infinite-outline"
+              size={24}
+              color={theme.colors.primary}
+            />
             <Text style={styles.featureText}>Unlimited Swipes</Text>
           </View>
 
           <View style={styles.featureItem}>
-            <Ionicons name="eye-outline" size={24} color={theme.colors.primary} />
+            <Ionicons
+              name="eye-outline"
+              size={24}
+              color={theme.colors.primary}
+            />
             <Text style={styles.featureText}>See Who Liked You</Text>
           </View>
 
           <View style={styles.featureItem}>
-            <Ionicons name="videocam-outline" size={24} color={theme.colors.primary} />
+            <Ionicons
+              name="videocam-outline"
+              size={24}
+              color={theme.colors.primary}
+            />
             <Text style={styles.featureText}>Video Calls</Text>
           </View>
 
           <View style={styles.featureItem}>
-            <Ionicons name="options-outline" size={24} color={theme.colors.primary} />
+            <Ionicons
+              name="options-outline"
+              size={24}
+              color={theme.colors.primary}
+            />
             <Text style={styles.featureText}>Advanced Filters</Text>
           </View>
         </View>
@@ -156,8 +180,11 @@ export function SubscriptionSuccessScreen(): JSX.Element {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
-           testID="SubscriptionSuccessScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-            navigation.navigate("SubscriptionManager");
+          testID="SubscriptionSuccessScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={() => {
+            navigation.navigate('SubscriptionManager');
           }}
         >
           <Text style={styles.buttonText}>Manage Subscription</Text>
@@ -165,8 +192,11 @@ export function SubscriptionSuccessScreen(): JSX.Element {
 
         <TouchableOpacity
           style={StyleSheet.flatten([styles.button, styles.secondaryButton])}
-           testID="SubscriptionSuccessScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-            navigation.navigate("Home");
+          testID="SubscriptionSuccessScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={() => {
+            navigation.navigate('Home');
           }}
         >
           <Text style={styles.secondaryButtonText}>Go to Home</Text>
@@ -182,54 +212,54 @@ function makeStyles(theme: AppTheme) {
       flex: 1,
       backgroundColor: theme.colors.bg,
       padding: theme.spacing.lg,
-      justifyContent: "space-between",
+      justifyContent: 'space-between',
     },
     contentContainer: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     checkmarkContainer: {
-      marginBottom: theme.spacing["2xl"],
+      marginBottom: theme.spacing['2xl'],
     },
     checkmarkCircle: {
       width: 120,
       height: 120,
       borderRadius: 60,
-      justifyContent: "center",
-      alignItems: "center",
-      overflow: "hidden",
+      justifyContent: 'center',
+      alignItems: 'center',
+      overflow: 'hidden',
     },
     gradient: {
-      width: "100%",
-      height: "100%",
-      justifyContent: "center",
-      alignItems: "center",
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     title: {
       fontSize: 28,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onSurface,
-      textAlign: "center",
+      textAlign: 'center',
       marginBottom: theme.spacing.md,
     },
     message: {
       fontSize: 16,
       color: theme.colors.onMuted,
-      textAlign: "center",
-      marginBottom: theme.spacing["2xl"],
+      textAlign: 'center',
+      marginBottom: theme.spacing['2xl'],
       lineHeight: 24,
     },
     featuresContainer: {
-      width: "100%",
+      width: '100%',
       padding: theme.spacing.md,
       backgroundColor: theme.colors.surface,
       borderRadius: theme.radii.md,
       marginVertical: theme.spacing.lg,
     },
     featureItem: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       marginBottom: theme.spacing.md,
     },
     featureText: {
@@ -238,20 +268,20 @@ function makeStyles(theme: AppTheme) {
       marginLeft: theme.spacing.sm,
     },
     buttonContainer: {
-      width: "100%",
+      width: '100%',
     },
     button: {
       backgroundColor: theme.colors.primary,
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
       borderRadius: theme.radii.sm,
-      alignItems: "center",
+      alignItems: 'center',
       marginBottom: theme.spacing.md,
     },
     buttonText: {
       color: theme.colors.onPrimary,
       fontSize: 16,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     secondaryButton: {
       backgroundColor: theme.colors.surface,
@@ -259,7 +289,7 @@ function makeStyles(theme: AppTheme) {
     secondaryButtonText: {
       color: theme.colors.primary,
       fontSize: 16,
-      fontWeight: "600",
+      fontWeight: '600',
     },
   });
 }

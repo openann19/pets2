@@ -1,6 +1,7 @@
 # 🎯 Image Ultra PRO - Advanced Image Processing
 
-This document describes the **Ultra PRO** enhancements: glare recovery, clarity, vignette correction, auto-straighten, HDR clipping detection, and smart crop.
+This document describes the **Ultra PRO** enhancements: glare recovery, clarity,
+vignette correction, auto-straighten, HDR clipping detection, and smart crop.
 
 ---
 
@@ -17,14 +18,14 @@ const { blob, report, canvas } = await processImageUltraPro(
     denoise: { radius: 1 },
     sharpen: { radiusPx: 1.5, amount: 0.7, threshold: 2 },
     export: {
-      target: "jpeg",
+      target: 'jpeg',
       adaptive: {
         baselineCanvas,
         targetSSIM: 0.985,
         minQ: 0.65,
-        maxQ: 0.95
-      }
-    }
+        maxQ: 0.95,
+      },
+    },
   },
   // PRO options
   {
@@ -32,10 +33,10 @@ const { blob, report, canvas } = await processImageUltraPro(
     recoverHighlights: { strength: 0.55, pivot: 0.78 },
     clarity: { radiusPx: 16, amount: 0.3 },
     vignette: { amount: 0.22, softness: 0.6 },
-    noisePreset: "ios-night",
-    crop: { ratio: "4:5", bestOf3: true },
-    hdrWarnThreshold: 0.03
-  }
+    noisePreset: 'ios-night',
+    crop: { ratio: '4:5', bestOf3: true },
+    hdrWarnThreshold: 0.03,
+  },
 );
 
 // report.hdrWarning → true if >3% clipped
@@ -54,7 +55,7 @@ const { blob, report, canvas } = await processImageUltraPro(
 Recovers detail in overexposed areas (blown-out skies, foreheads, glare):
 
 ```typescript
-toneMapHighlights(canvas, strength = 0.6, pivot = 0.75);
+toneMapHighlights(canvas, (strength = 0.6), (pivot = 0.75));
 ```
 
 - `strength`: 0-1, recovery intensity
@@ -65,15 +66,16 @@ toneMapHighlights(canvas, strength = 0.6, pivot = 0.75);
 Edge-aware clarity boost without halo artifacts:
 
 ```typescript
-clarityLocalContrast(canvas, radiusPx = 12, amount = 0.35);
+clarityLocalContrast(canvas, (radiusPx = 12), (amount = 0.35));
 ```
 
 **Vignette Correction**
 
-Brightens edges to correct lens falloff, or adds artistic vignette when `amount < 0`:
+Brightens edges to correct lens falloff, or adds artistic vignette when
+`amount < 0`:
 
 ```typescript
-vignetteCorrect(canvas, amount = 0.25, softness = 0.6);
+vignetteCorrect(canvas, (amount = 0.25), (softness = 0.6));
 ```
 
 **Noise Presets**
@@ -81,7 +83,7 @@ vignetteCorrect(canvas, amount = 0.25, softness = 0.6);
 Mobile-optimized noise reduction:
 
 ```typescript
-applyNoisePreset(canvas, "ios-night");  // or "android-mid"
+applyNoisePreset(canvas, 'ios-night'); // or "android-mid"
 ```
 
 ---
@@ -140,7 +142,7 @@ const score = compositionScore(canvas, cropRect, { eyeLine: 0.28 });
 Generates trio (tight/medium/loose) and scores for optimal composition:
 
 ```typescript
-const trio = proposeTrioCrops(canvas, 4/5, subjectBbox);
+const trio = proposeTrioCrops(canvas, 4 / 5, subjectBbox);
 const best = bestOf3(canvas, trio, { eyeLine: 0.28 });
 // best.key → "tight" | "medium" | "loose"
 // best.rect → { x, y, w, h }
@@ -174,6 +176,7 @@ interface ProOpts {
 ```
 
 **Report includes:**
+
 - `hdrWarning`: boolean
 - `autoStraightened`: boolean
 - `angleDeg`: rotation applied
@@ -190,9 +193,9 @@ Shows auto-straighten angle and HDR warning:
 ```typescript
 import { CropBadges } from '@/components/editor/CropOverlayUltra';
 
-<CropBadges 
-  angleDeg={report.angleDeg} 
-  hdrWarning={report.hdrWarning} 
+<CropBadges
+  angleDeg={report.angleDeg}
+  hdrWarning={report.hdrWarning}
 />
 ```
 
@@ -203,17 +206,21 @@ import { CropBadges } from '@/components/editor/CropOverlayUltra';
 ### Example 1: Smart Instagram Portrait (4:5)
 
 ```typescript
-const result = await processImageUltraPro(photoBlob, {
-  upscale: { scale: 2 },
-  denoise: { radius: 1 },
-  sharpen: { radiusPx: 1.5, amount: 0.7 },
-  export: { target: "jpeg", adaptive: { baselineCanvas, targetSSIM: 0.985 } }
-}, {
-  autoStraighten: true,
-  recoverHighlights: { strength: 0.55 },
-  clarity: { radiusPx: 16, amount: 0.3 },
-  crop: { ratio: "4:5", bestOf3: true }
-});
+const result = await processImageUltraPro(
+  photoBlob,
+  {
+    upscale: { scale: 2 },
+    denoise: { radius: 1 },
+    sharpen: { radiusPx: 1.5, amount: 0.7 },
+    export: { target: 'jpeg', adaptive: { baselineCanvas, targetSSIM: 0.985 } },
+  },
+  {
+    autoStraighten: true,
+    recoverHighlights: { strength: 0.55 },
+    clarity: { radiusPx: 16, amount: 0.3 },
+    crop: { ratio: '4:5', bestOf3: true },
+  },
+);
 
 // Upload result.blob
 // Show CropBadges if result.report.hdrWarning
@@ -223,9 +230,9 @@ const result = await processImageUltraPro(photoBlob, {
 
 ```typescript
 const result = await processImageUltraPro(nightBlob, baseOpts, {
-  noisePreset: "ios-night",
+  noisePreset: 'ios-night',
   recoverHighlights: { strength: 0.7, pivot: 0.8 }, // aggressive recovery
-  clarity: { radiusPx: 14, amount: 0.28 }
+  clarity: { radiusPx: 14, amount: 0.28 },
 });
 ```
 
@@ -285,4 +292,3 @@ All filters run in-place on `HTMLCanvasElement` (fast, tile-safe). Perfect for:
 ✅ **Mobile noise presets**
 
 No placeholders. No mocks. **Production-ready.** 🚀
-

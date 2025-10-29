@@ -13,4 +13,4 @@
 // - ContentContainer
 
 // Export placeholder to avoid import errors
-export const LayoutsPlaceholder = "Layout components coming soon";
+export const LayoutsPlaceholder = 'Layout components coming soon';

@@ -7,10 +7,7 @@ interface PremiumGateProps {
   fallback?: React.ReactNode;
 }
 
-export const PremiumGate: React.FC<PremiumGateProps> = ({
-  children,
-  fallback
-}) => {
+export const PremiumGate: React.FC<PremiumGateProps> = ({ children, fallback }) => {
   const { isPremium } = usePremiumStatus();
 
   if (!isPremium) {

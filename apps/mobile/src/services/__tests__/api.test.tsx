@@ -65,7 +65,7 @@ describe('API Service', () => {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
       expect(result).toEqual(mockResponse.data);
     });
@@ -91,7 +91,7 @@ describe('API Service', () => {
           headers: {
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
       expect(result).toEqual(mockResponse.data);
     });
@@ -122,10 +122,9 @@ describe('API Service', () => {
         params: { page: 1, limit: 10 },
       });
 
-      expect(apiClient.get).toHaveBeenCalledWith(
-        '/test/endpoint?page=1&limit=10',
-        { timeout: 30000 }
-      );
+      expect(apiClient.get).toHaveBeenCalledWith('/test/endpoint?page=1&limit=10', {
+        timeout: 30000,
+      });
     });
 
     it('should handle FormData without Content-Type header', async () => {
@@ -154,9 +153,7 @@ describe('API Service', () => {
 
       (apiClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-      await expect(request('/test/endpoint', { method: 'GET' })).rejects.toThrow(
-        'Request failed'
-      );
+      await expect(request('/test/endpoint', { method: 'GET' })).rejects.toThrow('Request failed');
     });
 
     it('should throw error when response has no data', async () => {
@@ -168,7 +165,7 @@ describe('API Service', () => {
       (apiClient.get as jest.Mock).mockResolvedValueOnce(mockResponse);
 
       await expect(request('/test/endpoint', { method: 'GET' })).rejects.toThrow(
-        'Request to /test/endpoint failed: No data returned'
+        'Request to /test/endpoint failed: No data returned',
       );
     });
   });
@@ -176,7 +173,7 @@ describe('API Service', () => {
   describe('secureRequest function', () => {
     it('should validate endpoint', async () => {
       await expect(secureRequest('../invalid-endpoint', {})).rejects.toThrow(
-        'Invalid API endpoint'
+        'Invalid API endpoint',
       );
     });
 
@@ -186,9 +183,7 @@ describe('API Service', () => {
         .fill(0)
         .map(() => secureRequest('/test', {}));
 
-      await expect(Promise.all(requests)).rejects.toThrow(
-        'API rate limit exceeded'
-      );
+      await expect(Promise.all(requests)).rejects.toThrow('API rate limit exceeded');
     });
 
     it('should sanitize request body', async () => {
@@ -225,7 +220,7 @@ describe('API Service', () => {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json',
           }),
-        })
+        }),
       );
     });
   });
@@ -274,7 +269,7 @@ describe('API Service', () => {
       expect(apiClient.post).toHaveBeenCalledWith(
         '/matches',
         { petId: 'pet1', targetPetId: 'pet2' },
-        { timeout: 30000, headers: { 'Content-Type': 'application/json' } }
+        { timeout: 30000, headers: { 'Content-Type': 'application/json' } },
       );
     });
 
@@ -291,7 +286,7 @@ describe('API Service', () => {
       expect(apiClient.post).toHaveBeenCalledWith(
         '/matches/match1/messages',
         { content: 'Hello', replyTo: undefined },
-        { timeout: 30000, headers: { 'Content-Type': 'application/json' } }
+        { timeout: 30000, headers: { 'Content-Type': 'application/json' } },
       );
     });
 
@@ -303,10 +298,9 @@ describe('API Service', () => {
 
       await matchesAPI.deleteMessage('match1', 'message1');
 
-      expect(apiClient.delete).toHaveBeenCalledWith(
-        '/matches/match1/messages/message1',
-        { timeout: 30000 }
-      );
+      expect(apiClient.delete).toHaveBeenCalledWith('/matches/match1/messages/message1', {
+        timeout: 30000,
+      });
     });
 
     it('should unmatch', async () => {
@@ -333,32 +327,23 @@ describe('API Service', () => {
       const pets = await matchesAPI.getPets({ species: 'dog', minAge: 2, maxAge: 5 });
 
       expect(pets).toEqual(mockPets);
-      expect(apiClient.get).toHaveBeenCalledWith(
-        '/pets?species=dog&minAge=2&maxAge=5',
-        { timeout: 30000 }
-      );
+      expect(apiClient.get).toHaveBeenCalledWith('/pets?species=dog&minAge=2&maxAge=5', {
+        timeout: 30000,
+      });
     });
   });
 
   describe('Error Handling', () => {
     it('should handle network errors', async () => {
-      (apiClient.get as jest.Mock).mockRejectedValueOnce(
-        new Error('Network error')
-      );
+      (apiClient.get as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
 
-      await expect(request('/test', { method: 'GET' })).rejects.toThrow(
-        'Network error'
-      );
+      await expect(request('/test', { method: 'GET' })).rejects.toThrow('Network error');
     });
 
     it('should handle timeout errors', async () => {
-      (apiClient.get as jest.Mock).mockRejectedValueOnce(
-        new Error('Request timeout')
-      );
+      (apiClient.get as jest.Mock).mockRejectedValueOnce(new Error('Request timeout'));
 
-      await expect(request('/test', { method: 'GET' })).rejects.toThrow(
-        'Request timeout'
-      );
+      await expect(request('/test', { method: 'GET' })).rejects.toThrow('Request timeout');
     });
 
     it('should handle 401 unauthorized errors', async () => {
@@ -366,10 +351,7 @@ describe('API Service', () => {
       (error as any).response = { status: 401 };
       (apiClient.get as jest.Mock).mockRejectedValueOnce(error);
 
-      await expect(request('/test', { method: 'GET' })).rejects.toThrow(
-        'Unauthorized'
-      );
+      await expect(request('/test', { method: 'GET' })).rejects.toThrow('Unauthorized');
     });
   });
 });
-

@@ -4,13 +4,7 @@
  */
 
 import React from 'react';
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  within,
-} from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react-native';
 import { PetInfoForm } from '../PetInfoForm';
 
 // Mock the theme
@@ -24,7 +18,7 @@ jest.mock('../../../theme/unified-theme', () => ({
     },
     spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
     typography: {
-      fontSize: { xs: 12, sm: 14, base: 16, '2xl': 24 },
+      fontSize: { 'xs': 12, 'sm': 14, 'base': 16, '2xl': 24 },
       fontWeight: { medium: '500', bold: '700' },
       lineHeight: { normal: 1.5, relaxed: 1.625 },
     },
@@ -64,9 +58,7 @@ describe('PetInfoForm Component', () => {
     it('renders input placeholders correctly', () => {
       render(<PetInfoForm {...defaultProps} />);
 
-      expect(
-        screen.getByPlaceholderText("Enter your pet's name"),
-      ).toBeTruthy();
+      expect(screen.getByPlaceholderText("Enter your pet's name")).toBeTruthy();
       expect(screen.getByPlaceholderText('e.g., Golden Retriever, Mixed Breed')).toBeTruthy();
       expect(screen.getByPlaceholderText('e.g., 2 years old, 6 months')).toBeTruthy();
       expect(
@@ -87,7 +79,10 @@ describe('PetInfoForm Component', () => {
     it('calls setPetName when name input changes', () => {
       const mockSetPetName = jest.fn();
       render(
-        <PetInfoForm {...defaultProps} setPetName={mockSetPetName} />,
+        <PetInfoForm
+          {...defaultProps}
+          setPetName={mockSetPetName}
+        />,
       );
 
       const nameInput = screen.getByPlaceholderText("Enter your pet's name");
@@ -99,12 +94,13 @@ describe('PetInfoForm Component', () => {
     it('calls setPetBreed when breed input changes', () => {
       const mockSetPetBreed = jest.fn();
       render(
-        <PetInfoForm {...defaultProps} setPetBreed={mockSetPetBreed} />,
+        <PetInfoForm
+          {...defaultProps}
+          setPetBreed={mockSetPetBreed}
+        />,
       );
 
-      const breedInput = screen.getByPlaceholderText(
-        'e.g., Golden Retriever, Mixed Breed',
-      );
+      const breedInput = screen.getByPlaceholderText('e.g., Golden Retriever, Mixed Breed');
       fireEvent.changeText(breedInput, 'Golden Retriever');
 
       expect(mockSetPetBreed).toHaveBeenCalledWith('Golden Retriever');
@@ -112,7 +108,12 @@ describe('PetInfoForm Component', () => {
 
     it('calls setPetAge when age input changes', () => {
       const mockSetPetAge = jest.fn();
-      render(<PetInfoForm {...defaultProps} setPetAge={mockSetPetAge} />);
+      render(
+        <PetInfoForm
+          {...defaultProps}
+          setPetAge={mockSetPetAge}
+        />,
+      );
 
       const ageInput = screen.getByPlaceholderText('e.g., 2 years old, 6 months');
       fireEvent.changeText(ageInput, '2 years');
@@ -139,7 +140,10 @@ describe('PetInfoForm Component', () => {
 
     it('updates character count as personality text changes', () => {
       render(
-        <PetInfoForm {...defaultProps} petPersonality="Test personality" />,
+        <PetInfoForm
+          {...defaultProps}
+          petPersonality="Test personality"
+        />,
       );
 
       expect(screen.getByText('17/500 characters')).toBeTruthy();
@@ -148,7 +152,10 @@ describe('PetInfoForm Component', () => {
     it('shows correct character count for long text', () => {
       const longText = 'A'.repeat(250);
       render(
-        <PetInfoForm {...defaultProps} petPersonality={longText} />,
+        <PetInfoForm
+          {...defaultProps}
+          petPersonality={longText}
+        />,
       );
 
       expect(screen.getByText('250/500 characters')).toBeTruthy();
@@ -205,9 +212,7 @@ describe('PetInfoForm Component', () => {
 
       render(<PetInfoForm {...propsWithError} />);
 
-      expect(
-        screen.getByText('Pet personality is required'),
-      ).toBeTruthy();
+      expect(screen.getByText('Pet personality is required')).toBeTruthy();
     });
 
     it('displays multiple validation errors simultaneously', () => {
@@ -226,9 +231,7 @@ describe('PetInfoForm Component', () => {
       expect(screen.getByText('Pet name is required')).toBeTruthy();
       expect(screen.getByText('Pet breed is required')).toBeTruthy();
       expect(screen.getByText('Pet age is required')).toBeTruthy();
-      expect(
-        screen.getByText('Pet personality is required'),
-      ).toBeTruthy();
+      expect(screen.getByText('Pet personality is required')).toBeTruthy();
     });
 
     it('applies error styling to inputs with validation errors', () => {
@@ -241,7 +244,7 @@ describe('PetInfoForm Component', () => {
 
       const { UNSAFE_getByType } = render(<PetInfoForm {...propsWithError} />);
       const nameInput = screen.getByPlaceholderText("Enter your pet's name");
-      
+
       // Verify the input exists with error state
       expect(nameInput).toBeTruthy();
     });
@@ -251,8 +254,13 @@ describe('PetInfoForm Component', () => {
     it('handles maxLength for pet name (50 characters)', () => {
       const longName = 'A'.repeat(60);
       const mockSetPetName = jest.fn();
-      
-      render(<PetInfoForm {...defaultProps} setPetName={mockSetPetName} />);
+
+      render(
+        <PetInfoForm
+          {...defaultProps}
+          setPetName={mockSetPetName}
+        />,
+      );
 
       const nameInput = screen.getByPlaceholderText("Enter your pet's name");
       fireEvent.changeText(nameInput, longName);
@@ -264,12 +272,15 @@ describe('PetInfoForm Component', () => {
     it('handles maxLength for pet breed (100 characters)', () => {
       const longBreed = 'A'.repeat(110);
       const mockSetPetBreed = jest.fn();
-      
-      render(<PetInfoForm {...defaultProps} setPetBreed={mockSetPetBreed} />);
 
-      const breedInput = screen.getByPlaceholderText(
-        'e.g., Golden Retriever, Mixed Breed',
+      render(
+        <PetInfoForm
+          {...defaultProps}
+          setPetBreed={mockSetPetBreed}
+        />,
       );
+
+      const breedInput = screen.getByPlaceholderText('e.g., Golden Retriever, Mixed Breed');
       fireEvent.changeText(breedInput, longBreed);
 
       expect(mockSetPetBreed).toHaveBeenCalledWith(longBreed);
@@ -278,7 +289,7 @@ describe('PetInfoForm Component', () => {
     it('handles maxLength for pet personality (500 characters)', () => {
       const longPersonality = 'A'.repeat(600);
       const mockSetPetPersonality = jest.fn();
-      
+
       render(
         <PetInfoForm
           {...defaultProps}
@@ -296,7 +307,12 @@ describe('PetInfoForm Component', () => {
 
     it('handles empty strings gracefully', () => {
       const mockSetPetName = jest.fn();
-      render(<PetInfoForm {...defaultProps} setPetName={mockSetPetName} />);
+      render(
+        <PetInfoForm
+          {...defaultProps}
+          setPetName={mockSetPetName}
+        />,
+      );
 
       const nameInput = screen.getByPlaceholderText("Enter your pet's name");
       fireEvent.changeText(nameInput, '');
@@ -306,7 +322,12 @@ describe('PetInfoForm Component', () => {
 
     it('handles special characters in input', () => {
       const mockSetPetName = jest.fn();
-      render(<PetInfoForm {...defaultProps} setPetName={mockSetPetName} />);
+      render(
+        <PetInfoForm
+          {...defaultProps}
+          setPetName={mockSetPetName}
+        />,
+      );
 
       const nameInput = screen.getByPlaceholderText("Enter your pet's name");
       fireEvent.changeText(nameInput, "Max's 🐕 Dog");
@@ -317,7 +338,7 @@ describe('PetInfoForm Component', () => {
     it('handles multiline personality text', () => {
       const multilineText = 'Line 1\nLine 2\nLine 3';
       const mockSetPetPersonality = jest.fn();
-      
+
       render(
         <PetInfoForm
           {...defaultProps}
@@ -340,13 +361,13 @@ describe('PetInfoForm Component', () => {
 
       const nameInput = screen.getByPlaceholderText("Enter your pet's name");
       expect(nameInput).toBeTruthy();
-      
+
       const breedInput = screen.getByPlaceholderText('e.g., Golden Retriever, Mixed Breed');
       expect(breedInput).toBeTruthy();
-      
+
       const ageInput = screen.getByPlaceholderText('e.g., 2 years old, 6 months');
       expect(ageInput).toBeTruthy();
-      
+
       const personalityInput = screen.getByPlaceholderText(
         "Describe your pet's personality, habits, and quirks (e.g., energetic, loves belly rubs, afraid of thunderstorms)",
       );
@@ -365,23 +386,36 @@ describe('PetInfoForm Component', () => {
 
   describe('Value Display', () => {
     it('displays existing pet name value', () => {
-      render(<PetInfoForm {...defaultProps} petName="Max" />);
+      render(
+        <PetInfoForm
+          {...defaultProps}
+          petName="Max"
+        />,
+      );
 
       const nameInput = screen.getByPlaceholderText("Enter your pet's name");
       expect(nameInput.props.value).toBe('Max');
     });
 
     it('displays existing pet breed value', () => {
-      render(<PetInfoForm {...defaultProps} petBreed="Golden Retriever" />);
-
-      const breedInput = screen.getByPlaceholderText(
-        'e.g., Golden Retriever, Mixed Breed',
+      render(
+        <PetInfoForm
+          {...defaultProps}
+          petBreed="Golden Retriever"
+        />,
       );
+
+      const breedInput = screen.getByPlaceholderText('e.g., Golden Retriever, Mixed Breed');
       expect(breedInput.props.value).toBe('Golden Retriever');
     });
 
     it('displays existing pet age value', () => {
-      render(<PetInfoForm {...defaultProps} petAge="2 years" />);
+      render(
+        <PetInfoForm
+          {...defaultProps}
+          petAge="2 years"
+        />,
+      );
 
       const ageInput = screen.getByPlaceholderText('e.g., 2 years old, 6 months');
       expect(ageInput.props.value).toBe('2 years');
@@ -390,7 +424,10 @@ describe('PetInfoForm Component', () => {
     it('displays existing pet personality value', () => {
       const personality = 'Playful and energetic';
       render(
-        <PetInfoForm {...defaultProps} petPersonality={personality} />,
+        <PetInfoForm
+          {...defaultProps}
+          petPersonality={personality}
+        />,
       );
 
       const personalityInput = screen.getByPlaceholderText(
@@ -431,9 +468,10 @@ describe('PetInfoForm Component', () => {
       expect(screen.getByDisplayValue('Max')).toBeTruthy();
       expect(screen.getByDisplayValue('Golden Retriever')).toBeTruthy();
       expect(screen.getByDisplayValue('2 years old')).toBeTruthy();
-      expect(screen.getByDisplayValue('Very playful and energetic, loves to play fetch')).toBeTruthy();
+      expect(
+        screen.getByDisplayValue('Very playful and energetic, loves to play fetch'),
+      ).toBeTruthy();
       expect(screen.getByText('50/500 characters')).toBeTruthy();
     });
   });
 });
-

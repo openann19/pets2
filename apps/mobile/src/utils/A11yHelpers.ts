@@ -3,8 +3,8 @@
  * VoiceOver hints, high contrast support, Reduce Motion
  */
 
-import { AccessibilityInfo, useColorScheme } from "react-native";
-import { useState, useEffect } from "react";
+import { AccessibilityInfo, useColorScheme } from 'react-native';
+import { useState, useEffect } from 'react';
 
 type ColorScheme = 'light' | 'dark' | null;
 
@@ -26,7 +26,7 @@ export async function getAccessibilityFeatures(): Promise<AccessibilityFeatures>
   const [reduceMotion, screenReader, colorScheme] = await Promise.all([
     AccessibilityInfo.isReduceMotionEnabled(),
     AccessibilityInfo.isScreenReaderEnabled(),
-    Promise.resolve("light" as ColorScheme), // Would need native module for actual scheme
+    Promise.resolve('light' as ColorScheme), // Would need native module for actual scheme
   ]);
 
   return {
@@ -66,14 +66,16 @@ export async function getAdaptiveDuration(normalDuration: number): Promise<numbe
  * @param defaultIntensity - Default haptic intensity
  * @returns Appropriate intensity (may be reduced for accessibility)
  */
-export async function getAdaptiveHapticIntensity(defaultIntensity: "light" | "medium" | "heavy"): Promise<"light" | "medium" | "heavy"> {
+export async function getAdaptiveHapticIntensity(
+  defaultIntensity: 'light' | 'medium' | 'heavy',
+): Promise<'light' | 'medium' | 'heavy'> {
   const reduceMotion = await isReduceMotionEnabled();
-  
+
   // Reduce haptics for users who want less stimulation
   if (reduceMotion) {
-    return "light";
+    return 'light';
   }
-  
+
   return defaultIntensity;
 }
 
@@ -82,25 +84,25 @@ export async function getAdaptiveHapticIntensity(defaultIntensity: "light" | "me
  */
 export function getVoiceOverLabels() {
   return {
-    brightness: "Brightness slider. Adjust image lightness.",
-    contrast: "Contrast slider. Adjust image difference.",
-    saturation: "Saturation slider. Adjust color intensity.",
-    warmth: "Warmth slider. Adjust color temperature.",
-    blur: "Blur slider. Add background blur effect.",
-    sharpen: "Clarity slider. Enhance image sharpness.",
-    autoCrop: "Auto crop button. Automatically crop image using face detection.",
-    ratioOneOne: "One to one ratio button. Square image.",
-    ratioFourFive: "Four to five ratio button. Portrait image.",
-    ratioNineSixteen: "Nine to sixteen ratio button. Vertical story.",
-    tightCrop: "Tight crop option. Close framing.",
-    mediumCrop: "Medium crop option. Balanced framing.",
-    looseCrop: "Loose crop option. Environmental framing.",
-    save: "Save button. Save edited photo.",
-    cancel: "Cancel button. Discard changes and exit.",
-    undo: "Undo button. Revert last change.",
-    redo: "Redo button. Restore reverted change.",
-    compareOriginal: "Compare button. Hold to view original photo.",
-    gridGuides: "Grid button. Toggle composition guides.",
+    brightness: 'Brightness slider. Adjust image lightness.',
+    contrast: 'Contrast slider. Adjust image difference.',
+    saturation: 'Saturation slider. Adjust color intensity.',
+    warmth: 'Warmth slider. Adjust color temperature.',
+    blur: 'Blur slider. Add background blur effect.',
+    sharpen: 'Clarity slider. Enhance image sharpness.',
+    autoCrop: 'Auto crop button. Automatically crop image using face detection.',
+    ratioOneOne: 'One to one ratio button. Square image.',
+    ratioFourFive: 'Four to five ratio button. Portrait image.',
+    ratioNineSixteen: 'Nine to sixteen ratio button. Vertical story.',
+    tightCrop: 'Tight crop option. Close framing.',
+    mediumCrop: 'Medium crop option. Balanced framing.',
+    looseCrop: 'Loose crop option. Environmental framing.',
+    save: 'Save button. Save edited photo.',
+    cancel: 'Cancel button. Discard changes and exit.',
+    undo: 'Undo button. Revert last change.',
+    redo: 'Redo button. Restore reverted change.',
+    compareOriginal: 'Compare button. Hold to view original photo.',
+    gridGuides: 'Grid button. Toggle composition guides.',
   };
 }
 
@@ -109,15 +111,15 @@ export function getVoiceOverLabels() {
  */
 export function getHighContrastColors() {
   return {
-    background: "#000000",
-    surface: "#1a1a1a",
-    text: "#ffffff",
-    textSecondary: "#cccccc",
-    primary: "#ffffff",
-    border: "#ffffff",
-    error: "#ff0000",
-    success: "#00ff00",
-    warning: "#ffff00",
+    background: '#000000',
+    surface: '#1a1a1a',
+    text: '#ffffff',
+    textSecondary: '#cccccc',
+    primary: '#ffffff',
+    border: '#ffffff',
+    error: '#ff0000',
+    success: '#00ff00',
+    warning: '#ffff00',
   };
 }
 
@@ -144,7 +146,7 @@ export function useReducedMotion(): boolean {
 
   useEffect(() => {
     let mounted = true;
-    
+
     // Check initial state
     AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
       if (mounted) {
@@ -176,7 +178,7 @@ export function useScreenReader(): boolean {
 
   useEffect(() => {
     let mounted = true;
-    
+
     AccessibilityInfo.isScreenReaderEnabled().then((enabled) => {
       if (mounted) {
         setIsEnabled(enabled);
@@ -231,4 +233,3 @@ export function useA11yProps(props: A11yProps) {
     testID,
   };
 }
-

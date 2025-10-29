@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAIBioScreen } from "../hooks/screens/ai";
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 
 export default function AIBioScreen() {
   const theme = useTheme();
@@ -45,7 +45,7 @@ export default function AIBioScreen() {
 
   const getSentimentColor = (score: number) => {
     if (score >= 0.7) return theme.colors.success;
-    if (score >= 0.4) return theme.colors.status.warning;
+    if (score >= 0.4) return theme.colors.warning;
     return theme.colors.danger;
   };
 
@@ -322,7 +322,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     height: 200,
     borderRadius: 15,
     overflow: "hidden" as const,
-    backgroundColor: theme.colors.bgElevated,
+    backgroundColor: theme.colors.surface,
     shadowColor: theme.colors.onSurface
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -419,7 +419,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     fontWeight: "bold" as const,
   },
   bioContainer: {
-    backgroundColor: theme.colors.bgElevated,
+    backgroundColor: theme.colors.surface,
     borderRadius: 15,
     padding: 20,
     shadowColor: theme.colors.onSurface
@@ -439,7 +439,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     justifyContent: "space-around",
     marginBottom: 20,
     paddingVertical: 15,
-    backgroundColor: theme.colors.bgElevated,
+    backgroundColor: theme.colors.surface,
     borderRadius: 10,
   },
   statItem: {
@@ -489,7 +489,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     alignItems: "center" as const,
     justifyContent: "center" as const,
     paddingVertical: 12,
-    backgroundColor: theme.colors.bgElevated,
+    backgroundColor: theme.colors.surface,
     borderRadius: 10,
     gap: 8,
   },
@@ -516,7 +516,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   historyItem: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    backgroundColor: theme.colors.bgElevated,
+    backgroundColor: theme.colors.surface,
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,

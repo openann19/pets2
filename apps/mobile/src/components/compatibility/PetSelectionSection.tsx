@@ -3,8 +3,8 @@ import React, { useMemo } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import type { Pet } from "../../hooks/screens/useAICompatibility";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
+import type { AppTheme } from "@mobile/src/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({

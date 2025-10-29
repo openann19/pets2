@@ -1,6 +1,6 @@
 /**
  * Comprehensive tests for Analytics Service
- * 
+ *
  * Coverage:
  * - Event tracking
  * - Screen view tracking
@@ -41,10 +41,10 @@ describe('Analytics Service', () => {
 
       await track('test_event', { property: 'value' });
 
-      expect(mockRequest).toHaveBeenCalledWith(
-        '/admin/analytics/track',
-        { method: 'POST', body: { event: 'test_event', props: { property: 'value' } } }
-      );
+      expect(mockRequest).toHaveBeenCalledWith('/admin/analytics/track', {
+        method: 'POST',
+        body: { event: 'test_event', props: { property: 'value' } },
+      });
     });
 
     it('should track event without properties', async () => {
@@ -52,10 +52,10 @@ describe('Analytics Service', () => {
 
       await track('simple_event');
 
-      expect(mockRequest).toHaveBeenCalledWith(
-        '/admin/analytics/track',
-        { method: 'POST', body: { event: 'simple_event', props: undefined } }
-      );
+      expect(mockRequest).toHaveBeenCalledWith('/admin/analytics/track', {
+        method: 'POST',
+        body: { event: 'simple_event', props: undefined },
+      });
     });
 
     it('should track screen views', async () => {
@@ -63,10 +63,10 @@ describe('Analytics Service', () => {
 
       trackScreenView('HomeScreen', { tab: 'main' });
 
-      expect(mockRequest).toHaveBeenCalledWith(
-        '/admin/analytics/track',
-        { method: 'POST', body: { event: 'screen_view', props: { screen: 'HomeScreen', tab: 'main' } } }
-      );
+      expect(mockRequest).toHaveBeenCalledWith('/admin/analytics/track', {
+        method: 'POST',
+        body: { event: 'screen_view', props: { screen: 'HomeScreen', tab: 'main' } },
+      });
     });
 
     it('should track user actions', async () => {
@@ -74,10 +74,10 @@ describe('Analytics Service', () => {
 
       trackUserAction('button_click', { buttonId: 'submit' });
 
-      expect(mockRequest).toHaveBeenCalledWith(
-        '/admin/analytics/track',
-        { method: 'POST', body: { event: 'user_action', props: { action: 'button_click', buttonId: 'submit' } } }
-      );
+      expect(mockRequest).toHaveBeenCalledWith('/admin/analytics/track', {
+        method: 'POST',
+        body: { event: 'user_action', props: { action: 'button_click', buttonId: 'submit' } },
+      });
     });
   });
 
@@ -127,7 +127,9 @@ describe('Analytics Service', () => {
 
     it('should have settings event constants', () => {
       expect(AnalyticsEvents.SETTINGS_UPDATED).toBe('settings.updated');
-      expect(AnalyticsEvents.NOTIFICATION_PREFERENCE_CHANGED).toBe('notification.preference_changed');
+      expect(AnalyticsEvents.NOTIFICATION_PREFERENCE_CHANGED).toBe(
+        'notification.preference_changed',
+      );
     });
   });
 
@@ -219,10 +221,7 @@ describe('Analytics Service', () => {
 
       await track('integration_event', { test: true });
 
-      expect(mockRequest).toHaveBeenCalledWith(
-        '/admin/analytics/track',
-        expect.any(Object)
-      );
+      expect(mockRequest).toHaveBeenCalledWith('/admin/analytics/track', expect.any(Object));
     });
 
     it('should allow chaining multiple track calls', async () => {
@@ -246,7 +245,7 @@ describe('Analytics Service', () => {
         AnalyticsEvents.SWIPE_RIGHT,
       ];
 
-      expect(events.every(e => typeof e === 'string')).toBe(true);
+      expect(events.every((e) => typeof e === 'string')).toBe(true);
     });
 
     it('should maintain type safety for properties', async () => {

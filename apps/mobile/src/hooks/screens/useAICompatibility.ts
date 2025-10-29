@@ -1,10 +1,10 @@
-import { useAuthStore } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { useAuthStore } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 
-import { aiAPI, matchesAPI } from "../../services/api";
-import { logger } from "../../services/logger";
+import { aiAPI, matchesAPI } from '../../services/api';
+import { logger } from '../../services/logger';
 
 export interface Pet {
   id: string;
@@ -110,7 +110,7 @@ export const useAICompatibility = ({ route }: UseAICompatibilityProps = {}) => {
       setLoading(false);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error("Failed to load pets:", { error: err });
+      logger.error('Failed to load pets:', { error: err });
       setLoading(false);
     }
   };
@@ -174,13 +174,13 @@ export const useAICompatibility = ({ route }: UseAICompatibilityProps = {}) => {
 
         setAnalysisResult(analysis);
         setAnalysisHistory((prev) => [analysis, ...prev.slice(0, 4)]);
-        logger.info("Compatibility analysis completed", {
+        logger.info('Compatibility analysis completed', {
           score: analysis.score.overall,
         });
       }
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error("Compatibility analysis failed:", { error: err });
+      logger.error('Compatibility analysis failed:', { error: err });
 
       const fallbackAnalysis: CompatibilityAnalysis = {
         petA,
@@ -208,17 +208,9 @@ export const useAICompatibility = ({ route }: UseAICompatibilityProps = {}) => {
       lifestyle: 82,
     },
     factors: {
-      strengths: [
-        "Both are playful",
-        "Similar energy levels",
-        "Compatible sizes",
-      ],
-      concerns: ["Age difference", "Different play styles"],
-      recommendations: [
-        "Gradual introduction",
-        "Supervised playtime",
-        "Monitor interactions",
-      ],
+      strengths: ['Both are playful', 'Similar energy levels', 'Compatible sizes'],
+      concerns: ['Age difference', 'Different play styles'],
+      recommendations: ['Gradual introduction', 'Supervised playtime', 'Monitor interactions'],
     },
     interaction: {
       playdate: 88,
@@ -230,11 +222,11 @@ export const useAICompatibility = ({ route }: UseAICompatibilityProps = {}) => {
   const createFallbackAnalysis = (petA: Pet, petB: Pet) => ({
     summary: `${petA.name} and ${petB.name} show strong compatibility with an overall score of 85%.`,
     detailed:
-      "Both pets share similar temperaments and energy levels, making them well-suited for playdates and potential adoption.",
+      'Both pets share similar temperaments and energy levels, making them well-suited for playdates and potential adoption.',
     tips: [
-      "Introduce them gradually in a neutral environment",
-      "Monitor their interactions closely during initial meetings",
-      "Consider their individual needs and preferences",
+      'Introduce them gradually in a neutral environment',
+      'Monitor their interactions closely during initial meetings',
+      'Consider their individual needs and preferences',
     ],
   });
 
@@ -254,15 +246,12 @@ export const useAICompatibility = ({ route }: UseAICompatibilityProps = {}) => {
 
   const handleAnalyze = () => {
     if (!selectedPetA || !selectedPetB) {
-      Alert.alert(
-        "Selection Required",
-        "Please select both pets to analyze compatibility",
-      );
+      Alert.alert('Selection Required', 'Please select both pets to analyze compatibility');
       return;
     }
 
     if (selectedPetA.id === selectedPetB.id) {
-      Alert.alert("Invalid Selection", "Please select two different pets");
+      Alert.alert('Invalid Selection', 'Please select two different pets');
       return;
     }
 
@@ -283,4 +272,3 @@ export const useAICompatibility = ({ route }: UseAICompatibilityProps = {}) => {
     analyzeCompatibility,
   };
 };
-

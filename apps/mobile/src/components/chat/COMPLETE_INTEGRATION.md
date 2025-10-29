@@ -2,7 +2,9 @@
 
 ## Overview
 
-All components are fully integrated and working together in a seamless message experience with advanced gestures, reply system, read receipts, and visual feedback.
+All components are fully integrated and working together in a seamless message
+experience with advanced gestures, reply system, read receipts, and visual
+feedback.
 
 ## Integration Architecture
 
@@ -25,7 +27,8 @@ MobileChat (Main Container)
 
 ### 1. Gesture System
 
-#### **Swipe-to-Reply** 
+#### **Swipe-to-Reply**
+
 - Swipe right on any message to reply
 - Visual feedback via `ReplySwipeHint`
 - Works on both own and other messages
@@ -33,7 +36,11 @@ MobileChat (Main Container)
 
 ```typescript
 // Gesture detection in MessageBubbleEnhanced
-const { gesture: swipeGesture, bubbleStyle, progressX } = useSwipeToReply({
+const {
+  gesture: swipeGesture,
+  bubbleStyle,
+  progressX,
+} = useSwipeToReply({
   enabled: true,
   onReply: onReply,
   payload: message,
@@ -41,11 +48,13 @@ const { gesture: swipeGesture, bubbleStyle, progressX } = useSwipeToReply({
 ```
 
 #### **Tap-to-Toggle Timestamp**
+
 - Tap any message bubble to show/hide timestamp badge
 - Smooth fade and scale animations
 - UI-thread only (Reanimated)
 
 #### **Long-Press Actions**
+
 - **Long-press** on any message → Context menu
   - Reply
   - Copy
@@ -57,21 +66,28 @@ const { gesture: swipeGesture, bubbleStyle, progressX } = useSwipeToReply({
 ### 2. Reply System
 
 #### **Setting Reply Target**
+
 ```typescript
 // In MobileChat - triggered by swipe or context menu
-const handleReplyFromBubble = useCallback((m: Message) => {
-  const authorName = m.sender?.firstName 
-    ? `${m.sender.firstName}${m.sender.lastName ? ` ${m.sender.lastName}` : ''}`
-    : (m.sender?._id === currentUserId ? "You" : "User");
-  setReplyTarget({
-    id: m._id,
-    author: authorName,
-    text: m.messageType === "text" ? m.content : (m.messageType ?? "Media"),
-  });
-}, [currentUserId]);
+const handleReplyFromBubble = useCallback(
+  (m: Message) => {
+    const authorName = m.sender?.firstName
+      ? `${m.sender.firstName}${m.sender.lastName ? ` ${m.sender.lastName}` : ''}`
+      : m.sender?._id === currentUserId
+        ? 'You'
+        : 'User';
+    setReplyTarget({
+      id: m._id,
+      author: authorName,
+      text: m.messageType === 'text' ? m.content : (m.messageType ?? 'Media'),
+    });
+  },
+  [currentUserId],
+);
 ```
 
 #### **Reply Preview Bar**
+
 - Slides up from bottom when reply target set
 - Shows author and text snippet
 - Swipe left/right to dismiss
@@ -79,6 +95,7 @@ const handleReplyFromBubble = useCallback((m: Message) => {
 - Pink accent bar on left
 
 #### **Reply Quote in Message**
+
 ```typescript
 // In MessageBubbleEnhanced - shows inline reply quote
 {message.replyTo ? (
@@ -95,6 +112,7 @@ const handleReplyFromBubble = useCallback((m: Message) => {
 ```
 
 #### **Jump-to-Thread Navigation**
+
 - Click on reply quote or preview bar
 - Automatically scrolls to original message
 - Highlight pulse animation (2 pulses)
@@ -103,15 +121,17 @@ const handleReplyFromBubble = useCallback((m: Message) => {
 ### 3. Read Receipts
 
 #### **Read Receipt Display**
+
 ```typescript
 // Core ReadReceipt type
 interface ReadReceipt {
-  user: string;      // User ID
-  readAt: string;    // ISO timestamp
+  user: string; // User ID
+  readAt: string; // ISO timestamp
 }
 ```
 
 #### **ReadBy Popover**
+
 - Long-press on own delivered/read messages
 - Shows list of readers with:
   - Avatar (if available)
@@ -123,22 +143,29 @@ interface ReadReceipt {
 ### 4. Message Status System
 
 #### **Auto-Detection**
+
 ```typescript
-function getMessageStatus(message: Message, currentUserId: string): MessageStatus {
+function getMessageStatus(
+  message: Message,
+  currentUserId: string,
+): MessageStatus {
   const readByCount = message.readBy.length;
-  
-  if (readByCount === 0) return "sent";
-  
-  const isRead = message.readBy.some(receipt => receipt.user === currentUserId);
-  
-  if (isRead) return "read";
-  if (readByCount > 0) return "delivered";
-  
-  return "sent";
+
+  if (readByCount === 0) return 'sent';
+
+  const isRead = message.readBy.some(
+    (receipt) => receipt.user === currentUserId,
+  );
+
+  if (isRead) return 'read';
+  if (readByCount > 0) return 'delivered';
+
+  return 'sent';
 }
 ```
 
 #### **Status Indicators**
+
 - **Sending** - Pulsing clock icon (animated)
 - **Sent** - Single checkmark (gray)
 - **Delivered** - Double checkmark (gray)
@@ -148,6 +175,7 @@ function getMessageStatus(message: Message, currentUserId: string): MessageStatu
 ### 5. Visual Feedback
 
 #### **Highlight Pulse**
+
 - Triggers when navigating to a replied message
 - 2-pulse animation with pink glow
 - Scale transform for emphasis
@@ -160,11 +188,13 @@ const { highlightStyle } = useHighlightPulse(
 ```
 
 #### **Shake Animation**
+
 - Horizontal shake for failed messages
 - Used in `useBubbleRetryShake`
 - Triggers on retry fail
 
 #### **Sparkle Burst**
+
 - Optimistic send feedback
 - Triggered from SendSparkle component
 
@@ -224,19 +254,20 @@ interface MessageBubbleEnhancedProps {
 
 ```typescript
 interface MobileChatProps {
-  messages: Message[];                           // Message list
-  onSendMessage: (                               // Send handler
-    content: string, 
-    type?: Message["messageType"], 
-    replyTo?: { _id: string; author?: string; text?: string }
+  messages: Message[]; // Message list
+  onSendMessage: (
+    // Send handler
+    content: string,
+    type?: Message['messageType'],
+    replyTo?: { _id: string; author?: string; text?: string },
   ) => void;
-  currentUserId: string;                         // Current user
-  otherUserName: string;                         // Other user
-  onReply?: (message: Message) => void;          // Reply handler
-  onCopy?: (message: Message) => void;           // Copy handler
-  onReact?: (message: Message) => void;          // React handler
-  onDelete?: (message: Message) => void;         // Delete handler
-  onShowReadBy?: (message: Message) => void;     // Read-by handler
+  currentUserId: string; // Current user
+  otherUserName: string; // Other user
+  onReply?: (message: Message) => void; // Reply handler
+  onCopy?: (message: Message) => void; // Copy handler
+  onReact?: (message: Message) => void; // React handler
+  onDelete?: (message: Message) => void; // Delete handler
+  onShowReadBy?: (message: Message) => void; // Read-by handler
 }
 ```
 
@@ -250,7 +281,7 @@ function ChatScreen() {
   const [users, setUsers] = useState<Map<string, User>>(new Map());
 
   const handleSendMessage = useCallback((
-    content: string, 
+    content: string,
     type?: Message["messageType"],
     replyTo?: { _id: string; author?: string; text?: string }
   ) => {
@@ -311,15 +342,15 @@ packages/core/src/types/
 
 ## Animation Details
 
-| Feature | Animation | Duration | Easing |
-|---------|-----------|----------|--------|
-| ReplySwipeHint fade | Opacity | 120ms | spring |
-| Timestamp toggle | Fade + scale | 120-320ms | spring |
-| ReadBy popover | Morph + scale | 140-320ms | spring |
-| Context menu | Morph + fade | 140-320ms | spring |
-| Highlight pulse | 2x glow | 1.2s | timing |
-| Bubble shake | Horizontal | 260ms | sequence |
-| Sparkle burst | Particle | 600ms | spring |
+| Feature             | Animation     | Duration  | Easing   |
+| ------------------- | ------------- | --------- | -------- |
+| ReplySwipeHint fade | Opacity       | 120ms     | spring   |
+| Timestamp toggle    | Fade + scale  | 120-320ms | spring   |
+| ReadBy popover      | Morph + scale | 140-320ms | spring   |
+| Context menu        | Morph + fade  | 140-320ms | spring   |
+| Highlight pulse     | 2x glow       | 1.2s      | timing   |
+| Bubble shake        | Horizontal    | 260ms     | sequence |
+| Sparkle burst       | Particle      | 600ms     | spring   |
 
 ## Performance Optimizations
 
@@ -358,4 +389,3 @@ packages/core/src/types/
 ✅ Zero linter errors
 
 **Everything is fully integrated and production-ready!**
-

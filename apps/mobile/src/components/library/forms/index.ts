@@ -14,4 +14,4 @@
 // - FormSection
 
 // Export placeholder to avoid import errors
-export const FormsPlaceholder = "Forms components coming soon";
+export const FormsPlaceholder = 'Forms components coming soon';

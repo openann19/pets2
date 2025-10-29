@@ -1,7 +1,7 @@
 /**
  * @module components/ui/v2
  * Enhanced UI primitives for PawfectMatch Mobile
- * 
+ *
  * All components follow the design system principles:
  * - Token-first: No raw colors/spacings
  * - Accessible: WCAG AA compliant

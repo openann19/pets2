@@ -5,16 +5,16 @@
 
 /**
  * Estimate horizon angle using Sobel edge detection and weighted histogram
- * 
+ *
  * @param canvas - Source canvas
  * @returns Rotation angle in degrees (-90 to +90)
  */
 export function estimateHorizonAngle(canvas: HTMLCanvasElement): number {
   const { width: w, height: h } = canvas;
-  const c = document.createElement("canvas");
+  const c = document.createElement('canvas');
   c.width = w;
   c.height = h;
-  const ctx = c.getContext("2d")!;
+  const ctx = c.getContext('2d')!;
   ctx.drawImage(canvas, 0, 0);
   const img = ctx.getImageData(0, 0, w, h);
   const d = img.data;
@@ -86,33 +86,29 @@ export function estimateHorizonAngle(canvas: HTMLCanvasElement): number {
 
 /**
  * Rotate canvas by specified angle and crop to fit
- * 
+ *
  * @param src - Source canvas
  * @param degrees - Rotation angle
  * @returns New rotated canvas with proper dimensions
  */
-export function rotateCanvas(
-  src: HTMLCanvasElement,
-  degrees: number
-): HTMLCanvasElement {
+export function rotateCanvas(src: HTMLCanvasElement, degrees: number): HTMLCanvasElement {
   const rad = (degrees * Math.PI) / 180;
   const s = Math.sin(rad);
   const c = Math.cos(rad);
   const w = src.width;
   const h = src.height;
-  
+
   // Fit bounding box
   const nw = Math.abs(w * c) + Math.abs(h * s);
   const nh = Math.abs(w * s) + Math.abs(h * c);
-  
-  const out = document.createElement("canvas");
+
+  const out = document.createElement('canvas');
   out.width = Math.round(nw);
   out.height = Math.round(nh);
-  const ctx = out.getContext("2d")!;
+  const ctx = out.getContext('2d')!;
   ctx.translate(nw / 2, nh / 2);
   ctx.rotate(rad);
   ctx.drawImage(src, -w / 2, -h / 2);
-  
+
   return out;
 }
-

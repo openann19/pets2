@@ -2,11 +2,11 @@
  * useAICompatibilityScreen Hook
  * Manages AI Compatibility Analysis screen state and interactions
  */
-import { useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
-import { Alert } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import { useAICompatibility } from "../domains/ai/useAICompatibility";
+import { useNavigation } from '@react-navigation/native';
+import { useEffect } from 'react';
+import { Alert } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import { useAICompatibility } from '../domains/ai/useAICompatibility';
 
 interface UseAICompatibilityScreenReturn {
   // State from domain hook
@@ -75,23 +75,20 @@ export const useAICompatibilityScreen = (route?: {
         setTimeout(() => void handleAnalyzeCompatibility(), 500);
       }
     } catch (err) {
-      logger.error("Error loading specific pets", { error: err });
+      logger.error('Error loading specific pets', { error: err });
     }
   };
 
   const handleAnalyzeCompatibility = async () => {
     if (!selectedPet1 || !selectedPet2) {
-      Alert.alert(
-        "Selection Required",
-        "Please select two pets to analyze compatibility.",
-      );
+      Alert.alert('Selection Required', 'Please select two pets to analyze compatibility.');
       return;
     }
 
     try {
       await analyzeCompat(selectedPet1._id, selectedPet2._id);
     } catch (error) {
-      logger.error("Compatibility analysis failed", { error });
+      logger.error('Compatibility analysis failed', { error });
       // Error handling is done in the domain hook
     }
   };

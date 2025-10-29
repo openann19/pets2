@@ -3,18 +3,10 @@
  * Staggered animation delays
  */
 
-import { PREMIUM_ANIMATIONS } from "./constants";
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withDelay,
-  withTiming,
-} from "react-native-reanimated";
+import { PREMIUM_ANIMATIONS } from './constants';
+import { useSharedValue, useAnimatedStyle, withDelay, withTiming } from 'react-native-reanimated';
 
-export const useStaggeredAnimation = (
-  count: number,
-  delay = PREMIUM_ANIMATIONS.stagger.normal,
-) => {
+export const useStaggeredAnimation = (count: number, delay = PREMIUM_ANIMATIONS.stagger.normal) => {
   const getStaggeredDelay = (index: number) => index * delay;
 
   const opacity = useSharedValue(0);

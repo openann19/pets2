@@ -38,7 +38,11 @@ export const showcaseRegistry: ShowcaseItem[] = [
     demo: (
       <View>
         <Stack gap="md">
-          <Stack direction="row" gap="sm" wrap>
+          <Stack
+            direction="row"
+            gap="sm"
+            wrap
+          >
             <Button
               testID="btn-primary"
               title="Primary"
@@ -70,7 +74,11 @@ export const showcaseRegistry: ShowcaseItem[] = [
               onPress={() => {}}
             />
           </Stack>
-          <Stack direction="row" gap="sm" wrap>
+          <Stack
+            direction="row"
+            gap="sm"
+            wrap
+          >
             <Button
               testID="btn-sm"
               title="Small"
@@ -145,23 +153,26 @@ export const showcaseRegistry: ShowcaseItem[] = [
     description: 'Content containers and surfaces',
     demo: (
       <Stack gap="md">
-        <Card testID="card-default" variant="surface">
+        <Card
+          testID="card-default"
+          variant="surface"
+        >
           <Text variant="h6">Default Card</Text>
-          <Text variant="bodyMuted">
-            This is a basic card with default styling
-          </Text>
+          <Text variant="bodyMuted">This is a basic card with default styling</Text>
         </Card>
-        <Card testID="card-elevated" variant="elevated">
+        <Card
+          testID="card-elevated"
+          variant="elevated"
+        >
           <Text variant="h6">Elevated Card</Text>
-          <Text variant="bodyMuted">
-            Card with elevated shadow for emphasis
-          </Text>
+          <Text variant="bodyMuted">Card with elevated shadow for emphasis</Text>
         </Card>
-        <Card testID="card-outlined" variant="outlined">
+        <Card
+          testID="card-outlined"
+          variant="outlined"
+        >
           <Text variant="h6">Outlined Card</Text>
-          <Text variant="bodyMuted">
-            Card with border outline
-          </Text>
+          <Text variant="bodyMuted">Card with border outline</Text>
         </Card>
       </Stack>
     ),
@@ -173,13 +184,35 @@ export const showcaseRegistry: ShowcaseItem[] = [
     title: 'Badge',
     description: 'Labels and status indicators',
     demo: (
-      <Stack direction="row" gap="sm" wrap>
-        <Badge label="Primary" variant="primary" />
-        <Badge label="Secondary" variant="secondary" />
-        <Badge label="Success" variant="success" />
-        <Badge label="Warning" variant="warning" />
-        <Badge label="Danger" variant="danger" />
-        <Badge label="Muted" variant="muted" />
+      <Stack
+        direction="row"
+        gap="sm"
+        wrap
+      >
+        <Badge
+          label="Primary"
+          variant="primary"
+        />
+        <Badge
+          label="Secondary"
+          variant="secondary"
+        />
+        <Badge
+          label="Success"
+          variant="success"
+        />
+        <Badge
+          label="Warning"
+          variant="warning"
+        />
+        <Badge
+          label="Danger"
+          variant="danger"
+        />
+        <Badge
+          label="Muted"
+          variant="muted"
+        />
       </Stack>
     ),
     tags: ['data', 'status'],
@@ -191,22 +224,40 @@ export const showcaseRegistry: ShowcaseItem[] = [
     description: 'Typography system',
     demo: (
       <Stack gap="xs">
-        <Text variant="h1" testID="text-h1">
+        <Text
+          variant="h1"
+          testID="text-h1"
+        >
           Heading 1
         </Text>
-        <Text variant="h2" testID="text-h2">
+        <Text
+          variant="h2"
+          testID="text-h2"
+        >
           Heading 2
         </Text>
-        <Text variant="h3" testID="text-h3">
+        <Text
+          variant="h3"
+          testID="text-h3"
+        >
           Heading 3
         </Text>
-        <Text variant="body" testID="text-body">
+        <Text
+          variant="body"
+          testID="text-body"
+        >
           Body text for regular content
         </Text>
-        <Text variant="bodyMuted" testID="text-muted">
+        <Text
+          variant="bodyMuted"
+          testID="text-muted"
+        >
           Muted text for secondary content
         </Text>
-        <Text variant="caption" testID="text-caption">
+        <Text
+          variant="caption"
+          testID="text-caption"
+        >
           Caption for small details
         </Text>
       </Stack>
@@ -220,14 +271,26 @@ export const showcaseRegistry: ShowcaseItem[] = [
     description: 'Layout component for spacing',
     demo: (
       <Stack gap="md">
-        <Stack direction="row" gap="md">
-          <Card variant="surface" padding="md">
+        <Stack
+          direction="row"
+          gap="md"
+        >
+          <Card
+            variant="surface"
+            padding="md"
+          >
             <Text>Item 1</Text>
           </Card>
-          <Card variant="surface" padding="md">
+          <Card
+            variant="surface"
+            padding="md"
+          >
             <Text>Item 2</Text>
           </Card>
-          <Card variant="surface" padding="md">
+          <Card
+            variant="surface"
+            padding="md"
+          >
             <Text>Item 3</Text>
           </Card>
         </Stack>
@@ -247,11 +310,19 @@ export const showcaseRegistry: ShowcaseItem[] = [
     demo: (
       <Stack gap="md">
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Switch testID="switch-on" value={true} onValueChange={() => {}} />
+          <Switch
+            testID="switch-on"
+            value={true}
+            onValueChange={() => {}}
+          />
           <Text variant="body">Notifications</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Switch testID="switch-off" value={false} onValueChange={() => {}} />
+          <Switch
+            testID="switch-off"
+            value={false}
+            onValueChange={() => {}}
+          />
           <Text variant="body">Dark Mode</Text>
         </View>
       </Stack>
@@ -294,12 +365,31 @@ export const showcaseRegistry: ShowcaseItem[] = [
     title: 'Avatar',
     description: 'User profile pictures',
     demo: (
-      <Stack direction="row" gap="md" align="center">
-        <Avatar initials="AB" size="xs" />
-        <Avatar initials="CD" size="sm" />
-        <Avatar initials="EF" size="md" />
-        <Avatar initials="GH" size="lg" />
-        <Avatar initials="IJ" size="xl" />
+      <Stack
+        direction="row"
+        gap="md"
+        align="center"
+      >
+        <Avatar
+          initials="AB"
+          size="xs"
+        />
+        <Avatar
+          initials="CD"
+          size="sm"
+        />
+        <Avatar
+          initials="EF"
+          size="md"
+        />
+        <Avatar
+          initials="GH"
+          size="lg"
+        />
+        <Avatar
+          initials="IJ"
+          size="xl"
+        />
       </Stack>
     ),
     tags: ['core', 'content'],
@@ -335,12 +425,32 @@ export const showcaseRegistry: ShowcaseItem[] = [
     title: 'Tag',
     description: 'Chip-style tags',
     demo: (
-      <Stack direction="row" gap="xs" wrap>
-        <Tag label="Primary" variant="primary" />
-        <Tag label="Secondary" variant="secondary" />
-        <Tag label="Outline" variant="outline" />
-        <Tag label="Ghost" variant="ghost" />
-        <Tag label="Closable" closable onClose={() => {}} />
+      <Stack
+        direction="row"
+        gap="xs"
+        wrap
+      >
+        <Tag
+          label="Primary"
+          variant="primary"
+        />
+        <Tag
+          label="Secondary"
+          variant="secondary"
+        />
+        <Tag
+          label="Outline"
+          variant="outline"
+        />
+        <Tag
+          label="Ghost"
+          variant="ghost"
+        />
+        <Tag
+          label="Closable"
+          closable
+          onClose={() => {}}
+        />
       </Stack>
     ),
     tags: ['data', 'chip'],
@@ -351,11 +461,17 @@ export const showcaseRegistry: ShowcaseItem[] = [
     title: 'Divider',
     description: 'Section separators',
     demo: (
-      <Stack gap="md" style={{ width: '100%' }}>
+      <Stack
+        gap="md"
+        style={{ width: '100%' }}
+      >
         <Text>Content above</Text>
         <Divider />
         <Text>Content below</Text>
-        <Divider variant="dashed" spacing={16} />
+        <Divider
+          variant="dashed"
+          spacing={16}
+        />
         <Text>More content</Text>
       </Stack>
     ),
@@ -367,15 +483,30 @@ export const showcaseRegistry: ShowcaseItem[] = [
     title: 'Skeleton',
     description: 'Loading placeholders',
     demo: (
-      <Stack gap="sm" style={{ width: '100%' }}>
-        <Skeleton width="100%" height={20} />
-        <Skeleton width="80%" height={20} />
-        <Skeleton width="60%" height={20} />
-        <Skeleton variant="circle" width={50} height={50} />
+      <Stack
+        gap="sm"
+        style={{ width: '100%' }}
+      >
+        <Skeleton
+          width="100%"
+          height={20}
+        />
+        <Skeleton
+          width="80%"
+          height={20}
+        />
+        <Skeleton
+          width="60%"
+          height={20}
+        />
+        <Skeleton
+          variant="circle"
+          width={50}
+          height={50}
+        />
       </Stack>
     ),
     tags: ['feedback', 'loading'],
     area: 'feedback',
   },
 ];
-

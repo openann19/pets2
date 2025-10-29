@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
 export interface UseAsyncActionOptions<TResult, TArgs extends any[] = []> {
   action: (...args: TArgs) => Promise<TResult>;
@@ -30,10 +30,7 @@ export function useAsyncAction<TResult, TArgs extends any[] = []>({
   onSuccess,
   onError,
   immediate = false,
-}: UseAsyncActionOptions<TResult, TArgs>): UseAsyncActionReturn<
-  TResult,
-  TArgs
-> {
+}: UseAsyncActionOptions<TResult, TArgs>): UseAsyncActionReturn<TResult, TArgs> {
   const [data, setData] = useState<TResult | null>(null);
   const [isLoading, setIsLoading] = useState(immediate);
   const [error, setError] = useState<Error | null>(null);

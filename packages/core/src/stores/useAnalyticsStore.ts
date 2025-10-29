@@ -20,11 +20,19 @@ interface AnalyticsState {
 
   // Pet analytics
   fetchPetAnalytics: (petId: string) => Promise<void>;
-  trackPetEvent: (petId: string, eventType: string, metadata?: Record<string, unknown>) => Promise<void>;
+  trackPetEvent: (
+    petId: string,
+    eventType: string,
+    metadata?: Record<string, unknown>,
+  ) => Promise<void>;
 
   // Match analytics
   fetchMatchAnalytics: (matchId: string) => Promise<void>;
-  trackMatchEvent: (matchId: string, eventType: string, metadata?: Record<string, unknown>) => Promise<void>;
+  trackMatchEvent: (
+    matchId: string,
+    eventType: string,
+    metadata?: Record<string, unknown>,
+  ) => Promise<void>;
 }
 
 export const _useAnalyticsStore = create<AnalyticsState>()((set, get) => ({
@@ -42,7 +50,7 @@ export const _useAnalyticsStore = create<AnalyticsState>()((set, get) => ({
       const analyticsData = {
         id: 'user-analytics-id',
         timestamp: new Date().toISOString(),
-        data: { views: 123, matches: 45, likes: 67 }
+        data: { views: 123, matches: 45, likes: 67 },
       } as AnalyticsData;
 
       await Promise.resolve();
@@ -71,16 +79,16 @@ export const _useAnalyticsStore = create<AnalyticsState>()((set, get) => ({
       const petData = {
         id: `pet-analytics-${petId}`,
         timestamp: new Date().toISOString(),
-        data: { views: 89, likes: 34, superlikes: 12 }
+        data: { views: 89, likes: 34, superlikes: 12 },
       } as AnalyticsData;
 
       await Promise.resolve();
       set({
         petAnalytics: {
           ...get().petAnalytics,
-          [petId]: petData
+          [petId]: petData,
         },
-        isLoading: false
+        isLoading: false,
       });
     } catch {
       set({ error: `Failed to fetch pet analytics for ${petId}`, isLoading: false });
@@ -106,23 +114,27 @@ export const _useAnalyticsStore = create<AnalyticsState>()((set, get) => ({
       const matchData = {
         id: `match-analytics-${matchId}`,
         timestamp: new Date().toISOString(),
-        data: { messageCount: 42, responseTime: 15, lastActivity: new Date().toISOString() }
+        data: { messageCount: 42, responseTime: 15, lastActivity: new Date().toISOString() },
       } as AnalyticsData;
 
       await Promise.resolve();
       set({
         matchAnalytics: {
           ...get().matchAnalytics,
-          [matchId]: matchData
+          [matchId]: matchData,
         },
-        isLoading: false
+        isLoading: false,
       });
     } catch {
       set({ error: `Failed to fetch match analytics for ${matchId}`, isLoading: false });
     }
   },
 
-  trackMatchEvent: async (matchId: string, eventType: string, metadata?: Record<string, unknown>) => {
+  trackMatchEvent: async (
+    matchId: string,
+    eventType: string,
+    metadata?: Record<string, unknown>,
+  ) => {
     try {
       await apiClient.post('/analytics/match', { matchId, eventType, metadata });
       // Refresh match analytics after tracking event

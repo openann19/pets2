@@ -41,4 +41,3 @@ export const Danger: Story = {
     title: 'Delete',
   },
 };
-

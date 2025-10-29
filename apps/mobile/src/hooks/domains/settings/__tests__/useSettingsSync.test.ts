@@ -48,9 +48,7 @@ describe('useSettingsSync', () => {
       const onSyncSuccess = jest.fn();
       const onSyncError = jest.fn();
 
-      const { result } = renderHook(() =>
-        useSettingsSync({ onSyncSuccess, onSyncError }),
-      );
+      const { result } = renderHook(() => useSettingsSync({ onSyncSuccess, onSyncError }));
 
       expect(result.current.syncSettings).toBeDefined();
     });
@@ -59,9 +57,7 @@ describe('useSettingsSync', () => {
   describe('Sync Settings', () => {
     it('should sync settings successfully', async () => {
       const onSyncSuccess = jest.fn();
-      const { result } = renderHook(() =>
-        useSettingsSync({ onSyncSuccess }),
-      );
+      const { result } = renderHook(() => useSettingsSync({ onSyncSuccess }));
 
       let syncPromise: Promise<boolean>;
       act(() => {
@@ -78,14 +74,11 @@ describe('useSettingsSync', () => {
         expect(result.current.isSyncing).toBe(false);
       });
 
-      expect(mockMatchesAPI.updateUserSettings).toHaveBeenCalledWith(
-        mockSettings,
-      );
+      expect(mockMatchesAPI.updateUserSettings).toHaveBeenCalledWith(mockSettings);
       expect(onSyncSuccess).toHaveBeenCalled();
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        'Settings synced successfully',
-        { settings: mockSettings },
-      );
+      expect(mockLogger.info).toHaveBeenCalledWith('Settings synced successfully', {
+        settings: mockSettings,
+      });
     });
 
     it('should handle sync errors', async () => {
@@ -93,9 +86,7 @@ describe('useSettingsSync', () => {
       mockMatchesAPI.updateUserSettings.mockRejectedValue(error);
       const onSyncError = jest.fn();
 
-      const { result } = renderHook(() =>
-        useSettingsSync({ onSyncError }),
-      );
+      const { result } = renderHook(() => useSettingsSync({ onSyncError }));
 
       let syncPromise: Promise<boolean>;
       act(() => {
@@ -112,19 +103,16 @@ describe('useSettingsSync', () => {
       });
 
       expect(onSyncError).toHaveBeenCalledWith(error);
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to sync settings',
-        { error: 'Network error' },
-      );
+      expect(mockLogger.error).toHaveBeenCalledWith('Failed to sync settings', {
+        error: 'Network error',
+      });
     });
 
     it('should handle non-Error exceptions', async () => {
       mockMatchesAPI.updateUserSettings.mockRejectedValue('String error');
       const onSyncError = jest.fn();
 
-      const { result } = renderHook(() =>
-        useSettingsSync({ onSyncError }),
-      );
+      const { result } = renderHook(() => useSettingsSync({ onSyncError }));
 
       let syncPromise: Promise<boolean>;
       act(() => {
@@ -159,9 +147,7 @@ describe('useSettingsSync', () => {
     });
 
     it('should return false on failure', async () => {
-      mockMatchesAPI.updateUserSettings.mockRejectedValue(
-        new Error('Error'),
-      );
+      mockMatchesAPI.updateUserSettings.mockRejectedValue(new Error('Error'));
 
       const { result } = renderHook(() => useSettingsSync());
 
@@ -274,4 +260,3 @@ describe('useSettingsSync', () => {
     });
   });
 });
-

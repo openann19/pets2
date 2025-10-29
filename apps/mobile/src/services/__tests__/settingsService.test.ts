@@ -243,11 +243,7 @@ describe('SettingsService', () => {
 
       mockRequest.mockResolvedValue((settings: Settings) => settings);
 
-      const promises = [
-        saveSettings(settings1),
-        saveSettings(settings2),
-        saveSettings(settings3),
-      ];
+      const promises = [saveSettings(settings1), saveSettings(settings2), saveSettings(settings3)];
 
       const results = await Promise.all(promises);
 
@@ -545,9 +541,7 @@ describe('SettingsService', () => {
         mockRequest.mockResolvedValueOnce(update);
       });
 
-      const results = await Promise.all(
-        bulkUpdates.map(update => saveSettings(update))
-      );
+      const results = await Promise.all(bulkUpdates.map((update) => saveSettings(update)));
 
       expect(results).toHaveLength(4);
       expect(results[0].notifications?.matches).toBe(true);
@@ -675,13 +669,7 @@ describe('SettingsService', () => {
               },
             },
           },
-          mixedArray: [
-            'string',
-            42,
-            true,
-            { object: 'in array' },
-            [1, 2, 3],
-          ],
+          mixedArray: ['string', 42, true, { object: 'in array' }, [1, 2, 3]],
         },
       };
 
@@ -697,11 +685,11 @@ describe('SettingsService', () => {
         notifications: { [`setting${i}`]: i % 2 === 0 },
       }));
 
-      operations.forEach(op => {
+      operations.forEach((op) => {
         mockRequest.mockResolvedValueOnce(op);
       });
 
-      const promises = operations.map(op => saveSettings(op));
+      const promises = operations.map((op) => saveSettings(op));
       const results = await Promise.all(promises);
 
       expect(results).toHaveLength(100);

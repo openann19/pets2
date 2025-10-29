@@ -209,7 +209,7 @@ describe('PawfectMatch Integration Test Suite', () => {
 
       // Should show match modal
       await waitFor(() => {
-        expect(screen.getByText('It\'s a Match!')).toBeTruthy();
+        expect(screen.getByText("It's a Match!")).toBeTruthy();
       });
 
       // Verify all services worked together
@@ -218,7 +218,7 @@ describe('PawfectMatch Integration Test Suite', () => {
       expect(mockOfflineService.getPets).toHaveBeenCalled();
       expect(mockNotificationService.scheduleLocalNotification).toHaveBeenCalledWith(
         'New Match!',
-        'You matched with Luna!'
+        'You matched with Luna!',
       );
     });
   });
@@ -316,7 +316,7 @@ describe('PawfectMatch Integration Test Suite', () => {
       // Mock AI service call
       act(() => {
         mockAiService.generateBio.mockResolvedValue(
-          'Meet Buddy, a friendly and energetic companion who absolutely loves long walks in the park!'
+          'Meet Buddy, a friendly and energetic companion who absolutely loves long walks in the park!',
         );
       });
 
@@ -347,7 +347,8 @@ describe('PawfectMatch Integration Test Suite', () => {
 
       await waitFor(() => {
         expect(mockCommunityAPI.createPost).toHaveBeenCalledWith({
-          content: 'Meet Buddy, a friendly and energetic companion who absolutely loves long walks in the park!',
+          content:
+            'Meet Buddy, a friendly and energetic companion who absolutely loves long walks in the park!',
           images: ['processed-community-photo.jpg'],
           type: 'post',
         });
@@ -409,7 +410,7 @@ describe('PawfectMatch Integration Test Suite', () => {
       // Verify notification integration
       expect(mockNotificationService.scheduleLocalNotification).toHaveBeenCalledWith(
         'Comment Added',
-        'Your comment was posted successfully'
+        'Your comment was posted successfully',
       );
     });
   });
@@ -487,7 +488,7 @@ describe('PawfectMatch Integration Test Suite', () => {
       // Verify error reporting
       expect(mockNotificationService.scheduleLocalNotification).toHaveBeenCalledWith(
         'Connection Issues',
-        'Some features may not be available offline'
+        'Some features may not be available offline',
       );
     });
 
@@ -609,10 +610,13 @@ describe('PawfectMatch Integration Test Suite', () => {
       const { getByText } = render(<MatchesList />);
 
       // Should load without performance issues
-      await waitFor(() => {
-        expect(getByText('Pet0')).toBeTruthy();
-        expect(getByText('Pet999')).toBeTruthy();
-      }, { timeout: 5000 }); // Allow time for large list
+      await waitFor(
+        () => {
+          expect(getByText('Pet0')).toBeTruthy();
+          expect(getByText('Pet999')).toBeTruthy();
+        },
+        { timeout: 5000 },
+      ); // Allow time for large list
 
       // Verify virtualization or pagination is working
       expect(screen.queryByText('Loading...')).toBeNull();
@@ -762,7 +766,7 @@ describe('PawfectMatch Integration Test Suite', () => {
       await waitFor(() => {
         expect(mockNotificationService.scheduleLocalNotification).toHaveBeenCalledWith(
           'Message Sent',
-          'Your message was delivered successfully'
+          'Your message was delivered successfully',
         );
       });
     });
@@ -770,18 +774,42 @@ describe('PawfectMatch Integration Test Suite', () => {
 });
 
 // Mock components for integration testing
-function CommunityScreen() { return null; }
-function CommunityFeed() { return null; }
-function MainScreen() { return null; }
-function SwipeScreen() { return null; }
-function ProtectedScreen() { return null; }
-function Dashboard() { return null; }
-function MatchesList() { return null; }
-function ImageGallery() { return null; }
-function AppWithMultipleComponents() { return null; }
-function NavigationIntegration() { return null; }
-function ErrorAnalytics() { return null; }
-function NotificationOffline() { return null; }
+function CommunityScreen() {
+  return null;
+}
+function CommunityFeed() {
+  return null;
+}
+function MainScreen() {
+  return null;
+}
+function SwipeScreen() {
+  return null;
+}
+function ProtectedScreen() {
+  return null;
+}
+function Dashboard() {
+  return null;
+}
+function MatchesList() {
+  return null;
+}
+function ImageGallery() {
+  return null;
+}
+function AppWithMultipleComponents() {
+  return null;
+}
+function NavigationIntegration() {
+  return null;
+}
+function ErrorAnalytics() {
+  return null;
+}
+function NotificationOffline() {
+  return null;
+}
 
 // Helper hooks for integration testing
 function useConcurrentState() {

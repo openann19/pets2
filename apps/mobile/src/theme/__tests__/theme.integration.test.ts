@@ -16,4 +16,3 @@ describe('resolved theme', () => {
     expect(l.colors.onSurface).not.toBe(d.colors.onSurface);
   });
 });
-

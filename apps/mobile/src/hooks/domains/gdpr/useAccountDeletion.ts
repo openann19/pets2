@@ -1,15 +1,11 @@
-import { useState, useCallback } from "react";
-import { Alert } from "react-native";
-import gdprService from "../../../services/gdprService";
-import { logger } from "@pawfectmatch/core";
+import { useState, useCallback } from 'react';
+import { Alert } from 'react-native';
+import gdprService from '../../../services/gdprService';
+import { logger } from '@pawfectmatch/core';
 
 export interface UseAccountDeletionReturn {
   isDeleting: boolean;
-  requestDeletion: (
-    password: string,
-    reason?: string,
-    feedback?: string,
-  ) => Promise<boolean>;
+  requestDeletion: (password: string, reason?: string, feedback?: string) => Promise<boolean>;
   cancelDeletion: () => Promise<boolean>;
   error: string | null;
 }
@@ -22,11 +18,7 @@ export function useAccountDeletion(): UseAccountDeletionReturn {
   const [error, setError] = useState<string | null>(null);
 
   const requestDeletion = useCallback(
-    async (
-      password: string,
-      reason?: string,
-      feedback?: string,
-    ): Promise<boolean> => {
+    async (password: string, reason?: string, feedback?: string): Promise<boolean> => {
       setIsDeleting(true);
       setError(null);
 
@@ -39,11 +31,11 @@ export function useAccountDeletion(): UseAccountDeletionReturn {
 
         if (result.success) {
           Alert.alert(
-            "Account Deletion Requested",
+            'Account Deletion Requested',
             `Your account will be permanently deleted in 30 days. We'll send you reminders before the deletion occurs.`,
-            [{ text: "OK" }],
+            [{ text: 'OK' }],
           );
-          logger.info("Account deletion requested", {
+          logger.info('Account deletion requested', {
             deletionId: result.deletionId,
           });
           return true;
@@ -52,14 +44,12 @@ export function useAccountDeletion(): UseAccountDeletionReturn {
         return false;
       } catch (err) {
         const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "Failed to request account deletion";
+          err instanceof Error ? err.message : 'Failed to request account deletion';
         setError(errorMessage);
-        logger.error("Account deletion request failed:", {
+        logger.error('Account deletion request failed:', {
           error: errorMessage,
         });
-        Alert.alert("Error", errorMessage);
+        Alert.alert('Error', errorMessage);
         return false;
       } finally {
         setIsDeleting(false);
@@ -76,20 +66,16 @@ export function useAccountDeletion(): UseAccountDeletionReturn {
       const cancelled = await gdprService.cancelDeletion();
 
       if (cancelled.success) {
-        Alert.alert(
-          "Deletion Cancelled",
-          "Your account deletion has been cancelled.",
-        );
-        logger.info("Account deletion cancelled");
+        Alert.alert('Deletion Cancelled', 'Your account deletion has been cancelled.');
+        logger.info('Account deletion cancelled');
         return true;
       }
 
       return false;
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to cancel deletion";
+      const errorMessage = err instanceof Error ? err.message : 'Failed to cancel deletion';
       setError(errorMessage);
-      logger.error("Failed to cancel account deletion:", {
+      logger.error('Failed to cancel account deletion:', {
         error: errorMessage,
       });
       return false;

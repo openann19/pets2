@@ -30,13 +30,10 @@ export function extractUrls(text: string): string[] {
  */
 export async function fetchLinkPreview(url: string): Promise<LinkPreviewData | null> {
   try {
-    const response = await request<LinkPreviewData>(
-      `/api/chat/link-preview`,
-      {
-        method: 'POST',
-        body: { url },
-      }
-    );
+    const response = await request<LinkPreviewData>(`/api/chat/link-preview`, {
+      method: 'POST',
+      body: { url },
+    });
 
     return response || null;
   } catch (error) {
@@ -51,7 +48,9 @@ export async function fetchLinkPreview(url: string): Promise<LinkPreviewData | n
 /**
  * Fetch link previews for multiple URLs
  */
-export async function fetchLinkPreviews(urls: string[]): Promise<Map<string, LinkPreviewData | null>> {
+export async function fetchLinkPreviews(
+  urls: string[],
+): Promise<Map<string, LinkPreviewData | null>> {
   const previews = new Map<string, LinkPreviewData | null>();
 
   const promises = urls.map(async (url) => {
@@ -90,4 +89,3 @@ export default {
   containsUrls,
   getFirstUrl,
 };
-

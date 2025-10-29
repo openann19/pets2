@@ -1,8 +1,8 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import { EliteHeader } from "../EliteComponents";
-import { EliteButton } from "../EliteComponents";
+import { EliteHeader } from '../EliteComponents';
+import { EliteButton } from '../EliteComponents';
 
 interface SwipeHeaderProps {
   onBack: () => void;
@@ -10,11 +10,7 @@ interface SwipeHeaderProps {
   onMatchesPress: () => void;
 }
 
-export function SwipeHeader({
-  onBack,
-  onFilterPress,
-  onMatchesPress,
-}: SwipeHeaderProps) {
+export function SwipeHeader({ onBack, onFilterPress, onMatchesPress }: SwipeHeaderProps) {
   return (
     <EliteHeader
       title="Discover"
@@ -50,7 +46,7 @@ export function SwipeHeader({
 
 const styles = StyleSheet.create({
   headerActions: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 8,
   },
 });

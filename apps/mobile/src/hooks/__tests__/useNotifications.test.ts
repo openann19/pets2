@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act, waitFor } from "@testing-library/react-native";
-import { useNotifications } from "../useNotifications";
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { useNotifications } from '../useNotifications';
 
 // Mock notification service
 const mockInitializeNotificationsService = jest.fn();
@@ -31,27 +31,25 @@ const mockNotificationService = {
   cleanup: mockCleanup,
 };
 
-jest.mock("../../services/notifications", () => ({
+jest.mock('../../services/notifications', () => ({
   initializeNotificationsService: mockInitializeNotificationsService,
   notificationService: mockNotificationService,
 }));
 
-describe("useNotifications", () => {
+describe('useNotifications', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInitializeNotificationsService.mockResolvedValue(
-      "ExpoPushToken[test123]",
-    );
+    mockInitializeNotificationsService.mockResolvedValue('ExpoPushToken[test123]');
   });
 
-  it("should initialize with default state", () => {
+  it('should initialize with default state', () => {
     const { result } = renderHook(() => useNotifications());
 
     expect(result.current.isInitialized).toBe(false);
     expect(result.current.pushToken).toBe(null);
   });
 
-  it("should initialize notifications on mount", async () => {
+  it('should initialize notifications on mount', async () => {
     const { result } = renderHook(() => useNotifications());
 
     await waitFor(() => {
@@ -59,10 +57,10 @@ describe("useNotifications", () => {
     });
 
     expect(mockInitializeNotificationsService).toHaveBeenCalled();
-    expect(result.current.pushToken).toBe("ExpoPushToken[test123]");
+    expect(result.current.pushToken).toBe('ExpoPushToken[test123]');
   });
 
-  it("should cleanup on unmount", () => {
+  it('should cleanup on unmount', () => {
     const { unmount } = renderHook(() => useNotifications());
 
     unmount();
@@ -70,7 +68,7 @@ describe("useNotifications", () => {
     expect(mockCleanup).toHaveBeenCalled();
   });
 
-  it("should provide sendMatchNotification function", async () => {
+  it('should provide sendMatchNotification function', async () => {
     const { result } = renderHook(() => useNotifications());
 
     await waitFor(() => {
@@ -78,10 +76,10 @@ describe("useNotifications", () => {
     });
 
     expect(result.current.sendMatchNotification).toBeDefined();
-    expect(typeof result.current.sendMatchNotification).toBe("function");
+    expect(typeof result.current.sendMatchNotification).toBe('function');
   });
 
-  it("should provide sendMessageNotification function", async () => {
+  it('should provide sendMessageNotification function', async () => {
     const { result } = renderHook(() => useNotifications());
 
     await waitFor(() => {
@@ -89,10 +87,10 @@ describe("useNotifications", () => {
     });
 
     expect(result.current.sendMessageNotification).toBeDefined();
-    expect(typeof result.current.sendMessageNotification).toBe("function");
+    expect(typeof result.current.sendMessageNotification).toBe('function');
   });
 
-  it("should provide sendLikeNotification function", async () => {
+  it('should provide sendLikeNotification function', async () => {
     const { result } = renderHook(() => useNotifications());
 
     await waitFor(() => {
@@ -100,10 +98,10 @@ describe("useNotifications", () => {
     });
 
     expect(result.current.sendLikeNotification).toBeDefined();
-    expect(typeof result.current.sendLikeNotification).toBe("function");
+    expect(typeof result.current.sendLikeNotification).toBe('function');
   });
 
-  it("should provide scheduleReminderNotification function", async () => {
+  it('should provide scheduleReminderNotification function', async () => {
     const { result } = renderHook(() => useNotifications());
 
     await waitFor(() => {
@@ -111,10 +109,10 @@ describe("useNotifications", () => {
     });
 
     expect(result.current.scheduleReminderNotification).toBeDefined();
-    expect(typeof result.current.scheduleReminderNotification).toBe("function");
+    expect(typeof result.current.scheduleReminderNotification).toBe('function');
   });
 
-  it("should provide setBadgeCount function", async () => {
+  it('should provide setBadgeCount function', async () => {
     const { result } = renderHook(() => useNotifications());
 
     await waitFor(() => {
@@ -122,10 +120,10 @@ describe("useNotifications", () => {
     });
 
     expect(result.current.setBadgeCount).toBeDefined();
-    expect(typeof result.current.setBadgeCount).toBe("function");
+    expect(typeof result.current.setBadgeCount).toBe('function');
   });
 
-  it("should provide clearBadge function", async () => {
+  it('should provide clearBadge function', async () => {
     const { result } = renderHook(() => useNotifications());
 
     await waitFor(() => {
@@ -133,13 +131,11 @@ describe("useNotifications", () => {
     });
 
     expect(result.current.clearBadge).toBeDefined();
-    expect(typeof result.current.clearBadge).toBe("function");
+    expect(typeof result.current.clearBadge).toBe('function');
   });
 
-  it("should handle initialization error gracefully", async () => {
-    mockInitializeNotificationsService.mockRejectedValue(
-      new Error("Permission denied"),
-    );
+  it('should handle initialization error gracefully', async () => {
+    mockInitializeNotificationsService.mockRejectedValue(new Error('Permission denied'));
 
     const { result } = renderHook(() => useNotifications());
 
@@ -151,7 +147,7 @@ describe("useNotifications", () => {
     expect(result.current.pushToken).toBe(null);
   });
 
-  it("should handle null push token", async () => {
+  it('should handle null push token', async () => {
     mockInitializeNotificationsService.mockResolvedValue(null);
 
     const { result } = renderHook(() => useNotifications());
@@ -163,7 +159,7 @@ describe("useNotifications", () => {
     expect(result.current.pushToken).toBe(null);
   });
 
-  it("should provide all notification methods", async () => {
+  it('should provide all notification methods', async () => {
     const { result } = renderHook(() => useNotifications());
 
     await waitFor(() => {
@@ -171,21 +167,21 @@ describe("useNotifications", () => {
     });
 
     const methods = [
-      "sendMatchNotification",
-      "sendMessageNotification",
-      "sendLikeNotification",
-      "scheduleReminderNotification",
-      "setBadgeCount",
-      "clearBadge",
+      'sendMatchNotification',
+      'sendMessageNotification',
+      'sendLikeNotification',
+      'scheduleReminderNotification',
+      'setBadgeCount',
+      'clearBadge',
     ];
 
     methods.forEach((method) => {
       expect(result.current[method]).toBeDefined();
-      expect(typeof result.current[method]).toBe("function");
+      expect(typeof result.current[method]).toBe('function');
     });
   });
 
-  it("should only initialize once", async () => {
+  it('should only initialize once', async () => {
     const { rerender } = renderHook(() => useNotifications());
 
     await waitFor(() => {
@@ -196,8 +192,8 @@ describe("useNotifications", () => {
     expect(mockInitializeNotificationsService).toHaveBeenCalledTimes(1);
   });
 
-  it("should set push token after initialization", async () => {
-    const testToken = "ExpoPushToken[xyz789]";
+  it('should set push token after initialization', async () => {
+    const testToken = 'ExpoPushToken[xyz789]';
     mockInitializeNotificationsService.mockResolvedValue(testToken);
 
     const { result } = renderHook(() => useNotifications());
@@ -209,7 +205,7 @@ describe("useNotifications", () => {
     });
   });
 
-  it("should mark as initialized after setup completes", async () => {
+  it('should mark as initialized after setup completes', async () => {
     const { result } = renderHook(() => useNotifications());
 
     expect(result.current.isInitialized).toBe(false);
@@ -219,7 +215,7 @@ describe("useNotifications", () => {
     });
   });
 
-  it("should cleanup notifications on unmount", () => {
+  it('should cleanup notifications on unmount', () => {
     const { unmount } = renderHook(() => useNotifications());
 
     expect(mockCleanup).not.toHaveBeenCalled();

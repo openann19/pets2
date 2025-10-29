@@ -60,6 +60,7 @@
     "fix:chained": "tsx scripts/fix-chained-properties.ts",
     "fix:chained:write": "tsx scripts/fix-chained-properties.ts --write",
     "mobile:tsc": "cd apps/mobile && pnpm exec tsc --noEmit",
+    "mobile:test": "pnpm --filter apps/mobile test",
     "mobile:exports": "cd apps/mobile && tsx scripts/analyze-exports.ts",
     "mobile:contract:check": "cd apps/mobile && tsx scripts/validate-contracts.ts",
     "mobile:a11y": "cd apps/mobile && tsx scripts/run-a11y-audit.ts",

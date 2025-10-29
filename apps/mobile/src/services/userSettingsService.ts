@@ -1,7 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || process.env.API_URL || "";
-const KEY = "user_settings_v1";
+const API_URL = process.env.EXPO_PUBLIC_API_URL || process.env.API_URL || '';
+const KEY = 'user_settings_v1';
 
 export interface UserSettings {
   maxDistance?: number;
@@ -26,10 +26,10 @@ export async function getSettings(): Promise<UserSettings> {
       // Ignore parse errors
     }
   }
-  
+
   try {
     const res = await fetch(`${API_URL}/api/settings/me`);
-    const data = res.ok ? (await res.json() as UserSettings) : {};
+    const data = res.ok ? ((await res.json()) as UserSettings) : {};
     await AsyncStorage.setItem(KEY, JSON.stringify(data));
     return data;
   } catch {
@@ -40,8 +40,8 @@ export async function getSettings(): Promise<UserSettings> {
 export async function updateSettings(patch: UserSettings): Promise<UserSettings> {
   try {
     const res = await fetch(`${API_URL}/api/settings/me`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(patch),
     });
     const data = res.ok ? await res.json() : patch;
@@ -59,4 +59,3 @@ export async function updateSettings(patch: UserSettings): Promise<UserSettings>
 export async function clearSettings(): Promise<void> {
   await AsyncStorage.removeItem(KEY);
 }
-

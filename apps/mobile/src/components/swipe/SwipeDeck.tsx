@@ -1,25 +1,19 @@
-import type { Pet } from "@pawfectmatch/core";
-import React, { useCallback, useMemo, useRef } from "react";
-import {
-  FlatList,
-  InteractionManager,
-  StyleSheet,
-  View,
-  type ViewStyle,
-} from "react-native";
-import Animated from "react-native-reanimated";
+import type { Pet } from '@pawfectmatch/core';
+import React, { useCallback, useMemo, useRef } from 'react';
+import { FlatList, InteractionManager, StyleSheet, View, type ViewStyle } from 'react-native';
+import Animated from 'react-native-reanimated';
 
-import ModernSwipeCard from "../ModernSwipeCard";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
 import {
   IMAGE_PREFETCH_CONFIG,
   LIST_VIRTUALIZATION_CONFIG,
   SWIPE_DECK_LAYOUT,
-} from "@/constants/performance";
-import { preloadRemoteImages } from "@/services/AssetPreloader";
-import { logger } from "@pawfectmatch/core";
-import { extractPetImageUrls, extractPetTags } from "@/utils/pet-media";
+} from '@/constants/performance';
+import { preloadRemoteImages } from '@/services/AssetPreloader';
+import { extractPetImageUrls, extractPetTags } from '@/utils/pet-media';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { logger } from '@pawfectmatch/core';
+import ModernSwipeCard from '../ModernSwipeCard';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<Pet>);
 
@@ -48,57 +42,56 @@ const createStyles = (theme: AppTheme, cardWidth: number, cardHeight: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     list: {
       flex: 1,
-      width: "100%",
+      width: '100%',
     },
     contentContainer: {
       flexGrow: 1,
-      justifyContent: "center",
+      justifyContent: 'center',
       paddingVertical: theme.spacing.lg,
     },
     cardSlot: {
       height: cardHeight + SWIPE_DECK_LAYOUT.stackOffset,
-      width: "100%",
-      alignItems: "center",
-      justifyContent: "center",
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     cardWrapper: {
       width: cardWidth,
       height: cardHeight,
-      borderRadius: theme.radii["4xl"],
+      borderRadius: theme.radii['4xl'],
       shadowColor: theme.colors.shadow,
       shadowOpacity: 0.18,
       shadowOffset: { width: 0, height: 16 },
       shadowRadius: 24,
       elevation: 16,
-      overflow: "visible",
+      overflow: 'visible',
     },
   });
 
 const buildCardModel = (pet: Pet): CardPet => {
   const photos = extractPetImageUrls(pet);
   const tags = extractPetTags(pet);
-  const description =
-    (pet as any).description ?? (pet as any).bio ?? (pet as any).summary ?? "";
+  const description = (pet as any).description ?? (pet as any).bio ?? (pet as any).summary ?? '';
 
   return {
     _id: pet._id ?? (pet as any).id ?? Math.random().toString(36).slice(2),
-    name: pet.name ?? (pet as any).displayName ?? "Mystery Pet",
-    age: typeof pet.age === "number" ? pet.age : (pet as any).ageYears ?? 0,
-    breed: pet.breed ?? (pet as any).breedName ?? "Unknown",
+    name: pet.name ?? (pet as any).displayName ?? 'Mystery Pet',
+    age: typeof pet.age === 'number' ? pet.age : ((pet as any).ageYears ?? 0),
+    breed: pet.breed ?? (pet as any).breedName ?? 'Unknown',
     photos,
     bio: description,
     tags,
     distance:
-      typeof (pet as any).distance === "number"
+      typeof (pet as any).distance === 'number'
         ? (pet as any).distance
-        : (pet as any).location?.distance ?? 0,
+        : ((pet as any).location?.distance ?? 0),
     compatibility:
-      typeof (pet as any).compatibility === "number"
+      typeof (pet as any).compatibility === 'number'
         ? (pet as any).compatibility
         : Math.round((pet as any).compatibilityScore ?? 85),
     isVerified: Boolean((pet as any).isVerified ?? (pet as any).verified),
@@ -137,7 +130,7 @@ export const SwipeDeck = React.memo(function SwipeDeck({
 
       InteractionManager.runAfterInteractions(() => {
         preloadRemoteImages(urls).catch((error: unknown) => {
-          logger.warn("SwipeDeck image prefetch failed", {
+          logger.warn('SwipeDeck image prefetch failed', {
             error,
             count: urls.length,
           });
@@ -187,15 +180,12 @@ export const SwipeDeck = React.memo(function SwipeDeck({
             style={[
               styles.cardWrapper,
               {
-                transform: [
-                  { translateY },
-                  { scale },
-                ],
+                transform: [{ translateY }, { scale }],
                 opacity,
                 zIndex: pets.length - index,
               } satisfies ViewStyle,
             ]}
-            pointerEvents={isActive ? "auto" : "none"}
+            pointerEvents={isActive ? 'auto' : 'none'}
           >
             <ModernSwipeCard
               pet={cardModel as any}
@@ -218,7 +208,16 @@ export const SwipeDeck = React.memo(function SwipeDeck({
         </View>
       );
     },
-    [currentIndex, styles.cardSlot, styles.cardWrapper, pets.length, onSwipeLeft, onSwipeRight, onSwipeUp, schedulePrefetch],
+    [
+      currentIndex,
+      styles.cardSlot,
+      styles.cardWrapper,
+      pets.length,
+      onSwipeLeft,
+      onSwipeRight,
+      onSwipeUp,
+      schedulePrefetch,
+    ],
   );
 
   return (
@@ -243,7 +242,6 @@ export const SwipeDeck = React.memo(function SwipeDeck({
   );
 });
 
-SwipeDeck.displayName = "SwipeDeck";
+SwipeDeck.displayName = 'SwipeDeck';
 
 export default SwipeDeck;
-

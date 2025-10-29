@@ -16,14 +16,16 @@ export interface LegacyWebPet {
   photos?: Array<string | { url: string; isPrimary?: boolean }>;
   description?: string;
   temperament?: string[];
-  location?: {
-    latitude?: number;
-    longitude?: number;
-  } | {
-    lat?: number;
-    lon?: number;
-    coordinates?: [number, number];
-  };
+  location?:
+    | {
+        latitude?: number;
+        longitude?: number;
+      }
+    | {
+        lat?: number;
+        lon?: number;
+        coordinates?: [number, number];
+      };
 }
 
 /**
@@ -55,21 +57,32 @@ export function toCorePet(legacy: LegacyWebPet): Pet {
     'extra-large': 'extra-large',
     'xl': 'extra-large',
   };
-  const size = legacy.size != null && legacy.size.length > 0 ? (sizeMap[legacy.size.toLowerCase()] ?? 'medium') : 'medium';
+  const size =
+    legacy.size != null && legacy.size.length > 0
+      ? (sizeMap[legacy.size.toLowerCase()] ?? 'medium')
+      : 'medium';
 
   // Normalize species
   const speciesMap: Record<string, Pet['species']> = {
-    'dog': 'dog',
-    'cat': 'cat',
-    'bird': 'bird',
-    'rabbit': 'rabbit',
+    dog: 'dog',
+    cat: 'cat',
+    bird: 'bird',
+    rabbit: 'rabbit',
   };
-  const species = legacy.species != null && legacy.species.length > 0 ? (speciesMap[legacy.species.toLowerCase()] ?? 'other') : 'dog';
+  const species =
+    legacy.species != null && legacy.species.length > 0
+      ? (speciesMap[legacy.species.toLowerCase()] ?? 'other')
+      : 'dog';
 
   // Convert photos
   const photos = (legacy.photos != null ? legacy.photos : []).map((photo, index) => ({
     url: typeof photo === 'string' ? photo : photo.url,
-    isPrimary: typeof photo === 'object' ? (photo.isPrimary != null ? photo.isPrimary : index === 0) : index === 0,
+    isPrimary:
+      typeof photo === 'object'
+        ? photo.isPrimary != null
+          ? photo.isPrimary
+          : index === 0
+        : index === 0,
     caption: '',
   }));
 
@@ -86,7 +99,8 @@ export function toCorePet(legacy: LegacyWebPet): Pet {
     ...(legacy.weight != null && !isNaN(legacy.weight) && { weight: legacy.weight }),
     photos,
     videos: [],
-    description: legacy.description != null && legacy.description.length > 0 ? legacy.description : '',
+    description:
+      legacy.description != null && legacy.description.length > 0 ? legacy.description : '',
     personalityTags: legacy.temperament != null ? legacy.temperament : [],
     intent: 'all',
     availability: {
@@ -154,7 +168,7 @@ export function toLegacyPet(pet: Pet): LegacyWebPet {
   legacy.temperament = pet.personalityTags;
 
   if (pet.photos.length > 0) {
-    legacy.photos = pet.photos.map(p => ({ url: p.url, isPrimary: p.isPrimary }));
+    legacy.photos = pet.photos.map((p) => ({ url: p.url, isPrimary: p.isPrimary }));
   }
 
   legacy.location = {

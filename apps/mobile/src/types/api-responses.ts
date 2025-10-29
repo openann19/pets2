@@ -1,11 +1,11 @@
 /**
  * Comprehensive API Response Types
- * 
+ *
  * Defines all request/response types for mobile app API endpoints.
  * These types provide full type safety for all API interactions.
  */
 
-import type { Pet, User, Match, Message, PetFilters } from "@pawfectmatch/core";
+import type { Pet, User, Match, Message, PetFilters } from '@pawfectmatch/core';
 
 // ============================================================================
 // Common Response Wrappers
@@ -75,7 +75,7 @@ export interface LikeUserRequest {
 }
 
 export interface ReportContentRequest {
-  type: "user" | "pet" | "message";
+  type: 'user' | 'pet' | 'message';
   targetId: string;
   reason: string;
   description?: string;
@@ -163,7 +163,7 @@ export interface PremiumFeaturesResponse {
 }
 
 export interface SubscribeToPremiumRequest {
-  plan: "basic" | "premium" | "gold";
+  plan: 'basic' | 'premium' | 'gold';
   paymentMethodId: string;
 }
 
@@ -189,7 +189,7 @@ export interface AdoptionApplication {
   applicantId: string;
   applicant: User;
   pet: Pet;
-  status: "pending" | "approved" | "rejected" | "withdrawn";
+  status: 'pending' | 'approved' | 'rejected' | 'withdrawn';
   applicationData: {
     experience: string;
     livingSituation: string;
@@ -207,7 +207,7 @@ export interface SubmitAdoptionApplicationRequest {
   applicantId: string;
   applicationData: Omit<
     AdoptionApplication,
-    "_id" | "submittedAt" | "applicant" | "pet" | "status"
+    '_id' | 'submittedAt' | 'applicant' | 'pet' | 'status'
   >;
 }
 
@@ -239,8 +239,8 @@ export interface MarkNotificationReadResponse {
 export interface GenerateBioRequest {
   petName: string;
   keywords: string[];
-  tone?: "playful" | "professional" | "casual" | "romantic" | "funny";
-  length?: "short" | "medium" | "long";
+  tone?: 'playful' | 'professional' | 'casual' | 'romantic' | 'funny';
+  length?: 'short' | 'medium' | 'long';
   petType?: string;
   age?: number;
   breed?: string;
@@ -354,7 +354,7 @@ export interface DeleteAccountResponse {
 
 export interface AccountStatusResponse {
   success: boolean;
-  status: "not-found" | "pending" | "processing" | "completed";
+  status: 'not-found' | 'pending' | 'processing' | 'completed';
   scheduledDeletionDate?: string;
   daysRemaining?: number;
   canCancel?: boolean;
@@ -362,7 +362,7 @@ export interface AccountStatusResponse {
 }
 
 export interface DataExportRequest {
-  format?: "json" | "csv";
+  format?: 'json' | 'csv';
   includeMessages?: boolean;
   includeMatches?: boolean;
   includeProfileData?: boolean;
@@ -407,7 +407,7 @@ export interface CommunityPost {
   createdAt: string;
   packId?: string;
   packName?: string;
-  type: "post" | "activity";
+  type: 'post' | 'activity';
   activityDetails?: ActivityDetails;
 }
 
@@ -435,7 +435,7 @@ export interface CreatePostRequest {
   content: string;
   images?: string[];
   packId?: string;
-  type?: "post" | "activity";
+  type?: 'post' | 'activity';
   activityDetails?: ActivityDetails;
 }
 
@@ -493,7 +493,7 @@ export interface GetFeedParams {
   limit?: number;
   packId?: string;
   userId?: string;
-  type?: "post" | "activity";
+  type?: 'post' | 'activity';
 }
 
 export interface GetCommentsParams {
@@ -550,4 +550,3 @@ export interface CreateCheckoutSessionRequest {
 export interface CreateCheckoutSessionResponse {
   url: string;
 }
-

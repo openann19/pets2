@@ -1,13 +1,13 @@
-import { io, Socket } from "socket.io-client";
+import { io, Socket } from 'socket.io-client';
 
-const URL = process.env.EXPO_PUBLIC_SOCKET_URL || process.env.SOCKET_URL || "";
+const URL = process.env.EXPO_PUBLIC_SOCKET_URL || process.env.SOCKET_URL || '';
 
 let socket: Socket | null = null;
 
 export function getSocket(): Socket {
   if (!socket) {
     socket = io(URL, {
-      transports: ["websocket"],
+      transports: ['websocket'],
       forceNew: true,
       reconnection: true,
       reconnectionDelay: 1000,
@@ -32,4 +32,3 @@ export const socketService = {
   getSocket,
   socketClient,
 };
-

@@ -23,8 +23,8 @@ import { CompatibilityResults } from "../../components/compatibility/Compatibili
 import { PetSelectionSection } from "../../components/compatibility/PetSelectionSection";
 import { useAICompatibility } from "../../hooks/screens/useAICompatibility";
 import type { RootStackParamList } from "../../navigation/types";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
+import type { AppTheme } from "@mobile/src/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({

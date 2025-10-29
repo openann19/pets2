@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useRef } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   runOnJS,
   useAnimatedReaction,
@@ -8,10 +8,10 @@ import Animated, {
   withSequence,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 
-import type { ViewStyle } from "react-native";
+import type { ViewStyle } from 'react-native';
 
 interface WindowWithUndoPill extends Window {
   __undoPillShow?: () => void;
@@ -50,7 +50,6 @@ export default function UndoPill({ duration = 2000, onUndo, style, testID }: Und
         // progress goes 1->0 over duration; when reaches 0, auto-hide + finalize
         progress.value = 1;
         progress.value = withTiming(0, { duration });
-
       } else if (v === 0 && prev !== undefined && prev !== 1) {
         // reset progress for next time
         progress.value = 0;
@@ -117,14 +116,14 @@ export default function UndoPill({ duration = 2000, onUndo, style, testID }: Und
     const hide = () => {
       visible.value = 0;
     };
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       const win = window as unknown as WindowWithUndoPill;
       win.__undoPillShow = show;
       win.__undoPillHide = hide;
     }
 
     return () => {
-      if (typeof window !== "undefined") {
+      if (typeof window !== 'undefined') {
         const win = window as unknown as WindowWithUndoPill;
         delete win.__undoPillShow;
         delete win.__undoPillHide;
@@ -133,10 +132,19 @@ export default function UndoPill({ duration = 2000, onUndo, style, testID }: Und
   }, [visible]);
 
   return (
-    <Animated.View style={[styles.wrap, style, wrapStyle]} pointerEvents="box-none" testID={testID}>
+    <Animated.View
+      style={[styles.wrap, style, wrapStyle]}
+      pointerEvents="box-none"
+      testID={testID}
+    >
       <View style={styles.pill}>
         <Text style={styles.txt}>Liked • </Text>
-        <Pressable onPress={onPressUndo} hitSlop={8} accessibilityRole="button" accessibilityLabel="Undo like">
+        <Pressable
+          onPress={onPressUndo}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel="Undo like"
+        >
           <Text style={[styles.txt, styles.undo]}>Undo</Text>
         </Pressable>
       </View>
@@ -150,38 +158,37 @@ export default function UndoPill({ duration = 2000, onUndo, style, testID }: Und
 
 const styles = StyleSheet.create({
   wrap: {
-    position: "absolute",
+    position: 'absolute',
     left: 16,
     right: 16,
     bottom: 16,
-    alignItems: "center",
+    alignItems: 'center',
   },
   pill: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 999,
-    backgroundColor: "#111",
-    shadowColor: "#000",
+    backgroundColor: '#111',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
     shadowRadius: 12,
     elevation: 6,
   },
-  txt: { color: "#fff", fontWeight: "600" },
-  undo: { textDecorationLine: "underline" },
+  txt: { color: '#fff', fontWeight: '600' },
+  undo: { textDecorationLine: 'underline' },
   progressTrack: {
     marginTop: 6,
     height: 2,
-    width: "60%",
-    backgroundColor: "rgba(255,255,255,0.2)",
+    width: '60%',
+    backgroundColor: 'rgba(255,255,255,0.2)',
     borderRadius: 2,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   progressBar: {
-    height: "100%",
-    backgroundColor: "#ec4899",
+    height: '100%',
+    backgroundColor: '#ec4899',
   },
 });
-

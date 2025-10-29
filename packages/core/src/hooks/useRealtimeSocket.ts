@@ -59,13 +59,15 @@ interface UseRealtimeSocketReturn {
 /**
  * Hook for real-time WebSocket communication
  */
-export function useRealtimeSocket(
-  options: UseRealtimeSocketOptions = {}
-): UseRealtimeSocketReturn {
-  const { url = process.env['NEXT_PUBLIC_SOCKET_URL'] || 'http://localhost:5000', autoConnect = true } = options;
+export function useRealtimeSocket(options: UseRealtimeSocketOptions = {}): UseRealtimeSocketReturn {
+  const {
+    url = process.env['NEXT_PUBLIC_SOCKET_URL'] || 'http://localhost:5000',
+    autoConnect = true,
+  } = options;
 
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [socketInstance, setSocketInstance] = useState<Socket | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
   // Connect to WebSocket
@@ -81,7 +83,7 @@ export function useRealtimeSocket(
 
       // Use existing socket.io client if available
       // Token would be used here: getLocalStorageItem('accessToken')
-      
+
       // Create socket connection (simplified - actual implementation would use socket.io-client)
       // For now, we'll create a mock socket that can be replaced with real implementation
       const mockSocket: Socket = {
@@ -100,6 +102,7 @@ export function useRealtimeSocket(
       // });
 
       socketRef.current = mockSocket;
+      setSocketInstance(mockSocket);
       setIsConnected(true);
       setError(null);
 
@@ -116,6 +119,7 @@ export function useRealtimeSocket(
     if (socketRef.current) {
       socketRef.current.disconnect();
       socketRef.current = null;
+      setSocketInstance(null);
       setIsConnected(false);
       logger.info('Socket disconnected');
     }
@@ -180,6 +184,7 @@ export function useRealtimeSocket(
   // Auto-connect on mount
   useEffect(() => {
     if (autoConnect) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- autoConnect requires calling connect on mount
       connect();
     }
 
@@ -188,8 +193,13 @@ export function useRealtimeSocket(
     };
   }, [autoConnect, connect, disconnect]);
 
+  // Sync ref to state when connection changes
+  useEffect(() => {
+    setSocketInstance(socketRef.current);
+  }, [isConnected]);
+  
   return {
-    socket: socketRef.current,
+    socket: socketInstance,
     isConnected,
     error,
     connect,

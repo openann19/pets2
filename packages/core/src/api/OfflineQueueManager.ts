@@ -87,7 +87,7 @@ export class OfflineQueueManager {
 
     // Insert based on priority
     this.insertByPriority(queueItem);
-    
+
     await this.persistQueue();
     this.notifyListeners();
 
@@ -115,7 +115,7 @@ export class OfflineQueueManager {
     }
 
     const processableItems = this.queue.filter(
-      item => !this.processing.has(item.id) && item.retryCount < item.maxRetries
+      (item) => !this.processing.has(item.id) && item.retryCount < item.maxRetries,
     );
 
     if (processableItems.length === 0) {
@@ -129,14 +129,14 @@ export class OfflineQueueManager {
       }
 
       this.processing.add(item.id);
-      
+
       try {
         await this.processItem(item);
         this.removeItem(item.id);
         logger.debug('Item processed successfully', { id: item.id });
-      } catch (error) {
+      } catch (_err) {
         item.retryCount++;
-        
+
         if (item.retryCount >= item.maxRetries) {
           logger.error('Item failed after max retries', {
             id: item.id,
@@ -162,7 +162,7 @@ export class OfflineQueueManager {
   /**
    * Process individual item
    */
-  protected async processItem(item: QueueItem): Promise<void> {
+  protected async processItem(_item: QueueItem): Promise<void> {
     // This should be implemented by subclasses
     throw new Error('processItem must be implemented by subclass');
   }
@@ -171,14 +171,14 @@ export class OfflineQueueManager {
    * Get queue statistics
    */
   getStats(): QueueStats {
-    const criticalItems = this.queue.filter(item => item.priority === 'critical').length;
+    const criticalItems = this.queue.filter((item) => item.priority === 'critical').length;
     const oldestItem = this.queue.length > 0 ? this.queue[0]!.timestamp : undefined;
 
     return {
       totalItems: this.queue.length,
       pendingItems: this.queue.length - this.processing.size,
       processingItems: this.processing.size,
-      failedItems: this.queue.filter(item => item.retryCount >= item.maxRetries).length,
+      failedItems: this.queue.filter((item) => item.retryCount >= item.maxRetries).length,
       criticalItems,
       oldestItemTimestamp: oldestItem,
     };
@@ -198,14 +198,14 @@ export class OfflineQueueManager {
    * Get items by priority
    */
   getItemsByPriority(priority: QueuePriority): QueueItem[] {
-    return this.queue.filter(item => item.priority === priority);
+    return this.queue.filter((item) => item.priority === priority);
   }
 
   /**
    * Remove item from queue
    */
   removeItem(id: string): void {
-    const index = this.queue.findIndex(item => item.id === id);
+    const index = this.queue.findIndex((item) => item.id === id);
     if (index !== -1) {
       this.queue.splice(index, 1);
       this.persistQueue();
@@ -218,7 +218,7 @@ export class OfflineQueueManager {
    */
   setOnlineStatus(isOnline: boolean): void {
     this.isOnline = isOnline;
-    
+
     if (isOnline) {
       logger.info('Online, starting queue processing');
       void this.processQueue();
@@ -232,7 +232,7 @@ export class OfflineQueueManager {
    */
   subscribe(listener: (stats: QueueStats) => void): () => void {
     this.listeners.push(listener);
-    
+
     return () => {
       const index = this.listeners.indexOf(listener);
       if (index !== -1) {
@@ -246,7 +246,7 @@ export class OfflineQueueManager {
    */
   private insertByPriority(item: QueueItem): void {
     const priorityValue = this.getPriorityValue(item.priority);
-    
+
     let insertIndex = this.queue.length;
     for (let i = 0; i < this.queue.length; i++) {
       const current = this.queue[i]!;
@@ -255,7 +255,7 @@ export class OfflineQueueManager {
         break;
       }
     }
-    
+
     this.queue.splice(insertIndex, 0, item);
   }
 
@@ -299,7 +299,8 @@ export class OfflineQueueManager {
     try {
       const data = JSON.stringify(this.queue);
       this.storage.setItem('offline_queue', data);
-    } catch (error) {
+    } catch (err) {
+      const error = err;
       logger.error('Failed to persist queue', { error });
     }
   }
@@ -318,7 +319,8 @@ export class OfflineQueueManager {
         this.queue = JSON.parse(data);
         logger.info('Queue loaded from storage', { itemCount: this.queue.length });
       }
-    } catch (error) {
+    } catch (err) {
+      const error = err;
       logger.error('Failed to load queue', { error });
     }
   }
@@ -339,10 +341,11 @@ export class OfflineQueueManager {
    */
   private notifyListeners(): void {
     const stats = this.getStats();
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(stats);
-      } catch (error) {
+      } catch (err) {
+        const error = err;
         logger.error('Listener error', { error });
       }
     });
@@ -364,4 +367,3 @@ export class OfflineQueueManager {
     }
   }
 }
-

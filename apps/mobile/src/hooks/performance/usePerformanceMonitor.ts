@@ -3,8 +3,8 @@
  * Tracks and reports hook performance metrics
  */
 
-import { useEffect, useRef } from "react";
-import { logger } from "@pawfectmatch/core";
+import { useEffect, useRef } from 'react';
+import { logger } from '@pawfectmatch/core';
 
 interface PerformanceMetrics {
   hookName: string;
@@ -37,8 +37,7 @@ class PerformanceMonitor {
     if (metric) {
       metric.renderCount += 1;
       metric.avgRenderTime =
-        (metric.avgRenderTime * (metric.renderCount - 1) + renderTime) /
-        metric.renderCount;
+        (metric.avgRenderTime * (metric.renderCount - 1) + renderTime) / metric.renderCount;
 
       if (renderTime > 16) {
         // Flag renders over 1 frame (16.67ms at 60fps)
@@ -58,10 +57,10 @@ class PerformanceMonitor {
 
   logReport(): void {
     const report = this.getReport();
-    
+
     report.forEach((metric) => {
       if (metric.renderCount > 0) {
-        logger.info("Hook Performance", {
+        logger.info('Hook Performance', {
           hook: metric.hookName,
           screen: metric.screenName,
           mountTime: `${metric.mountTime.toFixed(2)}ms`,
@@ -79,10 +78,7 @@ export const performanceMonitor = new PerformanceMonitor();
 /**
  * Hook to monitor performance of other hooks
  */
-export function usePerformanceMonitor(
-  hookName: string,
-  screenName: string
-): void {
+export function usePerformanceMonitor(hookName: string, screenName: string): void {
   const mountTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
@@ -96,7 +92,7 @@ export function usePerformanceMonitor(
 
   useEffect(() => {
     const renderStart = performance.now();
-    
+
     return () => {
       const renderTime = performance.now() - renderStart;
       performanceMonitor.recordRender(hookName, screenName, renderTime);
@@ -110,4 +106,3 @@ export function usePerformanceMonitor(
 export function logPerformanceReport(): void {
   performanceMonitor.logReport();
 }
-

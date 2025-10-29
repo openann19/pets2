@@ -4,27 +4,28 @@
  * Provides custom render functions and utilities for testing.
  */
 
-import React from 'react';
-import { render } from '@testing-library/react-native';
-import type { RenderOptions } from '@testing-library/react-native';
+import { ThemeProvider } from '@mobile/src/theme';
 import { NavigationContainer } from '@react-navigation/native';
-import { ThemeProvider, defaultTheme } from "@/theme";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { RenderOptions } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
+import React from 'react';
 
 // Test theme is now provided by the canonical theme system
 
 // Query client for React Query testing
-const createTestQueryClient = () => new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      gcTime: 0,
+const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        gcTime: 0,
+      },
+      mutations: {
+        retry: false,
+      },
     },
-    mutations: {
-      retry: false,
-    },
-  },
-});
+  });
 
 // Custom render function with providers
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
@@ -32,10 +33,7 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   includeNavigation?: boolean;
 }
 
-export function customRender(
-  component: React.ReactElement,
-  options: CustomRenderOptions = {}
-) {
+export function customRender(component: React.ReactElement, options: CustomRenderOptions = {}) {
   const {
     queryClient = createTestQueryClient(),
     includeNavigation = true,
@@ -45,18 +43,12 @@ export function customRender(
   const AllTheProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const content = (
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider scheme="light">
-          {children}
-        </ThemeProvider>
+        <ThemeProvider scheme="light">{children}</ThemeProvider>
       </QueryClientProvider>
     );
 
     if (includeNavigation) {
-      return (
-        <NavigationContainer>
-          {content}
-        </NavigationContainer>
-      );
+      return <NavigationContainer>{content}</NavigationContainer>;
     }
 
     return content;
@@ -64,7 +56,7 @@ export function customRender(
 
   return render(component, {
     wrapper: AllTheProviders,
-    ...renderOptions
+    ...renderOptions,
   });
 }
 

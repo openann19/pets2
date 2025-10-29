@@ -2,5 +2,4 @@
  * Dashboard Hooks Index
  */
 
-export { useAdminDashboard } from "./useAdminDashboard";
-
+export { useAdminDashboard } from './useAdminDashboard';

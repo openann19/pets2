@@ -3,10 +3,10 @@
  * Lightweight logging for React Native with Sentry integration
  */
 
-import * as Sentry from "@sentry/react-native";
-import * as Keychain from "react-native-keychain";
-import * as Aes from "react-native-aes-crypto";
-import EncryptedStorage from "react-native-encrypted-storage";
+import * as Sentry from '@sentry/react-native';
+import * as Keychain from 'react-native-keychain';
+import * as Aes from 'react-native-aes-crypto';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 // Type assertion for Sentry to avoid unsafe call errors
 const sentry = Sentry as {
@@ -18,12 +18,12 @@ const sentry = Sentry as {
 };
 
 export enum LogLevel {
-  DEBUG = "debug",
-  INFO = "info",
-  WARN = "warn",
-  ERROR = "error",
-  SECURITY = "security",
-  PERFORMANCE = "performance",
+  DEBUG = 'debug',
+  INFO = 'info',
+  WARN = 'warn',
+  ERROR = 'error',
+  SECURITY = 'security',
+  PERFORMANCE = 'performance',
 }
 
 export type LogLevelType = `${LogLevel}`;
@@ -150,8 +150,7 @@ class MobileLogger {
   private isDevelopment = __DEV__;
   private sessionId: string;
   private appVersion: string;
-  private userInfo: { id?: string; email?: string; username?: string } | null =
-    null;
+  private userInfo: { id?: string; email?: string; username?: string } | null = null;
   private logBuffer: StructuredLogEntry[] = [];
   private offlineBuffer: StructuredLogEntry[] = [];
   private encryptionKey: string | null = null;
@@ -160,8 +159,8 @@ class MobileLogger {
   // Encryption constants
   private readonly ENCRYPTION_KEY_SIZE = 32; // 256 bits
   private readonly ENCRYPTION_IV_SIZE = 16; // 128 bits
-  private readonly ENCRYPTION_KEY_STORAGE_KEY = "logger_encryption_key";
-  private readonly ENCRYPTION_SALT_STORAGE_KEY = "logger_encryption_salt";
+  private readonly ENCRYPTION_KEY_STORAGE_KEY = 'logger_encryption_key';
+  private readonly ENCRYPTION_SALT_STORAGE_KEY = 'logger_encryption_salt';
 
   // Constants
   private readonly MAX_LOG_BUFFER_SIZE = 1000;
@@ -180,19 +179,18 @@ class MobileLogger {
   };
 
   // Rate limiting state
-  private rateTracking: Record<LogLevel, { count: number; resetTime: number }> =
-    {
-      [LogLevel.DEBUG]: { count: 0, resetTime: Date.now() },
-      [LogLevel.INFO]: { count: 0, resetTime: Date.now() },
-      [LogLevel.WARN]: { count: 0, resetTime: Date.now() },
-      [LogLevel.ERROR]: { count: 0, resetTime: Date.now() },
-      [LogLevel.SECURITY]: { count: 0, resetTime: Date.now() },
-      [LogLevel.PERFORMANCE]: { count: 0, resetTime: Date.now() },
-    };
+  private rateTracking: Record<LogLevel, { count: number; resetTime: number }> = {
+    [LogLevel.DEBUG]: { count: 0, resetTime: Date.now() },
+    [LogLevel.INFO]: { count: 0, resetTime: Date.now() },
+    [LogLevel.WARN]: { count: 0, resetTime: Date.now() },
+    [LogLevel.ERROR]: { count: 0, resetTime: Date.now() },
+    [LogLevel.SECURITY]: { count: 0, resetTime: Date.now() },
+    [LogLevel.PERFORMANCE]: { count: 0, resetTime: Date.now() },
+  };
 
   constructor() {
     this.sessionId = this.generateSessionId();
-    this.appVersion = "1.0.0"; // Could be from app config
+    this.appVersion = '1.0.0'; // Could be from app config
     this.setupLogRotation();
     void this.initializeEncryption();
   }
@@ -216,32 +214,25 @@ class MobileLogger {
       } else {
         // Generate new encryption keys
         const key = await this.generateSecureKey();
-        const salt = await this.generateSecureRandomBytes(
-          this.ENCRYPTION_KEY_SIZE,
-        );
+        const salt = await this.generateSecureRandomBytes(this.ENCRYPTION_KEY_SIZE);
 
         // Store keys securely
-        await Keychain.setGenericPassword(
-          this.ENCRYPTION_KEY_STORAGE_KEY,
-          key,
-          { service: this.ENCRYPTION_KEY_STORAGE_KEY },
-        );
-        await Keychain.setGenericPassword(
-          this.ENCRYPTION_SALT_STORAGE_KEY,
-          salt,
-          { service: this.ENCRYPTION_SALT_STORAGE_KEY },
-        );
+        await Keychain.setGenericPassword(this.ENCRYPTION_KEY_STORAGE_KEY, key, {
+          service: this.ENCRYPTION_KEY_STORAGE_KEY,
+        });
+        await Keychain.setGenericPassword(this.ENCRYPTION_SALT_STORAGE_KEY, salt, {
+          service: this.ENCRYPTION_SALT_STORAGE_KEY,
+        });
 
         this.encryptionKey = key;
         this.encryptionSalt = salt;
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.error("Failed to initialize encryption", {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.error('Failed to initialize encryption', {
         error: new Error(errorMessage),
-        component: "Logger",
-        action: "initializeEncryption",
+        component: 'Logger',
+        action: 'initializeEncryption',
       });
       // Fall back to unencrypted logging if encryption setup fails
       this.encryptionKey = null;
@@ -252,10 +243,7 @@ class MobileLogger {
   /**
    * Compatibility helpers for observability service
    */
-  setUserContext(
-    userId: string,
-    properties: Record<string, unknown> = {},
-  ): void {
+  setUserContext(userId: string, properties: Record<string, unknown> = {}): void {
     // Update internal user info minimally
     this.userInfo = { id: userId };
     try {
@@ -275,19 +263,16 @@ class MobileLogger {
    */
   private async generateSecureKey(): Promise<string> {
     try {
-      const randomBytes = await this.generateSecureRandomBytes(
-        this.ENCRYPTION_KEY_SIZE,
-      );
+      const randomBytes = await this.generateSecureRandomBytes(this.ENCRYPTION_KEY_SIZE);
       return await Aes.pbkdf2(
         randomBytes,
-        this.encryptionSalt ??
-          (await this.generateSecureRandomBytes(this.ENCRYPTION_KEY_SIZE)),
+        this.encryptionSalt ?? (await this.generateSecureRandomBytes(this.ENCRYPTION_KEY_SIZE)),
         10000, // Iterations
         this.ENCRYPTION_KEY_SIZE,
-        "sha256", // Hash algorithm
+        'sha256', // Hash algorithm
       );
     } catch (error) {
-      throw new Error("Failed to generate secure key: " + String(error));
+      throw new Error('Failed to generate secure key: ' + String(error));
     }
   }
 
@@ -299,7 +284,7 @@ class MobileLogger {
       const key = await Aes.randomKey(size);
       return key;
     } catch (error) {
-      throw new Error("Failed to generate random bytes: " + String(error));
+      throw new Error('Failed to generate random bytes: ' + String(error));
     }
   }
 
@@ -309,23 +294,18 @@ class MobileLogger {
   private async encryptData(data: string): Promise<EncryptedData> {
     try {
       if (!this.encryptionKey || !this.encryptionSalt) {
-        throw new Error("Encryption not initialized");
+        throw new Error('Encryption not initialized');
       }
 
       const iv = await this.generateSecureRandomBytes(this.ENCRYPTION_IV_SIZE);
-      const ciphertext = await Aes.encrypt(
-        data,
-        this.encryptionKey,
-        iv,
-        "aes-256-cbc",
-      );
+      const ciphertext = await Aes.encrypt(data, this.encryptionKey, iv, 'aes-256-cbc');
 
       return {
         ciphertext,
         iv,
       };
     } catch (error) {
-      throw new Error("Encryption failed: " + String(error));
+      throw new Error('Encryption failed: ' + String(error));
     }
   }
 
@@ -335,19 +315,19 @@ class MobileLogger {
   private async decryptData(encryptedData: EncryptedData): Promise<string> {
     try {
       if (!this.encryptionKey || !this.encryptionSalt) {
-        throw new Error("Encryption not initialized");
+        throw new Error('Encryption not initialized');
       }
 
       const decrypted = await Aes.decrypt(
         encryptedData.ciphertext,
         this.encryptionKey,
         encryptedData.iv,
-        "aes-128-cbc",
+        'aes-128-cbc',
       );
 
       return decrypted;
     } catch (error) {
-      throw new Error("Decryption failed: " + String(error));
+      throw new Error('Decryption failed: ' + String(error));
     }
   }
 
@@ -382,7 +362,7 @@ class MobileLogger {
       this.logBuffer = encryptedLogs.slice(-this.MAX_LOG_BUFFER_SIZE);
     } catch (error) {
       console.error(
-        "Failed to rotate logs:",
+        'Failed to rotate logs:',
         error instanceof Error ? error.message : String(error),
       );
     }
@@ -402,15 +382,13 @@ class MobileLogger {
   /**
    * Basic encryption for sensitive log entries
    */
-  private async encryptLogEntry(
-    log: StructuredLogEntry,
-  ): Promise<StructuredLogEntry> {
+  private async encryptLogEntry(log: StructuredLogEntry): Promise<StructuredLogEntry> {
     try {
       if (!this.encryptionKey) {
         // Fall back to redaction if encryption is not available
         return {
           ...log,
-          message: "[REDACTED] Encryption unavailable",
+          message: '[REDACTED] Encryption unavailable',
           metadata: {
             timestamp: log.timestamp,
             level: log.level,
@@ -429,36 +407,34 @@ class MobileLogger {
 
       return {
         ...log,
-        message: "[ENCRYPTED]",
+        message: '[ENCRYPTED]',
         metadata: {
           ...log.metadata,
           isEncrypted: true,
           encryptedAt: new Date().toISOString(),
           encryptedData: encryptedData,
           integrity: {
-            hash: await this.generateHMAC(
-              log.message + JSON.stringify(log.metadata),
-            ),
+            hash: await this.generateHMAC(log.message + JSON.stringify(log.metadata)),
             timestamp: new Date().toISOString(),
           },
         },
       };
     } catch (error) {
       // If encryption fails, redact sensitive data
-      this.error("Log encryption failed", {
+      this.error('Log encryption failed', {
         error: error instanceof Error ? error : new Error(String(error)),
-        component: "Logger",
-        action: "encryptLogEntry",
+        component: 'Logger',
+        action: 'encryptLogEntry',
       });
 
       return {
         ...log,
-        message: "[REDACTED] Log encryption failed",
+        message: '[REDACTED] Log encryption failed',
         metadata: {
           timestamp: log.timestamp,
           level: log.level,
           isRedacted: true,
-          error: new Error("Encryption failed"),
+          error: new Error('Encryption failed'),
         },
       };
     }
@@ -470,13 +446,13 @@ class MobileLogger {
   private async generateHMAC(data: string): Promise<string> {
     try {
       if (!this.encryptionKey || !this.encryptionSalt) {
-        throw new Error("Encryption not initialized");
+        throw new Error('Encryption not initialized');
       }
 
       const hmac = await Aes.hmac256(data, this.encryptionKey);
       return hmac;
     } catch (error) {
-      throw new Error("HMAC generation failed: " + String(error));
+      throw new Error('HMAC generation failed: ' + String(error));
     }
   }
 
@@ -496,32 +472,32 @@ class MobileLogger {
 
     const sanitized: LogMetadata = {};
     const sensitiveFields = [
-      "password",
-      "token",
-      "accessToken",
-      "refreshToken",
-      "secret",
-      "apiKey",
-      "authorization",
-      "auth",
-      "credentials",
-      "credit",
-      "card",
-      "ccv",
-      "cvv",
-      "ssn",
-      "social",
-      "address",
-      "phone",
-      "birth",
-      "zip",
-      "postal",
-      "payment",
+      'password',
+      'token',
+      'accessToken',
+      'refreshToken',
+      'secret',
+      'apiKey',
+      'authorization',
+      'auth',
+      'credentials',
+      'credit',
+      'card',
+      'ccv',
+      'cvv',
+      'ssn',
+      'social',
+      'address',
+      'phone',
+      'birth',
+      'zip',
+      'postal',
+      'payment',
     ];
 
     const hashValue = (value: string): string => {
-      if (value === undefined || value === null || value === "") {
-        return "empty";
+      if (value === undefined || value === null || value === '') {
+        return 'empty';
       }
       let hash = 0;
       for (let i = 0; i < value.length; i++) {
@@ -536,14 +512,14 @@ class MobileLogger {
       const lowerKey = key.toLowerCase();
 
       if (sensitiveFields.some((field) => lowerKey.includes(field))) {
-        if (typeof value === "string" && value !== "") {
+        if (typeof value === 'string' && value !== '') {
           sanitized[key] = `[REDACTED:${hashValue(value)}]`;
         } else {
-          sanitized[key] = "[REDACTED]";
+          sanitized[key] = '[REDACTED]';
         }
       } else if (value instanceof Error) {
         // Process error safely
-        const stackLines = value.stack?.split("\n") ?? [];
+        const stackLines = value.stack?.split('\n') ?? [];
         const sensitivePatterns = [
           /password=/i,
           /api_?key=/i,
@@ -560,23 +536,18 @@ class MobileLogger {
         // Filter sensitive info from stack if in development
         const sanitizedStack = this.isDevelopment
           ? stackLines
-              .filter(
-                (line) =>
-                  !sensitivePatterns.some((pattern) => pattern.test(line)),
-              )
-              .join("\n")
+              .filter((line) => !sensitivePatterns.some((pattern) => pattern.test(line)))
+              .join('\n')
           : undefined;
 
         sanitized[key] = {
-          message: value.message ?? "Unknown error",
+          message: value.message ?? 'Unknown error',
           stack: sanitizedStack,
-          name: value.name ?? "Error",
-          code: (value as Error & { code?: string }).code ?? "UNKNOWN",
+          name: value.name ?? 'Error',
+          code: (value as Error & { code?: string }).code ?? 'UNKNOWN',
         };
-      } else if (value !== null && typeof value === "object") {
-        sanitized[key] = this.sanitizeMetadata(
-          value as Record<string, unknown>,
-        );
+      } else if (value !== null && typeof value === 'object') {
+        sanitized[key] = this.sanitizeMetadata(value as Record<string, unknown>);
       } else {
         sanitized[key] = value;
       }
@@ -585,11 +556,7 @@ class MobileLogger {
     return sanitized;
   }
 
-  private formatLogMessage(
-    level: LogLevel,
-    message: string,
-    metadata?: LogMetadata,
-  ): string {
+  private formatLogMessage(level: LogLevel, message: string, metadata?: LogMetadata): string {
     const timestamp = new Date().toISOString();
     const sanitized = this.sanitizeMetadata(metadata);
 
@@ -599,7 +566,7 @@ class MobileLogger {
       parts.push(JSON.stringify(sanitized, null, 2));
     }
 
-    return parts.join(" ");
+    return parts.join(' ');
   }
 
   /**
@@ -611,12 +578,10 @@ class MobileLogger {
     }
 
     // Check total log size
-    const totalSize = new TextEncoder().encode(
-      JSON.stringify({ message, metadata }),
-    ).length;
+    const totalSize = new TextEncoder().encode(JSON.stringify({ message, metadata })).length;
 
     if (totalSize > this.MAX_LOG_SIZE) {
-      this.warn("Log entry exceeded maximum size limit", {
+      this.warn('Log entry exceeded maximum size limit', {
         size: totalSize,
         limit: this.MAX_LOG_SIZE,
         truncated: true,
@@ -696,9 +661,7 @@ class MobileLogger {
       // Trim buffer if it exceeds size limit
       if (this.offlineBuffer.length > this.MAX_OFFLINE_BUFFER_SIZE) {
         // Keep most recent logs, removing oldest
-        this.offlineBuffer = this.offlineBuffer.slice(
-          -this.MAX_OFFLINE_BUFFER_SIZE,
-        );
+        this.offlineBuffer = this.offlineBuffer.slice(-this.MAX_OFFLINE_BUFFER_SIZE);
       }
 
       // Persist to secure storage
@@ -718,12 +681,11 @@ class MobileLogger {
       // Clean up old entries from storage
       await this.cleanupOldOfflineLogs();
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.error("Failed to buffer offline log", {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.error('Failed to buffer offline log', {
         error: new Error(errorMessage),
-        component: "Logger",
-        action: "bufferOfflineLog",
+        component: 'Logger',
+        action: 'bufferOfflineLog',
       });
     }
   }
@@ -734,44 +696,34 @@ class MobileLogger {
   private async cleanupOldOfflineLogs(): Promise<void> {
     try {
       // Get all storage keys
-      const allKeys = Object.keys(
-        (await EncryptedStorage.getItem("__keys__")) || {},
-      );
-      const offlineLogKeys = allKeys.filter((key): key is string =>
-        key.startsWith("offline_log_"),
-      );
+      const allKeys = Object.keys((await EncryptedStorage.getItem('__keys__')) || {});
+      const offlineLogKeys = allKeys.filter((key): key is string => key.startsWith('offline_log_'));
 
       // Sort by timestamp (embedded in key)
       offlineLogKeys.sort((a, b) => {
-        const [, , timestampA = "0"] = a.split("_");
-        const [, , timestampB = "0"] = b.split("_");
+        const [, , timestampA = '0'] = a.split('_');
+        const [, , timestampB = '0'] = b.split('_');
         return timestampA.localeCompare(timestampB);
       });
 
       // Remove oldest entries if we exceed the limit
-      const logsToRemove = offlineLogKeys.slice(
-        0,
-        -this.MAX_OFFLINE_BUFFER_SIZE,
-      );
-      await Promise.all(
-        logsToRemove.map((key) => EncryptedStorage.removeItem(key)),
-      );
+      const logsToRemove = offlineLogKeys.slice(0, -this.MAX_OFFLINE_BUFFER_SIZE);
+      await Promise.all(logsToRemove.map((key) => EncryptedStorage.removeItem(key)));
 
       // Log cleanup
       if (logsToRemove.length > 0) {
-        this.info("Cleaned up old offline logs", {
-          component: "Logger",
-          action: "cleanupOldOfflineLogs",
+        this.info('Cleaned up old offline logs', {
+          component: 'Logger',
+          action: 'cleanupOldOfflineLogs',
           removedCount: logsToRemove.length,
         });
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.error("Failed to cleanup old offline logs", {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.error('Failed to cleanup old offline logs', {
         error: new Error(errorMessage),
-        component: "Logger",
-        action: "cleanupOldOfflineLogs",
+        component: 'Logger',
+        action: 'cleanupOldOfflineLogs',
       });
     }
   }
@@ -786,11 +738,9 @@ class MobileLogger {
   private async loadOfflineLogs(): Promise<void> {
     try {
       // Get all stored keys
-      const allKeys = Object.keys(
-        (await EncryptedStorage.getItem("__keys__")) || {},
-      );
+      const allKeys = Object.keys((await EncryptedStorage.getItem('__keys__')) || {});
       const offlineLogKeys = allKeys.filter((key: string): key is StorageKey =>
-        key.startsWith("offline_log_"),
+        key.startsWith('offline_log_'),
       );
 
       // Load and decrypt all logs
@@ -821,10 +771,10 @@ class MobileLogger {
           // Verify integrity
           const calculatedHash = await this.generateHMAC(JSON.stringify(entry));
           if (calculatedHash !== log.hash) {
-            this.error("Offline log integrity check failed", {
-              error: new Error("Log tampering detected"),
-              component: "Logger",
-              action: "loadOfflineLogs",
+            this.error('Offline log integrity check failed', {
+              error: new Error('Log tampering detected'),
+              component: 'Logger',
+              action: 'loadOfflineLogs',
               key: log.key,
             });
             await EncryptedStorage.removeItem(log.key);
@@ -837,13 +787,11 @@ class MobileLogger {
           await EncryptedStorage.removeItem(log.key);
           // Log error details
           const errorMessage =
-            decryptError instanceof Error
-              ? decryptError.message
-              : String(decryptError);
-          this.error("Failed to decrypt offline log", {
+            decryptError instanceof Error ? decryptError.message : String(decryptError);
+          this.error('Failed to decrypt offline log', {
             error: new Error(errorMessage),
-            component: "Logger",
-            action: "loadOfflineLogs",
+            component: 'Logger',
+            action: 'loadOfflineLogs',
             key: log.key,
           });
         }
@@ -852,24 +800,21 @@ class MobileLogger {
       // Sort and trim buffer
       this.offlineBuffer.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
       if (this.offlineBuffer.length > this.MAX_OFFLINE_BUFFER_SIZE) {
-        this.offlineBuffer = this.offlineBuffer.slice(
-          -this.MAX_OFFLINE_BUFFER_SIZE,
-        );
+        this.offlineBuffer = this.offlineBuffer.slice(-this.MAX_OFFLINE_BUFFER_SIZE);
       }
 
       // Log success
-      this.info("Offline logs loaded successfully", {
-        component: "Logger",
-        action: "loadOfflineLogs",
+      this.info('Offline logs loaded successfully', {
+        component: 'Logger',
+        action: 'loadOfflineLogs',
         logsLoaded: this.offlineBuffer.length,
       });
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.error("Failed to load offline logs", {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.error('Failed to load offline logs', {
         error: new Error(errorMessage),
-        component: "Logger",
-        action: "loadOfflineLogs",
+        component: 'Logger',
+        action: 'loadOfflineLogs',
       });
     }
   }
@@ -879,8 +824,7 @@ class MobileLogger {
    */
   private getBufferMetrics(): LogBufferMetrics {
     const criticalEntries = this.offlineBuffer.filter(
-      (entry) =>
-        entry.level === LogLevel.ERROR || entry.level === LogLevel.SECURITY,
+      (entry) => entry.level === LogLevel.ERROR || entry.level === LogLevel.SECURITY,
     ).length;
 
     let oldestEntry: Date | null = null;
@@ -942,21 +886,17 @@ class MobileLogger {
       timestamp: new Date().toISOString(),
       sessionId: this.sessionId,
       version: this.appVersion,
-      userId: this.userInfo?.id !== undefined ? this.userInfo.id : "anonymous",
+      userId: this.userInfo?.id !== undefined ? this.userInfo.id : 'anonymous',
       ...metadata,
       // Add security context
       securityContext: {
-        environment: this.isDevelopment ? "development" : "production",
+        environment: this.isDevelopment ? 'development' : 'production',
         sessionHash: this.hashIdentifier(this.sessionId),
         logId: this.hashIdentifier(`${level}_${String(Date.now())}_${message}`),
       },
     };
 
-    const formattedMessage = this.formatLogMessage(
-      level,
-      message,
-      enhancedMetadata,
-    );
+    const formattedMessage = this.formatLogMessage(level, message, enhancedMetadata);
     const sanitized = this.sanitizeMetadata(enhancedMetadata);
 
     // Create structured log entry
@@ -1018,24 +958,23 @@ class MobileLogger {
             // Add secure transaction data if available
             ...(metadata.correlationId
               ? {
-                  transaction: `${metadata.component ?? "unknown"}.${metadata.action ?? "action"}`,
+                  transaction: `${metadata.component ?? 'unknown'}.${metadata.action ?? 'action'}`,
                   transactionHash: this.hashIdentifier(metadata.correlationId),
                 }
               : {}),
           });
         } else {
-          const sentryLevel =
-            String(level) === "security" ? "warning" : "error";
+          const sentryLevel = String(level) === 'security' ? 'warning' : 'error';
 
           // Set secure context before capturing message
           const secureContext = {
             ...sanitized,
             timestamp: new Date().toISOString(),
             sessionHash: this.hashIdentifier(this.sessionId),
-            environment: this.isDevelopment ? "development" : "production",
+            environment: this.isDevelopment ? 'development' : 'production',
           };
 
-          sentry.setContext("metadata", secureContext);
+          sentry.setContext('metadata', secureContext);
           sentry.captureMessage(message, sentryLevel);
         }
 
@@ -1045,7 +984,7 @@ class MobileLogger {
         // Fallback to console if Sentry fails
         if (this.isDevelopment) {
           console.error(
-            "Failed to send to Sentry:",
+            'Failed to send to Sentry:',
             error instanceof Error ? error.message : String(error),
           );
         }
@@ -1076,10 +1015,8 @@ class MobileLogger {
     this.log(LogLevel.SECURITY, message, {
       ...metadata,
       tags: [
-        ...(metadata?.tags !== undefined && metadata.tags !== null
-          ? metadata.tags
-          : []),
-        "security",
+        ...(metadata?.tags !== undefined && metadata.tags !== null ? metadata.tags : []),
+        'security',
       ],
     });
   }
@@ -1087,26 +1024,16 @@ class MobileLogger {
   /**
    * Log performance metrics
    */
-  performance(
-    operation: string,
-    durationMs: number,
-    metadata?: LogMetadata,
-  ): void {
-    this.log(
-      LogLevel.PERFORMANCE,
-      `${operation} completed in ${String(durationMs)}ms`,
-      {
-        ...metadata,
-        duration: durationMs,
-        operation,
-        tags: [
-          ...(metadata?.tags !== undefined && metadata.tags !== null
-            ? metadata.tags
-            : []),
-          "performance",
-        ],
-      },
-    );
+  performance(operation: string, durationMs: number, metadata?: LogMetadata): void {
+    this.log(LogLevel.PERFORMANCE, `${operation} completed in ${String(durationMs)}ms`, {
+      ...metadata,
+      duration: durationMs,
+      operation,
+      tags: [
+        ...(metadata?.tags !== undefined && metadata.tags !== null ? metadata.tags : []),
+        'performance',
+      ],
+    });
   }
 
   /**
@@ -1129,15 +1056,15 @@ class MobileLogger {
       user === null ||
       user.id === undefined ||
       user.id === null ||
-      user.id === "" ||
+      user.id === '' ||
       user.email === undefined ||
       user.email === null ||
-      user.email === "" ||
+      user.email === '' ||
       user.username === undefined ||
       user.username === null ||
-      user.username === ""
+      user.username === ''
     ) {
-      throw new Error("Invalid user data provided to logger");
+      throw new Error('Invalid user data provided to logger');
     }
 
     this.userInfo = user;
@@ -1149,9 +1076,9 @@ class MobileLogger {
       username: user.username,
     });
 
-    this.info("User context set", {
+    this.info('User context set', {
       userId: user.id,
-      tags: ["user-context"],
+      tags: ['user-context'],
       level: LogLevel.INFO,
     } as LogMetadata);
   }
@@ -1159,11 +1086,7 @@ class MobileLogger {
   /**
    * Add breadcrumb for tracing and debugging
    */
-  addBreadcrumb(
-    message: string,
-    category: string,
-    data?: Record<string, unknown>,
-  ): void {
+  addBreadcrumb(message: string, category: string, data?: Record<string, unknown>): void {
     const sanitizedData = this.sanitizeMetadata(data);
 
     // Add secure breadcrumb with enhanced context
@@ -1172,11 +1095,11 @@ class MobileLogger {
         message: this.truncateString(message, 1000), // Limit message size
         category: this.validateCategory(category),
         data: sanitizedData,
-        level: "info",
+        level: 'info',
         timestamp: Date.now() / 1000,
         // Add security context
         sessionHash: this.hashIdentifier(this.sessionId),
-        sourceComponent: data?.["component"] ?? "unknown",
+        sourceComponent: data?.['component'] ?? 'unknown',
       };
 
       sentry.addBreadcrumb(secureBreadcrumb);
@@ -1193,7 +1116,7 @@ class MobileLogger {
       // Fail silently but log locally
       if (this.isDevelopment) {
         console.warn(
-          "Failed to add breadcrumb:",
+          'Failed to add breadcrumb:',
           error instanceof Error ? error.message : String(error),
         );
       }
@@ -1202,9 +1125,7 @@ class MobileLogger {
 
   // ===== SECURITY CONTROLS =====
 
-  async exportAuditLogs(
-    options: AuditLogRequest = {},
-  ): Promise<AuditLogExport> {
+  async exportAuditLogs(options: AuditLogRequest = {}): Promise<AuditLogExport> {
     try {
       const {
         startDate,
@@ -1215,7 +1136,7 @@ class MobileLogger {
 
       // Validate inputs
       if (endDate < (startDate ?? new Date(0))) {
-        throw new Error("End date must be after start date");
+        throw new Error('End date must be after start date');
       }
 
       // Filter and sanitize logs with proper type handling
@@ -1228,9 +1149,7 @@ class MobileLogger {
           if (isNaN(entryDate.getTime())) {
             return false;
           }
-          const matchesDate = startDate
-            ? entryDate >= startDate && entryDate <= endDate
-            : true;
+          const matchesDate = startDate ? entryDate >= startDate && entryDate <= endDate : true;
           const matchesLevel = levels.includes(entry.level);
           return matchesDate && matchesLevel;
         })
@@ -1244,7 +1163,7 @@ class MobileLogger {
         endDate: endDate.toISOString(),
         levels,
         includeMetrics,
-        contentHash: "",
+        contentHash: '',
         totalEntries: 0,
       };
 
@@ -1264,7 +1183,7 @@ class MobileLogger {
       exportData.exportMetadata.filters.totalEntries = filteredLogs.length;
 
       // Log export attempt for security audit
-      this.security("Audit logs exported", {
+      this.security('Audit logs exported', {
         exportId: exportData.exportMetadata.exportId,
         entriesCount: filteredLogs.length,
         timeRange: {
@@ -1276,26 +1195,22 @@ class MobileLogger {
 
       return exportData;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.error("Failed to export audit logs", {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.error('Failed to export audit logs', {
         error: new Error(errorMessage),
         options,
       });
-      throw new Error("Audit log export failed: " + errorMessage);
+      throw new Error('Audit log export failed: ' + errorMessage);
     }
   }
 
   /**
    * Generate a secure fingerprint for error grouping
    */
-  private generateErrorFingerprint(
-    message: string,
-    metadata?: LogMetadata,
-  ): string[] {
+  private generateErrorFingerprint(message: string, metadata?: LogMetadata): string[] {
     const components = [
-      metadata?.component ?? "unknown",
-      metadata?.action ?? "action",
+      metadata?.component ?? 'unknown',
+      metadata?.action ?? 'action',
       // Hash message to normalize it for grouping
       this.hashIdentifier(message),
     ];
@@ -1303,7 +1218,7 @@ class MobileLogger {
     if (metadata?.error instanceof Error) {
       components.push(
         metadata.error.name,
-        (metadata.error as Error & { code?: string }).code ?? "UNKNOWN",
+        (metadata.error as Error & { code?: string }).code ?? 'UNKNOWN',
       );
     }
 
@@ -1333,7 +1248,7 @@ class MobileLogger {
    */
   private clearSentryContext(): void {
     try {
-      sentry.setContext("metadata", {});
+      sentry.setContext('metadata', {});
       sentry.setUser({});
     } catch {
       // Ignore cleanup errors
@@ -1369,7 +1284,7 @@ class MobileLogger {
 
       // Validate input dates
       if (endDate < (startDate ?? new Date(0))) {
-        throw new Error("End date must be after start date");
+        throw new Error('End date must be after start date');
       }
 
       // Create a secure copy of logs with filtering
@@ -1382,9 +1297,7 @@ class MobileLogger {
           if (isNaN(entryDate.getTime())) {
             return false;
           }
-          const matchesDate = startDate
-            ? entryDate >= startDate && entryDate <= endDate
-            : true;
+          const matchesDate = startDate ? entryDate >= startDate && entryDate <= endDate : true;
           const matchesLevel = levels.includes(entry.level);
           return matchesDate && matchesLevel;
         })
@@ -1417,11 +1330,11 @@ class MobileLogger {
       };
 
       // Log export attempt for security audit
-      this.security("Audit logs exported", {
+      this.security('Audit logs exported', {
         exportId: exportData.exportMetadata.exportId,
         entriesCount: filteredLogs.length,
         timeRange: {
-          start: startDate?.toISOString() ?? "beginning",
+          start: startDate?.toISOString() ?? 'beginning',
           end: endDate.toISOString(),
         },
         contentHash,
@@ -1429,13 +1342,12 @@ class MobileLogger {
 
       return exportData;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.error("Failed to export audit logs", {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.error('Failed to export audit logs', {
         error: new Error(errorMessage),
         options,
       });
-      throw new Error("Audit log export failed: " + errorMessage);
+      throw new Error('Audit log export failed: ' + errorMessage);
     }
   }
 
@@ -1444,7 +1356,7 @@ class MobileLogger {
    */
   private validateCategory(category: string): string {
     // Only allow alphanumeric and basic punctuation
-    return category.replace(/[^a-zA-Z0-9_.-]/g, "_").substring(0, 100); // Limit length
+    return category.replace(/[^a-zA-Z0-9_.-]/g, '_').substring(0, 100); // Limit length
   }
 
   /**
@@ -1454,7 +1366,7 @@ class MobileLogger {
     if (str.length <= maxLength) {
       return str;
     }
-    return str.substring(0, maxLength - 3) + "...";
+    return str.substring(0, maxLength - 3) + '...';
   }
 
   /**
@@ -1467,10 +1379,7 @@ class MobileLogger {
     const enhancedMetadata = {
       ...metadata,
       feature,
-      tags: [
-        ...(metadata?.tags !== undefined ? metadata.tags : []),
-        "feature-usage",
-      ],
+      tags: [...(metadata?.tags !== undefined ? metadata.tags : []), 'feature-usage'],
       // Add security tracking
       trackingId: this.hashIdentifier(`${feature}_${Date.now()}`),
       featureHash: this.hashIdentifier(feature),
@@ -1507,17 +1416,15 @@ class MobileLogger {
       eventType: safeEvent,
       timestamp: new Date().toISOString(),
       sessionHash: this.hashIdentifier(this.sessionId),
-      securityLevel: "standard",
+      securityLevel: 'standard',
       // Add security scanning markers
       contentHash: this.hashIdentifier(JSON.stringify(sanitizedDetails)),
       // Add execution context
-      component: String(details["component"] ?? "unknown"),
-      action: String(details["action"] ?? "unknown"),
+      component: String(details['component'] ?? 'unknown'),
+      action: String(details['action'] ?? 'unknown'),
       // Add tracking
       eventId: this.hashIdentifier(`${safeEvent}_${Date.now()}`),
-      environmentHash: this.hashIdentifier(
-        this.isDevelopment ? "development" : "production",
-      ),
+      environmentHash: this.hashIdentifier(this.isDevelopment ? 'development' : 'production'),
     };
 
     this.security(`Security Event: ${safeEvent}`, enhancedDetails);

@@ -1,16 +1,14 @@
-import React, { useCallback, useRef, useState } from "react";
-import { View, TextInput, StyleSheet, Alert } from "react-native";
-import { Animated } from "react-native";
-import * as Haptics from "expo-haptics";
-import * as ImagePicker from "expo-image-picker";
-import { EliteButton } from "../EliteComponents";
-import { GlassContainer } from "../GlassMorphism";
-import { PremiumBody } from "../PremiumTypography";
-import { tokens } from "@pawfectmatch/design-tokens";
-import { useTheme } from "@/theme";
-import { getExtendedColors } from "../../theme/adapters";
-import { chatService } from "../../services/chatService";
-import { VoiceRecorder } from "./VoiceRecorder";
+import { useTheme } from '@mobile/src/theme';
+import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
+import React, { useCallback, useRef, useState } from 'react';
+import { Alert, Animated, StyleSheet, TextInput, View } from 'react-native';
+import { chatService } from '../../services/chatService';
+import { getExtendedColors } from '../../theme/adapters';
+import { EliteButton } from '../EliteComponents';
+import { GlassContainer } from '../GlassMorphism';
+import { PremiumBody } from '../PremiumTypography';
+import { VoiceRecorder } from './VoiceRecorder';
 
 interface MessageInputProps {
   value: string;
@@ -36,7 +34,7 @@ export function MessageInput({
   onTypingChange,
   isSending = false,
   maxLength = MAX_MESSAGE_LENGTH,
-  placeholder = "Type a message...",
+  placeholder = 'Type a message...',
   inputRef,
   matchId,
   onAttachmentSent,
@@ -120,24 +118,20 @@ export function MessageInput({
 
     try {
       // Request permissions
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Permission Needed",
-          "Please grant photo library access to send attachments.",
-        );
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Needed', 'Please grant photo library access to send attachments.');
         return;
       }
 
       // Show attachment options
       Alert.alert(
-        "Add Attachment",
-        "Choose an option",
+        'Add Attachment',
+        'Choose an option',
         [
-          { text: "Cancel", style: "cancel" },
+          { text: 'Cancel', style: 'cancel' },
           {
-            text: "Photo Library",
+            text: 'Photo Library',
             onPress: async () => {
               setIsUploading(true);
               try {
@@ -157,40 +151,29 @@ export function MessageInput({
                   // Send attachment using chatService
                   await chatService.sendAttachment({
                     matchId,
-                    attachmentType: "image",
+                    attachmentType: 'image',
                     file: blob,
                   });
 
-                  Haptics.notificationAsync(
-                    Haptics.NotificationFeedbackType.Success,
-                  );
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                   onAttachmentSent?.();
                 }
               } catch (error) {
-                Haptics.notificationAsync(
-                  Haptics.NotificationFeedbackType.Error,
-                );
-                Alert.alert(
-                  "Error",
-                  "Failed to send attachment. Please try again.",
-                );
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+                Alert.alert('Error', 'Failed to send attachment. Please try again.');
               } finally {
                 setIsUploading(false);
               }
             },
           },
           {
-            text: "Take Photo",
+            text: 'Take Photo',
             onPress: async () => {
               setIsUploading(true);
               try {
-                const { status } =
-                  await ImagePicker.requestCameraPermissionsAsync();
-                if (status !== "granted") {
-                  Alert.alert(
-                    "Permission Needed",
-                    "Camera access required to take photos.",
-                  );
+                const { status } = await ImagePicker.requestCameraPermissionsAsync();
+                if (status !== 'granted') {
+                  Alert.alert('Permission Needed', 'Camera access required to take photos.');
                   setIsUploading(false);
                   return;
                 }
@@ -207,20 +190,16 @@ export function MessageInput({
 
                   await chatService.sendAttachment({
                     matchId,
-                    attachmentType: "image",
+                    attachmentType: 'image',
                     file: blob,
                   });
 
-                  Haptics.notificationAsync(
-                    Haptics.NotificationFeedbackType.Success,
-                  );
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                   onAttachmentSent?.();
                 }
               } catch (error) {
-                Haptics.notificationAsync(
-                  Haptics.NotificationFeedbackType.Error,
-                );
-                Alert.alert("Error", "Failed to take photo. Please try again.");
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+                Alert.alert('Error', 'Failed to take photo. Please try again.');
               } finally {
                 setIsUploading(false);
               }
@@ -230,13 +209,13 @@ export function MessageInput({
         { cancelable: true },
       );
     } catch (error) {
-      Alert.alert("Error", "Failed to open photo picker.");
+      Alert.alert('Error', 'Failed to open photo picker.');
     }
   }, [isUploading, matchId, onAttachmentSent]);
 
   const handleEmojiPress = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert("Emoji Picker", "Emoji picker coming soon! 😊");
+    Alert.alert('Emoji Picker', 'Emoji picker coming soon! 😊');
   }, []);
 
   const handleVoicePress = useCallback(() => {
@@ -266,7 +245,7 @@ export function MessageInput({
           title=""
           variant="glass"
           size="sm"
-          icon={isUploading ? "hourglass" : "add"}
+          icon={isUploading ? 'hourglass' : 'add'}
           ripple={true}
           onPress={handleAttachPress}
           disabled={isUploading}
@@ -279,22 +258,22 @@ export function MessageInput({
             style={StyleSheet.flatten([
               styles.textInput,
               {
-                backgroundColor: "rgba(255,255,255,0.1)",
-                borderColor: "rgba(255,255,255,0.2)",
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                borderColor: 'rgba(255,255,255,0.2)',
                 color: colors.text,
               },
               isTyping && [
                 styles.textInputFocused,
                 {
                   borderColor: colors.primary,
-                  backgroundColor: "rgba(255,255,255,0.2)",
+                  backgroundColor: 'rgba(255,255,255,0.2)',
                 },
               ],
               isNearLimit && [
                 styles.textInputWarning,
                 {
                   borderColor: colors.warning,
-                  backgroundColor: "rgba(245,158,11,0.1)",
+                  backgroundColor: 'rgba(245,158,11,0.1)',
                 },
               ],
             ])}
@@ -344,16 +323,14 @@ export function MessageInput({
           <EliteButton
             testID="send-button"
             title=""
-            variant={value.trim() || isUploading ? "primary" : "glass"}
+            variant={value.trim() || isUploading ? 'primary' : 'glass'}
             size="sm"
-            icon={isSending || isUploading ? "hourglass" : "send"}
+            icon={isSending || isUploading ? 'hourglass' : 'send'}
             ripple={true}
             glow={!!(value.trim() || isUploading)}
             shimmer={!!(isSending || isUploading)}
             onPress={handleSend}
-            disabled={
-              (!value.trim() && !isUploading) || isSending || isUploading
-            }
+            disabled={(!value.trim() && !isUploading) || isSending || isUploading}
           />
         </Animated.View>
       </View>
@@ -371,15 +348,15 @@ export function MessageInput({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "flex-end",
+    flexDirection: 'row',
+    alignItems: 'flex-end',
     paddingHorizontal: 16,
     paddingVertical: 8,
     gap: 8,
   },
   inputWrapper: {
     flex: 1,
-    position: "relative",
+    position: 'relative',
     minHeight: 36,
     maxHeight: 120,
   },
@@ -390,10 +367,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     borderWidth: 1,
-    textAlignVertical: "center",
+    textAlignVertical: 'center',
   },
   textInputFocused: {
-    shadowColor: "#007AFF",
+    shadowColor: '#007AFF',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -403,10 +380,10 @@ const styles = StyleSheet.create({
     // Warning styles handled by theme colors
   },
   characterCountContainer: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 4,
     right: 8,
-    backgroundColor: "rgba(255,255,255,0.95)",
+    backgroundColor: 'rgba(255,255,255,0.95)',
     paddingHorizontal: 4,
     paddingVertical: 4,
     borderRadius: 4,

@@ -1,16 +1,16 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import React, { useCallback, useMemo, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-} from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 
-import DoubleTapLikePlus from "./DoubleTapLikePlus";
-import ReactionBarMagnetic from "../chat/ReactionBarMagnetic";
+import DoubleTapLikePlus from './DoubleTapLikePlus';
+import ReactionBarMagnetic from '../chat/ReactionBarMagnetic';
 
 /**
  * Wraps content with:
@@ -38,7 +38,7 @@ export default function LikeArbitrator({
   onUndo,
   onReact,
   triggerUndo,
-  a11yLongPressLabel = "Open reactions",
+  a11yLongPressLabel = 'Open reactions',
 }: LikeArbitratorProps) {
   const [reactionsOpen, setReactionsOpen] = useState(false);
 
@@ -48,8 +48,12 @@ export default function LikeArbitrator({
     transform: [{ translateY: lift.value }],
   }));
 
-  const closeReactions = useCallback(() => { setReactionsOpen(false); }, []);
-  const openReactions = useCallback(() => { setReactionsOpen(true); }, []);
+  const closeReactions = useCallback(() => {
+    setReactionsOpen(false);
+  }, []);
+  const openReactions = useCallback(() => {
+    setReactionsOpen(true);
+  }, []);
 
   const handleDoubleTap = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -92,7 +96,7 @@ export default function LikeArbitrator({
     .maxDuration(220)
     .maxDistance(8)
     .onEnd((_e, ok) => {
-      "worklet";
+      'worklet';
       if (!ok) return;
       // single taps just bounce the content a smidge for feedback (DoubleTapLikePlus already handles)
     });
@@ -105,29 +109,31 @@ export default function LikeArbitrator({
     // CRITICAL: if long-press recognizes, double-tap must fail
     .requireExternalGestureToFail(longPress)
     .onEnd((_e, ok) => {
-      "worklet";
+      'worklet';
       if (!ok) return;
       runOnJS(handleDoubleTap)();
     });
 
   // Exclusive: once one wins, the other cancels.
-  const composed = Gesture.Exclusive(
-    Gesture.Simultaneous(doubleTap, singleTap),
-    longPress,
-  );
+  const composed = Gesture.Exclusive(Gesture.Simultaneous(doubleTap, singleTap), longPress);
 
   return (
-    <View style={styles.root} accessible accessibilityLabel={a11yLongPressLabel}>
+    <View
+      style={styles.root}
+      accessible
+      accessibilityLabel={a11yLongPressLabel}
+    >
       <GestureDetector gesture={composed}>
         <Animated.View style={liftStyle}>
-          <DoubleTapLikePlus onDoubleTap={handleDoubleTap}>
-            {children}
-          </DoubleTapLikePlus>
+          <DoubleTapLikePlus onDoubleTap={handleDoubleTap}>{children}</DoubleTapLikePlus>
         </Animated.View>
       </GestureDetector>
 
       {reactionsOpen ? (
-        <View style={styles.reactionOverlay} pointerEvents="box-none">
+        <View
+          style={styles.reactionOverlay}
+          pointerEvents="box-none"
+        >
           <ReactionBarMagnetic
             onSelect={handleSelectReaction}
             onCancel={closeReactions}
@@ -139,13 +145,12 @@ export default function LikeArbitrator({
 }
 
 const styles = StyleSheet.create({
-  root: { position: "relative" },
+  root: { position: 'relative' },
   reactionOverlay: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     right: 0,
     bottom: 24,
-    alignItems: "center",
+    alignItems: 'center',
   },
 });
-

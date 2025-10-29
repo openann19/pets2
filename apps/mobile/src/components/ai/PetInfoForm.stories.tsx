@@ -72,9 +72,7 @@ const InteractiveWrapper = (args: any) => {
   const [petName, setPetName] = useState(args.petName || '');
   const [petBreed, setPetBreed] = useState(args.petBreed || '');
   const [petAge, setPetAge] = useState(args.petAge || '');
-  const [petPersonality, setPetPersonality] = useState(
-    args.petPersonality || ''
-  );
+  const [petPersonality, setPetPersonality] = useState(args.petPersonality || '');
   const [errors, setErrors] = useState(args.validationErrors || {});
 
   return (
@@ -145,8 +143,7 @@ export const WithValidationErrors: Story = {
     />
   ),
   parameters: {
-    notes:
-      'Form showing validation error states for required fields',
+    notes: 'Form showing validation error states for required fields',
   },
 };
 
@@ -161,8 +158,7 @@ export const PartialInput: Story = {
     />
   ),
   parameters: {
-    notes:
-      'Form with some fields filled and others empty',
+    notes: 'Form with some fields filled and others empty',
   },
 };
 
@@ -180,8 +176,7 @@ export const LongPersonalityText: Story = {
     />
   ),
   parameters: {
-    notes:
-      'Form with extensive personality description showing character count',
+    notes: 'Form with extensive personality description showing character count',
   },
 };
 
@@ -189,10 +184,13 @@ export const LongPersonalityText: Story = {
  * Interactive demonstration
  */
 export const Interactive: Story = {
-  render: () => <InteractiveWrapper {...mockFormData.empty} validationErrors={mockValidationErrors} />,
+  render: () => (
+    <InteractiveWrapper
+      {...mockFormData.empty}
+      validationErrors={mockValidationErrors}
+    />
+  ),
   parameters: {
-    notes:
-      'Fully interactive form where you can type and see real-time updates',
+    notes: 'Fully interactive form where you can type and see real-time updates',
   },
 };
-

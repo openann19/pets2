@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
-import { readJSON, writeJSON } from "../services/storage";
+import { useEffect, useState, useCallback } from 'react';
+import { readJSON, writeJSON } from '../services/storage';
 
 export type Settings = {
   notifications: { matches: boolean; messages: boolean; nearby: boolean };
@@ -13,7 +13,7 @@ const DEFAULTS: Settings = {
   premiumHints: true,
 };
 
-const KEY = "pm_settings_v1";
+const KEY = 'pm_settings_v1';
 
 export function useSettings() {
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
@@ -27,7 +27,7 @@ export function useSettings() {
   }, []);
 
   const update = useCallback(async (path: (s: Settings) => void) => {
-    setSettings(prev => {
+    setSettings((prev) => {
       const copy = JSON.parse(JSON.stringify(prev)) as Settings;
       path(copy);
       void writeJSON(KEY, copy);
@@ -37,4 +37,3 @@ export function useSettings() {
 
   return { settings, ready, update };
 }
-

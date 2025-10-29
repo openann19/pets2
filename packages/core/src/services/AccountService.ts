@@ -42,11 +42,11 @@ export class AccountService {
     });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: ApiError = (await response.json()) as ApiError;
       throw new Error(error.message ?? 'Failed to request account deletion');
     }
 
-    return await response.json() as AccountDeletionResponse;
+    return (await response.json()) as AccountDeletionResponse;
   }
 
   /**
@@ -66,11 +66,11 @@ export class AccountService {
     });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: ApiError = (await response.json()) as ApiError;
       throw new Error(error.message ?? 'Failed to cancel account deletion');
     }
 
-    return await response.json() as { success: boolean; message: string };
+    return (await response.json()) as { success: boolean; message: string };
   }
 
   /**
@@ -90,19 +90,17 @@ export class AccountService {
     });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: ApiError = (await response.json()) as ApiError;
       throw new Error(error.message ?? 'Failed to deactivate account');
     }
 
-    return await response.json() as AccountDeactivationResponse;
+    return (await response.json()) as AccountDeactivationResponse;
   }
 
   /**
    * Reactivate deactivated account
    */
-  async reactivateAccount(
-    token: string,
-  ): Promise<{ success: boolean; message: string }> {
+  async reactivateAccount(token: string): Promise<{ success: boolean; message: string }> {
     const response = await fetch(`${this.baseUrl}/api/account/reactivate`, {
       method: 'POST',
       headers: {
@@ -112,20 +110,17 @@ export class AccountService {
     });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: ApiError = (await response.json()) as ApiError;
       throw new Error(error.message ?? 'Failed to reactivate account');
     }
 
-    return await response.json() as { success: boolean; message: string };
+    return (await response.json()) as { success: boolean; message: string };
   }
 
   /**
    * Request data export (GDPR Article 20)
    */
-  async requestDataExport(
-    request: DataExportRequest,
-    token: string,
-  ): Promise<DataExportResponse> {
+  async requestDataExport(request: DataExportRequest, token: string): Promise<DataExportResponse> {
     const response = await fetch(`${this.baseUrl}/api/account/export-data`, {
       method: 'POST',
       headers: {
@@ -136,55 +131,43 @@ export class AccountService {
     });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: ApiError = (await response.json()) as ApiError;
       throw new Error(error.message ?? 'Failed to request data export');
     }
 
-    return await response.json() as DataExportResponse;
+    return (await response.json()) as DataExportResponse;
   }
 
   /**
    * Check data export status
    */
-  async getDataExportStatus(
-    exportId: string,
-    token: string,
-  ): Promise<DataExportStatus> {
-    const response = await fetch(
-      `${this.baseUrl}/api/account/export-data/${exportId}/status`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+  async getDataExportStatus(exportId: string, token: string): Promise<DataExportStatus> {
+    const response = await fetch(`${this.baseUrl}/api/account/export-data/${exportId}/status`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: ApiError = (await response.json()) as ApiError;
       throw new Error(error.message ?? 'Failed to get export status');
     }
 
-    return await response.json() as DataExportStatus;
+    return (await response.json()) as DataExportStatus;
   }
 
   /**
    * Download data export
    */
-  async downloadDataExport(
-    exportId: string,
-    token: string,
-  ): Promise<Blob> {
-    const response = await fetch(
-      `${this.baseUrl}/api/account/export-data/${exportId}/download`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+  async downloadDataExport(exportId: string, token: string): Promise<Blob> {
+    const response = await fetch(`${this.baseUrl}/api/account/export-data/${exportId}/download`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: ApiError = (await response.json()) as ApiError;
       throw new Error(error.message ?? 'Failed to download data export');
     }
 

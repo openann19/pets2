@@ -122,9 +122,9 @@ describe('LeaderboardService', () => {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer test-token',
+            'Authorization': 'Bearer test-token',
           },
-        })
+        }),
       );
     });
 
@@ -132,7 +132,7 @@ describe('LeaderboardService', () => {
       const filters = {
         category: 'matches',
         period: 'weekly' as const,
-        location: { latitude: 40.7128, longitude: -74.0060, radius: 10 },
+        location: { latitude: 40.7128, longitude: -74.006, radius: 10 },
         ageRange: { min: 1, max: 5 },
         breed: 'Golden Retriever',
         gender: 'male' as const,
@@ -174,7 +174,7 @@ describe('LeaderboardService', () => {
       });
 
       await service.getLeaderboard();
-      await new Promise(resolve => setTimeout(resolve, 2)); // Wait for cache to expire
+      await new Promise((resolve) => setTimeout(resolve, 2)); // Wait for cache to expire
       await service.getLeaderboard();
 
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -227,7 +227,7 @@ describe('LeaderboardService', () => {
       expect(result).toEqual(mockUserRankResponse);
       expect(mockFetch).toHaveBeenCalledWith(
         'https://api.pawfectmatch.com/api/leaderboard/user-rank?category=matches',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -243,7 +243,7 @@ describe('LeaderboardService', () => {
       expect(result.entry).toBeNull();
       expect(mockFetch).toHaveBeenCalledWith(
         'https://api.pawfectmatch.com/api/leaderboard/user-rank',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -293,7 +293,7 @@ describe('LeaderboardService', () => {
       expect(result).toEqual(mockCategories);
       expect(mockFetch).toHaveBeenCalledWith(
         'https://api.pawfectmatch.com/api/leaderboard/categories',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -379,7 +379,7 @@ describe('LeaderboardService', () => {
       expect(result).toEqual(mockStats);
       expect(mockFetch).toHaveBeenCalledWith(
         'https://api.pawfectmatch.com/api/leaderboard/pet/pet123/stats',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -404,7 +404,7 @@ describe('LeaderboardService', () => {
       });
 
       await expect(
-        service.updateScore('pet123', 'matches', 10, 'Got a new match')
+        service.updateScore('pet123', 'matches', 10, 'Got a new match'),
       ).resolves.not.toThrow();
 
       expect(mockFetch).toHaveBeenCalledWith(
@@ -417,7 +417,7 @@ describe('LeaderboardService', () => {
             points: 10,
             reason: 'Got a new match',
           }),
-        })
+        }),
       );
     });
 
@@ -447,9 +447,9 @@ describe('LeaderboardService', () => {
         statusText: 'Bad Request',
       });
 
-      await expect(
-        service.updateScore('pet123', 'matches', 10, 'test')
-      ).rejects.toThrow('HTTP 400: Bad Request');
+      await expect(service.updateScore('pet123', 'matches', 10, 'test')).rejects.toThrow(
+        'HTTP 400: Bad Request',
+      );
     });
   });
 
@@ -471,7 +471,7 @@ describe('LeaderboardService', () => {
       expect(result).toEqual(mockHistory);
       expect(mockFetch).toHaveBeenCalledWith(
         'https://api.pawfectmatch.com/api/leaderboard/history?category=matches&period=weekly&weeks=3',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -485,7 +485,7 @@ describe('LeaderboardService', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('period=weekly'),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -526,12 +526,12 @@ describe('LeaderboardService', () => {
         json: jest.fn().mockResolvedValue(mockNearbyLeaders),
       });
 
-      const result = await service.getNearbyLeaders(40.7128, -74.0060, 5);
+      const result = await service.getNearbyLeaders(40.7128, -74.006, 5);
 
       expect(result).toEqual(mockNearbyLeaders);
       expect(mockFetch).toHaveBeenCalledWith(
         'https://api.pawfectmatch.com/api/leaderboard/nearby?latitude=40.7128&longitude=-74.006&radius=5',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -541,11 +541,11 @@ describe('LeaderboardService', () => {
         json: jest.fn().mockResolvedValue(mockNearbyLeaders),
       });
 
-      await service.getNearbyLeaders(40.7128, -74.0060);
+      await service.getNearbyLeaders(40.7128, -74.006);
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('radius=10'),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -555,8 +555,8 @@ describe('LeaderboardService', () => {
         json: jest.fn().mockResolvedValue(mockNearbyLeaders),
       });
 
-      await service.getNearbyLeaders(40.7128, -74.0060, 10);
-      await service.getNearbyLeaders(40.7128, -74.0060, 10); // Cache hit
+      await service.getNearbyLeaders(40.7128, -74.006, 10);
+      await service.getNearbyLeaders(40.7128, -74.006, 10); // Cache hit
 
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
@@ -603,7 +603,7 @@ describe('LeaderboardService', () => {
       expect(result).toEqual(mockProgress);
       expect(mockFetch).toHaveBeenCalledWith(
         'https://api.pawfectmatch.com/api/leaderboard/achievements/progress',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -640,7 +640,7 @@ describe('LeaderboardService', () => {
             badgeId: 'badge123',
             platform: 'twitter',
           }),
-        })
+        }),
       );
     });
 
@@ -651,9 +651,9 @@ describe('LeaderboardService', () => {
         statusText: 'Forbidden',
       });
 
-      await expect(
-        service.shareAchievement('badge123', 'facebook')
-      ).rejects.toThrow('HTTP 403: Forbidden');
+      await expect(service.shareAchievement('badge123', 'facebook')).rejects.toThrow(
+        'HTTP 403: Forbidden',
+      );
     });
   });
 
@@ -662,7 +662,7 @@ describe('LeaderboardService', () => {
       mockAuthService.getAccessToken.mockResolvedValue(null);
 
       await expect(service.getLeaderboard()).rejects.toThrow(
-        'Authentication required for leaderboard access'
+        'Authentication required for leaderboard access',
       );
     });
 
@@ -681,7 +681,7 @@ describe('LeaderboardService', () => {
           headers: expect.objectContaining({
             Authorization: 'Bearer custom-token',
           }),
-        })
+        }),
       );
     });
   });
@@ -732,7 +732,7 @@ describe('LeaderboardService', () => {
         'Failed to get leaderboard',
         expect.objectContaining({
           error: expect.any(Error),
-        })
+        }),
       );
     });
 
@@ -792,7 +792,7 @@ describe('LeaderboardService', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('page=50&limit=100'),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -809,7 +809,7 @@ describe('LeaderboardService', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://api.pawfectmatch.com/api/leaderboard/user-rank?category=special-category_with+chars',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });

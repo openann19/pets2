@@ -1,11 +1,20 @@
-import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
-import { Alert, Dimensions, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import * as ImagePicker from 'expo-image-picker';
+import React, { useState } from 'react';
+import {
+  Alert,
+  Dimensions,
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-import { AdvancedPhotoEditor } from "./photo/AdvancedPhotoEditor";
+import { AdvancedPhotoEditor } from './photo/AdvancedPhotoEditor';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 const PHOTO_SIZE = (width - 60) / 3;
 
 interface Photo {
@@ -48,11 +57,9 @@ export function ModernPhotoUploadWithEditor({
   const requestPermissions = async (): Promise<boolean> => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== ImagePicker.PermissionStatus.GRANTED) {
-      Alert.alert(
-        "Permission Required",
-        "Please grant camera roll permissions to upload photos.",
-        [{ text: "OK" }],
-      );
+      Alert.alert('Permission Required', 'Please grant camera roll permissions to upload photos.', [
+        { text: 'OK' },
+      ]);
       return false;
     }
     return true;
@@ -60,10 +67,7 @@ export function ModernPhotoUploadWithEditor({
 
   const pickImage = async (): Promise<void> => {
     if (photos.length >= maxPhotos) {
-      Alert.alert(
-        "Photo Limit",
-        `You can only upload up to ${maxPhotos} photos.`,
-      );
+      Alert.alert('Photo Limit', `You can only upload up to ${maxPhotos} photos.`);
       return;
     }
 
@@ -87,7 +91,7 @@ export function ModernPhotoUploadWithEditor({
         setShowEditor(true);
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to pick image. Please try again.");
+      Alert.alert('Error', 'Failed to pick image. Please try again.');
     } finally {
       setIsUploading(false);
       scaleValue.value = withSpring(1, SPRING_CONFIG);
@@ -96,20 +100,15 @@ export function ModernPhotoUploadWithEditor({
 
   const takePhoto = async (): Promise<void> => {
     if (photos.length >= maxPhotos) {
-      Alert.alert(
-        "Photo Limit",
-        `You can only upload up to ${maxPhotos} photos.`,
-      );
+      Alert.alert('Photo Limit', `You can only upload up to ${maxPhotos} photos.`);
       return;
     }
 
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== ImagePicker.PermissionStatus.GRANTED) {
-      Alert.alert(
-        "Permission Required",
-        "Please grant camera permissions to take photos.",
-        [{ text: "OK" }],
-      );
+      Alert.alert('Permission Required', 'Please grant camera permissions to take photos.', [
+        { text: 'OK' },
+      ]);
       return;
     }
 
@@ -127,17 +126,17 @@ export function ModernPhotoUploadWithEditor({
         setShowEditor(true);
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to take photo. Please try again.");
+      Alert.alert('Error', 'Failed to take photo. Please try again.');
     } finally {
       setIsUploading(false);
     }
   };
 
   const showImageOptions = (): void => {
-    Alert.alert("Add Photo", "Choose how you want to add a photo", [
-      { text: "Camera", onPress: () => void takePhoto() },
-      { text: "Photo Library", onPress: () => void pickImage() },
-      { text: "Cancel", style: "cancel" },
+    Alert.alert('Add Photo', 'Choose how you want to add a photo', [
+      { text: 'Camera', onPress: () => void takePhoto() },
+      { text: 'Photo Library', onPress: () => void pickImage() },
+      { text: 'Cancel', style: 'cancel' },
     ]);
   };
 
@@ -177,11 +176,11 @@ export function ModernPhotoUploadWithEditor({
   };
 
   const removePhoto = (photoId: string): void => {
-    Alert.alert("Remove Photo", "Are you sure you want to remove this photo?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert('Remove Photo', 'Are you sure you want to remove this photo?', [
+      { text: 'Cancel', style: 'cancel' },
       {
-        text: "Remove",
-        style: "destructive",
+        text: 'Remove',
+        style: 'destructive',
         onPress: () => {
           const updatedPhotos = photos.filter((p) => p.id !== photoId);
           // If we removed the primary photo, make the first remaining photo primary
@@ -211,9 +210,19 @@ export function ModernPhotoUploadWithEditor({
       {photos.length > 0 && (
         <View style={styles.photoGrid}>
           {photos.map((photo) => (
-            <View key={photo.id} style={styles.photoContainer}>
-              <TouchableOpacity onPress={() => { editPhoto(photo.id); }}>
-                <Image source={{ uri: photo.uri }} style={styles.photo} />
+            <View
+              key={photo.id}
+              style={styles.photoContainer}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  editPhoto(photo.id);
+                }}
+              >
+                <Image
+                  source={{ uri: photo.uri }}
+                  style={styles.photo}
+                />
 
                 {photo.isPrimary && (
                   <View style={styles.primaryBadge}>
@@ -225,14 +234,18 @@ export function ModernPhotoUploadWithEditor({
                   {!photo.isPrimary && (
                     <TouchableOpacity
                       style={styles.actionButton}
-                      onPress={() => { setPrimaryPhoto(photo.id); }}
+                      onPress={() => {
+                        setPrimaryPhoto(photo.id);
+                      }}
                     >
                       <Text style={styles.actionButtonText}>⭐</Text>
                     </TouchableOpacity>
                   )}
                   <TouchableOpacity
                     style={[styles.actionButton, styles.removeButton]}
-                    onPress={() => { removePhoto(photo.id); }}
+                    onPress={() => {
+                      removePhoto(photo.id);
+                    }}
                   >
                     <Text style={styles.removeButtonText}>✕</Text>
                   </TouchableOpacity>
@@ -250,11 +263,11 @@ export function ModernPhotoUploadWithEditor({
             onPress={showImageOptions}
             disabled={isUploading || disabled}
           >
-            <Text style={styles.addButtonIcon}>
-              {isUploading ? "⏳" : "📷"}
-            </Text>
+            <Text style={styles.addButtonIcon}>{isUploading ? '⏳' : '📷'}</Text>
             <Text style={styles.addButtonText}>
-              {photos.length === 0 ? "Add First Photo" : `Add Photo (${photos.length}/${maxPhotos})`}
+              {photos.length === 0
+                ? 'Add First Photo'
+                : `Add Photo (${photos.length}/${maxPhotos})`}
             </Text>
           </TouchableOpacity>
         </Animated.View>
@@ -262,7 +275,11 @@ export function ModernPhotoUploadWithEditor({
 
       {/* Photo Editor Modal */}
       {showEditor && photoToEdit && (
-        <Modal visible={showEditor} animationType="slide" presentationStyle="fullScreen">
+        <Modal
+          visible={showEditor}
+          animationType="slide"
+          presentationStyle="fullScreen"
+        >
           <AdvancedPhotoEditor
             imageUri={photoToEdit}
             onSave={handleEditorSave}
@@ -282,31 +299,31 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   photoGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 12,
     marginBottom: 20,
   },
   photoContainer: {
-    position: "relative",
+    position: 'relative',
     width: PHOTO_SIZE,
     height: PHOTO_SIZE,
     borderRadius: 12,
-    overflow: "hidden",
-    shadowColor: "#000",
+    overflow: 'hidden',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
   },
   photo: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: 12,
     backgroundColor: Theme.colors.neutral[100],
   },
   primaryBadge: {
-    position: "absolute",
+    position: 'absolute',
     top: 8,
     left: 8,
     backgroundColor: Theme.colors.primary[500],
@@ -314,47 +331,47 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   primaryBadgeText: {
-    color: "white",
+    color: 'white',
     fontSize: 10,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   photoActions: {
-    position: "absolute",
+    position: 'absolute',
     top: 8,
     right: 8,
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 6,
   },
   actionButton: {
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     width: 28,
     height: 28,
     borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   removeButton: {
-    backgroundColor: "rgba(239, 68, 68, 0.9)",
+    backgroundColor: 'rgba(239, 68, 68, 0.9)',
   },
   actionButtonText: {
-    color: "white",
+    color: 'white',
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   removeButtonText: {
-    color: "white",
+    color: 'white',
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   addButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: 12,
     padding: 20,
     borderRadius: 16,
@@ -367,9 +384,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   addButtonText: {
-    color: "white",
+    color: 'white',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });
-

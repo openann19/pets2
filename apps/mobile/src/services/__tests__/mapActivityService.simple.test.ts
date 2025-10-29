@@ -16,7 +16,7 @@ jest.mock('expo-location', () => ({
   getCurrentPositionAsync: jest.fn().mockResolvedValue({
     coords: {
       latitude: 40.7128,
-      longitude: -74.0060,
+      longitude: -74.006,
       altitude: null,
       accuracy: 5,
       altitudeAccuracy: null,
@@ -66,7 +66,7 @@ describe('MapActivityService - Core Tests', () => {
         message: 'Going for a walk!',
         location: {
           type: 'Point',
-          coordinates: [-74.0060, 40.7128], // [lng, lat]
+          coordinates: [-74.006, 40.7128], // [lng, lat]
         },
         createdAt: new Date().toISOString(),
         likes: [],
@@ -109,7 +109,7 @@ describe('MapActivityService - Core Tests', () => {
           activity: 'walking',
           location: {
             type: 'Point',
-            coordinates: [-74.0060, 40.7128],
+            coordinates: [-74.006, 40.7128],
           },
           createdAt: new Date().toISOString(),
           likes: [],
@@ -132,14 +132,14 @@ describe('MapActivityService - Core Tests', () => {
 
       mockRequest.mockResolvedValueOnce(mockPins);
 
-      const result = await getNearbyPins(40.7128, -74.0060);
+      const result = await getNearbyPins(40.7128, -74.006);
 
       expect(result).toEqual(mockPins);
       expect(mockRequest).toHaveBeenCalledWith('/map/pins', {
         method: 'GET',
         params: {
           latitude: 40.7128,
-          longitude: -74.0060,
+          longitude: -74.006,
         },
       });
     });
@@ -147,7 +147,7 @@ describe('MapActivityService - Core Tests', () => {
     it('should handle empty results', async () => {
       mockRequest.mockResolvedValueOnce([]);
 
-      const result = await getNearbyPins(40.7128, -74.0060);
+      const result = await getNearbyPins(40.7128, -74.006);
 
       expect(result).toEqual([]);
     });
@@ -155,7 +155,7 @@ describe('MapActivityService - Core Tests', () => {
     it('should handle API errors', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Network error'));
 
-      await expect(getNearbyPins(40.7128, -74.0060)).rejects.toThrow('Network error');
+      await expect(getNearbyPins(40.7128, -74.006)).rejects.toThrow('Network error');
     });
   });
 
@@ -194,7 +194,7 @@ describe('MapActivityService - Core Tests', () => {
         activity: 'running',
         location: {
           type: 'Point',
-          coordinates: [-74.0060, 40.7128],
+          coordinates: [-74.006, 40.7128],
         },
         createdAt: new Date().toISOString(),
         likes: [],
@@ -226,7 +226,7 @@ describe('MapActivityService - Core Tests', () => {
           activity,
           location: {
             type: 'Point',
-            coordinates: [-74.0060, 40.7128],
+            coordinates: [-74.006, 40.7128],
           },
           createdAt: new Date().toISOString(),
           likes: [],

@@ -12,4 +12,3 @@ export { BouncePressable } from './pressables/BouncePressable';
 export type { ScreenShellProps } from './layout/ScreenShell';
 export type { MotionPreset, MotionConfig } from './motion/useMotion';
 export type { BouncePressableProps } from './pressables/BouncePressable';
-

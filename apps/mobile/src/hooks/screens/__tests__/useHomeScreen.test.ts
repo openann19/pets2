@@ -171,7 +171,7 @@ describe('useHomeScreen', () => {
       const cachedData = {
         homeData: mockHomeData,
         activityFeed: mockActivityFeed,
-        lastUpdated: Date.now() - (5 * 60 * 1000), // 5 minutes ago (fresh)
+        lastUpdated: Date.now() - 5 * 60 * 1000, // 5 minutes ago (fresh)
       };
 
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(cachedData));
@@ -190,7 +190,7 @@ describe('useHomeScreen', () => {
       const expiredCache = {
         homeData: mockHomeData,
         activityFeed: mockActivityFeed,
-        lastUpdated: Date.now() - (30 * 60 * 1000), // 30 minutes ago (expired)
+        lastUpdated: Date.now() - 30 * 60 * 1000, // 30 minutes ago (expired)
       };
 
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(expiredCache));
@@ -229,7 +229,7 @@ describe('useHomeScreen', () => {
 
     it('should handle refresh loading state', async () => {
       let resolveRefresh: (value: any) => void;
-      const refreshPromise = new Promise(resolve => {
+      const refreshPromise = new Promise((resolve) => {
         resolveRefresh = resolve;
       });
 
@@ -293,7 +293,7 @@ describe('useHomeScreen', () => {
       expect(mockHomeAPI.markActivityRead).toHaveBeenCalledWith('activity1');
 
       // Should update local state
-      const unreadActivity = result.current.activityFeed.find(a => a.id === 'activity1');
+      const unreadActivity = result.current.activityFeed.find((a) => a.id === 'activity1');
       expect(unreadActivity?.isRead).toBe(true);
     });
 
@@ -446,7 +446,7 @@ describe('useHomeScreen', () => {
           action: 'tap',
           petId: 'pet1',
         },
-        'user123'
+        'user123',
       );
     });
   });
@@ -503,7 +503,7 @@ describe('useHomeScreen', () => {
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         'home_screen_cache',
-        expect.any(String)
+        expect.any(String),
       );
     });
 
@@ -600,7 +600,7 @@ describe('useHomeScreen', () => {
       expect(mockAnalyticsService.trackEvent).toHaveBeenCalledWith(
         'performance_metric',
         { loadTime: 1250, apiCalls: 3 },
-        'user123'
+        'user123',
       );
     });
 
@@ -623,7 +623,7 @@ describe('useHomeScreen', () => {
           count: 5,
           timeSpent: expect.any(Number),
         },
-        'user123'
+        'user123',
       );
     });
   });

@@ -39,14 +39,14 @@ const mockSpacing = {
 };
 
 const mockBorderRadius = {
-  none: 0,
-  xs: 2,
-  sm: 4,
-  md: 8,
-  lg: 12,
-  xl: 16,
+  'none': 0,
+  'xs': 2,
+  'sm': 4,
+  'md': 8,
+  'lg': 12,
+  'xl': 16,
   '2xl': 20,
-  full: 9999,
+  'full': 9999,
 };
 
 /**
@@ -132,8 +132,7 @@ export const GeneratingState: Story = {
     </View>
   ),
   parameters: {
-    notes:
-      'Screen showing generation in progress with loading indicator',
+    notes: 'Screen showing generation in progress with loading indicator',
   },
 };
 
@@ -199,4 +198,3 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
 });
-

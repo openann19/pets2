@@ -1,12 +1,7 @@
-import React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@/theme";
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/src/theme';
+import { Pressable, StyleSheet } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 export default function RetryBadge({
   onPress,
@@ -18,15 +13,15 @@ export default function RetryBadge({
   bg?: string;
 }) {
   const { colors } = useTheme();
-  
+
   const backgroundColor = bg || colors.danger;
   const iconColor = colors.text;
-  const rippleColor = colors.text + "1F"; // Add alpha
+  const rippleColor = colors.text + '1F'; // Add alpha
   const s = useSharedValue(1);
   const sty = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
 
   const bounce = () => {
-    "worklet";
+    'worklet';
     s.value = 0.92;
     s.value = withSpring(1, { damping: 14, stiffness: 380 });
   };
@@ -34,7 +29,7 @@ export default function RetryBadge({
   const handlePress = () => {
     bounce();
     const r = onPress();
-    if (r && typeof (r as any).then === "function") {
+    if (r && typeof (r as any).then === 'function') {
       // no-op; the bubble can react (shake) based on promise result
     }
   };
@@ -49,7 +44,11 @@ export default function RetryBadge({
         accessibilityRole="button"
         accessibilityLabel="Retry sending message"
       >
-        <Ionicons name="refresh" size={14} color={iconColor} />
+        <Ionicons
+          name="refresh"
+          size={14}
+          color={iconColor}
+        />
       </Pressable>
     </Animated.View>
   );
@@ -61,9 +60,8 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     elevation: 2,
   },
 });
-

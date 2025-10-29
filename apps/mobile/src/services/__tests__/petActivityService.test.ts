@@ -68,7 +68,7 @@ describe('PetActivityService', () => {
     mockLocation.getCurrentPositionAsync.mockResolvedValue({
       coords: {
         latitude: 40.7128,
-        longitude: -74.0060,
+        longitude: -74.006,
         altitude: 10,
         accuracy: 5,
         altitudeAccuracy: 1,
@@ -92,7 +92,7 @@ describe('PetActivityService', () => {
 
       expect(location).toEqual({
         lat: 40.7128,
-        lng: -74.0060,
+        lng: -74.006,
       });
     });
 
@@ -103,15 +103,19 @@ describe('PetActivityService', () => {
         canAskAgain: false,
       });
 
-      await expect((global as any).getCurrentLocation()).rejects.toThrow('Location permission not granted');
+      await expect((global as any).getCurrentLocation()).rejects.toThrow(
+        'Location permission not granted',
+      );
     });
 
     it('should handle location services unavailable', async () => {
       mockLocation.getCurrentPositionAsync.mockRejectedValue(
-        new Error('Location services are disabled')
+        new Error('Location services are disabled'),
       );
 
-      await expect((global as any).getCurrentLocation()).rejects.toThrow('Location services are disabled');
+      await expect((global as any).getCurrentLocation()).rejects.toThrow(
+        'Location services are disabled',
+      );
     });
 
     it('should handle undetermined permission status', async () => {
@@ -121,7 +125,9 @@ describe('PetActivityService', () => {
         canAskAgain: true,
       });
 
-      await expect((global as any).getCurrentLocation()).rejects.toThrow('Location permission not granted');
+      await expect((global as any).getCurrentLocation()).rejects.toThrow(
+        'Location permission not granted',
+      );
     });
   });
 
@@ -132,7 +138,7 @@ describe('PetActivityService', () => {
       activity: 'walk',
       message: 'Enjoying a walk!',
       lat: 40.7128,
-      lng: -74.0060,
+      lng: -74.006,
       radius: 500,
       createdAt: '2024-01-01T12:00:00Z',
       updatedAt: '2024-01-01T12:00:00Z',
@@ -167,7 +173,7 @@ describe('PetActivityService', () => {
           activity: 'walk',
           message: 'Enjoying a walk!',
           shareToMap: true,
-          location: { lat: 40.7128, lng: -74.0060 },
+          location: { lat: 40.7128, lng: -74.006 },
           radius: 500,
           device: 'ios',
         }),
@@ -178,13 +184,15 @@ describe('PetActivityService', () => {
         activity: 'walk',
         message: 'Enjoying a walk!',
         shareToMap: true,
-        location: { lat: 40.7128, lng: -74.0060 },
+        location: { lat: 40.7128, lng: -74.006 },
         radius: 500,
         device: 'ios',
         _id: 'activity123',
       });
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Activity started', { record: mockActivityRecord });
+      expect(mockLogger.info).toHaveBeenCalledWith('Activity started', {
+        record: mockActivityRecord,
+      });
       expect(result).toEqual(mockActivityRecord);
     });
 
@@ -201,7 +209,7 @@ describe('PetActivityService', () => {
           activity: 'play',
           message: '',
           lat: 40.7128,
-          lng: -74.0060,
+          lng: -74.006,
           radius: 500, // default
           createdAt: '2024-01-01T13:00:00Z',
           updatedAt: '2024-01-01T13:00:00Z',
@@ -224,7 +232,7 @@ describe('PetActivityService', () => {
           activity: 'play',
           message: '',
           shareToMap: true, // default
-          location: { lat: 40.7128, lng: -74.0060 },
+          location: { lat: 40.7128, lng: -74.006 },
           radius: 500, // default
           device: 'ios',
         }),
@@ -235,7 +243,12 @@ describe('PetActivityService', () => {
 
     it('should handle all activity types', async () => {
       const activityTypes: Array<'walk' | 'play' | 'feeding' | 'rest' | 'training' | 'lost_pet'> = [
-        'walk', 'play', 'feeding', 'rest', 'training', 'lost_pet'
+        'walk',
+        'play',
+        'feeding',
+        'rest',
+        'training',
+        'lost_pet',
       ];
 
       for (const activityType of activityTypes) {
@@ -250,7 +263,7 @@ describe('PetActivityService', () => {
             petId: 'pet123',
             activity: activityType,
             lat: 40.7128,
-            lng: -74.0060,
+            lng: -74.006,
             createdAt: '2024-01-01T14:00:00Z',
             updatedAt: '2024-01-01T14:00:00Z',
             active: true,
@@ -265,9 +278,12 @@ describe('PetActivityService', () => {
         const result = await startPetActivity(payload);
 
         expect(result.activity).toBe(activityType);
-        expect(mockSocketClient.emit).toHaveBeenCalledWith('activity:start', expect.objectContaining({
-          activity: activityType,
-        }));
+        expect(mockSocketClient.emit).toHaveBeenCalledWith(
+          'activity:start',
+          expect.objectContaining({
+            activity: activityType,
+          }),
+        );
       }
     });
 
@@ -283,7 +299,9 @@ describe('PetActivityService', () => {
         text: jest.fn().mockResolvedValue('Invalid pet ID'),
       });
 
-      await expect(startPetActivity(payload)).rejects.toThrow('startPetActivity failed: 400 Invalid pet ID');
+      await expect(startPetActivity(payload)).rejects.toThrow(
+        'startPetActivity failed: 400 Invalid pet ID',
+      );
 
       expect(mockSocketClient.emit).not.toHaveBeenCalled();
       expect(mockLogger.info).not.toHaveBeenCalled();
@@ -365,7 +383,7 @@ describe('PetActivityService', () => {
       petId: 'pet456',
       activity: 'walk',
       lat: 40.7128,
-      lng: -74.0060,
+      lng: -74.006,
       createdAt: '2024-01-01T12:00:00Z',
       updatedAt: '2024-01-01T13:00:00Z',
       active: false,
@@ -395,7 +413,9 @@ describe('PetActivityService', () => {
         _id: 'activity123',
       });
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Activity ended', { record: mockActivityRecord });
+      expect(mockLogger.info).toHaveBeenCalledWith('Activity ended', {
+        record: mockActivityRecord,
+      });
       expect(result).toEqual(mockActivityRecord);
       expect(result.active).toBe(false);
     });
@@ -409,7 +429,9 @@ describe('PetActivityService', () => {
         text: jest.fn().mockResolvedValue('Activity not found'),
       });
 
-      await expect(endPetActivity(activityId)).rejects.toThrow('endPetActivity failed: 404 Activity not found');
+      await expect(endPetActivity(activityId)).rejects.toThrow(
+        'endPetActivity failed: 404 Activity not found',
+      );
 
       expect(mockSocketClient.emit).not.toHaveBeenCalled();
       expect(mockLogger.info).not.toHaveBeenCalled();
@@ -424,7 +446,9 @@ describe('PetActivityService', () => {
         text: jest.fn().mockResolvedValue('Activity already ended'),
       });
 
-      await expect(endPetActivity(activityId)).rejects.toThrow('endPetActivity failed: 400 Activity already ended');
+      await expect(endPetActivity(activityId)).rejects.toThrow(
+        'endPetActivity failed: 400 Activity already ended',
+      );
     });
 
     it('should handle network errors during end', async () => {
@@ -444,7 +468,7 @@ describe('PetActivityService', () => {
         activity: 'walk',
         message: 'Morning walk',
         lat: 40.7128,
-        lng: -74.0060,
+        lng: -74.006,
         radius: 500,
         createdAt: '2024-01-01T08:00:00Z',
         updatedAt: '2024-01-01T09:00:00Z',
@@ -455,8 +479,8 @@ describe('PetActivityService', () => {
         petId: 'pet123',
         activity: 'play',
         message: 'Park playtime',
-        lat: 40.7130,
-        lng: -74.0050,
+        lat: 40.713,
+        lng: -74.005,
         radius: 300,
         createdAt: '2024-01-01T14:00:00Z',
         updatedAt: '2024-01-01T15:30:00Z',
@@ -489,7 +513,7 @@ describe('PetActivityService', () => {
       const result = await getActivityHistory(petId);
 
       expect(mockFetch).toHaveBeenCalledWith(
-        `http://localhost:3001/api/pets/activity/history?petId=${encodeURIComponent(petId)}`
+        `http://localhost:3001/api/pets/activity/history?petId=${encodeURIComponent(petId)}`,
       );
 
       expect(result).toEqual(mockActivityHistory);
@@ -520,8 +544,8 @@ describe('PetActivityService', () => {
         _id: `activity${i}`,
         petId,
         activity: 'walk' as const,
-        lat: 40.7128 + (i * 0.001),
-        lng: -74.0060 + (i * 0.001),
+        lat: 40.7128 + i * 0.001,
+        lng: -74.006 + i * 0.001,
         createdAt: new Date(Date.now() - i * 3600000).toISOString(), // Different times
         updatedAt: new Date(Date.now() - i * 3600000 + 1800000).toISOString(),
         active: false,
@@ -552,7 +576,9 @@ describe('PetActivityService', () => {
         text: jest.fn().mockResolvedValue('Pet not found'),
       });
 
-      await expect(getActivityHistory(petId)).rejects.toThrow('getActivityHistory failed: 404 Pet not found');
+      await expect(getActivityHistory(petId)).rejects.toThrow(
+        'getActivityHistory failed: 404 Pet not found',
+      );
     });
 
     it('should handle network errors', async () => {
@@ -579,14 +605,16 @@ describe('PetActivityService', () => {
       const specialPetId = 'pet@123_special.test';
 
       const mockResponse = {
-        data: [{
-          _id: 'activity1',
-          petId: specialPetId,
-          activity: 'walk',
-          createdAt: '2024-01-01T10:00:00Z',
-          updatedAt: '2024-01-01T11:00:00Z',
-          active: false,
-        }],
+        data: [
+          {
+            _id: 'activity1',
+            petId: specialPetId,
+            activity: 'walk',
+            createdAt: '2024-01-01T10:00:00Z',
+            updatedAt: '2024-01-01T11:00:00Z',
+            active: false,
+          },
+        ],
       };
 
       mockFetch.mockResolvedValue({
@@ -598,7 +626,7 @@ describe('PetActivityService', () => {
 
       expect(result[0].petId).toBe(specialPetId);
       expect(mockFetch).toHaveBeenCalledWith(
-        `http://localhost:3001/api/pets/activity/history?petId=${encodeURIComponent(specialPetId)}`
+        `http://localhost:3001/api/pets/activity/history?petId=${encodeURIComponent(specialPetId)}`,
       );
     });
   });
@@ -618,7 +646,7 @@ describe('PetActivityService', () => {
           activity: 'walk',
           message: 'Socket test',
           lat: 40.7128,
-          lng: -74.0060,
+          lng: -74.006,
           createdAt: '2024-01-01T16:00:00Z',
           updatedAt: '2024-01-01T16:00:00Z',
           active: true,
@@ -637,7 +665,7 @@ describe('PetActivityService', () => {
         activity: 'walk',
         message: 'Socket test',
         shareToMap: true,
-        location: { lat: 40.7128, lng: -74.0060 },
+        location: { lat: 40.7128, lng: -74.006 },
         radius: 500,
         device: 'ios',
         _id: 'socket-activity',
@@ -712,7 +740,7 @@ describe('PetActivityService', () => {
         expect.any(String),
         expect.objectContaining({
           body: expect.stringContaining('"device":"ios"'),
-        })
+        }),
       );
     });
 
@@ -743,7 +771,7 @@ describe('PetActivityService', () => {
         expect.any(String),
         expect.objectContaining({
           body: expect.stringContaining('"device":"android"'),
-        })
+        }),
       );
 
       Platform.OS = 'ios'; // Reset
@@ -765,7 +793,7 @@ describe('PetActivityService', () => {
             petId: `pet${index + 1}`,
             activity: _.activity,
             lat: 40.7128,
-            lng: -74.0060,
+            lng: -74.006,
             createdAt: '2024-01-01T17:00:00Z',
             updatedAt: '2024-01-01T17:00:00Z',
             active: true,
@@ -778,9 +806,7 @@ describe('PetActivityService', () => {
         });
       });
 
-      const results = await Promise.all(
-        payloads.map(payload => startPetActivity(payload))
-      );
+      const results = await Promise.all(payloads.map((payload) => startPetActivity(payload)));
 
       expect(results).toHaveLength(3);
       results.forEach((result, index) => {
@@ -809,7 +835,7 @@ describe('PetActivityService', () => {
             activity: 'mock',
             active: false,
             lat: 40.7128,
-            lng: -74.0060,
+            lng: -74.006,
             createdAt: '2024-01-01T18:00:00Z',
             updatedAt: '2024-01-01T18:00:00Z',
           },
@@ -1031,8 +1057,8 @@ describe('PetActivityService', () => {
         _id: `activity${i}`,
         petId,
         activity: 'walk' as const,
-        lat: 40.7128 + (i * 0.0001),
-        lng: -74.0060 + (i * 0.0001),
+        lat: 40.7128 + i * 0.0001,
+        lng: -74.006 + i * 0.0001,
         createdAt: new Date(Date.now() - i * 60000).toISOString(),
         updatedAt: new Date(Date.now() - i * 60000 + 1800000).toISOString(),
         active: false,
@@ -1060,7 +1086,7 @@ describe('PetActivityService', () => {
           petId: `pet${i}`,
           activity: 'walk',
           message: `Activity ${i}`,
-        })
+        }),
       );
 
       operations.forEach((_, i) => {
@@ -1071,7 +1097,7 @@ describe('PetActivityService', () => {
             activity: 'walk',
             message: `Activity ${i}`,
             lat: 40.7128,
-            lng: -74.0060,
+            lng: -74.006,
           },
         };
 
@@ -1126,7 +1152,7 @@ describe('PetActivityService', () => {
           activity: 'walk' as const,
           message: 'Typed message',
           lat: 40.7128,
-          lng: -74.0060,
+          lng: -74.006,
           radius: 500,
           createdAt: '2024-01-01T19:00:00Z',
           updatedAt: '2024-01-01T20:00:00Z',
@@ -1147,7 +1173,9 @@ describe('PetActivityService', () => {
 
       expect(typeof result._id).toBe('string');
       expect(typeof result.petId).toBe('string');
-      expect(['walk', 'play', 'feeding', 'rest', 'training', 'lost_pet']).toContain(result.activity);
+      expect(['walk', 'play', 'feeding', 'rest', 'training', 'lost_pet']).toContain(
+        result.activity,
+      );
       expect(typeof result.lat).toBe('number');
       expect(typeof result.lng).toBe('number');
       expect(typeof result.active).toBe('boolean');
@@ -1162,7 +1190,7 @@ describe('PetActivityService', () => {
           petId: 'pet123',
           activity: 'rest' as const,
           lat: 40.7128,
-          lng: -74.0060,
+          lng: -74.006,
           createdAt: '2024-01-01T21:00:00Z',
           updatedAt: '2024-01-01T21:00:00Z',
           active: true,
@@ -1185,11 +1213,10 @@ describe('PetActivityService', () => {
     });
 
     it('should enforce ActivityKind type constraints', () => {
-      const validActivities: Array<'walk' | 'play' | 'feeding' | 'rest' | 'training' | 'lost_pet'> = [
-        'walk', 'play', 'feeding', 'rest', 'training', 'lost_pet'
-      ];
+      const validActivities: Array<'walk' | 'play' | 'feeding' | 'rest' | 'training' | 'lost_pet'> =
+        ['walk', 'play', 'feeding', 'rest', 'training', 'lost_pet'];
 
-      validActivities.forEach(activity => {
+      validActivities.forEach((activity) => {
         expect(['walk', 'play', 'feeding', 'rest', 'training', 'lost_pet']).toContain(activity);
       });
     });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,10 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
-} from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { analyzePhotoFromUri, type PhotoAnalysisResult } from "../services/aiPhotoService";
-import { useNavigation } from "@react-navigation/native";
+} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { analyzePhotoFromUri, type PhotoAnalysisResult } from '../services/aiPhotoService';
+import { useNavigation } from '@react-navigation/native';
 
 export default function AIPhotoAnalyzerScreen() {
   const [loading, setLoading] = useState(false);
@@ -19,8 +19,8 @@ export default function AIPhotoAnalyzerScreen() {
 
   const pickPhoto = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("Permission needed", "Please grant photo library access");
+    if (status !== 'granted') {
+      Alert.alert('Permission needed', 'Please grant photo library access');
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -36,8 +36,8 @@ export default function AIPhotoAnalyzerScreen() {
 
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("Permission needed", "Please grant camera access");
+    if (status !== 'granted') {
+      Alert.alert('Permission needed', 'Please grant camera access');
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
@@ -54,10 +54,10 @@ export default function AIPhotoAnalyzerScreen() {
     if (!photoUri) return;
     setLoading(true);
     try {
-      const r = await analyzePhotoFromUri(photoUri, "image/jpeg");
+      const r = await analyzePhotoFromUri(photoUri, 'image/jpeg');
       setResult(r);
     } catch (error: any) {
-      Alert.alert("Analysis Failed", error.message);
+      Alert.alert('Analysis Failed', error.message);
     } finally {
       setLoading(false);
     }
@@ -71,17 +71,29 @@ export default function AIPhotoAnalyzerScreen() {
       </View>
 
       <View style={styles.buttonGroup}>
-        <TouchableOpacity style={styles.button}  testID="AIPhotoAnalyzerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={pickPhoto}>
+        <TouchableOpacity
+          style={styles.button}
+          testID="AIPhotoAnalyzerScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={pickPhoto}
+        >
           <Text style={styles.buttonText}>Pick from Library</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}  testID="AIPhotoAnalyzerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={takePhoto}>
+        <TouchableOpacity
+          style={styles.button}
+          testID="AIPhotoAnalyzerScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={takePhoto}
+        >
           <Text style={styles.buttonText}>Take Photo</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity
         testID="btn-analyze"
-        accessibilityLabel={loading ? "Analyzing photo" : "Analyze photo"}
+        accessibilityLabel={loading ? 'Analyzing photo' : 'Analyze photo'}
         accessibilityRole="button"
         onPress={onAnalyze}
         disabled={!photoUri || loading}
@@ -90,16 +102,17 @@ export default function AIPhotoAnalyzerScreen() {
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.analyzeButtonText}>
-            {loading ? "Analyzing..." : "Analyze Photo"}
-          </Text>
+          <Text style={styles.analyzeButtonText}>{loading ? 'Analyzing...' : 'Analyze Photo'}</Text>
         )}
       </TouchableOpacity>
 
       {result && (
-        <View testID="analysis-result" style={styles.resultCard}>
+        <View
+          testID="analysis-result"
+          style={styles.resultCard}
+        >
           <Text style={styles.resultTitle}>Analysis Results</Text>
-          
+
           <View style={styles.metricRow}>
             <Text style={styles.metricLabel}>Overall Score:</Text>
             <Text style={styles.metricValue}>{result.overall}/100</Text>
@@ -122,14 +135,17 @@ export default function AIPhotoAnalyzerScreen() {
 
           <Text style={styles.sectionTitle}>Detected Breeds:</Text>
           <Text style={styles.breeds}>
-            {result.breedCandidates.map(b => b.name).join(", ") || "No breed detected"}
+            {result.breedCandidates.map((b) => b.name).join(', ') || 'No breed detected'}
           </Text>
 
           {result.suggestions.length > 0 && (
             <>
               <Text style={styles.sectionTitle}>Suggestions:</Text>
               {result.suggestions.map((s, idx) => (
-                <Text key={idx} style={styles.suggestion}>
+                <Text
+                  key={idx}
+                  style={styles.suggestion}
+                >
                   • {s}
                 </Text>
               ))}
@@ -144,7 +160,7 @@ export default function AIPhotoAnalyzerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
     padding: 16,
   },
   header: {
@@ -152,90 +168,90 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: 'bold',
+    color: '#333',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
+    color: '#666',
   },
   buttonGroup: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 12,
     marginBottom: 16,
   },
   button: {
     flex: 1,
-    backgroundColor: "#007AFF",
+    backgroundColor: '#007AFF',
     padding: 16,
     borderRadius: 12,
-    alignItems: "center",
+    alignItems: 'center',
   },
   buttonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   analyzeButton: {
-    backgroundColor: "#34C759",
+    backgroundColor: '#34C759',
     padding: 16,
     borderRadius: 12,
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 24,
   },
   disabled: {
-    backgroundColor: "#ccc",
+    backgroundColor: '#ccc',
   },
   analyzeButtonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   resultCard: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 12,
     marginTop: 8,
   },
   resultTitle: {
     fontSize: 22,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 16,
-    color: "#333",
+    color: '#333',
   },
   metricRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: '#eee',
   },
   metricLabel: {
     fontSize: 16,
-    color: "#666",
+    color: '#666',
   },
   metricValue: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
+    fontWeight: '600',
+    color: '#333',
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
     marginTop: 16,
     marginBottom: 8,
-    color: "#333",
+    color: '#333',
   },
   breeds: {
     fontSize: 16,
-    color: "#333",
+    color: '#333',
     marginBottom: 16,
   },
   suggestion: {
     fontSize: 14,
-    color: "#666",
+    color: '#666',
     marginTop: 4,
     lineHeight: 20,
   },

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef } from 'react';
 
 interface WindowWithUndo {
   __undoPillShow?: () => void;
@@ -22,12 +22,12 @@ export function useLikeWithUndo({
 
   const likeNow = () => {
     const cleanup = onLike();
-    if (typeof cleanup === "function") cleanupRef.current = cleanup;
+    if (typeof cleanup === 'function') cleanupRef.current = cleanup;
   };
 
   const triggerUndoPill = () => {
     const win = window as unknown as WindowWithUndo;
-    if (typeof win.__undoPillShow === "function") win.__undoPillShow();
+    if (typeof win.__undoPillShow === 'function') win.__undoPillShow();
   };
 
   const undoNow = () => {
@@ -35,9 +35,8 @@ export function useLikeWithUndo({
     cleanupRef.current = null;
     onUndo?.();
     const win = window as unknown as WindowWithUndo;
-    if (typeof win.__undoPillHide === "function") win.__undoPillHide();
+    if (typeof win.__undoPillHide === 'function') win.__undoPillHide();
   };
 
   return { likeNow, triggerUndoPill, undoNow };
 }
-

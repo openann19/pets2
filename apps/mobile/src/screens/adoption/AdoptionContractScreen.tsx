@@ -1,23 +1,33 @@
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { logger } from "@pawfectmatch/core";
-import { useState, useMemo } from "react";
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { logger } from '@pawfectmatch/core';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useMemo, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
   Alert,
+  ScrollView,
+  StyleSheet,
   Switch,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Runtime theme has radius (not radii) and bgAlt/surfaceAlt in colors
-type RuntimeTheme = AppTheme & { 
-  radius: { xs: number; sm: number; md: number; lg: number; xl: number; '2xl': number; full: number; pill: number; none: number };
+type RuntimeTheme = AppTheme & {
+  radius: {
+    'xs': number;
+    'sm': number;
+    'md': number;
+    'lg': number;
+    'xl': number;
+    '2xl': number;
+    'full': number;
+    'pill': number;
+    'none': number;
+  };
   colors: AppTheme['colors'] & { bgAlt?: string; surfaceAlt?: string };
 };
 
@@ -29,7 +39,7 @@ type AdoptionStackParamList = {
   };
 };
 
-type Props = NativeStackScreenProps<AdoptionStackParamList, "AdoptionContract">;
+type Props = NativeStackScreenProps<AdoptionStackParamList, 'AdoptionContract'>;
 
 interface ContractTerms {
   adoptionFee: string;
@@ -52,18 +62,18 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { applicationId, petName, applicantName } = route.params;
   const [contractTerms, setContractTerms] = useState<ContractTerms>({
-    adoptionFee: "0",
+    adoptionFee: '0',
     spayNeuterRequired: true,
     vaccinationRequired: true,
     microchipRequired: true,
     returnPolicy: true,
     homeVisitRequired: false,
     followUpRequired: true,
-    specialConditions: "",
+    specialConditions: '',
     emergencyContact: {
-      name: "",
-      phone: "",
-      relationship: "",
+      name: '',
+      phone: '',
+      relationship: '',
     },
   });
 
@@ -71,7 +81,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
 
   const updateContractTerms = (
     field: string,
-    value: import("../../types/forms").FormFieldValue,
+    value: import('../../types/forms').FormFieldValue,
   ) => {
     setContractTerms((prev) => ({ ...prev, [field]: value }));
   };
@@ -90,17 +100,17 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       Alert.alert(
-        "Contract Generated",
-        "The adoption contract has been generated and sent to both parties for review and signature.",
+        'Contract Generated',
+        'The adoption contract has been generated and sent to both parties for review and signature.',
         [
           {
-            text: "View Contract",
+            text: 'View Contract',
             onPress: () => {
-              logger.info("View contract");
+              logger.info('View contract');
             },
           },
           {
-            text: "Send for Signature",
+            text: 'Send for Signature',
             onPress: () => {
               handleSendForSignature();
             },
@@ -108,7 +118,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
         ],
       );
     } catch (error) {
-      Alert.alert("Error", "Failed to generate contract. Please try again.");
+      Alert.alert('Error', 'Failed to generate contract. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -116,9 +126,9 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
 
   const handleSendForSignature = () => {
     Alert.alert(
-      "Contract Sent",
+      'Contract Sent',
       `The adoption contract for ${petName} has been sent to ${applicantName} for digital signature. You will be notified when it's signed.`,
-      [{ text: "OK", onPress: () => navigation.goBack() }],
+      [{ text: 'OK', onPress: () => navigation.goBack() }],
     );
   };
 
@@ -126,23 +136,27 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity  testID="AdoptionContractScreen-button-2" accessibilityLabel="navigation.goBack()" accessibilityRole="button" onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          testID="AdoptionContractScreen-button-2"
+          accessibilityLabel="navigation.goBack()"
+          accessibilityRole="button"
+          onPress={() => navigation.goBack()}
+        >
           <Text style={styles.backButton}>← Back</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Adoption Contract</Text>
         <View style={styles.placeholder} />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Contract Info */}
         <View style={styles.contractInfo}>
-          <Text style={styles.contractTitle}>
-            Adoption Contract for {petName}
-          </Text>
+          <Text style={styles.contractTitle}>Adoption Contract for {petName}</Text>
           <Text style={styles.contractSubtitle}>Adopter: {applicantName}</Text>
-          <Text style={styles.contractDate}>
-            Date: {new Date().toLocaleDateString()}
-          </Text>
+          <Text style={styles.contractDate}>Date: {new Date().toLocaleDateString()}</Text>
         </View>
 
         {/* Financial Terms */}
@@ -154,7 +168,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
               style={styles.input}
               value={contractTerms.adoptionFee}
               onChangeText={(text) => {
-                updateContractTerms("adoptionFee", text);
+                updateContractTerms('adoptionFee', text);
               }}
               placeholder="0"
               keyboardType="numeric"
@@ -171,30 +185,31 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
 
           {[
             {
-              key: "spayNeuterRequired",
-              label: "Spay/Neuter Required",
-              description: "Pet must be spayed/neutered within 6 months",
+              key: 'spayNeuterRequired',
+              label: 'Spay/Neuter Required',
+              description: 'Pet must be spayed/neutered within 6 months',
             },
             {
-              key: "vaccinationRequired",
-              label: "Vaccination Updates Required",
-              description: "Keep vaccinations current per vet schedule",
+              key: 'vaccinationRequired',
+              label: 'Vaccination Updates Required',
+              description: 'Keep vaccinations current per vet schedule',
             },
             {
-              key: "microchipRequired",
-              label: "Microchip Required",
-              description: "Pet must be microchipped for identification",
+              key: 'microchipRequired',
+              label: 'Microchip Required',
+              description: 'Pet must be microchipped for identification',
             },
           ].map((item) => (
-            <View key={item.key} style={styles.switchContainer}>
+            <View
+              key={item.key}
+              style={styles.switchContainer}
+            >
               <View style={styles.switchInfo}>
                 <Text style={styles.switchLabel}>{item.label}</Text>
                 <Text style={styles.switchDescription}>{item.description}</Text>
               </View>
               <Switch
-                value={
-                  contractTerms[item.key as keyof ContractTerms] as boolean
-                }
+                value={contractTerms[item.key as keyof ContractTerms] as boolean}
                 onValueChange={(value) => {
                   updateContractTerms(item.key, value);
                 }}
@@ -215,31 +230,31 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
 
           {[
             {
-              key: "returnPolicy",
-              label: "Return Policy Agreement",
-              description:
-                "Pet must be returned to original owner if unable to care for it",
+              key: 'returnPolicy',
+              label: 'Return Policy Agreement',
+              description: 'Pet must be returned to original owner if unable to care for it',
             },
             {
-              key: "homeVisitRequired",
-              label: "Home Visit Required",
-              description: "Allow home visit before/after adoption",
+              key: 'homeVisitRequired',
+              label: 'Home Visit Required',
+              description: 'Allow home visit before/after adoption',
             },
             {
-              key: "followUpRequired",
-              label: "Follow-up Check Required",
-              description: "Allow follow-up contact within first year",
+              key: 'followUpRequired',
+              label: 'Follow-up Check Required',
+              description: 'Allow follow-up contact within first year',
             },
           ].map((item) => (
-            <View key={item.key} style={styles.switchContainer}>
+            <View
+              key={item.key}
+              style={styles.switchContainer}
+            >
               <View style={styles.switchInfo}>
                 <Text style={styles.switchLabel}>{item.label}</Text>
                 <Text style={styles.switchDescription}>{item.description}</Text>
               </View>
               <Switch
-                value={
-                  contractTerms[item.key as keyof ContractTerms] as boolean
-                }
+                value={contractTerms[item.key as keyof ContractTerms] as boolean}
                 onValueChange={(value) => {
                   updateContractTerms(item.key, value);
                 }}
@@ -267,7 +282,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
               style={styles.input}
               value={contractTerms.emergencyContact.name}
               onChangeText={(text) => {
-                updateEmergencyContact("name", text);
+                updateEmergencyContact('name', text);
               }}
               placeholder="Full Name"
             />
@@ -279,7 +294,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
               style={styles.input}
               value={contractTerms.emergencyContact.phone}
               onChangeText={(text) => {
-                updateEmergencyContact("phone", text);
+                updateEmergencyContact('phone', text);
               }}
               placeholder="Phone Number"
               keyboardType="phone-pad"
@@ -292,7 +307,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
               style={styles.input}
               value={contractTerms.emergencyContact.relationship}
               onChangeText={(text) => {
-                updateEmergencyContact("relationship", text);
+                updateEmergencyContact('relationship', text);
               }}
               placeholder="e.g., Friend, Family Member, Veterinarian"
             />
@@ -310,7 +325,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
             style={styles.textArea}
             value={contractTerms.specialConditions}
             onChangeText={(text) => {
-              updateContractTerms("specialConditions", text);
+              updateContractTerms('specialConditions', text);
             }}
             placeholder="Enter any special conditions, restrictions, or requirements..."
             multiline
@@ -322,10 +337,9 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
         <View style={styles.legalNotice}>
           <Text style={styles.legalTitle}>⚖️ Legal Notice</Text>
           <Text style={styles.legalText}>
-            This contract is legally binding. Both parties agree to the terms
-            outlined above. The adopter acknowledges responsibility for the
-            pet's welfare, medical care, and safety. Violation of terms may
-            result in return of the pet to the original owner.
+            This contract is legally binding. Both parties agree to the terms outlined above. The
+            adopter acknowledges responsibility for the pet's welfare, medical care, and safety.
+            Violation of terms may result in return of the pet to the original owner.
           </Text>
         </View>
       </ScrollView>
@@ -333,17 +347,15 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
       {/* Footer */}
       <View style={styles.footer}>
         <TouchableOpacity
-          style={StyleSheet.flatten([
-            styles.generateButton,
-            isGenerating && styles.disabledButton,
-          ])}
-           testID="AdoptionContractScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={generateContract}
+          style={StyleSheet.flatten([styles.generateButton, isGenerating && styles.disabledButton])}
+          testID="AdoptionContractScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={generateContract}
           disabled={isGenerating}
         >
           <Text style={styles.generateButtonText}>
-            {isGenerating
-              ? "Generating Contract..."
-              : "Generate & Send Contract"}
+            {isGenerating ? 'Generating Contract...' : 'Generate & Send Contract'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -353,16 +365,16 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
 
 function makeStyles(theme: AppTheme) {
   const themeRuntime = theme as RuntimeTheme;
-  
+
   return {
     container: {
       flex: 1,
       backgroundColor: theme.colors.bg,
     },
     header: {
-      flexDirection: "row" as const,
-      justifyContent: "space-between" as const,
-      alignItems: "center" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const,
       padding: theme.spacing.lg,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
@@ -374,11 +386,11 @@ function makeStyles(theme: AppTheme) {
     backButton: {
       fontSize: 16,
       color: theme.colors.primary,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
     },
     headerTitle: {
       fontSize: 18,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
     },
     content: {
@@ -393,7 +405,7 @@ function makeStyles(theme: AppTheme) {
     },
     contractTitle: {
       fontSize: 22,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.sm,
     },
@@ -416,7 +428,7 @@ function makeStyles(theme: AppTheme) {
     },
     sectionTitle: {
       fontSize: 18,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.md,
     },
@@ -430,7 +442,7 @@ function makeStyles(theme: AppTheme) {
     },
     label: {
       fontSize: 14,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
@@ -459,12 +471,12 @@ function makeStyles(theme: AppTheme) {
       fontSize: 16,
       color: theme.colors.onSurface,
       minHeight: 100,
-      textAlignVertical: "top" as const,
+      textAlignVertical: 'top' as const,
     },
     switchContainer: {
-      flexDirection: "row" as const,
-      justifyContent: "space-between" as const,
-      alignItems: "center" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const,
       paddingVertical: theme.spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
@@ -475,7 +487,7 @@ function makeStyles(theme: AppTheme) {
     },
     switchLabel: {
       fontSize: 16,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
@@ -493,7 +505,7 @@ function makeStyles(theme: AppTheme) {
     },
     legalTitle: {
       fontSize: 16,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.sm,
     },
@@ -513,15 +525,15 @@ function makeStyles(theme: AppTheme) {
       borderRadius: themeRuntime.radius.md,
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
-      alignItems: "center" as const,
-      justifyContent: "center" as const,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
     },
     disabledButton: {
       opacity: 0.6,
     },
     generateButtonText: {
       fontSize: 16,
-      fontWeight: "bold" as const,
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
     },
   };

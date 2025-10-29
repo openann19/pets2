@@ -42,7 +42,7 @@ describe('MatchModal', () => {
           show={false}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(queryByText("It's a Match! 🎉")).toBeNull();
@@ -55,7 +55,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(getByText("It's a Match! 🎉")).toBeTruthy();
@@ -67,7 +67,7 @@ describe('MatchModal', () => {
           pet={mockPet}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(getByText("It's a Match! 🎉")).toBeTruthy();
@@ -82,7 +82,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       const confettiComponents = UNSAFE_getAllByType('View');
@@ -96,7 +96,7 @@ describe('MatchModal', () => {
           show={false}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       rerender(
@@ -105,7 +105,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -120,7 +120,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       act(() => {
@@ -142,7 +142,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(getByText("It's a Match! 🎉")).toBeTruthy();
@@ -155,7 +155,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(getByText(/You and Buddy liked each other!/)).toBeTruthy();
@@ -173,7 +173,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(getByText(/Super Long Pet Name That Should Still Display/)).toBeTruthy();
@@ -188,7 +188,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(getByText('Keep Swiping')).toBeTruthy();
@@ -201,7 +201,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(getByText('Send Message')).toBeTruthy();
@@ -214,7 +214,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       const button = getByText('Keep Swiping');
@@ -230,7 +230,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       const button = getByText('Send Message');
@@ -246,7 +246,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       const keepSwipingButton = getByText('Keep Swiping');
@@ -269,12 +269,12 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       const containers = UNSAFE_getAllByType('View');
       const photoContainer = containers.find((view) =>
-        view.props.style?.some((style: any) => style?.width === 80)
+        view.props.style?.some((style: any) => style?.width === 80),
       );
 
       expect(photoContainer).toBeTruthy();
@@ -292,7 +292,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(getByText("It's a Match! 🎉")).toBeTruthy();
@@ -307,7 +307,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       const overlay = UNSAFE_getByType('View');
@@ -321,7 +321,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       const overlay = UNSAFE_getByType('View');
@@ -342,7 +342,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={onSendMessageWithNav}
-        />
+        />,
       );
 
       const button = getByText('Send Message');
@@ -366,7 +366,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={onKeepSwipingWithDismiss}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       const button = getByText('Keep Swiping');
@@ -384,7 +384,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={undefined as any}
           onSendMessage={undefined as any}
-        />
+        />,
       );
 
       const button = getByText('Keep Swiping');
@@ -401,7 +401,7 @@ describe('MatchModal', () => {
           show={false}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       rerender(
@@ -410,7 +410,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       rerender(
@@ -419,7 +419,7 @@ describe('MatchModal', () => {
           show={false}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(() => {}).not.toThrow();
@@ -438,7 +438,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       rerender(
@@ -447,7 +447,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(getByText(/You and Max liked each other!/)).toBeTruthy();
@@ -460,7 +460,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(() => {
@@ -477,7 +477,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(getByText("It's a Match! 🎉")).toBeTruthy();
@@ -490,7 +490,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(getByText('Keep Swiping')).toBeTruthy();
@@ -506,7 +506,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       rerender(
@@ -515,7 +515,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       expect(() => {}).not.toThrow();
@@ -528,7 +528,7 @@ describe('MatchModal', () => {
           show={true}
           onKeepSwiping={mockOnKeepSwiping}
           onSendMessage={mockOnSendMessage}
-        />
+        />,
       );
 
       act(() => {
@@ -550,4 +550,3 @@ describe('MatchModal', () => {
 function act(callback: () => void) {
   callback();
 }
-

@@ -31,26 +31,26 @@ export type Palette = {
 };
 
 export type SpacingScale = {
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
   '2xl': number;
   '3xl': number;
   '4xl': number;
 };
 
 export type RadiiScale = {
-  none: number;
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
+  'none': number;
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
   '2xl': number;
-  pill: number;
-  full: number;
+  'pill': number;
+  'full': number;
 };
 
 export type Elevation = {
@@ -103,4 +103,3 @@ export type AppTheme = {
 };
 
 export type Theme = AppTheme;
-

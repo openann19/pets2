@@ -4,11 +4,11 @@
  * This maintains backward compatibility for the resolve layer
  */
 
-import { COLORS, SPACING, RADIUS } from "@pawfectmatch/design-tokens";
-import { Easing } from "react-native";
+import { COLORS, SPACING, RADIUS } from '@pawfectmatch/design-tokens';
+import { Easing } from 'react-native';
 
 const toPx = (v: number | string): number =>
-  typeof v === "string" ? Number.parseFloat(v.replace("rem", "")) * 16 : v;
+  typeof v === 'string' ? Number.parseFloat(v.replace('rem', '')) * 16 : v;
 
 // Base theme structure that resolve.ts expects (with nested colors)
 export const Theme = {
@@ -91,22 +91,22 @@ export const Theme = {
   // Typography system
   typography: {
     fontSize: {
-      xs: 12,
-      sm: 14,
-      base: 16,
-      lg: 18,
-      xl: 20,
-      "2xl": 24,
-      "3xl": 30,
-      "4xl": 36,
+      'xs': 12,
+      'sm': 14,
+      'base': 16,
+      'lg': 18,
+      'xl': 20,
+      '2xl': 24,
+      '3xl': 30,
+      '4xl': 36,
     },
     fontWeight: {
-      thin: "100" as const,
-      light: "300" as const,
-      normal: "400" as const,
-      medium: "500" as const,
-      semibold: "600" as const,
-      bold: "700" as const,
+      thin: '100' as const,
+      light: '300' as const,
+      normal: '400' as const,
+      medium: '500' as const,
+      semibold: '600' as const,
+      bold: '700' as const,
     },
     lineHeight: {
       none: 1,
@@ -117,71 +117,71 @@ export const Theme = {
     body: {
       fontSize: 16,
       lineHeight: 24,
-      fontWeight: "400" as const,
+      fontWeight: '400' as const,
     },
     caption: {
       fontSize: 12,
       lineHeight: 16,
-      fontWeight: "400" as const,
+      fontWeight: '400' as const,
     },
     heading: {
       fontSize: 24,
       lineHeight: 32,
-      fontWeight: "700" as const,
+      fontWeight: '700' as const,
     },
   },
 
   // Spacing system
   spacing: {
-    xs: toPx(SPACING[1]),
-    sm: toPx(SPACING[2]),
-    md: toPx(SPACING[4]),
-    lg: toPx(SPACING[6]),
-    xl: toPx(SPACING[8]),
-    "2xl": toPx(SPACING[10]),
-    "3xl": toPx(SPACING[12]),
-    "4xl": toPx(SPACING[16]),
+    'xs': toPx(SPACING[1]),
+    'sm': toPx(SPACING[2]),
+    'md': toPx(SPACING[4]),
+    'lg': toPx(SPACING[6]),
+    'xl': toPx(SPACING[8]),
+    '2xl': toPx(SPACING[10]),
+    '3xl': toPx(SPACING[12]),
+    '4xl': toPx(SPACING[16]),
   },
 
   // Border radius system
   borderRadius: {
-    none: 0,
-    xs: toPx(RADIUS.sm) * 0.5,
-    sm: toPx(RADIUS.sm),
-    md: toPx(RADIUS.md),
-    lg: toPx(RADIUS.lg),
-    xl: toPx(RADIUS.xl),
-    "2xl": toPx(RADIUS.xl) * 1.5,
-    full: 9999,
-    pill: 999,
+    'none': 0,
+    'xs': toPx(RADIUS.sm) * 0.5,
+    'sm': toPx(RADIUS.sm),
+    'md': toPx(RADIUS.md),
+    'lg': toPx(RADIUS.lg),
+    'xl': toPx(RADIUS.xl),
+    '2xl': toPx(RADIUS.xl) * 1.5,
+    'full': 9999,
+    'pill': 999,
   },
 
   // Shadow system
   shadows: {
     depth: {
       sm: {
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
         elevation: 1,
       },
       md: {
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 6,
         elevation: 3,
       },
       lg: {
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.15,
         shadowRadius: 15,
         elevation: 5,
       },
       xl: {
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 20 },
         shadowOpacity: 0.25,
         shadowRadius: 25,
@@ -222,4 +222,3 @@ export const DarkTheme = {
     },
   },
 } as const;
-

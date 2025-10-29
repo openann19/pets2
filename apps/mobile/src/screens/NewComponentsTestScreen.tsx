@@ -1,4 +1,4 @@
-import { useTheme } from '@/theme';
+import { useTheme } from '@mobile/src/theme';
 /**
  * NEW COMPONENTS TEST SCREEN
  *
@@ -6,83 +6,85 @@ import { useTheme } from '@/theme';
  * This screen verifies that all components work properly.
  */
 
-import React, { useState } from "react";
-import { View, ScrollView, StyleSheet, Alert, Dimensions } from "react-native";
+import React, { useState } from 'react';
+import { Alert, Dimensions, ScrollView, StyleSheet, View } from 'react-native';
 
 // Import new architecture components
-import { EliteContainer, EliteHeader } from "../components";
 import {
+  Body,
+  BodySmall,
   EliteButton,
   EliteButtonPresets,
+  EliteContainer,
+  EliteHeader,
   FXContainer,
   FXContainerPresets,
-  ModernSwipeCard,
-  ModernPhotoUpload,
-  PerformanceTestSuite,
   Heading1,
   Heading2,
   Heading3,
-  Body,
-  BodySmall,
   Label,
-  useStaggeredAnimation,
+  ModernPhotoUpload,
+  ModernSwipeCard,
+  PerformanceTestSuite,
   useEntranceAnimation,
-} from "../components";
+  useStaggeredAnimation,
+} from '../components';
 
 // Import legacy components for comparison
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Mock data for testing
 const mockPet = {
-  _id: "1",
-  id: "1",
-  name: "Luna",
-  species: "Dog",
-  breed: "Golden Retriever",
+  _id: '1',
+  id: '1',
+  name: 'Luna',
+  species: 'Dog',
+  breed: 'Golden Retriever',
   age: 3,
   description:
-    "A friendly and energetic golden retriever who loves playing fetch and going on long walks.",
-  bio: "A friendly and energetic golden retriever who loves playing fetch and going on long walks.",
+    'A friendly and energetic golden retriever who loves playing fetch and going on long walks.',
+  bio: 'A friendly and energetic golden retriever who loves playing fetch and going on long walks.',
   photos: [
-    "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400",
-    "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400",
+    'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400',
+    'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400',
   ],
-  location: "San Francisco, CA",
+  location: 'San Francisco, CA',
   distance: 2.5,
   compatibility: 95,
   isVerified: true,
   owner: {
-    name: "Sarah Johnson",
+    name: 'Sarah Johnson',
     verified: true,
   },
-  tags: ["Friendly", "Playful", "Good with kids", "House trained"],
+  tags: ['Friendly', 'Playful', 'Good with kids', 'House trained'],
 };
 
 const mockPhotos = [
   {
-    id: "1",
-    uri: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400",
+    id: '1',
+    uri: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400',
   },
   {
-    id: "2",
-    uri: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400",
+    id: '2',
+    uri: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400',
   },
 ];
 
 export default function NewComponentsTestScreen() {
   const theme = useTheme();
   const styles = makeStyles(theme);
-  
+
   const [photos, setPhotos] = useState(mockPhotos);
   const [isLoading, setIsLoading] = useState(false);
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(7, 100);
+  const { start: startStaggeredAnimation, getAnimatedStyle } = useStaggeredAnimation(7, 100);
 
-  const { start: startEntranceAnimation, animatedStyle: entranceStyle } =
-    useEntranceAnimation("fadeIn", 0);
+  const { start: startEntranceAnimation, animatedStyle: entranceStyle } = useEntranceAnimation(
+    'fadeIn',
+    0,
+  );
 
   // Start animations
   React.useEffect(() => {
@@ -92,26 +94,26 @@ export default function NewComponentsTestScreen() {
 
   // Event handlers
   const handleButtonPress = (buttonName: string) => {
-    Alert.alert("Button Pressed", `${buttonName} button was pressed!`);
+    Alert.alert('Button Pressed', `${buttonName} button was pressed!`);
   };
 
   const handleSwipeLeft = () => {
-    Alert.alert("Swipe Left", "You swiped left on Luna!");
+    Alert.alert('Swipe Left', 'You swiped left on Luna!');
   };
 
   const handleSwipeRight = () => {
-    Alert.alert("Swipe Right", "You swiped right on Luna!");
+    Alert.alert('Swipe Right', 'You swiped right on Luna!');
   };
 
   const handleSwipeUp = () => {
-    Alert.alert("Swipe Up", "You swiped up on Luna!");
+    Alert.alert('Swipe Up', 'You swiped up on Luna!');
   };
 
   const handleLoadingTest = async () => {
     setIsLoading(true);
     await new Promise<void>((resolve) => setTimeout(resolve, 2000));
     setIsLoading(false);
-    Alert.alert("Loading Complete", "The loading animation has finished!");
+    Alert.alert('Loading Complete', 'The loading animation has finished!');
   };
 
   return (
@@ -131,9 +133,7 @@ export default function NewComponentsTestScreen() {
         <View style={[getAnimatedStyle, entranceStyle]}>
           <FXContainerPresets.glass style={styles.heroSection}>
             <Heading1 style={styles.heroTitle}>New Architecture Test</Heading1>
-            <Body style={styles.heroSubtitle}>
-              All new components are working perfectly!
-            </Body>
+            <Body style={styles.heroSubtitle}>All new components are working perfectly!</Body>
           </FXContainerPresets.glass>
         </View>
 
@@ -141,9 +141,7 @@ export default function NewComponentsTestScreen() {
         <View style={getAnimatedStyle}>
           <FXContainerPresets.glass style={styles.section}>
             <Heading2 style={styles.sectionTitle}>Button System Test</Heading2>
-            <BodySmall style={styles.sectionSubtitle}>
-              Testing EliteButton and presets
-            </BodySmall>
+            <BodySmall style={styles.sectionSubtitle}>Testing EliteButton and presets</BodySmall>
 
             <View style={styles.buttonGrid}>
               <EliteButton
@@ -151,7 +149,7 @@ export default function NewComponentsTestScreen() {
                 variant="primary"
                 size="md"
                 onPress={() => {
-                  handleButtonPress("Primary");
+                  handleButtonPress('Primary');
                 }}
               />
               <EliteButton
@@ -159,7 +157,7 @@ export default function NewComponentsTestScreen() {
                 variant="secondary"
                 size="md"
                 onPress={() => {
-                  handleButtonPress("Secondary");
+                  handleButtonPress('Secondary');
                 }}
               />
               <EliteButton
@@ -167,14 +165,14 @@ export default function NewComponentsTestScreen() {
                 variant="outline"
                 size="md"
                 onPress={() => {
-                  handleButtonPress("Outline");
+                  handleButtonPress('Outline');
                 }}
               />
               <EliteButtonPresets.glass
                 title="Glass"
                 size="md"
                 onPress={() => {
-                  handleButtonPress("Glass");
+                  handleButtonPress('Glass');
                 }}
               />
               <EliteButton
@@ -191,12 +189,8 @@ export default function NewComponentsTestScreen() {
         {/* Container Tests */}
         <View style={getAnimatedStyle}>
           <FXContainerPresets.glass style={styles.section}>
-            <Heading2 style={styles.sectionTitle}>
-              Container System Test
-            </Heading2>
-            <BodySmall style={styles.sectionSubtitle}>
-              Testing FXContainer and presets
-            </BodySmall>
+            <Heading2 style={styles.sectionTitle}>Container System Test</Heading2>
+            <BodySmall style={styles.sectionSubtitle}>Testing FXContainer and presets</BodySmall>
 
             <View style={styles.containerGrid}>
               <FXContainer
@@ -233,9 +227,7 @@ export default function NewComponentsTestScreen() {
         <View style={getAnimatedStyle}>
           <FXContainerPresets.glass style={styles.section}>
             <Heading2 style={styles.sectionTitle}>Swipe Card Test</Heading2>
-            <BodySmall style={styles.sectionSubtitle}>
-              Testing ModernSwipeCard component
-            </BodySmall>
+            <BodySmall style={styles.sectionSubtitle}>Testing ModernSwipeCard component</BodySmall>
 
             <View style={styles.swipeCardContainer}>
               <ModernSwipeCard
@@ -269,20 +261,14 @@ export default function NewComponentsTestScreen() {
         <View style={getAnimatedStyle}>
           <FXContainerPresets.glass style={styles.section}>
             <Heading2 style={styles.sectionTitle}>Typography Test</Heading2>
-            <BodySmall style={styles.sectionSubtitle}>
-              Testing unified typography system
-            </BodySmall>
+            <BodySmall style={styles.sectionSubtitle}>Testing unified typography system</BodySmall>
 
             <View style={styles.typographyShowcase}>
               <Heading1>Heading 1 - Main Title</Heading1>
               <Heading2>Heading 2 - Section Title</Heading2>
               <Heading3>Heading 3 - Subsection</Heading3>
-              <Body>
-                Body text - Regular content with proper line height and spacing.
-              </Body>
-              <BodySmall>
-                Body Small - Secondary information and captions.
-              </BodySmall>
+              <Body>Body text - Regular content with proper line height and spacing.</Body>
+              <BodySmall>Body Small - Secondary information and captions.</BodySmall>
               <Label>Label - Form labels and UI elements</Label>
             </View>
           </FXContainerPresets.glass>
@@ -293,7 +279,7 @@ export default function NewComponentsTestScreen() {
           <PerformanceTestSuite
             onTestComplete={(results) => {
               Alert.alert(
-                "Performance Test Complete",
+                'Performance Test Complete',
                 `Overall Grade: ${results.overallGrade}\nFPS: ${results.animationFPS}\nMemory: ${Math.round(results.memoryUsage / 1024 / 1024)}MB`,
               );
             }}
@@ -303,9 +289,7 @@ export default function NewComponentsTestScreen() {
         {/* Success Message */}
         <View style={getAnimatedStyle}>
           <FXContainerPresets.glass style={styles.section}>
-            <Heading2 style={styles.sectionTitle}>
-              ✅ All Tests Passed!
-            </Heading2>
+            <Heading2 style={styles.sectionTitle}>✅ All Tests Passed!</Heading2>
             <BodySmall style={styles.sectionSubtitle}>
               The new architecture is working perfectly
             </BodySmall>
@@ -337,65 +321,66 @@ export default function NewComponentsTestScreen() {
   );
 }
 
-const makeStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: theme.spacing.lg,
-    paddingBottom: theme.spacing["4xl"],
-  },
-  heroSection: {
-    padding: theme.spacing.xl,
-    marginBottom: theme.spacing.lg,
-    alignItems: "center",
-  },
-  heroTitle: {
-    textAlign: "center",
-    marginBottom: theme.spacing.md,
-  },
-  heroSubtitle: {
-    textAlign: "center",
-    color: theme.colors.onMuted,
-  },
-  section: {
-    padding: theme.spacing.xl,
-    marginBottom: theme.spacing.lg,
-  },
-  sectionTitle: {
-    marginBottom: theme.spacing.sm,
-  },
-  sectionSubtitle: {
-    marginBottom: theme.spacing.lg,
-    color: theme.colors.onMuted,
-  },
-  buttonGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: theme.spacing.sm,
-  },
-  containerGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: theme.spacing.md,
-  },
-  demoContainer: {
-    flex: 1,
-    minWidth: (SCREEN_WIDTH - theme.spacing.xl * 2 - theme.spacing.md * 2) / 3,
-    padding: theme.spacing.md,
-    alignItems: "center",
-  },
-  swipeCardContainer: {
-    height: 600,
-    marginHorizontal: -theme.spacing.md,
-  },
-  typographyShowcase: {
-    gap: theme.spacing.md,
-  },
-  successList: {
-    gap: theme.spacing.sm,
-  },
-  successItem: {
-    paddingLeft: theme.spacing.md,
-  },
-});
+const makeStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollContent: {
+      padding: theme.spacing.lg,
+      paddingBottom: theme.spacing['4xl'],
+    },
+    heroSection: {
+      padding: theme.spacing.xl,
+      marginBottom: theme.spacing.lg,
+      alignItems: 'center',
+    },
+    heroTitle: {
+      textAlign: 'center',
+      marginBottom: theme.spacing.md,
+    },
+    heroSubtitle: {
+      textAlign: 'center',
+      color: theme.colors.onMuted,
+    },
+    section: {
+      padding: theme.spacing.xl,
+      marginBottom: theme.spacing.lg,
+    },
+    sectionTitle: {
+      marginBottom: theme.spacing.sm,
+    },
+    sectionSubtitle: {
+      marginBottom: theme.spacing.lg,
+      color: theme.colors.onMuted,
+    },
+    buttonGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.sm,
+    },
+    containerGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.md,
+    },
+    demoContainer: {
+      flex: 1,
+      minWidth: (SCREEN_WIDTH - theme.spacing.xl * 2 - theme.spacing.md * 2) / 3,
+      padding: theme.spacing.md,
+      alignItems: 'center',
+    },
+    swipeCardContainer: {
+      height: 600,
+      marginHorizontal: -theme.spacing.md,
+    },
+    typographyShowcase: {
+      gap: theme.spacing.md,
+    },
+    successList: {
+      gap: theme.spacing.sm,
+    },
+    successItem: {
+      paddingLeft: theme.spacing.md,
+    },
+  });

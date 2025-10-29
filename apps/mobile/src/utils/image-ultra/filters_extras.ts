@@ -6,17 +6,13 @@
 /**
  * Tone map highlights to recover blown-out areas
  * Uses smooth compression curve to recover detail in overexposed regions
- * 
+ *
  * @param canvas - Canvas to process (mutated)
  * @param strength - Recovery strength 0-1 (default: 0.6)
  * @param pivot - Luminance pivot point 0-1 (default: 0.75, higher = compress more highlights)
  */
-export function toneMapHighlights(
-  canvas: HTMLCanvasElement,
-  strength = 0.6,
-  pivot = 0.75
-) {
-  const ctx = canvas.getContext("2d")!;
+export function toneMapHighlights(canvas: HTMLCanvasElement, strength = 0.6, pivot = 0.75) {
+  const ctx = canvas.getContext('2d')!;
   const { width: w, height: h } = canvas;
   const img = ctx.getImageData(0, 0, w, h);
   const d = img.data;
@@ -28,10 +24,7 @@ export function toneMapHighlights(
     const b = (d[i + 2] ?? 0) / 255;
     const l = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     // Compress highlights smoothly
-    const t =
-      l > p
-        ? p + (1 - Math.exp(-(l - p) * 4)) * (1 - p)
-        : l;
+    const t = l > p ? p + (1 - Math.exp(-(l - p) * 4)) * (1 - p) : l;
     // Scale channels by luminance ratio
     const k = l === 0 ? 0 : t / l;
     const mix = strength;
@@ -45,25 +38,21 @@ export function toneMapHighlights(
 /**
  * Clarity filter: Local contrast enhancement
  * Wide-radius unsharp mask on luminance channel for edge-aware clarity boost
- * 
+ *
  * @param canvas - Canvas to process (mutated)
  * @param radiusPx - Blur radius for luminance comparison (default: 12)
  * @param amount - Strength 0-1 (default: 0.35)
  */
-export function clarityLocalContrast(
-  canvas: HTMLCanvasElement,
-  radiusPx = 12,
-  amount = 0.35
-) {
+export function clarityLocalContrast(canvas: HTMLCanvasElement, radiusPx = 12, amount = 0.35) {
   const { width: w, height: h } = canvas;
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext('2d')!;
   const base = ctx.getImageData(0, 0, w, h);
-  
+
   // Blur copy
-  const blur = document.createElement("canvas");
+  const blur = document.createElement('canvas');
   blur.width = w;
   blur.height = h;
-  const bctx = blur.getContext("2d")!;
+  const bctx = blur.getContext('2d')!;
   bctx.filter = `blur(${radiusPx}px)`;
   bctx.drawImage(canvas, 0, 0);
   const blr = bctx.getImageData(0, 0, w, h);
@@ -74,7 +63,9 @@ export function clarityLocalContrast(
     const b = base.data[i + 2] ?? 0;
     const rl = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     const bl =
-      0.2126 * (blr.data[i] ?? 0) + 0.7152 * (blr.data[i + 1] ?? 0) + 0.0722 * (blr.data[i + 2] ?? 0);
+      0.2126 * (blr.data[i] ?? 0) +
+      0.7152 * (blr.data[i + 1] ?? 0) +
+      0.0722 * (blr.data[i + 2] ?? 0);
     // Detail = baseLuma - blurLuma; add fraction back
     const detail = rl - bl;
     const add = detail * amount;
@@ -89,17 +80,13 @@ export function clarityLocalContrast(
 /**
  * Vignette correction (or artistic vignette if amount < 0)
  * Brightens edges when amount > 0, darkens for artistic effect when amount < 0
- * 
+ *
  * @param canvas - Canvas to process (mutated)
  * @param amount - Correction strength -1..+1, positive = brighten edges (default: 0.25)
  * @param softness - Transition softness 0-1 (default: 0.6)
  */
-export function vignetteCorrect(
-  canvas: HTMLCanvasElement,
-  amount = 0.25,
-  softness = 0.6
-) {
-  const ctx = canvas.getContext("2d")!;
+export function vignetteCorrect(canvas: HTMLCanvasElement, amount = 0.25, softness = 0.6) {
+  const ctx = canvas.getContext('2d')!;
   const { width: w, height: h } = canvas;
   const img = ctx.getImageData(0, 0, w, h);
   const d = img.data;
@@ -121,22 +108,22 @@ export function vignetteCorrect(
   ctx.putImageData(img, 0, 0);
 }
 
-export type NoisePreset = "ios-night" | "android-mid";
+export type NoisePreset = 'ios-night' | 'android-mid';
 
 /**
  * Apply noise reduction preset optimized for mobile camera sensors
- * 
+ *
  * @param canvas - Canvas to process (mutated)
  * @param preset - Preset type
  */
 export function applyNoisePreset(canvas: HTMLCanvasElement, preset: NoisePreset) {
   switch (preset) {
-    case "ios-night":
+    case 'ios-night':
       // Denoise slightly then clarity + tiny USM
       median3(canvas);
       clarityLocalContrast(canvas, 14, 0.28);
       return;
-    case "android-mid":
+    case 'android-mid':
       median3(canvas);
       return;
   }
@@ -146,12 +133,11 @@ export function applyNoisePreset(canvas: HTMLCanvasElement, preset: NoisePreset)
  * Fast median filter (3x3 only for performance)
  */
 export function median3(canvas: HTMLCanvasElement) {
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext('2d')!;
   const { width: w, height: h } = canvas;
   const src = ctx.getImageData(0, 0, w, h);
   const dst = ctx.createImageData(w, h);
-  const clamp = (v: number, min: number, max: number) =>
-    v < min ? min : v > max ? max : v;
+  const clamp = (v: number, min: number, max: number) => (v < min ? min : v > max ? max : v);
 
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
@@ -187,4 +173,3 @@ const smoothstep = (e0: number, e1: number, x: number) => {
   const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
   return t * t * (3 - 2 * t);
 };
-

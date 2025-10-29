@@ -1,8 +1,8 @@
-import * as ImagePicker from "expo-image-picker";
-import { useState, useCallback } from "react";
-import { Alert } from "react-native";
-import { multipartUpload } from "../services/multipartUpload";
-import { logger } from "@pawfectmatch/core";
+import * as ImagePicker from 'expo-image-picker';
+import { useState, useCallback } from 'react';
+import { Alert } from 'react-native';
+import { multipartUpload } from '../services/multipartUpload';
+import { logger } from '@pawfectmatch/core';
 
 export interface UploadProgress {
   uploaded: number;
@@ -39,11 +39,8 @@ export const usePhotoManager = (): UsePhotoManagerReturn => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-      if (status !== "granted") {
-        Alert.alert(
-          "Permission needed",
-          "Please grant permission to access your photos",
-        );
+      if (status !== 'granted') {
+        Alert.alert('Permission needed', 'Please grant permission to access your photos');
         return;
       }
 
@@ -59,7 +56,7 @@ export const usePhotoManager = (): UsePhotoManagerReturn => {
       if (!result.canceled && result.assets.length > 0) {
         const newPhotos: PhotoData[] = result.assets.map((asset: any, index: number) => ({
           uri: asset.uri,
-          type: asset.type || "image/jpeg",
+          type: asset.type || 'image/jpeg',
           fileName: `pet-photo-${Date.now()}-${index}.jpg`,
           isPrimary: photos.length === 0 && index === 0,
           isUploading: false,
@@ -71,8 +68,8 @@ export const usePhotoManager = (): UsePhotoManagerReturn => {
         await uploadPhotos(newPhotos);
       }
     } catch (error) {
-      logger.error("Error picking images:", { error });
-      Alert.alert("Error", "Failed to pick images. Please try again.");
+      logger.error('Error picking images:', { error });
+      Alert.alert('Error', 'Failed to pick images. Please try again.');
     }
   };
 
@@ -85,9 +82,7 @@ export const usePhotoManager = (): UsePhotoManagerReturn => {
           if (photoIndex === -1) return prev;
 
           return prev.map((p, i) =>
-            i === photoIndex
-              ? { ...p, isUploading: true, error: undefined }
-              : p,
+            i === photoIndex ? { ...p, isUploading: true, error: undefined } : p,
           );
         });
 
@@ -132,26 +127,21 @@ export const usePhotoManager = (): UsePhotoManagerReturn => {
           );
         });
 
-        logger.info("Photo uploaded successfully:", { photo, url: uploadResult.url });
+        logger.info('Photo uploaded successfully:', { photo, url: uploadResult.url });
       } catch (error) {
-        logger.error("Error uploading photo:", { error, photo: photo.uri });
-        
+        logger.error('Error uploading photo:', { error, photo: photo.uri });
+
         // Mark photo with error
         setPhotos((prev) => {
           const photoIndex = prev.findIndex((p) => p.uri === photo.uri);
           if (photoIndex === -1) return prev;
 
           return prev.map((p, i) =>
-            i === photoIndex
-              ? { ...p, isUploading: false, error: "Upload failed" }
-              : p,
+            i === photoIndex ? { ...p, isUploading: false, error: 'Upload failed' } : p,
           );
         });
 
-        Alert.alert(
-          "Upload Failed",
-          `Failed to upload ${photo.fileName}. Please try again.`,
-        );
+        Alert.alert('Upload Failed', `Failed to upload ${photo.fileName}. Please try again.`);
       }
     }
   }, []);
@@ -182,14 +172,12 @@ export const usePhotoManager = (): UsePhotoManagerReturn => {
 
   const uploadPendingPhotos = useCallback(async () => {
     setPhotos((prev) => {
-      const pendingPhotos = prev.filter(
-        (p) => !p.uploadedUrl && !p.isUploading && !p.error,
-      );
+      const pendingPhotos = prev.filter((p) => !p.uploadedUrl && !p.isUploading && !p.error);
 
       if (pendingPhotos.length > 0) {
         // Upload in background without blocking
         uploadPhotos(pendingPhotos).catch((error) => {
-          logger.error("Error uploading pending photos:", { error });
+          logger.error('Error uploading pending photos:', { error });
         });
       }
 

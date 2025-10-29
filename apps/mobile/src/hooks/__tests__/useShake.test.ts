@@ -104,7 +104,7 @@ describe('useShake', () => {
           duration: 800,
           enableHaptics: false,
           repeatCount: 3,
-        })
+        }),
       );
 
       expect(result.current.config.intensity).toBe(20);
@@ -128,9 +128,7 @@ describe('useShake', () => {
     });
 
     it('should create shake sequence with correct pattern', () => {
-      const { result } = renderHook(() =>
-        useShake({ intensity: 15, repeatCount: 2 })
-      );
+      const { result } = renderHook(() => useShake({ intensity: 15, repeatCount: 2 }));
 
       act(() => {
         result.current.shake();
@@ -143,14 +141,12 @@ describe('useShake', () => {
         expect.anything(), // Second movement
         expect.anything(), // Return to center
         expect.anything(), // Third movement
-        expect.anything()  // Final return to center
+        expect.anything(), // Final return to center
       );
     });
 
     it('should use custom duration for shake timing', () => {
-      const { result } = renderHook(() =>
-        useShake({ duration: 600 })
-      );
+      const { result } = renderHook(() => useShake({ duration: 600 }));
 
       act(() => {
         result.current.shake();
@@ -159,7 +155,7 @@ describe('useShake', () => {
       expect(mockWithTiming).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({ duration: 600 }),
-        expect.any(Function) // onComplete callback
+        expect.any(Function), // onComplete callback
       );
     });
 
@@ -197,9 +193,7 @@ describe('useShake', () => {
     });
 
     it('should use custom haptic style', () => {
-      const { result } = renderHook(() =>
-        useShake({ hapticStyle: 'heavy' })
-      );
+      const { result } = renderHook(() => useShake({ hapticStyle: 'heavy' }));
 
       act(() => {
         result.current.shake();
@@ -209,9 +203,7 @@ describe('useShake', () => {
     });
 
     it('should disable haptic feedback when configured', () => {
-      const { result } = renderHook(() =>
-        useShake({ enableHaptics: false })
-      );
+      const { result } = renderHook(() => useShake({ enableHaptics: false }));
 
       act(() => {
         result.current.shake();
@@ -246,27 +238,23 @@ describe('useShake', () => {
         expect.anything(), // sharedValue
         expect.arrayContaining([-1, 0, 1]), // input range for shake pattern
         expect.arrayContaining([-10, 0, 10]), // output range based on intensity
-        'clamp'
+        'clamp',
       );
     });
 
     it('should use custom intensity in animation', () => {
-      const { result } = renderHook(() =>
-        useShake({ intensity: 25 })
-      );
+      const { result } = renderHook(() => useShake({ intensity: 25 }));
 
       expect(mockInterpolate).toHaveBeenCalledWith(
         expect.anything(),
         expect.any(Array),
         expect.arrayContaining([-25, 0, 25]), // Custom intensity
-        'clamp'
+        'clamp',
       );
     });
 
     it('should support vertical shake animation', () => {
-      const { result } = renderHook(() =>
-        useShake({ direction: 'vertical' })
-      );
+      const { result } = renderHook(() => useShake({ direction: 'vertical' }));
 
       expect(result.current.animatedStyle).toEqual({
         transform: [{ translateY: -10 }], // Vertical translation instead of horizontal
@@ -350,8 +338,8 @@ describe('useShake', () => {
 
   describe('Configuration Validation', () => {
     it('should handle invalid intensity values', () => {
-      const { result } = renderHook(() =>
-        useShake({ intensity: -5 }) // Invalid negative intensity
+      const { result } = renderHook(
+        () => useShake({ intensity: -5 }), // Invalid negative intensity
       );
 
       // Should use default or clamped value
@@ -363,8 +351,8 @@ describe('useShake', () => {
     });
 
     it('should handle invalid duration values', () => {
-      const { result } = renderHook(() =>
-        useShake({ duration: 0 }) // Invalid zero duration
+      const { result } = renderHook(
+        () => useShake({ duration: 0 }), // Invalid zero duration
       );
 
       act(() => {
@@ -376,8 +364,8 @@ describe('useShake', () => {
     });
 
     it('should handle invalid repeat count', () => {
-      const { result } = renderHook(() =>
-        useShake({ repeatCount: 0 }) // No repeats
+      const { result } = renderHook(
+        () => useShake({ repeatCount: 0 }), // No repeats
       );
 
       act(() => {
@@ -566,9 +554,7 @@ describe('useShake', () => {
 
   describe('Accessibility Features', () => {
     it('should respect reduced motion preferences', () => {
-      const { result } = renderHook(() =>
-        useShake({ respectReducedMotion: true })
-      );
+      const { result } = renderHook(() => useShake({ respectReducedMotion: true }));
 
       // Mock reduced motion enabled
       (global as any).__reducedMotion = true;
@@ -625,9 +611,7 @@ describe('useShake', () => {
     });
 
     it('should handle shake with zero intensity', () => {
-      const { result } = renderHook(() =>
-        useShake({ intensity: 0 })
-      );
+      const { result } = renderHook(() => useShake({ intensity: 0 }));
 
       act(() => {
         result.current.shake();
@@ -658,7 +642,7 @@ describe('useShake', () => {
           intensity: 1000, // Very high intensity
           duration: 10000, // Very long duration
           repeatCount: 100, // Many repeats
-        })
+        }),
       );
 
       act(() => {
@@ -675,7 +659,7 @@ describe('useShake', () => {
           intensity: 'invalid' as any,
           duration: null as any,
           enableHaptics: 'maybe' as any,
-        })
+        }),
       );
 
       // Should not crash, should use defaults

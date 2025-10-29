@@ -1,18 +1,19 @@
-import React, { useCallback } from "react";
-import { Image, StyleSheet, Dimensions } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import type { haptics } from '@/utils/haptics';
+import { useTheme } from '@mobile/src/theme';
+import * as Haptics from 'expo-haptics';
+import { useCallback } from 'react';
+import { Dimensions, Image, StyleSheet } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
   withDecay,
-} from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
-import { rubberClamp, rubberScale, hardClamp } from "../../utils/elastic";
-import { useTheme } from "@mobile/theme";
+  withSpring,
+} from 'react-native-reanimated';
+import { hardClamp, rubberClamp, rubberScale } from '../../utils/elastic';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export interface PinchZoomProProps {
   source: { uri: string } | number;
@@ -24,7 +25,7 @@ export interface PinchZoomProProps {
   enableMomentum?: boolean;
   onScaleChange?: (s: number) => void;
   disabled?: boolean;
-  resizeMode?: "cover" | "contain" | "stretch" | "repeat" | "center";
+  resizeMode?: 'cover' | 'contain' | 'stretch' | 'repeat' | 'center';
   backgroundColor?: string;
   haptics?: boolean;
 }
@@ -39,10 +40,10 @@ export function PinchZoomPro({
   enableMomentum = true,
   onScaleChange,
   disabled = false,
-  resizeMode = "cover",
-  }: PinchZoomProProps) {
+  resizeMode = 'cover',
+}: PinchZoomProProps) {
   const theme = useTheme();
-  const finalBackgroundColor = backgroundColor || theme.colors.text.primary;
+  const finalBackgroundColor = backgroundColor || theme.colors.onSurface.primary;
   const scale = useSharedValue(initialScale);
   const lastScale = useSharedValue(initialScale);
 
@@ -51,21 +52,24 @@ export function PinchZoomPro({
   const lastTx = useSharedValue(0);
   const lastTy = useSharedValue(0);
 
-  const trigger = useCallback((style: "Light" | "Medium" | "Heavy") => {
-    if (!haptics) return;
-    const map = {
-      Light: Haptics.ImpactFeedbackStyle.Light,
-      Medium: Haptics.ImpactFeedbackStyle.Medium,
-      Heavy: Haptics.ImpactFeedbackStyle.Heavy,
-    };
-    Haptics.impactAsync(map[style]);
-  }, [haptics]);
+  const trigger = useCallback(
+    (style: 'Light' | 'Medium' | 'Heavy') => {
+      if (!haptics) return;
+      const map = {
+        Light: Haptics.ImpactFeedbackStyle.Light,
+        Medium: Haptics.ImpactFeedbackStyle.Medium,
+        Heavy: Haptics.ImpactFeedbackStyle.Heavy,
+      };
+      Haptics.impactAsync(map[style]);
+    },
+    [haptics],
+  );
 
   const pinch = Gesture.Pinch()
     .enabled(!disabled)
     .onStart(() => {
       lastScale.value = scale.value;
-      if (haptics) runOnJS(trigger)("Light");
+      if (haptics) runOnJS(trigger)('Light');
     })
     .onUpdate((e) => {
       // raw scale
@@ -79,7 +83,7 @@ export function PinchZoomPro({
       // snap back to hard clamp
       if (scale.value < minScale) scale.value = withSpring(minScale);
       if (scale.value > maxScale) scale.value = withSpring(maxScale);
-      if (haptics) runOnJS(trigger)("Medium");
+      if (haptics) runOnJS(trigger)('Medium');
     });
 
   const pan = Gesture.Pan()
@@ -129,7 +133,7 @@ export function PinchZoomPro({
     .enabled(!disabled)
     .maxDelay(280)
     .onEnd((_e, success) => {
-      "worklet";
+      'worklet';
       if (!success) return;
       // quick zoom toggle with center snap
       const target = scale.value > 1.001 ? 1 : Math.min(2, maxScale);
@@ -141,20 +145,18 @@ export function PinchZoomPro({
   const composed = Gesture.Simultaneous(pinch, pan, doubleTap);
 
   const imageStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: tx.value },
-      { translateY: ty.value },
-      { scale: scale.value },
-    ],
+    transform: [{ translateX: tx.value }, { translateY: ty.value }, { scale: scale.value }],
   }));
 
   return (
     <GestureDetector gesture={composed}>
-      <Animated.View style={[styles.container, { width, height, backgroundColor: finalBackgroundColor }]}>
+      <Animated.View
+        style={[styles.container, { width, height, backgroundColor: finalBackgroundColor }]}
+      >
         <Animated.View style={[styles.center, imageStyle]}>
           <Image
             source={source}
-            style={{ width, height, backgroundColor: theme.colors.text.primary }}
+            style={{ width, height, backgroundColor: theme.colors.onSurface.primary }}
             resizeMode={resizeMode}
           />
         </Animated.View>
@@ -164,8 +166,8 @@ export function PinchZoomPro({
 }
 
 const styles = StyleSheet.create({
-  container: { overflow: "hidden", borderRadius: 12 },
-  center: { alignItems: "center", justifyContent: "center" },
+  container: { overflow: 'hidden', borderRadius: 12 },
+  center: { alignItems: 'center', justifyContent: 'center' },
 });
 
 export default PinchZoomPro;

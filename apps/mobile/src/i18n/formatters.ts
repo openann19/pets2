@@ -6,10 +6,10 @@
  * Format date in Bulgarian format (dd.mm.yyyy)
  */
 export const fmtDate = (d: Date): string => {
-  return new Intl.DateTimeFormat('bg-BG', { 
-    day: '2-digit', 
-    month: '2-digit', 
-    year: 'numeric' 
+  return new Intl.DateTimeFormat('bg-BG', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
   }).format(d);
 };
 
@@ -17,9 +17,9 @@ export const fmtDate = (d: Date): string => {
  * Format currency in Bulgarian format
  */
 export const fmtMoney = (amount: number, currency = 'BGN'): string => {
-  return new Intl.NumberFormat('bg-BG', { 
-    style: 'currency', 
-    currency 
+  return new Intl.NumberFormat('bg-BG', {
+    style: 'currency',
+    currency,
   }).format(amount);
 };
 

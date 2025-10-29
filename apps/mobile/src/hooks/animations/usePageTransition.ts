@@ -9,8 +9,8 @@ import {
   withSpring,
   withTiming,
   runOnJS,
-} from "react-native-reanimated";
-import { PREMIUM_ANIMATIONS } from "./constants";
+} from 'react-native-reanimated';
+import { PREMIUM_ANIMATIONS } from './constants';
 
 export const usePageTransition = () => {
   const screenOpacity = useSharedValue(1);

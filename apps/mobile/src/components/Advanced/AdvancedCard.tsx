@@ -4,10 +4,10 @@
  * Enterprise-level implementation with full TypeScript support
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import React, { useCallback } from "react";
-import type { ViewStyle, TextStyle } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { logger } from '@pawfectmatch/core';
+import React, { useCallback } from 'react';
+import type { ViewStyle, TextStyle } from 'react-native';
 import {
   View,
   Text,
@@ -16,10 +16,10 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
-} from "react-native";
+} from 'react-native';
 
-import { AdvancedButton } from "./AdvancedInteractionSystem";
-import { useCardAnimations, type CardInteraction } from "./Card/CardAnimations";
+import { AdvancedButton } from './AdvancedInteractionSystem';
+import { useCardAnimations, type CardInteraction } from './Card/CardAnimations';
 import {
   getCardStyles,
   getSizeStyles,
@@ -27,10 +27,10 @@ import {
   getMarginValue,
   type CardVariant,
   type CardSize,
-} from "./Card/CardVariants";
-import { CardBackground } from "./Card/CardBackground";
+} from './Card/CardVariants';
+import { CardBackground } from './Card/CardBackground';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Re-export types for backward compatibility
 export type { CardVariant, CardSize, CardInteraction };
@@ -40,8 +40,8 @@ interface CardAction {
   title?: string;
   onPress?: () => void | Promise<void>;
   apiAction?: () => Promise<any>;
-  variant?: "primary" | "secondary" | "danger" | "minimal";
-  haptic?: "light" | "medium" | "heavy";
+  variant?: 'primary' | 'secondary' | 'danger' | 'minimal';
+  haptic?: 'light' | 'medium' | 'heavy';
   disabled?: boolean;
   loading?: boolean;
 }
@@ -55,7 +55,7 @@ interface AdvancedCardProps {
   variant?: CardVariant;
   size?: CardSize;
   interactions?: CardInteraction[];
-  haptic?: "light" | "medium" | "heavy";
+  haptic?: 'light' | 'medium' | 'heavy';
   onPress?: () => void | Promise<void>;
   onLongPress?: () => void | Promise<void>;
   disabled?: boolean;
@@ -93,10 +93,10 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
   subtitle,
   description,
   image,
-  variant = "default",
-  size = "md",
-  interactions = ["hover", "press"],
-  haptic = "light",
+  variant = 'default',
+  size = 'md',
+  interactions = ['hover', 'press'],
+  haptic = 'light',
   onPress,
   onLongPress,
   disabled = false,
@@ -109,8 +109,8 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
   glowColor = Theme.colors.primary[500],
   gradientColors = [Theme.colors.primary[500], Theme.colors.primary[600]],
   blurIntensity = 20,
-  padding = "md",
-  margin = "sm",
+  padding = 'md',
+  margin = 'sm',
   actions = [],
   badge,
   status,
@@ -144,15 +144,15 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
     if (disabled || loading || isLoading) return;
 
     setIsLoading(true);
-    await triggerHaptic("medium");
+    await triggerHaptic('medium');
 
     try {
       if (onPress) {
         await onPress();
       }
     } catch (error) {
-      logger.error("Card action failed:", { error });
-      await triggerHaptic("heavy");
+      logger.error('Card action failed:', { error });
+      await triggerHaptic('heavy');
     } finally {
       setIsLoading(false);
     }
@@ -162,7 +162,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
   const handleLongPress = useCallback(async () => {
     if (disabled || loading || isLoading) return;
 
-    await triggerHaptic("heavy");
+    await triggerHaptic('heavy');
 
     if (onLongPress) {
       await onLongPress();
@@ -189,12 +189,12 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
           await action.onPress();
         }
 
-        if (apiActions[action.title || ""]) {
-          await apiActions[action.title || ""];
+        if (apiActions[action.title || '']) {
+          await apiActions[action.title || ''];
         }
       } catch (error) {
-        logger.error("Card action failed:", { error });
-        await triggerHaptic("heavy");
+        logger.error('Card action failed:', { error });
+        await triggerHaptic('heavy');
       } finally {
         setIsLoading(false);
       }
@@ -268,24 +268,16 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
         )}
 
         {/* Title */}
-        {title && (
-          <Text style={StyleSheet.flatten([styles.title, titleStyle])}>
-            {title}
-          </Text>
-        )}
+        {title && <Text style={StyleSheet.flatten([styles.title, titleStyle])}>{title}</Text>}
 
         {/* Subtitle */}
         {subtitle && (
-          <Text style={StyleSheet.flatten([styles.subtitle, subtitleStyle])}>
-            {subtitle}
-          </Text>
+          <Text style={StyleSheet.flatten([styles.subtitle, subtitleStyle])}>{subtitle}</Text>
         )}
 
         {/* Description */}
         {description && (
-          <Text
-            style={StyleSheet.flatten([styles.description, descriptionStyle])}
-          >
+          <Text style={StyleSheet.flatten([styles.description, descriptionStyle])}>
             {description}
           </Text>
         )}
@@ -301,15 +293,10 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
                 key={index}
                 icon={action.icon}
                 title={action.title}
-                variant={
-                  (action.variant || "minimal") as
-                    | "minimal"
-                    | "primary"
-                    | "secondary"
-                }
+                variant={(action.variant || 'minimal') as 'minimal' | 'primary' | 'secondary'}
                 size="sm"
-                interactions={["hover", "press"]}
-                haptic={action.haptic || "light"}
+                interactions={['hover', 'press']}
+                haptic={action.haptic || 'light'}
                 onPress={() => handleActionPress(action)}
                 disabled={action.disabled}
                 loading={action.loading}
@@ -356,7 +343,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
       />
 
       {/* Glow Overlay */}
-      {interactions.includes("glow") && (
+      {interactions.includes('glow') && (
         <Animated.View
           style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
@@ -379,7 +366,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
           style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
             {
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
               opacity: shimmer.interpolate({
                 inputRange: [0, 1],
                 outputRange: [0, 0.5],
@@ -414,61 +401,61 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
 export const CardConfigs = {
   // Default card
   default: (props: Partial<AdvancedCardProps>) => ({
-    variant: "default" as CardVariant,
-    interactions: ["hover", "press"] as CardInteraction[],
+    variant: 'default' as CardVariant,
+    interactions: ['hover', 'press'] as CardInteraction[],
     ...props,
   }),
 
   // Glass morphism card
   glass: (props: Partial<AdvancedCardProps>) => ({
-    variant: "glass" as CardVariant,
-    interactions: ["hover", "press", "glow"] as CardInteraction[],
+    variant: 'glass' as CardVariant,
+    interactions: ['hover', 'press', 'glow'] as CardInteraction[],
     blurIntensity: 20,
     ...props,
   }),
 
   // Gradient card
   gradient: (props: Partial<AdvancedCardProps>) => ({
-    variant: "gradient" as CardVariant,
-    interactions: ["hover", "press", "glow"] as CardInteraction[],
+    variant: 'gradient' as CardVariant,
+    interactions: ['hover', 'press', 'glow'] as CardInteraction[],
     gradientColors: [Theme.colors.primary[500], Theme.colors.primary[600]],
     ...props,
   }),
 
   // Premium card
   premium: (props: Partial<AdvancedCardProps>) => ({
-    variant: "premium" as CardVariant,
-    interactions: ["hover", "press", "glow", "bounce"] as CardInteraction[],
-    glowColor: "#8b5cf6",
+    variant: 'premium' as CardVariant,
+    interactions: ['hover', 'press', 'glow', 'bounce'] as CardInteraction[],
+    glowColor: '#8b5cf6',
     ...props,
   }),
 
   // Minimal card
   minimal: (props: Partial<AdvancedCardProps>) => ({
-    variant: "minimal" as CardVariant,
-    interactions: ["hover", "press"] as CardInteraction[],
+    variant: 'minimal' as CardVariant,
+    interactions: ['hover', 'press'] as CardInteraction[],
     ...props,
   }),
 
   // Neon card
   neon: (props: Partial<AdvancedCardProps>) => ({
-    variant: "neon" as CardVariant,
-    interactions: ["hover", "press", "glow", "bounce"] as CardInteraction[],
-    glowColor: "#00ffff",
+    variant: 'neon' as CardVariant,
+    interactions: ['hover', 'press', 'glow', 'bounce'] as CardInteraction[],
+    glowColor: '#00ffff',
     ...props,
   }),
 
   // Holographic card
   holographic: (props: Partial<AdvancedCardProps>) => ({
-    variant: "holographic" as CardVariant,
-    interactions: ["hover", "press", "glow", "tilt"] as CardInteraction[],
+    variant: 'holographic' as CardVariant,
+    interactions: ['hover', 'press', 'glow', 'tilt'] as CardInteraction[],
     ...props,
   }),
 
   // Floating card
   floating: (props: Partial<AdvancedCardProps>) => ({
-    variant: "floating" as CardVariant,
-    interactions: ["hover", "press", "bounce"] as CardInteraction[],
+    variant: 'floating' as CardVariant,
+    interactions: ['hover', 'press', 'bounce'] as CardInteraction[],
     ...props,
   }),
 };
@@ -480,10 +467,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    position: "relative",
+    position: 'relative',
   },
   badge: {
-    position: "absolute",
+    position: 'absolute',
     top: 8,
     right: 8,
     paddingHorizontal: 8,
@@ -493,10 +480,10 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   status: {
-    position: "absolute",
+    position: 'absolute',
     top: 8,
     left: 8,
     paddingHorizontal: 8,
@@ -506,23 +493,23 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   image: {
-    width: "100%",
+    width: '100%',
     height: 120,
     borderRadius: 8,
     marginBottom: 12,
   },
   title: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Theme.colors.neutral[800],
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: '500',
     color: Theme.colors.neutral[500],
     marginBottom: 8,
   },
@@ -533,9 +520,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   actionsContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     marginTop: 12,
   },
   actionButton: {

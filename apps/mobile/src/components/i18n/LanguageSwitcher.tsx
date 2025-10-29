@@ -1,9 +1,9 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { View, StyleSheet, Pressable, Text } from 'react-native';
+import { useTheme } from '@mobile/src/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useTheme } from "@/theme";
-import { changeLanguage, resetLanguageToDevice } from '../../i18n/detectors';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { changeLanguage, resetLanguageToDevice } from '../../i18n/detectors';
 
 type Lang = 'en' | 'bg';
 
@@ -24,7 +24,7 @@ export const LanguageSwitcher: React.FC = () => {
       const override = (await AsyncStorage.getItem(STORAGE_OVERRIDE_KEY)) === '1';
       setFollowingDevice(!override);
     };
-      checkOverride();
+    checkOverride();
   }, [i18n.language]);
 
   const onChange = useCallback(
@@ -38,7 +38,7 @@ export const LanguageSwitcher: React.FC = () => {
         setBusy(null);
       }
     },
-    [busy, current]
+    [busy, current],
   );
 
   const onResetToDevice = useCallback(async () => {
@@ -61,7 +61,11 @@ export const LanguageSwitcher: React.FC = () => {
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.container} accessible accessibilityRole="radiogroup">
+      <View
+        style={styles.container}
+        accessible
+        accessibilityRole="radiogroup"
+      >
         {items.map(({ lang, key, testID }) => {
           const selected = current === lang;
           return (
@@ -92,7 +96,7 @@ export const LanguageSwitcher: React.FC = () => {
           );
         })}
       </View>
-      
+
       {!followingDevice && (
         <Pressable
           testID="language-device"
@@ -122,7 +126,7 @@ const makeStyles = (theme: any) =>
       flex: 1,
       paddingVertical: 12,
       paddingHorizontal: 16,
-      borderRadius: theme.radius.md,
+      borderRadius: theme.radii.md,
       borderWidth: 2,
       alignItems: 'center',
     },
@@ -138,11 +142,11 @@ const makeStyles = (theme: any) =>
     buttonDisabled: { opacity: 0.6 },
     buttonText: { fontSize: 14, fontWeight: '600' },
     buttonTextActive: { color: theme.colors.primaryText },
-    buttonTextInactive: { color: theme.colors.onSurface},
+    buttonTextInactive: { color: theme.colors.onSurface },
     resetButton: {
       paddingVertical: 10,
       paddingHorizontal: 16,
-      borderRadius: theme.radius.md,
+      borderRadius: theme.radii.md,
       backgroundColor: theme.colors.border,
       alignItems: 'center',
     },
@@ -151,6 +155,6 @@ const makeStyles = (theme: any) =>
     resetButtonText: {
       fontSize: 13,
       fontWeight: '500',
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
     },
   });

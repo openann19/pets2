@@ -1,12 +1,8 @@
-import { useCallback } from "react";
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
+import { useCallback } from 'react';
+import { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
-import { SPRING_CONFIGS } from "./configs/springConfigs";
-import { prefersReducedMotion } from "./configs/accessibility";
+import { SPRING_CONFIGS } from './configs/springConfigs';
+import { prefersReducedMotion } from './configs/accessibility';
 
 /**
  * Hook for press animations
@@ -19,7 +15,7 @@ interface UsePressAnimationReturn {
 }
 
 export function usePressAnimation(
-  config: keyof typeof SPRING_CONFIGS = "snappy",
+  config: keyof typeof SPRING_CONFIGS = 'snappy',
 ): UsePressAnimationReturn {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);

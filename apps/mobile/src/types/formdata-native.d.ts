@@ -17,4 +17,3 @@ export interface NativeFileFormDataPart {
 export interface NativeFormData extends FormData {
   append(name: string, value: string | Blob | NativeFileFormDataPart, fileName?: string): void;
 }
-

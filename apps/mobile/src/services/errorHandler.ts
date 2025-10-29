@@ -3,9 +3,9 @@
  * Production-ready error handling with user notifications and logging
  */
 
-import { Alert } from "react-native";
+import { Alert } from 'react-native';
 
-import { logger } from "./logger";
+import { logger } from './logger';
 
 interface ErrorContext {
   component: string;
@@ -29,7 +29,7 @@ interface ErrorHandlerOptions {
 class ErrorHandler {
   private logError(error: Error, context: ErrorContext): void {
     // In production, this would send to a logging service like Sentry
-    logger.error("Error occurred", {
+    logger.error('Error occurred', {
       message: error.message,
       stack: error.stack,
       context,
@@ -38,48 +38,44 @@ class ErrorHandler {
   }
 
   private showUserNotification(title: string, message: string): void {
-    Alert.alert(title, message, [{ text: "OK" }]);
+    Alert.alert(title, message, [{ text: 'OK' }]);
   }
 
   private getUserFriendlyMessage(error: Error): string {
     const message = error.message.toLowerCase();
 
-    if (message.includes("network") || message.includes("fetch")) {
-      return "Please check your internet connection and try again.";
+    if (message.includes('network') || message.includes('fetch')) {
+      return 'Please check your internet connection and try again.';
     }
 
-    if (message.includes("unauthorized") || message.includes("401")) {
-      return "Your session has expired. Please log in again.";
+    if (message.includes('unauthorized') || message.includes('401')) {
+      return 'Your session has expired. Please log in again.';
     }
 
-    if (message.includes("forbidden") || message.includes("403")) {
+    if (message.includes('forbidden') || message.includes('403')) {
       return "You don't have permission to perform this action.";
     }
 
-    if (message.includes("not found") || message.includes("404")) {
-      return "The requested resource was not found.";
+    if (message.includes('not found') || message.includes('404')) {
+      return 'The requested resource was not found.';
     }
 
-    if (message.includes("server") || message.includes("500")) {
-      return "Server error occurred. Please try again later.";
+    if (message.includes('server') || message.includes('500')) {
+      return 'Server error occurred. Please try again later.';
     }
 
     // Return the original message if it's already user-friendly
-    if (error.message.length < 100 && !error.message.includes("Error:")) {
+    if (error.message.length < 100 && !error.message.includes('Error:')) {
       return error.message;
     }
 
-    return "An unexpected error occurred. Please try again.";
+    return 'An unexpected error occurred. Please try again.';
   }
 
   /**
    * Handle general errors
    */
-  handleError(
-    error: Error,
-    context: ErrorContext,
-    options: ErrorHandlerOptions = {},
-  ): void {
+  handleError(error: Error, context: ErrorContext, options: ErrorHandlerOptions = {}): void {
     const { showNotification = true, logToService = true } = options;
 
     if (logToService) {
@@ -88,7 +84,7 @@ class ErrorHandler {
 
     if (showNotification) {
       const userMessage = this.getUserFriendlyMessage(error);
-      this.showUserNotification("Error", userMessage);
+      this.showUserNotification('Error', userMessage);
     }
   }
 
@@ -116,15 +112,10 @@ class ErrorHandler {
   /**
    * Handle network errors
    */
-  handleNetworkError(
-    error: Error,
-    context: ErrorContext,
-    options: ErrorHandlerOptions = {},
-  ): void {
+  handleNetworkError(error: Error, context: ErrorContext, options: ErrorHandlerOptions = {}): void {
     const networkOptions: ErrorHandlerOptions = {
       ...options,
-      fallbackMessage:
-        "Network error. Please check your connection and try again.",
+      fallbackMessage: 'Network error. Please check your connection and try again.',
     };
 
     this.handleError(error, context, networkOptions);
@@ -140,7 +131,7 @@ class ErrorHandler {
   ): void {
     const validationOptions: ErrorHandlerOptions = {
       ...options,
-      fallbackMessage: "Please check your input and try again.",
+      fallbackMessage: 'Please check your input and try again.',
     };
 
     this.handleError(error, context, validationOptions);
@@ -149,14 +140,10 @@ class ErrorHandler {
   /**
    * Handle authentication errors
    */
-  handleAuthError(
-    error: Error,
-    context: ErrorContext,
-    options: ErrorHandlerOptions = {},
-  ): void {
+  handleAuthError(error: Error, context: ErrorContext, options: ErrorHandlerOptions = {}): void {
     const authOptions: ErrorHandlerOptions = {
       ...options,
-      fallbackMessage: "Authentication failed. Please log in again.",
+      fallbackMessage: 'Authentication failed. Please log in again.',
     };
 
     this.handleError(error, context, authOptions);
@@ -183,7 +170,7 @@ class ErrorHandler {
    */
   createError(message: string, code?: string): Error {
     const error = new Error(message);
-    if (code !== undefined && code !== "") {
+    if (code !== undefined && code !== '') {
       (error as Error & { code?: string }).code = code;
     }
     return error;
@@ -200,11 +187,7 @@ class ErrorHandler {
     try {
       return await asyncFn();
     } catch (error) {
-      this.handleError(
-        error instanceof Error ? error : new Error(String(error)),
-        context,
-        options,
-      );
+      this.handleError(error instanceof Error ? error : new Error(String(error)), context, options);
       return null;
     }
   }

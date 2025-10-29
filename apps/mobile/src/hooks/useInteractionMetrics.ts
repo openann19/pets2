@@ -23,65 +23,74 @@ export function useInteractionMetrics({
 }: UseInteractionMetricsOptions) {
   const metricsRef = useRef<Map<string, InteractionMetric>>(new Map());
 
-  const startInteraction = useCallback((id: string = 'default', metadata?: Record<string, any>) => {
-    const metric: InteractionMetric = {
-      name,
-      startTime: performance.now(),
-      success: false,
-      metadata,
-    };
-    
-    metricsRef.current.set(id, metric);
-    
-    if (enableLogging) {
-      logger.debug(`🎯 Interaction started: ${name}`, { id, metadata });
-    }
-  }, [name, enableLogging]);
+  const startInteraction = useCallback(
+    (id: string = 'default', metadata?: Record<string, any>) => {
+      const metric: InteractionMetric = {
+        name,
+        startTime: performance.now(),
+        success: false,
+        metadata,
+      };
 
-  const endInteraction = useCallback((id: string = 'default', success: boolean = true, metadata?: Record<string, any>) => {
-    const metric = metricsRef.current.get(id);
-    if (!metric) {
-      logger.warn(`⚠️ No interaction found for id: ${id}`);
-      return;
-    }
+      metricsRef.current.set(id, metric);
 
-    const endTime = performance.now();
-    const duration = endTime - metric.startTime;
-    
-    const completedMetric: InteractionMetric = {
-      ...metric,
-      endTime,
-      duration,
-      success,
-      metadata: { ...metric.metadata, ...metadata },
-    };
+      if (enableLogging) {
+        logger.debug(`🎯 Interaction started: ${name}`, { id, metadata });
+      }
+    },
+    [name, enableLogging],
+  );
 
-    metricsRef.current.set(id, completedMetric);
+  const endInteraction = useCallback(
+    (id: string = 'default', success: boolean = true, metadata?: Record<string, any>) => {
+      const metric = metricsRef.current.get(id);
+      if (!metric) {
+        logger.warn(`⚠️ No interaction found for id: ${id}`);
+        return;
+      }
 
-    if (enableLogging) {
-      const emoji = success ? '✅' : '❌';
-      const speedEmoji = duration > threshold ? '🐌' : '⚡';
-      
-      logger.info(`${emoji}${speedEmoji} Interaction completed: ${name}`, {
-        id,
-        duration: `${duration.toFixed(2)}ms`,
+      const endTime = performance.now();
+      const duration = endTime - metric.startTime;
+
+      const completedMetric: InteractionMetric = {
+        ...metric,
+        endTime,
+        duration,
         success,
-        threshold: duration > threshold ? 'SLOW' : 'FAST',
-        metadata: completedMetric.metadata,
-      });
+        metadata: { ...metric.metadata, ...metadata },
+      };
 
-      // Log performance warning for slow interactions
-      if (duration > threshold) {
-        logger.warn(`🐌 Slow interaction detected: ${name} took ${duration.toFixed(2)}ms (threshold: ${threshold}ms)`, {
+      metricsRef.current.set(id, completedMetric);
+
+      if (enableLogging) {
+        const emoji = success ? '✅' : '❌';
+        const speedEmoji = duration > threshold ? '🐌' : '⚡';
+
+        logger.info(`${emoji}${speedEmoji} Interaction completed: ${name}`, {
           id,
-          duration,
+          duration: `${duration.toFixed(2)}ms`,
+          success,
+          threshold: duration > threshold ? 'SLOW' : 'FAST',
           metadata: completedMetric.metadata,
         });
-      }
-    }
 
-    return completedMetric;
-  }, [name, enableLogging, threshold]);
+        // Log performance warning for slow interactions
+        if (duration > threshold) {
+          logger.warn(
+            `🐌 Slow interaction detected: ${name} took ${duration.toFixed(2)}ms (threshold: ${threshold}ms)`,
+            {
+              id,
+              duration,
+              metadata: completedMetric.metadata,
+            },
+          );
+        }
+      }
+
+      return completedMetric;
+    },
+    [name, enableLogging, threshold],
+  );
 
   const getMetrics = useCallback((id: string = 'default') => {
     return metricsRef.current.get(id);
@@ -96,22 +105,27 @@ export function useInteractionMetrics({
   }, []);
 
   // Helper for measuring a function execution
-  const measureFunction = useCallback(async <T>(
-    fn: () => T | Promise<T>,
-    id: string = 'default',
-    metadata?: Record<string, any>
-  ): Promise<{ result: T; metric: InteractionMetric }> => {
-    startInteraction(id, metadata);
-    
-    try {
-      const result = await fn();
-      const metric = endInteraction(id, true);
-      return { result, metric: metric! };
-    } catch (error) {
-      const metric = endInteraction(id, false, { error: error instanceof Error ? error.message : 'Unknown error' });
-      throw error;
-    }
-  }, [startInteraction, endInteraction]);
+  const measureFunction = useCallback(
+    async <T>(
+      fn: () => T | Promise<T>,
+      id: string = 'default',
+      metadata?: Record<string, any>,
+    ): Promise<{ result: T; metric: InteractionMetric }> => {
+      startInteraction(id, metadata);
+
+      try {
+        const result = await fn();
+        const metric = endInteraction(id, true);
+        return { result, metric: metric! };
+      } catch (error) {
+        const metric = endInteraction(id, false, {
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
+        throw error;
+      }
+    },
+    [startInteraction, endInteraction],
+  );
 
   return {
     startInteraction,

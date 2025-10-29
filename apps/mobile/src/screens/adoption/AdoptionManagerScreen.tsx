@@ -1,37 +1,23 @@
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
-import React, { useMemo } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-  Modal,
-  StyleSheet,
-} from "react-native";
-import Animated from "react-native-reanimated";
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { useMemo } from 'react';
+import { Modal, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { Colors, GlobalStyles, Spacing } from '../../animation';
 import {
-  EliteContainer,
-  EliteScrollContainer,
-  EliteHeader,
-  EliteCard,
   EliteButton,
-  EliteLoading,
+  EliteCard,
+  EliteContainer,
   EliteEmptyState,
-} from "../../components";
-import {
-  GlobalStyles,
-  Colors,
-  Spacing,
-  Shadows,
-} from "../../animation";
-import type { RootStackScreenProps } from "../../navigation/types";
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
-import { useAdoptionManagerScreen } from "../../hooks/screens/useAdoptionManagerScreen";
-import type { PetListing as PetListingFromHook } from "../../hooks/screens/useAdoptionManagerScreen";
+  EliteHeader,
+  EliteLoading,
+  EliteScrollContainer,
+} from '../../components';
+import { useAdoptionManagerScreen } from '../../hooks/screens/useAdoptionManagerScreen';
+import type { RootStackScreenProps } from '../../navigation/types';
 
 // Helper to convert rem spacing to pixels
 const sp = (key: keyof typeof Spacing): number => {
@@ -42,7 +28,7 @@ const sp = (key: keyof typeof Spacing): number => {
   return value;
 };
 
-type AdoptionManagerScreenProps = RootStackScreenProps<"AdoptionManager">;
+type AdoptionManagerScreenProps = RootStackScreenProps<'AdoptionManager'>;
 
 interface PetListing {
   id: string;
@@ -50,7 +36,7 @@ interface PetListing {
   species: string;
   breed: string;
   age: number;
-  status: "active" | "pending" | "adopted" | "paused";
+  status: 'active' | 'pending' | 'adopted' | 'paused';
   photos: string[];
   applications: number;
   views: number;
@@ -64,7 +50,7 @@ interface AdoptionApplication {
   petName: string;
   applicantName: string;
   applicantEmail: string;
-  status: "pending" | "approved" | "rejected" | "withdrawn";
+  status: 'pending' | 'approved' | 'rejected' | 'withdrawn';
   submittedAt: string;
   experience: string;
   livingSpace: string;
@@ -77,70 +63,65 @@ const SPRING_CONFIG = {
   mass: 1,
 };
 
-const VALID_LISTING_STATUSES = new Set<PetListing["status"]>([
-  "active",
-  "pending",
-  "adopted",
-  "paused",
+const VALID_LISTING_STATUSES = new Set<PetListing['status']>([
+  'active',
+  'pending',
+  'adopted',
+  'paused',
 ]);
 
 const normalizeListing = (listing: unknown): PetListing => {
   const item = listing as Record<string, unknown>;
-  const id = (item.id ?? item._id ?? "") as string;
+  const id = (item.id ?? item._id ?? '') as string;
 
   return {
     id,
-    name: (item.name as string) ?? "Unknown Pet",
-    species: (item.species as string) ?? "Unknown",
-    breed: (item.breed as string) ?? "Unknown",
-    age: typeof item.age === "number" ? item.age : 0,
-    status: VALID_LISTING_STATUSES.has(item.status as PetListing["status"])
-      ? (item.status as PetListing["status"])
-      : "pending",
-    photos: Array.isArray(item.photos)
-      ? (item.photos as string[])
-      : [],
-    applications: typeof item.applications === "number" ? item.applications : 0,
-    views: typeof item.views === "number" ? item.views : 0,
-    featured: typeof item.featured === "boolean" ? item.featured : false,
-    listedAt:
-      typeof item.listedAt === "string"
-        ? (item.listedAt)
-        : new Date().toISOString(),
+    name: (item.name as string) ?? 'Unknown Pet',
+    species: (item.species as string) ?? 'Unknown',
+    breed: (item.breed as string) ?? 'Unknown',
+    age: typeof item.age === 'number' ? item.age : 0,
+    status: VALID_LISTING_STATUSES.has(item.status as PetListing['status'])
+      ? (item.status as PetListing['status'])
+      : 'pending',
+    photos: Array.isArray(item.photos) ? (item.photos as string[]) : [],
+    applications: typeof item.applications === 'number' ? item.applications : 0,
+    views: typeof item.views === 'number' ? item.views : 0,
+    featured: typeof item.featured === 'boolean' ? item.featured : false,
+    listedAt: typeof item.listedAt === 'string' ? item.listedAt : new Date().toISOString(),
   };
 };
 
 const normalizeApplication = (application: unknown): AdoptionApplication => {
   const item = application as Record<string, unknown>;
-  const status = item.status as AdoptionApplication["status"];
+  const status = item.status as AdoptionApplication['status'];
 
   return {
-    id: (item.id ?? item._id ?? "") as string,
-    petId: (item.petId ?? "") as string,
-    petName:
-      (item.petName as string) ?? ((item.pet as { name?: string })?.name ?? "Unknown"),
+    id: (item.id ?? item._id ?? '') as string,
+    petId: (item.petId ?? '') as string,
+    petName: (item.petName as string) ?? (item.pet as { name?: string })?.name ?? 'Unknown',
     applicantName:
       (item.applicantName as string) ??
-      ((item.applicant as { name?: string })?.name ?? "Pending Applicant"),
+      (item.applicant as { name?: string })?.name ??
+      'Pending Applicant',
     applicantEmail:
       (item.applicantEmail as string) ??
-      ((item.applicant as { email?: string })?.email ?? "unknown@example.com"),
+      (item.applicant as { email?: string })?.email ??
+      'unknown@example.com',
     status:
-      status && ["pending", "approved", "rejected", "withdrawn"].includes(status)
+      status && ['pending', 'approved', 'rejected', 'withdrawn'].includes(status)
         ? status
-        : "pending",
-    submittedAt:
-      typeof item.submittedAt === "string"
-        ? (item.submittedAt)
-        : new Date().toISOString(),
+        : 'pending',
+    submittedAt: typeof item.submittedAt === 'string' ? item.submittedAt : new Date().toISOString(),
     experience:
       (item.experience as string) ??
-      ((item.applicationData as { experience?: string })?.experience ?? ""),
+      (item.applicationData as { experience?: string })?.experience ??
+      '',
     livingSpace:
       (item.livingSpace as string) ??
-      ((item.applicationData as { livingSituation?: string })?.livingSituation ?? ""),
+      (item.applicationData as { livingSituation?: string })?.livingSituation ??
+      '',
     references:
-      typeof item.references === "number"
+      typeof item.references === 'number'
         ? item.references
         : ((item.applicationData as { references?: number })?.references ?? 0),
   };
@@ -150,7 +131,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { colors } = theme;
-  
+
   // Use the extracted hook for all business logic
   const {
     activeTab,
@@ -179,7 +160,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   const renderListings = () => (
     <View style={styles.tabContent}>
       {petListings.map((pet) => (
-        <View key={pet.id} style={styles.listingCard}>
+        <View
+          key={pet.id}
+          style={styles.listingCard}
+        >
           <View style={styles.listingHeader}>
             <View style={styles.petInfo}>
               <Text style={styles.petName}>{pet.name}</Text>
@@ -192,7 +176,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                 styles.statusBadge,
                 { backgroundColor: `${getStatusColor(pet.status)}20` },
               ])}
-               testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+              testID="AdoptionManagerScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => {
                 setSelectedPet(pet);
                 setShowStatusModal(true);
               }}
@@ -203,7 +190,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                   { color: getStatusColor(pet.status) },
                 ])}
               >
-                {getStatusIcon(pet.status)}{" "}
+                {getStatusIcon(pet.status)}{' '}
                 {pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
               </Text>
             </TouchableOpacity>
@@ -219,7 +206,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               <Text style={styles.statLabel}>Views</Text>
             </View>
             <View style={styles.stat}>
-              <Text style={styles.statNumber}>{pet.featured ? "⭐" : "—"}</Text>
+              <Text style={styles.statNumber}>{pet.featured ? '⭐' : '—'}</Text>
               <Text style={styles.statLabel}>Featured</Text>
             </View>
           </View>
@@ -227,29 +214,25 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
           <View style={styles.listingActions}>
             <TouchableOpacity
               style={styles.actionButton}
-               testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() =>
-                navigation.navigate("PetDetails", { petId: pet.id })
-              }
+              testID="AdoptionManagerScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => navigation.navigate('PetDetails', { petId: pet.id })}
             >
               <Text style={styles.actionButtonText}>View Details</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.actionButton,
-                styles.primaryButton,
-              ])}
-               testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() =>
-                navigation.navigate("ApplicationReview", {
+              style={StyleSheet.flatten([styles.actionButton, styles.primaryButton])}
+              testID="AdoptionManagerScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() =>
+                navigation.navigate('ApplicationReview', {
                   applicationId: pet.id,
                 })
               }
             >
-              <Text
-                style={StyleSheet.flatten([
-                  styles.actionButtonText,
-                  styles.primaryButtonText,
-                ])}
-              >
+              <Text style={StyleSheet.flatten([styles.actionButtonText, styles.primaryButtonText])}>
                 Review Apps ({pet.applications})
               </Text>
             </TouchableOpacity>
@@ -262,7 +245,12 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   const renderEliteListings = () => (
     <View style={GlobalStyles.py4}>
       {petListings.map((pet) => (
-        <EliteCard key={pet.id} gradient blur style={GlobalStyles.mb4}>
+        <EliteCard
+          key={pet.id}
+          gradient
+          blur
+          style={GlobalStyles.mb4}
+        >
           <View style={styles.eliteListingHeader}>
             <View style={{ flex: 1 }}>
               <Text style={GlobalStyles.heading3}>{pet.name}</Text>
@@ -275,7 +263,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                 styles.eliteStatusBadge,
                 { backgroundColor: `${getStatusColor(pet.status)}20` },
               ])}
-               testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+              testID="AdoptionManagerScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setSelectedPet(pet);
                 setShowStatusModal(true);
@@ -287,7 +278,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                   { color: getStatusColor(pet.status) },
                 ])}
               >
-                {getStatusIcon(pet.status)}{" "}
+                {getStatusIcon(pet.status)}{' '}
                 {pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
               </Text>
             </TouchableOpacity>
@@ -303,9 +294,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               <Text style={styles.eliteStatLabel}>Views</Text>
             </View>
             <View style={styles.eliteStat}>
-              <Text style={styles.eliteStatNumber}>
-                {pet.featured ? "⭐" : "—"}
-              </Text>
+              <Text style={styles.eliteStatNumber}>{pet.featured ? '⭐' : '—'}</Text>
               <Text style={styles.eliteStatLabel}>Featured</Text>
             </View>
           </View>
@@ -316,9 +305,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               variant="secondary"
               size="sm"
               icon="eye"
-              onPress={() =>
-                navigation.navigate("PetDetails", { petId: pet.id })
-              }
+              onPress={() => navigation.navigate('PetDetails', { petId: pet.id })}
               style={{ flex: 1 }}
             />
             <View style={GlobalStyles.mx2} />
@@ -328,7 +315,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               size="sm"
               icon="document-text"
               onPress={() =>
-                navigation.navigate("ApplicationReview", {
+                navigation.navigate('ApplicationReview', {
                   applicationId: pet.id,
                 })
               }
@@ -343,7 +330,12 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   const renderEliteApplications = () => (
     <View style={GlobalStyles.py4}>
       {applications.map((app) => (
-        <EliteCard key={app.id} gradient blur style={GlobalStyles.mb4}>
+        <EliteCard
+          key={app.id}
+          gradient
+          blur
+          style={GlobalStyles.mb4}
+        >
           <View style={styles.eliteApplicationHeader}>
             <View style={{ flex: 1 }}>
               <Text style={GlobalStyles.heading3}>{app.applicantName}</Text>
@@ -361,7 +353,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                   { color: getStatusColor(app.status) },
                 ])}
               >
-                {getStatusIcon(app.status)}{" "}
+                {getStatusIcon(app.status)}{' '}
                 {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
               </Text>
             </View>
@@ -369,26 +361,40 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
 
           <View style={styles.eliteApplicationDetails}>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="mail" size={16} color={colors.onMuted} />
+              <Ionicons
+                name="mail"
+                size={16}
+                color={colors.onMuted}
+              />
               <Text style={styles.eliteDetailText}>{app.applicantEmail}</Text>
             </View>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="home" size={16} color={colors.onMuted} />
+              <Ionicons
+                name="home"
+                size={16}
+                color={colors.onMuted}
+              />
               <Text style={styles.eliteDetailText}>{app.livingSpace}</Text>
             </View>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="star" size={16} color={colors.onMuted} />
+              <Ionicons
+                name="star"
+                size={16}
+                color={colors.onMuted}
+              />
               <Text style={styles.eliteDetailText}>{app.experience}</Text>
             </View>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="people" size={16} color={colors.onMuted} />
-              <Text style={styles.eliteDetailText}>
-                {app.references} references
-              </Text>
+              <Ionicons
+                name="people"
+                size={16}
+                color={colors.onMuted}
+              />
+              <Text style={styles.eliteDetailText}>{app.references} references</Text>
             </View>
           </View>
 
-          {app.status === "pending" && (
+          {app.status === 'pending' && (
             <View style={styles.eliteActionsContainer}>
               <EliteButton
                 title="Reject"
@@ -396,12 +402,9 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                 size="sm"
                 icon="close"
                 onPress={() => {
-                  handleApplicationAction(app.id, "reject");
+                  handleApplicationAction(app.id, 'reject');
                 }}
-                style={StyleSheet.flatten([
-                  { flex: 1 },
-                  { borderColor: Colors.error },
-                ])}
+                style={StyleSheet.flatten([{ flex: 1 }, { borderColor: Colors.error }])}
               />
               <View style={GlobalStyles.mx2} />
               <EliteButton
@@ -410,7 +413,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                 size="sm"
                 icon="checkmark"
                 onPress={() => {
-                  handleApplicationAction(app.id, "approve");
+                  handleApplicationAction(app.id, 'approve');
                 }}
                 style={{ flex: 1 }}
                 gradientEffect
@@ -443,7 +446,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
             size="sm"
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("CreateListing");
+              navigation.navigate('CreateListing');
             }}
           />
         }
@@ -455,21 +458,24 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
           <TouchableOpacity
             style={StyleSheet.flatten([
               styles.eliteTab,
-              activeTab === "listings" && styles.eliteActiveTab,
+              activeTab === 'listings' && styles.eliteActiveTab,
             ])}
-             testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-              handleTabPress("listings", tabScale1);
+            testID="AdoptionManagerScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
+              handleTabPress('listings', tabScale1);
             }}
           >
             <Ionicons
               name="list"
               size={20}
-              color={activeTab === "listings" ? colors.onSurface : colors.onMuted}
+              color={activeTab === 'listings' ? colors.onSurface : colors.onMuted}
             />
             <Text
               style={StyleSheet.flatten([
                 styles.eliteTabText,
-                activeTab === "listings" && styles.eliteActiveTabText,
+                activeTab === 'listings' && styles.eliteActiveTabText,
               ])}
             >
               My Listings ({petListings.length})
@@ -481,23 +487,24 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
           <TouchableOpacity
             style={StyleSheet.flatten([
               styles.eliteTab,
-              activeTab === "applications" && styles.eliteActiveTab,
+              activeTab === 'applications' && styles.eliteActiveTab,
             ])}
-             testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-              handleTabPress("applications", tabScale2);
+            testID="AdoptionManagerScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
+              handleTabPress('applications', tabScale2);
             }}
           >
             <Ionicons
               name="document-text"
               size={20}
-              color={
-                activeTab === "applications" ? colors.onSurface : colors.onMuted
-              }
+              color={activeTab === 'applications' ? colors.onSurface : colors.onMuted}
             />
             <Text
               style={StyleSheet.flatten([
                 styles.eliteTabText,
-                activeTab === "applications" && styles.eliteActiveTabText,
+                activeTab === 'applications' && styles.eliteActiveTabText,
               ])}
             >
               Applications ({applications.length})
@@ -517,19 +524,19 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
           />
         }
       >
-        {petListings.length === 0 && activeTab === "listings" ? (
+        {petListings.length === 0 && activeTab === 'listings' ? (
           <EliteEmptyState
             icon="paw"
             title="No pets listed yet"
             message="Start by adding your first pet for adoption. It's easy and helps pets find loving homes!"
           />
-        ) : applications.length === 0 && activeTab === "applications" ? (
+        ) : applications.length === 0 && activeTab === 'applications' ? (
           <EliteEmptyState
             icon="document-text"
             title="No applications yet"
             message="Once people start applying for your pets, you'll see all applications here."
           />
-        ) : activeTab === "listings" ? (
+        ) : activeTab === 'listings' ? (
           renderEliteListings()
         ) : (
           renderEliteApplications()
@@ -547,19 +554,15 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
       >
         <View style={GlobalStyles.modalOverlay}>
           <View style={GlobalStyles.modalContent}>
-            <Text style={GlobalStyles.heading2}>
-              Change Status for {selectedPet?.name}
-            </Text>
+            <Text style={GlobalStyles.heading2}>Change Status for {selectedPet?.name}</Text>
 
             <View style={styles.statusOptions}>
-              {["active", "pending", "adopted", "paused"].map((status) => (
+              {['active', 'pending', 'adopted', 'paused'].map((status) => (
                 <EliteButton
                   key={status}
                   title={`${getStatusIcon(status)} ${status.charAt(0).toUpperCase() + status.slice(1)}`}
                   variant="ghost"
-                  onPress={() =>
-                    selectedPet && handleStatusChange(selectedPet, status)
-                  }
+                  onPress={() => selectedPet && handleStatusChange(selectedPet, status)}
                   style={styles.statusOptionButton}
                 />
               ))}
@@ -601,9 +604,9 @@ function makeStyles(theme: AppTheme) {
       elevation: 5,
     },
     listingHeader: {
-      flexDirection: "row" as const,
-      justifyContent: "space-between" as const,
-      alignItems: "flex-start" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'flex-start' as const,
       marginBottom: theme.spacing.sm ?? 12,
     },
     petInfo: {
@@ -611,7 +614,7 @@ function makeStyles(theme: AppTheme) {
     },
     petName: {
       fontSize: 18,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
       color: theme.colors.onSurface,
       marginBottom: 4,
     },
@@ -628,11 +631,11 @@ function makeStyles(theme: AppTheme) {
     },
     statusText: {
       fontSize: 12,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
     },
     listingStats: {
-      flexDirection: "row" as const,
-      justifyContent: "space-around" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-around' as const,
       paddingVertical: theme.spacing.sm ?? 12,
       borderTopWidth: 1,
       borderBottomWidth: 1,
@@ -640,21 +643,21 @@ function makeStyles(theme: AppTheme) {
       marginVertical: theme.spacing.sm ?? 12,
     },
     stat: {
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
     },
     statNumber: {
       fontSize: 20,
-      fontWeight: "700" as const,
+      fontWeight: '700' as const,
       color: theme.colors.primary,
       marginBottom: 4,
     },
     statLabel: {
       fontSize: 12,
       color: theme.colors.onMuted,
-      textAlign: "center" as const,
+      textAlign: 'center' as const,
     },
     listingActions: {
-      flexDirection: "row" as const,
+      flexDirection: 'row' as const,
       gap: theme.spacing.sm ?? 12,
     },
     actionButton: {
@@ -665,11 +668,11 @@ function makeStyles(theme: AppTheme) {
       borderWidth: 1,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
     },
     actionButtonText: {
       fontSize: 14,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
       color: theme.colors.onMuted,
     },
     primaryButton: {
@@ -682,20 +685,20 @@ function makeStyles(theme: AppTheme) {
 
     // === ELITE TAB SYSTEM ===
     tabContainer: {
-      flexDirection: "row" as const,
+      flexDirection: 'row' as const,
       paddingHorizontal: theme.spacing.xl ?? 24,
       paddingVertical: theme.spacing.lg ?? 20,
       gap: theme.spacing.sm ?? 12,
     },
     eliteTab: {
       flex: 1,
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
-      justifyContent: "center" as const,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
       paddingVertical: theme.spacing.lg ?? 20,
       paddingHorizontal: theme.spacing.md ?? 16,
       borderRadius: theme.radii?.lg ?? theme.radius?.lg ?? 16,
-      backgroundColor: theme.colors.surfaceAlt ?? theme.colors.surface,
+      backgroundColor: theme.colors.overlay ?? theme.colors.surface,
       borderWidth: 1,
       borderColor: theme.colors.border,
       gap: theme.spacing.xs ?? 8,
@@ -711,7 +714,7 @@ function makeStyles(theme: AppTheme) {
     },
     eliteTabText: {
       fontSize: 14,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
       color: theme.colors.onMuted,
     },
     eliteActiveTabText: {
@@ -720,8 +723,8 @@ function makeStyles(theme: AppTheme) {
 
     // === ELITE LISTING STYLES ===
     eliteListingHeader: {
-      flexDirection: "row" as const,
-      alignItems: "flex-start" as const,
+      flexDirection: 'row' as const,
+      alignItems: 'flex-start' as const,
       marginBottom: theme.spacing.lg ?? 20,
     },
     eliteStatusBadge: {
@@ -733,42 +736,42 @@ function makeStyles(theme: AppTheme) {
     },
     eliteStatusText: {
       fontSize: 12,
-      fontWeight: "600" as const,
+      fontWeight: '600' as const,
     },
     eliteStatsContainer: {
-      flexDirection: "row" as const,
-      justifyContent: "space-around" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-around' as const,
       paddingVertical: theme.spacing.lg ?? 20,
       marginVertical: theme.spacing.lg ?? 20,
-      backgroundColor: theme.colors.surfaceAlt ?? theme.colors.surface,
+      backgroundColor: theme.colors.overlay ?? theme.colors.surface,
       borderRadius: theme.radii?.md ?? theme.radius?.md ?? 12,
       borderWidth: 1,
       borderColor: theme.colors.border,
     },
     eliteStat: {
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
     },
     eliteStatNumber: {
       fontSize: 20,
-      fontWeight: "700" as const,
+      fontWeight: '700' as const,
       color: theme.colors.primary,
       marginBottom: theme.spacing.xs ?? 8,
     },
     eliteStatLabel: {
       fontSize: 12,
       color: theme.colors.onMuted,
-      fontWeight: "500" as const,
+      fontWeight: '500' as const,
     },
     eliteActionsContainer: {
-      flexDirection: "row" as const,
+      flexDirection: 'row' as const,
       marginTop: theme.spacing.lg ?? 20,
       gap: theme.spacing.sm ?? 12,
     },
 
     // === ELITE APPLICATION STYLES ===
     eliteApplicationHeader: {
-      flexDirection: "row" as const,
-      alignItems: "flex-start" as const,
+      flexDirection: 'row' as const,
+      alignItems: 'flex-start' as const,
       marginBottom: theme.spacing.lg ?? 20,
     },
     eliteApplicationDetails: {
@@ -776,12 +779,12 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.lg ?? 20,
     },
     eliteDetailRow: {
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
       gap: theme.spacing.sm ?? 12,
       paddingVertical: theme.spacing.xs ?? 6,
       paddingHorizontal: theme.spacing.sm ?? 12,
-      backgroundColor: theme.colors.surfaceAlt ?? theme.colors.surface,
+      backgroundColor: theme.colors.overlay ?? theme.colors.surface,
       borderRadius: theme.radii?.sm ?? theme.radius?.sm ?? 8,
       borderWidth: 1,
       borderColor: theme.colors.border,
@@ -789,7 +792,7 @@ function makeStyles(theme: AppTheme) {
     eliteDetailText: {
       fontSize: 14,
       color: theme.colors.onMuted,
-      fontWeight: "500" as const,
+      fontWeight: '500' as const,
       flex: 1,
     },
 

@@ -326,7 +326,7 @@ describe('GDPR Service', () => {
 
       // Mock the status request
       (request as jest.Mock).mockResolvedValueOnce(mockExportStatus);
-      
+
       // Mock fetch for the actual download
       global.fetch = jest.fn().mockResolvedValueOnce({
         ok: true,
@@ -350,9 +350,7 @@ describe('GDPR Service', () => {
     it('should handle missing export ID', async () => {
       (request as jest.Mock).mockRejectedValueOnce(new Error('Export not found'));
 
-      await expect(downloadExport('invalid-export-id')).rejects.toThrow(
-        'Export not found'
-      );
+      await expect(downloadExport('invalid-export-id')).rejects.toThrow('Export not found');
     });
   });
 

@@ -445,7 +445,7 @@ describe('useFeatureGating', () => {
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         'feature_gating_cache',
-        expect.any(String)
+        expect.any(String),
       );
     });
 
@@ -540,13 +540,13 @@ describe('useFeatureGating', () => {
 
       // Multiple concurrent usage attempts
       const usagePromises = Array.from({ length: 10 }, () =>
-        act(async () => result.current.useFeature('swipes'))
+        act(async () => result.current.useFeature('swipes')),
       );
 
       const results = await Promise.all(usagePromises);
 
       // Should handle all requests
-      expect(results.every(r => r === true)).toBe(true);
+      expect(results.every((r) => r === true)).toBe(true);
     });
 
     it('should handle malformed feature configurations', async () => {

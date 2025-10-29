@@ -10,8 +10,8 @@
  * This follows the Single Responsibility Principle - no visual effects here.
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React, { forwardRef } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import React, { forwardRef } from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -21,12 +21,11 @@ import {
   type TouchableOpacityProps,
   type TextStyle,
   type ViewStyle,
-} from "react-native";
-
+} from 'react-native';
 
 // === TYPES ===
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline";
-export type ButtonSize = "sm" | "md" | "lg" | "xl";
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline';
+export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface BaseButtonProps extends TouchableOpacityProps {
   title: string;
@@ -61,7 +60,7 @@ const SIZE_CONFIGS = {
     iconSize: 20,
   },
   lg: {
-    paddingHorizontal: Theme.spacing["2xl"],
+    paddingHorizontal: Theme.spacing['2xl'],
     paddingVertical: Theme.spacing.lg,
     fontSize: Theme.typography.fontSize.lg,
     borderRadius: Theme.borderRadius.xl,
@@ -69,10 +68,10 @@ const SIZE_CONFIGS = {
     iconSize: 24,
   },
   xl: {
-    paddingHorizontal: Theme.spacing["3xl"],
+    paddingHorizontal: Theme.spacing['3xl'],
     paddingVertical: Theme.spacing.xl,
     fontSize: Theme.typography.fontSize.xl,
-    borderRadius: Theme.borderRadius["2xl"],
+    borderRadius: Theme.borderRadius['2xl'],
     minHeight: 60,
     iconSize: 28,
   },
@@ -83,8 +82,8 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
   (
     {
       title,
-      variant = "primary",
-      size = "md",
+      variant = 'primary',
+      size = 'md',
       loading = false,
       disabled = false,
       icon,
@@ -107,34 +106,34 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       const baseStyles: ViewStyle = {
         borderRadius: sizeConfig.borderRadius,
         minHeight: sizeConfig.minHeight,
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "row",
-        overflow: "hidden",
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        overflow: 'hidden',
       };
 
       switch (variant) {
-        case "primary":
+        case 'primary':
           return {
             ...baseStyles,
             backgroundColor: Theme.semantic.interactive.primary,
             ...Theme.shadows.depth.sm,
           };
-        case "secondary":
+        case 'secondary':
           return {
             ...baseStyles,
             backgroundColor: Theme.semantic.interactive.secondary,
             ...Theme.shadows.depth.sm,
           };
-        case "ghost":
+        case 'ghost':
           return {
             ...baseStyles,
-            backgroundColor: "transparent",
+            backgroundColor: 'transparent',
           };
-        case "outline":
+        case 'outline':
           return {
             ...baseStyles,
-            backgroundColor: "transparent",
+            backgroundColor: 'transparent',
             borderWidth: 2,
             borderColor: Theme.semantic.interactive.primary,
           };
@@ -148,18 +147,18 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       const baseTextStyles: TextStyle = {
         fontSize: sizeConfig.fontSize,
         fontWeight: Theme.typography.fontWeight.semibold,
-        textAlign: "center",
+        textAlign: 'center',
       };
 
       switch (variant) {
-        case "primary":
-        case "secondary":
+        case 'primary':
+        case 'secondary':
           return {
             ...baseTextStyles,
             color: Theme.colors.text.inverse,
           };
-        case "ghost":
-        case "outline":
+        case 'ghost':
+        case 'outline':
           return {
             ...baseTextStyles,
             color: Theme.semantic.interactive.primary,
@@ -175,11 +174,11 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
     // Get icon color
     const getIconColor = (): string => {
       switch (variant) {
-        case "primary":
-        case "secondary":
+        case 'primary':
+        case 'secondary':
           return Theme.colors.text.inverse;
-        case "ghost":
-        case "outline":
+        case 'ghost':
+        case 'outline':
           return Theme.semantic.interactive.primary;
         default:
           return Theme.colors.text.primary;
@@ -197,13 +196,11 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       if (loading) {
         return (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color={getIconColor()} />
-            <Text
-              style={StyleSheet.flatten([
-                getTextStyles(),
-                { marginLeft: Theme.spacing.sm },
-              ])}
-            >
+            <ActivityIndicator
+              size="small"
+              color={getIconColor()}
+            />
+            <Text style={StyleSheet.flatten([getTextStyles(), { marginLeft: Theme.spacing.sm }])}>
               Loading...
             </Text>
           </View>
@@ -220,9 +217,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
               style={{ marginRight: Theme.spacing.sm }}
             />
           )}
-          <Text style={StyleSheet.flatten([getTextStyles(), textStyle])}>
-            {title}
-          </Text>
+          <Text style={StyleSheet.flatten([getTextStyles(), textStyle])}>{title}</Text>
           {rightIcon && (
             <Ionicons
               name={rightIcon}
@@ -264,13 +259,13 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
 // === STYLES ===
 const styles = StyleSheet.create({
   loadingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
 // Display name for debugging
-BaseButton.displayName = "BaseButton";
+BaseButton.displayName = 'BaseButton';
 
 export default BaseButton;

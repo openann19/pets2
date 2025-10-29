@@ -2,12 +2,12 @@
  * useWelcomeScreen Hook
  * Manages Welcome screen with navigation and theme integration
  */
-import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "@/theme";
-import { getIsDark } from "../../theme/adapters";
-import { useWelcome } from "../domains/onboarding/useWelcome";
-import type { WelcomeAnimationValues } from "../../types/animations";
-import type { Theme } from "../../theme/types";
+import { useTheme } from '@mobile/src/theme';
+import { useNavigation } from '@react-navigation/native';
+import { getIsDark } from '../../theme/adapters';
+import type { Theme } from '../../theme/types';
+import type { WelcomeAnimationValues } from '../../types/animations';
+import { useWelcome } from '../domains/onboarding/useWelcome';
 
 interface UseWelcomeScreenReturn {
   // From domain hook
@@ -59,13 +59,13 @@ export const useWelcomeScreen = (): UseWelcomeScreenReturn => {
 
   const handleGetStarted = () => {
     domainHandleGetStarted();
-    navigation.navigate("UserIntent" as never);
+    navigation.navigate('UserIntent' as never);
   };
 
   const handleSkipOnboarding = () => {
     domainHandleSkipOnboarding();
     // Navigate to main app or skip to end of onboarding
-    navigation.navigate("Main" as never);
+    navigation.navigate('Main' as never);
   };
 
   return {

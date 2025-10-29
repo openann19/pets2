@@ -1,6 +1,6 @@
 /**
  * Comprehensive tests for Socket Service
- * 
+ *
  * Coverage:
  * - WebSocket connections
  * - Reconnection logic
@@ -24,7 +24,7 @@ describe('Socket Service', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Create mock socket instance
     mockSocket = {
       on: jest.fn(),
@@ -113,7 +113,7 @@ describe('Socket Service', () => {
           reconnectionDelay: 1000,
           reconnectionDelayMax: 5000,
           reconnectionAttempts: 5,
-        })
+        }),
       );
     });
 

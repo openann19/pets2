@@ -22,10 +22,12 @@ describe('useAIPhotoAnalyzer', () => {
     });
 
     it('should accept custom configuration', () => {
-      const { result } = renderHook(() => useAIPhotoAnalyzer({
-        enableCache: false,
-        timeout: 10000
-      }));
+      const { result } = renderHook(() =>
+        useAIPhotoAnalyzer({
+          enableCache: false,
+          timeout: 10000,
+        }),
+      );
       expect(result.current.isAnalyzing).toBe(false);
     });
   });
@@ -35,7 +37,7 @@ describe('useAIPhotoAnalyzer', () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -52,7 +54,7 @@ describe('useAIPhotoAnalyzer', () => {
       const petPhoto = {
         uri: 'file://test/dog.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -67,7 +69,7 @@ describe('useAIPhotoAnalyzer', () => {
       const noPetPhoto = {
         uri: 'file://test/landscape.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -82,7 +84,7 @@ describe('useAIPhotoAnalyzer', () => {
       const lowQualityPhoto = {
         uri: 'file://test/blurry.jpg',
         width: 200,
-        height: 150
+        height: 150,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -100,7 +102,7 @@ describe('useAIPhotoAnalyzer', () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -121,7 +123,7 @@ describe('useAIPhotoAnalyzer', () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -139,7 +141,7 @@ describe('useAIPhotoAnalyzer', () => {
       const invalidPhoto = {
         uri: 'invalid://uri',
         width: 0,
-        height: 0
+        height: 0,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -156,7 +158,7 @@ describe('useAIPhotoAnalyzer', () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -174,12 +176,14 @@ describe('useAIPhotoAnalyzer', () => {
       const mockPhoto = {
         uri: 'file://test/large-photo.jpg',
         width: 4000,
-        height: 3000
+        height: 3000,
       };
 
-      const { result } = renderHook(() => useAIPhotoAnalyzer({
-        timeout: 100 // Very short timeout
-      }));
+      const { result } = renderHook(() =>
+        useAIPhotoAnalyzer({
+          timeout: 100, // Very short timeout
+        }),
+      );
 
       await act(async () => {
         await result.current.analyzePhoto(mockPhoto);
@@ -194,12 +198,14 @@ describe('useAIPhotoAnalyzer', () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
-      const { result } = renderHook(() => useAIPhotoAnalyzer({
-        enableCache: true
-      }));
+      const { result } = renderHook(() =>
+        useAIPhotoAnalyzer({
+          enableCache: true,
+        }),
+      );
 
       // First analysis
       await act(async () => {
@@ -221,12 +227,14 @@ describe('useAIPhotoAnalyzer', () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
-      const { result } = renderHook(() => useAIPhotoAnalyzer({
-        enableCache: false
-      }));
+      const { result } = renderHook(() =>
+        useAIPhotoAnalyzer({
+          enableCache: false,
+        }),
+      );
 
       await act(async () => {
         await result.current.analyzePhoto(mockPhoto);
@@ -242,7 +250,7 @@ describe('useAIPhotoAnalyzer', () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -261,7 +269,7 @@ describe('useAIPhotoAnalyzer', () => {
       const petPhoto = {
         uri: 'file://test/dog.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -278,7 +286,7 @@ describe('useAIPhotoAnalyzer', () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -295,7 +303,7 @@ describe('useAIPhotoAnalyzer', () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
         width: 800,
-        height: 600
+        height: 600,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -314,13 +322,13 @@ describe('useAIPhotoAnalyzer', () => {
       const photos = [
         { uri: 'file://test/photo1.jpg', width: 800, height: 600 },
         { uri: 'file://test/photo2.jpg', width: 800, height: 600 },
-        { uri: 'file://test/photo3.jpg', width: 800, height: 600 }
+        { uri: 'file://test/photo3.jpg', width: 800, height: 600 },
       ];
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        const promises = photos.map(photo => result.current.analyzePhoto(photo));
+        const promises = photos.map((photo) => result.current.analyzePhoto(photo));
         await Promise.all(promises);
       });
 
@@ -364,7 +372,7 @@ describe('useAIPhotoAnalyzer', () => {
       const invalidPhoto = {
         uri: 'not-a-file-uri',
         width: -1,
-        height: -1
+        height: -1,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -380,7 +388,7 @@ describe('useAIPhotoAnalyzer', () => {
       const largePhoto = {
         uri: 'file://test/huge.jpg',
         width: 10000,
-        height: 8000
+        height: 8000,
       };
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
@@ -407,7 +415,7 @@ describe('useAIPhotoAnalyzer', () => {
         result.current.analyzePhoto({
           uri: 'file://test/photo.jpg',
           width: 800,
-          height: 600
+          height: 600,
         });
       });
 

@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/src/theme";
 import { useTranslation } from 'react-i18next';
 import { useReduceMotion } from '../../hooks/useReducedMotion';
 import { haptic } from '../../ui/haptics';
@@ -130,16 +130,16 @@ const makeStyles = (theme: any) =>
       alignItems: 'center',
       paddingVertical: theme.spacing.sm,
       paddingHorizontal: theme.spacing.md,
-      backgroundColor: theme.colors.bgAlt,
+      backgroundColor: theme.colors.surface,
       borderColor: theme.colors.border,
       borderWidth: 1,
-      borderRadius: theme.radius.md,
+      borderRadius: theme.radii.md,
       gap: theme.spacing.sm,
     },
     leading: {
       width: 3,
       height: 28,
-      borderRadius: theme.radius.sm,
+      borderRadius: theme.radii.sm,
       backgroundColor: theme.colors.primary,
     },
     iconWrap: { width: 20, alignItems: 'center' },
@@ -154,6 +154,6 @@ const makeStyles = (theme: any) =>
       fontSize: 14,
       fontWeight: '500',
     },
-    thumb: { width: 28, height: 28, borderRadius: theme.radius.sm, marginLeft: theme.spacing.sm },
+    thumb: { width: 28, height: 28, borderRadius: theme.radii.sm, marginLeft: theme.spacing.sm },
     close: { padding: 6, marginLeft: theme.spacing.sm },
   });

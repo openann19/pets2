@@ -1,6 +1,6 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 interface MapViewProps {
   region: any;
@@ -50,9 +50,11 @@ export const MapViewComponent: React.FC<MapViewProps> = ({
         testID={`marker-${pin._id}`}
         coordinate={{ latitude: pin.latitude, longitude: pin.longitude }}
         pinColor={getMarkerColor(pin.activity, getStableMatchFlag(pin))}
-        onPress={() => { onMarkerPress(pin); }}
+        onPress={() => {
+          onMarkerPress(pin);
+        }}
         title={pin.activity}
-        description={pin.message || ""}
+        description={pin.message || ''}
       />
     ))}
   </MapView>

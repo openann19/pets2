@@ -2,9 +2,9 @@
  * useSafetyCenterScreen Hook
  * Manages Safety Center screen state and interactions
  */
-import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "@/theme";
-import { useSafetyCenter } from "../domains/safety/useSafetyCenter";
+import { useTheme } from '@mobile/src/theme';
+import { useNavigation } from '@react-navigation/native';
+import { useSafetyCenter } from '../domains/safety/useSafetyCenter';
 
 interface UseSafetyCenterScreenReturn {
   // From domain hook

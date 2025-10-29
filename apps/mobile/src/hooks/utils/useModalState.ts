@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
 export interface UseModalStateReturn {
   isOpen: boolean;
@@ -13,9 +13,7 @@ export interface UseModalStateReturn {
  * @example
  * const { isOpen, open, close } = useModalState();
  */
-export function useModalState(
-  initialOpen: boolean = false,
-): UseModalStateReturn {
+export function useModalState(initialOpen: boolean = false): UseModalStateReturn {
   const [isOpen, setIsOpen] = useState(initialOpen);
 
   const open = useCallback(() => {

@@ -1,3 +1,3 @@
-export * from "./useGDPRStatus";
-export * from "./useDataExport";
-export * from "./useAccountDeletion";
+export * from './useGDPRStatus';
+export * from './useDataExport';
+export * from './useAccountDeletion';

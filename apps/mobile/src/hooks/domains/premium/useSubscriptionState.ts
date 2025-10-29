@@ -2,19 +2,16 @@
  * useSubscriptionState Hook
  * Manages subscription lifecycle state and transitions
  */
-import { useCallback, useState } from "react";
-import { logger } from "@pawfectmatch/core";
-import {
-  premiumService,
-  type SubscriptionStatus,
-} from "../../../services/PremiumService";
+import { useCallback, useState } from 'react';
+import { logger } from '@pawfectmatch/core';
+import { premiumService, type SubscriptionStatus } from '../../../services/PremiumService';
 
 interface SubscriptionState {
   status: SubscriptionStatus | null;
   isActivating: boolean;
   isCanceling: boolean;
   isUpdating: boolean;
-  lastAction: "activate" | "cancel" | "update" | null;
+  lastAction: 'activate' | 'cancel' | 'update' | null;
   error: string | null;
 }
 
@@ -36,41 +33,35 @@ export const useSubscriptionState = (): UseSubscriptionStateReturn => {
     error: null,
   });
 
-  const activateSubscription = useCallback(
-    async (planId: string): Promise<boolean> => {
-      try {
-        setState((prev) => ({
-          ...prev,
-          isActivating: true,
-          error: null,
-          lastAction: "activate",
-        }));
+  const activateSubscription = useCallback(async (planId: string): Promise<boolean> => {
+    try {
+      setState((prev) => ({
+        ...prev,
+        isActivating: true,
+        error: null,
+        lastAction: 'activate',
+      }));
 
-        // This would typically redirect to Stripe checkout
-        // For now, we'll simulate the activation
-        logger.info("Activating subscription", { planId });
+      // This would typically redirect to Stripe checkout
+      // For now, we'll simulate the activation
+      logger.info('Activating subscription', { planId });
 
-        // In real implementation, this would handle the checkout flow
-        // and then refresh the status via usePremiumStatus
+      // In real implementation, this would handle the checkout flow
+      // and then refresh the status via usePremiumStatus
 
-        setState((prev) => ({ ...prev, isActivating: false }));
-        return true;
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "Failed to activate subscription";
-        setState((prev) => ({
-          ...prev,
-          isActivating: false,
-          error: errorMessage,
-        }));
-        logger.error("Failed to activate subscription", { error: err, planId });
-        return false;
-      }
-    },
-    [],
-  );
+      setState((prev) => ({ ...prev, isActivating: false }));
+      return true;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to activate subscription';
+      setState((prev) => ({
+        ...prev,
+        isActivating: false,
+        error: errorMessage,
+      }));
+      logger.error('Failed to activate subscription', { error: err, planId });
+      return false;
+    }
+  }, []);
 
   const cancelSubscription = useCallback(async (): Promise<boolean> => {
     try {
@@ -78,7 +69,7 @@ export const useSubscriptionState = (): UseSubscriptionStateReturn => {
         ...prev,
         isCanceling: true,
         error: null,
-        lastAction: "cancel",
+        lastAction: 'cancel',
       }));
 
       const result = await premiumService.cancelSubscription();
@@ -89,17 +80,16 @@ export const useSubscriptionState = (): UseSubscriptionStateReturn => {
         status: prev.status ? { ...prev.status, autoRenew: false } : null,
       }));
 
-      logger.info("Subscription cancelled", result);
+      logger.info('Subscription cancelled', result);
       return result.success;
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to cancel subscription";
+      const errorMessage = err instanceof Error ? err.message : 'Failed to cancel subscription';
       setState((prev) => ({
         ...prev,
         isCanceling: false,
         error: errorMessage,
       }));
-      logger.error("Failed to cancel subscription", { error: err });
+      logger.error('Failed to cancel subscription', { error: err });
       return false;
     }
   }, []);
@@ -110,22 +100,21 @@ export const useSubscriptionState = (): UseSubscriptionStateReturn => {
         ...prev,
         isUpdating: true,
         error: null,
-        lastAction: "update",
+        lastAction: 'update',
       }));
 
       // This would typically create a customer portal session
       // For now, we'll simulate the update
-      logger.info("Updating payment method");
+      logger.info('Updating payment method');
 
       // In real implementation, this would redirect to Stripe customer portal
 
       setState((prev) => ({ ...prev, isUpdating: false }));
       return true;
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to update payment method";
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update payment method';
       setState((prev) => ({ ...prev, isUpdating: false, error: errorMessage }));
-      logger.error("Failed to update payment method", { error: err });
+      logger.error('Failed to update payment method', { error: err });
       return false;
     }
   }, []);

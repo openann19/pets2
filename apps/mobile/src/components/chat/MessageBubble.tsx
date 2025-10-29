@@ -1,21 +1,17 @@
-import type { Message } from "@pawfectmatch/core";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useMemo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, {
-  useAnimatedRef,
-  measure,
-  runOnJS,
-} from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
-import { useTheme } from "@/theme";
-import { useSwipeToReply } from "../../hooks/useSwipeToReply";
-import ReplySwipeHint from "./ReplySwipeHint";
-import MorphingContextMenu, { type ContextAction } from "../menus/MorphingContextMenu";
-import MessageStatusTicks, { type MessageStatus } from "./MessageStatusTicks";
-import RetryBadge from "./RetryBadge";
-import { useBubbleRetryShake } from "../../hooks/useBubbleRetryShake";
+import { useTheme } from '@mobile/src/theme';
+import type { Message } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { measure, runOnJS, useAnimatedRef } from 'react-native-reanimated';
+import { useBubbleRetryShake } from '../../hooks/useBubbleRetryShake';
+import { useSwipeToReply } from '../../hooks/useSwipeToReply';
+import MorphingContextMenu, { type ContextAction } from '../menus/MorphingContextMenu';
+import MessageStatusTicks, { type MessageStatus } from './MessageStatusTicks';
+import ReplySwipeHint from './ReplySwipeHint';
+import RetryBadge from './RetryBadge';
 
 interface MessageBubbleProps {
   message: Message & { status?: MessageStatus };
@@ -28,7 +24,7 @@ interface MessageBubbleProps {
   petInfo?: {
     name: string;
     species: string;
-    mood?: "happy" | "excited" | "curious" | "sleepy" | "playful";
+    mood?: 'happy' | 'excited' | 'curious' | 'sleepy' | 'playful';
   };
   onRetry?: (message: Message) => Promise<boolean> | boolean;
   onReply?: (message: Message) => void;
@@ -60,28 +56,28 @@ export function MessageBubble({
 }: MessageBubbleProps): React.JSX.Element {
   const theme = useTheme();
   const { style: bubbleShakeStyle, shake } = useBubbleRetryShake();
-  
+
   const styles = useMemo(
     () =>
       StyleSheet.create({
         messageContainer: {
           marginVertical: 4,
-          maxWidth: "80%",
-          position: "relative",
+          maxWidth: '80%',
+          position: 'relative',
         },
         ownContainer: {
-          alignSelf: "flex-end",
-          alignItems: "flex-end",
+          alignSelf: 'flex-end',
+          alignItems: 'flex-end',
         },
         otherContainer: {
-          alignSelf: "flex-start",
-          alignItems: "flex-start",
+          alignSelf: 'flex-start',
+          alignItems: 'flex-start',
         },
         bubble: {
           paddingHorizontal: 12,
           paddingVertical: 8,
           borderRadius: 16,
-          maxWidth: "100%",
+          maxWidth: '100%',
         },
         ownMessageLight: {
           backgroundColor: theme.colors.primary,
@@ -90,79 +86,79 @@ export function MessageBubble({
           backgroundColor: theme.colors.primary,
         },
         otherMessageLight: {
-          backgroundColor: theme.colors.bgElevated,
+          backgroundColor: theme.colors.surface,
           borderWidth: 1,
           borderColor: theme.colors.border,
         },
         otherMessageDark: {
-          backgroundColor: theme.colors.bgElevated,
+          backgroundColor: theme.colors.surface,
           borderWidth: 1,
-          borderColor: theme.colors.text.primary,
+          borderColor: theme.colors.onSurface.primary,
         },
         messageText: {
           fontSize: 16,
           lineHeight: 20,
         },
         messageTextLight: {
-          color: theme.colors.text,
+          color: theme.colors.onSurface,
         },
         messageTextDark: {
           color: theme.colors.bg,
         },
         imageBubble: {
-          backgroundColor: theme.colors.bgElevated,
+          backgroundColor: theme.colors.surface,
           borderRadius: 12,
           padding: 4,
         },
         gifBubble: {
-          backgroundColor: theme.colors.bgElevated,
+          backgroundColor: theme.colors.surface,
           borderRadius: 12,
           padding: 20,
         },
         voiceBubble: {
-          backgroundColor: theme.colors.bgElevated,
+          backgroundColor: theme.colors.surface,
           borderRadius: 12,
           padding: 12,
         },
         loadingText: {
           fontSize: 14,
-          color: theme.colors.textMuted,
+          color: theme.colors.onMuted,
         },
         gifPlaceholder: {
           fontSize: 14,
-          color: theme.colors.textMuted,
+          color: theme.colors.onMuted,
         },
         messageMeta: {
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
           marginTop: 4,
         },
         timestamp: {
           fontSize: 12,
         },
         timestampLight: {
-          color: theme.colors.textMuted,
+          color: theme.colors.onMuted,
         },
         timestampDark: {
-          color: theme.colors.textMuted,
+          color: theme.colors.onMuted,
         },
         statusRow: {
-          flexDirection: "row",
-          alignItems: "center",
+          flexDirection: 'row',
+          alignItems: 'center',
           marginLeft: 8,
         },
         status: {
           fontSize: 12,
         },
         statusLight: {
-          color: theme.colors.textMuted,
+          color: theme.colors.onMuted,
         },
         statusDark: {
-          color: theme.colors.textMuted,
+          color: theme.colors.onMuted,
         },
         avatarContainer: {
-          position: "absolute",
+          position: 'absolute',
           bottom: -16,
         },
         avatar: {
@@ -174,21 +170,21 @@ export function MessageBubble({
         },
         avatarEmoji: {
           fontSize: 16,
-          textAlign: "center",
+          textAlign: 'center',
           lineHeight: 28,
         },
         avatarName: {
           fontSize: 10,
-          fontWeight: "500",
+          fontWeight: '500',
         },
         avatarNameLight: {
-          color: theme.colors.text,
+          color: theme.colors.onSurface,
         },
         avatarNameDark: {
           color: theme.colors.bg,
         },
         reactionButton: {
-          backgroundColor: theme.colors.bgElevated,
+          backgroundColor: theme.colors.surface,
           borderRadius: 12,
           paddingHorizontal: 8,
           paddingVertical: 4,
@@ -206,23 +202,32 @@ export function MessageBubble({
         },
         retryText: {
           fontSize: 12,
-          fontWeight: "500",
+          fontWeight: '500',
           color: theme.colors.bg,
         },
       }),
-    [theme]
+    [theme],
   );
-  
+
   // Default status if not provided
-  const messageStatus: MessageStatus = message.status || "sent";
-  
+  const messageStatus: MessageStatus = message.status || 'sent';
+
   // Measure anchor rect for morphing menu
   const bubbleRef = useAnimatedRef<Animated.View>();
   const [menuVisible, setMenuVisible] = React.useState(false);
-  const [anchor, setAnchor] = React.useState<{ x: number; y: number; width: number; height: number }>();
+  const [anchor, setAnchor] = React.useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }>();
 
   // Swipe-to-reply gesture
-  const { gesture: swipeGesture, bubbleStyle, progressX } = useSwipeToReply({
+  const {
+    gesture: swipeGesture,
+    bubbleStyle,
+    progressX,
+  } = useSwipeToReply({
     enabled: true,
     onReply: onReply || (() => {}),
     payload: message,
@@ -241,11 +246,11 @@ export function MessageBubble({
     .onStart(() => {
       const m = measure(bubbleRef);
       if (m) {
-        runOnJS(handleOpenMenu)({ 
-          x: m.pageX, 
-          y: m.pageY, 
-          width: m.width, 
-          height: m.height 
+        runOnJS(handleOpenMenu)({
+          x: m.pageX,
+          y: m.pageY,
+          width: m.width,
+          height: m.height,
         });
       }
       runOnJS(setMenuVisible)(true);
@@ -256,14 +261,24 @@ export function MessageBubble({
   const composed = Gesture.Exclusive(swipeGesture, Gesture.Simultaneous(longPress, tap));
 
   // Menu actions
-  const canReadBy = isOwnMessage && (messageStatus === "delivered" || messageStatus === "read");
+  const canReadBy = isOwnMessage && (messageStatus === 'delivered' || messageStatus === 'read');
   const actions: ContextAction[] = [
-    { key: "reply", label: "Reply", icon: "arrow-undo", onPress: () => onReply?.(message) },
-    { key: "copy", label: "Copy", icon: "copy", onPress: () => onCopy?.(message) },
-    { key: "react", label: "React…", icon: "happy", onPress: () => onReact?.(message) },
-    ...(canReadBy ? [{ key: "readby", label: "Read by…", icon: "eye", onPress: () => onShowReadBy?.(message) }] : []),
+    { key: 'reply', label: 'Reply', icon: 'arrow-undo', onPress: () => onReply?.(message) },
+    { key: 'copy', label: 'Copy', icon: 'copy', onPress: () => onCopy?.(message) },
+    { key: 'react', label: 'React…', icon: 'happy', onPress: () => onReact?.(message) },
+    ...(canReadBy
+      ? [{ key: 'readby', label: 'Read by…', icon: 'eye', onPress: () => onShowReadBy?.(message) }]
+      : []),
     ...(isOwnMessage
-      ? [{ key: "delete", label: "Delete", icon: "trash", onPress: () => onDelete?.(message), danger: true }]
+      ? [
+          {
+            key: 'delete',
+            label: 'Delete',
+            icon: 'trash',
+            onPress: () => onDelete?.(message),
+            danger: true,
+          },
+        ]
       : []),
   ];
 
@@ -277,20 +292,18 @@ export function MessageBubble({
 
   const formatTime = (timestamp: string) =>
     new Date(timestamp).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
+      hour: '2-digit',
+      minute: '2-digit',
     });
 
   const getStatusIcon = () => {
     if (!showStatus) return null;
 
     // Check if current user has read the message
-    const isRead = message.readBy.some(
-      (receipt) => receipt.user === currentUserId,
-    );
+    const isRead = message.readBy.some((receipt) => receipt.user === currentUserId);
 
-    if (isRead) return "✓✓";
-    return "✓";
+    if (isRead) return '✓✓';
+    return '✓';
   };
 
   const getMilestoneBadge = () => {
@@ -302,59 +315,54 @@ export function MessageBubble({
     if (!isMilestone) return null;
 
     return {
-      text:
-        messageIndex + 1 === 1
-          ? "First message!"
-          : `${messageIndex + 1} messages!`,
-      emoji: messageIndex + 1 === 1 ? "🎉" : "🏆",
+      text: messageIndex + 1 === 1 ? 'First message!' : `${messageIndex + 1} messages!`,
+      emoji: messageIndex + 1 === 1 ? '🎉' : '🏆',
     };
   };
 
   const getPetAvatar = () => {
     if (!showAvatars || !petInfo) return null;
 
-    const { species, mood = "happy" } = petInfo;
+    const { species, mood = 'happy' } = petInfo;
     const speciesEmojis = {
       dog: {
-        happy: "🐕",
-        excited: "🐕‍🦺",
-        curious: "🐕",
-        sleepy: "😴",
-        playful: "🐕",
+        happy: '🐕',
+        excited: '🐕‍🦺',
+        curious: '🐕',
+        sleepy: '😴',
+        playful: '🐕',
       },
       cat: {
-        happy: "🐱",
-        excited: "🐱",
-        curious: "🐱",
-        sleepy: "😴",
-        playful: "🐱",
+        happy: '🐱',
+        excited: '🐱',
+        curious: '🐱',
+        sleepy: '😴',
+        playful: '🐱',
       },
       bird: {
-        happy: "🐦",
-        excited: "🐦",
-        curious: "🐦",
-        sleepy: "😴",
-        playful: "🐦",
+        happy: '🐦',
+        excited: '🐦',
+        curious: '🐦',
+        sleepy: '😴',
+        playful: '🐦',
       },
       rabbit: {
-        happy: "🐰",
-        excited: "🐰",
-        curious: "🐰",
-        sleepy: "😴",
-        playful: "🐰",
+        happy: '🐰',
+        excited: '🐰',
+        curious: '🐰',
+        sleepy: '😴',
+        playful: '🐰',
       },
       other: {
-        happy: "🐾",
-        excited: "🐾",
-        curious: "🐾",
-        sleepy: "😴",
-        playful: "🐾",
+        happy: '🐾',
+        excited: '🐾',
+        curious: '🐾',
+        sleepy: '😴',
+        playful: '🐾',
       },
     };
 
-    const emojiSet =
-      speciesEmojis[species as keyof typeof speciesEmojis] ||
-      speciesEmojis.other;
+    const emojiSet = speciesEmojis[species as keyof typeof speciesEmojis] || speciesEmojis.other;
     return emojiSet[mood];
   };
 
@@ -365,10 +373,9 @@ export function MessageBubble({
     return theme.isDark ? styles.otherMessageDark : styles.otherMessageLight;
   };
 
-  const getTextStyle = () =>
-    theme.isDark ? styles.messageTextDark : styles.messageTextLight;
+  const getTextStyle = () => (theme.isDark ? styles.messageTextDark : styles.messageTextLight);
 
-  if (message.messageType === "image") {
+  if (message.messageType === 'image') {
     return (
       <View
         style={StyleSheet.flatten([
@@ -381,15 +388,13 @@ export function MessageBubble({
         </TouchableOpacity>
         <View style={styles.messageMeta}>
           <Text style={styles.timestamp}>{formatTime(message.sentAt)}</Text>
-          {isOwnMessage && showStatus ? (
-            <Text style={styles.status}>{getStatusIcon()}</Text>
-          ) : null}
+          {isOwnMessage && showStatus ? <Text style={styles.status}>{getStatusIcon()}</Text> : null}
         </View>
       </View>
     );
   }
 
-  if (message.messageType === "voice") {
+  if (message.messageType === 'voice') {
     return (
       <View
         style={StyleSheet.flatten([
@@ -402,15 +407,13 @@ export function MessageBubble({
         </TouchableOpacity>
         <View style={styles.messageMeta}>
           <Text style={styles.timestamp}>{formatTime(message.sentAt)}</Text>
-          {isOwnMessage && showStatus ? (
-            <Text style={styles.status}>{getStatusIcon()}</Text>
-          ) : null}
+          {isOwnMessage && showStatus ? <Text style={styles.status}>{getStatusIcon()}</Text> : null}
         </View>
       </View>
     );
   }
 
-  if (message.messageType === "video") {
+  if (message.messageType === 'video') {
     return (
       <View
         style={StyleSheet.flatten([
@@ -423,15 +426,13 @@ export function MessageBubble({
         </TouchableOpacity>
         <View style={styles.messageMeta}>
           <Text style={styles.timestamp}>{formatTime(message.sentAt)}</Text>
-          {isOwnMessage && showStatus ? (
-            <Text style={styles.status}>{getStatusIcon()}</Text>
-          ) : null}
+          {isOwnMessage && showStatus ? <Text style={styles.status}>{getStatusIcon()}</Text> : null}
         </View>
       </View>
     );
   }
 
-  if (message.messageType === "gif" || message.messageType === "sticker") {
+  if (message.messageType === 'gif' || message.messageType === 'sticker') {
     return (
       <View
         style={StyleSheet.flatten([
@@ -441,14 +442,12 @@ export function MessageBubble({
       >
         <TouchableOpacity style={styles.gifBubble}>
           <Text style={styles.gifPlaceholder}>
-            {message.messageType === "gif" ? "🎭 GIF" : "😊 Sticker"}
+            {message.messageType === 'gif' ? '🎭 GIF' : '😊 Sticker'}
           </Text>
         </TouchableOpacity>
         <View style={styles.messageMeta}>
           <Text style={styles.timestamp}>{formatTime(message.sentAt)}</Text>
-          {isOwnMessage && showStatus ? (
-            <Text style={styles.status}>{getStatusIcon()}</Text>
-          ) : null}
+          {isOwnMessage && showStatus ? <Text style={styles.status}>{getStatusIcon()}</Text> : null}
         </View>
       </View>
     );
@@ -464,119 +463,122 @@ export function MessageBubble({
               styles.messageContainer,
               isOwnMessage ? styles.ownContainer : styles.otherContainer,
             ]),
-            isOwnMessage && messageStatus === "failed" && bubbleShakeStyle,
+            isOwnMessage && messageStatus === 'failed' && bubbleShakeStyle,
           ]}
         >
-      {/* Milestone Badge */}
-      {getMilestoneBadge() && (
-        <View style={styles.milestoneContainer}>
-          <Text style={styles.milestoneText}>
-            {getMilestoneBadge()?.emoji} {getMilestoneBadge()?.text}
-          </Text>
-        </View>
-      )}
+          {/* Milestone Badge */}
+          {getMilestoneBadge() && (
+            <View style={styles.milestoneContainer}>
+              <Text style={styles.milestoneText}>
+                {getMilestoneBadge()?.emoji} {getMilestoneBadge()?.text}
+              </Text>
+            </View>
+          )}
 
-      {/* Pet Avatar */}
-      {showAvatars && getPetAvatar() ? (
-        <View
-          style={StyleSheet.flatten([
-            styles.avatarContainer,
-            isOwnMessage ? styles.ownAvatar : styles.otherAvatar,
-          ])}
-        >
-          <Text style={styles.avatarEmoji}>{getPetAvatar()}</Text>
-          {petInfo ? (
-            <Text
+          {/* Pet Avatar */}
+          {showAvatars && getPetAvatar() ? (
+            <View
               style={StyleSheet.flatten([
-                styles.avatarName,
-                theme.isDark ? styles.avatarNameDark : styles.avatarNameLight,
+                styles.avatarContainer,
+                isOwnMessage ? styles.ownAvatar : styles.otherAvatar,
               ])}
             >
-              {petInfo.name}
-            </Text>
-          ) : null}
-        </View>
-      ) : null}
-
-      <Animated.View style={bubbleStyle}>
-        <LinearGradient
-          colors={
-            isOwnMessage
-              ? [theme.colors.primary, theme.colors.primary + "80"]
-              : [theme.colors.bgElevated, theme.colors.bg]
-          }
-          style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-        <Text style={StyleSheet.flatten([styles.messageText, getTextStyle()])}>
-          {message.content}
-        </Text>
-
-        {/* Proactive UI - Quick reactions for common responses */}
-        {message.messageType === "text" && (
-          <View style={styles.reactionContainer}>
-            <TouchableOpacity style={styles.reactionButton}>
-              <Text style={styles.reactionEmoji}>��</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.reactionButton}>
-              <Text style={styles.reactionEmoji}>❤️</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.reactionButton}>
-              <Text style={styles.reactionEmoji}>😂</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        </LinearGradient>
-
-        {/* Timestamp and status */}
-        <View style={styles.messageMeta}>
-          <Text
-            style={StyleSheet.flatten([
-              styles.timestamp,
-              theme.isDark ? styles.timestampDark : styles.timestampLight,
-            ])}
-          >
-            {formatTime(message.sentAt)}
-          </Text>
-          {isOwnMessage && showStatus ? (
-            <View style={styles.statusRow}>
-              <MessageStatusTicks
-                status={messageStatus}
-                size={12}
-                sentColor={theme.colors.textMuted}
-                deliveredColor={theme.colors.textMuted}
-                readColor={theme.colors.success}
-                failedColor={theme.colors.danger}
-              />
-              {messageStatus === "failed" && (
-                <RetryBadge onPress={handleRetry} />
-              )}
+              <Text style={styles.avatarEmoji}>{getPetAvatar()}</Text>
+              {petInfo ? (
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.avatarName,
+                    theme.isDark ? styles.avatarNameDark : styles.avatarNameLight,
+                  ])}
+                >
+                  {petInfo.name}
+                </Text>
+              ) : null}
             </View>
           ) : null}
-        </View>
-      </Animated.View>
 
-      {/* Reply swipe hint - appears during swipe */}
-      {!isOwnMessage && (
-        <ReplySwipeHint progress={progressX} align="right" />
-      )}
-      </Animated.View>
+          <Animated.View style={bubbleStyle}>
+            <LinearGradient
+              colors={
+                isOwnMessage
+                  ? [theme.colors.primary, theme.colors.primary + '80']
+                  : [theme.colors.surface, theme.colors.bg]
+              }
+              style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <Text style={StyleSheet.flatten([styles.messageText, getTextStyle()])}>
+                {message.content}
+              </Text>
+
+              {/* Proactive UI - Quick reactions for common responses */}
+              {message.messageType === 'text' && (
+                <View style={styles.reactionContainer}>
+                  <TouchableOpacity style={styles.reactionButton}>
+                    <Text style={styles.reactionEmoji}>��</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.reactionButton}>
+                    <Text style={styles.reactionEmoji}>❤️</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.reactionButton}>
+                    <Text style={styles.reactionEmoji}>😂</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </LinearGradient>
+
+            {/* Timestamp and status */}
+            <View style={styles.messageMeta}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.timestamp,
+                  theme.isDark ? styles.timestampDark : styles.timestampLight,
+                ])}
+              >
+                {formatTime(message.sentAt)}
+              </Text>
+              {isOwnMessage && showStatus ? (
+                <View style={styles.statusRow}>
+                  <MessageStatusTicks
+                    status={messageStatus}
+                    size={12}
+                    sentColor={theme.colors.onMuted}
+                    deliveredColor={theme.colors.onMuted}
+                    readColor={theme.colors.success}
+                    failedColor={theme.colors.danger}
+                  />
+                  {messageStatus === 'failed' && <RetryBadge onPress={handleRetry} />}
+                </View>
+              ) : null}
+            </View>
+          </Animated.View>
+
+          {/* Reply swipe hint - appears during swipe */}
+          {!isOwnMessage && (
+            <ReplySwipeHint
+              progress={progressX}
+              align="right"
+            />
+          )}
+        </Animated.View>
       </GestureDetector>
 
       {/* Context menu */}
       <MorphingContextMenu
         visible={menuVisible}
-        onClose={() => { setMenuVisible(false); }}
+        onClose={() => {
+          setMenuVisible(false);
+        }}
         anchor={anchor}
         actions={actions}
         theme={{
-          bg: theme.colors.bgElevated,
+          bg: theme.colors.surface,
           border: theme.colors.border,
-          text: theme.colors.text,
-          sub: theme.colors.textMuted,
+          text: theme.colors.onSurface,
+          sub: theme.colors.onMuted,
           item: theme.colors.bg,
-          itemPressed: theme.colors.bgElevated,
+          itemPressed: theme.colors.surface,
         }}
       />
     </>

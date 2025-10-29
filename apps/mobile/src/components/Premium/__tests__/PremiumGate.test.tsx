@@ -1,50 +1,48 @@
-import React from "react";
-import {} from "@testing-library/react-native";
-import "@testing-library/jest-native/extend-expect";
-import PremiumGate from "../../Premium/PremiumGate";
-import {} from "@pawfectmatch/core";
-import {} from "@/theme";
+import React from 'react';
+import {} from '@testing-library/react-native';
+import '@testing-library/jest-native/extend-expect';
+import PremiumGate from '../../Premium/PremiumGate';
+import {} from '@pawfectmatch/core';
+import {} from '@/theme';
 
 // Mock dependencies
-jest.mock("@pawfectmatch/core");
-jest.mock("../../../theme/Provider");
+jest.mock('@pawfectmatch/core');
+jest.mock('../../../theme/Provider');
 
 const mockNavigation = {
   navigate: jest.fn(),
 };
 
-describe("PremiumGate", () => {
+describe('PremiumGate', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
     // Mock theme context
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
-        primary: "#7c3aed",
-        secondary: "Theme.colors.primary[500]",
-        background: "Theme.colors.neutral[0]",
-        text: "Theme.colors.neutral[950]",
+        primary: '#7c3aed',
+        secondary: 'Theme.colors.primary[500]',
+        background: 'Theme.colors.neutral[0]',
+        text: 'Theme.colors.neutral[950]',
       },
       isDark: false,
     });
   });
 
-  it("renders premium content when user is premium", () => {
+  it('renders premium content when user is premium', () => {
     // Mock user as premium
     (useAuthStore as jest.Mock).mockReturnValue({
       user: {
-        id: "user-123",
-        firstName: "Test",
+        id: 'user-123',
+        firstName: 'Test',
         premium: {
           isActive: true,
-          plan: "premium",
+          plan: 'premium',
         },
       },
     });
 
-    const mockPremiumContent = jest.fn(() => (
-      <React.Fragment>Premium Content</React.Fragment>
-    ));
+    const mockPremiumContent = jest.fn(() => <React.Fragment>Premium Content</React.Fragment>);
     const { getByText, queryByText } = render(
       <PremiumGate
         navigation={mockNavigation}
@@ -54,27 +52,25 @@ describe("PremiumGate", () => {
     );
 
     // Should render premium content
-    expect(getByText("Premium Content")).toBeTruthy();
+    expect(getByText('Premium Content')).toBeTruthy();
 
     // Should not render paywall
-    expect(queryByText("Premium Feature")).toBeNull();
+    expect(queryByText('Premium Feature')).toBeNull();
   });
 
-  it("renders paywall when user is not premium", () => {
+  it('renders paywall when user is not premium', () => {
     // Mock user as non-premium
     (useAuthStore as jest.Mock).mockReturnValue({
       user: {
-        id: "user-123",
-        firstName: "Test",
+        id: 'user-123',
+        firstName: 'Test',
         premium: {
           isActive: false,
         },
       },
     });
 
-    const mockPremiumContent = jest.fn(() => (
-      <React.Fragment>Premium Content</React.Fragment>
-    ));
+    const mockPremiumContent = jest.fn(() => <React.Fragment>Premium Content</React.Fragment>);
     const { getByText, queryByText, getByTestId } = render(
       <PremiumGate
         navigation={mockNavigation}
@@ -84,33 +80,29 @@ describe("PremiumGate", () => {
     );
 
     // Should render paywall
-    expect(getByText("Premium Feature")).toBeTruthy();
-    expect(
-      getByText("Advanced filters requires a premium subscription"),
-    ).toBeTruthy();
+    expect(getByText('Premium Feature')).toBeTruthy();
+    expect(getByText('Advanced filters requires a premium subscription')).toBeTruthy();
 
     // Should not render premium content
-    expect(queryByText("Premium Content")).toBeNull();
+    expect(queryByText('Premium Content')).toBeNull();
 
     // Should show upgrade button
-    expect(getByTestId("upgrade-button")).toBeTruthy();
+    expect(getByTestId('upgrade-button')).toBeTruthy();
   });
 
-  it("navigates to Premium screen when upgrade button is pressed", () => {
+  it('navigates to Premium screen when upgrade button is pressed', () => {
     // Mock user as non-premium
     (useAuthStore as jest.Mock).mockReturnValue({
       user: {
-        id: "user-123",
-        firstName: "Test",
+        id: 'user-123',
+        firstName: 'Test',
         premium: {
           isActive: false,
         },
       },
     });
 
-    const mockPremiumContent = jest.fn(() => (
-      <React.Fragment>Premium Content</React.Fragment>
-    ));
+    const mockPremiumContent = jest.fn(() => <React.Fragment>Premium Content</React.Fragment>);
     const { getByText } = render(
       <PremiumGate
         navigation={mockNavigation}
@@ -120,27 +112,25 @@ describe("PremiumGate", () => {
     );
 
     // Press upgrade button
-    fireEvent.press(getByText("Upgrade to Premium"));
+    fireEvent.press(getByText('Upgrade to Premium'));
 
     // Should navigate to Premium screen
-    expect(mockNavigation.navigate).toHaveBeenCalledWith("Premium");
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Premium');
   });
 
-  it("renders custom message when provided", () => {
+  it('renders custom message when provided', () => {
     // Mock user as non-premium
     (useAuthStore as jest.Mock).mockReturnValue({
       user: {
-        id: "user-123",
-        firstName: "Test",
+        id: 'user-123',
+        firstName: 'Test',
         premium: {
           isActive: false,
         },
       },
     });
 
-    const mockPremiumContent = jest.fn(() => (
-      <React.Fragment>Premium Content</React.Fragment>
-    ));
+    const mockPremiumContent = jest.fn(() => <React.Fragment>Premium Content</React.Fragment>);
     const { getByText } = render(
       <PremiumGate
         navigation={mockNavigation}
@@ -151,18 +141,18 @@ describe("PremiumGate", () => {
     );
 
     // Should render custom message
-    expect(getByText("Get premium to unlock advanced filters!")).toBeTruthy();
+    expect(getByText('Get premium to unlock advanced filters!')).toBeTruthy();
   });
 
-  it("renders with dark theme style", () => {
+  it('renders with dark theme style', () => {
     // Mock dark theme
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
-        primary: "#7c3aed",
-        secondary: "Theme.colors.primary[500]",
-        background: "Theme.colors.neutral[800]",
-        text: "Theme.colors.neutral[0]",
-        card: "Theme.colors.neutral[700]",
+        primary: '#7c3aed',
+        secondary: 'Theme.colors.primary[500]',
+        background: 'Theme.colors.neutral[800]',
+        text: 'Theme.colors.neutral[0]',
+        card: 'Theme.colors.neutral[700]',
       },
       isDark: true,
     });
@@ -170,17 +160,15 @@ describe("PremiumGate", () => {
     // Mock user as non-premium
     (useAuthStore as jest.Mock).mockReturnValue({
       user: {
-        id: "user-123",
-        firstName: "Test",
+        id: 'user-123',
+        firstName: 'Test',
         premium: {
           isActive: false,
         },
       },
     });
 
-    const mockPremiumContent = jest.fn(() => (
-      <React.Fragment>Premium Content</React.Fragment>
-    ));
+    const mockPremiumContent = jest.fn(() => <React.Fragment>Premium Content</React.Fragment>);
     const { getByTestId } = render(
       <PremiumGate
         navigation={mockNavigation}
@@ -190,7 +178,7 @@ describe("PremiumGate", () => {
     );
 
     // Should have dark theme style
-    const container = getByTestId("premium-gate-container");
+    const container = getByTestId('premium-gate-container');
     expect(container.props.style).toBeDefined();
   });
 });

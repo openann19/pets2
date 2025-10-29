@@ -1,9 +1,14 @@
-import { useMemo } from "react";
-import { Dimensions } from "react-native";
-import { Gesture } from "react-native-gesture-handler";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, runOnJS } from "react-native-reanimated";
+import { useMemo } from 'react';
+import { Dimensions } from 'react-native';
+import { Gesture } from 'react-native-gesture-handler';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  runOnJS,
+} from 'react-native-reanimated';
 
-const { width: screenWidth } = Dimensions.get("window");
+const { width: screenWidth } = Dimensions.get('window');
 
 export interface UseSwipeGesturesOptions {
   onSwipeRight: () => void;
@@ -16,7 +21,11 @@ export interface SwipeGestureState {
   cardStyle: ReturnType<typeof useAnimatedStyle>;
 }
 
-export function useSwipeGestures({ onSwipeRight, onSwipeLeft, onSwipeUp }: UseSwipeGesturesOptions): SwipeGestureState {
+export function useSwipeGestures({
+  onSwipeRight,
+  onSwipeLeft,
+  onSwipeUp,
+}: UseSwipeGesturesOptions): SwipeGestureState {
   const x = useSharedValue(0);
   const y = useSharedValue(0);
   const cardStyle = useAnimatedStyle(() => ({
@@ -35,10 +44,22 @@ export function useSwipeGestures({ onSwipeRight, onSwipeLeft, onSwipeUp }: UseSw
         })
         .onEnd(() => {
           const thr = screenWidth * 0.3;
-          if (x.value > thr) { runOnJS(onSwipeRight)(); x.value = withSpring(0); y.value = withSpring(0); }
-          else if (x.value < -thr) { runOnJS(onSwipeLeft)(); x.value = withSpring(0); y.value = withSpring(0); }
-          else if (y.value < -thr) { runOnJS(onSwipeUp)(); x.value = withSpring(0); y.value = withSpring(0); }
-          else { x.value = withSpring(0); y.value = withSpring(0); }
+          if (x.value > thr) {
+            runOnJS(onSwipeRight)();
+            x.value = withSpring(0);
+            y.value = withSpring(0);
+          } else if (x.value < -thr) {
+            runOnJS(onSwipeLeft)();
+            x.value = withSpring(0);
+            y.value = withSpring(0);
+          } else if (y.value < -thr) {
+            runOnJS(onSwipeUp)();
+            x.value = withSpring(0);
+            y.value = withSpring(0);
+          } else {
+            x.value = withSpring(0);
+            y.value = withSpring(0);
+          }
         }),
     [onSwipeLeft, onSwipeRight, onSwipeUp],
   );

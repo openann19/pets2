@@ -3,7 +3,7 @@
  * Entrance animations (fadeIn, slideIn, scaleIn, bounceIn)
  */
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -11,11 +11,11 @@ import {
   withTiming,
   withSpring,
   withSequence,
-} from "react-native-reanimated";
-import { PREMIUM_ANIMATIONS } from "./constants";
+} from 'react-native-reanimated';
+import { PREMIUM_ANIMATIONS } from './constants';
 
 export const useEntranceAnimation = (
-  type: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn" = "fadeIn",
+  type: 'fadeIn' | 'slideIn' | 'scaleIn' | 'bounceIn' = 'fadeIn',
   delay = 0,
 ) => {
   const opacity = useSharedValue(0);
@@ -26,24 +26,18 @@ export const useEntranceAnimation = (
   useEffect(() => {
     const animate = () => {
       switch (type) {
-        case "fadeIn":
+        case 'fadeIn':
           opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
           break;
-        case "slideIn":
-          translateY.value = withDelay(
-            delay,
-            withSpring(0, PREMIUM_ANIMATIONS.spring.gentle),
-          );
+        case 'slideIn':
+          translateY.value = withDelay(delay, withSpring(0, PREMIUM_ANIMATIONS.spring.gentle));
           opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
           break;
-        case "scaleIn":
-          scale.value = withDelay(
-            delay,
-            withSpring(1, PREMIUM_ANIMATIONS.spring.bouncy),
-          );
+        case 'scaleIn':
+          scale.value = withDelay(delay, withSpring(1, PREMIUM_ANIMATIONS.spring.bouncy));
           opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
           break;
-        case "bounceIn":
+        case 'bounceIn':
           scale.value = withDelay(
             delay,
             withSequence(
@@ -72,18 +66,18 @@ export const useEntranceAnimation = (
   const start = () => {
     // Animation already started in useEffect, but this can be used to restart
     switch (type) {
-      case "fadeIn":
+      case 'fadeIn':
         opacity.value = withTiming(1, { duration: 500 });
         break;
-      case "slideIn":
+      case 'slideIn':
         translateY.value = withSpring(0, PREMIUM_ANIMATIONS.spring.gentle);
         opacity.value = withTiming(1, { duration: 500 });
         break;
-      case "scaleIn":
+      case 'scaleIn':
         scale.value = withSpring(1, PREMIUM_ANIMATIONS.spring.bouncy);
         opacity.value = withTiming(1, { duration: 500 });
         break;
-      case "bounceIn":
+      case 'bounceIn':
         scale.value = withSequence(
           withTiming(1.2, { duration: 300 }),
           withTiming(0.9, { duration: 200 }),

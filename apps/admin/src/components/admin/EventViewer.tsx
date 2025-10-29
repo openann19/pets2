@@ -4,6 +4,14 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '@/lib/axios';
 
+interface Event {
+  id: string;
+  app: string;
+  type: string;
+  userId?: string;
+  ts: string | number;
+}
+
 export function EventViewer() {
   const [filters, setFilters] = useState({
     app: 'all',
@@ -130,7 +138,7 @@ export function EventViewer() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
-              {data?.events?.map((event: any) => (
+              {data?.events?.map((event: Event) => (
                 <tr key={event.id} className="hover:bg-admin-dark">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 py-1 text-xs rounded-full bg-blue-900 text-blue-300">

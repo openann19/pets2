@@ -9,8 +9,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+import { useTheme } from '@mobile/src/theme';
+import type { AppTheme } from '@mobile/src/theme';
 import { logger } from '../services/logger';
 
 interface VerificationBadge {

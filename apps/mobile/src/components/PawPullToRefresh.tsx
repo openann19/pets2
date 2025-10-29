@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/src/theme';
+import * as Haptics from 'expo-haptics';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  ScrollView,
-  RefreshControl,
   Animated,
-  StyleSheet,
   Dimensions,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
   type StyleProp,
   type ViewStyle,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
-import { useTheme } from "@/theme";
+} from 'react-native';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface PawPullToRefreshProps {
   children: React.ReactNode;
@@ -143,7 +143,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
   // Calculate animation transforms
   const pawRotationInterpolate = pawRotation.interpolate({
     inputRange: [0, 1],
-    outputRange: ["0deg", "15deg"],
+    outputRange: ['0deg', '15deg'],
   });
 
   const scratchTranslateY = scratchOffset.interpolate({
@@ -180,7 +180,11 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
               },
             ])}
           >
-            <Ionicons name="paw" size={24} color={colors.primary} />
+            <Ionicons
+              name="paw"
+              size={24}
+              color={colors.primary}
+            />
           </Animated.View>
 
           {/* Scratch marks effect */}
@@ -231,36 +235,36 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   refreshIndicator: {
-    position: "absolute",
+    position: 'absolute',
     top: 40,
     left: 0,
     right: 0,
     height: 60,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 1000,
   },
   pawContainer: {
     width: 40,
     height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 20,
-    shadowColor: "#000000",
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   scratchMarks: {
-    position: "absolute",
+    position: 'absolute',
     top: 45,
-    left: "50%",
+    left: '50%',
     marginLeft: -10,
     width: 20,
     height: 15,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   scratchMark: {
     width: 2,

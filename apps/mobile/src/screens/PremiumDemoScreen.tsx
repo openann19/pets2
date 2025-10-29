@@ -1,57 +1,43 @@
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
-import {
-  Text,
-  ScrollView,
-  SafeAreaView,
-  StatusBar,
-} from "react-native";
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView, ScrollView, StatusBar, Text } from 'react-native';
 
 // Project Hyperion Components
-import InteractiveButton from "../components/InteractiveButton";
-import {
-  StaggeredFadeInUpList,
-  PageTransition,
-} from "../components/MotionPrimitives";
+import InteractiveButton from '../components/InteractiveButton';
+import { PageTransition, StaggeredFadeInUpList } from '../components/MotionPrimitives';
 
 // Project Hyperion Design System
-import { usePremiumDemoScreen } from "../hooks/screens/usePremiumDemoScreen";
-import { useTheme } from "@/theme";
+import { useTheme } from '@mobile/src/theme';
+import { usePremiumDemoScreen } from '../hooks/screens/usePremiumDemoScreen';
 
 // Import extracted demo components
-import {
-  ButtonDemo,
-  CardDemo,
-  AnimationDemo,
-  GlassDemo,
-} from "../components/premium-demo";
+import { AnimationDemo, ButtonDemo, CardDemo, GlassDemo } from '../components/premium-demo';
 
 // Define theme-aware design tokens
 const DynamicColors = (theme: ReturnType<typeof useTheme>) => ({
   gradients: {
-    primary: [theme.colors.primary[500], theme.colors.primary[600]],
-    secondary: [theme.colors.danger, theme.colors.status.warning],
-    premium: [theme.colors.status.warning, theme.colors.status.warning],
-    sunset: [theme.colors.danger, theme.colors.status.warning],
-    ocean: [theme.colors.status.success, theme.colors.status.success],
+    primary: [theme.colors.primary, theme.colors.primary],
+    secondary: [theme.colors.danger, theme.colors.warning],
+    premium: [theme.colors.warning, theme.colors.warning],
+    sunset: [theme.colors.danger, theme.colors.warning],
+    ocean: [theme.colors.success, theme.colors.success],
   },
   glass: {
-    colors: ["rgba(255, 255, 255, 0.1)", "rgba(255, 255, 255, 0.05)"],
+    colors: ['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.05)'],
     locations: [0, 1],
     subtle: {
-      backgroundColor: "rgba(255, 255, 255, 0.05)",
-      borderColor: "rgba(255, 255, 255, 0.1)",
+      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+      borderColor: 'rgba(255, 255, 255, 0.1)',
       borderWidth: 1,
     },
     medium: {
-      backgroundColor: "rgba(255, 255, 255, 0.1)",
-      borderColor: "rgba(255, 255, 255, 0.2)",
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      borderColor: 'rgba(255, 255, 255, 0.2)',
       borderWidth: 1,
     },
     strong: {
-      backgroundColor: "rgba(255, 255, 255, 0.15)",
-      borderColor: "rgba(255, 255, 255, 0.3)",
+      backgroundColor: 'rgba(255, 255, 255, 0.15)',
+      borderColor: 'rgba(255, 255, 255, 0.3)',
       borderWidth: 1,
     },
   },
@@ -61,22 +47,22 @@ const EnhancedTypography = (theme: ReturnType<typeof useTheme>) => ({
   effects: {
     gradient: {
       primary: {
-        color: theme.colors.primary[500],
-        fontWeight: "700" as const,
+        color: theme.colors.primary,
+        fontWeight: '700' as const,
       },
       secondary: {
-        color: theme.colors.primary[600],
-        fontWeight: "700" as const,
+        color: theme.colors.primary,
+        fontWeight: '700' as const,
       },
     },
     shadow: {
       text: {
-        textShadowColor: "rgba(0, 0, 0, 0.3)",
+        textShadowColor: 'rgba(0, 0, 0, 0.3)',
         textShadowOffset: { width: 0, height: 1 },
         textShadowRadius: 2,
       },
       glow: {
-        textShadowColor: "rgba(255, 215, 0, 0.8)",
+        textShadowColor: 'rgba(255, 215, 0, 0.8)',
         textShadowOffset: { width: 0, height: 0 },
         textShadowRadius: 8,
       },
@@ -86,23 +72,23 @@ const EnhancedTypography = (theme: ReturnType<typeof useTheme>) => ({
 
 const SemanticColors = (theme: ReturnType<typeof useTheme>) => ({
   premium: {
-    gold: theme.colors.status.warning,
-    platinum: theme.colors.background.tertiary,
+    gold: theme.colors.warning,
+    platinum: theme.colors.bg.tertiary,
     diamond: theme.colors.status.info,
   },
   interactive: {
-    primary: theme.colors.primary[500],
-    secondary: theme.colors.primary[600],
+    primary: theme.colors.primary,
+    secondary: theme.colors.primary,
   },
   text: {
-    primary: theme.colors.text.primary,
-    secondary: theme.colors.text.secondary,
-    inverse: theme.colors.background.primary,
+    primary: theme.colors.onSurface.primary,
+    secondary: theme.colors.onSurface.secondary,
+    inverse: theme.colors.bg.primary,
   },
   background: {
-    primary: theme.colors.background.primary,
-    secondary: theme.colors.background.secondary,
-    dark: theme.colors.text.primary,
+    primary: theme.colors.bg.primary,
+    secondary: theme.colors.bg.secondary,
+    dark: theme.colors.onSurface.primary,
   },
 });
 
@@ -111,30 +97,25 @@ const SemanticColors = (theme: ReturnType<typeof useTheme>) => ({
 
 function PremiumDemoScreen() {
   const theme = useTheme();
-  const {
-    activeDemo,
-    setActiveDemo,
-    handleButtonPress,
-    handleCardPress,
-  } = usePremiumDemoScreen();
+  const { activeDemo, setActiveDemo, handleButtonPress, handleCardPress } = usePremiumDemoScreen();
 
   // Staggered animations for demo sections
   const demoItems = [
-    { id: "buttons", title: "Interactive Buttons", icon: "⚡" },
-    { id: "cards", title: "Immersive Cards", icon: "💎" },
-    { id: "animations", title: "Motion System", icon: "🌊" },
-    { id: "glass", title: "Glass Morphism", icon: "✨" },
+    { id: 'buttons', title: 'Interactive Buttons', icon: '⚡' },
+    { id: 'cards', title: 'Immersive Cards', icon: '💎' },
+    { id: 'animations', title: 'Motion System', icon: '🌊' },
+    { id: 'glass', title: 'Glass Morphism', icon: '✨' },
   ];
 
   const renderDemoContent = () => {
     switch (activeDemo) {
-      case "buttons":
+      case 'buttons':
         return <ButtonDemo onButtonPress={handleButtonPress} />;
-      case "cards":
+      case 'cards':
         return <CardDemo onCardPress={handleCardPress} />;
-      case "animations":
+      case 'animations':
         return <AnimationDemo />;
-      case "glass":
+      case 'glass':
         return <GlassDemo />;
       default:
         return <ButtonDemo onButtonPress={handleButtonPress} />;
@@ -142,9 +123,7 @@ function PremiumDemoScreen() {
   };
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: SemanticColors(theme).background.primary }}
-    >
+    <SafeAreaView style={{ flex: 1, backgroundColor: SemanticColors(theme).background.primary }}>
       <StatusBar barStyle="light-content" />
 
       {/* Premium Header with Glass Morphism */}
@@ -166,13 +145,16 @@ function PremiumDemoScreen() {
             ...DynamicColors(theme).glass.medium,
           }}
         >
-          <PageTransition type="fade" duration={1000}>
-          <Text
+          <PageTransition
+            type="fade"
+            duration={1000}
+          >
+            <Text
               style={{
                 fontSize: 32,
-                fontWeight: "800",
+                fontWeight: '800',
                 color: SemanticColors(theme).text.inverse,
-                textAlign: "center",
+                textAlign: 'center',
                 marginBottom: 10,
                 ...EnhancedTypography(theme).effects.shadow.glow,
               }}
@@ -182,8 +164,8 @@ function PremiumDemoScreen() {
             <Text
               style={{
                 fontSize: 16,
-                color: "rgba(255,255,255,0.8)",
-                textAlign: "center",
+                color: 'rgba(255,255,255,0.8)',
+                textAlign: 'center',
                 marginBottom: 20,
               }}
             >
@@ -197,11 +179,11 @@ function PremiumDemoScreen() {
               <InteractiveButton
                 key={item.id}
                 title={`${item.icon} ${item.title}`}
-                variant={activeDemo === item.id ? "holographic" : "glass"}
+                variant={activeDemo === item.id ? 'holographic' : 'glass'}
                 size="md"
                 magneticEffect={true}
                 glowEffect={activeDemo === item.id}
-                gradientName={activeDemo === item.id ? "premium" : undefined}
+                gradientName={activeDemo === item.id ? 'premium' : undefined}
                 onPress={() => {
                   setActiveDemo(item.id as any);
                 }}

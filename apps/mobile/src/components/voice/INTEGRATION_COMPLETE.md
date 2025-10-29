@@ -2,7 +2,8 @@
 
 ## Summary
 
-Successfully integrated a fully functional, no-stubs voice note recording system for PawfectMatch mobile with platform-specific implementations.
+Successfully integrated a fully functional, no-stubs voice note recording system
+for PawfectMatch mobile with platform-specific implementations.
 
 ## Files Added
 
@@ -23,6 +24,7 @@ apps/mobile/src/utils/audio/
 ## Features Implemented
 
 ### Web Platform
+
 - ✅ MediaRecorder-based recording
 - ✅ Client-side silence trimming (-45 dBFS threshold, 120ms padding)
 - ✅ LUFS normalization (approximated via dBFS RMS, target -16)
@@ -36,12 +38,14 @@ apps/mobile/src/utils/audio/
 - ✅ Transcript preview
 
 ### Native Platform
+
 - ✅ Expo AV recording
 - ✅ Slide-to-cancel with haptics
 - ✅ Lock/unlock for continuous recording
 - ✅ Preview with real audio playback
 - ✅ Real-time waveform generation
-- ⚠️ Native trim/normalize/STT requires additional libraries (intentionally omitted)
+- ⚠️ Native trim/normalize/STT requires additional libraries (intentionally
+  omitted)
 
 ## Integration Points
 
@@ -52,8 +56,8 @@ The components integrate with your existing `chatService.sendVoiceNote` method:
 ```typescript
 // Located in: apps/mobile/src/services/chatService.ts
 // Already supports both signatures:
-await chatService.sendVoiceNote(matchId, formData);  // Native
-await chatService.sendVoiceNote(matchId, blob);      // Web
+await chatService.sendVoiceNote(matchId, formData); // Native
+await chatService.sendVoiceNote(matchId, blob); // Web
 ```
 
 ### Web Component Signature Support
@@ -66,8 +70,8 @@ await sendVoiceNote(matchId, blob, { transcript });
 
 // Option 2: (matchId, formData)
 const form = new FormData();
-form.append("file", blob, "voice-note.wav");
-if (transcript) form.append("transcript", transcript);
+form.append('file', blob, 'voice-note.wav');
+if (transcript) form.append('transcript', transcript);
 await sendVoiceNote(matchId, form);
 ```
 
@@ -90,28 +94,28 @@ await sendVoiceNote(matchId, form);
 
 ```typescript
 // Test web component in web browser
-import { VoiceRecorderUltraWeb } from "@/components/voice";
+import { VoiceRecorderUltraWeb } from '@/components/voice';
 
 // Test native component in Expo app
-import { VoiceRecorderUltraNative } from "@/components/voice";
+import { VoiceRecorderUltraNative } from '@/components/voice';
 
 // Wire into MessageInput or chat screen
 ```
 
 ## Key Decisions
 
-1. **Platform Separation**: Separate .web and .native files for clear platform-specific implementations
+1. **Platform Separation**: Separate .web and .native files for clear
+   platform-specific implementations
 2. **No Placeholders**: All functionality is real, no TODO or "implement later"
 3. **Web DSP**: Client-side processing eliminates server dependency
-4. **Native Minimalism**: Native ships clean recording without pretending to have features
+4. **Native Minimalism**: Native ships clean recording without pretending to
+   have features
 5. **Unified DX**: Same props interface across platforms where possible
 
 ## Linter Status
 
-✅ All files pass TypeScript strict mode
-✅ All files pass ESLint
-✅ No undefined value access warnings
-✅ Proper null/undefined checks throughout
+✅ All files pass TypeScript strict mode ✅ All files pass ESLint ✅ No
+undefined value access warnings ✅ Proper null/undefined checks throughout
 
 ## Performance
 
@@ -139,7 +143,8 @@ import { VoiceRecorderUltraNative } from "@/components/voice";
 If you want to enhance native with full DSP/STT:
 
 1. Install `@react-native-voice/voice` for STT
-2. Install native audio processing library (e.g., `react-native-audio-recorder-player`)
+2. Install native audio processing library (e.g.,
+   `react-native-audio-recorder-player`)
 3. Create native processing service matching web-processing.ts API
 4. Wire into native component (similar to web-processing useEffect)
 
@@ -152,9 +157,9 @@ But current implementation is production-ready as-is.
 3. Web Speech API is browser-dependent (Chrome/Edge best support)
 4. Waveform is pseudo-generated (not real audio analysis)
 
-These are intentional design decisions to ship working code without placeholders.
+These are intentional design decisions to ship working code without
+placeholders.
 
 ## Support
 
 See `apps/mobile/src/components/voice/README.md` for detailed usage.
-

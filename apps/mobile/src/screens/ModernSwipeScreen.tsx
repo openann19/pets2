@@ -9,39 +9,32 @@
  * - Performance optimized with proper memoization
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { type Pet } from "@pawfectmatch/core";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useMemo } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { Dimensions, StyleSheet, View } from 'react-native';
 
 // Import new architecture components
 import {
-  ModernSwipeCard,
-  EliteButton,
-  EliteButtonPresets,
-  FXContainer,
-  FXContainerPresets,
-  Heading1,
-  Heading2,
   Body,
   BodySmall,
-} from "../components";
+  EliteButton,
+  EliteButtonPresets,
+  Heading2,
+  ModernSwipeCard,
+} from '../components';
 
 // Import legacy components for gradual migration
-import { EliteContainer, EliteHeader } from "../components";
-import { useTheme } from "@/theme";
-import { useModernSwipeScreen } from "../hooks/screens/useModernSwipeScreen";
-import type { RootStackScreenProps } from "../navigation/types";
+import { useTheme } from '@mobile/src/theme';
+import { EliteContainer, EliteHeader } from '../components';
+import { useModernSwipeScreen } from '../hooks/screens/useModernSwipeScreen';
+import type { RootStackScreenProps } from '../navigation/types';
 // Import state components
-import { LoadingState } from "../components/swipe/LoadingState";
-import { ErrorState } from "../components/swipe/ErrorState";
-import { NoMorePetsState } from "../components/swipe/NoMorePetsState";
+import { ErrorState } from '../components/swipe/ErrorState';
+import { LoadingState } from '../components/swipe/LoadingState';
+import { NoMorePetsState } from '../components/swipe/NoMorePetsState';
 // import { CardStack, FilterPanel, MatchModal, SwipeGestureHints, SwipeGestureHintOverlay, PeekSheet } from "../components/swipe"; // TODO: Implement missing components
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-type SwipeScreenProps = RootStackScreenProps<"Swipe">;
+type SwipeScreenProps = RootStackScreenProps<'Swipe'>;
 
 export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
   const theme = useTheme();
@@ -73,7 +66,12 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
 
   // Error state
   if (error) {
-    return <ErrorState error={error} loadPets={loadPets} />;
+    return (
+      <ErrorState
+        error={error}
+        loadPets={loadPets}
+      />
+    );
   }
 
   // No more pets state
@@ -84,59 +82,59 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
   const styles = StyleSheet.create({
     loadingContainer: {
       flex: 1,
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
       padding: theme.spacing.xl,
     },
     loadingCard: {
-      padding: theme.spacing["4xl"],
-      alignItems: "center" as const,
+      padding: theme.spacing['4xl'],
+      alignItems: 'center' as const,
     },
     loadingTitle: {
-      textAlign: "center",
+      textAlign: 'center',
       marginBottom: theme.spacing.lg,
     },
     loadingSubtitle: {
-      textAlign: "center",
+      textAlign: 'center',
       color: theme.colors.onMuted,
     },
     emptyContainer: {
       flex: 1,
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
       padding: theme.spacing.xl,
     },
     errorCard: {
-      padding: theme.spacing["4xl"],
-      alignItems: "center" as const,
+      padding: theme.spacing['4xl'],
+      alignItems: 'center' as const,
     },
     errorTitle: {
-      textAlign: "center",
+      textAlign: 'center',
       marginTop: theme.spacing.lg,
       marginBottom: theme.spacing.md,
       color: theme.colors.danger,
     },
     errorMessage: {
-      textAlign: "center",
+      textAlign: 'center',
       marginBottom: theme.spacing.xl,
       color: theme.colors.onMuted,
     },
     emptyCard: {
-      padding: theme.spacing["4xl"],
-      alignItems: "center" as const,
+      padding: theme.spacing['4xl'],
+      alignItems: 'center' as const,
     },
     emptyTitle: {
-      textAlign: "center",
+      textAlign: 'center',
       marginTop: theme.spacing.lg,
       marginBottom: theme.spacing.md,
     },
     emptySubtitle: {
-      textAlign: "center",
+      textAlign: 'center',
       marginBottom: theme.spacing.xl,
       color: theme.colors.onMuted,
     },
     headerActions: {
-      flexDirection: "row" as const,
+      flexDirection: 'row' as const,
       gap: theme.spacing.sm,
     },
     filterContainer: {
@@ -150,14 +148,14 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
     },
     hintsPlaceholder: {
       padding: theme.spacing.sm,
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
     },
     actionButtons: {
-      flexDirection: "row" as const,
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
       paddingVertical: theme.spacing.xl,
-      paddingHorizontal: theme.spacing["4xl"],
+      paddingHorizontal: theme.spacing['4xl'],
       gap: theme.spacing.lg,
     },
     actionButton: {
@@ -166,15 +164,15 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
       borderRadius: 30,
     },
     matchModalPlaceholder: {
-      position: "absolute",
+      position: 'absolute',
       top: 0,
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: "rgba(0,0,0,0.8)",
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
-      padding: theme.spacing["4xl"],
+      backgroundColor: 'rgba(0,0,0,0.8)',
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      padding: theme.spacing['4xl'],
       gap: theme.spacing.lg,
     },
   });
@@ -201,7 +199,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
               title=""
               size="sm"
               leftIcon="heart"
-              onPress={() => navigation.navigate("Matches")}
+              onPress={() => navigation.navigate('Matches')}
             />
           </View>
         }
@@ -220,7 +218,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
       <View style={styles.hintsPlaceholder}>
         <BodySmall>Swipe Hints (TODO: Implement)</BodySmall>
       </View>
-      
+
       {/* First-time user gesture hints overlay */}
       {/* SwipeGestureHintOverlay placeholder */}
 
@@ -252,7 +250,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             size="xl"
             leftIcon="close"
             onPress={() => {
-              handleButtonSwipe("pass");
+              handleButtonSwipe('pass');
             }}
             style={styles.actionButton}
           />
@@ -264,7 +262,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             size="lg"
             leftIcon="star"
             onPress={() => {
-              handleButtonSwipe("superlike");
+              handleButtonSwipe('superlike');
             }}
             style={styles.actionButton}
           />
@@ -276,7 +274,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             size="xl"
             leftIcon="heart"
             onPress={() => {
-              handleButtonSwipe("like");
+              handleButtonSwipe('like');
             }}
             style={styles.actionButton}
           />
@@ -296,7 +294,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             title="Send Message"
             onPress={() => {
               setShowMatchModal(false);
-              navigation.navigate("Chat", {
+              navigation.navigate('Chat', {
                 matchId: matchedPet._id,
                 petName: matchedPet.name,
               });

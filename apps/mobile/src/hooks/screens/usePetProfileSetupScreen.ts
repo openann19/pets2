@@ -2,10 +2,10 @@
  * usePetProfileSetupScreen Hook
  * Manages Pet Profile Setup screen with validation and navigation
  */
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { usePetProfileSetup } from "../domains/onboarding/usePetProfileSetup";
-import type { OnboardingScreenProps } from "../../navigation/types";
-import type { PetPhoto } from "@pawfectmatch/core";
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { usePetProfileSetup } from '../domains/onboarding/usePetProfileSetup';
+import type { OnboardingScreenProps } from '../../navigation/types';
+import type { PetPhoto } from '@pawfectmatch/core';
 
 // Interface for pet profile creation during onboarding
 interface PetProfileCreationData {
@@ -49,8 +49,8 @@ interface UsePetProfileSetupScreenReturn {
 }
 
 export const usePetProfileSetupScreen = (): UsePetProfileSetupScreenReturn => {
-  const navigation = useNavigation<OnboardingScreenProps<"PetProfileSetup">['navigation']>();
-  const route = useRoute<OnboardingScreenProps<"PetProfileSetup">['route']>();
+  const navigation = useNavigation<OnboardingScreenProps<'PetProfileSetup'>['navigation']>();
+  const route = useRoute<OnboardingScreenProps<'PetProfileSetup'>['route']>();
   const { userIntent } = route.params as { userIntent: string };
 
   const {
@@ -83,7 +83,7 @@ export const usePetProfileSetupScreen = (): UsePetProfileSetupScreenReturn => {
 
     try {
       await submitProfile();
-      navigation.navigate("PreferencesSetup", { userIntent });
+      navigation.navigate('PreferencesSetup', { userIntent });
     } catch (error) {
       // Error handling is done in the domain hook
     }

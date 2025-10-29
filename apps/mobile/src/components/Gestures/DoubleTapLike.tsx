@@ -1,6 +1,6 @@
-import React, { useCallback } from "react";
-import { StyleSheet, Text } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import React, { useCallback } from 'react';
+import { StyleSheet, Text } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   cancelAnimation,
   runOnJS,
@@ -9,8 +9,8 @@ import Animated, {
   withDelay,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 
 export interface DoubleTapLikeProps {
   children: React.ReactNode;
@@ -18,14 +18,14 @@ export interface DoubleTapLikeProps {
   onSingleTap?: () => void;
   scaleConfig?: { stiffness: number; damping: number; mass: number };
   heartConfig?: { size: number; color: string; showMs: number };
-  haptic?: "off" | "light" | "medium" | "heavy";
+  haptic?: 'off' | 'light' | 'medium' | 'heavy';
   style?: any;
   disabled?: boolean;
   maxDelay?: number;
 }
 
 export const DEFAULT_SCALE = { stiffness: 400, damping: 14, mass: 0.8 };
-export const DEFAULT_HEART = { size: 64, color: "#ff4757", showMs: 600 };
+export const DEFAULT_HEART = { size: 64, color: '#ff4757', showMs: 600 };
 
 export function DoubleTapLike({
   children,
@@ -33,7 +33,7 @@ export function DoubleTapLike({
   onSingleTap,
   scaleConfig = DEFAULT_SCALE,
   heartConfig = DEFAULT_HEART,
-  haptic = "medium",
+  haptic = 'medium',
   style,
   disabled,
   maxDelay = 300,
@@ -45,18 +45,18 @@ export function DoubleTapLike({
   const heartRotate = useSharedValue(0);
 
   const triggerHaptic = useCallback(() => {
-    if (haptic === "off" || disabled) return;
+    if (haptic === 'off' || disabled) return;
     const style =
-      haptic === "light"
+      haptic === 'light'
         ? Haptics.ImpactFeedbackStyle.Light
-        : haptic === "heavy"
-        ? Haptics.ImpactFeedbackStyle.Heavy
-        : Haptics.ImpactFeedbackStyle.Medium;
+        : haptic === 'heavy'
+          ? Haptics.ImpactFeedbackStyle.Heavy
+          : Haptics.ImpactFeedbackStyle.Medium;
     Haptics.impactAsync(style);
   }, [haptic, disabled]);
 
   const animateScale = useCallback(() => {
-    "worklet";
+    'worklet';
     cancelAnimation(scale);
     scale.value = withSpring(0.96, scaleConfig, () => {
       scale.value = withSpring(1, scaleConfig);
@@ -64,7 +64,7 @@ export function DoubleTapLike({
   }, [scaleConfig]);
 
   const animateHeart = useCallback(() => {
-    "worklet";
+    'worklet';
     cancelAnimation(heartScale);
     cancelAnimation(heartOpacity);
     cancelAnimation(heartRotate);
@@ -91,7 +91,7 @@ export function DoubleTapLike({
     .enabled(!disabled)
     .maxDuration(250)
     .onEnd((_e, success) => {
-      "worklet";
+      'worklet';
       if (!success) return;
       animateScale();
       if (onSingleTap) runOnJS(onSingleTap)();
@@ -102,7 +102,7 @@ export function DoubleTapLike({
     .numberOfTaps(2)
     .maxDelay(maxDelay)
     .onEnd((_e, success) => {
-      "worklet";
+      'worklet';
       if (!success) return;
       handleDoubleTap();
     });
@@ -132,18 +132,18 @@ export function DoubleTapLike({
 }
 
 const styles = StyleSheet.create({
-  container: { position: "relative" },
+  container: { position: 'relative' },
   heartOverlay: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     transform: [{ translateX: -32 }, { translateY: -32 }],
     zIndex: 1000,
-    pointerEvents: "none",
+    pointerEvents: 'none',
   },
   heart: {
-    textAlign: "center",
-    textShadowColor: "rgba(0,0,0,0.3)",
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.3)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
   },

@@ -3,45 +3,36 @@
  * Integrates all chat enhancement features into a single component
  */
 
-import React, { useState, useCallback, useMemo } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-  Dimensions,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useCallback, useState } from 'react';
+import { Alert, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
-  useSharedValue,
+  runOnJS,
   useAnimatedStyle,
+  useSharedValue,
   withSpring,
   withTiming,
-  runOnJS,
-} from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+} from 'react-native-reanimated';
 
-import type { Message } from "@pawfectmatch/core";
-import { useTheme } from "@/theme";
-import { getExtendedColors } from "../../theme/adapters";
-import { chatService } from "../../services/chatService";
-import ReactionBarMagnetic from "./ReactionBarMagnetic";
-import { AttachmentPreview } from "./AttachmentPreview";
-import { VoiceWaveform } from "./VoiceWaveform";
-import { DoubleTapLikePlus } from "../Gestures/DoubleTapLikePlus";
+import { useTheme } from '@mobile/src/theme';
+import type { Message } from '@pawfectmatch/core';
+import { chatService } from '../../services/chatService';
+import { getExtendedColors } from '../../theme/adapters';
+import { DoubleTapLikePlus } from '../Gestures/DoubleTapLikePlus';
+import ReactionBarMagnetic from './ReactionBarMagnetic';
+import { VoiceWaveform } from './VoiceWaveform';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const MAX_BUBBLE_WIDTH = SCREEN_WIDTH * 0.75;
 
 interface MessageWithEnhancementsProps {
   message: Message & {
     reactions?: Record<string, number>;
     attachment?: {
-      type: "image" | "video" | "file";
+      type: 'image' | 'video' | 'file';
       url: string;
       name?: string;
       size?: number;
@@ -71,7 +62,7 @@ export function MessageWithEnhancements({
 }: MessageWithEnhancementsProps) {
   const theme = useTheme();
   const colors = getExtendedColors(theme);
-  
+
   const [showReactionBar, setShowReactionBar] = useState(false);
   const [localReactions, setLocalReactions] = useState(message.reactions || {});
   const [isReacting, setIsReacting] = useState(false);
@@ -93,7 +84,7 @@ export function MessageWithEnhancements({
   // Handle long press to show reactions
   const handleLongPress = useCallback(() => {
     if (isReacting) return;
-    
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setShowReactionBar(true);
     reactionBarOpacity.value = withSpring(1, { damping: 15, stiffness: 300 });
@@ -120,18 +111,18 @@ export function MessageWithEnhancements({
 
         // Send to backend
         await chatService.sendReaction(matchId, message._id, emoji);
-        
+
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch (error) {
         // Rollback optimistic update
         setLocalReactions(message.reactions || {});
-        Alert.alert("Error", "Failed to send reaction. Please try again.");
+        Alert.alert('Error', 'Failed to send reaction. Please try again.');
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       } finally {
         setIsReacting(false);
       }
     },
-    [isReacting, localReactions, matchId, message._id, message.reactions, reactionBarOpacity]
+    [isReacting, localReactions, matchId, message._id, message.reactions, reactionBarOpacity],
   );
 
   // Handle reaction bar cancel
@@ -142,18 +133,18 @@ export function MessageWithEnhancements({
 
   // Handle double tap like
   const handleDoubleTapLike = useCallback(() => {
-    handleReactionSelect("❤️");
+    handleReactionSelect('❤️');
   }, [handleReactionSelect]);
 
   // Create long press gesture
   const longPressGesture = Gesture.LongPress()
     .minDuration(500)
     .onStart(() => {
-      "worklet";
+      'worklet';
       messageScale.value = withSpring(0.95, { damping: 15, stiffness: 300 });
     })
     .onEnd(() => {
-      "worklet";
+      'worklet';
       messageScale.value = withSpring(1, { damping: 15, stiffness: 300 });
       runOnJS(handleLongPress)();
     });
@@ -164,13 +155,13 @@ export function MessageWithEnhancements({
 
     const { type, url, name, size } = message.attachment;
 
-    if (type === "image") {
+    if (type === 'image') {
       return (
         <DoubleTapLikePlus
           onDoubleTap={handleDoubleTapLike}
           heartColor="#ff3b5c"
           particles={6}
-          haptics={{ enabled: true, style: "medium" }}
+          haptics={{ enabled: true, style: 'medium' }}
         >
           <Image
             source={{ uri: url }}
@@ -184,13 +175,16 @@ export function MessageWithEnhancements({
     return (
       <View style={styles.fileAttachment}>
         <Ionicons
-          name={type === "video" ? "videocam" : "document"}
+          name={type === 'video' ? 'videocam' : 'document'}
           size={24}
           color={colors.primary}
         />
         <View style={styles.fileInfo}>
-          <Text style={[styles.fileName, { color: colors.onSurface }]} numberOfLines={1}>
-            {name || "File"}
+          <Text
+            style={[styles.fileName, { color: colors.onSurface }]}
+            numberOfLines={1}
+          >
+            {name || 'File'}
           </Text>
           {size && (
             <Text style={[styles.fileSize, { color: colors.onMuted }]}>
@@ -228,14 +222,12 @@ export function MessageWithEnhancements({
             key={emoji}
             style={[
               styles.reactionBubble,
-              { backgroundColor: colors.bg, borderColor: colors.border }
+              { backgroundColor: colors.bg, borderColor: colors.border },
             ]}
             onPress={() => handleReactionSelect(emoji)}
           >
             <Text style={styles.reactionEmoji}>{emoji}</Text>
-            <Text style={[styles.reactionCount, { color: colors.onMuted }]}>
-              {count}
-            </Text>
+            <Text style={[styles.reactionCount, { color: colors.onMuted }]}>{count}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -262,9 +254,7 @@ export function MessageWithEnhancements({
           >
             {/* Message Content */}
             {message.content && (
-              <Text style={[styles.messageText, { color: textColor }]}>
-                {message.content}
-              </Text>
+              <Text style={[styles.messageText, { color: textColor }]}>{message.content}</Text>
             )}
 
             {/* Attachment */}
@@ -274,10 +264,15 @@ export function MessageWithEnhancements({
             {renderVoiceNote()}
 
             {/* Message Timestamp */}
-            <Text style={[styles.timestamp, { color: isOwnMessage ? colors.onPrimary : colors.onMuted }]}>
-              {new Date(message.sentAt).toLocaleTimeString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
+            <Text
+              style={[
+                styles.timestamp,
+                { color: isOwnMessage ? colors.onPrimary : colors.onMuted },
+              ]}
+            >
+              {new Date(message.sentAt).toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
                 hour12: false,
               })}
             </Text>
@@ -311,11 +306,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   ownMessageContainer: {
-    alignItems: "flex-end",
+    alignItems: 'flex-end',
   },
   messageWrapper: {
     maxWidth: MAX_BUBBLE_WIDTH,
-    position: "relative",
+    position: 'relative',
   },
   messageBubble: {
     padding: 12,
@@ -339,10 +334,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   fileAttachment: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 12,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
     marginTop: 8,
   },
@@ -352,7 +347,7 @@ const styles = StyleSheet.create({
   },
   fileName: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   fileSize: {
     fontSize: 12,
@@ -361,17 +356,17 @@ const styles = StyleSheet.create({
   timestamp: {
     fontSize: 11,
     marginTop: 4,
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
   },
   reactionsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     marginTop: 4,
     gap: 4,
   },
   reactionBubble: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -383,14 +378,14 @@ const styles = StyleSheet.create({
   reactionCount: {
     fontSize: 12,
     marginLeft: 4,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   reactionBarContainer: {
-    position: "absolute",
+    position: 'absolute',
     bottom: -60,
     left: 0,
     right: 0,
-    alignItems: "center",
+    alignItems: 'center',
     zIndex: 1000,
   },
 });

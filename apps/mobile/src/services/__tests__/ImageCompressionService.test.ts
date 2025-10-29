@@ -75,7 +75,7 @@ describe('ImageCompressionService', () => {
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         'file://input.jpg',
         [{ resize: { width: 1920, height: 1920 } }],
-        { compress: 0.8, format: 'jpeg' }
+        { compress: 0.8, format: 'jpeg' },
       );
       expect(mockFileSystem.getInfoAsync).toHaveBeenCalledWith('file://compressed.jpg');
 
@@ -103,7 +103,7 @@ describe('ImageCompressionService', () => {
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         'file://input.png',
         [{ resize: { width: 1024, height: 768 } }],
-        { compress: 0.6, format: 'png' }
+        { compress: 0.6, format: 'png' },
       );
     });
 
@@ -122,7 +122,7 @@ describe('ImageCompressionService', () => {
       mockImageManipulator.manipulateAsync.mockRejectedValue(new Error('Compression failed'));
 
       await expect(service.compressImage('file://input.jpg')).rejects.toThrow(
-        'Failed to compress image'
+        'Failed to compress image',
       );
     });
 
@@ -130,7 +130,7 @@ describe('ImageCompressionService', () => {
       mockFileSystem.getInfoAsync.mockRejectedValue(new Error('File not found'));
 
       await expect(service.compressImage('file://input.jpg')).rejects.toThrow(
-        'Failed to compress image'
+        'Failed to compress image',
       );
     });
   });
@@ -222,7 +222,7 @@ describe('ImageCompressionService', () => {
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         'file://avatar.jpg',
         [{ resize: { width: 512, height: 512 } }],
-        { compress: 0.8, format: 'jpeg' }
+        { compress: 0.8, format: 'jpeg' },
       );
     });
 
@@ -232,7 +232,7 @@ describe('ImageCompressionService', () => {
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         'file://pet.jpg',
         [{ resize: { width: 1920, height: 1920 } }],
-        { compress: 0.75, format: 'jpeg' }
+        { compress: 0.75, format: 'jpeg' },
       );
     });
 
@@ -242,7 +242,7 @@ describe('ImageCompressionService', () => {
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         'file://chat.jpg',
         [{ resize: { width: 1024, height: 1024 } }],
-        { compress: 0.7, format: 'jpeg' }
+        { compress: 0.7, format: 'jpeg' },
       );
     });
   });
@@ -333,10 +333,7 @@ describe('ImageCompressionService', () => {
     });
 
     it('should not delete files outside temp/cache directories', async () => {
-      const safeUris = [
-        'file://documents/photo.jpg',
-        'file://downloads/image.png',
-      ];
+      const safeUris = ['file://documents/photo.jpg', 'file://downloads/image.png'];
 
       await service.cleanupTempImages(safeUris);
 
@@ -364,11 +361,9 @@ describe('ImageCompressionService', () => {
       const dimensions = await service.getImageDimensions('file://input.jpg');
 
       expect(dimensions).toEqual({ width: 4000, height: 3000 });
-      expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
-        'file://input.jpg',
-        [],
-        { format: 'jpeg' }
-      );
+      expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith('file://input.jpg', [], {
+        format: 'jpeg',
+      });
     });
 
     it('should return null when dimensions cannot be retrieved', async () => {
@@ -457,7 +452,7 @@ describe('ImageCompressionService', () => {
         expect.objectContaining({
           uri: expect.any(String),
           options: expect.any(Object),
-        })
+        }),
       );
 
       expect(logger.info).toHaveBeenCalledWith(
@@ -467,7 +462,7 @@ describe('ImageCompressionService', () => {
           compressedSize: expect.any(String),
           compressionRatio: expect.any(String),
           dimensions: expect.any(String),
-        })
+        }),
       );
     });
 
@@ -482,7 +477,7 @@ describe('ImageCompressionService', () => {
         expect.objectContaining({
           error: expect.any(Error),
           imageUri: 'file://input.jpg',
-        })
+        }),
       );
     });
   });

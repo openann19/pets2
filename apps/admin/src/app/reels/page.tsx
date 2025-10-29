@@ -5,7 +5,7 @@
  * Reels management and moderation queue
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import useSWR from 'swr';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
@@ -283,7 +283,7 @@ export default function ReelsAdmin() {
                         <a
                           href={`/preview/${reel.id}`}
                           target="_blank"
-                          className="text-blue-600 hover:text-blue-900 mr-4"
+                          className="text-blue-600 hover:text-blue-900 mr-4" rel="noreferrer"
                         >
                           Preview
                         </a>

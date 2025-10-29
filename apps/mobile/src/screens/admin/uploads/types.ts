@@ -8,11 +8,11 @@ export interface Upload {
   userName: string;
   petId?: string;
   petName?: string;
-  type: "profile" | "pet" | "verification";
+  type: 'profile' | 'pet' | 'verification';
   url: string;
   thumbnailUrl?: string;
   uploadedAt: string;
-  status: "pending" | "approved" | "rejected";
+  status: 'pending' | 'approved' | 'rejected';
   flagged: boolean;
   flagReason?: string;
   reviewedBy?: string;
@@ -25,5 +25,4 @@ export interface Upload {
   };
 }
 
-export type UploadFilter = "pending" | "flagged" | "all";
-
+export type UploadFilter = 'pending' | 'flagged' | 'all';

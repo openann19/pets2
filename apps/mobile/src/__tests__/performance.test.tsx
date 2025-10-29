@@ -108,7 +108,7 @@ describe('PawfectMatch Performance Test Suite', () => {
       expect(performanceMeasures).toContainEqual(
         expect.objectContaining({
           name: 'SwipeScreen-mount-duration',
-        })
+        }),
       );
     });
 
@@ -160,7 +160,7 @@ describe('PawfectMatch Performance Test Suite', () => {
       expect(performanceMeasures).toContainEqual(
         expect.objectContaining({
           name: 'CommunityFeed-render-duration',
-        })
+        }),
       );
     });
 
@@ -182,7 +182,7 @@ describe('PawfectMatch Performance Test Suite', () => {
       // In a properly memoized component, render count should not increase
       // This test verifies the component follows React best practices
       await waitFor(() => {
-        expect(performanceMarks.filter(mark => mark.includes('render')).length).toBeLessThan(5);
+        expect(performanceMarks.filter((mark) => mark.includes('render')).length).toBeLessThan(5);
       });
     });
   });
@@ -296,7 +296,7 @@ describe('PawfectMatch Performance Test Suite', () => {
         expect(performanceMeasures).toContainEqual(
           expect.objectContaining({
             name: 'swipe-animation-duration',
-          })
+          }),
         );
       });
 
@@ -306,11 +306,11 @@ describe('PawfectMatch Performance Test Suite', () => {
       expect(animationDuration).toBeLessThan(1000); // 1 second
 
       // Verify frame rate monitoring
-      const frameRateMeasurements = performanceMeasures.filter(
-        measure => measure.name.includes('frame-rate')
+      const frameRateMeasurements = performanceMeasures.filter((measure) =>
+        measure.name.includes('frame-rate'),
       );
 
-      frameRateMeasurements.forEach(measurement => {
+      frameRateMeasurements.forEach((measurement) => {
         expect(measurement.duration).toBeLessThanOrEqual(PERFORMANCE_THRESHOLDS.ANIMATION_FRAME);
       });
     });
@@ -402,7 +402,7 @@ describe('PawfectMatch Performance Test Suite', () => {
         expect(performanceMeasures).toContainEqual(
           expect.objectContaining({
             name: `api-${call.endpoint.replace(/\//g, '-')}-duration`,
-          })
+          }),
         );
       }
     });
@@ -410,7 +410,7 @@ describe('PawfectMatch Performance Test Suite', () => {
     it('should handle concurrent network requests efficiently', async () => {
       const concurrentRequests = 10;
       const requestPromises = Array.from({ length: concurrentRequests }, (_, i) =>
-        mockApi.get(`/endpoint${i}`)
+        mockApi.get(`/endpoint${i}`),
       );
 
       const startTime = Date.now();
@@ -428,7 +428,9 @@ describe('PawfectMatch Performance Test Suite', () => {
       expect(totalTime).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE * 2);
 
       // Should not overwhelm the system
-      expect(performanceMeasures.filter(m => m.name.includes('api-')).length).toBe(concurrentRequests);
+      expect(performanceMeasures.filter((m) => m.name.includes('api-')).length).toBe(
+        concurrentRequests,
+      );
     });
 
     it('should optimize network usage with caching', async () => {
@@ -491,7 +493,9 @@ describe('PawfectMatch Performance Test Suite', () => {
         mockUploadHygieneService.processImageForUpload.mockResolvedValueOnce({
           uri: `processed-${image.uri}`,
           width: image.width > 2048 ? 2048 : image.width,
-          height: Math.round((image.height / image.width) * (image.width > 2048 ? 2048 : image.width)),
+          height: Math.round(
+            (image.height / image.width) * (image.width > 2048 ? 2048 : image.width),
+          ),
           fileSize: image.size * 0.8, // Assume compression
           mimeType: 'image/jpeg',
           metadata: {
@@ -510,7 +514,7 @@ describe('PawfectMatch Performance Test Suite', () => {
         expect(performanceMeasures).toContainEqual(
           expect.objectContaining({
             name: `image-process-${image.uri}-duration`,
-          })
+          }),
         );
       }
     });
@@ -532,7 +536,7 @@ describe('PawfectMatch Performance Test Suite', () => {
           s3Key: `key${i}`,
           url: `url${i}`,
           status: 'approved',
-        }))
+        })),
       );
 
       await mockUploadHygieneService.uploadBatch(imageBatch, 'pet');
@@ -545,7 +549,7 @@ describe('PawfectMatch Performance Test Suite', () => {
       expect(performanceMeasures).toContainEqual(
         expect.objectContaining({
           name: 'image-batch-upload-duration',
-        })
+        }),
       );
     });
 
@@ -561,7 +565,13 @@ describe('PawfectMatch Performance Test Suite', () => {
 
       // Scroll to reveal more images
       act(() => {
-        result.current.setVisibleImages(['image1.jpg', 'image2.jpg', 'image3.jpg', 'image4.jpg', 'image5.jpg']);
+        result.current.setVisibleImages([
+          'image1.jpg',
+          'image2.jpg',
+          'image3.jpg',
+          'image4.jpg',
+          'image5.jpg',
+        ]);
       });
 
       // Should load additional images progressively
@@ -599,7 +609,9 @@ describe('PawfectMatch Performance Test Suite', () => {
       expect(averageSetTime).toBeLessThan(50); // Fast storage operations
       expect(averageGetTime).toBeLessThan(20); // Very fast retrieval
 
-      expect(performanceMeasures.filter(m => m.name.includes('storage-')).length).toBeGreaterThan(0);
+      expect(performanceMeasures.filter((m) => m.name.includes('storage-')).length).toBeGreaterThan(
+        0,
+      );
     });
 
     it('should handle complex data queries efficiently', async () => {
@@ -607,7 +619,7 @@ describe('PawfectMatch Performance Test Suite', () => {
         filters: {
           age: { min: 1, max: 10 },
           breeds: ['Golden Retriever', 'Labrador', 'Poodle'],
-          location: { lat: 40.7128, lng: -74.0060, radius: 50 },
+          location: { lat: 40.7128, lng: -74.006, radius: 50 },
           compatibility: { min: 70 },
           vaccinated: true,
           size: 'large',
@@ -636,7 +648,7 @@ describe('PawfectMatch Performance Test Suite', () => {
       expect(performanceMeasures).toContainEqual(
         expect.objectContaining({
           name: 'complex-query-duration',
-        })
+        }),
       );
     });
 
@@ -645,7 +657,7 @@ describe('PawfectMatch Performance Test Suite', () => {
 
       // Simulate multiple concurrent database operations
       const operations = Array.from({ length: 50 }, (_, i) =>
-        result.current.performOperation(`operation${i}`)
+        result.current.performOperation(`operation${i}`),
       );
 
       const startTime = Date.now();
@@ -669,7 +681,7 @@ describe('PawfectMatch Performance Test Suite', () => {
 
       // Check individual component sizes
       const componentSizes = getComponentSizes();
-      const largeComponents = componentSizes.filter(size => size > 100 * 1024); // 100KB
+      const largeComponents = componentSizes.filter((size) => size > 100 * 1024); // 100KB
 
       // Should minimize large components
       expect(largeComponents.length).toBeLessThan(3);
@@ -696,7 +708,7 @@ describe('PawfectMatch Performance Test Suite', () => {
       expect(performanceMeasures).toContainEqual(
         expect.objectContaining({
           name: 'critical-resources-load-duration',
-        })
+        }),
       );
     });
 
@@ -725,7 +737,7 @@ describe('PawfectMatch Performance Test Suite', () => {
         expect(performanceMeasures).toContainEqual(
           expect.objectContaining({
             name: `module-${module}-load-duration`,
-          })
+          }),
         );
       }
     });
@@ -775,7 +787,7 @@ describe('PawfectMatch Performance Test Suite', () => {
       // 4. Perform interactions
       for (let i = 0; i < 5; i++) {
         fireEvent.press(getByText('Like'));
-        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Small delay
       }
 
       // 5. Check results
@@ -789,7 +801,9 @@ describe('PawfectMatch Performance Test Suite', () => {
       expect(totalJourneyTime).toBeLessThan(10000); // 10 seconds for complete journey
 
       // Verify performance metrics were collected
-      expect(performanceMeasures.filter(m => m.name.includes('journey-')).length).toBeGreaterThan(0);
+      expect(performanceMeasures.filter((m) => m.name.includes('journey-')).length).toBeGreaterThan(
+        0,
+      );
     });
 
     it('should maintain performance under memory pressure', async () => {
@@ -843,14 +857,16 @@ describe('PawfectMatch Performance Test Suite', () => {
         interactionTimes.push(Date.now() - startTime);
 
         // Check for frame drops (simulated)
-        if (Math.random() > 0.95) { // 5% chance of frame drop
+        if (Math.random() > 0.95) {
+          // 5% chance of frame drop
           frameDrops.push(i);
         }
 
-        await new Promise(resolve => setTimeout(resolve, 10)); // 100 interactions/second
+        await new Promise((resolve) => setTimeout(resolve, 10)); // 100 interactions/second
       }
 
-      const averageInteractionTime = interactionTimes.reduce((a, b) => a + b, 0) / interactionTimes.length;
+      const averageInteractionTime =
+        interactionTimes.reduce((a, b) => a + b, 0) / interactionTimes.length;
       const maxInteractionTime = Math.max(...interactionTimes);
 
       // High-frequency interactions should be responsive
@@ -860,7 +876,9 @@ describe('PawfectMatch Performance Test Suite', () => {
       // Frame drops should be minimal
       expect(frameDrops.length).toBeLessThan(10); // Less than 10% frame drops
 
-      expect(performanceMeasures.filter(m => m.name.includes('interaction-')).length).toBeGreaterThan(50);
+      expect(
+        performanceMeasures.filter((m) => m.name.includes('interaction-')).length,
+      ).toBeGreaterThan(50);
     });
 
     it('should scale performance with data size', async () => {
@@ -1043,8 +1061,12 @@ function renderHook(hookFn: () => any) {
 }
 
 // Mock components for performance testing
-function App() { return null; }
-function HighFrequencyInteraction() { return null; }
+function App() {
+  return null;
+}
+function HighFrequencyInteraction() {
+  return null;
+}
 function useScalabilityTest() {
   return {
     loadDataset: jest.fn(),

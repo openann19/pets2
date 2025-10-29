@@ -1,1 +1,1 @@
-export { EliteButton, default as EliteButtonDefault } from "./EliteButton";
+export { EliteButton, default as EliteButtonDefault } from './EliteButton';

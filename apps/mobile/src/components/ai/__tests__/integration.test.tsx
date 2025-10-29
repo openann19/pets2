@@ -21,7 +21,7 @@ jest.mock('@/theme/unified-theme', () => ({
     },
     spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
     typography: {
-      fontSize: { xs: 12, sm: 14, base: 16, xl: 20, '2xl': 24 },
+      fontSize: { 'xs': 12, 'sm': 14, 'base': 16, 'xl': 20, '2xl': 24 },
       fontWeight: { medium: '500', semibold: '600', bold: '700' },
       lineHeight: { normal: 1.5, relaxed: 1.625 },
     },
@@ -43,7 +43,7 @@ describe('AI Components Integration', () => {
         petPersonality: 'Very playful and energetic, loves fetch',
         setPetPersonality: jest.fn(),
         validationErrors: {},
-        
+
         // Tone
         selectedTone: 'playful',
         setSelectedTone: jest.fn(),
@@ -59,15 +59,21 @@ describe('AI Components Integration', () => {
 
     it('switches between tone options', () => {
       const mockSetTone = jest.fn();
-      
+
       const { rerender } = render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockSetTone} />
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockSetTone}
+        />,
       );
 
       expect(screen.getByText('Playful')).toBeTruthy();
 
       rerender(
-        <ToneSelector selectedTone="professional" onToneSelect={mockSetTone} />
+        <ToneSelector
+          selectedTone="professional"
+          onToneSelect={mockSetTone}
+        />,
       );
 
       expect(screen.getByText('Professional')).toBeTruthy();
@@ -141,7 +147,12 @@ describe('AI Components Integration', () => {
       expect(screen.getByDisplayValue('Max')).toBeTruthy();
 
       // Step 2: Select tone
-      render(<ToneSelector selectedTone="playful" onToneSelect={jest.fn()} />);
+      render(
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={jest.fn()}
+        />,
+      );
       expect(screen.getByText('Playful')).toBeTruthy();
 
       // Step 3: View results
@@ -187,13 +198,19 @@ describe('AI Components Integration', () => {
       const mockSetTone = jest.fn();
 
       const { rerender } = render(
-        <ToneSelector selectedTone="playful" onToneSelect={mockSetTone} />
+        <ToneSelector
+          selectedTone="playful"
+          onToneSelect={mockSetTone}
+        />,
       );
 
       expect(screen.getByText('Playful')).toBeTruthy();
 
       rerender(
-        <ToneSelector selectedTone="professional" onToneSelect={mockSetTone} />
+        <ToneSelector
+          selectedTone="professional"
+          onToneSelect={mockSetTone}
+        />,
       );
 
       expect(screen.getByText('Professional')).toBeTruthy();
@@ -233,4 +250,3 @@ describe('AI Components Integration', () => {
     });
   });
 });
-

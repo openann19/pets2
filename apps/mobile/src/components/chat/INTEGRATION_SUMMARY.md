@@ -3,25 +3,31 @@
 ## Created Components
 
 ### 1. `MessageTimestampBadge.tsx`
+
 A tiny animated badge displaying message timestamps with:
+
 - Fade + scale animations using Reanimated (UI-thread only)
 - 12-hour time format (e.g., "1:45 PM")
 - Tiny accent dot indicator
 - Fully customizable colors and visibility
 
 **Features:**
+
 - `visible` prop controls animation in/out
 - `textColor`, `bgColor`, `accentColor` for theming
 - Smooth spring animations on show/hide
 
 ### 2. `ReadByPopover.tsx`
+
 A long-press popover showing who read the message:
+
 - Displays avatars, names, and read times
 - Spring-in animation with backdrop fade
 - Positions dynamically based on bubble anchor point
 - Haptic feedback on open
 
 **Features:**
+
 - Accepts `readBy` array from Message type
 - Optional user lookup map for displaying names/avatars
 - Transforms core ReadReceipt to display format
@@ -29,17 +35,23 @@ A long-press popover showing who read the message:
 - Backdrop tap to close
 
 ### 3. `MessageBubbleEnhanced.tsx`
+
 Enhanced version of MessageBubble with full gesture support:
 
 **New Features:**
+
 - **Tap gesture** - Toggles timestamp badge visibility
-- **Long-press gesture** - Opens read-by popover (only for own messages in delivered/read status)
-- **Status detection** - Automatically determines message status from `readBy` array
+- **Long-press gesture** - Opens read-by popover (only for own messages in
+  delivered/read status)
+- **Status detection** - Automatically determines message status from `readBy`
+  array
 - **Shake animation** - Uses `useBubbleRetryShake` for failed messages
 - **Integration** - Seamlessly integrates MessageStatusTicks and RetryBadge
-- **Measure** - Uses `useAnimatedRef` to measure bubble position for popover placement
+- **Measure** - Uses `useAnimatedRef` to measure bubble position for popover
+  placement
 
 **Props:**
+
 - All props from original MessageBubble
 - `users?: Map<string, User>` - Optional user lookup for read receipt names
 - `onRetry?: () => void` - Callback for retry action
@@ -59,18 +71,20 @@ import { MessageBubbleEnhanced } from '@/components/chat';
   totalMessages={total}
   showAvatars={true}
   petInfo={petInfo}
-/>
+/>;
 ```
 
 ## Gesture Interactions
 
 1. **Tap** - Toggles timestamp badge (default: visible)
-2. **Long-press** (own messages only when delivered/read) - Shows read-by popover with haptic feedback
+2. **Long-press** (own messages only when delivered/read) - Shows read-by
+   popover with haptic feedback
 3. **Measure** - Automatically positions read-by popover near the bubble
 
 ## Message Status Detection
 
 The component automatically detects status from the `readBy` array:
+
 - `sent` - Message sent but not delivered/read yet
 - `delivered` - Someone has read it but not the current user
 - `read` - Current user has read the message
@@ -84,6 +98,7 @@ The component automatically detects status from the `readBy` array:
 ## Theme Support
 
 All components support dark/light mode:
+
 - ReadByPopover accepts theme colors
 - MessageTimestampBadge has customizable colors
 - MessageStatusTicks uses theme-aware colors
@@ -99,7 +114,8 @@ All components support dark/light mode:
 ## Files Modified
 
 - `apps/mobile/src/components/chat/index.ts` - Added exports
-- Created: `MessageTimestampBadge.tsx`, `ReadByPopover.tsx`, `MessageBubbleEnhanced.tsx`
+- Created: `MessageTimestampBadge.tsx`, `ReadByPopover.tsx`,
+  `MessageBubbleEnhanced.tsx`
 
 ## Notes
 
@@ -109,4 +125,3 @@ All components support dark/light mode:
 - Performance optimized (UI-thread animations)
 - Haptic feedback for better UX
 - Graceful fallbacks (unknown users, missing avatars)
-

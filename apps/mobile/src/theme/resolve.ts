@@ -7,22 +7,23 @@ function getContrastText(hex: string): string {
   try {
     // Normalize #RGB/#RRGGBB
     const normalized = hex.replace('#', '');
-    const expanded = normalized.length === 3 
-      ? `${normalized[0]}${normalized[0]}${normalized[1]}${normalized[1]}${normalized[2]}${normalized[2]}`
-      : normalized;
-    
+    const expanded =
+      normalized.length === 3
+        ? `${normalized[0]}${normalized[0]}${normalized[1]}${normalized[1]}${normalized[2]}${normalized[2]}`
+        : normalized;
+
     if (expanded.length < 6) return '#FFFFFF'; // fallback
-    
+
     const r = parseInt(expanded.slice(0, 2), 16);
     const g = parseInt(expanded.slice(2, 4), 16);
     const b = parseInt(expanded.slice(4, 6), 16);
-    
+
     // WCAG relative luminance
     const getLuminance = (val: number) => {
       const s = val / 255;
       return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
     };
-    
+
     const L = 0.2126 * getLuminance(r) + 0.7152 * getLuminance(g) + 0.0722 * getLuminance(b);
     return L > 0.55 ? '#111827' : '#FFFFFF';
   } catch {
@@ -34,7 +35,7 @@ function getContrastText(hex: string): string {
 
 export function resolveTheme(base: typeof BaseLight | typeof BaseDark): AppTheme {
   const primary = base.colors.primary[500];
-  
+
   // Map old structure to new semantic tokens + backward compat
   const textPrimary = base.colors.text.primary;
   const textSecondary = base.colors.text.secondary;
@@ -42,9 +43,9 @@ export function resolveTheme(base: typeof BaseLight | typeof BaseDark): AppTheme
   const bgPrimary = base.colors.background.primary;
   const bgSecondary = base.colors.background.secondary;
   const bgElevated = base.colors.background.tertiary;
-  
+
   const isDark = base === BaseDark;
-  
+
   return {
     scheme: isDark ? 'dark' : 'light',
     isDark,
@@ -64,22 +65,22 @@ export function resolveTheme(base: typeof BaseLight | typeof BaseDark): AppTheme
       info: base.colors.status.info,
     },
     radii: {
-      none: base.borderRadius.none,
-      xs: base.borderRadius.xs,
-      sm: base.borderRadius.sm,
-      md: base.borderRadius.md,
-      lg: base.borderRadius.lg,
-      xl: base.borderRadius.xl,
+      'none': base.borderRadius.none,
+      'xs': base.borderRadius.xs,
+      'sm': base.borderRadius.sm,
+      'md': base.borderRadius.md,
+      'lg': base.borderRadius.lg,
+      'xl': base.borderRadius.xl,
       '2xl': base.borderRadius['2xl'],
-      pill: base.borderRadius.pill,
-      full: base.borderRadius.full,
+      'pill': base.borderRadius.pill,
+      'full': base.borderRadius.full,
     },
     spacing: {
-      xs: base.spacing.xs,
-      sm: base.spacing.sm,
-      md: base.spacing.md,
-      lg: base.spacing.lg,
-      xl: base.spacing.xl,
+      'xs': base.spacing.xs,
+      'sm': base.spacing.sm,
+      'md': base.spacing.md,
+      'lg': base.spacing.lg,
+      'xl': base.spacing.xl,
       '2xl': base.spacing['2xl'] ?? base.spacing.xl * 1.5,
       '3xl': base.spacing['3xl'] ?? base.spacing.xl * 2,
       '4xl': base.spacing['4xl'] ?? base.spacing.xl * 3,
@@ -135,5 +136,5 @@ export function resolveTheme(base: typeof BaseLight | typeof BaseDark): AppTheme
 }
 
 export const getLightTheme = (): AppTheme => resolveTheme(BaseLight);
-export const getDarkTheme  = (): AppTheme => resolveTheme(BaseDark);
+export const getDarkTheme = (): AppTheme => resolveTheme(BaseDark);
 export type { AppTheme as ThemeLike };

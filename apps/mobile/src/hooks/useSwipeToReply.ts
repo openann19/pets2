@@ -1,6 +1,6 @@
-import { useCallback } from "react";
-import { Platform } from "react-native";
-import { Gesture } from "react-native-gesture-handler";
+import { useCallback } from 'react';
+import { Platform } from 'react-native';
+import { Gesture } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -9,21 +9,21 @@ import Animated, {
   withTiming,
   interpolate,
   Extrapolation,
-} from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 
 export interface UseSwipeToReplyOpts<T = any> {
   enabled?: boolean;
-  threshold?: number;   // px to trigger
-  maxPull?: number;     // max translation
+  threshold?: number; // px to trigger
+  maxPull?: number; // max translation
   onReply: (payload: T) => void;
-  payload: T;           // message object/id to pass back
+  payload: T; // message object/id to pass back
   onProgress?: (p: number) => void; // 0..1 pull progress
 }
 
 /**
  * useSwipeToReply - Swipe to reply gesture hook with haptic feedback
- * 
+ *
  * Implements a pull-to-right gesture with:
  * - Haptic tick on threshold cross
  * - Spring-animated snap-back on release
@@ -48,7 +48,7 @@ export function useSwipeToReply<T>({
   const gesture = Gesture.Pan()
     .enabled(enabled)
     .activeOffsetX([6, 9999]) // start only on right drag
-    .failOffsetY([16, -16])   // keep vertical tolerant
+    .failOffsetY([16, -16]) // keep vertical tolerant
     .onUpdate((e) => {
       const nx = Math.min(Math.max(e.translationX, 0), maxPull);
       x.value = nx;
@@ -78,4 +78,3 @@ export function useSwipeToReply<T>({
 
   return { gesture, bubbleStyle, progressX: x };
 }
-

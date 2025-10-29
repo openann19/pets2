@@ -169,7 +169,9 @@ export const reelsService = {
   /**
    * Generate presigned upload URLs
    */
-  presignUpload: (files: { key: string; contentType?: string }[]): Promise<Array<{ signedUrl: string; key: string }>> => {
+  presignUpload: (
+    files: { key: string; contentType?: string }[],
+  ): Promise<Array<{ signedUrl: string; key: string }>> => {
     return fetchAPI(`/uploads/sign`, {
       method: 'POST',
       body: JSON.stringify({ files }),
@@ -186,4 +188,3 @@ export const reelsService = {
     });
   },
 };
-

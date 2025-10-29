@@ -1,10 +1,10 @@
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore } from "@pawfectmatch/core";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Haptics from "expo-haptics";
-import { useCallback, useState } from "react";
-import { Alert } from "react-native";
-import { matchesAPI } from "../../services/api";
+import { logger } from '@pawfectmatch/core';
+import { useAuthStore } from '@pawfectmatch/core';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics';
+import { useCallback, useState } from 'react';
+import { Alert } from 'react-native';
+import { matchesAPI } from '../../services/api';
 
 export function useProfileScreen() {
   const { user, logout } = useAuthStore();
@@ -21,19 +21,19 @@ export function useProfileScreen() {
   });
 
   const handleLogout = useCallback(() => {
-    Alert.alert("Logout", "Are you sure you want to logout?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
       {
-        text: "Logout",
-        style: "destructive",
+        text: 'Logout',
+        style: 'destructive',
         onPress: () => {
           void (async () => {
             try {
               logout?.();
               await AsyncStorage.clear();
-              logger.info("User logged out successfully");
+              logger.info('User logged out successfully');
             } catch (error) {
-              logger.error("Logout error:", { error });
+              logger.error('Logout error:', { error });
             }
           })();
         },
@@ -66,4 +66,3 @@ export function useProfileScreen() {
     handlePrivacyToggle,
   };
 }
-

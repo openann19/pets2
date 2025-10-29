@@ -1,12 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
-import { useRoute } from "@react-navigation/native";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { api } from "../services/api";
-import { FLAGS } from "../config/flags";
-import { useTheme } from "@/theme";
-import { Ionicons } from "@expo/vector-icons";
-import io from "socket.io-client";
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/src/theme';
+import { useRoute } from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import io from 'socket.io-client';
+import { FLAGS } from '../config/flags';
+import { api } from '../services/api';
 import { logger } from '../services/logger';
 
 interface LiveViewerScreenProps {
@@ -21,82 +29,82 @@ export default function LiveViewerScreen({}: LiveViewerScreenProps) {
   const theme = useTheme();
   const route = useRoute();
   const { streamId } = (route.params as RouteParams) || {};
-  
+
   // Dynamic styles that depend on theme
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#000",
+      backgroundColor: '#000',
     },
     videoArea: {
       flex: 2,
-      backgroundColor: "#1a1a1a",
+      backgroundColor: '#1a1a1a',
     },
     videoPlaceholder: {
       flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     hint: {
-      color: "#fff",
+      color: '#fff',
       opacity: 0.6,
       marginTop: 12,
       fontSize: 16,
     },
     viewerCount: {
-      color: "#fff",
+      color: '#fff',
       opacity: 0.5,
       marginTop: 8,
       fontSize: 14,
     },
     chat: {
       flex: 1,
-      backgroundColor: "#111",
+      backgroundColor: '#111',
       borderTopLeftRadius: 16,
       borderTopRightRadius: 16,
       padding: 12,
       maxHeight: 300,
     },
     chatHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginBottom: 12,
     },
     chatTitle: {
-      color: "#fff",
-      fontWeight: "700",
+      color: '#fff',
+      fontWeight: '700',
       fontSize: 16,
     },
     message: {
       padding: 8,
       marginVertical: 2,
       borderRadius: 8,
-      backgroundColor: "rgba(255, 255, 255, 0.05)",
+      backgroundColor: 'rgba(255, 255, 255, 0.05)',
     },
     messageText: {
-      color: "#fff",
+      color: '#fff',
       fontSize: 14,
     },
     emptyChat: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     emptyText: {
-      color: "#666",
+      color: '#666',
       fontSize: 14,
     },
     inputRow: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: 8,
-      alignItems: "center",
+      alignItems: 'center',
       paddingTop: 8,
     },
     input: {
       flex: 1,
-      backgroundColor: "#1c1c1c",
-      color: "#fff",
+      backgroundColor: '#1c1c1c',
+      color: '#fff',
       padding: 10,
       borderRadius: 10,
       fontSize: 14,
@@ -107,32 +115,38 @@ export default function LiveViewerScreen({}: LiveViewerScreenProps) {
       paddingVertical: 10,
       paddingHorizontal: 14,
       borderRadius: 10,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     loadingText: {
-      color: "#fff",
+      color: '#fff',
       marginTop: 12,
       opacity: 0.7,
     },
     errorText: {
-      color: "#ef4444",
+      color: '#ef4444',
       fontSize: 16,
-      textAlign: "center",
+      textAlign: 'center',
     },
   });
-  
+
   const [room, setRoom] = useState<any>(null);
   const [messages, setMessages] = useState<Array<{ id: string; text: string; ts: number }>>([]);
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const socketRef = useRef<ReturnType<typeof io> | null>(null);
   const [viewerCount, setViewerCount] = useState(0);
 
   const watchQuery = useQuery({
-    queryKey: ["live-watch", streamId],
+    queryKey: ['live-watch', streamId],
     queryFn: async () => {
-      const data = await api.request(`/live/${streamId}/watch`, { method: "GET" });
-      return data as { roomName: string; token: string; url: string; title: string; coverUrl: string };
+      const data = await api.request(`/live/${streamId}/watch`, { method: 'GET' });
+      return data as {
+        roomName: string;
+        token: string;
+        url: string;
+        title: string;
+        coverUrl: string;
+      };
     },
     enabled: !!streamId && FLAGS.GO_LIVE,
   });
@@ -141,18 +155,18 @@ export default function LiveViewerScreen({}: LiveViewerScreenProps) {
     if (!watchQuery.data || !watchQuery.data.roomName) return;
 
     const { url, token, roomName } = watchQuery.data;
-    const baseUrl = url.replace("/", "");
+    const baseUrl = url.replace('/', '');
     const socket = io(`http://${baseUrl}/live:${roomName}`, {
-      transports: ["websocket"],
+      transports: ['websocket'],
     });
 
-    socket.on("chat:message", (m: any) => {
+    socket.on('chat:message', (m: any) => {
       setMessages((prev) => [{ id: String(m.ts), text: m.text, ts: m.ts }, ...prev]);
     });
 
-    socket.on("reaction", ({ emoji, ts }: { emoji: string; ts: number }) => {
+    socket.on('reaction', ({ emoji, ts }: { emoji: string; ts: number }) => {
       // Handle reaction
-      logger.info("Live reaction received", { emoji, timestamp: String(ts) });
+      logger.info('Live reaction received', { emoji, timestamp: String(ts) });
     });
 
     socketRef.current = socket;
@@ -173,7 +187,10 @@ export default function LiveViewerScreen({}: LiveViewerScreenProps) {
   if (watchQuery.isLoading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#fff" />
+        <ActivityIndicator
+          size="large"
+          color="#fff"
+        />
         <Text style={styles.loadingText}>Connecting to stream...</Text>
       </View>
     );
@@ -192,7 +209,12 @@ export default function LiveViewerScreen({}: LiveViewerScreenProps) {
       <View style={styles.videoArea}>
         {/* Placeholder for video view */}
         <View style={styles.videoPlaceholder}>
-          <Ionicons name="videocam" size={48} color="#fff" style={{ opacity: 0.5 }} />
+          <Ionicons
+            name="videocam"
+            size={48}
+            color="#fff"
+            style={{ opacity: 0.5 }}
+          />
           <Text style={styles.hint}>Live Stream</Text>
           <Text style={styles.viewerCount}>{viewerCount} viewers</Text>
         </View>
@@ -205,9 +227,15 @@ export default function LiveViewerScreen({}: LiveViewerScreenProps) {
             testID="clear-chat-button"
             accessibilityLabel="Clear chat messages"
             accessibilityRole="button"
-            onPress={() => { setMessages([]); }}
+            onPress={() => {
+              setMessages([]);
+            }}
           >
-            <Ionicons name="trash-outline" size={20} color="#999" />
+            <Ionicons
+              name="trash-outline"
+              size={20}
+              color="#999"
+            />
           </TouchableOpacity>
         </View>
 
@@ -245,12 +273,16 @@ export default function LiveViewerScreen({}: LiveViewerScreenProps) {
             accessibilityRole="button"
             onPress={() => {
               if (!text.trim()) return;
-              socketRef.current?.emit("chat:message", { text });
-              setText("");
+              socketRef.current?.emit('chat:message', { text });
+              setText('');
             }}
             disabled={!text.trim()}
           >
-            <Ionicons name="send" size={20} color="#fff" />
+            <Ionicons
+              name="send"
+              size={20}
+              color="#fff"
+            />
           </TouchableOpacity>
         </View>
       </View>

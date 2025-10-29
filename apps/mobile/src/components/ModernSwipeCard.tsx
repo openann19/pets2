@@ -9,37 +9,34 @@
  * - Performance optimized with proper memoization
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useMemo, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { logger } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
   AccessibilityInfo,
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
   type ViewStyle,
-} from "react-native";
-import { GestureDetector } from "react-native-gesture-handler";
-import Animated, {
-  type AnimatedStyleProp,
-} from "react-native-reanimated";
+} from 'react-native';
+import { GestureDetector } from 'react-native-gesture-handler';
+import Animated, { type AnimatedStyleProp } from 'react-native-reanimated';
 
-import { useEntranceAnimation } from "../hooks/useUnifiedAnimations";
-import { useSwipeGesturesRNGH } from "../hooks/useSwipeGesturesRNGH";
-import { useTheme } from "@/theme";
-import { DoubleTapLikePlus } from "./Gestures/DoubleTapLikePlus";
-import LikeArbitrator from "./Gestures/LikeArbitrator";
-import UndoPill from "./feedback/UndoPill";
-import { useLikeWithUndo } from "../hooks/useLikeWithUndo";
-import { useDoubleTapMetrics } from "../hooks/useInteractionMetrics";
-import SmartImage from "./common/SmartImage";
-import MicroPressable from "./micro/MicroPressable";
-import ParallaxCard from "./micro/ParallaxCard";
+import { useTheme } from '@mobile/src/theme';
+import { useDoubleTapMetrics } from '../hooks/useInteractionMetrics';
+import { useLikeWithUndo } from '../hooks/useLikeWithUndo';
+import { useSwipeGesturesRNGH } from '../hooks/useSwipeGesturesRNGH';
+import { useEntranceAnimation } from '../hooks/useUnifiedAnimations';
+import { DoubleTapLikePlus } from './Gestures/DoubleTapLikePlus';
+import LikeArbitrator from './Gestures/LikeArbitrator';
+import SmartImage from './common/SmartImage';
+import UndoPill from './feedback/UndoPill';
+import MicroPressable from './micro/MicroPressable';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 // === TYPES ===
 interface Pet {
@@ -95,11 +92,11 @@ function ModernSwipeCardComponent({
       cleanup();
       return () => {
         // Return cleanup function for undo
-        logger.info("Like undone for:", { petName: pet.name });
+        logger.info('Like undone for:', { petName: pet.name });
       };
     },
     onUndo: () => {
-      logger.info("Undo like for:", { petName: pet.name });
+      logger.info('Undo like for:', { petName: pet.name });
     },
   });
 
@@ -121,11 +118,11 @@ function ModernSwipeCardComponent({
 
       setIsProcessing(true);
       try {
-        logger.info("Liked pet:", { petName: pet.name });
+        logger.info('Liked pet:', { petName: pet.name });
         // API call would go here
         await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate API call
       } catch (error) {
-        logger.error("Error liking pet:", { error });
+        logger.error('Error liking pet:', { error });
       } finally {
         setIsProcessing(false);
       }
@@ -139,11 +136,11 @@ function ModernSwipeCardComponent({
 
       setIsProcessing(true);
       try {
-        logger.info("Passed pet:", { petName: pet.name });
+        logger.info('Passed pet:', { petName: pet.name });
         // API call would go here
         await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate API call
       } catch (error) {
-        logger.error("Error passing pet:", { error });
+        logger.error('Error passing pet:', { error });
       } finally {
         setIsProcessing(false);
       }
@@ -157,11 +154,11 @@ function ModernSwipeCardComponent({
 
       setIsProcessing(true);
       try {
-        logger.info("Super liked pet:", { petName: pet.name });
+        logger.info('Super liked pet:', { petName: pet.name });
         // API call would go here
         await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate API call
       } catch (error) {
-        logger.error("Error super liking pet:", { error });
+        logger.error('Error super liking pet:', { error });
       } finally {
         setIsProcessing(false);
       }
@@ -195,18 +192,30 @@ function ModernSwipeCardComponent({
   }, [disabled, isProcessing, pet, handleSuperLike, onSwipeUp]);
 
   // Swipe gesture hook with RNGH
-  const { gesture, cardStyle: panStyle, likeStyle, nopeStyle, superStyle, tx: translateX, ty: translateY } =
-    useSwipeGesturesRNGH({
-      onSwipeLeft: () => { handleSwipeLeft(); },
-      onSwipeRight: () => { handleSwipeRight(); },
-      onSwipeUp: () => { handleSwipeUp(); },
-      swipeThreshold: 0.30,
-      enabled: !disabled && isTopCard,
-    });
+  const {
+    gesture,
+    cardStyle: panStyle,
+    likeStyle,
+    nopeStyle,
+    superStyle,
+    tx: translateX,
+    ty: translateY,
+  } = useSwipeGesturesRNGH({
+    onSwipeLeft: () => {
+      handleSwipeLeft();
+    },
+    onSwipeRight: () => {
+      handleSwipeRight();
+    },
+    onSwipeUp: () => {
+      handleSwipeUp();
+    },
+    swipeThreshold: 0.3,
+    enabled: !disabled && isTopCard,
+  });
 
   // Entrance animation for non-top cards
-  const { start: startEntrance, animatedStyle: entranceStyle } =
-    useEntranceAnimation("slideIn", 0);
+  const { start: startEntrance, animatedStyle: entranceStyle } = useEntranceAnimation('slideIn', 0);
 
   // Start entrance animation for non-top cards
   React.useEffect(() => {
@@ -229,7 +238,6 @@ function ModernSwipeCardComponent({
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
   }, [currentPhotoIndex]);
-
 
   // Memoized styles for performance
   const cardStyle = useMemo(
@@ -255,9 +263,9 @@ function ModernSwipeCardComponent({
       <Animated.View
         style={[
           ...cardStyle,
-          ...(Array.isArray(combinedAnimatedStyle)
+          ...((Array.isArray(combinedAnimatedStyle)
             ? combinedAnimatedStyle
-            : [combinedAnimatedStyle]) as AnimatedStyleProp<ViewStyle>[] // Fix iterator issue
+            : [combinedAnimatedStyle]) as AnimatedStyleProp<ViewStyle>[]), // Fix iterator issue
         ]}
         accessible={true}
         accessibilityRole="button"
@@ -269,14 +277,14 @@ function ModernSwipeCardComponent({
           onLike={likeNow}
           triggerUndo={triggerUndoPill}
           onReact={(emoji) => {
-            logger.info("Reaction:", { emoji, petName: pet.name });
+            logger.info('Reaction:', { emoji, petName: pet.name });
           }}
         >
           <DoubleTapLikePlus
             onDoubleTap={handleDoubleTapLike}
             heartColor="#ff3b5c"
             particles={6}
-            haptics={{ enabled: true, style: "medium" }}
+            haptics={{ enabled: true, style: 'medium' }}
             disabled={disabled || !isTopCard}
           >
             <View style={styles.photoContainer}>
@@ -297,7 +305,7 @@ function ModernSwipeCardComponent({
                         backgroundColor:
                           index === currentPhotoIndex
                             ? colors.onSurfacenverse
-                            : "rgba(255,255,255,0.4)",
+                            : 'rgba(255,255,255,0.4)',
                       },
                     ])}
                   />
@@ -306,8 +314,14 @@ function ModernSwipeCardComponent({
 
               {/* Photo Navigation Areas */}
               <View style={styles.photoNavigation}>
-                <View style={styles.photoNavLeft} onTouchEnd={prevPhoto} />
-                <View style={styles.photoNavRight} onTouchEnd={nextPhoto} />
+                <View
+                  style={styles.photoNavLeft}
+                  onTouchEnd={prevPhoto}
+                />
+                <View
+                  style={styles.photoNavRight}
+                  onTouchEnd={nextPhoto}
+                />
               </View>
 
               {/* Verification Badge */}
@@ -322,13 +336,16 @@ function ModernSwipeCardComponent({
               )}
 
               {/* Distance Badge */}
-              <MicroPressable 
+              <MicroPressable
                 style={styles.distanceBadge}
                 haptics={true}
                 onPress={() => {
-                  logger.info("Distance badge pressed:", { petName: pet.name, distance: pet.distance });
+                  logger.info('Distance badge pressed:', {
+                    petName: pet.name,
+                    distance: pet.distance,
+                  });
                   // TODO: Navigate to Map screen when implemented
-                  // navigation?.navigate('Map', { 
+                  // navigation?.navigate('Map', {
                   //   pet: pet,
                   //   location: { lat: pet.lat, lng: pet.lng }
                   // });
@@ -339,31 +356,19 @@ function ModernSwipeCardComponent({
 
               {/* Swipe Overlays */}
               <Animated.View
-                style={StyleSheet.flatten([
-                  styles.overlay,
-                  styles.likeOverlay,
-                  likeStyle,
-                ])}
+                style={StyleSheet.flatten([styles.overlay, styles.likeOverlay, likeStyle])}
               >
                 <Text style={styles.overlayText}>LIKE</Text>
               </Animated.View>
 
               <Animated.View
-                style={StyleSheet.flatten([
-                  styles.overlay,
-                  styles.nopeOverlay,
-                  nopeStyle,
-                ])}
+                style={StyleSheet.flatten([styles.overlay, styles.nopeOverlay, nopeStyle])}
               >
                 <Text style={styles.overlayText}>NOPE</Text>
               </Animated.View>
 
               <Animated.View
-                style={StyleSheet.flatten([
-                  styles.overlay,
-                  styles.superLikeOverlay,
-                  superStyle,
-                ])}
+                style={StyleSheet.flatten([styles.overlay, styles.superLikeOverlay, superStyle])}
               >
                 <Text style={styles.overlayText}>SUPER LIKE</Text>
               </Animated.View>
@@ -373,7 +378,7 @@ function ModernSwipeCardComponent({
 
         {/* Info Section */}
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.8)"]}
+          colors={['transparent', 'rgba(0,0,0,0.8)']}
           style={styles.infoGradient}
         >
           <View style={styles.infoContainer}>
@@ -397,9 +402,7 @@ function ModernSwipeCardComponent({
                   ])}
                 />
               </View>
-              <Text style={styles.compatibilityText}>
-                {pet.compatibility}% match
-              </Text>
+              <Text style={styles.compatibilityText}>{pet.compatibility}% match</Text>
             </View>
 
             {/* Tags */}
@@ -412,12 +415,7 @@ function ModernSwipeCardComponent({
                     { backgroundColor: `${colors.primary}20` },
                   ])}
                 >
-                  <Text
-                    style={StyleSheet.flatten([
-                      styles.tagText,
-                      { color: colors.primary },
-                    ])}
-                  >
+                  <Text style={StyleSheet.flatten([styles.tagText, { color: colors.primary }])}>
                     {tag}
                   </Text>
                 </View>
@@ -425,7 +423,10 @@ function ModernSwipeCardComponent({
             </View>
 
             {/* Bio Preview */}
-            <Text style={styles.bio} numberOfLines={2}>
+            <Text
+              style={styles.bio}
+              numberOfLines={2}
+            >
               {pet.bio}
             </Text>
           </View>
@@ -443,6 +444,6 @@ const ModernSwipeCard = React.memo(ModernSwipeCardComponent);
 // === STYLES ===
 
 // Display name for debugging
-ModernSwipeCard.displayName = "ModernSwipeCard";
+ModernSwipeCard.displayName = 'ModernSwipeCard';
 
 export default ModernSwipeCard;

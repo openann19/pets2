@@ -5,11 +5,7 @@
  */
 
 import React from 'react';
-import Animated, { 
-  useSharedValue, 
-  withSpring, 
-  useAnimatedStyle 
-} from 'react-native-reanimated';
+import Animated, { useSharedValue, withSpring, useAnimatedStyle } from 'react-native-reanimated';
 import { Pressable, type ViewStyle } from 'react-native';
 import { useMotion } from '../motion/useMotion';
 import { haptic } from '../haptics';
@@ -25,7 +21,7 @@ export interface BouncePressableProps {
 
 /**
  * BouncePressable - Pressable with bounce animation and haptics
- * 
+ *
  * Usage:
  * ```tsx
  * <BouncePressable onPress={handlePress} hapticFeedback="confirm">
@@ -33,12 +29,12 @@ export interface BouncePressableProps {
  * </BouncePressable>
  * ```
  */
-export function BouncePressable({ 
-  children, 
-  onPress, 
+export function BouncePressable({
+  children,
+  onPress,
   disabled = false,
   style,
-  hapticFeedback = 'tap'
+  hapticFeedback = 'tap',
 }: BouncePressableProps) {
   const scale = useSharedValue(1);
   const m = useMotion('press');
@@ -65,7 +61,7 @@ export function BouncePressable({
     } else if (hapticFeedback === 'super') {
       haptic.super();
     }
-    
+
     onPress?.();
   };
 
@@ -83,4 +79,3 @@ export function BouncePressable({
     </Animated.View>
   );
 }
-

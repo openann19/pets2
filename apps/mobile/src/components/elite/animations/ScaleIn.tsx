@@ -1,11 +1,6 @@
-import React, { useEffect, type ReactNode } from "react";
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
-import Animated from "react-native-reanimated";
+import React, { useEffect, type ReactNode } from 'react';
+import { useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
 /**
  * ScaleIn Animation Component

@@ -1,4 +1,13 @@
-import { Room, RoomEvent, RemoteParticipant, RemoteTrackPublication, ConnectionState, LocalTrackPublication, LocalVideoTrack, LocalAudioTrack } from 'livekit-client';
+import {
+  Room,
+  RoomEvent,
+  RemoteParticipant,
+  RemoteTrackPublication,
+  ConnectionState,
+  LocalTrackPublication,
+  LocalVideoTrack,
+  LocalAudioTrack,
+} from 'livekit-client';
 import { logger } from '@pawfectmatch/core';
 
 export interface LiveStreamConfig {
@@ -19,7 +28,11 @@ export interface LiveStreamState {
  */
 export type LiveKitEventData =
   | { event: 'trackPublished'; publication: RemoteTrackPublication; participant: RemoteParticipant }
-  | { event: 'trackUnpublished'; publication: RemoteTrackPublication; participant: RemoteParticipant }
+  | {
+      event: 'trackUnpublished';
+      publication: RemoteTrackPublication;
+      participant: RemoteParticipant;
+    }
   | { event: 'participantConnected'; participant: RemoteParticipant }
   | { event: 'participantDisconnected'; participant: RemoteParticipant }
   | { event: 'disconnected' }
@@ -32,8 +45,9 @@ export type LiveKitEventData =
 /**
  * Type-safe event callback handler
  */
-type LiveKitEventCallback<T extends LiveKitEventData['event']> = 
-  (data: Extract<LiveKitEventData, { event: T }>) => void;
+type LiveKitEventCallback<T extends LiveKitEventData['event']> = (
+  data: Extract<LiveKitEventData, { event: T }>,
+) => void;
 
 class LiveKitService {
   private room: Room | null = null;
@@ -54,8 +68,8 @@ class LiveKitService {
       this.setupRoomListeners(room);
       this.room = room;
 
-      logger.info('Connected to LiveKit room', { 
-        name: room.name 
+      logger.info('Connected to LiveKit room', {
+        name: room.name,
       });
 
       return room;
@@ -123,20 +137,20 @@ class LiveKitService {
    */
   private setupRoomListeners(room: Room): void {
     room.on(RoomEvent.TrackPublished, (publication, participant) => {
-      logger.debug('Track published', { 
+      logger.debug('Track published', {
         track: publication.trackSid,
-        participant: participant.identity 
+        participant: participant.identity,
       });
-      
+
       this.emit('trackPublished', { event: 'trackPublished', publication, participant });
     });
 
     room.on(RoomEvent.TrackUnpublished, (publication, participant) => {
-      logger.debug('Track unpublished', { 
+      logger.debug('Track unpublished', {
         track: publication.trackSid,
-        participant: participant.identity 
+        participant: participant.identity,
       });
-      
+
       this.emit('trackUnpublished', { event: 'trackUnpublished', publication, participant });
     });
 
@@ -206,11 +220,12 @@ class LiveKitService {
    * Emit room events
    */
   private emit(event: string, data: LiveKitEventData): void {
-    this.listeners.get(event)?.forEach(callback => { callback(data); });
+    this.listeners.get(event)?.forEach((callback) => {
+      callback(data);
+    });
   }
 }
 
 // Export singleton
 export const liveKitService = new LiveKitService();
 export default liveKitService;
-

@@ -21,32 +21,29 @@ export async function actFlush(ms = 0) {
  * @param condition - Condition function to wait for
  * @param timeout - Max time to wait (default: 1000ms)
  */
-export async function actWaitFor(
-  condition: () => boolean | void,
-  timeout = 1000
-) {
+export async function actWaitFor(condition: () => boolean | void, timeout = 1000) {
   return new Promise<void>((resolve, reject) => {
     const startTime = Date.now();
-    
+
     const check = async () => {
       try {
         if (condition()) {
           resolve();
           return;
         }
-        
+
         if (Date.now() - startTime > timeout) {
           reject(new Error('actWaitFor timeout'));
           return;
         }
-        
+
         await actFlush(10);
         setTimeout(check, 10);
       } catch (error) {
         reject(error);
       }
     };
-    
+
     check();
   });
 }

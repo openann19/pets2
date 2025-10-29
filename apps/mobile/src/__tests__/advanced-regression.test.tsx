@@ -236,7 +236,7 @@ describe('Advanced Regression Test Suite', () => {
       }));
 
       act(() => {
-        updates.forEach(update => {
+        updates.forEach((update) => {
           result.current.applyUpdate(update);
         });
       });
@@ -269,8 +269,8 @@ describe('Advanced Regression Test Suite', () => {
       let callCount = 0;
       mockApi.get.mockImplementation(() => {
         callCount++;
-        return new Promise(resolve =>
-          setTimeout(() => resolve({ data: { callId: callCount } }), 100)
+        return new Promise((resolve) =>
+          setTimeout(() => resolve({ data: { callId: callCount } }), 100),
         );
       });
 
@@ -332,8 +332,12 @@ describe('Advanced Regression Test Suite', () => {
       });
 
       // Should update all nested levels correctly
-      expect(result.current.getNestedValue('user.profile.settings.notifications.matches')).toBe(true);
-      expect(result.current.getNestedValue('user.profile.settings.privacy.showOnlineStatus')).toBe(false);
+      expect(result.current.getNestedValue('user.profile.settings.notifications.matches')).toBe(
+        true,
+      );
+      expect(result.current.getNestedValue('user.profile.settings.privacy.showOnlineStatus')).toBe(
+        false,
+      );
       expect(result.current.updateSuccessful()).toBe(true);
     });
 
@@ -416,7 +420,7 @@ describe('Advanced Regression Test Suite', () => {
 
     it('should handle upload service failures', async () => {
       mockUploadHygieneService.uploadWithRetry.mockRejectedValue(
-        new Error('Upload service unavailable')
+        new Error('Upload service unavailable'),
       );
 
       const { result } = renderHook(() => usePhotoUpload());
@@ -436,7 +440,7 @@ describe('Advanced Regression Test Suite', () => {
 
     it('should handle notification service failures', async () => {
       mockNotificationService.registerForPushNotifications.mockRejectedValue(
-        new Error('Notification service down')
+        new Error('Notification service down'),
       );
 
       const { result } = renderHook(() => useNotifications());
@@ -650,7 +654,7 @@ describe('Advanced Regression Test Suite', () => {
 
     it('should handle malformed image data', async () => {
       mockUploadHygieneService.processImageForUpload.mockRejectedValue(
-        new Error('Invalid image format')
+        new Error('Invalid image format'),
       );
 
       const { result } = renderHook(() => useImageProcessing());
@@ -668,10 +672,12 @@ describe('Advanced Regression Test Suite', () => {
     });
 
     it('should handle database migration failures', async () => {
-      mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify({
-        version: 1,
-        data: 'old format',
-      }));
+      mockAsyncStorage.getItem.mockResolvedValue(
+        JSON.stringify({
+          version: 1,
+          data: 'old format',
+        }),
+      );
 
       // Mock migration failure
       const { result } = renderHook(() => useDataMigration());
@@ -690,7 +696,7 @@ describe('Advanced Regression Test Suite', () => {
 
     it('should handle concurrent data writes', async () => {
       const writeOperations = Array.from({ length: 10 }, (_, i) =>
-        mockAsyncStorage.setItem(`key${i}`, `value${i}`)
+        mockAsyncStorage.setItem(`key${i}`, `value${i}`),
       );
 
       await Promise.all(writeOperations);
@@ -732,9 +738,12 @@ describe('Advanced Regression Test Suite', () => {
         result.current.triggerInfiniteLoop();
       });
 
-      await waitFor(() => {
-        expect(result.current.loopDetected()).toBe(true);
-      }, { timeout: 1000 });
+      await waitFor(
+        () => {
+          expect(result.current.loopDetected()).toBe(true);
+        },
+        { timeout: 1000 },
+      );
 
       // Should recover gracefully
       expect(result.current.recoverySuccessful()).toBe(true);
@@ -822,7 +831,7 @@ describe('Advanced Regression Test Suite', () => {
 
     it('should handle malicious file uploads', async () => {
       mockUploadHygieneService.processImageForUpload.mockRejectedValue(
-        new Error('Malicious content detected')
+        new Error('Malicious content detected'),
       );
 
       const { result } = renderHook(() => useFileUpload());
@@ -863,7 +872,9 @@ describe('Advanced Regression Test Suite', () => {
 
       // Simulate token in URL or clipboard
       act(() => {
-        result.current.detectTokenExposure('https://app.com/token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');
+        result.current.detectTokenExposure(
+          'https://app.com/token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        );
       });
 
       expect(result.current.tokenExposed()).toBe(true);

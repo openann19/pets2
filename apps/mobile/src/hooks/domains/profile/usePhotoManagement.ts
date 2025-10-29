@@ -1,8 +1,8 @@
-import { useCallback, useState } from "react";
-import * as ImagePicker from "expo-image-picker";
-import { Alert } from "react-native";
-import { matchesAPI } from "../../../services/api";
-import { logger } from "@pawfectmatch/core";
+import { useCallback, useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
+import { Alert } from 'react-native';
+import { matchesAPI } from '../../../services/api';
+import { logger } from '@pawfectmatch/core';
 
 export interface PhotoData {
   uri: string;
@@ -39,19 +39,13 @@ export function usePhotoManagement({
   const pickImage = useCallback(async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission needed",
-        "Please grant permission to access your photos",
-      );
+    if (status !== 'granted') {
+      Alert.alert('Permission needed', 'Please grant permission to access your photos');
       return;
     }
 
     if (photos.length >= maxPhotos) {
-      Alert.alert(
-        "Maximum photos reached",
-        `You can only add up to ${maxPhotos} photos`,
-      );
+      Alert.alert('Maximum photos reached', `You can only add up to ${maxPhotos} photos`);
       return;
     }
 
@@ -67,7 +61,7 @@ export function usePhotoManagement({
     if (!result.canceled) {
       const newPhotos: PhotoData[] = result.assets.map((asset: any, index: number) => ({
         uri: asset.uri,
-        type: "image/jpeg",
+        type: 'image/jpeg',
         fileName: `photo-${Date.now()}-${index}.jpg`,
         isPrimary: photos.length === 0 && index === 0,
       }));
@@ -104,7 +98,7 @@ export function usePhotoManagement({
   const uploadPhotos = useCallback(
     async (petId: string): Promise<boolean> => {
       if (photos.length === 0) {
-        Alert.alert("No photos", "Please add at least one photo");
+        Alert.alert('No photos', 'Please add at least one photo');
         return false;
       }
 
@@ -113,26 +107,26 @@ export function usePhotoManagement({
       try {
         const formData = new FormData();
         photos.forEach((photo, index) => {
-          formData.append("photos", {
+          formData.append('photos', {
             uri: photo.uri,
             type: photo.type,
             name: photo.fileName || `photo_${index}.jpg`,
           } as unknown as Blob);
 
           if (photo.isPrimary) {
-            formData.append("primaryIndex", String(index));
+            formData.append('primaryIndex', String(index));
           }
         });
 
         await matchesAPI.uploadPetPhotos(petId, formData);
-        logger.info("Photos uploaded successfully", {
+        logger.info('Photos uploaded successfully', {
           petId,
           photoCount: photos.length,
         });
         return true;
       } catch (err) {
-        logger.error("Failed to upload photos", { error: err, petId });
-        Alert.alert("Error", "Failed to upload photos. Please try again.");
+        logger.error('Failed to upload photos', { error: err, petId });
+        Alert.alert('Error', 'Failed to upload photos. Please try again.');
         return false;
       } finally {
         setIsLoading(false);

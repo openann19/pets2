@@ -24,7 +24,7 @@ export const createPaginatedResponse = <T>(
   items: T[],
   page = 1,
   pageSize = 20,
-  total = items.length
+  total = items.length,
 ) => ({
   success: true,
   data: {

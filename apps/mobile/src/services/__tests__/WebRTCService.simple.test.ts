@@ -43,13 +43,16 @@ describe('WebRTCService - Core Tests', () => {
       const result = await WebRTCService.startCall('user123', 'voice');
 
       expect(result).toBeDefined();
-      expect(mockRequest).toHaveBeenCalledWith('/calls/start', expect.objectContaining({
-        method: 'POST',
-        body: expect.objectContaining({
-          targetUserId: 'user123',
-          callType: 'voice',
+      expect(mockRequest).toHaveBeenCalledWith(
+        '/calls/start',
+        expect.objectContaining({
+          method: 'POST',
+          body: expect.objectContaining({
+            targetUserId: 'user123',
+            callType: 'voice',
+          }),
         }),
-      }));
+      );
     });
 
     it('should start video call successfully', async () => {
@@ -58,19 +61,24 @@ describe('WebRTCService - Core Tests', () => {
       const result = await WebRTCService.startCall('user456', 'video');
 
       expect(result).toBeDefined();
-      expect(mockRequest).toHaveBeenCalledWith('/calls/start', expect.objectContaining({
-        method: 'POST',
-        body: expect.objectContaining({
-          targetUserId: 'user456',
-          callType: 'video',
+      expect(mockRequest).toHaveBeenCalledWith(
+        '/calls/start',
+        expect.objectContaining({
+          method: 'POST',
+          body: expect.objectContaining({
+            targetUserId: 'user456',
+            callType: 'video',
+          }),
         }),
-      }));
+      );
     });
 
     it('should handle call start errors', async () => {
       mockRequest.mockRejectedValueOnce(new Error('User not available'));
 
-      await expect(WebRTCService.startCall('user123', 'voice')).rejects.toThrow('User not available');
+      await expect(WebRTCService.startCall('user123', 'voice')).rejects.toThrow(
+        'User not available',
+      );
     });
 
     it('should end call successfully', async () => {

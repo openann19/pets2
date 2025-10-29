@@ -4,8 +4,8 @@
  * Uses @shopify/react-native-skia if available, otherwise falls back to ImageManipulator.
  */
 
-import * as ImageManipulator from "expo-image-manipulator";
-import * as FileSystem from "expo-file-system";
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as FileSystem from 'expo-file-system';
 
 /**
  * Lazy load Skia to avoid bundling if not installed
@@ -15,7 +15,7 @@ import * as FileSystem from "expo-file-system";
 async function loadSkia(): Promise<any> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-explicit-any
-    return require("@shopify/react-native-skia");
+    return require('@shopify/react-native-skia');
   } catch {
     return null;
   }
@@ -33,7 +33,7 @@ export interface TileUpscaleOpts {
   /** Output JPEG quality 0..1 */
   quality?: number;
   /** Output format */
-  format?: "jpg" | "png" | "webp";
+  format?: 'jpg' | 'png' | 'webp';
 }
 
 /**
@@ -42,7 +42,7 @@ export interface TileUpscaleOpts {
 function computeTargetDimensions(
   srcW: number,
   srcH: number,
-  opts: TileUpscaleOpts
+  opts: TileUpscaleOpts,
 ): { outW: number; outH: number } {
   const { scale, targetW, targetH } = opts;
 
@@ -80,7 +80,7 @@ function computeTargetDimensions(
 /**
  * Tile-based upscaler for large images
  * Processes the image in chunks to avoid memory issues
- * 
+ *
  * @param uri - Source image URI
  * @param srcW - Source image width
  * @param srcH - Source image height
@@ -91,10 +91,10 @@ export async function tileUpscale(
   uri: string,
   srcW: number,
   srcH: number,
-  opts: TileUpscaleOpts = {}
+  opts: TileUpscaleOpts = {},
 ): Promise<string> {
   const Skia = await loadSkia();
-  const { tile = 1024, overlap = 12, quality = 1, format = "jpg", ...rest } = opts;
+  const { tile = 1024, overlap = 12, quality = 1, format = 'jpg', ...rest } = opts;
 
   const { outW, outH } = computeTargetDimensions(srcW, srcH, rest);
 
@@ -106,10 +106,8 @@ export async function tileUpscale(
       {
         compress: quality,
         format:
-          format === "png"
-            ? ImageManipulator.SaveFormat.PNG
-            : ImageManipulator.SaveFormat.JPEG,
-      }
+          format === 'png' ? ImageManipulator.SaveFormat.PNG : ImageManipulator.SaveFormat.JPEG,
+      },
     );
     return result.uri;
   }
@@ -119,7 +117,7 @@ export async function tileUpscale(
   // Load image bytes
   const data = await S.Data.fromURI(uri);
   const img = S.Image.MakeImageFromEncoded(data);
-  
+
   if (!img) {
     // Fallback on load failure
     const result = await ImageManipulator.manipulateAsync(
@@ -128,14 +126,14 @@ export async function tileUpscale(
       {
         compress: quality,
         format: ImageManipulator.SaveFormat.JPEG,
-      }
+      },
     );
     return result.uri;
   }
 
   // Create output surface
   const surface = S.Surface.MakeSurface(Math.round(outW), Math.round(outH));
-  
+
   if (!surface) {
     const result = await ImageManipulator.manipulateAsync(
       uri,
@@ -143,14 +141,14 @@ export async function tileUpscale(
       {
         compress: quality,
         format: ImageManipulator.SaveFormat.JPEG,
-      }
+      },
     );
     return result.uri;
   }
 
   const canvas = surface.getCanvas();
   const paint = S.Paint();
-  paint.setFilterQuality("high");
+  paint.setFilterQuality('high');
 
   // Draw tiles with overlap to prevent seams
   const sxStep = tile - overlap;
@@ -174,12 +172,9 @@ export async function tileUpscale(
 
   const snapshot = surface.makeImageSnapshot();
   const base64 =
-    format === "png"
+    format === 'png'
       ? snapshot.encodeToBase64()
-      : snapshot.encodeToBase64(
-          S.ImageFormat.JPEG,
-          Math.round(quality * 100)
-        );
+      : snapshot.encodeToBase64(S.ImageFormat.JPEG, Math.round(quality * 100));
 
   const outPath = `${FileSystem.cacheDirectory}up_${Date.now()}.${format}`;
   await FileSystem.writeAsStringAsync(outPath, base64, {
@@ -193,23 +188,19 @@ export async function tileUpscale(
  * Simplified upscale without requiring source dimensions
  * Automatically detects source size using RNImage
  */
-export async function tileUpscaleAuto(
-  uri: string,
-  opts: TileUpscaleOpts = {}
-): Promise<string> {
+export async function tileUpscaleAuto(uri: string, opts: TileUpscaleOpts = {}): Promise<string> {
   // Get source dimensions
-  const { Image } = await import("react-native");
-  
+  const { Image } = await import('react-native');
+
   return new Promise((resolve, reject) => {
     Image.getSize(
       uri,
       (width, height) => {
-        tileUpscale(uri, width, height, opts)
-          .then(resolve)
-          .catch(reject);
+        tileUpscale(uri, width, height, opts).then(resolve).catch(reject);
       },
-      (error) => { reject(error); }
+      (error) => {
+        reject(error);
+      },
     );
   });
 }
-

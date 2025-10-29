@@ -1,10 +1,10 @@
 /**
  * Voice Note Recorder Component - Platform-Specific Wrapper
- * 
+ *
  * Uses the new Ultra stack with platform-specific implementations:
  * - Web: VoiceRecorderUltraWeb (client-side DSP + Web Speech API)
  * - Native: VoiceRecorderUltraNative (Expo AV recording)
- * 
+ *
  * Features:
  * - Press & hold to record
  * - Slide left to cancel
@@ -13,11 +13,11 @@
  * - Web: Auto-trim silence + normalize + transcription
  */
 
-import React from "react";
-import { Platform } from "react-native";
-import { chatService } from "../../services/chatService";
-import VoiceRecorderUltraWeb from "../voice/VoiceRecorderUltra.web";
-import VoiceRecorderUltraNative from "../voice/VoiceRecorderUltra.native";
+import React from 'react';
+import { Platform } from 'react-native';
+import { chatService } from '../../services/chatService';
+import VoiceRecorderUltraWeb from '../voice/VoiceRecorderUltra.web';
+import VoiceRecorderUltraNative from '../voice/VoiceRecorderUltra.native';
 
 interface VoiceRecorderProps {
   matchId: string;
@@ -38,7 +38,7 @@ export function VoiceRecorder({
   minDurationSec = 1,
 }: VoiceRecorderProps): React.JSX.Element {
   // Platform-specific rendering
-  if (Platform.OS === "web") {
+  if (Platform.OS === 'web') {
     return (
       <VoiceRecorderUltraWeb
         matchId={matchId}

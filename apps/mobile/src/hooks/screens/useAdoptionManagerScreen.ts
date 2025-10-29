@@ -4,12 +4,18 @@
  * Handles tab switching, data loading, status changes, and application actions
  */
 
-import { useState, useEffect, useCallback } from "react";
-import { Alert } from "react-native";
-import { useSharedValue, useAnimatedStyle, withSpring, type SharedValue, type AnimatedStyle } from "react-native-reanimated";
-import { logger } from "@pawfectmatch/core";
-import { adoptionAPI } from "../../services/api";
-import type { RootStackScreenProps } from "../../navigation/types";
+import { useState, useEffect, useCallback } from 'react';
+import { Alert } from 'react-native';
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  type SharedValue,
+  type AnimatedStyle,
+} from 'react-native-reanimated';
+import { logger } from '@pawfectmatch/core';
+import { adoptionAPI } from '../../services/api';
+import type { RootStackScreenProps } from '../../navigation/types';
 
 export interface PetListing {
   id: string;
@@ -17,7 +23,7 @@ export interface PetListing {
   species: string;
   breed: string;
   age: number;
-  status: "active" | "pending" | "adopted" | "paused";
+  status: 'active' | 'pending' | 'adopted' | 'paused';
   photos: string[];
   applications: number;
   views: number;
@@ -31,7 +37,7 @@ export interface AdoptionApplication {
   petName: string;
   applicantName: string;
   applicantEmail: string;
-  status: "pending" | "approved" | "rejected" | "withdrawn";
+  status: 'pending' | 'approved' | 'rejected' | 'withdrawn';
   submittedAt: string;
   experience: string;
   livingSpace: string;
@@ -40,7 +46,7 @@ export interface AdoptionApplication {
 
 interface UseAdoptionManagerScreenReturn {
   // State
-  activeTab: "listings" | "applications";
+  activeTab: 'listings' | 'applications';
   refreshing: boolean;
   showStatusModal: boolean;
   selectedPet: PetListing | null;
@@ -48,32 +54,26 @@ interface UseAdoptionManagerScreenReturn {
   error: string | null;
   petListings: PetListing[];
   applications: AdoptionApplication[];
-  
+
   // Actions
-  setActiveTab: (tab: "listings" | "applications") => void;
+  setActiveTab: (tab: 'listings' | 'applications') => void;
   setShowStatusModal: (show: boolean) => void;
   setSelectedPet: (pet: PetListing | null) => void;
-  
+
   // Handlers
   onRefresh: () => Promise<void>;
-  handleTabPress: (
-    tab: "listings" | "applications",
-    scaleValue: SharedValue<number>,
-  ) => void;
+  handleTabPress: (tab: 'listings' | 'applications', scaleValue: SharedValue<number>) => void;
   handleStatusChange: (pet: PetListing, newStatus: string) => void;
-  handleApplicationAction: (
-    applicationId: string,
-    action: "approve" | "reject",
-  ) => void;
-  
+  handleApplicationAction: (applicationId: string, action: 'approve' | 'reject') => void;
+
   // Helpers
   getStatusColor: (status: string) => string;
   getStatusIcon: (status: string) => string;
-  
+
   // Animated styles
   tabAnimatedStyle1: AnimatedStyle<any>;
   tabAnimatedStyle2: AnimatedStyle<any>;
-  
+
   // Shared values
   tabScale1: SharedValue<number>;
   tabScale2: SharedValue<number>;
@@ -85,85 +85,78 @@ const SPRING_CONFIG = {
   mass: 1,
 };
 
-const VALID_LISTING_STATUSES = new Set<PetListing["status"]>([
-  "active",
-  "pending",
-  "adopted",
-  "paused",
+const VALID_LISTING_STATUSES = new Set<PetListing['status']>([
+  'active',
+  'pending',
+  'adopted',
+  'paused',
 ]);
 
 const normalizeListing = (listing: unknown): PetListing => {
   const item = listing as Record<string, unknown>;
-  const id = (item.id ?? item._id ?? "") as string;
+  const id = (item.id ?? item._id ?? '') as string;
 
   return {
     id,
-    name: (item.name as string) ?? "Unknown Pet",
-    species: (item.species as string) ?? "Unknown",
-    breed: (item.breed as string) ?? "Unknown",
-    age: typeof item.age === "number" ? item.age : 0,
-    status: VALID_LISTING_STATUSES.has(item.status as PetListing["status"])
-      ? (item.status as PetListing["status"])
-      : "pending",
-    photos: Array.isArray(item.photos)
-      ? (item.photos as string[])
-      : [],
-    applications: typeof item.applications === "number" ? item.applications : 0,
-    views: typeof item.views === "number" ? item.views : 0,
-    featured: typeof item.featured === "boolean" ? item.featured : false,
-    listedAt:
-      typeof item.listedAt === "string"
-        ? (item.listedAt)
-        : new Date().toISOString(),
+    name: (item.name as string) ?? 'Unknown Pet',
+    species: (item.species as string) ?? 'Unknown',
+    breed: (item.breed as string) ?? 'Unknown',
+    age: typeof item.age === 'number' ? item.age : 0,
+    status: VALID_LISTING_STATUSES.has(item.status as PetListing['status'])
+      ? (item.status as PetListing['status'])
+      : 'pending',
+    photos: Array.isArray(item.photos) ? (item.photos as string[]) : [],
+    applications: typeof item.applications === 'number' ? item.applications : 0,
+    views: typeof item.views === 'number' ? item.views : 0,
+    featured: typeof item.featured === 'boolean' ? item.featured : false,
+    listedAt: typeof item.listedAt === 'string' ? item.listedAt : new Date().toISOString(),
   };
 };
 
 const normalizeApplication = (application: unknown): AdoptionApplication => {
   const item = application as Record<string, unknown>;
-  const status = item.status as AdoptionApplication["status"];
+  const status = item.status as AdoptionApplication['status'];
 
   return {
-    id: (item.id ?? item._id ?? "") as string,
-    petId: (item.petId ?? "") as string,
-    petName:
-      (item.petName as string) ?? ((item.pet as { name?: string })?.name ?? "Unknown"),
+    id: (item.id ?? item._id ?? '') as string,
+    petId: (item.petId ?? '') as string,
+    petName: (item.petName as string) ?? (item.pet as { name?: string })?.name ?? 'Unknown',
     applicantName:
       (item.applicantName as string) ??
-      ((item.applicant as { name?: string })?.name ?? "Pending Applicant"),
+      (item.applicant as { name?: string })?.name ??
+      'Pending Applicant',
     applicantEmail:
       (item.applicantEmail as string) ??
-      ((item.applicant as { email?: string })?.email ?? "unknown@example.com"),
+      (item.applicant as { email?: string })?.email ??
+      'unknown@example.com',
     status:
-      status && ["pending", "approved", "rejected", "withdrawn"].includes(status)
+      status && ['pending', 'approved', 'rejected', 'withdrawn'].includes(status)
         ? status
-        : "pending",
-    submittedAt:
-      typeof item.submittedAt === "string"
-        ? (item.submittedAt)
-        : new Date().toISOString(),
+        : 'pending',
+    submittedAt: typeof item.submittedAt === 'string' ? item.submittedAt : new Date().toISOString(),
     experience:
       (item.experience as string) ??
-      ((item.applicationData as { experience?: string })?.experience ?? ""),
+      (item.applicationData as { experience?: string })?.experience ??
+      '',
     livingSpace:
       (item.livingSpace as string) ??
-      ((item.applicationData as { livingSituation?: string })?.livingSituation ?? ""),
+      (item.applicationData as { livingSituation?: string })?.livingSituation ??
+      '',
     references:
-      typeof item.references === "number"
+      typeof item.references === 'number'
         ? item.references
         : ((item.applicationData as { references?: number })?.references ?? 0),
   };
 };
 
 export const useAdoptionManagerScreen = (): UseAdoptionManagerScreenReturn => {
-  const [activeTab, setActiveTab] = useState<"listings" | "applications">(
-    "listings",
-  );
+  const [activeTab, setActiveTab] = useState<'listings' | 'applications'>('listings');
   const [refreshing, setRefreshing] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<PetListing | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Real data fetched from backend API
   const [petListings, setPetListings] = useState<PetListing[]>([]);
   const [applications, setApplications] = useState<AdoptionApplication[]>([]);
@@ -185,7 +178,7 @@ export const useAdoptionManagerScreen = (): UseAdoptionManagerScreenReturn => {
     setIsLoading(true);
     setError(null);
     try {
-      if (activeTab === "listings") {
+      if (activeTab === 'listings') {
         const listingsData = await adoptionAPI.getListings();
         setPetListings(listingsData.map(normalizeListing));
       } else {
@@ -193,11 +186,8 @@ export const useAdoptionManagerScreen = (): UseAdoptionManagerScreenReturn => {
         setApplications(applicationsData.map(normalizeApplication));
       }
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Failed to load data. Please try again.";
-      logger.error("Failed to load adoption data:", { error: err });
+      const message = err instanceof Error ? err.message : 'Failed to load data. Please try again.';
+      logger.error('Failed to load adoption data:', { error: err });
       setError(message);
     } finally {
       setIsLoading(false);
@@ -215,10 +205,7 @@ export const useAdoptionManagerScreen = (): UseAdoptionManagerScreenReturn => {
   }, [loadData]);
 
   const handleTabPress = useCallback(
-    (
-      tab: "listings" | "applications",
-      scaleValue: SharedValue<number>,
-    ) => {
+    (tab: 'listings' | 'applications', scaleValue: SharedValue<number>) => {
       setActiveTab(tab);
       scaleValue.value = withSpring(0.95, SPRING_CONFIG, () => {
         scaleValue.value = withSpring(1, SPRING_CONFIG);
@@ -229,36 +216,29 @@ export const useAdoptionManagerScreen = (): UseAdoptionManagerScreenReturn => {
 
   const handleStatusChange = useCallback((pet: PetListing, newStatus: string) => {
     setPetListings((prev) =>
-      prev.map((p) =>
-        p.id === pet.id
-          ? { ...p, status: newStatus as PetListing["status"] }
-          : p,
-      ),
+      prev.map((p) => (p.id === pet.id ? { ...p, status: newStatus as PetListing['status'] } : p)),
     );
     setShowStatusModal(false);
     setSelectedPet(null);
   }, []);
 
   const handleApplicationAction = useCallback(
-    (
-      applicationId: string,
-      action: "approve" | "reject",
-    ) => {
+    (applicationId: string, action: 'approve' | 'reject') => {
       Alert.alert(
-        `${action === "approve" ? "Approve" : "Reject"} Application`,
+        `${action === 'approve' ? 'Approve' : 'Reject'} Application`,
         `Are you sure you want to ${action} this application?`,
         [
-          { text: "Cancel", style: "cancel" },
+          { text: 'Cancel', style: 'cancel' },
           {
-            text: action === "approve" ? "Approve" : "Reject",
-            style: action === "approve" ? "default" : "destructive",
+            text: action === 'approve' ? 'Approve' : 'Reject',
+            style: action === 'approve' ? 'default' : 'destructive',
             onPress: () => {
               setApplications((prev) =>
                 prev.map((app) =>
                   app.id === applicationId
                     ? {
                         ...app,
-                        status: action === "approve" ? "approved" : "rejected",
+                        status: action === 'approve' ? 'approved' : 'rejected',
                       }
                     : app,
                 ),
@@ -273,39 +253,39 @@ export const useAdoptionManagerScreen = (): UseAdoptionManagerScreenReturn => {
 
   const getStatusColor = useCallback((status: string) => {
     switch (status) {
-      case "active":
-        return "#10b981"; // success color
-      case "pending":
-        return "#f59e0b"; // warning color
-      case "adopted":
-        return "#8b5cf6";
-      case "paused":
-        return "#6b7280"; // neutral[500]
-      case "approved":
-        return "#10b981"; // success color
-      case "rejected":
-        return "#ef4444"; // error color
+      case 'active':
+        return '#10b981'; // success color
+      case 'pending':
+        return '#f59e0b'; // warning color
+      case 'adopted':
+        return '#8b5cf6';
+      case 'paused':
+        return '#6b7280'; // neutral[500]
+      case 'approved':
+        return '#10b981'; // success color
+      case 'rejected':
+        return '#ef4444'; // error color
       default:
-        return "#6b7280"; // neutral[500]
+        return '#6b7280'; // neutral[500]
     }
   }, []);
 
   const getStatusIcon = useCallback((status: string) => {
     switch (status) {
-      case "active":
-        return "✅";
-      case "pending":
-        return "⏳";
-      case "adopted":
-        return "🏠";
-      case "paused":
-        return "⏸️";
-      case "approved":
-        return "✅";
-      case "rejected":
-        return "❌";
+      case 'active':
+        return '✅';
+      case 'pending':
+        return '⏳';
+      case 'adopted':
+        return '🏠';
+      case 'paused':
+        return '⏸️';
+      case 'approved':
+        return '✅';
+      case 'rejected':
+        return '❌';
       default:
-        return "❓";
+        return '❓';
     }
   }, []);
 
@@ -319,12 +299,12 @@ export const useAdoptionManagerScreen = (): UseAdoptionManagerScreenReturn => {
     error,
     petListings,
     applications,
-    
+
     // Actions
     setActiveTab,
     setShowStatusModal,
     setSelectedPet,
-    
+
     // Handlers
     onRefresh,
     handleTabPress,
@@ -332,14 +312,13 @@ export const useAdoptionManagerScreen = (): UseAdoptionManagerScreenReturn => {
     handleApplicationAction,
     getStatusColor,
     getStatusIcon,
-    
+
     // Animated styles
     tabAnimatedStyle1,
     tabAnimatedStyle2,
-    
+
     // Shared values for tab animations
     tabScale1,
     tabScale2,
   };
 };
-

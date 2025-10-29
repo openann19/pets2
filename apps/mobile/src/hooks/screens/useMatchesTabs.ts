@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 
-export type MatchesTab = "matches" | "likedYou";
+export type MatchesTab = 'matches' | 'likedYou';
 
 export interface UseMatchesTabsReturn {
   activeTab: MatchesTab;
@@ -10,9 +10,7 @@ export interface UseMatchesTabsReturn {
 /**
  * Hook for managing MatchesScreen tab state
  */
-export function useMatchesTabs(
-  initialTab: MatchesTab = "matches",
-): UseMatchesTabsReturn {
+export function useMatchesTabs(initialTab: MatchesTab = 'matches'): UseMatchesTabsReturn {
   const [activeTab, setActiveTab] = useState<MatchesTab>(initialTab);
 
   return {

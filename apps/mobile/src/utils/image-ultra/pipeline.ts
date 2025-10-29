@@ -2,7 +2,7 @@
  * Ultra Image Processing Pipeline
  * Tile-based upscaling, denoising, sharpening, and adaptive export
  * All operations work on HTMLCanvasElement (web) or can be adapted for RN
- * 
+ *
  * Key features:
  * - Tile-based upscaling for 4K-safe memory usage
  * - Median denoise for low-light images
@@ -12,15 +12,15 @@
  * - WebP thumbnail generation
  */
 
-import { medianDenoise, unsharpMask } from "./filters";
-import { ssimApprox } from "./ssim";
+import { medianDenoise, unsharpMask } from './filters';
+import { ssimApprox } from './ssim';
 
 export type PipelineOptions = {
   upscale?: { scale: number; tileSize?: number };
   denoise?: { radius?: number }; // median
   sharpen?: { radiusPx?: number; amount?: number; threshold?: number };
   export?: {
-    target: "jpeg" | "webp" | "png";
+    target: 'jpeg' | 'webp' | 'png';
     adaptive?: {
       baselineCanvas: HTMLCanvasElement;
       targetSSIM: number;
@@ -35,17 +35,15 @@ export type PipelineOptions = {
  * Load image blob to canvas with EXIF orientation correction
  * Strips EXIF by re-encoding (privacy-first)
  */
-export async function loadImageToCanvas(
-  blob: Blob
-): Promise<HTMLCanvasElement> {
+export async function loadImageToCanvas(blob: Blob): Promise<HTMLCanvasElement> {
   const bmp = await createImageBitmap(blob, {
-    imageOrientation: "from-image",
-    premultiplyAlpha: "default",
+    imageOrientation: 'from-image',
+    premultiplyAlpha: 'default',
   });
-  const c = document.createElement("canvas");
+  const c = document.createElement('canvas');
   c.width = bmp.width;
   c.height = bmp.height;
-  const ctx = c.getContext("2d")!;
+  const ctx = c.getContext('2d')!;
   ctx.drawImage(bmp, 0, 0);
   bmp.close?.();
   return c;
@@ -54,7 +52,7 @@ export async function loadImageToCanvas(
 /**
  * Tile-based upscale for large images (4K-safe)
  * Processes image in tiles to avoid OOM on mobile devices
- * 
+ *
  * @param src - Source canvas
  * @param scale - Scale factor (e.g., 2 for 2x upscale)
  * @param tile - Tile size in source pixels (default: 512)
@@ -62,30 +60,30 @@ export async function loadImageToCanvas(
 export function tileUpscaleCanvas(
   src: HTMLCanvasElement,
   scale = 2,
-  tile = 512
+  tile = 512,
 ): HTMLCanvasElement {
-  const out = document.createElement("canvas");
+  const out = document.createElement('canvas');
   out.width = Math.round(src.width * scale);
   out.height = Math.round(src.height * scale);
-  const octx = out.getContext("2d")!;
+  const octx = out.getContext('2d')!;
   octx.imageSmoothingEnabled = true;
-  octx.imageSmoothingQuality = "high";
+  octx.imageSmoothingQuality = 'high';
 
   const sw = src.width;
   const sh = src.height;
   const tw = tile;
   const th = tile;
-  const sctx = src.getContext("2d")!;
+  const sctx = src.getContext('2d')!;
 
   for (let y = 0; y < sh; y += th) {
     const h = Math.min(th, sh - y);
     for (let x = 0; x < sw; x += tw) {
       const w = Math.min(tw, sw - x);
       const img = sctx.getImageData(x, y, w, h);
-      const tmp = document.createElement("canvas");
+      const tmp = document.createElement('canvas');
       tmp.width = w;
       tmp.height = h;
-      tmp.getContext("2d")!.putImageData(img, 0, 0);
+      tmp.getContext('2d')!.putImageData(img, 0, 0);
       octx.drawImage(tmp, x * scale, y * scale, w * scale, h * scale);
     }
   }
@@ -95,25 +93,21 @@ export function tileUpscaleCanvas(
 
 /**
  * Process image through full pipeline
- * 
+ *
  * @param input - Input blob
  * @param opts - Pipeline options
  * @returns Processed blob, report, and canvas
  */
 export async function processImagePipeline(
   input: Blob,
-  opts: PipelineOptions
+  opts: PipelineOptions,
 ): Promise<{ blob: Blob; report: any; canvas: HTMLCanvasElement }> {
   let canvas = await loadImageToCanvas(input);
   const report: any = {};
 
   // Upscale (tile-based for large images)
   if (opts.upscale) {
-    canvas = tileUpscaleCanvas(
-      canvas,
-      opts.upscale.scale,
-      opts.upscale.tileSize ?? 512
-    );
+    canvas = tileUpscaleCanvas(canvas, opts.upscale.scale, opts.upscale.tileSize ?? 512);
     report.upscale = {
       scale: opts.upscale.scale,
       tileSize: opts.upscale.tileSize ?? 512,
@@ -132,7 +126,7 @@ export async function processImagePipeline(
       canvas,
       opts.sharpen.radiusPx ?? 2,
       opts.sharpen.amount ?? 0.6,
-      opts.sharpen.threshold ?? 3
+      opts.sharpen.threshold ?? 3,
     );
     report.sharpen = opts.sharpen;
   }
@@ -140,9 +134,11 @@ export async function processImagePipeline(
   // Export
   if (!opts.export) {
     // Default: PNG (lossless, EXIF stripped)
-    const blob = await new Promise<Blob>((r) =>
-      { canvas.toBlob((b) => { r(b!); }, "image/png"); }
-    );
+    const blob = await new Promise<Blob>((r) => {
+      canvas.toBlob((b) => {
+        r(b!);
+      }, 'image/png');
+    });
     return { blob, report, canvas };
   }
 
@@ -159,9 +155,15 @@ export async function processImagePipeline(
 
     for (let iter = 0; iter < 7; iter++) {
       const q = (lo + hi) / 2;
-      const candidate = await new Promise<Blob>((r) =>
-        { canvas.toBlob((b) => { r(b!); }, mime(target), q); }
-      );
+      const candidate = await new Promise<Blob>((r) => {
+        canvas.toBlob(
+          (b) => {
+            r(b!);
+          },
+          mime(target),
+          q,
+        );
+      });
       const compCanvas = await loadImageToCanvas(candidate);
       const ssim = await ssimApprox(opts.export.adaptive.baselineCanvas, compCanvas);
 
@@ -179,12 +181,18 @@ export async function processImagePipeline(
 
     const blob =
       bestBlob ??
-      (await new Promise<Blob>((r) =>
-        { canvas.toBlob((b) => { r(b!); }, mime(target), maxQ); }
-      ));
+      (await new Promise<Blob>((r) => {
+        canvas.toBlob(
+          (b) => {
+            r(b!);
+          },
+          mime(target),
+          maxQ,
+        );
+      }));
 
     report.export = {
-      mode: "adaptive-ssim",
+      mode: 'adaptive-ssim',
       targetSSIM: opts.export.adaptive.targetSSIM,
       quality: round2(bestQ),
       ssim: round3(bestSSIM),
@@ -196,16 +204,18 @@ export async function processImagePipeline(
   // Simple export
   const target = opts.export?.target ?? 'png';
   const quality = opts.export?.quality ?? 0.9;
-  const blob = await new Promise<Blob>((r) =>
-    { canvas.toBlob(
-      (b) => { r(b!); },
+  const blob = await new Promise<Blob>((r) => {
+    canvas.toBlob(
+      (b) => {
+        r(b!);
+      },
       mime(target),
-      quality
-    ); }
-  );
+      quality,
+    );
+  });
 
   report.export = {
-    mode: "fixed",
+    mode: 'fixed',
     target: opts.export.target,
     quality: opts.export.quality ?? 0.9,
   };
@@ -213,13 +223,8 @@ export async function processImagePipeline(
   return { blob, report, canvas };
 }
 
-const mime = (t: "jpeg" | "webp" | "png") =>
-  t === "jpeg"
-    ? "image/jpeg"
-    : t === "webp"
-      ? "image/webp"
-      : "image/png";
+const mime = (t: 'jpeg' | 'webp' | 'png') =>
+  t === 'jpeg' ? 'image/jpeg' : t === 'webp' ? 'image/webp' : 'image/png';
 
 const round2 = (v: number) => Math.round(v * 100) / 100;
 const round3 = (v: number) => Math.round(v * 1000) / 1000;
-

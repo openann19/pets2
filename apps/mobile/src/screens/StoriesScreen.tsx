@@ -123,7 +123,7 @@ export default function StoriesScreen() {
   if (!currentGroup || !currentStory) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.secondary[500]} }/>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
@@ -202,7 +202,7 @@ export default function StoriesScreen() {
           <View style={styles.headerActions}>
             {/* View Count */}
             <View style={styles.viewCount}>
-              <Ionicons name="eye" size={16} color={theme.colors.neutral[0]} }/>
+              <Ionicons name="eye" size={16} color={theme.colors.onSurface} />
               <Text style={styles.viewCountText}>{viewCount}</Text>
             </View>
 
@@ -220,8 +220,8 @@ export default function StoriesScreen() {
                 <Ionicons
                   name={isMuted ? "volume-mute" : "volume-high"}
                   size={24}
-                  color={theme.colors.neutral[0]
-                  accessibilityLabel={isMuted ? "Muted icon" : "Unmuted icon}"}
+                  color={theme.colors.onSurface}
+                  accessibilityLabel={isMuted ? "Muted icon" : "Unmuted icon"}
                 />
               </TouchableOpacity>
             )}
@@ -237,9 +237,9 @@ export default function StoriesScreen() {
               <Ionicons 
                 name="close" 
                 size={24} 
-                color={theme.colors.neutral[0]
+                color={theme.colors.onSurface}
                 accessibilityLabel="Close icon"
-             } }/>
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: "100%",
-    backgroundColor: theme.colors.neutral[0],
+    backgroundColor: theme.colors.surface,
     borderRadius: 2,
   },
   header: {
@@ -315,10 +315,10 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: theme.colors.neutral[0],
+    borderColor: theme.colors.border,
   },
   username: {
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
     fontSize: 14,
     fontWeight: "600",
   },
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   viewCountText: {
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
     fontSize: 12,
     fontWeight: "600",
   },
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   caption: {
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
     fontSize: 14,
     textAlign: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",

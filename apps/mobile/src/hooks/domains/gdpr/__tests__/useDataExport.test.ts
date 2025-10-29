@@ -168,7 +168,7 @@ describe('useDataExport', () => {
 
     it('should handle export in progress state', async () => {
       let resolveExport: (value: any) => void;
-      const exportPromise = new Promise(resolve => {
+      const exportPromise = new Promise((resolve) => {
         resolveExport = resolve;
       });
 
@@ -251,7 +251,7 @@ describe('useDataExport', () => {
         expect.any(String),
         expect.objectContaining({
           to: expect.stringContaining('gdpr-export'),
-        })
+        }),
       );
 
       expect(result.current.isDownloading).toBe(false);
@@ -271,7 +271,7 @@ describe('useDataExport', () => {
 
     it('should handle download in progress state', async () => {
       let resolveDownload: (value: any) => void;
-      const downloadPromise = new Promise(resolve => {
+      const downloadPromise = new Promise((resolve) => {
         resolveDownload = resolve;
       });
 
@@ -351,10 +351,7 @@ describe('useDataExport', () => {
         await result.current.exportData();
       });
 
-      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        'gdpr_export_data',
-        expect.any(String)
-      );
+      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith('gdpr_export_data', expect.any(String));
 
       const cachedData = JSON.parse(mockAsyncStorage.setItem.mock.calls[0][1]);
       expect(cachedData.exportData).toEqual(mockExportResponse.exportData);
@@ -479,7 +476,7 @@ describe('useDataExport', () => {
         expect.any(String),
         expect.objectContaining({
           to: expect.stringContaining('gdpr-export-export-123'),
-        })
+        }),
       );
     });
 
@@ -506,7 +503,7 @@ describe('useDataExport', () => {
   describe('Concurrent Operations', () => {
     it('should prevent concurrent exports', async () => {
       let resolveExport: (value: any) => void;
-      const exportPromise = new Promise(resolve => {
+      const exportPromise = new Promise((resolve) => {
         resolveExport = resolve;
       });
 
@@ -581,7 +578,10 @@ describe('useDataExport', () => {
     it('should handle very large export data', async () => {
       const largeExportData = {
         profile: { name: 'A'.repeat(1000) },
-        matches: Array.from({ length: 500 }, (_, i) => ({ id: `match${i}`, data: 'x'.repeat(100) })),
+        matches: Array.from({ length: 500 }, (_, i) => ({
+          id: `match${i}`,
+          data: 'x'.repeat(100),
+        })),
       };
 
       const largeResponse = {

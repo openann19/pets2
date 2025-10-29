@@ -53,15 +53,15 @@ export async function generateBio(params: BioGenerationParams): Promise<string> 
   if (!params.petName || params.petName.trim().length === 0) {
     throw new Error('Pet name is required and cannot be empty');
   }
-  
+
   if (!params.keywords || params.keywords.length === 0) {
     throw new Error('At least one keyword is required');
   }
-  
-  if (params.keywords.some(keyword => !keyword || keyword.trim().length === 0)) {
+
+  if (params.keywords.some((keyword) => !keyword || keyword.trim().length === 0)) {
     throw new Error('All keywords must be non-empty strings');
   }
-  
+
   const { request } = await import('./api');
   const response = await request<BioGenerationResult>('/ai/generate-bio', {
     method: 'POST',

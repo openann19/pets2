@@ -1,13 +1,16 @@
 # Tab Navigation Comprehensive Test Suite
 
-This directory contains comprehensive tests for the ActivePillTabBar and related navigation functionality.
+This directory contains comprehensive tests for the ActivePillTabBar and related
+navigation functionality.
 
 ## Test Files
 
 ### 1. `ActivePillTabBar.test.tsx`
+
 **Purpose**: Unit tests for the ActivePillTabBar component
 
 **Coverage**:
+
 - ✅ Component rendering with all tabs
 - ✅ Icon display and state changes
 - ✅ Tab navigation logic
@@ -24,6 +27,7 @@ This directory contains comprehensive tests for the ActivePillTabBar and related
 - ✅ Haptic feedback error handling
 
 **Key Features Tested**:
+
 - Spring physics animations for indicator
 - Icon bounce animations on press
 - Haptic feedback integration
@@ -32,9 +36,11 @@ This directory contains comprehensive tests for the ActivePillTabBar and related
 - Navigation event emission
 
 ### 2. `ActivePillTabBar.integration.test.tsx`
+
 **Purpose**: Integration tests for complete user flows
 
 **Coverage**:
+
 - ✅ Complete tab navigation lifecycle
 - ✅ Rapid tab switching
 - ✅ Double-tap detection integration
@@ -49,15 +55,18 @@ This directory contains comprehensive tests for the ActivePillTabBar and related
 - ✅ Error handling and graceful degradation
 
 **Key Integration Tests**:
+
 - Tab navigation → animation → haptic feedback
 - Double-tap → event emission → callback execution
 - State changes → indicator animation → icon updates
 - Theme changes → style updates → re-renders
 
 ### 3. `TabNavigation.screen-integration.test.tsx`
+
 **Purpose**: Screen-level integration with double-tap functionality
 
 **Coverage**:
+
 - ✅ HomeScreen: scroll to top + refresh
 - ✅ MatchesScreen: scroll to top + refresh
 - ✅ ProfileScreen: scroll to top
@@ -70,15 +79,19 @@ This directory contains comprehensive tests for the ActivePillTabBar and related
 - ✅ Performance with many tabs
 
 **Screen-Specific Tests**:
+
 - Each screen's specific double-tap behavior
 - Scroll view integration
 - Refresh functionality
 - State management during navigation
 
 ### 4. Hook Tests: `useTabDoublePress.test.ts`
-**Location**: `apps/mobile/src/hooks/navigation/__tests__/useTabDoublePress.test.ts`
+
+**Location**:
+`apps/mobile/src/hooks/navigation/__tests__/useTabDoublePress.test.ts`
 
 **Coverage**:
+
 - ✅ Basic subscription to tabDoublePress event
 - ✅ Callback execution on event trigger
 - ✅ Listener cleanup on unmount
@@ -121,14 +134,16 @@ pnpm mobile:test:watch navigation
 ## Key Testing Patterns
 
 ### 1. Mock Setup
+
 ```typescript
-jest.mock("expo-haptics");
-jest.mock("expo-blur");
-jest.mock("react-native-safe-area-context");
-jest.mock("@expo/vector-icons");
+jest.mock('expo-haptics');
+jest.mock('expo-blur');
+jest.mock('react-native-safe-area-context');
+jest.mock('@expo/vector-icons');
 ```
 
 ### 2. Double-Tap Testing
+
 ```typescript
 // Use fake timers for time-based tests
 jest.useFakeTimers();
@@ -145,7 +160,7 @@ fireEvent.press(tab);
 // Verify event
 await waitFor(() => {
   expect(mockNavigation.emit).toHaveBeenCalledWith({
-    type: "tabDoublePress",
+    type: 'tabDoublePress',
     target: route.key,
   });
 });
@@ -154,17 +169,19 @@ jest.useRealTimers();
 ```
 
 ### 3. Navigation State Testing
+
 ```typescript
 const mockState = {
   index: 0,
   routes: [
-    { key: "Home-0", name: "Home" },
-    { key: "Swipe-1", name: "Swipe" },
+    { key: 'Home-0', name: 'Home' },
+    { key: 'Swipe-1', name: 'Swipe' },
   ],
 };
 ```
 
 ### 4. Animation Testing
+
 ```typescript
 // Test state transitions trigger animations
 const { rerender } = render(/* initial state */);
@@ -177,6 +194,7 @@ expect(true).toBe(true);
 ## Continuous Integration
 
 All tests run automatically:
+
 - On every PR
 - Nightly builds
 - Before deployment
@@ -184,6 +202,7 @@ All tests run automatically:
 ## Failure Debugging
 
 Common issues:
+
 1. **Timing issues**: Use `jest.useFakeTimers()`
 2. **Async operations**: Use `waitFor()` from RTL
 3. **Mock errors**: Check mock setup in `beforeEach`
@@ -208,9 +227,9 @@ Common issues:
 ## Contributing
 
 When adding new tests:
+
 1. Follow existing patterns
 2. Add to appropriate describe block
 3. Update this README
 4. Ensure all tests pass
 5. Check coverage thresholds
-

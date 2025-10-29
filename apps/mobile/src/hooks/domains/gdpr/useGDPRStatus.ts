@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import gdprService from "../../../services/gdprService";
-import { logger } from "@pawfectmatch/core";
+import { useState, useEffect, useCallback } from 'react';
+import gdprService from '../../../services/gdprService';
+import { logger } from '@pawfectmatch/core';
 
 export interface GDPRStatus {
   isPending: boolean;
@@ -31,7 +31,7 @@ export function useGDPRStatus(): UseGDPRStatusReturn {
     setIsLoading(true);
     try {
       const result = await gdprService.getAccountStatus();
-      
+
       if (result.success && result.status === 'pending') {
         setStatus({
           isPending: true,
@@ -48,7 +48,7 @@ export function useGDPRStatus(): UseGDPRStatusReturn {
         });
       }
     } catch (error) {
-      logger.error("Failed to check GDPR status:", { error });
+      logger.error('Failed to check GDPR status:', { error });
     } finally {
       setIsLoading(false);
     }

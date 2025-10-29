@@ -11,7 +11,7 @@ export function InstagramLikeExample() {
   const handleLike = () => {
     if (!liked) {
       setLiked(true);
-      setLikeCount(prev => prev + 1);
+      setLikeCount((prev) => prev + 1);
       // TODO: Send like to server
     }
   };
@@ -28,7 +28,7 @@ export function InstagramLikeExample() {
         onSingleTap={handleSingleTap}
         heartColor="#ff3b5c"
         particles={6}
-        haptics={{ enabled: true, style: "medium" }}
+        haptics={{ enabled: true, style: 'medium' }}
       >
         <Image
           source={{ uri: 'https://example.com/pet-photo.jpg' }}
@@ -36,7 +36,7 @@ export function InstagramLikeExample() {
           resizeMode="cover"
         />
       </DoubleTapLikePlus>
-      
+
       <View style={styles.postFooter}>
         <Text style={styles.likeCount}>
           {likeCount} {likeCount === 1 ? 'like' : 'likes'}
@@ -63,9 +63,7 @@ export function PhotoViewerExample() {
         onScaleChange={setScale}
         backgroundColor="#000"
       />
-      <Text style={styles.scaleIndicator}>
-        Scale: {scale.toFixed(2)}x
-      </Text>
+      <Text style={styles.scaleIndicator}>Scale: {scale.toFixed(2)}x</Text>
     </View>
   );
 }
@@ -81,35 +79,33 @@ export function ChatReactionExample() {
   };
 
   const customReactions = [
-    { emoji: "❤️", label: "Love" },
-    { emoji: "😂", label: "Laugh" },
-    { emoji: "😮", label: "Wow" },
-    { emoji: "🔥", label: "Fire" },
-    { emoji: "👍", label: "Like" },
+    { emoji: '❤️', label: 'Love' },
+    { emoji: '😂', label: 'Laugh' },
+    { emoji: '😮', label: 'Wow' },
+    { emoji: '🔥', label: 'Fire' },
+    { emoji: '👍', label: 'Like' },
   ];
 
   return (
     <View style={styles.container}>
       <View style={styles.messageExample}>
-        <Text style={styles.messageText}>
-          Check out this amazing pet photo! 🐕
-        </Text>
+        <Text style={styles.messageText}>Check out this amazing pet photo! 🐕</Text>
       </View>
-      
+
       <ReactionBarMagnetic
         reactions={customReactions}
         onSelect={handleReactionSelect}
-        onCancel={() => { console.log('Reaction cancelled'); }}
+        onCancel={() => {
+          console.log('Reaction cancelled');
+        }}
         influenceRadius={100}
         baseSize={32}
         backgroundColor="#fff"
         borderColor="#e0e0e0"
       />
-      
+
       {selectedReaction && (
-        <Text style={styles.selectedReaction}>
-          Selected: {selectedReaction}
-        </Text>
+        <Text style={styles.selectedReaction}>Selected: {selectedReaction}</Text>
       )}
     </View>
   );
@@ -130,7 +126,7 @@ export function CombinedGestureExample() {
   };
 
   const handleReactionSelect = (emoji: string) => {
-    setReactions(prev => [...prev, emoji]);
+    setReactions((prev) => [...prev, emoji]);
     setShowReactions(false);
   };
 
@@ -139,7 +135,7 @@ export function CombinedGestureExample() {
       <DoubleTapLikePlus
         onDoubleTap={handleLike}
         onSingleTap={handleLongPress} // Could be long press in real implementation
-        heartColor={liked ? "#ff3b5c" : "#666"}
+        heartColor={liked ? '#ff3b5c' : '#666'}
         particles={liked ? 8 : 0}
       >
         <PinchZoomPro
@@ -155,7 +151,9 @@ export function CombinedGestureExample() {
         <View style={styles.reactionOverlay}>
           <ReactionBarMagnetic
             onSelect={handleReactionSelect}
-            onCancel={() => { setShowReactions(false); }}
+            onCancel={() => {
+              setShowReactions(false);
+            }}
           />
         </View>
       )}

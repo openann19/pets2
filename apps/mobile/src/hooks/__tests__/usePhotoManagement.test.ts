@@ -39,14 +39,16 @@ describe('usePhotoManagement', () => {
 
     mockImagePicker.launchImageLibraryAsync.mockResolvedValue({
       cancelled: false,
-      assets: [{
-        uri: 'file://test-image.jpg',
-        width: 1024,
-        height: 768,
-        fileSize: 204800,
-        mimeType: 'image/jpeg',
-        fileName: 'test-image.jpg',
-      }],
+      assets: [
+        {
+          uri: 'file://test-image.jpg',
+          width: 1024,
+          height: 768,
+          fileSize: 204800,
+          mimeType: 'image/jpeg',
+          fileName: 'test-image.jpg',
+        },
+      ],
     });
 
     mockUploadHygieneService.processImageForUpload.mockResolvedValue({
@@ -146,7 +148,7 @@ describe('usePhotoManagement', () => {
 
   it('should handle photo processing errors', async () => {
     mockUploadHygieneService.processImageForUpload.mockRejectedValue(
-      new Error('Image processing failed')
+      new Error('Image processing failed'),
     );
 
     const { result } = renderHook(() => usePhotoManagement(mockPetId));
@@ -279,7 +281,7 @@ describe('usePhotoManagement', () => {
 
     expect(result.current.photos).toHaveLength(3);
 
-    const originalOrder = result.current.photos.map(p => p.id);
+    const originalOrder = result.current.photos.map((p) => p.id);
 
     // Move second photo to first position
     act(() => {
@@ -294,14 +296,16 @@ describe('usePhotoManagement', () => {
   it('should validate photo file size limits', async () => {
     mockImagePicker.launchImageLibraryAsync.mockResolvedValue({
       cancelled: false,
-      assets: [{
-        uri: 'file://large-image.jpg',
-        width: 2048,
-        height: 1536,
-        fileSize: 15000000, // 15MB - too large
-        mimeType: 'image/jpeg',
-        fileName: 'large-image.jpg',
-      }],
+      assets: [
+        {
+          uri: 'file://large-image.jpg',
+          width: 2048,
+          height: 1536,
+          fileSize: 15000000, // 15MB - too large
+          mimeType: 'image/jpeg',
+          fileName: 'large-image.jpg',
+        },
+      ],
     });
 
     const { result } = renderHook(() => usePhotoManagement(mockPetId));
@@ -386,14 +390,14 @@ describe('usePhotoManagement', () => {
     const addPromises = Array.from({ length: 3 }, () =>
       act(async () => {
         await result.current.addPhoto();
-      })
+      }),
     );
 
     await Promise.all(addPromises);
 
     await waitFor(() => {
       expect(result.current.photos).toHaveLength(3);
-      expect(result.current.photos.filter(p => p.status === 'approved')).toHaveLength(3);
+      expect(result.current.photos.filter((p) => p.status === 'approved')).toHaveLength(3);
     });
   });
 
@@ -415,9 +419,10 @@ describe('usePhotoManagement', () => {
 
   it('should handle network timeouts during upload', async () => {
     mockUploadHygieneService.uploadWithRetry.mockImplementation(
-      () => new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Network timeout')), 30000);
-      })
+      () =>
+        new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Network timeout')), 30000);
+        }),
     );
 
     const { result } = renderHook(() => usePhotoManagement(mockPetId));
@@ -464,7 +469,7 @@ describe('usePhotoManagement', () => {
     }
 
     await waitFor(() => {
-      expect(result.current.photos.filter(p => p.status === 'approved')).toHaveLength(5);
+      expect(result.current.photos.filter((p) => p.status === 'approved')).toHaveLength(5);
     });
 
     // Simulate memory warning

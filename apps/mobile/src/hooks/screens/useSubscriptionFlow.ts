@@ -2,34 +2,29 @@
  * useSubscriptionFlow Hook
  * Manages subscription flow state and navigation between screens
  */
-import { useNavigation } from "@react-navigation/native";
-import { useCallback, useState } from "react";
-import { Alert, Linking } from "react-native";
-import { logger } from "@pawfectmatch/core";
-import { premiumService } from "../../services/PremiumService";
+import { useNavigation } from '@react-navigation/native';
+import { useCallback, useState } from 'react';
+import { Alert, Linking } from 'react-native';
+import { logger } from '@pawfectmatch/core';
+import { premiumService } from '../../services/PremiumService';
 
-type SubscriptionFlowStep =
-  | "select-plan"
-  | "checkout"
-  | "processing"
-  | "success"
-  | "cancelled";
+type SubscriptionFlowStep = 'select-plan' | 'checkout' | 'processing' | 'success' | 'cancelled';
 
 interface SubscriptionFlowState {
   currentStep: SubscriptionFlowStep;
   selectedPlanId: string | null;
-  billingPeriod: "monthly" | "yearly";
+  billingPeriod: 'monthly' | 'yearly';
   isProcessing: boolean;
   error: string | null;
 }
 
 interface UseSubscriptionFlowReturn extends SubscriptionFlowState {
-  startFlow: (planId: string, billingPeriod?: "monthly" | "yearly") => void;
+  startFlow: (planId: string, billingPeriod?: 'monthly' | 'yearly') => void;
   proceedToCheckout: () => Promise<boolean>;
   handleSuccess: () => void;
   handleCancel: () => void;
   resetFlow: () => void;
-  setBillingPeriod: (period: "monthly" | "yearly") => void;
+  setBillingPeriod: (period: 'monthly' | 'yearly') => void;
   retryCheckout: () => Promise<boolean>;
 }
 
@@ -37,38 +32,38 @@ export const useSubscriptionFlow = (): UseSubscriptionFlowReturn => {
   const navigation = useNavigation();
 
   const [state, setState] = useState<SubscriptionFlowState>({
-    currentStep: "select-plan",
+    currentStep: 'select-plan',
     selectedPlanId: null,
-    billingPeriod: "monthly",
+    billingPeriod: 'monthly',
     isProcessing: false,
     error: null,
   });
 
   const startFlow = useCallback(
-    (planId: string, billingPeriod: "monthly" | "yearly" = "monthly") => {
+    (planId: string, billingPeriod: 'monthly' | 'yearly' = 'monthly') => {
       setState({
-        currentStep: "select-plan",
+        currentStep: 'select-plan',
         selectedPlanId: planId,
         billingPeriod,
         isProcessing: false,
         error: null,
       });
 
-      logger.info("Subscription flow started", { planId, billingPeriod });
+      logger.info('Subscription flow started', { planId, billingPeriod });
     },
     [],
   );
 
   const proceedToCheckout = useCallback(async (): Promise<boolean> => {
     if (!state.selectedPlanId) {
-      setState((prev) => ({ ...prev, error: "No plan selected" }));
+      setState((prev) => ({ ...prev, error: 'No plan selected' }));
       return false;
     }
 
     try {
       setState((prev) => ({
         ...prev,
-        currentStep: "processing",
+        currentStep: 'processing',
         isProcessing: true,
         error: null,
       }));
@@ -78,14 +73,14 @@ export const useSubscriptionFlow = (): UseSubscriptionFlowReturn => {
       const plan = plans.find((p) => p.id === state.selectedPlanId);
 
       if (!plan) {
-        throw new Error("Selected plan not found");
+        throw new Error('Selected plan not found');
       }
 
       // Create checkout session
       const session = await premiumService.createCheckoutSession(
         plan.stripePriceId,
-        "pawfectmatch://subscription/success",
-        "pawfectmatch://subscription/cancel",
+        'pawfectmatch://subscription/success',
+        'pawfectmatch://subscription/cancel',
       );
 
       if (session?.url) {
@@ -93,29 +88,26 @@ export const useSubscriptionFlow = (): UseSubscriptionFlowReturn => {
         await Linking.openURL(session.url);
         setState((prev) => ({
           ...prev,
-          currentStep: "checkout",
+          currentStep: 'checkout',
           isProcessing: false,
         }));
         return true;
       } else {
-        throw new Error("Failed to create checkout session");
+        throw new Error('Failed to create checkout session');
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to start checkout";
+      const errorMessage = error instanceof Error ? error.message : 'Failed to start checkout';
       setState((prev) => ({
         ...prev,
-        currentStep: "select-plan",
+        currentStep: 'select-plan',
         isProcessing: false,
         error: errorMessage,
       }));
-      logger.error("Checkout failed", { error, planId: state.selectedPlanId });
+      logger.error('Checkout failed', { error, planId: state.selectedPlanId });
 
-      Alert.alert(
-        "Checkout Error",
-        "Failed to start checkout process. Please try again.",
-        [{ text: "OK" }],
-      );
+      Alert.alert('Checkout Error', 'Failed to start checkout process. Please try again.', [
+        { text: 'OK' },
+      ]);
 
       return false;
     }
@@ -124,14 +116,14 @@ export const useSubscriptionFlow = (): UseSubscriptionFlowReturn => {
   const handleSuccess = useCallback(() => {
     setState((prev) => ({
       ...prev,
-      currentStep: "success",
+      currentStep: 'success',
       isProcessing: false,
     }));
 
     // Navigate to success screen
-    navigation.navigate("SubscriptionSuccess" as never);
+    navigation.navigate('SubscriptionSuccess' as never);
 
-    logger.info("Subscription flow completed successfully", {
+    logger.info('Subscription flow completed successfully', {
       planId: state.selectedPlanId,
       billingPeriod: state.billingPeriod,
     });
@@ -140,29 +132,29 @@ export const useSubscriptionFlow = (): UseSubscriptionFlowReturn => {
   const handleCancel = useCallback(() => {
     setState((prev) => ({
       ...prev,
-      currentStep: "cancelled",
+      currentStep: 'cancelled',
       isProcessing: false,
     }));
 
     // Navigate back or to cancel screen
     navigation.goBack();
 
-    logger.info("Subscription flow cancelled", {
+    logger.info('Subscription flow cancelled', {
       planId: state.selectedPlanId,
     });
   }, [navigation, state.selectedPlanId]);
 
   const resetFlow = useCallback(() => {
     setState({
-      currentStep: "select-plan",
+      currentStep: 'select-plan',
       selectedPlanId: null,
-      billingPeriod: "monthly",
+      billingPeriod: 'monthly',
       isProcessing: false,
       error: null,
     });
   }, []);
 
-  const setBillingPeriod = useCallback((period: "monthly" | "yearly") => {
+  const setBillingPeriod = useCallback((period: 'monthly' | 'yearly') => {
     setState((prev) => ({ ...prev, billingPeriod: period }));
   }, []);
 

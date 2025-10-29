@@ -1,11 +1,11 @@
-import { useRef, useState, useCallback } from "react";
-import { rewindLast } from "../services/swipeService";
-import type { Pet } from "@pawfectmatch/core";
+import { useRef, useState, useCallback } from 'react';
+import { rewindLast } from '../services/swipeService';
+import type { Pet } from '@pawfectmatch/core';
 
-type LastSwipe = { 
-  petId: string; 
-  direction: "left" | "right" | "up"; 
-  index: number 
+type LastSwipe = {
+  petId: string;
+  direction: 'left' | 'right' | 'up';
+  index: number;
 } | null;
 
 export function useSwipeUndo() {
@@ -23,11 +23,10 @@ export function useSwipeUndo() {
       const restored = await rewindLast();
       lastSwipeRef.current = null;
       return restored;
-    } finally { 
-      setBusy(false); 
+    } finally {
+      setBusy(false);
     }
   }, [busy]);
 
   return { capture, undo, busy };
 }
-

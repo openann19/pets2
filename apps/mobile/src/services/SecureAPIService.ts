@@ -2,33 +2,30 @@
  * Secure API Service with SSL Pinning for PawfectMatch Mobile App
  * Provides certificate pinning and secure HTTP communication
  */
-import { fetch as sslFetch } from "react-native-ssl-pinning";
-import { logger } from "../services/logger";
-import type { SSLFetch, SSLResponse, SSLPinningConfig } from "../types/ssl-pinning";
+import { fetch as sslFetch } from 'react-native-ssl-pinning';
+import { logger } from '../services/logger';
+import type { SSLFetch, SSLResponse, SSLPinningConfig } from '../types/ssl-pinning';
 
 const BASE_URL =
-  process.env["EXPO_PUBLIC_API_URL"] ??
-  (__DEV__ ? "http://localhost:3001/api" : "https://api.pawfectmatch.com/api");
+  process.env['EXPO_PUBLIC_API_URL'] ??
+  (__DEV__ ? 'http://localhost:3001/api' : 'https://api.pawfectmatch.com/api');
 
 // Certificate fingerprints for SSL pinning
 // In production, these should be obtained from your server certificates
-const SSL_CERTIFICATES: Record<
-  string,
-  Array<{ algorithm: string; value: string }> | undefined
-> = {
+const SSL_CERTIFICATES: Record<string, Array<{ algorithm: string; value: string }> | undefined> = {
   // Example certificate fingerprints (replace with your actual certificates)
-  "api.pawfectmatch.com": [
+  'api.pawfectmatch.com': [
     {
-      algorithm: "sha256",
-      value: "PLACEHOLDER_CERTIFICATE_FINGERPRINT_SHA256",
+      algorithm: 'sha256',
+      value: 'PLACEHOLDER_CERTIFICATE_FINGERPRINT_SHA256',
     },
     {
-      algorithm: "sha1",
-      value: "PLACEHOLDER_CERTIFICATE_FINGERPRINT_SHA1",
+      algorithm: 'sha1',
+      value: 'PLACEHOLDER_CERTIFICATE_FINGERPRINT_SHA1',
     },
   ],
   // Development certificates
-  localhost: undefined,
+  'localhost': undefined,
 };
 
 interface SSLConfig {
@@ -86,7 +83,7 @@ class SecureAPIService {
       if (__DEV__) {
         return {
           sslPinning: {
-            certs: "public",
+            certs: 'public',
           },
         };
       }
@@ -103,36 +100,28 @@ class SecureAPIService {
   /**
    * Make a secure HTTP request with SSL pinning
    */
-  async request<T = unknown>(
-    endpoint: string,
-    options: RequestInit & SSLConfig = {},
-  ): Promise<T> {
+  async request<T = unknown>(endpoint: string, options: RequestInit & SSLConfig = {}): Promise<T> {
     const url = `${BASE_URL}${endpoint}`;
     const domain = new URL(url).hostname;
 
-    const {
-      timeout = 30000,
-      retries = 3,
-      retryDelay = 1000,
-      ...fetchOptions
-    } = options;
+    const { timeout = 30000, retries = 3, retryDelay = 1000, ...fetchOptions } = options;
 
     // Build headers
     const headers: Record<string, string> = {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       ...(fetchOptions.headers as Record<string, string> | undefined),
     };
 
     // Add auth token if available
     if (this.authToken !== null) {
-      headers["Authorization"] = `Bearer ${this.authToken}`;
+      headers['Authorization'] = `Bearer ${this.authToken}`;
     }
 
     // SSL pinning configuration
     const sslConfig = this.getSSLConfig(domain);
 
     const requestConfig: SSLRequestConfig = {
-      method: fetchOptions.method ?? "GET",
+      method: fetchOptions.method ?? 'GET',
       headers,
       body: fetchOptions.body ? String(fetchOptions.body) : undefined,
       timeoutInterval: timeout,
@@ -144,16 +133,13 @@ class SecureAPIService {
     // Retry logic
     for (let attempt = 0; attempt < retries; attempt++) {
       try {
-        logger.debug(
-          `Secure API request attempt ${String(attempt + 1)}/${String(retries)}`,
-          {
-            url,
-            method: requestConfig.method,
-          },
-        );
+        logger.debug(`Secure API request attempt ${String(attempt + 1)}/${String(retries)}`, {
+          url,
+          method: requestConfig.method,
+        });
 
         // Type-safe SSL fetch with method validation
-        const validMethod = requestConfig.method as "GET" | "POST" | "PUT" | "DELETE";
+        const validMethod = requestConfig.method as 'GET' | 'POST' | 'PUT' | 'DELETE';
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const response = (await sslFetch(url, {
           ...requestConfig,
@@ -162,12 +148,12 @@ class SecureAPIService {
         const status = response.status;
         const ok = status >= 200 && status < 300;
         if (!ok) {
-          const statusText = response.statusText || "";
+          const statusText = response.statusText || '';
           throw new Error(`HTTP ${String(status)}: ${statusText}`);
         }
 
         const data = (await response.json()) as T;
-        logger.debug("Secure API request successful", {
+        logger.debug('Secure API request successful', {
           url,
           status: response.status,
         });
@@ -176,34 +162,36 @@ class SecureAPIService {
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
 
-        logger.warn(
-          `Secure API request attempt ${String(attempt + 1)} failed`,
-          {
-            url,
-            error: lastError,
-            attempt: attempt + 1,
-            maxRetries: retries,
-          },
-        );
+        logger.warn(`Secure API request attempt ${String(attempt + 1)} failed`, {
+          url,
+          error: lastError,
+          attempt: attempt + 1,
+          maxRetries: retries,
+        });
 
         // If not the last attempt, wait before retrying
         if (attempt < retries - 1) {
           await new Promise<void>((resolve) => {
-            setTimeout(() => { resolve(); }, retryDelay * (attempt + 1));
+            setTimeout(
+              () => {
+                resolve();
+              },
+              retryDelay * (attempt + 1),
+            );
           });
         }
       }
     }
 
     // All retries failed
-    logger.error("Secure API request failed after all retries", {
+    logger.error('Secure API request failed after all retries', {
       url,
       error: lastError ?? undefined,
       retries,
     });
 
     throw new SecureAPIError(
-      `Request failed after ${String(retries)} attempts: ${lastError?.message ?? "Unknown error"}`,
+      `Request failed after ${String(retries)} attempts: ${lastError?.message ?? 'Unknown error'}`,
       lastError ?? undefined,
     );
   }
@@ -212,38 +200,28 @@ class SecureAPIService {
    * GET request
    */
   async get<T = unknown>(endpoint: string, config?: SSLConfig): Promise<T> {
-    return this.request<T>(endpoint, { ...config, method: "GET" });
+    return this.request<T>(endpoint, { ...config, method: 'GET' });
   }
 
   /**
    * POST request
    */
-  async post<T = unknown>(
-    endpoint: string,
-    data?: unknown,
-    config?: SSLConfig,
-  ): Promise<T> {
+  async post<T = unknown>(endpoint: string, data?: unknown, config?: SSLConfig): Promise<T> {
     return this.request<T>(endpoint, {
       ...(config ?? {}),
-      method: "POST",
-      body:
-        data !== null && data !== undefined ? JSON.stringify(data) : undefined,
+      method: 'POST',
+      body: data !== null && data !== undefined ? JSON.stringify(data) : undefined,
     });
   }
 
   /**
    * PUT request
    */
-  async put<T = unknown>(
-    endpoint: string,
-    data?: unknown,
-    config?: SSLConfig,
-  ): Promise<T> {
+  async put<T = unknown>(endpoint: string, data?: unknown, config?: SSLConfig): Promise<T> {
     return this.request<T>(endpoint, {
       ...(config ?? {}),
-      method: "PUT",
-      body:
-        data !== null && data !== undefined ? JSON.stringify(data) : undefined,
+      method: 'PUT',
+      body: data !== null && data !== undefined ? JSON.stringify(data) : undefined,
     });
   }
 
@@ -251,7 +229,7 @@ class SecureAPIService {
    * DELETE request
    */
   async delete<T = unknown>(endpoint: string, config?: SSLConfig): Promise<T> {
-    return this.request<T>(endpoint, { ...config, method: "DELETE" });
+    return this.request<T>(endpoint, { ...config, method: 'DELETE' });
   }
 
   /**
@@ -262,7 +240,7 @@ class SecureAPIService {
       const sslConfig = this.getSSLConfig(domain);
       // Perform a test request to validate SSL pinning
       const testConfig: SSLPinningConfig = {
-        method: "HEAD",
+        method: 'HEAD',
         headers: {},
         timeoutInterval: 5000,
         ...sslConfig,
@@ -270,7 +248,7 @@ class SecureAPIService {
       await sslFetch(`https://${domain}`, testConfig as any);
       return true;
     } catch (error) {
-      logger.error("SSL certificate validation failed", {
+      logger.error('SSL certificate validation failed', {
         domain,
         error: error instanceof Error ? error : new Error(String(error)),
       });
@@ -302,7 +280,7 @@ export class SecureAPIError extends Error {
 
   constructor(message: string, originalError?: Error) {
     super(message);
-    this.name = "SecureAPIError";
+    this.name = 'SecureAPIError';
     this.originalError = originalError;
   }
 }

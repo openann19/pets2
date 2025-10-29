@@ -3,16 +3,14 @@
  * This file is kept for backward compatibility during migration
  */
 
-import { logger } from "@pawfectmatch/core";
+import { logger } from '@pawfectmatch/core';
 
 // Re-export all components from the main index
-export * from "./index";
+export * from './index';
 
 let warned = false;
 if (!warned) {
-  logger.warn(
-    "[DEPRECATION] components/index.tsx → use components/index instead.",
-  );
+  logger.warn('[DEPRECATION] components/index.tsx → use components/index instead.');
   warned = true;
 }
 
@@ -23,17 +21,15 @@ export {
   EliteScrollContainer,
   EliteHeader,
   ElitePageHeader,
-} from "./EliteComponents";
-export { default as InteractiveButton } from "./InteractiveButton";
-export { default as SwipeCard } from "./ModernSwipeCard"; // Alias to ModernSwipeCard
-export { default as MotionPrimitives } from "./MotionPrimitives";
+} from './EliteComponents';
+export { default as InteractiveButton } from './InteractiveButton';
+export { default as SwipeCard } from './ModernSwipeCard'; // Alias to ModernSwipeCard
+export { default as MotionPrimitives } from './MotionPrimitives';
 
 // === MIGRATION HELPERS ===
 export const MigrationHelpers = {
   // Helper to deprecate old components
   deprecateComponent: (ComponentName: string, NewComponentName: string) => {
-    logger.warn(
-      `[DEPRECATION] ${ComponentName} is deprecated. Use ${NewComponentName} instead.`,
-    );
+    logger.warn(`[DEPRECATION] ${ComponentName} is deprecated. Use ${NewComponentName} instead.`);
   },
 };

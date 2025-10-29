@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect, useRef } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { logger } from "../../services/logger";
+import { useState, useCallback, useEffect, useRef } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '../../services/logger';
 
 export interface UseChatInputOptions {
   matchId: string;
@@ -24,7 +24,7 @@ export function useChatInput({
   maxLength = 500,
   enabled = true,
 }: UseChatInputOptions): UseChatInputReturn {
-  const [inputText, setInputTextState] = useState("");
+  const [inputText, setInputTextState] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -41,7 +41,7 @@ export function useChatInput({
         }
       } catch (error: unknown) {
         const err = error instanceof Error ? error : new Error(String(error));
-        logger.error("Failed to load draft", { error: err });
+        logger.error('Failed to load draft', { error: err });
       }
     };
 
@@ -62,7 +62,7 @@ export function useChatInput({
         }
       } catch (error: unknown) {
         const err = error instanceof Error ? error : new Error(String(error));
-        logger.error("Failed to persist draft", { error: err });
+        logger.error('Failed to persist draft', { error: err });
       }
     };
 
@@ -79,7 +79,7 @@ export function useChatInput({
   );
 
   const clearInput = useCallback(() => {
-    setInputTextState("");
+    setInputTextState('');
 
     // Clear draft from storage
     void AsyncStorage.removeItem(`mobile_chat_draft_${matchId}`);

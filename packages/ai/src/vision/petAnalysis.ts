@@ -3,7 +3,6 @@
  * Real DeepSeek AI-powered photo analysis for breed identification and health assessment
  */
 
-
 export interface PetPhotoAnalysisData {
   species: string;
   breed: string;
@@ -83,13 +82,12 @@ export class PetPhotoAnalysis {
 
     try {
       // Convert image data to base64 if needed
-      const base64Image = typeof imageData === 'string'
-        ? imageData
-        : this.imageDataToBase64(imageData);
+      const base64Image =
+        typeof imageData === 'string' ? imageData : this.imageDataToBase64(imageData);
 
       // Use DeepSeek AI for analysis
-    const response = await this.deepSeekService.analyzePetPhoto(base64Image);
-    const analysis = this.parseDeepSeekResponse(response);
+      const response = await this.deepSeekService.analyzePetPhoto(base64Image);
+      const analysis = this.parseDeepSeekResponse(response);
 
       return {
         success: true,
@@ -161,7 +159,10 @@ export class PetPhotoAnalysis {
     return {
       species: speciesMatch !== null && speciesMatch[1] !== undefined ? speciesMatch[1] : 'unknown',
       breed: breedMatch !== null && breedMatch[1] !== undefined ? breedMatch[1].trim() : 'unknown',
-      confidence: confidenceMatch !== null && confidenceMatch[1] !== undefined ? parseFloat(confidenceMatch[1]) : 0.5,
+      confidence:
+        confidenceMatch !== null && confidenceMatch[1] !== undefined
+          ? parseFloat(confidenceMatch[1])
+          : 0.5,
       age: 0,
       health: {
         overall: 'good',
@@ -233,9 +234,7 @@ export class PetPhotoAnalysis {
    * Batch analyze multiple photos
    */
   public async analyzePhotos(photos: (ImageData | string)[]): Promise<AnalysisResult[]> {
-    const results = await Promise.all(
-      photos.map(photo => this.analyzePhoto(photo))
-    );
+    const results = await Promise.all(photos.map((photo) => this.analyzePhoto(photo)));
 
     return results;
   }
@@ -251,14 +250,18 @@ export class PetPhotoAnalysis {
    * Check if analysis is reliable
    */
   public isAnalysisReliable(analysis: PetPhotoAnalysisData): boolean {
-    return analysis.confidence >= this.getConfidenceThreshold() &&
-      analysis.quality.photoScore >= 0.6;
+    return (
+      analysis.confidence >= this.getConfidenceThreshold() && analysis.quality.photoScore >= 0.6
+    );
   }
 }
 
 /**
  * Create pet photo analysis instance
  */
-export function createPetPhotoAnalysis(deepSeekConfig: { apiKey: string; baseUrl?: string }): PetPhotoAnalysis {
+export function createPetPhotoAnalysis(deepSeekConfig: {
+  apiKey: string;
+  baseUrl?: string;
+}): PetPhotoAnalysis {
   return new PetPhotoAnalysis(deepSeekConfig);
 }

@@ -216,7 +216,7 @@ export default function LeaderboardScreen() {
           <Ionicons
             name={category.icon as never}
             size={16}
-            color={selectedCategory === category.id ? theme.colors.neutral[0] : "#666"}
+            color={selectedCategory === category.id ? theme.colors.onSurface : "#666"}
             style={styles.categoryTabIcon}
           />
           <Text
@@ -276,7 +276,7 @@ export default function LeaderboardScreen() {
 
             <View style={styles.userRankPet}>
               <View style={styles.userRankPetImage}>
-                <Ionicons name="paw" size={24} color={theme.colors.neutral[0]} }/>
+                <Ionicons name="paw" size={24} color={theme.colors.onSurface} />
               </View>
               <Text style={styles.userRankPetName}>{userEntry.petName}</Text>
             </View>
@@ -300,7 +300,7 @@ export default function LeaderboardScreen() {
                 { backgroundColor: rankColors[index] },
               ])}
             >
-              <Ionicons name="trophy" size={16} color={theme.colors.neutral[0]} }/>
+              <Ionicons name="trophy" size={16} color={theme.colors.onSurface} />
             </View>
           ) : (
             <Text style={styles.rankNumber}>#{entry.rank}</Text>
@@ -336,7 +336,7 @@ export default function LeaderboardScreen() {
                   { backgroundColor: badge.color },
                 ])}
               >
-                <Ionicons name="star" size={12} color={theme.colors.neutral[0]} }/>
+                <Ionicons name="star" size={12} color={theme.colors.onSurface} />
               </View>
             ))}
             {entry.badges.length > 3 && (
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: theme.colors.neutral[0],
+    backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   categoryTabs: {
-    backgroundColor: theme.colors.neutral[0],
+    backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -463,11 +463,11 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   categoryTabTextActive: {
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
   },
   periodTabs: {
     flexDirection: "row",
-    backgroundColor: theme.colors.neutral[0],
+    backgroundColor: theme.colors.surface,
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderBottomWidth: 1,
@@ -490,14 +490,14 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   periodTabTextActive: {
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
   },
   userRankCard: {
     margin: 20,
     borderRadius: 12,
     overflow: "hidden",
     elevation: 4,
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.bg,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
   userRankNumber: {
     fontSize: 32,
     fontWeight: "bold",
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
     marginBottom: 4,
   },
   userRankScore: {
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
   userRankPetName: {
     fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
   },
   leaderboardList: {
     flex: 1,
@@ -552,12 +552,12 @@ const styles = StyleSheet.create({
   entryCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.neutral[0],
+    backgroundColor: theme.colors.surface,
     padding: 16,
     marginBottom: 12,
     borderRadius: 12,
     elevation: 2,
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.bg,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,

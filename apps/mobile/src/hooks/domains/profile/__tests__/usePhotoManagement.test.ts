@@ -57,7 +57,7 @@ describe('usePhotoManagement', () => {
         usePhotoManagement({
           onPhotoSelected,
           maxPhotos: 5,
-        })
+        }),
       );
 
       expect(result.current.photos).toEqual([]);
@@ -78,7 +78,7 @@ describe('usePhotoManagement', () => {
 
       expect(mockAlert.alert).toHaveBeenCalledWith(
         'Permission needed',
-        'Please grant permission to access your photos'
+        'Please grant permission to access your photos',
       );
     });
 
@@ -104,9 +104,7 @@ describe('usePhotoManagement', () => {
       });
 
       const onPhotoSelected = jest.fn();
-      const { result } = renderHook(() =>
-        usePhotoManagement({ onPhotoSelected, maxPhotos: 5 })
-      );
+      const { result } = renderHook(() => usePhotoManagement({ onPhotoSelected, maxPhotos: 5 }));
 
       await act(async () => {
         await result.current.pickImage();
@@ -123,9 +121,7 @@ describe('usePhotoManagement', () => {
         status: 'granted',
       });
 
-      const { result } = renderHook(() =>
-        usePhotoManagement({ maxPhotos: 1 })
-      );
+      const { result } = renderHook(() => usePhotoManagement({ maxPhotos: 1 }));
 
       // Set existing photo
       act(() => {
@@ -142,7 +138,7 @@ describe('usePhotoManagement', () => {
 
       expect(mockAlert.alert).toHaveBeenCalledWith(
         'Maximum photos reached',
-        'You can only add up to 1 photos'
+        'You can only add up to 1 photos',
       );
       expect(mockImagePicker.launchImageLibraryAsync).not.toHaveBeenCalled();
     });
@@ -176,7 +172,7 @@ describe('usePhotoManagement', () => {
         result.current.photos.push(
           { uri: 'photo1.jpg', type: 'image/jpeg', fileName: 'photo1.jpg', isPrimary: true },
           { uri: 'photo2.jpg', type: 'image/jpeg', fileName: 'photo2.jpg', isPrimary: false },
-          { uri: 'photo3.jpg', type: 'image/jpeg', fileName: 'photo3.jpg', isPrimary: false }
+          { uri: 'photo3.jpg', type: 'image/jpeg', fileName: 'photo3.jpg', isPrimary: false },
         );
       });
 
@@ -194,7 +190,7 @@ describe('usePhotoManagement', () => {
       act(() => {
         result.current.photos.push(
           { uri: 'photo1.jpg', type: 'image/jpeg', fileName: 'photo1.jpg', isPrimary: true },
-          { uri: 'photo2.jpg', type: 'image/jpeg', fileName: 'photo2.jpg', isPrimary: false }
+          { uri: 'photo2.jpg', type: 'image/jpeg', fileName: 'photo2.jpg', isPrimary: false },
         );
       });
 
@@ -212,7 +208,7 @@ describe('usePhotoManagement', () => {
       act(() => {
         result.current.photos.push(
           { uri: 'photo1.jpg', type: 'image/jpeg', fileName: 'photo1.jpg' },
-          { uri: 'photo2.jpg', type: 'image/jpeg', fileName: 'photo2.jpg' }
+          { uri: 'photo2.jpg', type: 'image/jpeg', fileName: 'photo2.jpg' },
         );
       });
 
@@ -235,7 +231,7 @@ describe('usePhotoManagement', () => {
       act(() => {
         result.current.photos.push(
           { uri: 'photo1.jpg', type: 'image/jpeg', fileName: 'photo1.jpg', isPrimary: true },
-          { uri: 'photo2.jpg', type: 'image/jpeg', fileName: 'photo2.jpg', isPrimary: false }
+          { uri: 'photo2.jpg', type: 'image/jpeg', fileName: 'photo2.jpg', isPrimary: false },
         );
       });
 
@@ -256,9 +252,11 @@ describe('usePhotoManagement', () => {
       const { result } = renderHook(() => usePhotoManagement());
 
       act(() => {
-        result.current.photos.push(
-          { uri: 'photo1.jpg', type: 'image/jpeg', fileName: 'photo1.jpg' }
-        );
+        result.current.photos.push({
+          uri: 'photo1.jpg',
+          type: 'image/jpeg',
+          fileName: 'photo1.jpg',
+        });
       });
 
       let success: boolean;
@@ -268,7 +266,10 @@ describe('usePhotoManagement', () => {
 
       expect(success).toBe(false);
       expect(result.current.isLoading).toBe(false);
-      expect(mockAlert.alert).toHaveBeenCalledWith('Error', 'Failed to upload photos. Please try again.');
+      expect(mockAlert.alert).toHaveBeenCalledWith(
+        'Error',
+        'Failed to upload photos. Please try again.',
+      );
     });
 
     it('should reject upload when no photos', async () => {

@@ -12,4 +12,3 @@ declare module 'expo-haptics';
 declare module 'expo-notifications';
 declare module 'expo-image-picker';
 declare module 'expo-modules-core';
-

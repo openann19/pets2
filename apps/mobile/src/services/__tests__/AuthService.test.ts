@@ -31,23 +31,23 @@ describe('AuthService', () => {
     jest.clearAllMocks();
     jest.clearAllTimers();
     jest.useFakeTimers();
-    
+
     // Reset all mocks to defaults
     (api.request as jest.Mock).mockClear();
     (Keychain.setGenericPassword as jest.Mock).mockClear();
     (Keychain.getGenericPassword as jest.Mock).mockClear();
     (SecureStore.setItemAsync as jest.Mock).mockClear();
     (LocalAuthentication.authenticateAsync as jest.Mock).mockClear();
-    
+
     // Setup default mocks
     (Keychain.setGenericPassword as jest.Mock).mockResolvedValue(true);
     (Keychain.getGenericPassword as jest.Mock).mockResolvedValue({ password: 'test-value' });
     (Keychain.resetGenericPassword as jest.Mock).mockResolvedValue(true);
-    
+
     (SecureStore.setItemAsync as jest.Mock).mockResolvedValue(undefined);
     (SecureStore.getItemAsync as jest.Mock).mockResolvedValue('test-value');
     (SecureStore.deleteItemAsync as jest.Mock).mockResolvedValue(undefined);
-    
+
     (LocalAuthentication.hasHardwareAsync as jest.Mock).mockResolvedValue(true);
     (LocalAuthentication.isEnrolledAsync as jest.Mock).mockResolvedValue(true);
     (LocalAuthentication.supportedAuthenticationTypesAsync as jest.Mock).mockResolvedValue([
@@ -71,9 +71,7 @@ describe('AuthService', () => {
     });
 
     it('should fallback to SecureStore if Keychain fails', async () => {
-      (Keychain.setGenericPassword as jest.Mock).mockRejectedValueOnce(
-        new Error('Keychain error')
-      );
+      (Keychain.setGenericPassword as jest.Mock).mockRejectedValueOnce(new Error('Keychain error'));
 
       await authService.login({
         email: 'test@example.com',
@@ -144,7 +142,7 @@ describe('AuthService', () => {
         authService.login({
           email: 'test@example.com',
           password: 'wrongpassword',
-        })
+        }),
       ).rejects.toThrow(AuthError);
     });
 
@@ -203,7 +201,7 @@ describe('AuthService', () => {
           password: 'password123',
           name: 'New User',
           confirmPassword: 'differentpassword',
-        })
+        }),
       ).rejects.toThrow(AuthError);
     });
   });
@@ -452,9 +450,7 @@ describe('AuthService', () => {
         password: null,
       });
 
-      await expect(authService.updateUser({ name: 'Updated Name' })).rejects.toThrow(
-        AuthError
-      );
+      await expect(authService.updateUser({ name: 'Updated Name' })).rejects.toThrow(AuthError);
     });
   });
 
@@ -502,7 +498,7 @@ describe('AuthService', () => {
           token: 'reset-token-123',
           password: 'newpassword123',
           confirmPassword: 'differentpassword',
-        })
+        }),
       ).rejects.toThrow(AuthError);
     });
   });
@@ -546,7 +542,7 @@ describe('AuthService', () => {
         authService.login({
           email: 'test@example.com',
           password: 'password123',
-        })
+        }),
       ).rejects.toThrow(AuthError);
     });
 
@@ -561,9 +557,7 @@ describe('AuthService', () => {
     });
 
     it('should handle Keychain errors gracefully', async () => {
-      (Keychain.getGenericPassword as jest.Mock).mockRejectedValueOnce(
-        new Error('Keychain error')
-      );
+      (Keychain.getGenericPassword as jest.Mock).mockRejectedValueOnce(new Error('Keychain error'));
 
       const user = await authService.getCurrentUser();
 
@@ -571,4 +565,3 @@ describe('AuthService', () => {
     });
   });
 });
-

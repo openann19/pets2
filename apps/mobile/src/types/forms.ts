@@ -3,33 +3,30 @@
  * Replaces any types used in form field updates
  */
 
-export type FormFieldValue = 
-  | string 
-  | number 
-  | boolean 
-  | string[] 
+export type FormFieldValue =
+  | string
+  | number
+  | boolean
+  | string[]
   | { min: number; max: number }
   | Record<string, boolean>
   | null;
 
-export type FormUpdateHandler<T> = <K extends keyof T>(
-  field: K,
-  value: T[K],
-) => void;
+export type FormUpdateHandler<T> = <K extends keyof T>(field: K, value: T[K]) => void;
 
 /**
  * Pet form creation payload type
  */
 export interface PetFormData {
   name?: string;
-  species?: "dog" | "cat" | "bird" | "rabbit" | "other";
+  species?: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
   breed?: string;
   age?: number;
-  gender?: "male" | "female";
-  size?: "tiny" | "small" | "medium" | "large" | "extra-large";
+  gender?: 'male' | 'female';
+  size?: 'tiny' | 'small' | 'medium' | 'large' | 'extra-large';
   weight?: number;
   bio?: string;
-  intent?: "adoption" | "mating" | "playdate" | "all";
+  intent?: 'adoption' | 'mating' | 'playdate' | 'all';
   personality?: string[];
   health?: string[];
   photos?: string[];

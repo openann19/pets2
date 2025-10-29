@@ -1,22 +1,9 @@
-import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
-import {
-  Alert,
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
+import * as ImagePicker from 'expo-image-picker';
+import React, { useState } from 'react';
+import { Alert, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 const PHOTO_SIZE = (width - 60) / 3;
 
 interface Photo {
@@ -42,7 +29,7 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
   photos,
   onPhotosChange,
   maxPhotos = 6,
-  title = "Pet Photos",
+  title = 'Pet Photos',
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const scaleValue = useSharedValue(1);
@@ -54,11 +41,9 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
   const requestPermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== ImagePicker.PermissionStatus.GRANTED) {
-      Alert.alert(
-        "Permission Required",
-        "Please grant camera roll permissions to upload photos.",
-        [{ text: "OK" }],
-      );
+      Alert.alert('Permission Required', 'Please grant camera roll permissions to upload photos.', [
+        { text: 'OK' },
+      ]);
       return false;
     }
     return true;
@@ -66,10 +51,7 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
 
   const pickImage = async () => {
     if (photos.length >= maxPhotos) {
-      Alert.alert(
-        "Photo Limit",
-        `You can only upload up to ${maxPhotos} photos.`,
-      );
+      Alert.alert('Photo Limit', `You can only upload up to ${maxPhotos} photos.`);
       return;
     }
 
@@ -98,7 +80,7 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
         onPhotosChange([...photos, newPhoto]);
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to pick image. Please try again.");
+      Alert.alert('Error', 'Failed to pick image. Please try again.');
     } finally {
       setIsUploading(false);
       scaleValue.value = withSpring(1, SPRING_CONFIG);
@@ -107,20 +89,15 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
 
   const takePhoto = async () => {
     if (photos.length >= maxPhotos) {
-      Alert.alert(
-        "Photo Limit",
-        `You can only upload up to ${maxPhotos} photos.`,
-      );
+      Alert.alert('Photo Limit', `You can only upload up to ${maxPhotos} photos.`);
       return;
     }
 
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== ImagePicker.PermissionStatus.GRANTED) {
-      Alert.alert(
-        "Permission Required",
-        "Please grant camera permissions to take photos.",
-        [{ text: "OK" }],
-      );
+      Alert.alert('Permission Required', 'Please grant camera permissions to take photos.', [
+        { text: 'OK' },
+      ]);
       return;
     }
 
@@ -143,26 +120,26 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
         onPhotosChange([...photos, newPhoto]);
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to take photo. Please try again.");
+      Alert.alert('Error', 'Failed to take photo. Please try again.');
     } finally {
       setIsUploading(false);
     }
   };
 
   const showImageOptions = () => {
-    Alert.alert("Add Photo", "Choose how you want to add a photo", [
-      { text: "Camera", onPress: () => void takePhoto() },
-      { text: "Photo Library", onPress: () => void pickImage() },
-      { text: "Cancel", style: "cancel" },
+    Alert.alert('Add Photo', 'Choose how you want to add a photo', [
+      { text: 'Camera', onPress: () => void takePhoto() },
+      { text: 'Photo Library', onPress: () => void pickImage() },
+      { text: 'Cancel', style: 'cancel' },
     ]);
   };
 
   const removePhoto = (photoId: string) => {
-    Alert.alert("Remove Photo", "Are you sure you want to remove this photo?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert('Remove Photo', 'Are you sure you want to remove this photo?', [
+      { text: 'Cancel', style: 'cancel' },
       {
-        text: "Remove",
-        style: "destructive",
+        text: 'Remove',
+        style: 'destructive',
         onPress: () => {
           const updatedPhotos = photos.filter((p) => p.id !== photoId);
           // If we removed the primary photo, make the first remaining photo primary
@@ -190,8 +167,14 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
   const renderPhotoGrid = () => (
     <View style={styles.photoGrid}>
       {photos.map((photo, index) => (
-        <View key={photo.id} style={styles.photoContainer}>
-          <Image source={{ uri: photo.uri }} style={styles.photo} />
+        <View
+          key={photo.id}
+          style={styles.photoContainer}
+        >
+          <Image
+            source={{ uri: photo.uri }}
+            style={styles.photo}
+          />
 
           {/* Primary Badge */}
           {photo.isPrimary && (
@@ -213,10 +196,7 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
               </TouchableOpacity>
             )}
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.actionButton,
-                styles.removeButton,
-              ])}
+              style={StyleSheet.flatten([styles.actionButton, styles.removeButton])}
               onPress={() => {
                 removePhoto(photo.id);
               }}
@@ -229,18 +209,14 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
 
       {/* Add Photo Button */}
       {photos.length < maxPhotos && (
-        <Animated.View
-          style={StyleSheet.flatten([styles.addPhotoContainer, animatedStyle])}
-        >
+        <Animated.View style={StyleSheet.flatten([styles.addPhotoContainer, animatedStyle])}>
           <TouchableOpacity
             style={styles.addPhotoButton}
             onPress={showImageOptions}
             disabled={isUploading}
           >
-            <Text style={styles.addPhotoIcon}>{isUploading ? "⏳" : "📷"}</Text>
-            <Text style={styles.addPhotoText}>
-              {isUploading ? "Uploading..." : "Add Photo"}
-            </Text>
+            <Text style={styles.addPhotoIcon}>{isUploading ? '⏳' : '📷'}</Text>
+            <Text style={styles.addPhotoText}>{isUploading ? 'Uploading...' : 'Add Photo'}</Text>
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -252,8 +228,7 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>
-          {photos.length}/{maxPhotos} photos • First photo will be the main
-          photo
+          {photos.length}/{maxPhotos} photos • First photo will be the main photo
         </Text>
       </View>
 
@@ -264,8 +239,7 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
           <Text style={styles.emptyStateIcon}>📸</Text>
           <Text style={styles.emptyStateTitle}>No photos yet</Text>
           <Text style={styles.emptyStateText}>
-            Add photos to make your pet&apos;s profile more attractive to
-            potential matches
+            Add photos to make your pet&apos;s profile more attractive to potential matches
           </Text>
           <TouchableOpacity
             style={styles.emptyStateButton}
@@ -281,9 +255,7 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
           <Text style={styles.tipsTitle}>📝 Photo Tips:</Text>
           <Text style={styles.tip}>• Use clear, well-lit photos</Text>
           <Text style={styles.tip}>• Show your pet&apos;s personality</Text>
-          <Text style={styles.tip}>
-            • Include different angles and activities
-          </Text>
+          <Text style={styles.tip}>• Include different angles and activities</Text>
           <Text style={styles.tip}>• Avoid blurry or dark images</Text>
         </View>
       )}
@@ -300,86 +272,86 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    fontWeight: 'bold',
+    color: 'Theme.colors.neutral[800]',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: 'Theme.colors.neutral[500]',
   },
   photoGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 10,
     marginBottom: 20,
   },
   photoContainer: {
-    position: "relative",
+    position: 'relative',
     width: PHOTO_SIZE,
     height: PHOTO_SIZE,
   },
   photo: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: 12,
-    backgroundColor: "Theme.colors.neutral[100]",
+    backgroundColor: 'Theme.colors.neutral[100]',
   },
   primaryBadge: {
-    position: "absolute",
+    position: 'absolute',
     top: 8,
     left: 8,
-    backgroundColor: "Theme.colors.primary[500]",
+    backgroundColor: 'Theme.colors.primary[500]',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
   },
   primaryBadgeText: {
-    color: "Theme.colors.neutral[0]",
+    color: 'Theme.colors.neutral[0]',
     fontSize: 10,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   photoActions: {
-    position: "absolute",
+    position: 'absolute',
     top: 8,
     right: 8,
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 4,
   },
   actionButton: {
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     width: 24,
     height: 24,
     borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   removeButton: {
-    backgroundColor: "rgba(239, 68, 68, 0.8)",
+    backgroundColor: 'rgba(239, 68, 68, 0.8)',
   },
   actionButtonText: {
-    color: "Theme.colors.neutral[0]",
+    color: 'Theme.colors.neutral[0]',
     fontSize: 12,
   },
   removeButtonText: {
-    color: "Theme.colors.neutral[0]",
+    color: 'Theme.colors.neutral[0]',
     fontSize: 10,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   addPhotoContainer: {
     width: PHOTO_SIZE,
     height: PHOTO_SIZE,
   },
   addPhotoButton: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "Theme.colors.neutral[200]",
-    borderStyle: "dashed",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "Theme.colors.background.secondary",
+    borderColor: 'Theme.colors.neutral[200]',
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'Theme.colors.background.secondary',
   },
   addPhotoIcon: {
     fontSize: 32,
@@ -387,14 +359,14 @@ const styles = StyleSheet.create({
   },
   addPhotoText: {
     fontSize: 12,
-    color: "Theme.colors.neutral[500]",
-    fontWeight: "500",
-    textAlign: "center",
+    color: 'Theme.colors.neutral[500]',
+    fontWeight: '500',
+    textAlign: 'center',
   },
   emptyState: {
-    alignItems: "center",
+    alignItems: 'center',
     padding: 40,
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: 'Theme.colors.background.secondary',
     borderRadius: 16,
     marginBottom: 20,
   },
@@ -404,41 +376,41 @@ const styles = StyleSheet.create({
   },
   emptyStateTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    fontWeight: 'bold',
+    color: 'Theme.colors.neutral[800]',
     marginBottom: 8,
   },
   emptyStateText: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
-    textAlign: "center",
+    color: 'Theme.colors.neutral[500]',
+    textAlign: 'center',
     lineHeight: 20,
     marginBottom: 20,
   },
   emptyStateButton: {
-    backgroundColor: "Theme.colors.primary[500]",
+    backgroundColor: 'Theme.colors.primary[500]',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
   emptyStateButtonText: {
-    color: "Theme.colors.neutral[0]",
-    fontWeight: "600",
+    color: 'Theme.colors.neutral[0]',
+    fontWeight: '600',
   },
   tips: {
-    backgroundColor: "#fef3c7",
+    backgroundColor: '#fef3c7',
     borderRadius: 12,
     padding: 16,
   },
   tipsTitle: {
     fontSize: 14,
-    fontWeight: "bold",
-    color: "#92400e",
+    fontWeight: 'bold',
+    color: '#92400e',
     marginBottom: 8,
   },
   tip: {
     fontSize: 12,
-    color: "#92400e",
+    color: '#92400e',
     marginBottom: 2,
     lineHeight: 16,
   },

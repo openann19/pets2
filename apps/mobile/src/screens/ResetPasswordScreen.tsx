@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useResetPasswordScreen } from "../hooks/screens/useResetPasswordScreen";
 import type { RootStackScreenProps } from "../navigation/types";
-import { useTheme } from '@/theme';
+import { useTheme } from '@mobile/src/theme';
 import { useTranslation } from 'react-i18next';
 
 type ResetPasswordScreenProps = RootStackScreenProps<"ResetPassword">;
@@ -68,7 +68,7 @@ function ResetPasswordScreen({
       lineHeight: 24,
     },
     form: {
-      backgroundColor: theme.colors.bgElevated,
+      backgroundColor: theme.colors.surface,
       borderRadius: 16,
       padding: 20,
       shadowColor: theme.colors.bg,
@@ -87,7 +87,7 @@ function ResetPasswordScreen({
       marginBottom: 8,
     },
     input: {
-      backgroundColor: theme.colors.bgElevated,
+      backgroundColor: theme.colors.surface,
       borderWidth: 1,
       borderColor: theme.colors.border,
       borderRadius: 8,
@@ -111,7 +111,7 @@ function ResetPasswordScreen({
       marginVertical: 16,
     },
     buttonDisabled: {
-      backgroundColor: theme.colors.bgElevated,
+      backgroundColor: theme.colors.surface,
     },
     buttonText: {
       color: theme.colors.bg,

@@ -1,7 +1,7 @@
-import { logger, useAuthStore } from "@pawfectmatch/core";
-import { useEffect, useState } from "react";
+import { logger, useAuthStore } from '@pawfectmatch/core';
+import { useEffect, useState } from 'react';
 
-import { _adminAPI as adminAPI } from "../../../../services/api";
+import { _adminAPI as adminAPI } from '../../../../services/api';
 
 export interface AnalyticsData {
   users: {
@@ -12,14 +12,14 @@ export interface AnalyticsData {
     verified: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   pets: {
     total: number;
     active: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   matches: {
     total: number;
@@ -27,14 +27,14 @@ export interface AnalyticsData {
     blocked: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   messages: {
     total: number;
     deleted: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   engagement: {
     dailyActiveUsers: number;
@@ -79,9 +79,7 @@ export const useAdminAnalytics = () => {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState<"7d" | "30d" | "90d">(
-    "30d",
-  );
+  const [selectedPeriod, setSelectedPeriod] = useState<'7d' | '30d' | '90d'>('30d');
 
   useEffect(() => {
     void loadAnalyticsData();
@@ -102,14 +100,14 @@ export const useAdminAnalytics = () => {
           verified: responseData.users?.verified || 0,
           recent24h: responseData.users?.recent24h || 0,
           growth: (responseData.users as any)?.growth || 0,
-          trend: ((responseData.users as any)?.trend as "up" | "down" | "stable") || "stable",
+          trend: ((responseData.users as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
         },
         pets: {
           total: responseData.pets?.total || 0,
           active: responseData.pets?.active || 0,
           recent24h: responseData.pets?.recent24h || 0,
           growth: (responseData.pets as any)?.growth || 0,
-          trend: ((responseData.pets as any)?.trend as "up" | "down" | "stable") || "stable",
+          trend: ((responseData.pets as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
         },
         matches: {
           total: responseData.matches?.total || 0,
@@ -117,14 +115,14 @@ export const useAdminAnalytics = () => {
           blocked: responseData.matches?.blocked || 0,
           recent24h: responseData.matches?.recent24h || 0,
           growth: (responseData.matches as any)?.growth || 0,
-          trend: ((responseData.matches as any)?.trend as "up" | "down" | "stable") || "stable",
+          trend: ((responseData.matches as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
         },
         messages: {
           total: responseData.messages?.total || 0,
           deleted: responseData.messages?.deleted || 0,
           recent24h: responseData.messages?.recent24h || 0,
           growth: (responseData.messages as any)?.growth || 0,
-          trend: ((responseData.messages as any)?.trend as "up" | "down" | "stable") || "stable",
+          trend: ((responseData.messages as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
         },
         engagement: {
           dailyActiveUsers: 0,
@@ -154,7 +152,7 @@ export const useAdminAnalytics = () => {
       };
       setAnalytics(fullData);
     } catch (error: unknown) {
-      logger.error("Error loading analytics data:", { error });
+      logger.error('Error loading analytics data:', { error });
     } finally {
       setLoading(false);
     }
@@ -166,7 +164,7 @@ export const useAdminAnalytics = () => {
     setRefreshing(false);
   };
 
-  const handlePeriodChange = (period: "7d" | "30d" | "90d"): void => {
+  const handlePeriodChange = (period: '7d' | '30d' | '90d'): void => {
     setSelectedPeriod(period);
   };
 
@@ -179,4 +177,3 @@ export const useAdminAnalytics = () => {
     handlePeriodChange,
   };
 };
-

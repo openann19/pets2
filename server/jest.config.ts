@@ -1,5 +1,5 @@
 import type { Config } from 'jest';
-// @ts-ignore - No types available for the base config
+// @ts-expect-error - No types available for the base config
 import base from '../jest.config.base.cjs';
 
 const config: Config = {

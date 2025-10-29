@@ -36,10 +36,13 @@ export async function pickAndUpload(): Promise<PhotoUploadResult | null> {
     }
 
     // Create multipart upload
-    const multipartResponse = await request<{ key: string; uploadId: string }>('/upload/multipart/create', {
-      method: 'POST',
-      body: { contentType: 'image/jpeg' }
-    });
+    const multipartResponse = await request<{ key: string; uploadId: string }>(
+      '/upload/multipart/create',
+      {
+        method: 'POST',
+        body: { contentType: 'image/jpeg' },
+      },
+    );
 
     const { key, uploadId } = multipartResponse;
 
@@ -73,4 +76,3 @@ export async function pickAndUploadToCloudinary(): Promise<string | null> {
   const photo = await pickAndUpload();
   return photo?.url || null;
 }
-

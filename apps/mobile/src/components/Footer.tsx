@@ -1,28 +1,28 @@
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
-import * as React from "react";
-import { useEffect } from "react";
-import { Linking, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/src/theme';
+import { logger } from '@pawfectmatch/core';
+import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as React from 'react';
+import { useEffect } from 'react';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
-import { useTheme } from "@/theme";
-import { getExtendedColors } from "../theme/adapters";
-import AnimatedButton from "./AnimatedButton";
+} from 'react-native-reanimated';
+import { getExtendedColors } from '../theme/adapters';
+import AnimatedButton from './AnimatedButton';
 
 interface FooterProps {
   showCopyright?: boolean;
   showLegal?: boolean;
   showVersion?: boolean;
   showSupport?: boolean;
-  variant?: "default" | "minimal" | "premium";
+  variant?: 'default' | 'minimal' | 'premium';
   style?: object;
   accessibilityLabel?: string;
   accessibilityHint?: string;
@@ -33,10 +33,10 @@ export default function Footer({
   showLegal = true,
   showVersion = false,
   showSupport = true,
-  variant = "default",
+  variant = 'default',
   style,
-  accessibilityLabel = "App footer with legal links and support information",
-  accessibilityHint = "Contains links to terms of service, privacy policy, and support contact",
+  accessibilityLabel = 'App footer with legal links and support information',
+  accessibilityHint = 'Contains links to terms of service, privacy policy, and support contact',
 }: FooterProps) {
   const theme = useTheme();
   const colors = getExtendedColors(theme);
@@ -47,10 +47,7 @@ export default function Footer({
 
   useEffect(() => {
     opacity.value = withDelay(300, withTiming(1, { duration: 600 }));
-    translateY.value = withDelay(
-      300,
-      withSpring(0, { damping: 15, stiffness: 100 }),
-    );
+    translateY.value = withDelay(300, withSpring(0, { damping: 15, stiffness: 100 }));
   }, [opacity.value, translateY.value]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -70,22 +67,20 @@ export default function Footer({
         await Linking.openURL(url);
       }
     } catch (error) {
-      logger.error("Error opening link:", { error });
+      logger.error('Error opening link:', { error });
     }
   };
 
   const handleSupportPress = (): void => {
-    handleLinkPress(
-      "mailto:support@pawfectmatch.com?subject=Mobile App Support",
-    );
+    handleLinkPress('mailto:support@pawfectmatch.com?subject=Mobile App Support');
   };
 
   const handleTermsPress = (): void => {
-    handleLinkPress("https://pawfectmatch.com/terms");
+    handleLinkPress('https://pawfectmatch.com/terms');
   };
 
   const handlePrivacyPress = (): void => {
-    handleLinkPress("https://pawfectmatch.com/privacy");
+    handleLinkPress('https://pawfectmatch.com/privacy');
   };
 
   const renderDefaultFooter = (): React.ReactElement => (
@@ -114,10 +109,7 @@ export default function Footer({
               <Text style={styles.logoEmoji}>🐾</Text>
             </View>
             <Text
-              style={StyleSheet.flatten([
-                styles.brandName,
-                { color: theme.palette.neutral[800] },
-              ])}
+              style={StyleSheet.flatten([styles.brandName, { color: theme.palette.neutral[800] }])}
             >
               PawfectMatch
             </Text>
@@ -150,10 +142,7 @@ export default function Footer({
             </AnimatedButton>
 
             <Text
-              style={StyleSheet.flatten([
-                styles.separator,
-                { color: theme.palette.neutral[400] },
-              ])}
+              style={StyleSheet.flatten([styles.separator, { color: theme.palette.neutral[400] }])}
             >
               •
             </Text>
@@ -207,8 +196,7 @@ export default function Footer({
                 { color: theme.palette.neutral[500] },
               ])}
             >
-              © {new Date().getFullYear()} PawfectMatch Inc. All rights
-              reserved.
+              © {new Date().getFullYear()} PawfectMatch Inc. All rights reserved.
             </Text>
           </View>
         ) : null}
@@ -227,10 +215,7 @@ export default function Footer({
     >
       <View style={styles.minimalContent}>
         <Text
-          style={StyleSheet.flatten([
-            styles.minimalBrand,
-            { color: theme.palette.neutral[600] },
-          ])}
+          style={StyleSheet.flatten([styles.minimalBrand, { color: theme.palette.neutral[600] }])}
         >
           🐾 PawfectMatch
         </Text>
@@ -251,15 +236,13 @@ export default function Footer({
   const renderPremiumFooter = (): React.ReactElement => (
     <Animated.View style={animatedStyle as any}>
       <LinearGradient
-        colors={
-          ["rgba(139, 92, 246, 0.1)", "rgba(236, 72, 153, 0.1)"] as [
-            string,
-            string,
-          ]
-        }
+        colors={['rgba(139, 92, 246, 0.1)', 'rgba(236, 72, 153, 0.1)'] as [string, string]}
         style={StyleSheet.flatten([styles.premiumContainer, style])}
       >
-        <BlurView intensity={20} style={styles.premiumBlur}>
+        <BlurView
+          intensity={20}
+          style={styles.premiumBlur}
+        >
           <View style={styles.premiumContent}>
             <View style={styles.premiumBrand}>
               <View style={styles.premiumLogoContainer}>
@@ -336,41 +319,41 @@ export default function Footer({
   );
 
   switch (variant) {
-    case "minimal":
+    case 'minimal':
       return renderMinimalFooter();
-    case "premium":
+    case 'premium':
       return renderPremiumFooter();
     default:
       return renderDefaultFooter();
   }
-};
+}
 
 const styles = StyleSheet.create({
   // Default Footer Styles
   container: {
     borderTopWidth: 1,
-    borderTopColor: "#e9ecef",
+    borderTopColor: '#e9ecef',
     paddingVertical: 20,
     paddingHorizontal: 20,
   },
   content: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   brandSection: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 16,
   },
   brandContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 8,
   },
   logoContainer: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 8,
   },
   logoEmoji: {
@@ -378,54 +361,54 @@ const styles = StyleSheet.create({
   },
   brandName: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   versionText: {
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   legalSection: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 12,
   },
   legalLink: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   legalLinkText: {
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   separator: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   supportSection: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   supportContent: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   supportText: {
     fontSize: 14,
     marginLeft: 6,
   },
   copyrightSection: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   copyrightText: {
     fontSize: 12,
-    textAlign: "center",
+    textAlign: 'center',
   },
 
   // Minimal Footer Styles
@@ -433,16 +416,16 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderTopWidth: 1,
-    borderTopColor: "#e9ecef",
+    borderTopColor: '#e9ecef',
   },
   minimalContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   minimalBrand: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   minimalCopyright: {
     fontSize: 12,
@@ -453,29 +436,29 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 16,
     borderRadius: 16,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   premiumBlur: {
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   premiumContent: {
     padding: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
   premiumBrand: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 16,
   },
   premiumLogoContainer: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "rgba(139, 92, 246, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 10,
   },
   premiumLogoEmoji: {
@@ -483,26 +466,25 @@ const styles = StyleSheet.create({
   },
   premiumBrandName: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   premiumLinks: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 12,
   },
   premiumLink: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   premiumLinkText: {
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   premiumCopyright: {
     fontSize: 12,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });
-

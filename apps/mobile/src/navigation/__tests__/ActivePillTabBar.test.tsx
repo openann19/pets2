@@ -1,34 +1,37 @@
 /**
  * @jest-environment jsdom
  */
-import React from "react";
-import { render, fireEvent, waitFor, act } from "@testing-library/react-native";
-import { Platform } from "react-native";
-import ActivePillTabBar from "../ActivePillTabBar";
-import * as Haptics from "expo-haptics";
+import React from 'react';
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
+import { Platform } from 'react-native';
+import ActivePillTabBar from '../ActivePillTabBar';
+import * as Haptics from 'expo-haptics';
 
 // Mock dependencies
-jest.mock("expo-haptics", () => ({
+jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   ImpactFeedbackStyle: {
-    Light: "light",
-    Medium: "medium",
-    Heavy: "heavy",
+    Light: 'light',
+    Medium: 'medium',
+    Heavy: 'heavy',
   },
 }));
 
-jest.mock("expo-blur", () => {
-  const { View } = require("react-native");
+jest.mock('expo-blur', () => {
+  const { View } = require('react-native');
   return {
     BlurView: ({ children, ...props }: any) => (
-      <View testID="blur-view" {...props}>
+      <View
+        testID="blur-view"
+        {...props}
+      >
         {children}
       </View>
     ),
   };
 });
 
-jest.mock("react-native-safe-area-context", () => ({
+jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({
     top: 0,
     bottom: 0,
@@ -38,19 +41,19 @@ jest.mock("react-native-safe-area-context", () => ({
 }));
 
 // Mock Ionicons
-jest.mock("@expo/vector-icons", () => {
-  const { View } = require("react-native");
-  const React = require("react");
+jest.mock('@expo/vector-icons', () => {
+  const { View } = require('react-native');
+  const React = require('react');
   return {
     Ionicons: React.forwardRef(({ name, size, color, testID, ...props }: any, ref: any) => {
       // Store icon props as data attributes for testing
       const iconProps = {
-        testID: testID || `icon-${name}`,
-        accessibilityLabel: name,
-        "data-name": name,
-        "data-size": size,
-        "data-color": color,
-        ref: ref,
+        'testID': testID || `icon-${name}`,
+        'accessibilityLabel': name,
+        'data-name': name,
+        'data-size': size,
+        'data-color': color,
+        'ref': ref,
         ...props,
       };
       return <View {...iconProps} />;
@@ -58,33 +61,33 @@ jest.mock("@expo/vector-icons", () => {
   };
 });
 
-describe("ActivePillTabBar", () => {
+describe('ActivePillTabBar', () => {
   const mockState = {
     index: 0,
     routes: [
-      { key: "Home-0", name: "Home" },
-      { key: "Swipe-1", name: "Swipe" },
-      { key: "Matches-2", name: "Matches" },
-      { key: "Map-3", name: "Map" },
-      { key: "Profile-4", name: "Profile" },
+      { key: 'Home-0', name: 'Home' },
+      { key: 'Swipe-1', name: 'Swipe' },
+      { key: 'Matches-2', name: 'Matches' },
+      { key: 'Map-3', name: 'Map' },
+      { key: 'Profile-4', name: 'Profile' },
     ],
   };
 
   const mockDescriptors = {
-    "Home-0": {
-      options: { title: "Home", tabBarTestID: "tab-Home" },
+    'Home-0': {
+      options: { title: 'Home', tabBarTestID: 'tab-Home' },
     },
-    "Swipe-1": {
-      options: { title: "Swipe", tabBarTestID: "tab-Swipe" },
+    'Swipe-1': {
+      options: { title: 'Swipe', tabBarTestID: 'tab-Swipe' },
     },
-    "Matches-2": {
-      options: { title: "Matches", tabBarTestID: "tab-Matches" },
+    'Matches-2': {
+      options: { title: 'Matches', tabBarTestID: 'tab-Matches' },
     },
-    "Map-3": {
-      options: { title: "Map", tabBarTestID: "tab-Map" },
+    'Map-3': {
+      options: { title: 'Map', tabBarTestID: 'tab-Map' },
     },
-    "Profile-4": {
-      options: { title: "Profile", tabBarTestID: "tab-Profile" },
+    'Profile-4': {
+      options: { title: 'Profile', tabBarTestID: 'tab-Profile' },
     },
   };
 
@@ -96,9 +99,9 @@ describe("ActivePillTabBar", () => {
 
   const mockTheme = {
     colors: {
-      primary: "#007AFF",
-      text: "#000000",
-      background: "#FFFFFF",
+      primary: '#007AFF',
+      text: '#000000',
+      background: '#FFFFFF',
     },
     dark: false,
   };
@@ -108,7 +111,7 @@ describe("ActivePillTabBar", () => {
     (Haptics.impactAsync as jest.Mock).mockResolvedValue(undefined);
   });
 
-  it("should render all tabs correctly", () => {
+  it('should render all tabs correctly', () => {
     const { getByTestId } = render(
       <ActivePillTabBar
         state={mockState}
@@ -117,14 +120,14 @@ describe("ActivePillTabBar", () => {
       />,
     );
 
-    expect(getByTestId("tab-Home")).toBeTruthy();
-    expect(getByTestId("tab-Swipe")).toBeTruthy();
-    expect(getByTestId("tab-Matches")).toBeTruthy();
-    expect(getByTestId("tab-Map")).toBeTruthy();
-    expect(getByTestId("tab-Profile")).toBeTruthy();
+    expect(getByTestId('tab-Home')).toBeTruthy();
+    expect(getByTestId('tab-Swipe')).toBeTruthy();
+    expect(getByTestId('tab-Matches')).toBeTruthy();
+    expect(getByTestId('tab-Map')).toBeTruthy();
+    expect(getByTestId('tab-Profile')).toBeTruthy();
   });
 
-  it("should display correct icons for each route", () => {
+  it('should display correct icons for each route', () => {
     const { queryByTestId, getAllByTestId } = render(
       <ActivePillTabBar
         state={mockState}
@@ -134,12 +137,13 @@ describe("ActivePillTabBar", () => {
     );
 
     // Icons are rendered, check they exist (may be multiple with same name due to animation)
-    const homeIcons = queryByTestId("icon-home") || queryByTestId("icon-home-outline");
-    const heartIcons = queryByTestId("icon-heart") || queryByTestId("icon-heart-outline");
-    const chatIcons = queryByTestId("icon-chatbubbles") || queryByTestId("icon-chatbubbles-outline");
-    const mapIcons = queryByTestId("icon-map") || queryByTestId("icon-map-outline");
-    const personIcons = queryByTestId("icon-person") || queryByTestId("icon-person-outline");
-    
+    const homeIcons = queryByTestId('icon-home') || queryByTestId('icon-home-outline');
+    const heartIcons = queryByTestId('icon-heart') || queryByTestId('icon-heart-outline');
+    const chatIcons =
+      queryByTestId('icon-chatbubbles') || queryByTestId('icon-chatbubbles-outline');
+    const mapIcons = queryByTestId('icon-map') || queryByTestId('icon-map-outline');
+    const personIcons = queryByTestId('icon-person') || queryByTestId('icon-person-outline');
+
     expect(homeIcons).toBeTruthy();
     expect(heartIcons).toBeTruthy();
     expect(chatIcons).toBeTruthy();
@@ -147,7 +151,7 @@ describe("ActivePillTabBar", () => {
     expect(personIcons).toBeTruthy();
   });
 
-  it("should display focused icon for active tab", () => {
+  it('should display focused icon for active tab', () => {
     const { getByTestId } = render(
       <ActivePillTabBar
         state={mockState}
@@ -156,13 +160,13 @@ describe("ActivePillTabBar", () => {
       />,
     );
 
-    const homeIcon = getByTestId("icon-home");
+    const homeIcon = getByTestId('icon-home');
     expect(homeIcon).toBeTruthy();
     // Home is focused (index 0)
-    expect(homeIcon.props["data-name"]).toBe("home");
+    expect(homeIcon.props['data-name']).toBe('home');
   });
 
-  it("should navigate to tab on press", () => {
+  it('should navigate to tab on press', () => {
     const { getByTestId } = render(
       <ActivePillTabBar
         state={mockState}
@@ -171,18 +175,18 @@ describe("ActivePillTabBar", () => {
       />,
     );
 
-    const swipeTab = getByTestId("tab-Swipe");
+    const swipeTab = getByTestId('tab-Swipe');
     fireEvent.press(swipeTab);
 
     expect(mockNavigation.emit).toHaveBeenCalledWith({
-      type: "tabPress",
-      target: "Swipe-1",
+      type: 'tabPress',
+      target: 'Swipe-1',
       canPreventDefault: true,
     });
-    expect(mockNavigation.navigate).toHaveBeenCalledWith("Swipe");
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Swipe');
   });
 
-  it("should not navigate when already on the tab", () => {
+  it('should not navigate when already on the tab', () => {
     const { getByTestId } = render(
       <ActivePillTabBar
         state={mockState}
@@ -191,19 +195,19 @@ describe("ActivePillTabBar", () => {
       />,
     );
 
-    const homeTab = getByTestId("tab-Home");
+    const homeTab = getByTestId('tab-Home');
     fireEvent.press(homeTab);
 
     expect(mockNavigation.emit).toHaveBeenCalledWith({
-      type: "tabPress",
-      target: "Home-0",
+      type: 'tabPress',
+      target: 'Home-0',
       canPreventDefault: true,
     });
     // Should not navigate since already on Home
     expect(mockNavigation.navigate).not.toHaveBeenCalled();
   });
 
-  it("should detect double-tap and emit tabDoublePress event", async () => {
+  it('should detect double-tap and emit tabDoublePress event', async () => {
     const { getByTestId } = render(
       <ActivePillTabBar
         state={mockState}
@@ -212,11 +216,11 @@ describe("ActivePillTabBar", () => {
       />,
     );
 
-    const homeTab = getByTestId("tab-Home");
-    
+    const homeTab = getByTestId('tab-Home');
+
     // First tap
     fireEvent.press(homeTab);
-    
+
     // Second tap within 300ms (simulate quick double tap)
     await act(async () => {
       fireEvent.press(homeTab);
@@ -224,13 +228,13 @@ describe("ActivePillTabBar", () => {
 
     await waitFor(() => {
       expect(mockNavigation.emit).toHaveBeenCalledWith({
-        type: "tabDoublePress",
-        target: "Home-0",
+        type: 'tabDoublePress',
+        target: 'Home-0',
       });
     });
   });
 
-  it("should not emit tabDoublePress if second tap is after 300ms", async () => {
+  it('should not emit tabDoublePress if second tap is after 300ms', async () => {
     const { getByTestId } = render(
       <ActivePillTabBar
         state={mockState}
@@ -239,39 +243,39 @@ describe("ActivePillTabBar", () => {
       />,
     );
 
-    const homeTab = getByTestId("tab-Home");
-    
+    const homeTab = getByTestId('tab-Home');
+
     // First tap
     fireEvent.press(homeTab);
-    
+
     // Wait 350ms before second tap (longer than 300ms threshold)
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 350));
+      await new Promise((resolve) => setTimeout(resolve, 350));
     });
-    
+
     // Reset mock to ignore first tap events
     mockNavigation.emit.mockClear();
-    
+
     // Second tap after delay
     fireEvent.press(homeTab);
 
     // Should only have regular tap event, not double-tap
     await waitFor(() => {
       expect(mockNavigation.emit).toHaveBeenCalledWith({
-        type: "tabPress",
-        target: "Home-0",
+        type: 'tabPress',
+        target: 'Home-0',
         canPreventDefault: true,
       });
     });
-    
+
     expect(mockNavigation.emit).not.toHaveBeenCalledWith(
       expect.objectContaining({
-        type: "tabDoublePress",
+        type: 'tabDoublePress',
       }),
     );
   });
 
-  it("should show badge for routes with counts", () => {
+  it('should show badge for routes with counts', () => {
     const { getByText } = render(
       <ActivePillTabBar
         state={mockState}
@@ -281,10 +285,10 @@ describe("ActivePillTabBar", () => {
     );
 
     // Matches tab should have a badge with count 3
-    expect(getByText("3")).toBeTruthy();
+    expect(getByText('3')).toBeTruthy();
   });
 
-  it("should display badges for Home and Map tabs", () => {
+  it('should display badges for Home and Map tabs', () => {
     const { getByText } = render(
       <ActivePillTabBar
         state={mockState}
@@ -294,13 +298,13 @@ describe("ActivePillTabBar", () => {
     );
 
     // Home should have badge with count 2
-    expect(getByText("2")).toBeTruthy();
-    
+    expect(getByText('2')).toBeTruthy();
+
     // Map should have badge with count 1
-    expect(getByText("1")).toBeTruthy();
+    expect(getByText('1')).toBeTruthy();
   });
 
-  it("should display correct labels for each tab", () => {
+  it('should display correct labels for each tab', () => {
     const { getByText } = render(
       <ActivePillTabBar
         state={mockState}
@@ -309,14 +313,14 @@ describe("ActivePillTabBar", () => {
       />,
     );
 
-    expect(getByText("Home")).toBeTruthy();
-    expect(getByText("Swipe")).toBeTruthy();
-    expect(getByText("Matches")).toBeTruthy();
-    expect(getByText("Map")).toBeTruthy();
-    expect(getByText("Profile")).toBeTruthy();
+    expect(getByText('Home')).toBeTruthy();
+    expect(getByText('Swipe')).toBeTruthy();
+    expect(getByText('Matches')).toBeTruthy();
+    expect(getByText('Map')).toBeTruthy();
+    expect(getByText('Profile')).toBeTruthy();
   });
 
-  it("should handle long press event", () => {
+  it('should handle long press event', () => {
     const { getByTestId } = render(
       <ActivePillTabBar
         state={mockState}
@@ -325,7 +329,7 @@ describe("ActivePillTabBar", () => {
       />,
     );
 
-    const homeTab = getByTestId("tab-Home");
+    const homeTab = getByTestId('tab-Home');
     fireEvent.press(homeTab, { nativeEvent: { timestamp: Date.now() } });
 
     // Long press should emit tabLongPress
@@ -341,14 +345,14 @@ describe("ActivePillTabBar", () => {
     expect(mockNavigation.emit).toHaveBeenCalled();
   });
 
-  it("should handle route without title", () => {
+  it('should handle route without title', () => {
     const customState = {
       index: 0,
-      routes: [{ key: "Test-0", name: "TestRoute" }],
+      routes: [{ key: 'Test-0', name: 'TestRoute' }],
     };
 
     const customDescriptors = {
-      "Test-0": {
+      'Test-0': {
         options: {},
       },
     };
@@ -362,15 +366,15 @@ describe("ActivePillTabBar", () => {
     );
 
     // Should use route name as label
-    expect(getByText("TestRoute")).toBeTruthy();
+    expect(getByText('TestRoute')).toBeTruthy();
   });
 
-  it("should handle theme changes (dark mode)", () => {
+  it('should handle theme changes (dark mode)', () => {
     const darkTheme = {
       colors: {
-        primary: "#007AFF",
-        text: "#FFFFFF",
-        background: "#000000",
+        primary: '#007AFF',
+        text: '#FFFFFF',
+        background: '#000000',
       },
       dark: true,
     };
@@ -383,10 +387,10 @@ describe("ActivePillTabBar", () => {
       />,
     );
 
-    expect(getByTestId("tab-Home")).toBeTruthy();
+    expect(getByTestId('tab-Home')).toBeTruthy();
   });
 
-  it("should animate indicator on tab change", () => {
+  it('should animate indicator on tab change', () => {
     const newState = {
       index: 1, // Swipe is now focused
       routes: mockState.routes,
@@ -409,18 +413,18 @@ describe("ActivePillTabBar", () => {
     );
 
     // Swipe should now be focused
-    const swipeIcon = getByTestId("icon-heart");
-    expect(swipeIcon.props["data-name"]).toBe("heart");
+    const swipeIcon = getByTestId('icon-heart');
+    expect(swipeIcon.props['data-name']).toBe('heart');
   });
 
-  it("should handle undefined scale gracefully", () => {
+  it('should handle undefined scale gracefully', () => {
     const customState = {
       index: 0,
-      routes: [{ key: "Test-0", name: "Test" }],
+      routes: [{ key: 'Test-0', name: 'Test' }],
     };
 
     const customDescriptors = {
-      "Test-0": { options: { title: "Test" } },
+      'Test-0': { options: { title: 'Test' } },
     };
 
     expect(() => {
@@ -434,7 +438,7 @@ describe("ActivePillTabBar", () => {
     }).not.toThrow();
   });
 
-  it("should apply correct accessibility props", () => {
+  it('should apply correct accessibility props', () => {
     const { getByTestId } = render(
       <ActivePillTabBar
         state={mockState}
@@ -443,16 +447,16 @@ describe("ActivePillTabBar", () => {
       />,
     );
 
-    const homeTab = getByTestId("tab-Home");
-    expect(homeTab.props.accessibilityRole).toBe("tab");
+    const homeTab = getByTestId('tab-Home');
+    expect(homeTab.props.accessibilityRole).toBe('tab');
     expect(homeTab.props.accessibilityState.selected).toBe(true);
   });
 
-  it("should handle platform differences (iOS vs Android)", () => {
+  it('should handle platform differences (iOS vs Android)', () => {
     const originalPlatform = Platform.OS;
-    
+
     // Test iOS
-    Platform.OS = "ios";
+    Platform.OS = 'ios';
     const { rerender } = render(
       <ActivePillTabBar
         state={mockState}
@@ -462,7 +466,7 @@ describe("ActivePillTabBar", () => {
     );
 
     // Test Android
-    Platform.OS = "android";
+    Platform.OS = 'android';
     rerender(
       <ActivePillTabBar
         state={mockState}
@@ -475,14 +479,14 @@ describe("ActivePillTabBar", () => {
     expect(true).toBe(true); // If we got here, no errors occurred
   });
 
-  it("should get correct icon for unknown route", () => {
+  it('should get correct icon for unknown route', () => {
     const customState = {
       index: 0,
-      routes: [{ key: "Unknown-0", name: "UnknownRoute" }],
+      routes: [{ key: 'Unknown-0', name: 'UnknownRoute' }],
     };
 
     const customDescriptors = {
-      "Unknown-0": { options: { title: "Unknown" } },
+      'Unknown-0': { options: { title: 'Unknown' } },
     };
 
     const { getByTestId } = render(
@@ -494,7 +498,7 @@ describe("ActivePillTabBar", () => {
     );
 
     // Should default to home-outline icon
-    const icon = getByTestId("icon-home-outline");
+    const icon = getByTestId('icon-home-outline');
     expect(icon).toBeTruthy();
   });
 });

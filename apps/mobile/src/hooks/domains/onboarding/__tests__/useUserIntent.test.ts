@@ -21,9 +21,11 @@ describe('useUserIntent', () => {
     });
 
     it('should accept initial intent', () => {
-      const { result } = renderHook(() => useUserIntent({
-        initialIntent: 'adoption'
-      }));
+      const { result } = renderHook(() =>
+        useUserIntent({
+          initialIntent: 'adoption',
+        }),
+      );
       expect(result.current.intent).toBe('adoption');
     });
   });
@@ -37,8 +39,8 @@ describe('useUserIntent', () => {
           responses: {
             'looking-for': 'adopt',
             'timeline': 'soon',
-            'experience': 'first-time'
-          }
+            'experience': 'first-time',
+          },
         });
       });
 
@@ -54,8 +56,8 @@ describe('useUserIntent', () => {
           responses: {
             'looking-for': 'match',
             'pet-ownership': 'yes',
-            'matching-preferences': 'compatibility'
-          }
+            'matching-preferences': 'compatibility',
+          },
         });
       });
 
@@ -70,8 +72,8 @@ describe('useUserIntent', () => {
         result.current.analyzeIntent({
           responses: {
             'looking-for': 'browse',
-            'commitment': 'not-sure'
-          }
+            'commitment': 'not-sure',
+          },
         });
       });
 
@@ -85,8 +87,8 @@ describe('useUserIntent', () => {
       act(() => {
         result.current.analyzeIntent({
           responses: {
-            'looking-for': 'not-sure'
-          }
+            'looking-for': 'not-sure',
+          },
         });
       });
 
@@ -276,8 +278,8 @@ describe('useUserIntent', () => {
       act(() => {
         result.current.analyzeIntent({
           responses: {
-            'looking-for': 'adopt'
-          }
+            'looking-for': 'adopt',
+          },
         });
       });
 
@@ -314,7 +316,7 @@ describe('useUserIntent', () => {
 
       act(() => {
         result.current.analyzeIntent({
-          responses: {}
+          responses: {},
         });
       });
 
@@ -411,7 +413,7 @@ describe('useUserIntent', () => {
       const userProfile = {
         hasPets: false,
         experience: 'beginner',
-        location: 'urban'
+        location: 'urban',
       };
 
       act(() => {
@@ -430,7 +432,7 @@ describe('useUserIntent', () => {
 
       act(() => {
         result.current.analyzeIntent({
-          responses: null as any
+          responses: null as any,
         });
       });
 
@@ -442,7 +444,7 @@ describe('useUserIntent', () => {
 
       act(() => {
         result.current.analyzeIntent({
-          responses: {}
+          responses: {},
         });
       });
 
@@ -456,8 +458,8 @@ describe('useUserIntent', () => {
         result.current.analyzeIntent({
           responses: {
             'looking-for': 'adopt',
-            'commitment': 'not-interested'
-          }
+            'commitment': 'not-interested',
+          },
         });
       });
 

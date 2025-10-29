@@ -3,8 +3,8 @@
  * Advanced security implementation following Rule 12 (Security & Privacy)
  */
 
-import { z } from "zod";
-import { logger } from "@pawfectmatch/core";
+import { z } from 'zod';
+import { logger } from '@pawfectmatch/core';
 
 // Polyfill for crypto.getRandomValues in React Native
 function getRandomValues(array: Uint8Array): Uint8Array {
@@ -18,58 +18,46 @@ function getRandomValues(array: Uint8Array): Uint8Array {
 export const UserInputSchemas = {
   // Authentication
   login: z.object({
-    email: z.email("Invalid email format"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    email: z.email('Invalid email format'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
   }),
 
   register: z.object({
-    email: z.email("Invalid email format"),
+    email: z.email('Invalid email format'),
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters")
+      .min(8, 'Password must be at least 8 characters')
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Password must contain uppercase, lowercase, and number",
+        'Password must contain uppercase, lowercase, and number',
       ),
-    firstName: z
-      .string()
-      .min(2, "First name too short")
-      .max(50, "First name too long"),
-    lastName: z
-      .string()
-      .min(2, "Last name too short")
-      .max(50, "Last name too long"),
+    firstName: z.string().min(2, 'First name too short').max(50, 'First name too long'),
+    lastName: z.string().min(2, 'Last name too short').max(50, 'Last name too long'),
     dateOfBirth: z.string().refine((date) => {
       const age = new Date().getFullYear() - new Date(date).getFullYear();
       return age >= 13 && age <= 120;
-    }, "Invalid age (must be 13-120 years old)"),
+    }, 'Invalid age (must be 13-120 years old)'),
   }),
 
   // Pet Profile
   petProfile: z.object({
-    name: z.string().min(1, "Pet name required").max(50, "Pet name too long"),
-    breed: z.string().min(1, "Breed required").max(100, "Breed name too long"),
-    age: z
-      .number()
-      .min(0, "Age cannot be negative")
-      .max(50, "Age seems too high"),
-    species: z.enum(["dog", "cat", "bird", "rabbit", "other"]),
-    description: z.string().max(1000, "Description too long").optional(),
+    name: z.string().min(1, 'Pet name required').max(50, 'Pet name too long'),
+    breed: z.string().min(1, 'Breed required').max(100, 'Breed name too long'),
+    age: z.number().min(0, 'Age cannot be negative').max(50, 'Age seems too high'),
+    species: z.enum(['dog', 'cat', 'bird', 'rabbit', 'other']),
+    description: z.string().max(1000, 'Description too long').optional(),
   }),
 
   // Message/Chat
   message: z.object({
-    content: z
-      .string()
-      .min(1, "Message cannot be empty")
-      .max(2000, "Message too long"),
-    type: z.enum(["text", "image", "location"]).default("text"),
+    content: z.string().min(1, 'Message cannot be empty').max(2000, 'Message too long'),
+    type: z.enum(['text', 'image', 'location']).default('text'),
   }),
 
   // Search Filters
   searchFilters: z.object({
     maxDistance: z.number().min(1).max(500).optional(),
-    breeds: z.array(z.string()).max(10, "Too many breed filters").optional(),
+    breeds: z.array(z.string()).max(10, 'Too many breed filters').optional(),
     ageRange: z
       .object({
         min: z.number().min(0).max(50),
@@ -97,17 +85,17 @@ export class InputSanitizer {
     try {
       // Simple HTML sanitization - remove script tags and dangerous attributes
       return dirty
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
-        .replace(/on\w+\s*=/gi, "")
-        .replace(/javascript:/gi, "")
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+        .replace(/on\w+\s*=/gi, '')
+        .replace(/javascript:/gi, '')
         .trim();
     } catch (error) {
-      logger.error("HTML sanitization failed", {
+      logger.error('HTML sanitization failed', {
         error: error instanceof Error ? error.message : String(error),
         input: dirty,
       });
-      return "";
+      return '';
     }
   }
 
@@ -115,20 +103,22 @@ export class InputSanitizer {
    * Sanitize plain text (remove dangerous characters)
    */
   sanitizeText(input: string): string {
-    if (typeof input !== "string") {
-      logger.error("Invalid input type for text sanitization", {
+    if (typeof input !== 'string') {
+      logger.error('Invalid input type for text sanitization', {
         type: typeof input,
       });
-      return "";
+      return '';
     }
 
     // Remove null bytes and other dangerous characters
-    return input
-      // eslint-disable-next-line no-control-regex
-      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "") // Remove control characters
-      .replace(/[<>]/g, "") // Remove angle brackets
-      .trim()
-      .slice(0, 10000); // Limit length
+    return (
+      input
+        // eslint-disable-next-line no-control-regex
+        .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '') // Remove control characters
+        .replace(/[<>]/g, '') // Remove angle brackets
+        .trim()
+        .slice(0, 10000)
+    ); // Limit length
   }
 
   /**
@@ -140,7 +130,7 @@ export class InputSanitizer {
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(sanitized)) {
-      throw new Error("Invalid email format");
+      throw new Error('Invalid email format');
     }
 
     return sanitized;
@@ -151,7 +141,7 @@ export class InputSanitizer {
    */
   sanitizeFilename(filename: string): string {
     return this.sanitizeText(filename)
-      .replace(/[^a-zA-Z0-9._-]/g, "_") // Replace special chars with underscore
+      .replace(/[^a-zA-Z0-9._-]/g, '_') // Replace special chars with underscore
       .slice(0, 255); // Limit length
   }
 }
@@ -171,11 +161,7 @@ export class RateLimiter {
   /**
    * Check if request should be rate limited
    */
-  checkLimit(
-    identifier: string,
-    maxAttempts: number = 10,
-    windowMs: number = 60000,
-  ): boolean {
+  checkLimit(identifier: string, maxAttempts: number = 10, windowMs: number = 60000): boolean {
     const now = Date.now();
     const key = identifier;
 
@@ -188,7 +174,7 @@ export class RateLimiter {
     }
 
     if (record.count >= maxAttempts) {
-      logger.warn("Rate limit exceeded", {
+      logger.warn('Rate limit exceeded', {
         identifier,
         attempts: record.count,
       });
@@ -236,8 +222,8 @@ export class CSRFProtection {
    */
   generateToken(sessionId: string): string {
     const token = getRandomValues(new Uint8Array(32)).reduce(
-      (acc, byte) => acc + byte.toString(16).padStart(2, "0"),
-      "",
+      (acc, byte) => acc + byte.toString(16).padStart(2, '0'),
+      '',
     );
 
     this.tokens.set(sessionId, {
@@ -255,13 +241,13 @@ export class CSRFProtection {
     const record = this.tokens.get(sessionId);
 
     if (!record || record.expires < Date.now()) {
-      logger.warn("CSRF token expired or invalid", { sessionId });
+      logger.warn('CSRF token expired or invalid', { sessionId });
       return false;
     }
 
     const isValid = record.token === token;
     if (!isValid) {
-      logger.warn("CSRF token mismatch", { sessionId });
+      logger.warn('CSRF token mismatch', { sessionId });
     }
 
     return isValid;
@@ -296,51 +282,46 @@ export class InputValidator {
   /**
    * Validate and sanitize user input
    */
-  validateInput<T>(
-    schema: z.ZodType<T>,
-    data: unknown,
-    context: string = "unknown",
-  ): T {
+  validateInput<T>(schema: z.ZodType<T>, data: unknown, context: string = 'unknown'): T {
     try {
       // First pass: sanitize if it's a string
       let sanitizedData = data;
-      if (typeof data === "string") {
+      if (typeof data === 'string') {
         sanitizedData = this.sanitizer.sanitizeText(data);
-      } else if (typeof data === "object" && data !== null) {
+      } else if (typeof data === 'object' && data !== null) {
         // Sanitize string properties in objects
-        sanitizedData = this.sanitizeObjectStrings(
-          data as Record<string, unknown>,
-        );
+        sanitizedData = this.sanitizeObjectStrings(data as Record<string, unknown>);
       }
 
       // Validate with Zod schema
       const validatedData = schema.parse(sanitizedData);
 
-      logger.info("Input validation passed", {
+      logger.info('Input validation passed', {
         context,
-        schema: schema.description || "unnamed schema",
+        schema: schema.description || 'unnamed schema',
       });
 
       return validatedData;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error("Input validation failed", {
+        logger.error('Input validation failed', {
           context,
           errors: error.issues,
-          input: typeof data === "object" && data !== null ? (() => {
-            try {
-              return JSON.stringify(data, null, 2);
-            } catch {
-              return "[Object]";
-            }
-          })() : String(data),
+          input:
+            typeof data === 'object' && data !== null
+              ? (() => {
+                  try {
+                    return JSON.stringify(data, null, 2);
+                  } catch {
+                    return '[Object]';
+                  }
+                })()
+              : String(data),
         });
-        throw new Error(
-          `Validation failed: ${error.issues.map((e) => e.message).join(", ")}`,
-        );
+        throw new Error(`Validation failed: ${error.issues.map((e) => e.message).join(', ')}`);
       }
 
-      logger.error("Input validation error", {
+      logger.error('Input validation error', {
         context,
         error: error instanceof Error ? error.message : String(error),
       });
@@ -359,24 +340,18 @@ export class InputValidator {
     );
 
     if (limited) {
-      throw new Error(
-        `Rate limit exceeded for ${operation}. Please try again later.`,
-      );
+      throw new Error(`Rate limit exceeded for ${operation}. Please try again later.`);
     }
   }
 
-  private sanitizeObjectStrings(
-    obj: Record<string, unknown>,
-  ): Record<string, unknown> {
+  private sanitizeObjectStrings(obj: Record<string, unknown>): Record<string, unknown> {
     const sanitized: Record<string, unknown> = {};
 
     for (const [key, value] of Object.entries(obj)) {
-      if (typeof value === "string") {
+      if (typeof value === 'string') {
         sanitized[key] = this.sanitizer.sanitizeText(value);
-      } else if (typeof value === "object" && value !== null) {
-        sanitized[key] = this.sanitizeObjectStrings(
-          value as Record<string, unknown>,
-        );
+      } else if (typeof value === 'object' && value !== null) {
+        sanitized[key] = this.sanitizeObjectStrings(value as Record<string, unknown>);
       } else {
         sanitized[key] = value;
       }
@@ -395,10 +370,14 @@ interface SecurityResponse {
   setHeader: (name: string, value: string) => void;
 }
 
-export const createSecurityHeaders = (req: SecurityRequest, res: SecurityResponse, next: () => void) => {
+export const createSecurityHeaders = (
+  req: SecurityRequest,
+  res: SecurityResponse,
+  next: () => void,
+) => {
   // Content Security Policy
   res.setHeader(
-    "Content-Security-Policy",
+    'Content-Security-Policy',
     [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline'",
@@ -409,19 +388,19 @@ export const createSecurityHeaders = (req: SecurityRequest, res: SecurityRespons
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
-    ].join("; "),
+    ].join('; '),
   );
 
   // Other security headers
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-XSS-Protection", "1; mode=block");
-  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   // Permissions Policy
   res.setHeader(
-    "Permissions-Policy",
-    ["camera=(), microphone=(), geolocation=(), payment=()"].join(", "),
+    'Permissions-Policy',
+    ['camera=(), microphone=(), geolocation=(), payment=()'].join(', '),
   );
 
   next();

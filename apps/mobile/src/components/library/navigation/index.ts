@@ -1,1 +1,1 @@
-export { ConnectionPath } from "./ConnectionPath";
+export { ConnectionPath } from './ConnectionPath';

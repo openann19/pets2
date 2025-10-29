@@ -4,6 +4,15 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '@/lib/axios';
 
+interface User {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  status: 'active' | 'suspended' | 'banned';
+  createdAt: string;
+}
+
 export function UserManagement() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('all');
@@ -81,7 +90,7 @@ export function UserManagement() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
-            {data?.users?.map((user: any) => (
+            {data?.users?.map((user: User) => (
               <tr key={user.id} className="hover:bg-admin-dark">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">

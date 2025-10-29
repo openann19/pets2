@@ -3,11 +3,11 @@
  * Manages business logic for admin dashboard
  */
 
-import { logger } from "@pawfectmatch/core";
-import { useEffect, useState } from "react";
-import { Alert } from "react-native";
-import { _adminAPI as adminAPI } from "../../../../services/api";
-import type { AdminStats, SystemHealth } from "../types";
+import { logger } from '@pawfectmatch/core';
+import { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
+import { _adminAPI as adminAPI } from '../../../../services/api';
+import type { AdminStats, SystemHealth } from '../types';
 
 export const useAdminDashboard = () => {
   const [stats, setStats] = useState<AdminStats | null>(null);
@@ -30,8 +30,8 @@ export const useAdminDashboard = () => {
       setStats(statsResponse.data as AdminStats);
       setSystemHealth(healthResponse.data as SystemHealth);
     } catch (error: unknown) {
-      logger.error("Error loading dashboard data:", { error });
-      Alert.alert("Error", "Failed to load dashboard data");
+      logger.error('Error loading dashboard data:', { error });
+      Alert.alert('Error', 'Failed to load dashboard data');
     } finally {
       setLoading(false);
     }
@@ -51,4 +51,3 @@ export const useAdminDashboard = () => {
     onRefresh,
   };
 };
-
