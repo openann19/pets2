@@ -14,7 +14,12 @@
 
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import { AccessibilityInfo, Platform } from 'react-native';
-import { accessibilityService, AccessibilityService } from '../AccessibilityService';
+import { getLightTheme } from '@/theme/resolve';
+import {
+  accessibilityService,
+  AccessibilityService,
+  buildAccessibleColorScheme,
+} from '../AccessibilityService';
 
 // Mock React Native AccessibilityInfo
 jest.mock('react-native', () => ({
@@ -297,18 +302,9 @@ describe('AccessibilityService', () => {
   describe('Color Schemes', () => {
     it('should return standard accessible color scheme', () => {
       const colors = accessibilityService.getAccessibleColorScheme();
+      const expected = buildAccessibleColorScheme(getLightTheme());
 
-      expect(colors).toEqual({
-        primary: '#2563EB',
-        secondary: '#64748B',
-        background: '#FFFFFF',
-        surface: '#F8FAFC',
-        text: '#1E293B',
-        textSecondary: '#64748B',
-        error: '#DC2626',
-        success: '#16A34A',
-        warning: '#D97706',
-      });
+      expect(colors).toEqual(expected);
     });
 
     it('should return high contrast color scheme when enabled', () => {
@@ -316,18 +312,9 @@ describe('AccessibilityService', () => {
       (accessibilityService as any).config.isGrayscaleEnabled = true;
 
       const colors = accessibilityService.getAccessibleColorScheme();
+      const expected = buildAccessibleColorScheme(getLightTheme(), { highContrast: true });
 
-      expect(colors).toEqual({
-        primary: '#FFFFFF',
-        secondary: '#CCCCCC',
-        background: '#000000',
-        surface: '#111111',
-        text: '#FFFFFF',
-        textSecondary: '#CCCCCC',
-        error: '#FF4444',
-        success: '#44FF44',
-        warning: '#FFFF44',
-      });
+      expect(colors).toEqual(expected);
     });
   });
 

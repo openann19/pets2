@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -10,12 +10,13 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
 import { VideoView } from 'livekit-react-native';
 import type { RemoteParticipant } from 'livekit-client';
 import { useLiveStream } from '../../hooks/useLiveStream';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
 
 interface ChatMessage {
   id: string;
@@ -30,7 +31,6 @@ export function LiveStreamViewerScreen() {
   const { streamId } = route.params as { streamId: string };
 
   const {
-    room,
     isConnected,
     participants,
     viewerCount,
@@ -42,7 +42,14 @@ export function LiveStreamViewerScreen() {
 
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [messageInput, setMessageInput] = useState('');
-  const [pinnedMessages, setPinnedMessages] = useState<any[]>([]);
+  const [pinnedMessages] = useState<
+    Array<{ messageId: string; content: string }>
+  >([]);
+
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const statusBarStyle = theme.isDark ? 'light-content' : 'dark-content';
+  const placeholderColor = `${theme.colors.onMuted}CC`;
 
   useEffect(() => {
     if (streamId) {
@@ -52,25 +59,28 @@ export function LiveStreamViewerScreen() {
     return () => {
       // Cleanup handled in hook
     };
-  }, [streamId]);
+  }, [streamId, watchStream]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = useCallback(() => {
     if (messageInput.trim()) {
       sendChatMessage(messageInput);
       setMessageInput('');
     }
-  };
+  }, [messageInput, sendChatMessage]);
 
-  const handleReaction = (emoji: string) => {
-    sendReaction(emoji);
-  };
+  const handleReaction = useCallback(
+    (emoji: string) => {
+      sendReaction(emoji);
+    },
+    [sendReaction],
+  );
 
-  const quickReactions = ['❤️', '🔥', '😍', '👏', '🎉'];
+  const quickReactions = useMemo(() => ['❤️', '🔥', '😍', '👏', '🎉'], []);
 
   if (error) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle={statusBarStyle} />
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
@@ -92,7 +102,7 @@ export function LiveStreamViewerScreen() {
   if (!isConnected) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle={statusBarStyle} />
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>Connecting...</Text>
         </View>
@@ -102,7 +112,7 @@ export function LiveStreamViewerScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle={statusBarStyle} />
 
       {/* Header with live indicator */}
       <View style={styles.header}>
@@ -194,7 +204,7 @@ export function LiveStreamViewerScreen() {
           <TextInput
             style={styles.input}
             placeholder="Type a message..."
-            placeholderTextColor="#999"
+            placeholderTextColor={placeholderColor}
             value={messageInput}
             onChangeText={setMessageInput}
             multiline
@@ -229,166 +239,169 @@ export function LiveStreamViewerScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  errorText: {
-    color: '#ff4444',
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  backButton: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-  backButtonText: {
-    color: '#000',
-    fontWeight: 'bold',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-  },
-  closeButton: {
-    color: '#fff',
-    fontSize: 24,
-  },
-  liveIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  liveDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#ff0000',
-    marginRight: 6,
-  },
-  liveText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 12,
-  },
-  viewerCount: {
-    color: '#fff',
-    fontSize: 12,
-  },
-  videoContainer: {
-    flex: 1,
-  },
-  videoStream: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  noStreamView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  noStreamText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  pinnedContainer: {
-    backgroundColor: 'rgba(255,255,0,0.1)',
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-  },
-  pinnedLabel: {
-    color: '#ff0',
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  pinnedMessage: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    marginRight: 8,
-  },
-  pinnedText: {
-    color: '#fff',
-    fontSize: 12,
-  },
-  reactionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  reactionButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  reactionEmoji: {
-    fontSize: 24,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-  },
-  input: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    color: '#fff',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 20,
-    marginRight: 10,
-    fontSize: 14,
-  },
-  sendButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    justifyContent: 'center',
-  },
-  sendButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  chatContainer: {
-    maxHeight: 150,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-  },
-  chatMessage: {
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-  },
-  chatContent: {
-    color: '#fff',
-    fontSize: 14,
-  },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingText: {
+      color: theme.colors.onBg,
+      fontSize: 16,
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: theme.spacing.lg,
+      gap: theme.spacing.md,
+    },
+    errorText: {
+      color: theme.colors.danger,
+      fontSize: 16,
+    },
+    backButton: {
+      backgroundColor: theme.colors.surface,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.radii.lg,
+    },
+    backButtonText: {
+      color: theme.colors.onSurface,
+      fontWeight: '700',
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      backgroundColor: theme.colors.overlay,
+    },
+    closeButton: {
+      color: theme.colors.onSurface,
+      fontSize: 24,
+    },
+    liveIndicator: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.xs,
+    },
+    liveDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: theme.colors.danger,
+    },
+    liveText: {
+      color: theme.colors.onSurface,
+      fontWeight: '700',
+      fontSize: 12,
+    },
+    viewerCount: {
+      color: theme.colors.onSurface,
+      fontSize: 12,
+    },
+    videoContainer: {
+      flex: 1,
+    },
+    videoStream: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    noStreamView: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.surface,
+    },
+    noStreamText: {
+      color: theme.colors.onSurface,
+      fontSize: 16,
+    },
+    pinnedContainer: {
+      backgroundColor: `${theme.colors.warning}1A`,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      gap: theme.spacing.xs,
+    },
+    pinnedLabel: {
+      color: theme.colors.warning,
+      fontSize: 12,
+      fontWeight: '700',
+    },
+    pinnedMessage: {
+      backgroundColor: `${theme.colors.surface}E6`,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.radii.lg,
+      marginRight: theme.spacing.sm,
+    },
+    pinnedText: {
+      color: theme.colors.onSurface,
+      fontSize: 12,
+    },
+    reactionsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      paddingVertical: theme.spacing.sm,
+      backgroundColor: theme.colors.overlay,
+    },
+    reactionButton: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      backgroundColor: `${theme.colors.onSurface}1A`,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    reactionEmoji: {
+      fontSize: 24,
+      color: theme.colors.onSurface,
+    },
+    inputContainer: {
+      flexDirection: 'row',
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      backgroundColor: theme.colors.overlay,
+      gap: theme.spacing.sm,
+    },
+    input: {
+      flex: 1,
+      backgroundColor: `${theme.colors.onSurface}1A`,
+      color: theme.colors.onSurface,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.radii.full,
+      fontSize: 14,
+    },
+    sendButton: {
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.radii.full,
+      justifyContent: 'center',
+    },
+    sendButtonText: {
+      color: theme.colors.onPrimary,
+      fontWeight: '700',
+      fontSize: 14,
+    },
+    chatContainer: {
+      maxHeight: 150,
+      backgroundColor: theme.colors.overlay,
+    },
+    chatMessage: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+    },
+    chatContent: {
+      color: theme.colors.onSurface,
+      fontSize: 14,
+    },
+  });
