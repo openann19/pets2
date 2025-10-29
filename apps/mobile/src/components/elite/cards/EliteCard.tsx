@@ -23,8 +23,9 @@ import {
   SPRING,
 } from "../../../animation";
 import { GlobalStyles, BorderRadius, Shadows } from "../../../styles/GlobalStyles";
-import { PREMIUM_GRADIENTS } from "../constants/gradients";
+import { getPremiumGradients } from "../constants/gradients";
 import { PREMIUM_SHADOWS } from "../constants/shadows";
+import { useTheme } from '../../../theme/Provider';
 
 /**
  * EliteCard Component
@@ -52,6 +53,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
   shadow = "lg",
   shimmer = false,
 }) => {
+  const theme = useTheme();
   const scale = useSharedValue(1);
   const shimmerOffset = useSharedValue(-100);
 
@@ -98,7 +100,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
           backgroundColor: "rgba(255,255,255,0.1)",
           borderWidth: 1,
           borderColor: "rgba(255,255,255,0.2)",
-          shadowColor: "#000000",
+          shadowColor: theme.colors.text,
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.37,
           shadowRadius: 32,
@@ -124,13 +126,14 @@ export const EliteCard: React.FC<EliteCardProps> = ({
   };
 
   const getGradientColors = (): string[] | undefined => {
+    const gradients = getPremiumGradients(theme);
     switch (variant) {
       case "glass":
-        return [...PREMIUM_GRADIENTS.glass];
+        return [...gradients.glass];
       case "holographic":
-        return [...PREMIUM_GRADIENTS.holographic];
+        return [...gradients.holographic];
       case "glow":
-        return [...PREMIUM_GRADIENTS.primary];
+        return [...gradients.primary];
       default:
         return gradient
           ? ["rgba(255,255,255,0.9)", "rgba(255,255,255,0.7)"]

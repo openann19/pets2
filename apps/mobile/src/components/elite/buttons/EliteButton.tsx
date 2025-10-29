@@ -27,8 +27,9 @@ import {
   SPRING,
 } from "../../../animation";
 import { Colors, Spacing, BorderRadius, GlobalStyles } from "../../../styles/GlobalStyles";
-import { PREMIUM_GRADIENTS } from "../constants/gradients";
+import { getPremiumGradients } from "../constants/gradients";
 import { PREMIUM_SHADOWS } from "../constants/shadows";
+import { useTheme } from '../../../theme/Provider';
 
 /**
  * EliteButton Component
@@ -70,6 +71,7 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
   disabled,
   ...props
 }) => {
+  const theme = useTheme();
   const scale = useSharedValue(1);
   const shimmerOffset = useSharedValue(-100);
   const rippleScale = useSharedValue(0);
@@ -201,18 +203,20 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
 
   const getGradientColors = (): string[] => {
     if (gradient) return gradient;
+    
+    const gradients = getPremiumGradients(theme);
 
     switch (variant) {
       case "secondary":
-        return [...PREMIUM_GRADIENTS.secondary];
+        return [...gradients.secondary];
       case "glass":
-        return [...PREMIUM_GRADIENTS.glass];
+        return [...gradients.glass];
       case "holographic":
-        return [...PREMIUM_GRADIENTS.holographic];
+        return [...gradients.holographic];
       case "neon":
-        return [...PREMIUM_GRADIENTS.neon];
+        return [...gradients.neon];
       default:
-        return [...PREMIUM_GRADIENTS.primary];
+        return [...gradients.primary];
     }
   };
 
