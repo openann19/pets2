@@ -190,28 +190,28 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   const getVariantStyles = () => {
     const variants = {
       default: {
-        colors: isDark ? ["#262626", "#171717"] : ["#ffffff", "#fafafa"],
-        shadowColor: isDark ? "#000000" : "#000000",
+        colors: isDark ? [theme.colors.text.primary, theme.colors.text.primary + "80"] : [theme.colors.background.primary, theme.colors.background.secondary],
+        shadowColor: theme.colors.text.primary,
       },
       glass: {
         colors: ["transparent", "transparent"],
-        shadowColor: isDark ? "#000000" : "#000000",
+        shadowColor: theme.colors.text.primary,
       },
       elevated: {
-        colors: isDark ? ["#262626", "#171717"] : ["#ffffff", "#fafafa"],
-        shadowColor: isDark ? "#000000" : "#000000",
+        colors: isDark ? [theme.colors.text.primary, theme.colors.text.primary + "80"] : [theme.colors.background.primary, theme.colors.background.secondary],
+        shadowColor: theme.colors.text.primary,
       },
       gradient: {
-        colors: ["#667eea", "#764ba2"],
-        shadowColor: "#667eea",
+        colors: [theme.colors.primary[500], theme.colors.primary[600]],
+        shadowColor: theme.colors.primary[500],
       },
       neon: {
-        colors: ["#1a1a1a", "#1a1a1a"],
-        shadowColor: theme.colors.primary,
+        colors: [theme.colors.text.primary, theme.colors.text.primary],
+        shadowColor: theme.colors.primary[500],
       },
       holographic: {
-        colors: ["#ff6b6b", "#4ecdc4", "#45b7b8", "#96ceb4", "#ffeaa7"],
-        shadowColor: "#ff6b6b",
+        colors: [theme.colors.danger, theme.colors.status.success, theme.colors.status.success, theme.colors.status.success, theme.colors.status.warning],
+        shadowColor: theme.colors.danger,
       },
     };
 
@@ -254,8 +254,8 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       case "elevated":
         return {
           ...baseStyle,
-          backgroundColor: isDark ? "#262626" : "#ffffff",
-          shadowColor: "#000000",
+          backgroundColor: isDark ? theme.colors.text.primary : theme.colors.background.primary,
+          shadowColor: theme.colors.text.primary,
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.15,
           shadowRadius: 16,
@@ -266,7 +266,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       case "neon":
         return {
           ...baseStyle,
-          backgroundColor: "#1a1a1a",
+          backgroundColor: theme.colors.text.primary,
           borderWidth: 2,
           borderColor: theme.colors.primary,
           shadowColor: theme.colors.primary,
@@ -280,7 +280,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       case "gradient":
         return {
           ...baseStyle,
-          shadowColor: "#667eea",
+          shadowColor: theme.colors.primary[500],
           shadowOffset: { width: 0, height: 6 },
           shadowOpacity: 0.3,
           shadowRadius: 12,
@@ -291,8 +291,8 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       default:
         return {
           ...baseStyle,
-          backgroundColor: isDark ? "#262626" : "#ffffff",
-          shadowColor: "#000000",
+          backgroundColor: isDark ? theme.colors.text.primary : theme.colors.background.primary,
+          shadowColor: theme.colors.text.primary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
@@ -361,7 +361,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   if (variant === "gradient" || variant === "holographic") {
     const gradientColors =
       variant === "holographic"
-        ? ["#ff6b6b", "#4ecdc4", "#45b7b8", "#96ceb4", "#ffeaa7"]
+        ? [theme.colors.danger, theme.colors.status.success, theme.colors.status.success, theme.colors.status.success, theme.colors.status.warning]
         : getVariantStyles().colors;
 
     return (
