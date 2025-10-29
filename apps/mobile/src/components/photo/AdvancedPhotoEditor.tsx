@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useMemo } from 'react';
 import {
   View,
   StyleSheet,
@@ -17,6 +17,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import * as Haptics from 'expo-haptics';
 
 import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '@mobile/theme';
 import { usePhotoEditor } from '../../hooks/usePhotoEditor';
 import { PhotoAdjustmentSlider } from './PhotoAdjustmentSlider';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
@@ -77,6 +78,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
   maxWidth = 1920,
   maxHeight = 1920,
 }) => {
+  const theme = useTheme();
   const [activeTab, setActiveTab] = useState<'filters' | 'adjust' | 'crop'>('adjust');
   const [comparing, setComparing] = useState(false);
   const [showSplit, setShowSplit] = useState(false);
@@ -296,6 +298,119 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     }
   }, [ultraVariants]);
 
+  const styles = useMemo(() => ({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.text.primary,
+    },
+    previewContainer: {
+      height: PREVIEW_HEIGHT,
+      backgroundColor: theme.colors.text.primary,
+    },
+    previewHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+    },
+    headerButton: {
+      padding: 8,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.colors.background.primary,
+    },
+    saveButton: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.background.primary,
+    },
+    tabBar: {
+      flexDirection: 'row',
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    tab: {
+      flex: 1,
+      paddingVertical: 12,
+      alignItems: 'center',
+    },
+    activeTab: {
+      borderBottomWidth: 2,
+      borderBottomColor: theme.colors.primary[500],
+    },
+    tabText: {
+      fontSize: 14,
+      color: theme.colors.text.secondary,
+    },
+    activeTabText: {
+      color: theme.colors.primary[500],
+      fontWeight: '600',
+    },
+    content: {
+      flex: 1,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingText: {
+      marginTop: 12,
+      fontSize: 16,
+      color: theme.colors.text.secondary,
+    },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalContent: {
+      backgroundColor: theme.colors.background.elevated,
+      margin: 20,
+      borderRadius: 16,
+      padding: 20,
+      maxWidth: 300,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 12,
+      textAlign: 'center',
+      color: theme.colors.text.primary,
+    },
+    modalMessage: {
+      fontSize: 16,
+      marginBottom: 20,
+      textAlign: 'center',
+      color: theme.colors.text.secondary,
+    },
+    modalButtonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+    },
+    modalButton: {
+      paddingVertical: 12,
+      paddingHorizontal: 24,
+      borderRadius: 8,
+      minWidth: 100,
+    },
+    modalButtonSecondary: {
+      backgroundColor: theme.colors.background.secondary,
+    },
+    modalButtonPrimary: {
+      backgroundColor: theme.colors.primary[500],
+    },
+    modalButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.background.primary,
+    },
+  }), [theme]);
+
   return (
     <View style={styles.container}>
       {/* Preview Area */}
@@ -319,7 +434,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               <Ionicons
                 name={showSplit ? 'contract-outline' : 'swap-horizontal'}
                 size={22}
-                color={Theme.colors.primary[500]}
+                color={theme.colors.primary[500]}
               />
             </BouncePressable>
           </View>
@@ -327,7 +442,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
           <BouncePressable
             onPress={handleSave}
             disabled={isProcessing}
-            style={[styles.headerButton, isProcessing && { opacity: 0.5 }]}
+            style={[styles.headerButton, isProcessing && { opacity: 0.5 }]
             accessibilityRole="button"
             accessibilityLabel="Save edits"
           >
@@ -352,8 +467,8 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 8, paddingHorizontal: 12,
                          borderRadius: 10, backgroundColor: "rgba(255,255,255,0.08)", borderWidth: 1, borderColor: "rgba(255,255,255,0.15)" }}
                 accessibilityLabel="Auto-crop with face detection">
-                <Ionicons name="sparkles" size={18} color={Theme.colors.primary[500}]}} />
-                <Text style={{ color: "#fff", fontWeight: "700", fontSize: 13 }}>Auto</Text>
+                <Ionicons name="sparkles" size={18} color={theme.colors.primary[500]} />
+                <Text style={{ color: theme.colors.background.primary, fontWeight: "700", fontSize: 13 }}>Auto</Text>
               </BouncePressable>
 
               <BouncePressable
@@ -361,8 +476,8 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 8, paddingHorizontal: 12,
                          borderRadius: 10, backgroundColor: "rgba(255,255,255,0.08)", borderWidth: 1, borderColor: "rgba(255,255,255,0.15)" }}
                 accessibilityLabel="Toggle story mode guides">
-                <Ionicons name="eye" size={18} color={showGuides ? Theme.colors.primary[500] : "#fff"} />
-                <Text style={{ color: showGuides ? Theme.colors.primary[500] : "#fff", fontWeight: "700", fontSize: 13 }}>Guides</Text>
+                <Ionicons name="eye" size={18} color={showGuides ? theme.colors.primary[500] : theme.colors.background.primary} />
+                <Text style={{ color: showGuides ? theme.colors.primary[500] : theme.colors.background.primary, fontWeight: "700", fontSize: 13 }}>Guides</Text>
               </BouncePressable>
             </View>
 
@@ -414,18 +529,18 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 <View style={StyleSheet.absoluteFill} pointerEvents="none">
                   {showGrid === 'thirds' && (
                     <>
-                      <View style={[styles.gridLine, { left: '33.33%' }]} />
-                      <View style={[styles.gridLine, { left: '66.66%' }]} />
-                      <View style={[styles.gridLine, { top: '33.33%', left: 0, width: '100%', height: 1 }]} />
-                      <View style={[styles.gridLine, { top: '66.66%', left: 0, width: '100%', height: 1 }]} />
+                      <View style={[styles.gridLine, { left: '33.33%' }] />
+                      <View style={[styles.gridLine, { left: '66.66%' }] />
+                      <View style={[styles.gridLine, { top: '33.33%', left: 0, width: '100%', height: 1 }] />
+                      <View style={[styles.gridLine, { top: '66.66%', left: 0, width: '100%', height: 1 }] />
                     </>
                   )}
                   {showGrid === 'golden' && (
                     <>
-                      <View style={[styles.gridLine, { left: '38.2%' }]} />
-                      <View style={[styles.gridLine, { left: '61.8%' }]} />
-                      <View style={[styles.gridLine, { top: '38.2%', left: 0, width: '100%', height: 1 }]} />
-                      <View style={[styles.gridLine, { top: '61.8%', left: 0, width: '100%', height: 1 }]} />
+                      <View style={[styles.gridLine, { left: '38.2%' }] />
+                      <View style={[styles.gridLine, { left: '61.8%' }] />
+                      <View style={[styles.gridLine, { top: '38.2%', left: 0, width: '100%', height: 1 }] />
+                      <View style={[styles.gridLine, { top: '61.8%', left: 0, width: '100%', height: 1 }] />
                     </>
                   )}
                 </View>
@@ -444,7 +559,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === 'adjust' }}
           >
-            <Ionicons name="options" size={24} color={activeTab === 'adjust' ? Theme.colors.primary[500] : 'white'} />
+            <Ionicons name="options" size={24} color={activeTab === 'adjust' ? theme.colors.primary[500] : theme.colors.background.primary} />
             <Text style={[styles.tabText, activeTab === 'adjust' && styles.activeTabText]}>Adjust</Text>
           </BouncePressable>
         </Animated.View>
@@ -456,7 +571,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === 'filters' }}
           >
-            <Ionicons name="sparkles" size={24} color={activeTab === 'filters' ? Theme.colors.primary[500] : 'white'} />
+            <Ionicons name="sparkles" size={24} color={activeTab === 'filters' ? theme.colors.primary[500] : theme.colors.background.primary} />
             <Text style={[styles.tabText, activeTab === 'filters' && styles.activeTabText]}>Filters</Text>
           </BouncePressable>
         </Animated.View>
@@ -468,7 +583,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === 'crop' }}
           >
-            <Ionicons name="crop" size={24} color={activeTab === 'crop' ? Theme.colors.primary[500] : 'white'} />
+            <Ionicons name="crop" size={24} color={activeTab === 'crop' ? theme.colors.primary[500] : theme.colors.background.primary} />
             <Text style={[styles.tabText, activeTab === 'crop' && styles.activeTabText]}>Crop</Text>
           </BouncePressable>
         </Animated.View>
@@ -482,24 +597,24 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                 <BouncePressable onPress={autoEnhance} style={[styles.quickAction, quickMode === 'auto' && styles.quickActionActive]}>
-                  <Ionicons name="sparkles" size={16} color={quickMode === 'auto' ? Theme.colors.primary[500] : 'white'} />
-                  <Text style={[styles.quickActionText, quickMode === 'auto' && { color: Theme.colors.primary[500] }]}>Auto</Text>
+                  <Ionicons name="sparkles" size={16} color={quickMode === 'auto' ? theme.colors.primary[500] : theme.colors.background.primary} />
+                  <Text style={[styles.quickActionText, quickMode === 'auto' && { color: theme.colors.primary[500] }]}>Auto</Text>
                 </BouncePressable>
                 <BouncePressable onPress={() => { batchApply('portrait'); }} style={[styles.quickAction, quickMode === 'portrait' && styles.quickActionActive]}>
-                  <Ionicons name="person" size={16} color={quickMode === 'portrait' ? Theme.colors.primary[500] : 'white'} />
-                  <Text style={[styles.quickActionText, quickMode === 'portrait' && { color: Theme.colors.primary[500] }]}>Portrait</Text>
+                  <Ionicons name="person" size={16} color={quickMode === 'portrait' ? theme.colors.primary[500] : theme.colors.background.primary} />
+                  <Text style={[styles.quickActionText, quickMode === 'portrait' && { color: theme.colors.primary[500] }]}>Portrait</Text>
                 </BouncePressable>
                 <BouncePressable onPress={() => { batchApply('vivid'); }} style={[styles.quickAction, quickMode === 'vivid' && styles.quickActionActive]}>
-                  <Ionicons name="flash" size={16} color={quickMode === 'vivid' ? Theme.colors.primary[500] : 'white'} />
-                  <Text style={[styles.quickActionText, quickMode === 'vivid' && { color: Theme.colors.primary[500] }]}>Vivid+</Text>
+                  <Ionicons name="flash" size={16} color={quickMode === 'vivid' ? theme.colors.primary[500] : theme.colors.background.primary} />
+                  <Text style={[styles.quickActionText, quickMode === 'vivid' && { color: theme.colors.primary[500] }]}>Vivid+</Text>
                 </BouncePressable>
                 <BouncePressable onPress={() => { batchApply('dramatic'); }} style={[styles.quickAction, quickMode === 'dramatic' && styles.quickActionActive]}>
-                  <Ionicons name="contrast" size={16} color={quickMode === 'dramatic' ? Theme.colors.primary[500] : 'white'} />
-                  <Text style={[styles.quickActionText, quickMode === 'dramatic' && { color: Theme.colors.primary[500] }]}>Dramatic</Text>
+                  <Ionicons name="contrast" size={16} color={quickMode === 'dramatic' ? theme.colors.primary[500] : theme.colors.background.primary} />
+                  <Text style={[styles.quickActionText, quickMode === 'dramatic' && { color: theme.colors.primary[500] }]}>Dramatic</Text>
                 </BouncePressable>
               </ScrollView>
               <BouncePressable onPress={() => { setShowGrid((g) => g === 'off' ? 'thirds' : g === 'thirds' ? 'golden' : 'off'); }} style={{ padding: 10 }}>
-                <Ionicons name="grid" size={20} color={showGrid === 'off' ? 'rgba(255,255,255,0.5)' : Theme.colors.primary[500]} />
+                <Ionicons name="grid" size={20} color={showGrid === 'off' ? theme.colors.background.primary : theme.colors.primary[500]} />
               </BouncePressable>
             </View>
 
@@ -590,7 +705,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
 
               <View style={{ height: 10 }} />
               <BouncePressable onPress={resetAdjustments} style={styles.resetButton} scaleFrom={0.95} accessibilityLabel="Reset all adjustments">
-                <Ionicons name="refresh-circle" size={20} color={Theme.colors.status.erro}r}} />
+                <Ionicons name="refresh-circle" size={20} color={theme.colors.danger} />
                 <Text style={styles.resetButtonText}>Reset All</Text>
               </BouncePressable>
             </BlurView>
@@ -600,18 +715,18 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               <BouncePressable
                 onPress={handleUltraExport}
                 disabled={ultraExporting}
-                style={[styles.ultraExportButton, ultraExporting && { opacity: 0.6 }]}
+                style={[styles.ultraExportButton, ultraExporting && { opacity: 0.6 }]
                 accessibilityRole="button"
                 accessibilityLabel="Export ultra variants for social media"
               >
-                <Ionicons name="rocket" size={24} color={Theme.colors.primary[500}]}} />
+                <Ionicons name="rocket" size={24} color={theme.colors.primary[500]} />
                 <Text style={styles.ultraExportText}>
                   {ultraExporting ? `Exporting... ${ultraProgress}%` : 'ULTRA Export (9 Variants)'}
                 </Text>
               </BouncePressable>
               {ultraExporting && (
                 <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: `${ultraProgress}%` }]} />
+                  <View style={[styles.progressFill, { width: `${ultraProgress}%` }] />
                 </View>
               )}
             </View>
@@ -648,7 +763,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
       {isProcessing && (
         <View style={styles.loadingOverlay} pointerEvents="none">
           <BlurView intensity={80} style={styles.loadingContent}>
-            <ActivityIndicator size="small" color={Theme.colors.primary[500}]}} />
+            <ActivityIndicator size="small" color={theme.colors.primary[500]} />
             <Text style={styles.loadingText}>Processing…</Text>
           </BlurView>
         </View>
@@ -717,273 +832,4 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  previewContainer: {
-    height: PREVIEW_HEIGHT,
-    backgroundColor: '#000',
-  },
-  previewHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  headerButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  saveButton: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: Theme.colors.primary[500],
-  },
-  previewStage: { flex: 1, overflow: 'hidden' },
-  previewImage: { width: '100%', height: '100%', resizeMode: 'contain' },
-  compareBadge: {
-    position: 'absolute', top: 12, right: 12,
-    backgroundColor: 'rgba(0,0,0,0.6)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999,
-  },
-  compareText: { color: 'white', fontWeight: '700', fontSize: 12 },
-  tabBar: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  tab: { flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 16, gap: 8 },
-  activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: Theme.colors.primary[500],
-  },
-  tabText: {
-    fontSize: 14,
-    color: 'white',
-  },
-  activeTabText: {
-    color: Theme.colors.primary[500],
-    fontWeight: '600',
-  },
-  contentContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.95)',
-  },
-  adjustmentSection: {
-    padding: 20,
-    gap: 16,
-  },
-  controlRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 12,
-  },
-  controlButton: {
-    width: '100%',
-    alignItems: 'center',
-    gap: 8,
-    padding: 12,
-    minWidth: 80,
-  },
-  controlLabel: {
-    fontSize: 12,
-    color: 'white',
-    fontWeight: '500',
-  },
-  slidersPanel: {
-    borderRadius: 16,
-    padding: 20,
-    marginTop: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  resetButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    backgroundColor: 'rgba(239, 68, 68, 0.2)',
-    borderWidth: 1,
-    borderColor: Theme.colors.status.error,
-  },
-  resetButtonText: {
-    color: Theme.colors.status.error,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  filtersContainer: { padding: 20, flexDirection: 'row', flexWrap: 'nowrap', gap: 16 },
-  filterCard: { alignItems: 'center', marginRight: 16, gap: 8 },
-  filterIcon: { width: 80, height: 80, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  filterName: { fontSize: 12, color: 'white', fontWeight: '600', textAlign: 'center' },
-  loadingOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
-  loadingContent: { paddingVertical: 16, paddingHorizontal: 18, borderRadius: 12, alignItems: 'center', gap: 10 },
-  loadingText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  quickAction: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  quickActionActive: {
-    backgroundColor: 'rgba(112, 76, 255, 0.2)',
-    borderColor: Theme.colors.primary[500],
-  },
-  quickActionText: {
-    color: 'white',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  gridLine: {
-    position: 'absolute',
-    width: 1,
-    height: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    top: 0,
-  },
-  ultraExportButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 16,
-    backgroundColor: 'rgba(112, 76, 255, 0.15)',
-    borderWidth: 2,
-    borderColor: Theme.colors.primary[500],
-  },
-  ultraExportText: {
-    color: Theme.colors.primary[500],
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  progressBar: {
-    height: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 2,
-    marginTop: 8,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: Theme.colors.primary[500],
-    borderRadius: 2,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalContent: {
-    width: '100%',
-    maxHeight: '80%',
-    backgroundColor: 'rgba(0, 0, 0, 0.95)',
-    borderRadius: 24,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: 'white',
-  },
-  modalSubtitle: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.6)',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  modalScroll: {
-    flex: 1,
-    padding: 20,
-  },
-  ratioSection: {
-    marginBottom: 24,
-  },
-  ratioTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: Theme.colors.primary[500],
-    marginBottom: 12,
-  },
-  variantGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    justifyContent: 'space-between',
-  },
-  variantCard: {
-    width: '30%',
-    alignItems: 'center',
-    gap: 4,
-  },
-  variantImage: {
-    width: '100%',
-    aspectRatio: 1,
-  },
-  variantKind: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: 'white',
-    textTransform: 'capitalize',
-  },
-  variantMethod: {
-    fontSize: 10,
-    color: 'rgba(255, 255, 255, 0.5)',
-    textTransform: 'capitalize',
-  },
-  modalFooter: {
-    flexDirection: 'row',
-    gap: 12,
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  modalButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modalButtonPrimary: {
-    backgroundColor: Theme.colors.primary[500],
-  },
-  modalButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
-  },
-});
 
