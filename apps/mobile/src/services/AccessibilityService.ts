@@ -4,8 +4,8 @@
  */
 import { AccessibilityInfo, Platform } from 'react-native';
 import type { AppTheme } from '@/theme';
-import { createTheme } from '@/theme/rnTokens';
 import type { NeutralStep } from '@/theme/contracts';
+import { getLightTheme } from '@/theme/resolve';
 
 import { logger } from './logger';
 
@@ -31,16 +31,59 @@ export interface AccessibleColorScheme {
   warning: string;
 }
 
-const FALLBACK_SCHEME: AccessibleColorScheme = {
-  primary: '#2563EB',
-  secondary: '#64748B',
-  background: '#FFFFFF',
-  surface: '#F1F5F9',
-  text: '#0F172A',
-  textSecondary: '#475569',
-  error: '#DC2626',
-  success: '#16A34A',
-  warning: '#D97706',
+const DEFAULT_THEME: AppTheme = getLightTheme();
+
+const ensureColorValue = (value: string | undefined, fallback: string): string => {
+  if (typeof value === 'string' && value.trim().length > 0) {
+    return value;
+  }
+
+  return fallback;
+};
+
+const getNeutralColor = (theme: AppTheme, step: NeutralStep): string =>
+  ensureColorValue(theme.palette.neutral?.[step], DEFAULT_THEME.palette.neutral[step]);
+
+const getBrandColor = (theme: AppTheme, step: NeutralStep): string =>
+  ensureColorValue(theme.palette.brand?.[step], DEFAULT_THEME.palette.brand[step]);
+
+export const buildAccessibleColorScheme = (
+  theme: AppTheme,
+  { highContrast = false }: { highContrast?: boolean } = {},
+): AccessibleColorScheme => {
+  const palette = theme.palette;
+  const colors = theme.colors;
+
+  if (highContrast) {
+    const background = getNeutralColor(theme, 900);
+    const surface = ensureColorValue(palette.neutral?.[950], background);
+    const text = getNeutralColor(theme, 50);
+    const textSecondary = getNeutralColor(theme, 200);
+
+    return {
+      primary: ensureColorValue(colors.onPrimary, text),
+      secondary: textSecondary,
+      background,
+      surface,
+      text,
+      textSecondary,
+      error: ensureColorValue(colors.danger, DEFAULT_THEME.colors.danger),
+      success: ensureColorValue(colors.success, DEFAULT_THEME.colors.success),
+      warning: ensureColorValue(colors.warning, DEFAULT_THEME.colors.warning),
+    };
+  }
+
+  return {
+    primary: ensureColorValue(colors.primary, DEFAULT_THEME.colors.primary),
+    secondary: getBrandColor(theme, 500),
+    background: ensureColorValue(colors.bg, DEFAULT_THEME.colors.bg),
+    surface: ensureColorValue(colors.surface ?? colors.bg, DEFAULT_THEME.colors.surface),
+    text: ensureColorValue(colors.onSurface ?? colors.onBg, DEFAULT_THEME.colors.onSurface),
+    textSecondary: ensureColorValue(colors.onMuted, DEFAULT_THEME.colors.onMuted),
+    error: ensureColorValue(colors.danger, DEFAULT_THEME.colors.danger),
+    success: ensureColorValue(colors.success, DEFAULT_THEME.colors.success),
+    warning: ensureColorValue(colors.warning, DEFAULT_THEME.colors.warning),
+  };
 };
 
 const MIN_CONTRAST_RATIO = 4.5;
@@ -48,6 +91,7 @@ const MIN_CONTRAST_RATIO = 4.5;
 class AccessibilityService {
   private static instance: AccessibilityService | undefined;
   private themeResolver: () => AppTheme;
+  private hasLoggedThemeFallback = false;
   private config: AccessibilityConfig = {
     isScreenReaderEnabled: false,
     isBoldTextEnabled: false,
@@ -59,7 +103,7 @@ class AccessibilityService {
   };
 
   private constructor() {
-    this.themeResolver = () => createTheme('light') as unknown as AppTheme;
+    this.themeResolver = () => DEFAULT_THEME;
     void this.initializeAccessibility();
   }
 
@@ -72,6 +116,34 @@ class AccessibilityService {
 
   setThemeResolver(resolver: () => AppTheme): void {
     this.themeResolver = resolver;
+  }
+
+  private resolveTheme(): AppTheme {
+    try {
+      const theme = this.themeResolver();
+      if (theme && theme.colors && theme.palette) {
+        this.hasLoggedThemeFallback = false;
+        return theme;
+      }
+
+      if (!this.hasLoggedThemeFallback) {
+        this.hasLoggedThemeFallback = true;
+        logger.warn('AccessibilityService received invalid theme; falling back to default tokens', {
+          component: 'AccessibilityService',
+        });
+      }
+    } catch (error: unknown) {
+      const normalizedError: Error = error instanceof Error ? error : new Error(String(error));
+      if (!this.hasLoggedThemeFallback) {
+        this.hasLoggedThemeFallback = true;
+        logger.warn('AccessibilityService failed to resolve theme; using default tokens', {
+          component: 'AccessibilityService',
+          error: normalizedError,
+        });
+      }
+    }
+
+    return DEFAULT_THEME;
   }
 
   /**
@@ -280,58 +352,8 @@ class AccessibilityService {
    * Get accessibility-friendly color scheme
    */
   getAccessibleColorScheme(): AccessibleColorScheme {
-    const theme = this.themeResolver();
-    const colors = theme?.colors ?? {};
-    const palette = theme?.palette as
-      | {
-          neutral?: Partial<Record<NeutralStep | number, string>>;
-          brand?: Partial<Record<NeutralStep | number, string>>;
-        }
-      | undefined;
-
-    const neutral: Partial<Record<NeutralStep | number, string>> = palette?.neutral ?? {};
-    const brand: Partial<Record<NeutralStep | number, string>> = palette?.brand ?? {};
-
-    const getNeutral = (step: NeutralStep | number, fallback: string): string => {
-      const candidate = neutral?.[step];
-      return typeof candidate === 'string' && candidate.length > 0 ? candidate : fallback;
-    };
-
-    const getBrand = (step: NeutralStep | number, fallback: string): string => {
-      const candidate = brand?.[step];
-      return typeof candidate === 'string' && candidate.length > 0 ? candidate : fallback;
-    };
-
-    if (this.isHighContrastEnabled()) {
-      const highContrastBackground = getNeutral(900, '#000000');
-      const highContrastSurface = getNeutral(950, highContrastBackground);
-      const highContrastText = getNeutral(50, '#FFFFFF');
-      const highContrastTextSecondary = getNeutral(200, '#E5E5E5');
-
-      return {
-        primary: colors.onPrimary ?? highContrastText,
-        secondary: highContrastTextSecondary,
-        background: highContrastBackground,
-        surface: highContrastSurface,
-        text: highContrastText,
-        textSecondary: highContrastTextSecondary,
-        error: colors.danger ?? FALLBACK_SCHEME.error,
-        success: colors.success ?? FALLBACK_SCHEME.success,
-        warning: colors.warning ?? FALLBACK_SCHEME.warning,
-      };
-    }
-
-    return {
-      primary: colors.primary ?? FALLBACK_SCHEME.primary,
-      secondary: getBrand(500, getNeutral(500, FALLBACK_SCHEME.secondary)),
-      background: colors.bg ?? FALLBACK_SCHEME.background,
-      surface: colors.surface ?? colors.bg ?? FALLBACK_SCHEME.surface,
-      text: colors.onBg ?? colors.onSurface ?? FALLBACK_SCHEME.text,
-      textSecondary: colors.onSurface ?? colors.onMuted ?? FALLBACK_SCHEME.textSecondary,
-      error: colors.danger ?? FALLBACK_SCHEME.error,
-      success: colors.success ?? FALLBACK_SCHEME.success,
-      warning: colors.warning ?? FALLBACK_SCHEME.warning,
-    };
+    const theme = this.resolveTheme();
+    return buildAccessibleColorScheme(theme, { highContrast: this.isHighContrastEnabled() });
   }
 
   // Event listeners
