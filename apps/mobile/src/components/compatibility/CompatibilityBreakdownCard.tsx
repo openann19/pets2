@@ -119,7 +119,7 @@ export const CompatibilityBreakdownCard: React.FC<CompatibilityBreakdownCardProp
                 ]}
               />
             </View>
-            <Text style={[styles.breakdownScore, { color: colors.onSurface }]>
+            <Text style={[styles.breakdownScore, { color: colors.onSurface }]}>
               {score}%
             </Text>
           </View>

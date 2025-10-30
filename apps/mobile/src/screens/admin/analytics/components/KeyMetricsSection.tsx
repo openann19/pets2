@@ -179,7 +179,7 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
           <Ionicons name="chatbubble" size={20} color={theme.colors.primary} />
           <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Messages</Text>
         </View>
-        <Text style={[styles.metricValue, { color: colors.onSurface }]>
+        <Text style={[styles.metricValue, { color: colors.onSurface }]}>
           {formatNumber(analytics.messages.total)}
         </Text>
         <View style={styles.metricTrend}>
@@ -206,10 +206,10 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
           <Ionicons name="cash" size={20} color={theme.colors.success} />
           <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Revenue</Text>
         </View>
-        <Text style={[styles.metricValue, { color: colors.onSurface }]>
+        <Text style={[styles.metricValue, { color: colors.onSurface }]}>
           {formatCurrency(analytics.revenue.totalRevenue)}
         </Text>
-        <Text style={[styles.metricSubtext, { color: colors.onMuted }]>
+        <Text style={[styles.metricSubtext, { color: colors.onMuted }]}>
           MRR: {formatCurrency(analytics.revenue.monthlyRecurringRevenue)}
         </Text>
       </View>
