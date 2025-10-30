@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { Image, StyleSheet, Dimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -8,9 +8,8 @@ import Animated, {
   withSpring,
   withDecay,
 } from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export interface PinchZoomProps {
   source: { uri: string } | number;
