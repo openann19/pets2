@@ -244,8 +244,8 @@ export default function ActivePillTabBar({
                   <Ionicons
                     name={getIcon(route.name, isFocused)}
                     size={22}
-                    color={isFocused ? colors.primary : colors.onSurface
-                  }//>
+                    color={isFocused ? colors.primary : colors.onSurface}
+                  />
                 </Animated.View>
 
                 {showBadge ? (
@@ -270,7 +270,7 @@ export default function ActivePillTabBar({
                 style={[
                   styles.label,
                   {
-                    color: isFocused ? colors.primary : colors.onSurface
+                    color: isFocused ? colors.primary : colors.onSurface,
                     fontWeight: isFocused ? "600" : "400",
                   },
                 ]}

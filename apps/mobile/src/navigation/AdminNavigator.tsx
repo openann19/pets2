@@ -57,7 +57,7 @@ export default function AdminNavigator(): React.JSX.Element {
         headerStyle: {
           backgroundColor: theme.colors.bg,
         },
-        headerTintColor: theme.colors.onSurface
+        headerTintColor: theme.colors.onSurface,
         headerTitleStyle: {
           fontWeight: "bold",
         },
