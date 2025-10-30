@@ -5,6 +5,7 @@
 
 import request from 'supertest';
 import app from '../../src/app';
+import User from '../../src/models/User';
 import { setupTestDB, teardownTestDB, clearTestDB, createMockUser, generateTestToken } from '../setup';
 
 describe('Admin API Endpoints', () => {
@@ -25,7 +26,6 @@ describe('Admin API Endpoints', () => {
     await clearTestDB();
     
     // Create admin user
-    const User = require('../../src/models/User');
     adminUser = await User.create({
       firstName: 'Admin',
       lastName: 'User',
@@ -187,7 +187,6 @@ describe('Admin API Endpoints', () => {
   describe('GET /api/admin/kyc/pending', () => {
     beforeEach(async () => {
       // Create users with pending KYC
-      const User = require('../../src/models/User');
       await User.create({
         firstName: 'Pending',
         lastName: 'KYC',
@@ -222,7 +221,6 @@ describe('Admin API Endpoints', () => {
     let pendingUser: any;
 
     beforeEach(async () => {
-      const User = require('../../src/models/User');
       pendingUser = await User.create({
         firstName: 'Pending',
         lastName: 'User',
@@ -243,9 +241,9 @@ describe('Admin API Endpoints', () => {
       expect(response.body.success).toBe(true);
 
       // Verify status updated
-      const User = require('../../src/models/User');
       const updatedUser = await User.findById(pendingUser._id);
-      expect(updatedUser.kycStatus).toBe('approved');
+      expect(updatedUser).not.toBeNull();
+      expect(updatedUser?.get('kycStatus')).toBe('approved');
     });
 
     it('should log approval activity', async () => {
@@ -272,7 +270,6 @@ describe('Admin API Endpoints', () => {
     let pendingUser: any;
 
     beforeEach(async () => {
-      const User = require('../../src/models/User');
       pendingUser = await User.create({
         firstName: 'Pending',
         lastName: 'User',
@@ -296,9 +293,9 @@ describe('Admin API Endpoints', () => {
       expect(response.body.success).toBe(true);
 
       // Verify status updated
-      const User = require('../../src/models/User');
       const updatedUser = await User.findById(pendingUser._id);
-      expect(updatedUser.kycStatus).toBe('rejected');
+      expect(updatedUser).not.toBeNull();
+      expect(updatedUser?.get('kycStatus')).toBe('rejected');
     });
 
     it('should require rejection reason', async () => {
@@ -323,8 +320,6 @@ describe('Admin API Endpoints', () => {
 
   describe('GET /api/admin/kyc/stats', () => {
     beforeEach(async () => {
-      const User = require('../../src/models/User');
-      
       // Create users with different KYC statuses
       await User.create([
         { firstName: 'Pending1', lastName: 'User', email: 'p1@example.com', password: 'h', kycStatus: 'pending', isActive: true },

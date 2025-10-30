@@ -4,7 +4,7 @@ import {
   type TextProps as RNTextProps,
   StyleSheet,
 } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '../../../theme';
 
 export type TextVariant = 
   | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
@@ -49,7 +49,7 @@ export const Text = React.forwardRef<RNText, TextProps>(
     ref
   ) {
     const theme = useTheme();
-  const variantStyles = variantMap[variant];
+    const variantStyles = variantMap[variant];
 
   const getToneColor = () => {
     const { colors } = theme;
@@ -72,7 +72,7 @@ export const Text = React.forwardRef<RNText, TextProps>(
         return theme.scheme === 'dark' ? '#FFFFFF' : '#000000';
       case 'text':
       default:
-        return colors.onSurface
+        return colors.onSurface;
     }
   };
 

@@ -162,7 +162,7 @@ export default function MemoryWeaveScreen({
               <View style={styles.memoryMetadata}>
                 {memory.metadata.location && (
                   <View style={styles.metadataItem}>
-                    <Ionicons name="location-outline" size={14} color={theme.colors.onSurface />
+                    <Ionicons name="location-outline" size={14} color={theme.colors.onSurface} />
                     <Text style={styles.metadataText}>
                       {memory.metadata.location}
                     </Text>
@@ -170,7 +170,7 @@ export default function MemoryWeaveScreen({
                 )}
                 {memory.metadata.participants && (
                   <View style={styles.metadataItem}>
-                    <Ionicons name="people-outline" size={14} color={theme.colors.onSurface />
+                    <Ionicons name="people-outline" size={14} color={theme.colors.onSurface} />
                     <Text style={styles.metadataText}>
                       {memory.metadata.participants.join(" & ")}
                     </Text>
@@ -232,11 +232,14 @@ export default function MemoryWeaveScreen({
               {
                 left: point.x - 6,
                 top: point.y - 6,
-                backgroundColor: index === currentIndex ? "#FF69B4" : theme.colors.onSurface
+                backgroundColor: index === currentIndex ? "#FF69B4" : theme.colors.onSurface,
                 transform: [{ scale: index === currentIndex ? 1.2 : 1 }],
               },
             ])}
-             testID="MemoryWeaveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+            testID="MemoryWeaveScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
               scrollToIndex(index);
             }}
           />
@@ -263,13 +266,16 @@ export default function MemoryWeaveScreen({
         >
           <TouchableOpacity
             style={styles.backButton}
-             testID="MemoryWeaveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+            testID="MemoryWeaveScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.goBack();
             }}
           >
             <BlurView intensity={20} style={styles.backButtonBlur}>
-              <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface />
+              <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
             </BlurView>
           </TouchableOpacity>
 
@@ -280,13 +286,16 @@ export default function MemoryWeaveScreen({
 
           <TouchableOpacity
             style={styles.shareButton}
-             testID="MemoryWeaveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+            testID="MemoryWeaveScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               // Share functionality
             }}
           >
             <BlurView intensity={20} style={styles.shareButtonBlur}>
-              <Ionicons name="share-outline" size={24} color={theme.colors.onSurface />
+              <Ionicons name="share-outline" size={24} color={theme.colors.onSurface} />
             </BlurView>
           </TouchableOpacity>
         </Animated.View>
@@ -381,7 +390,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
   },
   headerSubtitle: {
     fontSize: 14,
@@ -430,7 +439,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   memoryTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
     marginBottom: 4,
   },
   memoryTimestamp: {
@@ -473,7 +482,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   memoryText: {
     fontSize: 18,
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
     lineHeight: 26,
     fontStyle: "italic",
     textAlign: "center",
@@ -493,7 +502,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   metadataText: {
     fontSize: 12,
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
     marginLeft: 4,
   },
   pathContainer: {
@@ -518,7 +527,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
     height: 12,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: theme.colors.onSurface
+    borderColor: theme.colors.onSurface,
   },
   counterContainer: {
     position: "absolute",
@@ -533,7 +542,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   counterText: {
     fontSize: 14,
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
     fontWeight: "600",
   },
 });

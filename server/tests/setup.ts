@@ -5,7 +5,8 @@
 
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { logger } from '../src/utils/logger';
+import jwt from 'jsonwebtoken';
+import logger from '../src/utils/logger';
 
 let mongoServer: MongoMemoryServer;
 
@@ -66,15 +67,12 @@ export const createMockUser = async () => {
 };
 
 // Generate valid JWT token for testing
-export const generateTestToken = (userId: string): string => {
-  const jwt = require('jsonwebtoken');
-  
-  return jwt.sign(
+export const generateTestToken = (userId: string): string =>
+  jwt.sign(
     { userId },
     process.env.JWT_SECRET || 'test-secret',
     { expiresIn: '1h' }
   );
-};
 
 // Mock request helpers
 export const mockAuthRequest = (userId: string) => ({

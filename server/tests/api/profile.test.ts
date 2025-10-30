@@ -5,6 +5,8 @@
 
 import request from 'supertest';
 import app from '../../src/app';
+import Pet from '../../src/models/Pet';
+import User from '../../src/models/User';
 import { setupTestDB, teardownTestDB, clearTestDB, createMockUser, generateTestToken } from '../setup';
 
 describe('Profile API Endpoints', () => {
@@ -26,7 +28,6 @@ describe('Profile API Endpoints', () => {
     testToken = generateTestToken(testUser._id.toString());
     
     // Create a test pet
-    const Pet = require('../../src/models/Pet');
     testPet = await Pet.create({
       name: 'Test Pet',
       species: 'dog',
@@ -259,10 +260,10 @@ describe('Profile API Endpoints', () => {
       expect(response.body.success).toBe(true);
 
       // Verify user is marked inactive
-      const User = require('../../src/models/User');
       const deletedUser = await User.findById(testUser._id);
-      expect(deletedUser.isActive).toBe(false);
-      expect(deletedUser.deletedAt).toBeDefined();
+      expect(deletedUser).not.toBeNull();
+      expect(deletedUser?.get('isActive')).toBe(false);
+      expect(deletedUser?.get('deletedAt')).toBeDefined();
     });
 
     it('should reject deletion with wrong password', async () => {

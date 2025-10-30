@@ -5,6 +5,8 @@
 
 import request from 'supertest';
 import app from '../../src/app';
+import Pet from '../../src/models/Pet';
+import AnalyticsEvent from '../../src/models/AnalyticsEvent';
 import { setupTestDB, teardownTestDB, clearTestDB, createMockUser, generateTestToken } from '../setup';
 
 describe('Analytics API Endpoints', () => {
@@ -66,7 +68,6 @@ describe('Analytics API Endpoints', () => {
     let testPet: any;
 
     beforeEach(async () => {
-      const Pet = require('../../src/models/Pet');
       testPet = await Pet.create({
         name: 'Analytics Pet',
         species: 'dog',
@@ -134,7 +135,6 @@ describe('Analytics API Endpoints', () => {
   describe('GET /api/analytics/user', () => {
     beforeEach(async () => {
       // Create some analytics events
-      const AnalyticsEvent = require('../../src/models/AnalyticsEvent');
       await AnalyticsEvent.create({
         userId: testUser._id,
         eventType: 'profile_view',
@@ -173,7 +173,6 @@ describe('Analytics API Endpoints', () => {
     let testPet: any;
 
     beforeEach(async () => {
-      const Pet = require('../../src/models/Pet');
       testPet = await Pet.create({
         name: 'Analytics Pet',
         species: 'dog',
@@ -181,7 +180,6 @@ describe('Analytics API Endpoints', () => {
       });
 
       // Create analytics for this pet
-      const AnalyticsEvent = require('../../src/models/AnalyticsEvent');
       await AnalyticsEvent.create({
         entityType: 'pet',
         entityId: testPet._id,
@@ -336,8 +334,6 @@ describe('Analytics API Endpoints', () => {
 
   describe('GET /api/analytics/performance', () => {
     beforeEach(async () => {
-      const AnalyticsEvent = require('../../src/models/AnalyticsEvent');
-      
       // Create events with performance data
       await AnalyticsEvent.create([
         {

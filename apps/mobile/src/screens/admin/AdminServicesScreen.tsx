@@ -163,10 +163,10 @@ export default function AdminServicesScreen({
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.onSurface}]>
+          <Text style={[styles.loadingText, { color: colors.onSurface }]}>
             Loading services...
           </Text>
         </View>
@@ -175,12 +175,12 @@ export default function AdminServicesScreen({
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
         <TouchableOpacity  testID="AdminServicesScreen-button-2" accessibilityLabel="navigation.goBack();" accessibilityRole="button" onPress={() => { navigation.goBack(); }}>
           <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: colors.onSurface}]>
+        <Text style={[styles.title, { color: colors.onSurface }]}>
           External Services
         </Text>
         <View style={{ width: 24 }} />
@@ -202,14 +202,14 @@ export default function AdminServicesScreen({
             style={[styles.serviceCard, { backgroundColor: colors.card }]}
           >
             <View style={styles.serviceHeader}>
-              <View style={[styles.iconContainer, { backgroundColor: `${service.color}20` }]>
-                <Ionicons name={service.icon as any} size={24} color={service.color} />
+              <View style={[styles.iconContainer, { backgroundColor: `${service.color}20` }]}>
+                <Ionicons name={service.icon as keyof typeof Ionicons.glyphMap} size={24} color={service.color} />
               </View>
               <View style={styles.serviceInfo}>
-                <Text style={[styles.serviceName, { color: colors.onSurface}]>
+                <Text style={[styles.serviceName, { color: colors.onSurface }]}>
                   {service.name}
                 </Text>
-                <Text style={[styles.serviceDescription, { color: colors.onMuted }]>
+                <Text style={[styles.serviceDescription, { color: colors.onMuted }]}>
                   {service.description}
                 </Text>
               </View>
@@ -235,11 +235,11 @@ export default function AdminServicesScreen({
               <Text style={[styles.endpoint, { color: colors.onMuted }]} numberOfLines={1}>
                 {service.endpoint}
               </Text>
-
+            )}
             <Text style={[styles.lastChecked, { color: colors.onMuted }]}>
               Last checked: {new Date(service.lastChecked).toLocaleTimeString()}
             </Text>
-          </View>
+            </View>
         ))}
       </ScrollView>
     </SafeAreaView>

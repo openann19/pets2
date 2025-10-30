@@ -99,4 +99,5 @@
       "lifestyle": "Lifestyle"
     },
     "percentage": "{{score}}%"
-  },
+  }
+}

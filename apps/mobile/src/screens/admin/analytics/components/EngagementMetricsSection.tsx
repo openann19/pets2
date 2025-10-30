@@ -68,30 +68,30 @@ export const EngagementMetricsSection: React.FC<EngagementMetricsSectionProps> =
 
   return (
     <View style={styles.engagementGrid}>
-      <View style={[styles.engagementCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.engagementLabel, { color: colors.onMuted }]>DAU</Text>
-        <Text style={[styles.engagementValue, { color: colors.onSurface }]>
+      <View style={[styles.engagementCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.engagementLabel, { color: colors.onMuted }]}>DAU</Text>
+        <Text style={[styles.engagementValue, { color: colors.onSurface }]}>
           {formatNumber(engagement.dailyActiveUsers)}
         </Text>
       </View>
 
-      <View style={[styles.engagementCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.engagementLabel, { color: colors.onMuted }]>WAU</Text>
-        <Text style={[styles.engagementValue, { color: colors.onSurface }]>
+      <View style={[styles.engagementCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.engagementLabel, { color: colors.onMuted }]}>WAU</Text>
+        <Text style={[styles.engagementValue, { color: colors.onSurface }]}>
           {formatNumber(engagement.weeklyActiveUsers)}
         </Text>
       </View>
 
-      <View style={[styles.engagementCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.engagementLabel, { color: colors.onMuted }]>MAU</Text>
-        <Text style={[styles.engagementValue, { color: colors.onSurface }]>
+      <View style={[styles.engagementCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.engagementLabel, { color: colors.onMuted }]}>MAU</Text>
+        <Text style={[styles.engagementValue, { color: colors.onSurface }]}>
           {formatNumber(engagement.monthlyActiveUsers)}
         </Text>
       </View>
 
-      <View style={[styles.engagementCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.engagementLabel, { color: colors.onMuted }]>Session</Text>
-        <Text style={[styles.engagementValue, { color: colors.onSurface }]>
+      <View style={[styles.engagementCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.engagementLabel, { color: colors.onMuted }]}>Session</Text>
+        <Text style={[styles.engagementValue, { color: colors.onSurface }]}>
           {Math.round(engagement.averageSessionDuration)}m
         </Text>
       </View>

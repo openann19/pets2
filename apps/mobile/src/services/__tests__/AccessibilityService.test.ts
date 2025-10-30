@@ -16,7 +16,7 @@ import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals
 import { AccessibilityInfo, Platform } from 'react-native';
 import { accessibilityService, AccessibilityService } from '../AccessibilityService';
 import type { AppTheme } from '@/theme';
-import { createTheme } from '@/theme';
+import { createTheme } from '@/theme/rnTokens';
 
 // Mock React Native AccessibilityInfo
 jest.mock('react-native', () => ({
@@ -345,9 +345,8 @@ describe('AccessibilityService', () => {
 
   describe('Color Schemes', () => {
     beforeEach(() => {
-      // Set up theme resolver for each test
-      const service = AccessibilityService.getInstance();
-      service.setThemeResolver(() => mockTheme);
+      // Set up theme resolver directly on mockService
+      mockService.setThemeResolver(() => mockTheme);
     });
 
     it('should return standard accessible color scheme using theme', () => {
@@ -570,8 +569,8 @@ describe('AccessibilityService', () => {
       const scheme = service.getAccessibleColorScheme();
 
       expect(scheme).toBeDefined();
-      expect(scheme).toHaveProperty('textColor');
-      expect(scheme).toHaveProperty('backgroundColor');
+      expect(scheme).toHaveProperty('text');
+      expect(scheme).toHaveProperty('background');
     });
 
     it('should use theme colors when resolution succeeds', () => {
@@ -581,8 +580,8 @@ describe('AccessibilityService', () => {
 
       const scheme = service.getAccessibleColorScheme();
 
-      expect(scheme.textColor).toBe(testTheme.colors.onSurface);
-      expect(scheme.backgroundColor).toBe(testTheme.colors.bg);
+      expect(scheme.text).toBe(testTheme.colors.onSurface);
+      expect(scheme.background).toBe(testTheme.colors.bg);
     });
   });
 });

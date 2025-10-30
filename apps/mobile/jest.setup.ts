@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import '@testing-library/jest-native/extend-expect';
+// import '@testing-library/jest-native/extend-expect'; // Moved to end after mocks
 
 // Silence noisy RN timers etc. when needed
 jest.mock('react-native/Libraries/Utilities/Platform', () => ({

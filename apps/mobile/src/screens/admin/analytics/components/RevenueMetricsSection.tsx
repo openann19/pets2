@@ -5,8 +5,8 @@
 
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { useTheme } from "../../../../theme";
+import type { AppTheme } from "../../../../theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
@@ -57,35 +57,29 @@ const formatCurrency = (amount: number): string =>
 export const RevenueMetricsSection: React.FC<RevenueMetricsSectionProps> = ({
   revenue,
 }) => {
-    const theme = useTheme();
+  const theme = useTheme();
   const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
-  const { colors, palette } = theme;
+  const { colors } = theme;
 
   return (
     <View style={styles.revenueGrid}>
-      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.revenueLabel, { color: colors.onMuted }]>
-          ARPU
-        </Text>
-        <Text style={[styles.revenueValue, { color: colors.onSurface }]>
+      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.revenueLabel, { color: colors.onMuted }]}>ARPU</Text>
+        <Text style={[styles.revenueValue, { color: colors.onSurface }]}>
           {formatCurrency(revenue.averageRevenuePerUser)}
         </Text>
       </View>
 
-      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.revenueLabel, { color: colors.onMuted }]>
-          Conversion
-        </Text>
-        <Text style={[styles.revenueValue, { color: colors.onSurface }]>
+      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.revenueLabel, { color: colors.onMuted }]}>Conversion</Text>
+        <Text style={[styles.revenueValue, { color: colors.onSurface }]}>
           {revenue.conversionRate.toFixed(1)}%
         </Text>
       </View>
 
-      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.revenueLabel, { color: colors.onMuted }]>
-          Churn
-        </Text>
-        <Text style={[styles.revenueValue, { color: theme.colors.danger }]>
+      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.revenueLabel, { color: colors.onMuted }]}>Churn</Text>
+        <Text style={[styles.revenueValue, { color: colors.danger }]}>
           {revenue.churnRate.toFixed(1)}%
         </Text>
       </View>

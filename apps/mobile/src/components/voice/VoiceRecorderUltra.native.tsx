@@ -4,6 +4,7 @@ import * as Haptics from "expo-haptics";
 import { Audio } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
 import { VoiceWaveform, generateWaveformFromAudio } from "../chat/VoiceWaveform";
+import { useTheme } from '../../theme';
 
 type SendFn = (matchId: string, form: FormData) => Promise<void>;
 
@@ -24,6 +25,7 @@ export default function VoiceRecorderUltraNative({
   minDurationSec = 1,
   onVoiceNoteSent,
 }: Props): React.JSX.Element {
+  const theme = useTheme();
   const [isRecording, setIsRecording] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -207,9 +209,9 @@ export default function VoiceRecorderUltraNative({
         <View
           {...panResponder.panHandlers}
           style={[
-            styles.recWrap,
-            isRecording && styles.recWrapActive,
-            isCancelling && styles.recWrapCancel,
+            styles.recWrap(theme),
+            isRecording && styles.recWrapActive(theme),
+            isCancelling && styles.recWrapCancel(theme),
           ]}
         >
           <TouchableOpacity
@@ -217,16 +219,16 @@ export default function VoiceRecorderUltraNative({
             onPressIn={() => (!disabled && !isRecording ? startRecording() : null)}
             onPressOut={() => (isRecording && !isLocked ? stopRecording() : null)}
             disabled={disabled}
-            style={styles.recBtn}
+            style={styles.recBtn(theme)}
           >
-            <Ionicons name={isRecording ? "stop" : "mic"} size={22} color={Theme.colors.neutral[0}]} />
+            <Ionicons name={isRecording ? "stop" : "mic"} size={22} color={theme.colors.onPrimary} />
           </TouchableOpacity>
 
           <Text
             style={[
-              styles.hint,
-              isRecording ? styles.hintActive : null,
-              isCancelling ? styles.hintCancel : null,
+              styles.hint(theme),
+              isRecording ? styles.hintActive(theme) : null,
+              isCancelling ? styles.hintCancel(theme) : null,
             ]}
           >
             {isRecording
@@ -240,40 +242,40 @@ export default function VoiceRecorderUltraNative({
 
           {isRecording && (
             <TouchableOpacity onPress={toggleLock} style={styles.lockBtn}>
-              <Ionicons name={isLocked ? "lock-closed" : "lock-open"} size={18} color={Theme.colors.neutral[0}]} />
+              <Ionicons name={isLocked ? "lock-closed" : "lock-open"} size={18} color={theme.colors.onPrimary} />
             </TouchableOpacity>
           )}
         </View>
       </View>
 
       {previewUri && !isRecording && (
-        <View style={styles.card}>
+        <View style={styles.card(theme)}>
           <View style={styles.waveRow}>
             <VoiceWaveform
               waveform={waveform}
               isPlaying={isPlaying}
               progress={progress}
               duration={Math.max(1, Math.round(durationMs / 1000))}
-              color={Theme.colors.primary[500}]
+              color={theme.colors.primary}
               height={36}
             />
-            <Text style={styles.dur}>{fmt(durationMs)}</Text>
+            <Text style={styles.dur(theme)}>{fmt(durationMs)}</Text>
           </View>
 
           <View style={styles.actions}>
-            <TouchableOpacity onPress={playPause} style={styles.actionBtn}>
-              <Ionicons name={isPlaying ? "pause" : "play"} size={18} color={Theme.colors.neutral[0}]} />
+            <TouchableOpacity onPress={playPause} style={styles.actionBtn(theme)}>
+              <Ionicons name={isPlaying ? "pause" : "play"} size={18} color={theme.colors.onPrimary} />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={handleCancel} style={styles.actionBtn}>
-              <Ionicons name="trash" size={18} color={Theme.colors.status.erro}r}} />
+            <TouchableOpacity onPress={handleCancel} style={styles.actionBtn(theme)}>
+              <Ionicons name="trash" size={18} color={theme.colors.danger} />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={send} disabled={isSending} style={styles.sendBtn}>
               <Ionicons
                 name={isSending ? "hourglass" : "send"}
                 size={18}
-                color={isSending ? Theme.colors.neutral[400] : Theme.colors.status.success}
+                color={isSending ? theme.colors.onMuted : theme.colors.success}
               />
             </TouchableOpacity>
           </View>
@@ -286,42 +288,42 @@ export default function VoiceRecorderUltraNative({
 const styles = StyleSheet.create({
   wrap: { alignItems: "stretch", padding: 8 },
   row: { flexDirection: "row", alignItems: "center", justifyContent: "center" },
-  recWrap: {
+  recWrap: (theme: any) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    backgroundColor: Theme.colors.neutral[900],
+    backgroundColor: theme.colors.surface,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 999,
-  },
-  recWrapActive: { backgroundColor: Theme.colors.neutral[800] },
-  recWrapCancel: { backgroundColor: "rgba(239, 68, 68, 0.15)", borderWidth: 1, borderColor: Theme.colors.status.error },
-  recBtn: {
+  }),
+  recWrapActive: (theme: any) => ({ backgroundColor: theme.colors.surfaceElevated }),
+  recWrapCancel: (theme: any) => ({ backgroundColor: "rgba(239, 68, 68, 0.15)", borderWidth: 1, borderColor: theme.colors.danger }),
+  recBtn: (theme: any) => ({
     width: 48, height: 48, borderRadius: 24,
-    backgroundColor: Theme.colors.status.error,
+    backgroundColor: theme.colors.danger,
     alignItems: "center", justifyContent: "center",
-    shadowColor: Theme.colors.neutral[900],
+    shadowColor: theme.colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3, shadowRadius: 8, elevation: 8,
-  },
+  }),
   lockBtn: {
     width: 28, height: 28, borderRadius: 14,
     backgroundColor: "rgba(255,255,255,0.1)",
     alignItems: "center", justifyContent: "center",
   },
-  hint: { color: Theme.colors.neutral[300], fontWeight: "600" as const },
-  hintActive: { color: Theme.colors.neutral[100] },
-  hintCancel: { color: Theme.colors.status.error },
-  card: { marginTop: 12, padding: 12, backgroundColor: "rgba(0,0,0,0.08)", borderRadius: 12 },
+  hint: (theme: any) => ({ color: theme.colors.onMuted, fontWeight: "600" as const }),
+  hintActive: (theme: any) => ({ color: theme.colors.onPrimary }),
+  hintCancel: (theme: any) => ({ color: theme.colors.danger }),
+  card: (theme: any) => ({ marginTop: 12, padding: 12, backgroundColor: theme.colors.card, borderRadius: 12 }),
   waveRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-  dur: { color: Theme.colors.neutral[600], fontWeight: "600" as const },
+  dur: (theme: any) => ({ color: theme.colors.onMuted, fontWeight: "600" as const }),
   actions: { marginTop: 10, flexDirection: "row", gap: 10, justifyContent: "flex-end" },
-  actionBtn: {
+  actionBtn: (theme: any) => ({
     width: 40, height: 40, borderRadius: 20,
     alignItems: "center", justifyContent: "center",
-    backgroundColor: Theme.colors.neutral[900],
-  },
+    backgroundColor: theme.colors.surface,
+  }),
   sendBtn: {
     width: 44, height: 44, borderRadius: 22,
     alignItems: "center", justifyContent: "center",

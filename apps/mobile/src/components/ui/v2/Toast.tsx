@@ -7,8 +7,8 @@ import Animated, {
   withTiming,
   withSequence,
 } from 'react-native-reanimated';
-import { useTheme } from ../../../theme
-import { useReduceMotion } from '../../../hooks/useReducedMotion';
+import { useTheme } from '../../../theme';
+import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { Text } from './Text';
 import { Card } from './Card';
 
@@ -96,7 +96,7 @@ export function Toast({
         return {
           backgroundColor: theme.colors.primary,
           icon: 'ℹ',
-          textColor: theme.colors.primaryText,
+          textColor: theme.colors.onPrimary,
         };
     }
   };
@@ -114,7 +114,7 @@ export function Toast({
         {
           top: position === 'top' ? 20 : undefined,
           bottom: position === 'bottom' ? 20 : undefined,
-          zIndex: theme.zIndex?.toast || 1700,
+          zIndex: 1700,
         },
         animatedStyle,
       ]}
@@ -124,10 +124,14 @@ export function Toast({
       <Card
         style={{
           backgroundColor: variantStyles.backgroundColor,
-          paddingHorizontal: theme.spacing.md,
-          paddingVertical: theme.spacing.sm,
-          borderRadius: theme.radius.lg,
-          ...theme.shadows.md,
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          borderRadius: 12,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 3,
         }}
       >
         <View style={styles.content}>
@@ -145,7 +149,7 @@ export function Toast({
             tone="text"
             style={{
               color: variantStyles.textColor,
-              marginLeft: theme.spacing.sm,
+              marginLeft: 8,
               flex: 1,
             }}
           >

@@ -5,6 +5,7 @@
 
 import request from 'supertest';
 import app from '../../src/app';
+import Pet from '../../src/models/Pet';
 import { setupTestDB, teardownTestDB, clearTestDB, createMockUser, generateTestToken } from '../setup';
 
 describe('Adoption API Endpoints', () => {
@@ -27,7 +28,6 @@ describe('Adoption API Endpoints', () => {
     testToken = generateTestToken(testUser._id.toString());
     
     // Create adoption listing
-    const Pet = require('../../src/models/Pet');
     adoptionPet = await Pet.create({
       name: 'Adoption Pet',
       species: 'dog',
@@ -95,7 +95,7 @@ describe('Adoption API Endpoints', () => {
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data.status).toBe('pending');
-      expect(response.body.data.applicantId.toString()).toBe(testUser._id.toString());
+      expect(String(response.body.data.applicantId)).toBe(String(testUser._id));
     });
 
     it('should prevent duplicate applications', async () => {
@@ -156,7 +156,7 @@ describe('Adoption API Endpoints', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.length).toBe(1);
-      expect(response.body.data[0].petId.toString()).toBe(adoptionPet._id.toString());
+      expect(String(response.body.data[0].petId)).toBe(String(adoptionPet._id));
     });
 
     it('should require authentication', async () => {
@@ -228,7 +228,7 @@ describe('Adoption API Endpoints', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.status).toBe('approved');
-      expect(response.body.data.reviewedBy.toString()).toBe(testUser._id.toString());
+      expect(String(response.body.data.reviewedBy)).toBe(String(testUser._id));
     });
 
     it('should reject application as pet owner', async () => {
@@ -269,7 +269,6 @@ describe('Adoption API Endpoints', () => {
 
   describe('POST /api/adoption/listings', () => {
     it('should create adoption listing', async () => {
-      const Pet = require('../../src/models/Pet');
       const newPet = await Pet.create({
         name: 'Listing Pet',
         species: 'cat',
@@ -289,7 +288,7 @@ describe('Adoption API Endpoints', () => {
 
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
-      expect(response.body.data.petId.toString()).toBe(newPet._id.toString());
+      expect(String(response.body.data.petId)).toBe(String(newPet._id));
     });
 
     it('should require authentication', async () => {

@@ -33,12 +33,12 @@ export interface SheetProps {
   dismissible?: boolean;
 }
 
-const sizeMap = {
-  sm: { height: '30%' },
-  md: { height: '50%' },
-  lg: { height: '70%' },
-  xl: { height: '85%' },
-  full: { height: '95%' },
+const sizeMap: Record<SheetSize, number> = {
+  sm: 0.3,
+  md: 0.5,
+  lg: 0.7,
+  xl: 0.85,
+  full: 0.95,
 };
 
 export function Sheet({
@@ -57,7 +57,7 @@ export function Sheet({
   const translateY = useSharedValue(screenHeight);
   const overlayOpacity = useSharedValue(0);
 
-  const sizeStyles = sizeMap[size];
+  const sizeRatio = sizeMap[size];
 
   useEffect(() => {
     if (visible) {
@@ -110,7 +110,7 @@ export function Sheet({
             {
               position: position === 'bottom' ? 'absolute' : undefined,
               bottom: position === 'bottom' ? 0 : undefined,
-              height: position === 'bottom' ? sizeStyles.height : undefined,
+              height: position === 'bottom' ? screenHeight * sizeRatio : undefined,
               maxHeight: screenHeight * 0.95,
             },
             animatedStyle,

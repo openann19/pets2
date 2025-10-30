@@ -4,7 +4,10 @@
  */
 
 import request from 'supertest';
+import jwt from 'jsonwebtoken';
 import app from '../../src/app';
+import Pet from '../../src/models/Pet';
+import User from '../../src/models/User';
 import { setupTestDB, teardownTestDB, clearTestDB, createMockUser, generateTestToken } from '../setup';
 
 describe('Security Tests', () => {
@@ -40,7 +43,6 @@ describe('Security Tests', () => {
     });
 
     it('should reject expired tokens', async () => {
-      const jwt = require('jsonwebtoken');
       const expiredToken = jwt.sign(
         { userId: 'test' },
         process.env.JWT_SECRET || 'test-secret',
@@ -71,7 +73,6 @@ describe('Security Tests', () => {
       const user1 = await createMockUser();
       const user2 = await createMockUser();
       
-      const Pet = require('../../src/models/Pet');
       const user1Pet = await Pet.create({
         name: 'User 1 Pet',
         species: 'dog',
@@ -101,7 +102,6 @@ describe('Security Tests', () => {
     });
 
     it('should allow admins to access admin endpoints', async () => {
-      const User = require('../../src/models/User');
       const adminUser = await User.create({
         firstName: 'Admin',
         lastName: 'User',

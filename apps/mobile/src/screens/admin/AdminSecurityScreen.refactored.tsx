@@ -19,11 +19,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { SecurityAlertCard, SecurityMetricsSection } from "./security/components";
 import { useAdminSecurity } from "./security/hooks";
-import { useTheme } from "../../theme";
+import { useTheme } from "@mobile/src/theme";
 import type { AdminScreenProps } from "../../navigation/types";
 import type { SecurityAlert } from "./security/types";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
@@ -157,10 +155,10 @@ export default function AdminSecurityScreen({
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.onSurface }]>
+          <Text style={[styles.loadingText, { color: colors.onSurface }]}>
             Loading security data...
           </Text>
         </View>
@@ -169,7 +167,7 @@ export default function AdminSecurityScreen({
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -181,7 +179,7 @@ export default function AdminSecurityScreen({
         >
           <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: colors.onSurface }]>Security Dashboard</Text>
+        <Text style={[styles.title, { color: colors.onSurface }]}>Security Dashboard</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity
             testID="AdminSecurity-refresh-button"
@@ -199,7 +197,7 @@ export default function AdminSecurityScreen({
       {/* Filters */}
       <View style={styles.filtersContainer}>
         <View style={styles.filterRow}>
-          <Text style={[styles.filterLabel, { color: colors.onSurface }]>Severity:</Text>
+          <Text style={[styles.filterLabel, { color: colors.onSurface }]}>Severity:</Text>
           <View style={styles.filterButtons}>
             {(["all", "critical", "high", "medium", "low"] as const).map((severity) => (
               <TouchableOpacity
@@ -238,7 +236,7 @@ export default function AdminSecurityScreen({
         </View>
 
         <View style={styles.filterRow}>
-          <Text style={[styles.filterLabel, { color: colors.onSurface }]>Type:</Text>
+          <Text style={[styles.filterLabel, { color: colors.onSurface }]}>Type:</Text>
           <View style={styles.filterButtons}>
             {(["all", "suspicious_login", "blocked_ip", "reported_content"] as const).map(
               (type) => (
@@ -279,14 +277,14 @@ export default function AdminSecurityScreen({
       {/* Metrics */}
       {metrics && (
         <View style={styles.metricsSection}>
-          <Text style={[styles.sectionTitle, { color: colors.onSurface }]>Security Metrics</Text>
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Security Metrics</Text>
           <SecurityMetricsSection metrics={metrics} />
         </View>
       )}
 
       {/* Alerts List */}
       <View style={styles.alertsSection}>
-        <Text style={[styles.sectionTitle, { color: colors.onSurface }]>
+        <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
           Security Alerts ({alerts.length})
         </Text>
         <FlatList

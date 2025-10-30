@@ -1,6 +1,8 @@
-import React from 'react';
+import { useMemo } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '../../../theme';
+import { getExtendedColors } from '../../../theme/adapters';
+import type { ExtendedColors } from '../../../theme/adapters';
 import { Text } from './Text';
 
 export type TagVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -16,10 +18,16 @@ export interface TagProps {
   disabled?: boolean;
 }
 
-const sizeMap = {
-  sm: { padding: 4, fontSize: 12 },
-  md: { padding: 6, fontSize: 14 },
-  lg: { padding: 8, fontSize: 16 },
+type SizeConfig = {
+  paddingHorizontal: number;
+  paddingVertical: number;
+  fontSize: number;
+};
+
+const sizeMap: Record<TagSize, SizeConfig> = {
+  sm: { paddingHorizontal: 8, paddingVertical: 4, fontSize: 12 },
+  md: { paddingHorizontal: 12, paddingVertical: 6, fontSize: 14 },
+  lg: { paddingHorizontal: 16, paddingVertical: 8, fontSize: 16 },
 };
 
 export function Tag({
@@ -32,41 +40,45 @@ export function Tag({
   disabled = false,
 }: TagProps) {
   const theme = useTheme();
+  const colors = useMemo<ExtendedColors>(() => getExtendedColors(theme), [theme]);
   const sizeStyles = sizeMap[size];
-  const paddingValue = theme.spacing[sizeStyles.padding];
 
   const getVariantStyles = () => {
     switch (variant) {
       case 'primary':
         return {
-          backgroundColor: theme.colors.primary,
+          backgroundColor: colors.primary,
           borderColor: 'transparent',
-          textColor: theme.colors.primaryText,
+          textColor: colors.onPrimary,
         };
       case 'secondary':
         return {
-          backgroundColor: theme.colors.secondary || theme.colors.primary,
+          backgroundColor: colors.secondary ?? colors.primary,
           borderColor: 'transparent',
           textColor: '#FFFFFF',
         };
       case 'outline':
         return {
           backgroundColor: 'transparent',
-          borderColor: theme.colors.border,
-          textColor: theme.colors.onSurface
+          borderColor: colors.border,
+          textColor: colors.onSurface,
         };
       case 'ghost':
       default:
         return {
-          backgroundColor: theme.colors.bgAlt,
+          backgroundColor: colors.surface ?? colors.bg,
           borderColor: 'transparent',
-          textColor: theme.colors.onSurface
+          textColor: colors.onSurface,
         };
     }
   };
 
   const variantStyles = getVariantStyles();
   const isPressable = !!onPress;
+  const spacingXSRaw = theme.spacing?.xs;
+  const spacingXS = typeof spacingXSRaw === 'number' ? spacingXSRaw : parseFloat(String(spacingXSRaw ?? 8)) || 8;
+  const pillRadiusRaw = theme.radius?.pill;
+  const pillRadius = typeof pillRadiusRaw === 'number' ? pillRadiusRaw : parseFloat(String(pillRadiusRaw ?? 999)) || 999;
 
   const TagContent = () => (
     <View
@@ -76,12 +88,9 @@ export function Tag({
           backgroundColor: variantStyles.backgroundColor,
           borderWidth: variantStyles.borderColor !== 'transparent' ? 1 : 0,
           borderColor: variantStyles.borderColor,
-          borderRadius: theme.radius.full,
-          paddingHorizontal: paddingValue,
-          paddingVertical: paddingValue / 2,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: theme.spacing.xs,
+          borderRadius: pillRadius,
+          paddingHorizontal: sizeStyles.paddingHorizontal,
+          paddingVertical: sizeStyles.paddingVertical,
           opacity: disabled ? 0.5 : 1,
         },
       ]}
@@ -105,6 +114,7 @@ export function Tag({
           }}
           disabled={disabled}
           hitSlop={4}
+          style={{ marginLeft: spacingXS }}
         >
           <Text style={{ color: variantStyles.textColor }}>×</Text>
         </Pressable>
@@ -126,5 +136,7 @@ export function Tag({
 const styles = StyleSheet.create({
   container: {
     alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
