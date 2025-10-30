@@ -246,7 +246,7 @@ function AdminVerificationsScreen({
       case "pending":
         return theme.colors.warning;
       case "requires_info":
-        return theme.theme.colors.primary[500];
+        return theme.colors.primary;
       default:
         return theme.colors.border;
     }
@@ -928,7 +928,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.success,
   },
   infoButton: {
-    backgroundColor: theme.theme.colors.primary[500],
+    backgroundColor: theme.colors.primary,
   },
   rejectButton: {
     backgroundColor: theme.colors.danger,

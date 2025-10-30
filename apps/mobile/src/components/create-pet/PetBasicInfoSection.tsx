@@ -228,11 +228,11 @@ const makeStyles = (theme: any) =>
       backgroundColor: theme.colors.neutral[0],
     },
     inputError: {
-      borderColor: theme.colors.status.error,
+      borderColor: theme.colors.danger,
     },
     errorText: {
       fontSize: 14,
-      color: theme.colors.status.error,
+      color: theme.colors.danger,
       marginTop: 4,
     },
     textArea: {

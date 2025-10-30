@@ -361,7 +361,7 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="people" size={20} color={theme.colors.status.info} }/>
+                    <Ionicons name="people" size={20} color={theme.colors.info} }/>
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -447,7 +447,7 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="chatbubble" size={20} color={theme.theme.colors.primary[500]} }/>
+                    <Ionicons name="chatbubble" size={20} color={theme.colors.primary} }/>
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -775,7 +775,7 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: colors.card },
                   ])}
                 >
-                  <Ionicons name="flag" size={20} color={theme.theme.colors.primary[500]} }/>
+                  <Ionicons name="flag" size={20} color={theme.colors.primary} }/>
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,

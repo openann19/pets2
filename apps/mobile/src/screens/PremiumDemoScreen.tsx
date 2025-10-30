@@ -73,22 +73,22 @@ const EnhancedTypography = (theme: ReturnType<typeof useTheme>) => ({
 const SemanticColors = (theme: ReturnType<typeof useTheme>) => ({
   premium: {
     gold: theme.colors.warning,
-    platinum: theme.colors.bg.tertiary,
-    diamond: theme.colors.status.info,
+    platinum: theme.colors.surface,
+    diamond: theme.colors.info,
   },
   interactive: {
     primary: theme.colors.primary,
     secondary: theme.colors.primary,
   },
   text: {
-    primary: theme.colors.onSurface.primary,
-    secondary: theme.colors.onSurface.secondary,
-    inverse: theme.colors.bg.primary,
+    primary: theme.colors.onSurface,
+    secondary: theme.colors.onMuted,
+    inverse: theme.colors.bg,
   },
   background: {
-    primary: theme.colors.bg.primary,
-    secondary: theme.colors.bg.secondary,
-    dark: theme.colors.onSurface.primary,
+    primary: theme.colors.bg,
+    secondary: theme.colors.bg,
+    dark: theme.colors.onSurface,
   },
 });
 

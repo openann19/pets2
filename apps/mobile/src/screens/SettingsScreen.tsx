@@ -423,7 +423,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
               category && handleToggle(category, item.id, value)
             }
             trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-            thumbColor={item.value ? theme.colors.bg.primary : theme.colors.bg.tertiary}
+            thumbColor={item.value ? theme.colors.bg : theme.colors.surface}
           />
         )}
         {item.type === "navigation" && (

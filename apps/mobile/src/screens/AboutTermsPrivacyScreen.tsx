@@ -120,7 +120,7 @@ function AboutTermsPrivacyScreen({
           {/* App Info */}
           <BlurView intensity={15} style={styles.appInfoCard}>
             <View style={styles.appIcon}>
-              <Ionicons name="paw-outline" size={40} color={theme.colors.status.info} }/>
+              <Ionicons name="paw-outline" size={40} color={theme.colors.info} }/>
             </View>
             <View style={styles.appDetails}>
               <Text style={styles.appName}>PawfectMatch</Text>
@@ -197,7 +197,7 @@ function AboutTermsPrivacyScreen({
 
           <BlurView intensity={15} style={styles.contactCard}>
             <View style={styles.contactItem}>
-              <Ionicons name="mail-outline" size={20} color={theme.colors.status.info} }/>
+              <Ionicons name="mail-outline" size={20} color={theme.colors.info} }/>
               <Text style={styles.contactText}>support@pawfectmatch.com</Text>
             </View>
             <View style={styles.contactItem}>

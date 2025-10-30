@@ -421,10 +421,10 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         viewButtonText: {
           fontSize: 14,
           fontWeight: '600',
-          color: theme.colors.bg.primary,
+          color: theme.colors.bg,
         },
         editButton: {
-          backgroundColor: theme.colors.bg.secondary,
+          backgroundColor: theme.colors.bg,
         },
         deleteButton: {
           backgroundColor: theme.colors.danger,
@@ -442,13 +442,13 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         emptyTitle: {
           fontSize: 24,
           fontWeight: '600',
-          color: theme.colors.onSurface.primary,
+          color: theme.colors.onSurface,
           textAlign: 'center',
           marginBottom: 8,
         },
         emptyText: {
           fontSize: 16,
-          color: theme.colors.onSurface.secondary,
+          color: theme.colors.onMuted,
           textAlign: 'center',
           lineHeight: 24,
           marginBottom: 32,
@@ -465,7 +465,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         emptyButtonText: {
           fontSize: 16,
           fontWeight: '600',
-          color: theme.colors.bg.primary,
+          color: theme.colors.bg,
         },
         loadingOverlay: {
           position: 'absolute',
@@ -473,16 +473,16 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: theme.colors.bg.primary + 'F0',
+          backgroundColor: theme.colors.bg + 'F0',
           justifyContent: 'center',
           alignItems: 'center',
         },
         loadingContent: {
-          backgroundColor: theme.colors.bg.primary,
+          backgroundColor: theme.colors.bg,
           borderRadius: 16,
           padding: 24,
           alignItems: 'center',
-          shadowColor: theme.colors.onSurface.primary,
+          shadowColor: theme.colors.onSurface,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.15,
           shadowRadius: 12,
@@ -491,7 +491,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         loadingText: {
           marginTop: 12,
           fontSize: 16,
-          color: theme.colors.onSurface.secondary,
+          color: theme.colors.onMuted,
         },
       }),
     [theme],

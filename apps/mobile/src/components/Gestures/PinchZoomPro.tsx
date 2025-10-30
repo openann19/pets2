@@ -43,7 +43,7 @@ export function PinchZoomPro({
   resizeMode = 'cover',
 }: PinchZoomProProps) {
   const theme = useTheme();
-  const finalBackgroundColor = backgroundColor || theme.colors.onSurface.primary;
+  const finalBackgroundColor = backgroundColor || theme.colors.onSurface;
   const scale = useSharedValue(initialScale);
   const lastScale = useSharedValue(initialScale);
 
@@ -156,7 +156,7 @@ export function PinchZoomPro({
         <Animated.View style={[styles.center, imageStyle]}>
           <Image
             source={source}
-            style={{ width, height, backgroundColor: theme.colors.onSurface.primary }}
+            style={{ width, height, backgroundColor: theme.colors.onSurface }}
             resizeMode={resizeMode}
           />
         </Animated.View>

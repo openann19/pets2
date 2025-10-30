@@ -73,10 +73,10 @@ export function MessageBubbleDemo() {
           padding="md"
           style={{ maxWidth: '75%', backgroundColor: theme.colors.primary }}
         >
-          <Text style={{ color: theme.colors.bg.primary }}>Hey! How's it going? 📸</Text>
+          <Text style={{ color: theme.colors.bg }}>Hey! How's it going? 📸</Text>
           <Text
             variant="caption"
-            style={{ color: theme.colors.bg.primary, opacity: 0.7, marginTop: 4 }}
+            style={{ color: theme.colors.bg, opacity: 0.7, marginTop: 4 }}
           >
             2:30 PM
           </Text>
@@ -166,7 +166,7 @@ export function VideoCallDemo() {
     <Card
       variant="elevated"
       padding="md"
-      style={{ aspectRatio: 16 / 9, backgroundColor: theme.colors.onSurface.primary }}
+      style={{ aspectRatio: 16 / 9, backgroundColor: theme.colors.onSurface }}
     >
       <Stack
         justify="between"
@@ -182,7 +182,7 @@ export function VideoCallDemo() {
             alignItems: 'center',
           }}
         >
-          <Text style={{ color: theme.colors.bg.primary, fontSize: 48 }}>🎥</Text>
+          <Text style={{ color: theme.colors.bg, fontSize: 48 }}>🎥</Text>
         </View>
 
         {/* Local video (PiP) */}
@@ -199,7 +199,7 @@ export function VideoCallDemo() {
             alignItems: 'center',
           }}
         >
-          <Text style={{ color: theme.colors.bg.primary, fontSize: 24 }}>📹</Text>
+          <Text style={{ color: theme.colors.bg, fontSize: 24 }}>📹</Text>
         </View>
 
         {/* Controls */}
@@ -253,7 +253,7 @@ export function VoiceCallDemo() {
             width: 120,
             height: 120,
             borderRadius: 60,
-            backgroundColor: theme.colors.bg.primary,
+            backgroundColor: theme.colors.bg,
             justifyContent: 'center',
             alignItems: 'center',
           }}
@@ -266,11 +266,11 @@ export function VoiceCallDemo() {
         >
           <Text
             variant="h4"
-            style={{ color: theme.colors.bg.primary }}
+            style={{ color: theme.colors.bg }}
           >
             Bella the Beagle
           </Text>
-          <Text style={{ color: theme.colors.bg.primary, opacity: 0.8 }}>Connected</Text>
+          <Text style={{ color: theme.colors.bg, opacity: 0.8 }}>Connected</Text>
         </Stack>
         <Stack
           direction="row"
@@ -305,7 +305,7 @@ export function AdvancedHeaderDemo() {
       padding="none"
       style={{ overflow: 'hidden' }}
     >
-      <View style={{ padding: 16, backgroundColor: theme.colors.onSurface.primary, opacity: 0.9 }}>
+      <View style={{ padding: 16, backgroundColor: theme.colors.onSurface, opacity: 0.9 }}>
         <Stack
           direction="row"
           justify="between"
@@ -314,13 +314,13 @@ export function AdvancedHeaderDemo() {
           <Stack>
             <Text
               variant="h6"
-              style={{ color: theme.colors.bg.primary }}
+              style={{ color: theme.colors.bg }}
             >
               Discover
             </Text>
             <Text
               variant="caption"
-              style={{ color: theme.colors.bg.primary, opacity: 0.6 }}
+              style={{ color: theme.colors.bg, opacity: 0.6 }}
             >
               Find your perfect match
             </Text>
@@ -430,14 +430,14 @@ export function SwipeCardDemo() {
       <View
         style={{
           flex: 1,
-          backgroundColor: theme.colors.bg.secondary,
+          backgroundColor: theme.colors.bg,
           justifyContent: 'center',
           alignItems: 'center',
         }}
       >
         <Text style={{ fontSize: 64 }}>🐕</Text>
       </View>
-      <View style={{ padding: 16, backgroundColor: theme.colors.bg.primary }}>
+      <View style={{ padding: 16, backgroundColor: theme.colors.bg }}>
         <Text variant="h5">Bella</Text>
         <Text variant="bodyMuted">Beagle • 3 years old</Text>
       </View>
@@ -459,7 +459,7 @@ export function LoadingStateDemo() {
           width: 50,
           height: 50,
           borderRadius: 25,
-          backgroundColor: theme.colors.bg.tertiary,
+          backgroundColor: theme.colors.surface,
         }}
       />
       <Stack

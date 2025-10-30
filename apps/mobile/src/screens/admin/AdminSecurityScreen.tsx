@@ -541,7 +541,7 @@ export default function AdminSecurityScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="information-circle" size={20} color={theme.colors.status.info} }/>
+                <Ionicons name="information-circle" size={20} color={theme.colors.info} }/>
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -554,7 +554,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.metricValue,
-                  { color: theme.colors.status.info },
+                  { color: theme.colors.info },
                 ])}
               >
                 {metrics.mediumAlerts}

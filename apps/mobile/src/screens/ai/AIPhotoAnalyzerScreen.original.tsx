@@ -268,7 +268,7 @@ export default function AIPhotoAnalyzerScreen({
       case "excellent":
         return theme.colors.success;
       case "good":
-        return theme.colors.status.info;
+        return theme.colors.info;
       case "fair":
         return theme.colors.warning;
       case "poor":
@@ -280,7 +280,7 @@ export default function AIPhotoAnalyzerScreen({
 
   const getQualityColor = (score: number): string => {
     if (score >= 90) return theme.colors.success;
-    if (score >= 80) return theme.colors.status.info;
+    if (score >= 80) return theme.colors.info;
     if (score >= 70) return theme.colors.warning;
     return theme.colors.danger;
   };
@@ -647,7 +647,7 @@ export default function AIPhotoAnalyzerScreen({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="list" size={24} color={theme.colors.status.info} }/>
+                <Ionicons name="list" size={24} color={theme.colors.info} }/>
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -710,7 +710,7 @@ export default function AIPhotoAnalyzerScreen({
                           key={index}
                           style={StyleSheet.flatten([
                             styles.tag,
-                            { backgroundColor: theme.colors.status.info },
+                            { backgroundColor: theme.colors.info },
                           ])}
                         >
                           <Text style={styles.tagText}>{trait}</Text>

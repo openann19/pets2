@@ -93,7 +93,7 @@ export function MessageBubble({
         otherMessageDark: {
           backgroundColor: theme.colors.surface,
           borderWidth: 1,
-          borderColor: theme.colors.onSurface.primary,
+          borderColor: theme.colors.onSurface,
         },
         messageText: {
           fontSize: 16,

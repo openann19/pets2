@@ -123,47 +123,47 @@ export function MessageBubbleEnhanced({
           backgroundColor: theme.colors.danger,
         },
         otherMessageLight: {
-          backgroundColor: theme.colors.bg.primary,
+          backgroundColor: theme.colors.bg,
           borderWidth: 1,
-          borderColor: theme.colors.border.medium,
+          borderColor: theme.colors.border,
         },
         otherMessageDark: {
-          backgroundColor: theme.colors.onSurface.primary,
+          backgroundColor: theme.colors.onSurface,
           borderWidth: 1,
-          borderColor: theme.colors.onSurface.primary,
+          borderColor: theme.colors.onSurface,
         },
         messageText: {
           fontSize: 16,
           lineHeight: 20,
         },
         messageTextLight: {
-          color: theme.colors.onSurface.primary,
+          color: theme.colors.onSurface,
         },
         messageTextDark: {
-          color: theme.colors.bg.primary,
+          color: theme.colors.bg,
         },
         imageBubble: {
-          backgroundColor: theme.colors.bg.secondary,
+          backgroundColor: theme.colors.bg,
           borderRadius: 12,
           padding: 4,
         },
         gifBubble: {
-          backgroundColor: theme.colors.bg.secondary,
+          backgroundColor: theme.colors.bg,
           borderRadius: 12,
           padding: 20,
         },
         voiceBubble: {
-          backgroundColor: theme.colors.bg.secondary,
+          backgroundColor: theme.colors.bg,
           borderRadius: 12,
           padding: 12,
         },
         loadingText: {
           fontSize: 14,
-          color: theme.colors.onSurface.secondary,
+          color: theme.colors.onMuted,
         },
         gifPlaceholder: {
           fontSize: 14,
-          color: theme.colors.onSurface.secondary,
+          color: theme.colors.onMuted,
         },
         messageMeta: {
           flexDirection: 'row',
@@ -175,10 +175,10 @@ export function MessageBubbleEnhanced({
           fontSize: 12,
         },
         timestampLight: {
-          color: theme.colors.onSurface.tertiary,
+          color: theme.colors.onMuted,
         },
         timestampDark: {
-          color: theme.colors.onSurface.secondary,
+          color: theme.colors.onMuted,
         },
         statusRow: {
           flexDirection: 'row',
@@ -189,10 +189,10 @@ export function MessageBubbleEnhanced({
           fontSize: 12,
         },
         statusLight: {
-          color: theme.colors.onSurface.secondary,
+          color: theme.colors.onMuted,
         },
         statusDark: {
-          color: theme.colors.onSurface.tertiary,
+          color: theme.colors.onMuted,
         },
         footerRow: {
           flexDirection: 'row',
@@ -208,7 +208,7 @@ export function MessageBubbleEnhanced({
           height: 32,
           borderRadius: 16,
           borderWidth: 2,
-          borderColor: theme.colors.bg.primary,
+          borderColor: theme.colors.bg,
         },
         avatarEmoji: {
           fontSize: 16,
@@ -220,13 +220,13 @@ export function MessageBubbleEnhanced({
           fontWeight: '500',
         },
         avatarNameLight: {
-          color: theme.colors.onSurface.primary,
+          color: theme.colors.onSurface,
         },
         avatarNameDark: {
-          color: theme.colors.bg.primary,
+          color: theme.colors.bg,
         },
         reactionButton: {
-          backgroundColor: theme.colors.bg.secondary,
+          backgroundColor: theme.colors.bg,
           borderRadius: 12,
           paddingHorizontal: 8,
           paddingVertical: 4,
@@ -245,7 +245,7 @@ export function MessageBubbleEnhanced({
         retryText: {
           fontSize: 12,
           fontWeight: '500',
-          color: theme.colors.bg.primary,
+          color: theme.colors.bg,
         },
         milestoneContainer: {
           position: 'absolute',
@@ -258,7 +258,7 @@ export function MessageBubbleEnhanced({
           fontSize: 10,
           fontWeight: '600',
           color: theme.colors.primary,
-          backgroundColor: theme.colors.bg.primary,
+          backgroundColor: theme.colors.bg,
           paddingHorizontal: 8,
           paddingVertical: 2,
           borderRadius: 8,
@@ -271,7 +271,7 @@ export function MessageBubbleEnhanced({
           marginBottom: 8,
           paddingVertical: 6,
           paddingHorizontal: 8,
-          backgroundColor: theme.colors.bg.secondary,
+          backgroundColor: theme.colors.bg,
           borderRadius: 8,
           borderLeftWidth: 3,
           borderLeftColor: theme.colors.primary,
@@ -286,12 +286,12 @@ export function MessageBubbleEnhanced({
         replyAuthor: {
           fontSize: 12,
           fontWeight: '600',
-          color: theme.colors.onSurface.primary,
+          color: theme.colors.onSurface,
           flex: 1,
         },
         replyText: {
           fontSize: 12,
-          color: theme.colors.onSurface.secondary,
+          color: theme.colors.onMuted,
           marginTop: 2,
         },
       }),
@@ -478,16 +478,16 @@ export function MessageBubbleEnhanced({
           <MessageTimestampBadge
             iso={message.sentAt}
             visible={showTime}
-            textColor={isOwnMessage ? theme.colors.bg.primary : theme.colors.onSurface.primary}
+            textColor={isOwnMessage ? theme.colors.bg : theme.colors.onSurface}
             bgColor={
               isOwnMessage
-                ? theme.colors.onSurface.primary + '30'
-                : theme.colors.onSurface.primary + '23'
+                ? theme.colors.onSurface + '30'
+                : theme.colors.onSurface + '23'
             }
             accentColor={
               isOwnMessage
-                ? theme.colors.onSurface.primary + 'B3'
-                : theme.colors.onSurface.primary + '80'
+                ? theme.colors.onSurface + 'B3'
+                : theme.colors.onSurface + '80'
             }
           />
           {isOwnMessage && showStatus && (
@@ -555,7 +555,7 @@ export function MessageBubbleEnhanced({
               colors={
                 isOwnMessage
                   ? [theme.colors.danger, theme.colors.danger + '80']
-                  : [theme.colors.bg.elevated, theme.colors.bg.primary]
+                  : [theme.colors.surface, theme.colors.bg]
               }
               style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
               start={{ x: 0, y: 0 }}
@@ -595,16 +595,16 @@ export function MessageBubbleEnhanced({
             <MessageTimestampBadge
               iso={message.sentAt}
               visible={showTime}
-              textColor={isOwnMessage ? theme.colors.bg.primary : theme.colors.onSurface.primary}
+              textColor={isOwnMessage ? theme.colors.bg : theme.colors.onSurface}
               bgColor={
                 isOwnMessage
-                  ? theme.colors.onSurface.primary + '30'
-                  : theme.colors.onSurface.primary + '23'
+                  ? theme.colors.onSurface + '30'
+                  : theme.colors.onSurface + '23'
               }
               accentColor={
                 isOwnMessage
-                  ? theme.colors.onSurface.primary + 'B3'
-                  : theme.colors.onSurface.primary + '80'
+                  ? theme.colors.onSurface + 'B3'
+                  : theme.colors.onSurface + '80'
               }
             />
             {isOwnMessage && showStatus && (
@@ -630,14 +630,14 @@ export function MessageBubbleEnhanced({
         users={users}
         anchor={anchor}
         theme={{
-          bg: theme.isDark ? theme.colors.onSurface.primary : theme.colors.bg.primary,
-          text: theme.isDark ? theme.colors.bg.primary : theme.colors.onSurface.primary,
+          bg: theme.isDark ? theme.colors.onSurface : theme.colors.bg,
+          text: theme.isDark ? theme.colors.bg : theme.colors.onSurface,
           subtext: theme.isDark
-            ? theme.colors.onSurface.tertiary
-            : theme.colors.onSurface.secondary,
+            ? theme.colors.onMuted
+            : theme.colors.onMuted,
           border: theme.isDark
-            ? theme.colors.onSurface.primary + '80'
-            : theme.colors.onSurface.primary + '80',
+            ? theme.colors.onSurface + '80'
+            : theme.colors.onSurface + '80',
         }}
       />
 
@@ -650,14 +650,14 @@ export function MessageBubbleEnhanced({
         anchor={menuAnchor}
         actions={actions}
         theme={{
-          bg: theme.isDark ? theme.colors.onSurface.primary : theme.colors.bg.primary,
+          bg: theme.isDark ? theme.colors.onSurface : theme.colors.bg,
           border: theme.isDark
-            ? theme.colors.onSurface.primary + '80'
-            : theme.colors.onSurface.primary + '80',
-          text: theme.isDark ? theme.colors.bg.primary : theme.colors.onSurface.primary,
-          sub: theme.isDark ? theme.colors.onSurface.tertiary : theme.colors.onSurface.secondary,
-          item: theme.isDark ? theme.colors.onSurface.primary : theme.colors.bg.secondary,
-          itemPressed: theme.isDark ? theme.colors.onSurface.primary : theme.colors.bg.tertiary,
+            ? theme.colors.onSurface + '80'
+            : theme.colors.onSurface + '80',
+          text: theme.isDark ? theme.colors.bg : theme.colors.onSurface,
+          sub: theme.isDark ? theme.colors.onMuted : theme.colors.onMuted,
+          item: theme.isDark ? theme.colors.onSurface : theme.colors.bg,
+          itemPressed: theme.isDark ? theme.colors.onSurface : theme.colors.surface,
         }}
       />
     </>
