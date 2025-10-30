@@ -37,7 +37,7 @@ export type TextVariant =
   | "label";
 
 export type TextWeight = keyof typeof Theme.typography.fontWeight;
-export type TextColor = keyof typeof Theme.colors.onSurface
+export type TextColor = keyof typeof Theme.colors.onSurface;
 
 export interface ModernTextProps extends TextProps {
   variant?: TextVariant;
@@ -163,7 +163,7 @@ function ModernText({
 
   // Get text color
   const textColorKey = color || 'primary';
-  const textColor = Theme.colors.onSurfacetextColorKey];
+  const textColor = Theme.colors.onSurface[textColorKey];
 
   // Build text style
   const textStyle: TextStyle = {
