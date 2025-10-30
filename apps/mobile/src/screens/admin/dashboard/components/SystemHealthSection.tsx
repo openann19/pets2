@@ -103,7 +103,7 @@ export const SystemHealthSection: React.FC<SystemHealthSectionProps> = ({ health
   const { colors, palette } = theme;
 
   return (
-    <View style={[styles.healthCard, { backgroundColor: colors.surface }]>
+    <View style={[styles.healthCard, { backgroundColor: colors.surface }]}>
       <View style={styles.healthHeader}>
         <Ionicons name="pulse" size={24} color={getStatusColor(health.status, colors)} />
         <Text style={[styles.healthTitle, { color: colors.onSurface }]}>System Health</Text>
