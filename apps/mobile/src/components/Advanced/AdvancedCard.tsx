@@ -286,8 +286,8 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
                 interactions={['hover', 'press']}
                 haptic={action.haptic || 'light'}
                 onPress={() => handleActionPress(action)}
-                disabled={action.disabled}
-                loading={action.loading}
+                disabled={!!action.disabled}
+                loading={!!action.loading}
                 style={styles.actionButton}
               />
             ))}
@@ -326,7 +326,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
       {/* Background */}
       <CardBackground
         variant={variant}
-        gradientColors={gradientColors ?? [Theme.colors.primary[500] ?? '#8b5cf6', Theme.colors.primary[600] ?? '#7c3aed']}
+        gradientColors={(gradientColors ?? [Theme.colors.primary[500] ?? '#8b5cf6', Theme.colors.primary[600] ?? '#7c3aed']) as string[]}
         blurIntensity={blurIntensity}
       />
 

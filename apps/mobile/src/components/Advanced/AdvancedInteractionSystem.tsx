@@ -18,7 +18,6 @@ import {
   PanResponder,
   Dimensions,
   TouchableOpacity,
-  Platform,
   AccessibilityInfo,
 } from 'react-native';
 
@@ -32,7 +31,7 @@ const getScreenDimensions = () => {
   }
 };
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = getScreenDimensions();
+const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = getScreenDimensions();
 
 // Advanced Animation Configuration
 const ANIMATION_CONFIG = {
@@ -138,8 +137,9 @@ function AdvancedButtonComponent({
   const tiltY = useRef(new Animated.Value(0)).current;
 
   // State
-  const [isPressed, setIsPressed] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  // Removed unused local UI states to satisfy strict noUnusedLocals
+  // const [isPressed, setIsPressed] = useState(false);
+  // const [isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isAccessibilityEnabled, setIsAccessibilityEnabled] = useState(false);
 
@@ -179,7 +179,7 @@ function AdvancedButtonComponent({
     (pressed: boolean) => {
       if (disabled || loading || isLoading) return;
 
-      setIsPressed(pressed);
+      // setIsPressed(pressed);
 
       const animations: Animated.CompositeAnimation[] = [];
 
@@ -223,39 +223,7 @@ function AdvancedButtonComponent({
   );
 
   // Hover Animation
-  const animateHover = useCallback(
-    (hovered: boolean) => {
-      if (disabled || loading || isLoading) return;
-
-      setIsHovered(hovered);
-
-      const animations: Animated.CompositeAnimation[] = [];
-
-      if (interactions.includes('hover')) {
-        animations.push(
-          Animated.spring(scale, {
-            toValue: hovered ? 1.05 : 1,
-            ...ANIMATION_CONFIG.spring,
-          }),
-        );
-      }
-
-      if (interactions.includes('glow')) {
-        animations.push(
-          Animated.timing(glow, {
-            toValue: hovered ? 0.5 : 0,
-            duration: 300,
-            useNativeDriver: false,
-          }),
-        );
-      }
-
-      if (animations.length > 0) {
-        Animated.parallel(animations).start();
-      }
-    },
-    [disabled, loading, isLoading, interactions, scale, glow],
-  );
+  // Removed unused hover animation handler (no hover on native touch)
 
   // Tilt Animation with PanResponder
   const panResponder = useRef(
@@ -264,7 +232,7 @@ function AdvancedButtonComponent({
       onPanResponderGrant: () => {
         triggerHaptic('light');
       },
-      onPanResponderMove: (evt, gestureState) => {
+      onPanResponderMove: (_evt, gestureState) => {
         if (!interactions.includes('tilt')) return;
 
         const { dx, dy } = gestureState;
@@ -565,7 +533,7 @@ function AdvancedButtonComponent({
   };
 
   // Start loading animation
-  useEffect(() => {
+  useEffect((): void | (() => void) => {
     if (loading || isLoading) {
       const rotationAnimation = Animated.loop(
         Animated.timing(rotation, {
@@ -580,7 +548,9 @@ function AdvancedButtonComponent({
         rotationAnimation.stop();
       };
     }
+    return undefined;
   }, [loading, isLoading, rotation]);
+
 
   return renderButton();
 }
@@ -621,9 +591,9 @@ export function AdvancedCard({
       variant={variant}
       interactions={interactions}
       haptic={haptic}
-      onPress={onPress}
+      {...(onPress ? { onPress } : {})}
       disabled={disabled}
-      style={style}
+      style={style ?? {}}
       glowColor={glowColor}
       gradientColors={gradientColors}
       blurIntensity={blurIntensity}

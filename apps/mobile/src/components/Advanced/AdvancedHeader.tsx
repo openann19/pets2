@@ -13,7 +13,7 @@ import type { ViewStyle, TextStyle } from 'react-native';
 import { View, Text, StyleSheet, Animated, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { matchesAPI } from '../../services/api';
+// (removed unused matchesAPI import)
 
 import { AdvancedButton } from './AdvancedInteractionSystem';
 
@@ -93,11 +93,11 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
   // Animation Values
   const headerOpacity = useRef(new Animated.Value(1)).current;
   const headerTranslateY = useRef(new Animated.Value(0)).current;
-  const buttonScale = useRef(new Animated.Value(1)).current;
+  // removed unused buttonScale
   const titleScale = useRef(new Animated.Value(1)).current;
 
   // State
-  const [isScrolled, setIsScrolled] = useState(false);
+  // removed unused scroll state
   const [isLoading, setIsLoading] = useState(false);
 
   // Handle Back Press
@@ -216,19 +216,19 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
     return (
       <AdvancedButton
         icon={icon}
-        title={button.title}
+        title={button.title ?? ''}
         variant={variant}
         size="sm"
         interactions={['hover', 'press', 'glow']}
         haptic={button.haptic || 'light'}
         onPress={() => handleButtonPress(button)}
-        disabled={button.disabled}
+        disabled={!!button.disabled}
         loading={button.loading || isLoading}
         style={StyleSheet.flatten([
           styles.headerButton,
           isLeft ? styles.leftButton : styles.rightButton,
         ])}
-        glowColor={variant === 'primary' ? Theme.colors.primary[500] : Theme.colors.neutral[500]}
+        glowColor={(variant === 'primary' ? Theme.colors.primary[500] : Theme.colors.neutral[500]) ?? '#8b5cf6'}
       >
         {button.badge && button.badge > 0 && (
           <View style={styles.badge}>
@@ -319,6 +319,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
           {showBackButton && (
             <AdvancedButton
               icon="arrow-back"
+              title={''}
               variant="minimal"
               size="sm"
               interactions={['hover', 'press', 'glow']}
