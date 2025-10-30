@@ -27,7 +27,7 @@ import {
   DangerZoneSection,
 } from "./settings";
 import { SettingSection } from "../components/settings/SettingSection";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
 import { useTranslation } from 'react-i18next';
 
 type SettingsScreenProps = RootStackScreenProps<"Settings">;

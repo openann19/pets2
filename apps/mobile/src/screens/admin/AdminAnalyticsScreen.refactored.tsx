@@ -5,8 +5,8 @@
  */
 
 import { Ionicons } from '@expo/vector-icons';
-import type { AppTheme } from '@mobile/src/theme';
-import { getExtendedColors, useTheme } from '@mobile/src/theme';
+import type { AppTheme } from '@mobile/theme';
+import { getExtendedColors, useTheme } from '@mobile/theme';
 import { logger, useAuthStore } from '@pawfectmatch/core';
 import * as Haptics from 'expo-haptics';
 import React, { useEffect, useMemo, useState } from 'react';

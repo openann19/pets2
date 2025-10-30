@@ -16,7 +16,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import performanceMonitorInstance, { type PerformanceMetrics } from '../utils/PerformanceMonitor';
 
 import { EliteButtonPresets } from './buttons/EliteButton';

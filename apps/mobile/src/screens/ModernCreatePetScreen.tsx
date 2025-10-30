@@ -32,7 +32,7 @@ import {
   Label,
   useStaggeredAnimation,
 } from "../components";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
 
 // Import legacy components for gradual migration
 import { EliteContainer, EliteHeader } from "../components";

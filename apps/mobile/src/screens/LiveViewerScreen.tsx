@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { useRoute } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';

@@ -10,8 +10,8 @@ import {
 } from '@/constants/performance';
 import { preloadRemoteImages } from '@/services/AssetPreloader';
 import { extractPetImageUrls, extractPetTags } from '@/utils/pet-media';
-import type { AppTheme } from '@mobile/src/theme';
-import { useTheme } from '@mobile/src/theme';
+import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@mobile/theme';
 import { logger } from '@pawfectmatch/core';
 import ModernSwipeCard from '../ModernSwipeCard';
 

@@ -1,7 +1,7 @@
 /**
  * Custom render function with providers for consistent test setup
  */
-import { ThemeProvider } from '@mobile/src/theme';
+import { ThemeProvider } from '@mobile/theme';
 import type { RenderOptions } from '@testing-library/react-native';
 import { render as rtlRender } from '@testing-library/react-native';
 import React from 'react';

@@ -1,4 +1,4 @@
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 import {
   KeyboardAvoidingView,

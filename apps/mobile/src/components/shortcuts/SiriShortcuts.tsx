@@ -3,7 +3,7 @@ import { logger } from '@pawfectmatch/core';
 import React, { useEffect, useState } from 'react';
 import { Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 
 // Mock Siri Shortcuts API for non-iOS platforms
 interface ExpoSiriShortcutsModule {

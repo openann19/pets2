@@ -3,7 +3,7 @@
  * Displays emoji reactions for messages
  */
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { useState } from 'react';
 import {
   FlatList,

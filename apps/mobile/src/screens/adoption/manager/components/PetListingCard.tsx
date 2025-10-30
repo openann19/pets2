@@ -7,8 +7,8 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { PetListing } from "../../../../hooks/screens/useAdoptionManagerScreen";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
+import type { AppTheme } from "@mobile/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({

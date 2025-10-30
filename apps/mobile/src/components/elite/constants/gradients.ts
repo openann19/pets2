@@ -3,7 +3,7 @@
  * Centralized gradient color definitions for elite components
  */
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 
 export const getPremiumGradients = (theme: ReturnType<typeof useTheme>) =>
   ({
@@ -19,7 +19,7 @@ export const getPremiumGradients = (theme: ReturnType<typeof useTheme>) =>
       theme.colors.danger,
       theme.colors.success,
     ],
-    neon: [theme.colors.status.info, theme.colors.primary, theme.colors.warning],
+    neon: [theme.colors.info, theme.colors.primary, theme.colors.warning],
     glass: ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)'],
   }) as const;
 

@@ -15,7 +15,7 @@ import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHe
 import { haptic } from '../ui/haptics';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 
 import { DoubleTapLikePlus } from '../components/Gestures/DoubleTapLikePlus';
 import { PinchZoomPro } from '../components/Gestures/PinchZoomPro';

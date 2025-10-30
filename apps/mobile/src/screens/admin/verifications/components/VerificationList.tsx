@@ -3,8 +3,8 @@ import React, { useMemo } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import type { Verification } from "../hooks/useAdminVerifications";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
+import type { AppTheme } from "@mobile/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({

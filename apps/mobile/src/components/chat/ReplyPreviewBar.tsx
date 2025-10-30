@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
 import { useTranslation } from 'react-i18next';
 import { useReduceMotion } from '../../hooks/useReducedMotion';
 import { haptic } from '../../ui/haptics';

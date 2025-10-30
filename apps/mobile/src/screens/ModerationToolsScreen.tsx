@@ -254,7 +254,7 @@ function ModerationToolsScreen({
               Alert.alert("Guidelines", "Community guidelines coming soon!");
             }}
           >
-            <Ionicons name="document-text-outline" size={20} color={theme.colors.status.info} />
+            <Ionicons name="document-text-outline" size={20} color={theme.colors.info} />
             <Text style={styles.quickActionText}>Guidelines</Text>
           </TouchableOpacity>
 

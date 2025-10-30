@@ -10,7 +10,7 @@ import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
 import type { RootStackParamList } from "../navigation/types";
 
 const PremiumSuccessScreen = (): React.JSX.Element => {

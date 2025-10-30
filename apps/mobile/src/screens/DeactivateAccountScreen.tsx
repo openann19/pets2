@@ -1,6 +1,6 @@
 import React from "react";
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';

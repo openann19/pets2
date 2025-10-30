@@ -1,4 +1,4 @@
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import type { Message, User } from '@pawfectmatch/core';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';

@@ -2,7 +2,7 @@
  * Physical Info Step Component
  */
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import type { PetFormData } from '../types';

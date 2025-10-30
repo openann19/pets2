@@ -1,4 +1,4 @@
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { logger } from '@pawfectmatch/core';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useMemo, useState } from 'react';

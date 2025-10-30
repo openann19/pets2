@@ -4,8 +4,8 @@
  */
 
 import { Ionicons } from '@expo/vector-icons';
-import type { AppTheme } from '@mobile/src/theme';
-import { useTheme } from '@mobile/src/theme';
+import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@mobile/theme';
 import React, { useMemo } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

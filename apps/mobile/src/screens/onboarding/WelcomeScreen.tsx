@@ -1,7 +1,7 @@
 import type { Spacing } from '@/animation';
 import { getExtendedColors } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { logger } from '@pawfectmatch/core';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';

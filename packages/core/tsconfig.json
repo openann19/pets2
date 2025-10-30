@@ -6,6 +6,8 @@
     "rootDir": "./src",
     "lib": ["ES2023"],
     "types": ["node", "jest"],
+    "declaration": true,
+    "declarationMap": true,
     "verbatimModuleSyntax": false // Allow mixed import/export for compatibility
   },
   "include": ["src/**/*"],

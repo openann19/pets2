@@ -22,7 +22,7 @@ import {
 } from '../components';
 
 // Import legacy components for gradual migration
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { EliteContainer, EliteHeader } from '../components';
 import { useModernSwipeScreen } from '../hooks/screens/useModernSwipeScreen';
 import type { RootStackScreenProps } from '../navigation/types';

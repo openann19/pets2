@@ -19,7 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { SecurityAlertCard, SecurityMetricsSection } from "./security/components";
 import { useAdminSecurity } from "./security/hooks";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
 import type { AdminScreenProps } from "../../navigation/types";
 import type { SecurityAlert } from "./security/types";
 

@@ -1,6 +1,6 @@
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { MessageInput } from '../components/chat/MessageInput';

@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import * as Haptics from 'expo-haptics';
 import type { Match } from '../../hooks/useMatchesData';
 import OptimizedImage from '../OptimizedImage';

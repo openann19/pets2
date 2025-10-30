@@ -1,4 +1,4 @@
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 /**
  * NEW COMPONENTS TEST SCREEN
  *

@@ -10,7 +10,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { NavigationProp } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
 import type { RootStackParamList } from "../navigation/types";
 
 const PremiumCancelScreen = (): React.JSX.Element => {

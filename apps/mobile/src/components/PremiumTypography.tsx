@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { Colors } from '../animation';
 
 // === PREMIUM GRADIENT COLORS FOR TEXT ===

@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { EliteButtonPresets, Body, Heading2 } from "@mobile/src/components";
-import { ShimmerPlaceholder } from "@mobile/src/components/ShimmerPlaceholder";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { EliteButtonPresets, Body, Heading2 } from "@mobile/components";
+import { ShimmerPlaceholder } from "@mobile/components/ShimmerPlaceholder";
+import { useTheme } from "@mobile/theme";
+import type { AppTheme } from "@mobile/theme";
 
 type MapEmptyStateProps = {
   onAdjustFilters: () => void;

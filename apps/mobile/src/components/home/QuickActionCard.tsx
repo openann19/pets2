@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, type ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
 
 interface QuickActionCardProps {
   icon: string;

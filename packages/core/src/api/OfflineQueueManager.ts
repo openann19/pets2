@@ -13,13 +13,13 @@ export interface QueueItem {
   endpoint: string;
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   data?: unknown;
-  headers?: Record<string, string>;
+  headers?: Record<string, string> | undefined;
   timestamp: number;
   priority: QueuePriority;
   retryCount: number;
   maxRetries: number;
   conflictResolution: ConflictResolution;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> | undefined;
 }
 
 export interface QueueConfig {
@@ -36,7 +36,7 @@ export interface QueueStats {
   processingItems: number;
   failedItems: number;
   criticalItems: number;
-  oldestItemTimestamp?: number;
+  oldestItemTimestamp?: number | undefined;
 }
 
 const DEFAULT_CONFIG: QueueConfig = {

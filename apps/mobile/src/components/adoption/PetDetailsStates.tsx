@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Body, EliteButtonPresets, Heading2 } from '@mobile/src/components';
-import { ShimmerPlaceholder } from '@mobile/src/components/ShimmerPlaceholder';
-import type { AppTheme } from '@mobile/src/theme';
-import { useTheme } from '@mobile/src/theme';
+import { Body, EliteButtonPresets, Heading2 } from '@mobile/components';
+import { ShimmerPlaceholder } from '@mobile/components/ShimmerPlaceholder';
+import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@mobile/theme';
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({

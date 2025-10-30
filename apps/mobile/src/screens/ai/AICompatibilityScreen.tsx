@@ -19,8 +19,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
+import type { AppTheme } from "@mobile/theme";
 import type { RootStackParamList } from "../../navigation/types";
 import { aiAPI, matchesAPI } from "../../services/api";
 import { logger } from "../../services/logger";

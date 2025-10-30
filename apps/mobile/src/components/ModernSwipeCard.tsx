@@ -25,7 +25,7 @@ import {
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated, { type AnimatedStyleProp } from 'react-native-reanimated';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { useDoubleTapMetrics } from '../hooks/useInteractionMetrics';
 import { useLikeWithUndo } from '../hooks/useLikeWithUndo';
 import { useSwipeGesturesRNGH } from '../hooks/useSwipeGesturesRNGH';

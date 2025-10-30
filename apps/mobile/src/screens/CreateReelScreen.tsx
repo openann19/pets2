@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { View, Text, Pressable, ActivityIndicator, StyleSheet, ScrollView, Image, Alert } from 'react-native';
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 
 const API_URL = process.env['EXPO_PUBLIC_API_URL'] || 'http://localhost:3001';

@@ -10,7 +10,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { AdvancedCard, CardConfigs } from '../components/Advanced/AdvancedCard';
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
 import { StaggerList } from '../ui/lists/StaggerList';
 import { BouncePressable } from '../ui/pressables/BouncePressable';
 import { logger } from '../services/logger';

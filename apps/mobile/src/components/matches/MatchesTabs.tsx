@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { AdvancedCard, CardConfigs } from '../Advanced/AdvancedCard';
 
 interface MatchesTabsProps {

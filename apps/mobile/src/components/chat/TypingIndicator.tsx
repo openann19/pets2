@@ -1,4 +1,4 @@
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import React, { useMemo } from 'react';
 import { Animated, Image, StyleSheet, Text, View } from 'react-native';
 

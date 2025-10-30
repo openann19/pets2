@@ -4,7 +4,7 @@ import { FlatList, RefreshControl, StyleSheet } from 'react-native';
 import { haptic } from '../ui/haptics';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { MatchCard } from '../components/matches/MatchCard';

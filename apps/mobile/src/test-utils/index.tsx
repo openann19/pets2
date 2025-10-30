@@ -4,7 +4,7 @@
  * Provides custom render functions and utilities for testing.
  */
 
-import { ThemeProvider } from '@mobile/src/theme';
+import { ThemeProvider } from '@mobile/theme';
 import { NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { RenderOptions } from '@testing-library/react-native';

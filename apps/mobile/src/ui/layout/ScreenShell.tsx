@@ -4,7 +4,7 @@
  * Provides: header space, safe areas, gradients, consistent spacing
  */
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';

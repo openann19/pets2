@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppInfoCard } from '../components/help/AppInfoCard';
 import { HelpContactCard } from '../components/help/HelpContactCard';
 import { HelpOptionCard } from '../components/help/HelpOptionCard';
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 
 interface HelpSupportScreenProps {
   navigation: {

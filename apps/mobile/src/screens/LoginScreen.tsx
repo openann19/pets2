@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 import { useLoginScreen } from '../hooks/screens/useLoginScreen';
 import type { RootStackScreenProps } from '../navigation/types';

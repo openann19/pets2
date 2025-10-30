@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAIBioScreen } from "../hooks/screens/ai";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
 
 export default function AIBioScreen() {
   const theme = useTheme();

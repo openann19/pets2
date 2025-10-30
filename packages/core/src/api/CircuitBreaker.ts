@@ -25,8 +25,8 @@ export interface CircuitBreakerMetrics {
   failures: number;
   successes: number;
   totalRequests: number;
-  lastFailureTime?: number;
-  lastSuccessTime?: number;
+  lastFailureTime?: number | undefined;
+  lastSuccessTime?: number | undefined;
   state: CircuitState;
   stateChangedAt: number;
 }

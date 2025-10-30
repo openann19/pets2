@@ -3,7 +3,7 @@
  * These are placeholder components for showcasing UI patterns
  */
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { View } from 'react-native';
 import { Badge } from './Badge';
 import { Button } from './Button';

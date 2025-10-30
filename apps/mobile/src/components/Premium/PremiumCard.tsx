@@ -18,7 +18,7 @@ import {
   View,
 } from 'react-native';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 

@@ -2,8 +2,8 @@ import * as Haptics from 'expo-haptics';
 import { useCallback } from 'react';
 import { Alert } from 'react-native';
 
-import type { ThemeColors } from '@mobile/src/theme';
-import { useTheme } from '@mobile/src/theme';
+import type { ThemeColors } from '@mobile/theme';
+import { useTheme } from '@mobile/theme';
 import type { ThemeMode } from '../stores/useUIStore';
 import { getExtendedColors } from '../theme/adapters';
 import { useThemeContext } from '../theme/ThemeProvider';

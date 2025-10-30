@@ -8,7 +8,7 @@ import { ScrollView, View, StyleSheet, Switch, Alert } from 'react-native';
 import { Stack } from '../components/ui/v2/layout/Stack';
 import { Text } from '../components/ui/v2/Text';
 import { Button } from '../components/ui/v2/Button';
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@mobile/theme";
 import { useTranslation } from 'react-i18next';
 import { showcaseRegistry } from '../components/ui/v2/registry';
 

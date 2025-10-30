@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { Theme } from '@mobile/src/theme';
-import { useTheme } from '@mobile/src/theme';
+import type { Theme } from '@mobile/theme';
+import { useTheme } from '@mobile/theme';
 import { useMemo } from 'react';
 import type { ViewStyle } from 'react-native';
 import { Pressable, Switch as RNSwitch, StyleSheet, View } from 'react-native';

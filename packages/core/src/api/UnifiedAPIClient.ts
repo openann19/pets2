@@ -31,7 +31,7 @@ export interface APIClientConfig {
 
 export interface UnifiedRequestConfig {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  headers?: Record<string, string>;
+  headers?: Record<string, string> | undefined;
   body?: unknown;
   timeout?: number;
   retry?: boolean;
@@ -42,9 +42,9 @@ export interface UnifiedRequestConfig {
 export interface UnifiedResponse<T> {
   success: boolean;
   data?: T;
-  error?: string;
-  statusCode?: number;
-  retries?: number;
+  error?: string | undefined;
+  statusCode?: number | undefined;
+  retries?: number | undefined;
 }
 
 export class UnifiedAPIClient extends OfflineQueueManager {
@@ -100,15 +100,23 @@ export class UnifiedAPIClient extends OfflineQueueManager {
     // Check if online is required
     if (requireOnline && !this.isOnline) {
       // Queue for offline processing
-      await this.enqueue({
+      const queueItemData: Omit<QueueItem, 'id' | 'timestamp' | 'retryCount'> = {
         endpoint,
         method,
-        data: config.body,
-        headers: config.headers,
         priority: config.priority || 'normal',
         maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
         conflictResolution: 'overwrite',
-      });
+      };
+      
+      if (config.body !== undefined) {
+        queueItemData.data = config.body;
+      }
+      
+      if (config.headers !== undefined) {
+        queueItemData.headers = config.headers;
+      }
+      
+      await this.enqueue(queueItemData);
 
       return {
         success: false,
@@ -226,9 +234,10 @@ export class UnifiedAPIClient extends OfflineQueueManager {
     endpoint: string,
     config: UnifiedRequestConfig,
   ): Promise<UnifiedResponse<T>> {
+    const method = config.method || 'GET';
     const classification = this.errorClassifier.classify(error, {
       endpoint,
-      method: config.method,
+      method,
     });
 
     logger.error('API request failed', {
@@ -241,24 +250,29 @@ export class UnifiedAPIClient extends OfflineQueueManager {
     // Try recovery strategies
     if (classification.retryable) {
       try {
+        const recoveryOptions: any = {
+          retry: true,
+          useCache: () => this.getCache(endpoint),
+          queue: async (data: unknown) => {
+            await this.enqueue({
+              endpoint,
+              method: config.method || 'GET',
+              data,
+              headers: config.headers,
+              priority: config.priority || 'normal',
+              maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
+              conflictResolution: 'overwrite',
+            });
+          },
+        };
+        
+        if (this.tokenRefreshFn) {
+          recoveryOptions.refreshToken = this.tokenRefreshFn;
+        }
+        
         const recoveryResult = await this.recoveryStrategies.combinedRecovery(
           () => this.makeRequest<T>(endpoint, config),
-          {
-            retry: true,
-            refreshToken: this.tokenRefreshFn,
-            useCache: () => this.getCache(endpoint),
-            queue: async (data) => {
-              await this.enqueue({
-                endpoint,
-                method: config.method || 'GET',
-                data,
-                headers: config.headers,
-                priority: config.priority || 'normal',
-                maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
-                conflictResolution: 'overwrite',
-              });
-            },
-          },
+          recoveryOptions,
           {
             maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
           },
@@ -277,7 +291,7 @@ export class UnifiedAPIClient extends OfflineQueueManager {
 
     return {
       success: false,
-      error: this.errorClassifier.getUserMessage(error, { endpoint, method: config.method }),
+      error: this.errorClassifier.getUserMessage(error, { endpoint, method }),
       statusCode: classification.statusCode,
     };
   }

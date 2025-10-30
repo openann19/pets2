@@ -4,7 +4,7 @@
  * Extracted from ModernSwipeScreen for better modularity
  */
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/theme';
 import { StyleSheet, View } from 'react-native';
 import { BodySmall, FXContainerPresets, Heading2 } from '../';
 import { EliteButtonPresets } from '../buttons/EliteButton';
