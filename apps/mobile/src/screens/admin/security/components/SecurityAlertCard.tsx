@@ -7,8 +7,8 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { SecurityAlert } from "../types";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
@@ -158,7 +158,7 @@ export const SecurityAlertCard: React.FC<SecurityAlertCardProps> = ({
 
   return (
     <TouchableOpacity
-      style={[styles.alertCard, { backgroundColor: colors.surface }]
+      style={[styles.alertCard, { backgroundColor: colors.surface }]}
       onPress={() => onPress(alert)}
       disabled={isActionLoading}
     >
@@ -176,7 +176,7 @@ export const SecurityAlertCard: React.FC<SecurityAlertCardProps> = ({
         {!alert.resolved && (
           <View style={styles.actionButtons}>
             <TouchableOpacity
-              style={[styles.resolveButton, { backgroundColor: colors.success }]
+              style={[styles.resolveButton, { backgroundColor: colors.success }]}
               onPress={(e) => {
                 e.stopPropagation();
                 onResolve(alert.id);
@@ -190,7 +190,7 @@ export const SecurityAlertCard: React.FC<SecurityAlertCardProps> = ({
             </TouchableOpacity>
             {alert.ipAddress && onBlockIP && (
               <TouchableOpacity
-                style={[styles.blockButton, { backgroundColor: colors.danger }]
+                style={[styles.blockButton, { backgroundColor: colors.danger }]}
                 onPress={(e) => {
                   e.stopPropagation();
                   onBlockIP(alert.id, alert.ipAddress!);

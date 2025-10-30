@@ -174,7 +174,7 @@ const AICompatibilityScreen = ({
           <View style={styles.headerActions}>
             {analysisHistory.length > 0 && (
               <TouchableOpacity
-                style={[styles.historyButton, { backgroundColor: colors.primary }]
+                style={[styles.historyButton, { backgroundColor: colors.primary }]}
                 testID="AICompatibility-history-button"
                 accessibilityLabel="View analysis history"
                 accessibilityRole="button"

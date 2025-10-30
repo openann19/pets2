@@ -9,6 +9,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@mobile/*": ["./src/*"],
+      "@mobile/src/*": ["./src/*"],
       "@pawfectmatch/core": ["../../packages/core/src/index.ts"],
       "@pawfectmatch/core/*": ["../../packages/core/src/*"],
       "@pawfectmatch/ui": ["../../packages/ui/src/index.ts"],

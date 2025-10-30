@@ -304,7 +304,7 @@ export default function AIPhotoAnalyzerScreen({
             }}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.onSurface }//>
+            <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
           </TouchableOpacity>
           <Text
             style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
@@ -647,7 +647,7 @@ export default function AIPhotoAnalyzerScreen({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="list" size={24} color={theme.colors.info} }/>
+                <Ionicons name="list" size={24} color={theme.colors.info} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -662,7 +662,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Age
@@ -755,7 +755,7 @@ export default function AIPhotoAnalyzerScreen({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="bulb" size={24} color={theme.colors.warning} }/>
+                <Ionicons name="bulb" size={24} color={theme.colors.warning} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -772,7 +772,7 @@ export default function AIPhotoAnalyzerScreen({
                       name="checkmark-circle"
                       size={16}
                       color={theme.colors.warning
-                   } }/>
+                   } />
                     <Text
                       style={StyleSheet.flatten([
                         styles.suggestionText,

@@ -18,8 +18,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme';
-import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 
@@ -255,7 +255,7 @@ export default function AdminBillingScreen({
     }
   };
 
-  const formatCurrency = (amount: number, currency都是 = "USD") =>
+  const formatCurrency = (amount: number, currency: string = "USD") =>
     new Intl.NumberFormat("en-US", {
       style: "currency",
       currency,
@@ -1022,4 +1022,3 @@ function makeStyles(theme: AppTheme) {
       },
     };
   }
-}

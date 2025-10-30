@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@/theme';
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 
@@ -346,8 +346,8 @@ export default function AdminSecurityScreen({
         </View>
 
         {item.resolved ? (
-          <View style={styles.resolvedInfo}>
-            <Ionicons name="checkmark-circle" size={16} color={theme.colors.success} }/>
+              <View style={styles.resolvedInfo}>
+            <Ionicons name="checkmark-circle" size={16} color={colors.success} />
             <Text
               style={StyleSheet.flatten([
                 styles.resolvedText,
@@ -463,7 +463,7 @@ export default function AdminSecurityScreen({
              testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onRefresh}
             disabled={refreshing}
           >
-            <Ionicons name="refresh" size={20} color={colors.onSurface} />
+          <Ionicons name="refresh" size={20} color={colors.onSurface} />
           </TouchableOpacity>
         </View>
       </View>
@@ -487,7 +487,7 @@ export default function AdminSecurityScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="alert-circle" size={20} color={colors.danger} />
+            <Ionicons name="alert-circle" size={20} color={colors.danger} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -770,7 +770,7 @@ const styles = StyleSheet.create({
     width: (SCREEN_WIDTH - 44) / 2,
     borderRadius: 12,
     padding: 16,
-    shadowColor: theme.colors.onSurface,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -830,7 +830,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: theme.colors.onSurface,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -875,7 +875,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   severityText: {
-    color: theme.colors.onSurface,
+    color: '#fff',
     fontSize: 10,
     fontWeight: "600",
   },

@@ -3,8 +3,8 @@ import React, { useMemo } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import type { Verification } from "../hooks/useAdminVerifications";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
@@ -247,7 +247,7 @@ export const VerificationList = ({
         {isSelected && (
           <View style={styles.actions}>
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: theme.colors.success }]
+              style={[styles.actionButton, { backgroundColor: theme.colors.success }]}
               onPress={() => onApprove(item.id)}
               testID={`approve-${item.id}`}
               accessibilityLabel="Approve verification"
@@ -258,7 +258,7 @@ export const VerificationList = ({
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: theme.colors.warning }]
+              style={[styles.actionButton, { backgroundColor: theme.colors.warning }]}
               onPress={() => {
                 // Simple request - in real app would show modal
                 onRequestInfo(item.id, "Please provide additional information");
@@ -272,7 +272,7 @@ export const VerificationList = ({
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: theme.colors.danger }]
+              style={[styles.actionButton, { backgroundColor: theme.colors.danger }]}
               onPress={() => {
                 // Simple reject - in real app would show modal for reason
                 onReject(item.id, "Verification rejected");

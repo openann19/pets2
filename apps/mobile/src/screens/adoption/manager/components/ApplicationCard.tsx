@@ -6,8 +6,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
@@ -148,7 +148,7 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
       {application.status === "pending" && onApprove && onReject && (
         <View style={styles.actionButtons}>
           <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: colors.danger }]
+            style={[styles.actionButton, { backgroundColor: colors.danger }]}
             onPress={() => onReject(application.id)}
             testID={`reject-app-${application.id}`}
             accessibilityLabel="Reject application"
@@ -157,7 +157,7 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
             <Text style={[styles.actionButtonText]}>Reject</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: colors.success }]
+            style={[styles.actionButton, { backgroundColor: colors.success }]}
             onPress={() => onApprove(application.id)}
             testID={`approve-app-${application.id}`}
             accessibilityLabel="Approve application"
