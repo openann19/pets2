@@ -80,8 +80,8 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
           <Ionicons
             name="arrow-back"
             size={24}
-            color={colors.onSurface
-          }//>
+            color={colors.onSurface}
+          />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Pet Bio</Text>
         <View style={styles.headerSpacer} />
@@ -222,7 +222,7 @@ const createStyles = (colors: ReturnType<typeof getExtendedColors>, spacing: any
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.onSurface
+    color: colors.onSurface,
   },
   headerSpacer: {
     flex: 1,
@@ -239,7 +239,7 @@ const createStyles = (colors: ReturnType<typeof getExtendedColors>, spacing: any
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.onSurface
+    color: colors.onSurface,
     marginBottom: spacing.md,
   },
   photoPicker: {
