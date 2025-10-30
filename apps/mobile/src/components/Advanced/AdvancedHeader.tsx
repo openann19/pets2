@@ -4,30 +4,19 @@
  * Enterprise-level implementation with full TypeScript support
  */
 
-import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import type { ViewStyle, TextStyle } from 'react-native';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  TouchableOpacity,
-  Platform,
-  Dimensions,
-  StatusBar,
-} from 'react-native';
+import { View, Text, StyleSheet, Animated, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { matchesAPI } from '../../services/api';
 
 import { AdvancedButton } from './AdvancedInteractionSystem';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Header Variants
 export type HeaderVariant = 'default' | 'glass' | 'gradient' | 'premium' | 'minimal' | 'floating';
