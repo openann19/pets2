@@ -10,45 +10,45 @@ import type { AppTheme } from "@mobile/src/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  performersGrid: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  performersCard: {
-    flex: 1,
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: theme.colors.onSurface,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  performersTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 12,
-  },
-  performerItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-    gap: 8,
-  },
-  performerRank: {
-    fontSize: 12,
-    fontWeight: "600",
-    width: 20,
-  },
-  performerName: {
-    fontSize: 14,
-    fontWeight: "500",
-    flex: 1,
-  },
-  performerStats: {
-    fontSize: 12,
-  },
-});
+    performersGrid: {
+      flexDirection: "row",
+      gap: 12,
+    },
+    performersCard: {
+      flex: 1,
+      borderRadius: 12,
+      padding: 16,
+      shadowColor: theme.colors.onSurface,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    performersTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      marginBottom: 12,
+    },
+    performerItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 8,
+      gap: 8,
+    },
+    performerRank: {
+      fontSize: 12,
+      fontWeight: "600",
+      width: 20,
+    },
+    performerName: {
+      fontSize: 14,
+      fontWeight: "500",
+      flex: 1,
+    },
+    performerStats: {
+      fontSize: 12,
+    },
+  });
 }
 
 
@@ -79,7 +79,7 @@ export const TopPerformersSection: React.FC<TopPerformersSectionProps> = ({
   return (
     <View style={styles.performersGrid}>
       {/* Top Users */}
-      <View style={[styles.performersCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.performersCard, { backgroundColor: colors.surface }]}>
         <Text style={[styles.performersTitle, { color: colors.onSurface }]>
           Top Users
         </Text>
@@ -99,7 +99,7 @@ export const TopPerformersSection: React.FC<TopPerformersSectionProps> = ({
       </View>
 
       {/* Top Pets */}
-      <View style={[styles.performersCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.performersCard, { backgroundColor: colors.surface }]}>
         <Text style={[styles.performersTitle, { color: colors.onSurface }]>
           Top Pets
         </Text>

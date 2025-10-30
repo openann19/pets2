@@ -8,11 +8,11 @@ import type { AppTheme } from "@mobile/src/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  listContainer: {
-    paddingBottom: 16,
-  },
-  card: {
-    borderRadius: 12,
+    listContainer: {
+      paddingBottom: 16,
+    },
+    card: {
+      borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     shadowColor: theme.colors.onSurface,
@@ -207,7 +207,7 @@ export const VerificationList = ({
             {item.priority === "high" && (
               <View style={[styles.priorityBadge, { backgroundColor: theme.colors.danger + "20" }]>
                 <Ionicons name="flag" size={12} color={theme.colors.danger} />
-                <Text style={[styles.priorityText, { color: theme.colors.danger }]>High</Text>
+                <Text style={[styles.priorityText, { color: theme.colors.danger }]}>High</Text>
               </View>
             )}
           </View>
@@ -220,7 +220,7 @@ export const VerificationList = ({
           <View style={styles.userInfo}>
             <Ionicons name="person" size={20} color={colors.primary} />
             <View style={styles.userDetails}>
-              <Text style={[styles.userName, { color: colors.onSurface }]>{item.userName}</Text>
+              <Text style={[styles.userName, { color: colors.onSurface }]}>{item.userName}</Text>
               <Text style={[styles.userEmail, { color: colors.onMuted }]>
                 {item.userEmail}
               </Text>

@@ -12,54 +12,54 @@ import type { AppTheme } from "@mobile/src/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  healthCard: {
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  healthHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  healthTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginLeft: 8,
-    flex: 1,
-  },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  statusText: {
-    color: "#FFFFFF",
-    fontSize: 10,
-    fontWeight: "bold",
-  },
-  healthMetrics: {
-    gap: 12,
-  },
-  metricRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  metricLabel: {
-    fontSize: 14,
-    minWidth: 80,
-  },
-  metricValue: {
-    fontSize: 14,
-    fontWeight: "600",
-    flex: 1,
-  },
-});
+    healthCard: {
+      borderRadius: 16,
+      padding: 16,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    healthHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 16,
+    },
+    healthTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      marginLeft: 8,
+      flex: 1,
+    },
+    statusBadge: {
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 8,
+    },
+    statusText: {
+      color: "#FFFFFF",
+      fontSize: 10,
+      fontWeight: "bold",
+    },
+    healthMetrics: {
+      gap: 12,
+    },
+    metricRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    metricLabel: {
+      fontSize: 14,
+      minWidth: 80,
+    },
+    metricValue: {
+      fontSize: 14,
+      fontWeight: "600",
+      flex: 1,
+    },
+  });
 }
 
 

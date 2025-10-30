@@ -11,12 +11,12 @@ import type { AppTheme } from "@mobile/src/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  securityGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  securityCard: {
+    securityGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 12,
+    },
+    securityCard: {
     width: "48%",
     borderRadius: 12,
     padding: 16,
@@ -62,7 +62,7 @@ export const SecurityMetricsSection: React.FC<SecurityMetricsSectionProps> = ({
 
   return (
     <View style={styles.securityGrid}>
-      <View style={[styles.securityCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.securityCard, { backgroundColor: colors.surface }]}>
         <Ionicons name="warning" size={20} color={colors.warning} />
         <Text style={[styles.securityLabel, { color: colors.onMuted }]>
           Suspicious Logins
@@ -72,7 +72,7 @@ export const SecurityMetricsSection: React.FC<SecurityMetricsSectionProps> = ({
         </Text>
       </View>
 
-      <View style={[styles.securityCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.securityCard, { backgroundColor: colors.surface }]}>
         <Ionicons name="shield" size={20} color={colors.danger} />
         <Text style={[styles.securityLabel, { color: colors.onMuted }]>
           Blocked IPs
@@ -82,7 +82,7 @@ export const SecurityMetricsSection: React.FC<SecurityMetricsSectionProps> = ({
         </Text>
       </View>
 
-      <View style={[styles.securityCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.securityCard, { backgroundColor: colors.surface }]}>
         <Ionicons name="flag" size={20} color={colors.primary} />
         <Text style={[styles.securityLabel, { color: colors.onMuted }]>
           Reported Content
@@ -92,7 +92,7 @@ export const SecurityMetricsSection: React.FC<SecurityMetricsSectionProps> = ({
         </Text>
       </View>
 
-      <View style={[styles.securityCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.securityCard, { backgroundColor: colors.surface }]}>
         <Ionicons name="ban" size={20} color={colors.danger} />
         <Text style={[styles.securityLabel, { color: colors.onMuted }]>
           Banned Users

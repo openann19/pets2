@@ -12,43 +12,43 @@ import type { AppTheme } from "@mobile/src/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  metricsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  metricCard: {
-    width: "48%",
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  metricHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  metricTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-  metricValue: {
-    fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  metricDetails: {
-    gap: 4,
-  },
-  metricDetail: {
-    fontSize: 12,
-  },
-});
+    metricsContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 12,
+    },
+    metricCard: {
+      width: "48%",
+      borderRadius: 16,
+      padding: 16,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    metricHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    metricTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      marginLeft: 8,
+    },
+    metricValue: {
+      fontSize: 32,
+      fontWeight: "bold",
+      marginBottom: 8,
+    },
+    metricDetails: {
+      gap: 4,
+    },
+    metricDetail: {
+      fontSize: 12,
+    },
+  });
 }
 
 
@@ -72,7 +72,7 @@ export const DashboardMetricsSection: React.FC<DashboardMetricsSectionProps> = (
   return (
     <View style={styles.metricsContainer}>
       {/* Users Stats */}
-      <View style={[styles.metricCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
           <Ionicons name="people" size={24} color={colors.primary} />
           <Text style={[styles.metricTitle, { color: colors.onSurface }]>Users</Text>
@@ -91,7 +91,7 @@ export const DashboardMetricsSection: React.FC<DashboardMetricsSectionProps> = (
       </View>
 
       {/* Pets Stats */}
-      <View style={[styles.metricCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
           <Ionicons name="paw" size={24} color={colors.primary} />
           <Text style={[styles.metricTitle, { color: colors.onSurface }]>Pets</Text>
@@ -110,7 +110,7 @@ export const DashboardMetricsSection: React.FC<DashboardMetricsSectionProps> = (
       </View>
 
       {/* Matches Stats */}
-      <View style={[styles.metricCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
           <Ionicons name="heart" size={24} color={colors.primary} />
           <Text style={[styles.metricTitle, { color: colors.onSurface }]>Matches</Text>
@@ -129,7 +129,7 @@ export const DashboardMetricsSection: React.FC<DashboardMetricsSectionProps> = (
       </View>
 
       {/* Messages Stats */}
-      <View style={[styles.metricCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
           <Ionicons name="chatbubble" size={24} color={colors.primary} />
           <Text style={[styles.metricTitle, { color: colors.onSurface }]>Messages</Text>

@@ -832,13 +832,13 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.md,
     },
     metricsGrid: {
-        flexDirection: "row" as const,
-        flexWrap: "wrap" as const,
-        gap: theme.spacing.md,
-        marginBottom: theme.spacing.md,
-      },
-      metricCard: {
-        width: (SCREEN_WIDTH - 44) / 2,
+      flexDirection: "row" as const,
+      flexWrap: "wrap" as const,
+      gap: theme.spacing.md,
+      marginBottom: theme.spacing.md,
+    },
+    metricCard: {
+      width: (SCREEN_WIDTH - 44) / 2,
         borderRadius: themeRuntime.radius.md,
         padding: theme.spacing.md,
         shadowColor: theme.colors.border,
@@ -850,7 +850,7 @@ function makeStyles(theme: AppTheme) {
       metricHeader: {
         flexDirection: "row" as const,
         alignItems: "center" as const,
-        margin<｜place▁holder▁no▁24｜>: theme.spacing.sm,
+        marginBottom: theme.spacing.sm,
       },
       metricTitle: {
         fontSize: 14,
@@ -1021,5 +1021,4 @@ function makeStyles(theme: AppTheme) {
         fontWeight: "500" as const,
       },
     };
-  }
 }
