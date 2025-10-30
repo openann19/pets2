@@ -87,7 +87,25 @@ const project = new Project({
   skipAddingFilesFromTsConfig: false,
 });
 
-project.addSourceFilesAtPaths(TARGET_GLOBS);
+// Parse batch argument
+const batchArg = process.argv.find(arg => arg.startsWith('--batch='));
+const specificBatch = batchArg ? batchArg.split('=')[1] : null;
+
+if (specificBatch) {
+  // Process specific batch
+  const batch = BATCHES.find(b => b.name === specificBatch);
+  if (batch) {
+    project.addSourceFilesAtPaths([batch.glob]);
+    console.log(`📦 Processing batch: ${batch.name}`);
+  } else {
+    console.error(`❌ Unknown batch: ${specificBatch}`);
+    console.error(`Available batches: ${BATCHES.map(b => b.name).join(', ')}`);
+    process.exit(1);
+  }
+} else {
+  // Process all files (default)
+  project.addSourceFilesAtPaths(TARGET_GLOBS);
+}
 
 // Migration mappings
 const COLOR_MIGRATIONS: Record<string, string> = {
@@ -349,39 +367,124 @@ function migratePropertyAccess(node: any): boolean {
 
 /**
  * Process a source file
+ * FIXED: Collects all nodes first, then modifies in reverse order
  */
 function processFile(sourceFile: any): boolean {
   let fileModified = false;
   let replacements = 0;
   
-  // Find all property access expressions
-  const propertyAccesses = sourceFile.getDescendantsOfKind(SyntaxKind.PropertyAccessExpression);
+  // STEP 1: Collect all nodes to migrate BEFORE modifying anything
+  const nodesToMigrate: Array<{ node: any; newPath: string; position: number }> = [];
   
-  for (const access of propertyAccesses) {
-    const text = access.getText();
-    
-    // Only process theme-related access
-    if (text.includes('theme.') && (
-      text.includes('colors.') ||
-      text.includes('borderRadius') ||
-      text.includes('shadows.')
-    )) {
-      if (migratePropertyAccess(access)) {
-        replacements++;
-        fileModified = true;
+  // Get all descendants once - this gives us a snapshot
+  const allNodes = sourceFile.getDescendants();
+  
+  // Track which ElementAccess nodes we've already handled to avoid duplicates
+  const handledElementAccesses = new Set<any>();
+  
+  for (const node of allNodes) {
+    try {
+      const kind = node.getKind();
+      
+      // Handle ElementAccessExpression FIRST (e.g., theme.colors.primary[500])
+      // Must check before PropertyAccessExpression since ElementAccess contains PropertyAccess
+      if (kind === SyntaxKind.ElementAccessExpression) {
+        if (handledElementAccesses.has(node)) continue;
+        
+        const text = node.getText();
+        if (text.includes('theme.colors') && text.includes('[')) {
+          const expression = node.getExpression();
+          const argument = node.getArgumentExpression();
+          
+          if (expression && argument) {
+            try {
+              const exprText = expression.getText();
+              const argText = argument.getText();
+              const match = exprText.match(/^theme\.colors\.(primary|secondary|neutral)$/);
+              
+              if (match && /^\d+$/.test(argText)) {
+                const colorType = match[1];
+                const index = argText;
+                let migration: string;
+                
+                if (colorType === 'primary') {
+                  migration = index === '500' ? 'colors.primary' : `palette.brand[${index}]`;
+                } else if (colorType === 'secondary') {
+                  migration = index === '500' ? 'colors.primary' : `palette.brand[${index}]`;
+                } else {
+                  migration = `palette.neutral[${index}]`;
+                }
+                
+                nodesToMigrate.push({
+                  node,
+                  newPath: `theme.${migration}`,
+                  position: node.getStart(),
+                });
+                handledElementAccesses.add(node);
+                continue; // Skip to next node
+              }
+            } catch (e) {
+              // Skip if can't process
+              continue;
+            }
+          }
+        }
+        continue;
       }
-    }
-    
-    // Also check for indexed access like theme.colors.primary[500]
-    const parent = access.getParent();
-    if (parent && parent.getKind() === SyntaxKind.ElementAccessExpression) {
-      const elementAccess = parent as any;
-      if (elementAccess.getExpression().getText().includes('theme.colors')) {
-        if (migratePropertyAccess(elementAccess)) {
-          replacements++;
-          fileModified = true;
+      
+      // Handle PropertyAccessExpression (but skip if it's part of an ElementAccess)
+      if (kind === SyntaxKind.PropertyAccessExpression) {
+        // Skip if this is part of an ElementAccessExpression (already handled above)
+        const parent = node.getParent();
+        if (parent && parent.getKind() === SyntaxKind.ElementAccessExpression) {
+          continue;
+        }
+        
+        const text = node.getText();
+        if (text.includes('theme.') && (
+          text.includes('colors.') ||
+          text.includes('borderRadius') ||
+          text.includes('shadows.')
+        )) {
+          try {
+            const path = buildThemePath(node);
+            if (path) {
+              const migration = COLOR_MIGRATIONS[path] || RADIUS_MIGRATIONS[path] || SHADOW_MIGRATIONS[path];
+              if (migration) {
+                nodesToMigrate.push({
+                  node,
+                  newPath: `theme.${migration}`,
+                  position: node.getStart(),
+                });
+              }
+            }
+          } catch (e) {
+            // Skip if can't process
+            continue;
+          }
         }
       }
+    } catch (e) {
+      // Skip nodes that can't be accessed
+      continue;
+    }
+  }
+  
+  // STEP 2: Sort nodes by position (reverse order - deepest/last first)
+  // This ensures we modify child nodes before parent nodes
+  nodesToMigrate.sort((a, b) => b.position - a.position);
+  
+  // STEP /BACKUP: Apply all migrations in reverse order
+  for (const { node, newPath } of nodesToMigrate) {
+    try {
+      if (!DRY_RUN) {
+        node.replaceWithText(newPath);
+      }
+      replacements++;
+      fileModified = true;
+    } catch (e) {
+      // Skip if node was already modified or removed
+      continue;
     }
   }
   
@@ -439,6 +542,12 @@ if (DRY_RUN) {
   console.log('🔍 DRY RUN MODE - No changes will be saved\n');
 }
 console.log('🚀 Starting semantic theme migration...\n');
+if (specificBatch) {
+  console.log(`📦 Batch mode: ${specificBatch}\n`);
+} else {
+  console.log(`💡 Tip: Run with --batch=<name> to process specific batch\n`);
+  console.log(`   Available batches: ${BATCHES.map(b => b.name).join(', ')}\n`);
+}
 
 project.getSourceFiles().forEach((sourceFile) => {
   try {
