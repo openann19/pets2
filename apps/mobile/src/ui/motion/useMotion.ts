@@ -5,7 +5,7 @@
  */
 
 import { Easing } from 'react-native-reanimated';
-import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { useReduceMotion } from '../../hooks/useReducedMotion';
 
 type EasingFunction = (t: number) => number;
 
@@ -50,7 +50,7 @@ export interface MotionConfig {
 }
 
 export function useMotion(preset: MotionPreset): MotionConfig {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReduceMotion();
 
   const config: MotionConfig = ((): MotionConfig => {
     switch (preset) {

@@ -6,7 +6,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Theme } from "../../theme";
 import { useTheme } from "@mobile/src/theme";
 import type { AppTheme } from "@mobile/src/theme";
 
@@ -74,10 +73,10 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
   const { colors, palette } = theme;
 
   return (
-    <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+    <View style={[styles.resultCard, { backgroundColor: colors.surface }]}> 
       <View style={styles.resultHeader}>
         <Ionicons name="list" size={24} color={theme.colors.success} />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
           Analysis Factors
         </Text>
       </View>
@@ -85,7 +84,7 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
       <View style={styles.factorsSection}>
         <View style={styles.factorGroup}>
           <Text
-            style={[styles.factorGroupTitle, { color: theme.colors.success }]
+            style={[styles.factorGroupTitle, { color: theme.colors.success }]}
           >
             Strengths
           </Text>
@@ -96,7 +95,7 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
                 size={16}
                 color={theme.colors.success}
               />
-              <Text style={[styles.factorText, { color: colors.onSurface }]>
+              <Text style={[styles.factorText, { color: colors.onSurface }]}>
                 {strength}
               </Text>
             </View>
@@ -105,14 +104,14 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
 
         <View style={styles.factorGroup}>
           <Text
-            style={[styles.factorGroupTitle, { color: theme.colors.warning }]
+            style={[styles.factorGroupTitle, { color: theme.colors.warning }]}
           >
             Concerns
           </Text>
           {factors.concerns.map((concern, index) => (
             <View key={index} style={styles.factorItem}>
               <Ionicons name="warning" size={16} color={theme.colors.warning} />
-              <Text style={[styles.factorText, { color: colors.onSurface }]>
+              <Text style={[styles.factorText, { color: colors.onSurface }]}>
                 {concern}
               </Text>
             </View>
@@ -121,7 +120,7 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
 
         <View style={styles.factorGroup}>
           <Text
-            style={[styles.factorGroupTitle, { color: theme.colors.info }]
+            style={[styles.factorGroupTitle, { color: theme.colors.info }]}
           >
             Recommendations
           </Text>
@@ -132,7 +131,7 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
                 size={16}
                 color={theme.colors.info}
               />
-              <Text style={[styles.factorText, { color: colors.onSurface }]>
+              <Text style={[styles.factorText, { color: colors.onSurface }]}>
                 {recommendation}
               </Text>
             </View>

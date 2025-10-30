@@ -34,7 +34,7 @@ export default function ReplySwipeHint({
 
   return (
     <Animated.View 
-      style={[styles.wrap, sty, align === "left" && { flexDirection: "row-reverse" }]
+      style={[styles.wrap, sty, align === "left" && { flexDirection: "row-reverse" }]}
       accessibilityRole="button"
       accessibilityLabel="Swipe to reply"
     >

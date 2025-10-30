@@ -173,7 +173,7 @@ const makeStyles = (theme: any) =>
     memoryTitle: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: theme.colors.neutral[0],
+      color: theme.palette.neutral[0],
       marginBottom: 4,
     },
     memoryTimestamp: {
@@ -216,7 +216,7 @@ const makeStyles = (theme: any) =>
     },
     memoryText: {
       fontSize: 18,
-      color: theme.colors.neutral[0],
+      color: theme.palette.neutral[0],
       lineHeight: 26,
       fontStyle: 'italic',
       textAlign: 'center',

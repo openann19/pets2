@@ -187,7 +187,7 @@ Components accept style props for customization:
 ```typescript
 <Component
   style={{
-    backgroundColor: theme.colors.primary[50],
+    backgroundColor: theme.colors.primary,
     borderRadius: theme.borderRadius.lg,
   }}
 />

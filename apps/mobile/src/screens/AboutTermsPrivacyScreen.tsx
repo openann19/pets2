@@ -120,7 +120,7 @@ function AboutTermsPrivacyScreen({
           {/* App Info */}
           <BlurView intensity={15} style={styles.appInfoCard}>
             <View style={styles.appIcon}>
-              <Ionicons name="paw-outline" size={40} color={theme.colors.status.info} }/>
+              <Ionicons name="paw-outline" size={40} color={theme.colors.info} />
             </View>
             <View style={styles.appDetails}>
               <Text style={styles.appName}>PawfectMatch</Text>
@@ -135,7 +135,7 @@ function AboutTermsPrivacyScreen({
           <TouchableOpacity style={styles.websiteCard}  testID="AboutTermsPrivacyScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleWebsite}>
             <BlurView intensity={20} style={styles.websiteBlur}>
               <View style={styles.websiteContent}>
-                <Ionicons name="globe-outline" size={24} color={theme.colors.success} }/>
+                <Ionicons name="globe-outline" size={24} color={theme.colors.success} />
                 <View style={styles.websiteText}>
                   <Text style={styles.websiteTitle}>Visit Our Website</Text>
                   <Text style={styles.websiteDescription}>
@@ -167,7 +167,7 @@ function AboutTermsPrivacyScreen({
                   <View
                     style={StyleSheet.flatten([
                       styles.documentIcon,
-                      { backgroundColor: theme.colors.secondary[500] },
+                      { backgroundColor: theme.colors.secondary },
                     ])}
                   >
                     <Ionicons name={document.icon} size={20} color="white" />
@@ -197,15 +197,15 @@ function AboutTermsPrivacyScreen({
 
           <BlurView intensity={15} style={styles.contactCard}>
             <View style={styles.contactItem}>
-              <Ionicons name="mail-outline" size={20} color={theme.colors.status.info} }/>
+              <Ionicons name="mail-outline" size={20} color={theme.colors.info} />
               <Text style={styles.contactText}>support@pawfectmatch.com</Text>
             </View>
             <View style={styles.contactItem}>
-              <Ionicons name="call-outline" size={20} color={theme.colors.success} }/>
+              <Ionicons name="call-outline" size={20} color={theme.colors.success} />
               <Text style={styles.contactText}>1-800-PET-MATCH</Text>
             </View>
             <View style={styles.contactItem}>
-              <Ionicons name="location-outline" size={20} color={theme.colors.warning} }/>
+              <Ionicons name="location-outline" size={20} color={theme.colors.warning} />
               <Text style={styles.contactText}>San Francisco, CA</Text>
             </View>
           </BlurView>

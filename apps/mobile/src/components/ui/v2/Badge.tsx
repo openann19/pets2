@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '@mobile/src/theme';
 import { Text } from './Text';
 
 export type BadgeVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'muted';
@@ -31,9 +31,9 @@ export function Badge({
   const getColors = () => {
     switch (variant) {
       case 'primary':
-        return { bg: theme.colors.primary, text: theme.colors.primaryText };
+        return { bg: theme.colors.primary, text: theme.colors.onPrimary };
       case 'secondary':
-        return { bg: theme.colors.secondary, text: '#FFFFFF' };
+        return { bg: theme.colors.primary, text: '#FFFFFF' };
       case 'success':
         return { bg: theme.colors.success, text: '#FFFFFF' };
       case 'warning':
@@ -55,7 +55,7 @@ export function Badge({
           backgroundColor: colors.bg,
           paddingHorizontal: sizeStyles.paddingHorizontal,
           paddingVertical: sizeStyles.paddingVertical,
-          borderRadius: theme.radius.full,
+          borderRadius: theme.radii.full,
           alignSelf: 'flex-start',
         },
       ]}
@@ -64,7 +64,7 @@ export function Badge({
         style={{
           fontSize: sizeStyles.fontSize,
           fontWeight: '600',
-          color: colors.onSurface
+          color: colors.text,
         }}
       >
         {label}

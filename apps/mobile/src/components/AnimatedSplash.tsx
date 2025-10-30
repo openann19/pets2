@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions, StatusBar } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Animated, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface AnimatedSplashProps {
   onAnimationComplete?: () => void;
@@ -71,8 +69,8 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
         }),
       ]),
 
-      // Hold for a moment
-      Animated.delay(800),
+      // Hold for a moment (respect duration prop)
+      Animated.delay(duration),
     ]);
 
     animationSequence.start(() => {

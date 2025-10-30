@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme'";
+import { useTheme } from "@/theme";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
 
@@ -246,7 +246,7 @@ function AdminVerificationsScreen({
       case "pending":
         return theme.colors.warning;
       case "requires_info":
-        return theme.theme.colors.primary[500];
+        return theme.colors.primary;
       default:
         return theme.colors.border;
     }
@@ -285,7 +285,7 @@ function AdminVerificationsScreen({
       <TouchableOpacity
         style={StyleSheet.flatten([
           styles.verificationCard,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
         ])}
          testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
           setSelectedVerification(item);
@@ -319,7 +319,7 @@ function AdminVerificationsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.userEmail,
-                { color: colors.onSurfaceecondary },
+                { color: colors.onMuted },
               ])}
             >
               {item.userEmail}
@@ -354,7 +354,7 @@ function AdminVerificationsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.submittedAt,
-              { color: colors.onSurfaceecondary },
+              { color: colors.onMuted },
             ])}
           >
             Submitted: {new Date(item.submittedAt).toLocaleDateString()}
@@ -364,12 +364,12 @@ function AdminVerificationsScreen({
             <Ionicons
               name="document-text"
               size={16}
-              color={colors.onSurfaceecondary}
+              color={colors.onMuted}
             />
             <Text
               style={StyleSheet.flatten([
                 styles.documentsCount,
-                { color: colors.onSurfaceecondary },
+                { color: colors.onMuted },
               ])}
             >
               {item.documents.length} document
@@ -394,7 +394,7 @@ function AdminVerificationsScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionButton,
-                styles.approveButton,
+                { backgroundColor: theme.colors.success },
               ])}
                testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleVerificationAction(item.id, "approve")}
             >
@@ -404,7 +404,7 @@ function AdminVerificationsScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionButton,
-                styles.infoButton,
+                { backgroundColor: theme.colors.primary },
               ])}
                testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleRequestInfo(item);
@@ -416,7 +416,7 @@ function AdminVerificationsScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionButton,
-                styles.rejectButton,
+                { backgroundColor: theme.colors.danger },
               ])}
                testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleRejectWithReason(item);
@@ -441,7 +441,7 @@ function AdminVerificationsScreen({
       style={StyleSheet.flatten([
         styles.filterButton,
         {
-          backgroundColor: filter === filterType ? colors.primary : colors.card,
+          backgroundColor: filter === filterType ? colors.primary : colors.surface,
         },
       ])}
        testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
@@ -467,10 +467,10 @@ function AdminVerificationsScreen({
         <View
           style={StyleSheet.flatten([
             styles.modalContent,
-            { backgroundColor: colors.card },
+            { backgroundColor: colors.surface },
           ])}
         >
-          <View style={styles.modalHeader}>
+          <View style={StyleSheet.flatten([styles.modalHeader, { borderBottomColor: colors.border }])}>
             <Text
               style={StyleSheet.flatten([
                 styles.modalTitle,
@@ -484,7 +484,7 @@ function AdminVerificationsScreen({
                 setSelectedVerification(null);
               }}
             >
-              <Ionicons name="close" size={24} color={colors.onSurface />
+              <Ionicons name="close" size={24} color={colors.onSurface} />
             </TouchableOpacity>
           </View>
 
@@ -493,7 +493,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoLabel,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 User:
@@ -511,7 +511,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoLabel,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Type:
@@ -528,7 +528,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoLabel,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Submitted:
@@ -547,7 +547,7 @@ function AdminVerificationsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.infoLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Notes:
@@ -595,7 +595,7 @@ function AdminVerificationsScreen({
                     <Text
                       style={StyleSheet.flatten([
                         styles.documentType,
-                        { color: colors.onSurfaceecondary },
+                        { color: colors.onMuted },
                       ])}
                     >
                       {item.type.replace("_", " ")}
@@ -668,7 +668,7 @@ function AdminVerificationsScreen({
       <View
         style={StyleSheet.flatten([
           styles.header,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
         ])}
       >
         <TouchableOpacity
@@ -677,7 +677,7 @@ function AdminVerificationsScreen({
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
         </TouchableOpacity>
         <Text
           style={StyleSheet.flatten([
@@ -693,7 +693,7 @@ function AdminVerificationsScreen({
       <View
         style={StyleSheet.flatten([
           styles.searchContainer,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
         ])}
       >
         <View
@@ -702,7 +702,7 @@ function AdminVerificationsScreen({
             { backgroundColor: colors.background },
           ])}
         >
-          <Ionicons name="search" size={20} color={colors.onSurfaceecondary} />
+          <Ionicons name="search" size={20} color={colors.onMuted} />
           <TextInput
             style={StyleSheet.flatten([
               styles.searchInput,
@@ -711,7 +711,7 @@ function AdminVerificationsScreen({
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search verifications..."
-            placeholderTextColor={colors.onSurfaceecondary}
+            placeholderTextColor={colors.onMuted}
           />
         </View>
 
@@ -729,7 +729,7 @@ function AdminVerificationsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.onSurfaceecondary },
+              { color: colors.onMuted },
             ])}
           >
             Loading verifications...
@@ -753,12 +753,12 @@ function AdminVerificationsScreen({
               <Ionicons
                 name="shield-checkmark-outline"
                 size={64}
-                color={colors.onSurfaceecondary}
+                color={colors.onMuted}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.emptyText,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 No verifications found
@@ -784,7 +784,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
   },
   backButton: {
     marginRight: 16,
@@ -796,7 +795,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -840,7 +838,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: theme.colors.border,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -924,15 +922,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  approveButton: {
-    backgroundColor: theme.colors.success,
-  },
-  infoButton: {
-    backgroundColor: theme.theme.colors.primary[500],
-  },
-  rejectButton: {
-    backgroundColor: theme.colors.danger,
-  },
+  approveButton: {},
+  infoButton: {},
+  rejectButton: {},
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
@@ -966,7 +958,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
   },
   modalTitle: {
     fontSize: 18,

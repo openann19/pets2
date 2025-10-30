@@ -268,7 +268,7 @@ export default function AIPhotoAnalyzerScreen({
       case "excellent":
         return theme.colors.success;
       case "good":
-        return theme.colors.status.info;
+        return theme.colors.info;
       case "fair":
         return theme.colors.warning;
       case "poor":
@@ -280,7 +280,7 @@ export default function AIPhotoAnalyzerScreen({
 
   const getQualityColor = (score: number): string => {
     if (score >= 90) return theme.colors.success;
-    if (score >= 80) return theme.colors.status.info;
+    if (score >= 80) return theme.colors.info;
     if (score >= 70) return theme.colors.warning;
     return theme.colors.danger;
   };
@@ -304,7 +304,7 @@ export default function AIPhotoAnalyzerScreen({
             }}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+            <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
           </TouchableOpacity>
           <Text
             style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
@@ -364,7 +364,7 @@ export default function AIPhotoAnalyzerScreen({
             <View
               style={StyleSheet.flatten([
                 styles.imagePlaceholder,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <Ionicons name="camera" size={48} color={colors.onSurfaceecondary} />
@@ -445,7 +445,7 @@ export default function AIPhotoAnalyzerScreen({
             <View
               style={StyleSheet.flatten([
                 styles.resultCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.resultHeader}>
@@ -506,7 +506,7 @@ export default function AIPhotoAnalyzerScreen({
             <View
               style={StyleSheet.flatten([
                 styles.resultCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.resultHeader}>
@@ -574,7 +574,7 @@ export default function AIPhotoAnalyzerScreen({
             <View
               style={StyleSheet.flatten([
                 styles.resultCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.resultHeader}>
@@ -643,11 +643,11 @@ export default function AIPhotoAnalyzerScreen({
             <View
               style={StyleSheet.flatten([
                 styles.resultCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="list" size={24} color={theme.colors.status.info} }/>
+                <Ionicons name="list" size={24} color={theme.colors.info} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -662,7 +662,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Age
@@ -710,7 +710,7 @@ export default function AIPhotoAnalyzerScreen({
                           key={index}
                           style={StyleSheet.flatten([
                             styles.tag,
-                            { backgroundColor: theme.colors.status.info },
+                            { backgroundColor: theme.colors.info },
                           ])}
                         >
                           <Text style={styles.tagText}>{trait}</Text>
@@ -751,11 +751,11 @@ export default function AIPhotoAnalyzerScreen({
             <View
               style={StyleSheet.flatten([
                 styles.resultCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="bulb" size={24} color={theme.colors.warning} }/>
+                <Ionicons name="bulb" size={24} color={theme.colors.warning} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -772,7 +772,7 @@ export default function AIPhotoAnalyzerScreen({
                       name="checkmark-circle"
                       size={16}
                       color={theme.colors.warning
-                   } }/>
+                   } />
                     <Text
                       style={StyleSheet.flatten([
                         styles.suggestionText,
@@ -790,7 +790,7 @@ export default function AIPhotoAnalyzerScreen({
             <View
               style={StyleSheet.flatten([
                 styles.resultCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.resultHeader}>

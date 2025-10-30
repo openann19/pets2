@@ -69,7 +69,7 @@ export const SecurityFiltersComponent: React.FC<SecurityFiltersComponentProps> =
     <View style={styles.filtersContainer}>
       {/* Severity Filter */}
       <View style={styles.filterRow}>
-        <Text style={[styles.filterLabel, { color: colors.onSurface }]>Severity:</Text>
+        <Text style={[styles.filterLabel, { color: colors.onSurface }]}>Severity:</Text>
         <View style={styles.filterButtons}>
           {(["all", "critical", "high", "medium", "low"] as const).map((severity) => (
             <TouchableOpacity
@@ -103,7 +103,7 @@ export const SecurityFiltersComponent: React.FC<SecurityFiltersComponentProps> =
 
       {/* Type Filter */}
       <View style={styles.filterRow}>
-        <Text style={[styles.filterLabel, { color: colors.onSurface }]>Type:</Text>
+        <Text style={[styles.filterLabel, { color: colors.onSurface }]}>Type:</Text>
         <View style={styles.filterButtons}>
           {(
             [

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch as RNSwitch } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '@/theme';
 
 export interface SwitchProps {
   value: boolean;
@@ -23,11 +23,11 @@ export function Switch({
       onValueChange={onValueChange}
       disabled={disabled}
       trackColor={{
-        false: theme.colors.bgAlt,
+        false: theme.colors.surface,
         true: theme.colors.primary,
       }}
       thumbColor={theme.colors.bg}
-      ios_backgroundColor={theme.colors.bgAlt}
+      ios_backgroundColor={theme.colors.surface}
       testID={testID}
       accessibilityRole="switch"
       accessibilityState={{ checked: value, disabled }}

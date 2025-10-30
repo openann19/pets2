@@ -115,10 +115,10 @@ export default function AdminDashboardScreen({
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.onSurface }]>
+          <Text style={[styles.loadingText, { color: colors.onSurface }]}>
             Loading dashboard...
           </Text>
         </View>
@@ -127,7 +127,7 @@ export default function AdminDashboardScreen({
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]}>
       <ScrollView
         style={styles.scrollView}
         refreshControl={
@@ -136,8 +136,8 @@ export default function AdminDashboardScreen({
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.onSurface }]>Admin Dashboard</Text>
-          <Text style={[styles.subtitle, { color: colors.onMuted }]>
+          <Text style={[styles.title, { color: colors.onSurface }]}>Admin Dashboard</Text>
+          <Text style={[styles.subtitle, { color: colors.onMuted }]}>
             Welcome, {user?.firstName} {user?.lastName}
           </Text>
         </View>
@@ -145,7 +145,7 @@ export default function AdminDashboardScreen({
         {/* Dashboard Metrics */}
         {stats && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.onSurface }]>Overview</Text>
+            <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Overview</Text>
             <DashboardMetricsSection stats={stats} />
           </View>
         )}
@@ -153,7 +153,7 @@ export default function AdminDashboardScreen({
         {/* System Health */}
         {systemHealth && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.onSurface }]>System Status</Text>
+            <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>System Status</Text>
             <SystemHealthSection health={systemHealth} />
           </View>
         )}

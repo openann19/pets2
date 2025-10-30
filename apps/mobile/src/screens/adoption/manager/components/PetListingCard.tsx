@@ -116,22 +116,22 @@ export const PetListingCard: React.FC<PetListingCardProps> = ({
   const { colors, palette } = theme;
 
   return (
-    <View style={[styles.listingCard, { backgroundColor: colors.surface }]>
+    <View style={[styles.listingCard, { backgroundColor: colors.surface }]}> 
       <View style={styles.listingHeader}>
         <View style={styles.petInfo}>
-          <Text style={[styles.petName, { color: colors.onSurface }]>{pet.name}</Text>
-          <Text style={[styles.petBreed, { color: colors.onMuted }]>
+          <Text style={[styles.petName, { color: colors.onSurface }]}>{pet.name}</Text>
+          <Text style={[styles.petBreed, { color: colors.onMuted }]}>
             {pet.breed} • {pet.age} years old
           </Text>
         </View>
         <TouchableOpacity
-          style={[styles.statusBadge, { backgroundColor: `${getStatusColor(pet.status)}20` }]
+          style={[styles.statusBadge, { backgroundColor: `${getStatusColor(pet.status)}20` }]}
           onPress={() => onChangeStatus(pet)}
           testID={`status-badge-${pet.id}`}
           accessibilityLabel={`Change status for ${pet.name}`}
           accessibilityRole="button"
         >
-          <Text style={[styles.statusText, { color: getStatusColor(pet.status) }]>
+          <Text style={[styles.statusText, { color: getStatusColor(pet.status) }]}>
             {getStatusIcon(pet.status)} {pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
           </Text>
         </TouchableOpacity>
@@ -139,31 +139,31 @@ export const PetListingCard: React.FC<PetListingCardProps> = ({
 
       <View style={styles.listingStats}>
         <View style={styles.stat}>
-          <Text style={[styles.statNumber, { color: colors.onSurface }]>{pet.applications}</Text>
-          <Text style={[styles.statLabel, { color: colors.onMuted }]>Applications</Text>
+          <Text style={[styles.statNumber, { color: colors.onSurface }]}>{pet.applications}</Text>
+          <Text style={[styles.statLabel, { color: colors.onMuted }]}>Applications</Text>
         </View>
         <View style={styles.stat}>
-          <Text style={[styles.statNumber, { color: colors.onSurface }]>{pet.views}</Text>
-          <Text style={[styles.statLabel, { color: colors.onMuted }]>Views</Text>
+          <Text style={[styles.statNumber, { color: colors.onSurface }]}>{pet.views}</Text>
+          <Text style={[styles.statLabel, { color: colors.onMuted }]}>Views</Text>
         </View>
         <View style={styles.stat}>
-          <Text style={[styles.statNumber, { color: colors.onSurface }]>{pet.featured ? "⭐" : "—"}</Text>
-          <Text style={[styles.statLabel, { color: colors.onMuted }]>Featured</Text>
+          <Text style={[styles.statNumber, { color: colors.onSurface }]}>{pet.featured ? "⭐" : "—"}</Text>
+          <Text style={[styles.statLabel, { color: colors.onMuted }]}>Featured</Text>
         </View>
       </View>
 
       <View style={styles.listingActions}>
         <TouchableOpacity
-          style={[styles.actionButton, { borderColor: colors.border }]
+          style={[styles.actionButton, { borderColor: colors.border }]}
           onPress={() => onViewDetails(pet.id)}
           testID={`view-details-${pet.id}`}
           accessibilityLabel="View pet details"
           accessibilityRole="button"
         >
-          <Text style={[styles.actionButtonText, { color: colors.onSurface }]>View Details</Text>
+          <Text style={[styles.actionButtonText, { color: colors.onSurface }]}>View Details</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.actionButton, styles.primaryButton, { backgroundColor: colors.primary }]
+          style={[styles.actionButton, styles.primaryButton, { backgroundColor: colors.primary }]}
           onPress={() => onReviewApps(pet.id)}
           testID={`review-apps-${pet.id}`}
           accessibilityLabel={`Review ${pet.applications} applications`}

@@ -3,7 +3,7 @@
  * Professional-grade Lottie animation wrapper with lifecycle management
  */
 
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import LottieView from 'lottie-react-native';
 import type { AnimationObject } from 'lottie-react-native';
 import type { ViewStyle } from 'react-native';
@@ -48,29 +48,20 @@ export function LottieAnimation({
   colorFilters,
 }: LottieAnimationProps) {
   const animationRef = useRef<LottieView>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  // Simplified autoplay without internal loaded state
 
   useEffect(() => {
-    if (animationRef.current && isLoaded) {
-      if (autoPlay) {
+    if (animationRef.current && autoPlay) {
+      try {
+        // Best-effort autoplay; Lottie handles readiness internally
         animationRef.current.play();
-      }
+      } catch {}
     }
-  }, [autoPlay, isLoaded]);
+  }, [autoPlay]);
 
   const handleAnimationFinish = () => {
     onAnimationFinish?.();
   };
-
-  if (!visible) return null;
-
-  useEffect(() => {
-    if (animationRef.current && isLoaded) {
-      if (autoPlay) {
-        animationRef.current.play();
-      }
-    }
-  }, [autoPlay, isLoaded]);
 
   if (!visible) return null;
 

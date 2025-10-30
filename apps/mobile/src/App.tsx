@@ -7,6 +7,7 @@ import { I18nextProvider } from 'react-i18next';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { ThemeProvider } from '@mobile/src/theme';
+import '@/theme/compat';
 import { queryClient } from './config/queryClient';
 import i18n from './i18n';
 import AdminNavigator from './navigation/AdminNavigator';

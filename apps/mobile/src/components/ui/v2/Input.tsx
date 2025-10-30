@@ -6,7 +6,7 @@ import {
   type TextInputProps,
   type ViewStyle,
 } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '@mobile/src/theme';
 import { Text } from './Text';
 
 export type InputVariant = 'outlined' | 'filled' | 'underlined';
@@ -23,7 +23,7 @@ export interface InputProps extends TextInputProps {
   fullWidth?: boolean;
 }
 
-export const Input = forwardRef<TextInput, InputProps>(({
+export const Input = forwardRef<TextInput, InputProps>(({ 
   label,
   error,
   helperText,
@@ -45,14 +45,14 @@ export const Input = forwardRef<TextInput, InputProps>(({
   };
 
   const sizeStyle = sizeStyles[size];
-  const radius = theme.radius.md;
+  const radius = theme.radii.md;
 
   const getInputStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
       height: sizeStyle.height,
       paddingHorizontal: sizeStyle.paddingHorizontal,
       fontSize: sizeStyle.fontSize,
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       backgroundColor: theme.colors.bg,
       borderWidth: 1,
       borderColor: hasError ? theme.colors.danger : theme.colors.border,
@@ -64,7 +64,7 @@ export const Input = forwardRef<TextInput, InputProps>(({
       case 'filled':
         return {
           ...baseStyle,
-          backgroundColor: theme.colors.bgAlt,
+          backgroundColor: theme.colors.surface,
         };
       case 'underlined':
         return {

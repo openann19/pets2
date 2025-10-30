@@ -4,19 +4,10 @@
  * Enterprise-level implementation with full TypeScript support
  */
 
-import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
 import React, { useCallback } from 'react';
 import type { ViewStyle, TextStyle } from 'react-native';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  TouchableOpacity,
-  Dimensions,
-  Image,
-} from 'react-native';
+import { View, Text, StyleSheet, Animated, TouchableOpacity, Image } from 'react-native';
 
 import { AdvancedButton } from './AdvancedInteractionSystem';
 import { useCardAnimations, type CardInteraction } from './Card/CardAnimations';
@@ -30,7 +21,6 @@ import {
 } from './Card/CardVariants';
 import { CardBackground } from './Card/CardBackground';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Re-export types for backward compatibility
 export type { CardVariant, CardSize, CardInteraction };
@@ -123,12 +113,9 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
     glow,
     elevation,
     shimmer,
-    isPressed,
-    isHovered,
     isLoading,
     triggerHaptic,
     animatePress,
-    animateHover,
     setIsLoading,
   } = useCardAnimations({
     disabled,
@@ -203,7 +190,8 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
   );
 
   // Note: Card styling moved to CardVariants module
-  const cardStyles = getCardStyles({ variant, glowColor });
+  const defaultGlow: string = (Theme.colors.primary[500] ?? '#8b5cf6');
+  const cardStyles = getCardStyles({ variant, glowColor: glowColor ?? defaultGlow });
   const sizeStyles = getSizeStyles({ size });
 
   // Note: Padding and margin helpers moved to CardVariants module
@@ -291,15 +279,15 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
             {actions.map((action, index) => (
               <AdvancedButton
                 key={index}
-                icon={action.icon}
-                title={action.title}
+                icon={action.icon ?? 'ellipsis-horizontal'}
+                title={action.title ?? ''}
                 variant={(action.variant || 'minimal') as 'minimal' | 'primary' | 'secondary'}
                 size="sm"
                 interactions={['hover', 'press']}
                 haptic={action.haptic || 'light'}
                 onPress={() => handleActionPress(action)}
-                disabled={action.disabled}
-                loading={action.loading}
+                disabled={!!action.disabled}
+                loading={!!action.loading}
                 style={styles.actionButton}
               />
             ))}
@@ -338,7 +326,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
       {/* Background */}
       <CardBackground
         variant={variant}
-        gradientColors={gradientColors}
+        gradientColors={(gradientColors ?? [Theme.colors.primary[500] ?? '#8b5cf6', Theme.colors.primary[600] ?? '#7c3aed']) as string[]}
         blurIntensity={blurIntensity}
       />
 

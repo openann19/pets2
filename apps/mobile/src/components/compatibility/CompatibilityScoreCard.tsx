@@ -83,14 +83,14 @@ export const CompatibilityScoreCard: React.FC<CompatibilityScoreCardProps> = ({
   };
 
   return (
-    <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+    <View style={[styles.resultCard, { backgroundColor: colors.surface }]}>
       <View style={styles.resultHeader}>
         <Ionicons
           name="trophy"
           size={24}
           color={getScoreColor(overallScore)}
         />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
           Overall Compatibility
         </Text>
       </View>
@@ -103,10 +103,10 @@ export const CompatibilityScoreCard: React.FC<CompatibilityScoreCardProps> = ({
         >
           {overallScore}%
         </Text>
-        <Text style={[styles.scoreLabel, { color: colors.onMuted }]>
+        <Text style={[styles.scoreLabel, { color: colors.onMuted }]}>
           {getScoreLabel(overallScore)}
         </Text>
-        <Text style={[styles.scoreDescription, { color: colors.onSurface }]>
+        <Text style={[styles.scoreDescription, { color: colors.onSurface }]}>
           {summary}
         </Text>
       </View>

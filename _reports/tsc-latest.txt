@@ -1,0 +1,1718 @@
+src/components/Gestures/PinchZoom.tsx(129,75): error TS1005: '}' expected.
+src/components/HolographicEffects.tsx(91,11): error TS1005: ')' expected.
+src/components/ImmersiveCard.tsx(114,13): error TS1005: ',' expected.
+src/components/ImmersiveCard.tsx(125,13): error TS1005: ',' expected.
+src/components/ImmersiveCard.tsx(136,13): error TS1005: ',' expected.
+src/components/ImmersiveCard.tsx(147,13): error TS1005: ',' expected.
+src/components/ImmersiveCard.tsx(158,13): error TS1005: ',' expected.
+src/components/InteractiveButton.tsx(332,11): error TS1005: '}' expected.
+src/components/OptimizedImage.tsx(147,13): error TS1005: '}' expected.
+src/components/chat/MobileVoiceRecorder.tsx(150,75): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/chat/MobileVoiceRecorder.tsx(151,13): error TS1003: Identifier expected.
+src/components/chat/ReadByPopover.tsx(98,80): error TS1109: Expression expected.
+src/components/chat/ReadByPopover.tsx(99,7): error TS1109: Expression expected.
+src/components/chat/ReadByPopover.tsx(116,16): error TS1005: '}' expected.
+src/components/chat/ReadByPopover.tsx(117,9): error TS1003: Identifier expected.
+src/components/chat/ReadByPopover.tsx(117,11): error TS17002: Expected corresponding JSX closing tag for 'Animated.View'.
+src/components/chat/ReadByPopover.tsx(121,20): error TS1005: '}' expected.
+src/components/chat/ReadByPopover.tsx(122,11): error TS1003: Identifier expected.
+src/components/chat/ReadByPopover.tsx(122,13): error TS17002: Expected corresponding JSX closing tag for 'Modal'.
+src/components/chat/ReadByPopover.tsx(123,11): error TS1005: ';' expected.
+src/components/chat/ReadByPopover.tsx(133,80): error TS1005: '}' expected.
+src/components/chat/ReadByPopover.tsx(137,35): error TS1005: ',' expected.
+src/components/chat/ReadByPopover.tsx(137,42): error TS1005: ',' expected.
+src/components/chat/ReadByPopover.tsx(137,43): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/chat/ReadByPopover.tsx(138,21): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/chat/ReadByPopover.tsx(140,15): error TS1005: ')' expected.
+src/components/chat/ReadByPopover.tsx(141,14): error TS1005: ';' expected.
+src/components/chat/ReadByPopover.tsx(142,11): error TS1128: Declaration or statement expected.
+src/components/chat/ReadByPopover.tsx(143,9): error TS1109: Expression expected.
+src/components/chat/ReadByPopover.tsx(143,10): error TS1128: Declaration or statement expected.
+src/components/chat/ReadByPopover.tsx(144,7): error TS1128: Declaration or statement expected.
+src/components/chat/ReadByPopover.tsx(145,5): error TS1109: Expression expected.
+src/components/chat/ReadByPopover.tsx(146,3): error TS1109: Expression expected.
+src/components/chat/ReadByPopover.tsx(147,1): error TS1128: Declaration or statement expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(76,5): error TS2657: JSX expressions must have one parent element.
+src/components/compatibility/AnalysisFactorsCard.tsx(80,20): error TS1005: '}' expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(81,9): error TS1003: Identifier expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(81,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/AnalysisFactorsCard.tsx(100,15): error TS1005: '}' expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(100,17): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/AnalysisFactorsCard.tsx(101,13): error TS1005: ')' expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(102,13): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/compatibility/AnalysisFactorsCard.tsx(116,15): error TS1005: '}' expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(116,17): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/AnalysisFactorsCard.tsx(117,13): error TS1005: ')' expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(118,12): error TS1005: ';' expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(119,9): error TS1128: Declaration or statement expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(136,15): error TS1005: '}' expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(136,17): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/AnalysisFactorsCard.tsx(137,13): error TS1005: ')' expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(138,11): error TS1128: Declaration or statement expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(138,12): error TS1128: Declaration or statement expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(138,13): error TS1128: Declaration or statement expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(139,9): error TS1128: Declaration or statement expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(140,7): error TS1109: Expression expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(141,5): error TS1109: Expression expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(142,3): error TS1109: Expression expected.
+src/components/compatibility/AnalysisFactorsCard.tsx(143,1): error TS1128: Declaration or statement expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(99,25): error TS1005: '}' expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(100,9): error TS1003: Identifier expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(100,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(101,7): error TS1005: '}' expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(123,13): error TS1109: Expression expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(123,15): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(124,11): error TS1005: ')' expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(125,9): error TS1128: Declaration or statement expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(125,10): error TS1128: Declaration or statement expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(125,11): error TS1128: Declaration or statement expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(126,7): error TS1128: Declaration or statement expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(127,5): error TS1109: Expression expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(128,3): error TS1109: Expression expected.
+src/components/compatibility/CompatibilityBreakdownCard.tsx(129,1): error TS1128: Declaration or statement expected.
+src/components/compatibility/CompatibilityScoreCard.tsx(94,19): error TS1005: '}' expected.
+src/components/compatibility/CompatibilityScoreCard.tsx(95,9): error TS1003: Identifier expected.
+src/components/compatibility/CompatibilityScoreCard.tsx(95,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/CompatibilityScoreCard.tsx(96,7): error TS1005: '}' expected.
+src/components/compatibility/CompatibilityScoreCard.tsx(97,7): error TS2657: JSX expressions must have one parent element.
+src/components/compatibility/CompatibilityScoreCard.tsx(108,9): error TS1005: '}' expected.
+src/components/compatibility/CompatibilityScoreCard.tsx(108,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/CompatibilityScoreCard.tsx(111,9): error TS1005: '}' expected.
+src/components/compatibility/CompatibilityScoreCard.tsx(112,9): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/components/compatibility/CompatibilityScoreCard.tsx(113,5): error TS1128: Declaration or statement expected.
+src/components/compatibility/CompatibilityScoreCard.tsx(114,3): error TS1109: Expression expected.
+src/components/compatibility/CompatibilityScoreCard.tsx(115,1): error TS1128: Declaration or statement expected.
+src/components/compatibility/DetailedAnalysisCard.tsx(62,20): error TS1005: '}' expected.
+src/components/compatibility/DetailedAnalysisCard.tsx(63,9): error TS1003: Identifier expected.
+src/components/compatibility/DetailedAnalysisCard.tsx(63,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/DetailedAnalysisCard.tsx(64,7): error TS1005: '}' expected.
+src/components/compatibility/DetailedAnalysisCard.tsx(67,7): error TS1005: '}' expected.
+src/components/compatibility/DetailedAnalysisCard.tsx(68,7): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/components/compatibility/DetailedAnalysisCard.tsx(69,3): error TS1128: Declaration or statement expected.
+src/components/compatibility/DetailedAnalysisCard.tsx(70,1): error TS1128: Declaration or statement expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(87,23): error TS1005: '}' expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(88,9): error TS1003: Identifier expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(88,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/InteractionCompatibilityCard.tsx(89,7): error TS1005: '}' expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(92,11): error TS2657: JSX expressions must have one parent element.
+src/components/compatibility/InteractionCompatibilityCard.tsx(96,20): error TS1005: ',' expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(97,13): error TS1005: '}' expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(97,15): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/InteractionCompatibilityCard.tsx(102,13): error TS1005: ')' expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(102,13): error TS1109: Expression expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(102,15): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/InteractionCompatibilityCard.tsx(103,11): error TS1128: Declaration or statement expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(104,9): error TS1109: Expression expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(104,10): error TS1128: Declaration or statement expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(104,11): error TS1128: Declaration or statement expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(105,7): error TS1128: Declaration or statement expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(106,5): error TS1109: Expression expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(107,3): error TS1109: Expression expected.
+src/components/compatibility/InteractionCompatibilityCard.tsx(108,1): error TS1128: Declaration or statement expected.
+src/components/compatibility/PetSelectionCard.tsx(108,5): error TS2657: JSX expressions must have one parent element.
+src/components/compatibility/PetSelectionCard.tsx(124,17): error TS1005: ',' expected.
+src/components/compatibility/PetSelectionCard.tsx(125,11): error TS1005: '}' expected.
+src/components/compatibility/PetSelectionCard.tsx(125,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/PetSelectionCard.tsx(129,17): error TS1005: ',' expected.
+src/components/compatibility/PetSelectionCard.tsx(130,11): error TS1005: '}' expected.
+src/components/compatibility/PetSelectionCard.tsx(130,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/PetSelectionCard.tsx(134,17): error TS1005: ',' expected.
+src/components/compatibility/PetSelectionCard.tsx(134,25): error TS1127: Invalid character.
+src/components/compatibility/PetSelectionCard.tsx(135,13): error TS17002: Expected corresponding JSX closing tag for 'TouchableOpacity'.
+src/components/compatibility/PetSelectionCard.tsx(143,15): error TS1005: '}' expected.
+src/components/compatibility/PetSelectionCard.tsx(144,14): error TS1005: ';' expected.
+src/components/compatibility/PetSelectionCard.tsx(145,11): error TS1128: Declaration or statement expected.
+src/components/compatibility/PetSelectionCard.tsx(146,9): error TS1109: Expression expected.
+src/components/compatibility/PetSelectionCard.tsx(147,7): error TS1109: Expression expected.
+src/components/compatibility/PetSelectionCard.tsx(148,19): error TS1005: ',' expected.
+src/components/compatibility/PetSelectionCard.tsx(156,8): error TS1128: Declaration or statement expected.
+src/components/compatibility/PetSelectionCard.tsx(157,5): error TS1128: Declaration or statement expected.
+src/components/compatibility/PetSelectionCard.tsx(158,3): error TS1109: Expression expected.
+src/components/compatibility/PetSelectionCard.tsx(159,1): error TS1128: Declaration or statement expected.
+src/components/compatibility/PetSelectionSection.tsx(124,5): error TS2657: JSX expressions must have one parent element.
+src/components/compatibility/PetSelectionSection.tsx(149,18): error TS1005: ',' expected.
+src/components/compatibility/PetSelectionSection.tsx(150,11): error TS1005: '}' expected.
+src/components/compatibility/PetSelectionSection.tsx(150,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/PetSelectionSection.tsx(154,18): error TS1005: ',' expected.
+src/components/compatibility/PetSelectionSection.tsx(155,11): error TS1005: '}' expected.
+src/components/compatibility/PetSelectionSection.tsx(155,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/PetSelectionSection.tsx(157,18): error TS1005: ',' expected.
+src/components/compatibility/PetSelectionSection.tsx(157,26): error TS1127: Invalid character.
+src/components/compatibility/PetSelectionSection.tsx(158,13): error TS17002: Expected corresponding JSX closing tag for 'TouchableOpacity'.
+src/components/compatibility/PetSelectionSection.tsx(169,9): error TS1005: ')' expected.
+src/components/compatibility/PetSelectionSection.tsx(170,7): error TS1109: Expression expected.
+src/components/compatibility/PetSelectionSection.tsx(171,8): error TS1136: Property assignment expected.
+src/components/compatibility/PetSelectionSection.tsx(179,8): error TS1128: Declaration or statement expected.
+src/components/compatibility/PetSelectionSection.tsx(180,5): error TS1128: Declaration or statement expected.
+src/components/compatibility/PetSelectionSection.tsx(181,3): error TS1109: Expression expected.
+src/components/compatibility/PetSelectionSection.tsx(184,5): error TS2657: JSX expressions must have one parent element.
+src/components/compatibility/PetSelectionSection.tsx(186,16): error TS1005: '}' expected.
+src/components/compatibility/PetSelectionSection.tsx(187,7): error TS1003: Identifier expected.
+src/components/compatibility/PetSelectionSection.tsx(187,9): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/PetSelectionSection.tsx(230,5): error TS1005: ')' expected.
+src/components/compatibility/PetSelectionSection.tsx(231,3): error TS1109: Expression expected.
+src/components/compatibility/PetSelectionSection.tsx(232,1): error TS1128: Declaration or statement expected.
+src/components/compatibility/TipsCard.tsx(69,16): error TS1005: '}' expected.
+src/components/compatibility/TipsCard.tsx(70,9): error TS1003: Identifier expected.
+src/components/compatibility/TipsCard.tsx(70,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/TipsCard.tsx(71,7): error TS1005: '}' expected.
+src/components/compatibility/TipsCard.tsx(82,13): error TS1005: '}' expected.
+src/components/compatibility/TipsCard.tsx(82,15): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/compatibility/TipsCard.tsx(83,11): error TS1005: ')' expected.
+src/components/compatibility/TipsCard.tsx(84,9): error TS1128: Declaration or statement expected.
+src/components/compatibility/TipsCard.tsx(84,10): error TS1128: Declaration or statement expected.
+src/components/compatibility/TipsCard.tsx(84,11): error TS1128: Declaration or statement expected.
+src/components/compatibility/TipsCard.tsx(85,7): error TS1128: Declaration or statement expected.
+src/components/compatibility/TipsCard.tsx(86,5): error TS1109: Expression expected.
+src/components/compatibility/TipsCard.tsx(87,3): error TS1109: Expression expected.
+src/components/compatibility/TipsCard.tsx(88,1): error TS1128: Declaration or statement expected.
+src/components/editor/CropOverlayUltra.tsx(74,55): error TS1109: Expression expected.
+src/components/editor/CropOverlayUltra.tsx(75,55): error TS1109: Expression expected.
+src/components/editor/CropOverlayUltra.tsx(76,55): error TS1109: Expression expected.
+src/components/editor/CropOverlayUltra.tsx(77,55): error TS1109: Expression expected.
+src/components/editor/CropOverlayUltra.tsx(80,13): error TS1005: '}' expected.
+src/components/editor/CropOverlayUltra.tsx(80,69): error TS1109: Expression expected.
+src/components/editor/CropOverlayUltra.tsx(81,69): error TS1109: Expression expected.
+src/components/editor/CropOverlayUltra.tsx(82,7): error TS2657: JSX expressions must have one parent element.
+src/components/editor/CropOverlayUltra.tsx(82,69): error TS1109: Expression expected.
+src/components/editor/CropOverlayUltra.tsx(83,7): error TS2657: JSX expressions must have one parent element.
+src/components/editor/CropOverlayUltra.tsx(83,69): error TS1109: Expression expected.
+src/components/editor/CropOverlayUltra.tsx(86,13): error TS1005: '}' expected.
+src/components/editor/CropOverlayUltra.tsx(89,7): error TS1005: '}' expected.
+src/components/editor/CropOverlayUltra.tsx(89,34): error TS1005: '...' expected.
+src/components/editor/CropOverlayUltra.tsx(90,7): error TS1003: Identifier expected.
+src/components/editor/CropOverlayUltra.tsx(90,67): error TS1109: Expression expected.
+src/components/editor/CropOverlayUltra.tsx(91,5): error TS1005: '}' expected.
+src/components/editor/CropOverlayUltra.tsx(91,5): error TS1109: Expression expected.
+src/components/editor/CropOverlayUltra.tsx(140,9): error TS1005: '}' expected.
+src/components/editor/CropOverlayUltra.tsx(147,9): error TS1005: '}' expected.
+src/components/editor/CropOverlayUltra.tsx(148,8): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/elite/cards/EliteCard.tsx(104,11): error TS1005: ',' expected.
+src/components/feedback/SendSparkle.tsx(104,17): error TS1005: ',' expected.
+src/components/feedback/SendSparkle.tsx(105,13): error TS1005: '}' expected.
+src/components/feedback/SendSparkle.tsx(105,15): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/feedback/SendSparkle.tsx(107,11): error TS1128: Declaration or statement expected.
+src/components/feedback/SendSparkle.tsx(108,7): error TS1128: Declaration or statement expected.
+src/components/feedback/SendSparkle.tsx(109,5): error TS1109: Expression expected.
+src/components/feedback/SendSparkle.tsx(110,3): error TS1128: Declaration or statement expected.
+src/components/feedback/SendSparkle.tsx(110,4): error TS1128: Declaration or statement expected.
+src/components/feedback/SendSparkle.tsx(111,1): error TS1128: Declaration or statement expected.
+src/components/home/QuickActionCard.tsx(44,74): error TS1005: '}' expected.
+src/components/home/QuickActionCard.tsx(44,76): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/home/QuickActionCard.tsx(48,81): error TS1005: '}' expected.
+src/components/home/QuickActionCard.tsx(48,83): error TS17002: Expected corresponding JSX closing tag for 'TouchableOpacity'.
+src/components/home/QuickActionCard.tsx(49,11): error TS1005: ')' expected.
+src/components/home/QuickActionCard.tsx(50,9): error TS1109: Expression expected.
+src/components/home/QuickActionCard.tsx(50,10): error TS1128: Declaration or statement expected.
+src/components/home/QuickActionCard.tsx(51,7): error TS1128: Declaration or statement expected.
+src/components/home/QuickActionCard.tsx(52,5): error TS1109: Expression expected.
+src/components/home/QuickActionCard.tsx(53,3): error TS1109: Expression expected.
+src/components/home/QuickActionCard.tsx(54,1): error TS1128: Declaration or statement expected.
+src/components/map/CreateActivityModal.tsx(63,63): error TS1005: '}' expected.
+src/components/map/CreateActivityModal.tsx(63,65): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/map/CreateActivityModal.tsx(89,9): error TS17002: Expected corresponding JSX closing tag for 'Modal'.
+src/components/map/CreateActivityModal.tsx(90,5): error TS1005: ')' expected.
+src/components/map/CreateActivityModal.tsx(91,3): error TS1109: Expression expected.
+src/components/map/MapScreenStates.tsx(74,10): error TS1109: Expression expected.
+src/components/map/MapScreenStates.tsx(75,9): error TS2657: JSX expressions must have one parent element.
+src/components/map/MapScreenStates.tsx(83,7): error TS1005: '}' expected.
+src/components/map/MapStatsPanel.tsx(21,6): error TS17008: JSX element 'Animated.View' has no corresponding closing tag.
+src/components/map/MapStatsPanel.tsx(22,7): error TS2657: JSX expressions must have one parent element.
+src/components/map/MapStatsPanel.tsx(34,5): error TS1005: '}' expected.
+src/components/map/MapStatsPanel.tsx(34,15): error TS1003: Identifier expected.
+src/components/map/MapStatsPanel.tsx(36,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/map/MapStatsPanel.tsx(39,17): error TS1005: '}' expected.
+src/components/map/MapStatsPanel.tsx(40,18): error TS1005: '}' expected.
+src/components/map/MapStatsPanel.tsx(43,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/map/MapStatsPanel.tsx(45,15): error TS1005: '}' expected.
+src/components/map/MapStatsPanel.tsx(46,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/map/MapStatsPanel.tsx(48,13): error TS1005: '}' expected.
+src/components/map/MapStatsPanel.tsx(51,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/map/MapStatsPanel.tsx(53,13): error TS1005: '}' expected.
+src/components/map/MapStatsPanel.tsx(55,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/map/MapStatsPanel.tsx(56,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/map/MapStatsPanel.tsx(57,1): error TS1005: '</' expected.
+src/components/menus/MorphingContextMenu.tsx(113,80): error TS1109: Expression expected.
+src/components/menus/MorphingContextMenu.tsx(114,7): error TS1109: Expression expected.
+src/components/menus/MorphingContextMenu.tsx(148,69): error TS1005: '}' expected.
+src/components/menus/MorphingContextMenu.tsx(148,76): error TS1003: Identifier expected.
+src/components/menus/MorphingContextMenu.tsx(148,78): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/menus/MorphingContextMenu.tsx(189,11): error TS17002: Expected corresponding JSX closing tag for 'Animated.View'.
+src/components/menus/MorphingContextMenu.tsx(190,9): error TS17002: Expected corresponding JSX closing tag for 'Modal'.
+src/components/menus/MorphingContextMenu.tsx(191,5): error TS1005: ')' expected.
+src/components/menus/MorphingContextMenu.tsx(192,3): error TS1109: Expression expected.
+src/components/micro/BouncePressable.tsx(40,15): error TS1005: ':' expected.
+src/components/micro/BouncePressable.tsx(45,5): error TS1005: '}' expected.
+src/components/micro/BouncePressable.tsx(46,3): error TS1109: Expression expected.
+src/components/micro/BouncePressable.tsx(47,1): error TS1128: Declaration or statement expected.
+src/components/micro/BouncePressable.tsx(47,2): error TS1128: Declaration or statement expected.
+src/components/photo/AdvancedPhotoEditor.tsx(445,13): error TS1005: '}' expected.
+src/components/photo/AdvancedPhotoEditor.tsx(531,75): error TS1109: Expression expected.
+src/components/photo/AdvancedPhotoEditor.tsx(532,75): error TS1109: Expression expected.
+src/components/photo/AdvancedPhotoEditor.tsx(533,109): error TS1109: Expression expected.
+src/components/photo/AdvancedPhotoEditor.tsx(534,109): error TS1109: Expression expected.
+src/components/photo/AdvancedPhotoEditor.tsx(535,21): error TS1109: Expression expected.
+src/components/photo/AdvancedPhotoEditor.tsx(539,74): error TS1109: Expression expected.
+src/components/photo/AdvancedPhotoEditor.tsx(540,74): error TS1109: Expression expected.
+src/components/photo/AdvancedPhotoEditor.tsx(541,108): error TS1109: Expression expected.
+src/components/photo/AdvancedPhotoEditor.tsx(542,108): error TS1109: Expression expected.
+src/components/photo/AdvancedPhotoEditor.tsx(543,21): error TS1109: Expression expected.
+src/components/photo/AdvancedPhotoEditor.tsx(718,17): error TS1005: '}' expected.
+src/components/photo/AdvancedPhotoEditor.tsx(728,87): error TS1109: Expression expected.
+src/components/photo/AdvancedPhotoEditor.tsx(729,17): error TS1109: Expression expected.
+src/components/photo/BeforeAfterSlider.tsx(60,5): error TS2657: JSX expressions must have one parent element.
+src/components/photo/BeforeAfterSlider.tsx(71,9): error TS1005: '}' expected.
+src/components/photo/BeforeAfterSlider.tsx(71,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/photo/BeforeAfterSlider.tsx(78,9): error TS1005: '}' expected.
+src/components/photo/BeforeAfterSlider.tsx(83,9): error TS1005: ')' expected.
+src/components/photo/BeforeAfterSlider.tsx(83,9): error TS1005: '}' expected.
+src/components/photo/BeforeAfterSlider.tsx(86,26): error TS1005: ';' expected.
+src/components/photo/BeforeAfterSlider.tsx(94,9): error TS1128: Declaration or statement expected.
+src/components/photo/BeforeAfterSlider.tsx(97,15): error TS1005: ';' expected.
+src/components/photo/BeforeAfterSlider.tsx(97,28): error TS1005: ',' expected.
+src/components/photo/BeforeAfterSlider.tsx(102,9): error TS1128: Declaration or statement expected.
+src/components/photo/BeforeAfterSlider.tsx(103,7): error TS1109: Expression expected.
+src/components/photo/BeforeAfterSlider.tsx(104,5): error TS1109: Expression expected.
+src/components/photo/BeforeAfterSlider.tsx(105,3): error TS1109: Expression expected.
+src/components/photo/BeforeAfterSlider.tsx(106,1): error TS1128: Declaration or statement expected.
+src/components/photo/Cropper.tsx(214,15): error TS2657: JSX expressions must have one parent element.
+src/components/photo/Cropper.tsx(217,13): error TS1005: '}' expected.
+src/components/photo/Cropper.tsx(224,7): error TS1005: ')' expected.
+src/components/photo/Cropper.tsx(228,67): error TS1109: Expression expected.
+src/components/photo/Cropper.tsx(230,17): error TS1005: '}' expected.
+src/components/photo/Cropper.tsx(230,89): error TS1109: Expression expected.
+src/components/photo/Cropper.tsx(231,9): error TS1109: Expression expected.
+src/components/photo/Cropper.tsx(249,5): error TS1128: Declaration or statement expected.
+src/components/photo/Cropper.tsx(250,3): error TS1109: Expression expected.
+src/components/photo/Cropper.tsx(251,1): error TS1128: Declaration or statement expected.
+src/components/photo/Cropper.tsx(251,2): error TS1128: Declaration or statement expected.
+src/components/photo/SubjectSuggestionsBar.tsx(41,72): error TS1005: ']' expected.
+src/components/photo/SubjectSuggestionsBar.tsx(41,73): error TS1003: Identifier expected.
+src/components/photo/SubjectSuggestionsBar.tsx(41,74): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/photo/SubjectSuggestionsBar.tsx(41,77): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/photo/SubjectSuggestionsBar.tsx(60,14): error TS17008: JSX element 'BouncePressable' has no corresponding closing tag.
+src/components/photo/SubjectSuggestionsBar.tsx(70,17): error TS1005: '}' expected.
+src/components/photo/SubjectSuggestionsBar.tsx(71,16): error TS1005: ',' expected.
+src/components/photo/SubjectSuggestionsBar.tsx(75,15): error TS17002: Expected corresponding JSX closing tag for 'ScrollView'.
+src/components/photo/SubjectSuggestionsBar.tsx(90,10): error TS1005: ';' expected.
+src/components/photo/SubjectSuggestionsBar.tsx(91,7): error TS1128: Declaration or statement expected.
+src/components/photo/SubjectSuggestionsBar.tsx(92,5): error TS1109: Expression expected.
+src/components/photo/SubjectSuggestionsBar.tsx(93,3): error TS1109: Expression expected.
+src/components/photo/SubjectSuggestionsBar.tsx(94,1): error TS1128: Declaration or statement expected.
+src/components/premium/BillingToggle.tsx(19,7): error TS2657: JSX expressions must have one parent element.
+src/components/premium/BillingToggle.tsx(68,5): error TS1005: '}' expected.
+src/components/premium/BillingToggle.tsx(69,3): error TS1109: Expression expected.
+src/components/premium/BillingToggle.tsx(70,1): error TS1128: Declaration or statement expected.
+src/components/premium/PremiumTierCard.tsx(41,7): error TS1005: '}' expected.
+src/components/premium/PremiumTierCard.tsx(41,9): error TS17002: Expected corresponding JSX closing tag for 'TouchableOpacity'.
+src/components/premium/PremiumTierCard.tsx(42,6): error TS1128: Declaration or statement expected.
+src/components/premium/PremiumTierCard.tsx(44,5): error TS2657: JSX expressions must have one parent element.
+src/components/premium/PremiumTierCard.tsx(46,14): error TS1005: ',' expected.
+src/components/premium/PremiumTierCard.tsx(47,7): error TS1005: '}' expected.
+src/components/premium/PremiumTierCard.tsx(47,9): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/premium/PremiumTierCard.tsx(50,12): error TS1005: '}' expected.
+src/components/premium/PremiumTierCard.tsx(50,13): error TS1005: '...' expected.
+src/components/premium/PremiumTierCard.tsx(51,9): error TS1003: Identifier expected.
+src/components/premium/PremiumTierCard.tsx(51,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/premium/PremiumTierCard.tsx(53,11): error TS1161: Unterminated regular expression literal.
+src/components/premium/PremiumTierCard.tsx(54,9): error TS1005: '}' expected.
+src/components/premium/PremiumTierCard.tsx(55,9): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/components/premium/PremiumTierCard.tsx(56,5): error TS1128: Declaration or statement expected.
+src/components/premium/PremiumTierCard.tsx(68,11): error TS1005: '}' expected.
+src/components/premium/PremiumTierCard.tsx(68,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/premium/PremiumTierCard.tsx(69,9): error TS1005: ')' expected.
+src/components/premium/PremiumTierCard.tsx(70,7): error TS1128: Declaration or statement expected.
+src/components/premium/PremiumTierCard.tsx(70,8): error TS1128: Declaration or statement expected.
+src/components/premium/PremiumTierCard.tsx(70,9): error TS1128: Declaration or statement expected.
+src/components/premium/PremiumTierCard.tsx(71,5): error TS1128: Declaration or statement expected.
+src/components/premium/PremiumTierCard.tsx(72,3): error TS1109: Expression expected.
+src/components/premium/PremiumTierCard.tsx(73,1): error TS1109: Expression expected.
+src/components/settings/SettingItemComponent.tsx(92,83): error TS1005: ']' expected.
+src/components/settings/SettingItemComponent.tsx(92,84): error TS1003: Identifier expected.
+src/components/settings/SettingItemComponent.tsx(92,85): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/settings/SettingItemComponent.tsx(92,88): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/settings/SettingItemComponent.tsx(93,8): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/ErrorState.tsx(29,46): error TS1003: Identifier expected.
+src/components/swipe/ErrorState.tsx(29,47): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/ErrorState.tsx(30,12): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/swipe/NoMorePetsState.tsx(22,44): error TS1005: ']' expected.
+src/components/swipe/NoMorePetsState.tsx(22,45): error TS1003: Identifier expected.
+src/components/swipe/NoMorePetsState.tsx(22,46): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/NoMorePetsState.tsx(23,12): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(106,77): error TS1005: ']' expected.
+src/components/swipe/SwipeGestureHintOverlay.tsx(106,78): error TS1003: Identifier expected.
+src/components/swipe/SwipeGestureHintOverlay.tsx(106,79): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(106,80): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(106,83): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(114,77): error TS1005: ']' expected.
+src/components/swipe/SwipeGestureHintOverlay.tsx(114,78): error TS1003: Identifier expected.
+src/components/swipe/SwipeGestureHintOverlay.tsx(114,79): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(114,80): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(114,83): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(124,77): error TS1005: ']' expected.
+src/components/swipe/SwipeGestureHintOverlay.tsx(124,78): error TS1003: Identifier expected.
+src/components/swipe/SwipeGestureHintOverlay.tsx(124,79): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(124,80): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(124,83): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(134,76): error TS1005: ']' expected.
+src/components/swipe/SwipeGestureHintOverlay.tsx(134,77): error TS1003: Identifier expected.
+src/components/swipe/SwipeGestureHintOverlay.tsx(134,78): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(134,79): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(134,82): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(144,84): error TS1005: ']' expected.
+src/components/swipe/SwipeGestureHintOverlay.tsx(144,85): error TS1003: Identifier expected.
+src/components/swipe/SwipeGestureHintOverlay.tsx(144,86): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(144,87): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/SwipeGestureHintOverlay.tsx(144,90): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/swipe/SwipeGestureHints.tsx(106,59): error TS1005: '}' expected.
+src/components/swipe/SwipeGestureHints.tsx(111,13): error TS2657: JSX expressions must have one parent element.
+src/components/swipe/SwipeGestureHints.tsx(112,80): error TS1005: ',' expected.
+src/components/swipe/SwipeGestureHints.tsx(112,86): error TS1005: '}' expected.
+src/components/swipe/SwipeGestureHints.tsx(112,88): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/swipe/SwipeGestureHints.tsx(113,11): error TS1005: ')' expected.
+src/components/swipe/SwipeGestureHints.tsx(113,13): error TS17002: Expected corresponding JSX closing tag for 'Animated.View'.
+src/components/swipe/SwipeGestureHints.tsx(114,9): error TS1005: ')' expected.
+src/components/swipe/SwipeGestureHints.tsx(115,7): error TS1109: Expression expected.
+src/components/swipe/SwipeGestureHints.tsx(121,13): error TS2657: JSX expressions must have one parent element.
+src/components/swipe/SwipeGestureHints.tsx(122,82): error TS1005: ',' expected.
+src/components/swipe/SwipeGestureHints.tsx(122,88): error TS1005: '}' expected.
+src/components/swipe/SwipeGestureHints.tsx(122,90): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/swipe/SwipeGestureHints.tsx(123,11): error TS1005: ')' expected.
+src/components/swipe/SwipeGestureHints.tsx(124,9): error TS1109: Expression expected.
+src/components/swipe/SwipeGestureHints.tsx(125,7): error TS1109: Expression expected.
+src/components/swipe/SwipeGestureHints.tsx(131,13): error TS2657: JSX expressions must have one parent element.
+src/components/swipe/SwipeGestureHints.tsx(132,78): error TS1005: ',' expected.
+src/components/swipe/SwipeGestureHints.tsx(132,84): error TS1005: '}' expected.
+src/components/swipe/SwipeGestureHints.tsx(132,86): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/swipe/SwipeGestureHints.tsx(133,11): error TS1005: ')' expected.
+src/components/swipe/SwipeGestureHints.tsx(134,9): error TS1109: Expression expected.
+src/components/swipe/SwipeGestureHints.tsx(135,7): error TS1109: Expression expected.
+src/components/swipe/SwipeGestureHints.tsx(139,71): error TS1005: ']' expected.
+src/components/swipe/SwipeGestureHints.tsx(139,72): error TS1003: Identifier expected.
+src/components/swipe/SwipeGestureHints.tsx(139,73): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/swipe/SwipeGestureHints.tsx(139,76): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/swipe/SwipeGestureHints.tsx(141,5): error TS1128: Declaration or statement expected.
+src/components/swipe/SwipeGestureHints.tsx(142,3): error TS1109: Expression expected.
+src/components/swipe/SwipeGestureHints.tsx(143,1): error TS1128: Declaration or statement expected.
+src/components/typography/ModernTypography.tsx(166,55): error TS1005: ',' expected.
+src/components/ui/Input.tsx(37,7): error TS1005: ',' expected.
+src/components/ui/v2/Avatar.tsx(3,26): error TS1109: Expression expected.
+src/components/ui/v2/Avatar.tsx(3,27): error TS1003: Identifier expected.
+src/components/ui/v2/Avatar.tsx(3,28): error TS1003: Identifier expected.
+src/components/ui/v2/Avatar.tsx(3,29): error TS1109: Expression expected.
+src/components/ui/v2/Avatar.tsx(3,30): error TS1003: Identifier expected.
+src/components/ui/v2/Avatar.tsx(3,31): error TS1003: Identifier expected.
+src/components/ui/v2/Avatar.tsx(3,32): error TS1109: Expression expected.
+src/components/ui/v2/Avatar.tsx(3,33): error TS1003: Identifier expected.
+src/components/ui/v2/Avatar.tsx(3,34): error TS1003: Identifier expected.
+src/components/ui/v2/Badge.tsx(3,26): error TS1109: Expression expected.
+src/components/ui/v2/Badge.tsx(3,27): error TS1003: Identifier expected.
+src/components/ui/v2/Badge.tsx(3,28): error TS1003: Identifier expected.
+src/components/ui/v2/Badge.tsx(3,29): error TS1109: Expression expected.
+src/components/ui/v2/Badge.tsx(3,30): error TS1003: Identifier expected.
+src/components/ui/v2/Badge.tsx(3,31): error TS1003: Identifier expected.
+src/components/ui/v2/Badge.tsx(3,32): error TS1109: Expression expected.
+src/components/ui/v2/Badge.tsx(3,33): error TS1003: Identifier expected.
+src/components/ui/v2/Badge.tsx(3,34): error TS1003: Identifier expected.
+src/components/ui/v2/Card.tsx(4,26): error TS1109: Expression expected.
+src/components/ui/v2/Card.tsx(4,27): error TS1003: Identifier expected.
+src/components/ui/v2/Card.tsx(4,28): error TS1003: Identifier expected.
+src/components/ui/v2/Card.tsx(4,29): error TS1109: Expression expected.
+src/components/ui/v2/Card.tsx(4,30): error TS1003: Identifier expected.
+src/components/ui/v2/Card.tsx(4,31): error TS1003: Identifier expected.
+src/components/ui/v2/Card.tsx(4,32): error TS1109: Expression expected.
+src/components/ui/v2/Card.tsx(4,33): error TS1003: Identifier expected.
+src/components/ui/v2/Card.tsx(4,34): error TS1003: Identifier expected.
+src/components/ui/v2/Checkbox.tsx(3,26): error TS1109: Expression expected.
+src/components/ui/v2/Checkbox.tsx(3,27): error TS1003: Identifier expected.
+src/components/ui/v2/Checkbox.tsx(3,28): error TS1003: Identifier expected.
+src/components/ui/v2/Checkbox.tsx(3,29): error TS1109: Expression expected.
+src/components/ui/v2/Checkbox.tsx(3,30): error TS1003: Identifier expected.
+src/components/ui/v2/Checkbox.tsx(3,31): error TS1003: Identifier expected.
+src/components/ui/v2/Checkbox.tsx(3,32): error TS1109: Expression expected.
+src/components/ui/v2/Checkbox.tsx(3,33): error TS1003: Identifier expected.
+src/components/ui/v2/Checkbox.tsx(3,34): error TS1003: Identifier expected.
+src/components/ui/v2/Divider.tsx(3,26): error TS1109: Expression expected.
+src/components/ui/v2/Divider.tsx(3,27): error TS1003: Identifier expected.
+src/components/ui/v2/Divider.tsx(3,28): error TS1003: Identifier expected.
+src/components/ui/v2/Divider.tsx(3,29): error TS1109: Expression expected.
+src/components/ui/v2/Divider.tsx(3,30): error TS1003: Identifier expected.
+src/components/ui/v2/Divider.tsx(3,31): error TS1003: Identifier expected.
+src/components/ui/v2/Divider.tsx(3,32): error TS1109: Expression expected.
+src/components/ui/v2/Divider.tsx(3,33): error TS1003: Identifier expected.
+src/components/ui/v2/Divider.tsx(3,34): error TS1003: Identifier expected.
+src/components/ui/v2/Input.tsx(9,26): error TS1109: Expression expected.
+src/components/ui/v2/Input.tsx(9,27): error TS1003: Identifier expected.
+src/components/ui/v2/Input.tsx(9,28): error TS1003: Identifier expected.
+src/components/ui/v2/Input.tsx(9,29): error TS1109: Expression expected.
+src/components/ui/v2/Input.tsx(9,30): error TS1003: Identifier expected.
+src/components/ui/v2/Input.tsx(9,31): error TS1003: Identifier expected.
+src/components/ui/v2/Input.tsx(9,32): error TS1109: Expression expected.
+src/components/ui/v2/Input.tsx(9,33): error TS1003: Identifier expected.
+src/components/ui/v2/Input.tsx(9,34): error TS1003: Identifier expected.
+src/components/ui/v2/Input.tsx(56,7): error TS1005: ',' expected.
+src/components/ui/v2/Radio.tsx(3,26): error TS1109: Expression expected.
+src/components/ui/v2/Radio.tsx(3,27): error TS1003: Identifier expected.
+src/components/ui/v2/Radio.tsx(3,28): error TS1003: Identifier expected.
+src/components/ui/v2/Radio.tsx(3,29): error TS1109: Expression expected.
+src/components/ui/v2/Radio.tsx(3,30): error TS1003: Identifier expected.
+src/components/ui/v2/Radio.tsx(3,31): error TS1003: Identifier expected.
+src/components/ui/v2/Radio.tsx(3,32): error TS1109: Expression expected.
+src/components/ui/v2/Radio.tsx(3,33): error TS1003: Identifier expected.
+src/components/ui/v2/Radio.tsx(3,34): error TS1003: Identifier expected.
+src/components/ui/v2/Radio.tsx(83,9): error TS1005: '}' expected.
+src/components/ui/v2/Radio.tsx(83,11): error TS17002: Expected corresponding JSX closing tag for 'Pressable'.
+src/components/ui/v2/Radio.tsx(85,5): error TS1128: Declaration or statement expected.
+src/components/ui/v2/Radio.tsx(86,3): error TS1109: Expression expected.
+src/components/ui/v2/Radio.tsx(87,1): error TS1128: Declaration or statement expected.
+src/components/ui/v2/Sheet.tsx(15,26): error TS1109: Expression expected.
+src/components/ui/v2/Sheet.tsx(15,27): error TS1003: Identifier expected.
+src/components/ui/v2/Sheet.tsx(15,28): error TS1003: Identifier expected.
+src/components/ui/v2/Sheet.tsx(15,29): error TS1109: Expression expected.
+src/components/ui/v2/Sheet.tsx(15,30): error TS1003: Identifier expected.
+src/components/ui/v2/Sheet.tsx(15,31): error TS1003: Identifier expected.
+src/components/ui/v2/Sheet.tsx(15,32): error TS1109: Expression expected.
+src/components/ui/v2/Sheet.tsx(15,33): error TS1003: Identifier expected.
+src/components/ui/v2/Sheet.tsx(15,34): error TS1003: Identifier expected.
+src/components/ui/v2/Sheet.tsx(133,51): error TS1127: Invalid character.
+src/components/ui/v2/Sheet.tsx(133,54): error TS17002: Expected corresponding JSX closing tag for 'Pressable'.
+src/components/ui/v2/Sheet.tsx(134,19): error TS1005: ')' expected.
+src/components/ui/v2/Sheet.tsx(134,21): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/components/ui/v2/Sheet.tsx(136,17): error TS17002: Expected corresponding JSX closing tag for 'Card'.
+src/components/ui/v2/Sheet.tsx(137,14): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/ui/v2/Sheet.tsx(139,13): error TS17002: Expected corresponding JSX closing tag for 'AnimatedView'.
+src/components/ui/v2/Sheet.tsx(141,9): error TS17002: Expected corresponding JSX closing tag for 'Modal'.
+src/components/ui/v2/Sheet.tsx(142,5): error TS1005: ')' expected.
+src/components/ui/v2/Sheet.tsx(143,3): error TS1109: Expression expected.
+src/components/ui/v2/Skeleton.tsx(3,26): error TS1109: Expression expected.
+src/components/ui/v2/Skeleton.tsx(3,27): error TS1003: Identifier expected.
+src/components/ui/v2/Skeleton.tsx(3,28): error TS1003: Identifier expected.
+src/components/ui/v2/Skeleton.tsx(3,29): error TS1109: Expression expected.
+src/components/ui/v2/Skeleton.tsx(3,30): error TS1003: Identifier expected.
+src/components/ui/v2/Skeleton.tsx(3,31): error TS1003: Identifier expected.
+src/components/ui/v2/Skeleton.tsx(3,32): error TS1109: Expression expected.
+src/components/ui/v2/Skeleton.tsx(3,33): error TS1003: Identifier expected.
+src/components/ui/v2/Skeleton.tsx(3,34): error TS1003: Identifier expected.
+src/components/ui/v2/Switch.tsx(3,26): error TS1109: Expression expected.
+src/components/ui/v2/Switch.tsx(3,27): error TS1003: Identifier expected.
+src/components/ui/v2/Switch.tsx(3,28): error TS1003: Identifier expected.
+src/components/ui/v2/Switch.tsx(3,29): error TS1109: Expression expected.
+src/components/ui/v2/Switch.tsx(3,30): error TS1003: Identifier expected.
+src/components/ui/v2/Switch.tsx(3,31): error TS1003: Identifier expected.
+src/components/ui/v2/Switch.tsx(3,32): error TS1109: Expression expected.
+src/components/ui/v2/Switch.tsx(3,33): error TS1003: Identifier expected.
+src/components/ui/v2/Switch.tsx(3,34): error TS1003: Identifier expected.
+src/components/ui/v2/Tag.tsx(3,26): error TS1109: Expression expected.
+src/components/ui/v2/Tag.tsx(3,27): error TS1003: Identifier expected.
+src/components/ui/v2/Tag.tsx(3,28): error TS1003: Identifier expected.
+src/components/ui/v2/Tag.tsx(3,29): error TS1109: Expression expected.
+src/components/ui/v2/Tag.tsx(3,30): error TS1003: Identifier expected.
+src/components/ui/v2/Tag.tsx(3,31): error TS1003: Identifier expected.
+src/components/ui/v2/Tag.tsx(3,32): error TS1109: Expression expected.
+src/components/ui/v2/Tag.tsx(3,33): error TS1003: Identifier expected.
+src/components/ui/v2/Tag.tsx(3,34): error TS1003: Identifier expected.
+src/components/ui/v2/Text.tsx(7,26): error TS1109: Expression expected.
+src/components/ui/v2/Text.tsx(7,27): error TS1003: Identifier expected.
+src/components/ui/v2/Text.tsx(7,28): error TS1003: Identifier expected.
+src/components/ui/v2/Text.tsx(7,29): error TS1109: Expression expected.
+src/components/ui/v2/Text.tsx(7,30): error TS1003: Identifier expected.
+src/components/ui/v2/Text.tsx(7,31): error TS1003: Identifier expected.
+src/components/ui/v2/Text.tsx(7,32): error TS1109: Expression expected.
+src/components/ui/v2/Text.tsx(7,33): error TS1003: Identifier expected.
+src/components/ui/v2/Text.tsx(7,34): error TS1003: Identifier expected.
+src/components/ui/v2/Toast.tsx(10,26): error TS1109: Expression expected.
+src/components/ui/v2/Toast.tsx(10,27): error TS1003: Identifier expected.
+src/components/ui/v2/Toast.tsx(10,28): error TS1003: Identifier expected.
+src/components/ui/v2/Toast.tsx(10,29): error TS1109: Expression expected.
+src/components/ui/v2/Toast.tsx(10,30): error TS1003: Identifier expected.
+src/components/ui/v2/Toast.tsx(10,31): error TS1003: Identifier expected.
+src/components/ui/v2/Toast.tsx(10,32): error TS1109: Expression expected.
+src/components/ui/v2/Toast.tsx(10,33): error TS1003: Identifier expected.
+src/components/ui/v2/Toast.tsx(10,34): error TS1003: Identifier expected.
+src/components/voice/VoiceRecorderUltra.native.tsx(222,98): error TS1005: ']' expected.
+src/components/voice/VoiceRecorderUltra.native.tsx(222,99): error TS1003: Identifier expected.
+src/components/voice/VoiceRecorderUltra.native.tsx(222,100): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/voice/VoiceRecorderUltra.native.tsx(222,103): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/voice/VoiceRecorderUltra.native.tsx(243,110): error TS1005: ']' expected.
+src/components/voice/VoiceRecorderUltra.native.tsx(243,111): error TS1003: Identifier expected.
+src/components/voice/VoiceRecorderUltra.native.tsx(243,112): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/voice/VoiceRecorderUltra.native.tsx(243,115): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/voice/VoiceRecorderUltra.native.tsx(257,46): error TS1005: ']' expected.
+src/components/voice/VoiceRecorderUltra.native.tsx(257,47): error TS1003: Identifier expected.
+src/components/voice/VoiceRecorderUltra.native.tsx(259,14): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/voice/VoiceRecorderUltra.native.tsx(265,100): error TS1005: ']' expected.
+src/components/voice/VoiceRecorderUltra.native.tsx(265,101): error TS1003: Identifier expected.
+src/components/voice/VoiceRecorderUltra.native.tsx(265,102): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/voice/VoiceRecorderUltra.native.tsx(265,105): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/voice/VoiceRecorderUltra.native.tsx(269,81): error TS1003: Identifier expected.
+src/components/voice/VoiceRecorderUltra.native.tsx(269,82): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/voice/VoiceRecorderUltra.native.tsx(269,85): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/voice/VoiceRecorderUltra.web.tsx(368,98): error TS1005: ']' expected.
+src/components/voice/VoiceRecorderUltra.web.tsx(368,99): error TS1003: Identifier expected.
+src/components/voice/VoiceRecorderUltra.web.tsx(368,100): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/voice/VoiceRecorderUltra.web.tsx(368,103): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/voice/VoiceRecorderUltra.web.tsx(389,110): error TS1005: ']' expected.
+src/components/voice/VoiceRecorderUltra.web.tsx(389,111): error TS1003: Identifier expected.
+src/components/voice/VoiceRecorderUltra.web.tsx(389,112): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/voice/VoiceRecorderUltra.web.tsx(389,115): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/voice/VoiceRecorderUltra.web.tsx(404,46): error TS1005: ']' expected.
+src/components/voice/VoiceRecorderUltra.web.tsx(404,47): error TS1003: Identifier expected.
+src/components/voice/VoiceRecorderUltra.web.tsx(406,14): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/voice/VoiceRecorderUltra.web.tsx(428,103): error TS1005: ']' expected.
+src/components/voice/VoiceRecorderUltra.web.tsx(428,104): error TS1003: Identifier expected.
+src/components/voice/VoiceRecorderUltra.web.tsx(428,105): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/voice/VoiceRecorderUltra.web.tsx(428,108): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/components/voice/VoiceRecorderUltra.web.tsx(432,81): error TS1003: Identifier expected.
+src/components/voice/VoiceRecorderUltra.web.tsx(432,82): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/components/voice/VoiceRecorderUltra.web.tsx(432,85): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/navigation/ActivePillTabBar.tsx(167,11): error TS1005: '}' expected.
+src/navigation/ActivePillTabBar.tsx(248,22): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/navigation/ActivePillTabBar.tsx(249,17): error TS1003: Identifier expected.
+src/navigation/ActivePillTabBar.tsx(274,21): error TS1005: ',' expected.
+src/navigation/ActivePillTabBar.tsx(285,9): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/navigation/ActivePillTabBar.tsx(286,5): error TS1005: ')' expected.
+src/navigation/ActivePillTabBar.tsx(287,3): error TS1109: Expression expected.
+src/navigation/AdminNavigator.tsx(61,9): error TS1005: ',' expected.
+src/navigation/UltraTabBar.tsx(208,93): error TS1005: '}' expected.
+src/screens/AIBioScreen.refactored.tsx(84,14): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/AIBioScreen.refactored.tsx(85,9): error TS1003: Identifier expected.
+src/screens/AIBioScreen.refactored.tsx(243,5): error TS1005: ',' expected.
+src/screens/AIBioScreen.tsx(59,82): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/AIBioScreen.tsx(60,9): error TS1003: Identifier expected.
+src/screens/AIBioScreen.tsx(295,5): error TS1005: ',' expected.
+src/screens/AIBioScreen.tsx(319,5): error TS1005: ',' expected.
+src/screens/AIBioScreen.tsx(327,5): error TS1005: ',' expected.
+src/screens/AIBioScreen.tsx(355,5): error TS1005: ',' expected.
+src/screens/AIBioScreen.tsx(366,5): error TS1005: ',' expected.
+src/screens/AIBioScreen.tsx(426,5): error TS1005: ',' expected.
+src/screens/AIBioScreen.tsx(435,5): error TS1005: ',' expected.
+src/screens/AIBioScreen.tsx(524,5): error TS1005: ',' expected.
+src/screens/AICompatibilityScreen.tsx(127,78): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/AICompatibilityScreen.tsx(128,11): error TS1003: Identifier expected.
+src/screens/ARScentTrailsScreen.tsx(114,17): error TS1005: '}' expected.
+src/screens/AboutTermsPrivacyScreen.tsx(123,80): error TS1003: Identifier expected.
+src/screens/AboutTermsPrivacyScreen.tsx(123,82): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/AboutTermsPrivacyScreen.tsx(138,87): error TS1003: Identifier expected.
+src/screens/AboutTermsPrivacyScreen.tsx(138,89): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/AboutTermsPrivacyScreen.tsx(200,81): error TS1003: Identifier expected.
+src/screens/AboutTermsPrivacyScreen.tsx(200,83): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/AboutTermsPrivacyScreen.tsx(204,84): error TS1003: Identifier expected.
+src/screens/AboutTermsPrivacyScreen.tsx(204,86): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/AboutTermsPrivacyScreen.tsx(208,88): error TS1003: Identifier expected.
+src/screens/AboutTermsPrivacyScreen.tsx(208,90): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/AdvancedFiltersScreen.tsx(129,14): error TS1003: Identifier expected.
+src/screens/AdvancedFiltersScreen.tsx(129,16): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/BlockedUsersScreen.tsx(194,14): error TS1003: Identifier expected.
+src/screens/BlockedUsersScreen.tsx(194,16): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/CreateReelScreen.tsx(157,90): error TS1109: Expression expected.
+src/screens/CreateReelScreen.tsx(158,11): error TS1109: Expression expected.
+src/screens/CreateReelScreen.tsx(275,83): error TS1005: ',' expected.
+src/screens/CreateReelScreen.tsx(279,57): error TS1005: ',' expected.
+src/screens/CreateReelScreen.tsx(291,51): error TS1005: ',' expected.
+src/screens/CreateReelScreen.tsx(300,61): error TS1005: ',' expected.
+src/screens/ForgotPasswordScreen.tsx(62,7): error TS1005: ',' expected.
+src/screens/ForgotPasswordScreen.tsx(86,7): error TS1005: ',' expected.
+src/screens/GoLiveScreen.tsx(237,6): error TS17008: JSX element 'View' has no corresponding closing tag.
+src/screens/GoLiveScreen.tsx(238,7): error TS2657: JSX expressions must have one parent element.
+src/screens/GoLiveScreen.tsx(308,5): error TS1005: '}' expected.
+src/screens/GoLiveScreen.tsx(310,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/GoLiveScreen.tsx(311,1): error TS1005: '</' expected.
+src/screens/HomeScreen.tsx(95,7): error TS1005: ',' expected.
+src/screens/LiveBrowseScreen.tsx(48,6): error TS17008: JSX element 'View' has no corresponding closing tag.
+src/screens/LiveBrowseScreen.tsx(49,7): error TS2657: JSX expressions must have one parent element.
+src/screens/LiveBrowseScreen.tsx(94,5): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(96,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(99,12): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(100,9): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(102,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(104,18): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(108,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(110,10): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(113,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(115,12): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(117,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(119,9): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(124,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(126,10): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(129,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(131,13): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(141,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(143,10): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(147,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(149,10): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(152,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(154,12): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(155,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(157,10): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(161,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(163,18): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(166,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(168,10): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(170,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(172,15): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(174,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(176,10): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(180,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(182,10): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(185,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(187,9): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(191,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(193,10): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(197,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(199,10): error TS1005: '}' expected.
+src/screens/LiveBrowseScreen.tsx(202,3): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(203,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/LiveBrowseScreen.tsx(205,1): error TS1005: '</' expected.
+src/screens/MemoryWeaveScreen.tsx(165,98): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/MemoryWeaveScreen.tsx(166,21): error TS1003: Identifier expected.
+src/screens/MemoryWeaveScreen.tsx(173,96): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/MemoryWeaveScreen.tsx(174,21): error TS1003: Identifier expected.
+src/screens/MemoryWeaveScreen.tsx(236,17): error TS1005: ',' expected.
+src/screens/MemoryWeaveScreen.tsx(272,86): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/MemoryWeaveScreen.tsx(273,13): error TS1003: Identifier expected.
+src/screens/MemoryWeaveScreen.tsx(289,89): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/MemoryWeaveScreen.tsx(290,13): error TS1003: Identifier expected.
+src/screens/MemoryWeaveScreen.tsx(434,5): error TS1005: ',' expected.
+src/screens/MemoryWeaveScreen.tsx(477,5): error TS1005: ',' expected.
+src/screens/MemoryWeaveScreen.tsx(497,5): error TS1005: ',' expected.
+src/screens/MemoryWeaveScreen.tsx(537,5): error TS1005: ',' expected.
+src/screens/ModerationToolsScreen.tsx(222,16): error TS1003: Identifier expected.
+src/screens/ModerationToolsScreen.tsx(222,18): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/ModerationToolsScreen.tsx(242,84): error TS1003: Identifier expected.
+src/screens/ModerationToolsScreen.tsx(242,86): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/ModerationToolsScreen.tsx(252,88): error TS1003: Identifier expected.
+src/screens/ModerationToolsScreen.tsx(252,90): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/ModerationToolsScreen.tsx(262,84): error TS1003: Identifier expected.
+src/screens/ModerationToolsScreen.tsx(262,86): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/ModernCreatePetScreen.tsx(102,7): error TS1005: ',' expected.
+src/screens/PremiumCancelScreen.tsx(38,81): error TS1003: Identifier expected.
+src/screens/PremiumCancelScreen.tsx(38,83): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/PremiumSuccessScreen.tsx(50,88): error TS1003: Identifier expected.
+src/screens/PremiumSuccessScreen.tsx(50,90): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/PremiumSuccessScreen.tsx(71,79): error TS1003: Identifier expected.
+src/screens/PremiumSuccessScreen.tsx(71,81): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/PrivacySettingsScreen.tsx(139,76): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/PrivacySettingsScreen.tsx(140,9): error TS1003: Identifier expected.
+src/screens/ResetPasswordScreen.tsx(63,7): error TS1005: ',' expected.
+src/screens/ResetPasswordScreen.tsx(87,7): error TS1005: ',' expected.
+src/screens/SafetyCenterScreen.tsx(142,88): error TS1003: Identifier expected.
+src/screens/SafetyCenterScreen.tsx(142,90): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/SafetyCenterScreen.tsx(165,18): error TS1003: Identifier expected.
+src/screens/SafetyCenterScreen.tsx(165,20): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/SettingsScreen.tsx(124,7): error TS1005: ',' expected.
+src/screens/SwipeScreen.tsx(128,7): error TS1005: ',' expected.
+src/screens/TemplateScreen.tsx(126,5): error TS1005: ',' expected.
+src/screens/TemplateScreen.tsx(137,5): error TS1005: ',' expected.
+src/screens/UIDemoScreen.tsx(37,9): error TS1005: '}' expected.
+src/screens/UIDemoScreen.tsx(104,7): error TS1005: ')' expected.
+src/screens/UIDemoScreen.tsx(131,5): error TS1128: Declaration or statement expected.
+src/screens/UIDemoScreen.tsx(132,3): error TS1109: Expression expected.
+src/screens/VerificationCenterScreen.tsx(337,11): error TS1005: '}' expected.
+src/screens/VerificationCenterScreen.tsx(359,9): error TS17002: Expected corresponding JSX closing tag for 'ScrollView'.
+src/screens/VerificationCenterScreen.tsx(361,7): error TS1005: ')' expected.
+src/screens/VerificationCenterScreen.tsx(455,5): error TS1128: Declaration or statement expected.
+src/screens/VerificationCenterScreen.tsx(456,3): error TS1109: Expression expected.
+src/screens/admin/AdminAnalyticsScreen.tsx(22,45): error TS1005: ';' expected.
+src/screens/admin/AdminAnalyticsScreen.tsx(22,47): error TS1002: Unterminated string literal.
+src/screens/admin/AdminAnalyticsScreen.tsx(305,78): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminAnalyticsScreen.tsx(306,11): error TS1003: Identifier expected.
+src/screens/admin/AdminAnalyticsScreen.tsx(364,81): error TS1003: Identifier expected.
+src/screens/admin/AdminAnalyticsScreen.tsx(364,83): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminAnalyticsScreen.tsx(407,83): error TS1003: Identifier expected.
+src/screens/admin/AdminAnalyticsScreen.tsx(407,85): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminAnalyticsScreen.tsx(450,88): error TS1003: Identifier expected.
+src/screens/admin/AdminAnalyticsScreen.tsx(450,90): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminAnalyticsScreen.tsx(493,82): error TS1003: Identifier expected.
+src/screens/admin/AdminAnalyticsScreen.tsx(493,84): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminAnalyticsScreen.tsx(730,83): error TS1003: Identifier expected.
+src/screens/admin/AdminAnalyticsScreen.tsx(730,85): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminAnalyticsScreen.tsx(754,81): error TS1003: Identifier expected.
+src/screens/admin/AdminAnalyticsScreen.tsx(754,83): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminAnalyticsScreen.tsx(778,80): error TS1003: Identifier expected.
+src/screens/admin/AdminAnalyticsScreen.tsx(778,82): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminAnalyticsScreen.tsx(802,78): error TS1003: Identifier expected.
+src/screens/admin/AdminAnalyticsScreen.tsx(802,80): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminBillingScreen.tsx(853,16): error TS1127: Invalid character.
+src/screens/admin/AdminBillingScreen.tsx(853,22): error TS1127: Invalid character.
+src/screens/admin/AdminBillingScreen.tsx(853,29): error TS1127: Invalid character.
+src/screens/admin/AdminBillingScreen.tsx(853,32): error TS1127: Invalid character.
+src/screens/admin/AdminBillingScreen.tsx(853,33): error TS1139: Type parameter declaration expected.
+src/screens/admin/AdminBillingScreen.tsx(853,35): error TS1127: Invalid character.
+src/screens/admin/AdminBillingScreen.tsx(853,36): error TS1136: Property assignment expected.
+src/screens/admin/AdminBillingScreen.tsx(853,37): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(853,44): error TS1005: ',' expected.
+src/screens/admin/AdminBillingScreen.tsx(855,18): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(857,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(858,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(859,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(859,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(862,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(863,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(863,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(866,12): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(867,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(867,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(870,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(871,16): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(872,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(873,20): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(874,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(874,41): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(874,46): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(876,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(877,18): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(878,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(878,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(881,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(882,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(883,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(883,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(886,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(887,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(887,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(890,24): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(891,12): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(892,24): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(893,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(893,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(896,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(897,12): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(898,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(898,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(901,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(902,17): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(903,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(903,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(906,17): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(907,12): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(908,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(908,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(911,24): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(912,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(913,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(913,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(916,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(919,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(920,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(920,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(923,22): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(924,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(924,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(927,16): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(928,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(929,20): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(930,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(930,41): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(930,46): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(932,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(933,18): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(934,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(934,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(937,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(938,23): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(939,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(940,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(940,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(943,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(944,13): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(945,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(945,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(948,15): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(949,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(950,24): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(951,23): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(952,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(953,20): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(954,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(954,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(957,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(958,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(958,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(961,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(961,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(964,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(965,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(966,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(966,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(969,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(970,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(970,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(973,12): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(974,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(974,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(977,24): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(978,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(979,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(979,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(982,17): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(983,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(984,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(984,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(987,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(988,26): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(989,24): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(990,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(991,12): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(992,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(992,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(995,17): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(996,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(997,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(997,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(1000,12): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(1001,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(1001,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(1004,15): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(1005,21): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(1006,23): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(1007,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(1008,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(1008,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(1011,17): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(1012,12): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(1013,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(1013,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(1016,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(1017,12): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(1018,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(1018,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(1021,19): error TS1005: ';' expected.
+src/screens/admin/AdminBillingScreen.tsx(1022,7): error TS1109: Expression expected.
+src/screens/admin/AdminBillingScreen.tsx(1022,8): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(1024,3): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminBillingScreen.tsx(1025,1): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminChatsScreen.tsx(20,45): error TS1005: ';' expected.
+src/screens/admin/AdminChatsScreen.tsx(20,47): error TS1002: Unterminated string literal.
+src/screens/admin/AdminChatsScreen.tsx(298,76): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminChatsScreen.tsx(299,9): error TS1003: Identifier expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(122,21): error TS1005: '}' expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(122,30): error TS1003: Identifier expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(123,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(124,9): error TS1005: '}' expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(139,74): error TS1005: '}' expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(139,83): error TS1003: Identifier expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(139,85): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(141,27): error TS1005: ',' expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(141,41): error TS1005: '...' expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(142,11): error TS1003: Identifier expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(142,13): error TS17002: Expected corresponding JSX closing tag for 'ScrollView'.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(143,9): error TS1005: '}' expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(147,11): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(148,85): error TS1005: '}' expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(148,87): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(150,11): error TS1005: ')' expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(150,13): error TS17002: Expected corresponding JSX closing tag for 'SafeAreaView'.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(155,11): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(156,84): error TS1005: '}' expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(156,90): error TS1003: Identifier expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(156,92): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(158,11): error TS1005: ')' expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(159,9): error TS1109: Expression expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(165,7): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(166,5): error TS1109: Expression expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(167,3): error TS1109: Expression expected.
+src/screens/admin/AdminDashboardScreen.refactored.tsx(168,1): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminDashboardScreen.tsx(22,45): error TS1005: ';' expected.
+src/screens/admin/AdminDashboardScreen.tsx(22,47): error TS1002: Unterminated string literal.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(164,21): error TS1005: '}' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(164,34): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(165,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(166,9): error TS1005: '}' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(172,5): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(174,13): error TS1005: '}' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(184,75): error TS1005: '}' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(184,84): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(184,86): error TS17002: Expected corresponding JSX closing tag for 'SafeAreaView'.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(197,7): error TS1005: ')' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(200,13): error TS1005: ';' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(200,26): error TS1005: ',' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(201,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(202,82): error TS1005: '}' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(202,85): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(238,9): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(240,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(241,78): error TS1005: '}' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(241,81): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(276,9): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(277,7): error TS1109: Expression expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(281,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(282,84): error TS1005: '}' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(282,91): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(282,93): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(284,9): error TS1005: ')' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(285,7): error TS1109: Expression expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(288,7): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(290,20): error TS1005: '}' expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(290,27): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(291,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(302,7): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(303,5): error TS1109: Expression expected.
+src/screens/admin/AdminSecurityScreen.refactored.tsx(304,3): error TS1109: Expression expected.
+src/screens/admin/AdminSecurityScreen.tsx(326,82): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.tsx(326,84): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminSecurityScreen.tsx(328,87): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.tsx(328,89): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminSecurityScreen.tsx(329,18): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/admin/AdminSecurityScreen.tsx(341,81): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.tsx(341,83): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminSecurityScreen.tsx(350,86): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.tsx(350,88): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminSecurityScreen.tsx(450,76): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminSecurityScreen.tsx(451,9): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.tsx(466,79): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.tsx(466,81): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminSecurityScreen.tsx(490,85): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.tsx(490,87): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminSecurityScreen.tsx(517,81): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.tsx(517,83): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminSecurityScreen.tsx(544,89): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.tsx(544,91): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminSecurityScreen.tsx(571,90): error TS1003: Identifier expected.
+src/screens/admin/AdminSecurityScreen.tsx(571,92): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminServicesScreen.tsx(19,45): error TS1005: ';' expected.
+src/screens/admin/AdminServicesScreen.tsx(19,47): error TS1002: Unterminated string literal.
+src/screens/admin/AdminServicesScreen.tsx(170,21): error TS1005: '}' expected.
+src/screens/admin/AdminServicesScreen.tsx(170,29): error TS1003: Identifier expected.
+src/screens/admin/AdminServicesScreen.tsx(171,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminServicesScreen.tsx(172,9): error TS1005: '}' expected.
+src/screens/admin/AdminServicesScreen.tsx(179,7): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/AdminServicesScreen.tsx(181,76): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminServicesScreen.tsx(182,9): error TS1003: Identifier expected.
+src/screens/admin/AdminServicesScreen.tsx(184,20): error TS1005: '}' expected.
+src/screens/admin/AdminServicesScreen.tsx(185,9): error TS1003: Identifier expected.
+src/screens/admin/AdminServicesScreen.tsx(185,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminServicesScreen.tsx(187,7): error TS1005: '}' expected.
+src/screens/admin/AdminServicesScreen.tsx(204,13): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/AdminServicesScreen.tsx(207,15): error TS1005: '}' expected.
+src/screens/admin/AdminServicesScreen.tsx(210,27): error TS1005: ',' expected.
+src/screens/admin/AdminServicesScreen.tsx(211,17): error TS1005: '}' expected.
+src/screens/admin/AdminServicesScreen.tsx(211,19): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminServicesScreen.tsx(213,27): error TS1005: ',' expected.
+src/screens/admin/AdminServicesScreen.tsx(214,17): error TS1005: '}' expected.
+src/screens/admin/AdminServicesScreen.tsx(214,19): error TS17002: Expected corresponding JSX closing tag for 'ScrollView'.
+src/screens/admin/AdminServicesScreen.tsx(215,17): error TS17002: Expected corresponding JSX closing tag for 'SafeAreaView'.
+src/screens/admin/AdminServicesScreen.tsx(216,13): error TS1005: ')' expected.
+src/screens/admin/AdminServicesScreen.tsx(218,13): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/AdminServicesScreen.tsx(226,27): error TS1005: ',' expected.
+src/screens/admin/AdminServicesScreen.tsx(227,17): error TS1005: '}' expected.
+src/screens/admin/AdminServicesScreen.tsx(227,19): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/AdminServicesScreen.tsx(230,25): error TS1005: ',' expected.
+src/screens/admin/AdminServicesScreen.tsx(230,39): error TS1005: '}' expected.
+src/screens/admin/AdminServicesScreen.tsx(231,15): error TS1003: Identifier expected.
+src/screens/admin/AdminServicesScreen.tsx(232,15): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/AdminServicesScreen.tsx(235,83): error TS1005: '}' expected.
+src/screens/admin/AdminServicesScreen.tsx(241,20): error TS1005: '}' expected.
+src/screens/admin/AdminServicesScreen.tsx(241,29): error TS1003: Identifier expected.
+src/screens/admin/AdminServicesScreen.tsx(241,30): error TS1005: '...' expected.
+src/screens/admin/AdminServicesScreen.tsx(242,13): error TS1003: Identifier expected.
+src/screens/admin/AdminServicesScreen.tsx(243,13): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/AdminServicesScreen.tsx(244,9): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminServicesScreen.tsx(244,10): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminServicesScreen.tsx(245,7): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminServicesScreen.tsx(246,5): error TS1109: Expression expected.
+src/screens/admin/AdminServicesScreen.tsx(247,3): error TS1109: Expression expected.
+src/screens/admin/AdminServicesScreen.tsx(248,1): error TS1128: Declaration or statement expected.
+src/screens/admin/AdminUploadsScreen.tsx(22,45): error TS1005: ';' expected.
+src/screens/admin/AdminUploadsScreen.tsx(22,47): error TS1002: Unterminated string literal.
+src/screens/admin/AdminUploadsScreen.tsx(306,75): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminUploadsScreen.tsx(307,13): error TS1003: Identifier expected.
+src/screens/admin/AdminUploadsScreen.tsx(485,76): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminUploadsScreen.tsx(486,9): error TS1003: Identifier expected.
+src/screens/admin/AdminVerificationsScreen.tsx(20,45): error TS1005: ';' expected.
+src/screens/admin/AdminVerificationsScreen.tsx(20,47): error TS1002: Unterminated string literal.
+src/screens/admin/AdminVerificationsScreen.tsx(487,75): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminVerificationsScreen.tsx(488,13): error TS1003: Identifier expected.
+src/screens/admin/AdminVerificationsScreen.tsx(680,76): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/AdminVerificationsScreen.tsx(681,9): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(70,5): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(72,77): error TS1005: '}' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(72,79): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(74,35): error TS1005: ',' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(74,52): error TS1005: ',' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(75,9): error TS1005: ')' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(75,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(76,7): error TS1109: Expression expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(78,7): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(79,77): error TS1005: '}' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(81,35): error TS1005: ',' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(81,53): error TS1005: ',' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(81,54): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(83,7): error TS1005: '}' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(86,77): error TS1005: '}' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(86,79): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(88,35): error TS1005: ',' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(88,54): error TS1005: ',' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(89,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(90,9): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(93,81): error TS1005: '}' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(95,16): error TS1005: ',' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(95,58): error TS1005: '}' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(96,9): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(97,7): error TS1005: '}' expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(99,3): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/EngagementMetricsSection.tsx(100,1): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(121,5): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(126,79): error TS1005: '}' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(126,81): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(127,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(129,34): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(129,46): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(130,9): error TS1005: ')' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(130,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(147,7): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(150,13): error TS1005: ';' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(150,76): error TS1005: ':' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(153,81): error TS1005: '}' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(153,83): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(154,9): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(154,15): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(156,34): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(156,48): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(157,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(174,9): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(177,7): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(180,82): error TS1005: '}' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(180,84): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(181,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(183,34): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(183,49): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(183,50): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(184,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(201,7): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(204,13): error TS1005: ';' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(204,76): error TS1005: ':' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(207,81): error TS1005: '}' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(207,83): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(208,9): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(208,15): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(210,36): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(210,57): error TS1005: ',' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(211,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(213,14): error TS1005: '}' expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(215,7): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(216,5): error TS1109: Expression expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(217,3): error TS1109: Expression expected.
+src/screens/admin/analytics/components/KeyMetricsSection.tsx(218,1): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(65,5): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(69,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(69,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(71,34): error TS1005: ',' expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(71,56): error TS1005: ',' expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(72,9): error TS1005: ')' expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(72,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(73,7): error TS1109: Expression expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(75,7): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(78,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(80,19): error TS1005: ',' expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(81,9): error TS1109: Expression expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(82,7): error TS1005: '}' expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(87,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(87,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(89,19): error TS1005: ',' expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(90,9): error TS1109: Expression expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(91,9): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(92,5): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(93,3): error TS1109: Expression expected.
+src/screens/admin/analytics/components/RevenueMetricsSection.tsx(94,1): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(64,5): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(66,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(68,22): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(69,9): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(69,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(69,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(71,20): error TS1005: ',' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(72,9): error TS1005: ')' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(72,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(73,7): error TS1109: Expression expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(75,7): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(76,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(78,19): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(79,9): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(81,20): error TS1005: ',' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(82,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(83,7): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(86,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(88,20): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(89,9): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(89,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(89,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(91,20): error TS1005: ',' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(92,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(93,9): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(96,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(98,18): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(99,9): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(101,20): error TS1005: ',' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(102,9): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(103,7): error TS1005: '}' expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(105,3): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/SecurityMetricsSection.tsx(106,1): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(84,15): error TS1005: '}' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(85,9): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(85,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(86,9): error TS1005: ')' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(87,11): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(89,15): error TS1127: Invalid character.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(89,16): error TS1005: '}' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(89,17): error TS1005: '...' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(90,13): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(90,15): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(92,20): error TS1005: ',' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(93,13): error TS1005: ')' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(93,13): error TS1005: '}' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(95,20): error TS1005: ',' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(95,30): error TS1005: '}' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(96,13): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(97,13): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(98,9): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(98,10): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(98,11): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(99,7): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(102,13): error TS1005: ';' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(102,80): error TS1005: ':' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(103,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(104,15): error TS1005: '}' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(105,9): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(107,11): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(109,15): error TS1127: Invalid character.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(109,16): error TS1005: '}' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(109,17): error TS1005: '...' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(110,13): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(110,15): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(112,19): error TS1005: ',' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(113,13): error TS1005: ')' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(113,13): error TS1005: '}' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(115,19): error TS1005: ',' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(115,29): error TS1005: '}' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(116,13): error TS1003: Identifier expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(117,13): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(118,9): error TS1005: ',' expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(118,10): error TS1136: Property assignment expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(119,7): error TS1128: Declaration or statement expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(120,5): error TS1109: Expression expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(121,3): error TS1109: Expression expected.
+src/screens/admin/analytics/components/TopPerformersSection.tsx(122,1): error TS1128: Declaration or statement expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(90,5): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(91,79): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(91,87): error TS1003: Identifier expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(91,89): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(96,82): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(96,89): error TS1003: Identifier expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(96,91): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(97,11): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(99,36): error TS1005: ',' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(99,49): error TS1005: ',' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(100,11): error TS1005: ')' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(100,11): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(101,9): error TS1109: Expression expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(106,79): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(106,81): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(107,11): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(109,36): error TS1005: ',' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(109,60): error TS1005: ',' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(109,61): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/admin/billing/components/BillingMetricsSection.tsx(110,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(111,9): error TS1128: Declaration or statement expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(116,80): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(116,82): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(117,11): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(119,36): error TS1005: ',' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(119,58): error TS1005: ',' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(119,59): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/admin/billing/components/BillingMetricsSection.tsx(120,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(121,9): error TS1128: Declaration or statement expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(126,83): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(126,87): error TS1003: Identifier expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(126,89): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(127,11): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(129,21): error TS1005: ',' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(130,11): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(130,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(131,9): error TS1128: Declaration or statement expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(132,7): error TS1109: Expression expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(134,7): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(137,24): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(138,11): error TS1003: Identifier expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(138,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(140,21): error TS1005: ',' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(141,11): error TS1109: Expression expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(142,11): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(145,19): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(146,11): error TS1003: Identifier expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(148,21): error TS1005: ',' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(149,11): error TS1109: Expression expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(150,9): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(153,21): error TS1005: '}' expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(154,11): error TS1003: Identifier expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(154,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(166,9): error TS1128: Declaration or statement expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(167,7): error TS1109: Expression expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(168,5): error TS1109: Expression expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(169,3): error TS1109: Expression expected.
+src/screens/admin/billing/components/BillingMetricsSection.tsx(170,1): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(73,5): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(78,79): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(78,81): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(79,9): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(81,30): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(81,42): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(82,9): error TS1005: ')' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(82,9): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(83,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(85,19): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(86,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(88,21): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(88,24): error TS1005: '...' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(89,11): error TS1003: Identifier expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(90,11): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(91,7): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(94,13): error TS1005: ';' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(94,76): error TS1005: ':' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(97,78): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(97,80): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(98,9): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(98,15): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(99,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(100,30): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(100,41): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(101,9): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(102,10): error TS17008: JSX element 'View' has no corresponding closing tag.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(104,19): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(107,20): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(107,22): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(107,25): error TS1005: '...' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(108,11): error TS1003: Identifier expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(109,11): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(110,7): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(113,13): error TS1005: ';' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(113,76): error TS1005: ':' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(116,81): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(116,83): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(117,9): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(117,15): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(118,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(119,30): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(119,44): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(120,9): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(121,10): error TS17008: JSX element 'View' has no corresponding closing tag.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(123,19): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(126,20): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(126,23): error TS1005: '...' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(127,11): error TS1003: Identifier expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(128,11): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(129,7): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(132,13): error TS1005: ';' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(132,76): error TS1005: ':' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(135,82): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(135,84): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(136,9): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(136,15): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(137,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(138,30): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(138,45): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(139,9): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(140,10): error TS17008: JSX element 'View' has no corresponding closing tag.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(142,20): error TS1351: An identifier or keyword cannot immediately follow a numeric literal.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(142,22): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(145,20): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(145,23): error TS1005: '...' expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(146,11): error TS1003: Identifier expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(147,11): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(148,7): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(149,5): error TS1109: Expression expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(150,3): error TS1109: Expression expected.
+src/screens/admin/dashboard/components/DashboardMetricsSection.tsx(151,1): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(134,5): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(135,77): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(135,84): error TS1003: Identifier expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(135,86): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(138,11): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(141,13): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(148,13): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(148,15): error TS17002: Expected corresponding JSX closing tag for 'TouchableOpacity'.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(149,83): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(149,90): error TS1005: ')' expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(149,90): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(149,92): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(150,11): error TS1005: ')' expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(151,9): error TS1109: Expression expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(151,10): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(151,11): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(152,7): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(153,5): error TS1109: Expression expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(154,3): error TS1109: Expression expected.
+src/screens/admin/dashboard/components/QuickActionsSection.tsx(155,1): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(107,7): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(109,79): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(109,85): error TS1003: Identifier expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(109,87): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(112,9): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(113,7): error TS1109: Expression expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(119,78): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(119,81): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(121,33): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(121,40): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(121,41): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(122,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(123,9): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(126,15): error TS1005: ';' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(126,28): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(127,11): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(132,80): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(132,81): error TS1003: Identifier expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(134,20): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(135,11): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(136,9): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(139,15): error TS1005: ';' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(139,28): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(140,11): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(141,78): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(141,79): error TS1003: Identifier expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(143,33): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(143,45): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(143,46): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(145,9): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(148,15): error TS1005: ';' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(148,28): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(149,11): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(150,83): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(150,84): error TS1003: Identifier expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(151,81): error TS1005: ',' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(151,94): error TS1005: '}' expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(152,9): error TS1128: Declaration or statement expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(153,7): error TS1109: Expression expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(154,5): error TS1109: Expression expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(155,3): error TS1109: Expression expected.
+src/screens/admin/dashboard/components/SystemHealthSection.tsx(156,1): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(162,7): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(170,11): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(173,19): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(174,11): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(174,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityAlertCard.tsx(175,11): error TS17002: Expected corresponding JSX closing tag for 'TouchableOpacity'.
+src/screens/admin/security/components/SecurityAlertCard.tsx(176,9): error TS1005: ')' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(180,15): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(194,17): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(208,7): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(211,13): error TS1005: ';' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(211,26): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(212,77): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(212,84): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(214,17): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(215,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(216,7): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(219,13): error TS1005: ';' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(219,26): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(220,9): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/security/components/SecurityAlertCard.tsx(222,16): error TS1005: ':' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(223,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(228,21): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(229,13): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(229,15): error TS17015: Expected corresponding closing tag for JSX fragment.
+src/screens/admin/security/components/SecurityAlertCard.tsx(229,19): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/security/components/SecurityAlertCard.tsx(230,13): error TS1003: Identifier expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(231,9): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(231,10): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(232,7): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(234,13): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(239,11): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(239,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityAlertCard.tsx(240,9): error TS1005: ')' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(240,15): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(241,7): error TS1109: Expression expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(241,8): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(242,5): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(243,3): error TS1109: Expression expected.
+src/screens/admin/security/components/SecurityAlertCard.tsx(244,1): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityFiltersComponent.tsx(72,80): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityFiltersComponent.tsx(72,83): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityFiltersComponent.tsx(104,7): error TS1005: ')' expected.
+src/screens/admin/security/components/SecurityFiltersComponent.tsx(105,7): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/security/components/SecurityFiltersComponent.tsx(106,76): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityFiltersComponent.tsx(106,79): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityFiltersComponent.tsx(148,7): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityFiltersComponent.tsx(149,5): error TS1109: Expression expected.
+src/screens/admin/security/components/SecurityFiltersComponent.tsx(150,3): error TS1109: Expression expected.
+src/screens/admin/security/components/SecurityFiltersComponent.tsx(151,1): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(60,5): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(66,19): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(67,11): error TS1003: Identifier expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(67,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(68,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(70,19): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(71,9): error TS1005: ')' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(71,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(72,7): error TS1109: Expression expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(75,13): error TS1005: ';' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(75,76): error TS1005: ':' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(80,11): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(80,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(81,9): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(81,15): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(83,19): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(84,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(85,9): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(93,11): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(93,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(94,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(96,19): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(97,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(97,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(98,7): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(101,13): error TS1005: ';' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(101,76): error TS1005: ':' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(106,11): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(106,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(107,9): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(107,15): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(109,19): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(110,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(111,9): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(118,24): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(119,11): error TS1003: Identifier expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(119,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(120,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(122,19): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(123,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(123,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(124,7): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(127,13): error TS1005: ';' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(127,76): error TS1005: ':' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(131,21): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(132,11): error TS1003: Identifier expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(132,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(133,9): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(133,15): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(135,19): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(136,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(137,9): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(144,22): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(145,11): error TS1003: Identifier expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(145,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(146,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(148,19): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(149,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(149,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(150,7): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(153,13): error TS1005: ';' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(153,76): error TS1005: ':' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(158,11): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(158,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(159,9): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(159,15): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(161,19): error TS1005: ',' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(162,9): error TS1005: '}' expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(163,9): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(164,5): error TS1128: Declaration or statement expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(165,3): error TS1109: Expression expected.
+src/screens/admin/security/components/SecurityMetricsSection.tsx(166,1): error TS1128: Declaration or statement expected.
+src/screens/admin/verifications/components/VerificationList.tsx(202,15): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/verifications/components/VerificationList.tsx(204,22): error TS1005: ',' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(205,15): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(205,17): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/verifications/components/VerificationList.tsx(209,17): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/verifications/components/VerificationList.tsx(210,88): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(210,90): error TS17002: Expected corresponding JSX closing tag for 'TouchableOpacity'.
+src/screens/admin/verifications/components/VerificationList.tsx(211,15): error TS1005: ')' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(212,13): error TS1109: Expression expected.
+src/screens/admin/verifications/components/VerificationList.tsx(212,14): error TS1128: Declaration or statement expected.
+src/screens/admin/verifications/components/VerificationList.tsx(213,11): error TS1128: Declaration or statement expected.
+src/screens/admin/verifications/components/VerificationList.tsx(214,11): error TS2657: JSX expressions must have one parent element.
+src/screens/admin/verifications/components/VerificationList.tsx(215,18): error TS1005: ':' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(216,11): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(217,11): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/admin/verifications/components/VerificationList.tsx(223,80): error TS1005: ',' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(223,90): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(223,92): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/verifications/components/VerificationList.tsx(225,22): error TS1005: ',' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(226,15): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(226,17): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/verifications/components/VerificationList.tsx(228,11): error TS1128: Declaration or statement expected.
+src/screens/admin/verifications/components/VerificationList.tsx(233,20): error TS1005: ',' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(234,13): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(234,15): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/verifications/components/VerificationList.tsx(235,11): error TS1128: Declaration or statement expected.
+src/screens/admin/verifications/components/VerificationList.tsx(237,16): error TS1005: ',' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(241,22): error TS1005: ',' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(241,41): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(241,50): error TS1005: '...' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(242,15): error TS1003: Identifier expected.
+src/screens/admin/verifications/components/VerificationList.tsx(242,17): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/verifications/components/VerificationList.tsx(243,13): error TS1005: ')' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(243,19): error TS1005: ',' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(244,11): error TS1109: Expression expected.
+src/screens/admin/verifications/components/VerificationList.tsx(244,12): error TS1128: Declaration or statement expected.
+src/screens/admin/verifications/components/VerificationList.tsx(245,9): error TS1128: Declaration or statement expected.
+src/screens/admin/verifications/components/VerificationList.tsx(247,21): error TS1005: ',' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(251,15): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(262,15): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(276,15): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(288,10): error TS1128: Declaration or statement expected.
+src/screens/admin/verifications/components/VerificationList.tsx(289,7): error TS1128: Declaration or statement expected.
+src/screens/admin/verifications/components/VerificationList.tsx(290,5): error TS1109: Expression expected.
+src/screens/admin/verifications/components/VerificationList.tsx(291,3): error TS1128: Declaration or statement expected.
+src/screens/admin/verifications/components/VerificationList.tsx(294,6): error TS17008: JSX element 'FlatList' has no corresponding closing tag.
+src/screens/admin/verifications/components/VerificationList.tsx(302,16): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(303,11): error TS1003: Identifier expected.
+src/screens/admin/verifications/components/VerificationList.tsx(303,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/admin/verifications/components/VerificationList.tsx(304,9): error TS1005: '}' expected.
+src/screens/admin/verifications/components/VerificationList.tsx(305,7): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/admin/verifications/components/VerificationList.tsx(308,6): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/admin/verifications/components/VerificationList.tsx(310,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/admin/verifications/components/VerificationList.tsx(311,1): error TS1005: '</' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(119,88): error TS1005: ',' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(119,103): error TS1005: '}' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(119,105): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/ApplicationCard.tsx(120,77): error TS1005: '}' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(120,82): error TS1003: Identifier expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(120,83): error TS1005: '...' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(120,103): error TS1003: Identifier expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(120,105): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/ApplicationCard.tsx(121,9): error TS1005: '}' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(122,9): error TS2657: JSX expressions must have one parent element.
+src/screens/adoption/manager/components/ApplicationCard.tsx(124,39): error TS1005: ',' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(124,46): error TS1005: ',' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(124,49): error TS1005: '}' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(124,50): error TS1005: '...' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(125,11): error TS1003: Identifier expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(126,11): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/adoption/manager/components/ApplicationCard.tsx(127,7): error TS1005: '}' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(132,83): error TS1005: ',' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(132,99): error TS1005: '}' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(132,101): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/ApplicationCard.tsx(136,83): error TS1005: ',' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(136,96): error TS1005: '}' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(136,98): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/ApplicationCard.tsx(140,83): error TS1005: ',' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(140,95): error TS1005: '}' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(140,97): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/ApplicationCard.tsx(141,9): error TS1128: Declaration or statement expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(144,83): error TS1005: ',' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(144,96): error TS1005: '}' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(144,106): error TS1003: Identifier expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(144,108): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/ApplicationCard.tsx(145,9): error TS1128: Declaration or statement expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(146,7): error TS1109: Expression expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(148,19): error TS1005: ',' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(152,13): error TS1005: '}' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(161,13): error TS1005: '}' expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(170,5): error TS1128: Declaration or statement expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(171,3): error TS1109: Expression expected.
+src/screens/adoption/manager/components/ApplicationCard.tsx(172,1): error TS1128: Declaration or statement expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(122,74): error TS1005: ',' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(122,80): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(122,82): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/PetListingCard.tsx(124,17): error TS1005: ',' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(124,25): error TS1127: Invalid character.
+src/screens/adoption/manager/components/PetListingCard.tsx(125,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/PetListingCard.tsx(126,9): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(129,11): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(135,31): error TS1005: ',' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(135,38): error TS1005: ',' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(135,39): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/adoption/manager/components/PetListingCard.tsx(136,13): error TS17002: Expected corresponding JSX closing tag for 'TouchableOpacity'.
+src/screens/adoption/manager/components/PetListingCard.tsx(137,9): error TS1128: Declaration or statement expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(138,7): error TS1109: Expression expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(142,77): error TS1005: ',' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(142,91): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(142,93): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/PetListingCard.tsx(143,82): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(143,84): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/PetListingCard.tsx(144,9): error TS1128: Declaration or statement expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(145,9): error TS2657: JSX expressions must have one parent element.
+src/screens/adoption/manager/components/PetListingCard.tsx(146,77): error TS1005: ',' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(146,84): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(146,86): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/PetListingCard.tsx(147,75): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(148,11): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/adoption/manager/components/PetListingCard.tsx(150,77): error TS1005: ',' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(150,99): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(150,101): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/PetListingCard.tsx(151,78): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(152,11): error TS17002: Expected corresponding JSX closing tag for 'Text'.
+src/screens/adoption/manager/components/PetListingCard.tsx(153,7): error TS1128: Declaration or statement expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(155,7): error TS2657: JSX expressions must have one parent element.
+src/screens/adoption/manager/components/PetListingCard.tsx(158,11): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(163,84): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(163,91): error TS1003: Identifier expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(163,93): error TS17002: Expected corresponding JSX closing tag for 'TouchableOpacity'.
+src/screens/adoption/manager/components/PetListingCard.tsx(164,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/adoption/manager/components/PetListingCard.tsx(167,11): error TS1005: '}' expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(174,7): error TS1128: Declaration or statement expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(175,5): error TS1109: Expression expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(176,3): error TS1109: Expression expected.
+src/screens/adoption/manager/components/PetListingCard.tsx(177,1): error TS1128: Declaration or statement expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(143,21): error TS1005: '}' expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(143,25): error TS1003: Identifier expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(144,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/ai/AICompatibilityScreen.original.tsx(145,9): error TS1005: '}' expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(146,7): error TS1109: Expression expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(147,5): error TS1109: Expression expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(148,3): error TS1128: Declaration or statement expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(151,5): error TS2657: JSX expressions must have one parent element.
+src/screens/ai/AICompatibilityScreen.original.tsx(172,27): error TS1005: '}' expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(173,11): error TS1003: Identifier expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(173,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/ai/AICompatibilityScreen.original.tsx(178,17): error TS1005: '}' expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(192,11): error TS17002: Expected corresponding JSX closing tag for 'ScrollView'.
+src/screens/ai/AICompatibilityScreen.original.tsx(194,9): error TS1005: '}' expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(194,29): error TS1005: '...' expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(195,9): error TS1003: Identifier expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(202,9): error TS1005: ')' expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(240,7): error TS1128: Declaration or statement expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(241,5): error TS1109: Expression expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(242,3): error TS1109: Expression expected.
+src/screens/ai/AICompatibilityScreen.original.tsx(243,1): error TS1128: Declaration or statement expected.
+src/screens/ai/AICompatibilityScreen.tsx(884,24): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/ai/AICompatibilityScreen.tsx(885,21): error TS1003: Identifier expected.
+src/screens/ai/AIPhotoAnalyzerScreen.original.tsx(307,78): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/ai/AIPhotoAnalyzerScreen.original.tsx(308,11): error TS1003: Identifier expected.
+src/screens/ai/AIPhotoAnalyzerScreen.original.tsx(650,75): error TS1003: Identifier expected.
+src/screens/ai/AIPhotoAnalyzerScreen.original.tsx(650,77): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/ai/AIPhotoAnalyzerScreen.original.tsx(758,78): error TS1003: Identifier expected.
+src/screens/ai/AIPhotoAnalyzerScreen.original.tsx(758,80): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/ai/AIPhotoAnalyzerScreen.original.tsx(775,22): error TS1003: Identifier expected.
+src/screens/ai/AIPhotoAnalyzerScreen.original.tsx(775,24): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/ai/AIPhotoAnalyzerScreen.refactored.tsx(64,78): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/screens/ai/AIPhotoAnalyzerScreen.refactored.tsx(65,11): error TS1003: Identifier expected.
+src/screens/ai/AIPhotoAnalyzerScreen.refactored.tsx(83,13): error TS1005: ',' expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(74,22): error TS1005: '}' expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(75,11): error TS1003: Identifier expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(75,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(76,9): error TS1005: '}' expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(76,11): error TS17015: Expected corresponding closing tag for JSX fragment.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(78,20): error TS1005: ',' expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(79,9): error TS1005: '}' expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(80,7): error TS1109: Expression expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(86,18): error TS1005: '}' expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(87,11): error TS1003: Identifier expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(87,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(88,9): error TS1005: '}' expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(93,79): error TS1005: '}' expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(93,81): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(94,13): error TS1005: ')' expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(95,13): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(97,7): error TS1128: Declaration or statement expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(98,5): error TS1109: Expression expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(98,7): error TS1109: Expression expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(99,3): error TS1109: Expression expected.
+src/screens/ai/compatibility/components/AnalysisDetails.tsx(100,1): error TS1128: Declaration or statement expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(100,25): error TS1005: '}' expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(101,9): error TS1003: Identifier expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(101,11): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(102,7): error TS1005: '}' expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(105,11): error TS2657: JSX expressions must have one parent element.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(107,22): error TS1005: ',' expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(108,13): error TS1005: '}' expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(108,15): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(122,13): error TS1005: ')' expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(122,13): error TS1109: Expression expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(122,15): error TS17002: Expected corresponding JSX closing tag for 'View'.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(123,11): error TS1128: Declaration or statement expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(124,9): error TS1109: Expression expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(124,10): error TS1128: Declaration or statement expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(124,11): error TS1128: Declaration or statement expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(125,7): error TS1128: Declaration or statement expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(126,5): error TS1109: Expression expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(127,3): error TS1109: Expression expected.
+src/screens/ai/compatibility/components/CompatibilityBreakdown.tsx(128,1): error TS1128: Declaration or statement expected.

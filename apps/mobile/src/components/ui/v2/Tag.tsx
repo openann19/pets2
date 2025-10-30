@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '@/theme';
 import { Text } from './Text';
 
 export type TagVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -17,10 +17,10 @@ export interface TagProps {
 }
 
 const sizeMap = {
-  sm: { padding: 4, fontSize: 12 },
-  md: { padding: 6, fontSize: 14 },
-  lg: { padding: 8, fontSize: 16 },
-};
+  sm: { paddingKey: 'xs', fontSize: 12 },
+  md: { paddingKey: 'sm', fontSize: 14 },
+  lg: { paddingKey: 'md', fontSize: 16 },
+} as const;
 
 export function Tag({
   label,
@@ -33,7 +33,7 @@ export function Tag({
 }: TagProps) {
   const theme = useTheme();
   const sizeStyles = sizeMap[size];
-  const paddingValue = theme.spacing[sizeStyles.padding];
+  const paddingValue = theme.spacing[sizeStyles.paddingKey];
 
   const getVariantStyles = () => {
     switch (variant) {
@@ -41,7 +41,7 @@ export function Tag({
         return {
           backgroundColor: theme.colors.primary,
           borderColor: 'transparent',
-          textColor: theme.colors.primaryText,
+          textColor: theme.colors.onPrimary,
         };
       case 'secondary':
         return {
@@ -53,14 +53,14 @@ export function Tag({
         return {
           backgroundColor: 'transparent',
           borderColor: theme.colors.border,
-          textColor: theme.colors.onSurface
+          textColor: theme.colors.onSurface,
         };
       case 'ghost':
       default:
         return {
-          backgroundColor: theme.colors.bgAlt,
+          backgroundColor: theme.colors.surface,
           borderColor: 'transparent',
-          textColor: theme.colors.onSurface
+          textColor: theme.colors.onSurface,
         };
     }
   };
@@ -76,7 +76,7 @@ export function Tag({
           backgroundColor: variantStyles.backgroundColor,
           borderWidth: variantStyles.borderColor !== 'transparent' ? 1 : 0,
           borderColor: variantStyles.borderColor,
-          borderRadius: theme.radius.full,
+          borderRadius: theme.radii.full,
           paddingHorizontal: paddingValue,
           paddingVertical: paddingValue / 2,
           flexDirection: 'row',

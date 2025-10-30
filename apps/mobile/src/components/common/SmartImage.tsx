@@ -41,7 +41,7 @@ const SmartImage = memo(function SmartImage({
           />
         )}
         {errored && (
-          <View style={[styles.fallback, { borderRadius: rounded }]>
+          <View style={[styles.fallback, { borderRadius: rounded }]}> 
             {/* fallback - could show icon here */}
           </View>
         )}

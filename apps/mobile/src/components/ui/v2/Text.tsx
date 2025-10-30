@@ -4,7 +4,7 @@ import {
   type TextProps as RNTextProps,
   StyleSheet,
 } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '@/theme';
 
 export type TextVariant = 
   | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'

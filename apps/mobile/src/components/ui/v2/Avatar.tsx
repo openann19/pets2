@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '@mobile/src/theme';
 import { Text } from './Text';
 
 export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -33,7 +33,7 @@ export function Avatar({
 }: AvatarProps) {
   const theme = useTheme();
   const sizeStyles = sizeMap[size];
-  const radius = variant === 'circle' ? sizeStyles.width / 2 : theme.radius.md;
+  const radius = variant === 'circle' ? sizeStyles.width / 2 : theme.radii.md;
 
   const bgColor = fallbackColor || theme.colors.primary;
 
@@ -46,7 +46,7 @@ export function Avatar({
             height: sizeStyles.height,
             borderRadius: radius,
             overflow: 'hidden',
-            backgroundColor: theme.colors.bgAlt,
+            backgroundColor: theme.colors.surface,
           },
         ]}
         testID={testID}
@@ -81,7 +81,7 @@ export function Avatar({
         style={{
           fontSize: sizeStyles.fontSize,
           fontWeight: '600',
-          color: theme.colors.primaryText,
+          color: theme.colors.onPrimary,
         }}
       >
         {initials || '?'}

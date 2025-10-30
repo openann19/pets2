@@ -74,7 +74,7 @@ const SemanticColors = (theme: ReturnType<typeof useTheme>) => ({
   premium: {
     gold: theme.colors.warning,
     platinum: theme.colors.bg.tertiary,
-    diamond: theme.colors.status.info,
+    diamond: theme.colors.info,
   },
   interactive: {
     primary: theme.colors.primary,

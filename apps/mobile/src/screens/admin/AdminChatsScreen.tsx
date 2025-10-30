@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme'";
+import { useTheme } from "@/theme";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
 
@@ -145,7 +145,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       <View
         style={StyleSheet.flatten([
           styles.messageCard,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
         ])}
       >
         <View style={styles.messageHeader}>
@@ -161,7 +161,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             <Text
               style={StyleSheet.flatten([
                 styles.timestamp,
-                { color: colors.onSurfaceecondary },
+                { color: colors.onMuted },
               ])}
             >
               {new Date(item.timestamp).toLocaleString()}
@@ -212,12 +212,12 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             </Text>
           </View>
         ) : (
-          <View style={styles.actionButtons}>
-            <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.actionButton,
-                styles.approveButton,
-              ])}
+        <View style={styles.actionButtons}>
+          <TouchableOpacity
+            style={StyleSheet.flatten([
+              styles.actionButton,
+              { backgroundColor: theme.colors.success },
+            ])}
                testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleMessageAction(item.id, "approve")}
             >
               <Ionicons name="checkmark" size={16} color="white" />
@@ -225,10 +225,10 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.actionButton,
-                styles.warnButton,
-              ])}
+            style={StyleSheet.flatten([
+              styles.actionButton,
+              { backgroundColor: theme.colors.warning },
+            ])}
                testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleMessageAction(item.id, "warn")}
             >
               <Ionicons name="warning" size={16} color="white" />
@@ -236,10 +236,10 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.actionButton,
-                styles.removeButton,
-              ])}
+            style={StyleSheet.flatten([
+              styles.actionButton,
+              { backgroundColor: theme.colors.danger },
+            ])}
                testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleMessageAction(item.id, "remove")}
             >
               <Ionicons name="trash" size={16} color="white" />
@@ -257,7 +257,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       style={StyleSheet.flatten([
         styles.filterButton,
         {
-          backgroundColor: filter === filterType ? colors.primary : colors.card,
+          backgroundColor: filter === filterType ? colors.primary : colors.surface,
         },
       ])}
        testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
@@ -286,7 +286,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       <View
         style={StyleSheet.flatten([
           styles.header,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
         ])}
       >
         <TouchableOpacity
@@ -295,7 +295,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
         </TouchableOpacity>
         <Text
           style={StyleSheet.flatten([
@@ -311,7 +311,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       <View
         style={StyleSheet.flatten([
           styles.searchContainer,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
         ])}
       >
         <View
@@ -320,7 +320,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             { backgroundColor: colors.background },
           ])}
         >
-          <Ionicons name="search" size={20} color={colors.onSurfaceecondary} />
+          <Ionicons name="search" size={20} color={colors.onMuted} />
           <TextInput
             style={StyleSheet.flatten([
               styles.searchInput,
@@ -329,7 +329,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search messages..."
-            placeholderTextColor={colors.onSurfaceecondary}
+            placeholderTextColor={colors.onMuted}
           />
         </View>
 
@@ -344,10 +344,10 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text
+              <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
             ])}
           >
             Loading messages...
@@ -371,12 +371,12 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
               <Ionicons
                 name="chatbubbles-outline"
                 size={64}
-                color={colors.onSurfaceecondary}
+                color={colors.onMuted}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.emptyText,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 No messages found
@@ -399,7 +399,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
   },
   backButton: {
     marginRight: 16,
@@ -411,7 +410,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -455,7 +453,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: theme.colors.border,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -524,15 +522,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     gap: 4,
   },
-  approveButton: {
-    backgroundColor: theme.colors.success,
-  },
-  warnButton: {
-    backgroundColor: theme.colors.warning,
-  },
-  removeButton: {
-    backgroundColor: theme.colors.danger,
-  },
+  approveButton: {},
+  warnButton: {},
+  removeButton: {},
   actionButtonText: {
     fontSize: 12,
     color: "white",

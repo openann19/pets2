@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme'";
+import { useTheme } from "@/theme";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 import { getExtendedColors, type ExtendedColors } from '../../theme/adapters';
@@ -204,7 +204,7 @@ export default function AdminDashboardScreen({
           <Text
             style={StyleSheet.flatten([
               styles.subtitle,
-              { color: colors.onSurfaceecondary },
+              { color: colors.onMuted },
             ])}
           >
             Welcome, {_user?.firstName} {_user?.lastName}
@@ -216,7 +216,7 @@ export default function AdminDashboardScreen({
           <View
             style={StyleSheet.flatten([
               styles.card,
-              { backgroundColor: colors.card },
+              { backgroundColor: colors.surface },
             ])}
           >
             <View style={styles.cardHeader}>
@@ -246,7 +246,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.healthDetails,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Uptime: {Math.floor(systemHealth.uptime / 3600)}h{" "}
@@ -255,7 +255,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.healthDetails,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Database: {systemHealth.database.status}
@@ -263,7 +263,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.healthDetails,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Memory: {systemHealth.memory.used}MB /{" "}
@@ -287,7 +287,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("analytics");
@@ -307,13 +307,13 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("users");
               }}
             >
-              <Ionicons name="people-outline" size={32} color={theme.colors.primary} />
+              <Ionicons name="people-outline" size={32} color={colors.primary} />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -327,13 +327,13 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("security");
               }}
             >
-              <Ionicons name="shield-outline" size={32} color={theme.colors.danger} />
+              <Ionicons name="shield-outline" size={32} color={colors.danger} />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -347,7 +347,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("billing");
@@ -367,13 +367,13 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("chats");
               }}
             >
-              ?{" "}
+              
               <Ionicons name="chatbubbles-outline" size={32} color={colors.warning} />
               <Text
                 style={StyleSheet.flatten([
@@ -388,7 +388,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("uploads");
@@ -408,7 +408,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("verifications");
@@ -428,7 +428,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("services");
@@ -463,7 +463,7 @@ export default function AdminDashboardScreen({
             <View
               style={StyleSheet.flatten([
                 styles.statCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.statHeader}>
@@ -489,7 +489,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   Active: {stats.users.active}
@@ -497,7 +497,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   Verified: {stats.users.verified}
@@ -525,7 +525,7 @@ export default function AdminDashboardScreen({
             <View
               style={StyleSheet.flatten([
                 styles.statCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.statHeader}>
@@ -551,7 +551,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   Active: {stats.pets.active}
@@ -571,7 +571,7 @@ export default function AdminDashboardScreen({
             <View
               style={StyleSheet.flatten([
                 styles.statCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.statHeader}>
@@ -597,7 +597,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   Active: {stats.matches.active}
@@ -625,11 +625,11 @@ export default function AdminDashboardScreen({
             <View
               style={StyleSheet.flatten([
                 styles.statCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="chatbubble" size={24} color={theme.colors.primary} />
+                <Ionicons name="chatbubble" size={24} color={colors.primary} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,

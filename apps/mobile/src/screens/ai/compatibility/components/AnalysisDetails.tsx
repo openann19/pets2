@@ -67,22 +67,22 @@ export const AnalysisDetails: React.FC<AnalysisDetailsProps> = ({ analysis }) =>
 
   return (
     <>
-      <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.resultCard, { backgroundColor: colors.surface }]}>
         <View style={styles.resultHeader}>
           <Ionicons name="document-text" size={24} color={colors.onMuted} />
-          <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+          <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
             Detailed Analysis
           </Text>
         </View>
-        <Text style={[styles.detailedText, { color: colors.onSurface }]>
+        <Text style={[styles.detailedText, { color: colors.onSurface }]}>
           {analysis.detailed}
         </Text>
       </View>
 
-      <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.resultCard, { backgroundColor: colors.surface }]}>
         <View style={styles.resultHeader}>
           <Ionicons name="bulb-outline" size={24} color={colors.warning} />
-          <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+          <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
             Tips for Success
           </Text>
         </View>
@@ -90,7 +90,7 @@ export const AnalysisDetails: React.FC<AnalysisDetailsProps> = ({ analysis }) =>
           {analysis.tips.map((tip, index) => (
             <View key={index} style={styles.tipItem}>
               <Ionicons name="checkmark-circle" size={16} color={colors.warning} />
-              <Text style={[styles.tipText, { color: colors.onSurface }]>{tip}</Text>
+              <Text style={[styles.tipText, { color: colors.onSurface }]}>{tip}</Text>
             </View>
           ))}
         </View>

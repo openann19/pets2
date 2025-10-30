@@ -33,7 +33,7 @@ import { useHomeScreen } from "../hooks/screens/useHomeScreen";
 import { useScrollOffsetTracker, useTabReselectRefresh } from "../hooks/navigation";
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 import { useTranslation } from 'react-i18next';
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -91,7 +91,7 @@ export default function HomeScreen() {
     sectionTitle: {
       fontSize: 20,
       fontWeight: "bold",
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       marginBottom: 16,
     },
     actionsGrid: {

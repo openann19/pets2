@@ -120,12 +120,12 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
   return (
     <View style={styles.metricsGrid}>
       {/* Users Metric */}
-      <View style={[styles.metricCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
           <Ionicons name="people" size={20} color={theme.colors.info} />
-          <Text style={[styles.metricTitle, { color: colors.onSurface }]>Users</Text>
+          <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Users</Text>
         </View>
-        <Text style={[styles.metricValue, { color: colors.onSurface }]>
+        <Text style={[styles.metricValue, { color: colors.onSurface }]}>
           {formatNumber(analytics.users.total)}
         </Text>
         <View style={styles.metricTrend}>
@@ -147,12 +147,12 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
       </View>
 
       {/* Matches Metric */}
-      <View style={[styles.metricCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
           <Ionicons name="heart" size={20} color={theme.colors.primary} />
-          <Text style={[styles.metricTitle, { color: colors.onSurface }]>Matches</Text>
+          <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Matches</Text>
         </View>
-        <Text style={[styles.metricValue, { color: colors.onSurface }]>
+        <Text style={[styles.metricValue, { color: colors.onSurface }]}>
           {formatNumber(analytics.matches.total)}
         </Text>
         <View style={styles.metricTrend}>
@@ -174,12 +174,12 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
       </View>
 
       {/* Messages Metric */}
-      <View style={[styles.metricCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
           <Ionicons name="chatbubble" size={20} color={theme.colors.primary} />
-          <Text style={[styles.metricTitle, { color: colors.onSurface }]>Messages</Text>
+          <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Messages</Text>
         </View>
-        <Text style={[styles.metricValue, { color: colors.onSurface }]>
+        <Text style={[styles.metricValue, { color: colors.onSurface }]}>
           {formatNumber(analytics.messages.total)}
         </Text>
         <View style={styles.metricTrend}>
@@ -201,15 +201,15 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
       </View>
 
       {/* Revenue Metric */}
-      <View style={[styles.metricCard, { backgroundColor: colors.surface }]>
+      <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
           <Ionicons name="cash" size={20} color={theme.colors.success} />
-          <Text style={[styles.metricTitle, { color: colors.onSurface }]>Revenue</Text>
+          <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Revenue</Text>
         </View>
-        <Text style={[styles.metricValue, { color: colors.onSurface }]>
+        <Text style={[styles.metricValue, { color: colors.onSurface }]}>
           {formatCurrency(analytics.revenue.totalRevenue)}
         </Text>
-        <Text style={[styles.metricSubtext, { color: colors.onMuted }]>
+        <Text style={[styles.metricSubtext, { color: colors.onMuted }]}>
           MRR: {formatCurrency(analytics.revenue.monthlyRecurringRevenue)}
         </Text>
       </View>

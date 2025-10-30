@@ -3,7 +3,7 @@
  * Extracts animation logic from AdvancedCard
  */
 
-import { useRef, useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { Animated } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { logger } from '@pawfectmatch/core';

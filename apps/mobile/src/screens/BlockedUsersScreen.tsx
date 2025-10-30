@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 import { useBlockedUsersScreen } from "../hooks/screens/useBlockedUsersScreen";
 
 interface BlockedUser {
@@ -117,7 +117,7 @@ function BlockedUsersScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.userEmail,
-                { color: colors.onSurfaceecondary },
+                { color: colors.onMuted },
               ])}
             >
               {item.email}
@@ -125,7 +125,7 @@ function BlockedUsersScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.blockedDate,
-                { color: colors.onSurfaceecondary },
+                { color: colors.onMuted },
               ])}
             >
               Blocked {new Date(item.blockedAt).toLocaleDateString()}
@@ -190,8 +190,8 @@ function BlockedUsersScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color={theme.colors.status.info
-           } }/>
+              color={colors.info}
+            />
             <Text style={styles.infoText}>
               Blocked users cannot contact you or view your profile. You can
               unblock them at any time.

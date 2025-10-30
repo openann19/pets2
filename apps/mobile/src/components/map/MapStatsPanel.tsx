@@ -18,7 +18,7 @@ export function MapStatsPanel({
   opacity,
 }: MapStatsPanelProps): React.JSX.Element {
   return (
-    <Animated.View style={[styles.statsContainer, { opacity }]>
+    <Animated.View style={[styles.statsContainer, { opacity }]}>
       <View style={styles.statItem}>
         <Text style={styles.statValue}>{stats.activePets}</Text>
         <Text style={styles.statLabel}>Active</Text>

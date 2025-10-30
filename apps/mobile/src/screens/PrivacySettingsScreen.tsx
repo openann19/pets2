@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 import type { RootStackParamList } from "../navigation/types";
 import { request } from "../services/api";
 import {
@@ -34,7 +34,8 @@ type PrivacySettingsScreenProps = NativeStackScreenProps<
 function PrivacySettingsScreen({
   navigation,
 }: PrivacySettingsScreenProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const { settings, loading, updateSetting } = usePrivacySettingsScreen();
   const [loadingExport, setLoadingExport] = useState(false);
 
@@ -47,7 +48,7 @@ function PrivacySettingsScreen({
     <View
       style={StyleSheet.flatten([
         styles.settingItem,
-        { backgroundColor: colors.card },
+        { backgroundColor: colors.surface },
       ])}
     >
       <View style={styles.settingContent}>
@@ -115,7 +116,7 @@ function PrivacySettingsScreen({
       testID="privacy-settings-screen"
       style={StyleSheet.flatten([
         styles.container,
-        { backgroundColor: colors.background },
+        { backgroundColor: colors.bg },
       ])}
     >
       {/* Header */}
@@ -125,7 +126,7 @@ function PrivacySettingsScreen({
         accessibilityRole="header"
         style={StyleSheet.flatten([
           styles.header,
-          { backgroundColor: colors.card, borderBottomColor: colors.border },
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
         ])}
       >
         <TouchableOpacity
@@ -136,7 +137,7 @@ function PrivacySettingsScreen({
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
         </TouchableOpacity>
         <Text
           testID="privacy-settings-title"
@@ -201,7 +202,7 @@ function PrivacySettingsScreen({
               }
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showOnlineStatus ? colors.card : theme.palette.neutral[500]
+                settings.showOnlineStatus ? colors.surface : theme.palette.neutral[500]
               }
             />,
           )}
@@ -213,7 +214,7 @@ function PrivacySettingsScreen({
               value={settings.showDistance}
               onValueChange={(value) => updateSetting("showDistance", value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.showDistance ? colors.card : theme.palette.neutral[500]}
+              thumbColor={settings.showDistance ? colors.surface : theme.palette.neutral[500]}
             />,
           )}
 
@@ -225,7 +226,7 @@ function PrivacySettingsScreen({
               onValueChange={(value) => updateSetting("showLastActive", value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showLastActive ? colors.card : theme.palette.neutral[500]
+                settings.showLastActive ? colors.surface : theme.palette.neutral[500]
               }
             />,
           )}
@@ -269,7 +270,7 @@ function PrivacySettingsScreen({
               }
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showReadReceipts ? colors.card : theme.palette.neutral[500]
+                settings.showReadReceipts ? colors.surface : theme.palette.neutral[500]
               }
             />,
           )}
@@ -292,7 +293,7 @@ function PrivacySettingsScreen({
               value={settings.incognitoMode}
               onValueChange={(value) => updateSetting("incognitoMode", value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.incognitoMode ? colors.card : theme.palette.neutral[500]}
+              thumbColor={settings.incognitoMode ? colors.surface : theme.palette.neutral[500]}
             />,
           )}
 
@@ -303,7 +304,7 @@ function PrivacySettingsScreen({
               value={settings.shareLocation}
               onValueChange={(value) => updateSetting("shareLocation", value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.shareLocation ? colors.card : theme.palette.neutral[500]}
+              thumbColor={settings.shareLocation ? colors.surface : theme.palette.neutral[500]}
             />,
           )}
         </View>
@@ -325,7 +326,7 @@ function PrivacySettingsScreen({
               value={settings.dataSharing}
               onValueChange={(value) => updateSetting("dataSharing", value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.dataSharing ? colors.card : theme.palette.neutral[500]}
+              thumbColor={settings.dataSharing ? colors.surface : theme.palette.neutral[500]}
             />,
           )}
 
@@ -339,7 +340,7 @@ function PrivacySettingsScreen({
               }
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.analyticsTracking ? colors.card : theme.palette.neutral[500]
+                settings.analyticsTracking ? colors.surface : theme.palette.neutral[500]
               }
             />,
           )}
@@ -365,7 +366,7 @@ function PrivacySettingsScreen({
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color={colors.onSurfaceecondary}
+                color={colors.onMuted}
               />
             </TouchableOpacity>,
             true,
@@ -412,7 +413,7 @@ function PrivacySettingsScreen({
               <Ionicons
                 name="download-outline"
                 size={20}
-                color={colors.onSurfaceecondary}
+                color={colors.onMuted}
               />
             </TouchableOpacity>,
             true,
@@ -465,7 +466,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 8,
-    shadowColor: theme.palette.neutral,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -493,7 +494,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: theme.palette.neutral[200],
   },
   pickerOptionText: {
     fontSize: 12,

@@ -134,7 +134,7 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
           style={StyleSheet.flatten([
             styles.overlay,
             styles.errorOverlay,
-            { backgroundColor: colors.bgElevated },
+            { backgroundColor: colors.surface },
           ])}
           accessible={true}
           accessibilityLabel="Image failed to load"
@@ -143,7 +143,7 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
           <Ionicons
             name={fallbackIcon}
             size={32}
-            color={colors.onSurface
+            color={colors.onSurface}
             style={styles.errorIcon}
           />
           <Text

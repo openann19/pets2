@@ -55,8 +55,8 @@ export default function AIBioScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity  testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleGoBack}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface />
+        <TouchableOpacity testID="AIBioScreen-button-2" accessibilityLabel="Go back" accessibilityRole="button" onPress={handleGoBack}>
+          <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Bio Generator</Text>
         <View style={styles.headerRight}>
@@ -68,7 +68,7 @@ export default function AIBioScreen() {
         {/* Photo Upload */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Pet Photo (Optional)</Text>
-          <TouchableOpacity style={styles.photoUpload}  testID="AIBioScreen-button-2" accessibilityLabel="selectedPhoto ? (" accessibilityRole="button" onPress={pickImage}>
+          <TouchableOpacity style={styles.photoUpload} testID="AIBioScreen-button-2" accessibilityLabel="Select pet photo" accessibilityRole="button" onPress={pickImage}>
             {selectedPhoto ? (
               <Image
                 source={{ uri: selectedPhoto }}
@@ -291,7 +291,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     backgroundColor: theme.colors.bg,
-    shadowColor: theme.colors.onSurface
+    shadowColor: theme.colors.onSurface,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -300,7 +300,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold" as const,
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
   },
   headerRight: {
     width: 24,
@@ -315,7 +315,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold" as const,
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
     marginBottom: 15,
   },
   photoUpload: {
@@ -323,7 +323,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     borderRadius: 15,
     overflow: "hidden" as const,
     backgroundColor: theme.colors.surface,
-    shadowColor: theme.colors.onSurface
+    shadowColor: theme.colors.onSurface,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -351,7 +351,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
     marginBottom: 8,
   },
   textInput: {
@@ -362,7 +362,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    shadowColor: theme.colors.onSurface
+    shadowColor: theme.colors.onSurface,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -422,7 +422,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: 15,
     padding: 20,
-    shadowColor: theme.colors.onSurface
+    shadowColor: theme.colors.onSurface,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -431,7 +431,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   bioText: {
     fontSize: 16,
     lineHeight: 24,
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
     marginBottom: 20,
   },
   bioStats: {
@@ -520,7 +520,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
-    shadowColor: theme.colors.onSurface
+    shadowColor: theme.colors.onSurface,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,

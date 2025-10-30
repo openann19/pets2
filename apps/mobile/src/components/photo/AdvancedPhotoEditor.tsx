@@ -441,7 +441,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
           <BouncePressable
             onPress={handleSave}
             disabled={isProcessing}
-            style={[styles.headerButton, isProcessing && { opacity: 0.5 }]
+            style={[styles.headerButton, isProcessing && { opacity: 0.5 }]}
             accessibilityRole="button"
             accessibilityLabel="Save edits"
           >
@@ -466,8 +466,8 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 8, paddingHorizontal: 12,
                          borderRadius: 10, backgroundColor: "rgba(255,255,255,0.08)", borderWidth: 1, borderColor: "rgba(255,255,255,0.15)" }}
                 accessibilityLabel="Auto-crop with face detection">
-                <Ionicons name="sparkles" size={18} color={theme.colors.primary} />
-                <Text style={{ color: theme.colors.bg.primary, fontWeight: "700", fontSize: 13 }}>Auto</Text>
+              <Ionicons name="sparkles" size={18} color={theme.colors.primary} />
+                <Text style={{ color: theme.colors.primary, fontWeight: "700", fontSize: 13 }}>Auto</Text>
               </BouncePressable>
 
               <BouncePressable
@@ -475,8 +475,8 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 8, paddingHorizontal: 12,
                          borderRadius: 10, backgroundColor: "rgba(255,255,255,0.08)", borderWidth: 1, borderColor: "rgba(255,255,255,0.15)" }}
                 accessibilityLabel="Toggle story mode guides">
-                <Ionicons name="eye" size={18} color={showGuides ? theme.colors.primary : theme.colors.bg.primary} />
-                <Text style={{ color: showGuides ? theme.colors.primary : theme.colors.bg.primary, fontWeight: "700", fontSize: 13 }}>Guides</Text>
+                <Ionicons name="eye" size={18} color={showGuides ? theme.colors.primary : theme.colors.onSurface} />
+                <Text style={{ color: showGuides ? theme.colors.primary : theme.colors.onSurface, fontWeight: "700", fontSize: 13 }}>Guides</Text>
               </BouncePressable>
             </View>
 
@@ -528,18 +528,18 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 <View style={StyleSheet.absoluteFill} pointerEvents="none">
                   {showGrid === 'thirds' && (
                     <>
-                      <View style={[styles.gridLine, { left: '33.33%' }] />
-                      <View style={[styles.gridLine, { left: '66.66%' }] />
-                      <View style={[styles.gridLine, { top: '33.33%', left: 0, width: '100%', height: 1 }] />
-                      <View style={[styles.gridLine, { top: '66.66%', left: 0, width: '100%', height: 1 }] />
+                      <View style={[styles.gridLine, { left: '33.33%' }]} />
+                      <View style={[styles.gridLine, { left: '66.66%' }]} />
+                      <View style={[styles.gridLine, { top: '33.33%', left: 0, width: '100%', height: 1 }]} />
+                      <View style={[styles.gridLine, { top: '66.66%', left: 0, width: '100%', height: 1 }]} />
                     </>
                   )}
                   {showGrid === 'golden' && (
                     <>
-                      <View style={[styles.gridLine, { left: '38.2%' }] />
-                      <View style={[styles.gridLine, { left: '61.8%' }] />
-                      <View style={[styles.gridLine, { top: '38.2%', left: 0, width: '100%', height: 1 }] />
-                      <View style={[styles.gridLine, { top: '61.8%', left: 0, width: '100%', height: 1 }] />
+                      <View style={[styles.gridLine, { left: '38.2%' }]} />
+                      <View style={[styles.gridLine, { left: '61.8%' }]} />
+                      <View style={[styles.gridLine, { top: '38.2%', left: 0, width: '100%', height: 1 }]} />
+                      <View style={[styles.gridLine, { top: '61.8%', left: 0, width: '100%', height: 1 }]} />
                     </>
                   )}
                 </View>
@@ -714,7 +714,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               <BouncePressable
                 onPress={handleUltraExport}
                 disabled={ultraExporting}
-                style={[styles.ultraExportButton, ultraExporting && { opacity: 0.6 }]
+                style={[styles.ultraExportButton, ultraExporting && { opacity: 0.6 }]}
                 accessibilityRole="button"
                 accessibilityLabel="Export ultra variants for social media"
               >
@@ -725,7 +725,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               </BouncePressable>
               {ultraExporting && (
                 <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: `${ultraProgress}%` }] />
+                  <View style={[styles.progressFill, { width: `${ultraProgress}%` }]} />
                 </View>
               )}
             </View>

@@ -7,6 +7,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
+import { useTheme } from '@/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const HINTS_STORAGE_KEY = 'swipe_hints_dismissed';
@@ -30,6 +31,7 @@ const hints: Hint[] = [
 ];
 
 export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureHintsProps): React.JSX.Element {
+  const theme = useTheme();
   const [visible, setVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(initialDismissed ?? false);
   const opacity = useRef(new Animated.Value(0)).current;
@@ -103,13 +105,26 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
   const topHint = hints[2];
 
   return (
-    <Animated.View style={[styles.container, { opacity }] pointerEvents="box-none">
+    <Animated.View style={[styles.container, { opacity }]} pointerEvents="box-none">
       {/* Left hint */}
       {leftHint && (
         <View style={styles.hintContainerLeft}>
-          <View style={[styles.hint, { backgroundColor: leftHint.color + '20' }]>
+          <View
+            style={[
+              styles.hint,
+              {
+                backgroundColor: leftHint.color + '20',
+                padding: theme.spacing.sm,
+                borderRadius: theme.radii.lg,
+                gap: theme.spacing.xs,
+                ...theme.shadows.elevation2,
+              },
+            ]}
+          >
             <Ionicons name={leftHint.icon} size={24} color={leftHint.color} />
-            <Text style={[styles.hintText, { color: leftHint.color }]>{leftHint.text}</Text>
+            <Text style={{ fontSize: theme.typography.body.size, fontWeight: '600', color: leftHint.color }}>
+              {leftHint.text}
+            </Text>
           </View>
         </View>
       )}
@@ -117,9 +132,22 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
       {/* Right hint */}
       {rightHint && (
         <View style={styles.hintContainerRight}>
-          <View style={[styles.hint, { backgroundColor: rightHint.color + '20' }]>
+          <View
+            style={[
+              styles.hint,
+              {
+                backgroundColor: rightHint.color + '20',
+                padding: theme.spacing.sm,
+                borderRadius: theme.radii.lg,
+                gap: theme.spacing.xs,
+                ...theme.shadows.elevation2,
+              },
+            ]}
+          >
             <Ionicons name={rightHint.icon} size={24} color={rightHint.color} />
-            <Text style={[styles.hintText, { color: rightHint.color }]>{rightHint.text}</Text>
+            <Text style={{ fontSize: theme.typography.body.size, fontWeight: '600', color: rightHint.color }}>
+              {rightHint.text}
+            </Text>
           </View>
         </View>
       )}
@@ -127,16 +155,29 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
       {/* Top hint */}
       {topHint && (
         <View style={styles.hintContainerTop}>
-          <View style={[styles.hint, { backgroundColor: topHint.color + '20' }]>
+          <View
+            style={[
+              styles.hint,
+              {
+                backgroundColor: topHint.color + '20',
+                padding: theme.spacing.sm,
+                borderRadius: theme.radii.lg,
+                gap: theme.spacing.xs,
+                ...theme.shadows.elevation2,
+              },
+            ]}
+          >
             <Ionicons name={topHint.icon} size={24} color={topHint.color} />
-            <Text style={[styles.hintText, { color: topHint.color }]>{topHint.text}</Text>
+            <Text style={{ fontSize: theme.typography.body.size, fontWeight: '600', color: topHint.color }}>
+              {topHint.text}
+            </Text>
           </View>
         </View>
       )}
 
       {/* Dismiss button */}
       <Pressable style={styles.dismissButton} onPress={handleDismiss} testID="dismiss-button">
-        <Ionicons name="close" size={20} color={Theme.colors.neutral[0}]} />
+        <Ionicons name="close" size={20} color={theme.colors.onPrimary} />
       </Pressable>
     </Animated.View>
   );
@@ -172,15 +213,12 @@ const styles = StyleSheet.create({
   hint: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: Theme.spacing.md,
-    borderRadius: Theme.borderRadius.lg,
-    gap: Theme.spacing.sm,
-    ...Theme.shadows.depth.md,
+    padding: 0, // set via inline using hint color
+    borderRadius: 0, // set via inline using hint color
+    gap: 0, // set via inline using hint color
+    // Shadow applied via theme; override at callsite if needed
   },
-  hintText: {
-    fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.semibold,
-  },
+  hintText: {},
   dismissButton: {
     position: 'absolute',
     top: 60,

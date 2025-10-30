@@ -36,6 +36,7 @@ function ModerationToolsScreen({
 }: ModerationToolsScreenProps): JSX.Element {
   const [pendingReports, setPendingReports] = useState(12);
   const [refreshing, setRefreshing] = useState(false);
+  const theme = useTheme();
 
   const moderationTools: ModerationTool[] = [
     {
@@ -64,7 +65,7 @@ function ModerationToolsScreen({
       title: "Message Monitoring",
       description: "Monitor chat messages for inappropriate content",
       icon: "chatbubble-ellipses-outline",
-      color: theme.colors.secondary[500],
+      color: theme.colors.secondary,
       action: () => {
         navigation.goBack();
       }, // Navigate back to admin chats
@@ -94,7 +95,7 @@ function ModerationToolsScreen({
       title: "Moderation Settings",
       description: "Configure moderation rules and thresholds",
       icon: "settings-outline",
-      color: theme.colors.primary[500],
+      color: theme.colors.primary,
       action: () => {
         Alert.alert("Settings", "Moderation settings coming soon!");
       },
@@ -195,7 +196,7 @@ function ModerationToolsScreen({
                     <View style={styles.toolHeader}>
                       <Text style={styles.toolTitle}>{item.title}</Text>
                       {item.badge && (
-                        <View style={styles.badge}>
+                        <View style={StyleSheet.flatten([styles.badge, { backgroundColor: theme.colors.danger }])}>
                           <Text style={styles.badgeText}>{item.badge}</Text>
                         </View>
                       )}
@@ -218,8 +219,8 @@ function ModerationToolsScreen({
               <Ionicons
                 name="shield-checkmark-outline"
                 size={24}
-                color={theme.colors.success
-             } }/>
+                color={theme.colors.success}
+              />
               <Text style={styles.infoText}>
                 Use these tools to maintain a safe and positive community for
                 all pet lovers.
@@ -239,7 +240,7 @@ function ModerationToolsScreen({
               );
             }}
           >
-            <Ionicons name="warning-outline" size={20} color={theme.colors.danger} }/>
+            <Ionicons name="warning-outline" size={20} color={theme.colors.danger} />
             <Text style={styles.quickActionText}>Emergency Mode</Text>
           </TouchableOpacity>
 
@@ -249,7 +250,7 @@ function ModerationToolsScreen({
               Alert.alert("Guidelines", "Community guidelines coming soon!");
             }}
           >
-            <Ionicons name="document-text-outline" size={20} color={theme.colors.status.info} }/>
+            <Ionicons name="document-text-outline" size={20} color={theme.colors.info} />
             <Text style={styles.quickActionText}>Guidelines</Text>
           </TouchableOpacity>
 
@@ -259,7 +260,7 @@ function ModerationToolsScreen({
               Alert.alert("Training", "Moderator training coming soon!");
             }}
           >
-            <Ionicons name="school-outline" size={20} color={theme.colors.success} }/>
+            <Ionicons name="school-outline" size={20} color={theme.colors.success} />
             <Text style={styles.quickActionText}>Training</Text>
           </TouchableOpacity>
         </BlurView>
@@ -384,7 +385,6 @@ const styles = StyleSheet.create({
     color: "white",
   },
   badge: {
-    backgroundColor: theme.colors.danger,
     borderRadius: 10,
     paddingHorizontal: 8,
     paddingVertical: 2,

@@ -36,20 +36,20 @@ export const PremiumTierCard: React.FC<PremiumTierCardProps> = ({
     accessibilityRole="button"
   >
     {tier.popular && (
-      <View style={[styles.popularBadge, { backgroundColor: "#ec4899" }]>
+      <View style={[styles.popularBadge, { backgroundColor: "#ec4899" }]}>
         <Text style={styles.popularText}>Most Popular</Text>
       </View>
     )}
 
     <View style={styles.tierHeader}>
-      <Text style={[styles.tierName, { color: "#ffffff" }]>
+      <Text style={[styles.tierName, { color: "#ffffff" }]}>
         {tier.name}
       </Text>
       <View style={styles.tierPricing}>
-        <Text style={[styles.tierPrice, { color: "#ffffff" }]>
+        <Text style={[styles.tierPrice, { color: "#ffffff" }]}>
           ${tier.price[billingPeriod]}
         </Text>
-        <Text style={[styles.tierDuration, { color: "#9ca3af" }]>
+        <Text style={[styles.tierDuration, { color: "#9ca3af" }]}>
           /{billingPeriod === "monthly" ? "month" : "year"}
         </Text>
       </View>
@@ -63,7 +63,7 @@ export const PremiumTierCard: React.FC<PremiumTierCardProps> = ({
             size={16}
             color="#10b981"
           />
-          <Text style={[styles.tierFeatureText, { color: "#d1d5db" }]>
+          <Text style={[styles.tierFeatureText, { color: "#d1d5db" }]}>
             {feature}
           </Text>
         </View>

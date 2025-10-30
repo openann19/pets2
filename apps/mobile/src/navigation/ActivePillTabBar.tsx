@@ -160,7 +160,7 @@ export default function ActivePillTabBar({
       <BlurView
         intensity={Platform.OS === "ios" ? 80 : 100}
         tint={dark ? "dark" : "light"}
-        style={[styles.bar, { borderColor: dark ? "#2a2e36" : "#e5e7eb" }]
+        style={[styles.bar, { borderColor: dark ? "#2a2e36" : "#e5e7eb" }]}
       >
         {/* active pill */}
         <Animated.View
@@ -244,7 +244,7 @@ export default function ActivePillTabBar({
                   <Ionicons
                     name={getIcon(route.name, isFocused)}
                     size={22}
-                    color={isFocused ? colors.primary : colors.onSurface
+                    color={isFocused ? colors.primary : colors.onSurface}
                   />
                 </Animated.View>
 
@@ -270,7 +270,7 @@ export default function ActivePillTabBar({
                 style={[
                   styles.label,
                   {
-                    color: isFocused ? colors.primary : colors.onSurface
+                    color: isFocused ? colors.primary : colors.onSurface,
                     fontWeight: isFocused ? "600" : "400",
                   },
                 ]}

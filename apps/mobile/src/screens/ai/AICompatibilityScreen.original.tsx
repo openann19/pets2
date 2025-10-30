@@ -135,11 +135,11 @@ const AICompatibilityScreen = ({
   if (loading) {
     return (
       <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.bg }]
+        style={[styles.container, { backgroundColor: colors.bg }]}
       >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.onSurface }]>
+          <Text style={[styles.loadingText, { color: colors.onSurface }]}>
             Loading pets...
           </Text>
         </View>
@@ -149,7 +149,7 @@ const AICompatibilityScreen = ({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.bg }]
+      style={[styles.container, { backgroundColor: colors.bg }]}
     >
       <ScrollView
         style={styles.scrollView}
@@ -168,13 +168,13 @@ const AICompatibilityScreen = ({
           >
             <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
           </TouchableOpacity>
-          <Text style={[styles.title, { color: colors.onSurface }]>
+          <Text style={[styles.title, { color: colors.onSurface }]}>
             Compatibility Analyzer
           </Text>
           <View style={styles.headerActions}>
             {analysisHistory.length > 0 && (
               <TouchableOpacity
-                style={[styles.historyButton, { backgroundColor: colors.primary }]
+                style={[styles.historyButton, { backgroundColor: colors.primary }]}
                 testID="AICompatibility-history-button"
                 accessibilityLabel="View analysis history"
                 accessibilityRole="button"

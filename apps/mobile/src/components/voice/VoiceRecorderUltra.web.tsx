@@ -3,6 +3,7 @@ import { Alert, PanResponder, StyleSheet, Text, TouchableOpacity, View } from "r
 import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import { VoiceWaveform, generateWaveformFromAudio } from "../chat/VoiceWaveform";
+import { useTheme } from "@/theme";
 import { canProcessOnWeb, processAudioWeb } from "../../utils/audio/web-processing";
 import type { WebProcessingReport } from "../../utils/audio/web-processing";
 import { TranscriptionBadge } from "../chat/TranscriptionBadge";
@@ -48,6 +49,7 @@ export default function VoiceRecorderUltraWeb({
   transcription,
   onVoiceNoteSent,
 }: Props): React.JSX.Element {
+  const theme = useTheme();
   // UI + state
   const [isRecording, setIsRecording] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
@@ -365,7 +367,7 @@ export default function VoiceRecorderUltraWeb({
             disabled={disabled}
             style={styles.recBtn}
           >
-            <Ionicons name={isRecording ? "stop" : "mic"} size={22} color={Theme.colors.neutral[0}]} />
+            <Ionicons name={isRecording ? "stop" : "mic"} size={22} color={theme.colors.onPrimary} />
           </TouchableOpacity>
 
           <Text
@@ -386,7 +388,7 @@ export default function VoiceRecorderUltraWeb({
 
           {isRecording && (
             <TouchableOpacity onPress={toggleLock} style={styles.lockBtn}>
-              <Ionicons name={isLocked ? "lock-closed" : "lock-open"} size={18} color={Theme.colors.neutral[0}]} />
+              <Ionicons name={isLocked ? "lock-closed" : "lock-open"} size={18} color={theme.colors.onPrimary} />
             </TouchableOpacity>
           )}
         </View>
@@ -401,8 +403,8 @@ export default function VoiceRecorderUltraWeb({
               isPlaying={isPlayingSim}
               progress={progress}
               duration={Math.max(1, Math.round(durationMs / 1000))}
-              color={Theme.colors.primary[500}]
-              height={36}
+              color={theme.colors.primary}
+            height={36}
             />
             <Text style={styles.dur}>{fmt(durationMs)}</Text>
           </View>
@@ -425,18 +427,18 @@ export default function VoiceRecorderUltraWeb({
           {/* controls */}
           <View style={styles.actions}>
             <TouchableOpacity onPress={playPause} style={styles.actionBtn}>
-              <Ionicons name={isPlayingSim ? "pause" : "play"} size={18} color={Theme.colors.neutral[0}]} />
+              <Ionicons name={isPlayingSim ? "pause" : "play"} size={18} color={theme.colors.onPrimary} />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={handleCancel} style={styles.actionBtn}>
-              <Ionicons name="trash" size={18} color={Theme.colors.status.erro}r}} />
+              <Ionicons name="trash" size={18} color={theme.colors.danger} />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={send} disabled={isSending || activeProcessing} style={styles.sendBtn}>
               <Ionicons
                 name={isSending ? "hourglass" : "send"}
                 size={18}
-                color={isSending || activeProcessing ? Theme.colors.neutral[400] : Theme.colors.status.success}
+                color={isSending || activeProcessing ? theme.palette.neutral[400] : theme.colors.success}
               />
             </TouchableOpacity>
           </View>
@@ -466,10 +468,10 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   recWrapActive: { backgroundColor: Theme.colors.neutral[800] },
-  recWrapCancel: { backgroundColor: "rgba(239, 68, 68, 0.15)", borderWidth: 1, borderColor: Theme.colors.status.error },
+  recWrapCancel: { backgroundColor: "rgba(239, 68, 68, 0.15)", borderWidth: 1, borderColor: theme.colors.danger },
   recBtn: {
     width: 48, height: 48, borderRadius: 24,
-    backgroundColor: Theme.colors.status.error,
+    backgroundColor: theme.colors.danger,
     alignItems: "center", justifyContent: "center",
     shadowColor: Theme.colors.neutral[900],
     shadowOffset: { width: 0, height: 4 },
@@ -482,7 +484,7 @@ const styles = StyleSheet.create({
   },
   hint: { color: Theme.colors.neutral[300], fontWeight: "600" as const },
   hintActive: { color: Theme.colors.neutral[100] },
-  hintCancel: { color: Theme.colors.status.error },
+  hintCancel: { color: theme.colors.danger },
   card: { marginTop: 12, padding: 12, backgroundColor: "rgba(0,0,0,0.08)", borderRadius: 12 },
   waveRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   dur: { color: Theme.colors.neutral[600], fontWeight: "600" as const },

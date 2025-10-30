@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Pressable, ActivityIndicator, StyleSheet, ScrollView, Image, Alert } from 'react-native';
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
@@ -154,7 +154,7 @@ export default function CreateReelScreen() {
         </Text>
         {step < 3 && (
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${((step + 1) / 3) * 100}%` }] />
+            <View style={[styles.progressFill, { width: `${((step + 1) / 3) * 100}%` }]} />
           </View>
         )}
         {loading && (
@@ -272,11 +272,11 @@ const makeStyles = (theme: any) =>
   StyleSheet.create({
     root: { flex: 1, backgroundColor: theme.colors.bg },
     header: { padding: 16, paddingTop: 48, borderBottomWidth: 1, borderBottomColor: theme.colors.border },
-    headerText: { fontSize: 24, fontWeight: 'bold', color: theme.colors.onSurface marginBottom: 12 },
+    headerText: { fontSize: 24, fontWeight: 'bold', color: theme.colors.onSurface, marginBottom: 12 },
     progressBar: { height: 4, backgroundColor: theme.colors.border, borderRadius: 2, overflow: 'hidden' },
     progressFill: { height: '100%', backgroundColor: theme.colors.primary },
     renderProgress: { flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: 8 },
-    renderProgressText: { color: theme.colors.onSurface fontSize: 14 },
+    renderProgressText: { color: theme.colors.onSurface, fontSize: 14 },
     content: { flex: 1, padding: 16 },
     section: { gap: 16 },
     videoContainer: { width: '100%', height: 420, backgroundColor: '#000', borderRadius: 12, overflow: 'hidden' },
@@ -288,16 +288,16 @@ const makeStyles = (theme: any) =>
     primaryBtnDisabled: { opacity: 0.5 },
     primaryBtnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
     ghostBtn: { flex: 1, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 12, paddingVertical: 14, alignItems: 'center' },
-    ghostBtnText: { color: theme.colors.onSurface fontWeight: '700', fontSize: 16 },
+    ghostBtnText: { color: theme.colors.onSurface, fontWeight: '700', fontSize: 16 },
     card: { padding: 16, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 12, marginBottom: 12 },
     cardActive: { borderColor: theme.colors.primary, borderWidth: 2 },
     cardTitle: { fontSize: 18, fontWeight: '700', color: theme.colors.onSurface},
-    cardSub: { fontSize: 14, color: theme.colors.onSurfaceecondary, marginTop: 4 },
+    cardSub: { fontSize: 14, color: theme.colors.onMuted, marginTop: 4 },
     clipsList: { flexDirection: 'row', gap: 12 },
     clipItem: { gap: 8 },
     clipThumb: { width: 80, height: 120, borderRadius: 8, backgroundColor: '#000' },
     clipPlaceholder: { width: 80, height: 120, borderRadius: 8, backgroundColor: theme.colors.border },
-    clipText: { fontSize: 12, color: theme.colors.onSurface textAlign: 'center' },
+    clipText: { fontSize: 12, color: theme.colors.onSurface, textAlign: 'center' },
     footer: { padding: 16, flexDirection: 'row', gap: 12, borderTopWidth: 1, borderTopColor: theme.colors.border },
   });
 

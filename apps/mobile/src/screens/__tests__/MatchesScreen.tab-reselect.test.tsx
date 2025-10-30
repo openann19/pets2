@@ -133,7 +133,7 @@ describe('MatchesScreen Tab Reselect Integration', () => {
   it('should pass correct theme colors to RefreshControl', () => {
     render(<MatchesScreen navigation={{ navigate: jest.fn() } as any} />);
 
-    // theme.colors.primary[500] should be used
+    // theme.colors.primary should be used
     expect(useMatchesData).toHaveBeenCalled();
   });
 

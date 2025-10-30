@@ -3,7 +3,6 @@
  * Animated loading spinner
  */
 
-import React from 'react';
 import { LottieAnimation } from './LottieAnimation';
 
 interface LoadingAnimationProps {

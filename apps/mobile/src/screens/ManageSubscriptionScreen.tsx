@@ -137,14 +137,14 @@ const ManageSubscriptionScreen = ({
       <SafeAreaView
         style={StyleSheet.flatten([
           styles.container,
-          { backgroundColor: theme.colors.bg }, // Replaced theme.colors.background
+          { backgroundColor: theme.colors.bg }, // Replaced theme.colors.bg
         ])}
       >
         <View style={styles.loadingContainer}>
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: theme.colors.onSurface }, // Replaced theme.colors.text
+              { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
             ])}
           >
             Loading subscription...
@@ -158,7 +158,7 @@ const ManageSubscriptionScreen = ({
     <SafeAreaView
       style={StyleSheet.flatten([
         styles.container,
-        { backgroundColor: theme.colors.bg }, // Replaced theme.colors.background
+        { backgroundColor: theme.colors.bg }, // Replaced theme.colors.bg
       ])}
     >
       <ScrollView
@@ -169,7 +169,7 @@ const ManageSubscriptionScreen = ({
         <View
           style={StyleSheet.flatten([
             styles.header,
-            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.card
+            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.surface
           ])}
         >
           <TouchableOpacity
@@ -191,7 +191,7 @@ const ManageSubscriptionScreen = ({
           <Text
             style={StyleSheet.flatten([
               styles.headerTitle,
-              { color: theme.colors.onSurface }, // Replaced theme.colors.text
+              { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
             ])}
           >
             Manage Subscription
@@ -203,13 +203,13 @@ const ManageSubscriptionScreen = ({
         <View
           style={StyleSheet.flatten([
             styles.section,
-            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.card
+            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.surface
           ])}
         >
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: theme.colors.onSurface }, // Replaced theme.colors.text
+              { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
             ])}
           >
             Current Plan
@@ -225,7 +225,7 @@ const ManageSubscriptionScreen = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.planName,
-                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
                 ])}
               >
                 {typeof subscription?.plan === 'object'
@@ -262,7 +262,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingValue,
-                    { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                    { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
                   ])}
                 >
                   {typeof subscription?.plan === 'object' ? subscription.plan.duration : 'monthly'}
@@ -281,7 +281,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingValue,
-                    { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                    { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
                   ])}
                 >
                   {subscription?.nextBillingDate || 'N/A'}
@@ -300,7 +300,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingValue,
-                    { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                    { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
                   ])}
                 >
                   ${typeof subscription?.plan === 'object' ? subscription.plan.price : '0.00'}
@@ -314,13 +314,13 @@ const ManageSubscriptionScreen = ({
         <View
           style={StyleSheet.flatten([
             styles.section,
-            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.card
+            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.surface
           ])}
         >
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: theme.colors.onSurface }, // Replaced theme.colors.text
+              { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
             ])}
           >
             Actions
@@ -368,7 +368,7 @@ const ManageSubscriptionScreen = ({
             <Text
               style={StyleSheet.flatten([
                 styles.actionButtonText,
-                { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
               ])}
             >
               Restore Purchases
@@ -380,13 +380,13 @@ const ManageSubscriptionScreen = ({
         <View
           style={StyleSheet.flatten([
             styles.section,
-            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.card
+            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.surface
           ])}
         >
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: theme.colors.onSurface }, // Replaced theme.colors.text
+              { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
             ])}
           >
             Premium Features
@@ -402,7 +402,7 @@ const ManageSubscriptionScreen = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
                 ])}
               >
                 Unlimited swipes
@@ -418,7 +418,7 @@ const ManageSubscriptionScreen = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
                 ])}
               >
                 See who liked you
@@ -434,7 +434,7 @@ const ManageSubscriptionScreen = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
                 ])}
               >
                 Priority matching
@@ -450,7 +450,7 @@ const ManageSubscriptionScreen = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
                 ])}
               >
                 Advanced filters
@@ -466,7 +466,7 @@ const ManageSubscriptionScreen = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
                 ])}
               >
                 AI bio generation
@@ -482,7 +482,7 @@ const ManageSubscriptionScreen = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
                 ])}
               >
                 Photo analysis
@@ -498,7 +498,7 @@ const ManageSubscriptionScreen = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.onSurface
                 ])}
               >
                 Compatibility insights

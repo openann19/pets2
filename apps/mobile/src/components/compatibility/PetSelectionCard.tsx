@@ -119,17 +119,17 @@ export const PetSelectionCard: React.FC<PetSelectionCardProps> = ({
       <View style={styles.petInfo}>
         <View style={styles.petAvatar}>
           <Text
-            style={[styles.petAvatarText, { color: colors.onSurface }]
+            style={[styles.petAvatarText, { color: colors.onSurface }]}
           >
             {pet.name.charAt(0)}
           </Text>
         </View>
         <View style={styles.petDetails}>
-          <Text style={[styles.petName, { color: colors.onSurface }]>
+          <Text style={[styles.petName, { color: colors.onSurface }]}>
             {pet.name}
           </Text>
           <Text
-            style={[styles.petBreed, { color: colors.onMuted }]
+            style={[styles.petBreed, { color: colors.onMuted }]}
           >
             {pet.breed} • {pet.age} years old
           </Text>
@@ -137,7 +137,7 @@ export const PetSelectionCard: React.FC<PetSelectionCardProps> = ({
             {pet.temperament.slice(0, 2).map((trait, index) => (
               <View
                 key={index}
-                style={[styles.petTag, { backgroundColor: colors.primary }]
+                style={[styles.petTag, { backgroundColor: colors.primary }]}
               >
                 <Text style={styles.petTagText}>{trait}</Text>
               </View>

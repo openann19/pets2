@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme'";
+import { useTheme } from "@/theme";
 import { api } from "../../services/api";
 
 import { logger } from '../../services/logger';
@@ -163,10 +163,10 @@ export default function AdminServicesScreen({
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.onSurface}]>
+          <Text style={[styles.loadingText, { color: colors.onSurface}]}>
             Loading services...
           </Text>
         </View>
@@ -175,12 +175,12 @@ export default function AdminServicesScreen({
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity  testID="AdminServicesScreen-button-2" accessibilityLabel="navigation.goBack();" accessibilityRole="button" onPress={() => { navigation.goBack(); }}>
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: colors.onSurface}]>
+        <Text style={[styles.title, { color: colors.onSurface}]}>
           External Services
         </Text>
         <View style={{ width: 24 }} />
@@ -199,17 +199,17 @@ export default function AdminServicesScreen({
         {services.map((service, index) => (
           <View
             key={index}
-            style={[styles.serviceCard, { backgroundColor: colors.card }]
+            style={[styles.serviceCard, { backgroundColor: colors.surface }]}
           >
             <View style={styles.serviceHeader}>
-              <View style={[styles.iconContainer, { backgroundColor: `${service.color}20` }]>
+              <View style={[styles.iconContainer, { backgroundColor: `${service.color}20` }]}>
                 <Ionicons name={service.icon as any} size={24} color={service.color} />
               </View>
               <View style={styles.serviceInfo}>
-                <Text style={[styles.serviceName, { color: colors.onSurface}]>
+                <Text style={[styles.serviceName, { color: colors.onSurface}]}>
                   {service.name}
                 </Text>
-                <Text style={[styles.serviceDescription, { color: colors.onSurfaceecondary }]>
+                <Text style={[styles.serviceDescription, { color: colors.onMuted }]}>
                   {service.description}
                 </Text>
               </View>
@@ -222,22 +222,22 @@ export default function AdminServicesScreen({
                   size={16}
                   color={getStatusColor(service.status)}
                 />
-                <Text style={[styles.statusText, { color: getStatusColor(service.status) }]>
+                <Text style={[styles.statusText, { color: getStatusColor(service.status) }]}>
                   {service.status.toUpperCase()}
                 </Text>
               </View>
-              <Text style={[styles.responseTime, { color: colors.onSurfaceecondary }]>
+              <Text style={[styles.responseTime, { color: colors.onMuted }]}>
                 {service.responseTime}ms
               </Text>
             </View>
 
             {service.endpoint && (
-              <Text style={[styles.endpoint, { color: colors.onSurfaceecondary }] numberOfLines={1}>
+              <Text style={[styles.endpoint, { color: colors.onMuted }]} numberOfLines={1}>
                 {service.endpoint}
               </Text>
             )}
 
-            <Text style={[styles.lastChecked, { color: colors.onSurfaceecondary }]>
+            <Text style={[styles.lastChecked, { color: colors.onMuted }]}>
               Last checked: {new Date(service.lastChecked).toLocaleTimeString()}
             </Text>
           </View>
@@ -267,7 +267,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
   },
   title: {
     fontSize: 20,

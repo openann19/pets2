@@ -58,14 +58,14 @@ export const TipsCard: React.FC<TipsCardProps> = ({ tips }) => {
   const { colors, palette } = theme;
 
   return (
-    <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+    <View style={[styles.resultCard, { backgroundColor: colors.surface }]}>
       <View style={styles.resultHeader}>
         <Ionicons
           name="bulb-outline"
           size={24}
           color={theme.colors.warning}
         />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
           Tips for Success
         </Text>
       </View>
@@ -77,7 +77,7 @@ export const TipsCard: React.FC<TipsCardProps> = ({ tips }) => {
               size={16}
               color={theme.colors.warning}
             />
-            <Text style={[styles.tipText, { color: colors.onSurface }]>
+            <Text style={[styles.tipText, { color: colors.onSurface }]}>
               {tip}
             </Text>
           </View>

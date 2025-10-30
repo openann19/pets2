@@ -18,11 +18,11 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({ isSubmitting, onSu
         marginBottom: 40,
       },
       submitButton: {
-        backgroundColor: theme.colors.secondary[500],
+        backgroundColor: theme.colors.secondary,
         borderRadius: 12,
         padding: 16,
         alignItems: 'center',
-        shadowColor: theme.colors.secondary[500],
+        shadowColor: theme.colors.secondary,
         shadowOffset: {
           width: 0,
           height: 4,
@@ -32,7 +32,7 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({ isSubmitting, onSu
         elevation: 8,
       },
       submitButtonDisabled: {
-        backgroundColor: theme.colors.neutral[400],
+        backgroundColor: theme.palette.neutral[400],
         shadowOpacity: 0,
         elevation: 0,
       },
@@ -43,7 +43,7 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({ isSubmitting, onSu
       submitButtonText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: theme.colors.neutral[0],
+        color: theme.palette.neutral[0],
         marginLeft: 8,
       },
     });

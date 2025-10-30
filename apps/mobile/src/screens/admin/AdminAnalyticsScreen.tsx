@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme'";
+import { useTheme } from "@/theme";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 import { getExtendedColors } from "@/theme";
@@ -302,7 +302,7 @@ export default function AdminAnalyticsScreen({
             }}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+            <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
           </TouchableOpacity>
           <Text
             style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
@@ -318,7 +318,7 @@ export default function AdminAnalyticsScreen({
                   selectedPeriod === period && styles.periodButtonActive,
                   {
                     backgroundColor:
-                      selectedPeriod === period ? colors.primary : colors.card,
+                      selectedPeriod === period ? colors.primary : colors.surface,
                   },
                 ])}
                  testID="AdminAnalyticsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
@@ -330,7 +330,7 @@ export default function AdminAnalyticsScreen({
                     styles.periodText,
                     {
                       color:
-                        selectedPeriod === period ? theme.colors.border : colors.onSurface
+                        selectedPeriod === period ? colors.border : colors.onSurface
                     },
                   ])}
                 >
@@ -357,11 +357,11 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.metricCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="people" size={20} color={theme.colors.status.info} }/>
+                    <Ionicons name="people" size={20} color={colors.info} />
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -400,11 +400,11 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.metricCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="heart" size={20} color={theme.colors.primary} }/>
+                    <Ionicons name="heart" size={20} color={colors.primary} />
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -443,11 +443,11 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.metricCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="chatbubble" size={20} color={theme.theme.colors.primary[500]} }/>
+                    <Ionicons name="chatbubble" size={20} color={colors.primary} />
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -486,11 +486,11 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.metricCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="cash" size={20} color={theme.colors.success} }/>
+                    <Ionicons name="cash" size={20} color={colors.success} />
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -511,7 +511,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.metricSubtext,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     MRR:{" "}
@@ -535,13 +535,13 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.engagementCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     DAU
@@ -558,13 +558,13 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.engagementCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     WAU
@@ -581,13 +581,13 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.engagementCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     MAU
@@ -604,13 +604,13 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.engagementCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Session
@@ -641,13 +641,13 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.revenueCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.revenueLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     ARPU
@@ -664,13 +664,13 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.revenueCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.revenueLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Conversion
@@ -687,13 +687,13 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.revenueCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.revenueLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Churn
@@ -724,14 +724,14 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.securityCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
-                  <Ionicons name="warning" size={20} color={theme.colors.warning} }/>
+                    <Ionicons name="warning" size={20} color={colors.warning} />
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Suspicious Logins
@@ -748,14 +748,14 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.securityCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
-                  <Ionicons name="shield" size={20} color={theme.colors.danger} }/>
+                    <Ionicons name="shield" size={20} color={colors.danger} />
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Blocked IPs
@@ -772,14 +772,14 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.securityCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
-                  <Ionicons name="flag" size={20} color={theme.theme.colors.primary[500]} }/>
+                    <Ionicons name="flag" size={20} color={colors.primary} />
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Reported Content
@@ -796,14 +796,14 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.securityCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
-                  <Ionicons name="ban" size={20} color={theme.colors.danger} }/>
+                    <Ionicons name="ban" size={20} color={colors.danger} />
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Banned Users
@@ -834,7 +834,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.performersCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
@@ -852,7 +852,7 @@ export default function AdminAnalyticsScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.performerRank,
-                            { color: colors.onSurfaceecondary },
+                            { color: colors.onMuted },
                           ])}
                         >
                           #{index + 1}
@@ -868,7 +868,7 @@ export default function AdminAnalyticsScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.performerStats,
-                            { color: colors.onSurfaceecondary },
+                            { color: colors.onMuted },
                           ])}
                         >
                           {user.matches} matches
@@ -879,7 +879,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.performersCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
@@ -897,7 +897,7 @@ export default function AdminAnalyticsScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.performerRank,
-                            { color: colors.onSurfaceecondary },
+                            { color: colors.onMuted },
                           ])}
                         >
                           #{index + 1}
@@ -997,7 +997,7 @@ const styles = StyleSheet.create({
     width: (SCREEN_WIDTH - 44) / 2,
     borderRadius: 12,
     padding: 16,
-    shadowColor: theme.colors.border,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1041,7 +1041,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: theme.colors.border,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1065,7 +1065,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: theme.colors.border,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1090,7 +1090,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: theme.colors.border,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1115,7 +1115,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 12,
     padding: 16,
-    shadowColor: theme.colors.border,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,

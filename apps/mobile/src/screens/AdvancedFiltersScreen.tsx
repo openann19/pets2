@@ -13,7 +13,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import { useAdvancedFiltersScreen } from "../hooks/screens/useAdvancedFiltersScreen";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 
 interface AdvancedFiltersScreenProps {
   navigation: {
@@ -38,6 +38,7 @@ function AdvancedFiltersScreen({
     saveFilters,
     getFiltersByCategory,
   } = useAdvancedFiltersScreen();
+  const theme = useTheme();
 
   const renderCategory = useCallback(
     (category: string, title: string) => {
@@ -73,7 +74,10 @@ function AdvancedFiltersScreen({
                   <View
                     style={StyleSheet.flatten([
                       styles.checkbox,
-                      filter.value && styles.checkboxActive,
+                      filter.value && {
+                        backgroundColor: theme.colors.success,
+                        borderColor: theme.colors.success,
+                      },
                     ])}
                   >
                     {filter.value && (
@@ -125,8 +129,8 @@ function AdvancedFiltersScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color={theme.colors.status.info
-           } }/>
+              color={theme.colors.info}
+            />
             <Text style={styles.infoText}>
               Advanced filters help you find pets that match your specific
               preferences and lifestyle.
@@ -256,10 +260,6 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.3)",
     alignItems: "center",
     justifyContent: "center",
-  },
-  checkboxActive: {
-    backgroundColor: theme.colors.success,
-    borderColor: theme.colors.success,
   },
   saveButton: {
     borderRadius: 16,
