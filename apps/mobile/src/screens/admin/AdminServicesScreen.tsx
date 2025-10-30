@@ -202,7 +202,7 @@ export default function AdminServicesScreen({
             style={[styles.serviceCard, { backgroundColor: colors.card }]}
           >
             <View style={styles.serviceHeader}>
-              <View style={[styles.iconContainer, { backgroundColor: `${service.color}20` }]>
+              <View style={[styles.iconContainer, { backgroundColor: `${service.color}20` }]}>
                 <Ionicons name={service.icon as any} size={24} color={service.color} />
               </View>
               <View style={styles.serviceInfo}>
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: '#e0e0e0',
   },
   title: {
     fontSize: 20,

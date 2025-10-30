@@ -198,14 +198,14 @@ export const VerificationList = ({
       >
         <View style={styles.cardHeader}>
           <View style={styles.headerLeft}>
-            <View style={[styles.statusBadge, { backgroundColor: `${statusColor}20` }]>
+            <View style={[styles.statusBadge, { backgroundColor: `${statusColor}20` }]}>
               <Ionicons name={statusIcon} size={16} color={statusColor} />
               <Text style={[styles.statusText, { color: statusColor }]}>
                 {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
               </Text>
             </View>
             {item.priority === "high" && (
-              <View style={[styles.priorityBadge, { backgroundColor: theme.colors.danger + "20" }]>
+              <View style={[styles.priorityBadge, { backgroundColor: theme.colors.danger + "20" }]}>
                 <Ionicons name="flag" size={12} color={theme.colors.danger} />
                 <Text style={[styles.priorityText, { color: theme.colors.danger }]}>High</Text>
               </View>
@@ -221,7 +221,7 @@ export const VerificationList = ({
             <Ionicons name="person" size={20} color={colors.primary} />
             <View style={styles.userDetails}>
               <Text style={[styles.userName, { color: colors.onSurface }]}>{item.userName}</Text>
-              <Text style={[styles.userEmail, { color: colors.onMuted }]>
+              <Text style={[styles.userEmail, { color: colors.onMuted }]}>
                 {item.userEmail}
               </Text>
             </View>
@@ -247,7 +247,7 @@ export const VerificationList = ({
         {isSelected && (
           <View style={styles.actions}>
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: theme.colors.success }]
+              style={[styles.actionButton, { backgroundColor: theme.colors.success }]}
               onPress={() => onApprove(item.id)}
               testID={`approve-${item.id}`}
               accessibilityLabel="Approve verification"
@@ -258,7 +258,7 @@ export const VerificationList = ({
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: theme.colors.warning }]
+              style={[styles.actionButton, { backgroundColor: theme.colors.warning }]}
               onPress={() => {
                 // Simple request - in real app would show modal
                 onRequestInfo(item.id, "Please provide additional information");
@@ -272,7 +272,7 @@ export const VerificationList = ({
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: theme.colors.danger }]
+              style={[styles.actionButton, { backgroundColor: theme.colors.danger }]}
               onPress={() => {
                 // Simple reject - in real app would show modal for reason
                 onReject(item.id, "Verification rejected");
@@ -298,7 +298,7 @@ export const VerificationList = ({
       ListEmptyComponent={
         <View style={styles.emptyContainer}>
           <Ionicons name="document-text-outline" size={64} color={colors.onMuted} />
-          <Text style={[styles.emptyText, { color: colors.onMuted }]>
+          <Text style={[styles.emptyText, { color: colors.onMuted }]}>
             No verifications found
           </Text>
         </View>

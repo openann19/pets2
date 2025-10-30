@@ -107,7 +107,7 @@ export const SystemHealthSection: React.FC<SystemHealthSectionProps> = ({ health
       <View style={styles.healthHeader}>
         <Ionicons name="pulse" size={24} color={getStatusColor(health.status, colors)} />
         <Text style={[styles.healthTitle, { color: colors.onSurface }]}>System Health</Text>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(health.status, colors) }]>
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(health.status, colors) }]}>
           <Text style={styles.statusText}>{health.status.toUpperCase()}</Text>
         </View>
       </View>
@@ -117,7 +117,7 @@ export const SystemHealthSection: React.FC<SystemHealthSectionProps> = ({ health
         <View style={styles.metricRow}>
           <Ionicons name="time" size={16} color={colors.onMuted} />
           <Text style={[styles.metricLabel, { color: colors.onMuted }]}>Uptime:</Text>
-          <Text style={[styles.metricValue, { color: colors.onSurface }]>
+          <Text style={[styles.metricValue, { color: colors.onSurface }]}>
             {formatUptime(health.uptime)}
           </Text>
         </View>
@@ -130,7 +130,7 @@ export const SystemHealthSection: React.FC<SystemHealthSectionProps> = ({ health
             color={getStatusColor(health.database.status, colors)}
           />
           <Text style={[styles.metricLabel, { color: colors.onMuted }]}>Database:</Text>
-          <Text style={[styles.metricValue, { color: getStatusColor(health.database.status, colors) }]>
+          <Text style={[styles.metricValue, { color: getStatusColor(health.database.status, colors) }]}>
             {health.database.status}
           </Text>
         </View>
@@ -139,7 +139,7 @@ export const SystemHealthSection: React.FC<SystemHealthSectionProps> = ({ health
         <View style={styles.metricRow}>
           <Ionicons name="hardware-chip" size={16} color={colors.onMuted} />
           <Text style={[styles.metricLabel, { color: colors.onMuted }]}>Memory:</Text>
-          <Text style={[styles.metricValue, { color: colors.onSurface }]>
+          <Text style={[styles.metricValue, { color: colors.onSurface }]}>
             {formatMemory(health.memory.used)} / {formatMemory(health.memory.total)}
           </Text>
         </View>
