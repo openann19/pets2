@@ -268,7 +268,7 @@ export default function AIPhotoAnalyzerScreen({
       case "excellent":
         return theme.colors.success;
       case "good":
-        return theme.colors.status.info;
+        return theme.colors.info;
       case "fair":
         return theme.colors.warning;
       case "poor":
@@ -304,7 +304,7 @@ export default function AIPhotoAnalyzerScreen({
             }}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+            <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
           </TouchableOpacity>
           <Text
             style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
@@ -647,7 +647,7 @@ export default function AIPhotoAnalyzerScreen({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="list" size={24} color={theme.colors.status.info} }/>
+                <Ionicons name="list" size={24} color={theme.colors.info} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -710,7 +710,7 @@ export default function AIPhotoAnalyzerScreen({
                           key={index}
                           style={StyleSheet.flatten([
                             styles.tag,
-                            { backgroundColor: theme.colors.status.info },
+                            { backgroundColor: theme.colors.info },
                           ])}
                         >
                           <Text style={styles.tagText}>{trait}</Text>
@@ -755,7 +755,7 @@ export default function AIPhotoAnalyzerScreen({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="bulb" size={24} color={theme.colors.warning} }/>
+                <Ionicons name="bulb" size={24} color={theme.colors.warning} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -771,8 +771,8 @@ export default function AIPhotoAnalyzerScreen({
                     <Ionicons
                       name="checkmark-circle"
                       size={16}
-                      color={theme.colors.warning
-                   } }/>
+                      color={theme.colors.warning}
+                    />
                     <Text
                       style={StyleSheet.flatten([
                         styles.suggestionText,

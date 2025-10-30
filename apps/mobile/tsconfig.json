@@ -29,8 +29,15 @@
     "moduleResolution": "bundler"
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
+    "src/**/*", 
+    "**/*.ts", 
+    "**/*.tsx", 
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**/*",
+    "**/setupTests.ts",
     "App.tsx",
     "app.config.cjs",
     "babel.config.cjs",
@@ -41,10 +48,6 @@
     "dist", 
     "coverage",
     "**/__mocks__/**",
-    "**/__tests__/**/*.test.ts",
-    "**/__tests__/**/*.test.tsx",
-    "**/image-ultra/**",
-    "**/web-only/**",
     "**/*.stories.tsx",
     "**/stories/**"
   ]

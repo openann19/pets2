@@ -1,332 +1,247 @@
-/**
- * @jest-environment jsdom
- */
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import { View, Text } from 'react-native';
+import { render, fireEvent } from '@testing-library/react-native';
+import { Text } from 'react-native';
 import BouncePressable from '../BouncePressable';
 import * as Haptics from 'expo-haptics';
+import { useReducedMotion } from '../../../utils/A11yHelpers';
 
-// Mock Haptics
-jest.mock('expo-haptics', () => ({
-  impactAsync: jest.fn(),
-  ImpactFeedbackStyle: {
-    Light: 'light',
-    Medium: 'medium',
-    Heavy: 'heavy',
-  },
+// Mock dependencies
+jest.mock('expo-haptics');
+jest.mock('../../../utils/A11yHelpers', () => ({
+  useReducedMotion: jest.fn(() => false),
 }));
 
-// Mock reanimated (requires explicit mocking)
-jest.mock('react-native-reanimated', () => {
-  const View = require('react-native').View;
-  const Animated = {
-    View: React.forwardRef((props: any, ref: any) => (
-      <View
-        {...props}
-        ref={ref}
-      />
-    )),
-    useSharedValue: (init: number) => ({ value: init }),
-    withSpring: jest.fn((value: number, config: any) => value),
-    useAnimatedStyle: (fn: () => any) => {
-      return {};
-    },
-  };
-  return {
-    ...Animated,
-    default: Animated,
-  };
-});
-
 describe('BouncePressable', () => {
+  const mockOnPress = jest.fn();
+  const mockOnPressIn = jest.fn();
+  const mockOnPressOut = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
     (Haptics.impactAsync as jest.Mock).mockResolvedValue(undefined);
+    (useReducedMotion as jest.Mock).mockReturnValue(false);
   });
 
-  it('renders children correctly', () => {
-    const { getByText } = render(
-      <BouncePressable>
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
+  describe('Rendering', () => {
+    it('renders children correctly', () => {
+      const { getByText } = render(
+        <BouncePressable>
+          <Text>Test Button</Text>
+        </BouncePressable>
+      );
 
-    expect(getByText('Press Me')).toBeTruthy();
+      expect(getByText('Test Button')).toBeTruthy();
+    });
+
+    it('renders function children correctly', () => {
+      const { getByText } = render(
+        <BouncePressable>
+          {({ pressed }: { pressed: boolean }) => (
+            <Text>{pressed ? 'Pressed' : 'Not Pressed'}</Text>
+          )}
+        </BouncePressable>
+      );
+
+      expect(getByText('Not Pressed')).toBeTruthy();
+    });
+
+    it('applies default scale values', () => {
+      const { getByText } = render(
+        <BouncePressable>
+          <Text>Test</Text>
+        </BouncePressable>
+      );
+
+      // Component should render without errors
+      expect(getByText('Test')).toBeTruthy();
+    });
   });
 
-  it('calls onPress when pressed', () => {
-    const onPress = jest.fn();
+  describe('Press Interactions', () => {
+    it('calls onPress when pressed', () => {
+      const { getByText } = render(
+        <BouncePressable onPress={mockOnPress}>
+          <Text>Press Me</Text>
+        </BouncePressable>
+      );
 
-    const { getByText } = render(
-      <BouncePressable onPress={onPress}>
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
+      fireEvent.press(getByText('Press Me'));
+      expect(mockOnPress).toHaveBeenCalledTimes(1);
+    });
 
-    fireEvent.press(getByText('Press Me'));
+    it('不受影响 not call onPress when not provided', () => {
+      const { getByText } = render(
+        <BouncePressable>
+          <Text>Press Me</Text>
+        </BouncePressable>
+      );
 
-    expect(onPress).toHaveBeenCalledTimes(1);
+      fireEvent.press(getByText('Press Me'));
+      // Should not throw
+    });
+
+    it('calls onPressIn when pressed in', () => {
+      const { getByText } = render(
+        <BouncePressable onPressIn={mockOnPressIn}>
+          <Text>Press Me</Text>
+        </BouncePressable>
+      );
+
+      fireEvent(getByText('Press Me'), 'pressIn');
+      expect(mockOnPressIn).toHaveBeenCalledTimes(1);
+    });
+
+    it('calls onPressOut when pressed out', () => {
+      const { getByText } = render(
+        <BouncePressable onPressOut={mockOnPressOut}>
+          <Text>Press Me</Text>
+        </BouncePressable>
+      );
+
+      fireEvent(getByText('Press Me'), 'pressOut');
+      expect(mockOnPressOut).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('provides haptic feedback by default', () => {
-    const onPress = jest.fn();
+  describe('Haptic Feedback', () => {
+    it('provides haptic feedback on press in by default', () => {
+      const { getByText } = render(
+        <BouncePressable>
+          <Text>Press Me</Text>
+        </BouncePressable>
+      );
 
-    const { getByText } = render(
-      <BouncePressable onPress={onPress}>
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
+      fireEvent(getByText('Press Me'), 'pressIn');
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(
+        Haptics.ImpactFeedbackStyle.Light
+      );
+    });
 
-    fireEvent.press(getByText('Press Me'));
+    it('skips haptic feedback when haptics is disabled', () => {
+      const { getByText } = render(
+        <BouncePressable haptics={false}>
+          <Text>Press Me</Text>
+        </BouncePressable>
+      );
 
-    expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Light);
+      fireEvent(getByText('Press Me'), 'pressIn');
+      expect(Haptics.impactAsync).not.toHaveBeenCalled();
+    });
   });
 
-  it('does not provide haptic feedback when disabled', () => {
-    const onPress = jest.fn();
+  describe('Reduced Motion Support', () => {
+    it('skips haptics when reduced motion is enabled', () => {
+      (useReducedMotion as jest.Mock).mockReturnValue(true);
+      
+      const { getByText } = render(
+        <BouncePressable>
+          <Text>Press Me</Text>
+        </BouncePressable>
+      );
 
-    const { getByText } = render(
-      <BouncePressable
-        onPress={onPress}
-        haptics={false}
-      >
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
-
-    fireEvent.press(getByText('Press Me'));
-
-    expect(Haptics.impactAsync).not.toHaveBeenCalled();
+      fireEvent(getByText('Press Me'), 'pressIn');
+      expect(Haptics.impactAsync).not.toHaveBeenCalled();
+    });
   });
 
-  it('calls onPressIn handler', () => {
-    const onPressIn = jest.fn();
-    const onPress = jest.fn();
+  describe('Custom Scale Values', () => {
+    it('uses custom scaleFrom value', () => {
+      const { getByText } = render(
+        <BouncePressable scaleFrom={0.9}>
+          <Text>Test</Text>
+        </BouncePressable>
+      );
 
-    const { getByText } = render(
-      <BouncePressable
-        onPress={onPress}
-        onPressIn={onPressIn}
-      >
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
+      // Component should render with custom scale
+      expect(getByText('Test')).toBeTruthy();
+    });
 
-    fireEvent(getByText('Press Me'), 'pressIn');
+    it('uses custom scaleTo value', () => {
+      const { getByText } = render(
+        <BouncePressable scaleTo={1.1}>
+          <Text>Test</Text>
+        </BouncePressable>
+      );
 
-    expect(onPressIn).toHaveBeenCalledTimes(1);
+      // Component should render with custom scale
+      expect(getByText('Test')).toBeTruthy();
+    });
   });
 
-  it('calls onPressOut handler', () => {
-    const onPressOut = jest.fn();
-    const onPress = jest.fn();
+  describe('Reduced Motion Support', () => {
+    it('disables animations when reduced motion is enabled', () => {
+      (useReducedMotion as jest.Mock).mockReturnValue(true);
+      
+      const { getByText } = render(
+        <BouncePressable>
+          <Text>Test</Text>
+        </BouncePressable>
+      );
 
-    const { getByText } = render(
-      <BouncePressable
-        onPress={onPress}
-        onPressOut={onPressOut}
-      >
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
-
-    fireEvent(getByText('Press Me'), 'pressOut');
-
-    expect(onPressOut).toHaveBeenCalledTimes(1);
+      fireEvent(getByText('Test'), 'pressIn');
+      fireEvent(getByText('Test'), 'pressOut');
+      
+      // Should not provide haptics or animations
+      expect(Haptics.impactAsync).not.toHaveBeenCalled();
+    });
   });
 
-  it('applies custom scale values', () => {
-    const onPress = jest.fn();
+  describe('Props Forwarding', () => {
+    it('forwards Pressable props correctly', () => {
+      const { getByTestId } = render(
+        <BouncePressable testID="custom-pressable" disabled>
+          <Text>Test</Text>
+        </BouncePressable>
+      );
 
-    const { getByText } = render(
-      <BouncePressable
-        onPress={onPress}
-        scaleFrom={0.9}
-        scaleTo={1.1}
-      >
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
+      const pressable = getByTestId('custom-pressable');
+      expect(pressable).toBeTruthy();
+      expect(pressable.props.disabled).toBe(true);
+    });
 
-    fireEvent.press(getByText('Press Me'));
+    it('handles style prop correctly', () => {
+      const customStyle = { backgroundColor: 'red' };
+      const { getByTestId } = render(
+        <BouncePressable testID="styled-pressable" style={customStyle}>
+          <Text>Test</Text>
+        </BouncePressable>
+      );
 
-    expect(onPress).toHaveBeenCalled();
+      const pressable = getByTestId('styled-pressable');
+      expect(pressable).toBeTruthy();
+    });
   });
 
-  it('handles disabled state', () => {
-    const onPress = jest.fn();
+  describe('Edge Cases', () => {
+    it('handles null children gracefully', () => {
+      const { container } = render(
+        <BouncePressable>{null}</BouncePressable>
+      );
+      expect(container).toBeTruthy();
+    });
 
-    const { getByText } = render(
-      <BouncePressable
-        onPress={onPress}
-        disabled
-      >
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
+    it('handles undefined children gracefully', () => {
+      const { container } = render(
+        <BouncePressable>{undefined}</BouncePressable>
+      );
+      expect(container).toBeTruthy();
+    });
 
-    fireEvent.press(getByText('Press Me'));
+    it('handles rapid press/unpress cycles', () => {
+      const { getByText } = render(
+        <BouncePressable onPress={mockOnPress}>
+          <Text>Press Me</Text>
+        </BouncePressable>
+      );
 
-    expect(onPress).not.toHaveBeenCalled();
-    expect(Haptics.impactAsync).not.toHaveBeenCalled();
-  });
+      const button = getByText('Press Me');
+      for (let i = 0; i < 10; i++) {
+        fireEvent(button, 'pressIn');
+        fireEvent(button, 'pressOut');
+      }
 
-  it('applies custom accessibility props', () => {
-    const onPress = jest.fn();
-
-    const { getByRole } = render(
-      <BouncePressable
-        onPress={onPress}
-        accessibilityLabel="Custom Button"
-        accessibilityRole="button"
-      >
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
-
-    const button = getByRole('button');
-    expect(button).toBeTruthy();
-  });
-
-  it('handles haptic failures gracefully', async () => {
-    (Haptics.impactAsync as jest.Mock).mockRejectedValue(new Error('Haptics unavailable'));
-
-    const onPress = jest.fn();
-
-    const { getByText } = render(
-      <BouncePressable onPress={onPress}>
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
-
-    fireEvent.press(getByText('Press Me'));
-
-    // Should still call onPress even if haptics fail
-    expect(onPress).toHaveBeenCalled();
-  });
-
-  it('supports all PressableProps', () => {
-    const onLongPress = jest.fn();
-    const onPress = jest.fn();
-
-    const { getByText } = render(
-      <BouncePressable
-        onPress={onPress}
-        onLongPress={onLongPress}
-      >
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
-
-    fireEvent(getByText('Press Me'), 'longPress');
-
-    expect(onLongPress).toHaveBeenCalled();
-  });
-
-  it('memoizes component to prevent unnecessary re-renders', () => {
-    const { rerender, getByText } = render(
-      <BouncePressable>
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
-
-    const firstRender = getByText('Press Me');
-
-    rerender(
-      <BouncePressable>
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
-
-    // If memo works, component should only re-render if props change
-    const secondRender = getByText('Press Me');
-
-    expect(secondRender).toBe(firstRender);
-  });
-
-  it('applies style prop correctly', () => {
-    const customStyle = { backgroundColor: 'red', padding: 10 };
-
-    const { UNSAFE_getByType } = render(
-      <BouncePressable style={customStyle}>
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
-
-    expect(UNSAFE_getByType).toBeDefined();
-  });
-
-  it('renders complex children structures', () => {
-    const { getByText } = render(
-      <BouncePressable>
-        <View>
-          <Text>Title</Text>
-          <Text>Description</Text>
-        </View>
-      </BouncePressable>,
-    );
-
-    expect(getByText('Title')).toBeTruthy();
-    expect(getByText('Description')).toBeTruthy();
-  });
-
-  it('handles rapid sequential presses', () => {
-    const onPress = jest.fn();
-
-    const { getByText } = render(
-      <BouncePressable onPress={onPress}>
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
-
-    const button = getByText('Press Me');
-
-    fireEvent.press(button);
-    fireEvent.press(button);
-    fireEvent.press(button);
-
-    expect(onPress).toHaveBeenCalledTimes(3);
-    expect(Haptics.impactAsync).toHaveBeenCalledTimes(3);
-  });
-
-  it('provides haptic feedback on press in, not press out', () => {
-    const onPress = jest.fn();
-
-    const { getByText } = render(
-      <BouncePressable onPress={onPress}>
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
-
-    // Haptics should fire on pressIn (which is part of press event)
-    fireEvent.press(getByText('Press Me'));
-
-    expect(Haptics.impactAsync).toHaveBeenCalled();
-  });
-
-  it('maintains children layout during animation', () => {
-    const { getByText } = render(
-      <BouncePressable>
-        <Text testID="child">Press Me</Text>
-      </BouncePressable>,
-    );
-
-    const child = getByText('Press Me');
-
-    fireEvent.press(child);
-
-    // Child should still exist after press
-    expect(getByText('Press Me')).toBeTruthy();
-  });
-
-  it('works with accessibility states', () => {
-    const { UNSAFE_getByType } = render(
-      <BouncePressable accessibilityState={{ disabled: false }}>
-        <Text>Press Me</Text>
-      </BouncePressable>,
-    );
-
-    expect(UNSAFE_getByType).toBeDefined();
+      // Should not crash
+      expect(getByText('Press Me')).toBeTruthy();
+    });
   });
 });

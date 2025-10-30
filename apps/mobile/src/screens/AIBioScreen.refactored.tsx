@@ -240,7 +240,7 @@ const createStyles = (colors: ReturnType<typeof getExtendedColors>, spacing: any
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.onSurface
+    color: colors.onSurface,
     marginBottom: spacing.md,
   },
   photoPicker: {

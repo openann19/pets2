@@ -26,7 +26,7 @@ import {
   useSwipeGestures,
   usePressAnimation,
   useGlowAnimation,
-} from './animations';
+} from './animations/index';
 
 // Export UnifiedAnimations object for backward compatibility
 const UnifiedAnimations = {

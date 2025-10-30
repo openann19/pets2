@@ -6,7 +6,7 @@ import {
   type TextInputProps,
   type ViewStyle,
 } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '../../../theme';
 import { Text } from './Text';
 
 export type InputVariant = 'outlined' | 'filled' | 'underlined';
@@ -52,7 +52,7 @@ export const Input = forwardRef<TextInput, InputProps>(({
       height: sizeStyle.height,
       paddingHorizontal: sizeStyle.paddingHorizontal,
       fontSize: sizeStyle.fontSize,
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       backgroundColor: theme.colors.bg,
       borderWidth: 1,
       borderColor: hasError ? theme.colors.danger : theme.colors.border,

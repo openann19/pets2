@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Image } from "react-native";
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { AutoCropEngine, type SuggestionType } from "../../utils/AutoCropEngine";
@@ -42,7 +42,7 @@ export const SubjectSuggestionsBar: React.FC<Props> = ({ uri, ratios = ["1:1","4
   if (loading) {
     return (
       <View style={styles.wrap}>
-        <ActivityIndicator size="small" color={Theme.colors.primary[500]} />
+        <ActivityIndicator size="small" color={theme.colors.primary} />
         <Text style={styles.meta}>Finding the best frames…</Text>
       </View>
     );
@@ -100,8 +100,8 @@ export const SubjectSuggestionsBar: React.FC<Props> = ({ uri, ratios = ["1:1","4
 function createStyles(theme: AppTheme) {
   return StyleSheet.create({
     wrap: { paddingVertical: 12, paddingHorizontal: 16 },
- obec  row: { gap: 12 },
-    card: { width:_width: 140, alignItems: "center" },
+    row: { gap: 12 },
+    card: { width: 140, alignItems: "center" },
     thumbBtn: { borderRadius: theme.radii.lg, overflow: "hidden", borderWidth: 1, borderColor: theme.colors.border },
     thumbImg: { width: 140, height: 140, backgroundColor: theme.colors.surface },
     badge: { position: "absolute", top: 8, right: 8, backgroundColor: theme.colors.overlay || 'rgba(0,0,0,0.55)', paddingVertical: 4, paddingHorizontal: 8, borderRadius: theme.radii.md },

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch as RNSwitch } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '../../../theme';
 
 export interface SwitchProps {
   value: boolean;

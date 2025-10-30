@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '../../../theme';
 import { Text } from './Text';
 
 export type RadioSize = 'sm' | 'md' | 'lg';
@@ -78,7 +78,7 @@ export function Radio({
         )}
       </View>
       {label && (
-        <Text variant="body" tone="text" style={{ marginLeft: theme.spacing.sm }>
+        <Text variant="body" tone="text" style={{ marginLeft: theme.spacing.sm }}>
           {label}
         </Text>
       )}

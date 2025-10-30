@@ -3,11 +3,13 @@
  * Shows first-time users how to use swipe gestures
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { View, Text, StyleSheet, Animated, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { logger } from "../../services/logger";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
 const STORAGE_KEY = "@PawfectMatch:swipe_hints_shown";
 
@@ -18,6 +20,8 @@ interface SwipeGestureHintOverlayProps {
 export function SwipeGestureHintOverlay({
   onDismiss,
 }: SwipeGestureHintOverlayProps): React.JSX.Element | null {
+  const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const [showHints, setShowHints] = useState(false);
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(50));
@@ -103,15 +107,15 @@ export function SwipeGestureHintOverlay({
         <View style={styles.header}>
           <Text style={styles.title}>Swipe to Connect</Text>
           <Pressable onPress={handleDismiss}>
-            <Ionicons name="close" size={24} color={Theme.colors.neutral[600]} />
+            <Ionicons name="close" size={24} color={theme.colors.onMuted} />
           </Pressable>
         </View>
 
         <View style={styles.hints}>
           {/* Like */}
           <View style={styles.hintItem}>
-            <View style={[styles.iconContainer, { backgroundColor: Theme.colors.status.success }]}>
-              <Ionicons name="heart" size={24} color={Theme.colors.neutral[0]} />
+            <View style={[styles.iconContainer, { backgroundColor: theme.colors.success }]}>
+              <Ionicons name="heart" size={24} color={theme.colors.onPrimary} />
             </View>
             <Text style={styles.hintText}>
               Swipe <Text style={styles.bold}>RIGHT</Text> to like
@@ -120,8 +124,8 @@ export function SwipeGestureHintOverlay({
 
           {/* Pass */}
           <View style={styles.hintItem}>
-            <View style={[styles.iconContainer, { backgroundColor: Theme.colors.status.error }]}>
-              <Ionicons name="close" size={24} color={Theme.colors.neutral[0]} />
+            <View style={[styles.iconContainer, { backgroundColor: theme.colors.danger }]}>
+              <Ionicons name="close" size={24} color={theme.colors.onPrimary} />
             </View>
             <Text style={styles.hintText}>
               Swipe <Text style={styles.bold}>LEFT</Text> to pass
@@ -130,8 +134,8 @@ export function SwipeGestureHintOverlay({
 
           {/* Super Like */}
           <View style={styles.hintItem}>
-            <View style={[styles.iconContainer, { backgroundColor: Theme.colors.accent[500] }]}>
-              <Ionicons name="star" size={24} color={Theme.colors.neutral[0]} />
+            <View style={[styles.iconContainer, { backgroundColor: theme.colors.info }]}>
+              <Ionicons name="star" size={24} color={theme.colors.onPrimary} />
             </View>
             <Text style={styles.hintText}>
               Swipe <Text style={styles.bold}>UP</Text> to super like
@@ -140,8 +144,8 @@ export function SwipeGestureHintOverlay({
 
           {/* Double Tap */}
           <View style={styles.hintItem}>
-            <View style={[styles.iconContainer, { backgroundColor: Theme.colors.primary[500] }]}>
-              <Ionicons name="heart-circle" size={24} color={Theme.colors.neutral[0]} />
+            <View style={[styles.iconContainer, { backgroundColor: theme.colors.primary }]}>
+              <Ionicons name="heart-circle" size={24} color={theme.colors.onPrimary} />
             </View>
             <Text style={styles.hintText}>
               <Text style={styles.bold}>DOUBLE TAP</Text> to like instantly
@@ -157,7 +161,8 @@ export function SwipeGestureHintOverlay({
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: AppTheme) {
+  return StyleSheet.create({
   overlay: {
     position: "absolute",
     top: 0,
@@ -179,58 +184,59 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: Theme.colors.neutral[0],
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: 24,
-    ...Theme.shadows.depth.lg,
+    backgroundColor: theme.colors.surface,
+    borderTopLeftRadius: theme.radii.xl,
+    borderTopRightRadius: theme.radii.xl,
+    padding: theme.spacing.lg,
+    ...theme.shadows.elevation2,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: theme.spacing.lg,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: Theme.colors.neutral[900],
+    fontSize: theme.typography.h1.size,
+    fontWeight: theme.typography.h1.weight,
+    color: theme.colors.onSurface,
   },
   hints: {
-    gap: 16,
+    gap: theme.spacing.md,
   },
   hintItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 16,
+    gap: theme.spacing.md,
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: theme.spacing["3xl"],
+    height: theme.spacing["3xl"],
+    borderRadius: theme.radii.full,
     justifyContent: "center",
     alignItems: "center",
   },
   hintText: {
     flex: 1,
-    fontSize: 16,
-    color: Theme.colors.neutral[700],
+    fontSize: theme.typography.body.size,
+    color: theme.colors.onSurface,
   },
   bold: {
     fontWeight: "bold",
-    color: Theme.colors.neutral[900],
+    color: theme.colors.onSurface,
   },
   gotItButton: {
-    marginTop: 24,
-    backgroundColor: Theme.colors.primary[500],
-    paddingVertical: 16,
-    borderRadius: 12,
+    marginTop: theme.spacing.lg,
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.md,
+    borderRadius: theme.radii.lg,
     alignItems: "center",
   },
   gotItText: {
-    color: Theme.colors.neutral[0],
-    fontSize: 16,
+    color: theme.colors.onPrimary,
+    fontSize: theme.typography.body.size,
     fontWeight: "600",
   },
-});
+  });
+}
 

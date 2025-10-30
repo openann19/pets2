@@ -1,13 +1,12 @@
 // components/photo/Cropper.tsx
-import React, { useEffect, useMemo, useState, forwardRef, useImperativeHandle } from "react";
-import { View, StyleSheet, Image as RNImage, Dimensions, Text, TouchableOpacity } from "react-native";
+import { useEffect, useMemo, useState, forwardRef, useImperativeHandle } from "react";
+import { View, StyleSheet, Image as RNImage, Text, TouchableOpacity } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as Haptics from "expo-haptics";
-
-const { width: SCREEN_W } = Dimensions.get("window");
+import { useTheme } from "@/theme";
 
 type Rect = { x: number; y: number; width: number; height: number };
 type Ratio = "FREE" | "1:1" | "4:5" | "9:16" | "16:9" | "3:2";
@@ -40,6 +39,7 @@ const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(ma
 
 export const Cropper = forwardRef<CropperHandle, Props>(
 ({ uri, containerW, containerH, defaultRatio = "4:5", onCropped, showStoryGuides = false }, ref) => {
+  const theme = useTheme();
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
   const [ratio, setRatio] = useState<Ratio>(defaultRatio);
@@ -152,6 +152,28 @@ export const Cropper = forwardRef<CropperHandle, Props>(
     ],
   }));
 
+  const styles = useMemo(() => StyleSheet.create({
+    img: { position: "absolute", left: 0, top: 0 },
+    gridRow: { flex: 1, borderBottomWidth: 1, borderColor: theme.colors.border, opacity: 0.35 },
+    gridCol: { flex: 1, borderRightWidth: 1, borderColor: theme.colors.border, opacity: 0.35 },
+    controls: { position: "absolute", bottom: 12, left: 12, right: 12, flexDirection: "row", flexWrap: "wrap", gap: 8, justifyContent: "center" },
+    ratioBtn: { paddingVertical: 6, paddingHorizontal: 10, borderRadius: theme.radii.md, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, opacity: 0.8 },
+    ratioBtnActive: { backgroundColor: theme.colors.primary, opacity: 0.22, borderColor: theme.colors.primary },
+    ratioTxt: { color: theme.colors.onSurface, fontSize: 12, fontWeight: "600" as const },
+    ratioTxtActive: { color: theme.colors.onSurface },
+    applyBtn: { marginLeft: 8, flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, paddingVertical: 6, borderRadius: theme.radii.lg, backgroundColor: theme.colors.primary },
+    applyTxt: { color: theme.colors.onPrimary, fontSize: 12, fontWeight: "700" as const },
+    storyBand: {
+      position: "absolute",
+      left: 0, right: 0,
+      height: 60,
+      borderColor: theme.colors.info || '#0EA5E9',
+      opacity: 0.7,
+      borderWidth: 1,
+      borderStyle: "dashed",
+    },
+  }), [theme]);
+
   const applyCrop = async () => {
     const s = scale.value;
     const dispW = imgW * baseScale * s;
@@ -202,10 +224,10 @@ export const Cropper = forwardRef<CropperHandle, Props>(
 
       {/* Mask + Crop window + Grid */}
       <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.6)" }} />
+        <View style={{ flex: 1, backgroundColor: theme.colors.overlay || 'rgba(0,0,0,0.6)' }} />
         <View style={{ height: cropH, flexDirection: "row" }}>
-          <View style={{ width: cropLeft, backgroundColor: "rgba(0,0,0,0.6)" }} />
-          <View style={{ width: cropW, borderWidth: 1, borderColor: "rgba(255,255,255,0.85)" }}>
+          <View style={{ width: cropLeft, backgroundColor: theme.colors.overlay || 'rgba(0,0,0,0.6)' }} />
+          <View style={{ width: cropW, borderWidth: 1, borderColor: theme.colors.onSurface, opacity: 0.85 }}>
             {/* thirds grid */}
             <View style={styles.gridRow} />
             <View style={styles.gridRow} />
@@ -216,9 +238,9 @@ export const Cropper = forwardRef<CropperHandle, Props>(
               <View style={styles.gridCol} />
             </View>
           </View>
-          <View style={{ width: cropLeft, backgroundColor: "rgba(0,0,0,0.6)" }} />
+          <View style={{ width: cropLeft, backgroundColor: theme.colors.overlay || 'rgba(0,0,0,0.6)' }} />
         </View>
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.6)" }} />
+        <View style={{ flex: 1, backgroundColor: theme.colors.overlay || 'rgba(0,0,0,0.6)' }} />
       </View>
 
       {/* Story safe area guides */}
@@ -242,31 +264,10 @@ export const Cropper = forwardRef<CropperHandle, Props>(
           </TouchableOpacity>
         ))}
         <TouchableOpacity onPress={applyCrop} style={styles.applyBtn}>
-          <Ionicons name="crop" size={16} color="#fff" />
+          <Ionicons name="crop" size={16} color={theme.colors.onPrimary} />
           <Text style={styles.applyTxt}>Apply Crop</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
-});
-
-const styles = StyleSheet.create({
-  img: { position: "absolute", left: 0, top: 0 },
-  gridRow: { flex: 1, borderBottomWidth: 1, borderColor: "rgba(255,255,255,0.35)" },
-  gridCol: { flex: 1, borderRightWidth: 1, borderColor: "rgba(255,255,255,0.35)" },
-  controls: { position: "absolute", bottom: 12, left: 12, right: 12, flexDirection: "row", flexWrap: "wrap", gap: 8, justifyContent: "center" },
-  ratioBtn: { paddingVertical: 6, paddingHorizontal: 10, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.08)", borderWidth: 1, borderColor: "rgba(255,255,255,0.15)" },
-  ratioBtnActive: { backgroundColor: "rgba(236,72,153,0.22)", borderColor: Theme.colors.primary[500] },
-  ratioTxt: { color: "#fff", fontSize: 12, fontWeight: "600" },
-  ratioTxtActive: { color: "#fff" },
-  applyBtn: { marginLeft: 8, flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, backgroundColor: Theme.colors.primary[500] },
-  applyTxt: { color: "#fff", fontSize: 12, fontWeight: "700" },
-  storyBand: {
-    position: "absolute",
-    left: 0, right: 0,
-    height: 60,
-    borderColor: "rgba(14,165,233,0.7)",
-    borderWidth: 1,
-    borderStyle: "dashed",
-  },
 });

@@ -10,6 +10,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 interface PhotoAdjustmentSliderProps {
   label: string;
@@ -32,6 +34,8 @@ export const PhotoAdjustmentSlider: React.FC<PhotoAdjustmentSliderProps> = ({
   icon,
   onValueChange,
 }) => {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const trackW = useSharedValue(0);
   const pct = Math.max(0, Math.min(1, (value - min) / (max - min)));
   const pos = useSharedValue(pct);
@@ -128,7 +132,7 @@ export const PhotoAdjustmentSlider: React.FC<PhotoAdjustmentSliderProps> = ({
         <Ionicons
           name={icon}
           size={18}
-          color="white"
+          color={theme.colors.onSurface}
         />
         <Text style={styles.label}>{label}</Text>
         <Text style={styles.value}>{Math.round(value)}</Text>
@@ -149,35 +153,38 @@ export const PhotoAdjustmentSlider: React.FC<PhotoAdjustmentSliderProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: { marginBottom: 24 },
-  header: { flexDirection: 'row', alignItems: 'center', columnGap: 12, marginBottom: 12 },
-  label: { flex: 1, fontSize: 14, fontWeight: '600', color: 'white' },
-  value: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Theme.colors.primary[500],
-    minWidth: 50,
-    textAlign: 'right',
-  },
+function createStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: { marginBottom: 24 },
+    header: { flexDirection: 'row', alignItems: 'center', columnGap: 12, marginBottom: 12 },
+    label: { flex: 1, fontSize: 14, fontWeight: '600', color: theme.colors.onSurface },
+    value: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.primary,
+      minWidth: 50,
+      textAlign: 'right',
+    },
 
-  sliderTrack: { height: 40, justifyContent: 'center' },
-  sliderBackground: {
-    height: 6,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  sliderFill: { height: '100%', backgroundColor: Theme.colors.primary[500], borderRadius: 3 },
+    sliderTrack: { height: 40, justifyContent: 'center' },
+    sliderBackground: {
+      height: 6,
+      backgroundColor: theme.colors.border,
+      borderRadius: 3,
+      overflow: 'hidden',
+      opacity: 0.2,
+    },
+    sliderFill: { height: '100%', backgroundColor: theme.colors.primary, borderRadius: 3 },
 
-  sliderThumb: {
-    position: 'absolute',
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: Theme.colors.primary[500],
-    borderWidth: 3,
-    borderColor: 'white',
-    top: 8, // centers thumb on 6px track
-  },
-});
+    sliderThumb: {
+      position: 'absolute',
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      backgroundColor: theme.colors.primary,
+      borderWidth: 3,
+      borderColor: theme.colors.onSurface,
+      top: 8, // centers thumb on 6px track
+    },
+  });
+}

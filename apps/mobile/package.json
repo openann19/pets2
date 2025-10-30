@@ -72,7 +72,7 @@
     "test:contract": "NODE_OPTIONS='--max-old-space-size=4096 --expose-gc' jest --selectProjects contract",
     "test:generate-summary": "node ./scripts/generate-test-summary.js",
     "mobile:typecheck": "tsc -p tsconfig.json --noEmit",
-    "mobile:lint": "eslint 'src/**/*.{ts,tsx}' --quiet || true",
+    "mobile:lint": "eslint 'src/**/*.{ts,tsx}' --config ../../eslint.config.js --quiet || true",
     "mobile:test:services": "jest --selectProjects services --runInBand",
     "mobile:test:ui": "jest --selectProjects ui --runInBand",
     "mobile:bundle:analyze": "react-native-bundle-visualizer",

@@ -12,7 +12,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { useTheme } from ../../../theme
+import { useTheme } from '../../../theme';
 import { useReduceMotion } from '../../../hooks/useReducedMotion';
 import { Card } from './Card';
 import { Text } from './Text';
@@ -130,7 +130,7 @@ export function Sheet({
                 <Text variant="h4">{title}</Text>
                 {showCloseButton && (
                   <Pressable onPress={onClose} hitSlop={8}>
-                    <Text style={{ fontSize: 24 }>×</Text>
+                    <Text style={{ fontSize: 24 }}>✕</Text>
                   </Pressable>
                 )}
               </View>

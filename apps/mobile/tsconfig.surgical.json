@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "isolatedModules": false
+  },
+  "include": [
+    "src/services/AccessibilityService.ts",
+    "src/services/__tests__/AccessibilityService.test.ts",
+    "src/screens/LiveStreamViewerScreen.tsx",
+    "src/theme/**/*",
+    "src/types/**/*",
+    "App.tsx"
+  ],
+  "exclude": [
+    "**/__generated__/**",
+    "**/*.stories.tsx",
+    "**/e2e/**",
+    "node_modules"
+  ]
+}

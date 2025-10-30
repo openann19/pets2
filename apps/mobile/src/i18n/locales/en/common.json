@@ -88,22 +88,15 @@
     "bio_placeholder": "Tell us about yourself and what you're looking for in a pet match...",
     "characters": "characters"
   },
-  "welcome": {
-    "title": "You're All Set!",
-    "subtitle": "Welcome to the PawfectMatch community! Your profile is ready and we're excited to help you find amazing connections.",
-    "smart_matching": "Smart Matching",
-    "smart_matching_desc": "AI-powered recommendations based on your preferences",
-    "safe_messaging": "Safe Messaging",
-    "safe_messaging_desc": "Connect securely with other pet lovers",
-    "local_connections": "Local Connections",
-    "local_connections_desc": "Find pets and owners in your area",
-    "verified_profiles": "Verified Profiles",
-    "verified_profiles_desc": "Trust and safety are our top priorities",
-    "pro_tips": "Pro Tips",
-    "tip_photos": "Add photos to get 3x more matches",
-    "tip_honest": "Be honest about your pet's personality",
-    "tip_respond": "Respond to messages within 24 hours",
-    "start_matching": "Start Matching! 🚀",
-    "update_preferences": "You can update your preferences anytime in settings"
-  }
-}
+  "compatibility": {
+    "breakdown_title": "Compatibility Breakdown",
+    "factors": {
+      "temperament": "Temperament",
+      "activity": "Activity",
+      "size": "Size",
+      "age": "Age",
+      "interests": "Interests",
+      "lifestyle": "Lifestyle"
+    },
+    "percentage": "{{score}}%"
+  },

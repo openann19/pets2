@@ -1,12 +1,48 @@
 import { jest } from '@jest/globals';
 import '@testing-library/jest-native/extend-expect';
 
+// Silence noisy RN timers etc. when needed
+jest.mock('react-native/Libraries/Utilities/Platform', () => ({
+  OS: 'ios',
+  select: (objs: any) => objs.ios
+}));
+
+// If you need a design-token fallback to avoid hex literals in tests:
+jest.mock('@pawfectmatch/design-tokens', () => ({
+  createTheme: jest.fn(() => ({
+    colors: {
+      primary: '#2563EB',
+      bg: '#FFFFFF',
+      surface: '#F8FAFC',
+      onBg: '#1E293B',
+      onSurface: '#64748B',
+      onPrimary: '#FFFFFF',
+      danger: '#DC2626',
+      success: '#16A34A',
+      warning: '#D97706',
+      border: '#E2E8F0',
+      onMuted: '#64748B',
+    },
+    palette: {
+      neutral: {
+        50: '#F8FAFC',
+        200: '#E2E8F0',
+        900: '#000000',
+        950: '#111111',
+      },
+      brand: {
+        500: '#64748B',
+      },
+    },
+  })),
+}));
+
 // Ensure React 18 act semantics
 // @ts-ignore
 global.IS_REACT_ACT_ENVIRONMENT = true;
 
 // Polyfill TextEncoder/TextDecoder for Node environment
-import { TextEncoder, TextDecoder } from 'util';
+const { TextEncoder, TextDecoder } = require('util') as any;
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
@@ -48,9 +84,9 @@ jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
 // Expo Haptics: no-op (assert calls via mocks)
 jest.mock('expo-haptics', () => ({
-  impactAsync: jest.fn().mockResolvedValue(undefined),
-  notificationAsync: jest.fn().mockResolvedValue(undefined),
-  selectionAsync: jest.fn().mockResolvedValue(undefined),
+  impactAsync: jest.fn(async () => undefined),
+  notificationAsync: jest.fn(async () => undefined),
+  selectionAsync: jest.fn(async () => undefined),
   ImpactFeedbackStyle: {
     Light: 'light',
     Medium: 'medium',
@@ -62,7 +98,7 @@ jest.mock('expo-haptics', () => ({
 jest.mock('react-native-safe-area-context', () => {
   const React = require('react');
   return {
-    SafeAreaProvider: ({ children }: any) => React.createElement(React.Fragment, null, children),
+    SafeAreaProvider: ({ children }: { children?: React.ReactNode }) => React.createElement(React.Fragment, null, children || null),
     useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
   };
 });
@@ -80,8 +116,8 @@ jest.mock('expo-modules-core', () => ({
 
 // Mock expo-font to prevent font loading issues
 jest.mock('expo-font', () => ({
-  loadAsync: jest.fn().mockResolvedValue(undefined),
-  isLoaded: jest.fn().mockReturnValue(true),
+  loadAsync: jest.fn(async () => undefined),
+  isLoaded: jest.fn(() => true),
   FontSource: {
     GoogleSans: {},
   },
@@ -159,35 +195,50 @@ jest.mock('react-native-encrypted-storage', () => ({
   getAllKeys: jest.fn(),
 }));
 
-// Mock React Native modules to avoid TurboModuleRegistry issues
-jest.mock("react-native", () => ({
-  View: "View",
-  Text: "Text",
-  StyleSheet: { 
-    create: jest.fn(() => ({})),
-    flatten: jest.fn((style) => style),
-  },
-  Animated: {
-    View: "Animated.View",
-    Text: "Animated.Text",
+// Mock React Native modules to avoid TurboModuleRegistry issues while preserving AccessibilityInfo
+jest.mock('react-native', () => {
+  const actualReactNative = jest.requireActual('react-native') as typeof import('react-native');
+  const mockedStyleSheet = {
+    ...(actualReactNative.StyleSheet as any),
+    create: jest.fn((styles: Record<string, unknown>) => styles),
+    flatten: jest.fn((style: unknown) => style),
+  } as typeof actualReactNative.StyleSheet;
+
+  const mockedAnimated = {
+    ...(actualReactNative.Animated as any),
     timing: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
     spring: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
     sequence: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
     parallel: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
     delay: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
     Value: jest.fn(() => ({ setValue: jest.fn(), addListener: jest.fn() })),
-  },
-  Platform: {
-    OS: "ios",
-    select: jest.fn((obj) => obj.ios || obj.default),
-  },
-  Dimensions: {
+  } as typeof actualReactNative.Animated;
+
+  const mockedPlatform = {
+    ...(actualReactNative.Platform as any),
+    OS: 'ios',
+    select: (obj: any) => obj?.ios ?? obj?.default,
+  } as typeof actualReactNative.Platform;
+
+  const mockedDimensions = {
+    ...(actualReactNative.Dimensions as any),
     get: jest.fn(() => ({ width: 375, height: 812 })),
-  },
-  NativeModules: {
+  } as typeof actualReactNative.Dimensions;
+
+  const mockedNativeModules = {
+    ...(actualReactNative.NativeModules as any),
     RNKeychainManager: {},
-  },
-}));
+  } as typeof actualReactNative.NativeModules;
+
+  return {
+    ...(actualReactNative as any),
+    StyleSheet: mockedStyleSheet,
+    Animated: mockedAnimated,
+    Platform: mockedPlatform,
+    Dimensions: mockedDimensions,
+    NativeModules: mockedNativeModules,
+  } as typeof import('react-native');
+});
 
 jest.mock('react-native-linear-gradient', () => 'LinearGradient');
 
@@ -199,6 +250,3 @@ jest.mock('@react-navigation/native', () => {
     useNavigation: () => ({ navigate: jest.fn(), goBack: jest.fn(), dispatch: jest.fn() }),
   };
 });
-
-// Asset/style mocks live here
-// (files created below in __mocks__)

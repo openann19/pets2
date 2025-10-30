@@ -4,8 +4,13 @@ import typescriptParser from '@typescript-eslint/parser';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import globals from 'globals';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import noThemeNamespace from './apps/mobile/eslint-local-rules/no-theme-namespace.js';
 import noHardcodedColors from './eslint-local-rules/no-hardcoded-colors.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default [
   // Global ignores
@@ -97,8 +102,11 @@ export default [
       'apps/mobile/src/constants/**/*',
       'apps/mobile/src/styles/**/*',
       'apps/mobile/src/types/**/*',
+      'apps/mobile/src/**/*.d.ts',
+      'apps/mobile/src/**/*.stories.{ts,tsx}',
     ],
     plugins: {
+      '@typescript-eslint': typescriptPlugin,
       'local': {
         rules: {
           'no-theme-namespace': noThemeNamespace,
@@ -107,6 +115,14 @@ export default [
       },
     },
     languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: { jsx: true },
+        project: ['./apps/mobile/tsconfig.eslint.json'],
+        tsconfigRootDir: __dirname,
+      },
       globals: {
         '__DEV__': 'readonly',
       },

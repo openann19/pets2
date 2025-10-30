@@ -30,9 +30,9 @@ module.exports = {
       ],
       extends: ['plugin:@typescript-eslint/recommended-requiring-type-checking'],
       parserOptions: {
-        project: ['./apps/mobile/tsconfig.json'],
+        project: ['./apps/mobile/tsconfig.eslint.json'],
         tsconfigRootDir: __dirname,
-        createDefaultProgram: true,
+        createDefaultProgram: false, // Use project config instead
       },
     },
     // Mobile-specific rules (excluding certain directories from color checks)

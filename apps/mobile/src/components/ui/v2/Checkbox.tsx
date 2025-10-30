@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '../../../theme';
 import { Text } from './Text';
 
 export type CheckboxSize = 'sm' | 'md' | 'lg';

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Animated, StyleSheet } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '../../../theme';
 
 export interface SkeletonProps {
   width?: number | string;

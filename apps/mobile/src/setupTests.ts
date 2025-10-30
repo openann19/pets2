@@ -1,9 +1,7 @@
 import '@testing-library/jest-native/extend-expect';
-import type { ReactNode } from 'react';
 
-// Jest globals are available in test environment
-declare const beforeAll: (fn: () => void) => void;
-declare const afterEach: (fn: () => void) => void;
+// Jest globals (beforeAll, afterEach, etc.) are available via @types/jest
+// No need to declare them manually - they're included in tsconfig via types: ['jest']
 
 // All mocks are consolidated in jest.setup.ts
 // This file is reserved for @testing-library/jest-native extensions and custom matchers

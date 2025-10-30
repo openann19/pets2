@@ -371,8 +371,8 @@ describe('Advanced E2E User Persona Journeys', () => {
       await performSwipe('right');
 
       // With reduced motion enabled, animations should be minimal or disabled
-      expect(element(by.id('swipe-animation'))).toHaveStyle({ duration: 0 });
-      expect(element(by.id('match-celebration-animation'))).toBeNotVisible();
+      await expect(element(by.id('swipe-animation'))).toHaveStyle({ duration: 0 });
+      await expect(element(by.id('match-celebration-animation'))).toBeNotVisible();
     });
 
     it('should provide high contrast mode support', async () => {
@@ -394,10 +394,10 @@ describe('Advanced E2E User Persona Journeys', () => {
 
       // Tab through interface
       await device.pressButton('tab');
-      expect(element(by.id('matches-list')).toHaveFocus();
+      await expect(element(by.id('matches-list'))).toHaveFocus();
 
       await device.pressButton('tab');
-      expect(element(by.id('filter-button')).toHaveFocus();
+      await expect(element(by.id('filter-button'))).toHaveFocus();
 
       // Enter to activate
       await device.pressButton('enter');

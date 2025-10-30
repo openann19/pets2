@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, type ViewProps } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { useTheme } from ../../../theme
+import { useTheme } from '../../../theme';
 
 export type CardVariant = 'surface' | 'elevated' | 'outlined' | 'glass';
 export type CardPadding = 'none' | 'sm' | 'md' | 'lg' | 'xl';

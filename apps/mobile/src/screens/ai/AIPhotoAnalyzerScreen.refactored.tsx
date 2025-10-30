@@ -61,7 +61,7 @@ const AIPhotoAnalyzerScreen = ({
             onPress={handleGoBack}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+            <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
           </TouchableOpacity>
           
           <Text
@@ -79,8 +79,8 @@ const AIPhotoAnalyzerScreen = ({
           onPickImage={pickImage}
           onTakePhoto={takePhoto}
           colors={{
-            text: colors.onSurface
-            textSecondary: colors.onSurfaceecondary,
+            text: colors.onSurface,
+            textSecondary: colors.onMuted,
             card: colors.card,
             primary: colors.primary,
             secondary: colors.secondary,

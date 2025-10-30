@@ -31,7 +31,7 @@ async function securityScan() {
   // Pattern for secrets and sensitive data
   const secretPatterns = [
     { pattern: /(?:secret|password|api[_-]?key|token|private[_-]?key)\s*=\s*["'`]([^"'`]+)/gi, name: 'Hardcoded secret' },
-    { pattern: /(?:mongodb|postgres|mysql)://[^\s,;\)]+/gi, name: 'Database connection string' },
+    { pattern: /(?:mongodb|postgres|mysql):\/\/[^\s]+/gi, name: 'Database connection string' },
     { pattern: /sk_live_[a-zA-Z0-9]{32,}/g, name: 'Stripe secret key' },
     { pattern: /ghp_[a-zA-Z0-9]{36}/g, name: 'GitHub token' },
     { pattern: /AKIA[0-9A-Z]{16}/g, name: 'AWS access key' }
