@@ -31,7 +31,7 @@ export default function UIDemoScreen(): React.ReactElement {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.bg }]>
+    <View style={[styles.container, { backgroundColor: theme.colors.bg }]}>
       {/* Controls Bar */}
       <View
         style={[

@@ -5,6 +5,9 @@
 import { renderHook } from '@testing-library/react-native';
 import { usePulseEffect } from '../usePulseEffect';
 
+jest.mock('react-native-reanimated', () => {
+
+
   const Reanimated = require('react-native-reanimated/mock');
   Reanimated.default.call = () => {};
   return Reanimated;

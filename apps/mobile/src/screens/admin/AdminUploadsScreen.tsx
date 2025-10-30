@@ -20,7 +20,9 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme'";
+import { useTheme } from "@mobile/src/theme";
+import { getExtendedColors, type ExtendedColors } from "../../theme/adapters";
+import type { Theme } from "../../theme/types";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
 
@@ -61,7 +63,8 @@ function AdminUploadsScreen({
   navigation,
 }: AdminUploadsScreenProps): React.JSX.Element {
   const theme = useTheme();
-  const { colors } = theme;
+  const colors = getExtendedColors(theme);
+  const styles = makeStyles(theme, colors);
   const [uploads, setUploads] = useState<Upload[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -187,7 +190,10 @@ function AdminUploadsScreen({
           styles.uploadCard,
           { backgroundColor: colors.card },
         ])}
-         testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+        testID="AdminUploadsScreen-button-2"
+        accessibilityLabel="View upload details"
+        accessibilityRole="button"
+        onPress={() => {
           setSelectedUpload(item);
         }}
       >
@@ -223,7 +229,7 @@ function AdminUploadsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.userName,
-              { color: colors.onSurface},
+              { color: theme.colors.onSurface },
             ])}
             numberOfLines={1}
           >
@@ -232,7 +238,7 @@ function AdminUploadsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.uploadType,
-              { color: colors.onSurfaceecondary },
+              { color: colors.textSecondary },
             ])}
           >
             {item.type} • {new Date(item.uploadedAt).toLocaleDateString()}
@@ -240,7 +246,7 @@ function AdminUploadsScreen({
         </View>
       </TouchableOpacity>
     ),
-    [colors],
+    [colors, theme.colors.onSurface],
   );
 
   const getStatusColor = (status: Upload["status"]) => {
@@ -261,17 +267,20 @@ function AdminUploadsScreen({
       style={StyleSheet.flatten([
         styles.filterButton,
         {
-          backgroundColor: filter === filterType ? colors.primary : colors.card,
+          backgroundColor: filter === filterType ? theme.colors.primary : colors.card,
         },
       ])}
-       testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+      testID="AdminUploadsScreen-button-2"
+      accessibilityLabel={`Filter uploads: ${label}`}
+      accessibilityRole="button"
+      onPress={() => {
         setFilter(filterType);
       }}
     >
       <Text
         style={StyleSheet.flatten([
           styles.filterButtonText,
-          { color: filter === filterType ? "white" : colors.onSurface},
+          { color: filter === filterType ? "white" : theme.colors.onSurface },
         ])}
       >
         {label}
@@ -294,17 +303,20 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.modalTitle,
-                { color: colors.onSurface},
+                { color: theme.colors.onSurface },
               ])}
             >
               Upload Details
             </Text>
             <TouchableOpacity
-               testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+              testID="AdminUploadsScreen-button-2"
+              accessibilityLabel="Close upload details"
+              accessibilityRole="button"
+              onPress={() => {
                 setSelectedUpload(null);
               }}
             >
-              <Ionicons name="close" size={24} color={colors.onSurface />
+              <Ionicons name="close" size={24} color={theme.colors.onSurface} />
             </TouchableOpacity>
           </View>
 
@@ -318,7 +330,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailLabel,
-                { color: colors.onSurfaceecondary },
+                { color: colors.textSecondary },
               ])}
             >
               User:
@@ -326,7 +338,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailValue,
-                { color: colors.onSurface},
+                { color: theme.colors.onSurface },
               ])}
             >
               {selectedUpload.userName}
@@ -335,7 +347,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailLabel,
-                { color: colors.onSurfaceecondary },
+                { color: colors.textSecondary },
               ])}
             >
               Type:
@@ -343,7 +355,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailValue,
-                { color: colors.onSurface},
+                { color: theme.colors.onSurface },
               ])}
             >
               {selectedUpload.type}
@@ -352,7 +364,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailLabel,
-                { color: colors.onSurfaceecondary },
+                { color: colors.textSecondary },
               ])}
             >
               Uploaded:
@@ -360,7 +372,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailValue,
-                { color: colors.onSurface},
+                { color: theme.colors.onSurface },
               ])}
             >
               {new Date(selectedUpload.uploadedAt).toLocaleString()}
@@ -371,7 +383,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailLabel,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.textSecondary },
                   ])}
                 >
                   Pet:
@@ -379,7 +391,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailValue,
-                    { color: colors.onSurface},
+                    { color: theme.colors.onSurface },
                   ])}
                 >
                   {selectedUpload.petName}
@@ -413,7 +425,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailLabel,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.textSecondary },
                   ])}
                 >
                   File Size:
@@ -421,7 +433,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailValue,
-                    { color: colors.onSurface},
+                    { color: theme.colors.onSurface },
                   ])}
                 >
                   {(selectedUpload.metadata.fileSize / 1024 / 1024).toFixed(2)}{" "}
@@ -438,7 +450,10 @@ function AdminUploadsScreen({
                   styles.actionButton,
                   styles.approveButton,
                 ])}
-                 testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleUploadAction(selectedUpload.id, "approve")}
+                testID="AdminUploadsScreen-button-2"
+                accessibilityLabel="Approve upload"
+                accessibilityRole="button"
+                onPress={() => handleUploadAction(selectedUpload.id, "approve")}
               >
                 <Ionicons name="checkmark" size={20} color="white" />
                 <Text style={styles.actionButtonText}>Approve</Text>
@@ -449,7 +464,10 @@ function AdminUploadsScreen({
                   styles.actionButton,
                   styles.rejectButton,
                 ])}
-                 testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+                testID="AdminUploadsScreen-button-2"
+                accessibilityLabel="Reject upload"
+                accessibilityRole="button"
+                onPress={() => {
                   handleRejectWithReason(selectedUpload);
                 }}
               >
@@ -478,17 +496,20 @@ function AdminUploadsScreen({
         ])}
       >
         <TouchableOpacity
-           testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+          testID="AdminUploadsScreen-button-2"
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
+          onPress={() => {
             navigation.goBack();
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
         </TouchableOpacity>
         <Text
           style={StyleSheet.flatten([
             styles.headerTitle,
-            { color: colors.onSurface},
+            { color: theme.colors.onSurface },
           ])}
         >
           Upload Management
@@ -508,16 +529,16 @@ function AdminUploadsScreen({
             { backgroundColor: colors.background },
           ])}
         >
-          <Ionicons name="search" size={20} color={colors.onSurfaceecondary} />
+          <Ionicons name="search" size={20} color={colors.textSecondary} />
           <TextInput
             style={StyleSheet.flatten([
               styles.searchInput,
-              { color: colors.onSurface},
+              { color: theme.colors.onSurface },
             ])}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search uploads..."
-            placeholderTextColor={colors.onSurfaceecondary}
+            placeholderTextColor={colors.textSecondary}
           />
         </View>
 
@@ -535,7 +556,7 @@ function AdminUploadsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.onSurfaceecondary },
+              { color: colors.textSecondary },
             ])}
           >
             Loading uploads...
@@ -561,12 +582,12 @@ function AdminUploadsScreen({
               <Ionicons
                 name="images-outline"
                 size={64}
-                color={colors.onSurfaceecondary}
+                color={colors.textSecondary}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.emptyText,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.textSecondary },
                 ])}
               >
                 No uploads found
@@ -582,18 +603,22 @@ function AdminUploadsScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-  },
+const makeStyles = (
+  theme: Theme,
+  colors: ExtendedColors,
+) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
   backButton: {
     marginRight: 16,
   },
@@ -601,63 +626,63 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
   },
-  searchContainer: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-  },
-  searchInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  searchInput: {
-    flex: 1,
-    marginLeft: 8,
-    fontSize: 16,
-  },
-  filterContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  filterButtonText: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
+    searchContainer: {
+      padding: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    searchInputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 8,
+      marginBottom: 12,
+    },
+    searchInput: {
+      flex: 1,
+      marginLeft: 8,
+      fontSize: 16,
+    },
+    filterContainer: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    filterButton: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+    },
+    filterButtonText: {
+      fontSize: 14,
+      fontWeight: "500",
+    },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-  },
-  listContainer: {
-    padding: 16,
-  },
-  row: {
-    justifyContent: "space-between",
-  },
-  uploadCard: {
-    width: IMAGE_SIZE,
-    marginBottom: 16,
-    borderRadius: 12,
-    overflow: "hidden",
-    shadowColor: theme.colors.border,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
+    loadingText: {
+      marginTop: 12,
+      fontSize: 16,
+    },
+    listContainer: {
+      padding: 16,
+    },
+    row: {
+      justifyContent: "space-between",
+    },
+    uploadCard: {
+      width: IMAGE_SIZE,
+      marginBottom: 16,
+      borderRadius: 12,
+      overflow: "hidden",
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
   uploadImage: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
@@ -698,86 +723,86 @@ const styles = StyleSheet.create({
   uploadType: {
     fontSize: 12,
   },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 64,
-  },
-  emptyText: {
-    fontSize: 16,
-    marginTop: 16,
-  },
-  modalOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  modalContent: {
-    width: SCREEN_WIDTH - 32,
-    maxHeight: "80%",
-    borderRadius: 16,
-    overflow: "hidden",
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  modalImage: {
-    width: "100%",
-    height: 300,
-  },
-  uploadDetails: {
-    padding: 16,
-  },
-  detailLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 8,
-    marginBottom: 4,
-  },
-  detailValue: {
-    fontSize: 14,
-  },
-  modalActions: {
-    flexDirection: "row",
-    padding: 16,
-    gap: 12,
-  },
-  actionButton: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    borderRadius: 8,
-    gap: 8,
-  },
-  approveButton: {
-    backgroundColor: theme.colors.success,
-  },
-  rejectButton: {
-    backgroundColor: theme.colors.danger,
-  },
-  actionButtonText: {
-    fontSize: 16,
-    color: "white",
-    fontWeight: "600",
-  },
-});
+    emptyContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 64,
+    },
+    emptyText: {
+      fontSize: 16,
+      marginTop: 16,
+    },
+    modalOverlay: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000,
+    },
+    modalContent: {
+      width: SCREEN_WIDTH - 32,
+      maxHeight: "80%",
+      borderRadius: 16,
+      overflow: "hidden",
+    },
+    modalHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+    },
+    modalImage: {
+      width: "100%",
+      height: 300,
+    },
+    uploadDetails: {
+      padding: 16,
+    },
+    detailLabel: {
+      fontSize: 12,
+      fontWeight: "600",
+      marginTop: 8,
+      marginBottom: 4,
+    },
+    detailValue: {
+      fontSize: 14,
+    },
+    modalActions: {
+      flexDirection: "row",
+      padding: 16,
+      gap: 12,
+    },
+    actionButton: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 12,
+      borderRadius: 8,
+      gap: 8,
+    },
+    approveButton: {
+      backgroundColor: theme.colors.success,
+    },
+    rejectButton: {
+      backgroundColor: theme.colors.danger,
+    },
+    actionButtonText: {
+      fontSize: 16,
+      color: "white",
+      fontWeight: "600",
+    },
+  });
 
 export default AdminUploadsScreen;

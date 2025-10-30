@@ -122,7 +122,7 @@ const createStyles = (theme: any) => StyleSheet.create({
   heroTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
     marginBottom: theme.spacing.sm,
   },
   heroDescription: {
@@ -133,7 +133,7 @@ const createStyles = (theme: any) => StyleSheet.create({
   itemName: {
     fontSize: 18,
     fontWeight: '600',
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
     marginBottom: theme.spacing.xs,
   },
   itemDescription: {

@@ -234,9 +234,15 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
   const [room, setRoom] = useState(null);
 
   return (
-    <View style={[styles.container, { paddingTop: top, paddingBottom: bottom }]>
+    <View style={[styles.container, { paddingTop: top, paddingBottom: bottom }]}>
       <View style={styles.header}>
-        <TouchableOpacity  testID="GoLiveScreen-button-2" accessibilityLabel="navigation.goBack() style=styles.closeButton" accessibilityRole="button" onPress={() => navigation.goBack()} style={styles.closeButton}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          testID="GoLiveScreen-button-2"
+          accessibilityLabel="Close"
+          accessibilityRole="button"
+          onPress={() => navigation.goBack()}
+        >
           <Ionicons name="close" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Go Live</Text>
@@ -259,13 +265,25 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
 
       <View style={styles.controls}>
         {!publishing ? (
-          <TouchableOpacity style={styles.primaryButton}  testID="GoLiveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={connectAndPublish}>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            testID="GoLiveScreen-button-2"
+            accessibilityLabel="Go Live"
+            accessibilityRole="button"
+            onPress={connectAndPublish}
+          >
             <Ionicons name="radio" size={20} color="#fff" />
             <Text style={styles.primaryText}>Go Live</Text>
           </TouchableOpacity>
         ) : (
           <>
-            <TouchableOpacity style={styles.dangerButton}  testID="GoLiveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={endLive}>
+            <TouchableOpacity
+              style={styles.dangerButton}
+              testID="GoLiveScreen-button-2"
+              accessibilityLabel="End Stream"
+              accessibilityRole="button"
+              onPress={endLive}
+            >
               <Ionicons name="stop" size={20} color="#fff" />
               <Text style={styles.primaryText}>End Stream</Text>
             </TouchableOpacity>
@@ -273,14 +291,24 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
             <View style={styles.row}>
               <TouchableOpacity
                 style={styles.circle}
-                 testID="GoLiveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { setMuted((m) => ({ ...m, audio: !m.audio })); }}
+                testID="GoLiveScreen-button-2"
+                accessibilityLabel="Toggle audio"
+                accessibilityRole="button"
+                onPress={() => {
+                  setMuted((m) => ({ ...m, audio: !m.audio }));
+                }}
               >
                 <Ionicons name={muted.audio ? "mic-off" : "mic"} size={20} color="#fff" />
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.circle}
-                 testID="GoLiveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { setMuted((m) => ({ ...m, video: !m.video })); }}
+                testID="GoLiveScreen-button-2"
+                accessibilityLabel="Toggle video"
+                accessibilityRole="button"
+                onPress={() => {
+                  setMuted((m) => ({ ...m, video: !m.video }));
+                }}
               >
                 <Ionicons
                   name={muted.video ? "eye-off" : "eye"}

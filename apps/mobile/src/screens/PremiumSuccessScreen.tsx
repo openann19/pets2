@@ -14,7 +14,8 @@ import { useTheme } from "@mobile/src/theme";
 import type { RootStackParamList } from "../navigation/types";
 
 const PremiumSuccessScreen = (): React.JSX.Element => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [isVerified, setIsVerified] = useState(false);
 
@@ -47,7 +48,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
         {isVerified ? (
           <>
             <View style={styles.successIcon}>
-              <Ionicons name="checkmark-circle" size={80} color={theme.colors.success} }/>
+              <Ionicons name="checkmark-circle" size={80} color={theme.colors.success} />
             </View>
 
             <Text
@@ -59,7 +60,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
             <Text
               style={StyleSheet.flatten([
                 styles.subtitle,
-                { color: colors.onSurfaceecondary },
+                { color: colors.onMuted },
               ])}
             >
               Your subscription has been activated successfully. Enjoy all
@@ -68,7 +69,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
 
             <View style={styles.featuresList}>
               <View style={styles.featureItem}>
-                <Ionicons name="heart" size={20} color={theme.colors.success} }/>
+                <Ionicons name="heart" size={20} color={theme.colors.success} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,

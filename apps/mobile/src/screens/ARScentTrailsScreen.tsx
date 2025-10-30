@@ -110,7 +110,7 @@ export default function ARScentTrailsScreen() {
             return (
               <View
                 key={i}
-                style={[styles.marker, { left: screenX - 30, top: y - 30 }]
+                style={[styles.marker, { left: screenX - 30, top: y - 30 }]}
                 testID={`marker-${i}`}
               >
                 <Text style={styles.markerText}>

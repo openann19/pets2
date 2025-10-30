@@ -124,7 +124,7 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
     emptyTitle: {
       fontSize: 24,
       fontWeight: "bold",
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       marginBottom: 16,
     },
     emptySubtitle: {

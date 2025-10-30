@@ -59,7 +59,7 @@ function ResetPasswordScreen({
     title: {
       fontSize: 28,
       fontWeight: "bold",
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       marginBottom: 8,
     },
     subtitle: {
@@ -83,7 +83,7 @@ function ResetPasswordScreen({
     label: {
       fontSize: 14,
       fontWeight: "600",
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       marginBottom: 8,
     },
     input: {
@@ -93,7 +93,7 @@ function ResetPasswordScreen({
       borderRadius: 8,
       padding: 12,
       fontSize: 16,
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
     },
     inputError: {
       borderColor: theme.colors.danger,

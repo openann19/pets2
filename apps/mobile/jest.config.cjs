@@ -11,6 +11,7 @@ module.exports = {
     'node_modules/(?!(@react-native|react-native|expo|expo-.*|@expo/.*|@unimodules/.*|@react-navigation/.*|@shopify/flash-list)/)'
   ],
   moduleNameMapper: {
+    '^@mobile/src/(.*)$': '<rootDir>/src/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@mobile/(.*)$': '<rootDir>/src/$1',
     '^@pawfectmatch/design-tokens$': '<rootDir>/../../packages/design-tokens/src/index.ts',

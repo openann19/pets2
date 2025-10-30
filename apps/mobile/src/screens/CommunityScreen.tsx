@@ -252,7 +252,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
                 {post.author.name}
               </Text>
               <Text
-                style={StyleSheet.flatten([styles.timeAgo, { color: colors.onSurfaceecondary }])}
+                style={StyleSheet.flatten([styles.timeAgo, { color: colors.onMuted }])}
               >
                 {formatTimeAgo(post.createdAt)}
               </Text>
@@ -286,7 +286,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             <Ionicons
               name="ellipsis-horizontal"
               size={20}
-              color={colors.onSurfaceecondary}
+              color={colors.onMuted}
             />
           </TouchableOpacity>
         </View>
@@ -371,7 +371,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
               <Text
                 style={StyleSheet.flatten([
                   styles.activityTextSmall,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 {post.activityDetails.currentAttendees} of {post.activityDetails.maxAttendees}{' '}
@@ -405,12 +405,12 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             <Ionicons
               name={post.liked ? 'heart' : 'heart-outline'}
               size={24}
-              color={post.liked ? theme.colors.primary : colors.onSurfaceecondary}
+              color={post.liked ? theme.colors.primary : colors.onMuted}
             />
             <Text
               style={StyleSheet.flatten([
                 styles.actionText,
-                { color: post.liked ? theme.colors.primary : colors.onSurfaceecondary },
+                { color: post.liked ? theme.colors.primary : colors.onMuted },
               ])}
             >
               {post.likes}
@@ -429,10 +429,10 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             <Ionicons
               name="chatbubble-outline"
               size={24}
-              color={colors.onSurfaceecondary}
+              color={colors.onMuted}
             />
             <Text
-              style={StyleSheet.flatten([styles.actionText, { color: colors.onSurfaceecondary }])}
+              style={StyleSheet.flatten([styles.actionText, { color: colors.onMuted }])}
             >
               {post.comments.length}
             </Text>
@@ -447,7 +447,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             <Ionicons
               name="share-outline"
               size={24}
-              color={colors.onSurfaceecondary}
+              color={colors.onMuted}
             />
           </TouchableOpacity>
         </View>
@@ -468,7 +468,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
                 <Text
                   style={StyleSheet.flatten([
                     styles.commentText,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   {comment.content}
@@ -510,12 +510,12 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
       <Ionicons
         name="people-outline"
         size={64}
-        color={colors.onSurfaceecondary}
+        color={colors.onMuted}
       />
       <Text style={StyleSheet.flatten([styles.emptyTitle, { color: colors.onSurface }])}>
         No posts yet
       </Text>
-      <Text style={StyleSheet.flatten([styles.emptyText, { color: colors.onSurfaceecondary }])}>
+      <Text style={StyleSheet.flatten([styles.emptyText, { color: colors.onMuted }])}>
         Be the first to share something!
       </Text>
     </View>
@@ -534,7 +534,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             color={colors.primary}
           />
           <Text
-            style={StyleSheet.flatten([styles.loadingText, { color: colors.onSurfaceecondary }])}
+            style={StyleSheet.flatten([styles.loadingText, { color: colors.onMuted }])}
           >
             Loading community...
           </Text>

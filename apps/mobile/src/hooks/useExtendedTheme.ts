@@ -13,7 +13,7 @@
  * ```
  */
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '../theme';
 import type { ExtendedColors } from '../theme/adapters';
 import { getExtendedColors, getIsDark } from '../theme/adapters';
 import type { Theme } from '../theme/types';

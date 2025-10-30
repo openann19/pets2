@@ -192,7 +192,7 @@ export function AnalysisResultsSection({ result, colors }: AnalysisResultsSectio
           {score}/100
         </Text>
         <Text
-          style={StyleSheet.flatten([styles.scoreDescription, { color: colors.onSurfaceecondary }])}
+          style={StyleSheet.flatten([styles.scoreDescription, { color: colors.onMuted }])}
         >
           {score >= 80
             ? 'Excellent for matching!'
@@ -215,7 +215,7 @@ export function AnalysisResultsSection({ result, colors }: AnalysisResultsSectio
         {result.ai_insights.map((insight, index) => (
           <Text
             key={index}
-            style={StyleSheet.flatten([styles.insight, { color: colors.onSurfaceecondary }])}
+            style={StyleSheet.flatten([styles.insight, { color: colors.onMuted }])}
           >
             • {insight}
           </Text>

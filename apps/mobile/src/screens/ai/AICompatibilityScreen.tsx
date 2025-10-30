@@ -880,7 +880,7 @@ const AICompatibilityScreen = ({
                     <Ionicons
                       name="checkmark-circle"
                       size={16}
-                      color={theme.colors.warning
+                      color={theme.colors.warning}
                     />
                     <Text
                       style={StyleSheet.flatten([

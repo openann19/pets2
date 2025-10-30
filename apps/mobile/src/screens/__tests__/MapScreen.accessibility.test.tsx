@@ -47,8 +47,9 @@ jest.mock("../../hooks/screens/useMapScreen", () => ({
 
 describe("MapScreen (accessibility)", () => {
   it("has visible headings and decorative gradient container", async () => {
+    const Screen = require("../MapScreen").default as React.ComponentType<any>;
     const { getByText, getByA11yLabel } = renderWithProviders(
-      (<(typeof import("../MapScreen"))["default"]>require("../MapScreen").default)({ navigation: { navigate: mockNavigate } } as any)
+      <Screen navigation={{ navigate: mockNavigate }} />
     );
     expect(getByText("Pet Activity Map")).toBeTruthy();
     expect(getByText("Real-time locations")).toBeTruthy();

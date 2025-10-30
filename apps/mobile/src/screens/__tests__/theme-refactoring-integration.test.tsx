@@ -113,7 +113,7 @@ describe('Theme Refactoring - Integration Verification', () => {
             backgroundColor: theme.colors.bg,
           },
           text: {
-            color: theme.colors.onSurface
+            color: theme.colors.onSurface,
             fontSize: 16,
           },
           button: {
@@ -132,7 +132,7 @@ describe('Theme Refactoring - Integration Verification', () => {
       const styles = createDynamicStyles();
       
       expect(styles.container.backgroundColor).toBe(theme.colors.bg);
-      expect(styles.text.color).toBe(theme.colors.onSurface;
+      expect(styles.text.color).toBe(theme.colors.onSurface);
       expect(styles.button.backgroundColor).toBe(theme.colors.primary);
       expect(styles.button.padding).toBe(theme.spacing.md);
       expect(styles.button.radius).toBe(theme.radius.lg);
@@ -148,7 +148,7 @@ describe('Theme Refactoring - Integration Verification', () => {
         success: theme.colors.success,
         warning: theme.colors.warning,
         danger: theme.colors.danger,
-        text: theme.colors.onSurface
+        text: theme.colors.onSurface,
         textMuted: theme.colors.onMuted,
       };
 
@@ -182,25 +182,25 @@ describe('Theme Refactoring - Integration Verification', () => {
       const lightTheme = createTheme('light');
       
       // Light theme: white bg, dark text
-      expect(lighttheme.colors.bg).toBe('#ffffff');
-      expect(lighttheme.colors.onSurface.toBe('#111827');
+      expect(lightTheme.colors.bg).toBe('#ffffff');
+      expect(lightTheme.colors.onSurface).toBe('#111827');
       
       const darkTheme = createTheme('dark');
       
       // Dark theme: dark bg, light text
-      expect(darktheme.colors.bg).toBe('#0a0a0a');
-      expect(darktheme.colors.onSurface.toBe('#ffffff');
+      expect(darkTheme.colors.bg).toBe('#0a0a0a');
+      expect(darkTheme.colors.onSurface).toBe('#ffffff');
     });
 
     it('should have readable text colors', () => {
       const theme = createTheme('light');
       
       // Primary text should be readable
-      expect(theme.colors.onSurface.toBeTruthy();
+      expect(theme.colors.onSurface).toBeTruthy();
       expect(theme.colors.onMuted).toBeTruthy();
       
       // They should be different
-      expect(theme.colors.onSurface.not.toBe(theme.colors.onMuted);
+      expect(theme.colors.onSurface.not).toBe(theme.colors.onMuted);
     });
   });
 
@@ -243,8 +243,8 @@ describe('Theme Refactoring - Integration Verification', () => {
       ];
 
       semanticColors.forEach(color => {
-        expect(lighttheme.colors[color as keyof typeof lighttheme.colors])
-          .toBe(darktheme.colors[color as keyof typeof darktheme.colors]);
+        expect(lightTheme.colors[color as keyof typeof lightTheme.colors])
+          .toBe(darkTheme.colors[color as keyof typeof darkTheme.colors]);
       });
     });
 
@@ -255,8 +255,8 @@ describe('Theme Refactoring - Integration Verification', () => {
       const spacingKeys = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'];
       
       spacingKeys.forEach(key => {
-        expect(lighttheme.spacing[key as keyof typeof lighttheme.spacing])
-          .toBe(darktheme.spacing[key as keyof typeof darktheme.spacing]);
+        expect(lightTheme.spacing[key as keyof typeof lightTheme.spacing])
+          .toBe(darkTheme.spacing[key as keyof typeof darkTheme.spacing]);
       });
     });
 
@@ -267,8 +267,8 @@ describe('Theme Refactoring - Integration Verification', () => {
       const radiusKeys = ['none', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', 'full'];
       
       radiusKeys.forEach(key => {
-        expect(lighttheme.radius[key as keyof typeof lighttheme.radius])
-          .toBe(darktheme.radius[key as keyof typeof darktheme.radius]);
+        expect(lightTheme.radius[key as keyof typeof lightTheme.radius])
+          .toBe(darkTheme.radius[key as keyof typeof darkTheme.radius]);
       });
     });
   });

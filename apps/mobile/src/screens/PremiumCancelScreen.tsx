@@ -14,7 +14,8 @@ import { useTheme } from "@mobile/src/theme";
 import type { RootStackParamList } from "../navigation/types";
 
 const PremiumCancelScreen = (): React.JSX.Element => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const handleTryAgain = () => {
@@ -35,7 +36,7 @@ const PremiumCancelScreen = (): React.JSX.Element => {
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <View style={styles.iconContainer}>
-            <Ionicons name="close-circle" size={80} color={theme.colors.danger} }/>
+            <Ionicons name="close-circle" size={80} color={theme.colors.danger} />
           </View>
 
           <Text
@@ -47,7 +48,7 @@ const PremiumCancelScreen = (): React.JSX.Element => {
           <Text
             style={StyleSheet.flatten([
               styles.subtitle,
-              { color: colors.onSurfaceecondary },
+              { color: colors.onMuted },
             ])}
           >
             No worries! Your payment was cancelled and you weren't charged. You

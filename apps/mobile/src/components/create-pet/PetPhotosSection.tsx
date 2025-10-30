@@ -201,7 +201,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
         <Ionicons
           name="camera"
           size={24}
-          color={colors.onSurfaceecondary}
+          color={colors.onMuted}
         />
         <Text style={styles.addPhotoText}>
           {photos.length === 0 ? 'Add Photos' : `Add More Photos (${photos.length}/10)`}

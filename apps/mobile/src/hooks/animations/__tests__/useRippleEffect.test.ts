@@ -5,6 +5,9 @@
 import { renderHook } from '@testing-library/react-native';
 import { useRippleEffect } from '../useRippleEffect';
 
+jest.mock('react-native-reanimated', () => {
+
+
   const Reanimated = require('react-native-reanimated/mock');
   Reanimated.default.call = () => {};
   return Reanimated;

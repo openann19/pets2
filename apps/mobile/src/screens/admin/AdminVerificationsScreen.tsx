@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@/theme';
+import { useTheme } from '@mobile/src/theme';
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
 
@@ -285,6 +285,7 @@ function AdminVerificationsScreen({
     }
   };
 
+  const renderVerification = ({ item }: { item: Verification }) => (
     <TouchableOpacity
       style={StyleSheet.flatten([
         styles.verificationCard,
@@ -357,7 +358,7 @@ function AdminVerificationsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.submittedAt,
-              { color: colors.onSurfaceecondary },
+              { color: colors.onMuted },
             ])}
           >
             Submitted: {new Date(item.submittedAt).toLocaleDateString()}
@@ -367,12 +368,12 @@ function AdminVerificationsScreen({
             <Ionicons
               name="document-text"
               size={16}
-              color={colors.onSurfaceecondary}
+              color={colors.onMuted}
             />
             <Text
               style={StyleSheet.flatten([
                 styles.documentsCount,
-                { color: colors.onSurfaceecondary },
+                { color: colors.onMuted },
               ])}
             >
               {item.documents.length} document
@@ -430,13 +431,6 @@ function AdminVerificationsScreen({
           </View>
         )}
       </TouchableOpacity>
-    ),
-    [
-      colors,
-      handleVerificationAction,
-      handleRejectWithReason,
-      handleRequestInfo,
-    ],
   );
 
   const renderFilterButton = (filterType: typeof filter, label: string) => (
@@ -487,7 +481,7 @@ function AdminVerificationsScreen({
                 setSelectedVerification(null);
               }}
             >
-              <Ionicons name="close" size={24} color={colors.onSurface />
+              <Ionicons name="close" size={24} color={colors.onSurface} />
             </TouchableOpacity>
           </View>
 
@@ -496,7 +490,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoLabel,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 User:
@@ -514,7 +508,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoLabel,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Type:
@@ -531,7 +525,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoLabel,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Submitted:
@@ -550,7 +544,7 @@ function AdminVerificationsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.infoLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Notes:
@@ -598,7 +592,7 @@ function AdminVerificationsScreen({
                     <Text
                       style={StyleSheet.flatten([
                         styles.documentType,
-                        { color: colors.onSurfaceecondary },
+                        { color: colors.onMuted },
                       ])}
                     >
                       {item.type.replace("_", " ")}
@@ -680,7 +674,7 @@ function AdminVerificationsScreen({
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
         </TouchableOpacity>
         <Text
           style={StyleSheet.flatten([
@@ -705,7 +699,7 @@ function AdminVerificationsScreen({
             { backgroundColor: colors.background },
           ])}
         >
-          <Ionicons name="search" size={20} color={colors.onSurfaceecondary} />
+          <Ionicons name="search" size={20} color={colors.onMuted} />
           <TextInput
             style={StyleSheet.flatten([
               styles.searchInput,
@@ -714,7 +708,7 @@ function AdminVerificationsScreen({
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search verifications..."
-            placeholderTextColor={colors.onSurfaceecondary}
+            placeholderTextColor={colors.onMuted}
           />
         </View>
 
@@ -732,7 +726,7 @@ function AdminVerificationsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.onSurfaceecondary },
+              { color: colors.onMuted },
             ])}
           >
             Loading verifications...
@@ -756,12 +750,12 @@ function AdminVerificationsScreen({
               <Ionicons
                 name="shield-checkmark-outline"
                 size={64}
-                color={colors.onSurfaceecondary}
+                color={colors.onMuted}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.emptyText,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 No verifications found
@@ -777,7 +771,7 @@ function AdminVerificationsScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -931,7 +925,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.success,
   },
   infoButton: {
-    backgroundColor: theme.theme.colors.primary[500],
+    backgroundColor: theme.colors.primary,
   },
   rejectButton: {
     backgroundColor: theme.colors.danger,

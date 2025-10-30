@@ -136,7 +136,7 @@ function PrivacySettingsScreen({
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface }/>
         </TouchableOpacity>
         <Text
           testID="privacy-settings-title"
@@ -365,7 +365,7 @@ function PrivacySettingsScreen({
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color={colors.onSurfaceecondary}
+                color={colors.onMuted}
               />
             </TouchableOpacity>,
             true,
@@ -412,7 +412,7 @@ function PrivacySettingsScreen({
               <Ionicons
                 name="download-outline"
                 size={20}
-                color={colors.onSurfaceecondary}
+                color={colors.onMuted}
               />
             </TouchableOpacity>,
             true,

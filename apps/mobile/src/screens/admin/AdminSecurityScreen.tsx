@@ -562,7 +562,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.metricValue,
-                  { color: theme.colors.status.info },
+                  { color: theme.colors.info },
                 ])}
               >
                 {metrics.mediumAlerts}
@@ -1036,4 +1036,5 @@ function makeStyles(theme: AppTheme) {
     metaText: {
       fontSize: theme.typography.body.size * 0.75,
     },
+  });
 }

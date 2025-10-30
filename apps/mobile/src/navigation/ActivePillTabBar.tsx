@@ -1,31 +1,29 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useEffect, useMemo, useRef } from "react";
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { LayoutChangeEvent } from "react-native";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@react-navigation/native";
-import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { useTheme } from "../theme";
+import { getExtendedColors } from "../theme/adapters";
 import { useReduceMotion } from "../hooks/useReducedMotion";
 
-type IoniconsName = string;
+type IoniconsName = keyof typeof Ionicons.glyphMap;
 
 type RouteName = "Home" | "Swipe" | "Map" | "Matches" | "Profile" | "AdoptionManager" | "Premium";
+
+const ICONS: Record<RouteName, { focused: IoniconsName; unfocused: IoniconsName }> = {
+  Home: { focused: "home", unfocused: "home-outline" },
+  Swipe: { focused: "heart", unfocused: "heart-outline" },
+  Map: { focused: "map", unfocused: "map-outline" },
+  Matches: { focused: "chatbubbles", unfocused: "chatbubbles-outline" },
+  Profile: { focused: "person", unfocused: "person-outline" },
+  AdoptionManager: { focused: "list", unfocused: "list-outline" },
+  Premium: { focused: "star", unfocused: "star-outline" },
+};
 
 const getSpringConfig = (reducedMotion: boolean) => {
   if (reducedMotion) {
@@ -34,35 +32,17 @@ const getSpringConfig = (reducedMotion: boolean) => {
   return { damping: 22, stiffness: 260, mass: 0.9 };
 };
 
-const getIcon = (routeName: string, focused: boolean): IoniconsName => {
-  const route = routeName as RouteName;
-  
-  switch (route) {
-    case "Home":
-      return focused ? "home" : "home-outline";
-    case "Swipe":
-      return focused ? "heart" : "heart-outline";
-    case "Map":
-      return focused ? "map" : "map-outline";
-    case "Matches":
-      return focused ? "chatbubbles" : "chatbubbles-outline";
-    case "Profile":
-      return focused ? "person" : "person-outline";
-    case "AdoptionManager":
-      return focused ? "list" : "list-outline";
-    case "Premium":
-      return focused ? "star" : "star-outline";
-    default:
-      return "home-outline";
-  }
-};
+const getIcon = (routeName: RouteName, focused: boolean): IoniconsName =>
+  focused ? ICONS[routeName].focused : ICONS[routeName].unfocused;
 
 export default function ActivePillTabBar({
   state,
   descriptors,
   navigation,
 }: BottomTabBarProps) {
-  const { colors, dark } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
+  const dark = theme.isDark;
   const insets = useSafeAreaInsets();
   const reducedMotion = useReduceMotion();
 
@@ -160,7 +140,12 @@ export default function ActivePillTabBar({
       <BlurView
         intensity={Platform.OS === "ios" ? 80 : 100}
         tint={dark ? "dark" : "light"}
-        style={[styles.bar, { borderColor: dark ? "#2a2e36" : "#e5e7eb" }]
+        style={[
+          styles.bar,
+          {
+            borderColor: dark ? "#2a2e36" : "#e5e7eb",
+          },
+        ]}
       >
         {/* active pill */}
         <Animated.View
@@ -185,7 +170,8 @@ export default function ActivePillTabBar({
           const label = typeof rawLabel === 'string' ? rawLabel : String(rawLabel);
 
           const isFocused = state.index === index;
-          const badgeCount = getBadgeCount(route.name);
+          const routeName = (route.name as RouteName) ?? "Home";
+          const badgeCount = getBadgeCount(routeName);
           const showBadge = badgeCount > 0;
 
           const scale = iconScales[index];
@@ -242,9 +228,9 @@ export default function ActivePillTabBar({
               <View style={styles.iconWrap} accessibilityRole="button" accessibilityLabel={`${label} icon`}>
                 <Animated.View style={iconStyle}>
                   <Ionicons
-                    name={getIcon(route.name, isFocused)}
+                    name={getIcon(routeName, isFocused)}
                     size={22}
-                    color={isFocused ? colors.primary : colors.onSurface
+                    color={isFocused ? colors.primary : colors.onSurface}
                   />
                 </Animated.View>
 
@@ -270,7 +256,7 @@ export default function ActivePillTabBar({
                 style={[
                   styles.label,
                   {
-                    color: isFocused ? colors.primary : colors.onSurface
+                    color: isFocused ? colors.primary : colors.onSurface,
                     fontWeight: isFocused ? "600" : "400",
                   },
                 ]}

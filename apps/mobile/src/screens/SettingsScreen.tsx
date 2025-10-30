@@ -120,7 +120,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     settingTitle: {
       fontSize: 16,
       fontWeight: "500",
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       marginBottom: 2,
     },
     settingTitleDestructive: {

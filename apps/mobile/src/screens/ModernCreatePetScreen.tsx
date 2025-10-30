@@ -98,7 +98,7 @@ export default function ModernCreatePetScreen({
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
       fontSize: 16,
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       borderWidth: 1,
       borderColor: theme.colors.border,
     },

@@ -10,6 +10,9 @@
 import { renderHook } from '@testing-library/react-native';
 import { useFloatingEffect } from '../useFloatingEffect';
 
+jest.mock('react-native-reanimated', () => {
+
+
   const Reanimated = require('react-native-reanimated/mock');
   Reanimated.default.call = () => {};
   return Reanimated;

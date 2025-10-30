@@ -18,30 +18,7 @@ import { accessibilityService, AccessibilityService } from '../AccessibilityServ
 import type { AppTheme } from '@/theme';
 import { createTheme } from '@/theme/rnTokens';
 
-// Mock React Native AccessibilityInfo
-jest.mock('react-native', () => ({
-  AccessibilityInfo: {
-    isScreenReaderEnabled: jest.fn(),
-    isBoldTextEnabled: jest.fn(),
-    isGrayscaleEnabled: jest.fn(),
-    isInvertColorsEnabled: jest.fn(),
-    isReduceMotionEnabled: jest.fn(),
-    isReduceTransparencyEnabled: jest.fn(),
-    announceForAccessibility: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-  },
-  Platform: {
-    OS: 'ios',
-  },
-}));
-
-// Mock logger
-jest.mock('../logger', () => ({
-  logger: {
-    warn: jest.fn(),
-  },
-}));
+// Mocks are handled globally in jest.setup.ts
 
 const mockAccessibilityInfo = AccessibilityInfo as jest.Mocked<typeof AccessibilityInfo>;
 

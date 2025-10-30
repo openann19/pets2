@@ -18,7 +18,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme'";
+import { useTheme } from '@mobile/src/theme';
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
 
@@ -162,7 +162,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
             <Text
               style={StyleSheet.flatten([
                 styles.timestamp,
-                { color: colors.onSurfaceecondary },
+                { color: colors.onMuted },
               ])}
             >
               {new Date(item.timestamp).toLocaleString()}
@@ -296,7 +296,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface }/>
         </TouchableOpacity>
         <Text
           style={StyleSheet.flatten([
@@ -321,7 +321,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
             { backgroundColor: colors.background },
           ])}
         >
-          <Ionicons name="search" size={20} color={colors.onSurfaceecondary} />
+          <Ionicons name="search" size={20} color={colors.onMuted} />
           <TextInput
             style={StyleSheet.flatten([
               styles.searchInput,
@@ -330,7 +330,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search messages..."
-            placeholderTextColor={colors.onSurfaceecondary}
+            placeholderTextColor={colors.onMuted}
           />
         </View>
 
@@ -348,7 +348,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.onSurfaceecondary },
+              { color: colors.onMuted },
             ])}
           >
             Loading messages...
@@ -372,12 +372,12 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
               <Ionicons
                 name="chatbubbles-outline"
                 size={64}
-                color={colors.onSurfaceecondary}
+                color={colors.onMuted}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.emptyText,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 No messages found

@@ -206,13 +206,13 @@ describe('ModernSwipeScreen - Theme Integration', () => {
       const darkTheme = createTheme('dark');
 
       // Spacing should be identical
-      expect(lighttheme.spacing.xl).toBe(darktheme.spacing.xl);
-      expect(lighttheme.spacing.lg).toBe(darktheme.spacing.lg);
-      expect(lighttheme.spacing['4xl']).toBe(darktheme.spacing['4xl']);
+      expect(lightTheme.spacing.xl).toBe(darkTheme.spacing.xl);
+      expect(lightTheme.spacing.lg).toBe(darkTheme.spacing.lg);
+      expect(lightTheme.spacing['4xl']).toBe(darkTheme.spacing['4xl']);
 
       // Semantic colors should be identical
-      expect(lighttheme.colors.danger).toBe(darktheme.colors.danger);
-      expect(lighttheme.colors.success).toBe(darktheme.colors.success);
+      expect(lightTheme.colors.danger).toBe(darkTheme.colors.danger);
+      expect(lightTheme.colors.success).toBe(darkTheme.colors.success);
     });
   });
 });

@@ -1,5 +1,47 @@
-import { jest } from '@jest/globals';
+import { jest, beforeAll, afterAll } from '@jest/globals';
 // import '@testing-library/jest-native/extend-expect'; // Moved to end after mocks
+
+// Mock React Native FIRST to avoid ReactCurrentOwner errors
+jest.mock('react-native', () => ({
+  StyleSheet: {
+    create: jest.fn((styles: Record<string, unknown>) => styles),
+    flatten: jest.fn((style: unknown) => style),
+  },
+  Animated: {
+    timing: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
+    spring: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
+    sequence: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
+    parallel: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
+    delay: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
+    Value: jest.fn(() => ({ setValue: jest.fn(), addListener: jest.fn() })),
+  },
+  Platform: {
+    OS: 'ios',
+    select: (obj: any) => obj?.ios ?? obj?.default,
+  },
+  Dimensions: {
+    get: jest.fn(() => ({ width: 375, height: 812 })),
+  },
+  NativeModules: {
+    RNKeychainManager: {},
+  },
+  Easing: {
+    bezier: (_x1: number, _y1: number, _x2: number, _y2: number) => (t: number) => t,
+  },
+  AccessibilityInfo: {
+    addEventListener: jest.fn((_event: string, _listener: (...args: unknown[]) => void) => ({
+      remove: jest.fn(),
+    })),
+    removeEventListener: jest.fn(),
+    setAccessibilityFocus: jest.fn(),
+    isScreenReaderEnabled: jest.fn(async () => false),
+    isBoldTextEnabled: jest.fn(async () => false),
+    isGrayscaleEnabled: jest.fn(async () => false),
+    isInvertColorsEnabled: jest.fn(async () => false),
+    isReduceMotionEnabled: jest.fn(async () => false),
+    isReduceTransparencyEnabled: jest.fn(async () => false),
+  },
+}));
 
 // Silence noisy RN timers etc. when needed
 jest.mock('react-native/Libraries/Utilities/Platform', () => ({
@@ -9,6 +51,76 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => ({
 
 // If you need a design-token fallback to avoid hex literals in tests:
 jest.mock('@pawfectmatch/design-tokens', () => ({
+  __esModule: true,
+  COLORS: {
+    primary: {
+      50: '#eff6ff',
+      100: '#dbeafe',
+      200: '#bfdbfe',
+      300: '#93c5fd',
+      400: '#60a5fa',
+      500: '#3b82f6',
+      600: '#2563eb',
+      700: '#1d4ed8',
+      800: '#1e40af',
+      900: '#1e3a8a',
+      950: '#172554',
+    },
+    secondary: {
+      50: '#f8fafc',
+      100: '#f1f5f9',
+      200: '#e2e8f0',
+      300: '#cbd5e1',
+      400: '#94a3b8',
+      500: '#64748b',
+      600: '#475569',
+      700: '#334155',
+      800: '#1e293b',
+      900: '#0f172a',
+    },
+    neutral: {
+      0: '#ffffff',
+      50: '#fafafa',
+      100: '#f5f5f5',
+      200: '#e5e5e5',
+      300: '#d4d4d4',
+      400: '#a3a3a3',
+      500: '#737373',
+      600: '#525252',
+      700: '#404040',
+      800: '#262626',
+      900: '#171717',
+      950: '#0a0a0a',
+    },
+    success: {
+      500: '#10b981',
+    },
+    warning: {
+      500: '#f59e0b',
+    },
+    error: {
+      500: '#ef4444',
+    },
+    info: {
+      500: '#3b82f6',
+    },
+  },
+  SPACING: {
+    1: '0.25rem',
+    2: '0.5rem',
+    4: '1rem',
+    6: '1.5rem',
+    8: '2rem',
+    10: '2.5rem',
+    12: '3rem',
+    16: '4rem',
+  },
+  RADIUS: {
+    sm: '0.125rem',
+    md: '0.375rem',
+    lg: '0.5rem',
+    xl: '0.75rem',
+  },
   createTheme: jest.fn(() => ({
     colors: {
       primary: '#2563EB',
@@ -195,58 +307,23 @@ jest.mock('react-native-encrypted-storage', () => ({
   getAllKeys: jest.fn(),
 }));
 
-// Mock React Native modules to avoid TurboModuleRegistry issues while preserving AccessibilityInfo
-jest.mock('react-native', () => {
-  const actualReactNative = jest.requireActual('react-native') as typeof import('react-native');
-  const mockedStyleSheet = {
-    ...(actualReactNative.StyleSheet as any),
-    create: jest.fn((styles: Record<string, unknown>) => styles),
-    flatten: jest.fn((style: unknown) => style),
-  } as typeof actualReactNative.StyleSheet;
-
-  const mockedAnimated = {
-    ...(actualReactNative.Animated as any),
-    timing: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-    spring: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-    sequence: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-    parallel: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-    delay: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-    Value: jest.fn(() => ({ setValue: jest.fn(), addListener: jest.fn() })),
-  } as typeof actualReactNative.Animated;
-
-  const mockedPlatform = {
-    ...(actualReactNative.Platform as any),
-    OS: 'ios',
-    select: (obj: any) => obj?.ios ?? obj?.default,
-  } as typeof actualReactNative.Platform;
-
-  const mockedDimensions = {
-    ...(actualReactNative.Dimensions as any),
-    get: jest.fn(() => ({ width: 375, height: 812 })),
-  } as typeof actualReactNative.Dimensions;
-
-  const mockedNativeModules = {
-    ...(actualReactNative.NativeModules as any),
-    RNKeychainManager: {},
-  } as typeof actualReactNative.NativeModules;
-
-  return {
-    ...(actualReactNative as any),
-    StyleSheet: mockedStyleSheet,
-    Animated: mockedAnimated,
-    Platform: mockedPlatform,
-    Dimensions: mockedDimensions,
-    NativeModules: mockedNativeModules,
-  } as typeof import('react-native');
-});
+// Mock logger with all required methods
+jest.mock('./src/services/logger', () => ({
+  logger: {
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 jest.mock('react-native-linear-gradient', () => 'LinearGradient');
 
 // Navigation helpers (only if you have tests relying on navigation)
 jest.mock('@react-navigation/native', () => {
-  const actual = jest.requireActual('@react-navigation/native');
+  const actual = jest.requireActual('@react-navigation/native') as typeof import('@react-navigation/native');
   return {
     ...actual,
     useNavigation: () => ({ navigate: jest.fn(), goBack: jest.fn(), dispatch: jest.fn() }),
-  };
+  } as typeof import('@react-navigation/native');
 });

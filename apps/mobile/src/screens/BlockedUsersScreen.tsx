@@ -269,7 +269,7 @@ function BlockedUsersScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.userEmail,
-                { color: colors.onSurfaceecondary },
+                { color: colors.onMuted },
               ])}
             >
               {item.email}
@@ -277,7 +277,7 @@ function BlockedUsersScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.blockedDate,
-                { color: colors.onSurfaceecondary },
+                { color: colors.onMuted },
               ])}
             >
               Blocked {new Date(item.blockedAt).toLocaleDateString()}

@@ -7,6 +7,19 @@
 import { COLORS, SPACING, RADIUS } from '@pawfectmatch/design-tokens';
 import { Easing } from 'react-native';
 
+const easingModule = Easing ?? require('react-native/Libraries/Animated/Easing');
+
+const legacyBezier = (x1: number, y1: number, x2: number, y2: number) => {
+  if (typeof easingModule?.bezier === 'function') {
+    return easingModule.bezier(x1, y1, x2, y2);
+  }
+
+  return (t: number) => {
+    const u = 1 - t;
+    return 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t;
+  };
+};
+
 const toPx = (v: number | string): number =>
   typeof v === 'string' ? Number.parseFloat(v.replace('rem', '')) * 16 : v;
 
@@ -193,7 +206,7 @@ export const Theme = {
   // Motion system
   motion: {
     duration: { fast: 150, normal: 250, slow: 400 },
-    easing: { standard: Easing.bezier(0.4, 0, 0.2, 1) },
+    easing: { standard: legacyBezier(0.4, 0, 0.2, 1) },
     spring: { stiff: { stiffness: 300, damping: 30, mass: 0.9 } },
   },
 } as const;

@@ -280,7 +280,7 @@ export default function AIPhotoAnalyzerScreen({
 
   const getQualityColor = (score: number): string => {
     if (score >= 90) return theme.colors.success;
-    if (score >= 80) return theme.colors.status.info;
+    if (score >= 80) return theme.colors.info;
     if (score >= 70) return theme.colors.warning;
     return theme.colors.danger;
   };
@@ -367,11 +367,11 @@ export default function AIPhotoAnalyzerScreen({
                 { backgroundColor: colors.card },
               ])}
             >
-              <Ionicons name="camera" size={48} color={colors.onSurfaceecondary} />
+              <Ionicons name="camera" size={48} color={colors.onMuted} />
               <Text
                 style={StyleSheet.flatten([
                   styles.placeholderText,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 No photo selected
@@ -472,7 +472,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.breedSecondary,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Mixed with {analysisResult.breed.secondary}
@@ -493,7 +493,7 @@ export default function AIPhotoAnalyzerScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.confidenceText,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   {Math.round(analysisResult.breed.confidence * 100)}%
@@ -537,7 +537,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.healthScoreLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Overall Health
@@ -550,7 +550,7 @@ export default function AIPhotoAnalyzerScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.healthIndicatorLabel,
-                            { color: colors.onSurfaceecondary },
+                            { color: colors.onMuted },
                           ])}
                         >
                           {key.charAt(0).toUpperCase() + key.slice(1)}
@@ -608,7 +608,7 @@ export default function AIPhotoAnalyzerScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.qualityFactorLabel,
-                            { color: colors.onSurfaceecondary },
+                            { color: colors.onMuted },
                           ])}
                         >
                           {factor.charAt(0).toUpperCase() + factor.slice(1)}
@@ -662,7 +662,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Age
@@ -680,7 +680,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Size
@@ -698,7 +698,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Temperament
@@ -723,7 +723,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicLabel,
-                      { color: colors.onSurfaceecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Features

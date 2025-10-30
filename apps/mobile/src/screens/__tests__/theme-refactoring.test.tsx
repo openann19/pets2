@@ -92,7 +92,7 @@ describe('Theme Refactoring - Integration Tests', () => {
       
       // Light theme should have light backgrounds
       expect(theme.colors.bg).toBe('#ffffff');
-      expect(theme.colors.onSurface.toBe('#111827');
+      expect(theme.colors.onSurface).toBe('#111827');
       
       // Primary color should be defined
       expect(theme.colors.primary).toBeTruthy();
@@ -106,7 +106,7 @@ describe('Theme Refactoring - Integration Tests', () => {
       
       // Dark theme should have dark backgrounds
       expect(theme.colors.bg).toBe('#0a0a0a');
-      expect(theme.colors.onSurface.toBe('#ffffff');
+      expect(theme.colors.onSurface).toBe('#ffffff');
       
       // Primary color should be defined
       expect(theme.colors.primary).toBeTruthy();
@@ -120,30 +120,30 @@ describe('Theme Refactoring - Integration Tests', () => {
       const darkTheme = createTheme('dark');
       
       // Primary color should be same in both themes
-      expect(lighttheme.colors.primary).toBe(darktheme.colors.primary);
+      expect(lightTheme.colors.primary).toBe(darkTheme.colors.primary);
       
       // Success, warning, danger should be same
-      expect(lighttheme.colors.success).toBe(darktheme.colors.success);
-      expect(lighttheme.colors.warning).toBe(darktheme.colors.warning);
-      expect(lighttheme.colors.danger).toBe(darktheme.colors.danger);
+      expect(lightTheme.colors.success).toBe(darkTheme.colors.success);
+      expect(lightTheme.colors.warning).toBe(darkTheme.colors.warning);
+      expect(lightTheme.colors.danger).toBe(darkTheme.colors.danger);
     });
 
     it('should have consistent spacing across themes', () => {
       const lightTheme = createTheme('light');
       const darkTheme = createTheme('dark');
       
-      expect(lighttheme.spacing.xl).toBe(darktheme.spacing.xl);
-      expect(lighttheme.spacing.lg).toBe(darktheme.spacing.lg);
-      expect(lighttheme.spacing.md).toBe(darktheme.spacing.md);
+      expect(lightTheme.spacing.xl).toBe(darkTheme.spacing.xl);
+      expect(lightTheme.spacing.lg).toBe(darkTheme.spacing.lg);
+      expect(lightTheme.spacing.md).toBe(darkTheme.spacing.md);
     });
 
     it('should have consistent radius across themes', () => {
       const lightTheme = createTheme('light');
       const darkTheme = createTheme('dark');
       
-      expect(lighttheme.radius.lg).toBe(darktheme.radius.lg);
-      expect(lighttheme.radius.md).toBe(darktheme.radius.md);
-      expect(lighttheme.radius.sm).toBe(darktheme.radius.sm);
+      expect(lightTheme.radius.lg).toBe(darkTheme.radius.lg);
+      expect(lightTheme.radius.md).toBe(darkTheme.radius.md);
+      expect(lightTheme.radius.sm).toBe(darkTheme.radius.sm);
     });
   });
 
@@ -191,14 +191,14 @@ describe('Theme Refactoring - Integration Tests', () => {
       const lightTheme = createTheme('light');
       
       // Light theme: light background, dark text
-      expect(lighttheme.colors.bg).toBe('#ffffff');
-      expect(lighttheme.colors.onSurface.toBe('#111827');
+      expect(lightTheme.colors.bg).toBe('#ffffff');
+      expect(lightTheme.colors.onSurface).toBe('#111827');
       
       const darkTheme = createTheme('dark');
       
       // Dark theme: dark background, light text
-      expect(darktheme.colors.bg).toBe('#0a0a0a');
-      expect(darktheme.colors.onSurface.toBe('#ffffff');
+      expect(darkTheme.colors.bg).toBe('#0a0a0a');
+      expect(darkTheme.colors.onSurface).toBe('#ffffff');
     });
   });
 
@@ -263,7 +263,7 @@ describe('Theme Refactoring - Screen Compliance', () => {
         button: { backgroundColor: mocktheme.colors.primary },
       };
       
-      expect(styles.text.color).toBe(mocktheme.colors.onSurface;
+      expect(styles.text.color).toBe(mocktheme.colors.onSurface);
       expect(styles.button.backgroundColor).toBe(mocktheme.colors.primary);
     });
   });
@@ -275,7 +275,7 @@ describe('Theme Refactoring - Screen Compliance', () => {
       // Correct patterns
       expect(theme.colors.bg).toBeTruthy();
       expect(theme.colors.bgElevated).toBeTruthy();
-      expect(theme.colors.onSurface.toBeTruthy();
+      expect(theme.colors.onSurface).toBeTruthy();
       expect(theme.colors.onMuted).toBeTruthy();
       expect(theme.colors.primary).toBeTruthy();
       expect(theme.colors.success).toBeTruthy();

@@ -254,7 +254,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingLabel,
-                    { color: theme.colors.onMuted }, // Replaced theme.colors.onSurfaceecondary
+                    { color: theme.colors.onMuted }, // Replaced theme.colors.onMuted
                   ])}
                 >
                   Billing Period:
@@ -273,7 +273,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingLabel,
-                    { color: theme.colors.onMuted }, // Replaced theme.colors.onSurfaceecondary
+                    { color: theme.colors.onMuted }, // Replaced theme.colors.onMuted
                   ])}
                 >
                   Next Billing Date:
@@ -292,7 +292,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingLabel,
-                    { color: theme.colors.onMuted }, // Replaced theme.colors.onSurfaceecondary
+                    { color: theme.colors.onMuted }, // Replaced theme.colors.onMuted
                   ])}
                 >
                   Amount:
