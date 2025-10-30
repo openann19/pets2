@@ -158,7 +158,7 @@ export const SecurityAlertCard: React.FC<SecurityAlertCardProps> = ({
 
   return (
     <TouchableOpacity
-      style={[styles.alertCard, { backgroundColor: colors.surface }]
+      style={[styles.alertCard, { backgroundColor: colors.surface }]}
       onPress={() => onPress(alert)}
       disabled={isActionLoading}
     >
@@ -169,14 +169,14 @@ export const SecurityAlertCard: React.FC<SecurityAlertCardProps> = ({
             <Text style={styles.severityText}>{alert.severity.toUpperCase()}</Text>
           </View>
           <Ionicons name={getTypeIcon(alert.type) as any} size={20} color={colors.onSurface} />
-          <Text style={[styles.alertType, { color: colors.onMuted }]>
+          <Text style={[styles.alertType, { color: colors.onMuted }]}>
             {alert.type.replace("_", " ")}
           </Text>
         </View>
         {!alert.resolved && (
           <View style={styles.actionButtons}>
             <TouchableOpacity
-              style={[styles.resolveButton, { backgroundColor: colors.success }]
+              style={[styles.resolveButton, { backgroundColor: colors.success }]}
               onPress={(e) => {
                 e.stopPropagation();
                 onResolve(alert.id);
@@ -190,7 +190,7 @@ export const SecurityAlertCard: React.FC<SecurityAlertCardProps> = ({
             </TouchableOpacity>
             {alert.ipAddress && onBlockIP && (
               <TouchableOpacity
-                style={[styles.blockButton, { backgroundColor: colors.danger }]
+                style={[styles.blockButton, { backgroundColor: colors.danger }]}
                 onPress={(e) => {
                   e.stopPropagation();
                   onBlockIP(alert.id, alert.ipAddress!);
@@ -209,8 +209,8 @@ export const SecurityAlertCard: React.FC<SecurityAlertCardProps> = ({
 
       {/* Content */}
       <View style={styles.alertContent}>
-        <Text style={[styles.alertTitle, { color: colors.onSurface }]>{alert.title}</Text>
-        <Text style={[styles.alertDescription, { color: colors.onMuted }]>
+        <Text style={[styles.alertTitle, { color: colors.onSurface }]}>{alert.title}</Text>
+        <Text style={[styles.alertDescription, { color: colors.onMuted }]}>
           {alert.description}
         </Text>
       </View>
@@ -218,13 +218,13 @@ export const SecurityAlertCard: React.FC<SecurityAlertCardProps> = ({
       {/* Footer */}
       <View style={styles.alertFooter}>
         <Ionicons name="time" size={14} color={colors.onMuted} />
-        <Text style={[styles.alertTimestamp, { color: colors.onMuted }]>
+        <Text style={[styles.alertTimestamp, { color: colors.onMuted }]}>
           {new Date(alert.timestamp).toLocaleString()}
         </Text>
         {alert.ipAddress && (
           <>
             <Ionicons name="location" size={14} color={colors.onMuted} />
-            <Text style={[styles.alertIP, { color: colors.onMuted }]>
+            <Text style={[styles.alertIP, { color: colors.onMuted }]}>
               {alert.ipAddress}
             </Text>
           </>
@@ -234,7 +234,7 @@ export const SecurityAlertCard: React.FC<SecurityAlertCardProps> = ({
       {alert.resolved && (
         <View style={styles.resolvedBadge}>
           <Ionicons name="checkmark-circle" size={16} color={colors.success} />
-          <Text style={[styles.resolvedText, { color: colors.success }]>
+          <Text style={[styles.resolvedText, { color: colors.success }]}>
             Resolved
           </Text>
         </View>

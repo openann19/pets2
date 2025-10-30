@@ -77,7 +77,7 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
     <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
       <View style={styles.resultHeader}>
         <Ionicons name="list" size={24} color={theme.colors.success} />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
           Analysis Factors
         </Text>
       </View>
@@ -85,7 +85,7 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
       <View style={styles.factorsSection}>
         <View style={styles.factorGroup}>
           <Text
-            style={[styles.factorGroupTitle, { color: theme.colors.success }]
+            style={[styles.factorGroupTitle, { color: theme.colors.success }]}
           >
             Strengths
           </Text>
@@ -96,7 +96,7 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
                 size={16}
                 color={theme.colors.success}
               />
-              <Text style={[styles.factorText, { color: colors.onSurface }]>
+              <Text style={[styles.factorText, { color: colors.onSurface }]}>
                 {strength}
               </Text>
             </View>
@@ -105,14 +105,14 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
 
         <View style={styles.factorGroup}>
           <Text
-            style={[styles.factorGroupTitle, { color: theme.colors.warning }]
+            style={[styles.factorGroupTitle, { color: theme.colors.warning }]}
           >
             Concerns
           </Text>
           {factors.concerns.map((concern, index) => (
             <View key={index} style={styles.factorItem}>
               <Ionicons name="warning" size={16} color={theme.colors.warning} />
-              <Text style={[styles.factorText, { color: colors.onSurface }]>
+              <Text style={[styles.factorText, { color: colors.onSurface }]}>
                 {concern}
               </Text>
             </View>
@@ -121,7 +121,7 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
 
         <View style={styles.factorGroup}>
           <Text
-            style={[styles.factorGroupTitle, { color: theme.colors.info }]
+            style={[styles.factorGroupTitle, { color: theme.colors.info }]}
           >
             Recommendations
           </Text>
@@ -132,7 +132,7 @@ export const AnalysisFactorsCard: React.FC<AnalysisFactorsCardProps> = ({
                 size={16}
                 color={theme.colors.info}
               />
-              <Text style={[styles.factorText, { color: colors.onSurface }]>
+              <Text style={[styles.factorText, { color: colors.onSurface }]}>
                 {recommendation}
               </Text>
             </View>
