@@ -256,8 +256,8 @@ export default function VoiceRecorderUltraNative({
               isPlaying={isPlaying}
               progress={progress}
               duration={Math.max(1, Math.round(durationMs / 1000))}
-              color={Theme.colors.primary[500}]
-              height={36}
+              color={theme.colors.primary}
+            height={36}
             />
             <Text style={styles.dur}>{fmt(durationMs)}</Text>
           </View>
