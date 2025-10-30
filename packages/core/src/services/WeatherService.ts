@@ -8,16 +8,14 @@ import { getGeolocation } from '../utils/environment';
  */
 
 const WeatherSchema = z.object({
-  weather: z.array(
-    z.object({ id: z.number(), main: z.string(), description: z.string() })
-  ),
+  weather: z.array(z.object({ id: z.number(), main: z.string(), description: z.string() })),
   main: z.object({ temp: z.number(), humidity: z.number(), pressure: z.number() }),
   name: z.string(),
   sys: z.object({ sunrise: z.number(), sunset: z.number() }),
   wind: z.object({ speed: z.number(), deg: z.number() }),
   clouds: z.object({ all: z.number() }),
   visibility: z.number(),
-  dt: z.number()
+  dt: z.number(),
 });
 
 export type WeatherResponse = z.infer<typeof WeatherSchema>;
@@ -48,7 +46,11 @@ async function fetchWeather(lat: number, lon: number): Promise<WeatherResponse> 
 /**
  * Get current time of day based on sunrise/sunset
  */
-function getTimeOfDay(sunrise: number, sunset: number, currentTime: number): 'dawn' | 'day' | 'dusk' | 'night' {
+function getTimeOfDay(
+  sunrise: number,
+  sunset: number,
+  currentTime: number,
+): 'dawn' | 'day' | 'dusk' | 'night' {
   const now = currentTime;
   const dawnStart = sunrise - 3600; // 1 hour before sunrise
   const duskEnd = sunset + 3600; // 1 hour after sunset
@@ -114,14 +116,23 @@ function generatePetTips(weather: WeatherResponse, timeOfDay: string, season: st
 /**
  * Generate activity suggestions based on weather
  */
-function generateActivitySuggestions(weather: WeatherResponse, timeOfDay: string, season: string): string[] {
+function generateActivitySuggestions(
+  weather: WeatherResponse,
+  timeOfDay: string,
+  season: string,
+): string[] {
   const suggestions: string[] = [];
   const temp = weather.main.temp;
   const condition = weather.weather[0]?.main.toLowerCase();
   const windSpeed = weather.wind.speed;
 
   // Outdoor activities
-  if (temp >= 10 && temp <= 25 && (condition == null || !condition.includes('rain')) && (condition == null || !condition.includes('snow'))) {
+  if (
+    temp >= 10 &&
+    temp <= 25 &&
+    (condition == null || !condition.includes('rain')) &&
+    (condition == null || !condition.includes('snow'))
+  ) {
     suggestions.push('Perfect weather for a long park walk');
     suggestions.push('Great conditions for fetch or agility training');
     if (windSpeed < 5) {
@@ -162,10 +173,11 @@ export function useEnhancedWeather(): UseQueryResult<EnhancedWeatherData> {
 
       const timeOfDay = getTimeOfDay(weather.sys.sunrise, weather.sys.sunset, weather.dt);
       const season = getSeason();
-      const isPrecipitating = weather.weather.some(w =>
-        w.main.toLowerCase().includes('rain') ||
-        w.main.toLowerCase().includes('snow') ||
-        w.main.toLowerCase().includes('drizzle')
+      const isPrecipitating = weather.weather.some(
+        (w) =>
+          w.main.toLowerCase().includes('rain') ||
+          w.main.toLowerCase().includes('snow') ||
+          w.main.toLowerCase().includes('drizzle'),
       );
       const isCold = weather.main.temp < 10;
       const isHot = weather.main.temp > 28;
@@ -178,14 +190,14 @@ export function useEnhancedWeather(): UseQueryResult<EnhancedWeatherData> {
         isCold,
         isHot,
         petFriendlyTips: generatePetTips(weather, timeOfDay, season),
-        activitySuggestions: generateActivitySuggestions(weather, timeOfDay, season)
+        activitySuggestions: generateActivitySuggestions(weather, timeOfDay, season),
       };
 
       return enhancedData;
     },
     staleTime: 1000 * 60 * 15, // 15 minutes
     refetchInterval: 1000 * 60 * 15,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -201,7 +213,7 @@ export function useWeather(): UseQueryResult<WeatherResponse> {
     },
     staleTime: 1000 * 60 * 20, // 20min
     refetchInterval: 1000 * 60 * 20,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
 }
 

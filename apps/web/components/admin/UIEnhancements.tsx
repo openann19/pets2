@@ -415,8 +415,8 @@ export const EnhancedInput = ({
             onChange(e.target.value);
             onInputChange?.(e);
           }}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={() => { setIsFocused(true); }}
+          onBlur={() => { setIsFocused(false); }}
           placeholder={placeholder}
           required={required}
           disabled={disabled}
@@ -536,7 +536,7 @@ export const EnhancedModal = ({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
             className={`inline-block align-bottom bg-white dark:bg-gray-800 rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle ${sizeClasses[modalSizeKey]} sm:w-full`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); }}
           >
             <div className="bg-white dark:bg-gray-800 px-6 pt-6 pb-4">
               <div className="flex items-center justify-between mb-4">
@@ -584,7 +584,7 @@ export const EnhancedTooltip = ({
 
   const showTooltip = () => {
     if (timeoutId) clearTimeout(timeoutId);
-    const id = setTimeout(() => setIsVisible(true), delay);
+    const id = setTimeout(() => { setIsVisible(true); }, delay);
     setTimeoutId(id);
   };
 
@@ -765,7 +765,7 @@ export const EnhancedDropdown = ({
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => { document.removeEventListener('mousedown', handleClickOutside); };
   }, []);
 
   const selectedOption = options.find((option) => option.value === value);
@@ -880,7 +880,7 @@ export const EnhancedToast = ({
 
   useEffect(() => {
     const timer = setTimeout(onClose, duration);
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); };
   }, [duration, onClose]);
 
   const typeClasses = {

@@ -1,0 +1,7 @@
+{
+  "success": true,
+  "checkoutUrl": "https://checkout.stripe.com/c/pay/cs_test_a1b2c3",
+  "sessionId": "cs_test_a1b2c3",
+  "planId": "premium_monthly"
+}
+

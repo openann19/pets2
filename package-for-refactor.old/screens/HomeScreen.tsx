@@ -1,0 +1,604 @@
+import React from "react";
+import { useAuthStore } from "@pawfectmatch/core";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  Dimensions,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
+// Import new architecture components
+import {
+  EliteButton,
+  Heading2,
+  useStaggeredAnimation,
+  useEntranceAnimation,
+} from "../components";
+
+// Import legacy components for backward compatibility
+import {
+  EliteContainer,
+  EliteScrollContainer,
+  EliteHeader,
+  EliteCard,
+  FadeInUp,
+  StaggeredContainer,
+} from "../components";
+
+// Import premium components
+import {
+  PremiumBody,
+  PremiumHeading,
+  HolographicCard,
+  GlowContainer,
+  ParticleEffect,
+} from "../components/PremiumComponents";
+import { useHomeScreen } from "../hooks/screens/useHomeScreen";
+import { Theme } from '../theme/unified-theme';
+
+const { width: screenWidth } = Dimensions.get("window");
+
+export default function HomeScreen() {
+  const { user } = useAuthStore();
+
+  const {
+    stats,
+    refreshing,
+    onRefresh,
+    handleProfilePress,
+    handleSettingsPress,
+    handleSwipePress,
+    handleMatchesPress,
+    handleMessagesPress,
+    handleMyPetsPress,
+    handleCreatePetPress,
+    handleCommunityPress,
+  } = useHomeScreen();
+
+  // Animation hooks
+  const { start: startStaggeredAnimation } = useStaggeredAnimation(6, 100);
+  const { start: startEntranceAnimation } = useEntranceAnimation("fadeIn", 0);
+
+  // Start animations
+  React.useEffect(() => {
+    startStaggeredAnimation();
+    startEntranceAnimation();
+  }, [startStaggeredAnimation, startEntranceAnimation]);
+
+  return (
+    <EliteContainer gradient="primary">
+      {/* Premium Glass Header */}
+      <EliteHeader
+        title="PawfectMatch"
+        subtitle={`Welcome back, ${user?.firstName ?? "Pet Lover"}!`}
+        blur={true}
+        rightComponent={
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            <EliteButton
+              title="Profile"
+              variant="secondary"
+              size="sm"
+              onPress={handleProfilePress}
+            />
+            <EliteButton
+              title="Settings"
+              variant="secondary"
+              size="sm"
+              onPress={handleSettingsPress}
+            />
+          </View>
+        }
+      />
+
+      <EliteScrollContainer
+        gradient="primary"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="Theme.colors.primary[500]"
+          />
+        }
+      >
+        {/* Quick Actions with Premium Effects */}
+        <FadeInUp delay={0}>
+          <View style={styles.quickActions}>
+            <Heading2 style={styles.sectionTitle}>Quick Actions</Heading2>
+            <StaggeredContainer delay={100}>
+              <FadeInUp delay={0}>
+                <EliteCard
+                  variant="glass"
+                  onPress={handleSwipePress}
+                  style={styles.actionCard}
+                >
+                  <GlowContainer
+                    color="primary"
+                    intensity="medium"
+                    animated={true}
+                  >
+                    <View style={styles.actionContent}>
+                      <View
+                        style={StyleSheet.flatten([
+                          styles.actionIcon,
+                          { backgroundColor: "Theme.colors.primary[500]" },
+                        ])}
+                      >
+                        <Ionicons name="heart" size={24} color="Theme.colors.neutral[0]" />
+                      </View>
+                      <PremiumBody
+                        size="sm"
+                        weight="semibold"
+                        gradient="primary"
+                      >
+                        Swipe
+                      </PremiumBody>
+                    </View>
+                  </GlowContainer>
+                </EliteCard>
+              </FadeInUp>
+
+              <FadeInUp delay={100}>
+                <EliteCard
+                  variant="glass"
+                  onPress={handleMatchesPress}
+                  style={styles.actionCard}
+                >
+                  <GlowContainer
+                    color="success"
+                    intensity="medium"
+                    animated={true}
+                  >
+                    <View style={styles.actionContent}>
+                      <View
+                        style={StyleSheet.flatten([
+                          styles.actionIcon,
+                          { backgroundColor: "Theme.colors.status.success" },
+                        ])}
+                      >
+                        <Ionicons name="people" size={24} color="Theme.colors.neutral[0]" />
+                      </View>
+                      <PremiumBody
+                        size="sm"
+                        weight="semibold"
+                        gradient="secondary"
+                      >
+                        Matches
+                      </PremiumBody>
+                      {stats.matches > 0 && (
+                        <View style={styles.badge}>
+                          <Text style={styles.badgeText}>{stats.matches}</Text>
+                        </View>
+                      )}
+                    </View>
+                  </GlowContainer>
+                </EliteCard>
+              </FadeInUp>
+
+              <FadeInUp delay={200}>
+                <EliteCard
+                  variant="glass"
+                  onPress={handleMessagesPress}
+                  style={styles.actionCard}
+                >
+                  <GlowContainer
+                    color="secondary"
+                    intensity="medium"
+                    animated={true}
+                  >
+                    <View style={styles.actionContent}>
+                      <View
+                        style={StyleSheet.flatten([
+                          styles.actionIcon,
+                          { backgroundColor: "Theme.colors.status.info" },
+                        ])}
+                      >
+                        <Ionicons name="chatbubbles" size={24} color="Theme.colors.neutral[0]" />
+                      </View>
+                      <PremiumBody
+                        size="sm"
+                        weight="semibold"
+                        gradient="secondary"
+                      >
+                        Messages
+                      </PremiumBody>
+                      {stats.messages > 0 && (
+                        <View style={styles.badge}>
+                          <Text style={styles.badgeText}>{stats.messages}</Text>
+                        </View>
+                      )}
+                    </View>
+                  </GlowContainer>
+                </EliteCard>
+              </FadeInUp>
+
+              <FadeInUp delay={300}>
+                <EliteCard
+                  variant="glass"
+                  onPress={handleProfilePress}
+                  style={styles.actionCard}
+                >
+                  <GlowContainer
+                    color="purple"
+                    intensity="medium"
+                    animated={true}
+                  >
+                    <View style={styles.actionContent}>
+                      <View
+                        style={StyleSheet.flatten([
+                          styles.actionIcon,
+                          { backgroundColor: "#8b5cf6" },
+                        ])}
+                      >
+                        <Ionicons name="person" size={24} color="Theme.colors.neutral[0]" />
+                      </View>
+                      <PremiumBody
+                        size="sm"
+                        weight="semibold"
+                        gradient="premium"
+                      >
+                        Profile
+                      </PremiumBody>
+                    </View>
+                  </GlowContainer>
+                </EliteCard>
+              </FadeInUp>
+
+              <FadeInUp delay={400}>
+                <EliteCard
+                  variant="glass"
+                  onPress={handleCommunityPress}
+                  style={styles.actionCard}
+                >
+                  <GlowContainer
+                    color="warning"
+                    intensity="medium"
+                    animated={true}
+                  >
+                    <View style={styles.actionContent}>
+                      <View
+                        style={StyleSheet.flatten([
+                          styles.actionIcon,
+                          { backgroundColor: "Theme.colors.status.warning" },
+                        ])}
+                      >
+                        <Ionicons name="people" size={24} color="Theme.colors.neutral[0]" />
+                      </View>
+                      <PremiumBody
+                        size="sm"
+                        weight="semibold"
+                        gradient="warning"
+                      >
+                        Community
+                      </PremiumBody>
+                    </View>
+                  </GlowContainer>
+                </EliteCard>
+              </FadeInUp>
+            </StaggeredContainer>
+          </View>
+        </FadeInUp>
+
+        {/* Recent Activity with Holographic Effects */}
+        <FadeInUp delay={400}>
+          <View style={styles.recentActivity}>
+            <PremiumHeading level={2} gradient="secondary" animated={true}>
+              Recent Activity
+            </PremiumHeading>
+            <HolographicCard
+              variant="cyber"
+              size="md"
+              animated={true}
+              shimmer={true}
+              glow={true}
+            >
+              <StaggeredContainer delay={50}>
+                <FadeInUp delay={0}>
+                  <View style={styles.activityItem}>
+                    <GlowContainer
+                      color="primary"
+                      intensity="light"
+                      animated={true}
+                    >
+                      <View style={styles.activityIcon}>
+                        <Ionicons name="heart" size={20} color="Theme.colors.primary[500]" />
+                      </View>
+                    </GlowContainer>
+                    <View style={styles.activityContent}>
+                      <PremiumBody
+                        size="base"
+                        weight="semibold"
+                        gradient="primary"
+                      >
+                        New Match!
+                      </PremiumBody>
+                      <PremiumBody size="sm" weight="regular">
+                        You and Buddy liked each other
+                      </PremiumBody>
+                    </View>
+                    <PremiumBody size="sm" weight="regular">
+                      2m ago
+                    </PremiumBody>
+                  </View>
+                </FadeInUp>
+
+                <FadeInUp delay={50}>
+                  <View style={styles.activityItem}>
+                    <GlowContainer
+                      color="secondary"
+                      intensity="light"
+                      animated={true}
+                    >
+                      <View style={styles.activityIcon}>
+                        <Ionicons name="chatbubble" size={20} color="Theme.colors.status.info" />
+                      </View>
+                    </GlowContainer>
+                    <View style={styles.activityContent}>
+                      <PremiumBody
+                        size="base"
+                        weight="semibold"
+                        gradient="secondary"
+                      >
+                        New Message
+                      </PremiumBody>
+                      <PremiumBody size="sm" weight="regular">
+                        From Luna: &quot;Hey there! 🐾&quot;
+                      </PremiumBody>
+                    </View>
+                    <PremiumBody size="sm" weight="regular">
+                      5m ago
+                    </PremiumBody>
+                  </View>
+                </FadeInUp>
+              </StaggeredContainer>
+            </HolographicCard>
+          </View>
+        </FadeInUp>
+
+        {/* Premium Features with Particle Effects */}
+        <FadeInUp delay={600}>
+          <View style={styles.premiumSection}>
+            <PremiumHeading
+              level={2}
+              gradient="holographic"
+              animated={true}
+              glow={true}
+            >
+              Premium Features
+            </PremiumHeading>
+            <View style={{ position: "relative" }}>
+              <ParticleEffect count={15} variant="neon" speed="normal" />
+              <HolographicCard
+                variant="rainbow"
+                size="lg"
+                animated={true}
+                shimmer={true}
+                glow={true}
+              >
+                <View style={styles.premiumContent}>
+                  <View style={styles.premiumHeader}>
+                    <GlowContainer
+                      color="neon"
+                      intensity="heavy"
+                      animated={true}
+                    >
+                      <Ionicons name="star" size={32} color="#fbbf24" />
+                    </GlowContainer>
+                    <PremiumHeading
+                      level={3}
+                      gradient="holographic"
+                      animated={true}
+                      glow={true}
+                    >
+                      PawfectMatch Premium
+                    </PremiumHeading>
+                  </View>
+                  <PremiumBody size="base" weight="regular" gradient="primary">
+                    Unlock unlimited swipes, see who liked you, and get priority
+                    in search results.
+                  </PremiumBody>
+                  <View style={styles.premiumActions}>
+                    <EliteButton
+                      title="Upgrade Now"
+                      variant="primary"
+                      size="lg"
+                      onPress={handleProfilePress}
+                    />
+                  </View>
+                </View>
+              </HolographicCard>
+            </View>
+          </View>
+        </FadeInUp>
+      </EliteScrollContainer>
+    </EliteContainer>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f8f9fa",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 20,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "Theme.colors.neutral[0]",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e9ecef",
+  },
+  greeting: {
+    fontSize: 16,
+    color: "#6c757d",
+  },
+  userName: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginTop: 4,
+  },
+  profileButton: {
+    padding: 4,
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  quickActions: {
+    padding: 20,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 16,
+  },
+  actionsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  actionCard: {
+    width: (screenWidth - 60) / 2,
+    marginBottom: 16,
+  },
+  actionContent: {
+    alignItems: "center",
+    padding: 16,
+  },
+  actionIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  actionText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+  },
+  badge: {
+    position: "absolute",
+    top: -8,
+    right: -8,
+    backgroundColor: "Theme.colors.status.error",
+    borderRadius: 12,
+    minWidth: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 6,
+  },
+  badgeText: {
+    color: "Theme.colors.neutral[0]",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  recentActivity: {
+    padding: 20,
+  },
+  activityCard: {
+    backgroundColor: "Theme.colors.neutral[0]",
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: "Theme.colors.neutral[950]",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  activityItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f1f3f4",
+  },
+  activityIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f8f9fa",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  activityContent: {
+    flex: 1,
+  },
+  activityTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+  },
+  activitySubtitle: {
+    fontSize: 14,
+    color: "#6c757d",
+    marginTop: 2,
+  },
+  activityTime: {
+    fontSize: 12,
+    color: "Theme.colors.neutral[400]",
+  },
+  premiumSection: {
+    padding: 20,
+  },
+  premiumCard: {
+    backgroundColor: "Theme.colors.neutral[0]",
+    borderRadius: 12,
+    padding: 20,
+    shadowColor: "Theme.colors.neutral[950]",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  premiumContent: {
+    alignItems: "center",
+  },
+  premiumHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  premiumTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginLeft: 8,
+  },
+  premiumDescription: {
+    fontSize: 14,
+    color: "#6c757d",
+    lineHeight: 20,
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  premiumActions: {
+    marginTop: 16,
+  },
+  premiumButton: {
+    backgroundColor: "Theme.colors.primary[500]",
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    alignItems: "center",
+  },
+  premiumButtonText: {
+    color: "Theme.colors.neutral[0]",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+});

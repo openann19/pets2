@@ -32,7 +32,7 @@ export function ReportDialog({ open, onOpenChange, targetId, category }) {
                 </DialogHeader>
                 <div className="space-y-3">
                     <label className="block text-sm">Type
-                        <select className="mt-1 w-full bg-white/10 border border-white/20 rounded p-2" value={type} onChange={(e) => setType(e.target.value)}>
+                        <select className="mt-1 w-full bg-white/10 border border-white/20 rounded p-2" value={type} onChange={(e) => { setType(e.target.value); }}>
                             <option value="inappropriate_content">Inappropriate content</option>
                             <option value="harassment">Harassment</option>
                             <option value="spam">Spam</option>
@@ -45,10 +45,10 @@ export function ReportDialog({ open, onOpenChange, targetId, category }) {
                         </select>
                     </label>
                     <label className="block text-sm">Reason
-                        <input className="mt-1 w-full bg-white/10 border border-white/20 rounded p-2" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Short reason"/>
+                        <input className="mt-1 w-full bg-white/10 border border-white/20 rounded p-2" value={reason} onChange={(e) => { setReason(e.target.value); }} placeholder="Short reason"/>
                     </label>
                     <label className="block text-sm">Description (optional)
-                        <textarea className="mt-1 w-full bg-white/10 border border-white/20 rounded p-2" value={description} onChange={(e) => setDescription(e.target.value)} rows={3}/>
+                        <textarea className="mt-1 w-full bg-white/10 border border-white/20 rounded p-2" value={description} onChange={(e) => { setDescription(e.target.value); }} rows={3}/>
                     </label>
                     <div className="flex gap-2 justify-end">
                         <PremiumButton variant="outline" onClick={() => onOpenChange(false)}>Cancel</PremiumButton>

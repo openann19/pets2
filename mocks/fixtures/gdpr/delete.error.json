@@ -1,0 +1,7 @@
+{
+  "success": false,
+  "error": "INVALID_PASSWORD",
+  "message": "The password you entered is incorrect. Please try again.",
+  "remainingAttempts": 2
+}
+

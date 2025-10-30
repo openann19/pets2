@@ -40,4 +40,3 @@ export declare const useAuthStore: import("zustand").UseBoundStore<Omit<Omit<imp
 }, "setState"> & {
     setState(nextStateOrUpdater: AuthState | Partial<AuthState> | ((state: import("immer").WritableDraft<AuthState>) => void), shouldReplace?: boolean | undefined): void;
 }>;
-//# sourceMappingURL=useAuthStore.d.ts.map

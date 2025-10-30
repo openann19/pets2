@@ -35,17 +35,7 @@ const disabledStyle: CSSProperties = {
 };
 
 const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      variant = 'primary',
-      size = 'md',
-      style,
-      disabled,
-      children,
-      ...rest
-    },
-    ref,
-  ) => {
+  ({ variant = 'primary', size = 'md', style, disabled, children, ...rest }, ref) => {
     const { theme } = useTheme();
     const paddingValues = paddingTokens[size];
     const isDisabled = disabled === true;
@@ -78,7 +68,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
     const computedStyle: CSSProperties = {
       ...baseStyle,
       padding: `${paddingValues[0]} ${paddingValues[1]}`,
-  font: fontBySize[size],
+      font: fontBySize[size],
       backgroundColor,
       color,
       border,
@@ -89,7 +79,12 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     return (
-      <button ref={ref} style={computedStyle} disabled={isDisabled} {...rest}>
+      <button
+        ref={ref}
+        style={computedStyle}
+        disabled={isDisabled}
+        {...rest}
+      >
         {children}
       </button>
     );

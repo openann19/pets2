@@ -9,7 +9,7 @@ export const _getOtherUser = (): User => {
     _id: 'mock-user-id',
     email: 'mock@example.com',
     firstName: 'Mock',
-    lastName: 'User'
+    lastName: 'User',
   } as User;
 };
 
@@ -25,7 +25,7 @@ export const _getOtherPet = (): Pet => {
     breed: 'Golden Retriever',
     owner: 'mock-owner-id',
     age: 3,
-    photos: ['https://example.com/pet.jpg']
+    photos: ['https://example.com/pet.jpg'],
   } as Pet;
 };
 
@@ -41,7 +41,7 @@ export const _getCurrentUserPet = (): Pet => {
     breed: 'Tabby',
     owner: 'current-user-id',
     age: 2,
-    photos: ['https://example.com/max.jpg']
+    photos: ['https://example.com/max.jpg'],
   } as Pet;
 };
 
@@ -51,11 +51,11 @@ export const _getCurrentUserPet = (): Pet => {
 export const _getTypingUsers = (
   isTyping: Record<string, boolean>,
   currentUserId: string,
-  otherUser: User
+  otherUser: User,
 ): string[] => {
   return Object.keys(isTyping)
-    .filter(userId => isTyping[userId] === true && userId !== currentUserId)
-    .map(userId => {
+    .filter((userId) => isTyping[userId] === true && userId !== currentUserId)
+    .map((userId) => {
       if (userId === otherUser._id) {
         return otherUser.firstName;
       }

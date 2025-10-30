@@ -15,7 +15,7 @@ export function useGesture(
   onSwipeLeft?: () => void,
   onSwipeRight?: () => void,
   onSwipeUp?: () => void,
-  onSwipeDown?: () => void
+  onSwipeDown?: () => void,
 ) {
   const startPos = useRef<Position>({ x: 0, y: 0, time: 0 });
   const currentPos = useRef<Position>({ x: 0, y: 0, time: 0 });
@@ -42,37 +42,40 @@ export function useGesture(
     }
   }, []);
 
-  const handleTouchEnd = useCallback((_e: TouchEvent) => {
-    const now = Date.now();
-    const deltaTime = now - startPos.current.time;
-    
-    // Only consider swipes that are quick enough (under 300ms)
-    if (deltaTime > 300) return;
-    
-    const deltaX = currentPos.current.x - startPos.current.x;
-    const deltaY = currentPos.current.y - startPos.current.y;
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    
-    // Only consider significant movements (over 50px)
-    if (distance < 50) return;
-    
-    // Determine primary direction
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      // Horizontal swipe
-      if (deltaX > 0 && onSwipeRight != null) {
-        onSwipeRight();
-      } else if (deltaX < 0 && onSwipeLeft != null) {
-        onSwipeLeft();
+  const handleTouchEnd = useCallback(
+    (_e: TouchEvent) => {
+      const now = Date.now();
+      const deltaTime = now - startPos.current.time;
+
+      // Only consider swipes that are quick enough (under 300ms)
+      if (deltaTime > 300) return;
+
+      const deltaX = currentPos.current.x - startPos.current.x;
+      const deltaY = currentPos.current.y - startPos.current.y;
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+      // Only consider significant movements (over 50px)
+      if (distance < 50) return;
+
+      // Determine primary direction
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (deltaX > 0 && onSwipeRight != null) {
+          onSwipeRight();
+        } else if (deltaX < 0 && onSwipeLeft != null) {
+          onSwipeLeft();
+        }
+      } else {
+        // Vertical swipe
+        if (deltaY > 0 && onSwipeDown != null) {
+          onSwipeDown();
+        } else if (deltaY < 0 && onSwipeUp != null) {
+          onSwipeUp();
+        }
       }
-    } else {
-      // Vertical swipe
-      if (deltaY > 0 && onSwipeDown != null) {
-        onSwipeDown();
-      } else if (deltaY < 0 && onSwipeUp != null) {
-        onSwipeUp();
-      }
-    }
-  }, [onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]);
+    },
+    [onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown],
+  );
 
   useEffect(() => {
     const element = getDocumentElement();
@@ -94,6 +97,6 @@ export function useGesture(
   return {
     handleTouchStart,
     handleTouchMove,
-    handleTouchEnd
+    handleTouchEnd,
   };
 }

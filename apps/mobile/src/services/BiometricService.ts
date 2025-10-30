@@ -2,26 +2,25 @@
  * Biometric Authentication Service for PawfectMatch Mobile App
  * Handles biometric authentication (FaceID, TouchID, Fingerprint)
  */
-import * as LocalAuthentication from "expo-local-authentication";
-import * as SecureStore from "expo-secure-store";
-import { logger } from "@pawfectmatch/core";
+import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
+import { logger } from '@pawfectmatch/core';
 
 export interface BiometricAuthResult {
   success: boolean;
   error?: string;
-  biometricType?: "fingerprint" | "facial" | "iris" | "unknown";
+  biometricType?: 'fingerprint' | 'facial' | 'iris' | 'unknown';
 }
 
 export interface BiometricCapabilities {
   hasHardware: boolean;
   isEnrolled: boolean;
   supportedTypes: LocalAuthentication.AuthenticationType[];
-  securityLevel: LocalAuthentication.SecurityLevel;
 }
 
 class BiometricService {
-  private static readonly BIOMETRIC_ENABLED_KEY = "biometric_enabled";
-  private static readonly BIOMETRIC_TYPE_KEY = "biometric_type";
+  private static readonly BIOMETRIC_ENABLED_KEY = 'biometric_enabled';
+  private static readonly BIOMETRIC_TYPE_KEY = 'biometric_type';
 
   /**
    * Check if device supports biometric authentication
@@ -30,32 +29,27 @@ class BiometricService {
     try {
       const hasHardware = await LocalAuthentication.hasHardwareAsync();
       const isEnrolled = await LocalAuthentication.isEnrolledAsync();
-      const supportedTypes =
-        await LocalAuthentication.supportedAuthenticationTypesAsync();
-      const securityLevel = await LocalAuthentication.getEnrolledLevelAsync();
+      const supportedTypes = await LocalAuthentication.supportedAuthenticationTypesAsync();
 
       const capabilities: BiometricCapabilities = {
         hasHardware,
         isEnrolled,
         supportedTypes,
-        securityLevel,
       };
 
-      logger.info("Biometric capabilities checked", {
+      logger.info('Biometric capabilities checked', {
         hasHardware,
         isEnrolled,
         supportedTypes: supportedTypes.length,
-        securityLevel,
       });
 
       return capabilities;
     } catch (error) {
-      logger.error("Failed to check biometric support", { error });
+      logger.error('Failed to check biometric support', { error });
       return {
         hasHardware: false,
         isEnrolled: false,
         supportedTypes: [],
-        securityLevel: LocalAuthentication.SecurityLevel.NONE,
       };
     }
   }
@@ -70,39 +64,36 @@ class BiometricService {
       if (!capabilities.hasHardware) {
         return {
           success: false,
-          error: "Biometric authentication not supported on this device",
+          error: 'Biometric authentication not supported on this device',
         };
       }
 
       if (!capabilities.isEnrolled) {
         return {
           success: false,
-          error: "No biometric authentication methods enrolled",
+          error: 'No biometric authentication methods enrolled',
         };
       }
 
       const result = await LocalAuthentication.authenticateAsync({
         promptMessage:
-          reason !== undefined && reason !== ""
-            ? reason
-            : "Authenticate to access PawfectMatch",
-        fallbackLabel: "Use PIN",
-        cancelLabel: "Cancel",
+          reason !== undefined && reason !== '' ? reason : 'Authenticate to access PawfectMatch',
+        fallbackLabel: 'Use PIN',
+        cancelLabel: 'Cancel',
         disableDeviceFallback: false,
       });
 
       const biometricType = this.getBiometricType(capabilities.supportedTypes);
 
       if (result.success) {
-        logger.info("Biometric authentication successful", { biometricType });
+        logger.info('Biometric authentication successful', { biometricType });
         return {
           success: true,
           biometricType,
         };
       } else {
-        const error =
-          result.error !== "" ? result.error : "Authentication failed";
-        logger.warn("Biometric authentication failed", {
+        const error = result.error !== '' ? result.error : 'Authentication failed';
+        logger.warn('Biometric authentication failed', {
           error,
           biometricType,
         });
@@ -113,11 +104,10 @@ class BiometricService {
         };
       }
     } catch (error) {
-      logger.error("Biometric authentication error", { error });
+      logger.error('Biometric authentication error', { error });
       return {
         success: false,
-        error:
-          error instanceof Error ? error.message : "Unknown error occurred",
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -128,32 +118,25 @@ class BiometricService {
   async enableBiometric(): Promise<boolean> {
     try {
       // First authenticate to verify biometrics work
-      const authResult = await this.authenticate(
-        "Enable biometric authentication",
-      );
+      const authResult = await this.authenticate('Enable biometric authentication');
 
       if (!authResult.success) {
         return false;
       }
 
       // Store that biometric is enabled
-      await SecureStore.setItemAsync(
-        BiometricService.BIOMETRIC_ENABLED_KEY,
-        "true",
-      );
+      await SecureStore.setItemAsync(BiometricService.BIOMETRIC_ENABLED_KEY, 'true');
       await SecureStore.setItemAsync(
         BiometricService.BIOMETRIC_TYPE_KEY,
-        authResult.biometricType !== undefined
-          ? authResult.biometricType
-          : "unknown",
+        authResult.biometricType !== undefined ? authResult.biometricType : 'unknown',
       );
 
-      logger.info("Biometric authentication enabled", {
+      logger.info('Biometric authentication enabled', {
         type: authResult.biometricType,
       });
       return true;
     } catch (error) {
-      logger.error("Failed to enable biometric authentication", { error });
+      logger.error('Failed to enable biometric authentication', { error });
       return false;
     }
   }
@@ -165,9 +148,9 @@ class BiometricService {
     try {
       await SecureStore.deleteItemAsync(BiometricService.BIOMETRIC_ENABLED_KEY);
       await SecureStore.deleteItemAsync(BiometricService.BIOMETRIC_TYPE_KEY);
-      logger.info("Biometric authentication disabled");
+      logger.info('Biometric authentication disabled');
     } catch (error) {
-      logger.error("Failed to disable biometric authentication", { error });
+      logger.error('Failed to disable biometric authentication', { error });
     }
   }
 
@@ -176,12 +159,10 @@ class BiometricService {
    */
   async isBiometricEnabled(): Promise<boolean> {
     try {
-      const enabled = await SecureStore.getItemAsync(
-        BiometricService.BIOMETRIC_ENABLED_KEY,
-      );
-      return enabled === "true";
+      const enabled = await SecureStore.getItemAsync(BiometricService.BIOMETRIC_ENABLED_KEY);
+      return enabled === 'true';
     } catch (error) {
-      logger.error("Failed to check biometric status", { error });
+      logger.error('Failed to check biometric status', { error });
       return false;
     }
   }
@@ -191,25 +172,17 @@ class BiometricService {
    */
   private getBiometricType(
     supportedTypes: LocalAuthentication.AuthenticationType[],
-  ): "fingerprint" | "facial" | "iris" | "unknown" {
-    if (
-      supportedTypes.includes(
-        LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION,
-      )
-    ) {
-      return "facial";
+  ): 'fingerprint' | 'facial' | 'iris' | 'unknown' {
+    if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)) {
+      return 'facial';
     }
-    if (
-      supportedTypes.includes(
-        LocalAuthentication.AuthenticationType.FINGERPRINT,
-      )
-    ) {
-      return "fingerprint";
+    if (supportedTypes.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
+      return 'fingerprint';
     }
     if (supportedTypes.includes(LocalAuthentication.AuthenticationType.IRIS)) {
-      return "iris";
+      return 'iris';
     }
-    return "unknown";
+    return 'unknown';
   }
 
   /**
@@ -217,44 +190,85 @@ class BiometricService {
    */
   getBiometricTypeName(type?: string): string {
     switch (type) {
-      case "facial":
-        return "Face ID";
-      case "fingerprint":
-        return "Touch ID";
-      case "iris":
-        return "Iris Scan";
+      case 'facial':
+        return 'Face ID';
+      case 'fingerprint':
+        return 'Touch ID';
+      case 'iris':
+        return 'Iris Scan';
       default:
-        return "Biometric Authentication";
+        return 'Biometric Authentication';
     }
   }
 
   /**
    * Encrypt sensitive data with biometric protection
-   * Note: This is a placeholder - actual implementation would require
-   * platform-specific keychain/keystore integration
+   * Uses SecureStore with biometric authentication for production-grade encryption
    */
-  encryptWithBiometric(data: string): string {
-    // This would require native module implementation
-    // For now, return the data as-is with a warning
-    logger.warn("Biometric encryption not implemented - using fallback");
-    return btoa(data); // Simple base64 encoding as fallback
+  async encryptWithBiometric(data: string, key: string): Promise<void> {
+    try {
+      // Authenticate first
+      const authResult = await this.authenticate('Encrypt sensitive data');
+      if (!authResult.success) {
+        throw new Error('Biometric authentication required for encryption');
+      }
+
+      // Store securely in keychain with biometric protection
+      await SecureStore.setItemAsync(key, data, {
+        requireAuthentication: true,
+        authenticationPrompt: 'Authenticate to access encrypted data',
+        showPrompt: true,
+      });
+
+      logger.info('Data encrypted securely with biometric authentication', {
+        key,
+        biometricType: authResult.biometricType,
+      });
+    } catch (error) {
+      logger.error('Failed to encrypt data with biometric protection', { error });
+      throw error;
+    }
   }
 
   /**
    * Decrypt data protected by biometrics
    */
-  async decryptWithBiometric(encryptedData: string): Promise<string> {
+  async decryptWithBiometric(key: string): Promise<string | null> {
     try {
       // First authenticate
-      const authResult = await this.authenticate("Decrypt sensitive data");
+      const authResult = await this.authenticate('Decrypt sensitive data');
       if (!authResult.success) {
-        throw new Error("Biometric authentication required");
+        throw new Error('Biometric authentication required');
       }
 
-      // Decrypt (placeholder implementation)
-      return atob(encryptedData);
+      // Retrieve from secure store (triggers biometric prompt)
+      const decryptedData = await SecureStore.getItemAsync(key, {
+        requireAuthentication: true,
+        authenticationPrompt: 'Authenticate to decrypt sensitive data',
+        showPrompt: true,
+      });
+
+      logger.info('Data decrypted successfully with biometric authentication', {
+        key,
+        biometricType: authResult.biometricType,
+      });
+
+      return decryptedData;
     } catch (error) {
-      logger.error("Failed to decrypt biometric data", { error });
+      logger.error('Failed to decrypt biometric data', { error });
+      throw error;
+    }
+  }
+
+  /**
+   * Remove encrypted data from biometric-protected storage
+   */
+  async removeBiometricData(key: string): Promise<void> {
+    try {
+      await SecureStore.deleteItemAsync(key);
+      logger.info('Biometric-protected data removed', { key });
+    } catch (error) {
+      logger.error('Failed to remove biometric data', { error });
       throw error;
     }
   }

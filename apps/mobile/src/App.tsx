@@ -1,20 +1,99 @@
-import React from "react";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { StatusBar } from "expo-status-bar";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
+import { I18nextProvider } from 'react-i18next';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { queryClient } from "./config/queryClient";
-import { ThemeProvider } from "./theme/ThemeProvider";
-import AdoptionManagerScreen from "./screens/adoption/AdoptionManagerScreen";
-import CreatePetScreen from "./screens/CreatePetScreen";
-import HomeScreen from "./screens/HomeScreen";
-import MatchesScreen from "./screens/MatchesScreen";
-import MyPetsScreen from "./screens/MyPetsScreen";
-import ProfileScreen from "./screens/ProfileScreen";
-import SettingsScreen from "./screens/SettingsScreen";
-import SwipeScreen from "./screens/SwipeScreen";
-import type { RootStackParamList } from "./navigation/types";
+import { ThemeProvider } from '@mobile/src/theme';
+import { queryClient } from './config/queryClient';
+import i18n from './i18n';
+import AdminNavigator from './navigation/AdminNavigator';
+import BottomTabNavigator from './navigation/BottomTabNavigator';
+import { screenTransitions } from './navigation/transitions';
+import type { RootStackParamList } from './navigation/types';
+
+// Authentication Screens
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
+import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import ResetPasswordScreen from './screens/ResetPasswordScreen';
+
+// Onboarding Screens
+// import WelcomeScreen from "./screens/onboarding/WelcomeScreen";
+// import UserIntentScreen from "./screens/onboarding/UserIntentScreen";
+// import PetProfileSetupScreen from "./screens/onboarding/PetProfileSetupScreen";
+// import PreferencesSetupScreen from "./screens/onboarding/PreferencesSetupScreen";
+
+// Main Screens
+import ChatScreen from './screens/ChatScreen';
+import HomeScreen from './screens/HomeScreen';
+import MatchesScreen from './screens/MatchesScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import SwipeScreen from './screens/SwipeScreen';
+
+// Premium & Subscription Screens
+import ManageSubscriptionScreen from './screens/ManageSubscriptionScreen';
+import PremiumCancelScreen from './screens/PremiumCancelScreen';
+import PremiumScreen from './screens/PremiumScreen';
+import PremiumSuccessScreen from './screens/PremiumSuccessScreen';
+import SubscriptionManagerScreen from './screens/premium/SubscriptionManagerScreen';
+import SubscriptionSuccessScreen from './screens/premium/SubscriptionSuccessScreen';
+
+// AI Screens
+import AIBioScreen from './screens/AIBioScreen';
+import AICompatibilityScreen from './screens/AICompatibilityScreen';
+import AIPhotoAnalyzerScreen from './screens/AIPhotoAnalyzerScreen';
+
+// Settings & Privacy Screens
+import AboutTermsPrivacyScreen from './screens/AboutTermsPrivacyScreen';
+import AdvancedFiltersScreen from './screens/AdvancedFiltersScreen';
+import BlockedUsersScreen from './screens/BlockedUsersScreen';
+import DeactivateAccountScreen from './screens/DeactivateAccountScreen';
+import EditProfileScreen from './screens/EditProfileScreen';
+import HelpSupportScreen from './screens/HelpSupportScreen';
+import ModerationToolsScreen from './screens/ModerationToolsScreen';
+import NotificationPreferencesScreen from './screens/NotificationPreferencesScreen';
+import PrivacySettingsScreen from './screens/PrivacySettingsScreen';
+import SafetyCenterScreen from './screens/SafetyCenterScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import VerificationCenterScreen from './screens/VerificationCenterScreen';
+
+// Pet Management Screens
+import CreatePetScreen from './screens/CreatePetScreen';
+import MapScreen from './screens/MapScreen';
+import MyPetsScreen from './screens/MyPetsScreen';
+
+// Adoption Screens
+import AdoptionApplicationScreen from './screens/adoption/AdoptionApplicationScreen';
+import AdoptionManagerScreen from './screens/adoption/AdoptionManagerScreen';
+
+// Calling Screens
+// import ActiveCallScreen from "./screens/calling/ActiveCallScreen";
+// import IncomingCallScreen from "./screens/calling/IncomingCallScreen";
+
+// Advanced Feature Screens
+import ARScentTrailsScreen from './screens/ARScentTrailsScreen';
+import CommunityScreen from './screens/CommunityScreen';
+import MemoryWeaveScreen from './screens/MemoryWeaveScreen';
+import StoriesScreen from './screens/StoriesScreen';
+import LeaderboardScreen from './screens/leaderboard/LeaderboardScreen';
+// import ModernSwipeScreen from "./screens/ModernSwipeScreen";
+// import ModernCreatePetScreen from "./screens/ModernCreatePetScreen";
+
+// Test/Demo Screens
+// ComponentShowcaseScreen removed
+import ComponentTestScreen from './screens/ComponentTestScreen';
+import MigrationExampleScreen from './screens/MigrationExampleScreen';
+import NewComponentsTestScreen from './screens/NewComponentsTestScreen';
+import PremiumDemoScreen from './screens/PremiumDemoScreen';
+import UIDemoScreen from './screens/UIDemoScreen';
+
+// Live Streaming Screens
+import GoLiveScreen from './screens/GoLiveScreen';
+import LiveBrowseScreen from './screens/LiveBrowseScreen';
+import LiveViewerScreen from './screens/LiveViewerScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -25,30 +104,298 @@ const AppNavigator = (): React.ReactElement => (
     initialRouteName="Home"
     screenOptions={{ headerShown: false }}
   >
-    <Stack.Screen name="Home" component={HomeScreen} />
-    <Stack.Screen name="Swipe" component={SwipeScreen} />
-    <Stack.Screen name="Matches" component={MatchesScreen} />
-    <Stack.Screen name="Profile" component={ProfileScreen} />
-    <Stack.Screen name="Settings" component={SettingsScreen} />
-    <Stack.Screen name="MyPets" component={MyPetsScreen} />
-    <Stack.Screen name="CreatePet" component={CreatePetScreen} />
+    {/* Authentication Screens */}
+    <Stack.Screen
+      name="Login"
+      component={LoginScreen}
+    />
+    <Stack.Screen
+      name="Register"
+      component={RegisterScreen}
+    />
+    <Stack.Screen
+      name="ForgotPassword"
+      component={ForgotPasswordScreen}
+    />
+    <Stack.Screen
+      name="ResetPassword"
+      component={ResetPasswordScreen}
+    />
+
+    {/* Main Tab Navigator (with EnhancedTabBar) */}
+    <Stack.Screen
+      name="Home"
+      component={BottomTabNavigator}
+    />
+    <Stack.Screen
+      name="Main"
+      component={HomeScreen}
+    />
+    <Stack.Screen
+      name="Swipe"
+      component={SwipeScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="Matches"
+      component={MatchesScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={screenTransitions.scale}
+    />
+    <Stack.Screen
+      name="Settings"
+      component={SettingsScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="Chat"
+      component={ChatScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="MainTabs"
+      component={MainTabsScreen}
+    />
+
+    {/* Onboarding Screens - Commented out due to navigation prop requirements */}
+    {/* These screens expect specific navigation props that will be handled by their own navigators */}
+
+    {/* Pet Management Screens */}
+    <Stack.Screen
+      name="MyPets"
+      component={MyPetsScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="CreatePet"
+      component={CreatePetScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="Map"
+      component={MapScreen}
+      options={screenTransitions.fluid}
+    />
+
+    {/* Premium & Subscription Screens */}
+    <Stack.Screen
+      name="Premium"
+      component={PremiumScreen}
+    />
+    <Stack.Screen
+      name="Subscription"
+      component={PremiumScreen}
+    />
+    <Stack.Screen
+      name="PremiumSuccess"
+      component={PremiumSuccessScreen}
+    />
+    <Stack.Screen
+      name="PremiumCancel"
+      component={PremiumCancelScreen}
+    />
+    <Stack.Screen
+      name="SubscriptionManager"
+      component={SubscriptionManagerScreen}
+    />
+    <Stack.Screen
+      name="SubscriptionSuccess"
+      component={SubscriptionSuccessScreen}
+    />
+    <Stack.Screen
+      name="ManageSubscription"
+      component={ManageSubscriptionScreen}
+    />
+
+    {/* AI Screens */}
+    <Stack.Screen
+      name="AIBio"
+      component={AIBioScreen}
+    />
+    <Stack.Screen
+      name="AIPhotoAnalyzer"
+      component={AIPhotoAnalyzerScreen}
+    />
+    <Stack.Screen
+      name="AICompatibility"
+      component={AICompatibilityScreen}
+    />
+
+    {/* Settings & Privacy Screens */}
+    <Stack.Screen
+      name="PrivacySettings"
+      component={PrivacySettingsScreen}
+    />
+    <Stack.Screen
+      name="BlockedUsers"
+      component={BlockedUsersScreen}
+    />
+    <Stack.Screen
+      name="SafetyCenter"
+      component={SafetyCenterScreen}
+    />
+    <Stack.Screen
+      name="VerificationCenter"
+      component={VerificationCenterScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="NotificationPreferences"
+      component={NotificationPreferencesScreen}
+    />
+    <Stack.Screen
+      name="HelpSupport"
+      component={HelpSupportScreen}
+    />
+    <Stack.Screen
+      name="AboutTermsPrivacy"
+      component={AboutTermsPrivacyScreen}
+    />
+    <Stack.Screen
+      name="DeactivateAccount"
+      component={DeactivateAccountScreen}
+    />
+    <Stack.Screen
+      name="EditProfile"
+      component={EditProfileScreen}
+    />
+    <Stack.Screen
+      name="AdvancedFilters"
+      component={AdvancedFiltersScreen}
+    />
+    <Stack.Screen
+      name="ModerationTools"
+      component={ModerationToolsScreen}
+    />
+
+    {/* Adoption Screens */}
     <Stack.Screen
       name="AdoptionManager"
       component={AdoptionManagerScreen}
     />
-    <Stack.Screen name="MainTabs" component={MainTabsScreen} />
+    <Stack.Screen
+      name="AdoptionApplication"
+      component={AdoptionApplicationScreen}
+    />
+
+    {/* Admin Navigator */}
+    <Stack.Screen
+      name="AdminDashboard"
+      component={AdminNavigator}
+    />
+    <Stack.Screen
+      name="AdminUsers"
+      component={AdminNavigator}
+    />
+    <Stack.Screen
+      name="AdminAnalytics"
+      component={AdminNavigator}
+    />
+    <Stack.Screen
+      name="AdminBilling"
+      component={AdminNavigator}
+    />
+    <Stack.Screen
+      name="AdminSecurity"
+      component={AdminNavigator}
+    />
+    <Stack.Screen
+      name="AdminChats"
+      component={AdminNavigator}
+    />
+    <Stack.Screen
+      name="AdminUploads"
+      component={AdminNavigator}
+    />
+    <Stack.Screen
+      name="AdminVerifications"
+      component={AdminNavigator}
+    />
+
+    {/* Calling Screens - Commented out due to prop requirements */}
+    {/* <Stack.Screen name="ActiveCall" component={ActiveCallScreen} /> */}
+    {/* <Stack.Screen name="IncomingCall" component={IncomingCallScreen} /> */}
+
+    {/* Advanced Feature Screens */}
+    <Stack.Screen
+      name="MemoryWeave"
+      component={MemoryWeaveScreen}
+    />
+    <Stack.Screen
+      name="ARScentTrails"
+      component={ARScentTrailsScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="Stories"
+      component={StoriesScreen}
+    />
+    <Stack.Screen
+      name="Leaderboard"
+      component={LeaderboardScreen}
+    />
+    <Stack.Screen
+      name="Community"
+      component={CommunityScreen}
+    />
+
+    {/* Test/Demo Screens */}
+    <Stack.Screen
+      name="ComponentTest"
+      component={ComponentTestScreen}
+    />
+    <Stack.Screen
+      name="NewComponentsTest"
+      component={NewComponentsTestScreen}
+    />
+    <Stack.Screen
+      name="MigrationExample"
+      component={MigrationExampleScreen}
+    />
+    <Stack.Screen
+      name="PremiumDemo"
+      component={PremiumDemoScreen}
+    />
+    <Stack.Screen
+      name="UIDemo"
+      component={UIDemoScreen}
+      options={screenTransitions.fluid}
+    />
+
+    {/* Live Streaming Screens */}
+    <Stack.Screen
+      name="GoLive"
+      component={GoLiveScreen}
+      options={{ presentation: 'modal' }}
+    />
+    <Stack.Screen
+      name="LiveViewer"
+      component={LiveViewerScreen}
+    />
+    <Stack.Screen
+      name="LiveBrowse"
+      component={LiveBrowseScreen}
+    />
   </Stack.Navigator>
 );
 
 export default function App(): React.ReactElement {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <NavigationContainer>
-          <StatusBar style="dark" />
-          <AppNavigator />
-        </NavigationContainer>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <I18nextProvider i18n={i18n}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <NavigationContainer>
+              <StatusBar style="dark" />
+              <AppNavigator />
+            </NavigationContainer>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </I18nextProvider>
+    </GestureHandlerRootView>
   );
 }

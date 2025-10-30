@@ -7,7 +7,7 @@ import {
   EnhancedProgressBar,
   LoadingSkeleton,
 } from '@/components/admin/UIEnhancements';
-import { Icon } from '@/src/components/UI/icon-helper';
+import { Icon } from '@/components/UI/icon-helper';
 import { logger } from '@/services/logger';
 import {
   ArrowPathIcon,
@@ -534,7 +534,7 @@ export default function MapsServiceManagementPage() {
                   <EnhancedInput
                     type="text"
                     value={mapsConfig.apiKey}
-                    onChange={(value) => setMapsConfig({ ...mapsConfig, apiKey: value })}
+                    onChange={(value: string) => setMapsConfig({ ...mapsConfig, apiKey: value })}
                     placeholder="AIzaSy..."
                     ariaLabel="Google Maps API key"
                   />
@@ -547,7 +547,7 @@ export default function MapsServiceManagementPage() {
                   <EnhancedInput
                     type="text"
                     value={mapsConfig.billingAccount}
-                    onChange={(value) => setMapsConfig({ ...mapsConfig, billingAccount: value })}
+                    onChange={(value: string) => setMapsConfig({ ...mapsConfig, billingAccount: value })}
                     placeholder="Billing account ID"
                     ariaLabel="Google Cloud billing account"
                   />
@@ -560,7 +560,7 @@ export default function MapsServiceManagementPage() {
                   <EnhancedInput
                     type="number"
                     value={mapsConfig.quotaLimit.toString()}
-                    onChange={(value) =>
+                    onChange={(value: string) =>
                       setMapsConfig({ ...mapsConfig, quotaLimit: parseInt(value) })
                     }
                     placeholder="100000"

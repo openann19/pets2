@@ -4,7 +4,10 @@
  */
 
 import request from 'supertest';
+import jwt from 'jsonwebtoken';
 import app from '../../src/app';
+import Pet from '../../src/models/Pet';
+import User from '../../src/models/User';
 import { setupTestDB, teardownTestDB, clearTestDB, createMockUser, generateTestToken } from '../setup';
 
 describe('Security Tests', () => {
@@ -40,7 +43,6 @@ describe('Security Tests', () => {
     });
 
     it('should reject expired tokens', async () => {
-      const jwt = require('jsonwebtoken');
       const expiredToken = jwt.sign(
         { userId: 'test' },
         process.env.JWT_SECRET || 'test-secret',
@@ -51,7 +53,7 @@ describe('Security Tests', () => {
         .get('/api/profile/pets')
         .set('Authorization', `Bearer ${expiredToken}`);
 
-      expect(response.status).toBe(401);
+      expect(response.status).toEqual(401);
     });
 
     it('should accept valid JWT tokens', async () => {
@@ -62,6 +64,7 @@ describe('Security Tests', () => {
         .get('/api/profile/stats/pets')
         .set('Authorization', `Bearer ${token}`);
 
+      expect(response.status).toEqual(200);
       expect(response.status).toBe(200);
     });
   });
@@ -71,7 +74,6 @@ describe('Security Tests', () => {
       const user1 = await createMockUser();
       const user2 = await createMockUser();
       
-      const Pet = require('../../src/models/Pet');
       const user1Pet = await Pet.create({
         name: 'User 1 Pet',
         species: 'dog',
@@ -101,7 +103,6 @@ describe('Security Tests', () => {
     });
 
     it('should allow admins to access admin endpoints', async () => {
-      const User = require('../../src/models/User');
       const adminUser = await User.create({
         firstName: 'Admin',
         lastName: 'User',

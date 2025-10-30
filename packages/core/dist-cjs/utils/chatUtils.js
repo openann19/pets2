@@ -60,4 +60,3 @@ const _getTypingUsers = (isTyping, currentUserId, otherUser) => {
     });
 };
 exports._getTypingUsers = _getTypingUsers;
-//# sourceMappingURL=chatUtils.js.map

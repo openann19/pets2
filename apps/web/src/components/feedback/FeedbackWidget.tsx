@@ -95,7 +95,7 @@ export function FeedbackWidget({ className = '', position = 'bottom-right' }) {
     return (<>
       {/* Feedback Tab */}
       <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className={`fixed ${positionClasses[position]} z-50 ${className}`}>
-        <button onClick={() => setIsOpen(true)} className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 group" aria-label="Send feedback">
+        <button onClick={() => { setIsOpen(true); }} className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 group" aria-label="Send feedback">
           <ChatBubbleLeftRightIcon className="w-6 h-6 group-hover:scale-110 transition-transform duration-200"/>
         </button>
       </motion.div>
@@ -111,7 +111,7 @@ export function FeedbackWidget({ className = '', position = 'bottom-right' }) {
                     <ChatBubbleLeftRightIcon className="w-6 h-6 mr-3"/>
                     <h2 className="text-xl font-bold">Share Your Feedback</h2>
                   </div>
-                  <button onClick={() => setIsOpen(false)} disabled={isSubmitting} className="text-white/80 hover:text-white transition-colors">
+                  <button onClick={() => { setIsOpen(false); }} disabled={isSubmitting} className="text-white/80 hover:text-white transition-colors">
                     <XMarkIcon className="w-6 h-6"/>
                   </button>
                 </div>
@@ -139,7 +139,7 @@ export function FeedbackWidget({ className = '', position = 'bottom-right' }) {
                       <div className="grid grid-cols-2 gap-3">
                         {feedbackTypes.map((type) => {
                     const Icon = type.icon;
-                    return (<button key={type.id} type="button" onClick={() => handleInputChange('type', type.id)} className={`
+                    return (<button key={type.id} type="button" onClick={() => { handleInputChange('type', type.id); }} className={`
                                 p-3 rounded-lg border-2 transition-all duration-200 text-left
                                 ${formData.type === type.id
                             ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
@@ -160,7 +160,7 @@ export function FeedbackWidget({ className = '', position = 'bottom-right' }) {
                         How would you rate your experience?
                       </label>
                       <div className="flex space-x-1">
-                        {[1, 2, 3, 4, 5].map((rating) => (<button key={rating} type="button" onClick={() => handleInputChange('rating', rating)} className={`
+                        {[1, 2, 3, 4, 5].map((rating) => (<button key={rating} type="button" onClick={() => { handleInputChange('rating', rating); }} className={`
                               p-2 rounded-lg transition-all duration-200
                               ${formData.rating && formData.rating >= rating
                         ? 'text-yellow-400'
@@ -176,7 +176,7 @@ export function FeedbackWidget({ className = '', position = 'bottom-right' }) {
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Your feedback
                       </label>
-                      <textarea ref={textareaRef} value={formData.message} onChange={(e) => handleInputChange('message', e.target.value)} placeholder="Tell us what's on your mind..." className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white" rows={4} required/>
+                      <textarea ref={textareaRef} value={formData.message} onChange={(e) => { handleInputChange('message', e.target.value); }} placeholder="Tell us what's on your mind..." className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white" rows={4} required/>
                     </div>
 
                     {/* Email */}
@@ -184,7 +184,7 @@ export function FeedbackWidget({ className = '', position = 'bottom-right' }) {
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Email (optional)
                       </label>
-                      <input type="email" value={formData.email} onChange={(e) => handleInputChange('email', e.target.value)} placeholder="your@email.com" className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"/>
+                      <input type="email" value={formData.email} onChange={(e) => { handleInputChange('email', e.target.value); }} placeholder="your@email.com" className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"/>
                     </div>
 
                     {/* Error */}
@@ -210,7 +210,7 @@ export function FeedbackWidget({ className = '', position = 'bottom-right' }) {
 export function CompactFeedbackButton({ type = 'general', className = '' }) {
     const [isOpen, setIsOpen] = useState(false);
     return (<>
-      <InteractiveButton onClick={() => setIsOpen(true)} variant="outline" size="sm" className={`text-gray-600 hover:text-gray-800 ${className}`} icon={<ChatBubbleLeftRightIcon className="w-4 h-4"/>}>
+      <InteractiveButton onClick={() => { setIsOpen(true); }} variant="outline" size="sm" className={`text-gray-600 hover:text-gray-800 ${className}`} icon={<ChatBubbleLeftRightIcon className="w-4 h-4"/>}>
         Feedback
       </InteractiveButton>
 

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { logger } from "@pawfectmatch/core";
 import {
   View,
@@ -9,21 +9,23 @@ import {
   type ViewStyle,
   type ImageStyle,
 } from "react-native";
-import FastImage, {
+import FastImage from "react-native-fast-image";
+import type {
   FastImageProps,
   Priority,
   ResizeMode,
+  Source,
 } from "react-native-fast-image";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "@/theme";
 
-interface OptimizedImageProps extends Omit<FastImageProps, "source"> {
+interface OptimizedImageProps {
   uri: string;
   style?: StyleProp<ImageStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   showLoadingIndicator?: boolean;
   showErrorState?: boolean;
-  fallbackIcon?: keyof typeof Ionicons.glyphMap;
+  fallbackIcon?: string;
   priority?: Priority;
   resizeMode?: ResizeMode;
   cache?: "immutable" | "web" | "cacheOnly";
@@ -45,24 +47,26 @@ interface OptimizedImageProps extends Omit<FastImageProps, "source"> {
  * - Preloading capabilities
  * - Memory management
  */
-export function OptimizedImage({
-  uri,
-  style,
-  containerStyle,
-  showLoadingIndicator = true,
-  showErrorState = true,
-  fallbackIcon = "image-outline",
-  priority = FastImage.priority.normal,
-  resizeMode = FastImage.resizeMode.cover,
-  cache = "immutable",
-  onLoadStart,
-  onLoadEnd,
-  onError,
-  accessible = true,
-  accessibilityLabel,
-  ...props
-}): React.ReactElement {
-  const { colors } = useTheme();
+export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
+  const {
+    uri,
+    style,
+    containerStyle,
+    showLoadingIndicator = true,
+    showErrorState = true,
+    fallbackIcon = "image-outline",
+    priority = "normal" as Priority,
+    resizeMode = "cover" as ResizeMode,
+    cache = "immutable",
+    onLoadStart,
+    onLoadEnd,
+    onError,
+    accessible = true,
+    accessibilityLabel,
+    ...restProps
+  } = props;
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -78,7 +82,7 @@ export function OptimizedImage({
   }, [onLoadEnd]);
 
   const handleError = useCallback(
-    (error: unknown) => {
+    (error: Error | unknown) => {
       setIsLoading(false);
       setHasError(true);
       onError?.(error);
@@ -90,22 +94,22 @@ export function OptimizedImage({
     [onError],
   );
 
-  const imageSource = {
+  const imageSource: Source = {
     uri,
-    priority,
-    cache,
-  };
+    priority: priority ?? "normal",
+    cache: cache ?? "immutable",
+  } as Source;
 
   return (
     <View style={[styles.container, containerStyle]}>
       <FastImage
-        {...props}
+        {...restProps}
         source={imageSource}
-        style={[styles.image, style]}
-        resizeMode={resizeMode}
+        style={[styles.image, style] as any}
+        resizeMode={resizeMode ?? "cover"}
         onLoadStart={handleLoadStart}
         onLoadEnd={handleLoadEnd}
-        onError={handleError}
+        onError={handleError as any}
         accessible={accessible}
         accessibilityLabel={accessibilityLabel || `Image: ${uri}`}
         accessibilityRole="image"
@@ -113,10 +117,12 @@ export function OptimizedImage({
 
       {/* Loading Indicator */}
       {isLoading && showLoadingIndicator && (
-        <View style={[styles.overlay, styles.loadingOverlay]}>
+        <View
+          style={[styles.overlay, styles.loadingOverlay]}
+        >
           <ActivityIndicator
             size="small"
-            color={colors.primary}
+            color={theme.colors.primary}
             accessible={true}
             accessibilityLabel="Loading image"
           />
@@ -129,7 +135,7 @@ export function OptimizedImage({
           style={[
             styles.overlay,
             styles.errorOverlay,
-            { backgroundColor: colors.card },
+            { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
           ]}
           accessible={true}
           accessibilityLabel="Image failed to load"
@@ -138,10 +144,15 @@ export function OptimizedImage({
           <Ionicons
             name={fallbackIcon}
             size={32}
-            color={colors.text}
+            color={theme.colors.onSurface}
             style={styles.errorIcon}
           />
-          <Text style={[styles.errorText, { color: colors.text }]}>
+          <Text
+            style={[
+              styles.errorText,
+              { color: theme.colors.onSurface },
+            ]}
+          >
             Image unavailable
           </Text>
         </View>
@@ -201,7 +212,7 @@ export const getCacheSize = (): Promise<{
  */
 export function HighPriorityImage(
   props: Omit<OptimizedImageProps, "priority">,
-): JSX.Element {
+): React.JSX.Element {
   return <OptimizedImage {...props} priority={FastImage.priority.high} />;
 }
 
@@ -211,7 +222,7 @@ export function HighPriorityImage(
  */
 export function LowPriorityImage(
   props: Omit<OptimizedImageProps, "priority">,
-): JSX.Element {
+): React.JSX.Element {
   return <OptimizedImage {...props} priority={FastImage.priority.low} />;
 }
 
@@ -223,7 +234,7 @@ export function AvatarImage({
   size = 40,
   style,
   ...props
-}: OptimizedImageProps & { size?: number }): JSX.Element {
+}: OptimizedImageProps & { size?: number }): React.JSX.Element {
   return (
     <OptimizedImage
       {...props}
@@ -241,7 +252,8 @@ export function AvatarImage({
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(theme: ReturnType<typeof useTheme>) {
+  return StyleSheet.create({
   container: {
     position: "relative",
   },
@@ -262,9 +274,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.1)",
   },
   errorOverlay: {
-    backgroundColor: "#f8f9fa",
     borderWidth: 1,
-    borderColor: "#e9ecef",
     borderStyle: "dashed",
   },
   errorIcon: {
@@ -272,10 +282,9 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   errorText: {
-    fontSize: 12,
+    fontSize: theme.typography.body.size * 0.75,
     textAlign: "center",
     opacity: 0.6,
   },
-});
-
-export default OptimizedImage;
+  });
+}

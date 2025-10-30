@@ -1,0 +1,12 @@
+{
+  "chat_title": "Messages",
+  "chat_send": "Send",
+  "chat_placeholder": "Type a message...",
+  "chat_new": "New chat",
+  "online_now": "Online now",
+  "last_seen_recently": "Last seen recently",
+  "other_user_typing": "Other User",
+  "replyingTo": "Replying to",
+  "media": "Media",
+  "dismiss": "Dismiss"
+}

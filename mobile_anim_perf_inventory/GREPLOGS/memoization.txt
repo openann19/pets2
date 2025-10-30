@@ -1,0 +1,708 @@
+src/hooks/useCommunityFeed.ts:13:import { useCallback, useEffect, useState } from "react";
+src/hooks/useCommunityFeed.ts:58:  const loadFeed = useCallback(async (page = 1, isRefresh = false) => {
+src/hooks/useCommunityFeed.ts:98:  const refreshFeed = useCallback(async () => {
+src/hooks/useCommunityFeed.ts:103:  const loadMore = useCallback(async () => {
+src/hooks/useCommunityFeed.ts:110:  const createPost = useCallback(
+src/hooks/useCommunityFeed.ts:127:  const likePost = useCallback(async (postId: string) => {
+src/hooks/useCommunityFeed.ts:145:  const addComment = useCallback(
+src/hooks/useCommunityFeed.ts:170:  const deletePost = useCallback(async (postId: string) => {
+src/hooks/useCommunityFeed.ts:181:  const reportPost = useCallback(
+src/hooks/useCommunityFeed.ts:199:  const blockUser = useCallback(async (userId: string) => {
+src/hooks/useCommunityFeed.ts:211:  const joinActivity = useCallback(async (postId: string) => {
+src/hooks/useCommunityFeed.ts:233:  const leaveActivity = useCallback(async (postId: string) => {
+src/hooks/useHelpSupportData.ts:2:import React, { useCallback, useEffect } from "react";
+src/hooks/useHelpSupportData.ts:122:  const handleHelpOption = useCallback((option: HelpOption) => {
+src/hooks/useHelpSupportData.ts:127:  const handleEmailSupport = useCallback(() => {
+src/hooks/useSwipeData.ts:1:import { useCallback, useEffect, useState } from "react";
+src/hooks/useSwipeData.ts:64:  const loadPets = useCallback(async () => {
+src/hooks/useSwipeData.ts:103:  const handleSwipe = useCallback(
+src/hooks/useSwipeData.ts:146:  const handleButtonSwipe = useCallback(
+src/hooks/useSwipeData.ts:154:  const refreshPets = useCallback(() => {
+src/hooks/useSwipeData.ts:159:  const setFilters = useCallback(
+src/hooks/animations/useSpringAnimation.ts:1:import { useCallback } from "react";
+src/hooks/animations/useSpringAnimation.ts:31:  const animate = useCallback(
+src/hooks/animations/useSpringAnimation.ts:53:  const reset = useCallback(() => {
+src/hooks/animations/useSwipeGesture.ts:1:import { useCallback } from "react";
+src/hooks/animations/usePressAnimation.ts:1:import { useCallback } from "react";
+src/hooks/animations/usePressAnimation.ts:27:  const handlePressIn = useCallback(() => {
+src/hooks/animations/usePressAnimation.ts:34:  const handlePressOut = useCallback(() => {
+src/hooks/useAdminUsersScreen.ts:3:import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+src/hooks/useAdminUsersScreen.ts:143:  const clearHandlerCache = useCallback(() => {
+src/hooks/useAdminUsersScreen.ts:147:  const loadUsers = useCallback(
+src/hooks/useAdminUsersScreen.ts:184:  const toggleUserSelection = useCallback(async (userId: string) => {
+src/hooks/useAdminUsersScreen.ts:202:  const updateUserStatusLocal = useCallback(
+src/hooks/useAdminUsersScreen.ts:218:  const handleSingleAction = useCallback(
+src/hooks/useAdminUsersScreen.ts:249:  const primaryActionForStatus = useCallback(
+src/hooks/useAdminUsersScreen.ts:256:  const secondaryActionForStatus = useCallback(
+src/hooks/useAdminUsersScreen.ts:263:  const handlePrimaryAction = useCallback(
+src/hooks/useAdminUsersScreen.ts:270:  const handleSecondaryAction = useCallback(
+src/hooks/useAdminUsersScreen.ts:286:  const getHandlersForUser = useCallback(
+src/hooks/useAdminUsersScreen.ts:311:  const filteredUsers = useMemo(() => {
+src/hooks/useAdminUsersScreen.ts:325:  const listItems = useMemo<AdminUserListItemViewModel[]>(() => {
+src/hooks/useAdminUsersScreen.ts:380:  const handleSearchChange = useCallback((value: string) => {
+src/hooks/useAdminUsersScreen.ts:384:  const handleStatusChange = useCallback((value: AdminUsersStatusFilter) => {
+src/hooks/useAdminUsersScreen.ts:388:  const onRefresh = useCallback(async () => {
+src/hooks/useAdminUsersScreen.ts:393:  const performBulkAction = useCallback(
+src/hooks/useAdminUsersScreen.ts:449:  const onBulkSuspend = useCallback(
+src/hooks/useAdminUsersScreen.ts:453:  const onBulkActivate = useCallback(
+src/hooks/useAdminUsersScreen.ts:457:  const onBulkBan = useCallback(
+src/hooks/useAdminUsersScreen.ts:462:  const keyExtractor = useCallback(
+src/hooks/useAdminUsersScreen.ts:467:  const getItemLayout = useCallback(
+src/hooks/useChatData.ts:1:import { useCallback, useEffect, useRef, useState } from "react";
+src/hooks/useChatData.ts:127:  const loadMessages = useCallback(async (): Promise<void> => {
+src/hooks/useChatData.ts:152:  const sendMessage = useCallback(
+src/hooks/useChatData.ts:242:  const retryMessage = useCallback(
+src/hooks/useChatData.ts:282:  const markAsRead = useCallback(async (): Promise<void> => {
+src/hooks/useChatData.ts:293:  const clearError = useCallback((): void => {
+src/hooks/utils/useToggleState.ts:1:import { useCallback, useState } from "react";
+src/hooks/utils/useToggleState.ts:21:  const toggle = useCallback(() => {
+src/hooks/utils/useToggleState.ts:25:  const setOn = useCallback(() => {
+src/hooks/utils/useToggleState.ts:29:  const setOff = useCallback(() => {
+src/hooks/utils/useAsyncAction.ts:1:import { useCallback, useState } from "react";
+src/hooks/utils/useAsyncAction.ts:41:  const execute = useCallback(
+src/hooks/utils/useAsyncAction.ts:68:  const reset = useCallback(() => {
+src/hooks/utils/useScrollPersistence.ts:1:import { useCallback, useEffect, useRef, useState } from "react";
+src/hooks/utils/useScrollPersistence.ts:68:  const handleScroll = useCallback(
+src/hooks/utils/useScrollPersistence.ts:84:  const restoreScroll = useCallback(() => {
+src/hooks/utils/usePersistedState.ts:1:import { useCallback, useEffect, useState } from "react";
+src/hooks/utils/usePersistedState.ts:61:  const setValue = useCallback(
+src/hooks/utils/usePersistedState.ts:76:  const clearStorage = useCallback(async () => {
+src/hooks/utils/useFormState.ts:1:import { useCallback, useState } from "react";
+src/hooks/utils/useFormState.ts:52:  const setValue = useCallback((name: keyof T, value: T[keyof T]) => {
+src/hooks/utils/useFormState.ts:64:  const setValues = useCallback((newValues: Partial<T>) => {
+src/hooks/utils/useFormState.ts:68:  const setError = useCallback((name: keyof T, error: string | null) => {
+src/hooks/utils/useFormState.ts:79:  const setFieldTouched = useCallback(
+src/hooks/utils/useFormState.ts:86:  const validate = useCallback((): boolean => {
+src/hooks/utils/useFormState.ts:102:  const reset = useCallback(() => {
+src/hooks/utils/useFormState.ts:108:  const handleSubmit = useCallback(
+src/hooks/utils/useModalState.ts:1:import { useCallback, useState } from "react";
+src/hooks/utils/useModalState.ts:21:  const open = useCallback(() => {
+src/hooks/utils/useModalState.ts:25:  const close = useCallback(() => {
+src/hooks/utils/useModalState.ts:29:  const toggle = useCallback(() => {
+src/hooks/utils/useTabState.ts:1:import { useCallback, useState } from "react";
+src/hooks/utils/useTabState.ts:19:  const setActiveTab = useCallback((tab: T) => {
+src/hooks/chat/useMessageActions.ts:1:import { useCallback } from "react";
+src/hooks/chat/useMessageActions.ts:28:  const retryMessage = useCallback(
+src/hooks/chat/useMessageActions.ts:45:  const deleteMessage = useCallback(
+src/hooks/chat/useChatInput.ts:1:import { useState, useCallback, useEffect, useRef } from "react";
+src/hooks/chat/useChatInput.ts:69:  const setInputText = useCallback(
+src/hooks/chat/useChatInput.ts:78:  const clearInput = useCallback(() => {
+src/hooks/chat/useChatInput.ts:85:  const handleTyping = useCallback((typing: boolean) => {
+src/hooks/useErrorRecovery.ts:2:import { useCallback } from "react";
+src/hooks/useErrorRecovery.ts:62:  const executeWithRecovery = useCallback(
+src/hooks/useErrorRecovery.ts:137:  const resetRecovery = useCallback(() => {
+src/hooks/useErrorRecovery.ts:150:  const getRecoveryState = useCallback(
+src/hooks/useAIBio.ts:7:import { useState, useCallback } from "react";
+src/hooks/useAIBio.ts:92:  const validateForm = useCallback((): boolean => {
+src/hooks/useAIBio.ts:106:  const generateBio = useCallback(async (): Promise<void> => {
+src/hooks/useAIBio.ts:187:  const pickImage = useCallback(async (): Promise<void> => {
+src/hooks/useAIBio.ts:221:  const saveBio = useCallback((bio: GeneratedBio): void => {
+src/hooks/useAIBio.ts:230:  const clearForm = useCallback((): void => {
+src/hooks/useAIBio.ts:242:  const resetGeneration = useCallback((): void => {
+src/hooks/swipe/useSwipeAnimations.ts:1:import { useCallback } from "react";
+src/hooks/swipe/useSwipeAnimations.ts:17:  const animateSwipe = useCallback(
+src/hooks/swipe/useSwipeGestures.ts:1:import { useRef, useCallback } from "react";
+src/hooks/swipe/useSwipeGestures.ts:53:  const resetPosition = useCallback(() => {
+src/hooks/swipe/useMatchModal.ts:1:import { useState, useCallback } from "react";
+src/hooks/swipe/useMatchModal.ts:26:  const showMatch = useCallback((pet: Pet) => {
+src/hooks/swipe/useMatchModal.ts:31:  const closeModal = useCallback(() => {
+src/hooks/swipe/useMatchModal.ts:37:  const handleKeepSwiping = useCallback(() => {
+src/hooks/swipe/useMatchModal.ts:41:  const handleSendMessage = useCallback(() => {
+src/hooks/domains/premium/useFeatureGating.ts:5:import { useCallback, useMemo } from "react";
+src/hooks/domains/premium/useFeatureGating.ts:46:  const checkFeatureAccess = useCallback(
+src/hooks/domains/premium/useFeatureGating.ts:95:  const getFeatureLimit = useCallback(
+src/hooks/domains/premium/useFeatureGating.ts:116:  const isFeatureUnlimited = useCallback(
+src/hooks/domains/premium/useFeatureGating.ts:124:  const trackFeatureUsage = useCallback(
+src/hooks/domains/premium/useFeatureGating.ts:136:  const getUpgradeMessage = useCallback(
+src/hooks/domains/premium/useSubscriptionState.ts:5:import { useCallback, useState } from "react";
+src/hooks/domains/premium/useSubscriptionState.ts:39:  const activateSubscription = useCallback(
+src/hooks/domains/premium/useSubscriptionState.ts:75:  const cancelSubscription = useCallback(async (): Promise<boolean> => {
+src/hooks/domains/premium/useSubscriptionState.ts:107:  const updatePaymentMethod = useCallback(async (): Promise<boolean> => {
+src/hooks/domains/premium/useSubscriptionState.ts:133:  const clearError = useCallback(() => {
+src/hooks/domains/premium/useSubscriptionState.ts:137:  const resetState = useCallback(() => {
+src/hooks/domains/premium/usePremiumStatus.ts:5:import { useCallback, useEffect, useState } from "react";
+src/hooks/domains/premium/usePremiumStatus.ts:29:  const refreshStatus = useCallback(async () => {
+src/hooks/domains/premium/usePremiumStatus.ts:49:  const hasFeature = useCallback(
+src/hooks/domains/gdpr/useGDPRStatus.ts:1:import { useState, useEffect, useCallback } from "react";
+src/hooks/domains/gdpr/useGDPRStatus.ts:30:  const refresh = useCallback(async () => {
+src/hooks/useBiometric.ts:6:import { useCallback, useEffect, useState } from "react";
+src/hooks/useBiometric.ts:74:  const authenticate = useCallback(
+src/hooks/useBiometric.ts:102:  const enableBiometric = useCallback(async (): Promise<boolean> => {
+src/hooks/useBiometric.ts:138:  const disableBiometric = useCallback(async (): Promise<boolean> => {
+src/hooks/useBiometric.ts:175:  const quickAuth = useCallback(async (): Promise<BiometricResult> => {
+src/hooks/useBiometric.ts:194:  const showSetupPrompt = useCallback(async (): Promise<boolean> => {
+src/hooks/useBiometric.ts:211:  const storeSecureData = useCallback(
+src/hooks/useBiometric.ts:238:  const getSecureData = useCallback(
+src/hooks/useBiometric.ts:264:  const removeSecureData = useCallback(
+src/hooks/useBiometric.ts:290:  const refreshState = useCallback(async (): Promise<void> => {
+src/hooks/usePerformance.ts:5:import { useCallback, useMemo, useRef, useState } from "react";
+src/hooks/usePerformance.ts:19:  return useCallback((...args: Parameters<T>) => {
+src/hooks/usePerformance.ts:65:  return useCallback(
+src/hooks/usePerformance.ts:100:export function useMemoCompare<T>(
+src/hooks/usePerformance.ts:218:  return useCallback((...args: Parameters<T>) => {
+src/hooks/usePerformance.ts:241:  const visibleItems = useMemo(() => {
+src/hooks/domains/gdpr/useAccountDeletion.ts:1:import { useState, useCallback } from "react";
+src/hooks/domains/gdpr/useAccountDeletion.ts:24:  const requestDeletion = useCallback(
+src/hooks/domains/gdpr/useAccountDeletion.ts:71:  const cancelDeletion = useCallback(async (): Promise<boolean> => {
+src/hooks/domains/gdpr/useDataExport.ts:1:import { useState, useCallback } from "react";
+src/hooks/domains/gdpr/useDataExport.ts:19:  const exportData = useCallback(async (): Promise<boolean> => {
+src/hooks/domains/safety/useBlockedUsers.ts:5:import { useCallback, useEffect, useState } from "react";
+src/hooks/domains/safety/useBlockedUsers.ts:39:  const loadBlockedUsers = useCallback(async (refresh = false) => {
+src/hooks/domains/safety/useBlockedUsers.ts:80:  const unblockUser = useCallback(async (userId: string, userName: string) => {
+src/hooks/domains/safety/useBlockedUsers.ts:112:  const blockUser = useCallback(
+src/hooks/domains/safety/useBlockedUsers.ts:131:  const refreshData = useCallback(async () => {
+src/hooks/domains/safety/useSafetyCenter.ts:5:import { useCallback, useState } from "react";
+src/hooks/domains/safety/useSafetyCenter.ts:45:  const toggleEmergencyMode = useCallback(async (): Promise<void> => {
+src/hooks/domains/safety/useSafetyCenter.ts:74:  const reportUser = useCallback(
+src/hooks/domains/safety/useSafetyCenter.ts:100:  const contactSupport = useCallback(() => {
+src/hooks/domains/safety/useSafetyCenter.ts:104:  const viewSafetyGuidelines = useCallback(() => {
+src/hooks/domains/safety/useSafetyCenter.ts:111:  const navigateToPrivacySettings = useCallback(() => {
+src/hooks/domains/safety/useSafetyCenter.ts:118:  const setupEmergencyContacts = useCallback(() => {
+src/hooks/domains/safety/useSafetyCenter.ts:122:  const viewSafetyTips = useCallback(() => {
+src/hooks/domains/safety/useSafetyCenter.ts:129:  const handleSafetyOption = useCallback((option: SafetyOption) => {
+src/hooks/domains/safety/useModerationTools.ts:5:import { useCallback, useState } from "react";
+src/hooks/domains/safety/useModerationTools.ts:54:  const reviewReports = useCallback(() => {
+src/hooks/domains/safety/useModerationTools.ts:58:  const moderateContent = useCallback(() => {
+src/hooks/domains/safety/useModerationTools.ts:62:  const monitorMessages = useCallback(() => {
+src/hooks/domains/safety/useModerationTools.ts:67:  const manageUsers = useCallback(() => {
+src/hooks/domains/safety/useModerationTools.ts:71:  const viewAnalytics = useCallback(() => {
+src/hooks/domains/safety/useModerationTools.ts:75:  const configureSettings = useCallback(() => {
+src/hooks/domains/safety/useModerationTools.ts:79:  const refreshStats = useCallback(async () => {
+src/hooks/domains/safety/useModerationTools.ts:101:  const handleModerationTool = useCallback((tool: ModerationTool) => {
+src/hooks/domains/social/useLeaderboard.ts:5:import { useCallback, useEffect, useState } from "react";
+src/hooks/domains/social/useLeaderboard.ts:58:  const loadCategories = useCallback(async () => {
+src/hooks/domains/social/useLeaderboard.ts:68:  const loadLeaderboard = useCallback(
+src/hooks/domains/social/useLeaderboard.ts:98:  const loadUserRank = useCallback(async () => {
+src/hooks/domains/social/useLeaderboard.ts:111:  const loadInitialData = useCallback(async () => {
+src/hooks/domains/social/useLeaderboard.ts:123:  const refreshData = useCallback(async () => {
+src/hooks/domains/social/useLeaderboard.ts:135:  const loadMore = useCallback(async () => {
+src/hooks/domains/settings/useSettingsPersistence.ts:1:import { useCallback } from "react";
+src/hooks/domains/settings/useSettingsPersistence.ts:27:  const loadSettings = useCallback(async (): Promise<SettingsData> => {
+src/hooks/domains/settings/useSettingsPersistence.ts:37:  const saveSettings = useCallback(
+src/hooks/domains/settings/useSettingsPersistence.ts:48:  const clearSettings = useCallback(async (): Promise<void> => {
+src/hooks/domains/settings/useSettingsSync.ts:1:import { useCallback, useState } from "react";
+src/hooks/domains/settings/useSettingsSync.ts:26:  const syncSettings = useCallback(
+src/hooks/screens/useStripePayment.ts:5:import { useCallback, useState } from "react";
+src/hooks/screens/useStripePayment.ts:45:  const createCheckoutSession = useCallback(
+src/hooks/screens/useStripePayment.ts:105:  const processPayment = useCallback(
+src/hooks/screens/useStripePayment.ts:151:  const confirmPayment = useCallback(
+src/hooks/screens/useStripePayment.ts:186:  const handlePaymentSuccess = useCallback(
+src/hooks/screens/useStripePayment.ts:201:  const handlePaymentCancel = useCallback((sessionId: string) => {
+src/hooks/screens/useStripePayment.ts:206:  const clearError = useCallback(() => {
+src/hooks/domains/social/useStories.ts:5:import { useCallback, useEffect, useRef, useState } from "react";
+src/hooks/domains/social/useStories.ts:126:  const goToNextStory = useCallback(() => {
+src/hooks/domains/social/useStories.ts:144:  const goToPreviousStory = useCallback(() => {
+src/hooks/domains/social/useStories.ts:161:  const goToGroup = useCallback(
+src/hooks/domains/social/useStories.ts:172:  const goToStory = useCallback(
+src/hooks/domains/social/useStories.ts:238:  const markAsViewed = useCallback(
+src/hooks/domains/social/useStories.ts:249:  const setPaused = useCallback((paused: boolean) => {
+src/hooks/domains/social/useStories.ts:253:  const setMuted = useCallback((muted: boolean) => {
+src/hooks/domains/social/index.ts:8:export { useMemoryWeave } from "./useMemoryWeave";
+src/components/map/MapFiltersModal.tsx:29:  const sliderPosition = React.useMemo(() => {
+src/hooks/screens/useMyPetsScreen.ts:3:import { useCallback, useState } from "react";
+src/hooks/screens/useMyPetsScreen.ts:13:  const loadPets = useCallback(async () => {
+src/hooks/screens/useMyPetsScreen.ts:27:  const onRefresh = useCallback(async () => {
+src/hooks/screens/useMyPetsScreen.ts:33:  const getSpeciesEmoji = useCallback((species: string) => {
+src/hooks/screens/useMyPetsScreen.ts:44:  const getIntentColor = useCallback((intent: string) => {
+src/hooks/screens/useMyPetsScreen.ts:54:  const getIntentLabel = useCallback((intent: string) => {
+src/hooks/screens/useMyPetsScreen.ts:64:  const handleDeletePet = useCallback(
+src/hooks/domains/profile/useProfileUpdate.ts:1:import { useCallback, useState } from "react";
+src/hooks/domains/profile/useProfileUpdate.ts:29:  const updateProfile = useCallback(
+src/hooks/domains/social/useMemoryWeave.ts:2: * useMemoryWeave Hook
+src/hooks/domains/social/useMemoryWeave.ts:5:import { useCallback, useEffect, useRef, useState } from "react";
+src/hooks/domains/social/useMemoryWeave.ts:50:export const useMemoryWeave = (
+src/hooks/domains/social/useMemoryWeave.ts:82:  const handleScroll = useCallback(
+src/hooks/domains/social/useMemoryWeave.ts:95:  const scrollToIndex = useCallback(
+src/hooks/domains/social/useMemoryWeave.ts:109:  const getEmotionColor = useCallback((emotion?: string): string => {
+src/hooks/domains/social/useMemoryWeave.ts:124:  const getEmotionEmoji = useCallback((emotion?: string): string => {
+src/hooks/domains/social/useMemoryWeave.ts:139:  const formatTimestamp = useCallback((timestamp: string): string => {
+src/hooks/screens/useAdminDashboardScreen.ts:6:import { useCallback, useEffect, useState } from "react";
+src/hooks/screens/useAdminDashboardScreen.ts:95:  const loadDashboardData = useCallback(
+src/hooks/screens/useAdminDashboardScreen.ts:177:  const onRefresh = useCallback(async () => {
+src/hooks/screens/useAdminDashboardScreen.ts:183:  const onNavigateToUsers = useCallback(() => {
+src/hooks/screens/useAdminDashboardScreen.ts:188:  const onNavigateToChats = useCallback(() => {
+src/hooks/screens/useAdminDashboardScreen.ts:193:  const onNavigateToVerifications = useCallback(() => {
+src/hooks/screens/useAdminDashboardScreen.ts:198:  const onNavigateToUploads = useCallback(() => {
+src/hooks/screens/useAdminDashboardScreen.ts:203:  const onNavigateToAnalytics = useCallback(() => {
+src/hooks/screens/useAdminDashboardScreen.ts:208:  const onNavigateToSecurity = useCallback(() => {
+src/hooks/screens/useAdminDashboardScreen.ts:213:  const onNavigateToBilling = useCallback(() => {
+src/hooks/screens/useAdminDashboardScreen.ts:264:  const onQuickAction = useCallback(
+src/hooks/screens/useNotificationSettings.ts:1:import { useState, useCallback, useEffect } from "react";
+src/hooks/screens/useNotificationSettings.ts:35:  const updateSetting = useCallback(
+src/hooks/screens/useNotificationSettings.ts:42:  const resetToDefault = useCallback(() => {
+src/hooks/domains/onboarding/useUserIntent.ts:5:import { useCallback, useState } from "react";
+src/hooks/domains/onboarding/useUserIntent.ts:60:  const selectIntent = useCallback((intentId: string) => {
+src/hooks/domains/onboarding/useUserIntent.ts:65:  const confirmIntent = useCallback(async (): Promise<string> => {
+src/hooks/domains/onboarding/useUserIntent.ts:89:  const resetSelection = useCallback(() => {
+src/hooks/domains/profile/useProfileData.ts:1:import { useCallback, useEffect, useState } from "react";
+src/hooks/domains/profile/useProfileData.ts:30:  const refreshProfile = useCallback(async () => {
+src/hooks/screens/useHomeScreen.ts:5:import { useCallback, useState } from "react";
+src/hooks/screens/useHomeScreen.ts:47:  const onRefresh = useCallback(async () => {
+src/hooks/screens/useHomeScreen.ts:69:  const handleQuickAction = useCallback(
+src/hooks/screens/useHomeScreen.ts:110:  const handleProfilePress = useCallback(() => {
+src/hooks/screens/useHomeScreen.ts:114:  const handleSettingsPress = useCallback(() => {
+src/hooks/screens/useHomeScreen.ts:118:  const handleSwipePress = useCallback(() => {
+src/hooks/screens/useHomeScreen.ts:122:  const handleMatchesPress = useCallback(() => {
+src/hooks/screens/useHomeScreen.ts:126:  const handleMessagesPress = useCallback(() => {
+src/hooks/screens/useHomeScreen.ts:130:  const handleMyPetsPress = useCallback(() => {
+src/hooks/screens/useHomeScreen.ts:134:  const handleCreatePetPress = useCallback(() => {
+src/hooks/screens/useHomeScreen.ts:138:  const handleCommunityPress = useCallback(() => {
+src/hooks/domains/onboarding/usePreferencesSetup.ts:5:import { useCallback, useState } from "react";
+src/hooks/domains/onboarding/usePreferencesSetup.ts:126:  const updatePreferences = useCallback((updates: Partial<UserPreferences>) => {
+src/hooks/domains/onboarding/usePreferencesSetup.ts:131:  const updateMaxDistance = useCallback(
+src/hooks/domains/onboarding/usePreferencesSetup.ts:138:  const updateAgeRange = useCallback(
+src/hooks/domains/onboarding/usePreferencesSetup.ts:145:  const toggleBreed = useCallback((breed: string) => {
+src/hooks/domains/onboarding/usePreferencesSetup.ts:155:  const setActivityLevel = useCallback(
+src/hooks/domains/onboarding/usePreferencesSetup.ts:162:  const setSize = useCallback(
+src/hooks/domains/onboarding/usePreferencesSetup.ts:169:  const toggleNotification = useCallback(
+src/hooks/domains/onboarding/usePreferencesSetup.ts:183:  const togglePrivacy = useCallback(
+src/hooks/domains/onboarding/usePreferencesSetup.ts:212:  const submitPreferences = useCallback(async (): Promise<UserPreferences> => {
+src/hooks/domains/onboarding/usePreferencesSetup.ts:251:  const resetPreferences = useCallback(() => {
+src/components/phoenix/PhoenixCard.tsx:7:import React, { useCallback } from "react";
+src/components/phoenix/PhoenixCard.tsx:84:  const handlePressIn = useCallback(() => {
+src/components/phoenix/PhoenixCard.tsx:94:  const handlePressOut = useCallback(() => {
+src/components/phoenix/PhoenixCard.tsx:102:  const handlePress = useCallback(() => {
+src/components/phoenix/PhoenixCard.tsx:109:  const getSizeStyles = useCallback((): ViewStyle => {
+src/components/phoenix/PhoenixCard.tsx:121:  const getVariantStyles = useCallback((): ViewStyle => {
+src/hooks/domains/profile/usePhotoManagement.ts:1:import { useCallback, useState } from "react";
+src/hooks/domains/profile/usePhotoManagement.ts:39:  const pickImage = useCallback(async () => {
+src/hooks/domains/profile/usePhotoManagement.ts:83:  const removePhoto = useCallback((index: number) => {
+src/hooks/domains/profile/usePhotoManagement.ts:95:  const setPrimaryPhoto = useCallback((index: number) => {
+src/hooks/domains/profile/usePhotoManagement.ts:104:  const uploadPhotos = useCallback(
+src/hooks/domains/profile/usePhotoManagement.ts:144:  const clearPhotos = useCallback(() => {
+src/hooks/screens/useSubscriptionManager.ts:6:import { useCallback, useEffect, useState } from "react";
+src/hooks/screens/useSubscriptionManager.ts:70:  const fetchSubscriptionData = useCallback(async () => {
+src/hooks/screens/useSubscriptionManager.ts:131:  const refreshData = useCallback(async () => {
+src/hooks/screens/useSubscriptionManager.ts:137:  const handleCancelSubscription = useCallback(async () => {
+src/hooks/screens/useSubscriptionManager.ts:158:  const handleUpdatePaymentMethod = useCallback(async () => {
+src/hooks/screens/useSubscriptionManager.ts:169:  const handleGoBack = useCallback(() => {
+src/hooks/domains/onboarding/useWelcome.ts:5:import { useCallback, useEffect } from "react";
+src/hooks/domains/onboarding/useWelcome.ts:55:  const initializeAnimations = useCallback(() => {
+src/hooks/domains/onboarding/useWelcome.ts:118:  const handleGetStarted = useCallback(() => {
+src/hooks/domains/onboarding/useWelcome.ts:123:  const handleSkipOnboarding = useCallback(() => {
+src/hooks/useErrorHandler.ts:1:import { useCallback } from "react";
+src/hooks/useErrorHandler.ts:30:  const handleError = useCallback(
+src/hooks/useErrorHandler.ts:145:  const handleNetworkError = useCallback(
+src/hooks/useErrorHandler.ts:162:  const handleAuthError = useCallback(
+src/hooks/useErrorHandler.ts:171:  const handleValidationError = useCallback(
+src/hooks/useErrorHandler.ts:187:  const handleOfflineError = useCallback(
+src/hooks/screens/useMatchesTabs.ts:1:import { useState, useCallback } from "react";
+src/hooks/domains/onboarding/usePetProfileSetup.ts:5:import { useCallback, useState } from "react";
+src/hooks/domains/onboarding/usePetProfileSetup.ts:58:  const updateProfile = useCallback((updates: Partial<PetProfile>) => {
+src/hooks/domains/onboarding/usePetProfileSetup.ts:64:  const setCurrentStep = useCallback((step: number) => {
+src/hooks/domains/onboarding/usePetProfileSetup.ts:69:  const uploadPhoto = useCallback(async (uri: string) => {
+src/hooks/domains/onboarding/usePetProfileSetup.ts:95:  const removePhoto = useCallback((index: number) => {
+src/hooks/domains/onboarding/usePetProfileSetup.ts:103:  const submitProfile = useCallback(async (): Promise<PetProfile> => {
+src/hooks/domains/onboarding/usePetProfileSetup.ts:142:  const resetProfile = useCallback(() => {
+src/hooks/domains/onboarding/usePetProfileSetup.ts:153:  const validateCurrentStep = useCallback((): boolean => {
+src/hooks/screens/useARScentTrailsScreen.ts:3:import { useCallback, useState } from "react";
+src/hooks/screens/useARScentTrailsScreen.ts:55:  const startScanning = useCallback(() => {
+src/hooks/screens/useARScentTrailsScreen.ts:65:  const getIntensityColor = useCallback((intensity: string) => {
+src/hooks/screens/useARScentTrailsScreen.ts:78:  const getDirectionIcon = useCallback((direction: string) => {
+src/hooks/screens/useARScentTrailsScreen.ts:101:  const handleFollowTrail = useCallback((petName: string) => {
+src/components/containers/FXContainer.tsx:19:import React, { useMemo } from "react";
+src/components/containers/FXContainer.tsx:80:  const baseStyles = useMemo(() => {
+src/hooks/domains/ai/useAICompatibility.ts:5:import { useCallback, useState } from "react";
+src/hooks/domains/ai/useAICompatibility.ts:70:  const loadAvailablePets = useCallback(async (): Promise<Pet[]> => {
+src/hooks/domains/ai/useAICompatibility.ts:97:  const analyzeCompatibility = useCallback(
+src/hooks/domains/ai/useAICompatibility.ts:183:  const resetAnalysis = useCallback(() => {
+src/hooks/domains/ai/useAICompatibility.ts:190:  const clearError = useCallback(() => {
+src/hooks/domains/ai/useAIPhotoAnalyzer.ts:5:import { useCallback, useState } from "react";
+src/hooks/domains/ai/useAIPhotoAnalyzer.ts:52:  const requestPermissions = useCallback(async (): Promise<boolean> => {
+src/hooks/domains/ai/useAIPhotoAnalyzer.ts:65:  const pickImages = useCallback(async (): Promise<void> => {
+src/hooks/domains/ai/useAIPhotoAnalyzer.ts:88:  const takePhoto = useCallback(async (): Promise<void> => {
+src/hooks/domains/ai/useAIPhotoAnalyzer.ts:117:  const analyzePhotos = useCallback(
+src/hooks/domains/ai/useAIPhotoAnalyzer.ts:196:  const removePhoto = useCallback((index: number) => {
+src/hooks/domains/ai/useAIPhotoAnalyzer.ts:200:  const resetAnalysis = useCallback(() => {
+src/hooks/domains/ai/useAIPhotoAnalyzer.ts:206:  const clearError = useCallback(() => {
+src/hooks/domains/ai/useAIBio.ts:5:import { useCallback, useState } from "react";
+src/hooks/domains/ai/useAIBio.ts:49:  const generateBio = useCallback(
+src/hooks/domains/ai/useAIBio.ts:107:  const addToHistory = useCallback((bio: GeneratedBio) => {
+src/hooks/domains/ai/useAIBio.ts:111:  const clearHistory = useCallback(() => {
+src/hooks/domains/ai/useAIBio.ts:115:  const clearError = useCallback(() => {
+src/components/SwipeCard.tsx:19:import React, { useRef, useState, useCallback, useMemo } from "react";
+src/components/SwipeCard.tsx:74:const SwipeCard = React.memo(function SwipeCard({
+src/components/SwipeCard.tsx:91:  const handleLike = useCallback(async (pet: Pet) => {
+src/components/SwipeCard.tsx:103:  const handlePass = useCallback(async (pet: Pet) => {
+src/components/SwipeCard.tsx:115:  const handleSuperLike = useCallback(async (pet: Pet) => {
+src/components/SwipeCard.tsx:128:  const animationValues = useMemo(
+src/components/SwipeCard.tsx:239:  const animateSwipeRight = useCallback(() => {
+src/components/SwipeCard.tsx:278:  const animateSwipeLeft = useCallback(() => {
+src/components/SwipeCard.tsx:317:  const animateSwipeUp = useCallback(() => {
+src/components/SwipeCard.tsx:357:  const animateReturn = useCallback(() => {
+src/components/SwipeCard.tsx:386:  const rotate = useMemo(
+src/components/SwipeCard.tsx:396:  const nextPhoto = useCallback(() => {
+src/components/SwipeCard.tsx:403:  const prevPhoto = useCallback(() => {
+src/hooks/screens/useAdvancedFiltersScreen.ts:5:import { useCallback, useState } from "react";
+src/hooks/screens/useAdvancedFiltersScreen.ts:54:  const toggleFilter = useCallback((filterId: string) => {
+src/hooks/screens/useAdvancedFiltersScreen.ts:63:  const resetFilters = useCallback(() => {
+src/hooks/screens/useAdvancedFiltersScreen.ts:83:  const saveFilters = useCallback(() => {
+src/hooks/screens/useAdvancedFiltersScreen.ts:94:  const getFiltersByCategory = useCallback(
+src/hooks/screens/useModernSwipeScreen.ts:5:import { useCallback, useEffect, useState } from "react";
+src/hooks/screens/useModernSwipeScreen.ts:57:  const loadPets = useCallback(async () => {
+src/hooks/screens/useModernSwipeScreen.ts:75:  const handleLike = useCallback(
+src/hooks/screens/useModernSwipeScreen.ts:99:  const handlePass = useCallback(async (pet: Pet) => {
+src/hooks/screens/useModernSwipeScreen.ts:110:  const handleSuperLike = useCallback(
+src/hooks/screens/useModernSwipeScreen.ts:129:  const swipePet = useCallback(
+src/hooks/screens/useModernSwipeScreen.ts:155:  const handleSwipeRight = useCallback(
+src/hooks/screens/useModernSwipeScreen.ts:163:  const handleSwipeLeft = useCallback(
+src/hooks/screens/useModernSwipeScreen.ts:171:  const handleSwipeUp = useCallback(
+src/hooks/screens/useModernSwipeScreen.ts:180:  const handleButtonSwipe = useCallback(
+src/hooks/screens/useAdminVerificationsScreen.ts:6:import { useCallback, useEffect, useMemo, useState } from "react";
+src/hooks/screens/useAdminVerificationsScreen.ts:119:  const loadVerificationRequests = useCallback(
+src/hooks/screens/useAdminVerificationsScreen.ts:219:  const filteredRequests = useMemo(() => {
+src/hooks/screens/useAdminVerificationsScreen.ts:247:  const onRefresh = useCallback(async () => {
+src/hooks/screens/useAdminVerificationsScreen.ts:252:  const onStatusFilterChange = useCallback((status: typeof statusFilter) => {
+src/hooks/screens/useAdminVerificationsScreen.ts:256:  const onPriorityFilterChange = useCallback(
+src/hooks/screens/useAdminVerificationsScreen.ts:263:  const onSearchChange = useCallback((query: string) => {
+src/hooks/screens/useAdminVerificationsScreen.ts:267:  const onRequestSelect = useCallback((request: VerificationRequest) => {
+src/hooks/screens/useAdminVerificationsScreen.ts:272:  const onRequestClose = useCallback(() => {
+src/hooks/screens/useAdminVerificationsScreen.ts:276:  const onApproveRequest = useCallback(
+src/hooks/screens/useAdminVerificationsScreen.ts:337:  const onRejectRequest = useCallback(
+src/hooks/screens/useAdminVerificationsScreen.ts:412:  const onAssignToMe = useCallback(
+src/hooks/screens/useCreatePetScreen.ts:2:import { useCallback, useState } from "react";
+src/hooks/screens/useCreatePetScreen.ts:72:  const updateFormData = useCallback(
+src/hooks/screens/useCreatePetScreen.ts:82:  const updateNestedFormData = useCallback(
+src/hooks/screens/useCreatePetScreen.ts:95:  const validateForm = useCallback((): string[] => {
+src/hooks/screens/useCreatePetScreen.ts:109:  const handleSubmit = useCallback(async () => {
+src/hooks/screens/useCreatePetScreen.ts:130:  const togglePersonalityTag = useCallback((tag: string) => {
+src/hooks/screens/useMatchesActions.ts:1:import { useCallback } from "react";
+src/hooks/screens/useMatchesActions.ts:27:  const handleUnmatch = useCallback(
+src/hooks/screens/useMatchesActions.ts:57:  const handleBlock = useCallback(
+src/hooks/screens/useMatchesActions.ts:87:  const handleReport = useCallback(
+src/hooks/screens/useRegisterScreen.ts:1:import { useCallback, useState } from "react";
+src/hooks/screens/useRegisterScreen.ts:39:  const validateForm = useCallback(
+src/hooks/screens/useRegisterScreen.ts:113:  const handleRegister = useCallback(async () => {
+src/hooks/screens/useRegisterScreen.ts:175:  const handleSubmit = useCallback(
+src/hooks/screens/useRegisterScreen.ts:182:  const navigateToLogin = useCallback(() => {
+src/components/ModernPhotoUpload.tsx:16:import React, { useState, useCallback, useMemo } from "react";
+src/components/ModernPhotoUpload.tsx:76:  const requestPermissions = useCallback(async () => {
+src/components/ModernPhotoUpload.tsx:90:  const pickImage = useCallback(async () => {
+src/components/ModernPhotoUpload.tsx:147:  const removePhoto = useCallback(
+src/components/ModernPhotoUpload.tsx:160:  const renderPhotoItem = useCallback(
+src/components/ModernPhotoUpload.tsx:227:  const renderAddButton = useCallback(() => {
+src/components/ModernPhotoUpload.tsx:257:  const gridItems = useMemo(() => {
+src/hooks/screens/useAdminBillingScreen.ts:6:import { useCallback, useEffect, useMemo, useState } from "react";
+src/hooks/screens/useAdminBillingScreen.ts:157:  const loadBillingData = useCallback(
+src/hooks/screens/useAdminBillingScreen.ts:286:  const filteredTransactions = useMemo(() => {
+src/hooks/screens/useAdminBillingScreen.ts:325:  const filteredSubscriptions = useMemo(() => {
+src/hooks/screens/useAdminBillingScreen.ts:363:  const onRefresh = useCallback(async () => {
+src/hooks/screens/useAdminBillingScreen.ts:368:  const onTransactionStatusFilterChange = useCallback(
+src/hooks/screens/useAdminBillingScreen.ts:375:  const onTransactionTypeFilterChange = useCallback(
+src/hooks/screens/useAdminBillingScreen.ts:382:  const onSubscriptionStatusFilterChange = useCallback(
+src/hooks/screens/useAdminBillingScreen.ts:389:  const onSubscriptionPlanFilterChange = useCallback(
+src/hooks/screens/useAdminBillingScreen.ts:396:  const onDateRangeChange = useCallback((range: typeof dateRange) => {
+src/hooks/screens/useAdminBillingScreen.ts:401:  const onSearchChange = useCallback((query: string) => {
+src/hooks/screens/useAdminBillingScreen.ts:405:  const onTransactionSelect = useCallback((transaction: BillingTransaction) => {
+src/hooks/screens/useAdminBillingScreen.ts:414:  const onSubscriptionSelect = useCallback((subscription: SubscriptionData) => {
+src/hooks/screens/useAdminBillingScreen.ts:423:  const onRefundTransaction = useCallback(
+src/hooks/screens/useAdminBillingScreen.ts:485:  const onCancelSubscription = useCallback(
+src/hooks/screens/useAdminBillingScreen.ts:542:  const onReactivateSubscription = useCallback(
+src/hooks/screens/useAdminBillingScreen.ts:578:  const onUpdateSubscriptionPlan = useCallback(
+src/hooks/screens/useAdminBillingScreen.ts:613:  const onExportBillingData = useCallback(
+src/hooks/screens/usePremiumDemoScreen.ts:2:import { useCallback, useState } from "react";
+src/hooks/screens/usePremiumDemoScreen.ts:9:  const handleButtonPress = useCallback(
+src/hooks/screens/usePremiumDemoScreen.ts:16:  const handleCardPress = useCallback(
+src/hooks/screens/usePrivacySettingsScreen.ts:3:import { useCallback, useState, useEffect } from "react";
+src/hooks/screens/usePrivacySettingsScreen.ts:36:  const loadPrivacySettings = useCallback(async () => {
+src/hooks/screens/usePrivacySettingsScreen.ts:62:  const updateSetting = useCallback(
+src/components/LazyScreen.tsx:196:  const preloadScreens = React.useCallback(
+src/components/chat/MessageItem.tsx:1:import React, { useCallback, useState } from "react";
+src/components/chat/MessageItem.tsx:52:  const formatMessageTime = useCallback((timestamp: string): string => {
+src/components/chat/MessageItem.tsx:71:  const getDateHeader = useCallback((timestamp: string): string => {
+src/components/chat/MessageItem.tsx:90:  const handlePress = useCallback(() => {
+src/components/chat/MessageItem.tsx:94:  const handleLongPress = useCallback(() => {
+src/components/chat/MessageItem.tsx:99:  const handleReactionSelect = useCallback(
+src/components/chat/MessageItem.tsx:118:  const handleRetry = useCallback(() => {
+src/hooks/screens/useAdminChatsScreen.ts:6:import { useCallback, useEffect, useMemo, useState } from "react";
+src/hooks/screens/useAdminChatsScreen.ts:94:  const loadChats = useCallback(
+src/hooks/screens/useAdminChatsScreen.ts:168:  const loadChatMessages = useCallback(
+src/hooks/screens/useAdminChatsScreen.ts:225:  const filteredChats = useMemo(() => {
+src/hooks/screens/useAdminChatsScreen.ts:256:  const onRefresh = useCallback(async () => {
+src/hooks/screens/useAdminChatsScreen.ts:261:  const onFilterChange = useCallback((newFilter: Partial<ChatFilter>) => {
+src/hooks/screens/useAdminChatsScreen.ts:265:  const onChatSelect = useCallback(
+src/hooks/screens/useAdminChatsScreen.ts:276:  const onChatClose = useCallback(() => {
+src/hooks/screens/useAdminChatsScreen.ts:281:  const onMessageDelete = useCallback(
+src/hooks/screens/useAdminChatsScreen.ts:305:  const onChatBlock = useCallback(
+src/hooks/screens/useAdminChatsScreen.ts:351:  const onChatWarn = useCallback(
+src/components/ModernSwipeCard.tsx:16:import React, { useCallback, useMemo, useState } from "react";
+src/components/ModernSwipeCard.tsx:97:  const handleLike = useCallback(
+src/components/ModernSwipeCard.tsx:115:  const handlePass = useCallback(
+src/components/ModernSwipeCard.tsx:133:  const handleSuperLike = useCallback(
+src/components/ModernSwipeCard.tsx:152:  const handleSwipeLeft = useCallback(() => {
+src/components/ModernSwipeCard.tsx:160:  const handleSwipeRight = useCallback(() => {
+src/components/ModernSwipeCard.tsx:168:  const handleSwipeUp = useCallback(() => {
+src/components/ModernSwipeCard.tsx:197:  const nextPhoto = useCallback(() => {
+src/components/ModernSwipeCard.tsx:204:  const prevPhoto = useCallback(() => {
+src/components/ModernSwipeCard.tsx:252:  const cardStyle = useMemo(
+src/components/ModernSwipeCard.tsx:265:  const combinedAnimatedStyle = useMemo(
+src/components/ModernSwipeCard.tsx:431:const ModernSwipeCard = React.memo(ModernSwipeCardComponent);
+src/components/chat/MessageList.tsx:1:import React, { useCallback } from "react";
+src/components/chat/MessageList.tsx:35:  const renderMessage = useCallback(
+src/components/chat/MessageList.tsx:50:  const renderTypingIndicator = useCallback(
+src/components/chat/MessageList.tsx:55:  const keyExtractor = useCallback((item: Message) => item._id, []);
+src/components/chat/MessageList.tsx:57:  const getItemLayout = useCallback(
+src/hooks/screens/useAdminAnalyticsScreen.ts:6:import { useCallback, useEffect, useMemo, useState } from "react";
+src/hooks/screens/useAdminAnalyticsScreen.ts:113:  const generateMockAnalytics = useCallback(
+src/hooks/screens/useAdminAnalyticsScreen.ts:215:  const loadAnalytics = useCallback(
+src/hooks/screens/useAdminAnalyticsScreen.ts:255:  const onRefresh = useCallback(async () => {
+src/hooks/screens/useAdminAnalyticsScreen.ts:260:  const onTimeRangeChange = useCallback((range: typeof timeRange) => {
+src/hooks/screens/useAdminAnalyticsScreen.ts:265:  const onExportData = useCallback(
+src/hooks/screens/useAdminAnalyticsScreen.ts:288:  const chartData = useMemo(() => {
+src/components/chat/MessageInput.tsx:1:import React, { useCallback, useRef, useState } from "react";
+src/components/chat/MessageInput.tsx:53:  const handleTextChange = useCallback(
+src/components/chat/MessageInput.tsx:70:  const handleFocus = useCallback(() => {
+src/components/chat/MessageInput.tsx:80:  const handleBlur = useCallback(() => {
+src/components/chat/MessageInput.tsx:90:  const handleSend = useCallback(() => {
+src/components/chat/MessageInput.tsx:113:  const handleAttachPress = useCallback(async () => {
+src/components/chat/MessageInput.tsx:234:  const handleEmojiPress = useCallback(() => {
+src/components/chat/MessageInput.tsx:239:  const handleVoicePress = useCallback(() => {
+src/components/chat/MessageInput.tsx:244:  const handleVoiceNoteSent = useCallback(() => {
+src/hooks/screens/useResetPasswordScreen.ts:5:import { useCallback, useState } from "react";
+src/hooks/screens/useResetPasswordScreen.ts:40:  const validateForm = useCallback(
+src/hooks/screens/useResetPasswordScreen.ts:86:  const handleResetPassword = useCallback(async () => {
+src/hooks/screens/useResetPasswordScreen.ts:137:  const navigateBack = useCallback(() => {
+src/components/PerformanceTestSuite.tsx:8:import React, { useState, useEffect, useCallback } from "react";
+src/components/PerformanceTestSuite.tsx:71:  const handleMetricsUpdate = useCallback((newMetrics: PerformanceMetrics) => {
+src/components/PerformanceTestSuite.tsx:82:  const testAnimations = useCallback(() => {
+src/components/PerformanceTestSuite.tsx:119:  const testGestures = useCallback(() => {
+src/components/PerformanceTestSuite.tsx:148:  const testMemoryUsage = useCallback(() => {
+src/components/PerformanceTestSuite.tsx:174:  const runTestSuite = useCallback(async () => {
+src/hooks/screens/useAdminSecurityScreen.ts:6:import { useCallback, useEffect, useMemo, useState } from "react";
+src/hooks/screens/useAdminSecurityScreen.ts:133:  const loadSecurityData = useCallback(
+src/hooks/screens/useAdminSecurityScreen.ts:251:  const filteredEvents = useMemo(() => {
+src/hooks/screens/useAdminSecurityScreen.ts:281:  const onRefresh = useCallback(async () => {
+src/hooks/screens/useAdminSecurityScreen.ts:286:  const onSeverityFilterChange = useCallback(
+src/hooks/screens/useAdminSecurityScreen.ts:293:  const onStatusFilterChange = useCallback((status: typeof statusFilter) => {
+src/hooks/screens/useAdminSecurityScreen.ts:297:  const onTypeFilterChange = useCallback((type: typeof typeFilter) => {
+src/hooks/screens/useAdminSecurityScreen.ts:301:  const onSearchChange = useCallback((query: string) => {
+src/hooks/screens/useAdminSecurityScreen.ts:305:  const onEventSelect = useCallback((event: SecurityEvent) => {
+src/hooks/screens/useAdminSecurityScreen.ts:315:  const onResolveEvent = useCallback(
+src/hooks/screens/useAdminSecurityScreen.ts:355:  const onBlockIP = useCallback(
+src/hooks/screens/useAdminSecurityScreen.ts:383:  const onUnblockIP = useCallback(
+src/hooks/screens/useAdminSecurityScreen.ts:411:  const onEnableRule = useCallback(
+src/hooks/screens/useAdminSecurityScreen.ts:437:  const onDisableRule = useCallback(
+src/hooks/screens/useAdminSecurityScreen.ts:463:  const onUpdateRule = useCallback(
+src/hooks/screens/README.md:121:- Use useCallback for memoized functions
+src/hooks/screens/README.md:122:- Use useMemo for computed values
+src/hooks/screens/README.md:143:- Use useCallback for event handlers
+src/hooks/screens/README.md:144:- Use useMemo for expensive computations
+src/components/chat/MobileVoiceRecorder.tsx:3:import React, { useCallback, useEffect, useRef, useState } from "react";
+src/components/chat/MobileVoiceRecorder.tsx:54:  const startRecording = useCallback(async () => {
+src/hooks/screens/useProfileScreen.ts:5:import { useCallback, useState } from "react";
+src/hooks/screens/useProfileScreen.ts:23:  const handleLogout = useCallback(() => {
+src/hooks/screens/useProfileScreen.ts:44:  const handleSettingToggle = useCallback((setting: string) => {
+src/hooks/screens/useProfileScreen.ts:52:  const handlePrivacyToggle = useCallback((setting: string) => {
+src/components/chat/ChatHeader.tsx:1:import React, { useCallback } from "react";
+src/components/chat/ChatHeader.tsx:24:  const handleVoiceCall = useCallback(async () => {
+src/components/chat/ChatHeader.tsx:29:  const handleVideoCall = useCallback(async () => {
+src/components/chat/ChatHeader.tsx:34:  const handleMoreOptions = useCallback(() => {
+src/hooks/screens/index.ts:51:export { useMemoryWeaveScreen } from "./useMemoryWeaveScreen";
+src/components/swipe/SwipeFilters.tsx:1:import React, { useCallback } from "react";
+src/components/swipe/SwipeFilters.tsx:22:  const handleBreedPress = useCallback(
+src/components/swipe/SwipeFilters.tsx:33:  const handleSpeciesPress = useCallback(
+src/hooks/screens/useSettingsScreen.ts:5:import { useCallback, useEffect, useState } from "react";
+src/hooks/screens/useSettingsScreen.ts:89:  const handleLogout = useCallback(() => {
+src/hooks/screens/useSettingsScreen.ts:102:  const handleDeleteAccount = useCallback(() => {
+src/hooks/screens/useSettingsScreen.ts:147:  const handleExportData = useCallback(async () => {
+src/hooks/screens/useSettingsScreen.ts:166:  const handleExportDataComplete = useCallback(() => {
+src/components/chat/EnhancedMessageBubble.tsx:11:import React, { useState, useCallback } from "react";
+src/components/chat/EnhancedMessageBubble.tsx:65:  const handleLongPress = useCallback(() => {
+src/components/chat/EnhancedMessageBubble.tsx:70:  const handleReactionPress = useCallback(
+src/hooks/screens/useSubscriptionFlow.ts:6:import { useCallback, useState } from "react";
+src/hooks/screens/useSubscriptionFlow.ts:47:  const startFlow = useCallback(
+src/hooks/screens/useSubscriptionFlow.ts:62:  const proceedToCheckout = useCallback(async (): Promise<boolean> => {
+src/hooks/screens/useSubscriptionFlow.ts:124:  const handleSuccess = useCallback(() => {
+src/hooks/screens/useSubscriptionFlow.ts:140:  const handleCancel = useCallback(() => {
+src/hooks/screens/useSubscriptionFlow.ts:155:  const resetFlow = useCallback(() => {
+src/hooks/screens/useSubscriptionFlow.ts:165:  const setBillingPeriod = useCallback((period: "monthly" | "yearly") => {
+src/hooks/screens/useSubscriptionFlow.ts:169:  const retryCheckout = useCallback(async (): Promise<boolean> => {
+src/hooks/screens/useAdminUploadsScreen.ts:6:import { useCallback, useEffect, useMemo, useState } from "react";
+src/hooks/screens/useAdminUploadsScreen.ts:116:  const loadUploads = useCallback(
+src/hooks/screens/useAdminUploadsScreen.ts:212:  const filteredUploads = useMemo(() => {
+src/hooks/screens/useAdminUploadsScreen.ts:239:  const onRefresh = useCallback(async () => {
+src/hooks/screens/useAdminUploadsScreen.ts:244:  const onTypeFilterChange = useCallback((type: typeof typeFilter) => {
+src/hooks/screens/useAdminUploadsScreen.ts:248:  const onStatusFilterChange = useCallback((status: typeof statusFilter) => {
+src/hooks/screens/useAdminUploadsScreen.ts:252:  const onSearchChange = useCallback((query: string) => {
+src/hooks/screens/useAdminUploadsScreen.ts:256:  const onUploadSelect = useCallback((upload: MediaUpload) => {
+src/hooks/screens/useAdminUploadsScreen.ts:261:  const onUploadClose = useCallback(() => {
+src/hooks/screens/useAdminUploadsScreen.ts:265:  const updateUploadStatus = useCallback(
+src/hooks/screens/useAdminUploadsScreen.ts:290:  const onApproveUpload = useCallback(
+src/hooks/screens/useAdminUploadsScreen.ts:322:  const onRejectUpload = useCallback(
+src/hooks/screens/useAdminUploadsScreen.ts:352:  const onFlagUpload = useCallback(
+src/hooks/screens/useAdminUploadsScreen.ts:381:  const onBulkApprove = useCallback(
+src/hooks/screens/useAdminUploadsScreen.ts:420:  const onBulkReject = useCallback(
+src/components/Gestures/PinchZoom.tsx:7:import React, { useCallback, useRef } from "react";
+src/components/Gestures/PinchZoom.tsx:115:  const triggerHaptic = useCallback(
+src/components/Gestures/PinchZoom.tsx:141:  const handleScaleChange = useCallback(
+src/components/Gestures/PinchZoom.tsx:458:  const resetZoom = useCallback(() => {
+src/components/Gestures/PinchZoom.tsx:464:  const setZoom = useCallback(
+src/hooks/screens/useMapScreen.ts:5:import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+src/hooks/screens/useMapScreen.ts:126:  const activityTypes = useMemo<ActivityType[]>(
+src/hooks/screens/useMapScreen.ts:168:  const getCurrentLocation = useCallback(() => {
+src/hooks/screens/useMapScreen.ts:189:  const requestLocationPermission = useCallback(async () => {
+src/hooks/screens/useMapScreen.ts:211:  const toggleFilterPanel = useCallback(() => {
+src/hooks/screens/useMapScreen.ts:220:  const handlePinPress = useCallback((pin: PulsePin) => {
+src/hooks/screens/useMapScreen.ts:226:  const calculateDistance = useCallback(
+src/hooks/screens/useMapScreen.ts:244:  const filteredPins = useMemo(() => {
+src/hooks/screens/useMapScreen.ts:261:  const toggleActivity = useCallback(
+src/hooks/screens/useMapScreen.ts:274:  const getMarkerColor = useCallback(
+src/hooks/screens/useMapScreen.ts:284:  const getStableMatchFlag = useCallback((pin: PulsePin): boolean => {
+src/hooks/screens/useMapScreen.ts:293:  const handleStatistics = useCallback(() => {
+src/components/Gestures/DoubleTapLike.tsx:7:import React, { useCallback } from "react";
+src/components/Gestures/DoubleTapLike.tsx:95:  const triggerHaptic = useCallback(() => {
+src/components/Gestures/DoubleTapLike.tsx:112:  const animateHeart = useCallback(() => {
+src/components/Gestures/DoubleTapLike.tsx:156:  const animateScale = useCallback(() => {
+src/components/Gestures/DoubleTapLike.tsx:165:  const handleDoubleTap = useCallback(() => {
+src/components/Gestures/DoubleTapLike.tsx:175:  const handleSingleTap = useCallback(() => {
+src/components/Gestures/DoubleTapLike.tsx:258:  const handleDoubleTap = useCallback(() => {
+src/components/Gestures/DoubleTapLike.tsx:356:  const handleTap = useCallback(() => {
+src/hooks/screens/useForgotPasswordScreen.ts:5:import { useCallback, useState } from "react";
+src/hooks/screens/useForgotPasswordScreen.ts:35:  const validateForm = useCallback(
+src/hooks/screens/useForgotPasswordScreen.ts:69:  const handleForgotPassword = useCallback(async () => {
+src/hooks/screens/useForgotPasswordScreen.ts:116:  const navigateBack = useCallback(() => {
+src/theme/UnifiedThemeProvider.tsx:13:  useMemo,
+src/theme/UnifiedThemeProvider.tsx:62:  const isDark = useMemo(() => {
+src/theme/UnifiedThemeProvider.tsx:70:  const theme = useMemo<Theme>(() => {
+src/theme/UnifiedThemeProvider.tsx:75:  const toggleTheme = React.useCallback(() => {
+src/theme/UnifiedThemeProvider.tsx:85:  const value = useMemo<ThemeContextValue>(
+src/hooks/screens/social.ts:8:export { useMemoryWeaveScreen } from "./useMemoryWeaveScreen";
+src/components/AnimatedButton.tsx:2:import { useCallback, useEffect, useMemo, useState } from "react";
+src/components/AnimatedButton.tsx:61:  const buttonConfig = useMemo(
+src/components/AnimatedButton.tsx:100:  const triggerHaptic = useCallback(() => {
+src/components/AnimatedButton.tsx:122:  const handlePress = useCallback((): void => {
+src/hooks/screens/useLoginScreen.ts:1:import { useCallback, useState } from "react";
+src/hooks/screens/useLoginScreen.ts:37:  const validateForm = useCallback(
+src/hooks/screens/useLoginScreen.ts:78:  const handleLogin = useCallback(async () => {
+src/hooks/screens/useLoginScreen.ts:118:  const handleSubmit = useCallback(
+src/hooks/screens/useLoginScreen.ts:125:  const navigateToRegister = useCallback(() => {
+src/hooks/screens/useLoginScreen.ts:129:  const navigateToForgotPassword = useCallback(() => {
+src/theme/Provider.tsx:6:import React, { createContext, useContext, useMemo } from "react";
+src/theme/Provider.tsx:19:  const value = useMemo(() => createTheme(scheme ?? auto), [scheme, auto]);
+src/hooks/screens/useBlockedUsersScreen.ts:5:import { useCallback, useState } from "react";
+src/hooks/screens/useBlockedUsersScreen.ts:33:  const loadBlockedUsers = useCallback(async (refresh = false) => {
+src/hooks/screens/useBlockedUsersScreen.ts:62:  const refreshBlockedUsers = useCallback(async () => {
+src/hooks/screens/useBlockedUsersScreen.ts:66:  const unblockUser = useCallback(async (userId: string) => {
+src/theme/ThemeProvider.tsx:6:import React, { createContext, useContext, useMemo, useState } from "react";
+src/theme/ThemeProvider.tsx:46:  const value = useMemo<ThemeContextValue>(() => {
+src/hooks/screens/useEditProfileScreen.ts:5:import { useCallback, useEffect, useState } from "react";
+src/hooks/screens/useEditProfileScreen.ts:51:  const updateField = useCallback((field: keyof ProfileData, value: string) => {
+src/hooks/screens/useEditProfileScreen.ts:55:  const handleSelectAvatar = useCallback(async () => {
+src/hooks/screens/useEditProfileScreen.ts:86:  const handleSave = useCallback(async () => {
+src/hooks/screens/useEditProfileScreen.ts:105:  const handleCancel = useCallback(() => {
+src/components/OptimizedImage.tsx:1:import React, { useState, useCallback } from "react";
+src/components/OptimizedImage.tsx:72:  const handleLoadStart = useCallback(() => {
+src/components/OptimizedImage.tsx:78:  const handleLoadEnd = useCallback(() => {
+src/components/OptimizedImage.tsx:83:  const handleError = useCallback(
+src/hooks/screens/useMemoryWeaveScreen.ts:2: * useMemoryWeaveScreen Hook
+src/hooks/screens/useMemoryWeaveScreen.ts:10:import { useMemoryWeave } from "../domains/social/useMemoryWeave";
+src/hooks/screens/useMemoryWeaveScreen.ts:50:export const useMemoryWeaveScreen = (route: {
+src/hooks/screens/useMemoryWeaveScreen.ts:71:  } = useMemoryWeave(initialMemories);
+src/hooks/screens/useDeactivateAccountScreen.ts:6:import { useCallback, useState } from "react";
+src/hooks/screens/useDeactivateAccountScreen.ts:38:  const selectReason = useCallback((selectedReason: string) => {
+src/hooks/screens/useDeactivateAccountScreen.ts:43:  const handleDeactivate = useCallback(async () => {
+src/hooks/screens/useDeactivateAccountScreen.ts:90:  const handleGoBack = useCallback(() => {
+src/hooks/screens/useLeaderboardScreen.ts:7:import { useCallback } from "react";
+src/hooks/screens/useLeaderboardScreen.ts:63:    useCallback(() => {
+src/hooks/screens/useLeaderboardScreen.ts:70:  const handleCategoryChange = useCallback(
+src/hooks/screens/useLeaderboardScreen.ts:77:  const handleGoBack = useCallback(() => {
+src/hooks/useRetry.ts:1:import { useCallback, useRef, useState } from "react";
+src/hooks/useRetry.ts:38:  const clearTimeoutRef = useCallback(() => {
+src/hooks/useRetry.ts:45:  const abort = useCallback(() => {
+src/hooks/useRetry.ts:52:  const executeWithRetry = useCallback(
+src/hooks/useRetry.ts:127:  const reset = useCallback(() => {
+src/hooks/useThemeToggle.ts:2:import { useCallback } from "react";
+src/hooks/useThemeToggle.ts:34:  const toggleTheme = useCallback(async () => {
+src/hooks/useThemeToggle.ts:46:  const setLightTheme = useCallback(() => {
+src/hooks/useThemeToggle.ts:50:  const setDarkTheme = useCallback(() => {
+src/hooks/useThemeToggle.ts:54:  const setSystemTheme = useCallback(() => {
+src/hooks/useThemeToggle.ts:59:  const showThemeSelector = useCallback(() => {
+src/components/Advanced/AdvancedHeader.tsx:12:import React, { useRef, useState, useCallback, useEffect } from "react";
+src/components/Advanced/AdvancedHeader.tsx:122:  const handleBackPress = useCallback(async () => {
+src/components/Advanced/AdvancedHeader.tsx:129:  const handleButtonPress = useCallback(
+src/components/Advanced/AdvancedCard.tsx:9:import React, { useCallback } from "react";
+src/components/Advanced/AdvancedCard.tsx:144:  const handlePress = useCallback(async () => {
+src/components/Advanced/AdvancedCard.tsx:163:  const handleLongPress = useCallback(async () => {
+src/components/Advanced/AdvancedCard.tsx:174:  const handleActionPress = useCallback(
+src/components/Advanced/AdvancedInteractionSystem.tsx:11:import React, { useRef, useState, useCallback, useEffect } from "react";
+src/components/Advanced/AdvancedInteractionSystem.tsx:153:  const triggerHaptic = useCallback(
+src/components/Advanced/AdvancedInteractionSystem.tsx:179:  const animatePress = useCallback(
+src/components/Advanced/AdvancedInteractionSystem.tsx:236:  const animateHover = useCallback(
+src/components/Advanced/AdvancedInteractionSystem.tsx:314:  const handlePress = useCallback(async () => {
+src/components/Advanced/AdvancedInteractionSystem.tsx:336:  const handleLongPress = useCallback(async () => {
+src/components/Advanced/AdvancedInteractionSystem.tsx:347:  const getVariantStyles = useCallback(() => {
+src/components/Advanced/AdvancedInteractionSystem.tsx:401:  const getSizeStyles = useCallback(() => {
+src/components/Advanced/Card/CardAnimations.tsx:6:import { useRef, useState, useCallback } from "react";
+src/components/Advanced/Card/CardAnimations.tsx:52:  const triggerHaptic = useCallback(
+src/components/Advanced/Card/CardAnimations.tsx:72:  const animatePress = useCallback(
+src/components/Advanced/Card/CardAnimations.tsx:133:  const animateHover = useCallback(
+docs/HOOK_API_DOCUMENTATION.md:175:4. **Use useCallback for handlers**
+docs/HOOK_API_DOCUMENTATION.md:177:const handleSubmit = useCallback(() => {
+docs/HOOK_API_DOCUMENTATION.md:192:- Use `useCallback` for event handlers
+docs/HOOK_API_DOCUMENTATION.md:193:- Use `useMemo` for expensive computations
+plan1.md:271:* Memoization discipline: `useMemo`, `useCallback`, `React.memo` for list items
+plan1.md:1142:* **Memoization**: `React.memo` on list items
+src/components/ui/Input.tsx:1:import React, { useMemo } from "react";
+src/components/ui/Input.tsx:21:  const borderColor = useMemo(() => {
+src/screens/NotificationPreferencesScreen.tsx:5:import { useCallback, useState } from "react";
+src/screens/NotificationPreferencesScreen.tsx:96:  const toggleSetting = useCallback((settingId: string) => {
+src/screens/NotificationPreferencesScreen.tsx:107:  const toggleCategory = useCallback((category: string) => {
+src/screens/NotificationPreferencesScreen.tsx:121:  const saveSettings = useCallback(() => {
+src/screens/NotificationPreferencesScreen.tsx:129:  const getCategorySettings = useCallback(
+src/screens/NotificationPreferencesScreen.tsx:136:  const isCategoryEnabled = useCallback(
+src/screens/NotificationPreferencesScreen.tsx:143:  const renderCategory = useCallback(
+src/screens/ModerationToolsScreen.tsx:5:import { useCallback, useState } from "react";
+src/screens/ModerationToolsScreen.tsx:104:  const handleToolPress = useCallback(
+src/screens/ModerationToolsScreen.tsx:112:  const handleRefresh = useCallback(async () => {
+src/screens/leaderboard/LeaderboardScreen.tsx:10:import { useCallback, useEffect, useState } from "react";
+src/screens/leaderboard/LeaderboardScreen.tsx:63:    useCallback(() => {
+src/screens/AboutTermsPrivacyScreen.tsx:5:import React, { useCallback } from "react";
+src/screens/AboutTermsPrivacyScreen.tsx:74:  const handleDocument = useCallback((document: LegalDocument) => {
+src/screens/AboutTermsPrivacyScreen.tsx:79:  const handleWebsite = useCallback(() => {
+src/screens/admin/AdminUploadsScreen.tsx:7:import { useCallback, useEffect, useState } from "react";
+src/screens/admin/AdminUploadsScreen.tsx:72:  const loadUploads = useCallback(
+src/screens/admin/AdminUploadsScreen.tsx:107:  const handleUploadAction = useCallback(
+src/screens/admin/AdminUploadsScreen.tsx:154:  const handleRejectWithReason = useCallback(
+src/screens/admin/AdminUploadsScreen.tsx:179:  const renderUpload = useCallback(
+src/screens/admin/AdminChatsScreen.tsx:7:import { useCallback, useEffect, useState } from "react";
+src/screens/admin/AdminChatsScreen.tsx:58:  const loadMessages = useCallback(
+src/screens/admin/AdminChatsScreen.tsx:95:  const handleMessageAction = useCallback(
+src/screens/admin/AdminChatsScreen.tsx:140:  const renderMessage = useCallback(
+src/screens/admin/AdminUsersScreen.tsx:1:import React, { useCallback, useMemo } from "react";
+src/screens/admin/AdminUsersScreen.tsx:36:  const filterHandlers = useMemo(() => {
+src/screens/admin/AdminUsersScreen.tsx:45:  const renderItem = useCallback(
+src/screens/admin/AdminVerificationsScreen.tsx:7:import { useCallback, useEffect, useState } from "react";
+src/screens/admin/AdminVerificationsScreen.tsx:73:  const loadVerifications = useCallback(
+src/screens/admin/AdminVerificationsScreen.tsx:110:  const handleVerificationAction = useCallback(
+src/screens/admin/AdminVerificationsScreen.tsx:174:  const handleRejectWithReason = useCallback(
+src/screens/admin/AdminVerificationsScreen.tsx:203:  const handleRequestInfo = useCallback(
+src/screens/admin/AdminVerificationsScreen.tsx:274:  const renderVerification = useCallback(
+src/screens/MemoryWeaveScreen.tsx:21:import { useMemoryWeaveScreen } from "../hooks/screens/useMemoryWeaveScreen";
+src/screens/MemoryWeaveScreen.tsx:76:  } = useMemoryWeaveScreen(route);
+src/screens/MapScreen.tsx:3:import React, { useCallback } from "react";
+src/screens/MapScreen.tsx:54:  const navigateToArScentTrails = useCallback(() => {
+src/screens/CommunityScreen.tsx:14:import React, { useCallback, useState } from "react";
+src/screens/CommunityScreen.tsx:69:  const handleLike = useCallback(
+src/screens/CommunityScreen.tsx:88:  const handleComment = useCallback(
+src/screens/CommunityScreen.tsx:110:  const handleReport = useCallback(
+src/screens/CommunityScreen.tsx:136:  const handleBlockUser = useCallback(
+src/screens/CommunityScreen.tsx:162:  const handleJoinActivity = useCallback(
+src/screens/CommunityScreen.tsx:176:  const formatTimeAgo = useCallback((dateString: string) => {
+src/screens/CommunityScreen.tsx:189:  const renderPost = useCallback(
+src/screens/SettingsScreen.tsx:4:import React, { useMemo, type ComponentProps } from "react";
+src/screens/BlockedUsersScreen.tsx:3:import React, { useCallback, useEffect } from "react";
+src/screens/BlockedUsersScreen.tsx:53:  const handleUnblockUser = useCallback(async (userId: string) => {
+src/screens/BlockedUsersScreen.tsx:66:  const _handleUnblockUser = useCallback(
+src/screens/BlockedUsersScreen.tsx:91:  const renderBlockedUser = useCallback(
+src/screens/ChatScreen.tsx:1:import React, { useCallback, useEffect, useRef, useState } from "react";
+src/screens/ChatScreen.tsx:139:  const startTypingAnimation = useCallback(() => {
+src/screens/ChatScreen.tsx:161:  const handleSendMessage = useCallback(async () => {
+src/screens/ChatScreen.tsx:182:  const handleTypingChange = useCallback((typing: boolean) => {
+src/screens/ChatScreen.tsx:202:  const handleScroll = useCallback(
+src/screens/ChatScreen.tsx:220:  const handleQuickReplySelect = useCallback((reply: string) => {
+src/screens/ChatScreen.tsx:226:  const handleVoiceCall = useCallback(async () => {
+src/screens/ChatScreen.tsx:238:  const handleVideoCall = useCallback(async () => {
+src/screens/ChatScreen.tsx:250:  const handleMoreOptions = useCallback(() => {
+src/screens/onboarding/WelcomeScreen.tsx:182:  const containerStyle = React.useMemo(
+src/screens/AdvancedFiltersScreen.tsx:2:import React, { useCallback } from "react";
+src/screens/AdvancedFiltersScreen.tsx:42:  const renderCategory = useCallback(

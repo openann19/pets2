@@ -1,0 +1,34 @@
+{
+  "plans": [
+    {
+      "id": "premium_monthly",
+      "name": "Premium",
+      "interval": "month",
+      "price": 9.99,
+      "currency": "USD",
+      "features": [
+        "Unlimited swipes",
+        "See who liked you",
+        "Advanced filters",
+        "Priority support",
+        "AI Bio Generation"
+      ]
+    },
+    {
+      "id": "premium_yearly",
+      "name": "Premium",
+      "interval": "year",
+      "price": 79.99,
+      "currency": "USD",
+      "originalPrice": 119.88,
+      "discount": "Save $40/year",
+      "features": [
+        "All Premium features",
+        "Save 33% with yearly billing",
+        "AI Photo Analysis",
+        "AI Compatibility Insights"
+      ]
+    }
+  ]
+}
+

@@ -91,9 +91,9 @@ const AIBioAssistant = ({ currentBio = '', onBioGenerated, petName = 'your pet',
       <AnimatePresence>
         {isOpen && (<>
             {/* Backdrop */}
-            <motion.div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsOpen(false)}>
+            <motion.div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setIsOpen(false); }}>
               {/* Modal */}
-              <motion.div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden" initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} transition={SPRING_CONFIG} onClick={(e) => e.stopPropagation()}>
+              <motion.div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden" initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} transition={SPRING_CONFIG} onClick={(e) => { e.stopPropagation(); }}>
                 {/* Header */}
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex items-center space-x-3">
@@ -122,7 +122,7 @@ const AIBioAssistant = ({ currentBio = '', onBioGenerated, petName = 'your pet',
                         
                         {/* Selected Keywords */}
                         {keywords.length > 0 && (<div className="flex flex-wrap gap-2 mb-4">
-                            {keywords.map((keyword) => (<motion.button key={keyword} onClick={() => removeKeyword(keyword)} className="inline-flex items-center px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm hover:bg-purple-200 transition-colors" whileHover={{ scale: 1.05, transition: SPRING_CONFIG }} whileTap={{ scale: 0.95, transition: SPRING_CONFIG }} layout>
+                            {keywords.map((keyword) => (<motion.button key={keyword} onClick={() => { removeKeyword(keyword); }} className="inline-flex items-center px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm hover:bg-purple-200 transition-colors" whileHover={{ scale: 1.05, transition: SPRING_CONFIG }} whileTap={{ scale: 0.95, transition: SPRING_CONFIG }} layout>
                                 {keyword}
                                 <span className="ml-1 text-xs">×</span>
                               </motion.button>))}
@@ -130,7 +130,7 @@ const AIBioAssistant = ({ currentBio = '', onBioGenerated, petName = 'your pet',
 
                         {/* Suggested Keywords */}
                         <div className="flex flex-wrap gap-2 mb-4">
-                          {suggestedKeywords.map((keyword) => (<motion.button key={keyword} onClick={() => addKeyword(keyword)} disabled={keywords.includes(keyword) || keywords.length >= 6} className={`px-3 py-1 rounded-full text-sm transition-colors border ${keywords.includes(keyword)
+                          {suggestedKeywords.map((keyword) => (<motion.button key={keyword} onClick={() => { addKeyword(keyword); }} disabled={keywords.includes(keyword) || keywords.length >= 6} className={`px-3 py-1 rounded-full text-sm transition-colors border ${keywords.includes(keyword)
                         ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                         : keywords.length >= 6
                             ? 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'
@@ -147,7 +147,7 @@ const AIBioAssistant = ({ currentBio = '', onBioGenerated, petName = 'your pet',
 
                         {/* Custom Keyword Input */}
                         <div className="flex space-x-2">
-                          <input type="text" value={newKeyword} onChange={(e) => setNewKeyword(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleAddCustomKeyword()} placeholder="Add custom trait..." disabled={keywords.length >= 6} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm disabled:bg-gray-50 disabled:text-gray-400"/>
+                          <input type="text" value={newKeyword} onChange={(e) => { setNewKeyword(e.target.value); }} onKeyPress={(e) => e.key === 'Enter' && handleAddCustomKeyword()} placeholder="Add custom trait..." disabled={keywords.length >= 6} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm disabled:bg-gray-50 disabled:text-gray-400"/>
                           <PremiumButton onClick={handleAddCustomKeyword} disabled={!newKeyword.trim() || keywords.length >= 6} variant="secondary" size="sm">
                             Add
                           </PremiumButton>
@@ -174,7 +174,7 @@ const AIBioAssistant = ({ currentBio = '', onBioGenerated, petName = 'your pet',
                 {/* Footer */}
                 <div className="p-6 border-t border-gray-200 bg-gray-50">
                   {!generatedBio ? (<div className="flex justify-end space-x-3">
-                      <PremiumButton onClick={() => setIsOpen(false)} variant="ghost">
+                      <PremiumButton onClick={() => { setIsOpen(false); }} variant="ghost">
                         Cancel
                       </PremiumButton>
                       <PremiumButton onClick={generateBio} disabled={keywords.length === 0} loading={isGenerating} variant="primary">

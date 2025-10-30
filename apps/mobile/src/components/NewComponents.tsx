@@ -6,29 +6,51 @@
  */
 
 // === THEME SYSTEM ===
-export { default as Theme } from "../theme/unified-theme";
-export type { ThemeType } from "../theme/unified-theme";
+export {
+  ThemeProvider,
+  useTheme,
+  defaultTheme,
+  getLightTheme,
+  getDarkTheme,
+  createTheme,
+} from '@/theme';
+export type {
+  AppTheme,
+  Theme,
+  ColorScheme,
+  SemanticColors,
+  ThemeColors,
+  ExtendedColors,
+} from '@/theme';
 
 // === ANIMATION HOOKS ===
+// Hooks available from useUnifiedAnimations
 export {
   useSpringAnimation,
   useEntranceAnimation,
-  useStaggeredAnimation,
+  useSwipeGesture,
   usePressAnimation,
   useGlowAnimation,
+} from '../hooks/useUnifiedAnimations';
+
+// Additional hooks available from usePremiumAnimations
+export {
+  useStaggeredAnimation,
   useMagneticEffect,
-  useSwipeGesture,
   useRippleEffect,
   useShimmerEffect,
-  useScrollAnimation,
-} from "../hooks/useUnifiedAnimations";
+  useGlowEffect,
+  usePulseEffect,
+  useFloatingEffect,
+  useHapticFeedback,
+  usePageTransition,
+  useLoadingAnimation,
+  useParallaxEffect,
+} from '../hooks/usePremiumAnimations';
 
 // === BUTTON SYSTEM ===
-export { default as BaseButton } from "./buttons/BaseButton";
-export {
-  default as EliteButton,
-  EliteButtonPresets,
-} from "./buttons/EliteButton";
+export { default as BaseButton } from './buttons/BaseButton';
+export { default as EliteButton, EliteButtonPresets } from './buttons/EliteButton';
 export {
   WithGlowFX,
   WithMagneticFX,
@@ -36,13 +58,10 @@ export {
   WithShimmerFX,
   WithPressFX,
   WithGradientFX,
-} from "./buttons/EffectWrappers";
+} from './buttons/EffectWrappers';
 
 // === CONTAINER SYSTEM ===
-export {
-  default as FXContainer,
-  FXContainerPresets,
-} from "./containers/FXContainer";
+export { default as FXContainer, FXContainerPresets } from './containers/FXContainer';
 
 // === TYPOGRAPHY SYSTEM ===
 export {
@@ -64,11 +83,11 @@ export {
   HolographicText,
   AnimatedHeading,
   AnimatedText,
-} from "./typography/ModernTypography";
+} from './typography/ModernTypography';
 
 // === MODERNIZED COMPONENTS ===
-export { default as ModernSwipeCard } from "./ModernSwipeCard";
-export { default as ModernPhotoUpload } from "./ModernPhotoUpload";
+export { default as ModernSwipeCard } from './ModernSwipeCard';
+export { default as ModernPhotoUpload } from './ModernPhotoUpload';
 
 // === PERFORMANCE TESTING ===
-export { default as PerformanceTestSuite } from "./PerformanceTestSuite";
+export { default as PerformanceTestSuite } from './PerformanceTestSuite';

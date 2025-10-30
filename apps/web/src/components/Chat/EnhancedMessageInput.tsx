@@ -108,7 +108,7 @@ export default function EnhancedMessageInput({ onSendMessage, onTyping, disabled
             setMessage('');
             setIsTyping(false);
             setSuccess('✓ Sent');
-            setTimeout(() => setSuccess(null), 2000);
+            setTimeout(() => { setSuccess(null); }, 2000);
             // Clear persisted draft after successful send
             try {
                 if (draftKey)
@@ -209,7 +209,7 @@ export default function EnhancedMessageInput({ onSendMessage, onTyping, disabled
             const locationMessage = `📍 Live Location\nhttps://www.google.com/maps?q=${latitude},${longitude}`;
             await onSendMessage(locationMessage, 'location');
             setSuccess('✓ Location shared');
-            setTimeout(() => setSuccess(null), 2000);
+            setTimeout(() => { setSuccess(null); }, 2000);
             analytics.trackInteraction('MessageInput', 'send_location');
         }
         catch (err) {
@@ -233,7 +233,7 @@ export default function EnhancedMessageInput({ onSendMessage, onTyping, disabled
             mediaRecorder.onstop = async () => {
                 const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                 await handleVoiceUpload(audioBlob);
-                stream.getTracks().forEach(track => track.stop());
+                stream.getTracks().forEach(track => { track.stop(); });
             };
             mediaRecorder.start();
             mediaRecorderRef.current = mediaRecorder;
@@ -273,7 +273,7 @@ export default function EnhancedMessageInput({ onSendMessage, onTyping, disabled
             if (data.secure_url) {
                 await onSendMessage(data.secure_url, 'voice');
                 setSuccess('✓ Voice message sent');
-                setTimeout(() => setSuccess(null), 2000);
+                setTimeout(() => { setSuccess(null); }, 2000);
                 analytics.trackInteraction('MessageInput', 'send_voice', { size: audioBlob.size });
             }
         }
@@ -302,7 +302,7 @@ export default function EnhancedMessageInput({ onSendMessage, onTyping, disabled
         {error && (<motion.div initial={{ opacity: 0, height: 0, marginBottom: 0 }} animate={{ opacity: 1, height: 'auto', marginBottom: 12 }} exit={{ opacity: 0, height: 0, marginBottom: 0 }} className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3 flex items-center gap-2">
             <ExclamationCircleIcon className="w-5 h-5 text-red-500 flex-shrink-0"/>
             <p className="text-sm text-red-700 dark:text-red-300 flex-1">{error}</p>
-            <button onClick={() => setError(null)} className="text-red-500 hover:text-red-700 text-sm font-medium">
+            <button onClick={() => { setError(null); }} className="text-red-500 hover:text-red-700 text-sm font-medium">
               Dismiss
             </button>
           </motion.div>)}

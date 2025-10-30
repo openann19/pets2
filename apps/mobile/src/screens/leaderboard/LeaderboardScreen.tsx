@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -26,10 +26,14 @@ import type {
   LeaderboardFilter,
 } from "../../services/LeaderboardService";
 import LeaderboardService from "../../services/LeaderboardService";
-
-const { width: _screenWidth } = Dimensions.get("window");
+import { useTheme } from "@/theme";
+import { useScrollOffsetTracker } from "../../hooks/navigation/useScrollOffsetTracker";
+import { useTabReselectRefresh } from "../../hooks/navigation/useTabReselectRefresh";
 
 export default function LeaderboardScreen() {
+  const theme = useTheme();
+  const scrollRef = useRef<ScrollView>(null);
+  const { onScroll, getOffset } = useScrollOffsetTracker();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [categories, setCategories] = useState<LeaderboardCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -43,6 +47,320 @@ export default function LeaderboardScreen() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      backgroundColor: theme.colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    headerTitle: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: theme.colors.onSurface,
+    },
+    filterButton: {
+      padding: 8,
+    },
+    categoryTabs: {
+      backgroundColor: theme.colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    categoryTabsContent: {
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+    },
+    categoryTab: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      marginRight: 12,
+      borderRadius: 20,
+      backgroundColor: theme.colors.bg,
+    },
+    categoryTabActive: {
+      backgroundColor: theme.colors.primary,
+    },
+    categoryTabIcon: {
+      marginRight: 6,
+    },
+    categoryTabText: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: theme.colors.onMuted,
+    },
+    categoryTabTextActive: {
+      color: theme.colors.onPrimary,
+    },
+    periodTabs: {
+      flexDirection: "row",
+      backgroundColor: theme.colors.surface,
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    periodTab: {
+      flex: 1,
+      alignItems: "center",
+      paddingVertical: 8,
+      marginHorizontal: 4,
+      borderRadius: 8,
+      backgroundColor: theme.colors.bg,
+    },
+    periodTabActive: {
+      backgroundColor: theme.colors.primary,
+    },
+    periodTabText: {
+      fontSize: 12,
+      fontWeight: "500",
+      color: theme.colors.onMuted,
+    },
+    periodTabTextActive: {
+      color: theme.colors.onPrimary,
+    },
+    userRankCard: {
+      margin: 20,
+      borderRadius: 12,
+      overflow: "hidden",
+      elevation: 4,
+      shadowColor: theme.colors.bg,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    userRankGradient: {
+      padding: 20,
+    },
+    userRankContent: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    userRankInfo: {
+      flex: 1,
+    },
+    userRankTitle: {
+      fontSize: 14,
+      color: "rgba(255, 255, 255, 0.8)",
+      marginBottom: 4,
+    },
+    userRankNumber: {
+      fontSize: 32,
+      fontWeight: "bold",
+      color: theme.colors.onPrimary,
+      marginBottom: 4,
+    },
+    userRankScore: {
+      fontSize: 16,
+      color: "rgba(255, 255, 255, 0.9)",
+    },
+    userRankPet: {
+      alignItems: "center",
+    },
+    userRankPetImage: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    userRankPetName: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.colors.onPrimary,
+    },
+    leaderboardList: {
+      flex: 1,
+      paddingHorizontal: 20,
+    },
+    entryCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.colors.surface,
+      padding: 16,
+      marginBottom: 12,
+      borderRadius: 12,
+      elevation: 2,
+      shadowColor: theme.colors.bg,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+    },
+    entryRank: {
+      width: 40,
+      alignItems: "center",
+    },
+    rankBadge: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    rankNumber: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: theme.colors.onSurface,
+    },
+    entryPetImage: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      backgroundColor: theme.colors.bg,
+      justifyContent: "center",
+      alignItems: "center",
+      marginHorizontal: 12,
+    },
+    entryInfo: {
+      flex: 1,
+    },
+    entryPetName: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.onSurface,
+      marginBottom: 2,
+    },
+    entryOwnerName: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      marginBottom: 4,
+    },
+    entryStats: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    entryStat: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      marginRight: 8,
+    },
+    entryScore: {
+      alignItems: "center",
+      marginLeft: 12,
+    },
+    entryScoreText: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme.colors.primary,
+    },
+    entryScoreLabel: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+    },
+    entryBadges: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginLeft: 8,
+    },
+    badge: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 4,
+    },
+    badgeCount: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      marginLeft: 4,
+    },
+    loadingMore: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    loadingMoreText: {
+      marginLeft: 8,
+      fontSize: 14,
+      color: theme.colors.onMuted,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: 16,
+      color: theme.colors.onMuted,
+    },
+  }), [theme]);
+
+  // Define refreshData after the functions it uses are defined
+  const loadLeaderboard = async (pageNum = 1) => {
+    try {
+      const filter: LeaderboardFilter =
+        selectedCategory === "all"
+          ? { period: selectedPeriod }
+          : { category: selectedCategory, period: selectedPeriod };
+
+      const response = await LeaderboardService.getLeaderboard(
+        filter,
+        pageNum,
+        20,
+      );
+
+      if (pageNum === 1) {
+        setEntries(response.entries);
+      } else {
+        setEntries((prev) => [...prev, ...response.entries]);
+      }
+
+      setHasMore(response.hasMore);
+      setPage(pageNum);
+    } catch (error) {
+      logger.error("Failed to load leaderboard:", { error });
+      Alert.alert("Error", "Failed to load leaderboard");
+    }
+  };
+
+  const loadUserRank = async () => {
+    try {
+      const userRankData = await LeaderboardService.getUserRank(
+        selectedCategory === "all" ? undefined : selectedCategory,
+      );
+      setUserRank(userRankData.rank);
+      setUserEntry(userRankData.entry);
+    } catch (error) {
+      logger.error("Failed to load user rank:", { error });
+    }
+  };
+
+  const refreshData = useCallback(async () => {
+    if (loading || refreshing) return;
+    setRefreshing(true);
+    try {
+      await Promise.all([loadLeaderboard(1), loadUserRank()]);
+    } catch (error) {
+      logger.error("Failed to refresh data:", { error });
+    } finally {
+      setRefreshing(false);
+    }
+  }, [loading, refreshing, selectedCategory, selectedPeriod]);
+
+  useTabReselectRefresh({
+    listRef: scrollRef,
+    onRefresh: refreshData,
+    getOffset,
+    topThreshold: 80,
+    cooldownMs: 700,
+  });
 
   // Load initial data
   useEffect(() => {
@@ -87,56 +405,6 @@ export default function LeaderboardScreen() {
     }
   };
 
-  const loadLeaderboard = async (pageNum = 1) => {
-    try {
-      const filter: LeaderboardFilter =
-        selectedCategory === "all"
-          ? { period: selectedPeriod }
-          : { category: selectedCategory, period: selectedPeriod };
-
-      const response = await LeaderboardService.getLeaderboard(
-        filter,
-        pageNum,
-        20,
-      );
-
-      if (pageNum === 1) {
-        setEntries(response.entries);
-      } else {
-        setEntries((prev) => [...prev, ...response.entries]);
-      }
-
-      setHasMore(response.hasMore);
-      setPage(pageNum);
-    } catch (error) {
-      logger.error("Failed to load leaderboard:", { error });
-      Alert.alert("Error", "Failed to load leaderboard");
-    }
-  };
-
-  const loadUserRank = async () => {
-    try {
-      const rankData = await LeaderboardService.getUserRank(
-        selectedCategory === "all" ? undefined : selectedCategory,
-      );
-      setUserRank(rankData.rank);
-      setUserEntry(rankData.entry);
-    } catch (error) {
-      logger.error("Failed to load user rank:", { error });
-    }
-  };
-
-  const refreshData = async () => {
-    try {
-      setRefreshing(true);
-      await Promise.all([loadLeaderboard(1), loadUserRank()]);
-    } catch (error) {
-      logger.error("Failed to refresh data:", { error });
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
   const loadMore = async () => {
     if (!hasMore || loading) return;
 
@@ -169,19 +437,19 @@ export default function LeaderboardScreen() {
       contentContainerStyle={styles.categoryTabsContent}
     >
       <TouchableOpacity
-        style={[
+        style={StyleSheet.flatten([
           styles.categoryTab,
           selectedCategory === "all" && styles.categoryTabActive,
-        ]}
-        onPress={() => {
+        ])}
+         testID="LeaderboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
           handleCategoryChange("all");
         }}
       >
         <Text
-          style={[
+          style={StyleSheet.flatten([
             styles.categoryTabText,
             selectedCategory === "all" && styles.categoryTabTextActive,
-          ]}
+          ])}
         >
           All
         </Text>
@@ -190,25 +458,25 @@ export default function LeaderboardScreen() {
       {categories.map((category) => (
         <TouchableOpacity
           key={category.id}
-          style={[
+          style={StyleSheet.flatten([
             styles.categoryTab,
             selectedCategory === category.id && styles.categoryTabActive,
-          ]}
-          onPress={() => {
+          ])}
+           testID="LeaderboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             handleCategoryChange(category.id);
           }}
         >
           <Ionicons
             name={category.icon as never}
             size={16}
-            color={selectedCategory === category.id ? "#fff" : "#666"}
+            color={selectedCategory === category.id ? theme.colors.onSurface : "#666"}
             style={styles.categoryTabIcon}
           />
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.categoryTabText,
               selectedCategory === category.id && styles.categoryTabTextActive,
-            ]}
+            ])}
           >
             {category.name}
           </Text>
@@ -222,19 +490,19 @@ export default function LeaderboardScreen() {
       {(["daily", "weekly", "monthly", "all_time"] as const).map((period) => (
         <TouchableOpacity
           key={period}
-          style={[
+          style={StyleSheet.flatten([
             styles.periodTab,
             selectedPeriod === period && styles.periodTabActive,
-          ]}
-          onPress={() => {
+          ])}
+           testID="LeaderboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             handlePeriodChange(period);
           }}
         >
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.periodTabText,
               selectedPeriod === period && styles.periodTabTextActive,
-            ]}
+            ])}
           >
             {period.replace("_", " ").toUpperCase()}
           </Text>
@@ -261,7 +529,7 @@ export default function LeaderboardScreen() {
 
             <View style={styles.userRankPet}>
               <View style={styles.userRankPetImage}>
-                <Ionicons name="paw" size={24} color="#fff" />
+                <Ionicons name="paw" size={24} color={theme.colors.onSurface} />
               </View>
               <Text style={styles.userRankPetName}>{userEntry.petName}</Text>
             </View>
@@ -280,9 +548,12 @@ export default function LeaderboardScreen() {
         <View style={styles.entryRank}>
           {isTopThree ? (
             <View
-              style={[styles.rankBadge, { backgroundColor: rankColors[index] }]}
+              style={StyleSheet.flatten([
+                styles.rankBadge,
+                { backgroundColor: rankColors[index] },
+              ])}
             >
-              <Ionicons name="trophy" size={16} color="#fff" />
+              <Ionicons name="trophy" size={16} color={theme.colors.onSurface} />
             </View>
           ) : (
             <Text style={styles.rankNumber}>#{entry.rank}</Text>
@@ -313,9 +584,12 @@ export default function LeaderboardScreen() {
             {entry.badges.slice(0, 3).map((badge) => (
               <View
                 key={badge.id}
-                style={[styles.badge, { backgroundColor: badge.color }]}
+                style={StyleSheet.flatten([
+                  styles.badge,
+                  { backgroundColor: badge.color },
+                ])}
               >
-                <Ionicons name="star" size={12} color="#fff" />
+                <Ionicons name="star" size={12} color={theme.colors.onSurface} />
               </View>
             ))}
             {entry.badges.length > 3 && (
@@ -355,7 +629,7 @@ export default function LeaderboardScreen() {
         <Text style={styles.headerTitle}>Leaderboard</Text>
         <TouchableOpacity
           style={styles.filterButton}
-          onPress={() => {
+           testID="LeaderboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             setShowFilters(!showFilters);
           }}
         >
@@ -369,12 +643,14 @@ export default function LeaderboardScreen() {
       {renderUserRankCard()}
 
       <ScrollView
+        ref={scrollRef}
         style={styles.leaderboardList}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+            colors={[theme.colors.primary]}
             onRefresh={refreshData}
-            colors={["#667eea"]}
           />
         }
         onScrollEndDrag={loadMore}
@@ -385,257 +661,3 @@ export default function LeaderboardScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e9ecef",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  filterButton: {
-    padding: 8,
-  },
-  categoryTabs: {
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e9ecef",
-  },
-  categoryTabsContent: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  categoryTab: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 12,
-    borderRadius: 20,
-    backgroundColor: "#f8f9fa",
-  },
-  categoryTabActive: {
-    backgroundColor: "#667eea",
-  },
-  categoryTabIcon: {
-    marginRight: 6,
-  },
-  categoryTabText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#666",
-  },
-  categoryTabTextActive: {
-    color: "#fff",
-  },
-  periodTabs: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e9ecef",
-  },
-  periodTab: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 8,
-    marginHorizontal: 4,
-    borderRadius: 8,
-    backgroundColor: "#f8f9fa",
-  },
-  periodTabActive: {
-    backgroundColor: "#667eea",
-  },
-  periodTabText: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#666",
-  },
-  periodTabTextActive: {
-    color: "#fff",
-  },
-  userRankCard: {
-    margin: 20,
-    borderRadius: 12,
-    overflow: "hidden",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  userRankGradient: {
-    padding: 20,
-  },
-  userRankContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  userRankInfo: {
-    flex: 1,
-  },
-  userRankTitle: {
-    fontSize: 14,
-    color: "rgba(255, 255, 255, 0.8)",
-    marginBottom: 4,
-  },
-  userRankNumber: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 4,
-  },
-  userRankScore: {
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.9)",
-  },
-  userRankPet: {
-    alignItems: "center",
-  },
-  userRankPetImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  userRankPetName: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#fff",
-  },
-  leaderboardList: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  entryCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  entryRank: {
-    width: 40,
-    alignItems: "center",
-  },
-  rankBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  rankNumber: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#666",
-  },
-  entryPetImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#f8f9fa",
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 12,
-  },
-  entryInfo: {
-    flex: 1,
-  },
-  entryPetName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 2,
-  },
-  entryOwnerName: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4,
-  },
-  entryStats: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  entryStat: {
-    fontSize: 12,
-    color: "#999",
-    marginRight: 8,
-  },
-  entryScore: {
-    alignItems: "center",
-    marginLeft: 12,
-  },
-  entryScoreText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#667eea",
-  },
-  entryScoreLabel: {
-    fontSize: 12,
-    color: "#666",
-  },
-  entryBadges: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 8,
-  },
-  badge: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 4,
-  },
-  badgeCount: {
-    fontSize: 12,
-    color: "#666",
-    marginLeft: 4,
-  },
-  loadingMore: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  loadingMoreText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: "#666",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: "#666",
-  },
-});

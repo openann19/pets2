@@ -51,7 +51,7 @@ export function EnhancementProvider({ children, showFeedbackWidget = true, showT
             const timer = setTimeout(() => {
                 requestNotificationPermission();
             }, 3000);
-            return () => clearTimeout(timer);
+            return () => { clearTimeout(timer); };
         }
     }, [isAuthenticated, showPushNotifications, requestNotificationPermission]);
     return (<div className="relative">

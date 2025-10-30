@@ -1,0 +1,103 @@
+{
+  "app_name": "PawfectMatch",
+  "welcome": "Welcome to PawfectMatch",
+  "login": "Login",
+  "register": "Register",
+  "email": "Email",
+  "password": "Password",
+  "forgot_password": "Forgot Password?",
+  "settings": "Settings",
+  "profile": "Profile",
+  "matches": "Matches",
+  "messages": "Messages",
+  "swipe": "Swipe",
+  "map": "Map",
+  "premium": "Premium",
+  "language": {
+    "english": "English",
+    "bulgarian": "Bulgarian",
+    "device": "Use device language"
+  },
+  "home": {
+    "quick_actions": "Quick Actions",
+    "swipe_action": "Swipe",
+    "matches_action": "Matches",
+    "messages_action": "Messages",
+    "profile_action": "Profile",
+    "community_action": "Community",
+    "recent_activity": "Recent Activity",
+    "new_match": "New Match!",
+    "match_description": "You and Buddy liked each other",
+    "new_message": "New Message",
+    "message_description": "From Luna: \"Hey there! 🐾\"",
+    "premium_features": "Premium Features",
+    "premium_title": "PawfectMatch Premium",
+    "premium_description": "Unlock unlimited swipes, see who liked you, and get priority in search results.",
+    "upgrade_now": "Upgrade Now"
+  },
+  "settings": {
+    "title": "Settings",
+    "error": "Error",
+    "failed_update": "Failed to update settings. Please try again.",
+    "coming_soon": "Coming Soon",
+    "coming_soon_message": "{{feature}} feature is coming soon!",
+    "navigation": "Navigation",
+    "navigate_to": "Navigate to {{destination}}",
+    "preferences": "Preferences",
+    "support": "Support",
+    "version": "PawfectMatch v1.0.0",
+    "version_subtitle": "Built with ❤️ for pet lovers"
+  },
+  "matches": {
+    "title": "Matches",
+    "liked_you": "Liked You",
+    "new_match": "New Match!",
+    "no_matches": "No matches yet",
+    "no_matches_subtitle": "Keep swiping to find your perfect pet match!"
+  },
+  "swipe": {
+    "title": "Swipe",
+    "error": "Error",
+    "loading_pets": "Loading pets...",
+    "no_more_pets": "No more pets!",
+    "check_back_later": "Check back later for more matches"
+  },
+  "profile": {
+    "title": "Profile",
+    "logout": "Logout"
+  },
+  "edit_profile": {
+    "title": "Edit Profile",
+    "saving": "Saving...",
+    "save": "Save",
+    "success": "Success",
+    "profile_updated": "Profile updated successfully!",
+    "profile_picture": "Profile Picture",
+    "personal_info": "Personal Information",
+    "first_name": "First Name",
+    "first_name_placeholder": "Enter first name",
+    "last_name": "Last Name",
+    "last_name_placeholder": "Enter last name",
+    "email": "Email",
+    "email_placeholder": "Enter email",
+    "phone": "Phone",
+    "phone_placeholder": "Enter phone number",
+    "location": "Location",
+    "location_placeholder": "Enter your location",
+    "about_me": "About Me",
+    "bio_placeholder": "Tell us about yourself and what you're looking for in a pet match...",
+    "characters": "characters"
+  },
+  "compatibility": {
+    "breakdown_title": "Compatibility Breakdown",
+    "factors": {
+      "temperament": "Temperament",
+      "activity": "Activity",
+      "size": "Size",
+      "age": "Age",
+      "interests": "Interests",
+      "lifestyle": "Lifestyle"
+    },
+    "percentage": "{{score}}%"
+  }
+}

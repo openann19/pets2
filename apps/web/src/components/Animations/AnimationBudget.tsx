@@ -70,7 +70,7 @@ export function useAnimationBudgetV2({
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
+    return () => { cancelAnimationFrame(raf); };
   }, [sample, maxAnimationsHigh, maxAnimationsMid, maxAnimationsLow]);
 
   const registerAnimation = useCallback(() => {

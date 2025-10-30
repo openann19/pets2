@@ -19,7 +19,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports._VERSION = exports.useRealtimeSocket = exports.useEventTracking = exports.useKeyboardShortcut = exports.useGesture = exports.useFocusTrap = exports.errorHandler = exports.AccountService = exports.useAnimationConfig = exports.animationConfig = exports.SETTINGS = exports.HAPTIC_SETTINGS = exports.HAPTICS = void 0;
+exports._VERSION = exports.useRealtimeSocket = exports.useEventTracking = exports.useKeyboardShortcut = exports.useGesture = exports.useFocusTrap = exports.errorHandler = exports.AccountService = exports.mediaLogger = exports.notificationLogger = exports.analyticsLogger = exports.storageLogger = exports.navigationLogger = exports.uiLogger = exports.authLogger = exports.apiLogger = exports.logger = exports.useAnimationConfig = exports.animationConfig = exports.SETTINGS = exports.HAPTIC_SETTINGS = exports.HAPTICS = void 0;
 // Export all types
 __exportStar(require("./schemas"), exports);
 __exportStar(require("./types"), exports);
@@ -37,6 +37,17 @@ __exportStar(require("./types/animations"), exports);
 // Export utility functions
 __exportStar(require("./utils"), exports);
 __exportStar(require("./utils/env"), exports);
+// Export logger specifically for web app
+var logger_1 = require("./utils/logger");
+Object.defineProperty(exports, "logger", { enumerable: true, get: function () { return logger_1.logger; } });
+Object.defineProperty(exports, "apiLogger", { enumerable: true, get: function () { return logger_1.apiLogger; } });
+Object.defineProperty(exports, "authLogger", { enumerable: true, get: function () { return logger_1.authLogger; } });
+Object.defineProperty(exports, "uiLogger", { enumerable: true, get: function () { return logger_1.uiLogger; } });
+Object.defineProperty(exports, "navigationLogger", { enumerable: true, get: function () { return logger_1.navigationLogger; } });
+Object.defineProperty(exports, "storageLogger", { enumerable: true, get: function () { return logger_1.storageLogger; } });
+Object.defineProperty(exports, "analyticsLogger", { enumerable: true, get: function () { return logger_1.analyticsLogger; } });
+Object.defineProperty(exports, "notificationLogger", { enumerable: true, get: function () { return logger_1.notificationLogger; } });
+Object.defineProperty(exports, "mediaLogger", { enumerable: true, get: function () { return logger_1.mediaLogger; } });
 // Export global state stores
 __exportStar(require("./stores"), exports);
 // Export services (logger from utils only to avoid conflicts)
@@ -59,4 +70,3 @@ Object.defineProperty(exports, "useRealtimeSocket", { enumerable: true, get: fun
 __exportStar(require("./mappers"), exports);
 // Version
 exports._VERSION = '1.0.0';
-//# sourceMappingURL=index.js.map

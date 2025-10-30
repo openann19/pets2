@@ -399,7 +399,7 @@ export default function SettingsPage() {
                   <EnhancedInput
                     label=""
                     value={String(setting.value)}
-                    onChange={(value) => handleSettingChange(setting.id, value)}
+                    onChange={(value: string) => handleSettingChange(setting.id, value)}
                     placeholder={`Enter ${setting.name.toLowerCase()}`}
                   />
                 )}
@@ -408,7 +408,7 @@ export default function SettingsPage() {
                   <EnhancedInput
                     label=""
                     value={setting.value.toString()}
-                    onChange={(value) => handleSettingChange(setting.id, Number(value))}
+                    onChange={(value: string) => handleSettingChange(setting.id, Number(value))}
                     type="number"
                     placeholder={`Enter ${setting.name.toLowerCase()}`}
                   />
@@ -419,7 +419,7 @@ export default function SettingsPage() {
                     label=""
                     options={setting.options}
                     value={String(setting.value)}
-                    onChange={(value) => handleSettingChange(setting.id, value)}
+                    onChange={(value: string) => handleSettingChange(setting.id, value)}
                   />
                 )}
               </div>

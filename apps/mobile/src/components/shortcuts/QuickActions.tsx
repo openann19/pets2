@@ -1,6 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/src/theme';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface QuickAction {
   id: string;
@@ -14,9 +15,58 @@ interface QuickActionsProps {
   actions: QuickAction[];
 }
 
-export function QuickActions({
-  actions,
-}: QuickActionsProps): React.JSX.Element {
+export function QuickActions({ actions }: QuickActionsProps): React.JSX.Element {
+  const { colors } = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          backgroundColor: colors.bg,
+          borderRadius: 16,
+          padding: 16,
+          margin: 8,
+          shadowColor: colors.primary,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 4,
+        },
+        title: {
+          fontSize: 18,
+          fontWeight: 'bold',
+          color: colors.text,
+          marginBottom: 16,
+          textAlign: 'center',
+        },
+        actionsGrid: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          justifyContent: 'space-around',
+        },
+        actionButton: {
+          width: 80,
+          height: 80,
+          borderRadius: 12,
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: 4,
+          shadowColor: colors.primary,
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          elevation: 2,
+        },
+        actionText: {
+          fontSize: 12,
+          fontWeight: '500',
+          color: 'white',
+          marginTop: 4,
+          textAlign: 'center',
+        },
+      }),
+    [colors],
+  );
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quick Actions</Text>
@@ -24,10 +74,14 @@ export function QuickActions({
         {actions.map((action) => (
           <TouchableOpacity
             key={action.id}
-            style={[styles.actionButton, { backgroundColor: action.color }]}
+            style={StyleSheet.flatten([styles.actionButton, { backgroundColor: action.color }])}
             onPress={action.onPress}
           >
-            <Ionicons name={action.icon} size={24} color="white" />
+            <Ionicons
+              name={action.icon}
+              size={24}
+              color={colors.text}
+            />
             <Text style={styles.actionText}>{action.title}</Text>
           </TouchableOpacity>
         ))}
@@ -35,48 +89,3 @@ export function QuickActions({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-    borderRadius: 16,
-    padding: 16,
-    margin: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1F2937",
-    marginBottom: 12,
-  },
-  actionsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-  },
-  actionButton: {
-    width: "48%",
-    aspectRatio: 1,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  actionText: {
-    color: "white",
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 4,
-    textAlign: "center",
-  },
-});

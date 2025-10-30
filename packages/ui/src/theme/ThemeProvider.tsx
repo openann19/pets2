@@ -3,7 +3,9 @@ import { createTheme, defaultTheme, type Theme, type ThemeOverrides } from './th
 
 export interface ThemeContextValue {
   readonly theme: Theme;
-  readonly setTheme: (next: Theme | ThemeOverrides | ((previous: Theme) => Theme | ThemeOverrides)) => void;
+  readonly setTheme: (
+    next: Theme | ThemeOverrides | ((previous: Theme) => Theme | ThemeOverrides),
+  ) => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -95,7 +97,9 @@ export function ThemeProvider({ value, children }: ThemeProviderProps) {
     };
   }, [theme]);
 
-  const setTheme = (next: Theme | ThemeOverrides | ((previous: Theme) => Theme | ThemeOverrides)) => {
+  const setTheme = (
+    next: Theme | ThemeOverrides | ((previous: Theme) => Theme | ThemeOverrides),
+  ) => {
     setThemeState((previous) => {
       const resolvedNext = typeof next === 'function' ? next(previous) : next;
       return resolveTheme(resolvedNext);

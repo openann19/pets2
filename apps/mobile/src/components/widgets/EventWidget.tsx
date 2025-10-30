@@ -1,6 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import React, { useMemo } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface EventWidgetProps {
   event: {
@@ -23,34 +25,50 @@ export function EventWidget({
   onEventPress,
   onJoinEvent,
 }: EventWidgetProps): React.JSX.Element {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+
   const getCategoryEmoji = (category: string) => {
     const emojis = {
-      playdate: "🐾",
-      training: "🎓",
-      social: "👥",
-      adoption: "🏠",
-      health: "🏥",
+      playdate: '🐾',
+      training: '🎓',
+      social: '👥',
+      adoption: '🏠',
+      health: '🏥',
     };
-    return emojis[category as keyof typeof emojis] || "🎉";
+    return emojis[category as keyof typeof emojis] || '🎉';
   };
 
   const getCategoryColor = (category: string) => {
-    const colors = {
-      playdate: "#10B981",
-      training: "#3B82F6",
-      social: "#8B5CF6",
-      adoption: "#F59E0B",
-      health: "#EF4444",
-    };
-    return colors[category as keyof typeof colors] || "#6B7280";
+    switch (category) {
+      case 'playdate':
+        return theme.colors.success;
+      case 'training':
+        return theme.colors.info;
+      case 'social':
+        return theme.colors.primary;
+      case 'adoption':
+        return theme.colors.warning;
+      case 'health':
+        return theme.colors.danger;
+      default:
+        return theme.colors.onMuted;
+    }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Upcoming Event</Text>
-        <TouchableOpacity onPress={onEventPress}>
-          <Ionicons name="open-outline" size={20} color="#8B5CF6" />
+        <TouchableOpacity
+          onPress={onEventPress}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Ionicons
+            name="open-outline"
+            size={20}
+            color={theme.colors.primary}
+          />
         </TouchableOpacity>
       </View>
 
@@ -65,48 +83,71 @@ export function EventWidget({
 
         <View style={styles.eventInfo}>
           <View style={styles.eventHeader}>
-            <Text style={styles.eventTitle} numberOfLines={2}>
+            <Text
+              style={styles.eventTitle}
+              numberOfLines={2}
+            >
               {event.title}
             </Text>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.categoryBadge,
                 { backgroundColor: getCategoryColor(event.category) },
-              ]}
+              ])}
             >
-              <Text style={styles.categoryEmoji}>
-                {getCategoryEmoji(event.category)}
-              </Text>
+              <Text style={styles.categoryEmoji}>{getCategoryEmoji(event.category)}</Text>
             </View>
           </View>
 
           <View style={styles.eventDetails}>
             <View style={styles.detailRow}>
-              <Ionicons name="calendar-outline" size={14} color="#6B7280" />
+              <Ionicons
+                name="calendar-outline"
+                size={14}
+                color={theme.colors.border}
+              />
               <Text style={styles.detailText}>{event.date}</Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="time-outline" size={14} color="#6B7280" />
+              <Ionicons
+                name="time-outline"
+                size={14}
+                color={theme.colors.border}
+              />
               <Text style={styles.detailText}>{event.time}</Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="location-outline" size={14} color="#6B7280" />
-              <Text style={styles.detailText} numberOfLines={1}>
+              <Ionicons
+                name="location-outline"
+                size={14}
+                color={theme.colors.border}
+              />
+              <Text
+                style={styles.detailText}
+                numberOfLines={1}
+              >
                 {event.location}
               </Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="people-outline" size={14} color="#6B7280" />
+              <Ionicons
+                name="people-outline"
+                size={14}
+                color={theme.colors.border}
+              />
               <Text style={styles.detailText}>
                 {event.attendees}/{event.maxAttendees} attending
               </Text>
             </View>
           </View>
 
-          <TouchableOpacity style={styles.joinButton} onPress={onJoinEvent}>
+          <TouchableOpacity
+            style={styles.joinButton}
+            onPress={onJoinEvent}
+          >
             <Text style={styles.joinButtonText}>Join Event</Text>
           </TouchableOpacity>
         </View>
@@ -115,88 +156,90 @@ export function EventWidget({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-    borderRadius: 16,
-    padding: 16,
-    margin: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1F2937",
-  },
-  eventCard: {
-    backgroundColor: "#F9FAFB",
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  eventImage: {
-    width: "100%",
-    height: 100,
-  },
-  eventInfo: {
-    padding: 12,
-  },
-  eventHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 8,
-  },
-  eventTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#1F2937",
-    flex: 1,
-    marginRight: 8,
-  },
-  categoryBadge: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  categoryEmoji: {
-    fontSize: 12,
-  },
-  eventDetails: {
-    marginBottom: 12,
-  },
-  detailRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  detailText: {
-    fontSize: 12,
-    color: "#6B7280",
-    marginLeft: 6,
-    flex: 1,
-  },
-  joinButton: {
-    backgroundColor: "#8B5CF6",
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    alignItems: "center",
-  },
-  joinButtonText: {
-    color: "white",
-    fontSize: 12,
-    fontWeight: "600",
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.md ?? 16,
+      padding: theme.spacing.md,
+      margin: theme.spacing.sm,
+      shadowColor: theme.palette?.overlay ?? theme.colors.border,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: theme.spacing.sm,
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+    },
+    eventCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.sm ?? 12,
+      overflow: 'hidden',
+    },
+    eventImage: {
+      width: '100%',
+      height: 100,
+    },
+    eventInfo: {
+      padding: theme.spacing.sm,
+    },
+    eventHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: theme.spacing.xs,
+    },
+    eventTitle: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      flex: 1,
+      marginRight: theme.spacing.xs,
+    },
+    categoryBadge: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    categoryEmoji: {
+      fontSize: 12,
+    },
+    eventDetails: {
+      marginBottom: theme.spacing.sm,
+    },
+    detailRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: theme.spacing.xs,
+    },
+    detailText: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      marginLeft: theme.spacing.xs,
+      flex: 1,
+    },
+    joinButton: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radii.xs ?? 8,
+      paddingVertical: theme.spacing.xs,
+      paddingHorizontal: theme.spacing.md,
+      alignItems: 'center',
+    },
+    joinButtonText: {
+      color: theme.colors.onSurface,
+      fontSize: 12,
+      fontWeight: '600',
+    },
+  });
+}

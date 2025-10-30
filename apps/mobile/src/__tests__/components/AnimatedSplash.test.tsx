@@ -1,26 +1,26 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
-import { AnimatedSplash } from "../../components/AnimatedSplash";
+import React from 'react';
+import { render } from '@testing-library/react-native';
+import { AnimatedSplash } from '../../components/AnimatedSplash';
 
 // Mock expo modules
-jest.mock("expo-haptics", () => ({
+jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   ImpactFeedbackStyle: {
-    Medium: "medium",
+    Medium: 'medium',
   },
 }));
 
-jest.mock("expo-linear-gradient", () => ({
-  LinearGradient: "LinearGradient",
+jest.mock('expo-linear-gradient', () => ({
+  LinearGradient: 'LinearGradient',
 }));
 
-jest.mock("@expo/vector-icons", () => ({
-  Ionicons: "Ionicons",
+jest.mock('@expo/vector-icons', () => ({
+  Ionicons: 'Ionicons',
 }));
 
 // Mock Animated
-jest.mock("react-native", () => {
-  const RN = jest.requireActual("react-native");
+jest.mock('react-native', () => {
+  const RN = jest.requireActual('react-native');
 
   RN.Animated.timing = () => ({
     start: jest.fn(),
@@ -50,34 +50,32 @@ jest.mock("react-native", () => {
   return RN;
 });
 
-describe("AnimatedSplash Component", () => {
+describe('AnimatedSplash Component', () => {
   const mockOnAnimationComplete = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("renders correctly with default props", () => {
+  it('renders correctly with default props', () => {
     const tree = render(<AnimatedSplash />).toJSON();
 
     expect(tree).toMatchSnapshot();
   });
 
-  it("renders correctly with custom duration", () => {
+  it('renders correctly with custom duration', () => {
     const tree = render(<AnimatedSplash duration={3000} />).toJSON();
 
     expect(tree).toMatchSnapshot();
   });
 
-  it("renders correctly with onAnimationComplete callback", () => {
-    const tree = render(
-      <AnimatedSplash onAnimationComplete={mockOnAnimationComplete} />,
-    ).toJSON();
+  it('renders correctly with onAnimationComplete callback', () => {
+    const tree = render(<AnimatedSplash onAnimationComplete={mockOnAnimationComplete} />).toJSON();
 
     expect(tree).toMatchSnapshot();
   });
 
-  it("renders correctly with both custom props", () => {
+  it('renders correctly with both custom props', () => {
     const tree = render(
       <AnimatedSplash
         duration={1500}

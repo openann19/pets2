@@ -117,6 +117,7 @@ export interface User {
 // Pet Types
 export interface Pet {
   _id: string;
+  id: string; // Alias for _id for consistency
   owner: User | string;
   name: string;
   species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
@@ -264,6 +265,8 @@ export interface Match {
       user2Feedback?: string;
     };
   };
+  isMatch: boolean; // Indicates if this is a mutual match
+  matchId?: string; // Optional ID for the match
   createdAt: string;
   updatedAt: string;
 }
@@ -272,7 +275,16 @@ export interface Message {
   _id: string;
   sender: User;
   content: string;
-  messageType: 'text' | 'image' | 'location' | 'system' | 'voice' | 'video' | 'audio' | 'gif' | 'sticker';
+  messageType:
+    | 'text'
+    | 'image'
+    | 'location'
+    | 'system'
+    | 'voice'
+    | 'video'
+    | 'audio'
+    | 'gif'
+    | 'sticker';
   attachments?: Attachment[];
   readBy: ReadReceipt[];
   sentAt: string;
@@ -281,6 +293,7 @@ export interface Message {
   isDeleted: boolean;
   duration?: number; // For voice/video messages
   thumbnailUrl?: string; // For video messages
+  replyTo?: { _id: string; author?: string; text?: string }; // Reply metadata
 }
 
 export interface Attachment {
@@ -523,7 +536,14 @@ export interface AdoptionApplication {
   petId: string;
   applicantId: string;
   shelterId: string;
-  status: 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'withdrawn' | 'completed';
+  status:
+    | 'draft'
+    | 'submitted'
+    | 'under_review'
+    | 'approved'
+    | 'rejected'
+    | 'withdrawn'
+    | 'completed';
   submittedAt?: string;
   reviewedAt?: string;
   completedAt?: string;

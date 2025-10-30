@@ -33,7 +33,7 @@ export const SwipeCardCore = ({ pet, onSwipe, onCardClick, style, dragConstraint
      */
     const announce = useCallback((message) => {
         setAnnouncement(message);
-        setTimeout(() => setAnnouncement(''), 1000);
+        setTimeout(() => { setAnnouncement(''); }, 1000);
     }, []);
     /**
      * Handle keyboard navigation
@@ -160,7 +160,7 @@ export const SwipeCardCore = ({ pet, onSwipe, onCardClick, style, dragConstraint
               <button ref={passButtonRef} onClick={(e) => {
             e.stopPropagation();
             handleButtonClick('pass');
-        }} onFocus={() => handleButtonFocus('pass')} onBlur={handleButtonBlur} onKeyDown={(e) => {
+        }} onFocus={() => { handleButtonFocus('pass'); }} onBlur={handleButtonBlur} onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 e.stopPropagation();
@@ -174,7 +174,7 @@ export const SwipeCardCore = ({ pet, onSwipe, onCardClick, style, dragConstraint
               <button ref={superlikeButtonRef} onClick={(e) => {
             e.stopPropagation();
             handleButtonClick('superlike');
-        }} onFocus={() => handleButtonFocus('superlike')} onBlur={handleButtonBlur} onKeyDown={(e) => {
+        }} onFocus={() => { handleButtonFocus('superlike'); }} onBlur={handleButtonBlur} onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 e.stopPropagation();
@@ -188,7 +188,7 @@ export const SwipeCardCore = ({ pet, onSwipe, onCardClick, style, dragConstraint
               <button ref={likeButtonRef} onClick={(e) => {
             e.stopPropagation();
             handleButtonClick('like');
-        }} onFocus={() => handleButtonFocus('like')} onBlur={handleButtonBlur} onKeyDown={(e) => {
+        }} onFocus={() => { handleButtonFocus('like'); }} onBlur={handleButtonBlur} onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 e.stopPropagation();

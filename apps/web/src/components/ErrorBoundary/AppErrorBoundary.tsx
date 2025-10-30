@@ -98,7 +98,7 @@ export class AppErrorBoundary extends Component {
                 Go to Home
               </button>
 
-              <button onClick={() => window.location.reload()} className="w-full text-gray-600 px-6 py-2 rounded-lg hover:text-gray-800 transition-all duration-200">
+              <button onClick={() => { window.location.reload(); }} className="w-full text-gray-600 px-6 py-2 rounded-lg hover:text-gray-800 transition-all duration-200">
                 Refresh Page
               </button>
             </div>

@@ -203,7 +203,7 @@ const SecurityAlertsDashboard: React.FC<SecurityAlertsDashboardProps> = ({
       onRefresh();
     }, 30000); // Refresh every 30 seconds
 
-    return () => clearInterval(interval);
+    return () => { clearInterval(interval); };
   }, [autoRefresh, onRefresh]);
 
   // Filtered and sorted alerts
@@ -375,7 +375,7 @@ const SecurityAlertsDashboard: React.FC<SecurityAlertsDashboardProps> = ({
           {alert.assignedTo !== undefined && <span>Assigned to: {alert.assignedTo.name}</span>}
         </div>
         <div className="flex items-center space-x-1">
-          {alert.isAcknowledged === true && <CheckCircleIcon className="h-4 w-4 text-green-500" />}
+          {alert.isAcknowledged && <CheckCircleIcon className="h-4 w-4 text-green-500" />}
           {alert.escalationLevel > 0 && (
             <ExclamationTriangleIcon className="h-4 w-4 text-red-500" />
           )}
@@ -599,7 +599,7 @@ const SecurityAlertsDashboard: React.FC<SecurityAlertsDashboardProps> = ({
 
         <div className="flex items-center space-x-4">
           <button
-            onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
+            onClick={() => { setViewMode(viewMode === 'list' ? 'grid' : 'list'); }}
             className="p-2 rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             aria-label={`Switch to ${viewMode === 'list' ? 'grid' : 'list'} view`}
           >
@@ -719,7 +719,7 @@ const SecurityAlertsDashboard: React.FC<SecurityAlertsDashboardProps> = ({
                 type="text"
                 placeholder="Search alerts..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => { setSearchTerm(e.target.value); }}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 aria-label="Search alerts"
               />
@@ -729,7 +729,7 @@ const SecurityAlertsDashboard: React.FC<SecurityAlertsDashboardProps> = ({
           {/* Filters */}
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => { setShowFilters(!showFilters); }}
               className={`p-2 rounded-lg transition-colors ${
                 showFilters
                   ? 'bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-400'
@@ -759,7 +759,7 @@ const SecurityAlertsDashboard: React.FC<SecurityAlertsDashboardProps> = ({
                   <select
                     id="alertType"
                     value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
+                    onChange={(e) => { setSelectedType(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
                     <option value="all">All Types</option>
@@ -781,7 +781,7 @@ const SecurityAlertsDashboard: React.FC<SecurityAlertsDashboardProps> = ({
                   <select
                     id="alertSeverity"
                     value={selectedSeverity}
-                    onChange={(e) => setSelectedSeverity(e.target.value)}
+                    onChange={(e) => { setSelectedSeverity(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
                     <option value="all">All Severities</option>
@@ -803,7 +803,7 @@ const SecurityAlertsDashboard: React.FC<SecurityAlertsDashboardProps> = ({
                   <select
                     id="alertStatus"
                     value={selectedStatus}
-                    onChange={(e) => setSelectedStatus(e.target.value)}
+                    onChange={(e) => { setSelectedStatus(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
                     <option value="all">All Statuses</option>
@@ -826,7 +826,7 @@ const SecurityAlertsDashboard: React.FC<SecurityAlertsDashboardProps> = ({
                   <select
                     id="alertPriority"
                     value={selectedPriority}
-                    onChange={(e) => setSelectedPriority(e.target.value)}
+                    onChange={(e) => { setSelectedPriority(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
                     <option value="all">All Priorities</option>
@@ -850,9 +850,9 @@ const SecurityAlertsDashboard: React.FC<SecurityAlertsDashboardProps> = ({
                       id="alertSortBy"
                       value={sortBy}
                       onChange={(e) =>
-                        setSortBy(
+                        { setSortBy(
                           e.target.value as 'createdAt' | 'severity' | 'priority' | 'riskScore',
-                        )
+                        ); }
                       }
                       className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     >
@@ -862,7 +862,7 @@ const SecurityAlertsDashboard: React.FC<SecurityAlertsDashboardProps> = ({
                       <option value="riskScore">Risk Score</option>
                     </select>
                     <button
-                      onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                      onClick={() => { setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); }}
                       className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                       aria-label={`Sort ${sortOrder === 'asc' ? 'descending' : 'ascending'}`}
                     >

@@ -68,7 +68,7 @@ export function PhotoEnhancement({ imageUrl, onEnhanced, className = '', autoEnh
               Optimize
             </InteractiveButton>
 
-            <InteractiveButton onClick={() => setShowEnhancement(!showEnhancement)} size="sm" className="bg-white/20 hover:bg-white/30 text-white border border-white/30" icon={<ArrowPathIcon className="w-4 h-4"/>}>
+            <InteractiveButton onClick={() => { setShowEnhancement(!showEnhancement); }} size="sm" className="bg-white/20 hover:bg-white/30 text-white border border-white/30" icon={<ArrowPathIcon className="w-4 h-4"/>}>
               Settings
             </InteractiveButton>
           </div>
@@ -91,10 +91,10 @@ export function PhotoEnhancement({ imageUrl, onEnhanced, className = '', autoEnh
                 { key: 'autoBrightness', label: 'Auto Brightness' },
                 { key: 'autoSaturation', label: 'Auto Saturation' }
             ].map(({ key, label }) => (<label key={key} className="flex items-center space-x-2">
-                    <input type="checkbox" checked={enhancementOptions[key]} onChange={(e) => setEnhancementOptions(prev => ({
+                    <input type="checkbox" checked={enhancementOptions[key]} onChange={(e) => { setEnhancementOptions(prev => ({
                     ...prev,
                     [key]: e.target.checked
-                }))} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/>
+                })); }} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/>
                     <span className="text-sm text-gray-700 dark:text-gray-300">{label}</span>
                   </label>))}
               </div>
@@ -104,10 +104,10 @@ export function PhotoEnhancement({ imageUrl, onEnhanced, className = '', autoEnh
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Quality
                 </label>
-                <select value={enhancementOptions.quality} onChange={(e) => setEnhancementOptions(prev => ({
+                <select value={enhancementOptions.quality} onChange={(e) => { setEnhancementOptions(prev => ({
                 ...prev,
                 quality: e.target.value
-            }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+            })); }} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
                   <option value="auto">Auto</option>
                   <option value="best">Best</option>
                   <option value="good">Good</option>
@@ -138,14 +138,14 @@ export function PhotoEnhancement({ imageUrl, onEnhanced, className = '', autoEnh
 }
 function PhotoComparison({ originalUrl, enhancedUrl, className = '' }) {
     const [activeTab, setActiveTab] = useState('enhanced');
-    return (<div className={`${className}`}>
+    return (<div className={className}>
       <div className="flex space-x-1 mb-4">
-        <button onClick={() => setActiveTab('original')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'original'
+        <button onClick={() => { setActiveTab('original'); }} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'original'
             ? 'bg-gray-900 text-white'
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
           Original
         </button>
-        <button onClick={() => setActiveTab('enhanced')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'enhanced'
+        <button onClick={() => { setActiveTab('enhanced'); }} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'enhanced'
             ? 'bg-gray-900 text-white'
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
           Enhanced

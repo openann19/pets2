@@ -4,10 +4,9 @@
  */
 
 import { Ionicons } from "@expo/vector-icons";
-import { logger, useAuthStore } from "@pawfectmatch/core";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import * as Haptics from "expo-haptics";
-import React, { useEffect, useState } from "react";
+import { logger } from "@pawfectmatch/core";
+import React, { useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -18,96 +17,26 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "@mobile/src/theme";
 import type { RootStackParamList } from "../navigation/types";
 import { request } from "../services/api";
+import {
+  usePrivacySettingsScreen,
+  type PrivacySettings,
+} from "../hooks/screens/usePrivacySettingsScreen";
+
 
 type PrivacySettingsScreenProps = NativeStackScreenProps<
   RootStackParamList,
   "PrivacySettings"
 >;
 
-interface PrivacySettings {
-  profileVisibility: "public" | "friends" | "nobody";
-  showOnlineStatus: boolean;
-  showDistance: boolean;
-  showLastActive: boolean;
-  allowMessages: "everyone" | "matches" | "nobody";
-  showReadReceipts: boolean;
-  incognitoMode: boolean;
-  shareLocation: boolean;
-  dataSharing: boolean;
-  analyticsTracking: boolean;
-}
-
 function PrivacySettingsScreen({
   navigation,
-}: PrivacySettingsScreenProps): JSX.Element {
+}: PrivacySettingsScreenProps): React.JSX.Element {
   const { colors } = useTheme();
-  const { user: _user } = useAuthStore();
-  const [settings, setSettings] = useState<PrivacySettings>({
-    profileVisibility: "nobody",
-    showOnlineStatus: true,
-    showDistance: true,
-    showLastActive: true,
-    allowMessages: "nobody",
-    showReadReceipts: true,
-    incognitoMode: false,
-    shareLocation: true,
-    dataSharing: false,
-    analyticsTracking: true,
-  });
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    loadPrivacySettings();
-  }, []);
-
-  const loadPrivacySettings = async () => {
-    try {
-      setLoading(true);
-      const response = await request<PrivacySettings>("/api/profile/privacy", {
-        method: "GET",
-      });
-
-      if (response) {
-        setSettings(response);
-      }
-
-      logger.info("Privacy settings loaded");
-    } catch (error) {
-      logger.error("Failed to load privacy settings:", error);
-      // Don't show alert on first load - use defaults
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateSetting = async <K extends keyof PrivacySettings>(
-    key: K,
-    value: PrivacySettings[K],
-  ) => {
-    try {
-      setLoading(true);
-      await Haptics.selectionAsync();
-
-      const newSettings = { ...settings, [key]: value };
-      setSettings(newSettings);
-
-      // Save to API
-      await request("/api/profile/privacy", {
-        method: "PUT",
-        body: newSettings,
-      });
-
-      logger.info("Privacy setting updated", { key, value });
-    } catch (error) {
-      logger.error("Failed to update privacy setting:", error);
-      Alert.alert("Error", "Failed to update setting");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { settings, loading, updateSetting } = usePrivacySettingsScreen();
+  const [loadingExport, setLoadingExport] = useState(false);
 
   const renderSettingItem = (
     title: string,
@@ -115,17 +44,27 @@ function PrivacySettingsScreen({
     control: React.ReactNode,
     danger?: boolean,
   ) => (
-    <View style={[styles.settingItem, { backgroundColor: colors.card }]}>
+    <View
+      style={StyleSheet.flatten([
+        styles.settingItem,
+        { backgroundColor: colors.card },
+      ])}
+    >
       <View style={styles.settingContent}>
         <Text
-          style={[
+          style={StyleSheet.flatten([
             styles.settingTitle,
-            { color: danger ? colors.error : colors.text },
-          ]}
+            { color: danger ? colors.danger : colors.onSurface },
+          ])}
         >
           {title}
         </Text>
-        <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.settingSubtitle,
+            { color: colors.onMuted },
+          ])}
+        >
           {subtitle}
         </Text>
       </View>
@@ -139,25 +78,30 @@ function PrivacySettingsScreen({
     onChange: (value: string) => void,
   ) => (
     <View style={styles.pickerContainer}>
-      {options.map((option) => (
+        {options.map((option) => (
         <TouchableOpacity
           key={option.value}
-          style={[
+          testID={`privacy-option-${option.value}`}
+          accessibilityLabel={option.label}
+          accessibilityRole="button"
+          accessibilityState={{ selected: value === option.value }}
+          accessibilityHint={`Select ${option.label}`}
+          style={StyleSheet.flatten([
             styles.pickerOption,
             value === option.value && {
               backgroundColor: colors.primary,
               borderColor: colors.primary,
             },
-          ]}
+          ])}
           onPress={() => {
             onChange(option.value);
           }}
         >
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.pickerOptionText,
-              { color: value === option.value ? "white" : colors.text },
-            ]}
+              { color: value === option.value ? "white" : colors.onSurface},
+            ])}
           >
             {option.label}
           </Text>
@@ -168,34 +112,61 @@ function PrivacySettingsScreen({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      testID="privacy-settings-screen"
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       {/* Header */}
       <View
-        style={[
+        testID="privacy-settings-header"
+        accessibilityLabel="Privacy settings header"
+        accessibilityRole="header"
+        style={StyleSheet.flatten([
           styles.header,
           { backgroundColor: colors.card, borderBottomColor: colors.border },
-        ]}
+        ])}
       >
         <TouchableOpacity
+          testID="privacy-settings-back-button"
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
+          accessibilityHint="Returns to previous screen"
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface }/>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>
+        <Text
+          testID="privacy-settings-title"
+          accessibilityRole="header"
+          style={StyleSheet.flatten([
+            styles.headerTitle,
+            { color: colors.onSurface},
+          ])}
+        >
           Privacy Settings
         </Text>
         <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView
+        testID="privacy-settings-scroll-view"
+        accessibilityLabel="Privacy settings content"
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
       >
         {/* Profile Visibility */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <View testID="profile-visibility-section" accessibilityLabel="Profile visibility settings" style={styles.section}>
+          <Text
+            testID="profile-visibility-title"
+            accessibilityRole="text"
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.onSurface},
+            ])}
+          >
             Profile Visibility
           </Text>
           {renderSettingItem(
@@ -220,13 +191,17 @@ function PrivacySettingsScreen({
             "Show online status",
             "Let others know when you are active on the app",
             <Switch
+              testID="show-online-status-switch"
+              accessibilityLabel="Show online status"
+              accessibilityRole="switch"
+              accessibilityState={{ checked: settings.showOnlineStatus }}
               value={settings.showOnlineStatus}
               onValueChange={(value) =>
                 updateSetting("showOnlineStatus", value)
               }
-              trackColor={{ false: colors.gray300, true: colors.primary }}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showOnlineStatus ? colors.card : colors.gray500
+                settings.showOnlineStatus ? colors.card : theme.palette.neutral[500]
               }
             />,
           )}
@@ -237,8 +212,8 @@ function PrivacySettingsScreen({
             <Switch
               value={settings.showDistance}
               onValueChange={(value) => updateSetting("showDistance", value)}
-              trackColor={{ false: colors.gray300, true: colors.primary }}
-              thumbColor={settings.showDistance ? colors.card : colors.gray500}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
+              thumbColor={settings.showDistance ? colors.card : theme.palette.neutral[500]}
             />,
           )}
 
@@ -248,9 +223,9 @@ function PrivacySettingsScreen({
             <Switch
               value={settings.showLastActive}
               onValueChange={(value) => updateSetting("showLastActive", value)}
-              trackColor={{ false: colors.gray300, true: colors.primary }}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showLastActive ? colors.card : colors.gray500
+                settings.showLastActive ? colors.card : theme.palette.neutral[500]
               }
             />,
           )}
@@ -258,7 +233,12 @@ function PrivacySettingsScreen({
 
         {/* Communication */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.onSurface},
+            ])}
+          >
             Communication
           </Text>
           {renderSettingItem(
@@ -287,9 +267,9 @@ function PrivacySettingsScreen({
               onValueChange={(value) =>
                 updateSetting("showReadReceipts", value)
               }
-              trackColor={{ false: colors.gray300, true: colors.primary }}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showReadReceipts ? colors.card : colors.gray500
+                settings.showReadReceipts ? colors.card : theme.palette.neutral[500]
               }
             />,
           )}
@@ -297,7 +277,12 @@ function PrivacySettingsScreen({
 
         {/* Privacy Features */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.onSurface},
+            ])}
+          >
             Privacy Features
           </Text>
           {renderSettingItem(
@@ -306,8 +291,8 @@ function PrivacySettingsScreen({
             <Switch
               value={settings.incognitoMode}
               onValueChange={(value) => updateSetting("incognitoMode", value)}
-              trackColor={{ false: colors.gray300, true: colors.primary }}
-              thumbColor={settings.incognitoMode ? colors.card : colors.gray500}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
+              thumbColor={settings.incognitoMode ? colors.card : theme.palette.neutral[500]}
             />,
           )}
 
@@ -317,15 +302,20 @@ function PrivacySettingsScreen({
             <Switch
               value={settings.shareLocation}
               onValueChange={(value) => updateSetting("shareLocation", value)}
-              trackColor={{ false: colors.gray300, true: colors.primary }}
-              thumbColor={settings.shareLocation ? colors.card : colors.gray500}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
+              thumbColor={settings.shareLocation ? colors.card : theme.palette.neutral[500]}
             />,
           )}
         </View>
 
         {/* Data & Analytics */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.onSurface},
+            ])}
+          >
             Data & Analytics
           </Text>
           {renderSettingItem(
@@ -334,8 +324,8 @@ function PrivacySettingsScreen({
             <Switch
               value={settings.dataSharing}
               onValueChange={(value) => updateSetting("dataSharing", value)}
-              trackColor={{ false: colors.gray300, true: colors.primary }}
-              thumbColor={settings.dataSharing ? colors.card : colors.gray500}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
+              thumbColor={settings.dataSharing ? colors.card : theme.palette.neutral[500]}
             />,
           )}
 
@@ -347,9 +337,9 @@ function PrivacySettingsScreen({
               onValueChange={(value) =>
                 updateSetting("analyticsTracking", value)
               }
-              trackColor={{ false: colors.gray300, true: colors.primary }}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.analyticsTracking ? colors.card : colors.gray500
+                settings.analyticsTracking ? colors.card : theme.palette.neutral[500]
               }
             />,
           )}
@@ -357,7 +347,12 @@ function PrivacySettingsScreen({
 
         {/* Danger Zone */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.error }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.danger },
+            ])}
+          >
             Danger Zone
           </Text>
           {renderSettingItem(
@@ -365,12 +360,12 @@ function PrivacySettingsScreen({
             "Manage users you have blocked",
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => navigation.navigate("BlockedUsers")}
+               testID="PrivacySettingsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.navigate("BlockedUsers")}
             >
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color={colors.textSecondary}
+                color={colors.onMuted}
               />
             </TouchableOpacity>,
             true,
@@ -380,10 +375,16 @@ function PrivacySettingsScreen({
             "Data Download",
             "Download all your personal data (GDPR)",
             <TouchableOpacity
+              testID="export-data-button"
+              accessibilityLabel="Export my data"
+              accessibilityRole="button"
+              accessibilityHint="Downloads all your personal data for GDPR compliance"
+              accessibilityState={{ disabled: loadingExport }}
+              disabled={loadingExport}
               style={styles.actionButton}
               onPress={async () => {
                 try {
-                  setLoading(true);
+                  setLoadingExport(true);
 
                   const response = await request<{
                     url: string;
@@ -404,14 +405,14 @@ function PrivacySettingsScreen({
                     "Failed to initiate data export. Please try again.",
                   );
                 } finally {
-                  setLoading(false);
+                  setLoadingExport(false);
                 }
               }}
             >
               <Ionicons
                 name="download-outline"
                 size={20}
-                color={colors.textSecondary}
+                color={colors.onMuted}
               />
             </TouchableOpacity>,
             true,
@@ -464,7 +465,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 8,
-    shadowColor: "#000",
+    shadowColor: theme.palette.neutral,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -492,7 +493,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: theme.palette.neutral[200],
   },
   pickerOptionText: {
     fontSize: 12,

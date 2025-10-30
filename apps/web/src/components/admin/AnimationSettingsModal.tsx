@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { logger } from '@pawfectmatch/core';
-;
 import { motion } from 'framer-motion';
 import { logger } from '@/services/logger';
 import { AccessibleModal, AccessibleModalContent, AccessibleModalDescription, AccessibleModalHeader, AccessibleModalTitle } from '@/components/ui/accessible-modal';
@@ -80,13 +78,13 @@ export function AnimationSettingsModal({ isOpen, onClose }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center justify-between">
                 <label className="text-white/80">Enable Animations</label>
-                <button onClick={() => updateConfig({ enabled: !config.enabled })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.enabled ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                <button onClick={() => { updateConfig({ enabled: !config.enabled }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.enabled ? 'bg-blue-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.enabled ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
               <div className="flex items-center justify-between">
                 <label className="text-white/80">Respect Reduced Motion</label>
-                <button onClick={() => updateConfig({ reduceMotionRespected: !config.reduceMotionRespected })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.reduceMotionRespected ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                <button onClick={() => { updateConfig({ reduceMotionRespected: !config.reduceMotionRespected }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.reduceMotionRespected ? 'bg-blue-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.reduceMotionRespected ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
@@ -102,31 +100,31 @@ export function AnimationSettingsModal({ isOpen, onClose }) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="flex items-center justify-between">
                 <label className="text-white/80 text-sm">Enable Buttons</label>
-                <button onClick={() => updateNestedConfig('buttons', { enabled: !config.buttons.enabled })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.buttons.enabled ? 'bg-green-600' : 'bg-gray-600'}`}>
+                <button onClick={() => { updateNestedConfig('buttons', { enabled: !config.buttons.enabled }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.buttons.enabled ? 'bg-green-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.buttons.enabled ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
               <div>
                 <label className="text-white/80 text-sm block mb-2">Press Scale</label>
-                <input type="number" step="0.01" min="0.5" max="1.0" value={config.buttons.pressScale} onChange={(e) => updateNestedConfig('buttons', { pressScale: parseFloat(e.target.value) })} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"/>
+                <input type="number" step="0.01" min="0.5" max="1.0" value={config.buttons.pressScale} onChange={(e) => { updateNestedConfig('buttons', { pressScale: parseFloat(e.target.value) }); }} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"/>
               </div>
               <div>
                 <label className="text-white/80 text-sm block mb-2">Bounce Scale</label>
-                <input type="number" step="0.01" min="1.0" max="1.2" value={config.buttons.bounceScale} onChange={(e) => updateNestedConfig('buttons', { bounceScale: parseFloat(e.target.value) })} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"/>
+                <input type="number" step="0.01" min="1.0" max="1.2" value={config.buttons.bounceScale} onChange={(e) => { updateNestedConfig('buttons', { bounceScale: parseFloat(e.target.value) }); }} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"/>
               </div>
               <div>
                 <label className="text-white/80 text-sm block mb-2">Rotation (°)</label>
-                <input type="number" step="0.5" min="0" max="10" value={config.buttons.rotationDegrees} onChange={(e) => updateNestedConfig('buttons', { rotationDegrees: parseFloat(e.target.value) })} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"/>
+                <input type="number" step="0.5" min="0" max="10" value={config.buttons.rotationDegrees} onChange={(e) => { updateNestedConfig('buttons', { rotationDegrees: parseFloat(e.target.value) }); }} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"/>
               </div>
               <div className="flex items-center justify-between">
                 <label className="text-white/80 text-sm">Haptic Feedback</label>
-                <button onClick={() => updateNestedConfig('buttons', { hapticFeedback: !config.buttons.hapticFeedback })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.buttons.hapticFeedback ? 'bg-purple-600' : 'bg-gray-600'}`}>
+                <button onClick={() => { updateNestedConfig('buttons', { hapticFeedback: !config.buttons.hapticFeedback }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.buttons.hapticFeedback ? 'bg-purple-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.buttons.hapticFeedback ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
               <div className="flex items-center justify-between">
                 <label className="text-white/80 text-sm">Loading Animation</label>
-                <button onClick={() => updateNestedConfig('buttons', { loadingAnimation: !config.buttons.loadingAnimation })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.buttons.loadingAnimation ? 'bg-yellow-600' : 'bg-gray-600'}`}>
+                <button onClick={() => { updateNestedConfig('buttons', { loadingAnimation: !config.buttons.loadingAnimation }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.buttons.loadingAnimation ? 'bg-yellow-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.buttons.loadingAnimation ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
@@ -142,35 +140,35 @@ export function AnimationSettingsModal({ isOpen, onClose }) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="flex items-center justify-between">
                 <label className="text-white/80 text-sm">Enable Cards</label>
-                <button onClick={() => updateNestedConfig('cards', { enabled: !config.cards.enabled })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.cards.enabled ? 'bg-green-600' : 'bg-gray-600'}`}>
+                <button onClick={() => { updateNestedConfig('cards', { enabled: !config.cards.enabled }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.cards.enabled ? 'bg-green-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.cards.enabled ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
               <div className="flex items-center justify-between">
                 <label className="text-white/80 text-sm">Hover Effects</label>
-                <button onClick={() => updateNestedConfig('cards', { hoverEffects: !config.cards.hoverEffects })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.cards.hoverEffects ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                <button onClick={() => { updateNestedConfig('cards', { hoverEffects: !config.cards.hoverEffects }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.cards.hoverEffects ? 'bg-blue-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.cards.hoverEffects ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
               <div className="flex items-center justify-between">
                 <label className="text-white/80 text-sm">Interactive Tilt</label>
-                <button onClick={() => updateNestedConfig('cards', { interactiveTilt: !config.cards.interactiveTilt })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.cards.interactiveTilt ? 'bg-orange-600' : 'bg-gray-600'}`}>
+                <button onClick={() => { updateNestedConfig('cards', { interactiveTilt: !config.cards.interactiveTilt }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.cards.interactiveTilt ? 'bg-orange-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.cards.interactiveTilt ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
               <div>
                 <label className="text-white/80 text-sm block mb-2">Tilt Degrees</label>
-                <input type="number" step="0.5" min="0" max="10" value={config.cards.tiltDegrees} onChange={(e) => updateNestedConfig('cards', { tiltDegrees: parseFloat(e.target.value) })} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"/>
+                <input type="number" step="0.5" min="0" max="10" value={config.cards.tiltDegrees} onChange={(e) => { updateNestedConfig('cards', { tiltDegrees: parseFloat(e.target.value) }); }} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-md text-white"/>
               </div>
               <div className="flex items-center justify-between">
                 <label className="text-white/80 text-sm">Shimmer Effect</label>
-                <button onClick={() => updateNestedConfig('cards', { shimmerEffect: !config.cards.shimmerEffect })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.cards.shimmerEffect ? 'bg-cyan-600' : 'bg-gray-600'}`}>
+                <button onClick={() => { updateNestedConfig('cards', { shimmerEffect: !config.cards.shimmerEffect }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.cards.shimmerEffect ? 'bg-cyan-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.cards.shimmerEffect ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
               <div className="flex items-center justify-between">
                 <label className="text-white/80 text-sm">Glow Effect</label>
-                <button onClick={() => updateNestedConfig('cards', { glowEffect: !config.cards.glowEffect })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.cards.glowEffect ? 'bg-pink-600' : 'bg-gray-600'}`}>
+                <button onClick={() => { updateNestedConfig('cards', { glowEffect: !config.cards.glowEffect }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.cards.glowEffect ? 'bg-pink-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.cards.glowEffect ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
@@ -186,15 +184,15 @@ export function AnimationSettingsModal({ isOpen, onClose }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center justify-between">
                 <label className="text-white/80 text-sm">Enable Celebrations</label>
-                <button onClick={() => updateNestedConfig('celebrations', { enabled: !config.celebrations.enabled })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.celebrations.enabled ? 'bg-purple-600' : 'bg-gray-600'}`}>
+                <button onClick={() => { updateNestedConfig('celebrations', { enabled: !config.celebrations.enabled }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.celebrations.enabled ? 'bg-purple-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.celebrations.enabled ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
               <div className="flex items-center justify-between">
                 <label className="text-white/80 text-sm">Enable Confetti</label>
-                <button onClick={() => updateNestedConfig('celebrations', {
+                <button onClick={() => { updateNestedConfig('celebrations', {
             confetti: { ...config.celebrations.confetti, enabled: !config.celebrations.confetti.enabled }
-        })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.celebrations.confetti.enabled ? 'bg-pink-600' : 'bg-gray-600'}`}>
+        }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.celebrations.confetti.enabled ? 'bg-pink-600' : 'bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.celebrations.confetti.enabled ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
@@ -211,19 +209,19 @@ export function AnimationSettingsModal({ isOpen, onClose }) {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-white/80 text-sm">Haptic Feedback</label>
-                  <button onClick={() => updateNestedConfig('mobile', { hapticFeedback: !config.mobile.hapticFeedback })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.mobile.hapticFeedback ? 'bg-green-600' : 'bg-gray-600'}`}>
+                  <button onClick={() => { updateNestedConfig('mobile', { hapticFeedback: !config.mobile.hapticFeedback }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.mobile.hapticFeedback ? 'bg-green-600' : 'bg-gray-600'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.mobile.hapticFeedback ? 'translate-x-6' : 'translate-x-1'}`}/>
                   </button>
                 </div>
                 <div className="flex items-center justify-between">
                   <label className="text-white/80 text-sm">Gesture Animations</label>
-                  <button onClick={() => updateNestedConfig('mobile', { gestureAnimations: !config.mobile.gestureAnimations })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.mobile.gestureAnimations ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                  <button onClick={() => { updateNestedConfig('mobile', { gestureAnimations: !config.mobile.gestureAnimations }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.mobile.gestureAnimations ? 'bg-blue-600' : 'bg-gray-600'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.mobile.gestureAnimations ? 'translate-x-6' : 'translate-x-1'}`}/>
                   </button>
                 </div>
                 <div className="flex items-center justify-between">
                   <label className="text-white/80 text-sm">Tab Transitions</label>
-                  <button onClick={() => updateNestedConfig('mobile', { tabTransitions: !config.mobile.tabTransitions })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.mobile.tabTransitions ? 'bg-purple-600' : 'bg-gray-600'}`}>
+                  <button onClick={() => { updateNestedConfig('mobile', { tabTransitions: !config.mobile.tabTransitions }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.mobile.tabTransitions ? 'bg-purple-600' : 'bg-gray-600'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.mobile.tabTransitions ? 'translate-x-6' : 'translate-x-1'}`}/>
                   </button>
                 </div>
@@ -238,19 +236,19 @@ export function AnimationSettingsModal({ isOpen, onClose }) {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-white/80 text-sm">Cursor Effects</label>
-                  <button onClick={() => updateNestedConfig('web', { cursorEffects: !config.web.cursorEffects })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.web.cursorEffects ? 'bg-green-600' : 'bg-gray-600'}`}>
+                  <button onClick={() => { updateNestedConfig('web', { cursorEffects: !config.web.cursorEffects }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.web.cursorEffects ? 'bg-green-600' : 'bg-gray-600'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.web.cursorEffects ? 'translate-x-6' : 'translate-x-1'}`}/>
                   </button>
                 </div>
                 <div className="flex items-center justify-between">
                   <label className="text-white/80 text-sm">Hover Animations</label>
-                  <button onClick={() => updateNestedConfig('web', { hoverAnimations: !config.web.hoverAnimations })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.web.hoverAnimations ? 'bg-blue-600' : 'bg-gray-600'}`}>
+                  <button onClick={() => { updateNestedConfig('web', { hoverAnimations: !config.web.hoverAnimations }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.web.hoverAnimations ? 'bg-blue-600' : 'bg-gray-600'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.web.hoverAnimations ? 'translate-x-6' : 'translate-x-1'}`}/>
                   </button>
                 </div>
                 <div className="flex items-center justify-between">
                   <label className="text-white/80 text-sm">Micro Interactions</label>
-                  <button onClick={() => updateNestedConfig('web', { microInteractions: !config.web.microInteractions })} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.web.microInteractions ? 'bg-purple-600' : 'bg-gray-600'}`}>
+                  <button onClick={() => { updateNestedConfig('web', { microInteractions: !config.web.microInteractions }); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${config.web.microInteractions ? 'bg-purple-600' : 'bg-gray-600'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.web.microInteractions ? 'translate-x-6' : 'translate-x-1'}`}/>
                   </button>
                 </div>

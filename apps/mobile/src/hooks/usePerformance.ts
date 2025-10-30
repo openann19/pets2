@@ -2,8 +2,8 @@
  * Performance Optimization Utilities
  * React hooks and utilities for preventing unnecessary re-renders
  */
-import { useCallback, useMemo, useRef, useState } from "react";
-import { logger } from "../services/logger";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { logger } from '../services/logger';
 
 /**
  * Hook for stable callback references
@@ -14,12 +14,17 @@ export function useStableCallback<T extends (...args: never[]) => unknown>(
   deps: React.DependencyList = [],
 ): T {
   const callbackRef = useRef<T>(callback);
-  callbackRef.current = callback;
 
-  return useCallback((...args: Parameters<T>) => {
-    return callbackRef.current(...args);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps) as T;
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  return useCallback(
+    (...args: Parameters<T>) => {
+      return callbackRef.current(...args);
+    },
+    [deps],
+  ) as T;
 }
 
 /**
@@ -39,7 +44,7 @@ export function useStableValue<T>(value: T): T {
 export function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedValue(value);
     }, delay);
@@ -106,11 +111,11 @@ export function useMemoCompare<T>(
 
   const isEqual = compare(previous, next);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isEqual) {
       previousRef.current = next;
     }
-  });
+  }, [isEqual, next]);
 
   return isEqual ? previous! : next;
 }
@@ -120,9 +125,9 @@ export function useMemoCompare<T>(
  */
 export function usePrevious<T>(value: T): T | undefined {
   const ref = useRef<T | undefined>(undefined);
-  React.useEffect(() => {
+  useEffect(() => {
     ref.current = value;
-  });
+  }, [value]);
   return ref.current;
 }
 
@@ -130,37 +135,30 @@ export function usePrevious<T>(value: T): T | undefined {
  * Performance monitoring hook
  * Logs render counts and performance metrics
  */
-export function usePerformanceMonitor(
-  componentName: string,
-  enabled: boolean = __DEV__,
-) {
+export function usePerformanceMonitor(componentName: string, enabled: boolean = __DEV__) {
   const renderCountRef = useRef(0);
   const lastRenderTimeRef = useRef(Date.now());
 
   renderCountRef.current += 1;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!enabled) return;
 
     const now = Date.now();
     const timeSinceLastRender = now - lastRenderTimeRef.current;
 
     if (renderCountRef.current > 1) {
-      logger.performance(
-        `Component Render: ${componentName}`,
-        timeSinceLastRender,
-        {
-          renderCount: renderCountRef.current,
-          componentName,
-        },
-      );
+      logger.performance(`Component Render: ${componentName}`, timeSinceLastRender, {
+        renderCount: renderCountRef.current,
+        componentName,
+      });
     }
 
     lastRenderTimeRef.current = now;
-  });
+  }, [componentName, enabled]);
 
   // Log on unmount
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       if (enabled && renderCountRef.current > 1) {
         logger.performance(`Component Unmount: ${componentName}`, 0, {
@@ -176,10 +174,7 @@ export function usePerformanceMonitor(
  * Context selector hook for optimized context consumption
  * Only triggers re-renders when selected values change
  */
-export function useContextSelector<T, R>(
-  context: React.Context<T>,
-  selector: (value: T) => R,
-): R {
+export function useContextSelector<T, R>(context: React.Context<T>, selector: (value: T) => R): R {
   const [, forceUpdate] = useState({});
   const selectedRef = useRef<R | undefined>(undefined);
   const selectorRef = useRef(selector);
@@ -206,18 +201,19 @@ export function useEventHandler<T extends (...args: never[]) => unknown>(
   handler: T,
   deps: React.DependencyList = [],
 ): T {
-  const handlerRef = useRef<T | undefined>(undefined);
+  const handlerRef = useRef<T>(handler);
 
   // Update handler ref when dependencies change
-  React.useEffect(() => {
+  useEffect(() => {
     handlerRef.current = handler;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handler, ...deps]);
 
   // Return stable function that calls current handler
-  return useCallback((...args: Parameters<T>) => {
-    return handlerRef.current?.(...args);
-  }, []) as T;
+  const stableHandler = useCallback((...args: Parameters<T>) => {
+    return handlerRef.current(...args);
+  }, []);
+
+  return stableHandler as T;
 }
 
 /**
@@ -243,22 +239,19 @@ export function useVirtualization<T>(
       item,
       index: startIndex + index,
       style: {
-        position: "absolute" as const,
+        position: 'absolute' as const,
         top: (startIndex + index) * itemHeight,
         height: itemHeight,
-        width: "100%",
+        width: '100%',
       },
     }));
   }, [items, startIndex, endIndex, itemHeight]);
 
   const totalHeight = items.length * itemHeight;
 
-  const handleScroll = useThrottle(
-    (event: { nativeEvent: { contentOffset: { y: number } } }) => {
-      setScrollTop(event.nativeEvent.contentOffset.y);
-    },
-    16,
-  ); // ~60fps
+  const handleScroll = useThrottle((event: { nativeEvent: { contentOffset: { y: number } } }) => {
+    setScrollTop(event.nativeEvent.contentOffset.y);
+  }, 16); // ~60fps
 
   return {
     visibleItems,
@@ -276,15 +269,16 @@ export function useImperativeHandleStable<T>(
   deps: React.DependencyList = [],
 ) {
   const handleRef = useRef<T | undefined>(undefined);
+  const depsRef = useRef(deps);
+  depsRef.current = deps;
 
-  React.useImperativeHandle(ref, () => {
-    if (!handleRef.current) {
+  const stableCreateHandle = useCallback(() => {
+    const depsChanged = deps !== depsRef.current;
+    if (!handleRef.current || depsChanged) {
       handleRef.current = createHandle();
     }
     return handleRef.current;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createHandle, ...deps]);
-}
+  }, [createHandle, deps]);
 
-// Import React for useEffect
-import React from "react";
+  React.useImperativeHandle(ref, stableCreateHandle, deps);
+}

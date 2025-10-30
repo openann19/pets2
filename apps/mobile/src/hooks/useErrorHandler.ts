@@ -1,6 +1,6 @@
-import { useCallback } from "react";
-import { Alert, Platform } from "react-native";
-import { logger } from "../services/logger";
+import { useCallback } from 'react';
+import { Alert, Platform } from 'react-native';
+import { logger } from '../services/logger';
 
 type EventData = Record<string, unknown>;
 
@@ -36,7 +36,7 @@ export const useErrorHandler = () => {
       const {
         showAlert = true,
         logError = true,
-        fallbackMessage = "Something went wrong. Please try again.",
+        fallbackMessage = 'Something went wrong. Please try again.',
         onRetry,
         retryable = false,
       } = options;
@@ -45,7 +45,7 @@ export const useErrorHandler = () => {
       let errorMessage = fallbackMessage;
       let errorDetails: EventData = {};
 
-      if (typeof error === "string") {
+      if (typeof error === 'string') {
         errorMessage = error;
       } else if (error instanceof Error) {
         errorMessage = error.message;
@@ -56,48 +56,41 @@ export const useErrorHandler = () => {
       } else if (Array.isArray(error)) {
         // Validation errors array
         const firstError = error[0];
-        if (
-          firstError &&
-          typeof firstError === "object" &&
-          "message" in firstError
-        ) {
+        if (firstError && typeof firstError === 'object' && 'message' in firstError) {
           errorMessage = firstError.message;
         }
-        errorDetails["validationErrors"] = error;
-      } else if (error && typeof error === "object") {
+        errorDetails['validationErrors'] = error;
+      } else if (error && typeof error === 'object') {
         // Network error
         const networkError = error;
         errorMessage = networkError.message || fallbackMessage;
 
         if (networkError.status) {
-          errorDetails["status"] = networkError.status;
-          errorDetails["code"] = networkError.code;
+          errorDetails['status'] = networkError.status;
+          errorDetails['code'] = networkError.code;
 
           // Customize message based on status code
           switch (networkError.status) {
             case 400:
-              errorMessage = "Invalid request. Please check your input.";
+              errorMessage = 'Invalid request. Please check your input.';
               break;
             case 401:
-              errorMessage = "Session expired. Please log in again.";
+              errorMessage = 'Session expired. Please log in again.';
               break;
             case 403:
-              errorMessage =
-                "Access denied. You may not have permission for this action.";
+              errorMessage = 'Access denied. You may not have permission for this action.';
               break;
             case 404:
-              errorMessage = "Resource not found.";
+              errorMessage = 'Resource not found.';
               break;
             case 429:
-              errorMessage =
-                "Too many requests. Please wait a moment and try again.";
+              errorMessage = 'Too many requests. Please wait a moment and try again.';
               break;
             case 500:
-              errorMessage = "Server error. Please try again later.";
+              errorMessage = 'Server error. Please try again later.';
               break;
             case 503:
-              errorMessage =
-                "Service temporarily unavailable. Please try again later.";
+              errorMessage = 'Service temporarily unavailable. Please try again later.';
               break;
           }
         }
@@ -105,7 +98,7 @@ export const useErrorHandler = () => {
 
       // Log error if requested
       if (logError) {
-        logger.error("Error handled by useErrorHandler", {
+        logger.error('Error handled by useErrorHandler', {
           message: errorMessage,
           context,
           details: errorDetails,
@@ -116,19 +109,17 @@ export const useErrorHandler = () => {
 
       // Show alert if requested
       if (showAlert) {
-        const alertButtons: Array<{ text: string; onPress?: () => void }> = [
-          { text: "OK" },
-        ];
+        const alertButtons: Array<{ text: string; onPress?: () => void }> = [{ text: 'OK' }];
 
         // Add retry button if retryable and callback provided
         if (retryable && onRetry) {
           alertButtons.unshift({
-            text: "Retry",
+            text: 'Retry',
             onPress: onRetry,
           });
         }
 
-        Alert.alert("Error", errorMessage, alertButtons);
+        Alert.alert('Error', errorMessage, alertButtons);
       }
 
       return {
@@ -143,16 +134,11 @@ export const useErrorHandler = () => {
 
   // Specific error handlers for common scenarios
   const handleNetworkError = useCallback(
-    (
-      error: NetworkError | Error | string,
-      context?: string,
-      onRetry?: () => void,
-    ) =>
+    (error: NetworkError | Error | string, context?: string, onRetry?: () => void) =>
       handleError(error, context, {
         showAlert: true,
         logError: true,
-        fallbackMessage:
-          "Network error. Please check your connection and try again.",
+        fallbackMessage: 'Network error. Please check your connection and try again.',
         ...(onRetry && { onRetry }),
         retryable: true,
       }),
@@ -161,7 +147,7 @@ export const useErrorHandler = () => {
 
   const handleAuthError = useCallback(
     (context?: string) =>
-      handleError("Authentication failed. Please log in again.", context, {
+      handleError('Authentication failed. Please log in again.', context, {
         showAlert: true,
         logError: true,
       }),
@@ -178,7 +164,7 @@ export const useErrorHandler = () => {
       return handleError(errorMessage, context, {
         showAlert: true,
         logError: true,
-        fallbackMessage: "Please check your input and try again.",
+        fallbackMessage: 'Please check your input and try again.',
       });
     },
     [handleError],
@@ -186,16 +172,12 @@ export const useErrorHandler = () => {
 
   const handleOfflineError = useCallback(
     (context?: string, onRetry?: () => void) =>
-      handleError(
-        "You appear to be offline. Please check your connection.",
-        context,
-        {
-          showAlert: true,
-          logError: false, // Don't log offline errors as they're expected
-          ...(onRetry && { onRetry }),
-          retryable: true,
-        },
-      ),
+      handleError('You appear to be offline. Please check your connection.', context, {
+        showAlert: true,
+        logError: false, // Don't log offline errors as they're expected
+        ...(onRetry && { onRetry }),
+        retryable: true,
+      }),
     [handleError],
   );
 

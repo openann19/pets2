@@ -5,14 +5,16 @@ export interface LegacyWebMessage {
   id: string;
   _id?: string;
   senderId?: string;
-  sender?: {
-    id: string;
-    _id?: string;
-    name?: string;
-    email?: string;
-    avatar?: string;
-    [key: string]: unknown;
-  } | string;
+  sender?:
+    | {
+        id: string;
+        _id?: string;
+        name?: string;
+        email?: string;
+        avatar?: string;
+        [key: string]: unknown;
+      }
+    | string;
   content: string;
   text?: string;
   message?: string;
@@ -42,7 +44,7 @@ import type { Message, User } from '../types';
 export function toCoreMessage(legacy: LegacyWebMessage): Message {
   const messageId = legacy._id ?? legacy.id;
   const contentCandidate = [legacy.content, legacy.text, legacy.message].find(
-    (value): value is string => typeof value === 'string' && value.trim().length > 0
+    (value): value is string => typeof value === 'string' && value.trim().length > 0,
   );
   const content = contentCandidate ?? '';
 
@@ -50,9 +52,10 @@ export function toCoreMessage(legacy: LegacyWebMessage): Message {
   let sender: User;
   if (typeof legacy.sender === 'string' || legacy.sender === undefined) {
     // Create minimal user object
-    const senderId = typeof legacy.sender === 'string' && legacy.sender.length > 0
-      ? legacy.sender
-      : legacy.senderId ?? messageId;
+    const senderId =
+      typeof legacy.sender === 'string' && legacy.sender.length > 0
+        ? legacy.sender
+        : (legacy.senderId ?? messageId);
     sender = {
       _id: senderId,
       id: senderId, // Alias for _id
@@ -115,7 +118,9 @@ export function toCoreMessage(legacy: LegacyWebMessage): Message {
       lastName,
       dateOfBirth: '',
       age: 0,
-  ...(senderObj.avatar != null && senderObj.avatar.trim() !== '' ? { avatar: senderObj.avatar } : {}),
+      ...(senderObj.avatar != null && senderObj.avatar.trim() !== ''
+        ? { avatar: senderObj.avatar }
+        : {}),
       location: {
         type: 'Point',
         coordinates: [0, 0],
@@ -167,7 +172,7 @@ export function toCoreMessage(legacy: LegacyWebMessage): Message {
   const messageType = isMessageType(normalizedType) ? normalizedType : 'text';
 
   // Convert attachments
-  const attachments = (legacy.attachments ?? []).map(att => {
+  const attachments = (legacy.attachments ?? []).map((att) => {
     const fileName = att.fileName?.trim();
     const fileNameObj = fileName != null && fileName.length > 0 ? { fileName } : {};
     const resolvedFileType = att.fileType ?? att.type;

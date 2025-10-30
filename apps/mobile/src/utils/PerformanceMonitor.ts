@@ -16,11 +16,14 @@ declare const __DEV__: boolean;
  * - Development-only monitoring
  */
 
-interface PerformanceMetrics {
+export interface PerformanceMetrics {
   fps: number;
   memoryUsage: number;
   interactionTime: number;
   timestamp: number;
+  gestureResponseTime?: number;
+  animationFrameTime?: number;
+  componentRenderTime?: number;
 }
 
 interface InteractionTiming {
@@ -50,7 +53,7 @@ class PerformanceMonitor {
    */
   public setEnabled(enabled: boolean): void {
     this.isEnabled = enabled && __DEV__;
-    
+
     if (this.isEnabled) {
       this.startFPSMonitoring();
     }
@@ -64,22 +67,22 @@ class PerformanceMonitor {
 
     const measureFPS = () => {
       const now = Date.now();
-      
+
       if (this.lastFrameTime > 0) {
         const deltaTime = now - this.lastFrameTime;
         this.frameCount++;
-        
+
         // Calculate FPS every second
         if (deltaTime >= 1000) {
           this.currentFPS = Math.round((this.frameCount * 1000) / deltaTime);
           this.frameCount = 0;
           this.lastFrameTime = now;
-          
+
           // Log low FPS warnings
           if (this.currentFPS < 30) {
             logger.warn('Low FPS detected', { fps: this.currentFPS });
           }
-          
+
           this.recordMetrics();
         }
       } else {
@@ -133,7 +136,10 @@ class PerformanceMonitor {
 
     // Log slow interactions
     if (duration > 100) {
-      logger.warn('Slow interaction detected', { interactionName: name, duration });
+      logger.warn('Slow interaction detected', {
+        interactionName: name,
+        duration,
+      });
     }
 
     this.interactions.delete(name);
@@ -143,16 +149,13 @@ class PerformanceMonitor {
   /**
    * Measure interaction with automatic timing
    */
-  public async measureInteraction<T>(
-    name: string,
-    fn: () => Promise<T> | T
-  ): Promise<T> {
+  public async measureInteraction<T>(name: string, fn: () => Promise<T> | T): Promise<T> {
     if (!this.isEnabled) {
       return await fn();
     }
 
     this.startInteraction(name);
-    
+
     try {
       const result = await fn();
       return result;
@@ -202,14 +205,14 @@ class PerformanceMonitor {
    */
   private getAverageInteractionTime(): number {
     const recentInteractions = Array.from(this.interactions.values())
-      .filter(interaction => interaction.duration !== undefined)
+      .filter((interaction) => interaction.duration !== undefined)
       .slice(-10); // Last 10 interactions
 
     if (recentInteractions.length === 0) return 0;
 
     const totalTime = recentInteractions.reduce(
       (sum, interaction) => sum + (interaction.duration !== undefined ? interaction.duration : 0),
-      0
+      0,
     );
 
     return totalTime / recentInteractions.length;
@@ -233,12 +236,14 @@ class PerformanceMonitor {
     memoryUsage: number;
     activeInteractions: number;
   } {
-    const fpsValues = this.metricsHistory.map(m => m.fps);
-    
+    const fpsValues = this.metricsHistory.map((m) => m.fps);
+
     return {
       currentFPS: this.currentFPS,
-      averageFPS: fpsValues.length > 0 ? 
-        Math.round(fpsValues.reduce((a, b) => a + b, 0) / fpsValues.length) : 0,
+      averageFPS:
+        fpsValues.length > 0
+          ? Math.round(fpsValues.reduce((a, b) => a + b, 0) / fpsValues.length)
+          : 0,
       minFPS: fpsValues.length > 0 ? Math.min(...fpsValues) : 0,
       maxFPS: fpsValues.length > 0 ? Math.max(...fpsValues) : 0,
       memoryUsage: this.getMemoryUsage(),
@@ -268,7 +273,7 @@ class PerformanceMonitor {
    * Wait for interactions to complete
    */
   public waitForInteractions(): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       InteractionManager.runAfterInteractions(resolve);
     });
   }
@@ -287,7 +292,7 @@ export const usePerformanceMonitor = () => {
   const endInteraction = (name: string) => {
     return performanceMonitor.endInteraction(name);
   };
-  const measureInteraction = <T>(name: string, fn: () => Promise<T> | T) => 
+  const measureInteraction = <T>(name: string, fn: () => Promise<T> | T) =>
     performanceMonitor.measureInteraction(name, fn);
   const getCurrentFPS = () => performanceMonitor.getCurrentFPS();
   const getPerformanceSummary = () => performanceMonitor.getPerformanceSummary();
@@ -311,7 +316,7 @@ export const withPerformanceMonitoring = (_name: string) => {
     descriptor.value = async function (...args: unknown[]): Promise<unknown> {
       return performanceMonitor.measureInteraction(
         `${target.constructor.name}.${propertyKey}`,
-        () => originalMethod.apply(this, args)
+        () => originalMethod.apply(this, args),
       );
     };
 
@@ -324,14 +329,14 @@ export const withPerformanceMonitoring = (_name: string) => {
  */
 export const withComponentPerformanceMonitoring = <P extends object>(
   Component: React.ComponentType<P>,
-  componentName?: string
+  componentName?: string,
 ): React.FC<P> => {
   const WrappedComponent: React.FC<P> = (props) => {
     const name = componentName ?? Component.displayName ?? Component.name;
-    
+
     React.useEffect(() => {
       performanceMonitor.startInteraction(`${name}.mount`);
-      
+
       return () => {
         performanceMonitor.endInteraction(`${name}.mount`);
       };
@@ -341,7 +346,7 @@ export const withComponentPerformanceMonitoring = <P extends object>(
   };
 
   WrappedComponent.displayName = `withPerformanceMonitoring(${Component.displayName !== undefined && Component.displayName !== '' ? Component.displayName : Component.name})`;
-  
+
   return WrappedComponent;
 };
 

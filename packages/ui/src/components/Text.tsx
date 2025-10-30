@@ -3,7 +3,17 @@ import { useTheme } from '../theme/ThemeProvider';
 import type { ThemeTypographyScale } from '../theme/theme';
 
 export type TextVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'body' | 'caption' | 'mono';
-export type TextElement = 'p' | 'span' | 'div' | 'h1' | 'h2' | 'h3' | 'h4' | 'label' | 'strong' | 'em';
+export type TextElement =
+  | 'p'
+  | 'span'
+  | 'div'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'label'
+  | 'strong'
+  | 'em';
 
 export interface TextProps extends HTMLAttributes<HTMLElement> {
   readonly as?: TextElement;
@@ -59,7 +69,11 @@ export const Text = forwardRef<HTMLElement, TextProps>(
     const ElementTag = element;
 
     return (
-      <ElementTag ref={ref as never} style={computedStyle} {...rest}>
+      <ElementTag
+        ref={ref as never}
+        style={computedStyle}
+        {...rest}
+      >
         {children}
       </ElementTag>
     );

@@ -7,7 +7,7 @@ import {
   EnhancedInput,
   LoadingSkeleton,
 } from '@/components/admin/UIEnhancements';
-import { Icon } from '@/src/components/UI/icon-helper';
+import { Icon } from '@/components/UI/icon-helper';
 import {
   ArrowDownTrayIcon,
   ArrowPathIcon,
@@ -269,7 +269,7 @@ export default function BillingDashboardPage() {
               { value: '1y', label: 'Last year' },
             ]}
             value={dateRange}
-            onChange={(v) => setDateRange(v as '7d' | '30d' | '90d' | '1y')}
+            onChange={(v: string | number) => setDateRange(v as '7d' | '30d' | '90d' | '1y')}
           />
           <EnhancedButton
             onClick={exportCustomers}
@@ -478,7 +478,7 @@ export default function BillingDashboardPage() {
                 <EnhancedInput
                   placeholder="Search customers..."
                   value={searchTerm}
-                  onChange={(v) => setSearchTerm(v)}
+                  onChange={(v: string | number) => setSearchTerm(v)}
                   ariaLabel="Search customers"
                 />
                 <EnhancedDropdown
@@ -490,7 +490,7 @@ export default function BillingDashboardPage() {
                     { value: 'gold', label: 'Gold' },
                   ]}
                   value={filterTier}
-                  onChange={(v) => setFilterTier(v as 'all' | 'basic' | 'premium' | 'gold')}
+                  onChange={(v: string | number) => setFilterTier(v as 'all' | 'basic' | 'premium' | 'gold')}
                 />
                 <EnhancedDropdown
                   label="Status"
@@ -501,7 +501,7 @@ export default function BillingDashboardPage() {
                     { value: 'past_due', label: 'Past Due' },
                   ]}
                   value={filterStatus}
-                  onChange={(v) => setFilterStatus(v as 'all' | 'active' | 'canceled' | 'past_due')}
+                  onChange={(v: string | number) => setFilterStatus(v as 'all' | 'active' | 'canceled' | 'past_due')}
                 />
               </div>
             </div>

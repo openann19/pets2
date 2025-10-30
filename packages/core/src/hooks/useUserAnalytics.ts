@@ -44,9 +44,7 @@ interface UseUserAnalyticsReturn {
 /**
  * Hook to fetch and track user analytics
  */
-export function useUserAnalytics(
-  options: UseUserAnalyticsOptions = {}
-): UseUserAnalyticsReturn {
+export function useUserAnalytics(options: UseUserAnalyticsOptions = {}): UseUserAnalyticsReturn {
   const { userId, autoRefresh = false, refreshInterval = 60000 } = options;
 
   const [analytics, setAnalytics] = useState<AnalyticsTimeframe | null>(null);
@@ -65,7 +63,7 @@ export function useUserAnalytics(
 
       const response = await fetch(`/api/analytics/user/${userId}`, {
         headers: {
-          'Authorization': `Bearer ${getLocalStorageItem('accessToken') ?? ''}`,
+          Authorization: `Bearer ${getLocalStorageItem('accessToken') ?? ''}`,
         },
       });
 

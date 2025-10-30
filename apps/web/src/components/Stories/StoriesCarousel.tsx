@@ -184,17 +184,17 @@ export default function StoriesCarousel({ stories, currentStoryIndex, onClose, o
       {/* Navigation areas */}
       <div className="absolute inset-0 flex">
         {/* Left side - previous story */}
-        <div className="flex-1 cursor-pointer" onClick={() => handleStoryTap('left')}/>
+        <div className="flex-1 cursor-pointer" onClick={() => { handleStoryTap('left'); }}/>
         
         {/* Right side - next story */}
-        <div className="flex-1 cursor-pointer" onClick={() => handleStoryTap('right')}/>
+        <div className="flex-1 cursor-pointer" onClick={() => { handleStoryTap('right'); }}/>
       </div>
 
       {/* Bottom actions */}
       <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
         <div className="flex items-center justify-center space-x-8">
           {/* Like */}
-          <button onClick={() => handleReaction('❤️')} className="p-3 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors">
+          <button onClick={() => { handleReaction('❤️'); }} className="p-3 rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors">
             <HeartIcon className="w-6 h-6"/>
           </button>
 
@@ -235,7 +235,7 @@ export default function StoriesCarousel({ stories, currentStoryIndex, onClose, o
       <AnimatePresence>
         {showReactions && (<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-20">
             <div className="flex items-center space-x-4 p-4 bg-black/80 backdrop-blur-sm rounded-full">
-              {['❤️', '😂', '😍', '😮', '😢', '😡'].map((emoji) => (<button key={emoji} onClick={() => handleReaction(emoji)} className="text-2xl hover:scale-110 transition-transform">
+              {['❤️', '😂', '😍', '😮', '😢', '😡'].map((emoji) => (<button key={emoji} onClick={() => { handleReaction(emoji); }} className="text-2xl hover:scale-110 transition-transform">
                   {emoji}
                 </button>))}
             </div>

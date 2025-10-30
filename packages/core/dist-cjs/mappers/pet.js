@@ -45,6 +45,7 @@ function toCorePet(legacy) {
     }));
     const corePet = {
         _id: legacy.id,
+        id: legacy.id,
         owner: legacy.ownerId != null ? legacy.ownerId : '',
         name: legacy.name.length > 0 ? legacy.name : 'Unknown',
         species,
@@ -128,4 +129,3 @@ function toLegacyPet(pet) {
     };
     return legacy;
 }
-//# sourceMappingURL=pet.js.map

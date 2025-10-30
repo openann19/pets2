@@ -24,7 +24,7 @@ export const dynamicImport = <T>(
       }
       
       return { default: module as any };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Dynamic import failed:', { error });
       return { default: fallback || (() => React.createElement('div', null, 'Loading failed')) };
     }
@@ -69,7 +69,7 @@ export const optimizeImageUrl = (
 };
 
 // ====== BUNDLE ANALYSIS ======
-export const analyzeBundleSize = () => {
+export const analyzeBundleSize = (): void | { scripts: number; styles: number; total: number; estimate: string } => {
   if (typeof window === 'undefined') return;
   
   const scripts = Array.from(document.querySelectorAll('script[src]'));
@@ -96,7 +96,7 @@ export class PerformanceMonitor {
     this.initializeObservers();
   }
   
-  private initializeObservers() {
+  private initializeObservers(): void {
     if (typeof window === 'undefined') return;
     
     try {
@@ -105,8 +105,12 @@ export class PerformanceMonitor {
         for (const entry of list.getEntries()) {
           if (entry.entryType === 'navigation') {
             const nav = entry as PerformanceNavigationTiming;
-            this.trackMetric('page_load', nav.loadEventEnd - nav.navigationStart);
-            this.trackMetric('first_paint', nav.domContentLoadedEventEnd - nav.navigationStart);
+            const loadEnd = nav.loadEventEnd ?? 0;
+            const domContentLoadedEnd = nav.domContentLoadedEventEnd ?? 0;
+            const fetchStart = nav.fetchStart ?? 0;
+            
+            this.trackMetric('page_load', loadEnd - fetchStart);
+            this.trackMetric('first_paint', domContentLoadedEnd - fetchStart);
           }
         }
       });
@@ -138,7 +142,7 @@ export class PerformanceMonitor {
       clsObserver.observe({ entryTypes: ['layout-shift'] });
       this.observers.push(clsObserver);
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.debug('Performance observers not supported');
     }
   }
@@ -238,14 +242,14 @@ export class PerformanceMonitor {
   }
   
   destroy() {
-    this.observers.forEach(observer => observer.disconnect());
+    this.observers.forEach(observer => { observer.disconnect(); });
     this.observers = [];
     this.metrics.clear();
   }
 }
 
 // ====== ANIMATION PERFORMANCE ======
-export const optimizeAnimations = () => {
+export const optimizeAnimations = (): { prefersReducedMotion: boolean; isLowEndDevice: boolean } | undefined => {
   if (typeof window === 'undefined') return;
   
   // Detect reduced motion preference
@@ -272,7 +276,7 @@ export const optimizeAnimations = () => {
 };
 
 // ====== MEMORY OPTIMIZATION ======
-export const optimizeMemory = () => {
+export const optimizeMemory = (): { getMemoryInfo: () => { used: string; total: string; limit: string; percentage: string } | null; cleanupImages: () => void; startMemoryMonitoring: () => void } | undefined => {
   if (typeof window === 'undefined') return;
   
   // Monitor memory usage
@@ -319,19 +323,22 @@ export const optimizeMemory = () => {
 };
 
 // ====== NETWORK OPTIMIZATION ======
-export const optimizeNetwork = () => {
+export const optimizeNetwork = (): { getConnectionInfo: () => { effectiveType: string; downlink: number; rtt: number; saveData: boolean } | null; shouldOptimizeForConnection: () => boolean } | undefined => {
   if (typeof window === 'undefined') return;
   
   // Detect connection quality
   const getConnectionInfo = () => {
     if (navigator.connection) {
       const conn = navigator.connection;
-      return {
-        effectiveType: conn.effectiveType,
-        downlink: conn.downlink,
-        rtt: conn.rtt,
-        saveData: conn.saveData,
-      };
+      // Type guard: ensure all properties exist before returning
+      if (conn.effectiveType && conn.downlink !== undefined && conn.rtt !== undefined && conn.saveData !== undefined) {
+        return {
+          effectiveType: conn.effectiveType,
+          downlink: conn.downlink,
+          rtt: conn.rtt,
+          saveData: conn.saveData,
+        };
+      }
     }
     return null;
   };
@@ -345,7 +352,7 @@ export const optimizeNetwork = () => {
       conn.saveData ||
       conn.effectiveType === 'slow-2g' ||
       conn.effectiveType === '2g' ||
-      conn.downlink < 1
+      (conn.downlink !== undefined && conn.downlink < 1)
     );
   };
   
@@ -353,13 +360,13 @@ export const optimizeNetwork = () => {
 };
 
 // ====== PRELOADING UTILITIES ======
-export const preloadCriticalResources = () => {
+export const preloadCriticalResources = (): { preloadImage: (src: string) => Promise<void>; preloadFont: (fontUrl: string) => Promise<void>; preloadCriticalImages: () => Promise<void> } | undefined => {
   if (typeof window === 'undefined') return;
   
   const preloadImage = (src: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.onload = () => resolve();
+      img.onload = () => { resolve(); };
       img.onerror = reject;
       img.src = src;
     });
@@ -373,7 +380,7 @@ export const preloadCriticalResources = () => {
       link.type = 'font/woff2';
       link.crossOrigin = 'anonymous';
       link.href = fontUrl;
-      link.onload = () => resolve();
+      link.onload = () => { resolve(); };
       link.onerror = reject;
       document.head.appendChild(link);
     });
@@ -389,7 +396,7 @@ export const preloadCriticalResources = () => {
     try {
       await Promise.all(criticalImages.map(preloadImage));
       logger.info('✅ Critical images preloaded');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Some critical images failed to preload:', { error });
     }
   };

@@ -10,11 +10,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { NavigationProp } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "@mobile/src/theme";
 import type { RootStackParamList } from "../navigation/types";
 
 const PremiumCancelScreen = (): React.JSX.Element => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const handleTryAgain = () => {
@@ -35,35 +36,48 @@ const PremiumCancelScreen = (): React.JSX.Element => {
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <View style={styles.iconContainer}>
-            <Ionicons name="close-circle" size={80} color="#ef4444" />
+            <Ionicons name="close-circle" size={80} color={theme.colors.danger} />
           </View>
 
-          <Text style={[styles.title, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
+          >
             Payment Cancelled
           </Text>
 
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.subtitle,
+              { color: colors.onMuted },
+            ])}
+          >
             No worries! Your payment was cancelled and you weren't charged. You
             can try again anytime.
           </Text>
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.primaryButton,
                 { backgroundColor: colors.primary },
-              ]}
-              onPress={handleTryAgain}
+              ])}
+               testID="PremiumCancelScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleTryAgain}
             >
               <Text style={styles.primaryButtonText}>Try Again</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.secondaryButton, { borderColor: colors.primary }]}
-              onPress={handleGoBack}
+              style={StyleSheet.flatten([
+                styles.secondaryButton,
+                { borderColor: colors.primary },
+              ])}
+               testID="PremiumCancelScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleGoBack}
             >
               <Text
-                style={[styles.secondaryButtonText, { color: colors.primary }]}
+                style={StyleSheet.flatten([
+                  styles.secondaryButtonText,
+                  { color: colors.primary },
+                ])}
               >
                 Go Back
               </Text>

@@ -107,4 +107,3 @@ const _getGeminiClient = () => {
     return geminiClient;
 };
 exports._getGeminiClient = _getGeminiClient;
-//# sourceMappingURL=gemini-client.js.map

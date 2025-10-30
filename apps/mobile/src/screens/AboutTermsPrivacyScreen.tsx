@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   Alert,
   Linking,
@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "@/theme";
 
 interface AboutTermsPrivacyScreenProps {
   navigation: {
@@ -30,7 +31,9 @@ interface LegalDocument {
 
 function AboutTermsPrivacyScreen({
   navigation,
-}: AboutTermsPrivacyScreenProps): JSX.Element {
+}: AboutTermsPrivacyScreenProps): React.JSX.Element {
+  const theme = useTheme();
+  const { colors } = theme;
   const legalDocuments: LegalDocument[] = [
     {
       id: "terms",
@@ -47,7 +50,7 @@ function AboutTermsPrivacyScreen({
       description: "How we collect and use your data",
       icon: "lock-closed-outline",
       action: () => {
-        Alert.alert("Privacy Policy", "Privacy policy document coming soon!");
+        Alert.alert("Privacy Policy", "Privacy document coming soon!");
       },
     },
     {
@@ -87,10 +90,174 @@ function AboutTermsPrivacyScreen({
     });
   }, []);
 
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    safeArea: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+    },
+    backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      overflow: "hidden",
+    },
+    backButtonBlur: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: colors.onPrimary,
+    },
+    headerSpacer: {
+      width: 40,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: 20,
+    },
+    appInfoCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: "rgba(255,255,255,0.1)",
+      borderRadius: 16,
+      padding: 20,
+      marginBottom: 24,
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.2)",
+    },
+    appIcon: {
+      width: 60,
+      height: 60,
+      borderRadius: 16,
+      backgroundColor: "rgba(59, 130, 246, 0.2)",
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: 16,
+    },
+    appDetails: {
+      flex: 1,
+    },
+    appName: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: colors.onPrimary,
+      marginBottom: 4,
+    },
+    appTagline: {
+      fontSize: 14,
+      color: "rgba(255,255,255,0.8)",
+      marginBottom: 4,
+    },
+    appVersion: {
+      fontSize: 12,
+      color: "rgba(255,255,255,0.6)",
+    },
+    websiteCard: {
+      borderRadius: 16,
+      overflow: "hidden",
+      marginBottom: 24,
+    },
+    websiteBlur: {
+      padding: 16,
+    },
+    websiteContent: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    websiteText: {
+      flex: 1,
+      marginLeft: 16,
+    },
+    websiteTitle: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: colors.onPrimary,
+      marginBottom: 4,
+    },
+    websiteDescription: {
+      fontSize: 14,
+      color: "rgba(255,255,255,0.7)",
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: colors.onPrimary,
+      marginBottom: 16,
+    },
+    documentCard: {
+      marginBottom: 12,
+      borderRadius: 16,
+      overflow: "hidden",
+    },
+    documentBlur: {
+      padding: 16,
+    },
+    documentContent: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    documentIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: 16,
+    },
+    documentText: {
+      flex: 1,
+    },
+    documentTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.onPrimary,
+      marginBottom: 4,
+    },
+    documentDescription: {
+      fontSize: 14,
+      color: "rgba(255,255,255,0.7)",
+      lineHeight: 20,
+    },
+    contactCard: {
+      borderRadius: 16,
+      padding: 20,
+      marginBottom: 24,
+    },
+    contactItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    contactText: {
+      fontSize: 14,
+      color: colors.onPrimary,
+      marginLeft: 12,
+    },
+    copyright: {
+      textAlign: "center",
+      fontSize: 12,
+      color: "rgba(255,255,255,0.6)",
+      marginTop: 24,
+      marginBottom: 32,
+    },
+  }), [colors]);
+
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#a8edea", "#fed6e3", "#a8edea"]}
+        colors={[colors.primary, colors.secondary, colors.primary]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -99,7 +266,7 @@ function AboutTermsPrivacyScreen({
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => {
+             testID="AboutTermsPrivacyScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
                 () => {},
               );
@@ -119,7 +286,7 @@ function AboutTermsPrivacyScreen({
           {/* App Info */}
           <BlurView intensity={15} style={styles.appInfoCard}>
             <View style={styles.appIcon}>
-              <Ionicons name="paw-outline" size={40} color="#3B82F6" />
+              <Ionicons name="paw-outline" size={40} color={theme.colors.info} />
             </View>
             <View style={styles.appDetails}>
               <Text style={styles.appName}>PawfectMatch</Text>
@@ -131,10 +298,10 @@ function AboutTermsPrivacyScreen({
           </BlurView>
 
           {/* Quick Links */}
-          <TouchableOpacity style={styles.websiteCard} onPress={handleWebsite}>
+          <TouchableOpacity style={styles.websiteCard}  testID="AboutTermsPrivacyScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleWebsite}>
             <BlurView intensity={20} style={styles.websiteBlur}>
               <View style={styles.websiteContent}>
-                <Ionicons name="globe-outline" size={24} color="#10B981" />
+                <Ionicons name="globe-outline" size={24} color={theme.colors.success} />
                 <View style={styles.websiteText}>
                   <Text style={styles.websiteTitle}>Visit Our Website</Text>
                   <Text style={styles.websiteDescription}>
@@ -157,17 +324,17 @@ function AboutTermsPrivacyScreen({
             <TouchableOpacity
               key={document.id}
               style={styles.documentCard}
-              onPress={() => {
+               testID="AboutTermsPrivacyScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleDocument(document);
               }}
             >
               <BlurView intensity={20} style={styles.documentBlur}>
                 <View style={styles.documentContent}>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.documentIcon,
-                      { backgroundColor: "#8B5CF6" },
-                    ]}
+                      { backgroundColor: theme.colors.secondary },
+                    ])}
                   >
                     <Ionicons name={document.icon} size={20} color="white" />
                   </View>
@@ -188,21 +355,23 @@ function AboutTermsPrivacyScreen({
           ))}
 
           {/* Contact Info */}
-          <Text style={[styles.sectionTitle, { marginTop: 32 }]}>
+          <Text
+            style={StyleSheet.flatten([styles.sectionTitle, { marginTop: 32 }])}
+          >
             Contact Information
           </Text>
 
           <BlurView intensity={15} style={styles.contactCard}>
             <View style={styles.contactItem}>
-              <Ionicons name="mail-outline" size={20} color="#3B82F6" />
+              <Ionicons name="mail-outline" size={20} color={theme.colors.info} />
               <Text style={styles.contactText}>support@pawfectmatch.com</Text>
             </View>
             <View style={styles.contactItem}>
-              <Ionicons name="call-outline" size={20} color="#10B981" />
+              <Ionicons name="call-outline" size={20} color={theme.colors.success} />
               <Text style={styles.contactText}>1-800-PET-MATCH</Text>
             </View>
             <View style={styles.contactItem}>
-              <Ionicons name="location-outline" size={20} color="#F59E0B" />
+              <Ionicons name="location-outline" size={20} color={theme.colors.warning} />
               <Text style={styles.contactText}>San Francisco, CA</Text>
             </View>
           </BlurView>
@@ -216,169 +385,5 @@ function AboutTermsPrivacyScreen({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-  backButtonBlur: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
-  },
-  headerSpacer: {
-    width: 40,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  appInfoCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-  },
-  appIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 16,
-    backgroundColor: "rgba(59, 130, 246, 0.2)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 16,
-  },
-  appDetails: {
-    flex: 1,
-  },
-  appName: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
-    marginBottom: 4,
-  },
-  appTagline: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.8)",
-    marginBottom: 4,
-  },
-  appVersion: {
-    fontSize: 12,
-    color: "rgba(255,255,255,0.6)",
-  },
-  websiteCard: {
-    borderRadius: 16,
-    overflow: "hidden",
-    marginBottom: 24,
-  },
-  websiteBlur: {
-    padding: 16,
-  },
-  websiteContent: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  websiteText: {
-    flex: 1,
-    marginLeft: 16,
-  },
-  websiteTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "white",
-    marginBottom: 4,
-  },
-  websiteDescription: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.7)",
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-    marginBottom: 16,
-  },
-  documentCard: {
-    marginBottom: 12,
-    borderRadius: 16,
-    overflow: "hidden",
-  },
-  documentBlur: {
-    padding: 16,
-  },
-  documentContent: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  documentIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 16,
-  },
-  documentText: {
-    flex: 1,
-  },
-  documentTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "white",
-    marginBottom: 4,
-  },
-  documentDescription: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.7)",
-    lineHeight: 20,
-  },
-  contactCard: {
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-  },
-  contactItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  contactText: {
-    fontSize: 14,
-    color: "white",
-    marginLeft: 12,
-  },
-  copyright: {
-    textAlign: "center",
-    fontSize: 12,
-    color: "rgba(255,255,255,0.6)",
-    marginTop: 24,
-    marginBottom: 32,
-  },
-});
 
 export default AboutTermsPrivacyScreen;

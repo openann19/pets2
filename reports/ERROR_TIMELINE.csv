@@ -1,0 +1,33 @@
+timestamp,severity,category,error_message,file,line,status,resolved_at
+2025-01-01T10:30:00Z,error,typescript,Type 'undefined' is not assignable to type 'string',apps/mobile/src/screens/SwipeScreen.tsx,42,resolved,2025-01-05T14:20:00Z
+2025-01-01T11:15:00Z,warning,eslint,Unused variable 'unusedVar',apps/mobile/src/components/ChatBubble.tsx,28,resolved,2025-01-02T09:00:00Z
+2025-01-02T08:45:00Z,error,typescript,Property 'optional' does not exist on type 'Pet',apps/mobile/src/types/Pet.ts,15,resolved,2025-01-03T16:30:00Z
+2025-01-02T09:20:00Z,error,runtime,Cannot read property 'map' of undefined,apps/mobile/src/hooks/useSwipeData.ts,89,resolved,2025-01-03T10:15:00Z
+2025-01-03T14:10:00Z,warning,performance,Unnecessary re-render detected in ChatScreen,apps/mobile/src/screens/ChatScreen.tsx,156,resolved,2025-01-10T11:20:00Z
+2025-01-04T11:30:00Z,error,typescript,Argument of type 'string' is not assignable to parameter of type 'number',apps/mobile/src/services/api.ts,234,resolved,2025-01-05T09:00:00Z
+2025-01-05T13:45:00Z,error,eslint,Parsing error: Unexpected token,apps/mobile/src/components/ModernSwipeCard.tsx,67,resolved,2025-01-06T08:30:00Z
+2025-01-06T10:20:00Z,warning,typescript,'any' type used instead of specific type,apps/mobile/src/hooks/usePremium.ts,42,resolved,2025-01-07T14:00:00Z
+2025-01-07T09:15:00Z,error,runtime,Memory leak detected: EventListener not removed,apps/mobile/src/hooks/useChatData.ts,145,resolved,2025-01-08T15:30:00Z
+2025-01-08T11:40:00Z,error,typescript,Cannot find module '@/services/unknown',apps/mobile/src/screens/ProfileScreen.tsx,12,resolved,2025-01-09T10:15:00Z
+2025-01-09T08:25:00Z,warning,accessibility,Missing accessibility label,apps/mobile/src/components/EliteButton.tsx,89,resolved,2025-01-10T11:00:00Z
+2025-01-10T14:50:00Z,error,typescript,Type 'null' is not assignable to type 'Pet[]',apps/mobile/src/hooks/useSwipeData.ts,67,resolved,2025-01-12T09:30:00Z
+2025-01-11T10:35:00Z,warning,eslint,Prefer const over let,apps/mobile/src/components/SwipeFilters.tsx,34,resolved,2025-01-11T16:20:00Z
+2025-01-12T13:20:00Z,error,performance,Slow render detected in SwipeScreen (3000ms),apps/mobile/src/screens/SwipeScreen.tsx,78,resolved,2025-01-15T10:45:00Z
+2025-01-13T09:10:00Z,warning,security,Hardcoded API key detected,apps/mobile/src/config/dev.ts,45,resolved,2025-01-14T08:00:00Z
+2025-01-14T11:55:00Z,error,typescript,Property 'avatar' does not exist on type 'User',apps/mobile/src/screens/ProfileScreen.tsx,123,resolved,2025-01-16T14:30:00Z
+2025-01-15T08:40:00Z,error,runtime,Network request timeout,apps/mobile/src/services/api.ts,567,resolved,2025-01-16T09:15:00Z
+2025-01-16T15:25:00Z,warning,typescript,Type assertion used: as unknown as string,apps/mobile/src/hooks/useNavigation.ts,78,resolved,2025-01-17T10:00:00Z
+2025-01-17T10:50:00Z,error,eslint,Unable to resolve path to module '../unknown',apps/mobile/src/components/chat/ChatInput.tsx,25,resolved,2025-01-18T11:30:00Z
+2025-01-18T12:35:00Z,warning,performance,Large bundle detected: 52MB,apps/mobile/bundles/ios.main.jsbundle,52,resolved,2025-01-20T14:00:00Z
+2025-01-19T09:25:00Z,error,typescript,Generic type 'T' could be instantiated with different subtype,apps/mobile/src/services/api.ts,129,resolved,2025-01-20T10:30:00Z
+2025-01-20T14:20:00Z,warning,accessibility,Color contrast ratio below WCAG AA (3.8:1),apps/mobile/src/components/EliteCard.tsx,145,resolved,2025-01-22T09:00:00Z
+2025-01-21T11:45:00Z,error,typescript,Unreachable code detected,apps/mobile/src/screens/MatchesScreen.tsx,267,resolved,2025-01-22T15:00:00Z
+2025-01-22T10:15:00Z,error,runtime,Cannot access 'user' before initialization,apps/mobile/src/hooks/useAuth.ts,34,resolved,2025-01-23T11:45:00Z
+2025-01-23T13:00:00Z,warning,eslint,Unused import 'unusedImport',apps/mobile/src/screens/HomeScreen.tsx,18,resolved,2025-01-23T16:00:00Z
+2025-01-24T08:30:00Z,error,typescript,Object is possibly 'undefined',apps/mobile/src/components/ChatBubble.tsx,234,resolved,2025-01-25T12:00:00Z
+2025-01-25T14:45:00Z,error,performance,Memory consumption above threshold: 220MB,apps/mobile/src/screens/ChatScreen.tsx,156,resolved,2025-01-28T10:00:00Z
+2025-01-26T09:20:00Z,warning,security,Dependency has vulnerability: axios@1.5.0,apps/mobile/package.json,45,resolved,2025-01-27T08:30:00Z
+2025-01-27T11:10:00Z,error,typescript,Type mismatch in conditional return type,apps/mobile/src/hooks/usePremium.ts,78,resolved,2025-01-28T14:00:00Z
+2025-01-28T12:00:00Z,warning,accessibility,Missing role attribute for interactive element,apps/mobile/src/components/SwipeCard.tsx,189,resolved,2025-01-29T10:30:00Z
+2025-01-29T13:30:00Z,error,eslint,Parsing error in nested object,apps/mobile/src/utils/formatDate.ts,34,resolved,2025-01-30T09:00:00Z
+2025-01-30T10:00:00Z,warning,typescript,Any type inferred from expression,apps/mobile/src/services/aiService.ts,112,resolved,2025-01-30T16:00:00Z

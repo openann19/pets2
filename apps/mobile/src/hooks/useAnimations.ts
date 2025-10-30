@@ -1,8 +1,8 @@
 // Mobile Animations for PawfectMatch Premium
 // High-impact micro-interactions for React Native
 
-import * as Haptics from "expo-haptics";
-import { logger } from "@pawfectmatch/core";
+import * as Haptics from 'expo-haptics';
+import { logger } from '@pawfectmatch/core';
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -13,35 +13,12 @@ import {
   interpolate,
   Extrapolate,
   runOnJS,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
+import { SPRING, DUR } from '../animation/index';
 
-// Animation configurations
-export const AnimationConfigs = {
-  spring: {
-    damping: 15,
-    stiffness: 150,
-    mass: 1,
-  },
-  springBouncy: {
-    damping: 8,
-    stiffness: 200,
-    mass: 0.8,
-  },
-  springGentle: {
-    damping: 20,
-    stiffness: 100,
-    mass: 1.2,
-  },
-  timing: {
-    duration: 300,
-  },
-  timingFast: {
-    duration: 150,
-  },
-  timingSlow: {
-    duration: 500,
-  },
-};
+// Re-export animation constants for direct use
+// No longer wrapping in AnimationConfigs object - import SPRING and DUR directly
+export { SPRING, DUR };
 
 interface UseHoverLiftReturn {
   animatedStyle: ReturnType<typeof useAnimatedStyle>;
@@ -59,25 +36,20 @@ export function useHoverLift(): UseHoverLiftReturn {
     return {
       transform: [{ scale: scale.value }, { translateY: translateY.value }],
       shadowOpacity: shadowOpacity.value,
-      shadowRadius: interpolate(
-        shadowOpacity.value,
-        [0.1, 0.3],
-        [4, 20],
-        Extrapolate.CLAMP,
-      ),
+      shadowRadius: interpolate(shadowOpacity.value, [0.1, 0.3], [4, 20], Extrapolate.CLAMP),
     };
   });
 
   const onPressIn = () => {
-    scale.value = withSpring(1.05, AnimationConfigs.springBouncy);
-    translateY.value = withSpring(-8, AnimationConfigs.springBouncy);
-    shadowOpacity.value = withTiming(0.3, AnimationConfigs.timingFast);
+    scale.value = withSpring(1.05, SPRING.stiff);
+    translateY.value = withSpring(-8, SPRING.stiff);
+    shadowOpacity.value = withTiming(0.3, { duration: DUR.fast });
   };
 
   const onPressOut = () => {
-    scale.value = withSpring(1, AnimationConfigs.springGentle);
-    translateY.value = withSpring(0, AnimationConfigs.springGentle);
-    shadowOpacity.value = withTiming(0.1, AnimationConfigs.timingFast);
+    scale.value = withSpring(1, SPRING.soft);
+    translateY.value = withSpring(0, SPRING.soft);
+    shadowOpacity.value = withTiming(0.1, { duration: DUR.fast });
   };
 
   return { animatedStyle, onPressIn, onPressOut };
@@ -124,44 +96,40 @@ export function useSwipeAnimations(): UseSwipeAnimationsReturn {
 
   const swipeRightStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { translateX: translateX.value },
-        { rotate: `${rotate.value}deg` },
-      ],
+      transform: [{ translateX: translateX.value }, { rotate: `${rotate.value}deg` }],
       opacity: opacity.value,
     };
   });
 
   const swipeLeftStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { translateX: translateX.value },
-        { rotate: `${rotate.value}deg` },
-      ],
+      transform: [{ translateX: translateX.value }, { rotate: `${rotate.value}deg` }],
       opacity: opacity.value,
     };
   });
 
   const animateSwipeRight = (onComplete?: () => void) => {
-    translateX.value = withTiming(300, AnimationConfigs.timing);
-    rotate.value = withTiming(15, AnimationConfigs.timing);
-    opacity.value = withTiming(0, AnimationConfigs.timing, () => {
+    const config = { duration: DUR.normal };
+    translateX.value = withTiming(300, config);
+    rotate.value = withTiming(15, config);
+    opacity.value = withTiming(0, config, () => {
       if (onComplete) runOnJS(onComplete)();
     });
   };
 
   const animateSwipeLeft = (onComplete?: () => void) => {
-    translateX.value = withTiming(-300, AnimationConfigs.timing);
-    rotate.value = withTiming(-15, AnimationConfigs.timing);
-    opacity.value = withTiming(0, AnimationConfigs.timing, () => {
+    const config = { duration: DUR.normal };
+    translateX.value = withTiming(-300, config);
+    rotate.value = withTiming(-15, config);
+    opacity.value = withTiming(0, config, () => {
       if (onComplete) runOnJS(onComplete)();
     });
   };
 
   const resetSwipe = () => {
-    translateX.value = withSpring(0, AnimationConfigs.springGentle);
-    rotate.value = withSpring(0, AnimationConfigs.springGentle);
-    opacity.value = withSpring(1, AnimationConfigs.springGentle);
+    translateX.value = withSpring(0, SPRING.soft);
+    rotate.value = withSpring(0, SPRING.soft);
+    opacity.value = withSpring(1, SPRING.soft);
   };
 
   return {
@@ -192,21 +160,21 @@ export function useButtonMicro(): UseButtonMicroReturn {
   });
 
   const onPressIn = () => {
-    scale.value = withSpring(0.98, AnimationConfigs.springBouncy);
-    translateY.value = withSpring(2, AnimationConfigs.springBouncy);
+    scale.value = withSpring(0.98, SPRING.stiff);
+    translateY.value = withSpring(2, SPRING.stiff);
 
     // Haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const onPressOut = () => {
-    scale.value = withSpring(1, AnimationConfigs.springGentle);
-    translateY.value = withSpring(0, AnimationConfigs.springGentle);
+    scale.value = withSpring(1, SPRING.soft);
+    translateY.value = withSpring(0, SPRING.soft);
   };
 
   const onHover = () => {
-    scale.value = withSpring(1.02, AnimationConfigs.springGentle);
-    translateY.value = withSpring(-2, AnimationConfigs.springGentle);
+    scale.value = withSpring(1.02, SPRING.soft);
+    translateY.value = withSpring(-2, SPRING.soft);
   };
 
   return { animatedStyle, onPressIn, onPressOut, onHover };
@@ -309,13 +277,15 @@ export function useGlow(): UseGlowReturn {
   });
 
   const startGlow = () => {
-    shadowOpacity.value = withTiming(0.4, AnimationConfigs.timing);
-    shadowRadius.value = withTiming(20, AnimationConfigs.timing);
+    const config = { duration: DUR.normal };
+    shadowOpacity.value = withTiming(0.4, config);
+    shadowRadius.value = withTiming(20, config);
   };
 
   const stopGlow = () => {
-    shadowOpacity.value = withTiming(0, AnimationConfigs.timing);
-    shadowRadius.value = withTiming(0, AnimationConfigs.timing);
+    const config = { duration: DUR.normal };
+    shadowOpacity.value = withTiming(0, config);
+    shadowRadius.value = withTiming(0, config);
   };
 
   return { animatedStyle, startGlow, stopGlow };
@@ -338,20 +308,18 @@ export function useHoverScale(): UseHoverScaleReturn {
   });
 
   const onHover = () => {
-    scale.value = withSpring(1.05, AnimationConfigs.springGentle);
+    scale.value = withSpring(1.05, SPRING.soft);
   };
 
   const onLeave = () => {
-    scale.value = withSpring(1, AnimationConfigs.springGentle);
+    scale.value = withSpring(1, SPRING.soft);
   };
 
   return { animatedStyle, onHover, onLeave };
 }
 
 // Enhanced haptic feedback
-export function triggerHaptic(
-  type: "light" | "medium" | "heavy" = "medium",
-): void {
+export function triggerHaptic(type: 'light' | 'medium' | 'heavy' = 'medium'): void {
   const hapticTypes = {
     light: Haptics.ImpactFeedbackStyle.Light,
     medium: Haptics.ImpactFeedbackStyle.Medium,
@@ -362,7 +330,7 @@ export function triggerHaptic(
 }
 
 // Sound feedback (if available)
-export function triggerSound(type: "hover" | "press" = "press"): void {
+export function triggerSound(type: 'hover' | 'press' = 'press'): void {
   // Note: Sound feedback would require additional audio setup
   // This is a placeholder for future implementation
   logger.info(`Sound feedback: ${type}`);

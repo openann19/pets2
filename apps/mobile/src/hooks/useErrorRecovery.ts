@@ -1,8 +1,8 @@
-import NetInfo from "@react-native-community/netinfo";
-import { useCallback } from "react";
-import { logger } from "../services/logger";
-import { useErrorHandler } from "./useErrorHandler";
-import { useRetry } from "./useRetry";
+import NetInfo from '@react-native-community/netinfo';
+import { useCallback } from 'react';
+import { logger } from '../services/logger';
+import { useErrorHandler } from './useErrorHandler';
+import { useRetry } from './useRetry';
 
 interface RecoveryOptions {
   enableOfflineRetry?: boolean;
@@ -27,8 +27,7 @@ export const useErrorRecovery = (options: RecoveryOptions = {}) => {
     onRecoveryFailure,
   } = options;
 
-  const { handleError, handleNetworkError, handleOfflineError } =
-    useErrorHandler();
+  const { handleError, handleNetworkError, handleOfflineError } = useErrorHandler();
 
   const offlineRetry = useRetry({
     maxAttempts: maxOfflineRetries,
@@ -38,8 +37,9 @@ export const useErrorRecovery = (options: RecoveryOptions = {}) => {
       logger.info(`Offline retry attempt ${attempt}/${maxOfflineRetries}`);
     },
     onFailure: (error) => {
-      logger.error("Offline retry failed", { error: error.message });
-      onRecoveryFailure?.(error);
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Offline retry failed', { error: errorObj });
+      onRecoveryFailure?.(errorObj);
     },
   });
 
@@ -51,8 +51,9 @@ export const useErrorRecovery = (options: RecoveryOptions = {}) => {
       logger.info(`Network retry attempt ${attempt}/${maxNetworkRetries}`);
     },
     onFailure: (error) => {
-      logger.error("Network retry failed", { error: error.message });
-      onRecoveryFailure?.(error);
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Network retry failed', { error: errorObj });
+      onRecoveryFailure?.(errorObj);
     },
   });
 
@@ -67,16 +68,11 @@ export const useErrorRecovery = (options: RecoveryOptions = {}) => {
 
         if (!networkState.isConnected && enableOfflineRetry) {
           // Handle offline scenario
-          return await offlineRetry.executeWithRetry(async (signal) => {
+          return await offlineRetry.executeWithRetry(async () => {
             // Check connectivity again
             const currentState = await NetInfo.fetch();
             if (!currentState.isConnected) {
-              throw new Error("No internet connection");
-            }
-
-            // Abort if operation was cancelled
-            if (signal?.aborted) {
-              throw new Error("Operation cancelled");
+              throw new Error('No internet connection');
             }
 
             return await operation();
@@ -85,12 +81,7 @@ export const useErrorRecovery = (options: RecoveryOptions = {}) => {
 
         // Normal operation with network retry
         if (enableNetworkRetry) {
-          return await networkRetry.executeWithRetry(async (signal) => {
-            // Abort if operation was cancelled
-            if (signal?.aborted) {
-              throw new Error("Operation cancelled");
-            }
-
+          return await networkRetry.executeWithRetry(async () => {
             return await operation();
           });
         }
@@ -99,8 +90,7 @@ export const useErrorRecovery = (options: RecoveryOptions = {}) => {
         return await operation();
       } catch (error) {
         // Type guard for error handling
-        const errorToHandle =
-          error instanceof Error ? error : new Error(String(error));
+        const errorToHandle = error instanceof Error ? error : new Error(String(error));
 
         handleError(errorToHandle, context, {
           showAlert: false, // We'll handle UI feedback
@@ -182,7 +172,7 @@ export const useErrorRecovery = (options: RecoveryOptions = {}) => {
  * Check if error is a network-related error
  */
 function isNetworkError(error: unknown): boolean {
-  if (!error || typeof error !== "object") return false;
+  if (!error || typeof error !== 'object') return false;
 
   const err = error as { status?: number; code?: string; message?: string };
 
@@ -193,23 +183,18 @@ function isNetworkError(error: unknown): boolean {
   }
 
   // Error codes indicating network issues
-  const networkErrorCodes = [
-    "NETWORK_ERROR",
-    "TIMEOUT",
-    "ENOTFOUND",
-    "ECONNREFUSED",
-  ];
+  const networkErrorCodes = ['NETWORK_ERROR', 'TIMEOUT', 'ENOTFOUND', 'ECONNREFUSED'];
   if (err.code && networkErrorCodes.includes(err.code)) {
     return true;
   }
 
   // Message-based detection
-  const message = err.message?.toLowerCase() || "";
+  const message = err.message?.toLowerCase() || '';
   if (
-    message.includes("network") ||
-    message.includes("connection") ||
-    message.includes("timeout") ||
-    message.includes("server")
+    message.includes('network') ||
+    message.includes('connection') ||
+    message.includes('timeout') ||
+    message.includes('server')
   ) {
     return true;
   }
@@ -221,15 +206,15 @@ function isNetworkError(error: unknown): boolean {
  * Check if error is specifically an offline/no-connection error
  */
 function isOfflineError(error: unknown): boolean {
-  if (!error || typeof error !== "object") return false;
+  if (!error || typeof error !== 'object') return false;
 
   const err = error as { code?: string; message?: string };
-  const message = err.message?.toLowerCase() || "";
+  const message = err.message?.toLowerCase() || '';
   return (
-    message.includes("offline") ||
-    message.includes("no internet") ||
-    message.includes("no connection") ||
-    err.code === "NETWORK_ERROR"
+    message.includes('offline') ||
+    message.includes('no internet') ||
+    message.includes('no connection') ||
+    err.code === 'NETWORK_ERROR'
   );
 }
 

@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "@pawfectmatch/core";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Haptics from "expo-haptics";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -19,9 +19,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "@mobile/src/theme";
+import type { AppTheme } from "@mobile/src/theme";
 import type { RootStackParamList } from "../../navigation/types";
-import { _aiAPI, _petAPI } from "../../services/api";
+import { aiAPI, matchesAPI } from "../../services/api";
 import { logger } from "../../services/logger";
 
 interface Pet {
@@ -95,7 +96,9 @@ const AICompatibilityScreen = ({
   navigation,
   route,
 }: AICompatibilityScreenProps): React.JSX.Element => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { user: _user } = useAuthStore();
   const [pets, setPets] = useState<Pet[]>([]);
   const [selectedPetA, setSelectedPetA] = useState<Pet | null>(null);
@@ -126,15 +129,11 @@ const AICompatibilityScreen = ({
 
   const loadPets = async (): Promise<void> => {
     try {
-      const response = (await _petAPI.getPets()) as unknown as {
-        success: boolean;
-        data?: Pet[];
-      };
-      if (response?.success && response.data) {
-        setPets(response.data);
-      }
-    } catch (error) {
-      logger.error("Failed to load pets:", { error });
+      const pets = await matchesAPI.getPets();
+      setPets(pets as unknown as Pet[]);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error("Failed to load pets:", { error: err });
     }
   };
 
@@ -145,10 +144,47 @@ const AICompatibilityScreen = ({
 
     setIsAnalyzing(true);
     try {
-      const response = (await _aiAPI.analyzeCompatibility(petA.id, petB.id, {
-        includeDetailedAnalysis: true,
-        includeRecommendations: true,
-      })) as CompatibilityResponse;
+      const data = await aiAPI.analyzeCompatibility({
+        pet1Id: petA.id,
+        pet2Id: petB.id,
+      });
+
+      // Map the API response to our expected format
+      const mappedScore: CompatibilityScore = {
+        overall: data.compatibility_score,
+        breakdown: {
+          temperament: data.breakdown.personality_compatibility,
+          activity: data.breakdown.activity_compatibility,
+          size: data.breakdown.social_compatibility,
+          age: data.breakdown.social_compatibility,
+          interests: data.breakdown.lifestyle_compatibility,
+          lifestyle: data.breakdown.environment_compatibility,
+        },
+        factors: {
+          strengths: data.recommendations.meeting_suggestions,
+          concerns: data.recommendations.supervision_requirements,
+          recommendations: data.recommendations.activity_recommendations,
+        },
+        interaction: {
+          playdate: data.recommendations.success_probability * 100,
+          adoption: data.recommendations.success_probability * 90,
+          breeding: data.recommendations.success_probability * 70,
+        },
+      };
+
+      const mappedAnalysis = {
+        summary: data.ai_analysis,
+        detailed: data.ai_analysis,
+        tips: data.recommendations.activity_recommendations,
+      };
+
+      const response: CompatibilityResponse = {
+        success: true,
+        data: {
+          score: mappedScore,
+          analysis: mappedAnalysis,
+        },
+      };
 
       if (response && response.success && response.data) {
         const analysis: CompatibilityAnalysis = {
@@ -202,8 +238,9 @@ const AICompatibilityScreen = ({
           score: analysis.score.overall,
         });
       }
-    } catch (error) {
-      logger.error("Compatibility analysis failed:", { error });
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error("Compatibility analysis failed:", { error: err });
 
       // Fallback analysis for demo
       const fallbackAnalysis: CompatibilityAnalysis = {
@@ -285,10 +322,10 @@ const AICompatibilityScreen = ({
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return "#10B981";
-    if (score >= 80) return "#3B82F6";
-    if (score >= 70) return "#F59E0B";
-    return "#EF4444";
+    if (score >= 90) return theme.colors.success;
+    if (score >= 80) return theme.colors.info;
+    if (score >= 70) return theme.colors.warning;
+    return theme.colors.danger;
   };
 
   const getScoreLabel = (score: number) => {
@@ -300,13 +337,13 @@ const AICompatibilityScreen = ({
 
   const renderPetItem = ({ item }: { item: Pet }) => (
     <TouchableOpacity
-      style={[
+      style={StyleSheet.flatten([
         styles.petCard,
-        { backgroundColor: colors.card },
+        { backgroundColor: colors.surface },
         (selectedPetA?.id === item.id || selectedPetB?.id === item.id) &&
           styles.petCardSelected,
-      ]}
-      onPress={() => {
+      ])}
+       testID="AICompatibilityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
         if (selectedPetA?.id === item.id) {
           handlePetSelection(item, true);
         } else if (selectedPetB?.id === item.id) {
@@ -320,22 +357,37 @@ const AICompatibilityScreen = ({
     >
       <View style={styles.petInfo}>
         <View style={styles.petAvatar}>
-          <Text style={[styles.petAvatarText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.petAvatarText,
+              { color: colors.onSurface},
+            ])}
+          >
             {item.name.charAt(0)}
           </Text>
         </View>
         <View style={styles.petDetails}>
-          <Text style={[styles.petName, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([styles.petName, { color: colors.onSurface}])}
+          >
             {item.name}
           </Text>
-          <Text style={[styles.petBreed, { color: colors.textSecondary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.petBreed,
+              { color: colors.onMuted },
+            ])}
+          >
             {item.breed} • {item.age} years old
           </Text>
           <View style={styles.petTags}>
             {item.temperament.slice(0, 2).map((trait, index) => (
               <View
                 key={index}
-                style={[styles.petTag, { backgroundColor: colors.primary }]}
+                style={StyleSheet.flatten([
+                  styles.petTag,
+                  { backgroundColor: colors.primary },
+                ])}
               >
                 <Text style={styles.petTagText}>{trait}</Text>
               </View>
@@ -358,11 +410,19 @@ const AICompatibilityScreen = ({
   if (loading) {
     return (
       <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.background }]}
+        style={StyleSheet.flatten([
+          styles.container,
+          { backgroundColor: colors.bg },
+        ])}
       >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.onSurface},
+            ])}
+          >
             Loading pets...
           </Text>
         </View>
@@ -372,7 +432,10 @@ const AICompatibilityScreen = ({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       <ScrollView
         style={styles.scrollView}
@@ -381,31 +444,33 @@ const AICompatibilityScreen = ({
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => {
+             testID="AICompatibilityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               navigation.goBack();
             }}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.text} />
+            <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
           </TouchableOpacity>
-          <Text style={[styles.title, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
+          >
             Compatibility Analyzer
           </Text>
           <View style={styles.headerActions}>
             {analysisHistory.length > 0 && (
               <TouchableOpacity
-                style={[
+                style={StyleSheet.flatten([
                   styles.historyButton,
                   { backgroundColor: colors.primary },
-                ]}
-                onPress={() => {
+                ])}
+                 testID="AICompatibilityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                   Alert.alert(
                     "Analysis History",
                     `${analysisHistory.length} previous analyses`,
                   );
                 }}
               >
-                <Ionicons name="time" size={20} color="#FFFFFF" />
+                <Ionicons name="time" size={20} color={theme.colors.onSurface} />
               </TouchableOpacity>
             )}
           </View>
@@ -413,7 +478,12 @@ const AICompatibilityScreen = ({
 
         {/* Pet Selection */}
         <View style={styles.selectionSection}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.onSurface},
+            ])}
+          >
             Select Pets to Compare
           </Text>
 
@@ -422,13 +492,13 @@ const AICompatibilityScreen = ({
               <Ionicons
                 name="paw"
                 size={20}
-                color={selectedPetA ? colors.primary : colors.textSecondary}
+                color={selectedPetA ? colors.primary : colors.onMuted}
               />
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.selectionText,
-                  { color: selectedPetA ? colors.text : colors.textSecondary },
-                ]}
+                  { color: selectedPetA ? colors.onSurface : colors.onMuted },
+                ])}
               >
                 {selectedPetA ? selectedPetA.name : "Select Pet A"}
               </Text>
@@ -436,19 +506,19 @@ const AICompatibilityScreen = ({
             <Ionicons
               name="arrow-forward"
               size={20}
-              color={colors.textSecondary}
+              color={colors.onMuted}
             />
             <View style={styles.selectionItem}>
               <Ionicons
                 name="heart"
                 size={20}
-                color={selectedPetB ? colors.primary : colors.textSecondary}
+                color={selectedPetB ? colors.primary : colors.onMuted}
               />
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.selectionText,
-                  { color: selectedPetB ? colors.text : colors.textSecondary },
-                ]}
+                  { color: selectedPetB ? colors.onSurface : colors.onMuted },
+                ])}
               >
                 {selectedPetB ? selectedPetB.name : "Select Pet B"}
               </Text>
@@ -468,22 +538,22 @@ const AICompatibilityScreen = ({
         {selectedPetA && selectedPetB ? (
           <View style={styles.analysisSection}>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.analyzeButton,
                 { backgroundColor: colors.primary },
                 isAnalyzing && styles.analyzeButtonDisabled,
-              ]}
-              onPress={handleAnalyze}
+              ])}
+               testID="AICompatibilityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleAnalyze}
               disabled={isAnalyzing}
             >
               {isAnalyzing ? (
                 <>
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color={theme.colors.onSurface} />
                   <Text style={styles.analyzeButtonText}>Analyzing...</Text>
                 </>
               ) : (
                 <>
-                  <Ionicons name="analytics" size={20} color="#FFFFFF" />
+                  <Ionicons name="analytics" size={20} color={theme.colors.onSurface} />
                   <Text style={styles.analyzeButtonText}>
                     Analyze Compatibility
                   </Text>
@@ -496,47 +566,80 @@ const AICompatibilityScreen = ({
         {/* Analysis Results */}
         {analysisResult ? (
           <View style={styles.resultsSection}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.sectionTitle,
+                { color: colors.onSurface},
+              ])}
+            >
               Compatibility Analysis
             </Text>
 
             {/* Overall Score */}
-            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.resultCard,
+                { backgroundColor: colors.surface },
+              ])}
+            >
               <View style={styles.resultHeader}>
                 <Ionicons
                   name="trophy"
                   size={24}
                   color={getScoreColor(analysisResult.score.overall)}
                 />
-                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.resultTitle,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   Overall Compatibility
                 </Text>
               </View>
               <View style={styles.overallScore}>
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.scoreValue,
                     { color: getScoreColor(analysisResult.score.overall) },
-                  ]}
+                  ])}
                 >
                   {analysisResult.score.overall}%
                 </Text>
                 <Text
-                  style={[styles.scoreLabel, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.scoreLabel,
+                    { color: colors.onMuted },
+                  ])}
                 >
                   {getScoreLabel(analysisResult.score.overall)}
                 </Text>
-                <Text style={[styles.scoreDescription, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.scoreDescription,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   {analysisResult.analysis.summary}
                 </Text>
               </View>
             </View>
 
             {/* Breakdown */}
-            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.resultCard,
+                { backgroundColor: colors.surface },
+              ])}
+            >
               <View style={styles.resultHeader}>
-                <Ionicons name="bar-chart" size={24} color="#3B82F6" />
-                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                <Ionicons name="bar-chart" size={24} color={theme.colors.info} />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.resultTitle,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   Compatibility Breakdown
                 </Text>
               </View>
@@ -545,26 +648,29 @@ const AICompatibilityScreen = ({
                   ([factor, score]) => (
                     <View key={factor} style={styles.breakdownItem}>
                       <Text
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.breakdownLabel,
-                          { color: colors.textSecondary },
-                        ]}
+                          { color: colors.onMuted },
+                        ])}
                       >
                         {factor.charAt(0).toUpperCase() + factor.slice(1)}
                       </Text>
                       <View style={styles.breakdownBar}>
                         <View
-                          style={[
+                          style={StyleSheet.flatten([
                             styles.breakdownFill,
                             {
                               width: `${score}%`,
                               backgroundColor: getScoreColor(score),
                             },
-                          ]}
+                          ])}
                         />
                       </View>
                       <Text
-                        style={[styles.breakdownScore, { color: colors.text }]}
+                        style={StyleSheet.flatten([
+                          styles.breakdownScore,
+                          { color: colors.onSurface},
+                        ])}
                       >
                         {score}%
                       </Text>
@@ -575,10 +681,20 @@ const AICompatibilityScreen = ({
             </View>
 
             {/* Interaction Types */}
-            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.resultCard,
+                { backgroundColor: colors.surface },
+              ])}
+            >
               <View style={styles.resultHeader}>
-                <Ionicons name="people" size={24} color="#8B5CF6" />
-                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                <Ionicons name="people" size={24} color={theme.colors.primary} />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.resultTitle,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   Interaction Compatibility
                 </Text>
               </View>
@@ -587,18 +703,18 @@ const AICompatibilityScreen = ({
                   ([type, score]) => (
                     <View key={type} style={styles.interactionItem}>
                       <Text
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.interactionLabel,
-                          { color: colors.textSecondary },
-                        ]}
+                          { color: colors.onMuted },
+                        ])}
                       >
                         {type.charAt(0).toUpperCase() + type.slice(1)}
                       </Text>
                       <Text
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.interactionScore,
                           { color: getScoreColor(score) },
-                        ]}
+                        ])}
                       >
                         {score}%
                       </Text>
@@ -609,17 +725,32 @@ const AICompatibilityScreen = ({
             </View>
 
             {/* Strengths & Concerns */}
-            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.resultCard,
+                { backgroundColor: colors.surface },
+              ])}
+            >
               <View style={styles.resultHeader}>
-                <Ionicons name="list" size={24} color="#10B981" />
-                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                <Ionicons name="list" size={24} color={theme.colors.success} />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.resultTitle,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   Analysis Factors
                 </Text>
               </View>
 
               <View style={styles.factorsSection}>
                 <View style={styles.factorGroup}>
-                  <Text style={[styles.factorGroupTitle, { color: "#10B981" }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.factorGroupTitle,
+                      { color: theme.colors.success },
+                    ])}
+                  >
                     Strengths
                   </Text>
                   {analysisResult.score.factors.strengths.map(
@@ -628,10 +759,13 @@ const AICompatibilityScreen = ({
                         <Ionicons
                           name="checkmark-circle"
                           size={16}
-                          color="#10B981"
+                          color={theme.colors.success}
                         />
                         <Text
-                          style={[styles.factorText, { color: colors.text }]}
+                          style={StyleSheet.flatten([
+                            styles.factorText,
+                            { color: colors.onSurface},
+                          ])}
                         >
                           {strength}
                         </Text>
@@ -641,15 +775,23 @@ const AICompatibilityScreen = ({
                 </View>
 
                 <View style={styles.factorGroup}>
-                  <Text style={[styles.factorGroupTitle, { color: "#F59E0B" }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.factorGroupTitle,
+                      { color: theme.colors.warning },
+                    ])}
+                  >
                     Concerns
                   </Text>
                   {analysisResult.score.factors.concerns.map(
                     (concern, index) => (
                       <View key={index} style={styles.factorItem}>
-                        <Ionicons name="warning" size={16} color="#F59E0B" />
+                        <Ionicons name="warning" size={16} color={theme.colors.warning} />
                         <Text
-                          style={[styles.factorText, { color: colors.text }]}
+                          style={StyleSheet.flatten([
+                            styles.factorText,
+                            { color: colors.onSurface},
+                          ])}
                         >
                           {concern}
                         </Text>
@@ -659,15 +801,23 @@ const AICompatibilityScreen = ({
                 </View>
 
                 <View style={styles.factorGroup}>
-                  <Text style={[styles.factorGroupTitle, { color: "#3B82F6" }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.factorGroupTitle,
+                      { color: theme.colors.info },
+                    ])}
+                  >
                     Recommendations
                   </Text>
                   {analysisResult.score.factors.recommendations.map(
                     (recommendation, index) => (
                       <View key={index} style={styles.factorItem}>
-                        <Ionicons name="bulb" size={16} color="#3B82F6" />
+                        <Ionicons name="bulb" size={16} color={theme.colors.info} />
                         <Text
-                          style={[styles.factorText, { color: colors.text }]}
+                          style={StyleSheet.flatten([
+                            styles.factorText,
+                            { color: colors.onSurface},
+                          ])}
                         >
                           {recommendation}
                         </Text>
@@ -679,23 +829,48 @@ const AICompatibilityScreen = ({
             </View>
 
             {/* Detailed Analysis */}
-            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.resultCard,
+                { backgroundColor: colors.surface },
+              ])}
+            >
               <View style={styles.resultHeader}>
-                <Ionicons name="document-text" size={24} color="#6B7280" />
-                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                <Ionicons name="document-text" size={24} color={theme.colors.onMuted} />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.resultTitle,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   Detailed Analysis
                 </Text>
               </View>
-              <Text style={[styles.detailedText, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.detailedText,
+                  { color: colors.onSurface},
+                ])}
+              >
                 {analysisResult.analysis.detailed}
               </Text>
             </View>
 
             {/* Tips */}
-            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.resultCard,
+                { backgroundColor: colors.surface },
+              ])}
+            >
               <View style={styles.resultHeader}>
-                <Ionicons name="bulb-outline" size={24} color="#F59E0B" />
-                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                <Ionicons name="bulb-outline" size={24} color={theme.colors.warning} />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.resultTitle,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   Tips for Success
                 </Text>
               </View>
@@ -705,9 +880,14 @@ const AICompatibilityScreen = ({
                     <Ionicons
                       name="checkmark-circle"
                       size={16}
-                      color="#F59E0B"
+                      color={theme.colors.warning}
                     />
-                    <Text style={[styles.tipText, { color: colors.text }]}>
+                    <Text
+                      style={StyleSheet.flatten([
+                        styles.tipText,
+                        { color: colors.onSurface},
+                      ])}
+                    >
                       {tip}
                     </Text>
                   </View>
@@ -721,70 +901,71 @@ const AICompatibilityScreen = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+      paddingHorizontal: theme.spacing.md ?? 16,
+    },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 4,
-  },
-  backButton: {
-    padding: 8,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    flex: 1,
-    marginLeft: 8,
-  },
-  headerActions: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  historyButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  selectionSection: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 16,
-  },
-  selectionStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-    gap: 12,
-  },
-  selectionItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
+    loadingText: {
+      marginTop: theme.spacing.md ?? 16,
+      fontSize: 16,
+      fontWeight: "500",
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: theme.spacing.md ?? 16,
+      paddingHorizontal: theme.spacing.xs ?? 4,
+    },
+    backButton: {
+      padding: theme.spacing.xs ?? 8,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: "bold",
+      flex: 1,
+      marginLeft: theme.spacing.xs ?? 8,
+    },
+    headerActions: {
+      flexDirection: "row",
+      gap: theme.spacing.xs ?? 8,
+    },
+    historyButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    selectionSection: {
+      marginBottom: theme.spacing.lg ?? 24,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      marginBottom: theme.spacing.md ?? 16,
+    },
+    selectionStatus: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: theme.spacing.md ?? 16,
+      gap: theme.spacing.sm ?? 12,
+    },
+    selectionItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs ?? 8,
+    },
   selectionText: {
     fontSize: 16,
     fontWeight: "600",
@@ -799,7 +980,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: "#000",
+    shadowColor: theme.colors.border,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -807,7 +988,7 @@ const styles = StyleSheet.create({
   },
   petCardSelected: {
     borderWidth: 2,
-    borderColor: "#3B82F6",
+    borderColor: theme.colors.info,
   },
   petInfo: {
     flexDirection: "row",
@@ -818,7 +999,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: theme.colors.border,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -849,7 +1030,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   petTagText: {
-    color: "#FFFFFF",
+    color: theme.colors.onSurface,
     fontSize: 10,
     fontWeight: "600",
   },
@@ -871,7 +1052,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   analyzeButtonText: {
-    color: "#FFFFFF",
+    color: theme.colors.onSurface,
     fontSize: 16,
     fontWeight: "600",
   },
@@ -882,7 +1063,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: theme.colors.border,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -930,7 +1111,7 @@ const styles = StyleSheet.create({
   breakdownBar: {
     flex: 1,
     height: 8,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: theme.colors.border,
     borderRadius: 4,
     overflow: "hidden",
   },
@@ -995,10 +1176,11 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     gap: 8,
   },
-  tipText: {
-    fontSize: 14,
-    flex: 1,
-  },
-});
+    tipText: {
+      fontSize: 14,
+      flex: 1,
+    },
+  });
+}
 
 export default AICompatibilityScreen;

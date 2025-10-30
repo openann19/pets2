@@ -5,6 +5,8 @@
 
 import request from 'supertest';
 import app from '../../src/app';
+import Pet from '../../src/models/Pet';
+import User from '../../src/models/User';
 import { setupTestDB, teardownTestDB, clearTestDB, createMockUser, generateTestToken } from '../setup';
 
 describe('GDPR Compliance Tests', () => {
@@ -61,7 +63,6 @@ describe('GDPR Compliance Tests', () => {
     });
 
     it('should include all user pets', async () => {
-      const Pet = require('../../src/models/Pet');
       await Pet.create({
         name: 'Export Test Pet',
         species: 'dog',
@@ -108,16 +109,15 @@ describe('GDPR Compliance Tests', () => {
       expect(response.body.success).toBe(true);
 
       // Verify soft delete
-      const User = require('../../src/models/User');
       const deletedUser = await User.findById(testUser._id);
       
-      expect(deletedUser.isActive).toBe(false);
-      expect(deletedUser.deletedAt).toBeDefined();
-      expect(deletedUser.deletedAt).toBeInstanceOf(Date);
+      expect(deletedUser).not.toBeNull();
+      expect(deletedUser?.get('isActive')).toBe(false);
+      expect(deletedUser?.get('deletedAt')).toBeDefined();
+      expect(deletedUser?.get('deletedAt')).toBeInstanceOf(Date);
     });
 
     it('should preserve data integrity after soft delete', async () => {
-      const Pet = require('../../src/models/Pet');
       await Pet.create({
         name: 'Test Pet',
         species: 'dog',
@@ -130,11 +130,10 @@ describe('GDPR Compliance Tests', () => {
         .send({ password: 'correct_password' });
 
       // Data should still exist
-      const User = require('../../src/models/User');
       const deletedUser = await User.findById(testUser._id);
       
-      expect(deletedUser).toBeDefined();
-      expect(deletedUser.email).toBe(testUser.email);
+      expect(deletedUser).not.toBeNull();
+      expect(deletedUser?.get('email')).toBe(testUser.email);
       
       // Pets should still exist
       const pets = await Pet.find({ owner: testUser._id });
@@ -158,8 +157,6 @@ describe('GDPR Compliance Tests', () => {
 
   describe('Right to Rectification', () => {
     it('should allow users to update their data', async () => {
-      const User = require('../../src/models/User');
-      
       // Update user data
       await User.findByIdAndUpdate(testUser._id, {
         firstName: 'Updated',
@@ -175,7 +172,6 @@ describe('GDPR Compliance Tests', () => {
     });
 
     it('should allow pet data updates', async () => {
-      const Pet = require('../../src/models/Pet');
       const pet = await Pet.create({
         name: 'Old Name',
         species: 'dog',
@@ -192,7 +188,7 @@ describe('GDPR Compliance Tests', () => {
         .set('Authorization', `Bearer ${testToken}`);
 
       const updatedPet = response.body.data.pets.find(
-        (p: any) => p._id.toString() === pet._id.toString()
+        (p: any) => String(p._id) === String(pet._id)
       );
       
       expect(updatedPet.name).toBe('New Name');

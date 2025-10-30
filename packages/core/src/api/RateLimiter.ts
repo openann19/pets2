@@ -28,12 +28,12 @@ export class RateLimiter {
    */
   tryConsume(tokensToConsume: number = 1): boolean {
     this.refill();
-    
+
     if (this.tokens >= tokensToConsume) {
       this.tokens -= tokensToConsume;
       return true;
     }
-    
+
     return false;
   }
 
@@ -43,7 +43,7 @@ export class RateLimiter {
   private refill(): void {
     const now = Date.now();
     const elapsed = (now - this.lastRefill) / 1000; // Convert to seconds
-    
+
     if (elapsed >= this.duration) {
       // Full refill
       this.tokens = this.points;
@@ -82,4 +82,3 @@ export class RateLimiter {
     this.lastRefill = Date.now();
   }
 }
-

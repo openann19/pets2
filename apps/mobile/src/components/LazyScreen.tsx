@@ -1,7 +1,7 @@
-import React, { Suspense, lazy, ComponentType } from "react";
-import { logger } from "@pawfectmatch/core";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from '@mobile/src/theme';
+import { logger } from '@pawfectmatch/core';
+import React, { Suspense, lazy, type ComponentType, type ReactNode } from 'react';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 interface LazyScreenProps {
   fallback?: React.ComponentType;
@@ -27,7 +27,7 @@ function DefaultLoadingFallback() {
 
   return (
     <View
-      style={[styles.loadingContainer, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([styles.loadingContainer, { backgroundColor: colors.bg }])}
       accessible={true}
       accessibilityLabel="Loading screen"
       accessibilityRole="progressbar"
@@ -37,7 +37,7 @@ function DefaultLoadingFallback() {
         color={colors.primary}
         style={styles.loadingIndicator}
       />
-      <Text style={[styles.loadingText, { color: colors.text }]}>
+      <Text style={StyleSheet.flatten([styles.loadingText, { color: colors.onSurface }])}>
         Loading...
       </Text>
     </View>
@@ -47,30 +47,24 @@ function DefaultLoadingFallback() {
 /**
  * Default Error Boundary Component
  */
-function DefaultErrorBoundary({
-  error,
-  retry,
-}: {
-  error: Error;
-  retry: () => void;
-}) {
+function DefaultErrorBoundary({ error, retry }: { error: Error; retry: () => void }) {
   const { colors } = useTheme();
 
   return (
     <View
-      style={[styles.errorContainer, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([styles.errorContainer, { backgroundColor: colors.bg }])}
       accessible={true}
       accessibilityLabel="Screen failed to load"
       accessibilityRole="alert"
     >
-      <Text style={[styles.errorTitle, { color: colors.text }]}>
+      <Text style={StyleSheet.flatten([styles.errorTitle, { color: colors.onSurface }])}>
         Oops! Something went wrong
       </Text>
-      <Text style={[styles.errorMessage, { color: colors.text }]}>
-        {error.message || "Failed to load this screen"}
+      <Text style={StyleSheet.flatten([styles.errorMessage, { color: colors.onSurface }])}>
+        {error.message || 'Failed to load this screen'}
       </Text>
       <Text
-        style={[styles.retryButton, { color: colors.primary }]}
+        style={StyleSheet.flatten([styles.retryButton, { color: colors.primary }])}
         onPress={retry}
         accessible={true}
         accessibilityRole="button"
@@ -92,7 +86,10 @@ class LazyScreenErrorBoundary extends React.Component<
   },
   { hasError: boolean; error: Error | null }
 > {
-  constructor(props: any) {
+  constructor(props: {
+    children: ReactNode;
+    fallback: ComponentType<{ error: Error; retry: () => void }>;
+  }) {
     super(props);
     this.state = { hasError: false, error: null };
   }
@@ -101,18 +98,23 @@ class LazyScreenErrorBoundary extends React.Component<
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    logger.error("LazyScreen Error:", { error, errorInfo });
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+    logger.error('LazyScreen Error:', { error, errorInfo });
   }
 
   retry = () => {
     this.setState({ hasError: false, error: null });
   };
 
-  render() {
+  override render() {
     if (this.state.hasError && this.state.error) {
       const ErrorComponent = this.props.fallback;
-      return <ErrorComponent error={this.state.error} retry={this.retry} />;
+      return (
+        <ErrorComponent
+          error={this.state.error}
+          retry={this.retry}
+        />
+      );
     }
 
     return this.props.children;
@@ -134,13 +136,18 @@ export const createLazyScreen = <P extends object>(
     return (
       <LazyScreenErrorBoundary fallback={ErrorBoundary}>
         <Suspense fallback={<LoadingFallback />}>
-          <LazyComponent {...props} />
+          <LazyComponent {...(props as any)} />
         </Suspense>
       </LazyScreenErrorBoundary>
     );
   }
 
-  LazyScreenWrapper.displayName = `LazyScreen(${LazyComponent.displayName || "Component"})`;
+  // displayName will be set after component is created since LazyComponent is lazy
+  if ('displayName' in LazyComponent && LazyComponent.displayName) {
+    LazyScreenWrapper.displayName = `LazyScreen(${String(LazyComponent.displayName)})`;
+  } else {
+    LazyScreenWrapper.displayName = 'LazyScreen(Component)';
+  }
 
   return LazyScreenWrapper;
 };
@@ -154,7 +161,7 @@ export const preloadLazyScreen = (
 ): void => {
   // Start loading the component in the background
   importFunction().catch((error) => {
-    logger.warn("Failed to preload lazy screen:", { error });
+    logger.warn('Failed to preload lazy screen:', { error });
   });
 };
 
@@ -163,9 +170,7 @@ export const preloadLazyScreen = (
  */
 export const useLazyScreenPreloader = () => {
   const preloadScreens = React.useCallback(
-    (
-      importFunctions: Array<() => Promise<{ default: ComponentType<any> }>>,
-    ) => {
+    (importFunctions: Array<() => Promise<{ default: ComponentType<any> }>>) => {
       importFunctions.forEach((importFunction) => {
         preloadLazyScreen(importFunction);
       });
@@ -177,77 +182,62 @@ export const useLazyScreenPreloader = () => {
 };
 
 // Pre-configured lazy screen creators for common heavy screens
-export const LazyProfileScreen = createLazyScreen(
-  () => import("../screens/ProfileScreen"),
-  {
-    fallback: () => {
-      const { colors } = useTheme();
-      return (
-        <View
-          style={[
-            styles.loadingContainer,
-            { backgroundColor: colors.background },
-          ]}
-        >
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
-            Loading Profile...
-          </Text>
-        </View>
-      );
-    },
+export const LazyProfileScreen = createLazyScreen(() => import('../screens/ProfileScreen'), {
+  fallback: () => {
+    const { colors } = useTheme();
+    return (
+      <View style={StyleSheet.flatten([styles.loadingContainer, { backgroundColor: colors.bg }])}>
+        <ActivityIndicator
+          size="large"
+          color={colors.primary}
+        />
+        <Text style={StyleSheet.flatten([styles.loadingText, { color: colors.onSurface }])}>
+          Loading Profile...
+        </Text>
+      </View>
+    );
   },
-);
+});
 
-export const LazySettingsScreen = createLazyScreen(
-  () => import("../screens/SettingsScreen"),
-  {
-    fallback: () => {
-      const { colors } = useTheme();
-      return (
-        <View
-          style={[
-            styles.loadingContainer,
-            { backgroundColor: colors.background },
-          ]}
-        >
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
-            Loading Settings...
-          </Text>
-        </View>
-      );
-    },
+export const LazySettingsScreen = createLazyScreen(() => import('../screens/SettingsScreen'), {
+  fallback: () => {
+    const { colors } = useTheme();
+    return (
+      <View style={StyleSheet.flatten([styles.loadingContainer, { backgroundColor: colors.bg }])}>
+        <ActivityIndicator
+          size="large"
+          color={colors.primary}
+        />
+        <Text style={StyleSheet.flatten([styles.loadingText, { color: colors.onSurface }])}>
+          Loading Settings...
+        </Text>
+      </View>
+    );
   },
-);
+});
 
-export const LazyMatchesScreen = createLazyScreen(
-  () => import("../screens/MatchesScreen"),
-  {
-    fallback: () => {
-      const { colors } = useTheme();
-      return (
-        <View
-          style={[
-            styles.loadingContainer,
-            { backgroundColor: colors.background },
-          ]}
-        >
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
-            Loading Matches...
-          </Text>
-        </View>
-      );
-    },
+export const LazyMatchesScreen = createLazyScreen(() => import('../screens/MatchesScreen'), {
+  fallback: () => {
+    const { colors } = useTheme();
+    return (
+      <View style={StyleSheet.flatten([styles.loadingContainer, { backgroundColor: colors.bg }])}>
+        <ActivityIndicator
+          size="large"
+          color={colors.primary}
+        />
+        <Text style={StyleSheet.flatten([styles.loadingText, { color: colors.onSurface }])}>
+          Loading Matches...
+        </Text>
+      </View>
+    );
   },
-);
+});
 
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   loadingIndicator: {
@@ -255,31 +245,31 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    textAlign: "center",
+    textAlign: 'center',
     opacity: 0.7,
   },
   errorContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 12,
-    textAlign: "center",
+    textAlign: 'center',
   },
   errorMessage: {
     fontSize: 14,
-    textAlign: "center",
+    textAlign: 'center',
     opacity: 0.7,
     marginBottom: 20,
   },
   retryButton: {
     fontSize: 16,
-    fontWeight: "600",
-    textDecorationLine: "underline",
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 });
 

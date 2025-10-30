@@ -10,7 +10,7 @@
  */
 
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, useCallback } from "react";
+import React from "react";
 import {
   View,
   TextInput,
@@ -23,7 +23,6 @@ import {
 
 // Import new architecture components
 import {
-  Theme,
   EliteButton,
   EliteButtonPresets,
   FXContainerPresets,
@@ -33,157 +32,97 @@ import {
   Label,
   useStaggeredAnimation,
 } from "../components";
+import { useTheme } from "@mobile/src/theme";
 
 // Import legacy components for gradual migration
-import { EliteContainer, EliteHeader } from "../components/EliteComponents";
+import { EliteContainer, EliteHeader } from "../components";
+import { useCreatePetScreen } from "../hooks/screens/useCreatePetScreen";
 
-type RootStackParamList = {
-  CreatePet: undefined;
-  MyPets: undefined;
-  Home: undefined;
-};
+import type { RootStackScreenProps } from "../navigation/types";
 
-type CreatePetScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "CreatePet"
->;
-
-interface PhotoItem {
-  id: string;
-  uri: string;
-  isUploading?: boolean;
-  error?: string;
-}
-
-interface FormData {
-  name: string;
-  species: string;
-  breed: string;
-  age: string;
-  gender: string;
-  size: string;
-  description: string;
-  intent: string;
-  personalityTags: string[];
-  healthInfo: {
-    vaccinated: boolean;
-    spayedNeutered: boolean;
-    microchipped: boolean;
-    specialNeeds: string;
-  };
-  location: {
-    city: string;
-    state: string;
-    zipCode: string;
-  };
-  contactInfo: {
-    email: string;
-    phone: string;
-    preferredContact: string;
-  };
-}
+type CreatePetScreenProps = RootStackScreenProps<"CreatePet">;
 
 export default function ModernCreatePetScreen({
   navigation,
 }: CreatePetScreenProps) {
-  // Form state
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    species: "",
-    breed: "",
-    age: "",
-    gender: "",
-    size: "",
-    description: "",
-    intent: "",
-    personalityTags: [],
-    healthInfo: {
-      vaccinated: false,
-      spayedNeutered: false,
-      microchipped: false,
-      specialNeeds: "",
-    },
-    location: {
-      city: "",
-      state: "",
-      zipCode: "",
-    },
-    contactInfo: {
-      email: "",
-      phone: "",
-      preferredContact: "email",
-    },
-  });
-
-  // Photo state
-  const [photos, setPhotos] = useState<PhotoItem[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const theme = useTheme();
+  const {
+    formData,
+    photos,
+    isSubmitting,
+    updateFormData,
+    updateNestedFormData,
+    setPhotos,
+    handleSubmit,
+    togglePersonalityTag,
+  } = useCreatePetScreen();
 
   // Animation hooks
   const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(
-      6, // Number of form sections
-      150,
-      "gentle",
-    );
+    useStaggeredAnimation(6);
 
   // Start animations
   React.useEffect(() => {
     startStaggeredAnimation();
   }, [startStaggeredAnimation]);
 
-  // Form handlers
-  const updateFormData = useCallback(
-    (field: keyof FormData, value: string | boolean | string[]) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
+  // Dynamic styles that depend on theme
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
     },
-    [],
-  );
-
-  const updateNestedFormData = useCallback(
-    (section: keyof FormData, field: string, value: string | boolean) => {
-      setFormData((prev) => ({
-        ...prev,
-        [section]: {
-          ...(prev[section] as Record<string, unknown>),
-          [field]: value,
-        },
-      }));
+    scrollView: {
+      flex: 1,
     },
-    [],
-  );
-
-  // Validation
-  const validateForm = useCallback((): string[] => {
-    const errors: string[] = [];
-
-    if (!formData.name.trim()) errors.push("Pet name is required");
-    if (!formData.species) errors.push("Species is required");
-    if (!formData.breed.trim()) errors.push("Breed is required");
-    if (!formData.age) errors.push("Age is required");
-    if (!formData.description.trim()) errors.push("Description is required");
-    if (photos.length === 0) errors.push("At least one photo is required");
-    if (!formData.contactInfo.email.trim()) errors.push("Email is required");
-
-    return errors;
-  }, [formData, photos]);
+    scrollContent: {
+      padding: theme.spacing.lg,
+      paddingBottom: theme.spacing["4xl"],
+    },
+    section: {
+      padding: theme.spacing.xl,
+      marginBottom: theme.spacing.lg,
+    },
+    sectionTitle: {
+      marginBottom: theme.spacing.sm,
+    },
+    sectionSubtitle: {
+      marginBottom: theme.spacing.lg,
+      color: theme.colors.onMuted,
+    },
+    formGroup: {
+      marginBottom: theme.spacing.lg,
+    },
+    input: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.lg,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+      fontSize: 16,
+      color: theme.colors.onSurface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    textArea: {
+      height: 100,
+      textAlignVertical: "top",
+    },
+    optionsContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.sm,
+    },
+    submitContainer: {
+      paddingTop: theme.spacing.xl,
+    },
+    submitButton: {
+      width: "100%",
+    },
+  });
 
   // Submit handler
-  const handleSubmit = useCallback(async () => {
-    const errors = validateForm();
-    if (errors.length > 0) {
-      Alert.alert("Validation Error", errors.join("\n"));
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
+  const onSubmit = async () => {
+    const result = await handleSubmit();
+    if (result?.success) {
       Alert.alert(
         "Success!",
         "Your pet profile has been created successfully.",
@@ -194,12 +133,8 @@ export default function ModernCreatePetScreen({
           },
         ],
       );
-    } catch (error) {
-      Alert.alert("Error", "Failed to create pet profile. Please try again.");
-    } finally {
-      setIsSubmitting(false);
     }
-  }, [validateForm, navigation]);
+  };
 
   // Species options
   const speciesOptions = ["Dog", "Cat", "Bird", "Rabbit", "Other"];
@@ -227,77 +162,6 @@ export default function ModernCreatePetScreen({
     "Leash trained",
   ];
 
-  const togglePersonalityTag = useCallback((tag: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      personalityTags: prev.personalityTags.includes(tag)
-        ? prev.personalityTags.filter((t) => t !== tag)
-        : [...prev.personalityTags, tag],
-    }));
-  }, []);
-
-  // Handler functions for form inputs
-  const handleNameChange = useCallback(
-    (value: string) => {
-      updateFormData("name", value);
-    },
-    [updateFormData],
-  );
-  const handleSpeciesChange = useCallback(
-    (species: string) => {
-      updateFormData("species", species);
-    },
-    [updateFormData],
-  );
-  const handleBreedChange = useCallback(
-    (value: string) => {
-      updateFormData("breed", value);
-    },
-    [updateFormData],
-  );
-  const handleAgeChange = useCallback(
-    (value: string) => {
-      updateFormData("age", value);
-    },
-    [updateFormData],
-  );
-  const handleGenderChange = useCallback(
-    (gender: string) => {
-      updateFormData("gender", gender);
-    },
-    [updateFormData],
-  );
-  const handleSizeChange = useCallback(
-    (size: string) => {
-      updateFormData("size", size);
-    },
-    [updateFormData],
-  );
-  const handleDescriptionChange = useCallback(
-    (value: string) => {
-      updateFormData("description", value);
-    },
-    [updateFormData],
-  );
-  const handleIntentChange = useCallback(
-    (intent: string) => {
-      updateFormData("intent", intent);
-    },
-    [updateFormData],
-  );
-  const handleEmailChange = useCallback(
-    (value: string) => {
-      updateNestedFormData("contactInfo", "email", value);
-    },
-    [updateNestedFormData],
-  );
-  const handlePhoneChange = useCallback(
-    (value: string) => {
-      updateNestedFormData("contactInfo", "phone", value);
-    },
-    [updateNestedFormData],
-  );
-
   return (
     <EliteContainer gradient="primary">
       <EliteHeader
@@ -316,7 +180,7 @@ export default function ModernCreatePetScreen({
           showsVerticalScrollIndicator={false}
         >
           {/* Photo Upload Section */}
-          <View style={getAnimatedStyle(0)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Pet Photos</Heading2>
               <BodySmall style={styles.sectionSubtitle}>
@@ -331,7 +195,7 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Basic Information */}
-          <View style={getAnimatedStyle(1)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Basic Information</Heading2>
 
@@ -340,9 +204,9 @@ export default function ModernCreatePetScreen({
                 <TextInput
                   style={styles.input}
                   value={formData.name}
-                  onChangeText={handleNameChange}
+                  onChangeText={(value) => { updateFormData("name", value); }}
                   placeholder="Enter your pet's name"
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.onMuted}
                 />
               </View>
 
@@ -357,9 +221,7 @@ export default function ModernCreatePetScreen({
                         formData.species === species ? "primary" : "outline"
                       }
                       size="sm"
-                      onPress={() => {
-                        handleSpeciesChange(species);
-                      }}
+                      onPress={() => { updateFormData("species", species); }}
                     />
                   ))}
                 </View>
@@ -370,9 +232,9 @@ export default function ModernCreatePetScreen({
                 <TextInput
                   style={styles.input}
                   value={formData.breed}
-                  onChangeText={handleBreedChange}
+                  onChangeText={(value) => { updateFormData("breed", value); }}
                   placeholder="Enter breed"
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.onMuted}
                 />
               </View>
 
@@ -381,9 +243,9 @@ export default function ModernCreatePetScreen({
                 <TextInput
                   style={styles.input}
                   value={formData.age}
-                  onChangeText={handleAgeChange}
+                  onChangeText={(value) => { updateFormData("age", value); }}
                   placeholder="e.g., 2 years, 6 months"
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.onMuted}
                 />
               </View>
 
@@ -398,9 +260,7 @@ export default function ModernCreatePetScreen({
                         formData.gender === gender ? "primary" : "outline"
                       }
                       size="sm"
-                      onPress={() => {
-                        handleGenderChange(gender);
-                      }}
+                      onPress={() => { updateFormData("gender", gender); }}
                     />
                   ))}
                 </View>
@@ -415,9 +275,7 @@ export default function ModernCreatePetScreen({
                       title={size}
                       variant={formData.size === size ? "primary" : "outline"}
                       size="sm"
-                      onPress={() => {
-                        handleSizeChange(size);
-                      }}
+                      onPress={() => { updateFormData("size", size); }}
                     />
                   ))}
                 </View>
@@ -426,17 +284,17 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Description */}
-          <View style={getAnimatedStyle(2)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Description</Heading2>
               <View style={styles.formGroup}>
                 <Label>Tell us about your pet *</Label>
                 <TextInput
-                  style={[styles.input, styles.textArea]}
+                  style={StyleSheet.flatten([styles.input, styles.textArea])}
                   value={formData.description}
-                  onChangeText={handleDescriptionChange}
+                  onChangeText={(value) => { updateFormData("description", value); }}
                   placeholder="Describe your pet's personality, habits, and what makes them special..."
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.onMuted}
                   multiline
                   numberOfLines={4}
                 />
@@ -445,7 +303,7 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Intent */}
-          <View style={getAnimatedStyle(3)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Intent</Heading2>
               <View style={styles.formGroup}>
@@ -454,14 +312,12 @@ export default function ModernCreatePetScreen({
                   {intentOptions.map((intent) => (
                     <EliteButton
                       key={intent}
-                      title={intent}
+                      title={intent.charAt(0).toUpperCase() + intent.slice(1)}
                       variant={
                         formData.intent === intent ? "primary" : "outline"
                       }
                       size="sm"
-                      onPress={() => {
-                        handleIntentChange(intent);
-                      }}
+                      onPress={() => { updateFormData("intent", intent); }}
                     />
                   ))}
                 </View>
@@ -470,27 +326,25 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Personality Tags */}
-          <View style={getAnimatedStyle(4)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>
                 Personality & Traits
               </Heading2>
               <View style={styles.formGroup}>
                 <Label>Select traits that describe your pet</Label>
-                <View style={styles.tagsContainer}>
+                <View style={styles.optionsContainer}>
                   {personalityTagOptions.map((tag) => (
                     <EliteButton
                       key={tag}
                       title={tag}
                       variant={
                         formData.personalityTags.includes(tag)
-                          ? "secondary"
+                          ? "primary"
                           : "outline"
                       }
                       size="sm"
-                      onPress={() => {
-                        togglePersonalityTag(tag);
-                      }}
+                      onPress={() => { togglePersonalityTag(tag); }}
                     />
                   ))}
                 </View>
@@ -499,7 +353,7 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Contact Information */}
-          <View style={getAnimatedStyle(5)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>
                 Contact Information
@@ -510,9 +364,11 @@ export default function ModernCreatePetScreen({
                 <TextInput
                   style={styles.input}
                   value={formData.contactInfo.email}
-                  onChangeText={handleEmailChange}
+                  onChangeText={(value) =>
+                    { updateNestedFormData("contactInfo", "email", value); }
+                  }
                   placeholder="your@email.com"
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.onMuted}
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -523,9 +379,11 @@ export default function ModernCreatePetScreen({
                 <TextInput
                   style={styles.input}
                   value={formData.contactInfo.phone}
-                  onChangeText={handlePhoneChange}
+                  onChangeText={(value) =>
+                    { updateNestedFormData("contactInfo", "phone", value); }
+                  }
                   placeholder="(555) 123-4567"
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.onMuted}
                   keyboardType="phone-pad"
                 />
               </View>
@@ -540,7 +398,7 @@ export default function ModernCreatePetScreen({
               }
               size="lg"
               loading={isSubmitting}
-              onPress={handleSubmit}
+              onPress={onSubmit}
               style={styles.submitButton}
             />
           </View>
@@ -550,60 +408,3 @@ export default function ModernCreatePetScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: Theme.spacing.lg,
-    paddingBottom: Theme.spacing["4xl"],
-  },
-  section: {
-    padding: Theme.spacing.xl,
-    marginBottom: Theme.spacing.lg,
-  },
-  sectionTitle: {
-    marginBottom: Theme.spacing.sm,
-  },
-  sectionSubtitle: {
-    marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.secondary,
-  },
-  formGroup: {
-    marginBottom: Theme.spacing.lg,
-  },
-  input: {
-    backgroundColor: Theme.colors.neutral[50],
-    borderRadius: Theme.borderRadius.lg,
-    paddingHorizontal: Theme.spacing.lg,
-    paddingVertical: Theme.spacing.md,
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary.primary,
-    borderWidth: 1,
-    borderColor: Theme.colors.border.light.default,
-    ...Theme.shadows.depth.sm,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-  optionsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Theme.spacing.sm,
-  },
-  tagsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Theme.spacing.sm,
-  },
-  submitContainer: {
-    paddingTop: Theme.spacing.xl,
-  },
-  submitButton: {
-    width: "100%",
-  },
-});

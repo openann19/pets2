@@ -4,7 +4,7 @@
  */
 
 // Type-only import to avoid build-time RN resolution
-import type { ColorValue } from "react-native";
+import type { ColorValue } from 'react-native';
 
 // Re-export all base tokens
 export * from './index';
@@ -17,6 +17,6 @@ export function toRNColor(value: string): ColorValue {
 // RN-specific color helpers
 export function getRNColorValue(colorObj: Record<string, string>, shade: string): ColorValue {
   const key = shade as keyof typeof colorObj;
-  const color = colorObj[key] ?? "";
-  return color as unknown as ColorValue;
+  const color = colorObj[key] ?? '';
+  return color;
 }

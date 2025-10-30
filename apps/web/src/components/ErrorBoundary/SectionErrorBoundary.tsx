@@ -28,7 +28,7 @@ export const SectionErrorBoundary = ({ children, section, fallback, onError }) =
           </p>
           
           <div className="flex gap-3">
-            <button onClick={() => window.location.reload()} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2">
+            <button onClick={() => { window.location.reload(); }} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2">
               <RefreshCw className="w-4 h-4"/>
               Reload Page
             </button>
@@ -57,7 +57,7 @@ export const ChatErrorBoundary = ({ children }) => (<SectionErrorBoundary sectio
           <p className="text-gray-600 mb-4">
             We're having trouble loading the chat. Please try refreshing the page.
           </p>
-          <button onClick={() => window.location.reload()} className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors">
+          <button onClick={() => { window.location.reload(); }} className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors">
             Refresh Page
           </button>
         </div>
@@ -76,7 +76,7 @@ export const MapErrorBoundary = ({ children }) => (<SectionErrorBoundary section
           <p className="text-gray-600 mb-4">
             We're having trouble loading the map. Please check your internet connection and try again.
           </p>
-          <button onClick={() => window.location.reload()} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+          <button onClick={() => { window.location.reload(); }} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
             Retry
           </button>
         </div>
@@ -95,7 +95,7 @@ export const ProfileErrorBoundary = ({ children }) => (<SectionErrorBoundary sec
           <p className="text-gray-600 mb-4">
             We couldn't load your profile information. Please try again.
           </p>
-          <button onClick={() => window.location.reload()} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+          <button onClick={() => { window.location.reload(); }} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
             Reload Profile
           </button>
         </div>
@@ -114,7 +114,7 @@ export const SwipeErrorBoundary = ({ children }) => (<SectionErrorBoundary secti
           <p className="text-gray-600 mb-4">
             We're having trouble loading new matches. Please try again in a moment.
           </p>
-          <button onClick={() => window.location.reload()} className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors">
+          <button onClick={() => { window.location.reload(); }} className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors">
             Find New Matches
           </button>
         </div>
@@ -134,7 +134,7 @@ export const PaymentErrorBoundary = ({ children }) => (<SectionErrorBoundary sec
             We're experiencing issues with our payment system. Please try again later or contact support.
           </p>
           <div className="flex gap-3 justify-center">
-            <button onClick={() => window.location.reload()} className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+            <button onClick={() => { window.location.reload(); }} className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
               Try Again
             </button>
             <button onClick={() => window.location.href = '/support'} className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">

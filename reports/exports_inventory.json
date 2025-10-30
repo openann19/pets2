@@ -1,0 +1,151 @@
+{
+  "version": "1.0.0",
+  "generated": "2025-01-30T00:00:00Z",
+  "description": "Exported modules inventory for mobile app",
+
+  "publicExports": {
+    "components": {
+      "path": "apps/mobile/src/components/index.ts",
+      "exports": [
+        "EliteButton", "EliteButtonPresets", "EliteContainer", "EliteHeader",
+        "ModernSwipeCard", "FXContainer", "FXContainerPresets",
+        "Heading1", "Heading2", "Body", "BodySmall",
+        "Animations": ["FadeInUp", "StaggeredContainer"],
+        "Premium": ["PremiumBody", "PremiumHeading", "HolographicCard", "GlowContainer", "ParticleEffect"]
+      ]
+    },
+    "hooks": {
+      "organization": "Categorized by domain",
+      "exports": {
+        "animations": ["useEntranceAnimation", "useStaggeredAnimation"],
+        "navigation": ["useTabDoublePress", "useScrollOffsetTracker", "useTabReselectRefresh"],
+        "chat": ["useChatData"],
+        "swipe": ["useSwipeData", "useSwipeGestures", "useSwipeAnimations", "useSwipeUndo"],
+        "premium": ["usePremium", "usePremiumAnimations"],
+        "ai": ["useAIBio"],
+        "screens": ["useHomeScreen", "useSwipeScreen", "useProfileScreen"]
+      }
+    },
+    "services": {
+      "api": {
+        "path": "apps/mobile/src/services/api.ts",
+        "exports": ["matchesAPI", "chat", "aiAPI", "request", "presignVoice", "presignPhoto", "api", "_adminAPI"],
+        "functions": ["getMatches", "getMatch", "createMatch", "getMessages", "sendMessage", "getPetCompatibility"]
+      },
+      "premium": {
+        "path": "apps/mobile/src/services/PremiumService.ts",
+        "exports": ["PremiumService"],
+        "functions": ["hasActiveSubscription", "getSubscriptionStatus"]
+      },
+      "chat": {
+        "path": "apps/mobile/src/services/chatService.ts",
+        "exports": ["ChatService"]
+      },
+      "ai": {
+        "path": "apps/mobile/src/services/aiService.ts",
+        "exports": ["aiAPI"]
+      }
+    },
+    "stores": {
+      "auth": {
+        "path": "apps/mobile/src/stores/useAuthStore.ts",
+        "exports": ["useAuthStore"]
+      },
+      "ui": {
+        "path": "apps/mobile/src/stores/useUIStore.ts",
+        "exports": ["useUIStore"]
+      }
+    },
+    "theme": {
+      "unified": {
+        "path": "apps/mobile/src/theme/unified-theme.ts",
+        "exports": ["Theme"]
+      },
+      "provider": {
+        "path": "apps/mobile/src/theme/Provider.tsx",
+        "exports": ["ThemeProvider", "useTheme"]
+      }
+    },
+    "types": {
+      "path": "apps/mobile/src/types/",
+      "exports": [
+        "Pet", "Match", "Conversation", "Message", "User",
+        "PremiumSubscription", "ChatBubble", "NavigationProps"
+      ]
+    },
+    "utils": {
+      "path": "apps/mobile/src/utils/",
+      "exports": [
+        "formatDate", "formatDistance", "debounce", "throttle",
+        "validateEmail", "sanitizeInput", "generateId"
+      ]
+    },
+    "navigation": {
+      "types": {
+        "path": "apps/mobile/src/navigation/types.ts",
+        "exports": [
+          "RootStackParamList", "TabParamList", "OnboardingStackParamList",
+          "AdminStackParamList", "PremiumStackParamList",
+          "RootStackScreenProps", "TabScreenProps"
+        ]
+      }
+    }
+  },
+
+  "packageJsonExports": {
+    "main": "./index.js",
+    "modules": "./index.ts",
+    "types": "./index.d.ts",
+    "exports": {
+      ".": "./src/index.ts",
+      "./components": "./src/components/index.ts",
+      "./hooks": "./src/hooks/index.ts",
+      "./services": "./src/services/index.ts",
+      "./stores": "./src/stores/index.ts",
+      "./theme": "./src/theme/index.ts",
+      "./types": "./src/types/index.ts",
+      "./utils": "./src/utils/index.ts"
+    }
+  },
+
+  "internalDependencies": {
+    "highCoupling": [
+      "screens → components → hooks → services",
+      "navigation → screens → components"
+    ],
+    "moderateCoupling": [
+      "components ↔ theme",
+      "services ↔ stores"
+    ],
+    "lowCoupling": [
+      "utils ↔ any",
+      "types ↔ any"
+    ]
+  },
+
+  "externalUsage": {
+    "@pawfectmatch/core": {
+      "imports": ["Pet", "Match", "User", "PremiumSubscription"],
+      "usages": 2000
+    },
+    "@pawfectmatch/ui": {
+      "imports": ["Common components", "Elite components"],
+      "usages": 500
+    }
+  },
+
+  "deprecatedExports": {
+    "legacy": [
+      "Old swiper components",
+      "Legacy navigation props",
+      "Deprecated theme variables"
+    ],
+    "status": "Marked for removal in next major version"
+  },
+
+  "unusedExports": {
+    "count": 0,
+    "items": [],
+    "status": "all exports are used"
+  }
+}

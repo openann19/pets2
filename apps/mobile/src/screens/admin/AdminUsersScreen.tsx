@@ -1,4 +1,6 @@
-import React, { useCallback, useMemo } from "react";
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
+import { useCallback, useMemo } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -8,16 +10,15 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ErrorBoundary } from "../../components/ErrorBoundary";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ErrorBoundary } from '../../components/ErrorBoundary';
 import {
   AdminUserListItem,
   type AdminUserListItemViewModel,
-} from "../../components/admin/AdminUserListItem";
-import { useTheme } from "../../contexts/ThemeContext";
-import { useAdminUsersScreen } from "../../hooks/useAdminUsersScreen";
-import type { AdminScreenProps } from "../../navigation/types";
+} from '../../components/admin/AdminUserListItem';
+import { useAdminUsersScreen } from '../../hooks/useAdminUsersScreen';
+import type { AdminScreenProps } from '../../navigation/types';
 
 const FILTER_BUTTON_HIT_SLOP = {
   top: 8,
@@ -26,8 +27,10 @@ const FILTER_BUTTON_HIT_SLOP = {
   right: 12,
 } as const;
 
-const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
-  const { colors } = useTheme();
+const AdminUsersScreen = ({ navigation }: AdminScreenProps<'AdminUsers'>) => {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const { colors } = theme;
   const state = useAdminUsersScreen({ navigation });
 
   const { filters, onStatusChange, users, keyExtractor, getItemLayout } = state;
@@ -45,36 +48,36 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
     ({ item }: { item: AdminUserListItemViewModel }) => (
       <AdminUserListItem
         data={item}
-        colors={colors}
+        colors={theme.colors}
         onSelect={item.onSelect}
         onPrimaryAction={item.onPrimaryAction}
         onSecondaryAction={item.onSecondaryAction}
       />
     ),
-    [colors],
+    [theme],
   );
 
   return (
     <ErrorBoundary>
       <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.background }]}
+        style={StyleSheet.flatten([styles.container, { backgroundColor: colors.background }])}
       >
         <View style={styles.header}>
           <View>
-            <Text style={[styles.title, { color: colors.text }]}>
+            <Text style={StyleSheet.flatten([styles.title, { color: colors.onSurface }])}>
               {state.title}
             </Text>
-            <Text style={[styles.description, { color: colors.textSecondary }]}>
+            <Text style={StyleSheet.flatten([styles.description, { color: colors.onMuted }])}>
               {state.description}
             </Text>
           </View>
           <TouchableOpacity
-            onPress={state.onBackPress}
-            style={[styles.backButton, { borderColor: colors.border }]}
+            style={StyleSheet.flatten([styles.backButton, { borderColor: colors.border }])}
             accessibilityRole="button"
             accessibilityLabel="Go back"
+            onPress={state.onBackPress}
           >
-            <Text style={[styles.backButtonText, { color: colors.text }]}>
+            <Text style={StyleSheet.flatten([styles.backButtonText, { color: colors.onSurface }])}>
               Back
             </Text>
           </TouchableOpacity>
@@ -82,14 +85,14 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
 
         <View style={styles.controls}>
           <View
-            style={[styles.searchContainer, { borderColor: colors.border }]}
+            style={StyleSheet.flatten([styles.searchContainer, { borderColor: colors.border }])}
           >
             <TextInput
               value={state.searchQuery}
               onChangeText={state.onSearchChange}
               placeholder="Search users by name or email"
-              placeholderTextColor={colors.textSecondary}
-              style={[styles.searchInput, { color: colors.text }]}
+              placeholderTextColor={colors.onMuted}
+              style={StyleSheet.flatten([styles.searchInput, { color: colors.onSurface }])}
               autoCorrect={false}
               accessibilityRole="search"
             />
@@ -101,25 +104,25 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
               return (
                 <TouchableOpacity
                   key={filter.value}
+                  testID={`filter-${filter.value}-button`}
                   onPress={filterHandlers[filter.value]}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.filterButton,
                     {
-                      backgroundColor: isActive
-                        ? colors.primary
-                        : "transparent",
+                      backgroundColor: isActive ? colors.primary : 'transparent',
                       borderColor: isActive ? colors.primary : colors.border,
                     },
-                  ]}
+                  ])}
                   hitSlop={FILTER_BUTTON_HIT_SLOP}
                   accessibilityRole="button"
+                  accessibilityLabel={`Filter by ${filter.label}`}
                   accessibilityState={{ selected: isActive }}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.filterText,
-                      { color: isActive ? "#FFFFFF" : colors.text },
-                    ]}
+                      { color: isActive ? colors.onPrimary : colors.onSurface },
+                    ])}
                   >
                     {filter.label}
                   </Text>
@@ -132,7 +135,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
         {state.isBulkProcessing ? (
           <View style={styles.bulkStatus}>
             <ActivityIndicator color={colors.primary} />
-            <Text style={[styles.bulkStatusText, { color: colors.text }]}>
+            <Text style={StyleSheet.flatten([styles.bulkStatusText, { color: colors.onSurface }])}>
               Performing bulk action...
             </Text>
           </View>
@@ -140,40 +143,54 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
 
         {state.selectedCount > 0 ? (
           <View
-            style={[styles.bulkActions, { backgroundColor: colors.surface }]}
+            style={StyleSheet.flatten([styles.bulkActions, { backgroundColor: colors.surface }])}
           >
-            <Text style={[styles.bulkSummary, { color: colors.text }]}>
+            <Text style={StyleSheet.flatten([styles.bulkSummary, { color: colors.onSurface }])}>
               {state.selectedCount} selected
             </Text>
             <View style={styles.bulkButtons}>
               <TouchableOpacity
-                style={[styles.bulkButton, { borderColor: colors.warning }]}
-                onPress={state.onBulkSuspend}
+                style={StyleSheet.flatten([styles.bulkButton, { borderColor: colors.warning }])}
+                testID="bulk-suspend-button"
+                accessibilityLabel="Suspend selected users"
                 accessibilityRole="button"
+                onPress={state.onBulkSuspend}
               >
                 <Text
-                  style={[styles.bulkButtonText, { color: colors.warning }]}
+                  style={StyleSheet.flatten([styles.bulkButtonText, { color: colors.warning }])}
                 >
                   Suspend
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.bulkButton, { borderColor: colors.success }]}
-                onPress={state.onBulkActivate}
+                style={StyleSheet.flatten([styles.bulkButton, { borderColor: colors.success }])}
+                testID="bulk-activate-button"
+                accessibilityLabel="Activate selected users"
                 accessibilityRole="button"
+                onPress={state.onBulkActivate}
               >
                 <Text
-                  style={[styles.bulkButtonText, { color: colors.success }]}
+                  style={StyleSheet.flatten([styles.bulkButtonText, { color: colors.success }])}
                 >
                   Activate
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.bulkButton, { borderColor: colors.error }]}
-                onPress={state.onBulkBan}
+                style={StyleSheet.flatten([
+                  styles.bulkButton,
+                  { borderColor: theme.colors.danger },
+                ])}
+                testID="bulk-ban-button"
+                accessibilityLabel="Ban selected users"
                 accessibilityRole="button"
+                onPress={state.onBulkBan}
               >
-                <Text style={[styles.bulkButtonText, { color: colors.error }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.bulkButtonText,
+                    { color: theme.colors.danger },
+                  ])}
+                >
                   Ban
                 </Text>
               </TouchableOpacity>
@@ -196,18 +213,17 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
           ListEmptyComponent={
             state.isLoading ? (
               <View style={styles.emptyState}>
-                <ActivityIndicator size="large" color={colors.primary} />
-                <Text
-                  style={[styles.emptyText, { color: colors.textSecondary }]}
-                >
+                <ActivityIndicator
+                  size="large"
+                  color={colors.primary}
+                />
+                <Text style={StyleSheet.flatten([styles.emptyText, { color: colors.onMuted }])}>
                   Loading users...
                 </Text>
               </View>
             ) : (
               <View style={styles.emptyState}>
-                <Text
-                  style={[styles.emptyText, { color: colors.textSecondary }]}
-                >
+                <Text style={StyleSheet.flatten([styles.emptyText, { color: colors.onMuted }])}>
                   No users match the current filters.
                 </Text>
               </View>
@@ -223,118 +239,118 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: AppTheme) => StyleSheet.create({
   container: {
     flex: 1,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.sm,
+    paddingBottom: theme.spacing.xs,
   },
   title: {
-    fontSize: 22,
-    fontWeight: "700",
-    marginBottom: 4,
+    fontSize: theme.typography.h2.size,
+    fontWeight: theme.typography.h1.weight,
+    marginBottom: theme.spacing.xs,
   },
   description: {
-    fontSize: 14,
+    fontSize: theme.typography.body.size * 0.875,
   },
   backButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 999,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.radii.full,
     borderWidth: 1,
   },
   backButtonText: {
-    fontWeight: "600",
+    fontWeight: theme.typography.h2.weight,
   },
   controls: {
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-    gap: 12,
+    paddingHorizontal: theme.spacing.lg,
+    paddingBottom: theme.spacing.sm,
+    gap: theme.spacing.sm,
   },
   searchContainer: {
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    borderRadius: theme.radii.lg,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
   },
   searchInput: {
-    fontSize: 15,
+    fontSize: theme.typography.body.size * 0.9375,
   },
   filterRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.xs,
   },
   filterButton: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.radii.full,
     borderWidth: 1,
   },
   filterText: {
-    fontSize: 13,
-    fontWeight: "600",
+    fontSize: theme.typography.body.size * 0.8125,
+    fontWeight: theme.typography.h2.weight,
   },
   bulkStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
   },
   bulkStatusText: {
-    fontSize: 14,
-    fontWeight: "500",
+    fontSize: theme.typography.body.size * 0.875,
+    fontWeight: theme.typography.body.weight,
   },
   bulkActions: {
-    marginHorizontal: 20,
-    marginBottom: 12,
-    borderRadius: 16,
-    padding: 16,
+    marginHorizontal: theme.spacing.lg,
+    marginBottom: theme.spacing.sm,
+    borderRadius: theme.radii.lg,
+    padding: theme.spacing.md,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "rgba(255,255,255,0.06)",
+    borderColor: 'rgba(255,255,255,0.06)',
     elevation: 1,
   },
   bulkSummary: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 12,
+    fontSize: theme.typography.body.size * 0.875,
+    fontWeight: theme.typography.h2.weight,
+    marginBottom: theme.spacing.sm,
   },
   bulkButtons: {
-    flexDirection: "row",
-    gap: 12,
+    flexDirection: 'row',
+    gap: theme.spacing.sm,
   },
   bulkButton: {
     flex: 1,
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radii.lg,
     borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   bulkButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: theme.typography.body.size * 0.875,
+    fontWeight: theme.typography.h2.weight,
   },
   listContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 32,
-    paddingTop: 4,
+    paddingHorizontal: theme.spacing.lg,
+    paddingBottom: theme.spacing.xl,
+    paddingTop: theme.spacing.xs,
   },
   emptyState: {
-    alignItems: "center",
-    paddingVertical: 48,
-    gap: 12,
+    alignItems: 'center',
+    paddingVertical: theme.spacing.xl * 1.5,
+    gap: theme.spacing.sm,
   },
   emptyText: {
-    fontSize: 14,
-    textAlign: "center",
+    fontSize: theme.typography.body.size * 0.875,
+    textAlign: 'center',
     maxWidth: 260,
   },
 });

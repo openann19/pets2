@@ -1,0 +1,137 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    # Warm up phase
+    - duration: 60
+      arrivalRate: 1
+      name: "Warm up"
+    
+    # Ramp up phase
+    - duration: 120
+      arrivalRate: 5
+      name: "Ramp up"
+    
+    # Sustained load phase
+    - duration: 300
+      arrivalRate: 10
+      name: "Sustained load"
+    
+    # Spike test
+    - duration: 60
+      arrivalRate: 50
+      name: "Traffic spike"
+    
+    # Cool down phase
+    - duration: 120
+      arrivalRate: 2
+      name: "Cool down"
+  
+  variables:
+    baseUrl: "http://localhost:3000"
+  
+  processor: "./server/tests/load/processor.js"
+  
+  plugins:
+    expect: {}
+    metrics-by-endpoint:
+      stripQueryString: true
+
+scenarios:
+  # Chat reactions load test
+  - name: "Chat Reactions"
+    weight: 30
+    flow:
+      - post:
+          url: "{{ baseUrl }}/api/chat/reactions"
+          headers:
+            Authorization: "Bearer {{ token }}"
+            Content-Type: "application/json"
+          json:
+            matchId: "{{ $randomMatchId }}"
+            messageId: "{{ $randomMessageId }}"
+            reaction: "heart"
+          capture:
+            - json: "$.messageId"
+              as: "reactionId"
+          expect:
+            - statusCode: 200
+              hasProperty: "success"
+    
+  # Chat attachments load test
+  - name: "Chat Attachments"
+    weight: 20
+    flow:
+      - post:
+          url: "{{ baseUrl }}/api/chat/attachments"
+          headers:
+            Authorization: "Bearer {{ token }}"
+          file:
+            file: "./tests/fixtures/test-image.jpg"
+            filename: "test-image.jpg"
+            contentType: "image/jpeg"
+          expect:
+            - statusCode: 200
+              hasProperty: "url"
+    
+  # Voice presign load test
+  - name: "Voice Notes Presign"
+    weight: 25
+    flow:
+      - post:
+          url: "{{ baseUrl }}/api/chat/voice/presign"
+          headers:
+            Authorization: "Bearer {{ token }}"
+            Content-Type: "application/json"
+          json:
+            contentType: "audio/webm"
+          capture:
+            - json: "$.url"
+              as: "presignUrl"
+            - json: "$.key"
+              as: "key"
+          expect:
+            - statusCode: 200
+              hasProperty: "url"
+      
+      - put:
+          url: "{{ presignUrl }}"
+          headers:
+            Content-Type: "audio/webm"
+          file: "./tests/fixtures/test-voice.webm"
+          expect:
+            - statusCode: 200
+  
+  # GDPR export load test
+  - name: "GDPR Export"
+    weight: 10
+    flow:
+      - post:
+          url: "{{ baseUrl }}/api/account/export-data"
+          headers:
+            Authorization: "Bearer {{ token }}"
+            Content-Type: "application/json"
+          json:
+            format: "json"
+            includeMessages: true
+            includeMatches: true
+            includeProfileData: true
+          expect:
+            - statusCode: 200
+              hasProperty: "exportId"
+  
+  # Premium checkout load test
+  - name: "Premium Checkout"
+    weight: 15
+    flow:
+      - post:
+          url: "{{ baseUrl }}/api/premium/subscribe"
+          headers:
+            Authorization: "Bearer {{ token }}"
+            Content-Type: "application/json"
+          json:
+            plan: "premium"
+            interval: "month"
+          expect:
+            - statusCode: 200
+              hasProperty: "data"
+

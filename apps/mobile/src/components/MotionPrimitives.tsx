@@ -1,10 +1,25 @@
-import React, { useEffect, useRef } from "react";
-import type { ViewStyle, FlatListProps } from "react-native";
-import { View, Animated, ScrollView, FlatList } from "react-native";
+import React, { useEffect, useState } from 'react';
+import type { ViewStyle } from 'react-native';
+import { StyleSheet, View, AccessibilityInfo } from 'react-native';
+import Animated, {
+  FadeInUp,
+  SlideInLeft,
+  SlideInRight,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 
-// import { MotionSystem } from '../styles/EnhancedDesignTokens'; // === PROJECT HYPERION: MOTION & ANIMATION PRIMITIVES ===
+const usePrefersReducedMotion = () => {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    AccessibilityInfo.isReduceMotionEnabled().then((v) => {
+      setReduced(!!v);
+    });
+  }, []);
+  return reduced;
+};
 
-// Staggered FadeInUp List Component
 interface StaggeredFadeInUpListProps {
   children: React.ReactNode[];
   delay?: number;
@@ -18,44 +33,23 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
   style,
   containerStyle,
 }) => {
-  const animatedValues = useRef(
-    children.map(() => new Animated.Value(0)),
-  ).current;
-
-  useEffect(() => {
-    const animations = animatedValues.map((animatedValue, index) =>
-      Animated.spring(animatedValue, {
-        ...MotionSystem.springs.gentle,
-        toValue: 1,
-        delay: index * delay,
-        useNativeDriver: true,
-      }),
-    );
-
-    Animated.stagger(delay, animations).start();
-  }, [animatedValues, delay]);
+  const reduceMotion = usePrefersReducedMotion();
 
   return (
-    <View style={[containerStyle]}>
+    <View style={StyleSheet.flatten([containerStyle])}>
       {children.map((child, index) => {
-        const animatedValue = animatedValues[index];
         return (
           <Animated.View
             key={index}
-            style={[
-              {
-                opacity: animatedValue,
-                transform: [
-                  {
-                    translateY: animatedValue.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [20, 0],
-                    }),
-                  },
-                ],
-              },
-              style,
-            ]}
+            entering={
+              reduceMotion
+                ? undefined
+                : FadeInUp.delay(index * delay)
+                    .springify()
+                    .damping(25)
+                    .stiffness(300)
+            }
+            style={style}
           >
             {child}
           </Animated.View>
@@ -65,7 +59,6 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
   );
 };
 
-// Physics-Based ScaleIn Component
 interface PhysicsBasedScaleInProps {
   children: React.ReactNode;
   delay?: number;
@@ -79,355 +72,107 @@ export const PhysicsBasedScaleIn: React.FC<PhysicsBasedScaleInProps> = ({
   style,
   trigger = true,
 }) => {
-  const animatedValue = useRef(new Animated.Value(0)).current;
+  const s = useSharedValue(0.3);
+  const reduceMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     if (trigger) {
-      Animated.spring(animatedValue, {
-        ...MotionSystem.springs.bouncy,
-        toValue: 1,
-        delay,
-        useNativeDriver: true,
-      }).start();
+      s.value = withSpring(1, { damping: 10, stiffness: 600, mass: 0.5 });
     }
-  }, [animatedValue, delay, trigger]);
+  }, [trigger]);
 
-  return (
-    <Animated.View
-      style={[
-        {
-          opacity: animatedValue,
-          transform: [
-            {
-              scale: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.3, 1],
-              }),
-            },
-          ],
-        },
-        style,
-      ]}
-    >
-      {children}
-    </Animated.View>
-  );
+  const styleA = useAnimatedStyle(() => ({
+    opacity: reduceMotion ? 1 : s.value,
+    transform: [{ scale: reduceMotion ? 1 : s.value }],
+  }));
+  return <Animated.View style={[styleA, style]}>{children}</Animated.View>;
 };
 
-// Seamless PageTransition Component
 interface PageTransitionProps {
   children: React.ReactNode;
-  type?: "fade" | "slideLeft" | "slideRight" | "scale" | "sharedElement";
+  type?: 'fade' | 'slideLeft' | 'slideRight';
   duration?: number;
   style?: ViewStyle;
 }
 
 export const PageTransition: React.FC<PageTransitionProps> = ({
   children,
-  type = "fade",
-  duration = MotionSystem.timings.standard,
+  type = 'fade',
+  duration = 300,
   style,
 }) => {
-  const animatedValue = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.timing(animatedValue, {
-      toValue: 1,
-      duration,
-      easing: MotionSystem.easings.standard as any,
-      useNativeDriver: true,
-    }).start();
-  }, [animatedValue, duration]);
-
-  const getTransitionStyle = () => {
-    switch (type) {
-      case "fade":
-        return {
-          opacity: animatedValue,
-        };
-
-      case "slideLeft":
-        return {
-          opacity: animatedValue,
-          transform: [
-            {
-              translateX: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [50, 0],
-              }),
-            },
-          ],
-        };
-
-      case "slideRight":
-        return {
-          opacity: animatedValue,
-          transform: [
-            {
-              translateX: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [-50, 0],
-              }),
-            },
-          ],
-        };
-
-      case "scale":
-        return {
-          opacity: animatedValue,
-          transform: [
-            {
-              scale: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.9, 1],
-              }),
-            },
-          ],
-        };
-
-      case "sharedElement":
-        return {
-          opacity: animatedValue,
-          transform: [
-            {
-              scale: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.8, 1],
-              }),
-            },
-            {
-              translateY: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [20, 0],
-              }),
-            },
-          ],
-        };
-
-      default:
-        return {
-          opacity: animatedValue,
-        };
-    }
-  };
-
+  const entering =
+    type === 'fade'
+      ? FadeInUp.duration(duration)
+      : type === 'slideLeft'
+        ? SlideInLeft.duration(duration)
+        : type === 'slideRight'
+          ? SlideInRight.duration(duration)
+          : FadeInUp.duration(duration);
   return (
-    <Animated.View style={[getTransitionStyle(), style]}>
+    <Animated.View
+      entering={entering}
+      style={style}
+    >
       {children}
     </Animated.View>
   );
 };
 
-// GestureWrapper Higher-Order Component
 interface GestureWrapperProps {
   children: React.ReactNode;
-  onSwipeLeft?: () => void;
-  onSwipeRight?: () => void;
-  onSwipeUp?: () => void;
-  onSwipeDown?: () => void;
-  onPinch?: (scale: number) => void;
-  onRotate?: (rotation: number) => void;
   style?: ViewStyle;
 }
 
-export const GestureWrapper: React.FC<GestureWrapperProps> = ({
-  children,
-  onSwipeLeft,
-  onSwipeRight,
-  onSwipeUp,
-  onSwipeDown,
-  onPinch,
-  onRotate,
-  style,
-}) => {
-  // This would integrate with react-native-gesture-handler
-  // For now, returning a basic wrapper
+export const GestureWrapper: React.FC<GestureWrapperProps> = ({ children, style }) => {
   return <View style={style}>{children}</View>;
 };
 
-// Enhanced FlatList with Staggered Animations
-interface AnimatedFlatListProps<T> extends FlatListProps<T> {
-  animationType?: "staggered" | "fadeIn" | "slideIn" | "none";
-  animationDelay?: number;
-}
-
-export function AnimatedFlatList<T>({
-  animationType = "staggered",
-  animationDelay = 100,
-  ...props
-}: AnimatedFlatListProps<T>) {
-  const animatedValues = useRef<Map<number, Animated.Value>>(new Map()).current;
-
-  const getAnimatedStyle = (index: number) => {
-    if (animationType === "none") return {};
-
-    let animatedValue = animatedValues.get(index);
-    if (!animatedValue) {
-      animatedValue = new Animated.Value(0);
-      animatedValues.set(index, animatedValue);
-
-      // Trigger animation
-      Animated.spring(animatedValue, {
-        ...MotionSystem.springs.gentle,
-        toValue: 1,
-        delay: index * animationDelay,
-        useNativeDriver: true,
-      }).start();
-    }
-
-    switch (animationType) {
-      case "staggered":
-        return {
-          opacity: animatedValue,
-          transform: [
-            {
-              translateY: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [20, 0],
-              }),
-            },
-          ],
-        };
-
-      case "fadeIn":
-        return {
-          opacity: animatedValue.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, 1],
-          }),
-        };
-
-      case "slideIn":
-        return {
-          opacity: animatedValue,
-          transform: [
-            {
-              translateX: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [30, 0],
-              }),
-            },
-          ],
-        };
-
-      default:
-        return {};
-    }
-  };
-
-  return (
-    <FlatList
-      {...props}
-      renderItem={(info) => (
-        <Animated.View style={getAnimatedStyle(info.index)}>
-          {props.renderItem?.(info)}
-        </Animated.View>
-      )}
-    />
-  );
-}
-
-// Scroll-triggered Animation Container
 interface ScrollTriggerProps {
   children: React.ReactNode;
-  triggerPoint?: number; // 0-1, where 1 is bottom of screen
-  animation?: "fadeInUp" | "scaleIn" | "slideInLeft" | "slideInRight";
-  delay?: number;
+  animation?: 'fade' | 'slide' | 'slideIn' | 'scale' | 'scaleIn';
+  triggerPoint?: number;
   style?: ViewStyle;
 }
 
 export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
   children,
+  animation = 'fade',
   triggerPoint = 0.8,
-  animation = "fadeInUp",
-  delay = 0,
   style,
 }) => {
-  const animatedValue = useRef(new Animated.Value(0)).current;
-  const hasAnimated = useRef(false);
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(20);
+  const scale = useSharedValue(0.9);
 
-  // This would integrate with scroll position
-  // For now, trigger immediately
   useEffect(() => {
-    if (!hasAnimated.current) {
-      hasAnimated.current = true;
-      Animated.sequence([
-        Animated.delay(delay),
-        Animated.spring(animatedValue, {
-          ...MotionSystem.springs.standard,
-          toValue: 1,
-          useNativeDriver: true,
-        }),
-      ]).start();
+    // Simulate scroll trigger
+    opacity.value = withSpring(1, { damping: 10, stiffness: 100 });
+    if (animation === 'slide' || animation === 'slideIn') {
+      translateY.value = withSpring(0, { damping: 10, stiffness: 100 });
     }
-  }, [animatedValue, delay]);
-
-  const getAnimationStyle = () => {
-    switch (animation) {
-      case "fadeInUp":
-        return {
-          opacity: animatedValue,
-          transform: [
-            {
-              translateY: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [30, 0],
-              }),
-            },
-          ],
-        };
-
-      case "scaleIn":
-        return {
-          opacity: animatedValue,
-          transform: [
-            {
-              scale: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.8, 1],
-              }),
-            },
-          ],
-        };
-
-      case "slideInLeft":
-        return {
-          opacity: animatedValue,
-          transform: [
-            {
-              translateX: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [-30, 0],
-              }),
-            },
-          ],
-        };
-
-      case "slideInRight":
-        return {
-          opacity: animatedValue,
-          transform: [
-            {
-              translateX: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [30, 0],
-              }),
-            },
-          ],
-        };
-
-      default:
-        return {
-          opacity: animatedValue,
-        };
+    if (animation === 'scale' || animation === 'scaleIn') {
+      scale.value = withSpring(1, { damping: 10, stiffness: 100 });
     }
-  };
+  }, [triggerPoint, animation]);
 
-  return (
-    <Animated.View style={[getAnimationStyle(), style]}>
-      {children}
-    </Animated.View>
-  );
+  const animatedStyle = useAnimatedStyle(() => {
+    if (animation === 'slide' || animation === 'slideIn') {
+      return {
+        opacity: opacity.value,
+        transform: [{ translateY: translateY.value }],
+      };
+    }
+    if (animation === 'scale' || animation === 'scaleIn') {
+      return {
+        opacity: opacity.value,
+        transform: [{ scale: scale.value }],
+      };
+    }
+    return { opacity: opacity.value };
+  });
+
+  return <Animated.View style={[animatedStyle, style]}>{children}</Animated.View>;
 };
 
 export default {
@@ -435,6 +180,5 @@ export default {
   PhysicsBasedScaleIn,
   PageTransition,
   GestureWrapper,
-  AnimatedFlatList,
   ScrollTrigger,
 };

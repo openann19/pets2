@@ -11,6 +11,7 @@ export { animationConfig, useAnimationConfig } from './services/animationConfig'
 export * from './types/animations';
 export * from './utils';
 export * from './utils/env';
+export { logger, apiLogger, authLogger, uiLogger, navigationLogger, storageLogger, analyticsLogger, notificationLogger, mediaLogger } from './utils/logger';
 export * from './stores';
 export { AccountService } from './services/AccountService';
 export { errorHandler } from './services/ErrorHandler';
@@ -19,4 +20,3 @@ export * from './api';
 export { useFocusTrap, useGesture, useKeyboardShortcut, useEventTracking, useRealtimeSocket } from './hooks';
 export * from './mappers';
 export declare const _VERSION = "1.0.0";
-//# sourceMappingURL=index.d.ts.map

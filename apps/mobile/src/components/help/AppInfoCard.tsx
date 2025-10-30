@@ -1,6 +1,6 @@
-import { BlurView } from "expo-blur";
-import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { BlurView } from 'expo-blur';
+import React from 'react';
+import { StyleSheet, Text } from 'react-native';
 
 interface AppInfoCardProps {
   version?: string;
@@ -9,12 +9,15 @@ interface AppInfoCardProps {
 }
 
 export function AppInfoCard({
-  version = "2.5.1",
-  build = "2024.10.13",
-  platform = "iOS & Android",
+  version = '2.5.1',
+  build = '2024.10.13',
+  platform = 'iOS & Android',
 }: AppInfoCardProps): React.JSX.Element {
   return (
-    <BlurView intensity={15} style={styles.infoCard}>
+    <BlurView
+      intensity={15}
+      style={styles.infoCard}
+    >
       <Text style={styles.infoTitle}>Version</Text>
       <Text style={styles.infoValue}>{version}</Text>
 
@@ -34,14 +37,14 @@ const styles = StyleSheet.create({
   },
   infoTitle: {
     fontSize: 14,
-    fontWeight: "600",
-    color: "rgba(255,255,255,0.8)",
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.8)',
     marginBottom: 4,
   },
   infoValue: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "white",
+    fontWeight: 'bold',
+    color: 'white',
     marginBottom: 16,
   },
 });

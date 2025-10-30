@@ -166,7 +166,7 @@ class LoggerService {
     url: string,
     statusCode: number,
     duration: number,
-    context?: LogEntry['context']
+    context?: LogEntry['context'],
   ): void {
     const level = statusCode >= 400 ? 'error' : 'info';
     this.log(level, `API ${method} ${url}`, {
@@ -188,7 +188,7 @@ class LoggerService {
     action: string,
     userId: string,
     metadata?: Record<string, unknown>,
-    context?: LogEntry['context']
+    context?: LogEntry['context'],
   ): void {
     this.log('info', `User action: ${action}`, {
       ...context,
@@ -207,12 +207,17 @@ class LoggerService {
   logSecurityEvent(
     event: string,
     severity: 'low' | 'medium' | 'high' | 'critical',
-    context?: LogEntry['context']
+    context?: LogEntry['context'],
   ): void {
-    const level = severity === 'critical' ? 'critical' : 
-                  severity === 'high' ? 'error' : 
-                  severity === 'medium' ? 'warn' : 'info';
-    
+    const level =
+      severity === 'critical'
+        ? 'critical'
+        : severity === 'high'
+          ? 'error'
+          : severity === 'medium'
+            ? 'warn'
+            : 'info';
+
     this.log(level, `Security event: ${event}`, {
       ...context,
       action: 'security_event',
@@ -234,15 +239,18 @@ class LoggerService {
   } {
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-    
-    const recentErrors = this.logQueue.filter(
-      entry => entry.level === 'error' || entry.level === 'critical'
-    ).filter(entry => entry.timestamp >= oneHourAgo);
-    
-    const byLevel = this.logQueue.reduce<Record<LogLevel, number>>((acc, entry) => {
-      acc[entry.level] += 1;
-      return acc;
-    }, { debug: 0, info: 0, warn: 0, error: 0, critical: 0 });
+
+    const recentErrors = this.logQueue
+      .filter((entry) => entry.level === 'error' || entry.level === 'critical')
+      .filter((entry) => entry.timestamp >= oneHourAgo);
+
+    const byLevel = this.logQueue.reduce<Record<LogLevel, number>>(
+      (acc, entry) => {
+        acc[entry.level] += 1;
+        return acc;
+      },
+      { debug: 0, info: 0, warn: 0, error: 0, critical: 0 },
+    );
 
     const byComponent = this.logQueue.reduce<Record<string, number>>((acc, entry) => {
       const component = entry.context?.component ?? 'unknown';
@@ -272,7 +280,7 @@ class LoggerService {
     level: LogLevel,
     message: string,
     context?: LogEntry['context'],
-    error?: Error
+    error?: Error,
   ): void {
     // Check if we should log this level
     if (!this.shouldLog(level)) {
@@ -313,7 +321,7 @@ class LoggerService {
     const levels: LogLevel[] = ['debug', 'info', 'warn', 'error', 'critical'];
     const currentLevelIndex = levels.indexOf(this.config.level);
     const messageLevelIndex = levels.indexOf(level);
-    
+
     return messageLevelIndex >= currentLevelIndex;
   }
 
@@ -322,7 +330,7 @@ class LoggerService {
    */
   private addToQueue(entry: LogEntry): void {
     this.logQueue.push(entry);
-    
+
     // Maintain queue size (keep last 1000 entries)
     if (this.logQueue.length > 1000) {
       this.logQueue = this.logQueue.slice(-1000);
@@ -358,7 +366,7 @@ class LoggerService {
    */
   private async writeToTransports(entry: LogEntry): Promise<void> {
     const promises = this.transports
-      .filter(transport => transport.shouldLog(entry.level))
+      .filter((transport) => transport.shouldLog(entry.level))
       .map(async (transport) => {
         try {
           await transport.write(entry);
@@ -387,7 +395,11 @@ class LoggerService {
     }
 
     // Remote transport
-    if (this.config.enableRemote && this.config.remoteEndpoint != null && this.config.remoteEndpoint !== '') {
+    if (
+      this.config.enableRemote &&
+      this.config.remoteEndpoint != null &&
+      this.config.remoteEndpoint !== ''
+    ) {
       this.transports.push(this.createRemoteTransport());
     }
   }
@@ -401,7 +413,7 @@ class LoggerService {
       shouldLog: (level) => this.shouldLog(level),
       write: (entry) => {
         const formattedMessage = this.formatConsoleMessage(entry);
-        
+
         switch (entry.level) {
           case 'debug':
             // eslint-disable-next-line no-console
@@ -469,25 +481,32 @@ class LoggerService {
     const timestamp = entry.timestamp.toISOString();
     const level = entry.level.toUpperCase().padEnd(8);
     const component = entry.context?.component ?? 'unknown';
-    const action = entry.context?.action != null && entry.context.action !== '' ? ` [${entry.context.action}]` : '';
-    
+    const action =
+      entry.context?.action != null && entry.context.action !== ''
+        ? ` [${entry.context.action}]`
+        : '';
+
     let message = `[${timestamp}] ${level} ${component}${action}: ${entry.message}`;
-    
+
     if (entry.error != null) {
       message += `\n  Error: ${entry.error.name}: ${entry.error.message}`;
-      if (entry.error.stack != null && entry.error.stack !== '' && process.env['NODE_ENV'] !== 'production') {
+      if (
+        entry.error.stack != null &&
+        entry.error.stack !== '' &&
+        process.env['NODE_ENV'] !== 'production'
+      ) {
         message += `\n  Stack: ${entry.error.stack}`;
       }
     }
-    
+
     if (entry.performance != null) {
       message += `\n  Performance: ${String(entry.performance.duration)}ms`;
     }
-    
+
     if (entry.context?.metadata != null && Object.keys(entry.context.metadata).length > 0) {
       message += `\n  Metadata: ${JSON.stringify(entry.context.metadata, null, 2)}`;
     }
-    
+
     return message;
   }
 

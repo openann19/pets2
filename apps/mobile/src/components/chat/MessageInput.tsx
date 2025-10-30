@@ -1,12 +1,14 @@
-import React, { useCallback, useRef, useState } from "react";
-import { View, TextInput, StyleSheet, Alert } from "react-native";
-import { Animated } from "react-native";
-import * as Haptics from "expo-haptics";
-import { EliteButton } from "../EliteButton";
-import { GlassContainer } from "../GlassContainer";
-import { PremiumBody } from "../PremiumBody";
-import { tokens } from "@pawfectmatch/design-tokens";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from '@mobile/src/theme';
+import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
+import React, { useCallback, useRef, useState } from 'react';
+import { Alert, Animated, StyleSheet, TextInput, View } from 'react-native';
+import { chatService } from '../../services/chatService';
+import { getExtendedColors } from '../../theme/adapters';
+import { EliteButton } from '../EliteComponents';
+import { GlassContainer } from '../GlassMorphism';
+import { PremiumBody } from '../PremiumTypography';
+import { VoiceRecorder } from './VoiceRecorder';
 
 interface MessageInputProps {
   value: string;
@@ -17,6 +19,10 @@ interface MessageInputProps {
   maxLength?: number;
   placeholder?: string;
   inputRef?: React.RefObject<TextInput>;
+  matchId: string;
+  onAttachmentSent?: () => void;
+  onVoiceNoteSent?: () => void;
+  testID?: string;
 }
 
 const MAX_MESSAGE_LENGTH = 500;
@@ -28,12 +34,19 @@ export function MessageInput({
   onTypingChange,
   isSending = false,
   maxLength = MAX_MESSAGE_LENGTH,
-  placeholder = "Type a message...",
+  placeholder = 'Type a message...',
   inputRef,
+  matchId,
+  onAttachmentSent,
+  onVoiceNoteSent,
+  testID,
 }: MessageInputProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
   const [characterCount, setCharacterCount] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
 
   const messageEntryAnimation = useRef(new Animated.Value(0)).current;
   const sendButtonScale = useRef(new Animated.Value(1)).current;
@@ -98,15 +111,122 @@ export function MessageInput({
     onSend();
   }, [value, isSending, onSend, sendButtonScale]);
 
-  const handleAttachPress = useCallback(() => {
+  const handleAttachPress = useCallback(async () => {
+    if (isUploading) return;
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert("Attach Media", "Photo and file sharing coming soon!");
-  }, []);
+
+    try {
+      // Request permissions
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Needed', 'Please grant photo library access to send attachments.');
+        return;
+      }
+
+      // Show attachment options
+      Alert.alert(
+        'Add Attachment',
+        'Choose an option',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Photo Library',
+            onPress: async () => {
+              setIsUploading(true);
+              try {
+                const result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  quality: 0.8,
+                  allowsMultipleSelection: false,
+                });
+
+                if (!result.canceled && result.assets && result.assets[0]) {
+                  const asset = result.assets[0];
+                  // Convert URI to Blob for upload
+                  const response = await fetch(asset.uri);
+                  const blob = await response.blob();
+
+                  // Send attachment using chatService
+                  await chatService.sendAttachment({
+                    matchId,
+                    attachmentType: 'image',
+                    file: blob,
+                  });
+
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  onAttachmentSent?.();
+                }
+              } catch (error) {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+                Alert.alert('Error', 'Failed to send attachment. Please try again.');
+              } finally {
+                setIsUploading(false);
+              }
+            },
+          },
+          {
+            text: 'Take Photo',
+            onPress: async () => {
+              setIsUploading(true);
+              try {
+                const { status } = await ImagePicker.requestCameraPermissionsAsync();
+                if (status !== 'granted') {
+                  Alert.alert('Permission Needed', 'Camera access required to take photos.');
+                  setIsUploading(false);
+                  return;
+                }
+
+                const result = await ImagePicker.launchCameraAsync({
+                  allowsEditing: true,
+                  quality: 0.8,
+                });
+
+                if (!result.canceled && result.assets && result.assets[0]) {
+                  const asset = result.assets[0];
+                  const response = await fetch(asset.uri);
+                  const blob = await response.blob();
+
+                  await chatService.sendAttachment({
+                    matchId,
+                    attachmentType: 'image',
+                    file: blob,
+                  });
+
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  onAttachmentSent?.();
+                }
+              } catch (error) {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+                Alert.alert('Error', 'Failed to take photo. Please try again.');
+              } finally {
+                setIsUploading(false);
+              }
+            },
+          },
+        ],
+        { cancelable: true },
+      );
+    } catch (error) {
+      Alert.alert('Error', 'Failed to open photo picker.');
+    }
+  }, [isUploading, matchId, onAttachmentSent]);
 
   const handleEmojiPress = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert("Emoji Picker", "Emoji picker coming soon! 😊");
+    Alert.alert('Emoji Picker', 'Emoji picker coming soon! 😊');
   }, []);
+
+  const handleVoicePress = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setShowVoiceRecorder(true);
+  }, []);
+
+  const handleVoiceNoteSent = useCallback(() => {
+    setShowVoiceRecorder(false);
+    onVoiceNoteSent?.();
+  }, [onVoiceNoteSent]);
 
   const isNearLimit = characterCount > maxLength * 0.9;
   const isOverLimit = characterCount > maxLength;
@@ -117,43 +237,46 @@ export function MessageInput({
       transparency="medium"
       border="light"
       shadow="medium"
+      testID={testID}
     >
       <View style={styles.container}>
         <EliteButton
+          testID="attachment-button"
           title=""
           variant="glass"
           size="sm"
-          icon="add"
-          magnetic={true}
+          icon={isUploading ? 'hourglass' : 'add'}
           ripple={true}
           onPress={handleAttachPress}
+          disabled={isUploading}
         />
 
         <View style={styles.inputWrapper}>
           <TextInput
+            testID="message-text-input"
             ref={inputRef}
-            style={[
+            style={StyleSheet.flatten([
               styles.textInput,
               {
-                backgroundColor: "rgba(255,255,255,0.1)",
-                borderColor: "rgba(255,255,255,0.2)",
-                color: "#fff",
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                borderColor: 'rgba(255,255,255,0.2)',
+                color: colors.text,
               },
               isTyping && [
                 styles.textInputFocused,
                 {
                   borderColor: colors.primary,
-                  backgroundColor: "rgba(255,255,255,0.2)",
+                  backgroundColor: 'rgba(255,255,255,0.2)',
                 },
               ],
               isNearLimit && [
                 styles.textInputWarning,
                 {
                   borderColor: colors.warning,
-                  backgroundColor: "rgba(245,158,11,0.1)",
+                  backgroundColor: 'rgba(245,158,11,0.1)',
                 },
               ],
-            ]}
+            ])}
             value={value}
             onChangeText={handleTextChange}
             placeholder={placeholder}
@@ -170,15 +293,15 @@ export function MessageInput({
           {/* Character Counter */}
           {characterCount > maxLength * 0.8 && (
             <Animated.View
-              style={[
+              style={StyleSheet.flatten([
                 styles.characterCountContainer,
                 { opacity: messageEntryAnimation },
-              ]}
+              ])}
             >
               <PremiumBody
-                size="xs"
+                size="sm"
                 weight="regular"
-                style={{ color: isOverLimit ? colors.error : colors.gray500 }}
+                style={{ color: isOverLimit ? colors.danger : colors.textMuted }}
               >
                 {characterCount}/{maxLength}
               </PremiumBody>
@@ -187,59 +310,67 @@ export function MessageInput({
         </View>
 
         <EliteButton
+          testID="emoji-button"
           title=""
           variant="glass"
           size="sm"
           icon="happy-outline"
-          magnetic={true}
           ripple={true}
           onPress={handleEmojiPress}
         />
 
         <Animated.View style={{ transform: [{ scale: sendButtonScale }] }}>
           <EliteButton
+            testID="send-button"
             title=""
-            variant={value.trim() ? "primary" : "glass"}
+            variant={value.trim() || isUploading ? 'primary' : 'glass'}
             size="sm"
-            icon={isSending ? "hourglass" : "send"}
-            magnetic={true}
+            icon={isSending || isUploading ? 'hourglass' : 'send'}
             ripple={true}
-            glow={value.trim()}
-            shimmer={isSending}
+            glow={!!(value.trim() || isUploading)}
+            shimmer={!!(isSending || isUploading)}
             onPress={handleSend}
-            disabled={!value.trim() || isSending}
+            disabled={(!value.trim() && !isUploading) || isSending || isUploading}
           />
         </Animated.View>
       </View>
+
+      {/* Voice Recorder */}
+      {showVoiceRecorder && (
+        <VoiceRecorder
+          matchId={matchId}
+          onVoiceNoteSent={handleVoiceNoteSent}
+        />
+      )}
     </GlassContainer>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    paddingHorizontal: tokens.spacing.md,
-    paddingVertical: tokens.spacing.sm,
-    gap: tokens.spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    gap: 8,
   },
   inputWrapper: {
     flex: 1,
-    position: "relative",
+    position: 'relative',
     minHeight: 36,
     maxHeight: 120,
   },
   textInput: {
-    borderRadius: tokens.borderRadius.xl,
-    paddingHorizontal: tokens.spacing.md,
-    paddingVertical: tokens.spacing.sm,
-    fontSize: tokens.typography.body.fontSize,
-    lineHeight: tokens.typography.body.lineHeight,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    fontSize: 16,
+    lineHeight: 24,
     borderWidth: 1,
-    textAlignVertical: "center",
+    textAlignVertical: 'center',
   },
   textInputFocused: {
-    shadowColor: "#007AFF",
+    shadowColor: '#007AFF',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -249,12 +380,12 @@ const styles = StyleSheet.create({
     // Warning styles handled by theme colors
   },
   characterCountContainer: {
-    position: "absolute",
-    bottom: tokens.spacing.xs,
-    right: tokens.spacing.sm,
-    backgroundColor: "rgba(255,255,255,0.95)",
-    paddingHorizontal: tokens.spacing.xs,
-    paddingVertical: tokens.spacing.xs,
-    borderRadius: tokens.borderRadius.sm,
+    position: 'absolute',
+    bottom: 4,
+    right: 8,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+    borderRadius: 4,
   },
 });

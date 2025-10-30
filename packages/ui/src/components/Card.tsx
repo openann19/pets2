@@ -17,18 +17,26 @@ const elevatedStyle: CSSProperties = {
   boxShadow: '0 18px 35px rgba(15, 23, 42, 0.12)',
 };
 
-export const Card = forwardRef<HTMLDivElement, CardProps>(({ elevated = false, style, ...rest }, ref) => {
-  const { theme } = useTheme();
-  const computedStyle: CSSProperties = {
-    ...baseStyle,
-    backgroundColor: theme.colors.surface,
-    color: theme.colors.text,
-    border: `1px solid ${theme.colors.muted}`,
-    ...(elevated ? elevatedStyle : {}),
-    ...style,
-  };
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ elevated = false, style, ...rest }, ref) => {
+    const { theme } = useTheme();
+    const computedStyle: CSSProperties = {
+      ...baseStyle,
+      backgroundColor: theme.colors.surface,
+      color: theme.colors.text,
+      border: `1px solid ${theme.colors.muted}`,
+      ...(elevated ? elevatedStyle : {}),
+      ...style,
+    };
 
-  return <div ref={ref} style={computedStyle} {...rest} />;
-});
+    return (
+      <div
+        ref={ref}
+        style={computedStyle}
+        {...rest}
+      />
+    );
+  },
+);
 
 Card.displayName = 'Card';

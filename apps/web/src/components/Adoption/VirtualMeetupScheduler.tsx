@@ -178,7 +178,7 @@ export const VirtualMeetupScheduler = ({ petId, applicantId, shelterId, applicat
 
               <div className="space-y-2">
                 <Label htmlFor="duration">Duration (minutes) *</Label>
-                <Select value={watch('duration')?.toString()} onValueChange={(value) => setValue('duration', parseInt(value, 10))}>
+                <Select value={watch('duration')?.toString()} onValueChange={(value) => { setValue('duration', parseInt(value, 10)); }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select duration"/>
                   </SelectTrigger>
@@ -245,8 +245,8 @@ export const VirtualMeetupScheduler = ({ petId, applicantId, shelterId, applicat
               </div>
 
               {agendaItems.map((item, index) => (<div key={index} className="flex gap-2">
-                  <Input value={item} onChange={(e) => updateAgendaItem(index, e.target.value)} placeholder={`Agenda item ${index + 1}...`}/>
-                  {agendaItems.length > 1 && (<Button type="button" variant="outline" size="sm" onClick={() => removeAgendaItem(index)}>
+                  <Input value={item} onChange={(e) => { updateAgendaItem(index, e.target.value); }} placeholder={`Agenda item ${index + 1}...`}/>
+                  {agendaItems.length > 1 && (<Button type="button" variant="outline" size="sm" onClick={() => { removeAgendaItem(index); }}>
                       Remove
                     </Button>)}
                 </div>))}

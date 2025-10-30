@@ -49,7 +49,7 @@ export default function EmojiReactions({ isVisible, onReaction, onClose, classNa
         };
         if (showPicker) {
             document.addEventListener('mousedown', handleClickOutside);
-            return () => document.removeEventListener('mousedown', handleClickOutside);
+            return () => { document.removeEventListener('mousedown', handleClickOutside); };
         }
     }, [showPicker]);
     const handleEmojiSelect = (emoji) => {
@@ -149,7 +149,7 @@ export default function EmojiReactions({ isVisible, onReaction, onClose, classNa
 
             {/* Emoji grid */}
             <div className="grid grid-cols-6 gap-2">
-              {EMOJI_CATEGORIES[activeCategory].map((emoji) => (<motion.button key={emoji} onClick={() => handleEmojiSelect(emoji)} className="p-2 text-2xl hover:scale-110 transition-transform rounded-lg hover:bg-white/10" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              {EMOJI_CATEGORIES[activeCategory].map((emoji) => (<motion.button key={emoji} onClick={() => { handleEmojiSelect(emoji); }} className="p-2 text-2xl hover:scale-110 transition-transform rounded-lg hover:bg-white/10" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                   {emoji}
                 </motion.button>))}
             </div>

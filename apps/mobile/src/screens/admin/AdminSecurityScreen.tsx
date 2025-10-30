@@ -1,3 +1,4 @@
+import React from "react";
 /**
  * Admin Security Screen for Mobile
  * Comprehensive security monitoring and threat management
@@ -19,9 +20,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
+
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface SecurityAlert {
@@ -46,26 +49,32 @@ interface SecurityAlert {
   resolvedAt?: string;
 }
 
-interface SecurityMetrics {
-  totalAlerts: number;
-  criticalAlerts: number;
-  highAlerts: number;
-  mediumAlerts: number;
-  lowAlerts: number;
-  resolvedAlerts: number;
-  pendingAlerts: number;
-  suspiciousLogins: number;
-  blockedIPs: number;
-  reportedContent: number;
-  spamDetected: number;
-  dataBreaches: number;
-  unusualActivity: number;
+interface SecurityApiResponse {
+  alerts?: SecurityAlert[];
+}
+
+interface SecurityMetricsApiResponse {
+  totalAlerts?: number;
+  criticalAlerts?: number;
+  highAlerts?: number;
+  mediumAlerts?: number;
+  lowAlerts?: number;
+  resolvedAlerts?: number;
+  pendingAlerts?: number;
+  suspiciousLogins?: number;
+  blockedIPs?: number;
+  reportedContent?: number;
+  spamDetected?: number;
+  dataBreaches?: number;
+  unusualActivity?: number;
 }
 
 export default function AdminSecurityScreen({
   navigation,
 }: AdminScreenProps<"AdminSecurity">): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = React.useMemo(() => makeStyles(theme), [theme]);
+  const { colors } = theme;
   const { user: _user } = useAuthStore();
   const [alerts, setAlerts] = useState<SecurityAlert[]>([]);
   const [filteredAlerts, setFilteredAlerts] = useState<SecurityAlert[]>([]);
@@ -97,18 +106,19 @@ export default function AdminSecurityScreen({
   const loadSecurityData = async (): Promise<void> => {
     try {
       setLoading(true);
-      const [alertsResponse, metricsResponse] = await Promise.all([
-        adminAPI.getSecurityAlerts({
-          page: 1,
-          limit: 100,
-          sort: "timestamp",
-          order: "desc",
-        }),
-        adminAPI.getSecurityMetrics(),
-      ]);
+      const alertsResponseRaw = await adminAPI.getSecurityAlerts({
+        page: 1,
+        limit: 100,
+        sort: "timestamp",
+        order: "desc",
+      });
+      const metricsResponseRaw = await adminAPI.getSecurityMetrics();
 
-      setAlerts(alertsResponse.data.alerts);
-      setMetrics(metricsResponse.data);
+      const alertsResponse: SecurityApiResponse = alertsResponseRaw.data || {};
+      const metricsResponse: SecurityMetricsApiResponse = metricsResponseRaw.data || {};
+
+      setAlerts(alertsResponse.alerts || []);
+      setMetrics(metricsResponse as SecurityMetrics);
     } catch (error: unknown) {
       logger.error("Error loading security data:", { error });
       Alert.alert("Error", "Failed to load security data");
@@ -148,7 +158,7 @@ export default function AdminSecurityScreen({
 
     try {
       setActionLoading(alertId);
-      const response = await adminAPI.resolveSecurityAlert(alertId);
+      const response = await adminAPI.resolveSecurityAlert({ alertId, action: "resolved" });
 
       if (response.success) {
         setAlerts((prevAlerts) =>
@@ -186,7 +196,7 @@ export default function AdminSecurityScreen({
           onPress: async () => {
             try {
               setActionLoading(alertId);
-              const response = await adminAPI.blockIPAddress(ipAddress);
+              const response = await adminAPI.blockIPAddress({ ipAddress, reason: "Manual block" });
 
               if (response.success) {
                 Alert.alert("Success", "IP address blocked successfully");
@@ -207,15 +217,15 @@ export default function AdminSecurityScreen({
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "critical":
-        return "#EF4444";
+        return theme.colors.danger;
       case "high":
-        return "#F59E0B";
+        return theme.colors.warning;
       case "medium":
-        return "#3B82F6";
+        return theme.colors.info;
       case "low":
-        return "#10B981";
+        return theme.colors.success;
       default:
-        return "#6B7280";
+        return theme.colors.border;
     }
   };
 
@@ -251,19 +261,19 @@ export default function AdminSecurityScreen({
 
     return (
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.alertCard,
           { backgroundColor: colors.card },
           item.resolved && styles.alertCardResolved,
-        ]}
+        ])}
       >
         <View style={styles.alertHeader}>
           <View style={styles.alertInfo}>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.severityIndicator,
                 { backgroundColor: getSeverityColor(item.severity) },
-              ]}
+              ])}
             />
             <View style={styles.alertDetails}>
               <View style={styles.alertTitleRow}>
@@ -272,14 +282,19 @@ export default function AdminSecurityScreen({
                   size={20}
                   color={getSeverityColor(item.severity)}
                 />
-                <Text style={[styles.alertTitle, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.alertTitle,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   {item.title}
                 </Text>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.severityBadge,
                     { backgroundColor: getSeverityColor(item.severity) },
-                  ]}
+                  ])}
                 >
                   <Text style={styles.severityText}>
                     {item.severity.toUpperCase()}
@@ -287,15 +302,18 @@ export default function AdminSecurityScreen({
                 </View>
               </View>
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.alertDescription,
-                  { color: colors.textSecondary },
-                ]}
+                  { color: colors.onMuted },
+                ])}
               >
                 {item.description}
               </Text>
               <Text
-                style={[styles.alertTimestamp, { color: colors.textSecondary }]}
+                style={StyleSheet.flatten([
+                  styles.alertTimestamp,
+                  { color: colors.onMuted },
+                ])}
               >
                 {formatDate(item.timestamp)}
               </Text>
@@ -305,24 +323,30 @@ export default function AdminSecurityScreen({
           {!item.resolved && (
             <View style={styles.alertActions}>
               <TouchableOpacity
-                style={[styles.actionButton, { backgroundColor: "#10B981" }]}
-                onPress={() => handleResolveAlert(item.id)}
+                style={StyleSheet.flatten([
+                  styles.actionButton,
+                  { backgroundColor: theme.colors.success },
+                ])}
+                 testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleResolveAlert(item.id)}
                 disabled={isActionLoading}
               >
                 {isActionLoading ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color={theme.colors.onSurface} />
                 ) : (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+                  <Ionicons name="checkmark" size={16} color={theme.colors.onSurface} />
                 )}
               </TouchableOpacity>
 
               {item.ipAddress ? (
                 <TouchableOpacity
-                  style={[styles.actionButton, { backgroundColor: "#EF4444" }]}
-                  onPress={() => handleBlockIP(item.id, item.ipAddress!)}
+                  style={StyleSheet.flatten([
+                    styles.actionButton,
+                    { backgroundColor: theme.colors.danger },
+                  ])}
+                   testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleBlockIP(item.id, item.ipAddress!)}
                   disabled={isActionLoading}
                 >
-                  <Ionicons name="ban" size={16} color="#FFFFFF" />
+                  <Ionicons name="ban" size={16} color={theme.colors.onSurface} />
                 </TouchableOpacity>
               ) : null}
             </View>
@@ -331,9 +355,12 @@ export default function AdminSecurityScreen({
 
         {item.resolved ? (
           <View style={styles.resolvedInfo}>
-            <Ionicons name="checkmark-circle" size={16} color="#10B981" />
+            <Ionicons name="checkmark-circle" size={16} color={theme.colors.success} />
             <Text
-              style={[styles.resolvedText, { color: colors.textSecondary }]}
+              style={StyleSheet.flatten([
+                styles.resolvedText,
+                { color: colors.onMuted },
+              ])}
             >
               Resolved by {item.resolvedBy} on {formatDate(item.resolvedAt!)}
             </Text>
@@ -344,16 +371,26 @@ export default function AdminSecurityScreen({
         <View style={styles.alertMeta}>
           {item.userEmail ? (
             <View style={styles.metaItem}>
-              <Ionicons name="person" size={14} color={colors.textSecondary} />
-              <Text style={[styles.metaText, { color: colors.textSecondary }]}>
+              <Ionicons name="person" size={14} color={colors.onMuted} />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.metaText,
+                  { color: colors.onMuted },
+                ])}
+              >
                 {item.userEmail}
               </Text>
             </View>
           ) : null}
           {item.ipAddress ? (
             <View style={styles.metaItem}>
-              <Ionicons name="globe" size={14} color={colors.textSecondary} />
-              <Text style={[styles.metaText, { color: colors.textSecondary }]}>
+              <Ionicons name="globe" size={14} color={colors.onMuted} />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.metaText,
+                  { color: colors.onMuted },
+                ])}
+              >
                 {item.ipAddress}
               </Text>
             </View>
@@ -363,9 +400,14 @@ export default function AdminSecurityScreen({
               <Ionicons
                 name="location"
                 size={14}
-                color={colors.textSecondary}
+                color={colors.onMuted}
               />
-              <Text style={[styles.metaText, { color: colors.textSecondary }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.metaText,
+                  { color: colors.onMuted },
+                ])}
+              >
                 {item.location}
               </Text>
             </View>
@@ -378,11 +420,19 @@ export default function AdminSecurityScreen({
   if (loading) {
     return (
       <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.background }]}
+        style={StyleSheet.flatten([
+          styles.container,
+          { backgroundColor: colors.background },
+        ])}
       >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.onSurface},
+            ])}
+          >
             Loading security data...
           </Text>
         </View>
@@ -392,28 +442,36 @@ export default function AdminSecurityScreen({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => {
+           testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             navigation.goBack();
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
+        >
           Security Dashboard
         </Text>
         <View style={styles.headerActions}>
           <TouchableOpacity
-            style={[styles.refreshButton, { backgroundColor: colors.primary }]}
-            onPress={onRefresh}
+            style={StyleSheet.flatten([
+              styles.refreshButton,
+              { backgroundColor: colors.primary },
+            ])}
+             testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onRefresh}
             disabled={refreshing}
           >
-            <Ionicons name="refresh" size={20} color="#FFFFFF" />
+            <Ionicons name="refresh" size={20} color={theme.colors.onSurface} />
           </TouchableOpacity>
         </View>
       </View>
@@ -421,54 +479,119 @@ export default function AdminSecurityScreen({
       {/* Security Metrics */}
       {metrics ? (
         <View style={styles.metricsContainer}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.onSurface},
+            ])}
+          >
             Security Overview
           </Text>
           <View style={styles.metricsGrid}>
-            <View style={[styles.metricCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.metricCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.metricHeader}>
-                <Ionicons name="alert-circle" size={20} color="#EF4444" />
-                <Text style={[styles.metricTitle, { color: colors.text }]}>
+                <Ionicons name="alert-circle" size={20} color={theme.colors.danger} />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.metricTitle,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   Critical
                 </Text>
               </View>
-              <Text style={[styles.metricValue, { color: "#EF4444" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.metricValue,
+                  { color: theme.colors.danger },
+                ])}
+              >
                 {metrics.criticalAlerts}
               </Text>
             </View>
 
-            <View style={[styles.metricCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.metricCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.metricHeader}>
-                <Ionicons name="warning" size={20} color="#F59E0B" />
-                <Text style={[styles.metricTitle, { color: colors.text }]}>
+                <Ionicons name="warning" size={20} color={theme.colors.warning} />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.metricTitle,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   High
                 </Text>
               </View>
-              <Text style={[styles.metricValue, { color: "#F59E0B" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.metricValue,
+                  { color: theme.colors.warning },
+                ])}
+              >
                 {metrics.highAlerts}
               </Text>
             </View>
 
-            <View style={[styles.metricCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.metricCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.metricHeader}>
-                <Ionicons name="information-circle" size={20} color="#3B82F6" />
-                <Text style={[styles.metricTitle, { color: colors.text }]}>
+                <Ionicons name="information-circle" size={20} color={theme.colors.info} />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.metricTitle,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   Medium
                 </Text>
               </View>
-              <Text style={[styles.metricValue, { color: "#3B82F6" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.metricValue,
+                  { color: theme.colors.info },
+                ])}
+              >
                 {metrics.mediumAlerts}
               </Text>
             </View>
 
-            <View style={[styles.metricCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.metricCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.metricHeader}>
-                <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                <Text style={[styles.metricTitle, { color: colors.text }]}>
+                <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.metricTitle,
+                    { color: colors.onSurface},
+                  ])}
+                >
                   Resolved
                 </Text>
               </View>
-              <Text style={[styles.metricValue, { color: "#10B981" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.metricValue,
+                  { color: theme.colors.success },
+                ])}
+              >
                 {metrics.resolvedAlerts}
               </Text>
             </View>
@@ -479,7 +602,12 @@ export default function AdminSecurityScreen({
       {/* Filters */}
       <View style={styles.filtersContainer}>
         <View style={styles.filterRow}>
-          <Text style={[styles.filterLabel, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.filterLabel,
+              { color: colors.onSurface},
+            ])}
+          >
             Severity:
           </Text>
           <View style={styles.filterButtons}>
@@ -487,7 +615,7 @@ export default function AdminSecurityScreen({
               (severity) => (
                 <TouchableOpacity
                   key={severity}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.filterButton,
                     selectedSeverity === severity && styles.filterButtonActive,
                     {
@@ -496,21 +624,21 @@ export default function AdminSecurityScreen({
                           ? colors.primary
                           : colors.card,
                     },
-                  ]}
-                  onPress={() => {
+                  ])}
+                   testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                     setSelectedSeverity(severity);
                   }}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.filterText,
                       {
                         color:
                           selectedSeverity === severity
-                            ? "#FFFFFF"
-                            : colors.text,
+                            ? theme.colors.onSurface
+                            : colors.onSurface
                       },
-                    ]}
+                    ])}
                   >
                     {severity.charAt(0).toUpperCase() + severity.slice(1)}
                   </Text>
@@ -521,7 +649,12 @@ export default function AdminSecurityScreen({
         </View>
 
         <View style={styles.filterRow}>
-          <Text style={[styles.filterLabel, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.filterLabel,
+              { color: colors.onSurface},
+            ])}
+          >
             Type:
           </Text>
           <View style={styles.filterButtons}>
@@ -538,23 +671,23 @@ export default function AdminSecurityScreen({
             ).map((type) => (
               <TouchableOpacity
                 key={type}
-                style={[
+                style={StyleSheet.flatten([
                   styles.filterButton,
                   selectedType === type && styles.filterButtonActive,
                   {
                     backgroundColor:
                       selectedType === type ? colors.primary : colors.card,
                   },
-                ]}
-                onPress={() => {
+                ])}
+                 testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                   setSelectedType(type);
                 }}
               >
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.filterText,
-                    { color: selectedType === type ? "#FFFFFF" : colors.text },
-                  ]}
+                    { color: selectedType === type ? theme.colors.onSurface : colors.onSurface},
+                  ])}
                 >
                   {type
                     .replace("_", " ")
@@ -585,214 +718,323 @@ export default function AdminSecurityScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(0,0,0,0.1)",
-  },
-  backButton: {
-    padding: 8,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    flex: 1,
-    marginLeft: 8,
-  },
-  headerActions: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  refreshButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  metricsContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 12,
-  },
-  metricsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  metricCard: {
-    width: (SCREEN_WIDTH - 44) / 2,
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  metricHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  metricTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-  metricValue: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  filtersContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 12,
-  },
-  filterRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  filterLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    minWidth: 60,
-  },
-  filterButtons: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  filterButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  filterButtonActive: {
-    // Active state handled by backgroundColor
-  },
-  filterText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  listContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  alertCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  alertCardResolved: {
-    opacity: 0.7,
-  },
-  alertHeader: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  alertInfo: {
-    flexDirection: "row",
-    flex: 1,
-  },
-  severityIndicator: {
-    width: 4,
-    height: "100%",
-    borderRadius: 2,
-    marginRight: 12,
-  },
-  alertDetails: {
-    flex: 1,
-  },
-  alertTitleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-    gap: 8,
-  },
-  alertTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    flex: 1,
-  },
-  severityBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  severityText: {
-    color: "#FFFFFF",
-    fontSize: 10,
-    fontWeight: "600",
-  },
-  alertDescription: {
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  alertTimestamp: {
-    fontSize: 12,
-  },
-  alertActions: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  actionButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  resolvedInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 12,
-  },
-  resolvedText: {
-    fontSize: 12,
-    fontStyle: "italic",
-  },
-  alertMeta: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  metaItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  metaText: {
-    fontSize: 12,
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+      paddingHorizontal: theme.spacing.lg,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    loadingText: {
+      marginTop: theme.spacing.md,
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.body.weight,
+    },
+    header: {
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.xs,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    backButton: {
+      padding: theme.spacing.xs,
+    },
+    title: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
+      flex: 1,
+      textAlign: "center",
+    },
+    headerActions: {
+      flexDirection: "row",
+      gap: theme.spacing.xs,
+    },
+    refreshButton: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radii.full,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    metricsContainer: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.lg,
+    },
+    sectionTitle: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.md,
+    },
+    metricsGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.sm,
+    },
+    metricCard: {
+      width: (SCREEN_WIDTH - theme.spacing.md * 2 - theme.spacing.sm) / 2,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      ...theme.shadows.elevation2,
+    },
+    metricHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: theme.spacing.xs,
+    },
+    metricTitle: {
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
+      marginLeft: theme.spacing.xs,
+    },
+    metricValue: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
+      marginBottom: theme.spacing.xs,
+    },
+    metricTrend: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+    },
+    metricTrendText: {
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.h2.weight,
+    },
+    metricSubtext: {
+      fontSize: theme.typography.body.size * 0.75,
+      marginTop: theme.spacing.xs,
+    },
+    engagementGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.sm,
+    },
+    engagementCard: {
+      width: (SCREEN_WIDTH - theme.spacing.md * 2 - theme.spacing.sm) / 2,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      alignItems: "center",
+      ...theme.shadows.elevation2,
+    },
+    engagementLabel: {
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.body.weight,
+      marginBottom: theme.spacing.xs,
+    },
+    engagementValue: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
+    },
+    revenueGrid: {
+      flexDirection: "row",
+      gap: theme.spacing.sm,
+    },
+    revenueCard: {
+      flex: 1,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      alignItems: "center",
+      ...theme.shadows.elevation2,
+    },
+    revenueLabel: {
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.body.weight,
+      marginBottom: theme.spacing.xs,
+    },
+    revenueValue: {
+      fontSize: theme.typography.h2.size * 0.75,
+      fontWeight: theme.typography.h1.weight,
+    },
+    securityGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.sm,
+    },
+    securityCard: {
+      width: (SCREEN_WIDTH - theme.spacing.md * 2 - theme.spacing.sm) / 2,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      alignItems: "center",
+      ...theme.shadows.elevation2,
+    },
+    securityLabel: {
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.body.weight,
+      marginTop: theme.spacing.xs,
+      marginBottom: theme.spacing.xs,
+      textAlign: "center",
+    },
+    securityValue: {
+      fontSize: theme.typography.h2.size * 0.75,
+      fontWeight: theme.typography.h1.weight,
+    },
+    performersGrid: {
+      flexDirection: "row",
+      gap: theme.spacing.sm,
+    },
+    performersCard: {
+      flex: 1,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      ...theme.shadows.elevation2,
+    },
+    performersTitle: {
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.sm,
+    },
+    performerItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: theme.spacing.xs,
+      gap: theme.spacing.xs,
+    },
+    performerRank: {
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.h2.weight,
+      width: 20,
+    },
+    performerName: {
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.body.weight,
+      flex: 1,
+    },
+    performerStats: {
+      fontSize: theme.typography.body.size * 0.75,
+    },
+    filtersContainer: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      gap: theme.spacing.sm,
+    },
+    filterRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.sm,
+    },
+    filterLabel: {
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
+      minWidth: 60,
+    },
+    filterButtons: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.xs,
+    },
+    filterButton: {
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.lg,
+    },
+    filterButtonActive: {
+      // Active state handled by backgroundColor
+    },
+    filterText: {
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.h2.weight,
+    },
+    listContainer: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingBottom: theme.spacing.xl,
+    },
+    alertCard: {
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
+      ...theme.shadows.elevation2,
+    },
+    alertCardResolved: {
+      opacity: 0.7,
+    },
+    alertHeader: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      marginBottom: theme.spacing.sm,
+    },
+    alertInfo: {
+      flexDirection: "row",
+      flex: 1,
+    },
+    severityIndicator: {
+      width: 4,
+      height: "100%",
+      borderRadius: theme.radii.sm,
+      marginRight: theme.spacing.sm,
+    },
+    alertDetails: {
+      flex: 1,
+    },
+    alertTitleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: theme.spacing.xs,
+      gap: theme.spacing.xs,
+    },
+    alertTitle: {
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
+      flex: 1,
+    },
+    severityBadge: {
+      paddingHorizontal: theme.spacing.xs,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.md,
+    },
+    severityText: {
+      color: theme.colors.onSurface,
+      fontSize: theme.typography.body.size * 0.625,
+      fontWeight: theme.typography.h2.weight,
+    },
+    alertDescription: {
+      fontSize: theme.typography.body.size * 0.875,
+      marginBottom: theme.spacing.xs,
+    },
+    alertTimestamp: {
+      fontSize: theme.typography.body.size * 0.75,
+    },
+    alertActions: {
+      flexDirection: "row",
+      gap: theme.spacing.xs,
+    },
+    actionButton: {
+      width: 32,
+      height: 32,
+      borderRadius: theme.radii.lg,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    resolvedInfo: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+      marginBottom: theme.spacing.sm,
+    },
+    resolvedText: {
+      fontSize: theme.typography.body.size * 0.75,
+      fontStyle: "italic",
+    },
+    alertMeta: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.sm,
+    },
+    metaItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+    },
+    metaText: {
+      fontSize: theme.typography.body.size * 0.75,
+    },
+  });
+}

@@ -2,20 +2,18 @@
 /**
  * Isomorphic environment guards for universal code
  * Safe to use in both Node and browser contexts
- * 
+ *
  * Note: This file uses DOM types via triple-slash reference
  * but guards all DOM access with runtime checks for Node safety
  */
 
 /** Runtime check for browser environment */
-export const isBrowser = (): boolean => 
-  typeof window !== "undefined" && typeof window.document !== "undefined";
+export const isBrowser = (): boolean =>
+  typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
 /** Runtime check for Node environment */
-export const isNode = (): boolean => 
-  typeof process !== "undefined" && 
-  process.versions != null && 
-  process.versions.node != null;
+export const isNode = (): boolean =>
+  typeof process !== 'undefined' && process.versions != null && process.versions.node != null;
 
 /** Safe window access (undefined in Node) */
 export const getSafeWindow = (): (Window & typeof globalThis) | undefined =>
@@ -127,13 +125,13 @@ export function safeMatchMedia(query: string): MediaQueryList | undefined {
 
 /** Check if user prefers reduced motion */
 export function prefersReducedMotion(): boolean {
-  const mediaQuery = safeMatchMedia("(prefers-reduced-motion: reduce)");
+  const mediaQuery = safeMatchMedia('(prefers-reduced-motion: reduce)');
   return mediaQuery?.matches ?? false;
 }
 
 /** Check if device has pointer:fine (mouse/trackpad) */
 export function hasPointerFine(): boolean {
-  const mediaQuery = safeMatchMedia("(pointer: fine)");
+  const mediaQuery = safeMatchMedia('(pointer: fine)');
   return mediaQuery?.matches ?? false;
 }
 
@@ -143,7 +141,6 @@ export function hasTouchSupport(): boolean {
   const nav = getSafeNavigator();
   return (
     nav != null &&
-    ("ontouchstart" in window ||
-      (nav.maxTouchPoints != null && nav.maxTouchPoints > 0))
+    ('ontouchstart' in window || (nav.maxTouchPoints != null && nav.maxTouchPoints > 0))
   );
 }

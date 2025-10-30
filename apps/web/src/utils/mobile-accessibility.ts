@@ -85,7 +85,7 @@ export function useMobileAccessibility(config = {}) {
         const mediaQuery = window.matchMedia('(prefers-contrast: high)');
         mediaQuery.addEventListener('change', checkHighContrast);
         checkHighContrast();
-        return () => mediaQuery.removeEventListener('change', checkHighContrast);
+        return () => { mediaQuery.removeEventListener('change', checkHighContrast); };
     }, []);
     // Detect reduced motion preference
     const detectReducedMotion = useCallback(() => {
@@ -96,7 +96,7 @@ export function useMobileAccessibility(config = {}) {
         const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         mediaQuery.addEventListener('change', checkReducedMotion);
         checkReducedMotion();
-        return () => mediaQuery.removeEventListener('change', checkReducedMotion);
+        return () => { mediaQuery.removeEventListener('change', checkReducedMotion); };
     }, []);
     // Detect large text preference
     const detectLargeText = useCallback(() => {
@@ -108,7 +108,7 @@ export function useMobileAccessibility(config = {}) {
         };
         checkLargeText();
         window.addEventListener('resize', checkLargeText);
-        return () => window.removeEventListener('resize', checkLargeText);
+        return () => { window.removeEventListener('resize', checkLargeText); };
     }, []);
     // Update focusable elements
     const updateFocusableElements = useCallback(() => {
@@ -167,7 +167,7 @@ export function useMobileAccessibility(config = {}) {
         updateFocusableElements();
         const observer = new MutationObserver(updateFocusableElements);
         observer.observe(document.body, { childList: true, subtree: true });
-        return () => observer.disconnect();
+        return () => { observer.disconnect(); };
     }, [updateFocusableElements]);
     return {
         state,

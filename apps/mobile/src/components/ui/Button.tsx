@@ -1,11 +1,11 @@
-import React from "react";
-import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
-import { useTheme } from "../../theme/useTheme";
-import type { ColorPalette } from "../../theme/theme";
-import { Text } from "./Text";
+import React from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import { useTheme } from '../../theme/useTheme';
+import type { ColorPalette } from '../../theme/theme';
+import { Text } from './Text';
 
-export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
-export type ButtonSize = "sm" | "md" | "lg";
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
+export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps {
   title: string;
@@ -15,7 +15,7 @@ export interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   icon?: React.ReactNode;
-  iconPosition?: "left" | "right";
+  iconPosition?: 'left' | 'right';
   testID?: string;
 }
 
@@ -31,39 +31,39 @@ const sizeStyles: Record<
 export function Button({
   title,
   onPress,
-  variant = "primary",
-  size = "md",
+  variant = 'primary',
+  size = 'md',
   disabled = false,
   loading = false,
   icon,
-  iconPosition = "left",
+  iconPosition = 'left',
   testID,
 }: ButtonProps): React.ReactElement {
   const { colors, radii } = useTheme();
 
   const { paddingVertical, paddingHorizontal, gap } = sizeStyles[size];
 
-  let backgroundColor = "transparent";
-  let borderColor = "transparent";
-  let contentTone: keyof ColorPalette = "text";
+  let backgroundColor = 'transparent';
+  let borderColor = 'transparent';
+  let contentTone: keyof ColorPalette = 'text';
 
   switch (variant) {
-    case "primary":
+    case 'primary':
       backgroundColor = colors.primary;
-      contentTone = "primaryForeground";
+      contentTone = 'primaryForeground';
       break;
-    case "secondary":
+    case 'secondary':
       backgroundColor = colors.secondary;
-      contentTone = "secondaryForeground";
+      contentTone = 'secondaryForeground';
       break;
-    case "outline":
+    case 'outline':
       borderColor = colors.border;
-      contentTone = "primary";
+      contentTone = 'primary';
       break;
-    case "ghost":
+    case 'ghost':
     default:
-      backgroundColor = "transparent";
-      contentTone = "text";
+      backgroundColor = 'transparent';
+      contentTone = 'text';
       break;
   }
 
@@ -74,8 +74,7 @@ export function Button({
       style={({ pressed }) => [
         styles.base,
         {
-          backgroundColor:
-            pressed && !disabled ? colors.surfaceMuted : backgroundColor,
+          backgroundColor: pressed && !disabled ? colors.surfaceMuted : backgroundColor,
           borderColor,
           borderRadius: radii.md,
           opacity: disabled ? 0.6 : 1,
@@ -87,16 +86,19 @@ export function Button({
       accessibilityState={{ disabled }}
       testID={testID}
     >
-      <View style={[styles.content, { gap }]}>
-        {icon != null && iconPosition === "left" ? icon : null}
+      <View style={StyleSheet.flatten([styles.content, { gap }])}>
+        {icon != null && iconPosition === 'left' ? icon : null}
         {loading ? (
           <ActivityIndicator color={colors[contentTone]} />
         ) : (
-          <Text variant="button" tone={contentTone}>
+          <Text
+            variant="button"
+            tone={contentTone}
+          >
             {title}
           </Text>
         )}
-        {icon != null && iconPosition === "right" ? icon : null}
+        {icon != null && iconPosition === 'right' ? icon : null}
       </View>
     </Pressable>
   );
@@ -105,11 +107,11 @@ export function Button({
 const styles = StyleSheet.create({
   base: {
     borderWidth: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   content: {
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
 });

@@ -40,7 +40,7 @@ export function useRevealObserver(options: RevealOptions = {}) {
     }, { root: null, rootMargin, threshold });
 
     io.observe(el);
-    return () => io.disconnect();
+    return () => { io.disconnect(); };
   }, [rootMargin, threshold, once, classWhenVisible, onReveal]);
 
   return { ref } as const;

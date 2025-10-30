@@ -1,67 +1,112 @@
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { PetFormData } from "../../hooks/usePetForm";
+import type { PetFormData } from '../../hooks/usePetForm';
+import type { FormFieldValue } from '../../types/forms';
+import { useTheme } from '@/theme';
 
 interface PetPersonalitySectionProps {
   formData: PetFormData;
-  onUpdateFormData: (field: string, value: any) => void;
+  onUpdateFormData: (field: string, value: FormFieldValue) => void;
 }
 
 const personalityTags = [
-  "friendly",
-  "energetic",
-  "playful",
-  "calm",
-  "shy",
-  "protective",
-  "good-with-kids",
-  "good-with-pets",
-  "trained",
-  "house-trained",
-  "intelligent",
+  'friendly',
+  'energetic',
+  'playful',
+  'calm',
+  'shy',
+  'protective',
+  'good-with-kids',
+  'good-with-pets',
+  'trained',
+  'house-trained',
+  'intelligent',
 ];
 
 export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
   formData,
   onUpdateFormData,
 }) => {
-  const togglePersonalityTag = (tag: string) => {
+  const toggleTag = (tag: string) => {
     onUpdateFormData(
-      "personalityTags",
+      'personalityTags',
       formData.personalityTags.includes(tag)
         ? formData.personalityTags.filter((t) => t !== tag)
         : [...formData.personalityTags, tag],
     );
   };
 
+  const makeStyles = (theme: any) =>
+    StyleSheet.create({
+      section: {
+        marginBottom: 32,
+      },
+      sectionTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: theme.colors.neutral[900],
+        marginBottom: 16,
+      },
+      sectionDesc: {
+        fontSize: 14,
+        color: theme.colors.neutral[500],
+        marginBottom: 16,
+      },
+      tagsContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+      },
+      tag: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderWidth: 1,
+        borderColor: theme.colors.neutral[300],
+        borderRadius: 16,
+        backgroundColor: theme.colors.neutral[0],
+      },
+      tagSelected: {
+        borderColor: theme.colors.secondary[500],
+        backgroundColor: theme.colors.neutral[100],
+      },
+      tagText: {
+        fontSize: 14,
+        color: theme.colors.neutral[700],
+      },
+      tagTextSelected: {
+        color: theme.colors.secondary[500],
+        fontWeight: '600',
+      },
+    });
+
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Personality & Traits</Text>
-      <Text style={styles.sectionDesc}>
-        Select all that apply to help us find better matches:
-      </Text>
+      <Text style={styles.sectionDesc}>Select tags that best describe your pet's personality</Text>
 
       <View style={styles.tagsContainer}>
         {personalityTags.map((tag) => (
           <TouchableOpacity
             key={tag}
-            style={[
+            style={StyleSheet.flatten([
               styles.tag,
               formData.personalityTags.includes(tag) && styles.tagSelected,
-            ]}
+            ])}
             onPress={() => {
               togglePersonalityTag(tag);
             }}
           >
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.tagText,
-                formData.personalityTags.includes(tag) &&
-                  styles.tagTextSelected,
-              ]}
+                formData.personalityTags.includes(tag) && styles.tagTextSelected,
+              ])}
             >
-              {tag.replace("-", " ")}
+              {tag.replace('-', ' ')}
             </Text>
           </TouchableOpacity>
         ))}
@@ -69,45 +114,3 @@ export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#111827",
-    marginBottom: 16,
-  },
-  sectionDesc: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginBottom: 16,
-  },
-  tagsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  tag: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderWidth: 1,
-    borderColor: "#D1D5DB",
-    borderRadius: 16,
-    backgroundColor: "#FFFFFF",
-  },
-  tagSelected: {
-    borderColor: "#8B5CF6",
-    backgroundColor: "#F3F4F6",
-  },
-  tagText: {
-    fontSize: 14,
-    color: "#374151",
-  },
-  tagTextSelected: {
-    color: "#8B5CF6",
-    fontWeight: "600",
-  },
-});

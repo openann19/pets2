@@ -1,12 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "jsx": "react",
-    "types": ["jest", "node"]
+    "lib": ["ES2021"],
+    "types": ["jest", "node"],
+    "skipLibCheck": true,
+    "noEmit": true
   },
-  "include": [
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx",
-    "src/**/__tests__/**/*"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "__mocks__/**/*.ts"]
 }

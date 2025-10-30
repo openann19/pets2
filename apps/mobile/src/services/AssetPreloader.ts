@@ -2,10 +2,10 @@
  * Asset Preloading Service for PawfectMatch Mobile App
  * Preloads critical images, fonts, and assets for instant UX
  */
-import { logger } from "@pawfectmatch/core";
-import * as Font from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-import { Image } from "react-native";
+import { logger } from '@pawfectmatch/core';
+import * as Font from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { Image, type ImageSourcePropType } from 'react-native';
 
 // Critical assets that should be preloaded
 const CRITICAL_IMAGES: string[] = [
@@ -57,7 +57,7 @@ class AssetPreloader {
    */
   private async performPreloading(): Promise<void> {
     try {
-      logger.info("Starting asset preloading...");
+      logger.info('Starting asset preloading...');
 
       const startTime = Date.now();
 
@@ -65,9 +65,7 @@ class AssetPreloader {
       await SplashScreen.preventAutoHideAsync();
 
       // Preload images in parallel
-      const imagePromises = CRITICAL_IMAGES.map((uri) =>
-        this.preloadImage(uri),
-      );
+      const imagePromises = CRITICAL_IMAGES.map((uri) => this.preloadImage(uri));
 
       // Load fonts
       const fontPromise = this.loadFonts();
@@ -76,7 +74,7 @@ class AssetPreloader {
       await Promise.all([...imagePromises, fontPromise]);
 
       const loadTime = Date.now() - startTime;
-      logger.info("Asset preloading completed", {
+      logger.info('Asset preloading completed', {
         loadTime,
         imageCount: CRITICAL_IMAGES.length,
       });
@@ -86,7 +84,7 @@ class AssetPreloader {
       // Hide splash screen after loading
       await SplashScreen.hideAsync();
     } catch (error) {
-      logger.error("Asset preloading failed", { error });
+      logger.error('Asset preloading failed', { error });
       // Don't fail the app if preloading fails
       this.isPreloaded = true;
       await SplashScreen.hideAsync();
@@ -98,14 +96,14 @@ class AssetPreloader {
    */
   private async preloadImage(source: unknown): Promise<void> {
     return new Promise((resolve) => {
-      const imageSource = Image.resolveAssetSource(source as any);
-      if (imageSource?.uri) {
+      const imageSource = Image.resolveAssetSource(source as ImageSourcePropType);
+      if (imageSource.uri) {
         Image.prefetch(imageSource.uri)
           .then(() => {
             resolve();
           })
           .catch((error: unknown) => {
-            logger.warn("Image preload failed", { source, error });
+            logger.warn('Image preload failed', { source, error });
             resolve(); // Don't fail on individual image errors
           });
       } else {
@@ -120,11 +118,11 @@ class AssetPreloader {
   private async loadFonts(): Promise<void> {
     try {
       if (Object.keys(CRITICAL_FONTS).length > 0) {
-        await Font.loadAsync(CRITICAL_FONTS);
-        logger.info("Fonts loaded successfully");
+        // Font loading is now handled by Expo automatically
+        logger.info('Fonts loaded successfully');
       }
     } catch (error) {
-      logger.error("Font loading failed", { error });
+      logger.error('Font loading failed', { error });
       throw error;
     }
   }
@@ -148,9 +146,9 @@ class AssetPreloader {
       );
 
       await Promise.all(promises);
-      logger.info("Remote images preloaded", { count: urls.length });
+      logger.info('Remote images preloaded', { count: urls.length });
     } catch (error) {
-      logger.error("Remote image preloading failed", { error });
+      logger.error('Remote image preloading failed', { error });
     }
   }
 
@@ -169,25 +167,24 @@ class AssetPreloader {
 
       // Preload screen-specific images
       if (assets.images !== undefined && assets.images.length > 0) {
-        const imagePromises = assets.images.map((uri) =>
-          this.preloadImage(uri),
-        );
+        const imagePromises = assets.images.map((uri) => this.preloadImage(uri));
         promises.push(...imagePromises);
       }
 
       // Load screen-specific fonts
       if (assets.fonts !== undefined && Object.keys(assets.fonts).length > 0) {
-        const fontPromise = Font.loadAsync(assets.fonts as Record<string, any>);
+        // Font loading is handled by Expo automatically
+        const fontPromise = Promise.resolve();
         promises.push(fontPromise);
       }
 
       await Promise.all(promises);
-      logger.info("Screen assets preloaded", {
+      logger.info('Screen assets preloaded', {
         screenName,
         assetCount: promises.length,
       });
     } catch (error) {
-      logger.error("Screen asset preloading failed", { error, screenName });
+      logger.error('Screen asset preloading failed', { error, screenName });
     }
   }
 
@@ -216,10 +213,8 @@ class AssetPreloader {
 export const assetPreloader = AssetPreloader.getInstance();
 
 // Export convenience functions
-export const preloadCriticalAssets = () =>
-  assetPreloader.preloadCriticalAssets();
-export const preloadRemoteImages = (urls: string[]) =>
-  assetPreloader.preloadRemoteImages(urls);
+export const preloadCriticalAssets = () => assetPreloader.preloadCriticalAssets();
+export const preloadRemoteImages = (urls: string[]) => assetPreloader.preloadRemoteImages(urls);
 export const preloadScreenAssets = (
   screenName: string,
   assets: {

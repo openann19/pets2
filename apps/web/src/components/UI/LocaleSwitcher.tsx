@@ -71,7 +71,7 @@ export default function LocaleSwitcher({ locales = DEFAULT_LOCALES, currentLocal
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        return () => { document.removeEventListener('mousedown', handleClickOutside); };
     }, []);
     const handleLocaleChange = (locale) => {
         setSelectedLocale(locale);
@@ -177,7 +177,7 @@ export default function LocaleSwitcher({ locales = DEFAULT_LOCALES, currentLocal
                 stiffness: 400,
                 damping: 25
             }} className={styles.dropdown}>
-            {locales.map((locale) => (<motion.button key={locale.code} onClick={() => handleLocaleChange(locale)} className={`
+            {locales.map((locale) => (<motion.button key={locale.code} onClick={() => { handleLocaleChange(locale); }} className={`
                   w-full flex items-center space-x-3 px-4 py-3
                   text-left hover:bg-neutral-50 dark:hover:bg-neutral-700
                   transition-colors duration-150

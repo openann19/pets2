@@ -1,11 +1,13 @@
 /**
  * Authentication Service for PawfectMatch Mobile App
  * Handles user authentication, token management, and secure storage
+ * Uses react-native-keychain for production-grade security
  */
-import * as SecureStore from "expo-secure-store";
-import * as LocalAuthentication from "expo-local-authentication";
-import { logger } from "@pawfectmatch/core";
-import { api } from "./api";
+import * as SecureStore from 'expo-secure-store';
+import * as LocalAuthentication from 'expo-local-authentication';
+import * as Keychain from 'react-native-keychain';
+import { logger } from '@pawfectmatch/core';
+import { api } from './api';
 
 // Types for authentication
 export interface LoginCredentials {
@@ -55,22 +57,26 @@ export interface BiometricCredentials {
 }
 
 class AuthService {
-  private static readonly ACCESS_TOKEN_KEY = "auth_access_token";
-  private static readonly REFRESH_TOKEN_KEY = "auth_refresh_token";
-  private static readonly USER_KEY = "auth_user";
-  private static readonly BIOMETRIC_ENABLED_KEY = "biometric_enabled";
-  private static readonly BIOMETRIC_CREDENTIALS_KEY = "biometric_credentials";
-  private static readonly SESSION_START_KEY = "session_start_time";
-  private static readonly LAST_ACTIVITY_KEY = "last_activity_time";
+  private static readonly ACCESS_TOKEN_KEY = 'auth_access_token';
+  private static readonly REFRESH_TOKEN_KEY = 'auth_refresh_token';
+  private static readonly USER_KEY = 'auth_user';
+  private static readonly BIOMETRIC_ENABLED_KEY = 'biometric_enabled';
+  private static readonly BIOMETRIC_CREDENTIALS_KEY = 'biometric_credentials';
+  private static readonly SESSION_START_KEY = 'session_start_time';
+  private static readonly LAST_ACTIVITY_KEY = 'last_activity_time';
+  private static readonly SERVICE_NAME = 'com.pawfectmatch.mobile';
 
   // Session configuration
   private static readonly SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
   private static readonly ACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes of inactivity
-  private sessionCheckInterval: NodeJS.Timeout | null = null;
+  private sessionCheckInterval: ReturnType<typeof setInterval> | null = null;
+  private useKeychain: boolean = true; // Use Keychain by default for production security
 
   constructor() {
     this.startSessionMonitoring();
   }
+
+  // ===== Session Management =====
 
   /**
    * Start session monitoring for auto-logout
@@ -82,8 +88,8 @@ class AuthService {
     }
 
     // Check session every minute
-    this.sessionCheckInterval = setInterval(async () => {
-      await this.checkSessionValidity();
+    this.sessionCheckInterval = setInterval(() => {
+      void this.checkSessionValidity();
     }, 60000); // Check every minute
   }
 
@@ -104,14 +110,14 @@ class AuthService {
 
       // Check session timeout (24 hours)
       if (sessionStart && now - sessionStart > AuthService.SESSION_TIMEOUT) {
-        logger.info("Session expired due to timeout");
+        logger.info('Session expired due to timeout');
         await this.logout();
         return;
       }
 
       // Check activity timeout (30 minutes)
       if (lastActivity && now - lastActivity > AuthService.ACTIVITY_TIMEOUT) {
-        logger.info("Session expired due to inactivity");
+        logger.info('Session expired due to inactivity');
         await this.logout();
         return;
       }
@@ -119,7 +125,7 @@ class AuthService {
       // Update last activity time
       await this.updateLastActivityTime();
     } catch (error) {
-      logger.error("Session validity check failed", { error });
+      logger.error('Session validity check failed', { error });
     }
   }
 
@@ -138,12 +144,10 @@ class AuthService {
    */
   private async getSessionStartTime(): Promise<number | null> {
     try {
-      const startTime = await SecureStore.getItemAsync(
-        AuthService.SESSION_START_KEY,
-      );
+      const startTime = await this.secureGetItemAsync(AuthService.SESSION_START_KEY);
       return startTime ? parseInt(startTime) : null;
     } catch (error) {
-      logger.error("Failed to get session start time", { error });
+      logger.error('Failed to get session start time', { error });
       return null;
     }
   }
@@ -153,12 +157,10 @@ class AuthService {
    */
   private async getLastActivityTime(): Promise<number | null> {
     try {
-      const lastActivity = await SecureStore.getItemAsync(
-        AuthService.LAST_ACTIVITY_KEY,
-      );
+      const lastActivity = await this.secureGetItemAsync(AuthService.LAST_ACTIVITY_KEY);
       return lastActivity ? parseInt(lastActivity) : null;
     } catch (error) {
-      logger.error("Failed to get last activity time", { error });
+      logger.error('Failed to get last activity time', { error });
       return null;
     }
   }
@@ -168,12 +170,9 @@ class AuthService {
    */
   private async updateLastActivityTime(): Promise<void> {
     try {
-      await SecureStore.setItemAsync(
-        AuthService.LAST_ACTIVITY_KEY,
-        Date.now().toString(),
-      );
+      await this.secureSetItemAsync(AuthService.LAST_ACTIVITY_KEY, Date.now().toString());
     } catch (error) {
-      logger.error("Failed to update last activity time", { error });
+      logger.error('Failed to update last activity time', { error });
     }
   }
 
@@ -195,8 +194,8 @@ class AuthService {
       }
 
       // Call refresh endpoint to get new tokens
-      const response = await api.request<AuthResponse>("/auth/refresh-token", {
-        method: "POST",
+      const response = await api.request<AuthResponse>('/auth/refresh-token', {
+        method: 'POST',
         body: JSON.stringify({ refreshToken }),
       });
 
@@ -204,15 +203,12 @@ class AuthService {
       await this.storeAuthData(response);
 
       // Update session start time for new session
-      await SecureStore.setItemAsync(
-        AuthService.SESSION_START_KEY,
-        Date.now().toString(),
-      );
+      await this.secureSetItemAsync(AuthService.SESSION_START_KEY, Date.now().toString());
 
-      logger.info("Tokens rotated successfully");
+      logger.info('Tokens rotated successfully');
       return true;
     } catch (error) {
-      logger.error("Token rotation failed", { error });
+      logger.error('Token rotation failed', { error });
       // If rotation fails, logout user
       await this.logout();
       return false;
@@ -229,15 +225,14 @@ class AuthService {
     try {
       const hasHardware = await LocalAuthentication.hasHardwareAsync();
       const isEnrolled = await LocalAuthentication.isEnrolledAsync();
-      const supportedTypes =
-        await LocalAuthentication.supportedAuthenticationTypesAsync();
+      const supportedTypes = await LocalAuthentication.supportedAuthenticationTypesAsync();
 
       return {
         available: hasHardware && isEnrolled,
         types: supportedTypes,
       };
     } catch (error) {
-      logger.error("Failed to check biometric availability", { error });
+      logger.error('Failed to check biometric availability', { error });
       return { available: false, types: [] };
     }
   }
@@ -249,25 +244,23 @@ class AuthService {
     try {
       const { available } = await this.isBiometricAvailable();
       if (!available) {
-        throw new AuthError(
-          "Biometric authentication is not available on this device",
-        );
+        throw new AuthError('Biometric authentication is not available on this device');
       }
 
       // Authenticate user with biometrics to enable feature
       const biometricAuth = await LocalAuthentication.authenticateAsync({
-        promptMessage: "Authenticate to enable biometric login",
-        fallbackLabel: "Use PIN",
-        cancelLabel: "Cancel",
+        promptMessage: 'Authenticate to enable biometric login',
+        fallbackLabel: 'Use PIN',
+        cancelLabel: 'Cancel',
         disableDeviceFallback: false,
       });
 
       if (!biometricAuth.success) {
-        throw new AuthError("Biometric authentication failed");
+        throw new AuthError('Biometric authentication failed');
       }
 
       // Store biometric preference
-      await SecureStore.setItemAsync(AuthService.BIOMETRIC_ENABLED_KEY, "true");
+      await this.secureSetItemAsync(AuthService.BIOMETRIC_ENABLED_KEY, 'true');
 
       // Get current user credentials for biometric storage
       const currentUser = await this.getCurrentUser();
@@ -277,17 +270,17 @@ class AuthService {
           biometricToken: Date.now().toString() + Math.random().toString(36),
         };
 
-        await SecureStore.setItemAsync(
+        await this.secureSetItemAsync(
           AuthService.BIOMETRIC_CREDENTIALS_KEY,
           JSON.stringify(biometricCredentials),
         );
       }
 
-      logger.info("Biometric authentication enabled");
+      logger.info('Biometric authentication enabled');
       return true;
     } catch (error) {
-      logger.error("Failed to enable biometric authentication", { error });
-      throw new AuthError("Failed to enable biometric authentication", error);
+      logger.error('Failed to enable biometric authentication', { error });
+      throw new AuthError('Failed to enable biometric authentication', error);
     }
   }
 
@@ -296,12 +289,12 @@ class AuthService {
    */
   async disableBiometricAuthentication(): Promise<void> {
     try {
-      await SecureStore.deleteItemAsync(AuthService.BIOMETRIC_ENABLED_KEY);
-      await SecureStore.deleteItemAsync(AuthService.BIOMETRIC_CREDENTIALS_KEY);
-      logger.info("Biometric authentication disabled");
+      await this.secureDeleteItemAsync(AuthService.BIOMETRIC_ENABLED_KEY);
+      await this.secureDeleteItemAsync(AuthService.BIOMETRIC_CREDENTIALS_KEY);
+      logger.info('Biometric authentication disabled');
     } catch (error) {
-      logger.error("Failed to disable biometric authentication", { error });
-      throw new AuthError("Failed to disable biometric authentication", error);
+      logger.error('Failed to disable biometric authentication', { error });
+      throw new AuthError('Failed to disable biometric authentication', error);
     }
   }
 
@@ -310,12 +303,10 @@ class AuthService {
    */
   async isBiometricEnabled(): Promise<boolean> {
     try {
-      const enabled = await SecureStore.getItemAsync(
-        AuthService.BIOMETRIC_ENABLED_KEY,
-      );
-      return enabled === "true";
+      const enabled = await this.secureGetItemAsync(AuthService.BIOMETRIC_ENABLED_KEY);
+      return enabled === 'true';
     } catch (error) {
-      logger.error("Failed to check biometric status", { error });
+      logger.error('Failed to check biometric status', { error });
       return false;
     }
   }
@@ -327,61 +318,55 @@ class AuthService {
     try {
       const isEnabled = await this.isBiometricEnabled();
       if (!isEnabled) {
-        throw new AuthError("Biometric authentication is not enabled");
+        throw new AuthError('Biometric authentication is not enabled');
       }
 
       const { available } = await this.isBiometricAvailable();
       if (!available) {
-        throw new AuthError("Biometric authentication is not available");
+        throw new AuthError('Biometric authentication is not available');
       }
 
       // Perform biometric authentication
       const biometricAuth = await LocalAuthentication.authenticateAsync({
-        promptMessage: "Authenticate to login",
-        fallbackLabel: "Use PIN",
-        cancelLabel: "Cancel",
+        promptMessage: 'Authenticate to login',
+        fallbackLabel: 'Use PIN',
+        cancelLabel: 'Cancel',
         disableDeviceFallback: false,
       });
 
       if (!biometricAuth.success) {
-        throw new AuthError("Biometric authentication failed");
+        throw new AuthError('Biometric authentication failed');
       }
 
       // Get stored biometric credentials
-      const storedCredentials = await SecureStore.getItemAsync(
+      const storedCredentials = await this.secureGetItemAsync(
         AuthService.BIOMETRIC_CREDENTIALS_KEY,
       );
       if (!storedCredentials) {
-        throw new AuthError("No biometric credentials found");
+        throw new AuthError('No biometric credentials found');
       }
 
-      const credentials: BiometricCredentials = JSON.parse(storedCredentials);
+      const credentials = JSON.parse(storedCredentials) as BiometricCredentials;
 
       // Perform login with stored email and a special biometric flag
-      const response = await api.request<AuthResponse>(
-        "/auth/biometric-login",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: credentials.email,
-            biometricToken: credentials.biometricToken,
-          }),
-        },
-      );
+      const response = await api.request<AuthResponse>('/auth/biometric-login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: credentials.email,
+          biometricToken: credentials.biometricToken,
+        }),
+      });
 
       // Store authentication data securely
       await this.storeAuthData(response);
 
-      logger.info("User logged in with biometrics", {
+      logger.info('User logged in with biometrics', {
         userId: response.user.id,
       });
       return response;
     } catch (error) {
-      logger.error("Biometric login failed", { error });
-      throw new AuthError(
-        "Biometric login failed. Please use email and password.",
-        error,
-      );
+      logger.error('Biometric login failed', { error });
+      throw new AuthError('Biometric login failed. Please use email and password.', error);
     }
   }
 
@@ -390,22 +375,19 @@ class AuthService {
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await api.request<AuthResponse>("/auth/login", {
-        method: "POST",
+      const response = await api.request<AuthResponse>('/auth/login', {
+        method: 'POST',
         body: JSON.stringify(credentials),
       });
 
       // Store authentication data securely
       await this.storeAuthData(response);
 
-      logger.info("User logged in successfully", { userId: response.user.id });
+      logger.info('User logged in successfully', { userId: response.user.id });
       return response;
     } catch (error) {
-      logger.error("Login failed", { error, email: credentials.email });
-      throw new AuthError(
-        "Login failed. Please check your credentials and try again.",
-        error,
-      );
+      logger.error('Login failed', { error, email: credentials.email });
+      throw new AuthError('Login failed. Please check your credentials and try again.', error);
     }
   }
 
@@ -416,7 +398,7 @@ class AuthService {
     try {
       // Validate password confirmation
       if (data.password !== data.confirmPassword) {
-        throw new AuthError("Passwords do not match");
+        throw new AuthError('Passwords do not match');
       }
 
       const registerData = {
@@ -424,19 +406,19 @@ class AuthService {
         password: data.password,
         name: data.name,
       };
-      const response = await api.request<AuthResponse>("/auth/register", {
-        method: "POST",
+      const response = await api.request<AuthResponse>('/auth/register', {
+        method: 'POST',
         body: JSON.stringify(registerData),
       });
 
       // Store authentication data securely
       await this.storeAuthData(response);
 
-      logger.info("User registered successfully", { userId: response.user.id });
+      logger.info('User registered successfully', { userId: response.user.id });
       return response;
     } catch (error) {
-      logger.error("Registration failed", { error, email: data.email });
-      throw new AuthError("Registration failed. Please try again.", error);
+      logger.error('Registration failed', { error, email: data.email });
+      throw new AuthError('Registration failed. Please try again.', error);
     }
   }
 
@@ -449,13 +431,13 @@ class AuthService {
       if (refreshToken) {
         // Notify server about logout (optional)
         try {
-          await api.request("/auth/logout", {
-            method: "POST",
+          await api.request('/auth/logout', {
+            method: 'POST',
             body: JSON.stringify({ refreshToken }),
           });
         } catch (error) {
           // Ignore server logout errors
-          logger.warn("Server logout failed, continuing with local logout", {
+          logger.warn('Server logout failed, continuing with local logout', {
             error,
           });
         }
@@ -463,9 +445,9 @@ class AuthService {
 
       // Clear all stored auth data
       await this.clearAuthData();
-      logger.info("User logged out successfully");
+      logger.info('User logged out successfully');
     } catch (error) {
-      logger.error("Logout failed", { error });
+      logger.error('Logout failed', { error });
       // Even if logout fails, clear local data
       await this.clearAuthData();
     }
@@ -481,8 +463,8 @@ class AuthService {
         return null;
       }
 
-      const response = await api.request<AuthResponse>("/auth/refresh", {
-        method: "POST",
+      const response = await api.request<AuthResponse>('/auth/refresh', {
+        method: 'POST',
         body: JSON.stringify({ refreshToken }),
       });
 
@@ -490,7 +472,7 @@ class AuthService {
       await this.storeAuthData(response);
       return response;
     } catch (error) {
-      logger.error("Token refresh failed", { error });
+      logger.error('Token refresh failed', { error });
       // Clear invalid tokens
       await this.clearAuthData();
       return null;
@@ -500,38 +482,31 @@ class AuthService {
   /**
    * Request password reset
    */
-  async forgotPassword(
-    email: string,
-  ): Promise<{ success: boolean; message: string }> {
+  async forgotPassword(email: string): Promise<{ success: boolean; message: string }> {
     try {
       const response = await api.request<{ success: boolean; message: string }>(
-        "/auth/forgot-password",
+        '/auth/forgot-password',
         {
-          method: "POST",
+          method: 'POST',
           body: JSON.stringify({ email }),
         },
       );
 
-      logger.info("Password reset requested", { email });
+      logger.info('Password reset requested', { email });
       return response;
     } catch (error) {
-      logger.error("Forgot password failed", { error, email });
-      throw new AuthError(
-        "Failed to send password reset email. Please try again.",
-        error,
-      );
+      logger.error('Forgot password failed', { error, email });
+      throw new AuthError('Failed to send password reset email. Please try again.', error);
     }
   }
 
   /**
    * Reset password with token
    */
-  async resetPassword(
-    data: ResetPasswordData,
-  ): Promise<{ success: boolean; message: string }> {
+  async resetPassword(data: ResetPasswordData): Promise<{ success: boolean; message: string }> {
     try {
       if (data.password !== data.confirmPassword) {
-        throw new AuthError("Passwords do not match");
+        throw new AuthError('Passwords do not match');
       }
 
       const resetData = {
@@ -539,18 +514,18 @@ class AuthService {
         password: data.password,
       };
       const response = await api.request<{ success: boolean; message: string }>(
-        "/auth/reset-password",
+        '/auth/reset-password',
         {
-          method: "POST",
+          method: 'POST',
           body: JSON.stringify(resetData),
         },
       );
 
-      logger.info("Password reset successful");
+      logger.info('Password reset successful');
       return response;
     } catch (error) {
-      logger.error("Password reset failed", { error });
-      throw new AuthError("Failed to reset password. Please try again.", error);
+      logger.error('Password reset failed', { error });
+      throw new AuthError('Failed to reset password. Please try again.', error);
     }
   }
 
@@ -559,10 +534,10 @@ class AuthService {
    */
   async getCurrentUser(): Promise<User | null> {
     try {
-      const userData = await SecureStore.getItemAsync(AuthService.USER_KEY);
-      return userData ? JSON.parse(userData) : null;
+      const userData = await this.secureGetItemAsync(AuthService.USER_KEY);
+      return userData ? (JSON.parse(userData) as User) : null;
     } catch (error) {
-      logger.error("Failed to get current user", { error });
+      logger.error('Failed to get current user', { error });
       return null;
     }
   }
@@ -572,9 +547,9 @@ class AuthService {
    */
   async getAccessToken(): Promise<string | null> {
     try {
-      return await SecureStore.getItemAsync(AuthService.ACCESS_TOKEN_KEY);
+      return await this.secureGetItemAsync(AuthService.ACCESS_TOKEN_KEY);
     } catch (error) {
-      logger.error("Failed to get access token", { error });
+      logger.error('Failed to get access token', { error });
       return null;
     }
   }
@@ -588,7 +563,7 @@ class AuthService {
       const user = await this.getCurrentUser();
       return !!(token && user);
     } catch (error) {
-      logger.error("Authentication check failed", { error });
+      logger.error('Authentication check failed', { error });
       return false;
     }
   }
@@ -600,18 +575,135 @@ class AuthService {
     try {
       const currentUser = await this.getCurrentUser();
       if (!currentUser) {
-        throw new AuthError("No authenticated user found");
+        throw new AuthError('No authenticated user found');
       }
 
       const updatedUser = { ...currentUser, ...userData };
-      await SecureStore.setItemAsync(
-        AuthService.USER_KEY,
-        JSON.stringify(updatedUser),
-      );
-      logger.info("User data updated", { userId: updatedUser.id });
+      await this.secureSetItemAsync(AuthService.USER_KEY, JSON.stringify(updatedUser));
+      logger.info('User data updated', { userId: updatedUser.id });
     } catch (error) {
-      logger.error("Failed to update user data", { error });
-      throw new AuthError("Failed to update user data", error);
+      logger.error('Failed to update user data', { error });
+      throw new AuthError('Failed to update user data', error);
+    }
+  }
+
+  // Secure storage methods - Keychain for sensitive data, SecureStore for session data
+  // Fallback to SecureStore if Keychain fails for robustness
+  private async secureSetItemAsync(key: string, value: string): Promise<void> {
+    try {
+      // Use Keychain for sensitive authentication data
+      if (key.includes('token') || key.includes('user')) {
+        try {
+          const result = await Keychain.setGenericPassword('pawfectmatch', value, {
+            service: 'pawfectmatch-auth',
+            accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
+            accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+          });
+          if (result === false) {
+            throw new Error('Failed to store in Keychain');
+          }
+          // Store a reference key in SecureStore for retrieval
+          await SecureStore.setItemAsync(`${key}_ref`, 'keychain', {
+            keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+          });
+          // Successfully stored in Keychain
+          return;
+        } catch (keychainError) {
+          // Fallback to SecureStore if Keychain fails
+          logger.warn(`Keychain failed, falling back to SecureStore for ${key}`, {
+            error: keychainError,
+          });
+          await SecureStore.setItemAsync(key, value, {
+            keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+          });
+          // Store a reference indicating fallback to SecureStore
+          await SecureStore.setItemAsync(`${key}_ref`, 'securestore', {
+            keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+          });
+        }
+      } else {
+        // Use SecureStore for less sensitive session data
+        await SecureStore.setItemAsync(key, value, {
+          keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+        });
+      }
+    } catch (error) {
+      logger.error(`Failed to securely store ${key}`, { error });
+      throw new AuthError(`Failed to securely store authentication data`, error);
+    }
+  }
+
+  private async secureGetItemAsync(key: string): Promise<string | null> {
+    try {
+      // Check if data is stored in Keychain or SecureStore (fallback)
+      const refKey = `${key}_ref`;
+      const storageLocation = await SecureStore.getItemAsync(refKey);
+
+      if (storageLocation === 'keychain') {
+        try {
+          const credentials = await Keychain.getGenericPassword({
+            service: 'pawfectmatch-auth',
+          });
+          if (credentials) {
+            // Return the password (which contains our stored value)
+            return credentials.password;
+          }
+          return null;
+        } catch (keychainError) {
+          // If Keychain retrieval fails, try SecureStore fallback
+          logger.warn(`Keychain retrieval failed, trying SecureStore fallback for ${key}`, {
+            error: keychainError,
+          });
+          return await SecureStore.getItemAsync(key);
+        }
+      } else if (storageLocation === 'securestore') {
+        // Data was stored in SecureStore due to Keychain failure
+        return await SecureStore.getItemAsync(key);
+      } else {
+        // No reference found, try SecureStore directly (for non-sensitive keys)
+        return await SecureStore.getItemAsync(key);
+      }
+    } catch (error) {
+      logger.error(`Failed to securely retrieve ${key}`, { error });
+      return null;
+    }
+  }
+
+  private async secureDeleteItemAsync(key: string): Promise<void> {
+    try {
+      // Check if data is stored in Keychain or SecureStore (fallback)
+      const refKey = `${key}_ref`;
+      const storageLocation = await SecureStore.getItemAsync(refKey);
+
+      if (storageLocation === 'keychain') {
+        try {
+          // Reset Keychain credentials
+          await Keychain.resetGenericPassword({
+            service: 'pawfectmatch-auth',
+          });
+        } catch (keychainError) {
+          logger.warn(`Keychain deletion failed, continuing with cleanup`, {
+            error: keychainError,
+          });
+        }
+        // Remove the reference
+        await SecureStore.deleteItemAsync(refKey);
+      } else if (storageLocation === 'securestore') {
+        // Data was stored in SecureStore
+        await SecureStore.deleteItemAsync(key);
+        // Remove the reference
+        await SecureStore.deleteItemAsync(refKey);
+      } else {
+        // Try to delete from SecureStore (for non-sensitive keys or cleanup)
+        try {
+          await SecureStore.deleteItemAsync(key);
+        } catch (error) {
+          // Silently ignore deletion errors
+        }
+      }
+    } catch (error) {
+      logger.error(`Failed to securely delete ${key}`, { error });
+      // Don't throw here as this is cleanup
     }
   }
 
@@ -620,59 +712,44 @@ class AuthService {
   private async storeAuthData(response: AuthResponse): Promise<void> {
     try {
       await Promise.all([
-        SecureStore.setItemAsync(
-          AuthService.ACCESS_TOKEN_KEY,
-          response.accessToken,
-        ),
-        SecureStore.setItemAsync(
-          AuthService.REFRESH_TOKEN_KEY,
-          response.refreshToken,
-        ),
-        SecureStore.setItemAsync(
-          AuthService.USER_KEY,
-          JSON.stringify(response.user),
-        ),
-        SecureStore.setItemAsync(
-          AuthService.SESSION_START_KEY,
-          Date.now().toString(),
-        ),
-        SecureStore.setItemAsync(
-          AuthService.LAST_ACTIVITY_KEY,
-          Date.now().toString(),
-        ),
+        this.secureSetItemAsync(AuthService.ACCESS_TOKEN_KEY, response.accessToken),
+        this.secureSetItemAsync(AuthService.REFRESH_TOKEN_KEY, response.refreshToken),
+        this.secureSetItemAsync(AuthService.USER_KEY, JSON.stringify(response.user)),
+        this.secureSetItemAsync(AuthService.SESSION_START_KEY, Date.now().toString()),
+        this.secureSetItemAsync(AuthService.LAST_ACTIVITY_KEY, Date.now().toString()),
       ]);
 
       // Start session monitoring
       this.startSessionMonitoring();
     } catch (error) {
-      logger.error("Failed to store auth data", { error });
-      throw new AuthError("Failed to save authentication data", error);
+      logger.error('Failed to store auth data', { error });
+      throw new AuthError('Failed to save authentication data', error);
     }
   }
 
   private async clearAuthData(): Promise<void> {
     try {
       await Promise.all([
-        SecureStore.deleteItemAsync(AuthService.ACCESS_TOKEN_KEY),
-        SecureStore.deleteItemAsync(AuthService.REFRESH_TOKEN_KEY),
-        SecureStore.deleteItemAsync(AuthService.USER_KEY),
-        SecureStore.deleteItemAsync(AuthService.SESSION_START_KEY),
-        SecureStore.deleteItemAsync(AuthService.LAST_ACTIVITY_KEY),
+        this.secureDeleteItemAsync(AuthService.ACCESS_TOKEN_KEY),
+        this.secureDeleteItemAsync(AuthService.REFRESH_TOKEN_KEY),
+        this.secureDeleteItemAsync(AuthService.USER_KEY),
+        this.secureDeleteItemAsync(AuthService.SESSION_START_KEY),
+        this.secureDeleteItemAsync(AuthService.LAST_ACTIVITY_KEY),
       ]);
 
       // Stop session monitoring
       this.stopSessionMonitoring();
     } catch (error) {
-      logger.error("Failed to clear auth data", { error });
+      logger.error('Failed to clear auth data', { error });
       // Don't throw here as this is cleanup
     }
   }
 
   private async getRefreshToken(): Promise<string | null> {
     try {
-      return await SecureStore.getItemAsync(AuthService.REFRESH_TOKEN_KEY);
+      return await this.secureGetItemAsync(AuthService.REFRESH_TOKEN_KEY);
     } catch (error) {
-      logger.error("Failed to get refresh token", { error });
+      logger.error('Failed to get refresh token', { error });
       return null;
     }
   }
@@ -685,7 +762,7 @@ export class AuthError extends Error {
     public originalError?: unknown,
   ) {
     super(message);
-    this.name = "AuthError";
+    this.name = 'AuthError';
   }
 }
 

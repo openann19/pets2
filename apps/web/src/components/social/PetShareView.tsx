@@ -60,7 +60,7 @@ export function PetShareView({ pet }) {
                     
                     {/* Photo Indicators */}
                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                      {pet.photos.map((_, index) => (<button key={index} onClick={() => setCurrentPhotoIndex(index)} className={`w-2 h-2 rounded-full transition-colors ${index === currentPhotoIndex ? 'bg-white' : 'bg-white/50'}`}/>))}
+                      {pet.photos.map((_, index) => (<button key={index} onClick={() => { setCurrentPhotoIndex(index); }} className={`w-2 h-2 rounded-full transition-colors ${index === currentPhotoIndex ? 'bg-white' : 'bg-white/50'}`}/>))}
                     </div>
                   </>)}
               </>) : (<div className="w-full h-full flex items-center justify-center">

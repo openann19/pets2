@@ -185,7 +185,7 @@ function PetGallerySection() {
                 id={`pet-${pet.id}`}
                 src={pet.image}
                 alt={pet.name}
-                onClick={() => console.log(`View ${pet.name}`)}
+                onClick={() => { console.log(`View ${pet.name}`); }}
               />
             </motion.div>
           ))}

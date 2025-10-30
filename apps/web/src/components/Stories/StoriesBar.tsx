@@ -99,7 +99,7 @@ export function StoriesBar({ onStoryClick, onCreateClick }) {
                 stiffness: 300,
                 damping: 30,
                 delay: index * 0.05,
-            }} className="flex flex-col items-center gap-2 flex-shrink-0 cursor-pointer group" onClick={() => handleStoryClick(group, index)}>
+            }} className="flex flex-col items-center gap-2 flex-shrink-0 cursor-pointer group" onClick={() => { handleStoryClick(group, index); }}>
                             {/* Story Avatar with Ring */}
                             <div className="relative">
                                 {/* Gradient Ring */}

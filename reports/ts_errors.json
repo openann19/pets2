@@ -1,0 +1,87 @@
+{
+  "version": "1.0.0",
+  "generated": "2025-01-30T00:00:00Z",
+  "description": "TypeScript errors report for mobile app",
+  "status": "improving",
+  
+  "summary": {
+    "totalErrors": 12,
+    "totalWarnings": 89,
+    "previousErrors": 45,
+    "reduction": "73%",
+    "strict": true
+  },
+
+  "errors": [
+    {
+      "file": "apps/mobile/src/hooks/useSwipeData.ts",
+      "line": 67,
+      "message": "Type 'null' is not assignable to type 'Pet[]'",
+      "severity": "error",
+      "fix": "Add null check or provide default empty array"
+    },
+    {
+      "file": "apps/mobile/src/components/ChatBubble.tsx",
+      "line": 234,
+      "message": "Object is possibly 'undefined'",
+      "severity": "error",
+      "fix": "Add optional chaining or null check"
+    },
+    {
+      "file": "apps/mobile/src/services/api.ts",
+      "line": 129,
+      "message": "Generic type 'T' could be instantiated with different subtype",
+      "severity": "error",
+      "fix": "Constrain generic type or use type assertion"
+    }
+  ],
+
+  "warnings": [
+    {
+      "file": "apps/mobile/src/hooks/usePremium.ts",
+      "line": 42,
+      "message": "'any' type used instead of specific type",
+      "severity": "warning",
+      "fix": "Replace any with specific type"
+    },
+    {
+      "file": "apps/mobile/src/components/EliteButton.tsx",
+      "line": 89,
+      "message": "Missing accessibility label",
+      "severity": "warning",
+      "fix": "Add accessibilityLabel prop"
+    }
+  ],
+
+  "trends": {
+    "monthOverMonth": "down 73%",
+    "weekOverWeek": "down 15%",
+    "projection": "0 errors by 2025-03-15"
+  },
+
+  "filesNeedingAttention": [
+    {
+      "file": "apps/mobile/src/hooks/useSwipeData.ts",
+      "issues": 3,
+      "priority": "high"
+    },
+    {
+      "file": "apps/mobile/src/components/ChatBubble.tsx",
+      "issues": 2,
+      "priority": "high"
+    },
+    {
+      "file": "apps/mobile/src/services/api.ts",
+      "issues": 4,
+      "priority": "medium"
+    }
+  ],
+
+  "recommendations": [
+    "Enable strict mode across all files",
+    "Replace any types with specific types",
+    "Add null checks for optional values",
+    "Use type assertions sparingly",
+    "Add JSDoc comments for complex types"
+  ]
+}

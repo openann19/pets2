@@ -26,7 +26,7 @@ export const useConfetti = () => {
         const interval = setInterval(() => {
             const timeLeft = animationEnd - Date.now();
             if (timeLeft <= 0) {
-                return clearInterval(interval);
+                clearInterval(interval); return;
             }
             const particleCount = 50 * (timeLeft / duration);
             confetti({

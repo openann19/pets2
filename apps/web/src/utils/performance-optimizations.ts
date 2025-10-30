@@ -89,8 +89,8 @@ export const useOptimizedImage = (src: string | null | undefined, options: Image
         setIsError(false);
         // Preload image
         const img = new Image();
-        img.onload = () => setIsLoaded(true);
-        img.onerror = () => setIsError(true);
+        img.onload = () => { setIsLoaded(true); };
+        img.onerror = () => { setIsError(true); };
         img.src = url.toString();
     }, [src, width, height, quality, format]);
     return {
@@ -111,7 +111,7 @@ export const useMemoryOptimization = () => {
         };
         const interval = setInterval(updateMemoryUsage, 5000);
         updateMemoryUsage();
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, []);
     const clearCache = useCallback(() => {
         // Clear various caches
@@ -153,7 +153,7 @@ export const useNetworkOptimization = () => {
                 });
             };
             conn.addEventListener('change', handleChange);
-            return () => conn.removeEventListener('change', handleChange);
+            return () => { conn.removeEventListener('change', handleChange); };
         }
     }, []);
     const isSlowConnection = connection && (connection.effectiveType === 'slow-2g' ||
@@ -199,7 +199,7 @@ export const useBundleOptimization = () => {
         const timer = setTimeout(() => {
             setIsLoaded(true);
         }, 100);
-        return () => clearTimeout(timer);
+        return () => { clearTimeout(timer); };
     }, []);
     const lazyImport = useCallback(async (moduleName) => {
         if (!isLoaded)
@@ -280,7 +280,7 @@ export const usePerformanceMonitoring = () => {
                 });
             });
             observer.observe({ entryTypes: ['navigation', 'paint', 'largest-contentful-paint'] });
-            return () => observer.disconnect();
+            return () => { observer.disconnect(); };
         }
     }, []);
     return metrics;

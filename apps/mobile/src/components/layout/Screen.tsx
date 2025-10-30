@@ -1,7 +1,7 @@
-import React from "react";
-import { ScrollView, StyleSheet, View, type ViewProps } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../theme/useTheme";
+import React from 'react';
+import { ScrollView, StyleSheet, View, type ViewProps } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../theme/useTheme';
 
 export interface ScreenProps extends ViewProps {
   scrollable?: boolean;
@@ -22,15 +22,16 @@ export function Screen({
   ]);
 
   const content = scrollable ? (
-    <ScrollView contentContainerStyle={styles.scrollContent}>
-      {children}
-    </ScrollView>
+    <ScrollView contentContainerStyle={styles.scrollContent}>{children}</ScrollView>
   ) : (
     <View style={styles.content}>{children}</View>
   );
 
   return (
-    <SafeAreaView style={containerStyle} {...rest}>
+    <SafeAreaView
+      style={containerStyle}
+      {...rest}
+    >
       {content}
     </SafeAreaView>
   );

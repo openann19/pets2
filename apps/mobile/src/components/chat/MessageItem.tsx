@@ -1,10 +1,14 @@
-import React, { useCallback } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { Message } from "../../hooks/useChatData";
-import { tokens } from "@pawfectmatch/design-tokens";
-import { useTheme } from "../../contexts/ThemeContext";
+import { Ionicons } from '@expo/vector-icons';
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { BlurView } from 'expo-blur';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import type { Message } from '../../hooks/useChatData';
+import { chatService } from '../../services/chatService';
+import { logger } from '../../services/logger';
+import { getExtendedColors } from '../../theme/adapters';
+import { ReactionPicker } from './ReactionPicker';
 
 interface MessageItemProps {
   message: Message;
@@ -25,19 +29,21 @@ export function MessageItem({
   onLongPress,
   onRetry,
 }: MessageItemProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
+  const [showReactionPicker, setShowReactionPicker] = useState(false);
+  const [reactions, setReactions] = useState<Record<string, number>>({});
+  const styles = useMemo(() => makeStyles(theme), [theme]);
 
-  const isMyMessage =
-    message.senderId === "me" || message.senderId === "current-user";
+  const isMyMessage = message.senderId === 'me' || message.senderId === 'current-user';
   const showAvatar =
-    !isMyMessage &&
-    (index === 0 || messages[index - 1].senderId !== message.senderId);
+    !isMyMessage && (index === 0 || messages[index - 1]?.senderId !== message.senderId);
+  const nextMessage = messages[index + 1];
   const showTime =
     index === messages.length - 1 ||
-    messages[index + 1].senderId !== message.senderId ||
-    new Date(messages[index + 1].timestamp).getTime() -
-      new Date(message.timestamp).getTime() >
-      300000;
+    !nextMessage ||
+    nextMessage.senderId !== message.senderId ||
+    new Date(nextMessage.timestamp).getTime() - new Date(message.timestamp).getTime() > 300000;
   const showDateHeader = shouldShowDateHeader(message, messages[index - 1]);
   const hasError = message.error === true;
 
@@ -47,15 +53,15 @@ export function MessageItem({
     const isToday = messageTime.toDateString() === now.toDateString();
 
     if (isToday) {
-      return messageTime.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
+      return messageTime.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
         hour12: false,
       });
     } else {
-      return messageTime.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
+      return messageTime.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
       });
     }
   }, []);
@@ -67,14 +73,14 @@ export function MessageItem({
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (messageDate.toDateString() === now.toDateString()) {
-      return "Today";
+      return 'Today';
     } else if (messageDate.toDateString() === yesterday.toDateString()) {
-      return "Yesterday";
+      return 'Yesterday';
     } else {
-      return messageDate.toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
+      return messageDate.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
       });
     }
   }, []);
@@ -84,8 +90,29 @@ export function MessageItem({
   }, [message, onPress]);
 
   const handleLongPress = useCallback(() => {
+    setShowReactionPicker(true);
     onLongPress?.(message);
   }, [message, onLongPress]);
+
+  const handleReactionSelect = useCallback(
+    async (reaction: string) => {
+      try {
+        if (message.matchId && message._id) {
+          await chatService.sendReaction(message.matchId, message._id, reaction);
+        }
+        // Update local reactions
+        setReactions((prev) => ({
+          ...prev,
+          [reaction]: (prev[reaction] || 0) + 1,
+        }));
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to send reaction', { error: err });
+      }
+      setShowReactionPicker(false);
+    },
+    [message],
+  );
 
   const handleRetry = useCallback(() => {
     onRetry?.(message._id);
@@ -96,8 +123,11 @@ export function MessageItem({
       {/* Date Header */}
       {showDateHeader && (
         <View style={styles.dateHeader}>
-          <BlurView intensity={20} style={styles.dateHeaderBlur}>
-            <Text style={[styles.dateHeaderText, { color: colors.gray600 }]}>
+          <BlurView
+            intensity={20}
+            style={styles.dateHeaderBlur}
+          >
+            <Text style={[styles.dateHeaderText, { color: colors.onMuted }]}>
               {getDateHeader(message.timestamp)}
             </Text>
           </BlurView>
@@ -105,28 +135,18 @@ export function MessageItem({
       )}
 
       {/* Message Container */}
-      <View
-        style={[
-          styles.messageContainer,
-          isMyMessage && styles.myMessageContainer,
-        ]}
-      >
+      <View style={[styles.messageContainer, isMyMessage ? styles.myMessageContainer : null]}>
         {/* Avatar */}
         {!isMyMessage && showAvatar && (
           <TouchableOpacity style={styles.avatarContainer}>
             <Image
               source={{
-                uri: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=100",
+                uri: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=100',
               }}
-              style={[styles.avatar, isOnline && styles.avatarOnline]}
+              style={[styles.avatar, isOnline ? styles.avatarOnline : null]}
             />
             {isOnline && (
-              <View
-                style={[
-                  styles.onlineIndicator,
-                  { backgroundColor: colors.success },
-                ]}
-              />
+              <View style={[styles.onlineIndicator, { backgroundColor: theme.colors.success }]} />
             )}
           </TouchableOpacity>
         )}
@@ -144,20 +164,22 @@ export function MessageItem({
               : [
                   styles.otherMessage,
                   {
-                    backgroundColor: colors.white,
-                    borderColor: colors.gray200,
+                    backgroundColor: theme.palette.neutral[0],
+                    borderColor: theme.palette.neutral[200],
                   },
                 ],
-            hasError && [
-              styles.errorMessage,
-              {
-                backgroundColor: `${colors.error}20`,
-                borderColor: colors.error,
-              },
-            ],
+            hasError
+              ? [
+                  styles.errorMessage,
+                  {
+                    backgroundColor: `${theme.colors.danger}20`,
+                    borderColor: theme.colors.danger,
+                  },
+                ]
+              : null,
           ]}
         >
-          {message.type === "image" ? (
+          {message.type === 'image' ? (
             <Image
               source={{ uri: message.content }}
               style={styles.messageImage}
@@ -166,8 +188,8 @@ export function MessageItem({
             <Text
               style={[
                 styles.messageText,
-                { color: isMyMessage ? colors.white : colors.gray800 },
-                hasError && { color: colors.error },
+                { color: isMyMessage ? theme.palette.neutral[0] : theme.palette.neutral[800] },
+                hasError ? { color: theme.colors.danger } : null,
               ]}
             >
               {message.content}
@@ -177,22 +199,22 @@ export function MessageItem({
           {/* Message Status */}
           {isMyMessage && (
             <View style={styles.messageStatus}>
-              {message.status === "sending" && (
-                <Text
-                  style={[styles.sendingText, { color: `${colors.white}B3` }]}
-                >
+              {message.status === 'sending' && (
+                <Text style={[styles.sendingText, { color: `${theme.palette.neutral[0]}B3` }]}>
                   Sending...
                 </Text>
               )}
-              {message.status === "failed" && (
+              {message.status === 'failed' && (
                 <TouchableOpacity
                   style={styles.retryButton}
                   onPress={handleRetry}
                 >
-                  <Ionicons name="refresh" size={12} color={colors.error} />
-                  <Text style={[styles.retryText, { color: colors.error }]}>
-                    Retry
-                  </Text>
+                  <Ionicons
+                    name="refresh"
+                    size={12}
+                    color={theme.colors.danger}
+                  />
+                  <Text style={[styles.retryText, { color: theme.colors.danger }]}>Retry</Text>
                 </TouchableOpacity>
               )}
               {hasError && (
@@ -200,7 +222,7 @@ export function MessageItem({
                   <Ionicons
                     name="alert-circle"
                     size={12}
-                    color={colors.error}
+                    color={theme.colors.danger}
                   />
                 </View>
               )}
@@ -213,21 +235,23 @@ export function MessageItem({
           <View
             style={[
               styles.timeContainer,
-              isMyMessage && {
-                justifyContent: "flex-end",
-                marginRight: tokens.spacing.sm,
-              },
+              isMyMessage
+                ? {
+                    justifyContent: 'flex-end',
+                    marginRight: theme.spacing.sm,
+                  }
+                : null,
             ]}
           >
-            <Text style={[styles.messageTime, { color: colors.gray500 }]}>
+            <Text style={[styles.messageTime, { color: theme.palette.neutral[500] }]}>
               {formatMessageTime(message.timestamp)}
             </Text>
             {isMyMessage && !hasError && (
               <View style={styles.readReceiptContainer}>
                 <Ionicons
-                  name={message.read ? "checkmark-done" : "checkmark"}
+                  name={message.read ? 'checkmark-done' : 'checkmark'}
                   size={14}
-                  color={message.read ? colors.success : colors.gray500}
+                  color={message.read ? theme.colors.success : theme.palette.neutral[500]}
                   style={styles.readIndicator}
                 />
               </View>
@@ -235,14 +259,35 @@ export function MessageItem({
           </View>
         )}
       </View>
+
+      {/* Reactions */}
+      {Object.keys(reactions).length > 0 && (
+        <View style={styles.reactionsContainer}>
+          {Object.entries(reactions).map(([emoji, count]) => (
+            <View
+              key={emoji}
+              style={styles.reactionBadge}
+            >
+              <Text style={styles.reactionEmoji}>{emoji}</Text>
+              {count > 1 && <Text style={styles.reactionCount}>{count}</Text>}
+            </View>
+          ))}
+        </View>
+      )}
+
+      {/* Reaction Picker */}
+      <ReactionPicker
+        visible={showReactionPicker}
+        onClose={() => {
+          setShowReactionPicker(false);
+        }}
+        onSelect={handleReactionSelect}
+      />
     </View>
   );
 }
 
-const shouldShowDateHeader = (
-  currentMessage: Message,
-  previousMessage?: Message,
-): boolean => {
+const shouldShowDateHeader = (currentMessage: Message, previousMessage?: Message): boolean => {
   if (!previousMessage) return true;
 
   const currentDate = new Date(currentMessage.timestamp).toDateString();
@@ -251,128 +296,154 @@ const shouldShowDateHeader = (
   return currentDate !== previousDate;
 };
 
-const styles = StyleSheet.create({
-  dateHeader: {
-    alignItems: "center",
-    marginVertical: tokens.spacing.md,
-  },
-  dateHeaderBlur: {
-    borderRadius: tokens.borderRadius.lg,
-    overflow: "hidden",
-    paddingHorizontal: tokens.spacing.sm,
-    paddingVertical: tokens.spacing.xs,
-  },
-  dateHeaderText: {
-    fontSize: tokens.typography.caption.fontSize,
-    fontWeight: tokens.typography.caption.fontWeight,
-    textAlign: "center",
-  },
-  messageContainer: {
-    flexDirection: "row",
-    marginBottom: tokens.spacing.xs,
-    alignItems: "flex-end",
-    paddingHorizontal: tokens.spacing.xs,
-  },
-  myMessageContainer: {
-    justifyContent: "flex-end",
-  },
-  avatarContainer: {
-    position: "relative",
-    marginRight: tokens.spacing.xs,
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: "#fff",
-  },
-  avatarOnline: {
-    borderColor: "#4CAF50",
-  },
-  avatarSpacer: {
-    width: 40,
-  },
-  onlineIndicator: {
-    position: "absolute",
-    bottom: -1,
-    right: -1,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
-  messageBubble: {
-    maxWidth: "75%",
-    paddingHorizontal: tokens.spacing.md,
-    paddingVertical: tokens.spacing.sm,
-    borderRadius: tokens.borderRadius.xl,
-    marginBottom: tokens.spacing.xs,
-    position: "relative",
-  },
-  myMessage: {
-    marginLeft: 40,
-    borderBottomRightRadius: tokens.borderRadius.sm,
-  },
-  otherMessage: {
-    borderBottomLeftRadius: tokens.borderRadius.sm,
-    borderWidth: 0.5,
-  },
-  errorMessage: {
-    borderWidth: 1,
-  },
-  messageText: {
-    fontSize: tokens.typography.body.fontSize,
-    lineHeight: tokens.typography.body.lineHeight,
-  },
-  messageImage: {
-    width: 200,
-    height: 150,
-    borderRadius: tokens.borderRadius.md,
-    resizeMode: "cover",
-  },
-  messageStatus: {
-    position: "absolute",
-    bottom: tokens.spacing.xs,
-    right: tokens.spacing.xs,
-  },
-  sendingText: {
-    fontSize: 10,
-    fontStyle: "italic",
-  },
-  retryButton: {
-    backgroundColor: "#ff6b6b",
-    paddingHorizontal: tokens.spacing.sm,
-    paddingVertical: tokens.spacing.xs,
-    borderRadius: tokens.borderRadius.md,
-    marginTop: tokens.spacing.xs,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: tokens.spacing.xs,
-  },
-  retryText: {
-    fontSize: tokens.typography.caption.fontSize,
-    fontWeight: tokens.typography.caption.fontWeight,
-  },
-  errorIndicator: {
-    marginLeft: tokens.spacing.xs,
-  },
-  timeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: tokens.spacing.xs,
-    marginLeft: 40,
-    marginBottom: tokens.spacing.xs,
-  },
-  messageTime: {
-    fontSize: tokens.typography.caption.fontSize,
-    fontWeight: tokens.typography.caption.fontWeight,
-  },
-  readReceiptContainer: {
-    marginLeft: tokens.spacing.xs,
-  },
-  readIndicator: {
-    marginLeft: tokens.spacing.xs,
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    dateHeader: {
+      alignItems: 'center',
+      marginVertical: theme.spacing.md,
+    },
+    dateHeaderBlur: {
+      borderRadius: theme.radii.lg,
+      overflow: 'hidden',
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+    },
+    dateHeaderText: {
+      fontSize: 12,
+      fontWeight: '500',
+      textAlign: 'center',
+    },
+    messageContainer: {
+      flexDirection: 'row',
+      marginBottom: theme.spacing.xs,
+      alignItems: 'flex-end',
+      paddingHorizontal: theme.spacing.xs,
+    },
+    myMessageContainer: {
+      justifyContent: 'flex-end',
+    },
+    avatarContainer: {
+      position: 'relative',
+      marginRight: theme.spacing.xs,
+    },
+    avatar: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      borderWidth: 1.5,
+      borderColor: theme.palette.neutral[0],
+    },
+    avatarOnline: {
+      borderColor: '#4CAF50',
+    },
+    avatarSpacer: {
+      width: 40,
+    },
+    onlineIndicator: {
+      position: 'absolute',
+      bottom: -1,
+      right: -1,
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      borderWidth: 2,
+      borderColor: theme.palette.neutral[0],
+    },
+    messageBubble: {
+      maxWidth: '75%',
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.radii.xl,
+      marginBottom: theme.spacing.xs,
+      position: 'relative',
+    },
+    myMessage: {
+      marginLeft: 40,
+      borderBottomRightRadius: theme.radii.md,
+    },
+    otherMessage: {
+      borderBottomLeftRadius: theme.radii.md,
+      borderWidth: 0.5,
+    },
+    errorMessage: {
+      borderWidth: 1,
+    },
+    messageText: {
+      fontSize: 16,
+      lineHeight: 24,
+    },
+    messageImage: {
+      width: 200,
+      height: 150,
+      borderRadius: theme.radii.lg,
+      resizeMode: 'cover',
+    },
+    messageStatus: {
+      position: 'absolute',
+      bottom: theme.spacing.xs,
+      right: theme.spacing.xs,
+    },
+    sendingText: {
+      fontSize: 10,
+      fontStyle: 'italic',
+    },
+    retryButton: {
+      backgroundColor: theme.colors.danger,
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.lg,
+      marginTop: theme.spacing.xs,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.xs,
+    },
+    retryText: {
+      fontSize: 12,
+      fontWeight: '500',
+    },
+    errorIndicator: {
+      marginLeft: theme.spacing.xs,
+    },
+    timeContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: theme.spacing.xs,
+      marginLeft: 40,
+      marginBottom: theme.spacing.xs,
+    },
+    messageTime: {
+      fontSize: 12,
+      fontWeight: '500',
+    },
+    readReceiptContainer: {
+      marginLeft: theme.spacing.xs,
+    },
+    readIndicator: {
+      marginLeft: theme.spacing.xs,
+    },
+    reactionsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 4,
+      marginTop: 4,
+      paddingHorizontal: theme.spacing.sm,
+    },
+    reactionBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.palette.neutral[100],
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+      gap: 4,
+    },
+    reactionEmoji: {
+      fontSize: 14,
+    },
+    reactionCount: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.palette.neutral[500],
+    },
+  });
+}

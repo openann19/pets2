@@ -1,13 +1,7 @@
-import * as Haptics from "expo-haptics";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type { TextStyle, ViewStyle } from "react-native";
-import {
-  AccessibilityInfo,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import * as Haptics from 'expo-haptics';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { TextStyle, ViewStyle } from 'react-native';
+import { AccessibilityInfo, Platform, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Animated, {
   Extrapolate,
   interpolate,
@@ -17,9 +11,9 @@ import Animated, {
   withSequence,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 // import { animationConfig } from '@pawfectmatch/core';
-import { logger } from "../services/logger";
+import { logger } from '../services/logger';
 
 interface AnimatedButtonProps {
   onPress: () => void;
@@ -28,12 +22,12 @@ interface AnimatedButtonProps {
   textStyle?: TextStyle | TextStyle[];
   disabled?: boolean;
   hapticFeedback?: boolean;
-  variant?: "primary" | "secondary" | "ghost" | "danger";
-  size?: "sm" | "md" | "lg";
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   accessibilityLabel?: string;
   accessibilityHint?: string;
-  accessibilityRole?: "button" | "link" | "menuitem";
+  accessibilityRole?: 'button' | 'link' | 'menuitem';
 }
 
 const AnimatedButton: React.FC<AnimatedButtonProps> = ({
@@ -43,12 +37,12 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   textStyle,
   disabled = false,
   hapticFeedback = true,
-  variant = "primary",
-  size = "md",
+  variant = 'primary',
+  size = 'md',
   loading = false,
   accessibilityLabel,
   accessibilityHint,
-  accessibilityRole = "button",
+  accessibilityRole = 'button',
 }) => {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
@@ -81,42 +75,28 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       .catch(() => {
         setReduceMotion(false);
       });
-    const sub = AccessibilityInfo.addEventListener?.(
-      "reduceMotionChanged",
-      setReduceMotion,
-    );
+    const sub = AccessibilityInfo.addEventListener?.('reduceMotionChanged', setReduceMotion);
     return () => {
       // Handle subscription cleanup - type cast needed for RN compatibility
-      if (
-        sub &&
-        typeof (sub as { remove?: () => void }).remove === "function"
-      ) {
+      if (sub && typeof (sub as { remove?: () => void }).remove === 'function') {
         (sub as { remove: () => void }).remove();
       }
     };
   }, []);
 
   const triggerHaptic = useCallback(() => {
-    if (
-      hapticFeedback &&
-      buttonConfig.hapticFeedback &&
-      mobileConfig.hapticFeedback &&
-      Haptics
-    ) {
+    if (hapticFeedback && buttonConfig.hapticFeedback && mobileConfig.hapticFeedback && Haptics) {
       Haptics.impactAsync(
-        variant === "danger"
+        variant === 'danger'
           ? Haptics.ImpactFeedbackStyle.Medium
           : Haptics.ImpactFeedbackStyle.Light,
-      ).catch((error) => {
-        logger.error("AnimatedButton haptic error", { error });
+      ).catch((error: unknown) => {
+        logger.error('AnimatedButton haptic error', {
+          error: error instanceof Error ? error : new Error(String(error)),
+        });
       });
     }
-  }, [
-    hapticFeedback,
-    variant,
-    buttonConfig.hapticFeedback,
-    mobileConfig.hapticFeedback,
-  ]);
+  }, [hapticFeedback, variant, buttonConfig.hapticFeedback, mobileConfig.hapticFeedback]);
 
   const handlePress = useCallback((): void => {
     if (disabled || loading) return;
@@ -224,26 +204,22 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         animatedStyle,
         styles.shadow,
-        Platform.OS === "android" && {
-          elevation: interpolate(
-            scale.value,
-            [0.92, 1, 1.02],
-            [2, 4, 6],
-          ) as unknown as number,
+        Platform.OS === 'android' && {
+          elevation: interpolate(scale.value, [0.92, 1, 1.02], [2, 4, 6]) as unknown as number,
         },
-      ]}
+      ])}
     >
       <TouchableOpacity
-        style={[
+        style={StyleSheet.flatten([
           styles.button,
           variantStyles[variant],
           sizeStyles[size],
           style,
           disabled && styles.disabled,
-        ]}
+        ])}
         onPress={handlePress}
         disabled={disabled || loading}
         activeOpacity={0.7}
@@ -252,11 +228,11 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         accessibilityHint={accessibilityHint}
         accessibilityState={{ disabled: disabled || loading, busy: loading }}
       >
-        {typeof children === "string" ? (
+        {typeof children === 'string' ? (
           <Text
-            style={[styles.text, textStyle, disabled && styles.disabledText]}
+            style={StyleSheet.flatten([styles.text, textStyle, disabled && styles.disabledText])}
           >
-            {loading ? "..." : children}
+            {loading ? '...' : children}
           </Text>
         ) : (
           children
@@ -271,22 +247,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   primaryButton: {
-    backgroundColor: "#FF6B9D",
+    backgroundColor: '#FF6B9D',
   },
   secondaryButton: {
-    backgroundColor: "#6366F1",
+    backgroundColor: '#6366F1',
   },
   ghostButton: {
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     borderWidth: 2,
-    borderColor: "#FF6B9D",
+    borderColor: '#FF6B9D',
   },
   dangerButton: {
-    backgroundColor: "#EF4444",
+    backgroundColor: 'Theme.colors.status.error',
   },
   smallButton: {
     paddingHorizontal: 12,
@@ -302,11 +278,11 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#FFFFFF",
+    fontWeight: '600',
+    color: 'Theme.colors.neutral[0]',
   },
   shadow: {
-    shadowColor: "#000",
+    shadowColor: 'Theme.colors.neutral[950]',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,

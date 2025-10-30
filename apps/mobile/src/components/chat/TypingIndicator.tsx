@@ -1,8 +1,6 @@
-import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
-import { Animated } from "react-native";
-import { tokens } from "@pawfectmatch/design-tokens";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from '@mobile/src/theme';
+import React, { useMemo } from 'react';
+import { Animated, Image, StyleSheet, Text, View } from 'react-native';
 
 interface TypingIndicatorProps {
   typingUsers: string[];
@@ -12,8 +10,8 @@ interface TypingIndicatorProps {
 export function TypingIndicator({
   typingUsers,
   animationValue,
-}: TypingIndicatorProps): React.JSX.Element {
-  const { colors } = useTheme();
+}: TypingIndicatorProps): React.JSX.Element | null {
+  const { colors, spacing, radius } = useTheme();
 
   if (typingUsers.length === 0) return null;
 
@@ -21,24 +19,24 @@ export function TypingIndicator({
     <View style={styles.container}>
       <Image
         source={{
-          uri: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=100",
+          uri: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=100',
         }}
         style={styles.avatar}
       />
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.typingBubble,
-          { backgroundColor: colors.white, borderColor: colors.gray200 },
-        ]}
+          { backgroundColor: colors.bgElevated, borderColor: colors.border },
+        ])}
       >
         <View style={styles.typingDots}>
           {[0, 1, 2].map((i) => (
             <Animated.View
               key={i}
-              style={[
+              style={StyleSheet.flatten([
                 styles.typingDot,
                 {
-                  backgroundColor: colors.gray500,
+                  backgroundColor: colors.textMuted,
                   opacity:
                     animationValue?.interpolate({
                       inputRange: [0, 0.5, 1],
@@ -54,12 +52,12 @@ export function TypingIndicator({
                     },
                   ],
                 },
-              ]}
+              ])}
             />
           ))}
         </View>
         {typingUsers.length > 1 && (
-          <Text style={[styles.typingText, { color: colors.gray500 }]}>
+          <Text style={StyleSheet.flatten([styles.typingText, { color: colors.textMuted }])}>
             {typingUsers.length} people are typing...
           </Text>
         )}
@@ -68,41 +66,46 @@ export function TypingIndicator({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    paddingHorizontal: tokens.spacing.lg,
-    marginBottom: tokens.spacing.sm,
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: "#fff",
-  },
-  typingBubble: {
-    paddingHorizontal: tokens.spacing.md,
-    paddingVertical: tokens.spacing.sm,
-    borderRadius: tokens.borderRadius.xl,
-    borderBottomLeftRadius: tokens.borderRadius.sm,
-    marginLeft: tokens.spacing.xs,
-    borderWidth: 0.5,
-  },
-  typingDots: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: tokens.spacing.xs,
-  },
-  typingDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  typingText: {
-    fontSize: tokens.typography.caption.fontSize,
-    fontStyle: "italic",
-    marginTop: tokens.spacing.xs,
-  },
-});
+const styles = useMemo(
+  () =>
+    StyleSheet.create({
+      container: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        paddingHorizontal: spacing.lg,
+        marginBottom: spacing.sm,
+      },
+      avatar: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+      },
+      typingBubble: {
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+        borderRadius: radius.md, // 0.75rem
+        borderBottomLeftRadius: 2, // 0.125rem
+        marginLeft: spacing.xs,
+        borderWidth: 0.5,
+      },
+      typingDots: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: spacing.xs,
+      },
+      typingDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        marginHorizontal: 2,
+      },
+      typingText: {
+        fontSize: 12,
+        fontStyle: 'italic',
+        marginTop: spacing.xs,
+      },
+    }),
+  [spacing, radius],
+);
+
+export default TypingIndicator;

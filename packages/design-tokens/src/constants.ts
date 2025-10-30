@@ -144,52 +144,52 @@ export const GRADIENTS = {
 // ====== SHADOWS ======
 export const SHADOWS = {
   // Standard shadows
-  xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-  sm: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-  md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-  lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-  xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+  'xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+  'sm': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+  'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+  'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+  'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
   '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-  inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+  'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
 
   // Premium color glows
-  primaryGlow: '0 0 20px rgba(236, 72, 153, 0.4)',
-  secondaryGlow: '0 0 20px rgba(168, 85, 247, 0.4)',
-  successGlow: '0 0 20px rgba(34, 197, 94, 0.4)',
-  errorGlow: '0 0 20px rgba(239, 68, 68, 0.4)',
-  warningGlow: '0 0 20px rgba(245, 158, 11, 0.4)',
-  infoGlow: '0 0 20px rgba(59, 130, 246, 0.4)',
+  'primaryGlow': '0 0 20px rgba(236, 72, 153, 0.4)',
+  'secondaryGlow': '0 0 20px rgba(168, 85, 247, 0.4)',
+  'successGlow': '0 0 20px rgba(34, 197, 94, 0.4)',
+  'errorGlow': '0 0 20px rgba(239, 68, 68, 0.4)',
+  'warningGlow': '0 0 20px rgba(245, 158, 11, 0.4)',
+  'infoGlow': '0 0 20px rgba(59, 130, 246, 0.4)',
 
   // Glass morphism
-  glass: '0 8px 32px rgba(31, 38, 135, 0.37)',
-  glassLight: '0 4px 16px rgba(255, 255, 255, 0.1)',
+  'glass': '0 8px 32px rgba(31, 38, 135, 0.37)',
+  'glassLight': '0 4px 16px rgba(255, 255, 255, 0.1)',
 
   // Neon effects
-  neon: '0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor',
-  neonPrimary: '0 0 5px #ec4899, 0 0 10px #ec4899, 0 0 15px #ec4899',
-  neonSecondary: '0 0 5px #a855f7, 0 0 10px #a855f7, 0 0 15px #a855f7',
+  'neon': '0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor',
+  'neonPrimary': '0 0 5px #ec4899, 0 0 10px #ec4899, 0 0 15px #ec4899',
+  'neonSecondary': '0 0 5px #a855f7, 0 0 10px #a855f7, 0 0 15px #a855f7',
 } as const;
 
 // ====== BLUR EFFECTS ======
 export const BLUR = {
-  sm: 'blur(4px)',
-  md: 'blur(8px)',
-  lg: 'blur(16px)',
-  xl: 'blur(24px)',
+  'sm': 'blur(4px)',
+  'md': 'blur(8px)',
+  'lg': 'blur(16px)',
+  'xl': 'blur(24px)',
   '2xl': 'blur(40px)',
-  premium: 'blur(20px)',
+  'premium': 'blur(20px)',
 } as const;
 
 // ====== BORDER RADIUS ======
 export const RADIUS = {
-  none: '0px',
-  sm: '0.125rem',
-  md: '0.375rem',
-  lg: '0.5rem',
-  xl: '0.75rem',
+  'none': '0px',
+  'sm': '0.125rem',
+  'md': '0.375rem',
+  'lg': '0.5rem',
+  'xl': '0.75rem',
   '2xl': '1rem',
   '3xl': '1.5rem',
-  full: '9999px',
+  'full': '9999px',
 } as const;
 
 // ====== SPACING ======
@@ -229,11 +229,11 @@ export const SPACING = {
 // ====== TYPOGRAPHY ======
 export const TYPOGRAPHY = {
   fontSizes: {
-    xs: '0.75rem',
-    sm: '0.875rem',
-    base: '1rem',
-    lg: '1.125rem',
-    xl: '1.25rem',
+    'xs': '0.75rem',
+    'sm': '0.875rem',
+    'base': '1rem',
+    'lg': '1.125rem',
+    'xl': '1.25rem',
     '2xl': '1.5rem',
     '3xl': '1.875rem',
     '4xl': '2.25rem',

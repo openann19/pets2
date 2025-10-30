@@ -3,7 +3,7 @@
  * Classifies errors and determines retry eligibility
  */
 
-import { logger } from '../utils/logger';
+// Logger removed - not used in this file
 
 export enum ErrorType {
   NETWORK = 'NETWORK',
@@ -41,13 +41,16 @@ export class APIErrorClassifier {
   /**
    * Classify an error
    */
-  classify(error: unknown, context?: {
-    endpoint?: string;
-    method?: string;
-    statusCode?: number;
-  }): ErrorClassification {
+  classify(
+    error: unknown,
+    context?: {
+      endpoint?: string;
+      method?: string;
+      statusCode?: number;
+    },
+  ): ErrorClassification {
     const statusCode = context?.statusCode || this.extractStatusCode(error);
-    
+
     // Classify by status code first
     if (statusCode) {
       return this.classifyByStatusCode(statusCode);
@@ -67,29 +70,29 @@ export class APIErrorClassifier {
         return {
           type: ErrorType.SERVER,
           retryable: true,
-          userMessage: this.ERROR_MESSAGES[ErrorType.SERVER],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.SERVER],
           statusCode,
           severity: 'high',
         };
-      
+
       case statusCode === 401:
         return {
           type: ErrorType.AUTHENTICATION,
           retryable: false,
-          userMessage: this.ERROR_MESSAGES[ErrorType.AUTHENTICATION],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.AUTHENTICATION],
           statusCode,
           severity: 'high',
         };
-      
+
       case statusCode === 403:
         return {
           type: ErrorType.AUTHORIZATION,
           retryable: false,
-          userMessage: this.ERROR_MESSAGES[ErrorType.AUTHORIZATION],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.AUTHORIZATION],
           statusCode,
           severity: 'medium',
         };
-      
+
       case statusCode === 404:
         return {
           type: ErrorType.CLIENT,
@@ -98,39 +101,39 @@ export class APIErrorClassifier {
           statusCode,
           severity: 'low',
         };
-      
+
       case statusCode === 408:
         return {
           type: ErrorType.TIMEOUT,
           retryable: true,
-          userMessage: this.ERROR_MESSAGES[ErrorType.TIMEOUT],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.TIMEOUT],
           statusCode,
           severity: 'medium',
         };
-      
+
       case statusCode === 429:
         return {
           type: ErrorType.RATE_LIMIT,
           retryable: true,
-          userMessage: this.ERROR_MESSAGES[ErrorType.RATE_LIMIT],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.RATE_LIMIT],
           statusCode,
           severity: 'medium',
         };
-      
+
       case statusCode >= 400:
         return {
           type: ErrorType.VALIDATION,
           retryable: false,
-          userMessage: this.ERROR_MESSAGES[ErrorType.VALIDATION],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.VALIDATION],
           statusCode,
           severity: 'medium',
         };
-      
+
       default:
         return {
           type: ErrorType.UNKNOWN,
           retryable: false,
-          userMessage: this.ERROR_MESSAGES[ErrorType.UNKNOWN],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.UNKNOWN],
           statusCode,
           severity: 'low',
         };
@@ -148,7 +151,7 @@ export class APIErrorClassifier {
       return {
         type: ErrorType.NETWORK,
         retryable: true,
-        userMessage: this.ERROR_MESSAGES[ErrorType.NETWORK],
+        userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.NETWORK],
         severity: 'high',
       };
     }
@@ -158,7 +161,7 @@ export class APIErrorClassifier {
       return {
         type: ErrorType.TIMEOUT,
         retryable: true,
-        userMessage: this.ERROR_MESSAGES[ErrorType.TIMEOUT],
+        userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.TIMEOUT],
         severity: 'medium',
       };
     }
@@ -168,7 +171,7 @@ export class APIErrorClassifier {
       return {
         type: ErrorType.AUTHENTICATION,
         retryable: false,
-        userMessage: this.ERROR_MESSAGES[ErrorType.AUTHENTICATION],
+        userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.AUTHENTICATION],
         severity: 'high',
       };
     }
@@ -177,7 +180,7 @@ export class APIErrorClassifier {
     return {
       type: ErrorType.UNKNOWN,
       retryable: this.isRetryableError(error),
-      userMessage: this.ERROR_MESSAGES[ErrorType.UNKNOWN],
+      userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.UNKNOWN],
       severity: 'medium',
     };
   }
@@ -195,22 +198,17 @@ export class APIErrorClassifier {
       'fetch failed',
       'network error',
     ];
-    
-    return networkKeywords.some(keyword => message.includes(keyword));
+
+    return networkKeywords.some((keyword) => message.includes(keyword));
   }
 
   /**
    * Check if error is timeout error
    */
   private isTimeoutError(message: string): boolean {
-    const timeoutKeywords = [
-      'timeout',
-      'timed out',
-      'etimedout',
-      'request timeout',
-    ];
-    
-    return timeoutKeywords.some(keyword => message.includes(keyword));
+    const timeoutKeywords = ['timeout', 'timed out', 'etimedout', 'request timeout'];
+
+    return timeoutKeywords.some((keyword) => message.includes(keyword));
   }
 
   /**
@@ -224,8 +222,8 @@ export class APIErrorClassifier {
       'invalid credentials',
       'session expired',
     ];
-    
-    return authKeywords.some(keyword => message.includes(keyword));
+
+    return authKeywords.some((keyword) => message.includes(keyword));
   }
 
   /**
@@ -276,13 +274,15 @@ export class APIErrorClassifier {
   /**
    * Get user-friendly error message
    */
-  getUserMessage(error: unknown, context?: {
-    endpoint?: string;
-    method?: string;
-    statusCode?: number;
-  }): string {
+  getUserMessage(
+    error: unknown,
+    context?: {
+      endpoint?: string;
+      method?: string;
+      statusCode?: number;
+    },
+  ): string {
     const classification = this.classify(error, context);
     return classification.userMessage;
   }
 }
-

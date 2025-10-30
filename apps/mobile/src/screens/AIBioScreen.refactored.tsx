@@ -4,22 +4,26 @@
  * Reduced from 17,000+ lines to focused, maintainable component
  */
 
+import React from "react";
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NavigationProp } from "@react-navigation/native";
 
-import { useAIBio } from "../../hooks/useAIBio";
-import { PetInfoForm } from "../../components/ai/PetInfoForm";
-import { ToneSelector } from "../../components/ai/ToneSelector";
-import { BioResults } from "../../components/ai/BioResults";
-import { Theme } from "../../theme/unified-theme";
+import { useAIBio } from "../hooks/useAIBio";
+import { PetInfoForm } from "../components/ai/PetInfoForm";
+import { ToneSelector } from "../components/ai/ToneSelector";
+import { BioResults } from "../components/ai/BioResults";
+import { useTheme } from "@mobile/src/theme";
+import { getExtendedColors } from "../theme/adapters";
 
 interface AIBioScreenProps {
   navigation: NavigationProp<any>;
 }
 
 export default function AIBioScreen({ navigation }: AIBioScreenProps) {
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
   const {
     // Form state
     petName,
@@ -69,10 +73,16 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={handleBack}
+          testID="AIBioScreen-back-button"
+          accessibilityRole="button"
           accessibilityLabel="Go back"
+          onPress={handleBack}
         >
-          <Ionicons name="arrow-back" size={24} color={Theme.colors.text.primary} />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={colors.onSurface}
+          />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Pet Bio</Text>
         <View style={styles.headerSpacer} />
@@ -105,8 +115,10 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
               <Text style={styles.sectionTitle}>Pet Photo (Optional)</Text>
               <TouchableOpacity
                 style={styles.photoPicker}
-                onPress={pickImage}
+                testID="AIBioScreen-photo-picker"
+                accessibilityRole="button"
                 accessibilityLabel="Select pet photo"
+                onPress={pickImage}
               >
                 {selectedPhoto ? (
                   <View style={styles.photoPreview}>
@@ -117,7 +129,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
                     <Ionicons
                       name="camera"
                       size={32}
-                      color={Theme.colors.text.secondary}
+                      color={colors.onMuted}
                     />
                     <Text style={styles.photoText}>Add Photo</Text>
                   </View>
@@ -127,13 +139,15 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
 
             {/* Generate Button */}
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.generateButton,
                 (!isFormValid || isGenerating) && styles.disabledButton,
-              ]}
-              onPress={handleGenerate}
-              disabled={!isFormValid || isGenerating}
+              ])}
+              testID="AIBioScreen-generate-button"
+              accessibilityRole="button"
               accessibilityLabel="Generate AI bio"
+              disabled={!isFormValid || isGenerating}
+              onPress={handleGenerate}
             >
               <Text style={styles.generateButtonText}>
                 {isGenerating ? "Generating..." : "Generate Bio"}
@@ -166,16 +180,18 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
             {/* New Bio Button */}
             <TouchableOpacity
               style={styles.newBioButton}
+              testID="AIBioScreen-new-bio-button"
+              accessibilityRole="button"
+              accessibilityLabel="Create new bio"
               onPress={() => {
                 resetGeneration();
                 clearForm();
               }}
-              accessibilityLabel="Create new bio"
             >
               <Ionicons
                 name="add-circle"
                 size={20}
-                color={Theme.colors.primary}
+                color={colors.primary}
               />
               <Text style={styles.newBioText}>Create New Bio</Text>
             </TouchableOpacity>
@@ -186,28 +202,28 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ReturnType<typeof getExtendedColors>, spacing: any, borderRadius: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.colors.background,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: Theme.spacing.lg,
-    paddingVertical: Theme.spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Theme.colors.border,
-    backgroundColor: Theme.colors.background.primary,
+    borderBottomColor: colors.border,
+    backgroundColor: colors.background,
   },
   backButton: {
-    padding: Theme.spacing.sm,
-    marginRight: Theme.spacing.md,
+    padding: spacing.sm,
+    marginRight: spacing.md,
   },
   headerTitle: {
-    fontSize: Theme.typography.fontSize.xl,
-    fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.onSurface
   },
   headerSpacer: {
     flex: 1,
@@ -219,23 +235,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   photoSection: {
-    padding: Theme.spacing.lg,
+    padding: spacing.lg,
   },
   sectionTitle: {
-    fontSize: Theme.typography.fontSize.lg,
-    fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.md,
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.onSurface,
+    marginBottom: spacing.md,
   },
   photoPicker: {
     borderWidth: 2,
-    borderColor: Theme.colors.border,
+    borderColor: colors.border,
     borderStyle: "dashed",
-    borderRadius: Theme.borderRadius.lg,
-    padding: Theme.spacing.xl,
+    borderRadius: borderRadius.lg,
+    padding: spacing.xl,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: colors.background,
   },
   photoPlaceholder: {
     alignItems: "center",
@@ -244,65 +260,72 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   photoText: {
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
-    marginTop: Theme.spacing.sm,
+    fontSize: 16,
+    color: colors.onMuted,
+    marginTop: spacing.sm,
   },
   generateButton: {
-    backgroundColor: Theme.colors.primary,
-    borderRadius: Theme.borderRadius.lg,
-    padding: Theme.spacing.lg,
-    margin: Theme.spacing.lg,
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    margin: spacing.lg,
     alignItems: "center",
-    shadowColor: Theme.colors.primary,
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 4,
   },
   disabledButton: {
-    backgroundColor: Theme.colors.text.secondary,
+    backgroundColor: colors.onMuted,
     shadowOpacity: 0,
     elevation: 0,
   },
   generateButtonText: {
-    fontSize: Theme.typography.fontSize.lg,
-    fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.background.primary,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.onPrimary,
   },
   submitError: {
-    fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.status.error,
+    fontSize: 14,
+    color: colors.danger,
     textAlign: "center",
-    marginHorizontal: Theme.spacing.lg,
-    marginBottom: Theme.spacing.lg,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
   },
   resultsContainer: {
     flex: 1,
   },
   historySummary: {
-    padding: Theme.spacing.lg,
+    padding: spacing.lg,
     alignItems: "center",
   },
   historyText: {
-    fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
+    fontSize: 14,
+    color: colors.onMuted,
   },
   newBioButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    padding: Theme.spacing.md,
-    margin: Theme.spacing.lg,
+    padding: spacing.md,
+    margin: spacing.lg,
     borderWidth: 1,
-    borderColor: Theme.colors.primary,
-    borderRadius: Theme.borderRadius.lg,
-    backgroundColor: Theme.colors.background.primary,
+    borderColor: colors.primary,
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.background,
   },
   newBioText: {
-    fontSize: Theme.typography.fontSize.base,
-    fontWeight: Theme.typography.fontWeight.medium,
-    color: Theme.colors.primary,
-    marginLeft: Theme.spacing.sm,
+    fontSize: 16,
+    fontWeight: '500',
+    color: colors.primary,
+    marginLeft: spacing.sm,
   },
 });
+
+// Call the function to create styles
+const styles = createStyles(
+  { background: '#fff', border: '#ccc', text: '#000', textMuted: '#666', primary: '#007AFF', white: '#fff', danger: '#FF3B30' } as any,
+  { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as any,
+  { none: 0, xs: 2, sm: 4, md: 8, lg: 12, xl: 16, '2xl': 20, full: 9999 } as any
+);

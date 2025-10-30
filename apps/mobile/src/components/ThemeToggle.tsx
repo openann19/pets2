@@ -1,35 +1,34 @@
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 import {
   TouchableOpacity,
   View,
   Text,
   StyleSheet,
   Animated,
-} from "react-native";
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 
-import { useThemeToggle } from "../hooks/useThemeToggle";
-import { Spacing, BorderRadius, Typography } from "../styles/GlobalStyles";
+import { useThemeToggle } from '../hooks/useThemeToggle';
+import { MOBILE_SPACING } from '../constants/design-tokens';
 
 interface ThemeToggleProps {
-  variant?: "icon" | "button" | "selector";
-  size?: "small" | "medium" | "large";
+  variant?: 'icon' | 'button' | 'selector';
+  size?: 'small' | 'medium' | 'large';
   showLabel?: boolean;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const ThemeToggle: React.FC<ThemeToggleProps> = ({
-  variant = "icon",
-  size = "medium",
+  variant = 'icon',
+  size = 'medium',
   showLabel = false,
   style,
 }) => {
-  const { isDark, themeMode, colors, styles, toggleTheme, showThemeSelector } =
-    useThemeToggle();
+  const { isDark, themeMode, colors, styles, toggleTheme, showThemeSelector } = useThemeToggle();
 
-  const animatedValue = React.useRef(
-    new Animated.Value(isDark ? 1 : 0),
-  ).current;
+  const animatedValue = React.useRef(new Animated.Value(isDark ? 1 : 0)).current;
 
   React.useEffect(() => {
     Animated.timing(animatedValue, {
@@ -48,9 +47,15 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 
   // Button sizes
   const buttonSizes = {
-    small: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm },
-    medium: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md },
-    large: { paddingHorizontal: Spacing.xl, paddingVertical: Spacing.lg },
+    small: { paddingHorizontal: MOBILE_SPACING[16] || 16, paddingVertical: MOBILE_SPACING[8] || 8 },
+    medium: {
+      paddingHorizontal: MOBILE_SPACING[24] || 24,
+      paddingVertical: MOBILE_SPACING[16] || 16,
+    },
+    large: {
+      paddingHorizontal: MOBILE_SPACING[32] || 32,
+      paddingVertical: MOBILE_SPACING[24] || 24,
+    },
   };
 
   const iconColor = animatedValue.interpolate({
@@ -60,102 +65,108 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 
   const backgroundColor = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [colors.gray100, colors.gray800],
+    outputRange: [theme.palette.neutral[100], theme.palette.neutral[800]],
   });
 
-  if (variant === "icon") {
+  if (variant === 'icon') {
     return (
       <TouchableOpacity
         onPress={toggleTheme}
-        style={[
+        accessibilityRole="button"
+        accessibilityLabel={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        accessibilityHint="Toggles between light and dark theme"
+        style={StyleSheet.flatten([
           themeStyles.iconContainer,
           buttonSizes[size],
           { backgroundColor: colors.glassWhiteLight },
           style,
-        ]}
+        ])}
         activeOpacity={0.7}
       >
         <Animated.View>
           <Ionicons
-            name={isDark ? "moon" : "sunny"}
+            name={isDark ? 'moon' : 'sunny'}
             size={iconSizes[size]}
             color={isDark ? colors.primary : colors.warning}
           />
         </Animated.View>
         {showLabel && (
-          <Text style={[themeStyles.label, { color: colors.gray600 }]}>
-            {isDark ? "Dark" : "Light"}
+          <Text
+            style={StyleSheet.flatten([themeStyles.label, { color: theme.palette.neutral[600] }])}
+          >
+            {isDark ? 'Dark' : 'Light'}
           </Text>
         )}
       </TouchableOpacity>
     );
   }
 
-  if (variant === "button") {
+  if (variant === 'button') {
     return (
       <TouchableOpacity
         onPress={toggleTheme}
-        style={[
-          themeStyles.buttonContainer,
-          buttonSizes[size],
-          styles.buttonSecondary,
-          style,
-        ]}
+        accessibilityRole="button"
+        accessibilityLabel={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        accessibilityHint="Toggles between light and dark theme"
+        style={[themeStyles.buttonContainer, buttonSizes[size], style]}
         activeOpacity={0.8}
       >
         <View style={themeStyles.buttonContent}>
           <Ionicons
-            name={isDark ? "moon" : "sunny"}
+            name={isDark ? 'moon' : 'sunny'}
             size={iconSizes[size]}
             color={colors.primary}
           />
-          <Text style={[themeStyles.buttonText, { color: colors.primary }]}>
-            {isDark ? "Dark Mode" : "Light Mode"}
+          <Text style={StyleSheet.flatten([themeStyles.buttonText, { color: colors.primary }])}>
+            {isDark ? 'Dark Mode' : 'Light Mode'}
           </Text>
         </View>
       </TouchableOpacity>
     );
   }
 
-  if (variant === "selector") {
+  if (variant === 'selector') {
     const themeLabels = {
-      light: "Light",
-      dark: "Dark",
-      system: "Auto",
+      light: 'Light',
+      dark: 'Dark',
+      system: 'Auto',
     };
 
     return (
       <TouchableOpacity
         onPress={showThemeSelector}
-        style={[
+        style={StyleSheet.flatten([
           themeStyles.selectorContainer,
           buttonSizes[size],
           {
             backgroundColor: colors.glassWhiteLight,
-            borderColor: colors.gray300,
+            borderColor: theme.palette.neutral[300],
           },
           style,
-        ]}
+        ])}
         activeOpacity={0.8}
       >
         <View style={themeStyles.selectorContent}>
           <View style={themeStyles.selectorLeft}>
             <Ionicons
-              name={
-                themeMode === "system"
-                  ? "phone-portrait"
-                  : isDark
-                    ? "moon"
-                    : "sunny"
-              }
+              name={themeMode === 'system' ? 'phone-portrait' : isDark ? 'moon' : 'sunny'}
               size={iconSizes[size]}
               color={colors.primary}
             />
-            <Text style={[themeStyles.selectorText, { color: colors.gray700 }]}>
+            <Text
+              style={StyleSheet.flatten([
+                themeStyles.selectorText,
+                { color: theme.palette.neutral[700] },
+              ])}
+            >
               Theme: {themeLabels[themeMode]}
             </Text>
           </View>
-          <Ionicons name="chevron-down" size={16} color={colors.gray500} />
+          <Ionicons
+            name="chevron-down"
+            size={16}
+            color={theme.palette.neutral[500]}
+          />
         </View>
       </TouchableOpacity>
     );
@@ -166,58 +177,58 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 
 const themeStyles = StyleSheet.create({
   iconContainer: {
-    borderRadius: BorderRadius.full,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    gap: Spacing.xs,
+    borderRadius: 9999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 4,
   },
 
   buttonContainer: {
-    borderRadius: BorderRadius.xl,
-    alignItems: "center",
-    justifyContent: "center",
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   buttonContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
 
   buttonText: {
-    fontSize: Typography.sizes.base,
-    fontWeight: Typography.weights.semibold,
+    fontSize: 16,
+    fontWeight: '600',
   },
 
   selectorContainer: {
-    borderRadius: BorderRadius.lg,
+    borderRadius: 12,
     borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   selectorContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
   },
 
   selectorLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
 
   selectorText: {
-    fontSize: Typography.sizes.base,
-    fontWeight: Typography.weights.medium,
+    fontSize: 16,
+    fontWeight: '500',
   },
 
   label: {
-    fontSize: Typography.sizes.sm,
-    fontWeight: Typography.weights.medium,
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
 

@@ -6,14 +6,14 @@
 
 // Standard spring configuration per Rule II.5
 export const SPRING_CONFIG = {
-  type: "spring" as const,
-  stiffness: 300,  // Rules-compliant value (was 400)
-  damping: 30      // Rules-compliant value (was 17)
+  type: 'spring' as const,
+  stiffness: 300, // Rules-compliant value (was 400)
+  damping: 30, // Rules-compliant value (was 17)
 };
 
 // Staggered animation configuration per Rule II.5
 export const STAGGER_CONFIG = {
-  staggerChildren: 0.07  // Rules specify 0.07 (was incorrectly 0.1)
+  staggerChildren: 0.07, // Rules specify 0.07 (was incorrectly 0.1)
 };
 
 // Shared layout animation configuration
@@ -24,16 +24,16 @@ export const _LAYOUT_TRANSITION = {
 
 // Hover/tap animation variants
 export const _INTERACTION_VARIANTS = {
-  hover: { 
+  hover: {
     scale: 1.02,
     rotateY: 1,
-    transition: SPRING_CONFIG
+    transition: SPRING_CONFIG,
   },
-  tap: { 
+  tap: {
     scale: 0.98,
     rotateY: -1,
-    transition: SPRING_CONFIG
-  }
+    transition: SPRING_CONFIG,
+  },
 };
 
 // List entrance animation
@@ -42,25 +42,25 @@ export const _LIST_VARIANTS = {
     opacity: 1,
     transition: {
       ...SPRING_CONFIG,
-      ...STAGGER_CONFIG
-    }
+      ...STAGGER_CONFIG,
+    },
   },
   hidden: {
-    opacity: 0
-  }
+    opacity: 0,
+  },
 };
 
 // Page transition variants
 export const _PAGE_VARIANTS = {
   initial: { opacity: 0, scale: 0.95 },
-  animate: { 
-    opacity: 1, 
+  animate: {
+    opacity: 1,
     scale: 1,
-    transition: SPRING_CONFIG
+    transition: SPRING_CONFIG,
   },
-  exit: { 
-    opacity: 0, 
+  exit: {
+    opacity: 0,
     scale: 1.05,
-    transition: SPRING_CONFIG
-  }
+    transition: SPRING_CONFIG,
+  },
 };

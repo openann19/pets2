@@ -116,7 +116,7 @@ export function measureRenderPerformance(
   renderFn: () => void
 ) {
   if (process.env.NODE_ENV !== 'development') {
-    return renderFn();
+    renderFn(); return;
   }
 
   const start = performance.now();
@@ -215,7 +215,7 @@ export function logBundleSize() {
     const scripts = entries.filter(e => e.name.includes('.js'));
     
     scripts.forEach(script => {
-      const size = (script as PerformanceResourceTiming).transferSize || 0;
+      const size = (script).transferSize || 0;
       console.log(`[Bundle] ${script.name}: ${(size / 1024).toFixed(2)}KB`);
     });
   }

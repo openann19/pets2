@@ -1,0 +1,33 @@
+{
+  "extends": "../tsconfig.base.json", // <-- Inherits all strict rules
+  "compilerOptions": {
+    // === Server-specific overrides ===
+    "module": "ES2022",
+    "lib": ["ES2022"],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,  // Required for verbatimModuleSyntax
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../packages/shared/*"],
+      "@shared/errors": ["../packages/core-errors/src/index.ts"],
+      "@shared/errors/*": ["../packages/core-errors/src/*"]
+    },
+    "types": ["node", "jest"]
+  },
+  "include": [
+    "src/**/*",
+    "server.ts",
+    "*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.js"
+  ]
+}

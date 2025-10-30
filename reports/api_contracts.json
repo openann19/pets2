@@ -1,0 +1,333 @@
+{
+  "name": "PawfectMatch API Contracts",
+  "version": "1.0.0",
+  "generated": "2025-01-20",
+  "agent": "API Contract Agent",
+  
+  "baseURL": "https://api.pawfectmatch.com",
+  "authentication": {
+    "type": "Bearer Token",
+    "header": "Authorization",
+    "format": "Bearer <token>"
+  },
+  
+  "endpoints": {
+    "authentication": {
+      "POST /api/auth/register": {
+        "description": "Register new user",
+        "request": {
+          "email": "string",
+          "password": "string (min 12 chars, complexity required)",
+          "username": "string"
+        },
+        "response": {
+          "success": true,
+          "token": "string",
+          "user": "User object"
+        },
+        "errors": {
+          "400": "Validation failed",
+          "409": "User already exists"
+        }
+      },
+      
+      "POST /api/auth/login": {
+        "description": "Authenticate user",
+        "request": {
+          "email": "string",
+          "password": "string"
+        },
+        "response": {
+          "success": true,
+          "token": "string",
+          "user": "User object"
+        },
+        "rateLimit": "100 requests/15min"
+      },
+      
+      "POST /api/auth/logout": {
+        "description": "Logout user",
+        "requiresAuth": true
+      }
+    },
+    
+    "pets": {
+      "GET /api/pets/discover": {
+        "description": "Discover pets with filters",
+        "requiresAuth": true,
+        "query": {
+          "age": "number[]",
+          "species": "string[]",
+          "location": "object {lat, lng, radius}",
+          "offset": "number",
+          "limit": "number"
+        },
+        "response": {
+          "success": true,
+          "pets": "Pet[]",
+          "total": "number"
+        }
+      },
+      
+      "GET /api/pets/my-pets": {
+        "description": "Get user's pets",
+        "requiresAuth": true,
+        "response": {
+          "success": true,
+          "pets": "Pet[]"
+        }
+      },
+      
+      "POST /api/pets/create": {
+        "description": "Create new pet profile",
+        "requiresAuth": true,
+        "request": {
+          "name": "string",
+          "species": "dog|cat|bird|rabbit|other",
+          "age": "number",
+          "gender": "male|female",
+          "bio": "string",
+          "photos": "string[]"
+        },
+        "response": {
+          "success": true,
+          "pet": "Pet object"
+        }
+      }
+    },
+    
+    "swipes": {
+      "POST /api/swipe": {
+        "description": "Swipe on a pet",
+        "requiresAuth": true,
+        "request": {
+          "petId": "string",
+          "action": "like|pass|superlike"
+        },
+        "response": {
+          "success": true,
+          "matched": "boolean",
+          "matchDetails": "object (if matched)"
+        }
+      }
+    },
+    
+    "matches": {
+      "GET /api/matches": {
+        "description": "Get user's matches",
+        "requiresAuth": true,
+        "response": {
+          "success": true,
+          "matches": "Match[]"
+        }
+      },
+      
+      "GET /api/matches/:matchId": {
+        "description": "Get specific match details",
+        "requiresAuth": true
+      }
+    },
+    
+    "chat": {
+      "GET /api/chat/:matchId/messages": {
+        "description": "Get chat messages",
+        "requiresAuth": true,
+        "query": {
+          "limit": "number",
+          "before": "timestamp"
+        }
+      },
+      
+      "POST /api/chat/:matchId/send": {
+        "description": "Send message",
+        "requiresAuth": true,
+        "request": {
+          "content": "string",
+          "type": "text|image|voice",
+          "attachment": "string (optional)"
+        }
+      },
+      
+      "POST /api/chat/reactions": {
+        "description": "Send reaction to message",
+        "requiresAuth": true,
+        "request": {
+          "matchId": "string",
+          "messageId": "string",
+          "reaction": "string"
+        },
+        "contractStatus": "defined-not-implemented"
+      },
+      
+      "POST /api/chat/attachments": {
+        "description": "Upload attachment",
+        "requiresAuth": true,
+        "request": "multipart/form-data",
+        "contractStatus": "defined-not-implemented"
+      }
+    },
+    
+    "gdpr": {
+      "DELETE /api/users/delete-account": {
+        "description": "Delete user account (30-day grace period)",
+        "requiresAuth": true,
+        "request": {
+          "password": "string",
+          "reason": "string (optional)",
+          "feedback": "string (optional)"
+        },
+        "response": {
+          "success": true,
+          "gracePeriodEndsAt": "timestamp",
+          "message": "string"
+        },
+        "contractStatus": "defined-partially-implemented"
+      },
+      
+      "GET /api/users/export-data": {
+        "description": "Export all user data (GDPR Article 15)",
+        "requiresAuth": true,
+        "query": {
+          "format": "json|csv"
+        },
+        "response": {
+          "success": true,
+          "data": "UserDataExport object"
+        },
+        "contractStatus": "defined-not-implemented"
+      }
+    },
+    
+    "ai": {
+      "POST /api/ai/generate-bio": {
+        "description": "Generate pet bio using AI",
+        "requiresAuth": true,
+        "requiresPremium": true,
+        "request": {
+          "petId": "string",
+          "tone": "professional|casual|fun",
+          "length": "short|medium|long"
+        }
+      },
+      
+      "POST /api/ai/analyze-photo": {
+        "description": "Analyze pet photo",
+        "requiresAuth": true,
+        "requiresPremium": true
+      },
+      
+      "POST /api/ai/compatibility": {
+        "description": "Calculate compatibility score",
+        "requiresAuth": true,
+        "requiresPremium": true,
+        "request": {
+          "petAId": "string",
+          "petBId": "string"
+        }
+      }
+    },
+    
+    "premium": {
+      "POST /api/subscription/checkout": {
+        "description": "Create Stripe checkout session",
+        "requiresAuth": true,
+        "request": {
+          "planId": "string",
+          "interval": "month|year"
+        },
+        "response": {
+          "success": true,
+          "checkoutUrl": "string",
+          "sessionId": "string"
+        }
+      },
+      
+      "GET /api/subscription/status": {
+        "description": "Get subscription status",
+        "requiresAuth": true
+      }
+    },
+    
+    "admin": {
+      "GET /api/admin/users": {
+        "description": "Get all users",
+        "requiresAuth": true,
+        "requiresAdmin": true
+      },
+      
+      "DELETE /api/admin/users/:userId": {
+        "description": "Delete user (admin)",
+        "requiresAuth": true,
+        "requiresAdmin": true
+      }
+    }
+  },
+  
+  "validationSchemas": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "username": { "type": "string", "minLength": 3, "maxLength": 30 },
+        "role": { "enum": ["user", "admin", "moderator"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    
+    "Pet": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string", "minLength": 2, "maxLength": 50 },
+        "species": { "enum": ["dog", "cat", "bird", "rabbit", "other"] },
+        "breed": { "type": "string" },
+        "age": { "type": "number", "minimum": 0, "maximum": 30 },
+        "gender": { "enum": ["male", "female", "unknown"] },
+        "photos": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "species", "age"]
+    }
+  },
+  
+  "errorResponses": {
+    "400": {
+      "description": "Bad Request - Validation failed",
+      "schema": {
+        "success": false,
+        "errors": "ValidationError[]"
+      }
+    },
+    "401": {
+      "description": "Unauthorized - Invalid or missing token"
+    },
+    "403": {
+      "description": "Forbidden - Insufficient permissions"
+    },
+    "404": {
+      "description": "Not Found - Resource doesn't exist"
+    },
+    "429": {
+      "description": "Too Many Requests - Rate limit exceeded"
+    },
+    "500": {
+      "description": "Internal Server Error"
+    }
+  },
+  
+  "missingImplementations": [
+    "POST /api/chat/reactions",
+    "POST /api/chat/attachments", 
+    "GET /api/users/export-data",
+    "DELETE /api/users/delete-account (full implementation)",
+    "POST /api/users/confirm-deletion"
+  ],
+  
+  "versionHistory": [
+    { "version": "1.0.0", "date": "2025-01-20", "changes": "Initial contract definition" }
+  ]
+}
+

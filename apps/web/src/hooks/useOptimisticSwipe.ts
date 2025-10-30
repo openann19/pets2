@@ -77,7 +77,7 @@ export function useOptimisticSwipe(options = {}) {
             toast.error('Please log in to swipe');
             return;
         }
-        return swipeMutation.mutate({ petId, action });
+        swipeMutation.mutate({ petId, action });
     }, [swipeMutation, user]);
     return {
         swipe,

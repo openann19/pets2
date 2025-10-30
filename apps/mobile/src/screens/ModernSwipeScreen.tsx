@@ -9,285 +9,173 @@
  * - Performance optimized with proper memoization
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import {
-  useAuthStore,
-  useSwipeLogic,
-  type Pet,
-  type PetFilters,
-} from "@pawfectmatch/core";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useCallback, useEffect, useState } from "react";
-import { View, StyleSheet, Dimensions, Alert } from "react-native";
+import { Dimensions, StyleSheet, View } from 'react-native';
 
 // Import new architecture components
 import {
-  Theme,
-  ModernSwipeCard,
-  EliteButton,
-  EliteButtonPresets,
-  FXContainer,
-  FXContainerPresets,
-  Heading1,
-  Heading2,
   Body,
   BodySmall,
-  useStaggeredAnimation,
-  useEntranceAnimation,
-} from "../components";
+  EliteButton,
+  EliteButtonPresets,
+  Heading2,
+  ModernSwipeCard,
+} from '../components';
 
 // Import legacy components for gradual migration
-import { EliteContainer, EliteHeader } from "../components/EliteComponents";
-import { useTheme } from "../contexts/ThemeContext";
-import { matchesAPI } from "../services/api";
+import { useTheme } from '@mobile/src/theme';
+import { EliteContainer, EliteHeader } from '../components';
+import { useModernSwipeScreen } from '../hooks/screens/useModernSwipeScreen';
+import type { RootStackScreenProps } from '../navigation/types';
+// Import state components
+import { ErrorState } from '../components/swipe/ErrorState';
+import { LoadingState } from '../components/swipe/LoadingState';
+import { NoMorePetsState } from '../components/swipe/NoMorePetsState';
+// import { CardStack, FilterPanel, MatchModal, SwipeGestureHints, SwipeGestureHintOverlay, PeekSheet } from "../components/swipe"; // TODO: Implement missing components
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-type RootStackParamList = {
-  Swipe: undefined;
-  Matches: undefined;
-  Chat: { matchId: string; petName: string };
-};
-
-type SwipeScreenProps = NativeStackScreenProps<RootStackParamList, "Swipe">;
+type SwipeScreenProps = RootStackScreenProps<'Swipe'>;
 
 export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
-  const { user } = useAuthStore();
-
-  // State management
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showMatchModal, setShowMatchModal] = useState(false);
-  const [matchedPet, setMatchedPet] = useState<Pet | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
-
-  // Filter state
-  const [filters, setFilters] = useState<PetFilters>({
-    breed: "",
-    species: "",
-    size: "",
-    maxDistance: 25,
-  });
-
-  // Swipe logic hook
-  const { handleLike, handlePass, handleSuperLike } = useSwipeLogic({
-    onMatch: (result) => {
-      if (result.isMatch) {
-        setShowMatchModal(true);
-      }
-    },
-  });
-
-  // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(
-      3, // Number of action buttons
-      100,
-      "gentle",
-    );
-
-  const { start: startEntrance, animatedStyle: entranceStyle } =
-    useEntranceAnimation("fadeInUp", 0, "standard");
-
-  // Start animations
-  useEffect(() => {
-    startStaggeredAnimation();
-    startEntrance();
-  }, [startStaggeredAnimation, startEntrance]);
-
-  // Load pets function
-  const loadPets = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const realPets = await matchesAPI.getPets(filters);
-      setPets(realPets);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Failed to load pets. Please check your connection.";
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [filters]);
-
-  // Swipe pet function
-  const swipePet = useCallback(
-    async (petId: string, action: "like" | "pass" | "superlike") => {
-      try {
-        const pet = pets.find((p) => p._id === petId);
-        if (!pet) return null;
-
-        const corePet = {
-          ...pet,
-          bio: pet.description ?? "",
-          distance: 0,
-          compatibility: 0,
-          isVerified: true,
-          owner: { _id: "owner1", name: "Owner" },
-        };
-
-        switch (action) {
-          case "like":
-            return await handleLike(corePet);
-          case "pass":
-            return await handlePass(corePet);
-          case "superlike":
-            return await handleSuperLike(corePet);
-          default:
-            return null;
-        }
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error occurred";
-        Alert.alert("Error", `Failed to process swipe: ${errorMessage}`);
-        return null;
-      }
-    },
-    [pets, handleLike, handlePass, handleSuperLike],
-  );
-
-  // Swipe handlers
-  const handleSwipeLeft = useCallback(
-    async (pet: Pet) => {
-      const result = await swipePet(pet._id, "pass");
-      if (result?.isMatch) {
-        setMatchedPet(pet);
-        setShowMatchModal(true);
-      }
-      setCurrentIndex((prev) => prev + 1);
-    },
-    [swipePet],
-  );
-
-  const handleSwipeRight = useCallback(
-    async (pet: Pet) => {
-      const result = await swipePet(pet._id, "like");
-      if (result?.isMatch) {
-        setMatchedPet(pet);
-        setShowMatchModal(true);
-      }
-      setCurrentIndex((prev) => prev + 1);
-    },
-    [swipePet],
-  );
-
-  const handleSwipeUp = useCallback(
-    async (pet: Pet) => {
-      const result = await swipePet(pet._id, "superlike");
-      if (result?.isMatch) {
-        setMatchedPet(pet);
-        setShowMatchModal(true);
-      }
-      setCurrentIndex((prev) => prev + 1);
-    },
-    [swipePet],
-  );
-
-  // Button swipe handlers
-  const handleButtonSwipe = useCallback(
-    (action: "like" | "pass" | "superlike") => {
-      const currentPet = pets[currentIndex];
-      if (!currentPet) return;
-
-      switch (action) {
-        case "like":
-          handleSwipeRight(currentPet);
-          break;
-        case "pass":
-          handleSwipeLeft(currentPet);
-          break;
-        case "superlike":
-          handleSwipeUp(currentPet);
-          break;
-      }
-    },
-    [pets, currentIndex, handleSwipeRight, handleSwipeLeft, handleSwipeUp],
-  );
-
-  // Load pets on mount
-  useEffect(() => {
-    void loadPets();
-  }, [loadPets]);
-
-  const currentPet = pets[currentIndex];
+  const theme = useTheme();
+  const {
+    pets,
+    currentPet,
+    isLoading,
+    error,
+    currentIndex,
+    showMatchModal,
+    matchedPet,
+    showFilters,
+    filters,
+    setCurrentIndex,
+    setShowMatchModal,
+    setShowFilters,
+    setFilters,
+    loadPets,
+    handleButtonSwipe,
+    handleSwipeLeft,
+    handleSwipeRight,
+    handleSwipeUp,
+  } = useModernSwipeScreen();
 
   // Loading state
   if (isLoading && pets.length === 0) {
-    return (
-      <EliteContainer gradient="primary">
-        <View style={styles.loadingContainer}>
-          <FXContainerPresets.glass style={styles.loadingCard}>
-            <Heading1 animated={true} style={styles.loadingTitle}>
-              Finding Matches
-            </Heading1>
-            <Body style={styles.loadingSubtitle}>
-              Discovering your perfect pet companions...
-            </Body>
-          </FXContainerPresets.glass>
-        </View>
-      </EliteContainer>
-    );
+    return <LoadingState loadPets={loadPets} />;
   }
 
   // Error state
   if (error) {
     return (
-      <EliteContainer gradient="primary">
-        <View style={styles.emptyContainer}>
-          <FXContainer
-            type="glow"
-            hasGlow={true}
-            glowColor={Theme.colors.status.error}
-            style={styles.errorCard}
-          >
-            <Ionicons
-              name="alert-circle-outline"
-              size={80}
-              color={Theme.colors.status.error}
-            />
-            <Heading2 style={styles.errorTitle}>Error loading pets</Heading2>
-            <Body style={styles.errorMessage}>{error}</Body>
-            <EliteButtonPresets.premium
-              title="Try Again"
-              leftIcon="refresh"
-              onPress={loadPets}
-            />
-          </FXContainer>
-        </View>
-      </EliteContainer>
+      <ErrorState
+        error={error}
+        loadPets={loadPets}
+      />
     );
   }
 
   // No more pets state
   if (!currentPet) {
-    return (
-      <EliteContainer gradient="primary">
-        <View style={styles.emptyContainer}>
-          <FXContainerPresets.glass style={styles.emptyCard}>
-            <Ionicons
-              name="heart-outline"
-              size={80}
-              color={Theme.colors.primary[500]}
-            />
-            <Heading2 style={styles.emptyTitle}>No more pets!</Heading2>
-            <Body style={styles.emptySubtitle}>
-              Check back later for more matches
-            </Body>
-            <EliteButtonPresets.premium
-              title="Refresh"
-              leftIcon="refresh"
-              onPress={loadPets}
-            />
-          </FXContainerPresets.glass>
-        </View>
-      </EliteContainer>
-    );
+    return <NoMorePetsState loadPets={loadPets} />;
   }
+
+  const styles = StyleSheet.create({
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      padding: theme.spacing.xl,
+    },
+    loadingCard: {
+      padding: theme.spacing['4xl'],
+      alignItems: 'center' as const,
+    },
+    loadingTitle: {
+      textAlign: 'center',
+      marginBottom: theme.spacing.lg,
+    },
+    loadingSubtitle: {
+      textAlign: 'center',
+      color: theme.colors.onMuted,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      padding: theme.spacing.xl,
+    },
+    errorCard: {
+      padding: theme.spacing['4xl'],
+      alignItems: 'center' as const,
+    },
+    errorTitle: {
+      textAlign: 'center',
+      marginTop: theme.spacing.lg,
+      marginBottom: theme.spacing.md,
+      color: theme.colors.danger,
+    },
+    errorMessage: {
+      textAlign: 'center',
+      marginBottom: theme.spacing.xl,
+      color: theme.colors.onMuted,
+    },
+    emptyCard: {
+      padding: theme.spacing['4xl'],
+      alignItems: 'center' as const,
+    },
+    emptyTitle: {
+      textAlign: 'center',
+      marginTop: theme.spacing.lg,
+      marginBottom: theme.spacing.md,
+    },
+    emptySubtitle: {
+      textAlign: 'center',
+      marginBottom: theme.spacing.xl,
+      color: theme.colors.onMuted,
+    },
+    headerActions: {
+      flexDirection: 'row' as const,
+      gap: theme.spacing.sm,
+    },
+    filterContainer: {
+      padding: theme.spacing.lg,
+    },
+    filterPlaceholder: {
+      padding: theme.spacing.lg,
+      backgroundColor: theme.colors.bg,
+      borderRadius: 8,
+      margin: theme.spacing.md,
+    },
+    hintsPlaceholder: {
+      padding: theme.spacing.sm,
+      alignItems: 'center' as const,
+    },
+    actionButtons: {
+      flexDirection: 'row' as const,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      paddingVertical: theme.spacing.xl,
+      paddingHorizontal: theme.spacing['4xl'],
+      gap: theme.spacing.lg,
+    },
+    actionButton: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+    },
+    matchModalPlaceholder: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0,0,0,0.8)',
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      padding: theme.spacing['4xl'],
+      gap: theme.spacing.lg,
+    },
+  });
 
   return (
     <EliteContainer gradient="primary">
@@ -311,7 +199,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
               title=""
               size="sm"
               leftIcon="heart"
-              onPress={() => navigation.navigate("Matches")}
+              onPress={() => navigation.navigate('Matches')}
             />
           </View>
         }
@@ -320,136 +208,73 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
       {/* Filter Panel */}
       {showFilters && (
         <View style={styles.filterContainer}>
-          <FXContainerPresets.glass style={styles.filterPanel}>
-            <Heading2 style={styles.filterTitle}>Quick Filters</Heading2>
-
-            {/* Breed Filters */}
-            <View style={styles.filterSection}>
-              <BodySmall style={styles.filterLabel}>Popular Breeds:</BodySmall>
-              <View style={styles.filterButtons}>
-                {[
-                  "Shiba Inu",
-                  "Golden Retriever",
-                  "Labrador",
-                  "Border Collie",
-                ].map((breed) => (
-                  <EliteButton
-                    key={breed}
-                    title={breed}
-                    variant={filters.breed === breed ? "primary" : "outline"}
-                    size="sm"
-                    onPress={() => {
-                      setFilters((prev) => ({
-                        ...prev,
-                        breed: prev.breed === breed ? "" : breed,
-                        species: "dog",
-                      }));
-                    }}
-                  />
-                ))}
-              </View>
-            </View>
-
-            {/* Species Filters */}
-            <View style={styles.filterSection}>
-              <BodySmall style={styles.filterLabel}>Species:</BodySmall>
-              <View style={styles.filterButtons}>
-                {["All", "Dogs", "Cats", "Birds"].map((species) => (
-                  <EliteButton
-                    key={species}
-                    title={species}
-                    variant={
-                      (species === "All" ? "" : species.toLowerCase()) ===
-                      filters.species
-                        ? "secondary"
-                        : "outline"
-                    }
-                    size="sm"
-                    onPress={() => {
-                      setFilters((prev) => ({
-                        ...prev,
-                        species: species === "All" ? "" : species.toLowerCase(),
-                      }));
-                    }}
-                  />
-                ))}
-              </View>
-            </View>
-
-            <EliteButtonPresets.holographic
-              title="Apply Filters"
-              leftIcon="checkmark"
-              onPress={loadPets}
-            />
-          </FXContainerPresets.glass>
+          <View style={styles.filterPlaceholder}>
+            <Body>Filter Panel (TODO: Implement)</Body>
+          </View>
         </View>
       )}
 
-      {/* Card Stack */}
-      <View style={styles.cardContainer}>
-        {/* Current Card */}
-        <ModernSwipeCard
-          pet={{
-            _id: currentPet._id,
-            name: currentPet.name,
-            age: currentPet.age,
-            breed: currentPet.breed,
-            photos: currentPet.photos.map((p) => p.url),
-            bio: currentPet.description || "",
-            distance: 2.5,
-            compatibility: 85,
-            isVerified: true,
-            tags: ["Friendly", "Active", "Playful"],
-          }}
-          onSwipeLeft={handleSwipeLeft}
-          onSwipeRight={handleSwipeRight}
-          onSwipeUp={handleSwipeUp}
-          isTopCard={true}
-        />
-
-        {/* Next Card Preview */}
-        {pets[currentIndex + 1] && (
-          <View style={styles.nextCardContainer}>
-            <FXContainerPresets.glass style={styles.nextCard}>
-              {/* Preview content would go here */}
-            </FXContainerPresets.glass>
-          </View>
-        )}
+      {/* Gesture Hints */}
+      <View style={styles.hintsPlaceholder}>
+        <BodySmall>Swipe Hints (TODO: Implement)</BodySmall>
       </View>
+
+      {/* First-time user gesture hints overlay */}
+      {/* SwipeGestureHintOverlay placeholder */}
+
+      {/* Card Stack */}
+      <ModernSwipeCard
+        pet={currentPet as any} // TODO: Create proper adapter between core Pet and ModernSwipeCard Pet
+        onSwipeLeft={() => {
+          handleSwipeLeft(currentPet);
+        }}
+        onSwipeRight={() => {
+          handleSwipeRight(currentPet);
+        }}
+        onSwipeUp={() => {
+          handleSwipeUp(currentPet);
+        }}
+      />
+
+      {/* Peek Sheet - Show next card */}
+      {/* TODO: Implement PeekSheet component */}
+      {/* {pets[currentIndex + 1] && (
+        <PeekSheet nextPet={pets[currentIndex + 1]} show={true} />
+      )} */}
 
       {/* Action Buttons */}
       <View style={styles.actionButtons}>
-        <View style={getAnimatedStyle(0)}>
+        <View>
           <EliteButtonPresets.glass
             title=""
             size="xl"
             leftIcon="close"
             onPress={() => {
-              handleButtonSwipe("pass");
+              handleButtonSwipe('pass');
             }}
             style={styles.actionButton}
           />
         </View>
 
-        <View style={getAnimatedStyle(1)}>
+        <View>
           <EliteButtonPresets.holographic
             title=""
             size="lg"
             leftIcon="star"
             onPress={() => {
-              handleButtonSwipe("superlike");
+              handleButtonSwipe('superlike');
             }}
             style={styles.actionButton}
           />
         </View>
 
-        <View style={getAnimatedStyle(2)}>
+        <View>
           <EliteButtonPresets.premium
             title=""
             size="xl"
             leftIcon="heart"
             onPress={() => {
-              handleButtonSwipe("like");
+              handleButtonSwipe('like');
             }}
             style={styles.actionButton}
           />
@@ -458,196 +283,25 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
 
       {/* Match Modal */}
       {showMatchModal && matchedPet && (
-        <View style={styles.matchModal}>
-          <FXContainerPresets.holographic style={styles.matchModalContent}>
-            <Heading1 style={styles.matchTitle}>It's a Match! 🎉</Heading1>
-
-            <View style={styles.matchPhotos}>
-              <FXContainer
-                type="glow"
-                hasGlow={true}
-                style={styles.matchPhotoContainer}
-              >
-                {/* Match photo would go here */}
-              </FXContainer>
-            </View>
-
-            <Body style={styles.matchText}>
-              You and {matchedPet.name} liked each other!
-            </Body>
-
-            <View style={styles.matchButtons}>
-              <EliteButtonPresets.glass
-                title="Keep Swiping"
-                onPress={() => {
-                  setShowMatchModal(false);
-                }}
-              />
-              <EliteButtonPresets.holographic
-                title="Send Message"
-                leftIcon="chatbubble"
-                onPress={() => {
-                  setShowMatchModal(false);
-                  navigation.navigate("Chat", {
-                    matchId: matchedPet._id,
-                    petName: matchedPet.name,
-                  });
-                }}
-              />
-            </View>
-          </FXContainerPresets.holographic>
+        <View style={styles.matchModalPlaceholder}>
+          <Heading2>It's a Match! 🎉</Heading2>
+          <Body>You matched with {matchedPet.name}!</Body>
+          <EliteButton
+            title="Keep Swiping"
+            onPress={() => setShowMatchModal(false)}
+          />
+          <EliteButton
+            title="Send Message"
+            onPress={() => {
+              setShowMatchModal(false);
+              navigation.navigate('Chat', {
+                matchId: matchedPet._id,
+                petName: matchedPet.name,
+              });
+            }}
+          />
         </View>
       )}
     </EliteContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: Theme.spacing.xl,
-  },
-  loadingCard: {
-    padding: Theme.spacing["4xl"],
-    alignItems: "center",
-  },
-  loadingTitle: {
-    textAlign: "center",
-    marginBottom: Theme.spacing.lg,
-  },
-  loadingSubtitle: {
-    textAlign: "center",
-    color: Theme.colors.text.secondary,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: Theme.spacing.xl,
-  },
-  errorCard: {
-    padding: Theme.spacing["4xl"],
-    alignItems: "center",
-  },
-  errorTitle: {
-    textAlign: "center",
-    marginTop: Theme.spacing.lg,
-    marginBottom: Theme.spacing.md,
-    color: Theme.colors.status.error,
-  },
-  errorMessage: {
-    textAlign: "center",
-    marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
-  },
-  emptyCard: {
-    padding: Theme.spacing["4xl"],
-    alignItems: "center",
-  },
-  emptyTitle: {
-    textAlign: "center",
-    marginTop: Theme.spacing.lg,
-    marginBottom: Theme.spacing.md,
-  },
-  emptySubtitle: {
-    textAlign: "center",
-    marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
-  },
-  headerActions: {
-    flexDirection: "row",
-    gap: Theme.spacing.sm,
-  },
-  filterContainer: {
-    padding: Theme.spacing.lg,
-  },
-  filterPanel: {
-    padding: Theme.spacing.xl,
-  },
-  filterTitle: {
-    marginBottom: Theme.spacing.lg,
-    textAlign: "center",
-  },
-  filterSection: {
-    marginBottom: Theme.spacing.lg,
-  },
-  filterLabel: {
-    marginBottom: Theme.spacing.sm,
-    fontWeight: Theme.typography.fontWeight.semibold,
-  },
-  filterButtons: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Theme.spacing.sm,
-  },
-  cardContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: Theme.spacing.xl,
-  },
-  nextCardContainer: {
-    position: "absolute",
-    zIndex: -1,
-  },
-  nextCard: {
-    width: screenWidth - Theme.spacing["4xl"] - Theme.spacing.lg,
-    height: screenHeight * 0.65,
-    transform: [{ scale: 0.95 }],
-    opacity: 0.8,
-  },
-  actionButtons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: Theme.spacing.xl,
-    paddingHorizontal: Theme.spacing["4xl"],
-    gap: Theme.spacing.lg,
-  },
-  actionButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-  },
-  matchModal: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.8)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  matchModalContent: {
-    width: screenWidth - Theme.spacing["4xl"],
-    padding: Theme.spacing["4xl"],
-    alignItems: "center",
-  },
-  matchTitle: {
-    textAlign: "center",
-    marginBottom: Theme.spacing.xl,
-  },
-  matchPhotos: {
-    flexDirection: "row",
-    marginBottom: Theme.spacing.xl,
-    gap: Theme.spacing.lg,
-  },
-  matchPhotoContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-  },
-  matchText: {
-    textAlign: "center",
-    marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
-  },
-  matchButtons: {
-    flexDirection: "row",
-    gap: Theme.spacing.lg,
-  },
-});

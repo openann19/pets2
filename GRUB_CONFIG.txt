@@ -1,0 +1,79 @@
+===============================================
+       YOUR GRUB CONFIGURATION
+===============================================
+
+CURRENT KERNEL PARAMETERS (This Boot):
+--------------------------------------
+BOOT_IMAGE=/boot/vmlinuz-6.8.0-85-generic root=UUID=d1992f47-682f-4a8c-9a50-97755a07c718 ro nomodeset acpi=off
+
+❌ PROBLEM: "acpi=off" is preventing CPU core detection
+
+
+/etc/default/grub:
+------------------
+GRUB_DEFAULT=0
+GRUB_TIMEOUT_STYLE=menu
+GRUB_TIMEOUT=5
+
+# Kernel parameters (these are CORRECT)
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nvidia-drm.modeset=1 nvidia.NVreg_PreserveVideoMemoryAllocations=1"
+GRUB_CMDLINE_LINUX=""
+
+NOTE: acpi=off is NOT in /etc/default/grub (good!)
+
+
+/etc/grub.d/ Files:
+------------------
+00_header        - Basic GRUB setup
+05_debian_theme  - Theme and styling
+06_custom_safe.backup  - This was the PROBLEM (removed!)
+10_linux          - Generates normal boot entries
+10_linux_zfs      - ZFS support
+20_linux_xen      - Xen support
+20_memtest86+     - Memory test
+25_bli             - Boot Loader Interface
+30_os-prober       - Detects other OS
+30_uefi-firmware   - UEFI firmware settings entry
+35_fwupd           - Firmware updates
+40_custom          - Empty custom file
+41_custom          - Empty custom file
+
+
+The Problem:
+-------------
+The file /etc/grub.d/06_custom_safe contained a "Safe Mode" boot entry 
+with "acpi=off" parameter. This has been:
+  ✅ Backed up to: 06_custom_safe.backup
+  ✅ Removed from GRUB
+  ✅ GRUB updated with: sudo update-grub
+
+
+WHAT HAPPENS NEXT BOOT:
+-----------------------
+After you reboot, the acpi=off will be gone and Linux will detect:
+  ✅ All 24 CPU cores
+  ✅ Proper ACPI power management
+  ✅ Normal reboot functionality
+  ✅ Much better performance
+
+
+CURRENT STATUS:
+--------------
+  ❌ Currently booted with: acpi=off (single core)
+  ✅ GRUB has been updated to remove it
+  ⚠️  You MUST reboot for fix to take effect
+
+
+TO VERIFY AFTER REBOOT:
+----------------------
+Run these commands to check:
+  
+  nproc                    # Should show 24 (not 1)
+  lscpu | grep "CPU(s)"    # Should show 24 cores
+  
+  cat /proc/cmdline         # Should NOT contain "acpi=off"
+
+
+===============================================
+
+

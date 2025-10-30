@@ -28,7 +28,7 @@ export function AnimatedButton({ children, variant = 'primary', size = 'md', loa
     return (<motion.button {...(!disabled && {
         whileHover: { scale: 1.05, y: -2 },
         whileTap: { scale: 0.95 },
-    })} transition={springConfig} onMouseDown={() => !disabled && setIsPressed(true)} onMouseUp={() => setIsPressed(false)} onMouseLeave={() => setIsPressed(false)} onClick={handleClick} disabled={disabled || loading} className={`relative overflow-hidden ${className}`} {...props}>
+    })} transition={springConfig} onMouseDown={() => !disabled && setIsPressed(true)} onMouseUp={() => { setIsPressed(false); }} onMouseLeave={() => { setIsPressed(false); }} onClick={handleClick} disabled={disabled || loading} className={`relative overflow-hidden ${className}`} {...props}>
             {/* Ripple effect background */}
             {isPressed && (<motion.div initial={{ scale: 0, opacity: 0.5 }} animate={{ scale: 4, opacity: 0 }} transition={{ duration: 0.6 }} className="absolute inset-0 bg-white rounded-full"/>)}
 
@@ -71,7 +71,7 @@ export function AnimatedCard({ children, hoverable = true, clickable = false, ha
             rotateX: 2,
             rotateY: isHovered ? 1 : 0,
         },
-    })} {...(clickable && { whileTap: { scale: 0.98 } })} transition={springConfig} onHoverStart={() => setIsHovered(true)} onHoverEnd={() => setIsHovered(false)} onClick={clickable ? handleClick : undefined} style={{ transformStyle: 'preserve-3d' }} className={`relative ${className}`} {...props}>
+    })} {...(clickable && { whileTap: { scale: 0.98 } })} transition={springConfig} onHoverStart={() => { setIsHovered(true); }} onHoverEnd={() => { setIsHovered(false); }} onClick={clickable ? handleClick : undefined} style={{ transformStyle: 'preserve-3d' }} className={`relative ${className}`} {...props}>
             {/* Glow effect on hover */}
             {hoverable && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: isHovered ? 0.6 : 0 }} transition={{ duration: 0.3 }} className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl blur-lg -z-10"/>)}
 
@@ -179,7 +179,7 @@ export function Tooltip({ children, content, position = 'top' }) {
         left: { right: '100%', top: '50%', transform: 'translateY(-50%) translateX(-8px)' },
         right: { left: '100%', top: '50%', transform: 'translateY(-50%) translateX(8px)' },
     };
-    return (<div className="relative inline-block" onMouseEnter={() => setIsVisible(true)} onMouseLeave={() => setIsVisible(false)}>
+    return (<div className="relative inline-block" onMouseEnter={() => { setIsVisible(true); }} onMouseLeave={() => { setIsVisible(false); }}>
             {children}
             {isVisible && (<motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.15 }} className="absolute z-50 px-3 py-1.5 text-sm text-white bg-gray-900 rounded-lg whitespace-nowrap pointer-events-none" style={positions[position]}>
                     {content}
@@ -205,7 +205,7 @@ export function usePrefersReducedMotion() {
             setPrefersReducedMotion(e.matches);
         };
         mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
+        return () => { mediaQuery.removeEventListener('change', handleChange); };
     }, []);
     return prefersReducedMotion;
 }

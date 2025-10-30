@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "./tsconfig.base.json",
+  "extends": "../../tsconfig.base.json",
   "display": "ESLint TypeScript Configuration",
   "compilerOptions": {
     // Include DOM libs for browser globals
@@ -11,6 +11,8 @@
 
     "baseUrl": "./",
     "paths": {
+      "@/*": ["./src/*"],
+      "@mobile/*": ["./src/*"],
       "@pawfectmatch/core": ["../../packages/core/src/index.ts"],
       "@pawfectmatch/core/*": ["../../packages/core/src/*"],
       "@pawfectmatch/ui": ["../../packages/ui/src/index.ts"],
@@ -34,6 +36,7 @@
     "noEmit": true
   },
   "include": [
+    "src/**/*", 
     "**/*.ts", 
     "**/*.tsx", 
     "**/*.js", 
@@ -43,7 +46,11 @@
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "**/setupTests.ts",
-    "**/setupTests.js"
+    "**/setupTests.js",
+    "App.tsx",
+    "app.config.cjs",
+    "babel.config.cjs",
+    "metro.config.cjs"
   ],
   "exclude": [
     "node_modules",

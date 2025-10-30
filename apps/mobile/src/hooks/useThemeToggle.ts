@@ -1,9 +1,12 @@
-import * as Haptics from "expo-haptics";
-import { useCallback } from "react";
-import { Alert } from "react-native";
+import * as Haptics from 'expo-haptics';
+import { useCallback } from 'react';
+import { Alert } from 'react-native';
 
-import type { ThemeMode } from "../contexts/ThemeContext";
-import { useTheme } from "../contexts/ThemeContext";
+import type { ThemeColors } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import type { ThemeMode } from '../stores/useUIStore';
+import { getExtendedColors } from '../theme/adapters';
+import { useThemeContext } from '../theme/ThemeProvider';
 
 export interface UseThemeToggleReturn {
   isDark: boolean;
@@ -19,15 +22,14 @@ export interface UseThemeToggleReturn {
 }
 
 export function useThemeToggle(): UseThemeToggleReturn {
-  const {
-    isDark,
-    themeMode,
-    colors,
-    styles,
-    shadows,
-    setThemeMode,
-    toggleTheme: contextToggleTheme,
-  } = useTheme();
+  const theme = useTheme();
+  const { isDark, mode, setMode, toggleTheme: contextToggleTheme } = useThemeContext();
+
+  // Get extended colors for backward compatibility
+  const colors = getExtendedColors(theme);
+  const styles: Record<string, unknown> = {};
+  const shadows: Record<string, unknown> = {};
+  const themeMode = mode as ThemeMode;
 
   // Enhanced toggle with haptic feedback
   const toggleTheme = useCallback(async () => {
@@ -43,58 +45,58 @@ export function useThemeToggle(): UseThemeToggleReturn {
 
   // Set specific theme modes
   const setLightTheme = useCallback(() => {
-    setThemeMode("light");
-  }, [setThemeMode]);
+    setMode('light');
+  }, [setMode]);
 
   const setDarkTheme = useCallback(() => {
-    setThemeMode("dark");
-  }, [setThemeMode]);
+    setMode('dark');
+  }, [setMode]);
 
   const setSystemTheme = useCallback(() => {
-    setThemeMode("system");
-  }, [setThemeMode]);
+    setMode('system');
+  }, [setMode]);
 
   // Show theme selection modal
   const showThemeSelector = useCallback(() => {
     const currentThemeLabel = {
-      light: "Light",
-      dark: "Dark",
-      system: "System Default",
+      light: 'Light',
+      dark: 'Dark',
+      system: 'System Default',
     }[themeMode];
 
     Alert.alert(
-      "Select Theme",
+      'Select Theme',
       `Current theme: ${currentThemeLabel}`,
       [
         {
-          text: "Light",
+          text: 'Light',
           onPress: setLightTheme,
-          style: themeMode === "light" ? "default" : "default",
+          style: themeMode === 'light' ? 'default' : 'default',
         },
         {
-          text: "Dark",
+          text: 'Dark',
           onPress: setDarkTheme,
-          style: themeMode === "dark" ? "default" : "default",
+          style: themeMode === 'dark' ? 'default' : 'default',
         },
         {
-          text: "System Default",
+          text: 'System Default',
           onPress: setSystemTheme,
-          style: themeMode === "system" ? "default" : "default",
+          style: themeMode === 'system' ? 'default' : 'default',
         },
         {
-          text: "Cancel",
-          style: "cancel",
+          text: 'Cancel',
+          style: 'cancel',
         },
       ],
       {
         cancelable: true,
-        userInterfaceStyle: isDark ? "dark" : "light",
+        userInterfaceStyle: isDark ? 'dark' : 'light',
       },
     );
   }, [themeMode, isDark, setLightTheme, setDarkTheme, setSystemTheme]);
 
   return {
-    isDark,
+    isDark: isDark ?? false,
     themeMode,
     colors,
     styles,

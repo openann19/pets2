@@ -11,11 +11,13 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
   });
 
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result != null ? {
-    r: parseInt(result[1] ?? "0", 16),
-    g: parseInt(result[2] ?? "0", 16),
-    b: parseInt(result[3] ?? "0", 16)
-  } : null;
+  return result != null
+    ? {
+        r: parseInt(result[1] ?? '0', 16),
+        g: parseInt(result[2] ?? '0', 16),
+        b: parseInt(result[3] ?? '0', 16),
+      }
+    : null;
 }
 
 // Calculate relative luminance of a color
@@ -24,14 +26,18 @@ export function getLuminance(r: number, g: number, b: number): number {
     v /= 255;
     return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
   });
-  return (a[0] != null ? a[0] : 0) * 0.2126 + (a[1] != null ? a[1] : 0) * 0.7152 + (a[2] != null ? a[2] : 0) * 0.0722;
+  return (
+    (a[0] != null ? a[0] : 0) * 0.2126 +
+    (a[1] != null ? a[1] : 0) * 0.7152 +
+    (a[2] != null ? a[2] : 0) * 0.0722
+  );
 }
 
 // Check if a hex color is light or dark
 export function isLightColor(hex: string): boolean {
   const rgb = hexToRgb(hex);
   if (rgb == null) return false;
-  
+
   const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
   return luminance > 0.5;
 }

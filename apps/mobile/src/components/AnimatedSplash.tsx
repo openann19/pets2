@@ -1,17 +1,10 @@
-import React, { useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Dimensions,
-  StatusBar,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Animated, Dimensions, StatusBar } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface AnimatedSplashProps {
   onAnimationComplete?: () => void;
@@ -32,12 +25,12 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
   onAnimationComplete,
   duration = 2500,
 }) => {
-  // Animation values
-  const pawScale = useRef(new Animated.Value(0)).current;
-  const pawOpacity = useRef(new Animated.Value(0)).current;
-  const textOpacity = useRef(new Animated.Value(0)).current;
-  const textTranslateY = useRef(new Animated.Value(30)).current;
-  const backgroundOpacity = useRef(new Animated.Value(0)).current;
+  // Animation values (useState pattern to avoid refs during render)
+  const [pawScale] = useState(() => new Animated.Value(0));
+  const [pawOpacity] = useState(() => new Animated.Value(0));
+  const [textOpacity] = useState(() => new Animated.Value(0));
+  const [textTranslateY] = useState(() => new Animated.Value(30));
+  const [backgroundOpacity] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     // Start animation sequence
@@ -94,24 +87,20 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
     return () => {
       animationSequence.stop();
     };
-  }, [
-    pawScale,
-    pawOpacity,
-    textOpacity,
-    textTranslateY,
-    backgroundOpacity,
-    onAnimationComplete,
-  ]);
+  }, [pawScale, pawOpacity, textOpacity, textTranslateY, backgroundOpacity, onAnimationComplete]);
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#ec4899" />
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="Theme.colors.primary[500]"
+      />
 
       <Animated.View
-        style={[styles.backgroundContainer, { opacity: backgroundOpacity }]}
+        style={StyleSheet.flatten([styles.backgroundContainer, { opacity: backgroundOpacity }])}
       >
         <LinearGradient
-          colors={["#ec4899", "#f97316", "#eab308"]}
+          colors={['Theme.colors.primary[500]', '#f97316', '#eab308']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
@@ -126,38 +115,35 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
       >
         {/* Animated Paw Icon */}
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.pawContainer,
             {
               transform: [{ scale: pawScale }],
               opacity: pawOpacity,
             },
-          ]}
+          ])}
         >
           <View style={styles.pawIconContainer}>
             <Ionicons
               name="paw"
               size={80}
-              color="#ffffff"
-              style={styles.pawIcon}
+              color="Theme.colors.neutral[0]"
             />
           </View>
         </Animated.View>
 
         {/* Animated Text */}
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.textContainer,
             {
               opacity: textOpacity,
               transform: [{ translateY: textTranslateY }],
             },
-          ]}
+          ])}
         >
           <Text style={styles.brandText}>PawfectMatch</Text>
-          <Text style={styles.taglineText}>
-            Find Your Perfect Pet Companion
-          </Text>
+          <Text style={styles.taglineText}>Find Your Perfect Pet Companion</Text>
         </Animated.View>
 
         {/* Loading indicator dots */}
@@ -173,9 +159,9 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
  * Animated loading dots component
  */
 const LoadingDots: React.FC = () => {
-  const dot1 = useRef(new Animated.Value(0)).current;
-  const dot2 = useRef(new Animated.Value(0)).current;
-  const dot3 = useRef(new Animated.Value(0)).current;
+  const [dot1] = useState(() => new Animated.Value(0));
+  const [dot2] = useState(() => new Animated.Value(0));
+  const [dot3] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     const createDotAnimation = (dot: Animated.Value, delay: number) => {
@@ -218,12 +204,12 @@ const LoadingDots: React.FC = () => {
       {[dot1, dot2, dot3].map((dot, index) => (
         <Animated.View
           key={index}
-          style={[
+          style={StyleSheet.flatten([
             styles.dot,
             {
               opacity: dot,
             },
-          ]}
+          ])}
         />
       ))}
     </View>
@@ -233,10 +219,10 @@ const LoadingDots: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ec4899",
+    backgroundColor: 'Theme.colors.primary[500]',
   },
   backgroundContainer: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
@@ -247,8 +233,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 40,
   },
   pawContainer: {
@@ -258,54 +244,49 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: 'Theme.colors.neutral[950]',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
   },
-  pawIcon: {
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-  },
   textContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 60,
   },
   brandText: {
     fontSize: 32,
-    fontWeight: "bold",
-    color: "#ffffff",
-    textAlign: "center",
+    fontWeight: 'bold',
+    color: 'Theme.colors.neutral[0]',
+    textAlign: 'center',
     marginBottom: 8,
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
   },
   taglineText: {
     fontSize: 16,
-    color: "rgba(255, 255, 255, 0.9)",
-    textAlign: "center",
-    fontWeight: "300",
+    color: 'rgba(255, 255, 255, 0.9)',
+    textAlign: 'center',
+    fontWeight: '300',
     letterSpacing: 0.5,
   },
   loadingContainer: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 100,
   },
   dotsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#ffffff",
+    backgroundColor: 'Theme.colors.neutral[0]',
     marginHorizontal: 4,
   },
 });

@@ -54,4 +54,3 @@ function useFocusTrap() {
     }, [handleKeyDown]);
     return containerRef;
 }
-//# sourceMappingURL=useFocusTrap.js.map

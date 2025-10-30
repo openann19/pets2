@@ -1,4 +1,5 @@
-export const isBrowserEnvironment = (): boolean => typeof window !== 'undefined' && typeof document !== 'undefined';
+export const isBrowserEnvironment = (): boolean =>
+  typeof window !== 'undefined' && typeof document !== 'undefined';
 
 export const getWindow = (): Window | null => {
   if (!isBrowserEnvironment()) {

@@ -1,24 +1,18 @@
-import { INTENT_OPTIONS, SPECIES_OPTIONS } from "@pawfectmatch/core";
-import { logger } from "@pawfectmatch/core";
-import Slider from "@react-native-community/slider";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@mobile/src/theme';
+import { logger } from '@pawfectmatch/core';
+import Slider from '@react-native-community/slider';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useMemo, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { INTENT_OPTIONS, SPECIES_OPTIONS } from '../../constants/options';
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -29,7 +23,7 @@ type OnboardingStackParamList = {
 
 type PreferencesSetupScreenProps = NativeStackScreenProps<
   OnboardingStackParamList,
-  "PreferencesSetup"
+  'PreferencesSetup'
 >;
 
 interface PreferencesData {
@@ -54,10 +48,9 @@ const SPRING_CONFIG = {
   mass: 1,
 };
 
-const PreferencesSetupScreen = ({
-  navigation,
-  route,
-}: PreferencesSetupScreenProps) => {
+const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenProps) => {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { userIntent } = route.params;
   const [preferences, setPreferences] = useState<PreferencesData>({
     maxDistance: 25,
@@ -66,7 +59,7 @@ const PreferencesSetupScreen = ({
       max: 15,
     },
     species: [],
-    intents: userIntent === "adopt" ? ["adoption"] : ["adoption", "playdate"],
+    intents: userIntent === 'adopt' ? ['adoption'] : ['adoption', 'playdate'],
     notifications: {
       email: true,
       push: true,
@@ -87,7 +80,7 @@ const PreferencesSetupScreen = ({
     transform: [{ scale: scaleValue.value }],
   }));
 
-  const updatePreferences = (field: string, value: any) => {
+  const updatePreferences = (field: string, value: import('../../types/forms').FormFieldValue) => {
     setPreferences((prev) => ({
       ...prev,
       [field]: value,
@@ -125,20 +118,20 @@ const PreferencesSetupScreen = ({
   const handleComplete = async () => {
     if (preferences.species.length === 0) {
       Alert.alert(
-        "Missing Information",
+        'Missing Information',
         "Please select at least one species you're interested in.",
       );
       return;
     }
 
     if (preferences.intents.length === 0) {
-      Alert.alert("Missing Information", "Please select at least one intent.");
+      Alert.alert('Missing Information', 'Please select at least one intent.');
       return;
     }
 
     try {
       // Save preferences to backend
-      logger.info("Saving preferences:", { preferences });
+      logger.info('Saving preferences:', { preferences });
 
       // Animate completion
       scaleValue.value = withSpring(0.95, SPRING_CONFIG, () => {
@@ -147,31 +140,31 @@ const PreferencesSetupScreen = ({
 
       // Navigate to welcome screen
       setTimeout(() => {
-        navigation.navigate("Welcome");
+        navigation.navigate('Welcome');
       }, 500);
     } catch (error) {
-      Alert.alert("Error", "Failed to save preferences. Please try again.");
+      Alert.alert('Error', 'Failed to save preferences. Please try again.');
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Animated.View style={[styles.animatedContainer, animatedStyle]}>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <Animated.View style={StyleSheet.flatten([styles.animatedContainer, animatedStyle])}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.title}>Set Your Preferences</Text>
-            <Text style={styles.subtitle}>
-              Help us find the perfect matches for you
-            </Text>
+            <Text style={styles.subtitle}>Help us find the perfect matches for you</Text>
           </View>
 
           {/* Distance Preference */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>📍 Search Distance</Text>
             <Text style={styles.sectionSubtitle}>
-              How far are you willing to travel? ({preferences.maxDistance}{" "}
-              miles)
+              How far are you willing to travel? ({preferences.maxDistance} miles)
             </Text>
             <View style={styles.sliderContainer}>
               <Slider
@@ -180,10 +173,10 @@ const PreferencesSetupScreen = ({
                 maximumValue={100}
                 value={preferences.maxDistance}
                 onValueChange={(value) => {
-                  updatePreferences("maxDistance", Math.round(value));
+                  updatePreferences('maxDistance', Math.round(value));
                 }}
-                minimumTrackTintColor="#ec4899"
-                maximumTrackTintColor="#e5e7eb"
+                minimumTrackTintColor={theme.colors.primary}
+                maximumTrackTintColor={theme.colors.border}
               />
               <View style={styles.sliderLabels}>
                 <Text style={styles.sliderLabel}>5 mi</Text>
@@ -196,8 +189,8 @@ const PreferencesSetupScreen = ({
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>🎂 Pet Age Range</Text>
             <Text style={styles.sectionSubtitle}>
-              What age range interests you? ({preferences.ageRange.min} -{" "}
-              {preferences.ageRange.max} years)
+              What age range interests you? ({preferences.ageRange.min} - {preferences.ageRange.max}{' '}
+              years)
             </Text>
             <View style={styles.ageRangeContainer}>
               <View style={styles.ageSlider}>
@@ -206,32 +199,32 @@ const PreferencesSetupScreen = ({
                   style={styles.slider}
                   minimumValue={0}
                   maximumValue={15}
-                  value={preferences.ageRange.min}
+                  value={preferences.ageRange?.min || 1}
                   onValueChange={(value) => {
-                    updatePreferences("ageRange", {
+                    updatePreferences('ageRange', {
                       ...preferences.ageRange,
                       min: Math.round(value),
                     });
                   }}
-                  minimumTrackTintColor="#ec4899"
-                  maximumTrackTintColor="#e5e7eb"
+                  minimumTrackTintColor={theme.colors.primary}
+                  maximumTrackTintColor={theme.colors.border}
                 />
               </View>
               <View style={styles.ageSlider}>
                 <Text style={styles.ageLabel}>Max Age</Text>
                 <Slider
                   style={styles.slider}
-                  minimumValue={preferences.ageRange.min}
+                  minimumValue={preferences.ageRange?.min || 1}
                   maximumValue={20}
-                  value={preferences.ageRange.max}
+                  value={preferences.ageRange?.max || 10}
                   onValueChange={(value) => {
-                    updatePreferences("ageRange", {
+                    updatePreferences('ageRange', {
                       ...preferences.ageRange,
                       max: Math.round(value),
                     });
                   }}
-                  minimumTrackTintColor="#ec4899"
-                  maximumTrackTintColor="#e5e7eb"
+                  minimumTrackTintColor={theme.colors.primary}
+                  maximumTrackTintColor={theme.colors.border}
                 />
               </View>
             </View>
@@ -247,21 +240,22 @@ const PreferencesSetupScreen = ({
               {SPECIES_OPTIONS.map((option) => (
                 <TouchableOpacity
                   key={option.value}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.optionButton,
-                    preferences.species.includes(option.value) &&
-                      styles.selectedOption,
-                  ]}
+                    preferences.species.includes(option.value) && styles.selectedOption,
+                  ])}
+                  testID="PreferencesSetupScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
                   onPress={() => {
                     toggleSpecies(option.value);
                   }}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.optionText,
-                      preferences.species.includes(option.value) &&
-                        styles.selectedOptionText,
-                    ]}
+                      preferences.species.includes(option.value) && styles.selectedOptionText,
+                    ])}
                   >
                     {option.label}
                   </Text>
@@ -273,28 +267,27 @@ const PreferencesSetupScreen = ({
           {/* Intent Preference */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>💝 What You're Looking For</Text>
-            <Text style={styles.sectionSubtitle}>
-              Select all that interest you
-            </Text>
+            <Text style={styles.sectionSubtitle}>Select all that interest you</Text>
             <View style={styles.optionsGrid}>
               {INTENT_OPTIONS.map((option) => (
                 <TouchableOpacity
                   key={option.value}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.optionButton,
-                    preferences.intents.includes(option.value) &&
-                      styles.selectedOption,
-                  ]}
+                    preferences.intents.includes(option.value) && styles.selectedOption,
+                  ])}
+                  testID="PreferencesSetupScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
                   onPress={() => {
                     toggleIntent(option.value);
                   }}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.optionText,
-                      preferences.intents.includes(option.value) &&
-                        styles.selectedOptionText,
-                    ]}
+                      preferences.intents.includes(option.value) && styles.selectedOptionText,
+                    ])}
                   >
                     {option.label}
                   </Text>
@@ -306,38 +299,37 @@ const PreferencesSetupScreen = ({
           {/* Notifications */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>🔔 Notifications</Text>
-            <Text style={styles.sectionSubtitle}>
-              Stay updated with your matches and messages
-            </Text>
+            <Text style={styles.sectionSubtitle}>Stay updated with your matches and messages</Text>
             <View style={styles.notificationOptions}>
               {[
                 {
-                  key: "push",
-                  label: "Push Notifications",
-                  description: "Get notified instantly",
+                  key: 'push',
+                  label: 'Push Notifications',
+                  description: 'Get notified instantly',
                 },
                 {
-                  key: "email",
-                  label: "Email Updates",
-                  description: "Weekly summaries and important updates",
+                  key: 'email',
+                  label: 'Email Updates',
+                  description: 'Weekly summaries and important updates',
                 },
                 {
-                  key: "matches",
-                  label: "New Matches",
-                  description: "When you get a new match",
+                  key: 'matches',
+                  label: 'New Matches',
+                  description: 'When you get a new match',
                 },
                 {
-                  key: "messages",
-                  label: "New Messages",
-                  description: "When someone messages you",
+                  key: 'messages',
+                  label: 'New Messages',
+                  description: 'When someone messages you',
                 },
               ].map((option) => (
-                <View key={option.key} style={styles.notificationOption}>
+                <View
+                  key={option.key}
+                  style={styles.notificationOption}
+                >
                   <View style={styles.notificationInfo}>
                     <Text style={styles.notificationLabel}>{option.label}</Text>
-                    <Text style={styles.notificationDescription}>
-                      {option.description}
-                    </Text>
+                    <Text style={styles.notificationDescription}>{option.description}</Text>
                   </View>
                   <Switch
                     value={
@@ -348,13 +340,13 @@ const PreferencesSetupScreen = ({
                     onValueChange={(value) => {
                       updateNotifications(option.key, value);
                     }}
-                    trackColor={{ false: "#e5e7eb", true: "#fce7f3" }}
+                    trackColor={{ false: theme.colors.border, true: theme.colors.primary + '33' }}
                     thumbColor={
                       preferences.notifications[
                         option.key as keyof typeof preferences.notifications
                       ]
-                        ? "#ec4899"
-                        : "#9ca3af"
+                        ? theme.colors.primary
+                        : theme.colors.border
                     }
                   />
                 </View>
@@ -365,8 +357,8 @@ const PreferencesSetupScreen = ({
           {/* Privacy Note */}
           <View style={styles.privacyNote}>
             <Text style={styles.privacyText}>
-              🔒 Your privacy is important to us. You can change these
-              preferences anytime in settings.
+              🔒 Your privacy is important to us. You can change these preferences anytime in
+              settings.
             </Text>
           </View>
         </Animated.View>
@@ -376,6 +368,9 @@ const PreferencesSetupScreen = ({
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.backButton}
+          testID="PreferencesSetupScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
           onPress={() => navigation.goBack()}
         >
           <Text style={styles.backButtonText}>Back</Text>
@@ -383,6 +378,9 @@ const PreferencesSetupScreen = ({
 
         <TouchableOpacity
           style={styles.completeButton}
+          testID="PreferencesSetupScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
           onPress={handleComplete}
         >
           <Text style={styles.completeButtonText}>Complete Setup</Text>
@@ -392,180 +390,183 @@ const PreferencesSetupScreen = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
-  animatedContainer: {
-    flex: 1,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#1f2937",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#6b7280",
-    textAlign: "center",
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#1f2937",
-    marginBottom: 8,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: "#6b7280",
-    marginBottom: 16,
-    lineHeight: 20,
-  },
-  sliderContainer: {
-    paddingHorizontal: 16,
-  },
-  slider: {
-    width: "100%",
-    height: 40,
-  },
-  sliderThumb: {
-    backgroundColor: "#ec4899",
-    width: 20,
-    height: 20,
-  },
-  sliderLabels: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 8,
-  },
-  sliderLabel: {
-    fontSize: 12,
-    color: "#9ca3af",
-  },
-  ageRangeContainer: {
-    gap: 16,
-  },
-  ageSlider: {
-    paddingHorizontal: 16,
-  },
-  ageLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#374151",
-    marginBottom: 8,
-  },
-  optionsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  optionButton: {
-    backgroundColor: "#f9fafb",
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    minWidth: 100,
-    alignItems: "center",
-  },
-  selectedOption: {
-    backgroundColor: "#fdf2f8",
-    borderColor: "#ec4899",
-  },
-  optionText: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-    textAlign: "center",
-  },
-  selectedOptionText: {
-    color: "#ec4899",
-    fontWeight: "600",
-  },
-  notificationOptions: {
-    gap: 16,
-  },
-  notificationOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#f9fafb",
-    borderRadius: 12,
-    padding: 16,
-  },
-  notificationInfo: {
-    flex: 1,
-    marginRight: 16,
-  },
-  notificationLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 4,
-  },
-  notificationDescription: {
-    fontSize: 14,
-    color: "#6b7280",
-  },
-  privacyNote: {
-    backgroundColor: "#f0f9ff",
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
-    marginBottom: 32,
-  },
-  privacyText: {
-    fontSize: 14,
-    color: "#0369a1",
-    lineHeight: 20,
-    textAlign: "center",
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: "#f3f4f6",
-  },
-  backButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: "#6b7280",
-    fontWeight: "600",
-  },
-  completeButton: {
-    backgroundColor: "#ec4899",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    minWidth: 140,
-    alignItems: "center",
-  },
-  completeButtonText: {
-    fontSize: 16,
-    color: "#fff",
-    fontWeight: "600",
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return {
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    content: {
+      flex: 1,
+      padding: theme.spacing.lg,
+    },
+    animatedContainer: {
+      flex: 1,
+    },
+    header: {
+      alignItems: 'center' as const,
+      marginBottom: theme.spacing['2xl'],
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: '700' as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      textAlign: 'center' as const,
+    },
+    section: {
+      marginBottom: theme.spacing['2xl'],
+    },
+    sectionTitle: {
+      fontSize: 20,
+      fontWeight: '700' as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    sectionSubtitle: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      marginBottom: theme.spacing.md,
+      lineHeight: 20,
+    },
+    sliderContainer: {
+      paddingHorizontal: theme.spacing.md,
+    },
+    slider: {
+      width: '100%' as const,
+      height: 40,
+    },
+    sliderThumb: {
+      backgroundColor: theme.colors.primary,
+      width: 20,
+      height: 20,
+    },
+    sliderLabels: {
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      marginTop: theme.spacing.xs,
+    },
+    sliderLabel: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+    },
+    ageRangeContainer: {
+      gap: theme.spacing.md,
+    },
+    ageSlider: {
+      paddingHorizontal: theme.spacing.md,
+    },
+    ageLabel: {
+      fontSize: 14,
+      fontWeight: '600' as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    optionsGrid: {
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
+      gap: theme.spacing.sm,
+    },
+    optionButton: {
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radii.md,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      minWidth: 100,
+      alignItems: 'center' as const,
+    },
+    selectedOption: {
+      backgroundColor: theme.colors.surface,
+      borderColor: theme.colors.primary,
+      borderWidth: 2,
+    },
+    optionText: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      fontWeight: '500' as const,
+      textAlign: 'center' as const,
+    },
+    selectedOptionText: {
+      color: theme.colors.primary,
+      fontWeight: '600' as const,
+    },
+    notificationOptions: {
+      gap: theme.spacing.md,
+    },
+    notificationOption: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'space-between' as const,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+    },
+    notificationInfo: {
+      flex: 1,
+      marginRight: theme.spacing.md,
+    },
+    notificationLabel: {
+      fontSize: 16,
+      fontWeight: '600' as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    notificationDescription: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+    },
+    privacyNote: {
+      backgroundColor: theme.colors.info + '1A',
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing['2xl'],
+    },
+    privacyText: {
+      fontSize: 14,
+      color: theme.colors.info,
+      lineHeight: 20,
+      textAlign: 'center' as const,
+    },
+    footer: {
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      padding: theme.spacing.lg,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+    },
+    backButton: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.lg,
+      borderRadius: theme.radii.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    backButtonText: {
+      fontSize: 16,
+      color: theme.colors.onSurface,
+      fontWeight: '600' as const,
+    },
+    completeButton: {
+      backgroundColor: theme.colors.primary,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.lg,
+      borderRadius: theme.radii.sm,
+      minWidth: 140,
+      alignItems: 'center' as const,
+    },
+    completeButtonText: {
+      fontSize: 16,
+      color: theme.colors.onPrimary,
+      fontWeight: '600' as const,
+    },
+  };
+}
 
 export default PreferencesSetupScreen;

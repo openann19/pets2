@@ -1,19 +1,19 @@
-import React, { useRef, useEffect } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/src/theme';
+import * as Haptics from 'expo-haptics';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  ScrollView,
-  RefreshControl,
   Animated,
-  StyleSheet,
   Dimensions,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
   type StyleProp,
   type ViewStyle,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
-import { useTheme } from "../contexts/ThemeContext";
+} from 'react-native';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface PawPullToRefreshProps {
   children: React.ReactNode;
@@ -40,11 +40,11 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
 }) => {
   const { colors } = useTheme();
 
-  // Animation values
-  const pawRotation = useRef(new Animated.Value(0)).current;
-  const pawScale = useRef(new Animated.Value(1)).current;
-  const pawOpacity = useRef(new Animated.Value(0.7)).current;
-  const scratchOffset = useRef(new Animated.Value(0)).current;
+  // Animation values (useState pattern to avoid refs during render)
+  const [pawRotation] = useState(() => new Animated.Value(0));
+  const [pawScale] = useState(() => new Animated.Value(1));
+  const [pawOpacity] = useState(() => new Animated.Value(0.7));
+  const [scratchOffset] = useState(() => new Animated.Value(0));
 
   // Start paw animation when refreshing
   useEffect(() => {
@@ -133,7 +133,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
         onRefresh={onRefresh}
         tintColor={colors.primary}
         colors={[colors.primary]}
-        progressBackgroundColor={colors.background}
+        progressBackgroundColor={colors.bg}
         // Hide default spinner since we have custom animation
         style={{ opacity: 0 }}
       />
@@ -143,7 +143,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
   // Calculate animation transforms
   const pawRotationInterpolate = pawRotation.interpolate({
     inputRange: [0, 1],
-    outputRange: ["0deg", "15deg"],
+    outputRange: ['0deg', '15deg'],
   });
 
   const scratchTranslateY = scratchOffset.interpolate({
@@ -157,7 +157,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
   });
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={StyleSheet.flatten([styles.container, style])}>
       {/* Custom Refresh Indicator */}
       {refreshing && (
         <View
@@ -167,7 +167,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
           accessibilityRole="progressbar"
         >
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               styles.pawContainer,
               {
                 transform: [
@@ -178,13 +178,12 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
                 ],
                 opacity: pawOpacity,
               },
-            ]}
+            ])}
           >
             <Ionicons
               name="paw"
               size={24}
               color={colors.primary}
-              style={styles.pawIcon}
             />
           </Animated.View>
 
@@ -193,7 +192,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
             {[0, 1, 2].map((index) => (
               <Animated.View
                 key={index}
-                style={[
+                style={StyleSheet.flatten([
                   styles.scratchMark,
                   {
                     backgroundColor: colors.primary,
@@ -207,7 +206,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
                       },
                     ],
                   },
-                ]}
+                ])}
               />
             ))}
           </View>
@@ -236,41 +235,36 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   refreshIndicator: {
-    position: "absolute",
+    position: 'absolute',
     top: 40,
     left: 0,
     right: 0,
     height: 60,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 1000,
   },
   pawContainer: {
     width: 40,
     height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 20,
-    shadowColor: "#000",
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-  pawIcon: {
-    textShadowColor: "rgba(0, 0, 0, 0.1)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
   scratchMarks: {
-    position: "absolute",
+    position: 'absolute',
     top: 45,
-    left: "50%",
+    left: '50%',
     marginLeft: -10,
     width: 20,
     height: 15,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   scratchMark: {
     width: 2,

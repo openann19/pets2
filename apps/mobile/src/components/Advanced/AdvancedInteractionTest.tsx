@@ -4,31 +4,24 @@
  * Enterprise-level testing with full TypeScript support
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  Dimensions,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from '@expo/vector-icons';
+import { logger } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Alert, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { matchesAPI } from "../../services/api";
+import { matchesAPI } from '../../services/api';
 
-import { AdvancedCard, CardConfigs } from "./AdvancedCard";
-import { AdvancedHeader, HeaderConfigs } from "./AdvancedHeader";
-import { AdvancedButton } from "./AdvancedInteractionSystem";
+import { AdvancedCard, CardConfigs } from './AdvancedCard';
+import { AdvancedHeader, HeaderConfigs } from './AdvancedHeader';
+import { AdvancedButton } from './AdvancedInteractionSystem';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface TestResult {
   testName: string;
-  status: "pending" | "running" | "passed" | "failed";
+  status: 'pending' | 'running' | 'passed' | 'failed';
   message?: string;
   duration?: number;
 }
@@ -43,29 +36,27 @@ export function AdvancedInteractionTest() {
 
   const updateTestResult = (testName: string, updates: Partial<TestResult>) => {
     setTestResults((prev) =>
-      prev.map((test) =>
-        test.testName === testName ? { ...test, ...updates } : test,
-      ),
+      prev.map((test) => (test.testName === testName ? { ...test, ...updates } : test)),
     );
   };
 
   const runTest = async (testName: string, testFn: () => Promise<void>) => {
     const startTime = Date.now();
-    addTestResult({ testName, status: "running" });
+    addTestResult({ testName, status: 'running' });
 
     try {
       await testFn();
       const duration = Date.now() - startTime;
       updateTestResult(testName, {
-        status: "passed",
-        message: "Test passed successfully",
+        status: 'passed',
+        message: 'Test passed successfully',
         duration,
       });
     } catch (error) {
       const duration = Date.now() - startTime;
       updateTestResult(testName, {
-        status: "failed",
-        message: error instanceof Error ? error.message : "Unknown error",
+        status: 'failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
         duration,
       });
     }
@@ -76,7 +67,7 @@ export function AdvancedInteractionTest() {
     setTestResults([]);
 
     // Test 1: Advanced Button Interactions
-    await runTest("Advanced Button Interactions", async () => {
+    await runTest('Advanced Button Interactions', async () => {
       // Test button press with haptic feedback
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -88,12 +79,12 @@ export function AdvancedInteractionTest() {
         await matchesAPI.getUserProfile();
       } catch (error) {
         // Expected to fail in test environment
-        logger.info("API test completed (expected failure in test)");
+        logger.info('API test completed (expected failure in test)');
       }
     });
 
     // Test 2: Advanced Card Interactions
-    await runTest("Advanced Card Interactions", async () => {
+    await runTest('Advanced Card Interactions', async () => {
       // Test card hover effects
       await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -104,12 +95,12 @@ export function AdvancedInteractionTest() {
       try {
         await matchesAPI.getMatches();
       } catch (error) {
-        logger.info("Card API test completed (expected failure in test)");
+        logger.info('Card API test completed (expected failure in test)');
       }
     });
 
     // Test 3: Advanced Header Interactions
-    await runTest("Advanced Header Interactions", async () => {
+    await runTest('Advanced Header Interactions', async () => {
       // Test header button interactions
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -120,12 +111,12 @@ export function AdvancedInteractionTest() {
       try {
         await matchesAPI.getAppVersion();
       } catch (error) {
-        logger.info("Header API test completed (expected failure in test)");
+        logger.info('Header API test completed (expected failure in test)');
       }
     });
 
     // Test 4: Haptic Feedback Patterns
-    await runTest("Haptic Feedback Patterns", async () => {
+    await runTest('Haptic Feedback Patterns', async () => {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       await new Promise((resolve) => setTimeout(resolve, 50));
 
@@ -142,7 +133,7 @@ export function AdvancedInteractionTest() {
     });
 
     // Test 5: Animation Performance
-    await runTest("Animation Performance", async () => {
+    await runTest('Animation Performance', async () => {
       // Test animation smoothness
       const startTime = performance.now();
 
@@ -160,51 +151,49 @@ export function AdvancedInteractionTest() {
     });
 
     // Test 6: API Integration
-    await runTest("API Integration", async () => {
+    await runTest('API Integration', async () => {
       // Test API client initialization
       const apiMethods = [
-        "getMatches",
-        "getUserProfile",
-        "getPets",
-        "getPremiumFeatures",
-        "getAppVersion",
+        'getMatches',
+        'getUserProfile',
+        'getPets',
+        'getPremiumFeatures',
+        'getAppVersion',
       ];
 
       for (const method of apiMethods) {
-        if (
-          typeof matchesAPI[method as keyof typeof matchesAPI] !== "function"
-        ) {
+        if (typeof matchesAPI[method as keyof typeof matchesAPI] !== 'function') {
           throw new Error(`API method ${method} not found`);
         }
       }
     });
 
     // Test 7: Component Variants
-    await runTest("Component Variants", async () => {
+    await runTest('Component Variants', async () => {
       // Test all button variants
       const buttonVariants = [
-        "primary",
-        "secondary",
-        "glass",
-        "neon",
-        "holographic",
-        "gradient",
-        "minimal",
-        "premium",
+        'primary',
+        'secondary',
+        'glass',
+        'neon',
+        'holographic',
+        'gradient',
+        'minimal',
+        'premium',
       ];
 
       for (const variant of buttonVariants) {
         // Test variant exists
         if (
           ![
-            "primary",
-            "secondary",
-            "glass",
-            "neon",
-            "holographic",
-            "gradient",
-            "minimal",
-            "premium",
+            'primary',
+            'secondary',
+            'glass',
+            'neon',
+            'holographic',
+            'gradient',
+            'minimal',
+            'premium',
           ].includes(variant)
         ) {
           throw new Error(`Invalid button variant: ${variant}`);
@@ -213,27 +202,27 @@ export function AdvancedInteractionTest() {
 
       // Test all card variants
       const cardVariants = [
-        "default",
-        "glass",
-        "gradient",
-        "premium",
-        "minimal",
-        "neon",
-        "holographic",
-        "floating",
+        'default',
+        'glass',
+        'gradient',
+        'premium',
+        'minimal',
+        'neon',
+        'holographic',
+        'floating',
       ];
 
       for (const variant of cardVariants) {
         if (
           ![
-            "default",
-            "glass",
-            "gradient",
-            "premium",
-            "minimal",
-            "neon",
-            "holographic",
-            "floating",
+            'default',
+            'glass',
+            'gradient',
+            'premium',
+            'minimal',
+            'neon',
+            'holographic',
+            'floating',
           ].includes(variant)
         ) {
           throw new Error(`Invalid card variant: ${variant}`);
@@ -242,30 +231,23 @@ export function AdvancedInteractionTest() {
     });
 
     // Test 8: Interaction Types
-    await runTest("Interaction Types", async () => {
+    await runTest('Interaction Types', async () => {
       const interactionTypes = [
-        "hover",
-        "press",
-        "longPress",
-        "swipe",
-        "tilt",
-        "glow",
-        "bounce",
-        "elastic",
+        'hover',
+        'press',
+        'longPress',
+        'swipe',
+        'tilt',
+        'glow',
+        'bounce',
+        'elastic',
       ];
 
       for (const interaction of interactionTypes) {
         if (
-          ![
-            "hover",
-            "press",
-            "longPress",
-            "swipe",
-            "tilt",
-            "glow",
-            "bounce",
-            "elastic",
-          ].includes(interaction)
+          !['hover', 'press', 'longPress', 'swipe', 'tilt', 'glow', 'bounce', 'elastic'].includes(
+            interaction,
+          )
         ) {
           throw new Error(`Invalid interaction type: ${interaction}`);
         }
@@ -275,42 +257,38 @@ export function AdvancedInteractionTest() {
     setIsRunning(false);
   };
 
-  const getStatusColor = (status: TestResult["status"]) => {
+  const getStatusColor = (status: TestResult['status']) => {
     switch (status) {
-      case "pending":
-        return "#6b7280";
-      case "running":
-        return "#f59e0b";
-      case "passed":
-        return "#10b981";
-      case "failed":
-        return "#ef4444";
+      case 'pending':
+        return 'Theme.colors.neutral[500]';
+      case 'running':
+        return 'Theme.colors.status.warning';
+      case 'passed':
+        return 'Theme.colors.status.success';
+      case 'failed':
+        return 'Theme.colors.status.error';
       default:
-        return "#6b7280";
+        return 'Theme.colors.neutral[500]';
     }
   };
 
-  const getStatusIcon = (status: TestResult["status"]) => {
+  const getStatusIcon = (status: TestResult['status']) => {
     switch (status) {
-      case "pending":
-        return "time-outline";
-      case "running":
-        return "sync-outline";
-      case "passed":
-        return "checkmark-circle";
-      case "failed":
-        return "close-circle";
+      case 'pending':
+        return 'time-outline';
+      case 'running':
+        return 'sync-outline';
+      case 'passed':
+        return 'checkmark-circle';
+      case 'failed':
+        return 'close-circle';
       default:
-        return "help-circle";
+        return 'help-circle';
     }
   };
 
-  const passedTests = testResults.filter(
-    (test) => test.status === "passed",
-  ).length;
-  const failedTests = testResults.filter(
-    (test) => test.status === "failed",
-  ).length;
+  const passedTests = testResults.filter((test) => test.status === 'passed').length;
+  const failedTests = testResults.filter((test) => test.status === 'failed').length;
   const totalTests = testResults.length;
 
   return (
@@ -318,19 +296,16 @@ export function AdvancedInteractionTest() {
       {/* Advanced Header */}
       <AdvancedHeader
         {...HeaderConfigs.glass({
-          title: "Advanced Interaction Test",
-          subtitle: "Comprehensive test suite for all interactions",
+          title: 'Advanced Interaction Test',
+          subtitle: 'Comprehensive test suite for all interactions',
           rightButtons: [
             {
-              type: "more",
+              type: 'more',
               onPress: () => {
-                Alert.alert(
-                  "Test Info",
-                  "Advanced interaction test suite for mobile components",
-                );
+                Alert.alert('Test Info', 'Advanced interaction test suite for mobile components');
               },
-              variant: "minimal",
-              haptic: "light",
+              variant: 'minimal',
+              haptic: 'light',
             },
           ],
         })}
@@ -343,9 +318,9 @@ export function AdvancedInteractionTest() {
         {/* Test Summary */}
         <AdvancedCard
           {...CardConfigs.glass({
-            title: "Test Summary",
-            interactions: ["hover", "press", "glow"],
-            haptic: "light",
+            title: 'Test Summary',
+            interactions: ['hover', 'press', 'glow'],
+            haptic: 'light',
           })}
           style={styles.summaryCard}
         >
@@ -355,13 +330,23 @@ export function AdvancedInteractionTest() {
               <Text style={styles.summaryLabel}>Total Tests</Text>
             </View>
             <View style={styles.summaryItem}>
-              <Text style={[styles.summaryNumber, { color: "#10b981" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.summaryNumber,
+                  { color: 'Theme.colors.status.success' },
+                ])}
+              >
                 {passedTests}
               </Text>
               <Text style={styles.summaryLabel}>Passed</Text>
             </View>
             <View style={styles.summaryItem}>
-              <Text style={[styles.summaryNumber, { color: "#ef4444" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.summaryNumber,
+                  { color: 'Theme.colors.status.error' },
+                ])}
+              >
                 {failedTests}
               </Text>
               <Text style={styles.summaryLabel}>Failed</Text>
@@ -371,17 +356,17 @@ export function AdvancedInteractionTest() {
 
         {/* Run Tests Button */}
         <AdvancedButton
-          title={isRunning ? "Running Tests..." : "Run All Tests"}
-          icon={isRunning ? "sync" : "play"}
+          title={isRunning ? 'Running Tests...' : 'Run All Tests'}
+          icon={isRunning ? 'sync' : 'play'}
           variant="gradient"
           size="lg"
-          interactions={["hover", "press", "glow", "bounce"]}
+          interactions={['hover', 'press', 'glow', 'bounce']}
           haptic="heavy"
           onPress={runAllTests}
           disabled={isRunning}
           loading={isRunning}
           style={styles.runButton}
-          gradientColors={["#ec4899", "#db2777"]}
+          gradientColors={['Theme.colors.primary[500]', 'Theme.colors.primary[600]']}
         />
 
         {/* Test Results */}
@@ -391,29 +376,25 @@ export function AdvancedInteractionTest() {
             <AdvancedCard
               key={test.testName}
               {...CardConfigs.minimal({
-                interactions: ["hover", "press"],
-                haptic: "light",
+                interactions: ['hover', 'press'],
+                haptic: 'light',
               })}
               style={styles.resultCard}
             >
               <View style={styles.resultContent}>
                 <View style={styles.resultLeft}>
                   <Ionicons
-                    name={getStatusIcon(test.status) as any}
+                    name={getStatusIcon(test.status)}
                     size={24}
                     color={getStatusColor(test.status)}
                   />
                   <View style={styles.resultInfo}>
                     <Text style={styles.resultName}>{test.testName}</Text>
-                    {test.message && (
-                      <Text style={styles.resultMessage}>{test.message}</Text>
-                    )}
+                    {test.message && <Text style={styles.resultMessage}>{test.message}</Text>}
                   </View>
                 </View>
                 <View style={styles.resultRight}>
-                  {test.duration && (
-                    <Text style={styles.resultDuration}>{test.duration}ms</Text>
-                  )}
+                  {test.duration && <Text style={styles.resultDuration}>{test.duration}ms</Text>}
                 </View>
               </View>
             </AdvancedCard>
@@ -427,9 +408,9 @@ export function AdvancedInteractionTest() {
           {/* Button Variants Demo */}
           <AdvancedCard
             {...CardConfigs.glass({
-              title: "Button Variants",
-              interactions: ["hover", "press", "glow"],
-              haptic: "light",
+              title: 'Button Variants',
+              interactions: ['hover', 'press', 'glow'],
+              haptic: 'light',
             })}
             style={styles.demoCard}
           >
@@ -438,40 +419,40 @@ export function AdvancedInteractionTest() {
                 title="Primary"
                 variant="primary"
                 size="sm"
-                interactions={["hover", "press", "glow"]}
+                interactions={['hover', 'press', 'glow']}
                 haptic="medium"
                 onPress={() => {
-                  Alert.alert("Primary Button", "Primary variant pressed!");
+                  Alert.alert('Primary Button', 'Primary variant pressed!');
                 }}
               />
               <AdvancedButton
                 title="Glass"
                 variant="glass"
                 size="sm"
-                interactions={["hover", "press", "glow"]}
+                interactions={['hover', 'press', 'glow']}
                 haptic="medium"
                 onPress={() => {
-                  Alert.alert("Glass Button", "Glass variant pressed!");
+                  Alert.alert('Glass Button', 'Glass variant pressed!');
                 }}
               />
               <AdvancedButton
                 title="Neon"
                 variant="neon"
                 size="sm"
-                interactions={["hover", "press", "glow"]}
+                interactions={['hover', 'press', 'glow']}
                 haptic="medium"
                 onPress={() => {
-                  Alert.alert("Neon Button", "Neon variant pressed!");
+                  Alert.alert('Neon Button', 'Neon variant pressed!');
                 }}
               />
               <AdvancedButton
                 title="Premium"
                 variant="premium"
                 size="sm"
-                interactions={["hover", "press", "glow"]}
+                interactions={['hover', 'press', 'glow']}
                 haptic="medium"
                 onPress={() => {
-                  Alert.alert("Premium Button", "Premium variant pressed!");
+                  Alert.alert('Premium Button', 'Premium variant pressed!');
                 }}
               />
             </View>
@@ -480,18 +461,18 @@ export function AdvancedInteractionTest() {
           {/* Card Variants Demo */}
           <AdvancedCard
             {...CardConfigs.glass({
-              title: "Card Variants",
-              interactions: ["hover", "press", "glow"],
-              haptic: "light",
+              title: 'Card Variants',
+              interactions: ['hover', 'press', 'glow'],
+              haptic: 'light',
             })}
             style={styles.demoCard}
           >
             <View style={styles.cardGrid}>
               <AdvancedCard
                 {...CardConfigs.glass({
-                  title: "Glass",
-                  interactions: ["hover", "press", "glow"],
-                  haptic: "light",
+                  title: 'Glass',
+                  interactions: ['hover', 'press', 'glow'],
+                  haptic: 'light',
                 })}
                 style={styles.demoSubCard}
               >
@@ -500,9 +481,9 @@ export function AdvancedInteractionTest() {
 
               <AdvancedCard
                 {...CardConfigs.premium({
-                  title: "Premium",
-                  interactions: ["hover", "press", "glow", "bounce"],
-                  haptic: "medium",
+                  title: 'Premium',
+                  interactions: ['hover', 'press', 'glow', 'bounce'],
+                  haptic: 'medium',
                 })}
                 style={styles.demoSubCard}
               >
@@ -519,7 +500,7 @@ export function AdvancedInteractionTest() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: '#f8f9fa',
   },
   scrollView: {
     flex: 1,
@@ -531,21 +512,21 @@ const styles = StyleSheet.create({
     margin: 16,
   },
   summaryContent: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
   summaryItem: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   summaryNumber: {
     fontSize: 24,
-    fontWeight: "bold",
-    color: "#1f2937",
+    fontWeight: 'bold',
+    color: 'Theme.colors.neutral[800]',
   },
   summaryLabel: {
     fontSize: 14,
-    color: "#6b7280",
+    color: 'Theme.colors.neutral[500]',
     marginTop: 4,
   },
   runButton: {
@@ -558,21 +539,21 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#1f2937",
+    fontWeight: 'bold',
+    color: 'Theme.colors.neutral[800]',
     marginBottom: 12,
   },
   resultCard: {
     marginBottom: 8,
   },
   resultContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   resultLeft: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
   },
   resultInfo: {
@@ -581,20 +562,20 @@ const styles = StyleSheet.create({
   },
   resultName: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#1f2937",
+    fontWeight: '600',
+    color: 'Theme.colors.neutral[800]',
   },
   resultMessage: {
     fontSize: 14,
-    color: "#6b7280",
+    color: 'Theme.colors.neutral[500]',
     marginTop: 2,
   },
   resultRight: {
-    alignItems: "flex-end",
+    alignItems: 'flex-end',
   },
   resultDuration: {
     fontSize: 12,
-    color: "#9ca3af",
+    color: 'Theme.colors.neutral[400]',
   },
   demoSection: {
     paddingHorizontal: 16,
@@ -603,13 +584,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   buttonGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     gap: 8,
   },
   cardGrid: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 8,
   },
   demoSubCard: {
@@ -618,9 +599,9 @@ const styles = StyleSheet.create({
   },
   demoText: {
     fontSize: 14,
-    fontWeight: "600",
-    color: "#1f2937",
-    textAlign: "center",
+    fontWeight: '600',
+    color: 'Theme.colors.neutral[800]',
+    textAlign: 'center',
   },
 });
 

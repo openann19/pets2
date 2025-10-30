@@ -34,7 +34,7 @@ declare global {
 
   // WebRTC types
   interface RTCSessionDescriptionInit {
-    type: "offer" | "answer" | "pranswer" | "rollback";
+    type: 'offer' | 'answer' | 'pranswer' | 'rollback';
     sdp?: string;
   }
 
@@ -67,31 +67,25 @@ declare global {
 
   interface MediaStreamTrack {
     id: string;
-    kind: "audio" | "video";
+    kind: 'audio' | 'video';
     enabled: boolean;
     muted: boolean;
-    readyState: "live" | "ended";
+    readyState: 'live' | 'ended';
     stop(): void;
   }
 
   interface RTCPeerConnection {
     localDescription: RTCSessionDescriptionInit | null;
     remoteDescription: RTCSessionDescriptionInit | null;
-    connectionState:
-      | "new"
-      | "connecting"
-      | "connected"
-      | "disconnected"
-      | "failed"
-      | "closed";
+    connectionState: 'new' | 'connecting' | 'connected' | 'disconnected' | 'failed' | 'closed';
     iceConnectionState:
-      | "new"
-      | "checking"
-      | "connected"
-      | "completed"
-      | "failed"
-      | "disconnected"
-      | "closed";
+      | 'new'
+      | 'checking'
+      | 'connected'
+      | 'completed'
+      | 'failed'
+      | 'disconnected'
+      | 'closed';
     addTrack(track: MediaStreamTrack, stream: MediaStream): RTCRtpSender;
     removeTrack(sender: RTCRtpSender): void;
     createOffer(): Promise<RTCSessionDescriptionInit>;
@@ -110,8 +104,8 @@ declare global {
   }
 
   interface RTCRtpTransceiver {
-    direction: "sendrecv" | "sendonly" | "recvonly" | "inactive";
-    currentDirection: "sendrecv" | "sendonly" | "recvonly" | "inactive" | null;
+    direction: 'sendrecv' | 'sendonly' | 'recvonly' | 'inactive';
+    currentDirection: 'sendrecv' | 'sendonly' | 'recvonly' | 'inactive' | null;
   }
 
   // React Native globals

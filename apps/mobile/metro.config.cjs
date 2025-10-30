@@ -1,8 +1,15 @@
 /**
  * Metro configuration for optimized bundle size and performance
  * Reduces APK size and improves app startup time
+ * 
+ * Includes workspace resolution for pnpm monorepo with hoisted node_modules
  */
+const path = require('path');
 const { getDefaultConfig } = require('expo/metro-config');
+
+// Calculate paths for workspace resolution
+const workspaceRoot = path.resolve(__dirname, '../..');
+const projectRoot = __dirname;
 
 /** @type {import('metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
@@ -17,10 +24,16 @@ const config = getDefaultConfig(__dirname);
       ...config.resolver.assetExts.filter(ext => !['svg', 'ttf'].includes(ext)),
       'ttf', 'otf', 'woff', 'woff2' // Re-add font extensions
     ],
-    // Ensure proper module resolution for Babel runtime
+    // Configure workspace package resolution for pnpm hoisting
+    nodeModulesPaths: [
+      path.resolve(projectRoot, 'node_modules'),
+      path.resolve(workspaceRoot, 'node_modules'),
+    ],
+    // Create aliases for workspace packages to resolve them directly
+    // Use built artifacts when available (core is built via pre-build hooks)
     extraNodeModules: {
-      ...config.resolver.extraNodeModules,
-      '@babel/runtime': require.resolve('@babel/runtime/package.json'),
+      '@pawfectmatch/core': path.resolve(workspaceRoot, 'packages/core/dist'),
+      '@pawfectmatch/design-tokens': path.resolve(workspaceRoot, 'packages/design-tokens/dist'),
     },
   };
 
@@ -40,7 +53,7 @@ config.transformer = {
   assetPlugins: ['expo-asset/tools/hashAssetFiles'],
   // Enable experimental features for smaller bundles
   enableBabelRCLookup: false,
-  enableBabelRuntime: true,
+  enableBabelRuntime: false,
   babelTransformerPath: require.resolve('metro-react-native-babel-transformer'),
 };
 
@@ -50,10 +63,17 @@ config.serializer = {
   // Use default module ID factory (removed custom implementation due to Metro API changes)
 };
 
-// Watch folders for better development experience
+// Watch folders for better development experience and hot reloading
 config.watchFolders = [
-  ...config.watchFolders,
-  // Add shared packages for better hot reloading
+  projectRoot,
+  workspaceRoot,
+  path.resolve(workspaceRoot, 'packages'),
+];
+
+// Blocklist conflicting directories
+config.resolver.blockList = [
+  /package-for-refactor/,
+  /node_modules\/.*\/.*\/package-for-refactor/,
 ];
 
 // Enable source maps in development for better debugging

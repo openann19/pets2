@@ -1,228 +1,211 @@
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { logger } from "@pawfectmatch/core";
-import { useState } from "react";
+import { useTheme } from '@mobile/src/theme';
+import { useTranslation } from 'react-i18next';
 import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRegisterScreen } from '../hooks/screens/useRegisterScreen';
+import type { RootStackScreenProps } from '../navigation/types';
 
-// Define the navigation props type
-type RootStackParamList = {
-  Home: undefined;
-  Login: undefined;
-  Register: undefined;
-};
-
-type RegisterScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Register"
->;
+type RegisterScreenProps = RootStackScreenProps<'Register'>;
 
 const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: "",
-    dateOfBirth: "",
+  const theme = useTheme();
+  const { t } = useTranslation('auth');
+  const { values, errors, setValue, handleSubmit, navigateToLogin } = useRegisterScreen({
+    navigation,
   });
 
-  const [errors, setErrors] = useState<{
-    email?: string;
-    password?: string;
-    confirmPassword?: string;
-    firstName?: string;
-    lastName?: string;
-    dateOfBirth?: string;
-  }>({});
-
-  const validateForm = () => {
-    const newErrors: {
-      email?: string;
-      password?: string;
-      confirmPassword?: string;
-      firstName?: string;
-      lastName?: string;
-      dateOfBirth?: string;
-    } = {};
-
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email format is invalid";
-    }
-
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    // Confirm password validation
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    // First name validation
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
-    }
-
-    // Last name validation
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-    }
-
-    // Date of birth validation
-    if (!formData.dateOfBirth.trim()) {
-      newErrors.dateOfBirth = "Date of birth is required";
-    } else if (!/^\d{4}-\d{2}-\d{2}$/.test(formData.dateOfBirth)) {
-      newErrors.dateOfBirth = "Date format should be YYYY-MM-DD";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleRegister = () => {
-    if (validateForm()) {
-      // Handle registration logic here
-      logger.info("Register with:", { formData });
-
-      // For demo purposes, navigate to Login
-      // In a real app, you would register first
-      navigation.navigate("Login");
-    }
-  };
-
-  const updateFormField = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    keyboardView: {
+      flex: 1,
+    },
+    scrollContainer: {
+      flexGrow: 1,
+      padding: 20,
+    },
+    backButton: {
+      marginBottom: 16,
+    },
+    backButtonText: {
+      fontSize: 16,
+      color: theme.colors.primary as string,
+    },
+    header: {
+      marginBottom: 24,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      marginBottom: 8,
+      color: theme.colors.onSurface,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+    },
+    form: {
+      backgroundColor: theme.colors.bg,
+    },
+    inputGroup: {
+      marginBottom: 16,
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: '600',
+      marginBottom: 6,
+      color: theme.colors.onSurface,
+    },
+    input: {
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      color: theme.colors.onSurface,
+    },
+    errorText: {
+      color: theme.colors.danger,
+      fontSize: 12,
+      marginTop: 4,
+    },
+    button: {
+      backgroundColor: theme.colors.primary as string,
+      borderRadius: 8,
+      padding: 15,
+      alignItems: 'center',
+      marginVertical: 16,
+    },
+    buttonText: {
+      color: theme.colors.bg,
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    termsContainer: {
+      marginTop: 16,
+      marginBottom: 32,
+    },
+    termsText: {
+      color: theme.colors.onMuted,
+      fontSize: 12,
+      textAlign: 'center',
+    },
+  });
 
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.navigate("Login")}
+            testID="RegisterScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={navigateToLogin}
           >
-            <Text style={styles.backButtonText}>← Back to Login</Text>
+            <Text style={styles.backButtonText}>{t('back_to_login')}</Text>
           </TouchableOpacity>
 
           <View style={styles.header}>
-            <Text style={styles.title}>Create Account</Text>
-            <Text style={styles.subtitle}>
-              Join PawfectMatch to find matches for your pets
-            </Text>
+            <Text style={styles.title}>{t('create_account')}</Text>
+            <Text style={styles.subtitle}>{t('create_account_subtitle')}</Text>
           </View>
 
           <View style={styles.form}>
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email</Text>
+              <Text style={styles.label}>{t('email_label')}</Text>
               <TextInput
                 style={styles.input}
-                value={formData.email}
+                value={values.email}
                 onChangeText={(text) => {
-                  updateFormField("email", text);
+                  setValue('email', text);
                 }}
-                placeholder="your@email.com"
+                placeholder={t('email_placeholder')}
                 autoCapitalize="none"
                 keyboardType="email-address"
                 autoCorrect={false}
               />
-              {errors.email && (
-                <Text style={styles.errorText}>{errors.email}</Text>
-              )}
+              {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>First Name</Text>
+              <Text style={styles.label}>{t('first_name_label')}</Text>
               <TextInput
                 style={styles.input}
-                value={formData.firstName}
+                value={values.firstName}
                 onChangeText={(text) => {
-                  updateFormField("firstName", text);
+                  setValue('firstName', text);
                 }}
-                placeholder="John"
+                placeholder={t('first_name_placeholder')}
               />
-              {errors.firstName && (
-                <Text style={styles.errorText}>{errors.firstName}</Text>
-              )}
+              {errors.firstName && <Text style={styles.errorText}>{errors.firstName}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Last Name</Text>
+              <Text style={styles.label}>{t('last_name_label')}</Text>
               <TextInput
                 style={styles.input}
-                value={formData.lastName}
+                value={values.lastName}
                 onChangeText={(text) => {
-                  updateFormField("lastName", text);
+                  setValue('lastName', text);
                 }}
-                placeholder="Doe"
+                placeholder={t('last_name_placeholder')}
               />
-              {errors.lastName && (
-                <Text style={styles.errorText}>{errors.lastName}</Text>
-              )}
+              {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Date of Birth (YYYY-MM-DD)</Text>
+              <Text style={styles.label}>{t('date_of_birth_label')}</Text>
               <TextInput
                 style={styles.input}
-                value={formData.dateOfBirth}
+                value={values.dateOfBirth}
                 onChangeText={(text) => {
-                  updateFormField("dateOfBirth", text);
+                  setValue('dateOfBirth', text);
                 }}
-                placeholder="1990-01-01"
+                placeholder={t('date_of_birth_placeholder')}
                 keyboardType="numbers-and-punctuation"
               />
-              {errors.dateOfBirth && (
-                <Text style={styles.errorText}>{errors.dateOfBirth}</Text>
-              )}
+              {errors.dateOfBirth && <Text style={styles.errorText}>{errors.dateOfBirth}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Password</Text>
+              <Text style={styles.label}>{t('password_label')}</Text>
               <TextInput
                 style={styles.input}
-                value={formData.password}
+                value={values.password}
                 onChangeText={(text) => {
-                  updateFormField("password", text);
+                  setValue('password', text);
                 }}
-                placeholder="********"
+                placeholder={t('password_placeholder')}
                 secureTextEntry
               />
-              {errors.password && (
-                <Text style={styles.errorText}>{errors.password}</Text>
-              )}
+              {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Confirm Password</Text>
+              <Text style={styles.label}>{t('confirm_password_label')}</Text>
               <TextInput
                 style={styles.input}
-                value={formData.confirmPassword}
+                value={values.confirmPassword}
                 onChangeText={(text) => {
-                  updateFormField("confirmPassword", text);
+                  setValue('confirmPassword', text);
                 }}
-                placeholder="********"
+                placeholder={t('confirm_password_placeholder')}
                 secureTextEntry
               />
               {errors.confirmPassword && (
@@ -230,15 +213,18 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               )}
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleRegister}>
-              <Text style={styles.buttonText}>Create Account</Text>
+            <TouchableOpacity
+              style={styles.button}
+              testID="RegisterScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={handleSubmit}
+            >
+              <Text style={styles.buttonText}>{t('create_account_button')}</Text>
             </TouchableOpacity>
 
             <View style={styles.termsContainer}>
-              <Text style={styles.termsText}>
-                By signing up, you agree to our Terms of Service and Privacy
-                Policy
-              </Text>
+              <Text style={styles.termsText}>{t('terms_agreement')}</Text>
             </View>
           </View>
         </ScrollView>
@@ -246,84 +232,5 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    padding: 20,
-  },
-  backButton: {
-    marginBottom: 16,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: "#ec4899",
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-  },
-  form: {
-    backgroundColor: "#fff",
-  },
-  inputGroup: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 6,
-    color: "#333",
-  },
-  input: {
-    backgroundColor: "#f9fafb",
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  errorText: {
-    color: "#ef4444",
-    fontSize: 12,
-    marginTop: 4,
-  },
-  button: {
-    backgroundColor: "#ec4899",
-    borderRadius: 8,
-    padding: 15,
-    alignItems: "center",
-    marginVertical: 16,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  termsContainer: {
-    marginTop: 16,
-    marginBottom: 32,
-  },
-  termsText: {
-    color: "#666",
-    fontSize: 12,
-    textAlign: "center",
-  },
-});
 
 export default RegisterScreen;

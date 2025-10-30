@@ -59,15 +59,15 @@ export declare function useMatchAnalytics(matchId: string): import("@tanstack/re
 export declare function useReportUser(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<{
     id: string;
 }>, Error, {
-    type: "inappropriate_content" | "harassment" | "spam" | "fake_profile" | "underage" | "animal_abuse" | "scam" | "inappropriate_behavior" | "copyright_violation" | "other";
-    category: "message" | "user" | "pet" | "chat" | "other";
+    type: "other" | "spam" | "harassment" | "fake_profile" | "inappropriate_content" | "scam" | "underage" | "animal_abuse" | "inappropriate_behavior" | "copyright_violation";
+    category: "message" | "other" | "user" | "pet" | "chat";
     reason: string;
     targetId: string;
     description?: string | undefined;
     evidence?: {
-        type: "message" | "other" | "screenshot" | "photo" | "video";
-        url?: string | undefined;
+        type: "photo" | "video" | "message" | "other" | "screenshot";
         description?: string | undefined;
+        url?: string | undefined;
     }[] | undefined;
     isAnonymous?: boolean | undefined;
 }, unknown>;
@@ -127,4 +127,3 @@ export declare function useUnmuteUser(): import("@tanstack/react-query").UseMuta
     previousState: unknown;
 }>;
 export {};
-//# sourceMappingURL=hooks.d.ts.map

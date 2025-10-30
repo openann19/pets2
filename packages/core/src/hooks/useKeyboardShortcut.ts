@@ -13,10 +13,7 @@ interface KeyCombo {
   meta?: boolean;
 }
 
-export function useKeyboardShortcut(
-  keyCombo: KeyCombo,
-  handler: () => void
-) {
+export function useKeyboardShortcut(keyCombo: KeyCombo, handler: () => void) {
   const handlerRef = useRef(handler);
 
   useEffect(() => {

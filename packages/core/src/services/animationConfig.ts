@@ -2,7 +2,6 @@ import type { AnimationConfig } from '../types/animations';
 import { defaultAnimationConfig } from '../types/animations';
 import { getLocalStorageItem, setLocalStorageItem } from '../utils/env';
 
-
 class AnimationConfigService {
   private config: AnimationConfig = { ...defaultAnimationConfig };
   private listeners: Set<(config: AnimationConfig) => void> = new Set();
@@ -102,7 +101,7 @@ class AnimationConfigService {
   }
 
   private notifyListeners(): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(this.getConfig());
       } catch (error) {

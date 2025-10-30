@@ -1,14 +1,13 @@
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore } from "@pawfectmatch/core";
-import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import * as ImagePicker from "expo-image-picker";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useEffect, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/src/theme';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -16,9 +15,11 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AdvancedPhotoEditor } from '../components/photo/AdvancedPhotoEditor';
+import { useEditProfileScreen } from '../hooks/screens/useEditProfileScreen';
+import { haptic } from '../ui/haptics';
 
 interface EditProfileScreenProps {
   navigation: {
@@ -26,177 +27,146 @@ interface EditProfileScreenProps {
   };
 }
 
-interface ProfileData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  bio: string;
-  location: string;
-  avatar: string | undefined;
-}
+function EditProfileScreen({ navigation }: EditProfileScreenProps): React.JSX.Element {
+  const theme = useTheme();
+  const { t } = useTranslation('common');
+  const [showPhotoEditor, setShowPhotoEditor] = useState(false);
+  const [avatarToEdit, setAvatarToEdit] = useState<string | undefined>(undefined);
 
-function EditProfileScreen({
-  navigation,
-}: EditProfileScreenProps): JSX.Element {
-  const { colors: _colors } = useTheme();
-  const { user } = useAuthStore();
-  const [profileData, setProfileData] = useState<ProfileData>(() => ({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-    bio: user?.bio || "",
-    location: user?.location?.address || "",
-    avatar: user?.avatar,
-  }));
-  const [loading, setLoading] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
+  const {
+    profileData,
+    loading,
+    hasChanges,
+    updateField,
+    handleSelectAvatar,
+    handleSave,
+    handleCancel,
+  } = useEditProfileScreen();
 
-  useEffect(() => {
-    // Check if form has changes
-    const originalData = {
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
-      bio: user?.bio || "",
-      location: user?.location?.address || "",
-      avatar: user?.avatar,
-    };
-
-    const changed = Object.keys(profileData).some(
-      (key) =>
-        profileData[key as keyof ProfileData] !==
-        originalData[key as keyof ProfileData],
-    );
-    setHasChanges(changed);
-  }, [profileData, user]);
-
-  const updateField = useCallback((field: keyof ProfileData, value: string) => {
-    setProfileData((prev) => ({ ...prev, [field]: value }));
-  }, []);
-
-  const handleSelectAvatar = useCallback(async () => {
+  const handleSelectAvatarWithEditor = async () => {
     try {
-      const permissionResult =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permissionResult.granted) {
-        Alert.alert(
-          "Permission required",
-          "Please enable photo library access to change your avatar.",
-        );
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets[0]) {
-        updateField("avatar", result.assets[0].uri);
-        Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Success,
-        ).catch(() => {});
+      // This will launch the image picker
+      await handleSelectAvatar();
+      // If an avatar was selected, show the editor
+      if (profileData.avatar) {
+        setAvatarToEdit(profileData.avatar);
+        setShowPhotoEditor(true);
       }
     } catch (error) {
-      logger.error("Error selecting avatar:", { error });
-      Alert.alert("Error", "Failed to select avatar. Please try again.");
+      // Handle error
     }
-  }, [updateField]);
+  };
 
-  const handleSave = useCallback(async () => {
-    if (!hasChanges) {
-      navigation.goBack();
-      return;
-    }
+  const handlePhotoEditorSave = (editedUri: string) => {
+    updateField('avatar', editedUri);
+    setShowPhotoEditor(false);
+    setAvatarToEdit(undefined);
+  };
 
-    setLoading(true);
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+  const handlePhotoEditorCancel = () => {
+    setShowPhotoEditor(false);
+    setAvatarToEdit(undefined);
+  };
 
-      // In a real app, this would call an API
-      Alert.alert("Success", "Profile updated successfully!", [
-        {
-          text: "OK",
-          onPress: () => {
-            navigation.goBack();
-          },
-        },
-      ]);
-
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
-        () => {},
-      );
-    } catch (error) {
-      logger.error("Error updating profile:", { error });
-      Alert.alert("Error", "Failed to update profile. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, [hasChanges, navigation]);
-
-  const handleCancel = useCallback(() => {
-    if (hasChanges) {
-      Alert.alert(
-        "Discard Changes",
-        "Are you sure you want to discard your changes?",
-        [
-          { text: "Keep Editing", style: "cancel" },
+  const onSubmit = async () => {
+    haptic.success();
+    const result = await handleSave();
+    if (result?.shouldNavigate) {
+      if (hasChanges) {
+        Alert.alert(t('edit_profile.success'), t('edit_profile.profile_updated'), [
           {
-            text: "Discard",
-            style: "destructive",
+            text: 'OK',
             onPress: () => {
               navigation.goBack();
             },
           },
-        ],
-      );
-    } else {
+        ]);
+      } else {
+        navigation.goBack();
+      }
+    }
+  };
+
+  const onCancel = () => {
+    haptic.tap();
+    const shouldNavigate = handleCancel();
+    if (shouldNavigate) {
       navigation.goBack();
     }
-  }, [hasChanges, navigation]);
+  };
+
+  const handleBackPress = () => {
+    haptic.tap();
+    navigation.goBack();
+  };
 
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#6366f1", "#8b5cf6", "#ec4899"]}
+        colors={['#6366f1', '#8b5cf6', theme.colors.primary]}
         style={StyleSheet.absoluteFillObject}
       />
+
+      {/* Photo Editor Modal */}
+      {showPhotoEditor && avatarToEdit && (
+        <Modal
+          visible={showPhotoEditor}
+          animationType="slide"
+          presentationStyle="fullScreen"
+        >
+          <AdvancedPhotoEditor
+            imageUri={avatarToEdit}
+            onSave={handlePhotoEditorSave}
+            onCancel={handlePhotoEditorCancel}
+            aspectRatio={[1, 1]}
+            maxWidth={512}
+            maxHeight={512}
+          />
+        </Modal>
+      )}
 
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-            <Ionicons name="close" size={24} color="white" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Edit Profile</Text>
           <TouchableOpacity
-            style={[
+            style={styles.cancelButton}
+            testID="EditProfileScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={onCancel}
+          >
+            <Ionicons
+              name="close"
+              size={24}
+              color="white"
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{t('edit_profile.title')}</Text>
+          <TouchableOpacity
+            style={StyleSheet.flatten([
               styles.saveButton,
               (!hasChanges || loading) && styles.saveButtonDisabled,
-            ]}
-            onPress={handleSave}
+            ])}
+            testID="EditProfileScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={onSubmit}
             disabled={!hasChanges || loading}
           >
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.saveButtonText,
                 (!hasChanges || loading) && styles.saveButtonTextDisabled,
-              ]}
+              ])}
             >
-              {loading ? "Saving..." : "Save"}
+              {loading ? t('edit_profile.saving') : t('edit_profile.save')}
             </Text>
           </TouchableOpacity>
         </View>
 
         <KeyboardAvoidingView
           style={styles.keyboardAvoid}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           <ScrollView
             style={styles.scrollView}
@@ -204,18 +174,32 @@ function EditProfileScreen({
           >
             {/* Avatar Section */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Profile Picture</Text>
+              <Text style={styles.sectionTitle}>{t('edit_profile.profile_picture')}</Text>
               <TouchableOpacity
                 style={styles.avatarContainer}
-                onPress={handleSelectAvatar}
+                testID="EditProfileScreen-button-2"
+                accessibilityLabel="Interactive element"
+                accessibilityRole="button"
+                onPress={handleSelectAvatarWithEditor}
               >
-                <BlurView intensity={20} style={styles.avatarBlur}>
+                <BlurView
+                  intensity={20}
+                  style={styles.avatarBlur}
+                >
                   {profileData.avatar ? (
                     <View style={styles.avatarWrapper}>
                       {/* In a real app, you'd show the actual image */}
-                      <Ionicons name="person" size={40} color="white" />
+                      <Ionicons
+                        name="person"
+                        size={40}
+                        color="white"
+                      />
                       <View style={styles.avatarOverlay}>
-                        <Ionicons name="camera" size={20} color="white" />
+                        <Ionicons
+                          name="camera"
+                          size={20}
+                          color="white"
+                        />
                       </View>
                     </View>
                   ) : (
@@ -226,7 +210,11 @@ function EditProfileScreen({
                         color="rgba(255,255,255,0.6)"
                       />
                       <View style={styles.addPhotoOverlay}>
-                        <Ionicons name="add" size={24} color="#6366f1" />
+                        <Ionicons
+                          name="add"
+                          size={24}
+                          color="#6366f1"
+                        />
                       </View>
                     </View>
                   )}
@@ -236,77 +224,92 @@ function EditProfileScreen({
 
             {/* Personal Information */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Personal Information</Text>
+              <Text style={styles.sectionTitle}>{t('edit_profile.personal_info')}</Text>
 
               <View style={styles.inputRow}>
                 <View style={styles.inputHalf}>
-                  <Text style={styles.inputLabel}>First Name</Text>
-                  <BlurView intensity={15} style={styles.inputBlur}>
+                  <Text style={styles.inputLabel}>{t('edit_profile.first_name')}</Text>
+                  <BlurView
+                    intensity={15}
+                    style={styles.inputBlur}
+                  >
                     <TextInput
                       style={styles.input}
                       value={profileData.firstName}
                       onChangeText={(value) => {
-                        updateField("firstName", value);
+                        updateField('firstName', value);
                       }}
-                      placeholder="Enter first name"
+                      placeholder={t('edit_profile.first_name_placeholder')}
                       placeholderTextColor="rgba(255,255,255,0.4)"
                     />
                   </BlurView>
                 </View>
                 <View style={styles.inputHalf}>
-                  <Text style={styles.inputLabel}>Last Name</Text>
-                  <BlurView intensity={15} style={styles.inputBlur}>
+                  <Text style={styles.inputLabel}>{t('edit_profile.last_name')}</Text>
+                  <BlurView
+                    intensity={15}
+                    style={styles.inputBlur}
+                  >
                     <TextInput
                       style={styles.input}
                       value={profileData.lastName}
                       onChangeText={(value) => {
-                        updateField("lastName", value);
+                        updateField('lastName', value);
                       }}
-                      placeholder="Enter last name"
+                      placeholder={t('edit_profile.last_name_placeholder')}
                       placeholderTextColor="rgba(255,255,255,0.4)"
                     />
                   </BlurView>
                 </View>
               </View>
 
-              <Text style={styles.inputLabel}>Email</Text>
-              <BlurView intensity={15} style={styles.inputBlur}>
+              <Text style={styles.inputLabel}>{t('edit_profile.email')}</Text>
+              <BlurView
+                intensity={15}
+                style={styles.inputBlur}
+              >
                 <TextInput
                   style={styles.input}
                   value={profileData.email}
                   onChangeText={(value) => {
-                    updateField("email", value);
+                    updateField('email', value);
                   }}
-                  placeholder="Enter email"
+                  placeholder={t('edit_profile.email_placeholder')}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
               </BlurView>
 
-              <Text style={styles.inputLabel}>Phone</Text>
-              <BlurView intensity={15} style={styles.inputBlur}>
+              <Text style={styles.inputLabel}>{t('edit_profile.phone')}</Text>
+              <BlurView
+                intensity={15}
+                style={styles.inputBlur}
+              >
                 <TextInput
                   style={styles.input}
                   value={profileData.phone}
                   onChangeText={(value) => {
-                    updateField("phone", value);
+                    updateField('phone', value);
                   }}
-                  placeholder="Enter phone number"
+                  placeholder={t('edit_profile.phone_placeholder')}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                   keyboardType="phone-pad"
                 />
               </BlurView>
 
-              <Text style={styles.inputLabel}>Location</Text>
-              <BlurView intensity={15} style={styles.inputBlur}>
+              <Text style={styles.inputLabel}>{t('edit_profile.location')}</Text>
+              <BlurView
+                intensity={15}
+                style={styles.inputBlur}
+              >
                 <TextInput
                   style={styles.input}
                   value={profileData.location}
                   onChangeText={(value) => {
-                    updateField("location", value);
+                    updateField('location', value);
                   }}
-                  placeholder="Enter your location"
+                  placeholder={t('edit_profile.location_placeholder')}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                 />
               </BlurView>
@@ -314,15 +317,18 @@ function EditProfileScreen({
 
             {/* Bio Section */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>About Me</Text>
-              <BlurView intensity={15} style={styles.bioInputBlur}>
+              <Text style={styles.sectionTitle}>{t('edit_profile.about_me')}</Text>
+              <BlurView
+                intensity={15}
+                style={styles.bioInputBlur}
+              >
                 <TextInput
                   style={styles.bioInput}
                   value={profileData.bio}
                   onChangeText={(value) => {
-                    updateField("bio", value);
+                    updateField('bio', value);
                   }}
-                  placeholder="Tell us about yourself and what you're looking for in a pet match..."
+                  placeholder={t('edit_profile.bio_placeholder')}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                   multiline
                   numberOfLines={4}
@@ -331,7 +337,7 @@ function EditProfileScreen({
                 />
               </BlurView>
               <Text style={styles.charCount}>
-                {profileData.bio.length}/500 characters
+                {profileData.bio.length}/500 {t('edit_profile.characters')}
               </Text>
             </View>
 
@@ -352,9 +358,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
@@ -362,29 +368,29 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
+    fontWeight: 'bold',
+    color: 'white',
   },
   saveButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "rgba(59, 130, 246, 0.2)",
+    backgroundColor: 'rgba(59, 130, 246, 0.2)',
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(59, 130, 246, 0.5)",
+    borderColor: 'rgba(59, 130, 246, 0.5)',
   },
   saveButtonDisabled: {
     opacity: 0.5,
   },
   saveButtonText: {
-    color: "white",
+    color: 'white',
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   saveButtonTextDisabled: {
     opacity: 0.5,
@@ -401,62 +407,62 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
+    fontWeight: 'bold',
+    color: 'white',
     marginBottom: 16,
   },
   avatarContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 16,
   },
   avatarBlur: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
   avatarWrapper: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatarPlaceholder: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderWidth: 2,
-    borderColor: "rgba(255,255,255,0.2)",
-    borderStyle: "dashed",
+    borderColor: 'rgba(255,255,255,0.2)',
+    borderStyle: 'dashed',
   },
   addPhotoOverlay: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 8,
     right: 8,
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatarOverlay: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 8,
     right: 8,
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   inputRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 12,
     marginBottom: 16,
   },
@@ -465,36 +471,36 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: "600",
-    color: "white",
+    fontWeight: '600',
+    color: 'white',
     marginBottom: 8,
   },
   inputBlur: {
     borderRadius: 12,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   input: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    color: "white",
+    color: 'white',
     fontSize: 16,
   },
   bioInputBlur: {
     borderRadius: 12,
-    overflow: "hidden",
+    overflow: 'hidden',
     height: 120,
   },
   bioInput: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    color: "white",
+    color: 'white',
     fontSize: 16,
-    height: "100%",
+    height: '100%',
   },
   charCount: {
     fontSize: 12,
-    color: "rgba(255,255,255,0.6)",
-    textAlign: "right",
+    color: 'rgba(255,255,255,0.6)',
+    textAlign: 'right',
     marginTop: 4,
   },
   spacer: {

@@ -123,7 +123,7 @@ export default function PetsPage() {
             </p>
           </div>
 
-          <button onClick={() => setShowAddModal(true)} className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-lg flex items-center transition-colors">
+          <button onClick={() => { setShowAddModal(true); }} className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-lg flex items-center transition-colors">
             <PlusIcon className="w-5 h-5 mr-1"/>
             <span>Add Pet</span>
           </button>
@@ -204,7 +204,7 @@ export default function PetsPage() {
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               Start by adding your first pet profile
             </p>
-            <button onClick={() => setShowAddModal(true)} className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-lg inline-flex items-center transition-colors">
+            <button onClick={() => { setShowAddModal(true); }} className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-lg inline-flex items-center transition-colors">
               <PlusIcon className="w-5 h-5 mr-2"/>
               Add Your First Pet
             </button>
@@ -249,7 +249,7 @@ export default function PetsPage() {
                   <label htmlFor="petName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Pet Name*
                   </label>
-                  <input type="text" id="petName" value={newPetName} onChange={(e) => setNewPetName(e.target.value)} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Enter pet name" required/>
+                  <input type="text" id="petName" value={newPetName} onChange={(e) => { setNewPetName(e.target.value); }} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Enter pet name" required/>
                 </div>
 
                 <div className="mb-6">
@@ -259,7 +259,7 @@ export default function PetsPage() {
                   <div className="grid grid-cols-3 gap-2">
                     {['dog', 'cat', 'bird', 'rabbit', 'fish', 'reptile', 'other'].map((species) => (<button key={species} type="button" className={`p-3 rounded-lg border text-center transition-colors ${newPetSpecies === species
                     ? 'bg-pink-100 dark:bg-pink-900/30 border-pink-500 text-pink-800 dark:text-pink-300'
-                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`} onClick={() => setNewPetSpecies(species)}>
+                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`} onClick={() => { setNewPetSpecies(species); }}>
                         <div className="text-2xl mb-1">
                           {getSpeciesEmoji(species)}
                         </div>
@@ -269,7 +269,7 @@ export default function PetsPage() {
                 </div>
 
                 <div className="flex justify-end space-x-2">
-                  <button type="button" onClick={() => setShowAddModal(false)} className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <button type="button" onClick={() => { setShowAddModal(false); }} className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
                     Cancel
                   </button>
                   <button type="submit" className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg">

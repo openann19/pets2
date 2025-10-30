@@ -1,9 +1,8 @@
-import React, { useCallback } from "react";
-import { View, StyleSheet, Alert } from "react-native";
-import * as Haptics from "expo-haptics";
-import { EliteHeader } from "../EliteHeader";
-import { EliteButton } from "../EliteButton";
-import { tokens } from "@pawfectmatch/design-tokens";
+import React, { useCallback } from 'react';
+import { View, StyleSheet, Alert } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { EliteHeader, EliteButton } from '../EliteComponents';
+import { Spacing } from '../../animation';
 
 interface ChatHeaderProps {
   petName: string;
@@ -44,7 +43,6 @@ export function ChatHeader({
         variant="glass"
         size="sm"
         icon="call"
-        magnetic={true}
         ripple={true}
         glow={true}
         onPress={handleVoiceCall}
@@ -54,7 +52,6 @@ export function ChatHeader({
         variant="glass"
         size="sm"
         icon="videocam"
-        magnetic={true}
         ripple={true}
         glow={true}
         onPress={handleVideoCall}
@@ -64,7 +61,6 @@ export function ChatHeader({
         variant="glass"
         size="sm"
         icon="ellipsis-vertical"
-        magnetic={true}
         ripple={true}
         onPress={handleMoreOptions}
       />
@@ -74,7 +70,7 @@ export function ChatHeader({
   return (
     <EliteHeader
       title={petName}
-      subtitle={isOnline ? "Online now" : "Last seen recently"}
+      subtitle={isOnline ? 'Online now' : 'Last seen recently'}
       blur={true}
       onBack={onBack}
       rightComponent={rightComponent}
@@ -84,7 +80,7 @@ export function ChatHeader({
 
 const styles = StyleSheet.create({
   rightComponent: {
-    flexDirection: "row",
-    gap: tokens.spacing.xs,
+    flexDirection: 'row',
+    gap: Spacing.xs,
   },
 });

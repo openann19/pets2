@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from "react";
-import type { ViewStyle, TextStyle } from "react-native";
-import { Animated, Easing, Dimensions } from "react-native";
+import React, { useRef, useEffect } from 'react';
+import type { ViewStyle, TextStyle } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Animated, Easing, Dimensions } from 'react-native';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 // Enhanced Animation Hooks and Components
 
@@ -28,10 +29,7 @@ export const useSequenceAnimation = () => {
     return Animated.sequence(animations);
   };
 
-  const createStagger = (
-    animations: Animated.CompositeAnimation[],
-    delay = 100,
-  ) => {
+  const createStagger = (animations: Animated.CompositeAnimation[], delay = 100) => {
     return Animated.stagger(delay, animations);
   };
 
@@ -139,7 +137,7 @@ export const useParallaxAnimation = () => {
         translateY: scrollY.interpolate({
           inputRange: [0, 1],
           outputRange: [offset, offset + speed],
-          extrapolate: "extend",
+          extrapolate: 'extend',
         }),
       },
     ],
@@ -181,7 +179,7 @@ export const FadeInView: React.FC<FadeInViewProps> = ({
   }, [duration, delay]);
 
   return (
-    <Animated.View style={[style, { opacity: fadeAnim }]}>
+    <Animated.View style={StyleSheet.flatten([style, { opacity: fadeAnim }])}>
       {children}
     </Animated.View>
   );
@@ -189,7 +187,7 @@ export const FadeInView: React.FC<FadeInViewProps> = ({
 
 interface SlideInViewProps {
   children: React.ReactNode;
-  direction?: "left" | "right" | "up" | "down";
+  direction?: 'left' | 'right' | 'up' | 'down';
   duration?: number;
   delay?: number;
   distance?: number;
@@ -198,7 +196,7 @@ interface SlideInViewProps {
 
 export const SlideInView: React.FC<SlideInViewProps> = ({
   children,
-  direction = "right",
+  direction = 'right',
   duration = 500,
   delay = 0,
   distance = 50,
@@ -223,7 +221,7 @@ export const SlideInView: React.FC<SlideInViewProps> = ({
 
   const getTransform = () => {
     switch (direction) {
-      case "left":
+      case 'left':
         return [
           {
             translateX: slideAnim.interpolate({
@@ -232,7 +230,7 @@ export const SlideInView: React.FC<SlideInViewProps> = ({
             }),
           },
         ];
-      case "right":
+      case 'right':
         return [
           {
             translateX: slideAnim.interpolate({
@@ -241,7 +239,7 @@ export const SlideInView: React.FC<SlideInViewProps> = ({
             }),
           },
         ];
-      case "up":
+      case 'up':
         return [
           {
             translateY: slideAnim.interpolate({
@@ -250,7 +248,7 @@ export const SlideInView: React.FC<SlideInViewProps> = ({
             }),
           },
         ];
-      case "down":
+      case 'down':
         return [
           {
             translateY: slideAnim.interpolate({
@@ -265,7 +263,7 @@ export const SlideInView: React.FC<SlideInViewProps> = ({
   };
 
   return (
-    <Animated.View style={[style, { transform: getTransform() }]}>
+    <Animated.View style={StyleSheet.flatten([style, { transform: getTransform() }])}>
       {children}
     </Animated.View>
   );
@@ -304,7 +302,7 @@ export const ScaleInView: React.FC<ScaleInViewProps> = ({
   }, [duration, delay, initialScale]);
 
   return (
-    <Animated.View style={[style, { transform: [{ scale: scaleAnim }] }]}>
+    <Animated.View style={StyleSheet.flatten([style, { transform: [{ scale: scaleAnim }] }])}>
       {children}
     </Animated.View>
   );
@@ -322,7 +320,7 @@ export const RotateInView: React.FC<RotateInViewProps> = ({
   children,
   duration = 500,
   delay = 0,
-  initialRotation = "180deg",
+  initialRotation = '180deg',
   style,
 }) => {
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -344,11 +342,11 @@ export const RotateInView: React.FC<RotateInViewProps> = ({
 
   const rotation = rotateAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [initialRotation, "0deg"],
+    outputRange: [initialRotation, '0deg'],
   });
 
   return (
-    <Animated.View style={[style, { transform: [{ rotate: rotation }] }]}>
+    <Animated.View style={StyleSheet.flatten([style, { transform: [{ rotate: rotation }] }])}>
       {children}
     </Animated.View>
   );
@@ -369,7 +367,7 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
   style,
   onComplete,
 }) => {
-  const [displayText, setDisplayText] = React.useState("");
+  const [displayText, setDisplayText] = React.useState('');
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
   useEffect(() => {
@@ -405,7 +403,7 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
     <Animated.Text style={style}>
       {displayText}
       {currentIndex < text.length && (
-        <Animated.Text style={[style, { opacity: usePulseAnimation(500) }]}>
+        <Animated.Text style={StyleSheet.flatten([style, { opacity: usePulseAnimation(500) }])}>
           |
         </Animated.Text>
       )}
@@ -426,8 +424,7 @@ export const customEasing = {
   quickOut: Easing.bezier(0.25, 0.46, 0.45, 0.94),
 
   // Physics-based
-  spring: (tension = 100, friction = 8) =>
-    Easing.out(Easing.poly(tension / 100)),
+  spring: (tension = 100, friction = 8) => Easing.out(Easing.poly(tension / 100)),
 };
 
 // Animation Presets
@@ -463,9 +460,9 @@ export const animationPresets = {
 
 // Gesture-based animations
 export const createSwipeAnimation = (
-  gestureState: any,
+  gestureState: { dx: number; vx: number },
   screenWidth: number,
-  onSwipeComplete?: (direction: "left" | "right") => void,
+  onSwipeComplete?: (direction: 'left' | 'right') => void,
 ) => {
   const translateX = new Animated.Value(0);
   const opacity = new Animated.Value(1);
@@ -476,8 +473,8 @@ export const createSwipeAnimation = (
     const velocity = Math.abs(vx) > 0.5;
 
     if (Math.abs(dx) > threshold || velocity) {
-      const direction = dx > 0 ? "right" : "left";
-      const toValue = direction === "right" ? screenWidth : -screenWidth;
+      const direction = dx > 0 ? 'right' : 'left';
+      const toValue = direction === 'right' ? screenWidth : -screenWidth;
 
       Animated.parallel([
         Animated.timing(translateX, {

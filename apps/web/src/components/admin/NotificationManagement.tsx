@@ -3,7 +3,7 @@ import { BellAlertIcon, BellIcon, BellSlashIcon, CalendarIcon, MagnifyingGlassIc
 import { logger } from '@pawfectmatch/core';
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useToast } from '../ui/toast';
+import { useToast } from '../UI/toast';
 ;
 export const NotificationManagement = ({ onBack }) => {
     const toast = useToast();

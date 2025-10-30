@@ -1,189 +1,103 @@
-import React from "react";
-import { Animated, Dimensions, Image, StyleSheet, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+/**
+ * SwipeCard Component
+ *
+ * Presentational component for displaying a swipeable pet card.
+ * Handles visual rendering only - no business logic.
+ *
+ * @example
+ * ```typescript
+ * <SwipeCard
+ *   pet={currentPet}
+ *   style={{ transform: [{ translateX: position.x }] }}
+ *   panHandlers={panHandlers}
+ * />
+ * ```
+ */
 
-import { EliteButton } from "../components/EliteButton";
-import { GlowContainer } from "../components/GlowContainer";
-import { GlassContainer } from "../components/GlassContainer";
-import { GradientText } from "../components/GradientText";
-import { PremiumBody } from "../components/PremiumBody";
-import { Pet } from "../types/api";
-import { tokens } from "@pawfectmatch/design-tokens";
+import React from 'react';
+import { Animated, StyleSheet, Text, View } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-
-interface SwipeCardProps {
-  pet: Pet;
-  position: Animated.ValueXY;
-  rotate: Animated.AnimatedInterpolation;
-  likeOpacity: Animated.AnimatedInterpolation;
-  nopeOpacity: Animated.AnimatedInterpolation;
-  panHandlers: any;
+export interface Pet {
+  _id: string;
+  name: string;
+  breed: string;
+  description?: string;
 }
 
-export function SwipeCard({
-  pet,
-  position,
-  rotate,
-  likeOpacity,
-  nopeOpacity,
-  panHandlers,
-}: SwipeCardProps) {
-  const primaryPhoto = pet.photos.find((p) => p.isPrimary) || pet.photos[0];
-  const ageText =
-    pet.age < 1 ? `${Math.round(pet.age * 12)} months` : `${pet.age} years`;
+export interface SwipeCardProps {
+  /**
+   * Pet data to display
+   */
+  pet: Pet;
 
+  /**
+   * Animated style for position/rotation
+   */
+  style?: StyleProp<ViewStyle>;
+
+  /**
+   * Pan responder handlers for gestures
+   */
+  panHandlers?: any;
+
+  /**
+   * Test ID for E2E testing
+   */
+  testID?: string;
+}
+
+/**
+ * SwipeCard - Displays a pet card with swipeable gestures
+ */
+export const SwipeCard: React.FC<SwipeCardProps> = ({ pet, style, panHandlers, testID }) => {
   return (
     <Animated.View
-      style={[
-        styles.card,
-        {
-          transform: [
-            { translateX: position.x },
-            { translateY: position.y },
-            { rotate },
-          ],
-        },
-      ]}
+      testID={testID || `swipe-card-${pet._id}`}
+      style={[styles.card, style]}
       {...panHandlers}
     >
-      {/* Premium Like/Nope Indicators */}
-      <Animated.View style={[styles.likeIndicator, { opacity: likeOpacity }]}>
-        <GlowContainer color="success" intensity="heavy" animated={true}>
-          <GradientText gradient="success" size="lg" weight="bold" glow={true}>
-            LIKE
-          </GradientText>
-        </GlowContainer>
-      </Animated.View>
-      <Animated.View style={[styles.nopeIndicator, { opacity: nopeOpacity }]}>
-        <GlowContainer color="error" intensity="heavy" animated={true}>
-          <GradientText gradient="error" size="lg" weight="bold" glow={true}>
-            NOPE
-          </GradientText>
-        </GlowContainer>
-      </Animated.View>
-
-      {/* Pet Photo with Glass Effect */}
-      <GlassContainer
-        intensity="light"
-        transparency="light"
-        border="light"
-        shadow="medium"
-      >
-        <Image source={{ uri: primaryPhoto?.url }} style={styles.petImage} />
-      </GlassContainer>
-
-      {/* Premium Featured Badge */}
-      {pet.featured?.isFeatured && (
-        <GlowContainer color="neon" intensity="medium" animated={true}>
-          <View style={styles.featuredBadge}>
-            <Ionicons name="star" size={16} color="#fff" />
-            <GradientText gradient="neon" size="sm" weight="bold" glow={true}>
-              Featured
-            </GradientText>
-          </View>
-        </GlowContainer>
-      )}
-
-      {/* Premium Pet Info Overlay */}
-      <LinearGradient
-        colors={["transparent", "rgba(0,0,0,0.8)"]}
-        style={styles.infoOverlay}
-      >
-        <View style={styles.petInfo}>
-          <View style={styles.nameRow}>
-            <GradientText
-              gradient="primary"
-              size="2xl"
-              weight="bold"
-              glow={true}
-            >
-              {pet.name}
-            </GradientText>
-            <PremiumBody size="lg" weight="semibold" gradient="secondary">
-              {ageText}
-            </PremiumBody>
-          </View>
-          <PremiumBody size="base" weight="medium" gradient="primary">
-            {pet.breed}
-          </PremiumBody>
-          <PremiumBody size="sm" weight="regular">
-            {pet.distance} km away
-          </PremiumBody>
-        </View>
-      </LinearGradient>
+      <View style={styles.petInfo}>
+        <Text style={styles.petName}>{pet.name}</Text>
+        <Text style={styles.petBreed}>{pet.breed}</Text>
+        {pet.description && <Text style={styles.petDescription}>{pet.description}</Text>}
+      </View>
     </Animated.View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   card: {
-    width: screenWidth - 40,
-    height: screenHeight * 0.65,
-    backgroundColor: "#fff",
+    width: '100%',
+    maxWidth: 400,
+    height: 400,
+    backgroundColor: 'white',
     borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
-    position: "absolute",
-  },
-  petImage: {
-    width: "100%",
-    height: "70%",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    resizeMode: "cover",
-  },
-  featuredBadge: {
-    position: "absolute",
-    top: 20,
-    left: 20,
-    backgroundColor: "#ffd700",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
-  },
-  likeIndicator: {
-    position: "absolute",
-    top: 50,
-    right: 20,
-    backgroundColor: "#66d7a2",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-    zIndex: 10,
-  },
-  nopeIndicator: {
-    position: "absolute",
-    top: 50,
-    left: 20,
-    backgroundColor: "#ff4458",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-    zIndex: 10,
-  },
-  infoOverlay: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: "30%",
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    justifyContent: "flex-end",
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    justifyContent: 'flex-end',
   },
   petInfo: {
-    padding: 20,
+    alignItems: 'center',
   },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 5,
+  petName: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  petBreed: {
+    fontSize: 18,
+    color: '#666',
+  },
+  petDescription: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 8,
+    textAlign: 'center',
   },
 });

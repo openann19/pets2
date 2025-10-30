@@ -1,0 +1,1 @@
+{"version":3,"names":["_gradients","require","_shadows"],"sources":["index.ts"],"sourcesContent":["export { PREMIUM_GRADIENTS, type PremiumGradientKey } from \"./gradients\";\nexport { PREMIUM_SHADOWS, type PremiumShadowKey } from \"./shadows\";\n"],"mappings":";;;;;;;;;;;;;;;;;AAAA,IAAAA,UAAA,GAAAC,OAAA;AACA,IAAAC,QAAA,GAAAD,OAAA","ignoreList":[]}

@@ -64,7 +64,7 @@ export const useUIStore = create<UIState>()(
     // Remove a toast by id
     removeToast: (id: string) => {
       set((state) => {
-        state.toasts = state.toasts.filter(toast => toast.id !== id);
+        state.toasts = state.toasts.filter((toast) => toast.id !== id);
       });
     },
 
@@ -109,5 +109,5 @@ export const useUIStore = create<UIState>()(
         state.loadingStates[key] = isLoading;
       });
     },
-  }))
+  })),
 );

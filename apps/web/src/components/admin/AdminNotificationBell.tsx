@@ -107,7 +107,7 @@ export function AdminNotificationBell({ userId, isAdmin }) {
     if (!isAdmin)
         return null;
     return (<div className="relative">
-            <button onClick={() => setShowDropdown(!showDropdown)} className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ''}`}>
+            <button onClick={() => { setShowDropdown(!showDropdown); }} className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ''}`}>
                 <BellIcon className="h-6 w-6 text-gray-700 dark:text-gray-300"/>
                 {unreadCount > 0 && (<motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="absolute top-1 right-1 h-5 w-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
                         {unreadCount > 99 ? '99+' : unreadCount}
@@ -187,7 +187,7 @@ export function AdminNotificationBell({ userId, isAdmin }) {
                         </div>
 
                         {notifications.length > 0 && (<div className="p-3 border-t border-gray-200 dark:border-gray-700 text-center">
-                                <a href="/admin/moderation/reports" className="text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400 font-medium" onClick={() => setShowDropdown(false)}>
+                                <a href="/admin/moderation/reports" className="text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400 font-medium" onClick={() => { setShowDropdown(false); }}>
                                     View All Reports →
                                 </a>
                             </div>)}

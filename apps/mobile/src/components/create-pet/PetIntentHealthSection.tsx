@@ -1,34 +1,119 @@
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { PetFormData } from "../../hooks/usePetForm";
+import type { PetFormData } from '../../hooks/usePetForm';
+import type { FormFieldValue } from '../../types/forms';
+import { useTheme } from '@/theme';
 
 interface PetIntentHealthSectionProps {
   formData: PetFormData;
   errors: Record<string, string>;
-  onUpdateFormData: (field: string, value: any) => void;
+  onUpdateFormData: (field: string, value: FormFieldValue) => void;
 }
 
 const intentOptions = [
-  { value: "adoption", label: "Available for Adoption", emoji: "🏠" },
-  { value: "mating", label: "Looking for Mates", emoji: "💕" },
-  { value: "playdate", label: "Playdates Only", emoji: "🎾" },
-  { value: "all", label: "Open to All", emoji: "🌟" },
+  { value: 'adoption', label: 'Available for Adoption', emoji: '🏠' },
+  { value: 'mating', label: 'Looking for Mates', emoji: '💕' },
+  { value: 'playdate', label: 'Playdates Only', emoji: '🎾' },
+  { value: 'all', label: 'Open to All', emoji: '🌟' },
 ];
 
 const healthOptions = [
-  { key: "vaccinated", label: "Vaccinated" },
-  { key: "spayedNeutered", label: "Spayed/Neutered" },
-  { key: "microchipped", label: "Microchipped" },
-  { key: "specialNeeds", label: "Has Special Needs" },
+  { key: 'vaccinated', label: 'Vaccinated' },
+  { key: 'spayedNeutered', label: 'Spayed/Neutered' },
+  { key: 'microchipped', label: 'Microchipped' },
+  { key: 'specialNeeds', label: 'Has Special Needs' },
 ];
+
+const makeStyles = (theme: any) =>
+  StyleSheet.create({
+    section: {
+      marginBottom: 32,
+    },
+    sectionTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.colors.neutral[900],
+      marginBottom: 16,
+    },
+    inputGroup: {
+      marginBottom: 20,
+    },
+    label: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.neutral[700],
+      marginBottom: 8,
+    },
+    errorText: {
+      fontSize: 14,
+      color: theme.colors.danger,
+      marginTop: 4,
+    },
+    intentOptions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
+    },
+    intentButton: {
+      flex: 1,
+      minWidth: 140,
+      alignItems: 'center',
+      padding: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral[300],
+      borderRadius: 12,
+      backgroundColor: theme.colors.neutral[0],
+    },
+    intentButtonSelected: {
+      borderColor: theme.colors.secondary[500],
+      backgroundColor: theme.colors.neutral[100],
+    },
+    intentEmoji: {
+      fontSize: 24,
+      marginBottom: 8,
+    },
+    intentText: {
+      fontSize: 16,
+      color: theme.colors.neutral[700],
+      fontWeight: '500',
+      flex: 1,
+    },
+    intentTextSelected: {
+      color: theme.colors.secondary[500],
+    },
+    healthOptions: {
+      gap: 12,
+    },
+    checkbox: {
+      width: 20,
+      height: 20,
+      borderWidth: 2,
+      borderColor: theme.colors.neutral[300],
+      borderRadius: 4,
+      marginRight: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    checkboxChecked: {
+      backgroundColor: theme.colors.secondary[500],
+      borderColor: theme.colors.secondary[500],
+    },
+    checkboxLabel: {
+      fontSize: 16,
+      color: theme.colors.neutral[700],
+    },
+  });
 
 export const PetIntentHealthSection: React.FC<PetIntentHealthSectionProps> = ({
   formData,
   errors,
   onUpdateFormData,
 }) => {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Intent & Health</Text>
@@ -39,20 +124,20 @@ export const PetIntentHealthSection: React.FC<PetIntentHealthSectionProps> = ({
           {intentOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.intentButton,
                 formData.intent === option.value && styles.intentButtonSelected,
-              ]}
+              ])}
               onPress={() => {
-                onUpdateFormData("intent", option.value);
+                onUpdateFormData('intent', option.value);
               }}
             >
               <Text style={styles.intentEmoji}>{option.emoji}</Text>
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.intentText,
                   formData.intent === option.value && styles.intentTextSelected,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
@@ -72,23 +157,24 @@ export const PetIntentHealthSection: React.FC<PetIntentHealthSectionProps> = ({
               onPress={() => {
                 onUpdateFormData(
                   `healthInfo.${item.key}`,
-                  !formData.healthInfo[
-                    item.key as keyof typeof formData.healthInfo
-                  ],
+                  !formData.healthInfo[item.key as keyof typeof formData.healthInfo],
                 );
               }}
             >
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.checkbox,
-                  formData.healthInfo[
-                    item.key as keyof typeof formData.healthInfo
-                  ] && styles.checkboxChecked,
-                ]}
+                  formData.healthInfo[item.key as keyof typeof formData.healthInfo] &&
+                    styles.checkboxChecked,
+                ])}
               >
-                {formData.healthInfo[
-                  item.key as keyof typeof formData.healthInfo
-                ] && <Ionicons name="checkmark" size={16} color="#FFFFFF" />}
+                {formData.healthInfo[item.key as keyof typeof formData.healthInfo] && (
+                  <Ionicons
+                    name="checkmark"
+                    size={16}
+                    color="#ffffff"
+                  />
+                )}
               </View>
               <Text style={styles.checkboxLabel}>{item.label}</Text>
             </TouchableOpacity>
@@ -102,79 +188,5 @@ export const PetIntentHealthSection: React.FC<PetIntentHealthSectionProps> = ({
 const styles = StyleSheet.create({
   section: {
     marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#111827",
-    marginBottom: 16,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#374151",
-    marginBottom: 8,
-  },
-  errorText: {
-    fontSize: 14,
-    color: "#EF4444",
-    marginTop: 4,
-  },
-  intentOptions: {
-    gap: 12,
-  },
-  intentButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#D1D5DB",
-    borderRadius: 12,
-    backgroundColor: "#FFFFFF",
-  },
-  intentButtonSelected: {
-    borderColor: "#8B5CF6",
-    backgroundColor: "#F3F4F6",
-  },
-  intentEmoji: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  intentText: {
-    fontSize: 16,
-    color: "#374151",
-    fontWeight: "500",
-    flex: 1,
-  },
-  intentTextSelected: {
-    color: "#8B5CF6",
-  },
-  healthOptions: {
-    gap: 12,
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 2,
-    borderColor: "#D1D5DB",
-    borderRadius: 4,
-    marginRight: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  checkboxChecked: {
-    backgroundColor: "#8B5CF6",
-    borderColor: "#8B5CF6",
-  },
-  checkboxLabel: {
-    fontSize: 16,
-    color: "#374151",
   },
 });

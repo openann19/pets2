@@ -20,6 +20,19 @@ export * from './types/animations';
 export * from './utils';
 export * from './utils/env';
 
+// Export logger specifically for web app
+export {
+  logger,
+  apiLogger,
+  authLogger,
+  uiLogger,
+  navigationLogger,
+  storageLogger,
+  analyticsLogger,
+  notificationLogger,
+  mediaLogger,
+} from './utils/logger';
+
 // Export global state stores
 export * from './stores';
 
@@ -33,7 +46,13 @@ export * from './featureFlags';
 // Export API client and hooks
 export * from './api';
 // Note: useMatchAnalytics and useUserAnalytics exported from ./api, not ./hooks to avoid duplication
-export { useFocusTrap, useGesture, useKeyboardShortcut, useEventTracking, useRealtimeSocket } from './hooks';
+export {
+  useFocusTrap,
+  useGesture,
+  useKeyboardShortcut,
+  useEventTracking,
+  useRealtimeSocket,
+} from './hooks';
 
 // Export mappers
 export * from './mappers';

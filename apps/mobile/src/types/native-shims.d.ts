@@ -1,7 +1,7 @@
 // Ambient module shims for native libraries to unblock typechecking during setup
 // Remove these once the real native dependencies are installed and configured.
 
-declare module "@react-native-firebase/messaging" {
+declare module '@react-native-firebase/messaging' {
   export interface RemoteMessage {
     messageId?: string;
     data?: { [key: string]: string };
@@ -19,13 +19,9 @@ declare module "@react-native-firebase/messaging" {
     getToken(): Promise<string>;
     requestPermission(): Promise<number>;
     onMessage(handler: (message: RemoteMessage) => void): () => void;
-    onNotificationOpenedApp(
-      handler: (message: RemoteMessage) => void,
-    ): () => void;
+    onNotificationOpenedApp(handler: (message: RemoteMessage) => void): () => void;
     getInitialNotification(): Promise<RemoteMessage | null>;
-    setBackgroundMessageHandler(
-      handler: (message: RemoteMessage) => Promise<void>,
-    ): void;
+    setBackgroundMessageHandler(handler: (message: RemoteMessage) => Promise<void>): void;
   }
 
   const messaging: () => Messaging;
@@ -39,7 +35,7 @@ declare module "@react-native-firebase/messaging" {
   }
 }
 
-declare module "@notifee/react-native" {
+declare module '@notifee/react-native' {
   export enum AndroidImportance {
     NONE = 0,
     MIN = 1,

@@ -57,7 +57,7 @@ export default function StoryComposer({ isOpen, onClose, onPublish, petId, petNa
             setMediaType('photo');
             setStep('edit');
             // Stop the stream
-            stream.getTracks().forEach(track => track.stop());
+            stream.getTracks().forEach(track => { track.stop(); });
         }
         catch (error) {
             logger.error('Camera access failed:', { error });

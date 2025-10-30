@@ -24,7 +24,7 @@ export async function generateBlurPlaceholder(imageUrl) {
             const blurDataUrl = canvas.toDataURL('image/jpeg', 0.1);
             resolve(blurDataUrl);
         };
-        img.onerror = () => reject(new Error('Failed to load image'));
+        img.onerror = () => { reject(new Error('Failed to load image')); };
         img.src = imageUrl;
     });
 }
@@ -140,8 +140,8 @@ export function lazyLoadImage(img, src, placeholder) {
 export function preloadImages(urls) {
     return Promise.all(urls.map((url) => new Promise((resolve, reject) => {
         const img = new Image();
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error(`Failed to preload ${url}`));
+        img.onload = () => { resolve(); };
+        img.onerror = () => { reject(new Error(`Failed to preload ${url}`)); };
         img.src = url;
     })));
 }
@@ -184,7 +184,7 @@ export async function getImageAspectRatio(imageUrl) {
         img.onload = () => {
             resolve(img.width / img.height);
         };
-        img.onerror = () => reject(new Error('Failed to load image'));
+        img.onerror = () => { reject(new Error('Failed to load image')); };
         img.src = imageUrl;
     });
 }

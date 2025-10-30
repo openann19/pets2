@@ -1,0 +1,127 @@
+af1d56167c0e7d5af778d5c5505653ca
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.hasNativeCameraSwitch = hasNativeCameraSwitch;
+function cov_1fuuj9rr43() {
+  var path = "/home/ben/Downloads/pets-fresh/apps/mobile/src/types/native-webrtc.ts";
+  var hash = "15dccfc025d0f0c101bba9fa2b2fa1f02de90e87";
+  var global = new Function("return this")();
+  var gcv = "__coverage__";
+  var coverageData = {
+    path: "/home/ben/Downloads/pets-fresh/apps/mobile/src/types/native-webrtc.ts",
+    statementMap: {
+      "0": {
+        start: {
+          line: 32,
+          column: 2
+        },
+        end: {
+          line: 32,
+          column: 136
+        }
+      }
+    },
+    fnMap: {
+      "0": {
+        name: "hasNativeCameraSwitch",
+        decl: {
+          start: {
+            line: 31,
+            column: 16
+          },
+          end: {
+            line: 31,
+            column: 37
+          }
+        },
+        loc: {
+          start: {
+            line: 31,
+            column: 107
+          },
+          end: {
+            line: 33,
+            column: 1
+          }
+        },
+        line: 31
+      }
+    },
+    branchMap: {
+      "0": {
+        loc: {
+          start: {
+            line: 32,
+            column: 9
+          },
+          end: {
+            line: 32,
+            column: 135
+          }
+        },
+        type: "binary-expr",
+        locations: [{
+          start: {
+            line: 32,
+            column: 9
+          },
+          end: {
+            line: 32,
+            column: 23
+          }
+        }, {
+          start: {
+            line: 32,
+            column: 27
+          },
+          end: {
+            line: 32,
+            column: 51
+          }
+        }, {
+          start: {
+            line: 32,
+            column: 55
+          },
+          end: {
+            line: 32,
+            column: 135
+          }
+        }],
+        line: 32
+      }
+    },
+    s: {
+      "0": 0
+    },
+    f: {
+      "0": 0
+    },
+    b: {
+      "0": [0, 0, 0]
+    },
+    _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
+    hash: "15dccfc025d0f0c101bba9fa2b2fa1f02de90e87"
+  };
+  var coverage = global[gcv] || (global[gcv] = {});
+  if (!coverage[path] || coverage[path].hash !== hash) {
+    coverage[path] = coverageData;
+  }
+  var actualCoverage = coverage[path];
+  {
+    cov_1fuuj9rr43 = function () {
+      return actualCoverage;
+    };
+  }
+  return actualCoverage;
+}
+cov_1fuuj9rr43();
+function hasNativeCameraSwitch(track) {
+  cov_1fuuj9rr43().f[0]++;
+  cov_1fuuj9rr43().s[0]++;
+  return (cov_1fuuj9rr43().b[0][0]++, track !== null) && (cov_1fuuj9rr43().b[0][1]++, '_switchCamera' in track) && (cov_1fuuj9rr43().b[0][2]++, typeof track._switchCamera === 'function');
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJoYXNOYXRpdmVDYW1lcmFTd2l0Y2giLCJ0cmFjayIsImNvdl8xZnV1ajlycjQzIiwiZiIsInMiLCJiIiwiX3N3aXRjaENhbWVyYSJdLCJzb3VyY2VzIjpbIm5hdGl2ZS13ZWJydGMudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBSdW50aW1lIGV4cG9ydHMgZm9yIFJlYWN0IE5hdGl2ZSBXZWJSVEMgdHlwZXNcbiAqIFJlLWV4cG9ydHMgZnJvbSB0aGUgLmQudHMgZmlsZSBmb3IgSmVzdCBjb21wYXRpYmlsaXR5XG4gKi9cblxuaW1wb3J0IHR5cGUgeyBNZWRpYVN0cmVhbVRyYWNrIH0gZnJvbSBcInJlYWN0LW5hdGl2ZS13ZWJydGNcIjtcblxuLyoqXG4gKiBFeHRlbmRlZCBNZWRpYVN0cmVhbVRyYWNrIHdpdGggUmVhY3QgTmF0aXZlIHNwZWNpZmljIG1ldGhvZHNcbiAqIFVzaW5nIGludGVyc2VjdGlvbiB0eXBlIGluc3RlYWQgb2YgZXh0ZW5kcyB0byBhdm9pZCB0eXBlIGNvbmZsaWN0c1xuICovXG5leHBvcnQgdHlwZSBNZWRpYVN0cmVhbVRyYWNrV2l0aE5hdGl2ZU1ldGhvZHMgPSBNZWRpYVN0cmVhbVRyYWNrICYge1xuICAvKipcbiAgICogU3dpdGNoIGNhbWVyYSAoZnJvbnQvYmFjaykgb24gbW9iaWxlIGRldmljZXNcbiAgICogUmVhY3QgTmF0aXZlIFdlYlJUQyBzcGVjaWZpYyBtZXRob2RcbiAgICovXG4gIF9zd2l0Y2hDYW1lcmE/OiAoKSA9PiB2b2lkO1xufVxuXG4vKipcbiAqIEV4dGVuZGVkIFJUQ1Nlc3Npb25EZXNjcmlwdGlvbiBmb3IgUmVhY3QgTmF0aXZlIFdlYlJUQyBjb21wYXRpYmlsaXR5XG4gKi9cbmV4cG9ydCBpbnRlcmZhY2UgUlRDU2Vzc2lvbkRlc2NyaXB0aW9uTmF0aXZlIGV4dGVuZHMgUlRDU2Vzc2lvbkRlc2NyaXB0aW9uSW5pdCB7XG4gIHR5cGU6IFJUQ1NkcFR5cGU7XG4gIHNkcDogc3RyaW5nO1xufVxuXG4vKipcbiAqIFR5cGUgZ3VhcmQgdG8gY2hlY2sgaWYgYSBNZWRpYVN0cmVhbVRyYWNrIGhhcyBuYXRpdmUgbWV0aG9kc1xuICovXG5leHBvcnQgZnVuY3Rpb24gaGFzTmF0aXZlQ2FtZXJhU3dpdGNoKHRyYWNrOiBNZWRpYVN0cmVhbVRyYWNrKTogdHJhY2sgaXMgTWVkaWFTdHJlYW1UcmFja1dpdGhOYXRpdmVNZXRob2RzIHtcbiAgcmV0dXJuIHRyYWNrICE9PSBudWxsICYmICdfc3dpdGNoQ2FtZXJhJyBpbiB0cmFjayAmJiB0eXBlb2YgKHRyYWNrIGFzIE1lZGlhU3RyZWFtVHJhY2tXaXRoTmF0aXZlTWV0aG9kcykuX3N3aXRjaENhbWVyYSA9PT0gJ2Z1bmN0aW9uJztcbn1cbiJdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBOEJPLFNBQVNBLHFCQUFxQkEsQ0FBQ0MsS0FBdUIsRUFBOEM7RUFBQUMsY0FBQSxHQUFBQyxDQUFBO0VBQUFELGNBQUEsR0FBQUUsQ0FBQTtFQUN6RyxPQUFPLENBQUFGLGNBQUEsR0FBQUcsQ0FBQSxVQUFBSixLQUFLLEtBQUssSUFBSSxNQUFBQyxjQUFBLEdBQUFHLENBQUEsVUFBSSxlQUFlLElBQUlKLEtBQUssTUFBQUMsY0FBQSxHQUFBRyxDQUFBLFVBQUksT0FBUUosS0FBSyxDQUF1Q0ssYUFBYSxLQUFLLFVBQVU7QUFDdkkiLCJpZ25vcmVMaXN0IjpbXX0=

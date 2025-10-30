@@ -183,7 +183,7 @@ export default function UltraPremiumFilterPanel({ isOpen, onClose, onApply, defa
 
             {/* Premium Tab Navigation */}
             <div className="flex border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-              {tabs.map((tab, index) => (<motion.button key={tab.id} onClick={() => setActiveTab(tab.id)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.1 }} className={`flex-1 px-6 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${activeTab === tab.id
+              {tabs.map((tab, index) => (<motion.button key={tab.id} onClick={() => { setActiveTab(tab.id); }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.1 }} className={`flex-1 px-6 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${activeTab === tab.id
                     ? 'border-gradient-to-r from-pink-500 to-purple-500 text-pink-600 dark:text-pink-400 bg-gradient-to-t from-pink-50 to-transparent dark:from-pink-900/20'
                     : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}>
                   <div className="flex items-center justify-center gap-2">
@@ -212,7 +212,7 @@ export default function UltraPremiumFilterPanel({ isOpen, onClose, onApply, defa
                         </h3>
                         
                         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                          {speciesOptions.map((species) => (<motion.button key={species.value} onClick={() => toggleArrayFilter('species', species.value)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={`p-6 rounded-2xl border-2 transition-all duration-300 ${filters.species.includes(species.value)
+                          {speciesOptions.map((species) => (<motion.button key={species.value} onClick={() => { toggleArrayFilter('species', species.value); }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={`p-6 rounded-2xl border-2 transition-all duration-300 ${filters.species.includes(species.value)
                         ? 'border-gradient-to-r border-pink-500 bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 shadow-lg'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md'}`}>
                               <div className="text-center">
@@ -249,7 +249,7 @@ export default function UltraPremiumFilterPanel({ isOpen, onClose, onApply, defa
                               <div className="flex flex-wrap gap-3">
                                 {filters.breeds.map((breed, index) => (<motion.span key={index} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/20 dark:to-purple-900/20 text-pink-800 dark:text-pink-200 rounded-full text-sm font-medium border border-pink-200 dark:border-pink-800 shadow-sm">
                                     <span>{breed}</span>
-                                    <button onClick={() => updateFilter('breeds', filters.breeds.filter((_, i) => i !== index))} className="text-pink-600 hover:text-pink-800 transition-colors">
+                                    <button onClick={() => { updateFilter('breeds', filters.breeds.filter((_, i) => i !== index)); }} className="text-pink-600 hover:text-pink-800 transition-colors">
                                       <XMarkIcon className="w-4 h-4"/>
                                     </button>
                                   </motion.span>))}
@@ -268,7 +268,7 @@ export default function UltraPremiumFilterPanel({ isOpen, onClose, onApply, defa
                         </h3>
                         
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                          {temperamentOptions.map((trait) => (<motion.button key={trait.value} onClick={() => toggleArrayFilter('temperaments', trait.value)} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className={`p-4 rounded-xl border-2 transition-all duration-200 ${filters.temperaments.includes(trait.value)
+                          {temperamentOptions.map((trait) => (<motion.button key={trait.value} onClick={() => { toggleArrayFilter('temperaments', trait.value); }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className={`p-4 rounded-xl border-2 transition-all duration-200 ${filters.temperaments.includes(trait.value)
                         ? 'border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 shadow-md'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
                               <div className="text-center">
@@ -289,7 +289,7 @@ export default function UltraPremiumFilterPanel({ isOpen, onClose, onApply, defa
                         </h3>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {energyLevelOptions.map((energy) => (<motion.button key={energy.value} onClick={() => toggleArrayFilter('energyLevels', energy.value)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${filters.energyLevels.includes(energy.value)
+                          {energyLevelOptions.map((energy) => (<motion.button key={energy.value} onClick={() => { toggleArrayFilter('energyLevels', energy.value); }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${filters.energyLevels.includes(energy.value)
                         ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 shadow-md'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
                               <div className="flex items-start gap-4">
@@ -342,10 +342,10 @@ export default function UltraPremiumFilterPanel({ isOpen, onClose, onApply, defa
                                     {key === 'aiRecommended' && 'AI-powered personalized matches'}
                                   </p>
                                 </div>
-                                <input type="checkbox" checked={value} onChange={(e) => updateFilter('premiumFeatures', {
+                                <input type="checkbox" checked={value} onChange={(e) => { updateFilter('premiumFeatures', {
                         ...filters.premiumFeatures,
                         [key]: e.target.checked
-                    })} className="w-5 h-5 text-yellow-500 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                    }); }} className="w-5 h-5 text-yellow-500 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                               </label>
                             </motion.div>))}
                         </div>
@@ -363,7 +363,7 @@ export default function UltraPremiumFilterPanel({ isOpen, onClose, onApply, defa
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                               Sort By
                             </label>
-                            <select value={filters.sortBy} onChange={(e) => updateFilter('sortBy', e.target.value)} className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                            <select value={filters.sortBy} onChange={(e) => { updateFilter('sortBy', e.target.value); }} className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent">
                               <option value="relevance">Most Relevant</option>
                               <option value="newest">Newest First</option>
                               <option value="popularity">Most Popular</option>
@@ -377,7 +377,7 @@ export default function UltraPremiumFilterPanel({ isOpen, onClose, onApply, defa
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                               Results Per Page
                             </label>
-                            <select value={filters.resultLimit} onChange={(e) => updateFilter('resultLimit', parseInt(e.target.value))} className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                            <select value={filters.resultLimit} onChange={(e) => { updateFilter('resultLimit', parseInt(e.target.value)); }} className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent">
                               <option value="10">10 per page</option>
                               <option value="20">20 per page</option>
                               <option value="50">50 per page</option>

@@ -3,11 +3,11 @@
  * Comprehensive offline functionality with data synchronization
  */
 
-import { logger } from "@pawfectmatch/core";
-import type { Match, Message, Pet, User } from "@pawfectmatch/core/types";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import NetInfo, { type NetInfoState } from "@react-native-community/netinfo";
-import { api } from "./api";
+import { logger } from '@pawfectmatch/core';
+import type { Match, Message, Pet, User } from '@pawfectmatch/core/types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo, { type NetInfoState } from '@react-native-community/netinfo';
+import { api } from './api';
 
 interface OfflineData {
   pets: Pet[];
@@ -20,7 +20,7 @@ interface OfflineData {
 
 interface PendingAction {
   id: string;
-  type: "swipe" | "message" | "profile_update" | "match_action";
+  type: 'swipe' | 'message' | 'profile_update' | 'match_action';
   data: unknown;
   timestamp: string;
   retryCount: number;
@@ -38,6 +38,8 @@ class OfflineService {
   private isOnline = true;
   private isSyncing = false;
   private syncListeners: ((status: SyncStatus) => void)[] = [];
+  private netInfoUnsubscribe?: () => void;
+  private syncInterval?: NodeJS.Timeout;
   private offlineData: OfflineData = {
     pets: [],
     user: null,
@@ -65,9 +67,9 @@ class OfflineService {
       // Start periodic sync
       this.startPeriodicSync();
 
-      logger.info("Offline service initialized successfully");
+      logger.info('Offline service initialized successfully');
     } catch (error) {
-      logger.error("Failed to initialize offline service", {
+      logger.error('Failed to initialize offline service', {
         error: String(error),
       });
     }
@@ -77,7 +79,7 @@ class OfflineService {
    * Set up network monitoring
    */
   private setupNetworkMonitoring(): void {
-    NetInfo.addEventListener((state: NetInfoState) => {
+    this.netInfoUnsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
       const wasOffline = !this.isOnline;
       this.isOnline = state.isConnected === true;
 
@@ -94,7 +96,7 @@ class OfflineService {
    * Start periodic sync when online
    */
   private startPeriodicSync(): void {
-    setInterval(() => {
+    this.syncInterval = setInterval(() => {
       if (this.isOnline && !this.isSyncing) {
         void this.triggerSync();
       }
@@ -106,15 +108,15 @@ class OfflineService {
    */
   private async loadOfflineData(): Promise<void> {
     try {
-      const storedData = await AsyncStorage.getItem("offline_data");
-      if (storedData !== null && storedData !== "") {
+      const storedData = await AsyncStorage.getItem('offline_data');
+      if (storedData !== null && storedData !== '') {
         const parsed: unknown = JSON.parse(storedData);
-        if (typeof parsed === "object" && parsed !== null) {
+        if (typeof parsed === 'object' && parsed !== null) {
           this.offlineData = parsed as OfflineData;
         }
       }
     } catch (error) {
-      logger.error("Failed to load offline data", { error: String(error) });
+      logger.error('Failed to load offline data', { error: String(error) });
     }
   }
 
@@ -123,12 +125,9 @@ class OfflineService {
    */
   private async saveOfflineData(): Promise<void> {
     try {
-      await AsyncStorage.setItem(
-        "offline_data",
-        JSON.stringify(this.offlineData),
-      );
+      await AsyncStorage.setItem('offline_data', JSON.stringify(this.offlineData));
     } catch (error) {
-      logger.error("Failed to save offline data", { error: String(error) });
+      logger.error('Failed to save offline data', { error: String(error) });
     }
   }
 
@@ -154,9 +153,9 @@ class OfflineService {
       this.offlineData.lastSync = new Date().toISOString();
       await this.saveOfflineData();
 
-      logger.info("Sync completed successfully");
+      logger.info('Sync completed successfully');
     } catch (error) {
-      logger.error("Sync failed", { error: String(error) });
+      logger.error('Sync failed', { error: String(error) });
     } finally {
       this.isSyncing = false;
       this.notifyListeners();
@@ -171,13 +170,14 @@ class OfflineService {
 
     for (const action of actionsToSync) {
       try {
-        this.executePendingAction(action);
+        await this.executePendingAction(action);
 
         // Remove successful action
-        this.offlineData.pendingActions =
-          this.offlineData.pendingActions.filter((a) => a.id !== action.id);
+        this.offlineData.pendingActions = this.offlineData.pendingActions.filter(
+          (a) => a.id !== action.id,
+        );
       } catch (error) {
-        logger.error("Failed to sync action", {
+        logger.error('Failed to sync action', {
           actionId: action.id,
           error: String(error),
         });
@@ -187,8 +187,9 @@ class OfflineService {
 
         // Remove if max retries exceeded
         if (action.retryCount >= 3) {
-          this.offlineData.pendingActions =
-            this.offlineData.pendingActions.filter((a) => a.id !== action.id);
+          this.offlineData.pendingActions = this.offlineData.pendingActions.filter(
+            (a) => a.id !== action.id,
+          );
         }
       }
     }
@@ -202,16 +203,16 @@ class OfflineService {
   private executePendingAction(_action: PendingAction): void {
     // const actionData = action.data as Record<string, unknown>;
     switch (_action.type) {
-      case "swipe":
+      case 'swipe':
         // await api.swipePet(String(actionData['petId']), String(actionData['direction']) as 'like' | 'pass' | 'superlike');
         break;
-      case "message":
+      case 'message':
         // await api.sendMessage(String(actionData['matchId']), String(actionData['message']));
         break;
-      case "profile_update":
+      case 'profile_update':
         // await api.updateUserProfile(actionData as Record<string, unknown>);
         break;
-      case "match_action":
+      case 'match_action':
         // await api.performMatchAction(String(actionData['matchId']), String(actionData['action']));
         break;
       default:
@@ -247,7 +248,7 @@ class OfflineService {
       //   this.offlineData.messages = allMessages;
       // }
     } catch (error) {
-      logger.error("Failed to sync from server", { error: String(error) });
+      logger.error('Failed to sync from server', { error: String(error) });
       throw error;
     }
   }
@@ -255,7 +256,7 @@ class OfflineService {
   /**
    * Add pending action for offline execution
    */
-  public addPendingAction(type: PendingAction["type"], data: unknown): void {
+  public addPendingAction(type: PendingAction['type'], data: unknown): void {
     const action: PendingAction = {
       id: `${type}_${String(Date.now())}_${String(Math.random())}`,
       type,
@@ -287,7 +288,7 @@ class OfflineService {
         await this.saveOfflineData();
         return pets;
       } catch (error) {
-        logger.warn("Failed to fetch pets online, using offline data", {
+        logger.warn('Failed to fetch pets online, using offline data', {
           error: String(error),
         });
       }
@@ -309,7 +310,7 @@ class OfflineService {
         // }
         // return user as User | null;
       } catch (error) {
-        logger.warn("Failed to fetch user online, using offline data", {
+        logger.warn('Failed to fetch user online, using offline data', {
           error: String(error),
         });
       }
@@ -329,7 +330,7 @@ class OfflineService {
         await this.saveOfflineData();
         return matches;
       } catch (error) {
-        logger.warn("Failed to fetch matches online, using offline data", {
+        logger.warn('Failed to fetch matches online, using offline data', {
           error: String(error),
         });
       }
@@ -357,7 +358,7 @@ class OfflineService {
         await this.saveOfflineData();
         return messages;
       } catch (error) {
-        logger.warn("Failed to fetch messages online, using offline data", {
+        logger.warn('Failed to fetch messages online, using offline data', {
           error: String(error),
         });
       }
@@ -366,31 +367,26 @@ class OfflineService {
     interface MessageWithMatchId extends Message {
       matchId?: string;
     }
-    return this.offlineData.messages.filter(
-      (m) => (m as MessageWithMatchId).matchId === matchId,
-    );
+    return this.offlineData.messages.filter((m) => (m as MessageWithMatchId).matchId === matchId);
   }
 
   /**
    * Swipe pet (offline-aware)
    */
-  public swipePet(
-    petId: string,
-    direction: "like" | "pass" | "superlike",
-  ): void {
+  public swipePet(petId: string, direction: 'like' | 'pass' | 'superlike'): void {
     if (this.isOnline) {
       try {
         // await api.swipePet(petId, direction);
         // return;
       } catch (error) {
-        logger.warn("Failed to swipe online, queuing for offline", {
+        logger.warn('Failed to swipe online, queuing for offline', {
           error: String(error),
         });
       }
     }
 
     // Queue for offline execution
-    this.addPendingAction("swipe", { petId, direction });
+    this.addPendingAction('swipe', { petId, direction });
   }
 
   /**
@@ -402,14 +398,14 @@ class OfflineService {
         await api.sendMessage(matchId, message);
         return;
       } catch (error) {
-        logger.warn("Failed to send message online, queuing for offline", {
+        logger.warn('Failed to send message online, queuing for offline', {
           error: String(error),
         });
       }
     }
 
     // Queue for offline execution
-    this.addPendingAction("message", { matchId, message });
+    this.addPendingAction('message', { matchId, message });
   }
 
   /**
@@ -421,14 +417,14 @@ class OfflineService {
         await api.updateUserProfile(profileData);
         return;
       } catch (error) {
-        logger.warn("Failed to update profile online, queuing for offline", {
+        logger.warn('Failed to update profile online, queuing for offline', {
           error: String(error),
         });
       }
     }
 
     // Queue for offline execution
-    this.addPendingAction("profile_update", profileData);
+    this.addPendingAction('profile_update', profileData);
   }
 
   /**
@@ -440,15 +436,14 @@ class OfflineService {
         // await api.performMatchAction(matchId, action);
         // return;
       } catch (error) {
-        logger.warn(
-          "Failed to perform match action online, queuing for offline",
-          { error: String(error) },
-        );
+        logger.warn('Failed to perform match action online, queuing for offline', {
+          error: String(error),
+        });
       }
     }
 
     // Queue for offline execution
-    this.addPendingAction("match_action", { matchId, action });
+    this.addPendingAction('match_action', { matchId, action });
   }
 
   /**
@@ -467,9 +462,7 @@ class OfflineService {
   /**
    * Add sync status listener
    */
-  public addSyncStatusListener(
-    listener: (status: SyncStatus) => void,
-  ): () => void {
+  public addSyncStatusListener(listener: (status: SyncStatus) => void): () => void {
     this.syncListeners.push(listener);
 
     // Return unsubscribe function
@@ -493,7 +486,7 @@ class OfflineService {
    */
   public async clearOfflineData(): Promise<void> {
     try {
-      await AsyncStorage.removeItem("offline_data");
+      await AsyncStorage.removeItem('offline_data');
       this.offlineData = {
         pets: [],
         user: null,
@@ -502,9 +495,9 @@ class OfflineService {
         lastSync: new Date().toISOString(),
         pendingActions: [],
       };
-      logger.info("Offline data cleared");
+      logger.info('Offline data cleared');
     } catch (error) {
-      logger.error("Failed to clear offline data", { error: String(error) });
+      logger.error('Failed to clear offline data', { error: String(error) });
     }
   }
 
@@ -518,19 +511,34 @@ class OfflineService {
 
       for (const key of keys) {
         const value = await AsyncStorage.getItem(key);
-        if (value !== null && value !== "") {
+        if (value !== null && value !== '') {
           totalSize += value.length;
         }
       }
 
       return totalSize;
     } catch (error) {
-      logger.error("Failed to get storage size", { error: String(error) });
+      logger.error('Failed to get storage size', { error: String(error) });
       return 0;
     }
   }
 
   // ===== SECURITY CONTROLS =====
+
+  /**
+   * Cleanup method for testing - removes event listeners and timers
+   */
+  public cleanup(): void {
+    if (this.netInfoUnsubscribe) {
+      this.netInfoUnsubscribe();
+      this.netInfoUnsubscribe = undefined;
+    }
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+      this.syncInterval = undefined;
+    }
+    this.syncListeners = [];
+  }
 }
 
 export const offlineService = new OfflineService();

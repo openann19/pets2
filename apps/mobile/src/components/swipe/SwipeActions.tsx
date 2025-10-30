@@ -1,90 +1,119 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
+/**
+ * SwipeActions Component
+ *
+ * Presentational component for swipe action buttons.
+ * Displays pass, superlike, and like buttons.
+ *
+ * @example
+ * ```typescript
+ * <SwipeActions
+ *   onPass={() => handleSwipe("pass")}
+ *   onSuperlike={() => handleSwipe("superlike")}
+ *   onLike={() => handleSwipe("like")}
+ * />
+ * ```
+ */
 
-import { EliteButton } from "../EliteButton";
-import { StaggeredContainer } from "../StaggeredContainer";
-import { FadeInUp } from "../FadeInUp";
+import React from 'react';
+import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 
-interface SwipeActionsProps {
+export interface SwipeActionsProps {
+  /**
+   * Callback when pass button is pressed
+   */
   onPass: () => void;
-  onSuperLike: () => void;
+
+  /**
+   * Callback when like button is pressed
+   */
   onLike: () => void;
+
+  /**
+   * Callback when superlike button is pressed
+   */
+  onSuperlike: () => void;
+
+  /**
+   * Container style override
+   */
+  style?: StyleProp<ViewStyle>;
+
+  /**
+   * Disable all buttons
+   */
+  disabled?: boolean;
 }
 
-export function SwipeActions({
+/**
+ * SwipeActions - Action buttons for swipe card interactions
+ */
+export const SwipeActions: React.FC<SwipeActionsProps> = ({
   onPass,
-  onSuperLike,
   onLike,
-}: SwipeActionsProps) {
+  onSuperlike,
+  style,
+  disabled = false,
+}) => {
   return (
-    <StaggeredContainer delay={100}>
-      <View style={styles.actionButtons}>
-        <FadeInUp delay={0}>
-          <EliteButton
-            title=""
-            variant="glass"
-            size="xl"
-            icon="close"
-            magnetic={true}
-            ripple={true}
-            glow={true}
-            onPress={onPass}
-            style={styles.actionButton}
-          />
-        </FadeInUp>
+    <View style={[styles.actions, style]}>
+      <TouchableOpacity
+        style={[styles.actionButton, styles.passButton]}
+        onPress={onPass}
+        disabled={disabled}
+        testID="swipe-pass-button"
+      >
+        <Text style={styles.actionButtonText}>Pass</Text>
+      </TouchableOpacity>
 
-        <FadeInUp delay={100}>
-          <EliteButton
-            title=""
-            variant="holographic"
-            size="lg"
-            icon="star"
-            magnetic={true}
-            ripple={true}
-            glow={true}
-            shimmer={true}
-            onPress={onSuperLike}
-            style={styles.actionButton}
-          />
-        </FadeInUp>
+      <TouchableOpacity
+        style={[styles.actionButton, styles.superLikeButton]}
+        onPress={onSuperlike}
+        disabled={disabled}
+        testID="swipe-superlike-button"
+      >
+        <Text style={styles.actionButtonText}>★</Text>
+      </TouchableOpacity>
 
-        <FadeInUp delay={200}>
-          <EliteButton
-            title=""
-            variant="primary"
-            size="xl"
-            icon="heart"
-            magnetic={true}
-            ripple={true}
-            glow={true}
-            onPress={onLike}
-            style={styles.actionButton}
-          />
-        </FadeInUp>
-      </View>
-    </StaggeredContainer>
+      <TouchableOpacity
+        style={[styles.actionButton, styles.likeButton]}
+        onPress={onLike}
+        disabled={disabled}
+        testID="swipe-like-button"
+      >
+        <Text style={styles.actionButtonText}>Like</Text>
+      </TouchableOpacity>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  actionButtons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 30,
+  actions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     paddingHorizontal: 40,
+    paddingVertical: 30,
+    backgroundColor: 'white',
   },
   actionButton: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  passButton: {
+    backgroundColor: '#ff4458',
+  },
+  likeButton: {
+    backgroundColor: '#42c767',
+  },
+  superLikeButton: {
+    backgroundColor: '#007AFF',
+  },
+  actionButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

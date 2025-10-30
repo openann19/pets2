@@ -27,7 +27,7 @@ export function useTypingIndicator(options = {}) {
                 setTypingUsers(activeUsers);
             }
         }, 1000);
-        return () => clearInterval(cleanupInterval);
+        return () => { clearInterval(cleanupInterval); };
     }, [timeoutMs]);
     // Set up socket event listeners
     useEffect(() => {

@@ -228,7 +228,7 @@ export function useNotificationSettings() {
                 setSettings(data.settings);
             }
         })
-            .catch(err => logger.error('[NotificationSettings] Error loading settings:', { error }));
+            .catch(err => { logger.error('[NotificationSettings] Error loading settings:', { error }); });
     }, [pushNotifications.isSubscribed]);
     // Save settings to server
     const saveSettings = useCallback(async (newSettings) => {

@@ -86,7 +86,7 @@ export default function EnhancedRejectModal({ isOpen, onClose, onConfirm }) {
             }
         };
         document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
+        return () => { document.removeEventListener('keydown', handleKeyDown); };
     }, [isOpen, onClose]);
     useEffect(() => {
         if (!isOpen) {
@@ -146,7 +146,7 @@ export default function EnhancedRejectModal({ isOpen, onClose, onConfirm }) {
                   {/* Step 1: Select Category */}
                   {step === 'select' && (<motion.div key="select" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
                       <div className="grid grid-cols-2 gap-3">
-                        {REJECTION_TEMPLATES.map((template) => (<motion.button key={template.category} onClick={() => handleTemplateSelect(template.category)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={`p-4 rounded-xl border-2 border-white/10 text-left transition-all ${template.bgColor} hover:border-white/30`}>
+                        {REJECTION_TEMPLATES.map((template) => (<motion.button key={template.category} onClick={() => { handleTemplateSelect(template.category); }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={`p-4 rounded-xl border-2 border-white/10 text-left transition-all ${template.bgColor} hover:border-white/30`}>
                             <div className="flex items-center gap-3 mb-2">
                               <span className="text-3xl">{template.icon}</span>
                               <span className="font-bold text-white">{template.label}</span>
@@ -168,7 +168,7 @@ export default function EnhancedRejectModal({ isOpen, onClose, onConfirm }) {
                             <div className="font-bold text-white">{selectedTemplate.label}</div>
                             <div className="text-sm text-white/60">Selected category</div>
                           </div>
-                          <AnimatedButton variant="ghost" size="sm" onClick={() => setStep('select')} className="ml-auto">
+                          <AnimatedButton variant="ghost" size="sm" onClick={() => { setStep('select'); }} className="ml-auto">
                             Change
                           </AnimatedButton>
                         </div>
@@ -179,7 +179,7 @@ export default function EnhancedRejectModal({ isOpen, onClose, onConfirm }) {
                         <label className="block text-sm font-medium text-white mb-2">
                           Rejection Message
                         </label>
-                        <textarea value={customReason} onChange={(e) => setCustomReason(e.target.value)} rows={5} className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-brand-primary resize-none" placeholder="Enter a custom rejection reason..."/>
+                        <textarea value={customReason} onChange={(e) => { setCustomReason(e.target.value); }} rows={5} className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-brand-primary resize-none" placeholder="Enter a custom rejection reason..."/>
                         <p className="text-xs text-white/60 mt-2 flex items-center gap-2">
                           <Sparkles className="h-3 w-3"/>
                           Be specific and constructive. This helps users understand what went wrong.
@@ -206,7 +206,7 @@ export default function EnhancedRejectModal({ isOpen, onClose, onConfirm }) {
                 </AnimatedButton>
 
                 <div className="flex gap-2">
-                  {step === 'customize' && (<AnimatedButton variant="ghost" onClick={() => setStep('select')}>
+                  {step === 'customize' && (<AnimatedButton variant="ghost" onClick={() => { setStep('select'); }}>
                       Back
                     </AnimatedButton>)}
                   {step === 'customize' && (<AnimatedButton variant="primary" onClick={handleConfirm} disabled={!customReason.trim()} className="bg-red-500 hover:bg-red-600">

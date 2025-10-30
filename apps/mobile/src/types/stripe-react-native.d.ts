@@ -1,4 +1,4 @@
-declare module "@stripe/stripe-react-native" {
+declare module '@stripe/stripe-react-native' {
   export interface InitPaymentSheetParams {
     merchantDisplayName: string;
     paymentIntentClientSecret: string;
@@ -15,9 +15,7 @@ declare module "@stripe/stripe-react-native" {
     };
   }
 
-  export function initPaymentSheet(
-    params: InitPaymentSheetParams,
-  ): Promise<PaymentSheetResult>;
+  export function initPaymentSheet(params: InitPaymentSheetParams): Promise<PaymentSheetResult>;
 
   export function presentPaymentSheet(): Promise<PaymentSheetResult>;
 }

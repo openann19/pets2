@@ -20,7 +20,7 @@ export const OptimizedImage = memo(({ src, alt, className = '', priority = false
         if (imgRef.current) {
             observer.observe(imgRef.current);
         }
-        return () => observer.disconnect();
+        return () => { observer.disconnect(); };
     }, [priority]);
     const handleLoad = useCallback(() => {
         setIsLoaded(true);

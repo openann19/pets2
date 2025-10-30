@@ -1,4 +1,4 @@
-import type { TextStyle } from "react-native";
+import type { TextStyle } from 'react-native';
 
 export interface ColorPalette {
   primary: string;
@@ -16,8 +16,7 @@ export interface ColorPalette {
   danger: string;
 }
 
-export interface TypographyVariant
-  extends Pick<TextStyle, "fontFamily" | "fontWeight"> {
+export interface TypographyVariant extends Pick<TextStyle, 'fontFamily' | 'fontWeight'> {
   fontSize: number;
   lineHeight: number;
   letterSpacing?: number;
@@ -61,10 +60,16 @@ export interface ShadowToken {
 }
 
 export interface ShadowScale {
-  none: ShadowToken;
-  soft: ShadowToken;
-  medium: ShadowToken;
-  strong: ShadowToken;
+  'none': ShadowToken;
+  'soft': ShadowToken;
+  'medium': ShadowToken;
+  'strong': ShadowToken;
+  'xs'?: ShadowToken;
+  'sm'?: ShadowToken;
+  'md'?: ShadowToken;
+  'lg'?: ShadowToken;
+  'xl'?: ShadowToken;
+  '2xl'?: ShadowToken;
 }
 
 export interface Theme {
@@ -84,63 +89,63 @@ export interface ThemeOverrides {
 }
 
 const baseColors: ColorPalette = {
-  primary: "#4C6EF5",
-  primaryForeground: "#FFFFFF",
-  secondary: "#22B8CF",
-  secondaryForeground: "#081C24",
-  background: "#F7F9FC",
-  surface: "#FFFFFF",
-  surfaceMuted: "#F1F3F5",
-  border: "#E2E8F0",
-  text: "#0B172A",
-  textMuted: "#4A5568",
-  success: "#38B27A",
-  warning: "#F59F00",
-  danger: "#E03131",
+  primary: '#4C6EF5',
+  primaryForeground: '#FFFFFF',
+  secondary: '#22B8CF',
+  secondaryForeground: '#081C24',
+  background: '#F7F9FC',
+  surface: '#FFFFFF',
+  surfaceMuted: '#F1F3F5',
+  border: '#E2E8F0',
+  text: '#0B172A',
+  textMuted: '#4A5568',
+  success: '#38B27A',
+  warning: '#F59F00',
+  danger: '#E03131',
 };
 
 const baseTypography: TypographyScale = {
   heading1: {
     fontSize: 32,
     lineHeight: 40,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   heading2: {
     fontSize: 24,
     lineHeight: 32,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   heading3: {
     fontSize: 20,
     lineHeight: 28,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   subtitle: {
     fontSize: 18,
     lineHeight: 26,
-    fontWeight: "500",
+    fontWeight: '500',
     letterSpacing: 0.1,
   },
   body: {
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: "400",
+    fontWeight: '400',
   },
   callout: {
     fontSize: 15,
     lineHeight: 22,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   caption: {
     fontSize: 13,
     lineHeight: 18,
-    fontWeight: "500",
+    fontWeight: '500',
     letterSpacing: 0.2,
   },
   button: {
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: "600",
+    fontWeight: '600',
     letterSpacing: 0.3,
   },
 };
@@ -164,7 +169,7 @@ const baseRadii: RadiusScale = {
   full: 9999,
 };
 
-const transparent = "rgba(0, 0, 0, 0)";
+const transparent = 'rgba(0, 0, 0, 0)';
 
 const baseShadows: ShadowScale = {
   none: {
@@ -174,19 +179,19 @@ const baseShadows: ShadowScale = {
     radius: 0,
   },
   soft: {
-    color: "rgba(15, 23, 42, 0.08)",
+    color: 'rgba(15, 23, 42, 0.08)',
     offset: { width: 0, height: 6 },
     opacity: 0.8,
     radius: 12,
   },
   medium: {
-    color: "rgba(15, 23, 42, 0.12)",
+    color: 'rgba(15, 23, 42, 0.12)',
     offset: { width: 0, height: 12 },
     opacity: 0.9,
     radius: 24,
   },
   strong: {
-    color: "rgba(15, 23, 42, 0.16)",
+    color: 'rgba(15, 23, 42, 0.16)',
     offset: { width: 0, height: 18 },
     opacity: 1,
     radius: 30,
@@ -203,30 +208,30 @@ export const baseTheme: Theme = {
 
 export const darkThemeOverrides: ThemeOverrides = {
   colors: {
-    background: "#050C1A",
-    surface: "#0B172A",
-    surfaceMuted: "#101F35",
-    border: "#1D2B45",
-    text: "#F8FAFC",
-    textMuted: "#CBD5F5",
-    primaryForeground: "#F8FAFC",
-    secondaryForeground: "#F8FAFC",
+    background: '#050C1A',
+    surface: '#0B172A',
+    surfaceMuted: '#101F35',
+    border: '#1D2B45',
+    text: '#F8FAFC',
+    textMuted: '#CBD5F5',
+    primaryForeground: '#F8FAFC',
+    secondaryForeground: '#F8FAFC',
   },
   shadows: {
     soft: {
-      color: "rgba(15, 23, 42, 0.32)",
+      color: 'rgba(15, 23, 42, 0.32)',
       offset: { width: 0, height: 12 },
       opacity: 1,
       radius: 20,
     },
     medium: {
-      color: "rgba(15, 23, 42, 0.36)",
+      color: 'rgba(15, 23, 42, 0.36)',
       offset: { width: 0, height: 18 },
       opacity: 1,
       radius: 28,
     },
     strong: {
-      color: "rgba(15, 23, 42, 0.42)",
+      color: 'rgba(15, 23, 42, 0.42)',
       offset: { width: 0, height: 24 },
       opacity: 1,
       radius: 36,
@@ -245,4 +250,4 @@ export const createTheme = (overrides?: ThemeOverrides): Theme => ({
 export const lightTheme = baseTheme;
 export const darkTheme = createTheme(darkThemeOverrides);
 
-export type ThemeName = "light" | "dark";
+export type ThemeName = 'light' | 'dark';

@@ -1,0 +1,31 @@
+{
+  "id": "tpl_funny_v1",
+  "name": "Funny • Quick Cuts + Emojis",
+  "version": 1,
+  "minClips": 6,
+  "maxClips": 16,
+  "canvas": { "w": 1080, "h": 1920, "fps": 30, "bg": "#000000" },
+  "music": { "bpm": 140, "offsetMs": 250 },
+  "timeline": [
+    { "t": 0,    "clip": 0, "inMs": 0, "durMs": 700, "transOut": "cut" },
+    { "t": 700,  "clip": 1, "inMs": 0, "durMs": 650, "transOut": "slideUp" },
+    { "t": 1350, "clip": 2, "inMs": 0, "durMs": 700, "transOut": "dip" },
+    { "t": 2050, "clip": 3, "inMs": 0, "durMs": 650, "transOut": "cut" },
+    { "t": 2700, "clip": 4, "inMs": 0, "durMs": 700, "transOut": "slideRight" },
+    { "t": 3400, "clip": 5, "inMs": 0, "durMs": 700, "transOut": "cut" }
+  ],
+  "fx": [
+    { "t": 600,  "type": "jumboSticker", "name": "lol", "pos": ["20%","15%"], "scale": 1.2, "duration": 400 },
+    { "t": 1900, "type": "shake", "amplitude": 6, "duration": 260 },
+    { "t": 3000, "type": "zoomPunch", "amount": 0.09, "duration": 180 }
+  ],
+  "overlays": [
+    { "t": 1000, "durMs": 800, "type": "text", "key": "reels.caption_funny1", "style": "comic", "pos": ["50%","14%"] },
+    { "t": 2600, "durMs": 800, "type": "text", "key": "reels.caption_funny2", "style": "comic", "pos": ["52%","84%"] }
+  ],
+  "cta": { "variant": "challenge", "t": -900 },
+  "styles": {
+    "comic": { "font": "Inter-Black.ttf", "size": 56, "color": "#FFFFFF", "stroke": "#000000", "strokeW": 6, "align": "center" }
+  }
+}
+

@@ -1,8 +1,5 @@
-import React from "react";
-import {
-  initializeNotificationsService,
-  notificationService,
-} from "../services/notifications";
+import React from 'react';
+import { initializeNotificationsService, notificationService } from '../services/notifications';
 
 /**
  * React Hook for notifications management
@@ -29,16 +26,11 @@ export const useNotifications = () => {
   return {
     isInitialized,
     pushToken,
-    sendMatchNotification:
-      notificationService.sendMatchNotification.bind(notificationService),
-    sendMessageNotification:
-      notificationService.sendMessageNotification.bind(notificationService),
-    sendLikeNotification:
-      notificationService.sendLikeNotification.bind(notificationService),
+    sendMatchNotification: notificationService.sendMatchNotification.bind(notificationService),
+    sendMessageNotification: notificationService.sendMessageNotification.bind(notificationService),
+    sendLikeNotification: notificationService.sendLikeNotification.bind(notificationService),
     scheduleReminderNotification:
-      notificationService.scheduleReminderNotification.bind(
-        notificationService,
-      ),
+      notificationService.scheduleReminderNotification.bind(notificationService),
     setBadgeCount: notificationService.setBadgeCount.bind(notificationService),
     clearBadge: notificationService.clearBadge.bind(notificationService),
   };

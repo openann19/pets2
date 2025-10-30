@@ -1,68 +1,28 @@
 /**
- * 🎨 UNIFIED THEME SYSTEM
- * Main export file for the mobile theme system
+ * 🎨 UNIFIED THEME EXPORTS
+ * Single export point for all theme-related functionality
  */
 
-// Provider and Context
-export { UnifiedThemeProvider, useThemeContext } from "./UnifiedThemeProvider";
+export { ThemeProvider, useTheme, ThemeContext } from './Provider';
+export { getLightTheme as defaultTheme, getDarkTheme, getLightTheme } from './resolve';
+import { getLightTheme, getDarkTheme } from './resolve';
+import type { AppTheme, ColorScheme } from './contracts';
 
-// Main Hooks
-export {
-  useTheme,
-  useThemeMode,
-  useColors,
-  useTypography,
-  useSpacing,
-  useShadows,
-  useRadii,
-  useOpacity,
-  useBorderWidth,
-  useIconSize,
-  useAnimation,
-  useZIndex,
-  useColor,
-  useTypographyVariant,
-  useSpacingValue,
-  useShadowConfig,
-  useRadius,
-  useLegacyTheme,
-} from "./hooks";
+/**
+ * Create a theme based on the specified color scheme
+ * Returns a complete AppTheme contract-compliant object
+ */
+export function createTheme(scheme: ColorScheme): AppTheme {
+  return scheme === 'dark' ? getDarkTheme() : getLightTheme();
+}
 
-// Theme Creation
-export { createTheme, lightTheme, darkTheme } from "./tokens";
+export type { AppTheme, Theme, ColorScheme, SemanticColors } from './contracts';
 
-// Types
-export type {
-  Theme,
-  ThemeMode,
-  ThemeContextValue,
-  ColorPalette,
-  TypographyScale,
-  TypographyVariant,
-  SpacingScale,
-  RadiusScale,
-  ShadowScale,
-  ShadowToken,
-  OpacityScale,
-  BorderWidthScale,
-  IconSizeScale,
-  AnimationScale,
-  ZIndexScale,
-  ThemeOverrides,
-  ColorToken,
-  TypographyVariantName,
-  SpacingToken,
-  RadiusToken,
-  ShadowTokenName,
-  OpacityToken,
-  BorderWidthToken,
-  IconSizeToken,
-  AnimationToken,
-  ZIndexToken,
-  ThemedComponentProps,
-  ThemedViewProps,
-  ThemedTextProps,
-} from "./types";
 
-// Default export
-export { default } from "./UnifiedThemeProvider";
+// Back-compat exports
+export { getExtendedColors, getThemeColors, getIsDark } from './adapters';
+export type { ExtendedColors } from './adapters';
+export type { ThemeColors } from './Provider';
+
+// Re-export the extended theme hook for convenience (kept for backward compatibility)
+export { useExtendedTheme, useExtendedColors } from '../hooks/useExtendedTheme';

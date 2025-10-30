@@ -3,33 +3,30 @@
  * Comprehensive testing of accessibility features and screen reader support
  */
 
-import React from "react";
-import { render, fireEvent, waitFor } from "@testing-library/react-native";
-import { AccessibilityInfo } from "react-native";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "../../providers/AuthProvider";
+import React from 'react';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { AccessibilityInfo } from 'react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from '../../providers/AuthProvider';
 
 // Mock AccessibilityInfo
-jest.mock(
-  "react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo",
-  () => ({
-    isScreenReaderEnabled: jest.fn(() => Promise.resolve(true)),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    setAccessibilityFocus: jest.fn(),
-    announceForAccessibility: jest.fn(),
-  }),
-);
+jest.mock('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo', () => ({
+  isScreenReaderEnabled: jest.fn(() => Promise.resolve(true)),
+  addEventListener: jest.fn(),
+  removeEventListener: jest.fn(),
+  setAccessibilityFocus: jest.fn(),
+  announceForAccessibility: jest.fn(),
+}));
 
 // Mock secure storage
-jest.mock("expo-secure-store", () => ({
+jest.mock('expo-secure-store', () => ({
   getItemAsync: jest.fn(),
   setItemAsync: jest.fn(),
   deleteItemAsync: jest.fn(),
 }));
 
 // Mock socket service
-jest.mock("../../services/socketService", () => ({
+jest.mock('../../services/socketService', () => ({
   socketService: {
     connect: jest.fn(),
     disconnect: jest.fn(),
@@ -60,13 +57,13 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
-describe("Accessibility Tests", () => {
+describe('Accessibility Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("Screen Reader Support", () => {
-    it("should have proper accessibility labels on buttons", () => {
+  describe('Screen Reader Support', () => {
+    it('should have proper accessibility labels on buttons', () => {
       const TestComponent = () => (
         <div>
           <button
@@ -90,15 +87,11 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      expect(getByTestId("login-button")).toHaveAccessibilityLabel(
-        "Login to your account",
-      );
-      expect(getByTestId("signup-button")).toHaveAccessibilityLabel(
-        "Create new account",
-      );
+      expect(getByTestId('login-button')).toHaveAccessibilityLabel('Login to your account');
+      expect(getByTestId('signup-button')).toHaveAccessibilityLabel('Create new account');
     });
 
-    it("should have proper accessibility hints", () => {
+    it('should have proper accessibility hints', () => {
       const TestComponent = () => (
         <div>
           <button
@@ -117,12 +110,10 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      expect(getByTestId("help-button")).toHaveAccessibilityHint(
-        "Opens help documentation",
-      );
+      expect(getByTestId('help-button')).toHaveAccessibilityHint('Opens help documentation');
     });
 
-    it("should announce important state changes", async () => {
+    it('should announce important state changes', async () => {
       const TestComponent = () => {
         const [isLoading, setIsLoading] = React.useState(false);
 
@@ -131,9 +122,7 @@ describe("Accessibility Tests", () => {
           // Simulate async operation
           setTimeout(() => {
             setIsLoading(false);
-            AccessibilityInfo.announceForAccessibility(
-              "Action completed successfully",
-            );
+            AccessibilityInfo.announceForAccessibility('Action completed successfully');
           }, 100);
         };
 
@@ -144,7 +133,7 @@ describe("Accessibility Tests", () => {
               onPress={handleAction}
               accessibilityState={{ busy: isLoading }}
             >
-              {isLoading ? "Loading..." : "Perform Action"}
+              {isLoading ? 'Loading...' : 'Perform Action'}
             </button>
           </div>
         );
@@ -156,29 +145,41 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const button = getByTestId("action-button");
+      const button = getByTestId('action-button');
       fireEvent.press(button);
 
       await waitFor(() => {
         expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith(
-          "Action completed successfully",
+          'Action completed successfully',
         );
       });
     });
   });
 
-  describe("Navigation Accessibility", () => {
-    it("should have proper navigation labels", () => {
+  describe('Navigation Accessibility', () => {
+    it('should have proper navigation labels', () => {
       const TestComponent = () => (
         <div>
-          <nav testID="main-navigation" accessibilityRole="navigation">
-            <button testID="nav-home" accessibilityLabel="Home page">
+          <nav
+            testID="main-navigation"
+            accessibilityRole="navigation"
+          >
+            <button
+              testID="nav-home"
+              accessibilityLabel="Home page"
+            >
               Home
             </button>
-            <button testID="nav-profile" accessibilityLabel="Profile page">
+            <button
+              testID="nav-profile"
+              accessibilityLabel="Profile page"
+            >
               Profile
             </button>
-            <button testID="nav-settings" accessibilityLabel="Settings page">
+            <button
+              testID="nav-settings"
+              accessibilityLabel="Settings page"
+            >
               Settings
             </button>
           </nav>
@@ -191,27 +192,21 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      expect(getByTestId("main-navigation")).toHaveAccessibilityRole(
-        "navigation",
-      );
-      expect(getByTestId("nav-home")).toHaveAccessibilityLabel("Home page");
-      expect(getByTestId("nav-profile")).toHaveAccessibilityLabel(
-        "Profile page",
-      );
-      expect(getByTestId("nav-settings")).toHaveAccessibilityLabel(
-        "Settings page",
-      );
+      expect(getByTestId('main-navigation')).toHaveAccessibilityRole('navigation');
+      expect(getByTestId('nav-home')).toHaveAccessibilityLabel('Home page');
+      expect(getByTestId('nav-profile')).toHaveAccessibilityLabel('Profile page');
+      expect(getByTestId('nav-settings')).toHaveAccessibilityLabel('Settings page');
     });
 
-    it("should support keyboard navigation", () => {
+    it('should support keyboard navigation', () => {
       const TestComponent = () => {
         const [focusedIndex, setFocusedIndex] = React.useState(0);
-        const items = ["Home", "Profile", "Settings"];
+        const items = ['Home', 'Profile', 'Settings'];
 
         const handleKeyPress = (event: unknown) => {
-          if (event.key === "ArrowRight") {
+          if (event.key === 'ArrowRight') {
             setFocusedIndex((prev) => Math.min(prev + 1, items.length - 1));
-          } else if (event.key === "ArrowLeft") {
+          } else if (event.key === 'ArrowLeft') {
             setFocusedIndex((prev) => Math.max(prev - 1, 0));
           }
         };
@@ -240,20 +235,20 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const homeButton = getByTestId("nav-home");
-      const profileButton = getByTestId("nav-profile");
+      const homeButton = getByTestId('nav-home');
+      const profileButton = getByTestId('nav-profile');
 
       fireEvent.focus(homeButton);
       expect(homeButton).toHaveAccessibilityState({ selected: true });
 
-      fireEvent.keyDown(homeButton, { key: "ArrowRight" });
+      fireEvent.keyDown(homeButton, { key: 'ArrowRight' });
       fireEvent.focus(profileButton);
       expect(profileButton).toHaveAccessibilityState({ selected: true });
     });
   });
 
-  describe("Form Accessibility", () => {
-    it("should have proper form labels and descriptions", () => {
+  describe('Form Accessibility', () => {
+    it('should have proper form labels and descriptions', () => {
       const TestComponent = () => (
         <form>
           <label htmlFor="email-input">Email Address</label>
@@ -264,7 +259,10 @@ describe("Accessibility Tests", () => {
             aria-describedby="email-help"
             aria-required="true"
           />
-          <div id="email-help" testID="email-help">
+          <div
+            id="email-help"
+            testID="email-help"
+          >
             Enter your email address to sign in
           </div>
 
@@ -276,7 +274,10 @@ describe("Accessibility Tests", () => {
             aria-describedby="password-help"
             aria-required="true"
           />
-          <div id="password-help" testID="password-help">
+          <div
+            id="password-help"
+            testID="password-help"
+          >
             Enter your password
           </div>
         </form>
@@ -288,22 +289,20 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const emailInput = getByTestId("email-input");
-      const passwordInput = getByTestId("password-input");
+      const emailInput = getByTestId('email-input');
+      const passwordInput = getByTestId('password-input');
 
       expect(emailInput).toHaveAccessibilityState({ required: true });
       expect(passwordInput).toHaveAccessibilityState({ required: true });
     });
 
-    it("should announce validation errors", () => {
+    it('should announce validation errors', () => {
       const TestComponent = () => {
-        const [error, setError] = React.useState("");
+        const [error, setError] = React.useState('');
 
         const handleSubmit = () => {
-          setError("Please enter a valid email address");
-          AccessibilityInfo.announceForAccessibility(
-            "Please enter a valid email address",
-          );
+          setError('Please enter a valid email address');
+          AccessibilityInfo.announceForAccessibility('Please enter a valid email address');
         };
 
         return (
@@ -312,14 +311,21 @@ describe("Accessibility Tests", () => {
               testID="email-input"
               type="email"
               aria-invalid={!!error}
-              aria-describedby={error ? "email-error" : undefined}
+              aria-describedby={error ? 'email-error' : undefined}
             />
             {error ? (
-              <div id="email-error" testID="email-error" role="alert">
+              <div
+                id="email-error"
+                testID="email-error"
+                role="alert"
+              >
                 {error}
               </div>
             ) : null}
-            <button testID="submit-button" onPress={handleSubmit}>
+            <button
+              testID="submit-button"
+              onPress={handleSubmit}
+            >
               Submit
             </button>
           </form>
@@ -332,24 +338,24 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const submitButton = getByTestId("submit-button");
+      const submitButton = getByTestId('submit-button');
       fireEvent.press(submitButton);
 
-      expect(getByTestId("email-error")).toHaveAccessibilityRole("alert");
+      expect(getByTestId('email-error')).toHaveAccessibilityRole('alert');
       expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith(
-        "Please enter a valid email address",
+        'Please enter a valid email address',
       );
     });
   });
 
-  describe("Pet Card Accessibility", () => {
-    it("should have proper accessibility information for pet cards", () => {
+  describe('Pet Card Accessibility', () => {
+    it('should have proper accessibility information for pet cards', () => {
       const pet = {
-        id: "1",
-        name: "Buddy",
+        id: '1',
+        name: 'Buddy',
         age: 3,
-        breed: "Golden Retriever",
-        photos: ["photo1.jpg"],
+        breed: 'Golden Retriever',
+        photos: ['photo1.jpg'],
       };
 
       const TestComponent = () => (
@@ -359,7 +365,10 @@ describe("Accessibility Tests", () => {
           accessibilityLabel={`Pet card for ${pet.name}, ${pet.age} year old ${pet.breed}`}
           accessibilityHint="Double tap to view pet details"
         >
-          <img src={pet.photos[0]} alt={`Photo of ${pet.name}`} />
+          <img
+            src={pet.photos[0]}
+            alt={`Photo of ${pet.name}`}
+          />
           <h3>{pet.name}</h3>
           <p>{pet.age} years old</p>
           <p>{pet.breed}</p>
@@ -372,22 +381,20 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const petCard = getByTestId("pet-card");
-      expect(petCard).toHaveAccessibilityRole("button");
-      expect(petCard).toHaveAccessibilityLabel(
-        "Pet card for Buddy, 3 year old Golden Retriever",
-      );
-      expect(petCard).toHaveAccessibilityHint("Double tap to view pet details");
+      const petCard = getByTestId('pet-card');
+      expect(petCard).toHaveAccessibilityRole('button');
+      expect(petCard).toHaveAccessibilityLabel('Pet card for Buddy, 3 year old Golden Retriever');
+      expect(petCard).toHaveAccessibilityHint('Double tap to view pet details');
     });
 
-    it("should announce swipe actions", () => {
+    it('should announce swipe actions', () => {
       const TestComponent = () => {
         const handleSwipeRight = () => {
-          AccessibilityInfo.announceForAccessibility("Pet liked");
+          AccessibilityInfo.announceForAccessibility('Pet liked');
         };
 
         const handleSwipeLeft = () => {
-          AccessibilityInfo.announceForAccessibility("Pet passed");
+          AccessibilityInfo.announceForAccessibility('Pet passed');
         };
 
         return (
@@ -416,27 +423,23 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const likeButton = getByTestId("like-button");
-      const passButton = getByTestId("pass-button");
+      const likeButton = getByTestId('like-button');
+      const passButton = getByTestId('pass-button');
 
       fireEvent.press(likeButton);
-      expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith(
-        "Pet liked",
-      );
+      expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith('Pet liked');
 
       fireEvent.press(passButton);
-      expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith(
-        "Pet passed",
-      );
+      expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith('Pet passed');
     });
   });
 
-  describe("Chat Accessibility", () => {
-    it("should have proper chat message accessibility", () => {
+  describe('Chat Accessibility', () => {
+    it('should have proper chat message accessibility', () => {
       const message = {
-        id: "1",
-        text: "Hello! How are you?",
-        senderId: "user1",
+        id: '1',
+        text: 'Hello! How are you?',
+        senderId: 'user1',
         timestamp: new Date().toISOString(),
       };
 
@@ -457,34 +460,38 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const messageElement = getByTestId("message-1");
-      expect(messageElement).toHaveAccessibilityRole("text");
-      expect(messageElement).toHaveAccessibilityLabel(
-        "Message from user1: Hello! How are you?",
-      );
+      const messageElement = getByTestId('message-1');
+      expect(messageElement).toHaveAccessibilityRole('text');
+      expect(messageElement).toHaveAccessibilityLabel('Message from user1: Hello! How are you?');
     });
 
-    it("should announce new messages", () => {
+    it('should announce new messages', () => {
       const TestComponent = () => {
         const [messages, setMessages] = React.useState([]);
 
         const addMessage = () => {
           const newMessage = {
-            id: "2",
-            text: "New message received",
-            senderId: "user2",
+            id: '2',
+            text: 'New message received',
+            senderId: 'user2',
           };
           setMessages((prev) => [...prev, newMessage]);
-          AccessibilityInfo.announceForAccessibility("New message received");
+          AccessibilityInfo.announceForAccessibility('New message received');
         };
 
         return (
           <div>
-            <button testID="add-message" onPress={addMessage}>
+            <button
+              testID="add-message"
+              onPress={addMessage}
+            >
               Add Message
             </button>
             {messages.map((msg) => (
-              <div key={msg.id} testID={`message-${msg.id}`}>
+              <div
+                key={msg.id}
+                testID={`message-${msg.id}`}
+              >
                 {msg.text}
               </div>
             ))}
@@ -498,17 +505,17 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const addButton = getByTestId("add-message");
+      const addButton = getByTestId('add-message');
       fireEvent.press(addButton);
 
       expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith(
-        "New message received",
+        'New message received',
       );
     });
   });
 
-  describe("Video Call Accessibility", () => {
-    it("should have proper call control accessibility", () => {
+  describe('Video Call Accessibility', () => {
+    it('should have proper call control accessibility', () => {
       const TestComponent = () => (
         <div>
           <button
@@ -525,7 +532,10 @@ describe("Accessibility Tests", () => {
           >
             Video
           </button>
-          <button testID="end-call" accessibilityLabel="End call">
+          <button
+            testID="end-call"
+            accessibilityLabel="End call"
+          >
             End Call
           </button>
         </div>
@@ -537,25 +547,25 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const muteButton = getByTestId("mute-button");
-      const videoToggle = getByTestId("video-toggle");
-      const endCallButton = getByTestId("end-call");
+      const muteButton = getByTestId('mute-button');
+      const videoToggle = getByTestId('video-toggle');
+      const endCallButton = getByTestId('end-call');
 
-      expect(muteButton).toHaveAccessibilityLabel("Mute microphone");
+      expect(muteButton).toHaveAccessibilityLabel('Mute microphone');
       expect(muteButton).toHaveAccessibilityState({ selected: false });
-      expect(videoToggle).toHaveAccessibilityLabel("Toggle video");
+      expect(videoToggle).toHaveAccessibilityLabel('Toggle video');
       expect(videoToggle).toHaveAccessibilityState({ selected: true });
-      expect(endCallButton).toHaveAccessibilityLabel("End call");
+      expect(endCallButton).toHaveAccessibilityLabel('End call');
     });
 
-    it("should announce call state changes", () => {
+    it('should announce call state changes', () => {
       const TestComponent = () => {
         const [isMuted, setIsMuted] = React.useState(false);
 
         const toggleMute = () => {
           setIsMuted(!isMuted);
           AccessibilityInfo.announceForAccessibility(
-            isMuted ? "Microphone unmuted" : "Microphone muted",
+            isMuted ? 'Microphone unmuted' : 'Microphone muted',
           );
         };
 
@@ -566,7 +576,7 @@ describe("Accessibility Tests", () => {
               onPress={toggleMute}
               accessibilityState={{ selected: isMuted }}
             >
-              {isMuted ? "Unmute" : "Mute"}
+              {isMuted ? 'Unmute' : 'Mute'}
             </button>
           </div>
         );
@@ -578,37 +588,28 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const muteButton = getByTestId("mute-button");
+      const muteButton = getByTestId('mute-button');
       fireEvent.press(muteButton);
 
-      expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith(
-        "Microphone muted",
-      );
+      expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith('Microphone muted');
 
       fireEvent.press(muteButton);
-      expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith(
-        "Microphone unmuted",
-      );
+      expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith('Microphone unmuted');
     });
   });
 
-  describe("Voice Control Support", () => {
-    it("should support voice commands", () => {
+  describe('Voice Control Support', () => {
+    it('should support voice commands', () => {
       const TestComponent = () => {
-        const [voiceControlEnabled, setVoiceControlEnabled] =
-          React.useState(false);
+        const [voiceControlEnabled, setVoiceControlEnabled] = React.useState(false);
 
         const handleVoiceCommand = (command: string) => {
           switch (command) {
-            case "like":
-              AccessibilityInfo.announceForAccessibility(
-                "Pet liked via voice command",
-              );
+            case 'like':
+              AccessibilityInfo.announceForAccessibility('Pet liked via voice command');
               break;
-            case "pass":
-              AccessibilityInfo.announceForAccessibility(
-                "Pet passed via voice command",
-              );
+            case 'pass':
+              AccessibilityInfo.announceForAccessibility('Pet passed via voice command');
               break;
             default:
               break;
@@ -623,16 +624,14 @@ describe("Accessibility Tests", () => {
                 setVoiceControlEnabled(!voiceControlEnabled);
               }}
             >
-              {voiceControlEnabled
-                ? "Disable Voice Control"
-                : "Enable Voice Control"}
+              {voiceControlEnabled ? 'Disable Voice Control' : 'Enable Voice Control'}
             </button>
             {voiceControlEnabled ? (
               <div testID="voice-commands">
                 <button
                   testID="voice-like"
                   onPress={() => {
-                    handleVoiceCommand("like");
+                    handleVoiceCommand('like');
                   }}
                 >
                   Voice Like
@@ -640,7 +639,7 @@ describe("Accessibility Tests", () => {
                 <button
                   testID="voice-pass"
                   onPress={() => {
-                    handleVoiceCommand("pass");
+                    handleVoiceCommand('pass');
                   }}
                 >
                   Voice Pass
@@ -657,33 +656,33 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const toggleButton = getByTestId("voice-control-toggle");
+      const toggleButton = getByTestId('voice-control-toggle');
       fireEvent.press(toggleButton);
 
-      const voiceLikeButton = getByTestId("voice-like");
+      const voiceLikeButton = getByTestId('voice-like');
       fireEvent.press(voiceLikeButton);
 
       expect(AccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith(
-        "Pet liked via voice command",
+        'Pet liked via voice command',
       );
     });
   });
 
-  describe("High Contrast Mode", () => {
-    it("should support high contrast mode", () => {
+  describe('High Contrast Mode', () => {
+    it('should support high contrast mode', () => {
       const TestComponent = () => (
         <div
           style={{
-            color: "var(--text-color)",
-            backgroundColor: "var(--bg-color)",
+            color: 'var(--text-color)',
+            backgroundColor: 'var(--bg-color)',
           }}
         >
           <button
             testID="high-contrast-button"
             style={{
-              color: "var(--button-text-color)",
-              backgroundColor: "var(--button-bg-color)",
-              border: "2px solid var(--button-border-color)",
+              color: 'var(--button-text-color)',
+              backgroundColor: 'var(--button-bg-color)',
+              border: '2px solid var(--button-border-color)',
             }}
           >
             High Contrast Button
@@ -697,13 +696,13 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const button = getByTestId("high-contrast-button");
+      const button = getByTestId('high-contrast-button');
       expect(button).toBeTruthy();
     });
   });
 
-  describe("Focus Management", () => {
-    it("should manage focus properly in modals", () => {
+  describe('Focus Management', () => {
+    it('should manage focus properly in modals', () => {
       const TestComponent = () => {
         const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -718,7 +717,11 @@ describe("Accessibility Tests", () => {
               Open Modal
             </button>
             {isModalOpen ? (
-              <div testID="modal" accessibilityRole="dialog" accessibilityModal>
+              <div
+                testID="modal"
+                accessibilityRole="dialog"
+                accessibilityModal
+              >
                 <button
                   testID="modal-close"
                   onPress={() => {
@@ -740,11 +743,11 @@ describe("Accessibility Tests", () => {
         </TestWrapper>,
       );
 
-      const openButton = getByTestId("open-modal");
+      const openButton = getByTestId('open-modal');
       fireEvent.press(openButton);
 
-      const modal = getByTestId("modal");
-      expect(modal).toHaveAccessibilityRole("dialog");
+      const modal = getByTestId('modal');
+      expect(modal).toHaveAccessibilityRole('dialog');
       expect(modal).toHaveAccessibilityState({ modal: true });
     });
   });

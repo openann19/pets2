@@ -69,7 +69,7 @@ export const DeactivateAccountDialog = ({ open, onOpenChange, userId, onSuccess,
         </Alert>
         <div className="space-y-2 mt-4">
           <Label htmlFor="reason">Why are you deactivating? (Optional)</Label>
-          <Textarea id="reason" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Taking a break, found a match, need time off, etc..." rows={3}/>
+          <Textarea id="reason" value={reason} onChange={(e) => { setReason(e.target.value); }} placeholder="Taking a break, found a match, need time off, etc..." rows={3}/>
         </div>
         {error && (<Alert className="mt-4">
             <AlertDescription>{error}</AlertDescription>

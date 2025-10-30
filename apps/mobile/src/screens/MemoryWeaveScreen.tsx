@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -12,14 +12,16 @@ import {
   Image,
   ScrollView,
   Animated,
-  PanResponder,
   StatusBar,
-  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useTheme } from "../contexts/ThemeContext";
-import type { NavigationProp, RouteProp } from "../navigation/types";
+import { useTheme } from "@mobile/src/theme";
+import type { RootStackScreenProps } from "../navigation/types";
+import { useMemoryWeaveScreen } from "../hooks/screens/useMemoryWeaveScreen";
+
+// Import extracted components
+// import { MemoryCard, ConnectionPath } from "../components/library";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -36,176 +38,37 @@ interface MemoryNode {
   };
 }
 
-interface MemoryWeaveScreenProps {
-  navigation: NavigationProp;
-  route: RouteProp & {
-    params: {
-      matchId: string;
-      petName: string;
-      memories?: MemoryNode[];
-    };
-  };
-}
+type MemoryWeaveScreenProps = RootStackScreenProps<"MemoryWeave">;
 
 export default function MemoryWeaveScreen({
   navigation,
   route,
 }: MemoryWeaveScreenProps) {
-  const { matchId, petName, memories: initialMemories } = route.params;
-  const { isDark, colors } = useTheme();
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
+  // Use the extracted hook for all business logic
+  const {
+    memories,
+    currentIndex,
+    scrollX,
+    fadeAnim,
+    scaleAnim,
+    scrollViewRef,
+    isDark,
+    colors,
+    handleGoBack,
+    handleShare,
+    setCurrentIndex,
+    scrollToIndex,
+    handleScroll,
+    getEmotionColor,
+    getEmotionEmoji,
+    formatTimestamp,
+    petName,
+  } = useMemoryWeaveScreen(route);
 
-  const [memories, setMemories] = useState<MemoryNode[]>(
-    initialMemories || [
-      {
-        id: "memory_1",
-        type: "text",
-        content:
-          "First time we met at the dog park! Buddy was so excited to meet Luna 🐕💕",
-        title: "First Meeting",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
-        metadata: {
-          location: "Elm Street Dog Park",
-          participants: ["Buddy", "Luna"],
-          emotion: "excited",
-        },
-      },
-      {
-        id: "memory_2",
-        type: "image",
-        content:
-          "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400",
-        title: "Perfect Playdate",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(),
-        metadata: {
-          location: "Central Park",
-          participants: ["Buddy", "Luna"],
-          emotion: "playful",
-        },
-      },
-      {
-        id: "memory_3",
-        type: "text",
-        content: "They've become inseparable! Best friends forever 🌟",
-        title: "Best Friends",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
-        metadata: {
-          emotion: "love",
-        },
-      },
-      {
-        id: "memory_4",
-        type: "image",
-        content:
-          "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400",
-        title: "Adventure Time",
-        timestamp: new Date().toISOString(),
-        metadata: {
-          location: "Beach Walk",
-          participants: ["Buddy", "Luna"],
-          emotion: "happy",
-        },
-      },
-    ],
-  );
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const scrollViewRef = useRef<ScrollView>(null);
-  const scrollX = useRef(new Animated.Value(0)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
-
-  useEffect(() => {
-    StatusBar.setBarStyle("light-content");
-
-    // Entrance animation
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 50,
-        friction: 8,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    return () => {
-      StatusBar.setBarStyle(isDark ? "light-content" : "dark-content");
-    };
-  }, []);
-
-  const handleScroll = useCallback(
-    (event: any) => {
-      const offsetX = event.nativeEvent.contentOffset.x;
-      const index = Math.round(offsetX / screenWidth);
-
-      if (index !== currentIndex && index >= 0 && index < memories.length) {
-        setCurrentIndex(index);
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
-    },
-    [currentIndex, memories.length],
-  );
-
-  const scrollToIndex = useCallback(
-    (index: number) => {
-      if (scrollViewRef.current && index >= 0 && index < memories.length) {
-        scrollViewRef.current.scrollTo({
-          x: index * screenWidth,
-          animated: true,
-        });
-        setCurrentIndex(index);
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      }
-    },
-    [memories.length],
-  );
-
-  const getEmotionColor = (emotion?: string) => {
-    switch (emotion) {
-      case "happy":
-        return "#FFD700";
-      case "excited":
-        return "#FF6B6B";
-      case "love":
-        return "#FF69B4";
-      case "playful":
-        return "#4ECDC4";
-      default:
-        return "#8B5CF6";
-    }
-  };
-
-  const getEmotionEmoji = (emotion?: string) => {
-    switch (emotion) {
-      case "happy":
-        return "😊";
-      case "excited":
-        return "🎉";
-      case "love":
-        return "💕";
-      case "playful":
-        return "🎾";
-      default:
-        return "✨";
-    }
-  };
-
-  const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffInDays = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
-    );
-
-    if (diffInDays === 0) return "Today";
-    if (diffInDays === 1) return "Yesterday";
-    if (diffInDays < 7) return `${diffInDays} days ago`;
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  };
+  const isAnimating = false; // Not used in current implementation
 
   const renderMemoryCard = (memory: MemoryNode, index: number) => {
     const inputRange = [
@@ -235,13 +98,13 @@ export default function MemoryWeaveScreen({
     return (
       <Animated.View
         key={memory.id}
-        style={[
+        style={StyleSheet.flatten([
           styles.memoryCard,
           {
             transform: [{ scale }, { perspective: 1000 }, { rotateY }],
             opacity,
           },
-        ]}
+        ])}
       >
         <LinearGradient
           colors={["rgba(255,255,255,0.15)", "rgba(255,255,255,0.05)"]}
@@ -257,12 +120,12 @@ export default function MemoryWeaveScreen({
                 </Text>
               </View>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.emotionBadge,
                   {
                     backgroundColor: `${getEmotionColor(memory.metadata?.emotion)}30`,
                   },
-                ]}
+                ])}
               >
                 <Text style={styles.emotionEmoji}>
                   {getEmotionEmoji(memory.metadata?.emotion)}
@@ -299,7 +162,7 @@ export default function MemoryWeaveScreen({
               <View style={styles.memoryMetadata}>
                 {memory.metadata.location && (
                   <View style={styles.metadataItem}>
-                    <Ionicons name="location-outline" size={14} color="#fff" />
+                    <Ionicons name="location-outline" size={14} color={theme.colors.onSurface} />
                     <Text style={styles.metadataText}>
                       {memory.metadata.location}
                     </Text>
@@ -307,7 +170,7 @@ export default function MemoryWeaveScreen({
                 )}
                 {memory.metadata.participants && (
                   <View style={styles.metadataItem}>
-                    <Ionicons name="people-outline" size={14} color="#fff" />
+                    <Ionicons name="people-outline" size={14} color={theme.colors.onSurface} />
                     <Text style={styles.metadataText}>
                       {memory.metadata.participants.join(" & ")}
                     </Text>
@@ -334,6 +197,8 @@ export default function MemoryWeaveScreen({
           if (index === pathPoints.length - 1) return null;
 
           const nextPoint = pathPoints[index + 1];
+          if (!nextPoint) return null;
+
           const distance = Math.sqrt(
             Math.pow(nextPoint.x - point.x, 2) +
               Math.pow(nextPoint.y - point.y, 2),
@@ -345,7 +210,7 @@ export default function MemoryWeaveScreen({
           return (
             <View
               key={index}
-              style={[
+              style={StyleSheet.flatten([
                 styles.pathSegment,
                 {
                   left: point.x,
@@ -354,7 +219,7 @@ export default function MemoryWeaveScreen({
                   transform: [{ rotate: `${angle}deg` }],
                   opacity: index <= currentIndex ? 1 : 0.3,
                 },
-              ]}
+              ])}
             />
           );
         })}
@@ -362,15 +227,18 @@ export default function MemoryWeaveScreen({
         {pathPoints.map((point, index) => (
           <TouchableOpacity
             key={`dot-${index}`}
-            style={[
+            style={StyleSheet.flatten([
               styles.pathDot,
               {
                 left: point.x - 6,
                 top: point.y - 6,
-                backgroundColor: index === currentIndex ? "#FF69B4" : "#fff",
+                backgroundColor: index === currentIndex ? "#FF69B4" : theme.colors.onSurface,
                 transform: [{ scale: index === currentIndex ? 1.2 : 1 }],
               },
-            ]}
+            ])}
+            testID="MemoryWeaveScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
             onPress={() => {
               scrollToIndex(index);
             }}
@@ -390,16 +258,24 @@ export default function MemoryWeaveScreen({
 
       {/* Header */}
       <SafeAreaView style={styles.header}>
-        <Animated.View style={[styles.headerContent, { opacity: fadeAnim }]}>
+        <Animated.View
+          style={StyleSheet.flatten([
+            styles.headerContent,
+            { opacity: fadeAnim },
+          ])}
+        >
           <TouchableOpacity
             style={styles.backButton}
+            testID="MemoryWeaveScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.goBack();
             }}
           >
             <BlurView intensity={20} style={styles.backButtonBlur}>
-              <Ionicons name="arrow-back" size={24} color="#fff" />
+              <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
             </BlurView>
           </TouchableOpacity>
 
@@ -410,13 +286,16 @@ export default function MemoryWeaveScreen({
 
           <TouchableOpacity
             style={styles.shareButton}
+            testID="MemoryWeaveScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               // Share functionality
             }}
           >
             <BlurView intensity={20} style={styles.shareButtonBlur}>
-              <Ionicons name="share-outline" size={24} color="#fff" />
+              <Ionicons name="share-outline" size={24} color={theme.colors.onSurface} />
             </BlurView>
           </TouchableOpacity>
         </Animated.View>
@@ -424,26 +303,24 @@ export default function MemoryWeaveScreen({
 
       {/* Memory Cards */}
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           styles.cardsContainer,
           {
             opacity: fadeAnim,
             transform: [{ scale: scaleAnim }],
           },
-        ]}
+        ])}
       >
         <ScrollView
           ref={scrollViewRef}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            {
-              useNativeDriver: false,
-              listener: handleScroll,
-            },
-          )}
+          onScroll={(event) => {
+            const offsetX = event.nativeEvent.contentOffset.x;
+            scrollX.setValue(offsetX);
+            handleScroll && handleScroll(event);
+          }}
           scrollEventThrottle={16}
           decelerationRate="fast"
           snapToInterval={screenWidth}
@@ -454,12 +331,22 @@ export default function MemoryWeaveScreen({
       </Animated.View>
 
       {/* Connection Path */}
-      <Animated.View style={[styles.pathContainer, { opacity: fadeAnim }]}>
+      <Animated.View
+        style={StyleSheet.flatten([
+          styles.pathContainer,
+          { opacity: fadeAnim },
+        ])}
+      >
         {renderConnectionPath()}
       </Animated.View>
 
       {/* Memory Counter */}
-      <Animated.View style={[styles.counterContainer, { opacity: fadeAnim }]}>
+      <Animated.View
+        style={StyleSheet.flatten([
+          styles.counterContainer,
+          { opacity: fadeAnim },
+        ])}
+      >
         <BlurView intensity={20} style={styles.counterBlur}>
           <Text style={styles.counterText}>
             {currentIndex + 1} of {memories.length}
@@ -470,10 +357,10 @@ export default function MemoryWeaveScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: theme.colors.bg,
   },
   header: {
     paddingHorizontal: 20,
@@ -503,7 +390,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
+    color: theme.colors.onSurface,
   },
   headerSubtitle: {
     fontSize: 14,
@@ -552,7 +439,7 @@ const styles = StyleSheet.create({
   memoryTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
+    color: theme.colors.onSurface,
     marginBottom: 4,
   },
   memoryTimestamp: {
@@ -595,7 +482,7 @@ const styles = StyleSheet.create({
   },
   memoryText: {
     fontSize: 18,
-    color: "#fff",
+    color: theme.colors.onSurface,
     lineHeight: 26,
     fontStyle: "italic",
     textAlign: "center",
@@ -615,7 +502,7 @@ const styles = StyleSheet.create({
   },
   metadataText: {
     fontSize: 12,
-    color: "#fff",
+    color: theme.colors.onSurface,
     marginLeft: 4,
   },
   pathContainer: {
@@ -640,7 +527,7 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: "#fff",
+    borderColor: theme.colors.onSurface,
   },
   counterContainer: {
     position: "absolute",
@@ -655,7 +542,7 @@ const styles = StyleSheet.create({
   },
   counterText: {
     fontSize: 14,
-    color: "#fff",
+    color: theme.colors.onSurface,
     fontWeight: "600",
   },
 });

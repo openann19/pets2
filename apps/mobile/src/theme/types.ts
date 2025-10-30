@@ -1,130 +1,167 @@
 /**
  * 🎨 UNIFIED THEME TYPES
- * Complete TypeScript definitions for the mobile theme system
- * Extends @pawfectmatch/design-tokens with React Native-specific types
+ * Single source of truth for theme types across the mobile app
  */
 
-import type { TextStyle, ViewStyle } from "react-native";
+export type ColorScheme = 'light' | 'dark';
 
-// ====== COLOR SYSTEM ======
-export interface ColorPalette {
-  // Brand colors
-  primary: string;
-  primaryLight: string;
-  primaryDark: string;
-  primaryForeground: string;
-
-  secondary: string;
-  secondaryLight: string;
-  secondaryDark: string;
-  secondaryForeground: string;
-
-  // Status colors
-  success: string;
-  warning: string;
-  error: string;
-  info: string;
-
-  // Semantic colors
-  background: string;
-  backgroundSecondary: string;
-  backgroundTertiary: string;
-
+export interface SemanticColors {
+  // Core semantic colors (matches AppTheme contract)
+  bg: string;
   surface: string;
-  surfaceMuted: string;
-  surfaceElevated: string;
-
-  border: string;
-  borderLight: string;
-  borderDark: string;
-
-  text: string;
-  textSecondary: string;
-  textTertiary: string;
-  textInverse: string;
-
-  // Overlay colors
   overlay: string;
-  overlayDark: string;
-
-  // Special colors
-  glass: string;
-  glassLight: string;
-  glassDark: string;
+  border: string;
+  onBg: string;
+  onSurface: string;
+  onMuted: string;
+  primary: string;
+  onPrimary: string;
+  success: string;
+  danger: string;
+  warning: string;
+  info: string;
 }
 
-// ====== TYPOGRAPHY SYSTEM ======
-export interface TypographyVariant
-  extends Pick<TextStyle, "fontFamily" | "fontWeight"> {
-  fontSize: number;
-  lineHeight: number;
-  letterSpacing?: number;
+export interface Spacing {
+  readonly 0: string;
+  readonly 1: string;
+  readonly 2: string;
+  readonly 3: string;
+  readonly 4: string;
+  readonly 5: string;
+  readonly 6: string;
+  readonly 7: string;
+  readonly 8: string;
+  readonly 9: string;
+  readonly 10: string;
+  readonly 11: string;
+  readonly 12: string;
+  readonly 14: string;
+  readonly 16: string;
+  readonly 20: string;
+  readonly 24: string;
+  readonly 28: string;
+  readonly 32: string;
+  readonly 36: string;
+  readonly 40: string;
+  readonly 44: string;
+  readonly 48: string;
+  readonly 52: string;
+  readonly 56: string;
+  readonly 60: string;
+  readonly 64: string;
+  readonly 72: string;
+  readonly 80: string;
+  readonly 96: string;
+  // Named spacing helpers
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
+  '2xl': number;
+  '3xl': number;
+  '4xl': number;
 }
 
+export interface Radius {
+  'none': number;
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
+  '2xl': number;
+  'full': number;
+  'pill': number;
+}
+
+export interface Motion {
+  duration: { fast: number; normal: number; slow: number };
+  easing: { standard: (t: number) => number };
+  spring: { stiff: { stiffness: number; damping: number; mass: number } };
+}
+
+export interface Theme {
+  scheme: ColorScheme;
+  colors: SemanticColors;
+  spacing: Spacing;
+  radius: Radius;
+  motion: Motion;
+
+  // Backward compatibility helpers
+  isDark?: boolean; // Use scheme === 'dark' instead
+  styles?: Record<string, unknown>; // For legacy component support
+  shadows?: Record<string, unknown>; // For legacy component support
+}
+
+// Additional types for theme providers
+export type ThemeMode = 'light' | 'dark' | 'system';
+
+export interface ThemeContextValue {
+  theme: Theme;
+  mode: ThemeMode;
+  isDark: boolean;
+  setMode: (mode: ThemeMode) => void;
+  toggleTheme: () => void;
+}
+
+// Color Palette type for backward compatibility
+export interface ColorPalette {
+  [key: string]: string;
+}
+
+// Typography Scale type for backward compatibility
 export interface TypographyScale {
-  heading1: TypographyVariant;
-  heading2: TypographyVariant;
-  heading3: TypographyVariant;
-  heading4: TypographyVariant;
-  heading5: TypographyVariant;
-  heading6: TypographyVariant;
-  subtitle: TypographyVariant;
-  subtitleSmall: TypographyVariant;
-  body: TypographyVariant;
-  bodySmall: TypographyVariant;
-  callout: TypographyVariant;
-  caption: TypographyVariant;
-  overline: TypographyVariant;
-  button: TypographyVariant;
-  label: TypographyVariant;
+  [key: string]: {
+    fontSize: number;
+    lineHeight: number;
+    fontWeight: string | number;
+    letterSpacing?: number;
+  };
 }
 
-// ====== SPACING SYSTEM ======
+// Spacing Scale type for backward compatibility
 export interface SpacingScale {
-  none: number;
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
-  "3xl": number;
-  "4xl": number;
+  [key: string]: number;
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
+  '2xl': number;
+  '3xl': number;
+  '4xl': number;
 }
 
-// ====== BORDER RADIUS SYSTEM ======
-export interface RadiusScale {
-  none: number;
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
-  full: number;
-}
-
-// ====== SHADOW SYSTEM ======
-export interface ShadowToken {
-  shadowColor: string;
-  shadowOffset: { width: number; height: number };
-  shadowOpacity: number;
-  shadowRadius: number;
-  elevation: number;
-}
-
+// Shadow Scale type for backward compatibility
 export interface ShadowScale {
-  none: ShadowToken;
-  xs: ShadowToken;
-  sm: ShadowToken;
-  md: ShadowToken;
-  lg: ShadowToken;
-  xl: ShadowToken;
-  "2xl": ShadowToken;
+  [key: string]: {
+    shadowColor: string;
+    shadowOffset: { width: number; height: number };
+    shadowOpacity: number;
+    shadowRadius: number;
+    elevation: number;
+  };
 }
 
-// ====== OPACITY SYSTEM ======
+// Radius Scale type for backward compatibility
+export interface RadiusScale {
+  [key: string]: number;
+  'none': number;
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
+  '2xl': number;
+  'full': number;
+  'pill': number;
+}
+
+// Opacity Scale type
 export interface OpacityScale {
+  [key: string]: number;
   transparent: number;
   invisible: number;
   disabled: number;
@@ -134,40 +171,42 @@ export interface OpacityScale {
   selected: number;
 }
 
-// ====== BORDER WIDTH SYSTEM ======
+// Border Width Scale type
 export interface BorderWidthScale {
+  [key: string]: number;
   none: number;
   thin: number;
   medium: number;
   thick: number;
 }
 
-// ====== ICON SIZES ======
+// Icon Size Scale type
 export interface IconSizeScale {
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
+  [key: string]: number;
+  'xs': number;
+  'sm': number;
+  'md': number;
+  'lg': number;
+  'xl': number;
+  '2xl': number;
 }
 
-// ====== ANIMATION SYSTEM ======
-export interface AnimationConfig {
-  duration: number;
-  easing: string;
-}
-
+// Animation Scale type
 export interface AnimationScale {
-  instant: AnimationConfig;
-  fast: AnimationConfig;
-  normal: AnimationConfig;
-  slow: AnimationConfig;
-  slower: AnimationConfig;
+  [key: string]: {
+    duration: number;
+    easing: string;
+  };
+  instant: { duration: number; easing: string };
+  fast: { duration: number; easing: string };
+  normal: { duration: number; easing: string };
+  slow: { duration: number; easing: string };
+  slower: { duration: number; easing: string };
 }
 
-// ====== Z-INDEX SYSTEM ======
+// Z-Index Scale type
 export interface ZIndexScale {
+  [key: string]: number;
   hide: number;
   base: number;
   docked: number;
@@ -178,76 +217,4 @@ export interface ZIndexScale {
   popover: number;
   tooltip: number;
   toast: number;
-}
-
-// ====== COMPLETE THEME INTERFACE ======
-export interface Theme {
-  colors: ColorPalette;
-  typography: TypographyScale;
-  spacing: SpacingScale;
-  radii: RadiusScale;
-  shadows: ShadowScale;
-  opacity: OpacityScale;
-  borderWidth: BorderWidthScale;
-  iconSize: IconSizeScale;
-  animation: AnimationScale;
-  zIndex: ZIndexScale;
-}
-
-// ====== THEME MODE ======
-export type ThemeMode = "light" | "dark" | "system";
-
-export interface ThemeContextValue {
-  theme: Theme;
-  mode: ThemeMode;
-  isDark: boolean;
-  setMode: (mode: ThemeMode) => void;
-  toggleTheme: () => void;
-}
-
-// ====== THEME OVERRIDES ======
-export interface ThemeOverrides {
-  colors?: Partial<ColorPalette>;
-  typography?: Partial<TypographyScale>;
-  spacing?: Partial<SpacingScale>;
-  radii?: Partial<RadiusScale>;
-  shadows?: Partial<ShadowScale>;
-  opacity?: Partial<OpacityScale>;
-  borderWidth?: Partial<BorderWidthScale>;
-  iconSize?: Partial<IconSizeScale>;
-  animation?: Partial<AnimationScale>;
-  zIndex?: Partial<ZIndexScale>;
-}
-
-// ====== UTILITY TYPES ======
-export type ColorToken = keyof ColorPalette;
-export type TypographyVariantName = keyof TypographyScale;
-export type SpacingToken = keyof SpacingScale;
-export type RadiusToken = keyof RadiusScale;
-export type ShadowTokenName = keyof ShadowScale;
-export type OpacityToken = keyof OpacityScale;
-export type BorderWidthToken = keyof BorderWidthScale;
-export type IconSizeToken = keyof IconSizeScale;
-export type AnimationToken = keyof AnimationScale;
-export type ZIndexToken = keyof ZIndexScale;
-
-// ====== COMPONENT PROP TYPES ======
-export interface ThemedComponentProps {
-  variant?: string;
-  tone?: ColorToken;
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
-}
-
-export interface ThemedViewProps extends ThemedComponentProps {
-  padding?: SpacingToken;
-  margin?: SpacingToken;
-  radius?: RadiusToken;
-  shadow?: ShadowTokenName;
-  borderWidth?: BorderWidthToken;
-}
-
-export interface ThemedTextProps extends ThemedComponentProps {
-  variant?: TypographyVariantName;
-  color?: ColorToken;
-  align?: "auto" | "left" | "right" | "center" | "justify";
 }

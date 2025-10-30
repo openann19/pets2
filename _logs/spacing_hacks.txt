@@ -1,0 +1,61 @@
+packages/design-tokens/build.js:43:    spacing[key] = value;
+packages/design-tokens/build.js:110:    spacing[key] = parseFloat(value);
+packages/ui/src/theme/ThemeProvider.tsx:51:  '--pm-spacing-2xl': px(theme.spacing['2xl']),
+apps/mobile/src/screens/premium/SubscriptionSuccessScreen.tsx:193:      marginBottom: theme.spacing["2xl"],
+apps/mobile/src/screens/premium/SubscriptionSuccessScreen.tsx:220:      marginBottom: theme.spacing["2xl"],
+apps/mobile/src/screens/premium/PremiumScreen.tsx:27:      paddingTop: theme.spacing["4xl"],
+apps/mobile/src/screens/premium/PremiumScreen.tsx:32:      top: theme.spacing["4xl"],
+apps/mobile/src/screens/premium/SubscriptionManagerScreen.tsx:86:      paddingBottom: theme.spacing["2xl"],
+apps/mobile/src/screens/ModernSwipeScreen.tsx:92:      padding: theme.spacing["4xl"],
+apps/mobile/src/screens/ModernSwipeScreen.tsx:110:      padding: theme.spacing["4xl"],
+apps/mobile/src/screens/ModernSwipeScreen.tsx:125:      padding: theme.spacing["4xl"],
+apps/mobile/src/screens/ModernSwipeScreen.tsx:160:      paddingHorizontal: theme.spacing["4xl"],
+apps/mobile/src/screens/ModernSwipeScreen.tsx:177:      padding: theme.spacing["4xl"],
+apps/mobile/src/screens/NewComponentsTestScreen.tsx:346:    paddingBottom: theme.spacing["4xl"],
+apps/mobile/src/screens/NewComponentsTestScreen.tsx:384:    minWidth: (SCREEN_WIDTH - theme.spacing.xl * 2 - theme.spacing.md * 2) / 3,
+apps/mobile/src/screens/ModernCreatePetScreen.tsx:79:      paddingBottom: theme.spacing["4xl"],
+apps/mobile/src/screens/onboarding/UserIntentScreen.tsx:393:      marginBottom: theme.spacing["2xl"] ?? theme.spacing.xl,
+apps/mobile/src/screens/onboarding/UserIntentScreen.tsx:452:      padding: theme.spacing["2xl"] ?? theme.spacing.xl,
+apps/mobile/src/screens/adoption/CreateListingScreen.tsx:584:      padding: theme.spacing["2xl"],
+apps/mobile/src/screens/adoption/ApplicationReviewScreen.tsx:636:      width: (screenWidth - theme.spacing.lg * 2 - theme.spacing.sm) / 2,
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:27:          padding: theme.spacing['4xl'],
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:41:      expect(styles.loadingCard.padding).toBe(theme.spacing['4xl']);
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:56:        '2xl': theme.spacing['2xl'],
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:57:        '3xl': theme.spacing['3xl'],
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:58:        '4xl': theme.spacing['4xl'],
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:155:          paddingHorizontal: theme.spacing['4xl'],
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:165:      expect(styles.actionButtons.paddingHorizontal).toBe(theme.spacing['4xl']);
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:177:          width: screenWidth - theme.spacing['4xl'],
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:178:          padding: theme.spacing['4xl'],
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:183:      expect(styles.matchModalContent.width).toBe(screenWidth - theme.spacing['4xl']);
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:184:      expect(styles.matchModalContent.padding).toBe(theme.spacing['4xl']);
+apps/mobile/src/screens/__tests__/ModernSwipeScreen.theme.test.tsx:211:      expect(lighttheme.spacing['4xl']).toBe(darktheme.spacing['4xl']);
+apps/mobile/src/screens/__tests__/theme-refactoring.test.tsx:212:        expect(typeof theme.spacing[key as keyof typeof theme.spacing]).toBe('number');
+apps/mobile/src/screens/__tests__/theme-refactoring.test.tsx:223:      expect(theme.spacing.xl).toBeLessThan(theme.spacing['2xl']);
+apps/mobile/src/screens/__tests__/theme-refactoring-integration.test.tsx:78:          expect(typeof theme.spacing[size as keyof typeof theme.spacing]).toBe('number');
+apps/mobile/src/screens/__tests__/theme-refactoring-integration.test.tsx:212:      expect(theme.spacing['4xl']).toBeLessThan(200);
+apps/mobile/src/screens/__tests__/theme-refactoring-integration.test.tsx:258:        expect(lighttheme.spacing[key as keyof typeof lighttheme.spacing])
+apps/mobile/src/screens/__tests__/theme-refactoring-integration.test.tsx:259:          .toBe(darktheme.spacing[key as keyof typeof darktheme.spacing]);
+apps/mobile/src/components/ui/Spacer.tsx:18:  const length = spacing[size];
+apps/mobile/src/components/ui/Card.tsx:28:  const resolvedPadding = spacing[padding];
+apps/mobile/src/components/ui/v2/layout/Stack.tsx:32:    return theme.spacing[gap];
+apps/mobile/src/components/ui/v2/layout/Spacer.tsx:15:    return theme.spacing[size];
+apps/mobile/src/components/ui/v2/Tag.tsx:36:  const paddingValue = theme.spacing[sizeStyles.padding];
+apps/mobile/src/components/ModernPhotoUpload.tsx:36:  (SCREEN_WIDTH - Theme.spacing["4xl"] * 2 - Theme.spacing.lg * 2) / 3;
+apps/mobile/src/components/ModernPhotoUpload.tsx:399:    padding: Theme.spacing["4xl"],
+apps/mobile/src/theme/__tests__/useTheme.test.ts:106:        expect(typeof theme.spacing[size as keyof typeof theme.spacing]).toBe('number');
+apps/mobile/src/theme/__tests__/useTheme.test.ts:117:      expect(theme.spacing.xl).toBeLessThan(theme.spacing['2xl']);
+apps/mobile/src/theme/__tests__/useTheme.test.ts:118:      expect(theme.spacing['2xl']).toBeLessThan(theme.spacing['3xl']);
+apps/mobile/src/theme/__tests__/useTheme.test.ts:119:      expect(theme.spacing['3xl']).toBeLessThan(theme.spacing['4xl']);
+apps/mobile/src/components/buttons/BaseButton.tsx:64:    paddingHorizontal: Theme.spacing["2xl"],
+apps/mobile/src/components/buttons/BaseButton.tsx:72:    paddingHorizontal: Theme.spacing["3xl"],
+apps/mobile/src/components/swipe/ErrorState.tsx:52:    padding: Theme.spacing["4xl"],
+apps/mobile/src/components/swipe/NoMorePetsState.tsx:47:    padding: Theme.spacing["4xl"],
+apps/mobile/src/components/swipe/CardStack.tsx:75:    width: screenWidth - Theme.spacing['4xl'] - Theme.spacing.lg,
+apps/mobile/src/components/swipe/LoadingState.tsx:39:    padding: Theme.spacing["4xl"],
+apps/mobile/src/components/swipe/MatchModal.tsx:95:    width: screenWidth - Theme.spacing['4xl'],
+apps/mobile/src/components/swipe/MatchModal.tsx:96:    padding: Theme.spacing['4xl'],
+apps/mobile/src/components/swipe/PeekSheet.tsx:100:    left: SCREEN_WIDTH / 2 - (SCREEN_WIDTH - Theme.spacing['4xl']) / 4,
+apps/mobile/src/components/swipe/PeekSheet.tsx:101:    width: (SCREEN_WIDTH - Theme.spacing['4xl']) / 2,
+apps/mobile/src/components/adoption/PetDetailsStates.tsx:13:      padding: theme.spacing["4xl"],
+apps/mobile/src/components/map/MapScreenStates.tsx:24:      paddingHorizontal: theme.spacing["4xl"],

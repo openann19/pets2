@@ -531,7 +531,7 @@ export default function StripeManagementPage() {
                   <EnhancedInput
                     type="password"
                     value={stripeConfig.secretKey}
-                    onChange={(value) => setStripeConfig({ ...stripeConfig, secretKey: value })}
+                    onChange={(value: string) => setStripeConfig({ ...stripeConfig, secretKey: value })}
                     placeholder="sk_live_..."
                     ariaLabel="Stripe secret key"
                   />
@@ -544,7 +544,7 @@ export default function StripeManagementPage() {
                   <EnhancedInput
                     type="text"
                     value={stripeConfig.publishableKey}
-                    onChange={(value) =>
+                    onChange={(value: string) =>
                       setStripeConfig({ ...stripeConfig, publishableKey: value })
                     }
                     placeholder="pk_live_..."
@@ -559,7 +559,7 @@ export default function StripeManagementPage() {
                   <EnhancedInput
                     type="password"
                     value={stripeConfig.webhookSecret}
-                    onChange={(value) => setStripeConfig({ ...stripeConfig, webhookSecret: value })}
+                    onChange={(value: string) => setStripeConfig({ ...stripeConfig, webhookSecret: value })}
                     placeholder="whsec_..."
                     ariaLabel="Stripe webhook secret"
                   />

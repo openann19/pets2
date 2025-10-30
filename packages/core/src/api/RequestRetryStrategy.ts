@@ -14,7 +14,7 @@ export interface RetryConfig {
   maxDelay: number;
   strategy: RetryStrategy;
   jitter: boolean;
-  retryBudget?: number;  // Maximum time budget for retries (ms)
+  retryBudget?: number; // Maximum time budget for retries (ms)
   retryableStatusCodes?: number[];
   retryableErrors?: string[];
 }
@@ -51,7 +51,7 @@ export class RequestRetryStrategy {
    */
   async execute<T>(
     fn: () => Promise<T>,
-    errorHandler?: (error: unknown, context: RetryContext) => boolean
+    errorHandler?: (error: unknown, context: RetryContext) => boolean,
   ): Promise<T> {
     let lastError: unknown;
     const startTime = Date.now();
@@ -59,14 +59,14 @@ export class RequestRetryStrategy {
     for (let attempt = 0; attempt <= this.config.maxRetries; attempt++) {
       try {
         const result = await fn();
-        
+
         if (attempt > 0) {
           logger.info('Request succeeded after retry', {
             attempt,
             attempts: attempt + 1,
           });
         }
-        
+
         return result;
       } catch (error) {
         lastError = error;
@@ -93,7 +93,7 @@ export class RequestRetryStrategy {
             elapsedTime,
             reason: this.getErrorReason(error),
           };
-          
+
           if (!errorHandler(error, retryContext)) {
             throw error;
           }
@@ -107,7 +107,7 @@ export class RequestRetryStrategy {
             maxRetries: this.config.maxRetries,
             delay,
           });
-          
+
           await this.sleep(delay);
         }
       }
@@ -118,7 +118,7 @@ export class RequestRetryStrategy {
       attempts: this.config.maxRetries + 1,
       lastError,
     });
-    
+
     throw lastError;
   }
 
@@ -132,7 +132,7 @@ export class RequestRetryStrategy {
 
     // Check if error is in retryable errors list
     const errorMessage = error instanceof Error ? error.message : String(error);
-    if (this.config.retryableErrors?.some(code => errorMessage.includes(code))) {
+    if (this.config.retryableErrors?.some((code) => errorMessage.includes(code))) {
       return true;
     }
 
@@ -154,16 +154,10 @@ export class RequestRetryStrategy {
 
     switch (this.config.strategy) {
       case 'exponential':
-        delay = Math.min(
-          this.config.baseDelay * Math.pow(2, attempt),
-          this.config.maxDelay
-        );
+        delay = Math.min(this.config.baseDelay * Math.pow(2, attempt), this.config.maxDelay);
         break;
       case 'linear':
-        delay = Math.min(
-          this.config.baseDelay * (attempt + 1),
-          this.config.maxDelay
-        );
+        delay = Math.min(this.config.baseDelay * (attempt + 1), this.config.maxDelay);
         break;
       case 'fixed':
         delay = this.config.baseDelay;
@@ -224,7 +218,7 @@ export class RequestRetryStrategy {
       let hash = 0;
       for (let i = 0; i < json.length; i++) {
         const char = json.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
+        hash = (hash << 5) - hash + char;
         hash = hash & hash;
       }
       return Math.abs(hash).toString(36);
@@ -237,7 +231,7 @@ export class RequestRetryStrategy {
    * Sleep for specified milliseconds
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -245,10 +239,12 @@ export class RequestRetryStrategy {
    */
   private isNetworkError(error: unknown): boolean {
     if (error instanceof Error) {
-      return error.message.includes('network') ||
-             error.message.includes('timeout') ||
-             error.message.includes('ECONNREFUSED') ||
-             error.message.includes('ETIMEDOUT');
+      return (
+        error.message.includes('network') ||
+        error.message.includes('timeout') ||
+        error.message.includes('ECONNREFUSED') ||
+        error.message.includes('ETIMEDOUT')
+      );
     }
     return false;
   }
@@ -280,4 +276,3 @@ export class RequestRetryStrategy {
     return String(error);
   }
 }
-

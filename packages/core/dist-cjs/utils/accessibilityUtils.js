@@ -36,4 +36,3 @@ function isLightColor(hex) {
     const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
     return luminance > 0.5;
 }
-//# sourceMappingURL=accessibilityUtils.js.map

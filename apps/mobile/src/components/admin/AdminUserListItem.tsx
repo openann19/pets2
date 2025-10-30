@@ -1,30 +1,24 @@
-import { Ionicons } from "@expo/vector-icons";
-import { memo } from "react";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import type { ThemeColors } from "../../contexts/ThemeContext";
-import type { AdminUserStatus } from "../../services/adminUsersService";
+import { Ionicons } from '@expo/vector-icons';
+import type { ThemeColors } from '@mobile/src/theme';
+import { memo } from 'react';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import type { AdminUserStatus } from '../../services/adminUsersService';
 
 type IoniconName =
-  | "paw"
-  | "heart"
-  | "chatbubble"
-  | "calendar"
-  | "checkmark"
-  | "checkmark-circle"
-  | "pause-circle"
-  | "ban"
-  | "time"
-  | "help-circle"
-  | "pause"
-  | "play"
-  | "shield-checkmark"
-  | "alert-circle";
+  | 'paw'
+  | 'heart'
+  | 'chatbubble'
+  | 'calendar'
+  | 'checkmark'
+  | 'checkmark-circle'
+  | 'pause-circle'
+  | 'ban'
+  | 'time'
+  | 'help-circle'
+  | 'pause'
+  | 'play'
+  | 'shield-checkmark'
+  | 'alert-circle';
 
 export interface AdminUserListMetrics {
   pets: number;
@@ -79,7 +73,11 @@ const MetricBadge = ({
   label: string;
 }) => (
   <View style={styles.metricItem}>
-    <Ionicons name={icon} size={16} color={color} />
+    <Ionicons
+      name={icon}
+      size={16}
+      color={color}
+    />
     <Text style={styles.metricText}>{label}</Text>
   </View>
 );
@@ -88,46 +86,54 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
   ({ data, colors, onSelect, onPrimaryAction, onSecondaryAction }) => {
     return (
       <TouchableOpacity
-        style={[
+        style={StyleSheet.flatten([
           styles.container,
           { backgroundColor: colors.surface },
           data.isSelected && styles.selectedContainer,
-        ]}
+        ])}
         onPress={onSelect}
         accessibilityRole="button"
         accessibilityLabel={`User ${data.fullName}`}
       >
         <View style={styles.headerRow}>
           <View style={styles.avatarContainer}>
-            <Text style={[styles.avatarText, { color: colors.text }]}>
+            <Text style={StyleSheet.flatten([styles.avatarText, { color: colors.onSurface }])}>
               {data.initials}
             </Text>
           </View>
           <View style={styles.titleContainer}>
-            <Text style={[styles.fullName, { color: colors.text }]}>
+            <Text style={StyleSheet.flatten([styles.fullName, { color: colors.onSurface }])}>
               {data.fullName}
             </Text>
-            <Text style={[styles.email, { color: colors.textSecondary }]}>
+            <Text style={StyleSheet.flatten([styles.email, { color: colors.onMuted }])}>
               {data.email}
             </Text>
             <View style={styles.badgeRow}>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.statusBadge,
                   { backgroundColor: data.statusColor },
-                ]}
+                ])}
               >
-                <Ionicons name={data.statusIcon} size={12} color="#FFFFFF" />
+                <Ionicons
+                  name={data.statusIcon}
+                  size={12}
+                  color="#FFFFFF"
+                />
                 <Text style={styles.statusText}>{data.statusLabel}</Text>
               </View>
               {data.verified ? (
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.verifiedBadge,
                     { backgroundColor: colors.success },
-                  ]}
+                  ])}
                 >
-                  <Ionicons name="checkmark" size={12} color="#FFFFFF" />
+                  <Ionicons
+                    name="checkmark"
+                    size={12}
+                    color="#FFFFFF"
+                  />
                   <Text style={styles.verifiedText}>Verified</Text>
                 </View>
               ) : null}
@@ -135,40 +141,46 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
           </View>
           <View style={styles.actionColumn}>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.actionButton,
                 { backgroundColor: data.primaryAction.tint },
-              ]}
+              ])}
               onPress={onPrimaryAction}
               accessibilityRole="button"
               accessibilityLabel={data.primaryAction.accessibilityLabel}
             >
               {data.isActionLoading ? (
-                <ActivityIndicator size="small" color="#FFFFFF" />
+                <ActivityIndicator
+                  size="small"
+                  color="#ffffff"
+                />
               ) : (
                 <Ionicons
                   name={data.primaryAction.icon}
                   size={16}
-                  color="#FFFFFF"
+                  color="#ffffff"
                 />
               )}
             </TouchableOpacity>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.actionButton,
                 { backgroundColor: data.secondaryAction.tint },
-              ]}
+              ])}
               onPress={onSecondaryAction}
               accessibilityRole="button"
               accessibilityLabel={data.secondaryAction.accessibilityLabel}
             >
               {data.isActionLoading ? (
-                <ActivityIndicator size="small" color="#FFFFFF" />
+                <ActivityIndicator
+                  size="small"
+                  color="#ffffff"
+                />
               ) : (
                 <Ionicons
                   name={data.secondaryAction.icon}
                   size={16}
-                  color="#FFFFFF"
+                  color="#ffffff"
                 />
               )}
             </TouchableOpacity>
@@ -183,7 +195,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
           />
           <MetricBadge
             icon="heart"
-            color="#EC4899"
+            color="#3B82F6"
             label={`${data.metrics.matches} matches`}
           />
           <MetricBadge
@@ -193,7 +205,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
           />
           <MetricBadge
             icon="calendar"
-            color={colors.gray500}
+            color={theme.palette.neutral[500]}
             label={data.createdDateLabel}
           />
         </View>
@@ -202,14 +214,14 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
   },
 );
 
-AdminUserListItem.displayName = "AdminUserListItem";
+AdminUserListItem.displayName = 'AdminUserListItem';
 
 const styles = StyleSheet.create({
   container: {
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 6,
@@ -217,24 +229,24 @@ const styles = StyleSheet.create({
   },
   selectedContainer: {
     borderWidth: 1,
-    borderColor: "#8B5CF6",
+    borderColor: '#3B82F6',
   },
   headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   avatarContainer: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "rgba(139, 92, 246, 0.12)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(139, 92, 246, 0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   avatarText: {
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   titleContainer: {
     flex: 1,
@@ -242,7 +254,7 @@ const styles = StyleSheet.create({
   },
   fullName: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 4,
   },
   email: {
@@ -250,35 +262,35 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   badgeRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
   },
   statusBadge: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 999,
     gap: 4,
   },
   statusText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   verifiedBadge: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 999,
     gap: 4,
   },
   verifiedText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   actionColumn: {
     gap: 8,
@@ -287,24 +299,24 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   metricsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     marginTop: 16,
     gap: 12,
   },
   metricItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
   },
   metricText: {
     fontSize: 13,
-    color: "#6B7280",
+    color: '#666666',
   },
 });
 

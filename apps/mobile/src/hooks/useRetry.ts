@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from 'react';
 
 interface RetryOptions {
   maxAttempts?: number;
@@ -18,13 +18,7 @@ interface RetryState {
  * Hook for handling retry logic with exponential backoff
  */
 export const useRetry = (options: RetryOptions = {}) => {
-  const {
-    maxAttempts = 3,
-    delayMs = 1000,
-    backoffMultiplier = 2,
-    onRetry,
-    onFailure,
-  } = options;
+  const { maxAttempts = 3, delayMs = 1000, backoffMultiplier = 2, onRetry, onFailure } = options;
 
   const [state, setState] = useState<RetryState>({
     isRetrying: false,
@@ -75,8 +69,7 @@ export const useRetry = (options: RetryOptions = {}) => {
           return result;
         } catch (error) {
           const isLastAttempt = attempt === maxAttempts;
-          const currentError =
-            error instanceof Error ? error : new Error(String(error));
+          const currentError = error instanceof Error ? error : new Error(String(error));
 
           setState((prev) => ({
             ...prev,
@@ -112,16 +105,9 @@ export const useRetry = (options: RetryOptions = {}) => {
       }
 
       // This should never be reached, but just in case
-      throw state.lastError || new Error("Retry logic failed unexpectedly");
+      throw state.lastError || new Error('Retry logic failed unexpectedly');
     },
-    [
-      maxAttempts,
-      delayMs,
-      backoffMultiplier,
-      onRetry,
-      onFailure,
-      state.lastError,
-    ],
+    [maxAttempts, delayMs, backoffMultiplier, onRetry, onFailure, state.lastError],
   );
 
   const reset = useCallback(() => {
@@ -148,7 +134,7 @@ export const useRetry = (options: RetryOptions = {}) => {
  * Determine if an error should not be retried
  */
 function shouldNotRetry(error: unknown): boolean {
-  if (!error || typeof error !== "object") return false;
+  if (!error || typeof error !== 'object') return false;
 
   const err = error as { status?: number; code?: string };
 
@@ -168,7 +154,7 @@ function shouldNotRetry(error: unknown): boolean {
   }
 
   // Don't retry if it's a network error that suggests no connection
-  if (err.code === "NETWORK_ERROR" || err.code === "TIMEOUT") {
+  if (err.code === 'NETWORK_ERROR' || err.code === 'TIMEOUT') {
     return false; // Actually, we might want to retry network errors
   }
 

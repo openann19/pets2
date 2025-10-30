@@ -116,7 +116,7 @@ class CoachTooltipsService {
             buttons: [
                 {
                     text: 'Got it!',
-                    action: () => tour.complete()
+                    action: () => { tour.complete(); }
                 }
             ]
         });

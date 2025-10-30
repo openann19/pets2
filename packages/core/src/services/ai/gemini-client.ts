@@ -29,9 +29,12 @@ export class GeminiClient {
   constructor(config: GeminiConfig) {
     this.apiKey = config.apiKey.length > 0 ? config.apiKey : '';
     this.model = config.model != null && config.model.length > 0 ? config.model : 'gemini-pro';
-    
+
     this.client = axios.create({
-      baseURL: config.baseURL != null && config.baseURL.length > 0 ? config.baseURL : 'https://generativelanguage.googleapis.com/v1beta',
+      baseURL:
+        config.baseURL != null && config.baseURL.length > 0
+          ? config.baseURL
+          : 'https://generativelanguage.googleapis.com/v1beta',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -46,12 +49,16 @@ export class GeminiClient {
       const response = await this.client.post<GeminiResponse>(
         `/models/${this.model}:generateContent?key=${this.apiKey}`,
         {
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }]
-        }
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+        },
       );
 
       const candidates = response.data.candidates;
@@ -59,7 +66,7 @@ export class GeminiClient {
         throw new Error('No candidates in response');
       }
 
-      const candidate = candidates[0] as NonNullable<typeof candidates[0]>;
+      const candidate = candidates[0] as NonNullable<(typeof candidates)[0]>;
 
       const text = candidate.content.parts[0]?.text;
       if (text == null || text.length === 0) {
@@ -81,18 +88,20 @@ export class GeminiClient {
       const response = await this.client.post<GeminiResponse>(
         `/models/gemini-pro-vision:generateContent?key=${this.apiKey}`,
         {
-          contents: [{
-            parts: [
-              { text: prompt },
-              {
-                inline_data: {
-                  mime_type: 'image/jpeg',
-                  data: await this.imageToBase64(imageUrl)
-                }
-              }
-            ]
-          }]
-        }
+          contents: [
+            {
+              parts: [
+                { text: prompt },
+                {
+                  inline_data: {
+                    mime_type: 'image/jpeg',
+                    data: await this.imageToBase64(imageUrl),
+                  },
+                },
+              ],
+            },
+          ],
+        },
       );
 
       const candidates = response.data.candidates;
@@ -100,7 +109,7 @@ export class GeminiClient {
         throw new Error('No candidates in response');
       }
 
-      const candidate = candidates[0] as NonNullable<typeof candidates[0]>;
+      const candidate = candidates[0] as NonNullable<(typeof candidates)[0]>;
 
       const text = candidate.content.parts[0]?.text;
       if (text == null || text.length === 0) {

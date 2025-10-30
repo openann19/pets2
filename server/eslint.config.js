@@ -1,67 +1,14 @@
-let rootConfig = require('../eslint.config.js');
-// If the root config was exported as an ES module default export, use it
-if (rootConfig && rootConfig.__esModule && rootConfig.default) {
-  rootConfig = rootConfig.default;
-}
-const globals = require('globals');
+// Server-specific ESLint config
+// Extends root config but overrides rules for server routes
+import rootConfig from '../eslint.config.js';
 
-module.exports = [
-  // 1. Global Ignores
+export default [
+  ...rootConfig.default || rootConfig,
   {
-    ignores: [
-      'node_modules/**',
-      'dist/**',
-      'build/**',
-      'coverage/**',
-      '*.config.js',
-      '*.config.cjs',
-    ],
-  },
-
-  // 2. Base Recommended JavaScript Rules
-  {
-    files: ['**/*.{js,cjs,mjs}'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'commonjs',
-      globals: {
-        ...globals.node,
-      },
-    },
+    files: ['**/*.{ts,js}'],
     rules: {
-      // Allow console in server code for now; we'll replace with structured logger in follow-up
-      'no-console': 'off',
-      'no-unused-vars': [
-        'error',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
-        },
-      ],
-    },
-  },
-
-  // 3. Server test files (all test directories)
-  {
-    files: ['**/__tests__/**/*.{js,cjs,mjs}', '**/tests/**/*.{js,cjs,mjs}', '**/*.test.{js,cjs,mjs}'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'commonjs',
-      globals: {
-        ...globals.node,
-        ...globals.jest,
-        'generateTestToken': 'readonly',
-        'fail': 'readonly',
-        'silenceConsole': 'readonly',
-        'restoreConsole': 'readonly',
-        'expectValidationError': 'readonly',
-        'sleep': 'readonly',
-      },
-    },
-    rules: {
-      // Allow console in tests
-      'no-console': 'off',
+      '@typescript-eslint/no-explicit-any': 'off', // Off for server - Express routes commonly use any for req/res
+      'no-console': 'off', // Allow console in server code
     },
   },
 ];

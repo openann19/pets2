@@ -145,7 +145,7 @@ describe('React Query Integration', () => {
   });
 
   it('provides loading states', async () => {
-    let resolvePromise: (value: any) => void;
+    let resolvePromise: (value: unknown) => void;
     const mockFn = jest.fn(() => new Promise(resolve => {
       resolvePromise = resolve;
     }));

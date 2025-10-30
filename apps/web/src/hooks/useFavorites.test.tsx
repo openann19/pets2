@@ -14,8 +14,8 @@ import { toast } from 'sonner';
 jest.mock('@/lib/http');
 jest.mock('sonner');
 
-const mockHttp = http as jest.Mocked<typeof http>;
-const mockToast = toast as jest.Mocked<typeof toast>;
+const mockHttp = http;
+const mockToast = toast;
 
 // Test wrapper with QueryClient
 const createWrapper = () => {
@@ -222,8 +222,8 @@ describe('useFavorites Hook', () => {
 jest.mock('@/lib/http');
 jest.mock('sonner');
 
-const mockHttp = http as jest.Mocked<typeof http>;
-const mockToast = toast as jest.Mocked<typeof toast>;
+const mockHttp = http;
+const mockToast = toast;
 
 // Test wrapper with QueryClient
 const createWrapper = () => {

@@ -247,4 +247,3 @@ async function setRefreshToken(token) {
 async function removeRefreshToken() {
     await exports.secureStorage.removeItem('refreshToken');
 }
-//# sourceMappingURL=storage.js.map

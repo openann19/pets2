@@ -118,28 +118,28 @@ export const ProfileVerification = ({ onComplete }) => {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   First Name
                 </label>
-                <input type="text" value={personalInfo.firstName} onChange={(e) => setPersonalInfo((prev) => ({ ...prev, firstName: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                <input type="text" value={personalInfo.firstName} onChange={(e) => { setPersonalInfo((prev) => ({ ...prev, firstName: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Last Name
                 </label>
-                <input type="text" value={personalInfo.lastName} onChange={(e) => setPersonalInfo((prev) => ({ ...prev, lastName: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                <input type="text" value={personalInfo.lastName} onChange={(e) => { setPersonalInfo((prev) => ({ ...prev, lastName: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Date of Birth
                 </label>
-                <input type="date" value={personalInfo.dateOfBirth} onChange={(e) => setPersonalInfo((prev) => ({ ...prev, dateOfBirth: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                <input type="date" value={personalInfo.dateOfBirth} onChange={(e) => { setPersonalInfo((prev) => ({ ...prev, dateOfBirth: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Phone Number
                 </label>
-                <input type="tel" value={personalInfo.phone} onChange={(e) => setPersonalInfo((prev) => ({ ...prev, phone: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                <input type="tel" value={personalInfo.phone} onChange={(e) => { setPersonalInfo((prev) => ({ ...prev, phone: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
               </div>
             </div>
 
@@ -148,26 +148,26 @@ export const ProfileVerification = ({ onComplete }) => {
                 Address
               </label>
               <div className="space-y-4">
-                <input type="text" placeholder="Street Address" value={personalInfo.address.street} onChange={(e) => setPersonalInfo((prev) => ({
+                <input type="text" placeholder="Street Address" value={personalInfo.address.street} onChange={(e) => { setPersonalInfo((prev) => ({
                         ...prev,
                         address: { ...prev.address, street: e.target.value },
-                    }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                    })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <input type="text" placeholder="City" value={personalInfo.address.city} onChange={(e) => setPersonalInfo((prev) => ({
+                  <input type="text" placeholder="City" value={personalInfo.address.city} onChange={(e) => { setPersonalInfo((prev) => ({
                         ...prev,
                         address: { ...prev.address, city: e.target.value },
-                    }))} className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                    })); }} className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
 
-                  <input type="text" placeholder="State" value={personalInfo.address.state} onChange={(e) => setPersonalInfo((prev) => ({
+                  <input type="text" placeholder="State" value={personalInfo.address.state} onChange={(e) => { setPersonalInfo((prev) => ({
                         ...prev,
                         address: { ...prev.address, state: e.target.value },
-                    }))} className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                    })); }} className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
 
-                  <input type="text" placeholder="ZIP Code" value={personalInfo.address.zipCode} onChange={(e) => setPersonalInfo((prev) => ({
+                  <input type="text" placeholder="ZIP Code" value={personalInfo.address.zipCode} onChange={(e) => { setPersonalInfo((prev) => ({
                         ...prev,
                         address: { ...prev.address, zipCode: e.target.value },
-                    }))} className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                    })); }} className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
                 </div>
               </div>
             </div>
@@ -213,14 +213,14 @@ export const ProfileVerification = ({ onComplete }) => {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Pet Name
                 </label>
-                <input type="text" value={petInfo.petName} onChange={(e) => setPetInfo((prev) => ({ ...prev, petName: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                <input type="text" value={petInfo.petName} onChange={(e) => { setPetInfo((prev) => ({ ...prev, petName: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Species
                 </label>
-                <select value={petInfo.species} onChange={(e) => setPetInfo((prev) => ({ ...prev, species: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                <select value={petInfo.species} onChange={(e) => { setPetInfo((prev) => ({ ...prev, species: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent">
                   <option value="">Select Species</option>
                   <option value="dog">Dog</option>
                   <option value="cat">Cat</option>
@@ -234,42 +234,42 @@ export const ProfileVerification = ({ onComplete }) => {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Breed
                 </label>
-                <input type="text" value={petInfo.breed} onChange={(e) => setPetInfo((prev) => ({ ...prev, breed: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                <input type="text" value={petInfo.breed} onChange={(e) => { setPetInfo((prev) => ({ ...prev, breed: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Age
                 </label>
-                <input type="number" value={petInfo.age} onChange={(e) => setPetInfo((prev) => ({ ...prev, age: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                <input type="number" value={petInfo.age} onChange={(e) => { setPetInfo((prev) => ({ ...prev, age: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Microchip Number
                 </label>
-                <input type="text" value={petInfo.microchipNumber} onChange={(e) => setPetInfo((prev) => ({ ...prev, microchipNumber: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                <input type="text" value={petInfo.microchipNumber} onChange={(e) => { setPetInfo((prev) => ({ ...prev, microchipNumber: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Veterinarian Name
                 </label>
-                <input type="text" value={petInfo.vetName} onChange={(e) => setPetInfo((prev) => ({ ...prev, vetName: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                <input type="text" value={petInfo.vetName} onChange={(e) => { setPetInfo((prev) => ({ ...prev, vetName: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Vet Phone
                 </label>
-                <input type="tel" value={petInfo.vetPhone} onChange={(e) => setPetInfo((prev) => ({ ...prev, vetPhone: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                <input type="tel" value={petInfo.vetPhone} onChange={(e) => { setPetInfo((prev) => ({ ...prev, vetPhone: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Vet Address
                 </label>
-                <input type="text" value={petInfo.vetAddress} onChange={(e) => setPetInfo((prev) => ({ ...prev, vetAddress: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+                <input type="text" value={petInfo.vetAddress} onChange={(e) => { setPetInfo((prev) => ({ ...prev, vetAddress: e.target.value })); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
               </div>
             </div>
           </div>);
@@ -394,12 +394,12 @@ export const ProfileVerification = ({ onComplete }) => {
 
       {/* Navigation */}
       <div className="flex justify-between mt-6">
-        <button onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))} disabled={currentStep === 0} className="px-4 py-2 text-gray-600 dark:text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed">
+        <button onClick={() => { setCurrentStep((prev) => Math.max(0, prev - 1)); }} disabled={currentStep === 0} className="px-4 py-2 text-gray-600 dark:text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed">
           Previous
         </button>
 
         <div className="flex space-x-3">
-          {currentStep < steps.length - 1 ? (<button onClick={() => setCurrentStep((prev) => Math.min(steps.length - 1, prev + 1))} className="px-6 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg font-medium transition-colors">
+          {currentStep < steps.length - 1 ? (<button onClick={() => { setCurrentStep((prev) => Math.min(steps.length - 1, prev + 1)); }} className="px-6 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg font-medium transition-colors">
               Next
             </button>) : (<button onClick={handleSubmit} disabled={isSubmitting} className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
               {isSubmitting ? 'Submitting...' : 'Submit Verification'}

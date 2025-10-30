@@ -3,16 +3,16 @@
  * Comprehensive testing of API interactions and data flow
  */
 
-import React from "react";
-import { render, waitFor, act } from "@testing-library/react-native";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { apiService } from "../../services/apiService";
-import { AuthProvider } from "../../providers/AuthProvider";
-import { useAuth } from "../../hooks/useAuth";
-import { logger } from "../../services/logger";
+import React from 'react';
+import { render, waitFor, act } from '@testing-library/react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { apiService } from '../../services/apiService';
+import { AuthProvider } from '../../providers/AuthProvider';
+import { useAuth } from '../../hooks/useAuth';
+import { logger } from '../../services/logger';
 
 // Mock API service
-jest.mock("../../services/apiService", () => ({
+jest.mock('../../services/apiService', () => ({
   apiService: {
     get: jest.fn(),
     post: jest.fn(),
@@ -22,14 +22,14 @@ jest.mock("../../services/apiService", () => ({
 }));
 
 // Mock secure storage
-jest.mock("expo-secure-store", () => ({
+jest.mock('expo-secure-store', () => ({
   getItemAsync: jest.fn(),
   setItemAsync: jest.fn(),
   deleteItemAsync: jest.fn(),
 }));
 
 // Mock socket service
-jest.mock("../../services/socketService", () => ({
+jest.mock('../../services/socketService', () => ({
   socketService: {
     connect: jest.fn(),
     disconnect: jest.fn(),
@@ -60,7 +60,7 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
-describe("API Integration Tests", () => {
+describe('API Integration Tests', () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
@@ -68,15 +68,15 @@ describe("API Integration Tests", () => {
     jest.clearAllMocks();
   });
 
-  describe("Authentication API", () => {
-    it("should handle successful login", async () => {
+  describe('Authentication API', () => {
+    it('should handle successful login', async () => {
       const mockResponse = {
         user: {
-          id: "1",
-          email: "test@example.com",
-          name: "Test User",
+          id: '1',
+          email: 'test@example.com',
+          name: 'Test User',
         },
-        token: "mock-jwt-token",
+        token: 'mock-jwt-token',
       };
 
       (apiService.post as jest.Mock).mockResolvedValue({
@@ -88,7 +88,7 @@ describe("API Integration Tests", () => {
         const { login, user, isLoading } = useAuth();
 
         React.useEffect(() => {
-          login("test@example.com", "password123");
+          login('test@example.com', 'password123');
         }, [login]);
 
         if (isLoading) return null;
@@ -102,19 +102,19 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("user-data")).toBeTruthy();
+        expect(getByTestId('user-data')).toBeTruthy();
       });
 
-      expect(apiService.post).toHaveBeenCalledWith("/auth/login", {
-        email: "test@example.com",
-        password: "password123",
+      expect(apiService.post).toHaveBeenCalledWith('/auth/login', {
+        email: 'test@example.com',
+        password: 'password123',
       });
     });
 
-    it("should handle login failure", async () => {
+    it('should handle login failure', async () => {
       (apiService.post as jest.Mock).mockRejectedValue({
         response: {
-          data: { message: "Invalid credentials" },
+          data: { message: 'Invalid credentials' },
           status: 401,
         },
       });
@@ -123,7 +123,7 @@ describe("API Integration Tests", () => {
         const { login, error, isLoading } = useAuth();
 
         React.useEffect(() => {
-          login("test@example.com", "wrongpassword");
+          login('test@example.com', 'wrongpassword');
         }, [login]);
 
         if (isLoading) return null;
@@ -137,14 +137,14 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("error-message")).toBeTruthy();
+        expect(getByTestId('error-message')).toBeTruthy();
       });
     });
 
-    it("should handle token refresh", async () => {
+    it('should handle token refresh', async () => {
       const mockRefreshResponse = {
-        token: "new-jwt-token",
-        refreshToken: "new-refresh-token",
+        token: 'new-jwt-token',
+        refreshToken: 'new-refresh-token',
       };
 
       (apiService.post as jest.Mock).mockResolvedValue({
@@ -169,29 +169,29 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("refresh-status")).toBeTruthy();
+        expect(getByTestId('refresh-status')).toBeTruthy();
       });
 
-      expect(apiService.post).toHaveBeenCalledWith("/auth/refresh");
+      expect(apiService.post).toHaveBeenCalledWith('/auth/refresh');
     });
   });
 
-  describe("Pet Profile API", () => {
-    it("should fetch pet profiles", async () => {
+  describe('Pet Profile API', () => {
+    it('should fetch pet profiles', async () => {
       const mockPets = [
         {
-          id: "1",
-          name: "Buddy",
+          id: '1',
+          name: 'Buddy',
           age: 3,
-          breed: "Golden Retriever",
-          photos: ["photo1.jpg", "photo2.jpg"],
+          breed: 'Golden Retriever',
+          photos: ['photo1.jpg', 'photo2.jpg'],
         },
         {
-          id: "2",
-          name: "Luna",
+          id: '2',
+          name: 'Luna',
           age: 2,
-          breed: "Labrador",
-          photos: ["photo3.jpg"],
+          breed: 'Labrador',
+          photos: ['photo3.jpg'],
         },
       ];
 
@@ -206,10 +206,10 @@ describe("API Integration Tests", () => {
         React.useEffect(() => {
           const fetchPets = async () => {
             try {
-              const response = await apiService.get("/pets");
+              const response = await apiService.get('/pets');
               setPets(response.data);
             } catch (error) {
-              logger.error("Failed to fetch pets:", { error });
+              logger.error('Failed to fetch pets:', { error });
             }
           };
           fetchPets();
@@ -218,7 +218,10 @@ describe("API Integration Tests", () => {
         return (
           <div testID="pets-list">
             {pets.map((pet: unknown) => (
-              <div key={pet.id} testID={`pet-${pet.id}`}>
+              <div
+                key={pet.id}
+                testID={`pet-${pet.id}`}
+              >
                 {pet.name}
               </div>
             ))}
@@ -233,23 +236,23 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("pet-1")).toBeTruthy();
-        expect(getByTestId("pet-2")).toBeTruthy();
+        expect(getByTestId('pet-1')).toBeTruthy();
+        expect(getByTestId('pet-2')).toBeTruthy();
       });
 
-      expect(apiService.get).toHaveBeenCalledWith("/pets");
+      expect(apiService.get).toHaveBeenCalledWith('/pets');
     });
 
-    it("should create new pet profile", async () => {
+    it('should create new pet profile', async () => {
       const newPet = {
-        name: "Max",
+        name: 'Max',
         age: 1,
-        breed: "German Shepherd",
-        bio: "Friendly and energetic",
+        breed: 'German Shepherd',
+        bio: 'Friendly and energetic',
       };
 
       const mockResponse = {
-        id: "3",
+        id: '3',
         ...newPet,
         photos: [],
         createdAt: new Date().toISOString(),
@@ -266,10 +269,10 @@ describe("API Integration Tests", () => {
         React.useEffect(() => {
           const createPet = async () => {
             try {
-              const response = await apiService.post("/pets", newPet);
+              const response = await apiService.post('/pets', newPet);
               setPet(response.data);
             } catch (error) {
-              logger.error("Failed to create pet:", { error });
+              logger.error('Failed to create pet:', { error });
             }
           };
           createPet();
@@ -286,18 +289,18 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("created-pet")).toBeTruthy();
+        expect(getByTestId('created-pet')).toBeTruthy();
       });
 
-      expect(apiService.post).toHaveBeenCalledWith("/pets", newPet);
+      expect(apiService.post).toHaveBeenCalledWith('/pets', newPet);
     });
 
-    it("should update pet profile", async () => {
+    it('should update pet profile', async () => {
       const updatedPet = {
-        id: "1",
-        name: "Buddy Updated",
+        id: '1',
+        name: 'Buddy Updated',
         age: 4,
-        breed: "Golden Retriever",
+        breed: 'Golden Retriever',
       };
 
       (apiService.put as jest.Mock).mockResolvedValue({
@@ -311,13 +314,10 @@ describe("API Integration Tests", () => {
         React.useEffect(() => {
           const updatePet = async () => {
             try {
-              const response = await apiService.put(
-                `/pets/${updatedPet.id}`,
-                updatedPet,
-              );
+              const response = await apiService.put(`/pets/${updatedPet.id}`, updatedPet);
               setPet(response.data);
             } catch (error) {
-              logger.error("Failed to update pet:", { error });
+              logger.error('Failed to update pet:', { error });
             }
           };
           updatePet();
@@ -334,21 +334,18 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("updated-pet")).toBeTruthy();
+        expect(getByTestId('updated-pet')).toBeTruthy();
       });
 
-      expect(apiService.put).toHaveBeenCalledWith(
-        `/pets/${updatedPet.id}`,
-        updatedPet,
-      );
+      expect(apiService.put).toHaveBeenCalledWith(`/pets/${updatedPet.id}`, updatedPet);
     });
   });
 
-  describe("Matching API", () => {
-    it("should handle pet likes", async () => {
+  describe('Matching API', () => {
+    it('should handle pet likes', async () => {
       const likeData = {
-        petId: "1",
-        action: "like",
+        petId: '1',
+        action: 'like',
       };
 
       (apiService.post as jest.Mock).mockResolvedValue({
@@ -362,19 +359,17 @@ describe("API Integration Tests", () => {
         React.useEffect(() => {
           const likePet = async () => {
             try {
-              const response = await apiService.post("/matches/like", likeData);
+              const response = await apiService.post('/matches/like', likeData);
               setResult(response.data);
             } catch (error) {
-              logger.error("Failed to like pet:", { error });
+              logger.error('Failed to like pet:', { error });
             }
           };
           likePet();
         }, []);
 
         if (!result) return null;
-        return (
-          <div testID="like-result">{result.isMatch ? "Match!" : "Liked"}</div>
-        );
+        return <div testID="like-result">{result.isMatch ? 'Match!' : 'Liked'}</div>;
       };
 
       const { getByTestId } = render(
@@ -384,20 +379,20 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("like-result")).toBeTruthy();
+        expect(getByTestId('like-result')).toBeTruthy();
       });
 
-      expect(apiService.post).toHaveBeenCalledWith("/matches/like", likeData);
+      expect(apiService.post).toHaveBeenCalledWith('/matches/like', likeData);
     });
 
-    it("should handle matches", async () => {
+    it('should handle matches', async () => {
       const matchData = {
-        petId: "1",
-        action: "like",
+        petId: '1',
+        action: 'like',
       };
 
       (apiService.post as jest.Mock).mockResolvedValue({
-        data: { success: true, isMatch: true, matchId: "match-123" },
+        data: { success: true, isMatch: true, matchId: 'match-123' },
         status: 200,
       });
 
@@ -407,22 +402,17 @@ describe("API Integration Tests", () => {
         React.useEffect(() => {
           const likePet = async () => {
             try {
-              const response = await apiService.post(
-                "/matches/like",
-                matchData,
-              );
+              const response = await apiService.post('/matches/like', matchData);
               setResult(response.data);
             } catch (error) {
-              logger.error("Failed to like pet:", { error });
+              logger.error('Failed to like pet:', { error });
             }
           };
           likePet();
         }, []);
 
         if (!result) return null;
-        return (
-          <div testID="match-result">{result.isMatch ? "Match!" : "Liked"}</div>
-        );
+        return <div testID="match-result">{result.isMatch ? 'Match!' : 'Liked'}</div>;
       };
 
       const { getByTestId } = render(
@@ -432,24 +422,24 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("match-result")).toBeTruthy();
+        expect(getByTestId('match-result')).toBeTruthy();
       });
     });
   });
 
-  describe("Chat API", () => {
-    it("should fetch chat messages", async () => {
+  describe('Chat API', () => {
+    it('should fetch chat messages', async () => {
       const mockMessages = [
         {
-          id: "1",
-          text: "Hello!",
-          senderId: "user1",
+          id: '1',
+          text: 'Hello!',
+          senderId: 'user1',
           timestamp: new Date().toISOString(),
         },
         {
-          id: "2",
-          text: "Hi there!",
-          senderId: "user2",
+          id: '2',
+          text: 'Hi there!',
+          senderId: 'user2',
           timestamp: new Date().toISOString(),
         },
       ];
@@ -465,10 +455,10 @@ describe("API Integration Tests", () => {
         React.useEffect(() => {
           const fetchMessages = async () => {
             try {
-              const response = await apiService.get("/chats/chat-123/messages");
+              const response = await apiService.get('/chats/chat-123/messages');
               setMessages(response.data);
             } catch (error) {
-              logger.error("Failed to fetch messages:", { error });
+              logger.error('Failed to fetch messages:', { error });
             }
           };
           fetchMessages();
@@ -477,7 +467,10 @@ describe("API Integration Tests", () => {
         return (
           <div testID="messages-list">
             {messages.map((message: unknown) => (
-              <div key={message.id} testID={`message-${message.id}`}>
+              <div
+                key={message.id}
+                testID={`message-${message.id}`}
+              >
                 {message.text}
               </div>
             ))}
@@ -492,23 +485,23 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("message-1")).toBeTruthy();
-        expect(getByTestId("message-2")).toBeTruthy();
+        expect(getByTestId('message-1')).toBeTruthy();
+        expect(getByTestId('message-2')).toBeTruthy();
       });
 
-      expect(apiService.get).toHaveBeenCalledWith("/chats/chat-123/messages");
+      expect(apiService.get).toHaveBeenCalledWith('/chats/chat-123/messages');
     });
 
-    it("should send chat message", async () => {
+    it('should send chat message', async () => {
       const messageData = {
-        text: "Hello from test!",
-        chatId: "chat-123",
+        text: 'Hello from test!',
+        chatId: 'chat-123',
       };
 
       const mockResponse = {
-        id: "3",
+        id: '3',
         ...messageData,
-        senderId: "user1",
+        senderId: 'user1',
         timestamp: new Date().toISOString(),
       };
 
@@ -523,13 +516,10 @@ describe("API Integration Tests", () => {
         React.useEffect(() => {
           const sendMessage = async () => {
             try {
-              const response = await apiService.post(
-                "/chats/messages",
-                messageData,
-              );
+              const response = await apiService.post('/chats/messages', messageData);
               setMessage(response.data);
             } catch (error) {
-              logger.error("Failed to send message:", { error });
+              logger.error('Failed to send message:', { error });
             }
           };
           sendMessage();
@@ -546,21 +536,18 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("sent-message")).toBeTruthy();
+        expect(getByTestId('sent-message')).toBeTruthy();
       });
 
-      expect(apiService.post).toHaveBeenCalledWith(
-        "/chats/messages",
-        messageData,
-      );
+      expect(apiService.post).toHaveBeenCalledWith('/chats/messages', messageData);
     });
   });
 
-  describe("Error Handling", () => {
-    it("should handle network errors", async () => {
+  describe('Error Handling', () => {
+    it('should handle network errors', async () => {
       (apiService.get as jest.Mock).mockRejectedValue({
-        message: "Network Error",
-        code: "NETWORK_ERROR",
+        message: 'Network Error',
+        code: 'NETWORK_ERROR',
       });
 
       const TestComponent = () => {
@@ -569,7 +556,7 @@ describe("API Integration Tests", () => {
         React.useEffect(() => {
           const fetchData = async () => {
             try {
-              await apiService.get("/pets");
+              await apiService.get('/pets');
             } catch (err) {
               setError(err.message);
             }
@@ -588,14 +575,14 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("network-error")).toBeTruthy();
+        expect(getByTestId('network-error')).toBeTruthy();
       });
     });
 
-    it("should handle server errors", async () => {
+    it('should handle server errors', async () => {
       (apiService.get as jest.Mock).mockRejectedValue({
         response: {
-          data: { message: "Internal Server Error" },
+          data: { message: 'Internal Server Error' },
           status: 500,
         },
       });
@@ -606,7 +593,7 @@ describe("API Integration Tests", () => {
         React.useEffect(() => {
           const fetchData = async () => {
             try {
-              await apiService.get("/pets");
+              await apiService.get('/pets');
             } catch (err) {
               setError(err.response.data.message);
             }
@@ -625,14 +612,14 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("server-error")).toBeTruthy();
+        expect(getByTestId('server-error')).toBeTruthy();
       });
     });
 
-    it("should handle timeout errors", async () => {
+    it('should handle timeout errors', async () => {
       (apiService.get as jest.Mock).mockRejectedValue({
-        message: "Request timeout",
-        code: "TIMEOUT",
+        message: 'Request timeout',
+        code: 'TIMEOUT',
       });
 
       const TestComponent = () => {
@@ -641,7 +628,7 @@ describe("API Integration Tests", () => {
         React.useEffect(() => {
           const fetchData = async () => {
             try {
-              await apiService.get("/pets");
+              await apiService.get('/pets');
             } catch (err) {
               setError(err.message);
             }
@@ -660,7 +647,7 @@ describe("API Integration Tests", () => {
       );
 
       await waitFor(() => {
-        expect(getByTestId("timeout-error")).toBeTruthy();
+        expect(getByTestId('timeout-error')).toBeTruthy();
       });
     });
   });

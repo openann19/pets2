@@ -1,0 +1,200 @@
+
+> pawfectmatch-premium@1.0.1-rc.0 typecheck:mobile /home/ben/Downloads/pets-fresh
+> tsc -b tsconfig.build.json --noEmit --pretty false
+
+apps/mobile/src/App.tsx(103,4): error TS2786: 'Stack.Navigator' cannot be used as a JSX component.
+  Its type 'ComponentType<Omit<DefaultRouterOptions<string> & { id?: string | undefined; children: ReactNode; screenListeners?: Partial<{ transitionStart: EventListenerCallback<NativeStackNavigationEventMap & EventMapCore<...>, "transitionStart">; ... 5 more ...; beforeRemove: EventListenerCallback<...>; }> | ((props: { ...; })...' is not a valid JSX element type.
+    Type 'ComponentClass<Omit<DefaultRouterOptions<string> & { id?: string | undefined; children: ReactNode; screenListeners?: Partial<{ transitionStart: EventListenerCallback<NativeStackNavigationEventMap & EventMapCore<...>, "transitionStart">; ... 5 more ...; beforeRemove: EventListenerCallback<...>; }> | ((props: { ...; }...' is not assignable to type 'ElementType'.
+      Type 'ComponentClass<Omit<DefaultRouterOptions<string> & { id?: string | undefined; children: ReactNode; screenListeners?: Partial<{ transitionStart: EventListenerCallback<NativeStackNavigationEventMap & EventMapCore<...>, "transitionStart">; ... 5 more ...; beforeRemove: EventListenerCallback<...>; }> | ((props: { ...; }...' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+        Property 'refs' is missing in type 'Component<Omit<DefaultRouterOptions<string> & { id?: string | undefined; children: ReactNode; screenListeners?: Partial<{ transitionStart: EventListenerCallback<NativeStackNavigationEventMap & EventMapCore<...>, "transitionStart">; ... 5 more ...; beforeRemove: EventListenerCallback<...>; }> | ((props: { ...; }) => ...' but required in type 'Component<any, any, any>'.
+apps/mobile/src/App.tsx(224,8): error TS2786: 'I18nextProvider' cannot be used as a JSX component.
+  Its type 'FunctionComponent<I18nextProviderProps>' is not a valid JSX element type.
+    Type 'FunctionComponent<I18nextProviderProps>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/App.tsx(227,14): error TS2786: 'NavigationContainer' cannot be used as a JSX component.
+  Its type '<RootParamList extends {} = RootParamList>(props: NavigationContainerProps & { theme?: Theme | undefined; linking?: LinkingOptions<RootParamList> | undefined; fallback?: ReactNode; documentTitle?: DocumentTitleOptions | undefined; onReady?: (() => void) | undefined; } & { ...; }) => ReactElement<...>' is not a valid JSX element type.
+    Type '<RootParamList extends {} = RootParamList>(props: NavigationContainerProps & { theme?: Theme | undefined; linking?: LinkingOptions<RootParamList> | undefined; fallback?: ReactNode; documentTitle?: DocumentTitleOptions | undefined; onReady?: (() => void) | undefined; } & { ...; }) => ReactElement<...>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactElement<unknown, string | JSXElementConstructor<any>>' is not assignable to type 'ReactNode'.
+        Property 'children' is missing in type 'ReactElement<unknown, string | JSXElementConstructor<any>>' but required in type 'ReactPortal'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(32,10): error TS1484: 'Theme' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(32,10): error TS2300: Duplicate identifier 'Theme'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(33,10): error TS2300: Duplicate identifier 'useTheme'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(34,10): error TS2300: Duplicate identifier 'useTheme'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(34,20): error TS1484: 'Theme' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(34,20): error TS2300: Duplicate identifier 'Theme'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(190,54): error TS2345: Argument of type 'AppTheme' is not assignable to parameter of type 'Theme'.
+  Type 'AppTheme' is missing the following properties from type 'Theme': radii, blur, easing
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(190,63): error TS2448: Block-scoped variable 'theme' used before its declaration.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(190,63): error TS2454: Variable 'theme' is used before being assigned.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(292,8): error TS2786: 'View' cannot be used as a JSX component.
+  Its type 'typeof View' is not a valid JSX element type.
+    Type 'typeof View' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'View' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(301,12): error TS2786: 'View' cannot be used as a JSX component.
+  Its type 'typeof View' is not a valid JSX element type.
+    Type 'typeof View' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'View' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(307,14): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type 'typeof Text' is not a valid JSX element type.
+    Type 'typeof Text' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'Text' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(320,12): error TS2786: 'View' cannot be used as a JSX component.
+  Its type 'typeof View' is not a valid JSX element type.
+    Type 'typeof View' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'View' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(326,14): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type 'typeof Text' is not a valid JSX element type.
+    Type 'typeof Text' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'Text' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(339,12): error TS2786: 'Image' cannot be used as a JSX component.
+  Its type 'typeof Image' is not a valid JSX element type.
+    Type 'typeof Image' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'Image' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(348,12): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type 'typeof Text' is not a valid JSX element type.
+    Type 'typeof Text' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'Text' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(355,12): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type 'typeof Text' is not a valid JSX element type.
+    Type 'typeof Text' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'Text' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(362,12): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type 'typeof Text' is not a valid JSX element type.
+    Type 'typeof Text' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'Text' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(374,12): error TS2786: 'View' cannot be used as a JSX component.
+  Its type 'typeof View' is not a valid JSX element type.
+    Type 'typeof View' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'View' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(426,6): error TS2786: 'Animated.View' cannot be used as a JSX component.
+  Its type 'AnimatedComponent<typeof View>' is not a valid JSX element type.
+    Type 'AnimatedComponent<typeof View>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(436,10): error TS2786: 'Animated.View' cannot be used as a JSX component.
+  Its type 'AnimatedComponent<typeof View>' is not a valid JSX element type.
+    Type 'AnimatedComponent<typeof View>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(454,10): error TS2786: 'Animated.View' cannot be used as a JSX component.
+  Its type 'AnimatedComponent<typeof View>' is not a valid JSX element type.
+    Type 'AnimatedComponent<typeof View>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedCard.tsx(470,8): error TS2786: 'TouchableOpacity' cannot be used as a JSX component.
+  Its type 'typeof TouchableOpacity' is not a valid JSX element type.
+    Type 'typeof TouchableOpacity' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'TouchableOpacity' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(29,10): error TS1484: 'Theme' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(29,10): error TS2300: Duplicate identifier 'Theme'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(30,10): error TS2300: Duplicate identifier 'useTheme'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(31,10): error TS2300: Duplicate identifier 'useTheme'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(31,20): error TS1484: 'Theme' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(31,20): error TS2300: Duplicate identifier 'Theme'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(35,35): error TS2339: Property 'neutral' does not exist on type 'Colors'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(94,35): error TS2339: Property 'status' does not exist on type 'Colors'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(101,18): error TS2693: 'Theme' only refers to a type, but is being used as a value here.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(104,12): error TS2693: 'Theme' only refers to a type, but is being used as a value here.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(192,54): error TS2345: Argument of type 'AppTheme' is not assignable to parameter of type 'Theme'.
+  Type 'AppTheme' is missing the following properties from type 'Theme': radii, blur, easing
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(192,63): error TS2448: Block-scoped variable 'theme' used before its declaration.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(192,63): error TS2454: Variable 'theme' is used before being assigned.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(342,12): error TS2786: 'View' cannot be used as a JSX component.
+  Its type 'typeof View' is not a valid JSX element type.
+    Type 'typeof View' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'View' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(343,14): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type 'typeof Text' is not a valid JSX element type.
+    Type 'typeof Text' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'Text' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(422,8): error TS2786: 'Animated.View' cannot be used as a JSX component.
+  Its type 'AnimatedComponent<typeof View>' is not a valid JSX element type.
+    Type 'AnimatedComponent<typeof View>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(432,10): error TS2786: 'View' cannot be used as a JSX component.
+  Its type 'typeof View' is not a valid JSX element type.
+    Type 'typeof View' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'View' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(446,14): error TS2786: 'View' cannot be used as a JSX component.
+  Its type 'typeof View' is not a valid JSX element type.
+    Type 'typeof View' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'View' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(453,10): error TS2786: 'View' cannot be used as a JSX component.
+  Its type 'typeof View' is not a valid JSX element type.
+    Type 'typeof View' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'View' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(454,12): error TS2786: 'Animated.View' cannot be used as a JSX component.
+  Its type 'AnimatedComponent<typeof View>' is not a valid JSX element type.
+    Type 'AnimatedComponent<typeof View>' is not assignable to type '(props: any, deprecatedLegacyContext?: any) => ReactNode'.
+      Type 'ReactNode | Promise<ReactNode>' is not assignable to type 'ReactNode'.
+        Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(460,16): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type 'typeof Text' is not a valid JSX element type.
+    Type 'typeof Text' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'Text' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(471,16): error TS2786: 'Text' cannot be used as a JSX component.
+  Its type 'typeof Text' is not a valid JSX element type.
+    Type 'typeof Text' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'Text' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.
+            Type 'bigint' is not assignable to type 'ReactNode'.
+apps/mobile/src/components/Advanced/AdvancedHeader.tsx(485,10): error TS2786: 'View' cannot be used as a JSX component.
+  Its type 'typeof View' is not a valid JSX element type.
+    Type 'typeof View' is not assignable to type 'new (props: any, deprecatedLegacyContext?: any) => Component<any, any, any>'.
+      Construct signature return types 'View' and 'Component<any, any, any>' are incompatible.
+        The types returned by 'render()' are incompatible between these types.
+          Type 'import("/home/ben/Downloads/pets-fresh/node_modules/@types/react/index").ReactNode' is not assignable to type 'React.ReactNode'.

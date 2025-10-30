@@ -1,4 +1,7 @@
 "use strict";
+/**
+ * API Client and Types
+ */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -14,6 +17,17 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./client"), exports);
+exports.apiClient = void 0;
+// Export API client
+var client_1 = require("./client");
+Object.defineProperty(exports, "apiClient", { enumerable: true, get: function () { return client_1.apiClient; } });
+// Export unified API client and infrastructure
+__exportStar(require("./UnifiedAPIClient"), exports);
+__exportStar(require("./CircuitBreaker"), exports);
+__exportStar(require("./RequestRetryStrategy"), exports);
+__exportStar(require("./OfflineQueueManager"), exports);
+__exportStar(require("./APIErrorClassifier"), exports);
+__exportStar(require("./RecoveryStrategies"), exports);
+__exportStar(require("./RateLimiter"), exports);
+// Export hooks
 __exportStar(require("./hooks"), exports);
-//# sourceMappingURL=index.js.map

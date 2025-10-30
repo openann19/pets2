@@ -26,12 +26,12 @@ export interface ThemePalette {
 }
 
 export interface ThemeSpacingScale {
-  readonly none: number;
-  readonly xs: number;
-  readonly sm: number;
-  readonly md: number;
-  readonly lg: number;
-  readonly xl: number;
+  readonly 'none': number;
+  readonly 'xs': number;
+  readonly 'sm': number;
+  readonly 'md': number;
+  readonly 'lg': number;
+  readonly 'xl': number;
   readonly '2xl': number;
 }
 
@@ -91,12 +91,12 @@ export const defaultTheme: Theme = {
     textMuted: '#4A5568',
   },
   spacing: {
-    none: 0,
-    xs: 4,
-    sm: 8,
-    md: 16,
-    lg: 24,
-    xl: 32,
+    'none': 0,
+    'xs': 4,
+    'sm': 8,
+    'md': 16,
+    'lg': 24,
+    'xl': 32,
     '2xl': 48,
   },
   radii: {

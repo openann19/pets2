@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import path from 'path';
 
 const isDemo = process.env['NEXT_PUBLIC_DEMO_MODE'] === '1';
 
@@ -43,6 +44,12 @@ const config: NextConfig = {
   },
 
   webpack: (config, { isServer }) => {
+    // Alias support for @ imports
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      '@': path.resolve(__dirname, 'src'),
+    };
+    
     // Deterministic chunk IDs for better caching
     config.optimization.moduleIds = 'deterministic';
     config.optimization.chunkIds = 'deterministic';

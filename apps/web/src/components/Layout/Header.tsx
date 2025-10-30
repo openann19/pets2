@@ -192,7 +192,7 @@ const Header = () => {
             <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200" ref={mobileMenuRef}>
               {navigationItems.map((item) => {
                 const Icon = isActive(item.path) ? item.iconSolid : item.icon;
-                return (<Link key={item.path} href={item.path} onClick={() => setIsMobileMenuOpen(false)} className="block">
+                return (<Link key={item.path} href={item.path} onClick={() => { setIsMobileMenuOpen(false); }} className="block">
                     <EnhancedButton id={`mobile-nav-${item.path}`} variant="ghost" size="md" effects={{
                         hover: true,
                         magnetic: true,

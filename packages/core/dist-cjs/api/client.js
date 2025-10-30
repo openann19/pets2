@@ -183,4 +183,3 @@ const extractErrorMessage = (error, fallback) => {
     }
     return fallback;
 };
-//# sourceMappingURL=client.js.map

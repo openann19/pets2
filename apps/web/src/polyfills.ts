@@ -1,5 +1,3 @@
-import { logger } from '@pawfectmatch/core';
-
 /**
  * Polyfills for Next.js 15.5.4 compatibility
  * Fixes "exports is not defined" error
@@ -32,8 +30,8 @@ if (typeof globalThis.module === 'undefined') {
 
 // Polyfill for require global (for compatibility)
 if (typeof globalThis.require === 'undefined') {
-  globalThis.require = function(id) {
-    logger.warn(`require is not available in browser environment: ${id}`);
+  globalThis.require = function(id: string) {
+    // Silently handle require in browser
     return {};
   };
 }
@@ -72,4 +70,4 @@ if (typeof exports !== 'undefined') {
   // Already handled by globalThis.exports
 }
 
-logger.info('Polyfills loaded successfully');
+// Polyfills loaded successfully

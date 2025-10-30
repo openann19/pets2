@@ -203,7 +203,7 @@ export function initializePWA() {
     // Register service worker
     void registerServiceWorker();
     // Setup install prompt
-    void setupInstallPrompt();
+    setupInstallPrompt();
     // Request persistent storage for premium users
     if (isAppInstalled()) {
         void requestPersistentStorage();

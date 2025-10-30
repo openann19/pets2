@@ -9,7 +9,7 @@ import { removeLocalStorageValue, setLocalStorageValue } from '../utils/environm
 export function useApiQuery<TData = unknown, TError = Error>(
   queryKey: string[],
   endpoint: string,
-  options?: Omit<UseQueryOptions<ApiClientResponse<TData>, TError>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<ApiClientResponse<TData>, TError>, 'queryKey' | 'queryFn'>,
 ) {
   return useQuery<ApiClientResponse<TData>, TError>({
     queryKey,
@@ -21,7 +21,7 @@ export function useApiQuery<TData = unknown, TError = Error>(
 // Mutation hook factory
 export function useApiMutation<TData = unknown, TVariables = void, TError = Error>(
   endpoint: string,
-  options?: Omit<UseMutationOptions<ApiClientResponse<TData>, TError, TVariables>, 'mutationFn'>
+  options?: Omit<UseMutationOptions<ApiClientResponse<TData>, TError, TVariables>, 'mutationFn'>,
 ) {
   const queryClient = useQueryClient();
 
@@ -96,10 +96,7 @@ export function useLogout() {
 
 export function useUser(userId?: string) {
   const userIdStr = userId ?? 'me';
-  return useApiQuery(
-    ['user', userIdStr],
-    userIdStr !== 'me' ? `/users/${userIdStr}` : '/users/me'
-  );
+  return useApiQuery(['user', userIdStr], userIdStr !== 'me' ? `/users/${userIdStr}` : '/users/me');
 }
 
 export function useUpdateUser() {
@@ -127,13 +124,16 @@ interface PetFilters {
 export function usePets(filters?: PetFilters) {
   const serializedFilters = JSON.stringify(filters ?? {});
   const queryKey = ['pets', serializedFilters];
-  const queryString = filters != null
-    ? `?${new URLSearchParams(
-      Object.fromEntries(
-        Object.entries(filters).filter(([_k, v]) => v != null).map(([k, v]) => [k, String(v)])
-      )
-    ).toString()}`
-    : '';
+  const queryString =
+    filters != null
+      ? `?${new URLSearchParams(
+          Object.fromEntries(
+            Object.entries(filters)
+              .filter(([_k, v]) => v != null)
+              .map(([k, v]) => [k, String(v)]),
+          ),
+        ).toString()}`
+      : '';
 
   return useApiQuery(queryKey, `/pets${queryString}`);
 }
@@ -236,7 +236,10 @@ export function usePetAnalytics(petId: string) {
 }
 
 export function useMatchAnalytics(matchId: string) {
-  return useApiQuery<{ data: unknown }>(['analytics', 'match', matchId], `/analytics/match/${matchId}`);
+  return useApiQuery<{ data: unknown }>(
+    ['analytics', 'match', matchId],
+    `/analytics/match/${matchId}`,
+  );
 }
 
 // Moderation hooks with optimistic updates
@@ -262,7 +265,12 @@ export function useReportUser() {
 export function useBlockUser() {
   const queryClient = useQueryClient();
 
-  return useMutation<ApiClientResponse<{ id: string }>, Error, BlockPayload, { previousState: unknown }>({
+  return useMutation<
+    ApiClientResponse<{ id: string }>,
+    Error,
+    BlockPayload,
+    { previousState: unknown }
+  >({
     mutationFn: async (payload) => {
       return await apiClient.post<{ id: string }>('/user/moderation/block', payload);
     },
@@ -296,9 +304,16 @@ export function useBlockUser() {
 export function useUnblockUser() {
   const queryClient = useQueryClient();
 
-  return useMutation<{ success: boolean }, Error, { blockedUserId: string }, { previousState: unknown }>({
+  return useMutation<
+    { success: boolean },
+    Error,
+    { blockedUserId: string },
+    { previousState: unknown }
+  >({
     mutationFn: async (vars) => {
-      const res = await apiClient.delete<{ success: boolean }>(`/user/moderation/block/${vars.blockedUserId}`);
+      const res = await apiClient.delete<{ success: boolean }>(
+        `/user/moderation/block/${vars.blockedUserId}`,
+      );
       return res;
     },
     onMutate: async (variables) => {
@@ -307,7 +322,9 @@ export function useUnblockUser() {
 
       queryClient.setQueryData(['moderation', 'state'], (old: ModerationState | undefined) => ({
         ...old,
-        blocks: (old != null ? old.blocks : []).filter((b) => b.blockedUserId !== variables.blockedUserId),
+        blocks: (old != null ? old.blocks : []).filter(
+          (b) => b.blockedUserId !== variables.blockedUserId,
+        ),
       }));
 
       return { previousState };
@@ -326,9 +343,17 @@ export function useUnblockUser() {
 export function useMuteUser() {
   const queryClient = useQueryClient();
 
-  return useMutation<ApiClientResponse<{ id: string; expiresAt: string }>, Error, MutePayload, { previousState: unknown }>({
+  return useMutation<
+    ApiClientResponse<{ id: string; expiresAt: string }>,
+    Error,
+    MutePayload,
+    { previousState: unknown }
+  >({
     mutationFn: async (payload) => {
-      return await apiClient.post<{ id: string; expiresAt: string }>('/user/moderation/mute', payload);
+      return await apiClient.post<{ id: string; expiresAt: string }>(
+        '/user/moderation/mute',
+        payload,
+      );
     },
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey: ['moderation', 'state'] });
@@ -336,7 +361,10 @@ export function useMuteUser() {
 
       queryClient.setQueryData(['moderation', 'state'], (old: ModerationState | undefined) => ({
         ...old,
-        mutes: [...(old != null ? old.mutes : []), { mutedUserId: variables.mutedUserId, durationMinutes: variables.durationMinutes }],
+        mutes: [
+          ...(old != null ? old.mutes : []),
+          { mutedUserId: variables.mutedUserId, durationMinutes: variables.durationMinutes },
+        ],
       }));
 
       return { previousState };
@@ -369,16 +397,23 @@ export function useAdminListReports(params: AdminListReportsParams = {}) {
     Object.fromEntries(
       Object.entries(params)
         .filter(([, v]) => Boolean(v))
-        .map(([k, v]) => [k, String(v)])
-    )
+        .map(([k, v]) => [k, String(v)]),
+    ),
   ).toString();
 
   const path = `/admin/moderation/reports${query.length > 0 ? `?${query}` : ''}`;
-  return useApiQuery<{ data: { items: unknown[]; total: number } }>(['admin', 'moderation', 'reports', query], path);
+  return useApiQuery<{ data: { items: unknown[]; total: number } }>(
+    ['admin', 'moderation', 'reports', query],
+    path,
+  );
 }
 
 export function useAdminUpdateReport() {
-  return useMutation<ApiClientResponse<{ id: string }>, Error, { id: string; updates: Record<string, unknown> }>({
+  return useMutation<
+    ApiClientResponse<{ id: string }>,
+    Error,
+    { id: string; updates: Record<string, unknown> }
+  >({
     mutationFn: async ({ id, updates }) => {
       const res = await apiClient.patch<{ id: string }>(`/admin/moderation/reports/${id}`, updates);
       return res as ApiClientResponse<{ id: string }>;
@@ -389,9 +424,16 @@ export function useAdminUpdateReport() {
 export function useUnmuteUser() {
   const queryClient = useQueryClient();
 
-  return useMutation<{ success: boolean }, Error, { mutedUserId: string }, { previousState: unknown }>({
+  return useMutation<
+    { success: boolean },
+    Error,
+    { mutedUserId: string },
+    { previousState: unknown }
+  >({
     mutationFn: async (vars) => {
-      const res = await apiClient.delete<{ success: boolean }>(`/user/moderation/mute/${vars.mutedUserId}`);
+      const res = await apiClient.delete<{ success: boolean }>(
+        `/user/moderation/mute/${vars.mutedUserId}`,
+      );
       return res;
     },
     onMutate: async (variables) => {
@@ -400,7 +442,9 @@ export function useUnmuteUser() {
 
       queryClient.setQueryData(['moderation', 'state'], (old: ModerationState | undefined) => ({
         ...old,
-        mutes: (old != null ? old.mutes : []).filter((m) => m.mutedUserId !== variables.mutedUserId),
+        mutes: (old != null ? old.mutes : []).filter(
+          (m) => m.mutedUserId !== variables.mutedUserId,
+        ),
       }));
 
       return { previousState };

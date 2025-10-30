@@ -1,0 +1,128 @@
+id: gdpr-delete-account
+owner: api
+severity: critical
+area: backend+mobile
+status: open
+context: |
+  User wants to delete their account for privacy/GDPR reasons.
+  Current behavior: Delete endpoint exists but lacks 30-day grace period and cancellation option.
+  Why it matters: GDPR violation without proper deletion flow with grace period.
+  
+  Use Case:
+  1. User navigates to Settings → Deactivate Account
+  2. User confirms deletion with password
+  3. System sends confirmation email
+  4. 30-day grace period begins
+  5. User can cancel deletion within grace period
+  6. Data export available before deletion
+  7. Final deletion occurs after grace period
+
+acceptance:
+  - [ ] Backend: DELETE /users/delete-account returns gracePeriodEndsAt timestamp
+  - [ ] Backend: GET /users/export-data returns downloadable JSON/blob
+  - [ ] Backend: POST /users/confirm-deletion with token finalizes deletion
+  - [ ] Backend: POST /users/cancel-deletion cancels scheduled deletion
+  - [ ] Mobile: GDPR client service methods implemented
+  - [ ] Mobile: DeactivateAccountScreen UI complete with all states
+  - [ ] Mobile: Email confirmation flow works
+  - [ ] Mobile: Grace period countdown displayed
+  - [ ] Mobile: Cancel deletion option available during grace period
+  - [ ] Mobile: Data export functionality works
+  - [ ] E2E: Detox test exercises full flow including grace period
+
+states:
+  - loading
+  - confirm
+  - grace-period
+  - cancelled
+  - error
+
+telemetry:
+  - event: GDPR_DELETE_REQUESTED
+    props: [reason, userId, timestamp]
+  - event: GDPR_DELETE_CONFIRMED
+    props: [userId, deletionDate, gracePeriodEndsAt]
+  - event: GDPR_DELETE_CANCELLED
+    props: [userId, cancelledAt]
+  - event: GDPR_DATA_EXPORTED
+    props: [userId, format, timestamp]
+  - event: GDPR_DELETE_COMPLETED
+    props: [userId, completedAt]
+
+contracts:
+  request:
+    deleteAccount: { password: string, reason?: string, feedback?: string }
+    confirmDeletion: { token: string }
+    exportData: {}
+    cancelDeletion: { userId: string }
+  response:
+    deleteAccount: { 
+      success: boolean
+      message: string
+      requestId: string
+      gracePeriodEndsAt: string
+      canCancel: boolean
+      exportUrl?: string
+    }
+    confirmDeletion: { success: boolean, deletedAt: string }
+    exportData: { url: string, expiresAt: string, format: string }
+    cancelDeletion: { success: boolean, cancelledAt: string }
+  errors:
+    - code: INVALID_PASSWORD
+      message: "Password is incorrect"
+    - code: GRACE_PERIOD_EXPIRED
+      message: "Grace period has expired, cannot cancel"
+    - code: TOKEN_INVALID
+      message: "Confirmation token is invalid or expired"
+    - code: EXPORT_FAILED
+      message: "Data export failed, please try again"
+    - code: ALREADY_DELETED
+      message: "Account is already deleted"
+
+assets:
+  mocks:
+    - mocks/fixtures/gdpr/delete.success.json
+    - mocks/fixtures/gdpr/delete.error-invalid-password.json
+    - mocks/fixtures/gdpr/export.success.json
+    - mocks/fixtures/gdpr/confirm.success.json
+    - mocks/fixtures/gdpr/cancel.success.json
+  tests:
+    - apps/mobile/src/screens/__tests__/DeactivateAccount.int.test.tsx
+    - apps/mobile/src/services/__tests__/gdprService.test.ts
+    - e2e/gdpr-delete.e2e.ts
+  screens:
+    - apps/mobile/src/screens/DeactivateAccountScreen.tsx
+  services:
+    - apps/mobile/src/services/gdprService.ts
+
+risks:
+  - Accidental permanent deletion without password verification
+  - Grace period not enforced on backend allowing immediate deletion
+  - Data export may contain incomplete or corrupted data
+  - Email delivery failures preventing cancellation
+  - Race conditions when multiple deletion requests submitted
+
+rollback:
+  - Disable DeactivateAccount UI entry point via feature flag
+  - Revert GDPR service method changes
+  - Rollback backend endpoint changes
+  - Notify affected users via email
+
+links:
+  - PR: #TODO
+  - docs: reports/gdpr_checklist.md
+  - legal: GDPR compliance requirements
+  - jira: GDPR-123
+
+dependencies:
+  - backend: accountController modifications
+  - mobile: gdprService enhancements
+  - infra: email service for confirmations
+  - testing: E2E test suite for GDPR flows
+
+timeline:
+  start: 2025-01-30
+  backend: 2025-02-10
+  mobile: 2025-02-14
+  testing: 2025-02-15
+  deploy: 2025-02-20

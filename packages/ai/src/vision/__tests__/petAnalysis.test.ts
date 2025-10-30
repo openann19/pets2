@@ -1,4 +1,8 @@
-import { createPetPhotoAnalysis, type AnalysisResult, type PetPhotoAnalysisData } from '../petAnalysis';
+import {
+  createPetPhotoAnalysis,
+  type AnalysisResult,
+  type PetPhotoAnalysisData,
+} from '../petAnalysis';
 
 // Note: PetPhotoAnalysis initializes DeepSeek connection asynchronously in constructor.
 // We test error path before initialization and utility methods not requiring DOM.
@@ -18,7 +22,10 @@ describe('PetPhotoAnalysis', () => {
     const analysis = createPetPhotoAnalysis({ apiKey: 'test-key' });
 
     const good: PetPhotoAnalysisData = {
-      species: 'dog', breed: 'lab', confidence: 0.8, age: 3,
+      species: 'dog',
+      breed: 'lab',
+      confidence: 0.8,
+      age: 3,
       health: { overall: 'good', conditions: [], recommendations: [] },
       characteristics: { size: 'medium', color: [], markings: [], features: [] },
       temperament: [],
@@ -26,7 +33,10 @@ describe('PetPhotoAnalysis', () => {
     };
 
     const bad: PetPhotoAnalysisData = {
-      species: 'dog', breed: 'lab', confidence: 0.6, age: 3,
+      species: 'dog',
+      breed: 'lab',
+      confidence: 0.6,
+      age: 3,
       health: { overall: 'good', conditions: [], recommendations: [] },
       characteristics: { size: 'medium', color: [], markings: [], features: [] },
       temperament: [],

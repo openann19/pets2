@@ -41,4 +41,3 @@ export declare function prefersReducedMotion(): boolean;
 export declare function hasPointerFine(): boolean;
 /** Check if device has touch support */
 export declare function hasTouchSupport(): boolean;
-//# sourceMappingURL=env.d.ts.map

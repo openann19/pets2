@@ -3,23 +3,16 @@
  * Controls access to premium features with elegant upgrade prompts
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
-import {
-  Dimensions,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { useTheme } from "../../contexts/ThemeContext";
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/src/theme';
+import { useNavigation } from '@react-navigation/native';
+import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface PremiumGateProps {
   feature: string;
@@ -48,7 +41,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
       onUpgrade();
     } else {
       // Navigate to premium screen
-      (navigation as any).navigate?.("Premium");
+      (navigation as any).navigate?.('Premium');
     }
   };
 
@@ -64,7 +57,10 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
       animationType="fade"
       onRequestClose={handleClose}
     >
-      <BlurView intensity={20} style={styles.overlay}>
+      <BlurView
+        intensity={20}
+        style={styles.overlay}
+      >
         <View style={styles.container}>
           <TouchableOpacity
             style={styles.backdrop}
@@ -73,10 +69,10 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
           />
 
           <View
-            style={[
+            style={StyleSheet.flatten([
               styles.modal,
               { backgroundColor: (colors as any).surface ?? colors.background },
-            ]}
+            ])}
           >
             {/* Header */}
             <View style={styles.header}>
@@ -85,37 +81,47 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                 onPress={handleClose}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Ionicons name="close" size={24} color={colors.textSecondary} />
+                <Ionicons
+                  name="close"
+                  size={24}
+                  color={colors.onMuted}
+                />
               </TouchableOpacity>
             </View>
             {/* Content */}
             <View style={styles.content}>
               {/* Premium Icon */}
               <LinearGradient
-                colors={["#FFD700", "#FFA000"]}
+                colors={['#FFD700', '#FFA000']}
                 style={styles.iconContainer}
               >
-                <Ionicons name="star" size={30} color="#fff" />
+                <Ionicons
+                  name="star"
+                  size={30}
+                  color="Theme.colors.neutral[0]"
+                />
               </LinearGradient>
 
               {/* Feature Icon */}
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.featureIcon,
                   { backgroundColor: `${colors.primary}20` },
-                ]}
+                ])}
               >
-                <Ionicons name={icon as any} size={40} color={colors.primary} />
+                <Ionicons
+                  name={icon}
+                  size={40}
+                  color={colors.primary}
+                />
               </View>
 
               {/* Text Content */}
-              <Text style={[styles.title, { color: colors.text }]}>
+              <Text style={StyleSheet.flatten([styles.title, { color: colors.onSurface }])}>
                 Unlock {feature}
               </Text>
 
-              <Text
-                style={[styles.description, { color: colors.textSecondary }]}
-              >
+              <Text style={StyleSheet.flatten([styles.description, { color: colors.onMuted }])}>
                 {description}
               </Text>
 
@@ -127,12 +133,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                     size={20}
                     color={colors.success}
                   />
-                  <Text
-                    style={[
-                      styles.featureText,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
+                  <Text style={StyleSheet.flatten([styles.featureText, { color: colors.onMuted }])}>
                     Unlimited access to all features
                   </Text>
                 </View>
@@ -142,12 +143,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                     size={20}
                     color={colors.success}
                   />
-                  <Text
-                    style={[
-                      styles.featureText,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
+                  <Text style={StyleSheet.flatten([styles.featureText, { color: colors.onMuted }])}>
                     Priority customer support
                   </Text>
                 </View>
@@ -157,12 +153,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                     size={20}
                     color={colors.success}
                   />
-                  <Text
-                    style={[
-                      styles.featureText,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
+                  <Text style={StyleSheet.flatten([styles.featureText, { color: colors.onMuted }])}>
                     Advanced AI matching
                   </Text>
                 </View>
@@ -176,29 +167,28 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                   activeOpacity={0.8}
                 >
                   <LinearGradient
-                    colors={["#FF6B6B", "#FF8E8E"]}
+                    colors={['#FF6B6B', '#FF8E8E']}
                     style={styles.upgradeButtonGradient}
                   >
-                    <Ionicons name="star" size={20} color="#fff" />
-                    <Text style={styles.upgradeButtonText}>
-                      Upgrade to Premium
-                    </Text>
+                    <Ionicons
+                      name="star"
+                      size={20}
+                      color="Theme.colors.neutral[0]"
+                    />
+                    <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
                   </LinearGradient>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.laterButton,
                     { backgroundColor: colors.background },
-                  ]}
+                  ])}
                   onPress={handleClose}
                   activeOpacity={0.8}
                 >
                   <Text
-                    style={[
-                      styles.laterButtonText,
-                      { color: colors.textSecondary },
-                    ]}
+                    style={StyleSheet.flatten([styles.laterButtonText, { color: colors.onMuted }])}
                   >
                     Maybe Later
                   </Text>
@@ -214,11 +204,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
 
 // Hook for easy premium gate usage
 export const usePremiumGate = (): {
-  showPremiumGate: (config: {
-    feature: string;
-    description: string;
-    icon?: string;
-  }) => void;
+  showPremiumGate: (config: { feature: string; description: string; icon?: string }) => void;
   hidePremiumGate: () => void;
   PremiumGateComponent: React.FC;
 } => {
@@ -229,9 +215,9 @@ export const usePremiumGate = (): {
     icon: string;
   }>({
     visible: false,
-    feature: "",
-    description: "",
-    icon: "star",
+    feature: '',
+    description: '',
+    icon: 'star',
   });
 
   const showPremiumGate = (config: {
@@ -244,7 +230,7 @@ export const usePremiumGate = (): {
       visible: true,
       feature: config.feature,
       description: config.description,
-      icon: config.icon ?? "star",
+      icon: config.icon ?? 'star',
     }));
   };
 
@@ -272,17 +258,17 @@ export const usePremiumGate = (): {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 20,
   },
   backdrop: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
@@ -292,15 +278,15 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH - 40,
     maxWidth: 400,
     borderRadius: 25,
-    shadowColor: "#000",
+    shadowColor: 'Theme.colors.neutral[950]',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
     elevation: 10,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     padding: 20,
     paddingBottom: 0,
   },
@@ -308,50 +294,50 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.1)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.1)',
   },
   content: {
     padding: 20,
     paddingTop: 0,
-    alignItems: "center",
+    alignItems: 'center',
   },
   iconContainer: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 20,
   },
   featureIcon: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: "800",
-    textAlign: "center",
+    fontWeight: '800',
+    textAlign: 'center',
     marginBottom: 10,
   },
   description: {
     fontSize: 16,
-    textAlign: "center",
+    textAlign: 'center',
     lineHeight: 22,
     marginBottom: 30,
   },
   featuresList: {
-    width: "100%",
+    width: '100%',
     marginBottom: 30,
   },
   featureItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 12,
     gap: 12,
   },
@@ -360,35 +346,35 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   actions: {
-    width: "100%",
+    width: '100%',
     gap: 12,
   },
   upgradeButton: {
     borderRadius: 25,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   upgradeButtonGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 16,
     gap: 8,
   },
   upgradeButtonText: {
-    color: "#fff",
+    color: 'Theme.colors.neutral[0]',
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   laterButton: {
     paddingVertical: 16,
     borderRadius: 25,
-    alignItems: "center",
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.1)",
+    borderColor: 'rgba(0,0,0,0.1)',
   },
   laterButtonText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });
 

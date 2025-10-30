@@ -5,7 +5,7 @@ import { useFormValidation, useAsyncSubmit } from './useFormValidation';
 import { loginSchema, registerSchema, forgotPasswordSchema, resetPasswordSchema, type LoginFormData, type RegisterFormData, type ForgotPasswordFormData, type ResetPasswordFormData } from '../schemas/auth';
 import { logger } from '@pawfectmatch/core';
 // import { toast } from 'react-hot-toast';
-const toast = { success: (msg: string) => logger.info(msg), error: (msg: string) => logger.error(msg) };
+const toast = { success: (msg: string) => { logger.info(msg); }, error: (msg: string) => { logger.error(msg); } };
 // Hook for login form
 export function useLoginForm() {
     const router = useRouter();
@@ -16,7 +16,7 @@ export function useLoginForm() {
     });
     const handleSubmit = useAsyncSubmit(async (data) => {
         await login(data);
-    }, () => router.push('/dashboard'), () => {
+    }, () => { router.push('/dashboard'); }, () => {
         // Error is handled by AuthContext
     });
     // Clear auth errors when form changes
@@ -50,7 +50,7 @@ export function useRegisterForm() {
     });
     const handleSubmit = useAsyncSubmit(async (data) => {
         await register(data);
-    }, () => router.push('/pets/new'), () => {
+    }, () => { router.push('/pets/new'); }, () => {
         // Error is handled by AuthContext
     });
     // Clear auth errors when form changes

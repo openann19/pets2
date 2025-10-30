@@ -183,7 +183,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
         </CardHeader>
         <CardContent>
           {renderStepIndicator()}
-          <form onSubmit={handleSubmit(() => setCurrentStep(2))} className="space-y-6">
+          <form onSubmit={handleSubmit(() => { setCurrentStep(2); })} className="space-y-6">
             {/* Personal Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -231,7 +231,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
 
               <div className="space-y-2">
                 <Label className="flex items-center space-x-2">
-                  <Checkbox checked={watchedHasChildren} onChange={(checked) => setValue('personalInfo.hasChildren', !!checked)}/>
+                  <Checkbox checked={watchedHasChildren} onChange={(checked) => { setValue('personalInfo.hasChildren', !!checked); }}/>
                   <span>Do you have children in your household?</span>
                 </Label>
               </div>
@@ -267,11 +267,11 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
         </CardHeader>
         <CardContent>
           {renderStepIndicator()}
-          <form onSubmit={handleSubmit(() => setCurrentStep(3))} className="space-y-6">
+          <form onSubmit={handleSubmit(() => { setCurrentStep(3); })} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="residenceType">Type of Residence *</Label>
-                <Select value={watchedResidenceType} onValueChange={(value) => setValue('livingSituation.residenceType', value)}>
+                <Select value={watchedResidenceType} onValueChange={(value) => { setValue('livingSituation.residenceType', value); }}>
                   <SelectItem value="house">House</SelectItem>
                   <SelectItem value="apartment">Apartment</SelectItem>
                   <SelectItem value="condo">Condo</SelectItem>
@@ -282,7 +282,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
 
               <div className="space-y-2">
                 <Label htmlFor="ownership">Ownership Status *</Label>
-                <Select value={watchedOwnership} onValueChange={(value) => setValue('livingSituation.ownership', value)}>
+                <Select value={watchedOwnership} onValueChange={(value) => { setValue('livingSituation.ownership', value); }}>
                   <SelectItem value="own">Own</SelectItem>
                   <SelectItem value="rent">Rent</SelectItem>
                   <SelectItem value="lease">Lease</SelectItem>
@@ -292,7 +292,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
 
               {(watchedResidenceType === 'house' || watchedResidenceType === 'condo') && (<div className="space-y-2">
                   <Label htmlFor="yardType">Yard Type</Label>
-                  <Select value={watch('livingSituation.yardType') || ''} onValueChange={(value) => setValue('livingSituation.yardType', value)}>
+                  <Select value={watch('livingSituation.yardType') || ''} onValueChange={(value) => { setValue('livingSituation.yardType', value); }}>
                     <SelectItem value="fenced">Fenced</SelectItem>
                     <SelectItem value="unfenced">Unfenced</SelectItem>
                     <SelectItem value="no_yard">No Yard</SelectItem>
@@ -302,7 +302,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
 
               {watchedOwnership === 'rent' && (<div className="space-y-2">
                   <Label className="flex items-center space-x-2">
-                    <Checkbox checked={watch('livingSituation.landlordPermission') || false} onChange={(checked) => setValue('livingSituation.landlordPermission', !!checked)}/>
+                    <Checkbox checked={watch('livingSituation.landlordPermission') || false} onChange={(checked) => { setValue('livingSituation.landlordPermission', !!checked); }}/>
                     <span>Do you have landlord permission to have pets?</span>
                   </Label>
                 </div>)}
@@ -314,7 +314,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
             </div>
 
             <div className="flex justify-between">
-              <Button type="button" variant="outline" onClick={() => setCurrentStep(1)}>
+              <Button type="button" variant="outline" onClick={() => { setCurrentStep(1); }}>
                 Back
               </Button>
               <Button type="submit">Continue to Pet Experience</Button>
@@ -333,10 +333,10 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
         </CardHeader>
         <CardContent>
           {renderStepIndicator()}
-          <form onSubmit={handleSubmit(() => setCurrentStep(4))} className="space-y-6">
+          <form onSubmit={handleSubmit(() => { setCurrentStep(4); })} className="space-y-6">
             <div className="space-y-4">
               <Label className="flex items-center space-x-2">
-                <Checkbox checked={watchedHasOwnedPets} onCheckedChange={(checked) => setValue('petExperience.hasOwnedPets', !!checked)}/>
+                <Checkbox checked={watchedHasOwnedPets} onCheckedChange={(checked) => { setValue('petExperience.hasOwnedPets', !!checked); }}/>
                 <span>Have you owned pets before?</span>
               </Label>
             </div>
@@ -346,13 +346,13 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <Label className="text-lg font-semibold">Current Pets</Label>
-                    <Button type="button" variant="outline" size="sm" onClick={() => appendCurrentPet({
+                    <Button type="button" variant="outline" size="sm" onClick={() => { appendCurrentPet({
                     name: '',
                     species: '',
                     age: 0,
                     vaccinated: false,
                     spayedNeutered: false,
-                })}>
+                }); }}>
                       <Plus className="h-4 w-4 mr-2"/>
                       Add Current Pet
                     </Button>
@@ -376,16 +376,16 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
                         </div>
                         <div className="flex items-center space-x-4">
                           <Label className="flex items-center space-x-2">
-                            <Checkbox checked={watch(`petExperience.currentPets.${index}.vaccinated`) || false} onChange={(checked) => setValue(`petExperience.currentPets.${index}.vaccinated`, !!checked)}/>
+                            <Checkbox checked={watch(`petExperience.currentPets.${index}.vaccinated`) || false} onChange={(checked) => { setValue(`petExperience.currentPets.${index}.vaccinated`, !!checked); }}/>
                             <span>Vaccinated</span>
                           </Label>
                           <Label className="flex items-center space-x-2">
-                            <Checkbox checked={watch(`petExperience.currentPets.${index}.spayedNeutered`) || false} onChange={(checked) => setValue(`petExperience.currentPets.${index}.spayedNeutered`, !!checked)}/>
+                            <Checkbox checked={watch(`petExperience.currentPets.${index}.spayedNeutered`) || false} onChange={(checked) => { setValue(`petExperience.currentPets.${index}.spayedNeutered`, !!checked); }}/>
                             <span>Spayed/Neutered</span>
                           </Label>
                         </div>
                       </div>
-                      <Button type="button" variant="outline" size="sm" className="mt-4" onClick={() => removeCurrentPet(index)}>
+                      <Button type="button" variant="outline" size="sm" className="mt-4" onClick={() => { removeCurrentPet(index); }}>
                         <Minus className="h-4 w-4 mr-2"/>
                         Remove Pet
                       </Button>
@@ -396,12 +396,12 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <Label className="text-lg font-semibold">Previous Pets</Label>
-                    <Button type="button" variant="outline" size="sm" onClick={() => appendPreviousPet({
+                    <Button type="button" variant="outline" size="sm" onClick={() => { appendPreviousPet({
                     name: '',
                     species: '',
                     ownedFor: 0,
                     reasonForChange: '',
-                })}>
+                }); }}>
                       <Plus className="h-4 w-4 mr-2"/>
                       Add Previous Pet
                     </Button>
@@ -428,7 +428,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
                           <Input {...register(`petExperience.previousPets.${index}.reasonForChange`)} placeholder="Moved to apartment"/>
                         </div>
                       </div>
-                      <Button type="button" variant="outline" size="sm" className="mt-4" onClick={() => removePreviousPet(index)}>
+                      <Button type="button" variant="outline" size="sm" className="mt-4" onClick={() => { removePreviousPet(index); }}>
                         <Minus className="h-4 w-4 mr-2"/>
                         Remove Pet
                       </Button>
@@ -443,7 +443,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
               <div className="space-y-3">
                 <Label>Preferred Species *</Label>
                 <div className="flex flex-wrap gap-2">
-                  {['dog', 'cat', 'bird', 'rabbit', 'other'].map((species) => (<Badge key={species} variant={watchedSpeciesPrefs.includes(species) ? 'default' : 'outline'} className="cursor-pointer" onClick={() => handleSpeciesToggle(species)}>
+                  {['dog', 'cat', 'bird', 'rabbit', 'other'].map((species) => (<Badge key={species} variant={watchedSpeciesPrefs.includes(species) ? 'default' : 'outline'} className="cursor-pointer" onClick={() => { handleSpeciesToggle(species); }}>
                       {species.charAt(0).toUpperCase() + species.slice(1)}
                     </Badge>))}
                 </div>
@@ -455,7 +455,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
               <div className="space-y-3">
                 <Label>Preferred Size *</Label>
                 <div className="flex flex-wrap gap-2">
-                  {['tiny', 'small', 'medium', 'large', 'extra-large'].map((size) => (<Badge key={size} variant={watchedSizePrefs.includes(size) ? 'default' : 'outline'} className="cursor-pointer" onClick={() => handleSizeToggle(size)}>
+                  {['tiny', 'small', 'medium', 'large', 'extra-large'].map((size) => (<Badge key={size} variant={watchedSizePrefs.includes(size) ? 'default' : 'outline'} className="cursor-pointer" onClick={() => { handleSizeToggle(size); }}>
                       {size.charAt(0).toUpperCase() + size.slice(1)}
                     </Badge>))}
                 </div>
@@ -481,14 +481,14 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
 
               <div className="space-y-2">
                 <Label className="flex items-center space-x-2">
-                  <Checkbox checked={watch('petExperience.petPreferences.specialNeeds') || false} onCheckedChange={(checked) => setValue('petExperience.petPreferences.specialNeeds', !!checked)}/>
+                  <Checkbox checked={watch('petExperience.petPreferences.specialNeeds') || false} onCheckedChange={(checked) => { setValue('petExperience.petPreferences.specialNeeds', !!checked); }}/>
                   <span>Open to pets with special needs</span>
                 </Label>
               </div>
             </div>
 
             <div className="flex justify-between">
-              <Button type="button" variant="outline" onClick={() => setCurrentStep(2)}>
+              <Button type="button" variant="outline" onClick={() => { setCurrentStep(2); }}>
                 Back
               </Button>
               <Button type="submit">Continue to Lifestyle</Button>
@@ -507,7 +507,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
         </CardHeader>
         <CardContent>
           {renderStepIndicator()}
-          <form onSubmit={handleSubmit(() => setCurrentStep(5))} className="space-y-6">
+          <form onSubmit={handleSubmit(() => { setCurrentStep(5); })} className="space-y-6">
             {/* Lifestyle */}
             <div className="space-y-4">
               <div className="space-y-2">
@@ -545,7 +545,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
 
                 <div className="space-y-2">
                   <Label className="flex items-center space-x-2">
-                    <Checkbox checked={watch('lifestyle.budget.emergencyFund') || false} onCheckedChange={(checked) => setValue('lifestyle.budget.emergencyFund', !!checked)}/>
+                    <Checkbox checked={watch('lifestyle.budget.emergencyFund') || false} onCheckedChange={(checked) => { setValue('lifestyle.budget.emergencyFund', !!checked); }}/>
                     <span>Do you have an emergency fund for unexpected vet costs?</span>
                   </Label>
                 </div>
@@ -556,13 +556,13 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-lg font-semibold">References * (Minimum 2)</Label>
-                <Button type="button" variant="outline" size="sm" onClick={() => appendReference({
+                <Button type="button" variant="outline" size="sm" onClick={() => { appendReference({
                 name: '',
                 relationship: '',
                 phone: '',
                 email: '',
                 knownFor: 0,
-            })}>
+            }); }}>
                   <Plus className="h-4 w-4 mr-2"/>
                   Add Reference
                 </Button>
@@ -591,7 +591,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
                       <Input type="number" {...register(`references.${index}.knownFor`, { valueAsNumber: true })} placeholder="5"/>
                     </div>
                   </div>
-                  {referenceFields.length > 2 && (<Button type="button" variant="outline" size="sm" className="mt-4" onClick={() => removeReference(index)}>
+                  {referenceFields.length > 2 && (<Button type="button" variant="outline" size="sm" className="mt-4" onClick={() => { removeReference(index); }}>
                       <Minus className="h-4 w-4 mr-2"/>
                       Remove Reference
                     </Button>)}
@@ -601,7 +601,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
             </div>
 
             <div className="flex justify-between">
-              <Button type="button" variant="outline" onClick={() => setCurrentStep(3)}>
+              <Button type="button" variant="outline" onClick={() => { setCurrentStep(3); }}>
                 Back
               </Button>
               <Button type="submit">Continue to Review</Button>
@@ -658,7 +658,7 @@ export const AdoptionApplicationForm = ({ petId: _petId, shelterId: _shelterId, 
           </div>
 
           <div className="flex justify-between">
-            <Button type="button" variant="outline" onClick={() => setCurrentStep(4)}>
+            <Button type="button" variant="outline" onClick={() => { setCurrentStep(4); }}>
               Back
             </Button>
             <Button onClick={handleSubmit(onFormSubmit)} disabled={isSubmitting}>

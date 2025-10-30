@@ -6,19 +6,19 @@
 import { logger } from '../utils/logger';
 
 export enum CircuitState {
-  CLOSED = 'CLOSED',      // Normal operation, requests pass through
-  OPEN = 'OPEN',          // Circuit is open, requests fail fast
-  HALF_OPEN = 'HALF_OPEN' // Testing if service recovered
+  CLOSED = 'CLOSED', // Normal operation, requests pass through
+  OPEN = 'OPEN', // Circuit is open, requests fail fast
+  HALF_OPEN = 'HALF_OPEN', // Testing if service recovered
 }
 
 export interface CircuitBreakerConfig {
-  failureThreshold: number;      // Number of failures before opening circuit
-  successThreshold: number;      // Number of successes to close circuit
-  timeout: number;               // Time before attempting half-open state (ms)
-  resetTimeout: number;          // Time in OPEN state before transition to HALF_OPEN (ms)
-  monitoringPeriod: number;      // Time window for failure tracking (ms)
-  healthCheckInterval?: number;  // Interval for health checks (ms)
-  healthCheckEndpoint?: string;  // Endpoint to check service health
+  failureThreshold: number; // Number of failures before opening circuit
+  successThreshold: number; // Number of successes to close circuit
+  timeout: number; // Time before attempting half-open state (ms)
+  resetTimeout: number; // Time in OPEN state before transition to HALF_OPEN (ms)
+  monitoringPeriod: number; // Time window for failure tracking (ms)
+  healthCheckInterval?: number; // Interval for health checks (ms)
+  healthCheckEndpoint?: string; // Endpoint to check service health
 }
 
 export interface CircuitBreakerMetrics {
@@ -48,7 +48,7 @@ export class CircuitBreaker {
   private lastSuccessTime?: number;
   private stateChangedAt: number = Date.now();
   private totalRequests: number = 0;
-  private healthCheckTimer?: NodeJS.Timeout;
+  private healthCheckTimer?: ReturnType<typeof setTimeout>;
 
   constructor(config: Partial<CircuitBreakerConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
@@ -72,7 +72,7 @@ export class CircuitBreaker {
 
     try {
       const result = await fn();
-      
+
       // Record success
       this.onSuccess();
       return result;
@@ -124,14 +124,16 @@ export class CircuitBreaker {
 
     if (this.state === CircuitState.HALF_OPEN) {
       this.successes++;
-      
+
       if (this.successes >= this.config.successThreshold) {
         this.transitionTo(CircuitState.CLOSED);
       }
     } else if (this.state === CircuitState.CLOSED) {
       // Reset failure count after monitoring period
-      if (this.lastFailureTime && 
-          Date.now() - this.lastFailureTime > this.config.monitoringPeriod) {
+      if (
+        this.lastFailureTime &&
+        Date.now() - this.lastFailureTime > this.config.monitoringPeriod
+      ) {
         this.failures = 0;
       }
     }
@@ -148,7 +150,7 @@ export class CircuitBreaker {
       this.transitionTo(CircuitState.OPEN);
     } else if (this.state === CircuitState.CLOSED) {
       this.failures++;
-      
+
       if (this.failures >= this.config.failureThreshold) {
         this.transitionTo(CircuitState.OPEN);
       }
@@ -233,4 +235,3 @@ export class CircuitBreakerOpenError extends Error {
     this.name = 'CircuitBreakerOpenError';
   }
 }
-

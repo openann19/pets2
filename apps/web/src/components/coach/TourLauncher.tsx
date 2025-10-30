@@ -41,7 +41,7 @@ export function TourLauncher({ className = '', showOnFirstVisit = true, autoStar
     return (<>
       {/* Tour Menu Button */}
       <div className={`relative ${className}`}>
-        <InteractiveButton onClick={() => setShowMenu(!showMenu)} variant="outline" size="sm" className="text-gray-600 hover:text-gray-800" icon={<QuestionMarkCircleIcon className="w-4 h-4"/>}>
+        <InteractiveButton onClick={() => { setShowMenu(!showMenu); }} variant="outline" size="sm" className="text-gray-600 hover:text-gray-800" icon={<QuestionMarkCircleIcon className="w-4 h-4"/>}>
           Help & Tours
         </InteractiveButton>
 
@@ -52,7 +52,7 @@ export function TourLauncher({ className = '', showOnFirstVisit = true, autoStar
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Guided Tours
                 </h3>
-                <button onClick={() => setShowMenu(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <button onClick={() => { setShowMenu(false); }} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                   <XMarkIcon className="w-5 h-5"/>
                 </button>
               </div>
@@ -73,7 +73,7 @@ export function TourLauncher({ className = '', showOnFirstVisit = true, autoStar
                           </span>
                         </div>)}
                     </div>
-                    <InteractiveButton onClick={() => handleStartTour(tourId)} disabled={isTourActive} size="sm" className="ml-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white" icon={<PlayIcon className="w-4 h-4"/>}>
+                    <InteractiveButton onClick={() => { handleStartTour(tourId); }} disabled={isTourActive} size="sm" className="ml-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white" icon={<PlayIcon className="w-4 h-4"/>}>
                       Start
                     </InteractiveButton>
                   </div>))}
@@ -124,7 +124,7 @@ export function TourLauncher({ className = '', showOnFirstVisit = true, autoStar
             }} className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white" icon={<PlayIcon className="w-5 h-5"/>}>
                     Take Tour
                   </InteractiveButton>
-                  <InteractiveButton onClick={() => setIsFirstVisit(false)} variant="outline" className="flex-1">
+                  <InteractiveButton onClick={() => { setIsFirstVisit(false); }} variant="outline" className="flex-1">
                     Skip
                   </InteractiveButton>
                 </div>
@@ -174,7 +174,7 @@ export function FloatingHelpButton({ className = '' }) {
     const [showMenu, setShowMenu] = useState(false);
     const { startTour, isTourActive } = useCoachTooltips();
     return (<div className={`fixed bottom-6 left-6 z-40 ${className}`}>
-      <InteractiveButton onClick={() => setShowMenu(!showMenu)} className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200" icon={<QuestionMarkCircleIcon className="w-6 h-6"/>}/>
+      <InteractiveButton onClick={() => { setShowMenu(!showMenu); }} className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200" icon={<QuestionMarkCircleIcon className="w-6 h-6"/>}/>
 
       <AnimatePresence>
         {showMenu && (<motion.div initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: 0.95 }} className="absolute bottom-full left-0 mb-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4">

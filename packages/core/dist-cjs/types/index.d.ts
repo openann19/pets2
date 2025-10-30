@@ -107,6 +107,7 @@ export interface User {
 }
 export interface Pet {
     _id: string;
+    id: string;
     owner: User | string;
     name: string;
     species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
@@ -248,6 +249,8 @@ export interface Match {
             user2Feedback?: string;
         };
     };
+    isMatch: boolean;
+    matchId?: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -264,6 +267,11 @@ export interface Message {
     isDeleted: boolean;
     duration?: number;
     thumbnailUrl?: string;
+    replyTo?: {
+        _id: string;
+        author?: string;
+        text?: string;
+    };
 }
 export interface Attachment {
     type: string;
@@ -626,4 +634,3 @@ export interface PackGroup {
     createdAt: string;
     updatedAt: string;
 }
-//# sourceMappingURL=index.d.ts.map

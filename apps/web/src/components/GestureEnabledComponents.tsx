@@ -97,7 +97,7 @@ export function SwipeableCard({ children, onSwipeLeft, onSwipeRight, onSwipeUp, 
             x: dragOffset.x,
             y: dragOffset.y,
             scale: isDragging ? 0.95 : 1,
-        }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} onDragStart={() => setIsDragging(true)} onDragEnd={() => {
+        }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} onDragStart={() => { setIsDragging(true); }} onDragEnd={() => {
             setIsDragging(false);
             setDragOffset({ x: 0, y: 0 });
         }}>
@@ -112,7 +112,7 @@ export function LongPress({ children, onLongPress, delay = 500, className = '', 
             gestureUtils.hapticFeedback('medium');
         }
         setIsPressed(true);
-        setTimeout(() => setIsPressed(false), 200);
+        setTimeout(() => { setIsPressed(false); }, 200);
         onLongPress();
     };
     const { attachGestures, detachGestures } = useLongPress(handleLongPress, { delay });
@@ -141,7 +141,7 @@ export function PinchToZoom({ children, minScale = 0.5, maxScale = 3, className 
         const newScale = Math.max(minScale, Math.min(maxScale, scale * gesture.scale));
         setScale(newScale);
         setIsZooming(true);
-        setTimeout(() => setIsZooming(false), 200);
+        setTimeout(() => { setIsZooming(false); }, 200);
     };
     const { attachGestures, detachGestures } = usePinchGesture(handlePinch);
     useEffect(() => {
@@ -264,7 +264,7 @@ export function GestureDemo() {
         <h3 className="p-4 font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700">
           Swipeable Card
         </h3>
-        <SwipeableCard onSwipeLeft={() => handleSwipe('left')} onSwipeRight={() => handleSwipe('right')} onSwipeUp={() => handleSwipe('up')} onSwipeDown={() => handleSwipe('down')} className="h-32">
+        <SwipeableCard onSwipeLeft={() => { handleSwipe('left'); }} onSwipeRight={() => { handleSwipe('right'); }} onSwipeUp={() => { handleSwipe('up'); }} onSwipeDown={() => { handleSwipe('down'); }} className="h-32">
           <div className="p-4 text-center text-gray-600 dark:text-gray-400">
             Swipe in any direction
           </div>

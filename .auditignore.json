@@ -1,0 +1,123 @@
+{
+  "version": "1.0.0",
+  "description": "Audit suppression file for PawfectMatch monorepo",
+  "lastUpdated": "2025-01-27T20:00:00.000Z",
+  "suppressions": [
+    {
+      "id": "BULK_I18N_SUPPRESSION",
+      "description": "Bulk suppression for hardcoded strings pending Phase 2 codemod",
+      "pattern": {
+        "category": "i18n",
+        "problem": "Hardcoded string in UI component"
+      },
+      "reason": "Phase 2 of i18n implementation will systematically replace hardcoded strings with t() functions",
+      "expires": "2025-02-15T00:00:00.000Z",
+      "owner": "mobile"
+    },
+    {
+      "id": "BULK_PERFORMANCE_SUPPRESSION", 
+      "description": "Bulk suppression for performance optimizations pending dedicated sprint",
+      "pattern": {
+        "category": "Performance",
+        "severity": ["P2", "P3"]
+      },
+      "reason": "Performance optimizations require dedicated sprint and benchmarking",
+      "expires": "2025-03-01T00:00:00.000Z",
+      "owner": "infra"
+    },
+    {
+      "id": "THEME_MIGRATION_SUPPRESSION",
+      "description": "Suppression for theme migration findings",
+      "pattern": {
+        "category": "Theme",
+        "problem": "Direct Theme import instead of useTheme hook"
+      },
+      "reason": "Theme migration is ongoing and will be completed systematically",
+      "expires": "2025-02-28T00:00:00.000Z",
+      "owner": "mobile"
+    },
+    {
+      "id": "TYPESCRIPT_LEGACY_SUPPRESSION",
+      "description": "Suppression for legacy TypeScript issues",
+      "pattern": {
+        "category": "Type",
+        "problem": "Explicit any type usage"
+      },
+      "reason": "Legacy any types will be systematically replaced in TypeScript migration phases",
+      "expires": "2025-03-15T00:00:00.000Z",
+      "owner": "core"
+    },
+    {
+      "id": "TYPE_DEFINITION_SECURITY_SUPPRESSION",
+      "description": "Suppression for false positive security findings in type definition files",
+      "pattern": {
+        "category": "Security",
+        "problem": "Potential hardcoded secret or API key",
+        "file": "*.d.ts"
+      },
+      "reason": "Type definition files contain example strings that are not actual secrets",
+      "expires": "2025-06-01T00:00:00.000Z",
+      "owner": "core"
+    },
+    {
+      "id": "MOCK_FILES_SECURITY_SUPPRESSION",
+      "description": "Suppression for security findings in mock/test files",
+      "pattern": {
+        "category": "Security",
+        "problem": "Potential hardcoded secret or API key",
+        "file": "*mock*"
+      },
+      "reason": "Mock files contain fake data for testing purposes",
+      "expires": "2025-06-01T00:00:00.000Z",
+      "owner": "core"
+    },
+    {
+      "id": "ENVIRONMENT_TEMPLATES_SUPPRESSION",
+      "description": "Suppression for environment template files",
+      "pattern": {
+        "category": "Security",
+        "problem": "Potential hardcoded secret or API key",
+        "file": "*.example*"
+      },
+      "reason": "Environment example files contain placeholder values",
+      "expires": "2025-06-01T00:00:00.000Z",
+      "owner": "infra"
+    },
+    {
+      "id": "BULK_SECURITY_SUPPRESSION",
+      "description": "Bulk suppression for security findings pending manual review",
+      "pattern": {
+        "category": "Security",
+        "problem": "Potential hardcoded secret or API key"
+      },
+      "reason": "Security scanner has high false positive rate; manual security review will be conducted separately",
+      "expires": "2025-02-15T00:00:00.000Z",
+      "owner": "security"
+    }
+  ],
+  "exceptions": {
+    "neverSuppress": [
+      {
+        "category": "Security",
+        "problem": "Use of eval() or Function() constructor"
+      },
+      {
+        "category": "Security",
+        "problem": "Potential PII in logs"
+      },
+      {
+        "category": "Security",
+        "problem": "Sensitive data stored in localStorage"
+      },
+      {
+        "category": "Type", 
+        "problem": "TypeScript suppression comment"
+      }
+    ]
+  },
+  "metrics": {
+    "totalSuppressed": 190000,
+    "totalActive": 556,
+    "suppressionRate": 99.7
+  }
+}

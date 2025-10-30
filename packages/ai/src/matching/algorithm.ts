@@ -77,23 +77,20 @@ export interface MatchResult {
  */
 export class AIMatchingAlgorithm {
   private readonly weights = {
-    species: 25,      // Species compatibility is most important
-    breed: 15,        // Breed preferences
-    age: 10,          // Age compatibility
-    temperament: 20,  // Personality match
-    activity: 15,     // Energy level match
-    location: 10,     // Geographic proximity
-    lifestyle: 5,     // Lifestyle factors
-    specialNeeds: 0,  // Special needs (bonus/penalty)
+    species: 25, // Species compatibility is most important
+    breed: 15, // Breed preferences
+    age: 10, // Age compatibility
+    temperament: 20, // Personality match
+    activity: 15, // Energy level match
+    location: 10, // Geographic proximity
+    lifestyle: 5, // Lifestyle factors
+    specialNeeds: 0, // Special needs (bonus/penalty)
   };
 
   /**
    * Calculate comprehensive compatibility score
    */
-  public calculateMatchScore(
-    pet: PetProfile,
-    userPreferences: UserPreferences
-  ): MatchResult {
+  public calculateMatchScore(pet: PetProfile, userPreferences: UserPreferences): MatchResult {
     const breakdown = {
       species: this.calculateSpeciesScore(pet, userPreferences),
       breed: this.calculateBreedScore(pet, userPreferences),
@@ -136,9 +133,7 @@ export class AIMatchingAlgorithm {
 
     // Partial credit for related species
     const relatedSpecies = this.getRelatedSpecies(pet.species);
-    const hasRelated = preferences.species.some(species =>
-      relatedSpecies.includes(species)
-    );
+    const hasRelated = preferences.species.some((species) => relatedSpecies.includes(species));
 
     return hasRelated ? 60 : 0;
   }
@@ -153,8 +148,8 @@ export class AIMatchingAlgorithm {
 
     // Check for breed groups/families
     const breedGroup = this.getBreedGroup(pet.breed);
-    const hasGroupMatch = preferences.breedPreferences.some(breed =>
-      this.getBreedGroup(breed) === breedGroup
+    const hasGroupMatch = preferences.breedPreferences.some(
+      (breed) => this.getBreedGroup(breed) === breedGroup,
     );
 
     return hasGroupMatch ? 70 : 50; // Default 50% for any breed
@@ -171,12 +166,9 @@ export class AIMatchingAlgorithm {
     }
 
     // Gradual penalty for age outside range
-    const ageDiff = Math.min(
-      Math.abs(pet.age - minAge),
-      Math.abs(pet.age - maxAge)
-    );
+    const ageDiff = Math.min(Math.abs(pet.age - minAge), Math.abs(pet.age - maxAge));
 
-    return Math.max(0, 100 - (ageDiff * 10));
+    return Math.max(0, 100 - ageDiff * 10);
   }
 
   /**
@@ -187,8 +179,8 @@ export class AIMatchingAlgorithm {
       return 50; // Neutral score for unknown temperament
     }
 
-    const matchingTraits = pet.temperament.filter(trait =>
-      preferences.temperamentPreferences.includes(trait)
+    const matchingTraits = pet.temperament.filter((trait) =>
+      preferences.temperamentPreferences.includes(trait),
     );
 
     const matchRatio = matchingTraits.length / pet.temperament.length;
@@ -215,10 +207,10 @@ export class AIMatchingAlgorithm {
     // Calculate distance from preferred range
     const distance = Math.min(
       Math.abs(pet.activityLevel - minActivity),
-      Math.abs(pet.activityLevel - maxActivity)
+      Math.abs(pet.activityLevel - maxActivity),
     );
 
-    return Math.max(0, 100 - (distance * 15));
+    return Math.max(0, 100 - distance * 15);
   }
 
   /**
@@ -277,7 +269,7 @@ export class AIMatchingAlgorithm {
   private generateReasons(
     pet: PetProfile,
     preferences: UserPreferences,
-    breakdown: MatchResult['breakdown']
+    breakdown: MatchResult['breakdown'],
   ): string[] {
     const reasons: string[] = [];
 
@@ -294,8 +286,8 @@ export class AIMatchingAlgorithm {
     }
 
     if (breakdown.temperament >= 80) {
-      const matchingTraits = pet.temperament.filter(trait =>
-        preferences.temperamentPreferences.includes(trait)
+      const matchingTraits = pet.temperament.filter((trait) =>
+        preferences.temperamentPreferences.includes(trait),
       );
       reasons.push(`Shares ${String(matchingTraits.length)} temperament traits you prefer`);
     }
@@ -317,7 +309,7 @@ export class AIMatchingAlgorithm {
   private generateConcerns(
     pet: PetProfile,
     _preferences: UserPreferences,
-    breakdown: MatchResult['breakdown']
+    breakdown: MatchResult['breakdown'],
   ): string[] {
     const concerns: string[] = [];
 
@@ -330,7 +322,9 @@ export class AIMatchingAlgorithm {
     }
 
     if (breakdown.activity < 50) {
-      concerns.push(`Activity level may be too ${pet.activityLevel > 5 ? 'high' : 'low'} for your lifestyle`);
+      concerns.push(
+        `Activity level may be too ${pet.activityLevel > 5 ? 'high' : 'low'} for your lifestyle`,
+      );
     }
 
     if (breakdown.specialNeeds < 0) {
@@ -350,12 +344,14 @@ export class AIMatchingAlgorithm {
   private generateRecommendations(
     pet: PetProfile,
     preferences: UserPreferences,
-    breakdown: MatchResult['breakdown']
+    breakdown: MatchResult['breakdown'],
   ): string[] {
     const recommendations: string[] = [];
 
     if (breakdown.activity < 70) {
-      recommendations.push(`Consider if you can provide ${pet.activityLevel > 5 ? 'high' : 'low'} activity level care`);
+      recommendations.push(
+        `Consider if you can provide ${pet.activityLevel > 5 ? 'high' : 'low'} activity level care`,
+      );
     }
 
     if (pet.specialNeeds.length > 0) {
@@ -394,12 +390,12 @@ export class AIMatchingAlgorithm {
   private getBreedGroup(breed: string): string {
     // Simplified breed grouping
     const breedGroups: Record<string, string[]> = {
-      'working': ['german_shepherd', 'rottweiler', 'boxer'],
-      'sporting': ['labrador', 'golden_retriever', 'spaniel'],
-      'herding': ['border_collie', 'australian_shepherd', 'corgi'],
-      'toy': ['poodle', 'chihuahua', 'pomeranian'],
-      'hound': ['beagle', 'bloodhound', 'greyhound'],
-      'terrier': ['jack_russell', 'scottish_terrier', 'bull_terrier'],
+      working: ['german_shepherd', 'rottweiler', 'boxer'],
+      sporting: ['labrador', 'golden_retriever', 'spaniel'],
+      herding: ['border_collie', 'australian_shepherd', 'corgi'],
+      toy: ['poodle', 'chihuahua', 'pomeranian'],
+      hound: ['beagle', 'bloodhound', 'greyhound'],
+      terrier: ['jack_russell', 'scottish_terrier', 'bull_terrier'],
     };
 
     for (const [group, breeds] of Object.entries(breedGroups)) {

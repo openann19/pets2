@@ -1,0 +1,129 @@
+# PawfectMatch Analytics Events Schema
+
+# Lifecycle Events
+- key: app.open
+  props:
+    version: string
+    platform: string
+  category: lifecycle
+
+- key: app.close
+  props:
+    session_duration_ms: number
+  category: lifecycle
+
+- key: screen.view
+  props:
+    screenName: string
+  category: lifecycle
+
+# Core Feature Events
+- key: swipe.card
+  props:
+    direction: string
+    petId: string
+  category: core
+
+- key: match.success
+  props:
+    matchId: string
+  category: core
+
+- key: match.viewed
+  props:
+    matchId: string
+  category: core
+
+- key: chat.message.sent
+  props:
+    length: number
+    hasMedia: boolean
+  category: core
+
+- key: chat.message.received
+  props:
+    matchId: string
+  category: core
+
+- key: chat.opened
+  props:
+    matchId: string
+  category: core
+
+# Photo & Media Events
+- key: upload.started
+  props:
+    mime: string
+    size: number
+  category: photo
+
+- key: upload.completed
+  props:
+    mime: string
+    duration_ms: number
+  category: photo
+
+- key: upload.failed
+  props:
+    error: string
+  category: photo
+
+- key: photo.editor.used
+  props:
+    edits: string[]
+  category: photo
+
+# Monetization Events
+- key: premium.paywall.viewed
+  props:
+    source: string
+  category: monetization
+
+- key: purchase.initiated
+  props:
+    productId: string
+    price: number
+  category: monetization
+
+- key: purchase.completed
+  props:
+    productId: string
+    transactionId: string
+  category: monetization
+
+- key: purchase.failed
+  props:
+    error: string
+    productId: string
+  category: monetization
+
+# User Behavior Events
+- key: settings.changed
+  props:
+    setting: string
+    value: string
+  category: behavior
+
+- key: filters.applied
+  props:
+    filters: string[]
+  category: behavior
+
+- key: search.performed
+  props:
+    query: string
+    results: number
+  category: behavior
+
+# Error & Stability Events
+- key: error.occurred
+  props:
+    error: string
+    screen: string
+  category: stability
+
+- key: crash.occurred
+  props:
+    error: string
+    screen: string
+  category: stability

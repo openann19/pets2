@@ -1,13 +1,21 @@
-import { useThemeContext } from "./ThemeProvider";
+/**
+ * @module theme/useTheme
+ * Hook for accessing theme in components
+ */
 
-export function useTheme() {
-  return useThemeContext().theme;
-}
+import { useTheme } from './Provider';
 
+// Re-export from Provider - single source of truth
+export { useTheme };
+
+// Legacy exports for backward compatibility
 export function useThemeName() {
-  return useThemeContext().name;
+  const { scheme } = useTheme();
+  return scheme;
 }
 
 export function useSetTheme() {
-  return useThemeContext().setThemeName;
+  // Theme is controlled by system scheme or ThemeProvider prop
+  // This is a no-op for now but kept for compatibility
+  return () => {};
 }

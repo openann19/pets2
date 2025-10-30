@@ -3,8 +3,8 @@
  * Comprehensive leaderboard system for mobile app matching web functionality
  */
 
-import { logger } from "@pawfectmatch/core";
-import { authService } from "./AuthService";
+import { logger } from '@pawfectmatch/core';
+import { authService } from './AuthService';
 
 export interface LeaderboardEntry {
   id: string;
@@ -39,7 +39,7 @@ export interface Badge {
   icon: string;
   color: string;
   earnedAt: number;
-  rarity: "common" | "rare" | "epic" | "legendary";
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
 }
 
 export interface LeaderboardCategory {
@@ -48,13 +48,13 @@ export interface LeaderboardCategory {
   description: string;
   icon: string;
   color: string;
-  period: "daily" | "weekly" | "monthly" | "all_time";
+  period: 'daily' | 'weekly' | 'monthly' | 'all_time';
   isActive: boolean;
 }
 
 export interface LeaderboardFilter {
   category?: string;
-  period?: "daily" | "weekly" | "monthly" | "all_time";
+  period?: 'daily' | 'weekly' | 'monthly' | 'all_time';
   location?: {
     latitude: number;
     longitude: number;
@@ -65,7 +65,7 @@ export interface LeaderboardFilter {
     max: number;
   };
   breed?: string;
-  gender?: "male" | "female" | "all";
+  gender?: 'male' | 'female' | 'all';
 }
 
 export interface LeaderboardResponse {
@@ -84,8 +84,7 @@ class LeaderboardService {
   private cacheExpiration: number = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
-    this.baseUrl =
-      process.env["EXPO_PUBLIC_API_URL"] ?? "https://api.pawfectmatch.com";
+    this.baseUrl = process.env['EXPO_PUBLIC_API_URL'] ?? 'https://api.pawfectmatch.com';
   }
 
   /**
@@ -112,21 +111,16 @@ class LeaderboardService {
         ...(filter as Record<string, string>),
       });
 
-      const response = await fetch(
-        `${this.baseUrl}/api/leaderboard?${params.toString()}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${await this.getAuthToken()}`,
-          },
+      const response = await fetch(`${this.baseUrl}/api/leaderboard?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await this.getAuthToken()}`,
         },
-      );
+      });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status.toString()}: ${response.statusText}`,
-        );
+        throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
       }
 
       const data = (await response.json()) as LeaderboardResponse;
@@ -134,7 +128,7 @@ class LeaderboardService {
 
       return data;
     } catch (error) {
-      logger.error("Failed to get leaderboard", { error });
+      logger.error('Failed to get leaderboard', { error });
       throw error;
     }
   }
@@ -142,11 +136,9 @@ class LeaderboardService {
   /**
    * Get user's rank and entry
    */
-  async getUserRank(
-    category?: string,
-  ): Promise<{ rank: number; entry: LeaderboardEntry | null }> {
+  async getUserRank(category?: string): Promise<{ rank: number; entry: LeaderboardEntry | null }> {
     try {
-      const cacheKey = `user-rank-${category ?? "all"}`;
+      const cacheKey = `user-rank-${category ?? 'all'}`;
       const cached = this.getCachedData(cacheKey) as {
         rank: number;
         entry: LeaderboardEntry | null;
@@ -156,22 +148,17 @@ class LeaderboardService {
         return cached;
       }
 
-      const params = category !== undefined ? `?category=${category}` : "";
-      const response = await fetch(
-        `${this.baseUrl}/api/leaderboard/user-rank${params}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${await this.getAuthToken()}`,
-          },
+      const params = category !== undefined ? `?category=${category}` : '';
+      const response = await fetch(`${this.baseUrl}/api/leaderboard/user-rank${params}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await this.getAuthToken()}`,
         },
-      );
+      });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status.toString()}: ${response.statusText}`,
-        );
+        throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
       }
 
       const data = (await response.json()) as {
@@ -182,7 +169,7 @@ class LeaderboardService {
 
       return data;
     } catch (error) {
-      logger.error("Failed to get user rank", { error });
+      logger.error('Failed to get user rank', { error });
       throw error;
     }
   }
@@ -192,30 +179,23 @@ class LeaderboardService {
    */
   async getCategories(): Promise<LeaderboardCategory[]> {
     try {
-      const cacheKey = "leaderboard-categories";
-      const cached = this.getCachedData(cacheKey) as
-        | LeaderboardCategory[]
-        | null;
+      const cacheKey = 'leaderboard-categories';
+      const cached = this.getCachedData(cacheKey) as LeaderboardCategory[] | null;
 
       if (cached !== null) {
         return cached;
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/leaderboard/categories`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${await this.getAuthToken()}`,
-          },
+      const response = await fetch(`${this.baseUrl}/api/leaderboard/categories`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await this.getAuthToken()}`,
         },
-      );
+      });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status.toString()}: ${response.statusText}`,
-        );
+        throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
       }
 
       const data = (await response.json()) as LeaderboardCategory[];
@@ -223,7 +203,7 @@ class LeaderboardService {
 
       return data;
     } catch (error) {
-      logger.error("Failed to get categories", { error });
+      logger.error('Failed to get categories', { error });
       throw error;
     }
   }
@@ -233,7 +213,7 @@ class LeaderboardService {
    */
   async getUserBadges(): Promise<Badge[]> {
     try {
-      const cacheKey = "user-badges";
+      const cacheKey = 'user-badges';
       const cached = this.getCachedData(cacheKey) as Badge[] | null;
 
       if (cached !== null) {
@@ -241,17 +221,15 @@ class LeaderboardService {
       }
 
       const response = await fetch(`${this.baseUrl}/api/leaderboard/badges`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${await this.getAuthToken()}`,
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await this.getAuthToken()}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status.toString()}: ${response.statusText}`,
-        );
+        throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
       }
 
       const data = (await response.json()) as Badge[];
@@ -259,7 +237,7 @@ class LeaderboardService {
 
       return data;
     } catch (error) {
-      logger.error("Failed to get user badges", { error });
+      logger.error('Failed to get user badges', { error });
       throw error;
     }
   }
@@ -276,21 +254,16 @@ class LeaderboardService {
         return cached;
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/leaderboard/pet/${petId}/stats`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${await this.getAuthToken()}`,
-          },
+      const response = await fetch(`${this.baseUrl}/api/leaderboard/pet/${petId}/stats`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await this.getAuthToken()}`,
         },
-      );
+      });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status.toString()}: ${response.statusText}`,
-        );
+        throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
       }
 
       const data = (await response.json()) as LeaderboardStats;
@@ -298,7 +271,7 @@ class LeaderboardService {
 
       return data;
     } catch (error) {
-      logger.error("Failed to get pet stats", { error });
+      logger.error('Failed to get pet stats', { error });
       throw error;
     }
   }
@@ -313,35 +286,30 @@ class LeaderboardService {
     reason: string,
   ): Promise<void> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/api/leaderboard/update-score`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${await this.getAuthToken()}`,
-          },
-          body: JSON.stringify({
-            petId,
-            category,
-            points,
-            reason,
-          }),
+      const response = await fetch(`${this.baseUrl}/api/leaderboard/update-score`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await this.getAuthToken()}`,
         },
-      );
+        body: JSON.stringify({
+          petId,
+          category,
+          points,
+          reason,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status.toString()}: ${response.statusText}`,
-        );
+        throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
       }
 
       // Clear relevant cache entries
-      this.clearCacheByPattern("leaderboard");
-      this.clearCacheByPattern("user-rank");
+      this.clearCacheByPattern('leaderboard');
+      this.clearCacheByPattern('user-rank');
       this.clearCacheByPattern(`pet-stats-${petId}`);
     } catch (error) {
-      logger.error("Failed to update score", { error });
+      logger.error('Failed to update score', { error });
       throw error;
     }
   }
@@ -351,7 +319,7 @@ class LeaderboardService {
    */
   async getLeaderboardHistory(
     category: string,
-    period: "daily" | "weekly" | "monthly" = "weekly",
+    period: 'daily' | 'weekly' | 'monthly' = 'weekly',
     weeks = 4,
   ): Promise<{ date: string; rank: number; score: number }[]> {
     try {
@@ -370,21 +338,16 @@ class LeaderboardService {
         weeks: weeks.toString(),
       });
 
-      const response = await fetch(
-        `${this.baseUrl}/api/leaderboard/history?${params.toString()}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${await this.getAuthToken()}`,
-          },
+      const response = await fetch(`${this.baseUrl}/api/leaderboard/history?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await this.getAuthToken()}`,
         },
-      );
+      });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status.toString()}: ${response.statusText}`,
-        );
+        throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
       }
 
       const data = (await response.json()) as {
@@ -396,7 +359,7 @@ class LeaderboardService {
 
       return data;
     } catch (error) {
-      logger.error("Failed to get leaderboard history", { error });
+      logger.error('Failed to get leaderboard history', { error });
       throw error;
     }
   }
@@ -423,21 +386,16 @@ class LeaderboardService {
         radius: radius.toString(),
       });
 
-      const response = await fetch(
-        `${this.baseUrl}/api/leaderboard/nearby?${params.toString()}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${await this.getAuthToken()}`,
-          },
+      const response = await fetch(`${this.baseUrl}/api/leaderboard/nearby?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await this.getAuthToken()}`,
         },
-      );
+      });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status.toString()}: ${response.statusText}`,
-        );
+        throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
       }
 
       const data = (await response.json()) as LeaderboardEntry[];
@@ -445,7 +403,7 @@ class LeaderboardService {
 
       return data;
     } catch (error) {
-      logger.error("Failed to get nearby leaders", { error });
+      logger.error('Failed to get nearby leaders', { error });
       throw error;
     }
   }
@@ -462,7 +420,7 @@ class LeaderboardService {
     }[];
   }> {
     try {
-      const cacheKey = "achievement-progress";
+      const cacheKey = 'achievement-progress';
       const cached = this.getCachedData(cacheKey) as {
         completed: Badge[];
         inProgress: {
@@ -476,21 +434,16 @@ class LeaderboardService {
         return cached;
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/leaderboard/achievements/progress`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${await this.getAuthToken()}`,
-          },
+      const response = await fetch(`${this.baseUrl}/api/leaderboard/achievements/progress`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await this.getAuthToken()}`,
         },
-      );
+      });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status.toString()}: ${response.statusText}`,
-        );
+        throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
       }
 
       const data = (await response.json()) as {
@@ -505,7 +458,7 @@ class LeaderboardService {
 
       return data;
     } catch (error) {
-      logger.error("Failed to get achievement progress", { error });
+      logger.error('Failed to get achievement progress', { error });
       throw error;
     }
   }
@@ -515,14 +468,14 @@ class LeaderboardService {
    */
   async shareAchievement(
     badgeId: string,
-    platform: "facebook" | "twitter" | "instagram",
+    platform: 'facebook' | 'twitter' | 'instagram',
   ): Promise<string> {
     try {
       const response = await fetch(`${this.baseUrl}/api/leaderboard/share`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${await this.getAuthToken()}`,
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await this.getAuthToken()}`,
         },
         body: JSON.stringify({
           badgeId,
@@ -531,15 +484,13 @@ class LeaderboardService {
       });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status.toString()}: ${response.statusText}`,
-        );
+        throw new Error(`HTTP ${response.status.toString()}: ${response.statusText}`);
       }
 
       const data = (await response.json()) as { shareUrl: string };
       return data.shareUrl;
     } catch (error) {
-      logger.error("Failed to share achievement", { error });
+      logger.error('Failed to share achievement', { error });
       throw error;
     }
   }
@@ -549,10 +500,7 @@ class LeaderboardService {
    */
   private getCachedData(key: string): unknown {
     const cached = this.cache.get(key);
-    if (
-      cached !== undefined &&
-      Date.now() - cached.timestamp < this.cacheExpiration
-    ) {
+    if (cached !== undefined && Date.now() - cached.timestamp < this.cacheExpiration) {
       return cached.data;
     }
     return null;
@@ -585,7 +533,7 @@ class LeaderboardService {
   private async getAuthToken(): Promise<string> {
     const token = await authService.getAccessToken();
     if (token === null) {
-      throw new Error("Authentication required for leaderboard access");
+      throw new Error('Authentication required for leaderboard access');
     }
     return token;
   }

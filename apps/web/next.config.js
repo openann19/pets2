@@ -6,6 +6,9 @@ const nextConfig = {
   // Enable SWC minification
   swcMinify: true,
   
+  // Transpile workspace packages
+  transpilePackages: ['@pawfectmatch/core'],
+  
   // Optimize images
   images: {
     domains: [
@@ -117,6 +120,13 @@ const nextConfig = {
 
   // Webpack configuration
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Alias react-native to react-native-web
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      'react-native$': 'react-native-web',
+    };
+    
     // Optimize bundle splitting
     if (!dev && !isServer) {
       config.optimization.splitChunks = {

@@ -123,7 +123,7 @@ export function MobileTestingDashboard({ className = '' }) {
                 { id: 'performance', label: 'Performance', icon: CpuChipIcon },
                 { id: 'accessibility', label: 'Accessibility', icon: EyeIcon },
                 { id: 'safe-areas', label: 'Safe Areas', icon: ShieldCheckIcon },
-            ].map((tab) => (<button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
+            ].map((tab) => (<button key={tab.id} onClick={() => { setActiveTab(tab.id); }} className={`flex items-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
                     ? 'border-pink-500 text-pink-600 dark:text-pink-400'
                     : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'}`}>
                 <tab.icon className="h-4 w-4"/>

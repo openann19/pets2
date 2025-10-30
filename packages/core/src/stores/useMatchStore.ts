@@ -102,7 +102,7 @@ export const useMatchStore = create<MatchState>()(
     // Update an existing match
     updateMatch: (matchId: string, data: Partial<Match>) => {
       set((state) => {
-        const index = state.matches.findIndex(match => match._id === matchId);
+        const index = state.matches.findIndex((match) => match._id === matchId);
         if (index !== -1) {
           const existing = state.matches[index];
           if (existing !== undefined) {
@@ -115,7 +115,7 @@ export const useMatchStore = create<MatchState>()(
     // Remove a match
     removeMatch: (matchId: string) => {
       set((state) => {
-        state.matches = state.matches.filter(match => match._id !== matchId);
+        state.matches = state.matches.filter((match) => match._id !== matchId);
       });
     },
 
@@ -156,5 +156,5 @@ export const useMatchStore = create<MatchState>()(
         };
       });
     },
-  }))
+  })),
 );

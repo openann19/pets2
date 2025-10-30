@@ -25,14 +25,16 @@ describe('ErrorHandler', () => {
           action: 'test-action',
           severity: 'high',
         },
-        { showNotification: true }
+        { showNotification: true },
       );
 
       expect(processed.message).toBe('Something went wrong');
       expect(processed.context.component).toBe('TestComponent');
       expect(processed.context.action).toBe('test-action');
       expect(processed.context.severity).toBe('high');
-      expect(errorLogger).toHaveBeenCalledWith(expect.objectContaining({ message: 'Something went wrong' }));
+      expect(errorLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Something went wrong' }),
+      );
       expect(notificationHandler).toHaveBeenCalledTimes(1);
     });
   });
@@ -48,12 +50,16 @@ describe('ErrorHandler', () => {
           method: 'GET',
           statusCode: 401,
           showNotification: false,
-        }
+        },
       );
 
       expect(processed.context.component).toBe('API');
       expect(processed.context.action).toBe('GET /pets');
-      expect(processed.context.metadata).toMatchObject({ endpoint: '/pets', method: 'GET', statusCode: 401 });
+      expect(processed.context.metadata).toMatchObject({
+        endpoint: '/pets',
+        method: 'GET',
+        statusCode: 401,
+      });
       expect(processed.context.severity).toBe('high');
     });
   });
@@ -63,7 +69,7 @@ describe('ErrorHandler', () => {
       const processed = ErrorHandler.handleAuthError(
         new Error('Token expired'),
         { sessionId: 'session-1' },
-        { authMethod: 'password', showNotification: false }
+        { authMethod: 'password', showNotification: false },
       );
 
       expect(processed.context.component).toBe('Authentication');
@@ -78,7 +84,7 @@ describe('ErrorHandler', () => {
       const processed = ErrorHandler.handleNetworkError(
         new Error('Connection timeout'),
         {},
-        { retryable: true, showNotification: false }
+        { retryable: true, showNotification: false },
       );
 
       expect(processed.context.component).toBe('Network');
@@ -90,22 +96,30 @@ describe('ErrorHandler', () => {
 
   describe('getErrorStats', () => {
     it('aggregates error statistics over recent events', () => {
-      ErrorHandler.handleError(new Error('First error'), { component: 'API' }, { showNotification: false });
+      ErrorHandler.handleError(
+        new Error('First error'),
+        { component: 'API' },
+        { showNotification: false },
+      );
       ErrorHandler.handleNetworkError(new Error('Network issue'), {}, { showNotification: false });
       ErrorHandler.handleAuthError(new Error('Auth failed'), {}, { showNotification: false });
 
       const stats = ErrorHandler.getErrorStats();
 
       expect(stats.total).toBeGreaterThanOrEqual(3);
-  expect(stats.byComponent['API'] ?? 0).toBeGreaterThanOrEqual(1);
-  expect(stats.byComponent['Network'] ?? 0).toBeGreaterThanOrEqual(1);
-  expect(stats.byComponent['Authentication'] ?? 0).toBeGreaterThanOrEqual(1);
+      expect(stats.byComponent['API'] ?? 0).toBeGreaterThanOrEqual(1);
+      expect(stats.byComponent['Network'] ?? 0).toBeGreaterThanOrEqual(1);
+      expect(stats.byComponent['Authentication'] ?? 0).toBeGreaterThanOrEqual(1);
     });
   });
 
   describe('clearQueue', () => {
     it('resets internal error queue state', () => {
-      ErrorHandler.handleError(new Error('Queued error'), { component: 'Test' }, { showNotification: false });
+      ErrorHandler.handleError(
+        new Error('Queued error'),
+        { component: 'Test' },
+        { showNotification: false },
+      );
       expect(ErrorHandler.getErrorStats().total).toBeGreaterThanOrEqual(1);
 
       ErrorHandler.clearQueue();

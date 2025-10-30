@@ -14,20 +14,25 @@ import AdminBillingScreen from "../screens/admin/AdminBillingScreen";
 import AdminChatsScreen from "../screens/admin/AdminChatsScreen";
 import AdminDashboardScreen from "../screens/admin/AdminDashboardScreen";
 import AdminSecurityScreen from "../screens/admin/AdminSecurityScreen";
+import AdminServicesScreen from "../screens/admin/AdminServicesScreen";
 import AdminUploadsScreen from "../screens/admin/AdminUploadsScreen";
 import AdminUsersScreen from "../screens/admin/AdminUsersScreen";
 import AdminVerificationsScreen from "../screens/admin/AdminVerificationsScreen";
+import { useTheme } from '@mobile/src/theme';
 
 const Stack = createNativeStackNavigator();
 
 export default function AdminNavigator(): React.JSX.Element {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
   const { user, isLoading } = useAuthStore();
 
   // Loading state
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3B82F6" />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
         <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
@@ -50,9 +55,9 @@ export default function AdminNavigator(): React.JSX.Element {
       initialRouteName="AdminDashboard"
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#1F2937",
+          backgroundColor: theme.colors.bg,
         },
-        headerTintColor: "#FFFFFF",
+        headerTintColor: theme.colors.onSurface,
         headerTitleStyle: {
           fontWeight: "bold",
         },
@@ -132,39 +137,49 @@ export default function AdminNavigator(): React.JSX.Element {
           headerShown: false,
         }}
       />
+
+      {/* Services Management */}
+      <Stack.Screen
+        name="AdminServices"
+        component={AdminServicesScreen as React.ComponentType<any>}
+        options={{
+          title: "Services Management",
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: any) => StyleSheet.create({
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: theme.colors.bg,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: "#6B7280",
+    color: theme.colors.onMuted,
   },
   errorContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: theme.colors.bg,
     paddingHorizontal: 32,
   },
   errorTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#EF4444",
+    color: theme.colors.danger,
     marginBottom: 16,
     textAlign: "center",
   },
   errorMessage: {
     fontSize: 16,
-    color: "#6B7280",
+    color: theme.colors.onMuted,
     textAlign: "center",
     lineHeight: 24,
   },

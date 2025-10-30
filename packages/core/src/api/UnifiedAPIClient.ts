@@ -4,10 +4,10 @@
  */
 
 import { logger } from '../utils/logger';
-import { CircuitBreaker, CircuitState } from './CircuitBreaker';
+import { CircuitBreaker } from './CircuitBreaker';
 import { RequestRetryStrategy } from './RequestRetryStrategy';
 import { OfflineQueueManager, type QueueItem, type QueuePriority } from './OfflineQueueManager';
-import { APIErrorClassifier, ErrorType } from './APIErrorClassifier';
+import { APIErrorClassifier } from './APIErrorClassifier';
 import { RecoveryStrategies } from './RecoveryStrategies';
 
 export interface APIClientConfig {
@@ -25,7 +25,7 @@ export interface APIClientConfig {
   };
   queueConfig?: {
     maxSize: number;
-    persistence: 'memory' | 'localStorage' | 'indexedDB';
+    persistence: 'memory' | 'localStorage' | 'indexedDB' | 'asyncStorage';
   };
 }
 
@@ -59,13 +59,12 @@ export class UnifiedAPIClient extends OfflineQueueManager {
 
   constructor(config: APIClientConfig) {
     super(config.queueConfig);
-    
+
     this.clientConfig = config;
     this.circuitBreaker = new CircuitBreaker(config.circuitBreakerConfig);
     this.retryStrategy = new RequestRetryStrategy(config.retryConfig);
     this.errorClassifier = new APIErrorClassifier();
     this.recoveryStrategies = new RecoveryStrategies();
-
   }
 
   /**
@@ -87,7 +86,7 @@ export class UnifiedAPIClient extends OfflineQueueManager {
    */
   async request<T>(
     endpoint: string,
-    config: UnifiedRequestConfig = {}
+    config: UnifiedRequestConfig = {},
   ): Promise<UnifiedResponse<T>> {
     const method = config.method || 'GET';
     const requireOnline = config.requireOnline ?? false;
@@ -143,21 +142,33 @@ export class UnifiedAPIClient extends OfflineQueueManager {
   /**
    * POST request
    */
-  async post<T>(endpoint: string, data?: unknown, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>> {
+  async post<T>(
+    endpoint: string,
+    data?: unknown,
+    config?: UnifiedRequestConfig,
+  ): Promise<UnifiedResponse<T>> {
     return this.request<T>(endpoint, { ...config, method: 'POST', body: data });
   }
 
   /**
    * PUT request
    */
-  async put<T>(endpoint: string, data?: unknown, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>> {
+  async put<T>(
+    endpoint: string,
+    data?: unknown,
+    config?: UnifiedRequestConfig,
+  ): Promise<UnifiedResponse<T>> {
     return this.request<T>(endpoint, { ...config, method: 'PUT', body: data });
   }
 
   /**
    * PATCH request
    */
-  async patch<T>(endpoint: string, data?: unknown, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>> {
+  async patch<T>(
+    endpoint: string,
+    data?: unknown,
+    config?: UnifiedRequestConfig,
+  ): Promise<UnifiedResponse<T>> {
     return this.request<T>(endpoint, { ...config, method: 'PATCH', body: data });
   }
 
@@ -250,7 +261,7 @@ export class UnifiedAPIClient extends OfflineQueueManager {
           },
           {
             maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
-          }
+          },
         );
 
         if (recoveryResult.success) {
@@ -292,7 +303,7 @@ export class UnifiedAPIClient extends OfflineQueueManager {
    */
   private async getCache(endpoint: string): Promise<unknown | null> {
     const cached = this.cache.get(endpoint);
-    
+
     if (!cached) {
       return null;
     }
@@ -341,9 +352,11 @@ export class UnifiedAPIClient extends OfflineQueueManager {
 }
 
 export class APIError extends Error {
-  constructor(message: string, public statusCode?: number) {
+  constructor(
+    message: string,
+    public statusCode?: number,
+  ) {
     super(message);
     this.name = 'APIError';
   }
 }
-

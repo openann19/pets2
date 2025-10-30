@@ -1,31 +1,30 @@
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useState, useEffect } from "react";
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useMemo, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Dimensions,
-  StatusBar,
   InteractionManager,
-} from "react-native";
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Animated, {
-  useSharedValue,
+  Easing,
+  runOnJS,
   useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSequence,
   withSpring,
   withTiming,
-  withSequence,
-  withDelay,
-  runOnJS,
-  Easing,
-} from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
-
-const { width } = Dimensions.get("window");
+} from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -34,10 +33,7 @@ type OnboardingStackParamList = {
   Welcome: undefined;
 };
 
-type UserIntentScreenProps = NativeStackScreenProps<
-  OnboardingStackParamList,
-  "UserIntent"
->;
+type UserIntentScreenProps = NativeStackScreenProps<OnboardingStackParamList, 'UserIntent'>;
 
 const SPRING_CONFIG = {
   damping: 20,
@@ -51,6 +47,8 @@ const ELITE_TIMING_CONFIG = {
 };
 
 const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const [selectedIntent, setSelectedIntent] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
 
@@ -66,7 +64,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
   const footerOpacity = useSharedValue(0);
 
   useEffect(() => {
-    StatusBar.setBarStyle("dark-content");
+    StatusBar.setBarStyle('dark-content');
 
     // Staggered entrance animations
     InteractionManager.runAfterInteractions(() => {
@@ -143,10 +141,10 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
 
     // Navigate with delay for smooth animation
     setTimeout(() => {
-      if (intent === "adopt") {
-        navigation.navigate("PreferencesSetup", { userIntent: intent });
+      if (intent === 'adopt') {
+        navigation.navigate('PreferencesSetup', { userIntent: intent });
       } else {
-        navigation.navigate("PetProfileSetup", { userIntent: intent });
+        navigation.navigate('PetProfileSetup', { userIntent: intent });
       }
     }, 800);
   };
@@ -155,7 +153,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
     <View style={styles.container}>
       {/* Elite Background Gradient */}
       <LinearGradient
-        colors={["#fef7ff", "#f3e8ff", "#e9d5ff"]}
+        colors={theme.palette?.gradients?.primary ?? [theme.colors.bg, theme.colors.bg]}
         style={styles.backgroundGradient}
       />
 
@@ -165,10 +163,13 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
           showsVerticalScrollIndicator={false}
           bounces={true}
         >
-          <Animated.View style={[styles.content, animatedContainerStyle]}>
+          <Animated.View style={StyleSheet.flatten([styles.content, animatedContainerStyle])}>
             {/* Elite Header with Glassmorphic Design */}
-            <Animated.View style={[styles.header, animatedHeaderStyle]}>
-              <BlurView intensity={20} style={styles.logoContainer}>
+            <Animated.View style={StyleSheet.flatten([styles.header, animatedHeaderStyle])}>
+              <BlurView
+                intensity={20}
+                style={styles.logoContainer}
+              >
                 <Text style={styles.logo}>🐾 PawfectMatch</Text>
               </BlurView>
               <Text style={styles.title}>Welcome to PawfectMatch!</Text>
@@ -180,63 +181,67 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
             {/* Elite Intent Cards */}
             <View style={styles.intentCards}>
               {/* Adopt a Pet Card */}
-              <Animated.View style={[styles.intentCard, animatedCard1Style]}>
+              <Animated.View style={StyleSheet.flatten([styles.intentCard, animatedCard1Style])}>
                 <TouchableOpacity
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.cardButton,
-                    selectedIntent === "adopt" && styles.selectedCard,
-                  ]}
+                    selectedIntent === 'adopt' && styles.selectedCard,
+                  ])}
+                  testID="UserIntentScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
                   onPress={() => {
-                    handleIntentSelect("adopt", scale1);
+                    handleIntentSelect('adopt', scale1);
                   }}
                   activeOpacity={0.9}
                   disabled={isNavigating}
                 >
                   <LinearGradient
                     colors={
-                      selectedIntent === "adopt"
-                        ? ["#fdf2f8", "#fce7f3", "#fbcfe8"]
-                        : ["rgba(255,255,255,0.9)", "rgba(255,255,255,0.7)"]
+                      selectedIntent === 'adopt'
+                        ? (theme.palette?.gradients?.primary ?? [
+                            theme.colors.primary,
+                            theme.colors.primary,
+                          ])
+                        : [theme.colors.surface + 'E6', theme.colors.surface + 'B3']
                     }
                     style={styles.cardGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                   >
                     <BlurView
-                      intensity={selectedIntent === "adopt" ? 30 : 15}
+                      intensity={selectedIntent === 'adopt' ? 30 : 15}
                       style={styles.cardBlur}
                     >
                       <View style={styles.cardIcon}>
                         <LinearGradient
-                          colors={["#ec4899", "#be185d"]}
+                          colors={
+                            theme.palette?.gradients?.primary ?? [
+                              theme.colors.primary,
+                              theme.colors.primary,
+                            ]
+                          }
                           style={styles.iconGradient}
                         >
                           <Text style={styles.cardEmoji}>🏠</Text>
                         </LinearGradient>
                       </View>
-                      <Text style={styles.cardTitle}>
-                        I want to adopt a pet
-                      </Text>
+                      <Text style={styles.cardTitle}>I want to adopt a pet</Text>
                       <Text style={styles.cardDescription}>
-                        Find your perfect companion from loving pets looking for
-                        their forever home
+                        Find your perfect companion from loving pets looking for their forever home
                       </Text>
                       <View style={styles.cardFeatures}>
                         <View style={styles.featureItem}>
                           <Text style={styles.featureBullet}>✨</Text>
-                          <Text style={styles.featureText}>
-                            Browse available pets
-                          </Text>
+                          <Text style={styles.featureText}>Browse available pets</Text>
                         </View>
                         <View style={styles.featureItem}>
                           <Text style={styles.featureBullet}>💝</Text>
-                          <Text style={styles.featureText}>
-                            Connect with pet owners
-                          </Text>
+                          <Text style={styles.featureText}>Connect with pet owners</Text>
                         </View>
                         <View style={styles.featureItem}>
                           <Text style={styles.featureBullet}>🤝</Text>
-                          <Text style={styles.featureText}>
-                            Schedule meet & greets
-                          </Text>
+                          <Text style={styles.featureText}>Schedule meet & greets</Text>
                         </View>
                       </View>
                     </BlurView>
@@ -245,33 +250,46 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
               </Animated.View>
 
               {/* List Pets Card */}
-              <Animated.View style={[styles.intentCard, animatedCard2Style]}>
+              <Animated.View style={StyleSheet.flatten([styles.intentCard, animatedCard2Style])}>
                 <TouchableOpacity
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.cardButton,
-                    selectedIntent === "list" && styles.selectedCard,
-                  ]}
+                    selectedIntent === 'list' && styles.selectedCard,
+                  ])}
+                  testID="UserIntentScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
                   onPress={() => {
-                    handleIntentSelect("list", scale2);
+                    handleIntentSelect('list', scale2);
                   }}
                   activeOpacity={0.9}
                   disabled={isNavigating}
                 >
                   <LinearGradient
                     colors={
-                      selectedIntent === "list"
-                        ? ["#f0f9ff", "#e0f2fe", "#bae6fd"]
-                        : ["rgba(255,255,255,0.9)", "rgba(255,255,255,0.7)"]
+                      selectedIntent === 'list'
+                        ? (theme.palette?.gradients?.primary ?? [
+                            theme.colors.primary,
+                            theme.colors.primary,
+                          ])
+                        : [theme.colors.surface + 'E6', theme.colors.surface + 'B3']
                     }
                     style={styles.cardGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                   >
                     <BlurView
-                      intensity={selectedIntent === "list" ? 30 : 15}
+                      intensity={selectedIntent === 'list' ? 30 : 15}
                       style={styles.cardBlur}
                     >
                       <View style={styles.cardIcon}>
                         <LinearGradient
-                          colors={["#0ea5e9", "#0284c7"]}
+                          colors={
+                            theme.palette?.gradients?.primary ?? [
+                              theme.colors.primary,
+                              theme.colors.primary,
+                            ]
+                          }
                           style={styles.iconGradient}
                         >
                           <Text style={styles.cardEmoji}>📝</Text>
@@ -279,27 +297,20 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                       </View>
                       <Text style={styles.cardTitle}>I have pets to list</Text>
                       <Text style={styles.cardDescription}>
-                        Share your pets for adoption, mating, or playdates with
-                        other pet lovers
+                        Share your pets for adoption, mating, or playdates with other pet lovers
                       </Text>
                       <View style={styles.cardFeatures}>
                         <View style={styles.featureItem}>
                           <Text style={styles.featureBullet}>📋</Text>
-                          <Text style={styles.featureText}>
-                            Create pet profiles
-                          </Text>
+                          <Text style={styles.featureText}>Create pet profiles</Text>
                         </View>
                         <View style={styles.featureItem}>
                           <Text style={styles.featureBullet}>⚡</Text>
-                          <Text style={styles.featureText}>
-                            Manage applications
-                          </Text>
+                          <Text style={styles.featureText}>Manage applications</Text>
                         </View>
                         <View style={styles.featureItem}>
                           <Text style={styles.featureBullet}>🔍</Text>
-                          <Text style={styles.featureText}>
-                            Screen potential adopters
-                          </Text>
+                          <Text style={styles.featureText}>Screen potential adopters</Text>
                         </View>
                       </View>
                     </BlurView>
@@ -310,15 +321,16 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
 
             {/* Elite Footer */}
             <Animated.View
-              style={[styles.additionalOptions, animatedFooterStyle]}
+              style={StyleSheet.flatten([styles.additionalOptions, animatedFooterStyle])}
             >
-              <BlurView intensity={25} style={styles.footerBlur}>
-                <Text style={styles.optionsTitle}>
-                  You can always do both later!
-                </Text>
+              <BlurView
+                intensity={25}
+                style={styles.footerBlur}
+              >
+                <Text style={styles.optionsTitle}>You can always do both later!</Text>
                 <Text style={styles.optionsSubtext}>
-                  This helps us personalize your experience, but you can change
-                  this anytime in settings
+                  This helps us personalize your experience, but you can change this anytime in
+                  settings
                 </Text>
               </BlurView>
             </Animated.View>
@@ -329,196 +341,197 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  // === CONTAINER & LAYOUT ===
-  container: {
-    flex: 1,
-    position: "relative",
-  },
-  backgroundGradient: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    minHeight: "100%",
-  },
+function makeStyles(theme: AppTheme) {
+  return {
+    // === CONTAINER & LAYOUT ===
+    container: {
+      flex: 1,
+      position: 'relative' as const,
+    },
+    backgroundGradient: {
+      position: 'absolute' as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    },
+    safeArea: {
+      flex: 1,
+    },
+    scrollContainer: {
+      flexGrow: 1,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.lg,
+    },
+    content: {
+      flex: 1,
+      justifyContent: 'center' as const,
+    },
 
-  // === ELITE HEADER ===
-  header: {
-    alignItems: "center",
-    marginBottom: 48,
-  },
-  logoContainer: {
-    borderRadius: 24,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    marginBottom: 24,
-    overflow: "hidden",
-    backgroundColor: "rgba(255,255,255,0.3)",
-  },
-  logo: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: "#7c3aed",
-    textAlign: "center",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "800",
-    color: "#1f2937",
-    textAlign: "center",
-    marginBottom: 16,
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: "#6b7280",
-    textAlign: "center",
-    lineHeight: 26,
-    paddingHorizontal: 24,
-    fontWeight: "500",
-  },
+    // === ELITE HEADER ===
+    header: {
+      alignItems: 'center' as const,
+      marginBottom: theme.spacing['2xl'],
+    },
+    logoContainer: {
+      borderRadius: theme.radii.lg,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      marginBottom: theme.spacing.lg,
+      overflow: 'hidden' as const,
+      backgroundColor: theme.colors.surface + '4D',
+    },
+    logo: {
+      fontSize: theme.typography.h1.size * 0.875,
+      fontWeight: theme.typography.h1.weight,
+      color: theme.colors.primary,
+      textAlign: 'center' as const,
+    },
+    title: {
+      fontSize: theme.typography.h1.size,
+      fontWeight: theme.typography.h1.weight,
+      color: theme.colors.onSurface,
+      textAlign: 'center' as const,
+      marginBottom: theme.spacing.md,
+      letterSpacing: -0.5,
+    },
+    subtitle: {
+      fontSize: theme.typography.body.size * 1.125,
+      color: theme.colors.onMuted,
+      textAlign: 'center' as const,
+      lineHeight: theme.typography.body.lineHeight * 1.08,
+      paddingHorizontal: theme.spacing.lg,
+      fontWeight: theme.typography.body.weight,
+    },
 
-  // === ELITE INTENT CARDS ===
-  intentCards: {
-    gap: 24,
-    marginBottom: 40,
-  },
-  intentCard: {
-    width: "100%",
-  },
-  cardButton: {
-    borderRadius: 24,
-    overflow: "hidden",
-    shadowColor: "#7c3aed",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
-    elevation: 12,
-  },
-  selectedCard: {
-    shadowOpacity: 0.25,
-    shadowRadius: 32,
-    elevation: 16,
-  },
-  cardGradient: {
-    borderRadius: 24,
-  },
-  cardBlur: {
-    padding: 28,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-  },
+    // === ELITE INTENT CARDS ===
+    intentCards: {
+      gap: theme.spacing.lg,
+      marginBottom: theme.spacing.xl,
+    },
+    intentCard: {
+      width: '100%' as const,
+    },
+    cardButton: {
+      borderRadius: theme.radii.lg,
+      overflow: 'hidden' as const,
+      shadowColor: theme.colors.primary,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.15,
+      shadowRadius: 24,
+      elevation: 12,
+    },
+    selectedCard: {
+      shadowOpacity: 0.25,
+      shadowRadius: 32,
+      elevation: 16,
+    },
+    cardGradient: {
+      borderRadius: theme.radii.lg,
+    },
+    cardBlur: {
+      padding: theme.spacing['2xl'],
+      borderRadius: theme.radii.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border + '33',
+    },
 
-  // === CARD CONTENT ===
-  cardIcon: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  iconGradient: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  cardEmoji: {
-    fontSize: 32,
-  },
-  cardTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#1f2937",
-    textAlign: "center",
-    marginBottom: 16,
-    letterSpacing: -0.3,
-  },
-  cardDescription: {
-    fontSize: 16,
-    color: "#6b7280",
-    textAlign: "center",
-    lineHeight: 24,
-    marginBottom: 24,
-    fontWeight: "500",
-    paddingHorizontal: 8,
-  },
+    // === CARD CONTENT ===
+    cardIcon: {
+      alignItems: 'center' as const,
+      marginBottom: theme.spacing.lg,
+    },
+    iconGradient: {
+      width: 72,
+      height: 72,
+      borderRadius: theme.radii.full,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      shadowColor: theme.colors.border,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+      elevation: 6,
+    },
+    cardEmoji: {
+      fontSize: 32,
+    },
+    cardTitle: {
+      fontSize: 24,
+      fontWeight: '700' as const,
+      color: theme.colors.onSurface,
+      textAlign: 'center' as const,
+      marginBottom: theme.spacing.md,
+      letterSpacing: -0.3,
+    },
+    cardDescription: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      textAlign: 'center' as const,
+      lineHeight: 24,
+      marginBottom: theme.spacing.lg,
+      fontWeight: '500' as const,
+      paddingHorizontal: theme.spacing.xs,
+    },
 
-  // === FEATURE LIST ===
-  cardFeatures: {
-    alignItems: "stretch",
-    gap: 12,
-  },
-  featureItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.4)",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
-  },
-  featureBullet: {
-    fontSize: 16,
-    marginRight: 12,
-    width: 20,
-    textAlign: "center",
-  },
-  featureText: {
-    fontSize: 15,
-    color: "#374151",
-    fontWeight: "600",
-    flex: 1,
-    lineHeight: 20,
-  },
+    // === FEATURE LIST ===
+    cardFeatures: {
+      alignItems: 'stretch' as const,
+      gap: theme.spacing.sm,
+    },
+    featureItem: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      backgroundColor: theme.colors.surface + '66',
+      borderRadius: theme.radii.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border + '4D',
+    },
+    featureBullet: {
+      fontSize: 16,
+      marginRight: theme.spacing.sm,
+      width: 20,
+      textAlign: 'center' as const,
+    },
+    featureText: {
+      fontSize: 15,
+      color: theme.colors.onSurface,
+      fontWeight: '600' as const,
+      flex: 1,
+      lineHeight: 20,
+    },
 
-  // === ELITE FOOTER ===
-  additionalOptions: {
-    alignItems: "center",
-    marginTop: 20,
-  },
-  footerBlur: {
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
-    overflow: "hidden",
-  },
-  optionsTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#7c3aed",
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  optionsSubtext: {
-    fontSize: 14,
-    color: "#6b7280",
-    textAlign: "center",
-    lineHeight: 22,
-    fontWeight: "500",
-  },
-});
+    // === ELITE FOOTER ===
+    additionalOptions: {
+      alignItems: 'center' as const,
+      marginTop: theme.spacing.lg,
+    },
+    footerBlur: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.lg,
+      borderRadius: theme.radii.lg,
+      backgroundColor: theme.colors.surface + '33',
+      borderWidth: 1,
+      borderColor: theme.colors.border + '4D',
+      overflow: 'hidden' as const,
+    },
+    optionsTitle: {
+      fontSize: 18,
+      fontWeight: '700' as const,
+      color: theme.colors.primary,
+      marginBottom: theme.spacing.sm,
+      textAlign: 'center' as const,
+    },
+    optionsSubtext: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      textAlign: 'center' as const,
+      lineHeight: 22,
+      fontWeight: '500' as const,
+    },
+  };
+}
 
 export default UserIntentScreen;

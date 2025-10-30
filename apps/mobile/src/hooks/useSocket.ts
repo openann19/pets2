@@ -1,14 +1,14 @@
-import { useAuthStore } from "@pawfectmatch/core";
-import { logger } from "@pawfectmatch/core";
-import { useEffect, useState, useRef } from "react";
-import type { Socket } from "socket.io-client";
-import { io } from "socket.io-client";
+import { useAuthStore } from '@pawfectmatch/core';
+import { logger } from '@pawfectmatch/core';
+import { useEffect, useState, useRef } from 'react';
+import type { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 import type {
   UserTypingEvent,
   NewMessageEvent,
   UserStatusEvent,
   OnlineUsersUpdate,
-} from "@pawfectmatch/core";
+} from '@pawfectmatch/core';
 
 interface UseSocketReturn {
   socket: Socket | null;
@@ -31,90 +31,89 @@ export function useSocket(): Socket | null {
 
     function connectSocket(): Socket | null {
       try {
-        const socketUrl =
-          process.env["EXPO_PUBLIC_SOCKET_URL"] || "http://localhost:3001";
+        const socketUrl = process.env['EXPO_PUBLIC_SOCKET_URL'] || 'http://localhost:3001';
         const newSocket = io(socketUrl, {
           auth: {
             token: accessToken,
             userId: user!._id, // Non-null assertion, guarded by check above
           },
-          transports: ["websocket"],
+          transports: ['websocket'],
           timeout: 10000,
           reconnection: true,
           reconnectionAttempts: maxReconnectAttempts,
           reconnectionDelay: 1000,
         });
 
-        newSocket.on("connect", () => {
-          logger.info("Socket connected:", { socketId: newSocket.id });
+        newSocket.on('connect', () => {
+          logger.info('Socket connected:', { socketId: newSocket.id });
           setIsConnected(true);
           setError(null);
           reconnectAttempts.current = 0;
         });
 
-        newSocket.on("disconnect", (reason: string) => {
-          logger.info("Socket disconnected:", { reason });
+        newSocket.on('disconnect', (reason: string) => {
+          logger.info('Socket disconnected:', { reason });
           setIsConnected(false);
 
-          if (reason === "io server disconnect") {
+          if (reason === 'io server disconnect') {
             // Server disconnected, try to reconnect
             newSocket.connect();
           }
         });
 
-        newSocket.on("connect_error", (err: Error) => {
-          logger.error("Socket connection error:", { error: err });
+        newSocket.on('connect_error', (err: Error) => {
+          logger.error('Socket connection error:', { error: err });
           setError(err.message);
           reconnectAttempts.current++;
 
           if (reconnectAttempts.current >= maxReconnectAttempts) {
-            setError("Failed to connect after multiple attempts");
+            setError('Failed to connect after multiple attempts');
           }
         });
 
-        newSocket.on("error", (err: Error) => {
-          logger.error("Socket error:", { error });
-          setError(err.message || "Socket error occurred");
+        newSocket.on('error', (err: Error) => {
+          logger.error('Socket error:', { error });
+          setError(err.message || 'Socket error occurred');
         });
 
         // Authentication error
-        newSocket.on("auth_error", (_err: Error) => {
-          logger.error("Socket auth error:", { error });
-          setError("Authentication failed");
+        newSocket.on('auth_error', (_err: Error) => {
+          logger.error('Socket auth error:', { error });
+          setError('Authentication failed');
           newSocket.disconnect();
         });
 
         // User-specific events
-        newSocket.on("user_online", (data: UserStatusEvent) => {
-          logger.info("User came online:", { data });
+        newSocket.on('user_online', (data: UserStatusEvent) => {
+          logger.info('User came online:', { data });
         });
 
-        newSocket.on("user_offline", (data: UserStatusEvent) => {
-          logger.info("User went offline:", { data });
+        newSocket.on('user_offline', (data: UserStatusEvent) => {
+          logger.info('User went offline:', { data });
         });
 
         // Match events
-        newSocket.on("new_match", (data: NewMessageEvent) => {
-          logger.info("New match:", { data });
+        newSocket.on('new_match', (data: NewMessageEvent) => {
+          logger.info('New match:', { data });
           // Handle new match notification
         });
 
-        newSocket.on("new_message", (data: NewMessageEvent) => {
-          logger.info("New message:", { data });
+        newSocket.on('new_message', (data: NewMessageEvent) => {
+          logger.info('New message:', { data });
           // Handle new message notification
         });
 
         // Call events (handled by WebRTC service)
-        newSocket.on("incoming_call", (data: OnlineUsersUpdate) => {
-          logger.info("Incoming call:", { data });
+        newSocket.on('incoming_call', (data: OnlineUsersUpdate) => {
+          logger.info('Incoming call:', { data });
         });
 
         setSocket(newSocket);
 
         return newSocket;
       } catch (err) {
-        logger.error("Error creating socket:", { error });
-        setError("Failed to create socket connection");
+        logger.error('Error creating socket:', { error });
+        setError('Failed to create socket connection');
         return null;
       }
     }
@@ -123,7 +122,7 @@ export function useSocket(): Socket | null {
 
     return () => {
       if (socketInstance) {
-        logger.info("Cleaning up socket connection");
+        logger.info('Cleaning up socket connection');
         socketInstance.removeAllListeners();
         socketInstance.disconnect();
       }
@@ -148,26 +147,25 @@ export function useSocketWithStatus(): UseSocketReturn {
       return;
     }
 
-    const socketUrl =
-      process.env["EXPO_PUBLIC_SOCKET_URL"] || "http://localhost:3001";
+    const socketUrl = process.env['EXPO_PUBLIC_SOCKET_URL'] || 'http://localhost:3001';
     const newSocket = io(socketUrl, {
       auth: {
         token: accessToken,
         userId: user._id, // Non-null assertion, guarded by check above
       },
-      transports: ["websocket"],
+      transports: ['websocket'],
     });
 
-    newSocket.on("connect", () => {
+    newSocket.on('connect', () => {
       setIsConnected(true);
       setError(null);
     });
 
-    newSocket.on("disconnect", () => {
+    newSocket.on('disconnect', () => {
       setIsConnected(false);
     });
 
-    newSocket.on("connect_error", (err: Error) => {
+    newSocket.on('connect_error', (err: Error) => {
       setError(err.message);
       setIsConnected(false);
     });
@@ -186,20 +184,20 @@ export function useSocketWithStatus(): UseSocketReturn {
   return { socket, isConnected, error };
 }
 
-// Emit helper
-export function useSocketEmit(): (
-  event: string,
-  data?: Record<string, unknown>,
-) => boolean {
+// Emit helper with type-safe null handling
+export function useSocketEmit(): (event: string, data?: Record<string, unknown> | null) => boolean {
   const socket = useSocket();
 
-  function emit(event: string, data?: Record<string, unknown>): boolean {
-    if (socket && socket.connected) {
-      socket.emit(event, data);
-      return true;
+  function emit(event: string, data?: Record<string, unknown> | null): boolean {
+    if (!socket || !socket.connected) {
+      logger.warn('Socket not connected, cannot emit:', { event });
+      return false;
     }
-    logger.warn("Socket not connected, cannot emit:", { event });
-    return false;
+
+    // Ensure data is never null - use empty object as fallback
+    const safeData = data ?? {};
+    socket.emit(event, safeData);
+    return true;
   }
 
   return emit;
