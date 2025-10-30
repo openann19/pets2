@@ -12,85 +12,85 @@ import type { AppTheme } from "@mobile/src/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  listingCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  listingHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 12,
-  },
-  petInfo: {
-    flex: 1,
-    marginRight: 8,
-  },
-  petName: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  petBreed: {
-    fontSize: 14,
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  listingStats: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: "rgba(0,0,0,0.05)",
-  },
-  stat: {
-    alignItems: "center",
-  },
-  statNumber: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-  },
-  listingActions: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  actionButton: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    borderWidth: 1,
-  },
-  primaryButton: {
-    borderWidth: 0,
-  },
-  actionButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  primaryButtonText: {
-    color: "#fff",
-  },
-});
+    listingCard: {
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 16,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    listingHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      marginBottom: 12,
+    },
+    petInfo: {
+      flex: 1,
+      marginRight: 8,
+    },
+    petName: {
+      fontSize: 18,
+      fontWeight: "600",
+      marginBottom: 4,
+    },
+    petBreed: {
+      fontSize: 14,
+    },
+    statusBadge: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+    },
+    statusText: {
+      fontSize: 12,
+      fontWeight: "600",
+    },
+    listingStats: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      marginBottom: 12,
+      paddingTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: "rgba(0,0,0,0.05)",
+    },
+    stat: {
+      alignItems: "center",
+    },
+    statNumber: {
+      fontSize: 20,
+      fontWeight: "bold",
+      marginBottom: 4,
+    },
+    statLabel: {
+      fontSize: 12,
+    },
+    listingActions: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    actionButton: {
+      flex: 1,
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      borderRadius: 8,
+      alignItems: "center",
+      borderWidth: 1,
+    },
+    primaryButton: {
+      borderWidth: 0,
+    },
+    actionButtonText: {
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    primaryButtonText: {
+      color: "#fff",
+    },
+  });
 }
 
 

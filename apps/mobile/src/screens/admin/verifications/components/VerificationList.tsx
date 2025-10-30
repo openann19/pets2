@@ -200,7 +200,7 @@ export const VerificationList = ({
           <View style={styles.headerLeft}>
             <View style={[styles.statusBadge, { backgroundColor: `${statusColor}20` }]>
               <Ionicons name={statusIcon} size={16} color={statusColor} />
-              <Text style={[styles.statusText, { color: statusColor }]>
+              <Text style={[styles.statusText, { color: statusColor }]}>
                 {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
               </Text>
             </View>
@@ -211,7 +211,7 @@ export const VerificationList = ({
               </View>
             )}
           </View>
-          <Text style={[styles.timestamp, { color: colors.onMuted }]>
+          <Text style={[styles.timestamp, { color: colors.onMuted }]}>
             {new Date(item.submittedAt).toLocaleDateString()}
           </Text>
         </View>
@@ -229,7 +229,7 @@ export const VerificationList = ({
 
           <View style={styles.verificationType}>
             <Ionicons name="document-text" size={16} color={colors.onMuted} />
-            <Text style={[styles.typeText, { color: colors.onMuted }]>
+            <Text style={[styles.typeText, { color: colors.onMuted }]}>
               {item.type.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
             </Text>
           </View>
@@ -237,7 +237,7 @@ export const VerificationList = ({
           {item.documents && item.documents.length > 0 && (
             <View style={styles.documents}>
               <Ionicons name="images" size={16} color={colors.onMuted} />
-              <Text style={[styles.documentCount, { color: colors.onMuted }]>
+              <Text style={[styles.documentCount, { color: colors.onMuted }]}>
                 {item.documents.length} document{item.documents.length !== 1 ? "s" : ""}
               </Text>
             </View>
