@@ -125,14 +125,18 @@ export function Sheet({
               borderBottomRightRadius: 0,
             }}
           >
-            {title && (
-              <View style={styles.header}>
-                <Text variant="h4">{title}</Text>
-                {showCloseButton && (
-                  <Pressable onPress={onClose} hitSlop={8}>
-                    <Text style={{ fontSize: 24 }>x</Text>
-                  </Pressable>
-                )}
+            {
+  Boolean(title) && (
+    <View style={styles.header}>
+      <Text variant="h4">{title}</Text>
+      {showCloseButton ? (
+        <Pressable onPress={onClose} hitSlop={8} accessibilityRole="button" accessibilityLabel="Close">
+          <Text style={{ fontSize: 24 }}>x</Text>
+        </Pressable>
+      ) : null}
+    </View>
+  )
+}
               </View>
             )}
             {children}
