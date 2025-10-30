@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { StyleSheet, TextInput, View, type TextInputProps } from "react-native";
-import { useTheme } from "../../theme/useTheme";
+import { useTheme } from "@/theme";
 import { Text } from "./Text";
 
 export interface InputProps extends TextInputProps {
@@ -30,10 +30,10 @@ export const Input = React.forwardRef<TextInput, InputProps>(function Input(
 
   const inputStyle = StyleSheet.compose(styles.input, [
     {
-      backgroundColor: editable ? colors.surface : colors.surfaceMuted,
+      backgroundColor: editable ? colors.surface : colors.surface,
       borderColor,
       borderRadius: radii.md,
-      color: colors.onSurface
+      color: colors.onSurface,
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.sm,
     },

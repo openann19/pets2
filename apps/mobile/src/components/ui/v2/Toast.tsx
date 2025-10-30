@@ -7,8 +7,8 @@ import Animated, {
   withTiming,
   withSequence,
 } from 'react-native-reanimated';
-import { useTheme } from ../../../theme
-import { useReduceMotion } from '../../../hooks/useReducedMotion';
+import { useTheme } from '@/theme';
+import { useReduceMotion } from '@/hooks/useReducedMotion';
 import { Text } from './Text';
 import { Card } from './Card';
 
@@ -114,7 +114,7 @@ export function Toast({
         {
           top: position === 'top' ? 20 : undefined,
           bottom: position === 'bottom' ? 20 : undefined,
-          zIndex: theme.zIndex?.toast || 1700,
+          zIndex: 1700,
         },
         animatedStyle,
       ]}
@@ -126,7 +126,7 @@ export function Toast({
           backgroundColor: variantStyles.backgroundColor,
           paddingHorizontal: theme.spacing.md,
           paddingVertical: theme.spacing.sm,
-          borderRadius: theme.radius.lg,
+          borderRadius: theme.radii.lg,
           ...theme.shadows.md,
         }}
       >

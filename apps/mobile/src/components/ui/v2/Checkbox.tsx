@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '@/theme';
 import { Text } from './Text';
 
 export type CheckboxSize = 'sm' | 'md' | 'lg';
@@ -53,7 +53,7 @@ export function Checkbox({
           {
             width: boxSize,
             height: boxSize,
-            borderRadius: theme.radius.sm,
+            borderRadius: theme.radii.sm,
             borderWidth: 2,
             borderColor: checked ? theme.colors.primary : theme.colors.border,
             backgroundColor: checked ? theme.colors.primary : 'transparent',

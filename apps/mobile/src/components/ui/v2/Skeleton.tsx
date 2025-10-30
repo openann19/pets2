@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Animated, StyleSheet } from 'react-native';
-import { useTheme } from ../../../theme
+import { useTheme } from '@/theme';
 
 export interface SkeletonProps {
   width?: number | string;
@@ -46,7 +46,7 @@ export function Skeleton({
   });
 
   const borderRadius =
-    radius || (variant === 'circle' ? height / 2 : theme.radius.sm);
+    radius || (variant === 'circle' ? height / 2 : theme.radii.sm);
 
   return (
     <Animated.View
@@ -56,7 +56,7 @@ export function Skeleton({
           width,
           height,
           borderRadius,
-          backgroundColor: theme.colors.bgAlt,
+          backgroundColor: theme.colors.surface,
           opacity,
         },
         style,

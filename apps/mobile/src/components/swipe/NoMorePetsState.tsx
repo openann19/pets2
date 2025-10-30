@@ -5,24 +5,25 @@ import { EliteContainer } from "../elite/containers";
 import { FXContainerPresets } from "../containers/FXContainer";
 import { EliteButtonPresets } from "../buttons/EliteButton";
 import { Heading2, Body } from "../typography/ModernTypography";
-import { Theme } from "../../theme";
+import { useTheme } from "@/theme";
 
 interface NoMorePetsStateProps {
   loadPets: () => void;
 }
 
 export const NoMorePetsState: React.FC<NoMorePetsStateProps> = ({ loadPets }) => {
+  const theme = useTheme();
   return (
     <EliteContainer gradient="primary">
-      <View style={styles.emptyContainer}>
-        <FXContainerPresets.glass style={styles.emptyCard}>
+      <View style={[styles.emptyContainer, { padding: theme.spacing.xl }]}>
+        <FXContainerPresets.glass style={[styles.emptyCard, { padding: theme.spacing['4xl'] }]}>
           <Ionicons
             name="heart-outline"
             size={80}
-            color={Theme.colors.primary[500}]}
+            color={theme.colors.primary}
           />
-          <Heading2 style={styles.emptyTitle}>No more pets!</Heading2>
-          <Body style={styles.emptySubtitle}>
+          <Heading2 style={[styles.emptyTitle, { marginTop: theme.spacing.lg, marginBottom: theme.spacing.md }]}>No more pets!</Heading2>
+          <Body style={[styles.emptySubtitle, { marginBottom: theme.spacing.xl, color: theme.colors.onMuted }] }>
             Check back later for more matches
           </Body>
           <EliteButtonPresets.premium
@@ -41,20 +42,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: Theme.spacing.xl,
   },
   emptyCard: {
-    padding: Theme.spacing["4xl"],
     alignItems: "center",
   },
   emptyTitle: {
     textAlign: "center",
-    marginTop: Theme.spacing.lg,
-    marginBottom: Theme.spacing.md,
   },
   emptySubtitle: {
     textAlign: "center",
-    marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
   },
 });

@@ -12,8 +12,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { useTheme } from ../../../theme
-import { useReduceMotion } from '../../../hooks/useReducedMotion';
+import { useTheme } from '@/theme';
+import { useReduceMotion } from '@/hooks/useReducedMotion';
 import { Card } from './Card';
 import { Text } from './Text';
 
@@ -105,7 +105,7 @@ export function Sheet({
         />
 
         <AnimatedView
-          style={[
+            style={[
             styles.sheet,
             {
               position: position === 'bottom' ? 'absolute' : undefined,
@@ -119,8 +119,8 @@ export function Sheet({
           <Card
             style={{
               flex: 1,
-              borderTopLeftRadius: theme.radius['2xl'],
-              borderTopRightRadius: theme.radius['2xl'],
+              borderTopLeftRadius: theme.radii['2xl'],
+              borderTopRightRadius: theme.radii['2xl'],
               borderBottomLeftRadius: 0,
               borderBottomRightRadius: 0,
             }}
