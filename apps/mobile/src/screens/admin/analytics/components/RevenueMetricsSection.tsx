@@ -67,7 +67,7 @@ export const RevenueMetricsSection: React.FC<RevenueMetricsSectionProps> = ({
         <Text style={[styles.revenueLabel, { color: colors.onMuted }]>
           ARPU
         </Text>
-        <Text style={[styles.revenueValue, { color: colors.onSurface }]>
+        <Text style={[styles.revenueValue, { color: colors.onSurface }]}>
           {formatCurrency(revenue.averageRevenuePerUser)}
         </Text>
       </View>

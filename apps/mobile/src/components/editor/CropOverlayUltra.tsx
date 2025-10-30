@@ -71,23 +71,23 @@ export function CropOverlayUltra({
   const guideLines = showGuides ? (
     <>
       {/* Rule of thirds */}
-      <View style={[styles.line, { left: "33.33%" }] />
-      <View style={[styles.line, { left: "66.66%" }] />
-      <View style={[styles.hline, { top: "33.33%" }] />
-      <View style={[styles.hline, { top: "66.66%" }] />
+      <View style={[styles.line, { left: "33.33%" }]} />
+      <View style={[styles.line, { left: "66.66%" }]} />
+      <View style={[styles.hline, { top: "33.33%" }]} />
+      <View style={[styles.hline, { top: "66.66%" }]} />
 
       {/* Golden ratio (approx 38.2/61.8) */}
-      <View style={[styles.line, { left: "38.2%", opacity: 0.35 }] />
-      <View style={[styles.line, { left: "61.8%", opacity: 0.35 }] />
-      <View style={[styles.hline, { top: "38.2%", opacity: 0.35 }] />
-      <View style={[styles.hline, { top: "61.8%", opacity: 0.35 }] />
+      <View style={[styles.line, { left: "38.2%", opacity: 0.35 }]} />
+      <View style={[styles.line, { left: "61.8%", opacity: 0.35 }]} />
+      <View style={[styles.hline, { top: "38.2%", opacity: 0.35 }]} />
+      <View style={[styles.hline, { top: "61.8%", opacity: 0.35 }]} />
 
       {/* Diagonals */}
       <View style={styles.diagA} />
       <View style={styles.diagB} />
 
       {/* Eye-line (top third) */}
-      <View style={[styles.hline, { top: "28%", opacity: 0.25 }] />
+      <View style={[styles.hline, { top: "28%", opacity: 0.25 }]} />
     </>
   ) : null;
 

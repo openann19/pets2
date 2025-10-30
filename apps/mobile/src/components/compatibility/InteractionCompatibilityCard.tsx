@@ -83,7 +83,7 @@ export const InteractionCompatibilityCard: React.FC<InteractionCompatibilityCard
     <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
       <View style={styles.resultHeader}>
         <Ionicons name="people" size={24} color={theme.colors.primary} />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
           Interaction Compatibility
         </Text>
       </View>
@@ -91,12 +91,12 @@ export const InteractionCompatibilityCard: React.FC<InteractionCompatibilityCard
         {Object.entries(interactions).map(([type, score]) => (
           <View key={type} style={styles.interactionItem}>
             <Text
-              style={[styles.interactionLabel, { color: colors.onMuted }]
+              style={[styles.interactionLabel, { color: colors.onMuted }]}
             >
               {type.charAt(0).toUpperCase() + type.slice(1)}
             </Text>
             <Text
-              style={[styles.interactionScore, { color: getScoreColor(score) }]
+              style={[styles.interactionScore, { color: getScoreColor(score) }]}
             >
               {score}%
             </Text>

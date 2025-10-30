@@ -96,7 +96,7 @@ export const CompatibilityBreakdownCard: React.FC<CompatibilityBreakdownCardProp
     <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
       <View style={styles.resultHeader}>
         <Ionicons name="bar-chart" size={24} color={theme.colors.info} />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
           Compatibility Breakdown
         </Text>
       </View>
@@ -104,7 +104,7 @@ export const CompatibilityBreakdownCard: React.FC<CompatibilityBreakdownCardProp
         {Object.entries(breakdown).map(([factor, score]) => (
           <View key={factor} style={styles.breakdownItem}>
             <Text
-              style={[styles.breakdownLabel, { color: colors.onMuted }]
+              style={[styles.breakdownLabel, { color: colors.onMuted }]}
             >
               {factor.charAt(0).toUpperCase() + factor.slice(1)}
             </Text>

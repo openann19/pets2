@@ -146,7 +146,7 @@ export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
             <View style={[styles.actionIconContainer, { backgroundColor: action.color }]>
               <Ionicons name={action.icon as any} size={24} color="#FFFFFF" />
             </View>
-            <Text style={[styles.actionTitle, { color: colors.onSurface }]>{action.title}</Text>
+            <Text style={[styles.actionTitle, { color: colors.onSurface }]}>{action.title}</Text>
           </TouchableOpacity>
         ))}
       </View>

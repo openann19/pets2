@@ -96,14 +96,14 @@ export const CompatibilityBreakdown: React.FC<CompatibilityBreakdownProps> = ({
     <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
       <View style={styles.resultHeader}>
         <Ionicons name="bar-chart" size={24} color={colors.primary} />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
           Compatibility Breakdown
         </Text>
       </View>
       <View style={styles.breakdownList}>
         {Object.entries(breakdown).map(([factor, score]) => (
           <View key={factor} style={styles.breakdownItem}>
-            <Text style={[styles.breakdownLabel, { color: colors.onMuted }]>
+            <Text style={[styles.breakdownLabel, { color: colors.onMuted }]}>
               {factor.charAt(0).toUpperCase() + factor.slice(1)}
             </Text>
             <View style={styles.breakdownBar}>

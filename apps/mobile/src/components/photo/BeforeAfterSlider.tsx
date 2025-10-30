@@ -66,7 +66,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
         <SmartImage source={{ uri: originalUri }} style={StyleSheet.absoluteFill} rounded={0} />
 
         {/* EDITED (clipped to divider) */}
-        <Animated.View style={[StyleSheet.absoluteFill, editedStyle, { overflow: 'hidden' }]>
+        <Animated.View style={[StyleSheet.absoluteFill, editedStyle, { overflow: 'hidden' }]}>
           <SmartImage source={{ uri: editedUri }} style={StyleSheet.absoluteFill} rounded={0} />
         </Animated.View>
 

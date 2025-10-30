@@ -143,7 +143,7 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
           <Ionicons
             name={fallbackIcon}
             size={32}
-            color={colors.onSurface
+            color={colors.onSurface}
             style={styles.errorIcon}
           />
           <Text

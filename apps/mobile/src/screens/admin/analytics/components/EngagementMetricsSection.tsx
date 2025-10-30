@@ -70,7 +70,7 @@ export const EngagementMetricsSection: React.FC<EngagementMetricsSectionProps> =
     <View style={styles.engagementGrid}>
       <View style={[styles.engagementCard, { backgroundColor: colors.surface }]>
         <Text style={[styles.engagementLabel, { color: colors.onMuted }]>DAU</Text>
-        <Text style={[styles.engagementValue, { color: colors.onSurface }]>
+        <Text style={[styles.engagementValue, { color: colors.onSurface }]}>
           {formatNumber(engagement.dailyActiveUsers)}
         </Text>
       </View>

@@ -84,7 +84,7 @@ export const DashboardMetricsSection: React.FC<DashboardMetricsSectionProps> = (
           <Text style={[styles.metricDetail, { color: colors.onMuted }]>
             Active: {formatNumber(stats.users.active)}
           </Text>
-          <Text style={[styles.metricDetail, { color: colors.onMuted }]>
+          <Text style={[styles.metricDetail, { color: colors.onMuted }]}>
             Verified: {formatNumber(stats.users.verified)}
           </Text>
         </View>
