@@ -79,7 +79,7 @@ export const SecurityMetricsSection: React.FC<SecurityMetricsSectionProps> = ({
             Critical
           </Text>
         </View>
-        <Text style={[styles.metricValue, { color: colors.danger }]>
+        <Text style={[styles.metricValue, { color: colors.danger }]}>
           {metrics.criticalAlerts}
         </Text>
       </View>
@@ -92,7 +92,7 @@ export const SecurityMetricsSection: React.FC<SecurityMetricsSectionProps> = ({
             High
           </Text>
         </View>
-        <Text style={[styles.metricValue, { color: colors.warning }]>
+        <Text style={[styles.metricValue, { color: colors.warning }]}>
           {metrics.highAlerts}
         </Text>
       </View>

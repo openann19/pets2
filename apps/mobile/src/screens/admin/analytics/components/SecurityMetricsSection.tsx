@@ -64,40 +64,40 @@ export const SecurityMetricsSection: React.FC<SecurityMetricsSectionProps> = ({
     <View style={styles.securityGrid}>
       <View style={[styles.securityCard, { backgroundColor: colors.surface }]}>
         <Ionicons name="warning" size={20} color={colors.warning} />
-        <Text style={[styles.securityLabel, { color: colors.onMuted }]>
+        <Text style={[styles.securityLabel, { color: colors.onMuted }]}>
           Suspicious Logins
         </Text>
-        <Text style={[styles.securityValue, { color: colors.onSurface }]>
+        <Text style={[styles.securityValue, { color: colors.onSurface }]}>
           {security.suspiciousLogins}
         </Text>
       </View>
 
       <View style={[styles.securityCard, { backgroundColor: colors.surface }]}>
         <Ionicons name="shield" size={20} color={colors.danger} />
-        <Text style={[styles.securityLabel, { color: colors.onMuted }]>
+        <Text style={[styles.securityLabel, { color: colors.onMuted }]}>
           Blocked IPs
         </Text>
-        <Text style={[styles.securityValue, { color: colors.onSurface }]>
+        <Text style={[styles.securityValue, { color: colors.onSurface }]}>
           {security.blockedIPs}
         </Text>
       </View>
 
       <View style={[styles.securityCard, { backgroundColor: colors.surface }]}>
         <Ionicons name="flag" size={20} color={colors.primary} />
-        <Text style={[styles.securityLabel, { color: colors.onMuted }]>
+        <Text style={[styles.securityLabel, { color: colors.onMuted }]}>
           Reported Content
         </Text>
-        <Text style={[styles.securityValue, { color: colors.onSurface }]>
+        <Text style={[styles.securityValue, { color: colors.onSurface }]}>
           {security.reportedContent}
         </Text>
       </View>
 
       <View style={[styles.securityCard, { backgroundColor: colors.surface }]}>
         <Ionicons name="ban" size={20} color={colors.danger} />
-        <Text style={[styles.securityLabel, { color: colors.onMuted }]>
+        <Text style={[styles.securityLabel, { color: colors.onMuted }]}>
           Banned Users
         </Text>
-        <Text style={[styles.securityValue, { color: colors.onSurface }]>
+        <Text style={[styles.securityValue, { color: colors.onSurface }]}>
           {security.bannedUsers}
         </Text>
       </View>
