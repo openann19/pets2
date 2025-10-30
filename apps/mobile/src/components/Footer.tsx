@@ -6,13 +6,14 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as React from 'react';
 import { useEffect } from 'react';
-import { Linking, StyleSheet, Text, View } from 'react-native';
+import { Linking, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withSpring,
   withTiming,
+  type AnimatedStyle,
 } from 'react-native-reanimated';
 import { getExtendedColors } from '../theme/adapters';
 import AnimatedButton from './AnimatedButton';
@@ -23,7 +24,7 @@ interface FooterProps {
   showVersion?: boolean;
   showSupport?: boolean;
   variant?: 'default' | 'minimal' | 'premium';
-  style?: object;
+  style?: ViewStyle;
   accessibilityLabel?: string;
   accessibilityHint?: string;
 }
@@ -85,13 +86,12 @@ export default function Footer({
 
   const renderDefaultFooter = (): React.ReactElement => (
     <Animated.View
-      // Animated style cast to any to satisfy RN/Reanimated type unions
-      style={StyleSheet.flatten([
+      style={[
         styles.container,
         { backgroundColor: colors.onPrimary },
         style,
-        animatedStyle as any,
-      ])}
+        animatedStyle as AnimatedStyle<ViewStyle>,
+      ]}
       accessibilityRole="text"
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={accessibilityHint}
@@ -206,12 +206,12 @@ export default function Footer({
 
   const renderMinimalFooter = (): React.ReactElement => (
     <Animated.View
-      style={StyleSheet.flatten([
+      style={[
         styles.minimalContainer,
         { backgroundColor: colors.onPrimary },
         style,
-        animatedStyle as any,
-      ])}
+        animatedStyle as AnimatedStyle<ViewStyle>,
+      ]}
     >
       <View style={styles.minimalContent}>
         <Text
@@ -234,7 +234,7 @@ export default function Footer({
   );
 
   const renderPremiumFooter = (): React.ReactElement => (
-    <Animated.View style={animatedStyle as any}>
+    <Animated.View style={animatedStyle as AnimatedStyle<ViewStyle>}>
       <LinearGradient
         colors={['rgba(139, 92, 246, 0.1)', 'rgba(236, 72, 153, 0.1)'] as [string, string]}
         style={StyleSheet.flatten([styles.premiumContainer, style])}

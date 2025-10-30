@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "generated": "2025-01-27T00:00:00Z",
+    "scope": "mobile",
+    "version": "1.0.0"
+  },
+  "test_suites": {
+    "unit": {
+      "count": 320,
+      "categories": {
+        "hooks": {
+          "count": 100,
+          "files": [
+            "apps/mobile/src/hooks/voice/__tests__/useVoiceRecording.test.ts",
+            "apps/mobile/src/hooks/voice/__tests__/useVoicePlayback.test.ts"
+          ],
+          "coverage": {
+            "voice": {
+              "hooks": ["useVoiceRecording", "useVoicePlayback", "useVoiceProcessing", "useSlideToCancel", "useVoiceSend"],
+              "status": "covered",
+              "gaps": []
+            }
+          }
+        },
+        "components": {
+          "count": 0,
+          "files": [],
+          "gaps": [
+            {
+              "component": "VoiceRecorderUltra.tsx",
+              "path": "apps/mobile/src/components/chat/VoiceRecorderUltra.tsx",
+              "status": "missing",
+              "severity": "high"
+            }
+          ]
+        }
+      }
+    },
+    "e2e": {
+      "count": 23,
+      "gaps": [
+        {
+          "area": "onboarding",
+          "status": "missing",
+          "severity": "high",
+          "file": "apps/mobile/e2e/onboarding.flow.e2e.ts"
+        },
+        {
+          "area": "push_notifications",
+          "status": "missing",
+          "severity": "high",
+          "file": "apps/mobile/e2e/push.open.e2e.ts"
+        }
+      ]
+    },
+    "contract": {
+      "count": 0,
+      "gaps": [
+        {
+          "area": "chat_api",
+          "status": "missing",
+          "severity": "high",
+          "file": "apps/mobile/tests/contract/chat-api.contract.test.ts"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_tests": 343,
+    "critical_gaps": [
+      {
+        "id": "tests-voice-recorder-ultra-unit",
+        "area": "components",
+        "severity": "high"
+      },
+      {
+        "id": "tests-chat-contracts",
+        "area": "contract",
+        "severity": "high"
+      },
+      {
+        "id": "tests-onboarding-e2e",
+        "area": "e2e",
+        "severity": "high"
+      },
+      {
+        "id": "tests-push-open-e2e",
+        "area": "e2e",
+        "severity": "high"
+      },
+      {
+        "id": "tests-deeplink-routing",
+        "area": "integration",
+        "severity": "medium"
+      }
+    ]
+  }
+}

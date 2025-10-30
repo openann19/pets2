@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.border,
   },
   backButton: {
-    marginRight: 16,
+    marginEnd: theme.spacing.lg,
   },
   headerTitle: {
     fontSize: 20,
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    marginLeft: 8,
+    marginStart: theme.spacing.sm,
     fontSize: 16,
   },
   filterContainer: {

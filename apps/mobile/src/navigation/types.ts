@@ -35,21 +35,8 @@ export type RootStackParamList = {
   AIBio: undefined;
   AIPhotoAnalyzer: undefined;
   AICompatibility: { petAId?: string; petBId?: string };
-  MemoryWeave:
-    | undefined
-    | {
-        matchId: string;
-        petName: string;
-        memories?: unknown[];
-      };
-  ARScentTrails:
-    | undefined
-    | {
-        initialLocation?: {
-          latitude: number;
-          longitude: number;
-        } | null;
-      };
+  MemoryWeave: { matchId: string; petName: string; memories?: unknown[] } | undefined;
+  ARScentTrails: { initialLocation?: { latitude: number; longitude: number } | null } | undefined;
   AdoptionApplication: { petId: string; petName: string };
   PetProfileSetup: undefined;
   ManageSubscription: undefined;
@@ -77,6 +64,7 @@ export type RootStackParamList = {
   AdminUploads: undefined;
   AdminVerifications: undefined;
   AdminServices: undefined;
+  AdminConfig: undefined;
   GoLive: undefined;
   LiveViewer: { streamId: string };
   LiveBrowse: undefined;
@@ -85,6 +73,7 @@ export type RootStackParamList = {
   NewComponentsTest: undefined;
   MigrationExample: undefined;
   PremiumDemo: undefined;
+  PreviewCode: undefined;
   [key: string]: undefined | object;
 };
 
@@ -120,6 +109,7 @@ export type AdminStackParamList = {
   AdminUploads: undefined;
   AdminVerifications: undefined;
   AdminServices: undefined;
+  AdminConfig: undefined;
 };
 
 // Premium Stack Types

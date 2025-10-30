@@ -7,8 +7,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
 import * as Haptics from 'expo-haptics';
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, Dimensions } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { matchesAPI } from '../../services/api';
@@ -16,8 +16,19 @@ import { matchesAPI } from '../../services/api';
 import { AdvancedCard, CardConfigs } from './AdvancedCard';
 import { AdvancedHeader, HeaderConfigs } from './AdvancedHeader';
 import { AdvancedButton } from './AdvancedInteractionSystem';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// Helper to filter undefined values for exactOptionalPropertyTypes
+const filterUndefined = <T extends Record<string, unknown>>(obj: T): Partial<T> => {
+  const filtered: Partial<T> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined && value !== null) {
+      filtered[key as keyof T] = value as T[keyof T];
+    }
+  }
+  return filtered;
+};
 
 interface TestResult {
   testName: string;
@@ -27,6 +38,8 @@ interface TestResult {
 }
 
 export function AdvancedInteractionTest() {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [isRunning, setIsRunning] = useState(false);
 
@@ -260,15 +273,15 @@ export function AdvancedInteractionTest() {
   const getStatusColor = (status: TestResult['status']) => {
     switch (status) {
       case 'pending':
-        return 'Theme.colors.neutral[500]';
+        return theme.colors.onMuted;
       case 'running':
-        return 'Theme.colors.status.warning';
+        return theme.colors.warning;
       case 'passed':
-        return 'Theme.colors.status.success';
+        return theme.colors.success;
       case 'failed':
-        return 'Theme.colors.status.error';
+        return theme.colors.danger;
       default:
-        return 'Theme.colors.neutral[500]';
+        return theme.colors.onMuted;
     }
   };
 
@@ -317,11 +330,11 @@ export function AdvancedInteractionTest() {
       >
         {/* Test Summary */}
         <AdvancedCard
-          {...CardConfigs.glass({
+          {...filterUndefined(CardConfigs.glass({
             title: 'Test Summary',
             interactions: ['hover', 'press', 'glow'],
             haptic: 'light',
-          })}
+          }))}
           style={styles.summaryCard}
         >
           <View style={styles.summaryContent}>
@@ -333,7 +346,7 @@ export function AdvancedInteractionTest() {
               <Text
                 style={StyleSheet.flatten([
                   styles.summaryNumber,
-                  { color: 'Theme.colors.status.success' },
+                  { color: theme.colors.success },
                 ])}
               >
                 {passedTests}
@@ -344,7 +357,7 @@ export function AdvancedInteractionTest() {
               <Text
                 style={StyleSheet.flatten([
                   styles.summaryNumber,
-                  { color: 'Theme.colors.status.error' },
+                  { color: theme.colors.danger },
                 ])}
               >
                 {failedTests}
@@ -366,19 +379,20 @@ export function AdvancedInteractionTest() {
           disabled={isRunning}
           loading={isRunning}
           style={styles.runButton}
-          gradientColors={['Theme.colors.primary[500]', 'Theme.colors.primary[600]']}
+          gradientColors={[theme.colors.primary, theme.palette?.primary?.[600] || theme.colors.primary]}
+          // Gradient colors will be ignored by AdvancedButton when using theme variants
         />
 
         {/* Test Results */}
         <View style={styles.resultsSection}>
           <Text style={styles.sectionTitle}>Test Results</Text>
-          {testResults.map((test, index) => (
+          {testResults.map((test) => (
             <AdvancedCard
               key={test.testName}
-              {...CardConfigs.minimal({
+              {...filterUndefined(CardConfigs.minimal({
                 interactions: ['hover', 'press'],
                 haptic: 'light',
-              })}
+              }))}
               style={styles.resultCard}
             >
               <View style={styles.resultContent}>
@@ -407,11 +421,11 @@ export function AdvancedInteractionTest() {
 
           {/* Button Variants Demo */}
           <AdvancedCard
-            {...CardConfigs.glass({
+            {...filterUndefined(CardConfigs.glass({
               title: 'Button Variants',
               interactions: ['hover', 'press', 'glow'],
               haptic: 'light',
-            })}
+            }))}
             style={styles.demoCard}
           >
             <View style={styles.buttonGrid}>
@@ -460,31 +474,31 @@ export function AdvancedInteractionTest() {
 
           {/* Card Variants Demo */}
           <AdvancedCard
-            {...CardConfigs.glass({
+            {...filterUndefined(CardConfigs.glass({
               title: 'Card Variants',
               interactions: ['hover', 'press', 'glow'],
               haptic: 'light',
-            })}
+            }))}
             style={styles.demoCard}
           >
             <View style={styles.cardGrid}>
               <AdvancedCard
-                {...CardConfigs.glass({
+                {...filterUndefined(CardConfigs.glass({
                   title: 'Glass',
                   interactions: ['hover', 'press', 'glow'],
                   haptic: 'light',
-                })}
+                }))}
                 style={styles.demoSubCard}
               >
                 <Text style={styles.demoText}>Glass Card</Text>
               </AdvancedCard>
 
               <AdvancedCard
-                {...CardConfigs.premium({
+                {...filterUndefined(CardConfigs.premium({
                   title: 'Premium',
                   interactions: ['hover', 'press', 'glow', 'bounce'],
                   haptic: 'medium',
-                })}
+                }))}
                 style={styles.demoSubCard}
               >
                 <Text style={styles.demoText}>Premium Card</Text>
@@ -497,10 +511,11 @@ export function AdvancedInteractionTest() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.bg,
   },
   scrollView: {
     flex: 1,
@@ -522,11 +537,11 @@ const styles = StyleSheet.create({
   summaryNumber: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'Theme.colors.neutral[800]',
+    color: theme.colors.onSurface,
   },
   summaryLabel: {
     fontSize: 14,
-    color: 'Theme.colors.neutral[500]',
+    color: theme.colors.onMuted,
     marginTop: 4,
   },
   runButton: {
@@ -540,7 +555,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'Theme.colors.neutral[800]',
+    color: theme.colors.onSurface,
     marginBottom: 12,
   },
   resultCard: {
@@ -563,11 +578,11 @@ const styles = StyleSheet.create({
   resultName: {
     fontSize: 16,
     fontWeight: '600',
-    color: 'Theme.colors.neutral[800]',
+    color: theme.colors.onSurface,
   },
   resultMessage: {
     fontSize: 14,
-    color: 'Theme.colors.neutral[500]',
+    color: theme.colors.onMuted,
     marginTop: 2,
   },
   resultRight: {
@@ -575,7 +590,7 @@ const styles = StyleSheet.create({
   },
   resultDuration: {
     fontSize: 12,
-    color: 'Theme.colors.neutral[400]',
+    color: theme.colors.onMuted,
   },
   demoSection: {
     paddingHorizontal: 16,
@@ -600,9 +615,10 @@ const styles = StyleSheet.create({
   demoText: {
     fontSize: 14,
     fontWeight: '600',
-    color: 'Theme.colors.neutral[800]',
+    color: theme.colors.onSurface,
     textAlign: 'center',
   },
 });
+}
 
 export default AdvancedInteractionTest;

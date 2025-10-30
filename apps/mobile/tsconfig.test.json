@@ -1,10 +1,21 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "lib": ["ES2021"],
-    "types": ["jest", "node"],
+    "types": ["jest", "react-native"],
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "__mocks__/**/*.ts"]
+  "include": [
+    "__tests__/**/*.ts",
+    "__tests__/**/*.tsx",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/__tests__/**/*.ts",
+    "src/**/__tests__/**/*.tsx",
+    "__mocks__/**/*.ts"
+  ],
+  "exclude": [
+    "e2e/**"
+  ]
 }

@@ -13,7 +13,8 @@ import * as Haptics from 'expo-haptics';
 
 import type { ViewStyle } from 'react-native';
 
-interface WindowWithUndoPill extends Window {
+// Web-only window interface (fenced)
+interface WindowWithUndoPill {
   __undoPillShow?: () => void;
   __undoPillHide?: () => void;
 }
@@ -107,23 +108,30 @@ export default function UndoPill({ duration = 2000, onUndo, style, testID }: Und
     runOnJS(performUndo)();
   };
 
-  // Public trigger helpers — you can keep these or call setShow from parent by toggling key
+  // Public trigger helpers — expose via ref pattern for cross-platform compatibility
+  // Note: window API is web-only, so we use a ref-based approach that works on all platforms
+  const triggerRef = useRef<{ show: () => void; hide: () => void } | null>(null);
+  
   useEffect(() => {
-    // attach to window for imperative calls:
     const show = () => {
       visible.value = 1;
     };
     const hide = () => {
       visible.value = 0;
     };
-    if (typeof window !== 'undefined') {
+    
+    triggerRef.current = { show, hide };
+    
+    // Web-only: attach to window for imperative calls (development/testing)
+    if (typeof window !== 'undefined' && __DEV__) {
       const win = window as unknown as WindowWithUndoPill;
       win.__undoPillShow = show;
       win.__undoPillHide = hide;
     }
 
     return () => {
-      if (typeof window !== 'undefined') {
+      triggerRef.current = null;
+      if (typeof window !== 'undefined' && __DEV__) {
         const win = window as unknown as WindowWithUndoPill;
         delete win.__undoPillShow;
         delete win.__undoPillHide;

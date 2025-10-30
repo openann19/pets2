@@ -10,7 +10,7 @@ import { useColorScheme } from '../hooks/useColorScheme';
 
 // Deprecation warning
 let warned = false;
-if (!warned && process.env.NODE_ENV !== 'test') {
+if (!warned && process.env['NODE_ENV'] !== 'test') {
   void import('../services/logger').then(({ logger }) => {
     logger.warn('[DEPRECATION] theme/Provider → use theme/Provider instead.');
   });

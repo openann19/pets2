@@ -30,10 +30,11 @@ import {
 } from "react-native";
 import { useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { useStoriesScreen } from "../hooks/screens/social";
-import { useTheme } from "@/theme";
+import { useTheme } from '@mobile/theme';
 import { getAccessibilityProps } from '../utils/accessibilityUtils';
+import { useReduceMotion } from '../hooks/useReducedMotion';
 
 // Navigation types
 type MainStackParamList = {
@@ -86,8 +87,10 @@ interface StoryGroup {
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function StoriesScreen() {
+  const theme = useTheme();
   const route = useRoute<StoriesScreenRouteProp>();
   const initialGroupIndex = route.params?.groupIndex ?? 0;
+  const reducedMotion = useReduceMotion();
 
   const videoRef = useRef<Video>(null);
 
@@ -107,6 +110,8 @@ export default function StoriesScreen() {
     setMuted,
     handleGoBack,
   } = useStoriesScreen(initialGroupIndex);
+
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   // Video controls
   useEffect(() => {
@@ -129,11 +134,16 @@ export default function StoriesScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="stories-screen">
       <StatusBar barStyle="light-content" />
 
       {/* Story Content */}
-      <View style={styles.storyContainer} {...panResponder.current.panHandlers}>
+      <View 
+        style={styles.storyContainer} 
+        {...panResponder.current.panHandlers}
+        testID="story-container"
+        accessibilityLabel={`Story by ${currentGroup.user.username}`}
+      >
         {currentStory.mediaType === "photo" ? (
           <Image
             source={{ uri: currentStory.mediaUrl }}
@@ -156,9 +166,9 @@ export default function StoriesScreen() {
         )}
 
         {/* Progress Bars */}
-        <View style={styles.progressContainer}>
+        <View style={styles.progressContainer} testID="story-progress-bars" accessibilityLabel={`Story ${currentStoryIndex + 1} of ${currentGroup.stories.length}`}>
           {currentGroup.stories.map((story: Story, index: number) => (
-            <View key={story._id} style={styles.progressBarBg}>
+            <View key={story._id} style={styles.progressBarBg} testID={`progress-bar-${index}`}>
               <Animated.View
                 style={StyleSheet.flatten([
                   styles.progressBarFill,
@@ -255,14 +265,14 @@ export default function StoriesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral[950],
+    backgroundColor: theme.colors.bg,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: theme.colors.neutral[950],
+    backgroundColor: theme.colors.bg,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -286,7 +296,7 @@ const styles = StyleSheet.create({
   progressBarBg: {
     flex: 1,
     height: 3,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}4D`,
     borderRadius: 2,
     overflow: "hidden",
   },
@@ -323,7 +333,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   timestamp: {
-    color: "rgba(255, 255, 255, 0.8)",
+    color: theme.colors.onMuted,
     fontSize: 12,
   },
   headerActions: {
@@ -335,7 +345,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}4D`,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -349,7 +359,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}4D`,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -364,7 +374,7 @@ const styles = StyleSheet.create({
     color: theme.colors.onSurface,
     fontSize: 14,
     textAlign: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}80`,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,

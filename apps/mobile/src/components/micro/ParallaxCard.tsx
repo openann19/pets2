@@ -1,7 +1,6 @@
-import React, { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   View,
-  StyleSheet,
   type ViewStyle,
   type LayoutChangeEvent,
   type GestureResponderEvent,
@@ -12,6 +11,7 @@ import Animated, {
   withSpring,
   interpolate,
 } from 'react-native-reanimated';
+import { useTheme } from '@mobile/theme';
 
 type Props = {
   children: React.ReactNode;
@@ -21,6 +21,7 @@ type Props = {
 };
 
 export default function ParallaxCard({ children, style, intensity = 0.6, glow = true }: Props) {
+  const theme = useTheme();
   const [box, setBox] = useState({ w: 0, h: 0 });
   const rx = useSharedValue(0);
   const ry = useSharedValue(0);
@@ -55,7 +56,7 @@ export default function ParallaxCard({ children, style, intensity = 0.6, glow = 
     ],
     shadowOpacity: glow ? 0.2 : 0.1,
     shadowRadius: glow ? 24 : 12,
-    shadowColor: Theme.colors.primary[500],
+    shadowColor: theme.colors.primary,
   }));
 
   return (
@@ -68,11 +69,7 @@ export default function ParallaxCard({ children, style, intensity = 0.6, glow = 
       onResponderRelease={onPressOut}
       onResponderTerminate={onPressOut}
     >
-      <Animated.View style={[a, styles.radius]}>{children}</Animated.View>
+      <Animated.View style={[a, { borderRadius: theme.radii['2xl'], overflow: 'visible' }]}>{children}</Animated.View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  radius: { borderRadius: Theme.borderRadius['2xl'], overflow: 'visible' },
-});

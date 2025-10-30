@@ -4,11 +4,11 @@
  * Features: Rich display, copy functionality, save options, match scoring
  */
 
-import React, { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Alert, ScrollView } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
-
+import { useTheme } from '@/theme';
 import type { GeneratedBio } from '../../hooks/useAIBio';
 
 interface BioResultsProps {
@@ -18,6 +18,7 @@ interface BioResultsProps {
 }
 
 export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsProps) {
+  const theme = useTheme();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -40,16 +41,146 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
   };
 
   const getSentimentColor = (score: number) => {
-    if (score >= 0.7) return Theme.colors.status.success;
-    if (score >= 0.4) return Theme.colors.status.warning;
-    return Theme.colors.status.error;
+    if (score >= 0.7) return theme.colors.success;
+    if (score >= 0.4) return theme.colors.warning;
+    return theme.colors.danger;
   };
 
   const getMatchScoreColor = (score: number) => {
-    if (score >= 80) return Theme.colors.status.success;
-    if (score >= 60) return Theme.colors.status.warning;
-    return Theme.colors.status.error;
+    if (score >= 80) return theme.colors.success;
+    if (score >= 60) return theme.colors.warning;
+    return theme.colors.danger;
   };
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          padding: theme.spacing.lg,
+        },
+        sectionTitle: {
+          fontSize: theme.typography.fontSize['2xl'],
+          fontWeight: theme.typography.fontWeight.bold,
+          color: theme.colors.onSurface,
+          marginBottom: theme.spacing.xl,
+        },
+        bioCard: {
+          backgroundColor: theme.colors.surface,
+          borderRadius: theme.radii.lg,
+          padding: theme.spacing.lg,
+          marginBottom: theme.spacing.xl,
+          shadowColor: theme.colors.border,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 4,
+        },
+        bioScroll: {
+          maxHeight: 200,
+        },
+        bioText: {
+          fontSize: theme.typography.fontSize.base,
+          color: theme.colors.onSurface,
+          lineHeight: theme.typography.lineHeight.relaxed,
+        },
+        actionButtons: {
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          marginTop: theme.spacing.lg,
+          paddingTop: theme.spacing.lg,
+          borderTopWidth: 1,
+          borderTopColor: theme.colors.border,
+        },
+        actionButton: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: theme.spacing.sm,
+          borderRadius: theme.radii.md,
+        },
+        actionText: {
+          fontSize: theme.typography.fontSize.sm,
+          color: theme.colors.onSurface,
+          marginLeft: theme.spacing.xs,
+          fontWeight: theme.typography.fontWeight.medium,
+        },
+        analysisContainer: {
+          backgroundColor: theme.colors.surface,
+          borderRadius: theme.radii.lg,
+          padding: theme.spacing.lg,
+        },
+        analysisTitle: {
+          fontSize: theme.typography.fontSize.xl,
+          fontWeight: theme.typography.fontWeight.semibold,
+          color: theme.colors.onSurface,
+          marginBottom: theme.spacing.lg,
+        },
+        metricsGrid: {
+          flexDirection: 'row',
+          gap: theme.spacing.lg,
+          marginBottom: theme.spacing.xl,
+        },
+        metricCard: {
+          flex: 1,
+          backgroundColor: theme.colors.surface,
+          borderRadius: theme.radii.md,
+          padding: theme.spacing.md,
+          alignItems: 'center',
+        },
+        metricLabel: {
+          fontSize: theme.typography.fontSize.sm,
+          color: theme.colors.onMuted,
+          marginBottom: theme.spacing.xs,
+        },
+        metricValue: {
+          fontSize: theme.typography.fontSize['2xl'],
+          fontWeight: theme.typography.fontWeight.bold,
+          marginBottom: theme.spacing.xs,
+        },
+        metricSubtext: {
+          fontSize: theme.typography.fontSize.xs,
+          color: theme.colors.onMuted,
+        },
+        progressBar: {
+          width: '100%',
+          height: 4,
+          backgroundColor: theme.colors.border,
+          borderRadius: theme.radii.full,
+          overflow: 'hidden',
+        },
+        progressFill: {
+          height: '100%',
+          borderRadius: theme.radii.full,
+        },
+        keywordsSection: {
+          borderTopWidth: 1,
+          borderTopColor: theme.colors.border,
+          paddingTop: theme.spacing.lg,
+        },
+        keywordsTitle: {
+          fontSize: theme.typography.fontSize.base,
+          fontWeight: theme.typography.fontWeight.semibold,
+          color: theme.colors.onSurface,
+          marginBottom: theme.spacing.md,
+        },
+        keywordsContainer: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: theme.spacing.sm,
+        },
+        keywordChip: {
+          backgroundColor: theme.colors.primary,
+          borderRadius: theme.radii.full,
+          paddingHorizontal: theme.spacing.sm,
+          paddingVertical: theme.spacing.xs,
+        },
+        keywordText: {
+          fontSize: theme.typography.fontSize.sm,
+          color: theme.colors.onPrimary,
+          fontWeight: theme.typography.fontWeight.medium,
+        },
+      }),
+    [theme],
+  );
 
   return (
     <View style={styles.container}>
@@ -74,12 +205,12 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
             <Ionicons
               name={copied ? 'checkmark-circle' : 'copy-outline'}
               size={20}
-              color={copied ? Theme.colors.status.success : Theme.colors.text.primary}
+              color={copied ? theme.colors.success : theme.colors.onSurface}
             />
             <Text
               style={StyleSheet.flatten([
                 styles.actionText,
-                copied && { color: Theme.colors.status.success },
+                copied && { color: theme.colors.success },
               ])}
             >
               {copied ? 'Copied!' : 'Copy'}
@@ -95,7 +226,7 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
               <Ionicons
                 name="bookmark-outline"
                 size={20}
-                color={Theme.colors.text.primary}
+                color={theme.colors.onSurface}
               />
               <Text style={styles.actionText}>Save</Text>
             </TouchableOpacity>
@@ -110,7 +241,7 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
               <Ionicons
                 name="refresh-outline"
                 size={20}
-                color={Theme.colors.text.primary}
+                color={theme.colors.onSurface}
               />
               <Text style={styles.actionText}>Regenerate</Text>
             </TouchableOpacity>
@@ -184,129 +315,3 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: Theme.spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: Theme.typography.fontSize['2xl'],
-    fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.xl,
-  },
-  bioCard: {
-    backgroundColor: Theme.colors.background.primary,
-    borderRadius: Theme.borderRadius.lg,
-    padding: Theme.spacing.lg,
-    marginBottom: Theme.spacing.xl,
-    shadowColor: 'Theme.colors.neutral[950]',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  bioScroll: {
-    maxHeight: 200,
-  },
-  bioText: {
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary,
-    lineHeight: Theme.typography.lineHeight.relaxed,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: Theme.spacing.lg,
-    paddingTop: Theme.spacing.lg,
-    borderTopWidth: 1,
-    borderTopColor: Theme.colors.border.light,
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Theme.spacing.sm,
-    borderRadius: Theme.borderRadius.md,
-  },
-  actionText: {
-    fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.primary,
-    marginLeft: Theme.spacing.xs,
-    fontWeight: Theme.typography.fontWeight.medium,
-  },
-  analysisContainer: {
-    backgroundColor: Theme.colors.background.primary,
-    borderRadius: Theme.borderRadius.lg,
-    padding: Theme.spacing.lg,
-  },
-  analysisTitle: {
-    fontSize: Theme.typography.fontSize.xl,
-    fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.lg,
-  },
-  metricsGrid: {
-    flexDirection: 'row',
-    gap: Theme.spacing.lg,
-    marginBottom: Theme.spacing.xl,
-  },
-  metricCard: {
-    flex: 1,
-    backgroundColor: Theme.colors.background.primary,
-    borderRadius: Theme.borderRadius.md,
-    padding: Theme.spacing.md,
-    alignItems: 'center',
-  },
-  metricLabel: {
-    fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
-    marginBottom: Theme.spacing.xs,
-  },
-  metricValue: {
-    fontSize: Theme.typography.fontSize['2xl'],
-    fontWeight: Theme.typography.fontWeight.bold,
-    marginBottom: Theme.spacing.xs,
-  },
-  metricSubtext: {
-    fontSize: Theme.typography.fontSize.xs,
-    color: Theme.colors.text.secondary,
-  },
-  progressBar: {
-    width: '100%',
-    height: 4,
-    backgroundColor: Theme.colors.border.light,
-    borderRadius: Theme.borderRadius.full,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: Theme.borderRadius.full,
-  },
-  keywordsSection: {
-    borderTopWidth: 1,
-    borderTopColor: Theme.colors.border.light,
-    paddingTop: Theme.spacing.lg,
-  },
-  keywordsTitle: {
-    fontSize: Theme.typography.fontSize.base,
-    fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.md,
-  },
-  keywordsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Theme.spacing.sm,
-  },
-  keywordChip: {
-    backgroundColor: Theme.colors.primary[500],
-    borderRadius: Theme.borderRadius.full,
-    paddingHorizontal: Theme.spacing.sm,
-    paddingVertical: Theme.spacing.xs,
-  },
-  keywordText: {
-    fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.background.primary,
-    fontWeight: Theme.typography.fontWeight.medium,
-  },
-});

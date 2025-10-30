@@ -64,17 +64,26 @@ const getCurrentEnvironment = (): string => {
 
   // For production builds, check environment variables
   // These would be set during build time
-  return process.env.NODE_ENV || 'development';
+  return process.env['NODE_ENV'] || 'development';
 };
+
+// Check if mock server should be used (development only)
+const USE_MOCK_SERVER = __DEV__ && process.env['USE_MOCK_SERVER'] !== 'false';
 
 // Merge default config with environment-specific config
 const currentEnv = getCurrentEnvironment();
 const envConfig = environments[currentEnv] || {};
 
-export const config: EnvironmentConfig = {
+// Override API_BASE_URL to use mock server in development if enabled
+const finalConfig: EnvironmentConfig = {
   ...defaultConfig,
   ...envConfig,
+  ...(USE_MOCK_SERVER && currentEnv === 'development' ? {
+    API_BASE_URL: 'http://localhost:3001', // Mock server port
+  } : {}),
 };
+
+export const config: EnvironmentConfig = finalConfig;
 
 // Export individual config values for convenience
 export const {

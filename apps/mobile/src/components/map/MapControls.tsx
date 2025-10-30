@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/theme';
+import { FABBloom } from '../micro/FABBloom';
 
 interface MapControlsProps {
   onLocatePress: () => void;
@@ -14,75 +16,75 @@ export const MapControls: React.FC<MapControlsProps> = ({
   onARPress,
   onCreatePress,
   onFilterPress,
-}) => (
-  <View style={styles.fabs}>
-    <TouchableOpacity
-      style={[styles.fab, styles.fabLocate]}
-      testID="fab-locate"
-      accessibilityLabel="Locate"
-      accessibilityRole="button"
-      onPress={onLocatePress}
-    >
-      <Text style={styles.fabText}>📍</Text>
-    </TouchableOpacity>
+}) => {
+  const theme = useTheme();
 
-    <TouchableOpacity
-      style={[styles.fab, styles.fabAR]}
-      testID="fab-ar"
-      accessibilityLabel="AR View"
-      accessibilityRole="button"
-      onPress={onARPress}
-    >
-      <Text style={styles.fabText}>👁️</Text>
-    </TouchableOpacity>
+  const styles = StyleSheet.create({
+    fabs: {
+      position: 'absolute',
+      right: theme.spacing.md,
+      bottom: theme.spacing.lg,
+      gap: theme.spacing.sm,
+    },
+    fab: {
+      width: 44,
+      height: 44,
+      borderRadius: theme.radii.full,
+      alignItems: 'center',
+      justifyContent: 'center',
+      shadowColor: theme.colors.border,
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 6,
+    },
+    fabLocate: { backgroundColor: theme.colors.surface },
+    fabAR: { backgroundColor: theme.colors.primary },
+    fabCreate: { backgroundColor: theme.colors.success },
+    fabFilters: { backgroundColor: theme.colors.info },
+    fabText: { fontSize: theme.typography.body.size + 4 },
+  });
 
-    <TouchableOpacity
-      style={[styles.fab, styles.fabCreate]}
-      testID="fab-create-activity"
-      accessibilityLabel="Create Activity"
-      accessibilityRole="button"
-      onPress={onCreatePress}
-    >
-      <Ionicons
-        name="add"
-        size={20}
-        color="#fff"
-      />
-    </TouchableOpacity>
+  return (
+    <View style={styles.fabs}>
+      <FABBloom
+        onPress={onLocatePress}
+        style={StyleSheet.flatten([styles.fab, styles.fabLocate]) as any}
+        testID="fab-locate"
+        accessibilityLabel="Locate"
+      >
+        <Text style={styles.fabText}>📍</Text>
+      </FABBloom>
 
-    <TouchableOpacity
-      style={[styles.fab, styles.fabFilters]}
-      testID="btn-filters"
-      accessibilityLabel="Filters"
-      accessibilityRole="button"
-      onPress={onFilterPress}
-    >
-      <Text style={styles.fabText}>⚙️</Text>
-    </TouchableOpacity>
-  </View>
-);
+      <FABBloom
+        onPress={onARPress}
+        style={StyleSheet.flatten([styles.fab, styles.fabAR]) as any}
+        testID="fab-ar"
+        accessibilityLabel="AR View"
+      >
+        <Text style={styles.fabText}>👁️</Text>
+      </FABBloom>
 
-const styles = StyleSheet.create({
-  fabs: {
-    position: 'absolute',
-    right: 12,
-    bottom: 24,
-    gap: 10,
-  },
-  fab: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  fabLocate: { backgroundColor: '#fff' },
-  fabAR: { backgroundColor: Theme.colors.primary[500] },
-  fabCreate: { backgroundColor: Theme.colors.status.success },
-  fabFilters: { backgroundColor: Theme.colors.secondary[500] },
-  fabText: { fontSize: 20 },
-});
+      <FABBloom
+        onPress={onCreatePress}
+        style={StyleSheet.flatten([styles.fab, styles.fabCreate]) as any}
+        testID="fab-create-activity"
+        accessibilityLabel="Create Activity"
+      >
+        <Ionicons
+          name="add"
+          size={20}
+          color={theme.colors.onSurface}
+        />
+      </FABBloom>
+
+      <FABBloom
+        onPress={onFilterPress}
+        style={StyleSheet.flatten([styles.fab, styles.fabFilters]) as any}
+        testID="btn-filters"
+        accessibilityLabel="Filters"
+      >
+        <Text style={styles.fabText}>⚙️</Text>
+      </FABBloom>
+    </View>
+  );
+};

@@ -1,11 +1,12 @@
-import { logger } from '@pawfectmatch/core';
+import { logger, useAuthStore } from '@pawfectmatch/core';
+import { API_BASE_URL } from '../config/environment';
 
 /**
  * Admin API Service for Mobile
  * Handles all admin-related API calls
  */
 
-const BASE_URL = process.env['EXPO_PUBLIC_API_URL'] ?? 'http://localhost:3001/api';
+const BASE_URL = `${API_BASE_URL}/api`;
 
 interface AdminAPIResponse<T> {
   success: boolean;
@@ -115,16 +116,36 @@ interface Verification {
 }
 
 class AdminAPIService {
+  private async getAuthHeaders(): Promise<Record<string, string>> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    // Add authentication token if available
+    try {
+      const authStore = useAuthStore.getState();
+      const token = authStore.accessToken;
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    } catch (error) {
+      logger.warn('Failed to get auth token for admin API request', { error });
+    }
+
+    return headers;
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestOptions = {},
   ): Promise<AdminAPIResponse<T>> {
     const url = `${BASE_URL}${endpoint}`;
+    const authHeaders = await this.getAuthHeaders();
 
     try {
       const response = await fetch(url, {
         headers: {
-          'Content-Type': 'application/json',
+          ...authHeaders,
           ...options.headers,
         },
         ...options,
@@ -373,6 +394,16 @@ class AdminAPIService {
     }>
   > {
     return await this.request(`/admin/verifications/${verificationId}`);
+  }
+
+  async requestVerificationInfo(
+    verificationId: string,
+    message: string,
+  ): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request(`/admin/kyc-management/verifications/${verificationId}/request-documents`, {
+      method: 'POST',
+      body: JSON.stringify({ message }),
+    });
   }
 
   async approveVerification(
@@ -806,6 +837,84 @@ class AdminAPIService {
     }>
   > {
     return await this.request('/admin/users/bulk-action', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    });
+  }
+
+  // Configuration Management
+  async getAIConfig(): Promise<
+    AdminAPIResponse<{
+      apiKey?: string;
+      baseUrl?: string;
+      model?: string;
+      maxTokens?: number;
+      temperature?: number;
+      isConfigured?: boolean;
+      isActive?: boolean;
+    }>
+  > {
+    return await this.request('/admin/ai/config');
+  }
+
+  async saveAIConfig(params: {
+    apiKey: string;
+    baseUrl: string;
+    model: string;
+    maxTokens: number;
+    temperature: number;
+  }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request('/admin/ai/config', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    });
+  }
+
+  async getStripeConfig(): Promise<
+    AdminAPIResponse<{
+      secretKey?: string;
+      publishableKey?: string;
+      webhookSecret?: string;
+      isLiveMode?: boolean;
+      isConfigured?: boolean;
+    }>
+  > {
+    return await this.request('/admin/stripe/config');
+  }
+
+  async saveStripeConfig(params: {
+    secretKey: string;
+    publishableKey: string;
+    webhookSecret?: string;
+    isLiveMode: boolean;
+  }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request('/admin/stripe/config', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    });
+  }
+
+  async getExternalServiceConfig(serviceId: string): Promise<
+    AdminAPIResponse<{
+      id: string;
+      apiKey?: string;
+      endpoint?: string;
+      limit?: number;
+      isActive?: boolean;
+      isConfigured?: boolean;
+    }>
+  > {
+    return await this.request(`/admin/external-services/${serviceId}/config`);
+  }
+
+  async saveExternalServiceConfig(params: {
+    serviceId: string;
+    apiKey?: string;
+    endpoint?: string;
+    limit?: number;
+    isActive?: boolean;
+  }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request(`/admin/external-services/${params.serviceId}/config`, {
       method: 'POST',
       body: JSON.stringify(params),
     });

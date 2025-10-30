@@ -8,6 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 interface ToastProps {
   message: string;
@@ -17,7 +18,7 @@ interface ToastProps {
   duration?: number;
 }
 
-const makeStyles = (theme: any) =>
+const makeStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       position: 'absolute',
@@ -29,14 +30,14 @@ const makeStyles = (theme: any) =>
       paddingVertical: 12,
       borderRadius: 12,
       borderWidth: 1,
-      shadowColor: theme.colors.neutral[950],
+      shadowColor: theme.palette.neutral[950],
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.15,
       shadowRadius: 8,
       elevation: 8,
     },
     text: {
-      color: theme.colors.neutral[0],
+      color: theme.colors.onPrimary,
       fontSize: 14,
       fontWeight: '600',
       textAlign: 'center',
@@ -90,11 +91,11 @@ export function Toast({
   const getTypeStyles = () => {
     switch (type) {
       case 'success':
-        return { backgroundColor: theme.colors.success, borderColor: '#059669' };
+        return { backgroundColor: theme.colors.success, borderColor: theme.colors.success };
       case 'error':
-        return { backgroundColor: theme.colors.danger, borderColor: '#dc2626' };
+        return { backgroundColor: theme.colors.danger, borderColor: theme.colors.danger };
       default:
-        return { backgroundColor: '#6366f1', borderColor: '#4f46e5' };
+        return { backgroundColor: theme.colors.info, borderColor: theme.colors.info };
     }
   };
 
@@ -114,27 +115,3 @@ export function Toast({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 50,
-    left: 16,
-    right: 16,
-    zIndex: 1000,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    shadowColor: theme.colors.neutral[950],
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  text: {
-    color: theme.colors.neutral[0],
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-});

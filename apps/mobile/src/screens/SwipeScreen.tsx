@@ -30,8 +30,9 @@ import { SwipeCard, SwipeActions } from "../components/swipe";
 import { ScreenShell } from "../ui/layout/ScreenShell";
 import { AdvancedHeader, HeaderConfigs } from "../components/Advanced/AdvancedHeader";
 import { haptic } from "../ui/haptics";
-import { useTheme } from "@mobile/theme";
+import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
+import { useReduceMotion } from '../hooks/useReducedMotion';
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -40,6 +41,7 @@ type SwipeScreenProps = RootStackScreenProps<"Swipe">;
 export default function SwipeScreen({ navigation }: SwipeScreenProps) {
   const theme = useTheme();
   const { t } = useTranslation('common');
+  const reducedMotion = useReduceMotion();
   
   // Data management hook
   const {
@@ -165,7 +167,7 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
         }
       >
         <View style={styles.emptyContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
+          <ActivityIndicator size="large" color={theme.colors.primary} />
           <Text style={styles.emptySubtitle}>{t('swipe.loading_pets')}</Text>
         </View>
       </ScreenShell>
@@ -234,7 +236,7 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
         />
       }
     >
-      <View style={styles.cardContainer}>
+      <View style={styles.cardContainer} testID="swipe-card-container" accessibilityLabel="Swipeable pet cards">
         <SwipeCard
           pet={currentPet}
           panHandlers={panHandlers}

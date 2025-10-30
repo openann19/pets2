@@ -3,7 +3,7 @@ module.exports = ({ config }) => ({
   name: 'PawfectMatch Premium',
   slug: 'pawfectmatch-premium',
   owner: 'pawfectmatch',
-  version: '1.0.0',
+  version: process.env.APP_VERSION || '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'automatic',
@@ -18,29 +18,81 @@ module.exports = ({ config }) => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.pawfectmatch.premium',
-    buildNumber: '1',
+    buildNumber: process.env.IOS_BUILD_NUMBER || '1',
+    jsEngine: 'hermes',
     infoPlist: {
       NSCameraUsageDescription:
         'PawfectMatch uses the camera for pet photo uploads and AR discovery features',
       NSLocationWhenInUseUsageDescription:
         'PawfectMatch uses your location to find compatible pets nearby',
+      NSLocationAlwaysAndWhenInUseUsageDescription:
+        'PawfectMatch uses your location to find compatible pets nearby and suggest meetup locations',
       NSMicrophoneUsageDescription:
         'PawfectMatch uses the microphone for video calls with pet matches',
       NSPhotoLibraryUsageDescription:
         'PawfectMatch needs access to your photo library to upload pet pictures',
+      NSPhotoLibraryAddUsageDescription:
+        'PawfectMatch needs access to save photos to your library',
       NSContactsUsageDescription:
         'PawfectMatch can sync your contacts to help you find friends who use the app',
+      NSUserTrackingUsageDescription:
+        'PawfectMatch uses tracking to provide personalized content and improve your experience',
+      ITSAppUsesNonExemptEncryption: false,
+      CFBundleDisplayName: 'PawfectMatch',
+      CFBundleName: 'PawfectMatch',
+      LSApplicationQueriesSchemes: ['pawfectmatch', 'https'],
     },
     associatedDomains: ['applinks:pawfectmatch.com'],
     config: {
       usesNonExemptEncryption: false,
     },
+    // App Store metadata
+    appStoreUrl: 'https://apps.apple.com/app/pawfectmatch-premium',
+    privacyManifests: {
+      NSPrivacyAccessedAPITypes: [
+        {
+          NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategoryFileTimestamp',
+          NSPrivacyAccessedAPITypeReasons: ['C617.1'], // App functionality
+        },
+        {
+          NSPrivacyAccessedAPIType: 'NSPrivacyAccessedAPICategorySystemBootTime',
+          NSPrivacyAccessedAPITypeReasons: ['35F9.1'], // Analytics
+        },
+      ],
+      NSPrivacyCollectedDataTypes: [
+        {
+          NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeLocation',
+          NSPrivacyCollectedDataTypeLinked: true,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+        },
+        {
+          NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypePhotosOrVideos',
+          NSPrivacyCollectedDataTypeLinked: true,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+        },
+        {
+          NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeName',
+          NSPrivacyCollectedDataTypeLinked: true,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+        },
+        {
+          NSPrivacyCollectedDataType: 'NSPrivacyCollectedDataTypeEmailAddress',
+          NSPrivacyCollectedDataTypeLinked: true,
+          NSPrivacyCollectedDataTypeTracking: false,
+          NSPrivacyCollectedDataTypePurposes: ['NSPrivacyCollectedDataTypePurposeAppFunctionality'],
+        },
+      ],
+    },
   },
   android: {
     package: 'com.pawfectmatch.premium',
-    versionCode: 1,
+    versionCode: parseInt(process.env.ANDROID_VERSION_CODE || '1', 10),
     compileSdkVersion: 34,
     targetSdkVersion: 34,
+    jsEngine: 'hermes',
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#ec4899',
@@ -49,13 +101,17 @@ module.exports = ({ config }) => ({
       'android.permission.CAMERA',
       'android.permission.ACCESS_FINE_LOCATION',
       'android.permission.ACCESS_COARSE_LOCATION',
+      'android.permission.ACCESS_BACKGROUND_LOCATION',
       'android.permission.RECORD_AUDIO',
       'android.permission.MODIFY_AUDIO_SETTINGS',
       'android.permission.READ_EXTERNAL_STORAGE',
       'android.permission.WRITE_EXTERNAL_STORAGE',
+      'android.permission.READ_MEDIA_IMAGES',
+      'android.permission.READ_MEDIA_VIDEO',
       'android.permission.INTERNET',
       'android.permission.ACCESS_NETWORK_STATE',
       'android.permission.VIBRATE',
+      'android.permission.POST_NOTIFICATIONS',
     ],
     intentFilters: [
       {
@@ -65,10 +121,16 @@ module.exports = ({ config }) => ({
             scheme: 'https',
             host: 'pawfectmatch.com',
           },
+          {
+            scheme: 'pawfectmatch',
+          },
         ],
         category: ['BROWSABLE', 'DEFAULT'],
       },
     ],
+    googleServicesFile: process.env.GOOGLE_SERVICES_JSON || './google-services.json',
+    // Play Store metadata
+    playStoreUrl: 'https://play.google.com/store/apps/details?id=com.pawfectmatch.premium',
   },
   web: {
     favicon: './assets/favicon.png',
@@ -76,9 +138,14 @@ module.exports = ({ config }) => ({
   },
   updates: {
     fallbackToCacheTimeout: 0,
-    url: 'https://u.expo.dev/your-project-id',
+    url: process.env.EXPO_UPDATE_URL || 'https://u.expo.dev/your-project-id',
+    requestHeaders: {
+      'expo-channel-name': process.env.EXPO_CHANNEL || 'production',
+    },
   },
-  runtimeVersion: '1.0.0',
+  runtimeVersion: {
+    policy: 'sdkVersion',
+  },
   plugins: [
     'expo-camera',
     [
@@ -86,6 +153,14 @@ module.exports = ({ config }) => ({
       {
         locationAlwaysAndWhenInUsePermission:
           'Allow PawfectMatch to use your location to find pets near you and suggest nearby meetup locations.',
+      },
+    ],
+    [
+      'expo-notifications',
+      {
+        icon: './assets/notification-icon.png',
+        color: '#ec4899',
+        sounds: [],
       },
     ],
   ],
@@ -105,6 +180,10 @@ module.exports = ({ config }) => ({
     enableAnalytics: process.env.EXPO_PUBLIC_ENABLE_ANALYTICS === 'true',
     enablePushNotifications:
       process.env.EXPO_PUBLIC_ENABLE_PUSH_NOTIFICATIONS === 'true',
+    // Store URLs
+    privacyPolicyUrl: 'https://pawfectmatch.com/privacy',
+    termsOfServiceUrl: 'https://pawfectmatch.com/terms',
+    supportUrl: 'https://pawfectmatch.com/support',
   },
   hooks: {
     postPublish: [

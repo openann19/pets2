@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["detox", "jest"],
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "e2e/**/*.ts",
+    "e2e/**/*.tsx"
+  ]
+}
+
+

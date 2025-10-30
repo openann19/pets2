@@ -1,0 +1,17 @@
+id: tests-push-open-e2e
+owner: e2e
+severity: high
+area: mobile
+context: |
+  No E2E verifies push notification open flows (cold/warm/background). Risk: broken intents to chat/match/promo.
+acceptance:
+  - Create `apps/mobile/e2e/push.open.e2e.ts`
+  - Simulate notification open (payload variants) on cold and warm app
+  - Assert navigation target and tracking event emission
+states: [cold, warm, background, error]
+assets:
+  tests: [apps/mobile/e2e/push.open.e2e.ts]
+risks:
+  - Platform-specific notification APIs; use Detox helpers or test doubles
+links:
+  - reports/mobile/test_gap_matrix.md

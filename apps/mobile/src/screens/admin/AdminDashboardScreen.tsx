@@ -19,8 +19,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -113,7 +113,7 @@ function makeStyles(theme: AppTheme) {
     cardTitle: {
       fontSize: theme.typography.h2.size,
       fontWeight: theme.typography.h2.weight,
-      marginLeft: theme.spacing.xs,
+      marginStart: theme.spacing.xs,
     },
     healthInfo: {
       gap: theme.spacing.xs,
@@ -139,7 +139,7 @@ function makeStyles(theme: AppTheme) {
       gap: theme.spacing.sm,
     },
     quickActionCard: {
-      width: (SCREEN_WIDTH - theme.spacing.md * 2 - theme.spacing.sm) / 2,
+      width: (SCREEN_WIDTH - theme.spacing['2xl'] - theme.spacing.sm) / 2,
       borderRadius: theme.radii.lg,
       padding: theme.spacing.md,
       alignItems: "center",
@@ -165,7 +165,7 @@ function makeStyles(theme: AppTheme) {
     statTitle: {
       fontSize: theme.typography.body.size,
       fontWeight: theme.typography.h2.weight,
-      marginLeft: theme.spacing.xs,
+      marginStart: theme.spacing.xs,
     },
     statNumber: {
       fontSize: theme.typography.h2.size,
@@ -252,6 +252,9 @@ export default function AdminDashboardScreen({
         break;
       case "services":
         navigation.navigate("AdminServices");
+        break;
+      case "config":
+        navigation.navigate("AdminConfig");
         break;
       default:
         logger.info(`Quick action: ${action}`);
@@ -549,6 +552,26 @@ export default function AdminDashboardScreen({
                 ]}
               >
                 Services
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.quickActionCard,
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
+               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+                handleQuickAction("config");
+              }}
+            >
+              <Ionicons name="settings-outline" size={32} color={theme.colors.info} />
+              <Text
+                style={[
+                  styles.quickActionTitle,
+                  { color: theme.colors.onSurface },
+                ]}
+              >
+                API Config
               </Text>
             </TouchableOpacity>
           </View>

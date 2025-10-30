@@ -94,10 +94,18 @@ export function getExtendedColors(theme: Theme | any): ExtendedColors {
     success: colors.success ?? '#10B981',
     warning: colors.warning ?? '#F59E0B',
     danger: colors.danger ?? '#EF4444',
+    
+    // Required SemanticColors properties
+    surface: colors.surface ?? colors.bgElevated ?? '#F8FAFC',
+    overlay: colors.overlay ?? colors.bg ?? '#FFFFFF80',
+    onBg: colors.onBg ?? colors.textInverse ?? '#FFFFFF',
+    onSurface: colors.onSurface ?? colors.text ?? '#0F172A',
+    onMuted: colors.onMuted ?? colors.textMuted ?? '#64748B',
+    onPrimary: colors.onPrimary ?? colors.primaryText ?? '#FFFFFF',
+    info: colors.info ?? '#3B82F6',
 
     // Extended properties from interface
     background: colors.background ?? colors.bg ?? '#FFFFFF',
-    surface: colors.surface ?? colors.bgElevated ?? '#F8FAFC',
     surfaceElevated: colors.surfaceElevated ?? colors.surface ?? '#FFFFFF',
     card: colors.card ?? colors.surface ?? '#FFFFFF',
     textSecondary: colors.textSecondary ?? colors.onMuted ?? '#64748B',
@@ -142,19 +150,12 @@ export function getExtendedColors(theme: Theme | any): ExtendedColors {
     glassDarkStrong: colors.glassDarkStrong ?? 'rgba(0, 0, 0, 0.5)',
 
     // Status colors
-    info: colors.info ?? '#3B82F6',
     error: colors.error ?? colors.danger ?? '#EF4444',
 
     // Additional properties
     tertiary: colors.tertiary ?? colors.secondary ?? '#94A3B8',
     inverse: colors.inverse ?? colors.onBg ?? '#FFFFFF',
     shadow: colors.shadow ?? 'rgba(0, 0, 0, 0.1)',
-
-    // Surface variants (already defined above)
-    onBg: colors.onBg ?? colors.textInverse ?? '#FFFFFF',
-    onSurface: colors.onSurface ?? colors.text ?? '#0F172A',
-    onMuted: colors.onMuted ?? colors.textMuted ?? '#64748B',
-    onPrimary: colors.onPrimary ?? colors.primaryText ?? '#FFFFFF',
   } as ExtendedColors;
 }
 

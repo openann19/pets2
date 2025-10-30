@@ -27,13 +27,13 @@ jest.mock('../../theme/Provider', () => ({
   useTheme: () => ({
     isDark: false,
     colors: {
-      primary: '#007AFF',
-      surface: 'Theme.colors.neutral[0]',
-      surfaceElevated: '#F8F9FA',
-      text: 'Theme.colors.neutral[950]',
-      textSecondary: '#666666',
-      border: '#E5E5E5',
-      shadow: 'Theme.colors.neutral[950]',
+      primary: 'Theme.colors.primary',
+      surface: 'Theme.colors.surface',
+      surfaceElevated: 'Theme.colors.surface',
+      text: 'Theme.colors.onSurface',
+      textSecondary: 'Theme.colors.onMuted',
+      border: 'Theme.colors.border',
+      shadow: 'Theme.colors.onSurface',
     },
   }),
 }));
@@ -41,14 +41,14 @@ jest.mock('../../theme/Provider', () => ({
 // Mock styles
 jest.mock('../../animation', () => ({
   Colors: {
-    primary: '#007AFF',
-    surface: 'Theme.colors.neutral[0]',
-    surfaceElevated: '#F8F9FA',
-    text: 'Theme.colors.neutral[950]',
-    textSecondary: '#666666',
-    border: '#E5E5E5',
-    borderLight: '#F0F0F0',
-    shadow: 'Theme.colors.neutral[950]',
+    primary: 'Theme.colors.primary',
+    surface: 'Theme.colors.surface',
+    surfaceElevated: 'Theme.colors.surface',
+    text: 'Theme.colors.onSurface',
+    textSecondary: 'Theme.colors.onMuted',
+    border: 'Theme.colors.border',
+    borderLight: 'Theme.colors.border',
+    shadow: 'Theme.colors.onSurface',
   },
   Spacing: {
     'xs': 4,

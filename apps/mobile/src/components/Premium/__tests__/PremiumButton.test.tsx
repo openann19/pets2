@@ -27,9 +27,10 @@ describe('PremiumButton', () => {
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
         primary: '#7c3aed',
-        secondary: 'Theme.colors.primary[500]',
-        background: 'Theme.colors.neutral[0]',
-        text: 'Theme.colors.neutral[950]',
+        info: '#7c3aed',
+        background: '#ffffff',
+        onSurface: '#000000',
+        onPrimary: '#ffffff',
       },
       isDark: false,
     });
@@ -81,9 +82,10 @@ describe('PremiumButton', () => {
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
         primary: '#7c3aed',
-        secondary: 'Theme.colors.primary[500]',
-        background: 'Theme.colors.neutral[800]',
-        text: 'Theme.colors.neutral[0]',
+        info: '#7c3aed',
+        background: '#1a1a1a',
+        onSurface: '#ffffff',
+        onPrimary: '#ffffff',
       },
       isDark: true,
     });

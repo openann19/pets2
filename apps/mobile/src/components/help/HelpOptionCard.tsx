@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
+import { useTheme } from '@mobile/theme';
 
 import type { HelpOption } from '../../hooks/useHelpSupportData';
 
@@ -17,6 +17,9 @@ export const HelpOptionCard: React.FC<HelpOptionCardProps> = ({
   animatedStyle,
   onPress,
 }) => {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
   return (
     <Animated.View style={StyleSheet.flatten([styles.optionCard, animatedStyle])}>
       <TouchableOpacity
@@ -32,7 +35,7 @@ export const HelpOptionCard: React.FC<HelpOptionCardProps> = ({
             <View
               style={StyleSheet.flatten([
                 styles.optionIcon,
-                { backgroundColor: Theme.colors.status.info },
+                { backgroundColor: theme.colors.info },
               ])}
             >
               <Ionicons
@@ -57,39 +60,41 @@ export const HelpOptionCard: React.FC<HelpOptionCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  optionCard: {
-    marginBottom: 12,
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  optionBlur: {
-    padding: 16,
-  },
-  optionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  optionIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  optionText: {
-    flex: 1,
-  },
-  optionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
-    marginBottom: 4,
-  },
-  optionDescription: {
-    fontSize: 14,
-    color: 'rgba(255,255,255,0.7)',
-    lineHeight: 20,
-  },
-});
+function makeStyles(theme: ReturnType<typeof useTheme>) {
+  return StyleSheet.create({
+    optionCard: {
+      marginBottom: theme.spacing.md,
+      borderRadius: theme.radii.lg,
+      overflow: 'hidden',
+    },
+    optionBlur: {
+      padding: theme.spacing.md,
+    },
+    optionContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    optionIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radii.full,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: theme.spacing.md,
+    },
+    optionText: {
+      flex: 1,
+    },
+    optionTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: 'white',
+      marginBottom: 4,
+    },
+    optionDescription: {
+      fontSize: 14,
+      color: 'rgba(255,255,255,0.7)',
+      lineHeight: 20,
+    },
+  });
+}

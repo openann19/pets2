@@ -120,7 +120,7 @@ async function validateContracts() {
 }
 
 // Run if executed directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   validateContracts().catch(console.error);
 }
 

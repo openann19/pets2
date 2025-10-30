@@ -8,6 +8,26 @@ export interface LeaderboardCategory {
   icon: string;
 }
 
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  earnedAt: number;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+}
+
+export interface LeaderboardStats {
+  matches: number;
+  likes: number;
+  views: number;
+  messages: number;
+  daysActive: number;
+  streak: number;
+  achievements: number;
+}
+
 export interface LeaderboardEntry {
   id: string;
   userId: string;
@@ -18,8 +38,8 @@ export interface LeaderboardEntry {
   score: number;
   rank: number;
   category: LeaderboardCategory;
-  badges: any[];
-  stats: any;
+  badges: Badge[];
+  stats: LeaderboardStats;
   lastUpdated: number;
 }
 

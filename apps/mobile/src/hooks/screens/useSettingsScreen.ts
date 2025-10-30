@@ -7,7 +7,7 @@ import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from '@pawfectmatch/core';
 import { useAuthStore } from '@pawfectmatch/core';
-import gdprService from '../../services/gdprService';
+import * as gdprService from '../../services/gdprService';
 
 interface Notifications {
   email: boolean;
@@ -100,6 +100,39 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
   }, [logout]);
 
   const handleDeleteAccount = useCallback(() => {
+    // If deletion is pending, cancel it
+    if (deletionStatus.isPending) {
+      Alert.alert(
+        'Cancel Account Deletion',
+        'Are you sure you want to cancel your account deletion request?',
+        [
+          { text: 'No', style: 'cancel' },
+          {
+            text: 'Yes, Cancel',
+            style: 'default',
+            onPress: async () => {
+              try {
+                const response = await gdprService.cancelDeletion();
+                if (response.success) {
+                  setDeletionStatus({
+                    isPending: false,
+                    daysRemaining: null,
+                  });
+                  Alert.alert('Success', 'Account deletion has been cancelled.');
+                } else {
+                  Alert.alert('Error', response.message || 'Failed to cancel deletion.');
+                }
+              } catch (error) {
+                logger.error('Failed to cancel deletion:', { error });
+                Alert.alert('Error', 'Failed to cancel deletion. Please try again.');
+              }
+            },
+          },
+        ],
+      );
+      return;
+    }
+
     // Password prompt for account deletion
     Alert.prompt(
       'Delete Account',
@@ -122,13 +155,20 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
               });
 
               if (response.success) {
+                const gracePeriodEndsAt = response.gracePeriodEndsAt 
+                  ? new Date(response.gracePeriodEndsAt)
+                  : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+                const daysRemaining = Math.ceil(
+                  (gracePeriodEndsAt.getTime() - Date.now()) / (24 * 60 * 60 * 1000)
+                );
+                
                 setDeletionStatus({
                   isPending: true,
-                  daysRemaining: 30,
+                  daysRemaining,
                 });
                 Alert.alert(
                   'Account Deletion Requested',
-                  'Your account will be deleted in 30 days. You can cancel this anytime from settings.',
+                  `Your account will be deleted in ${daysRemaining} days. You can cancel this anytime from settings.`,
                 );
               } else {
                 Alert.alert('Error', response.message || 'Failed to delete account.');
@@ -142,7 +182,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
       ],
       'secure-text',
     );
-  }, []);
+  }, [deletionStatus.isPending]);
 
   const handleExportData = useCallback(async () => {
     try {

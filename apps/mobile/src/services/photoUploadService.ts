@@ -1,5 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { request } from './api';
+import { uploadAdapter } from './upload/index';
 
 export interface PhotoUploadResult {
   url: string;
@@ -35,34 +36,27 @@ export async function pickAndUpload(): Promise<PhotoUploadResult | null> {
       throw new Error('No image selected');
     }
 
-    // Create multipart upload
-    const multipartResponse = await request<{ key: string; uploadId: string }>(
-      '/upload/multipart/create',
+    // Upload using UploadAdapter
+    const uploadResult = await uploadAdapter.uploadPhoto({
+      uri: asset.uri,
+      name: 'photo.jpg',
+      contentType: 'image/jpeg',
+    });
+
+    // Get upload metadata (key, thumbnails) from backend
+    const metadataResponse = await request<{ key: string; thumbnails: { jpg: string; webp: string } }>(
+      '/upload/metadata',
       {
         method: 'POST',
-        body: { contentType: 'image/jpeg' },
+        body: { url: uploadResult.url },
       },
     );
 
-    const { key, uploadId } = multipartResponse;
-
-    // Upload parts (simplified - in production, implement chunking)
-    const formData = new FormData();
-    formData.append('file', {
-      uri: asset.uri,
-      name: 'photo.jpg',
-      type: 'image/jpeg',
-    } as unknown as Blob);
-
-    const uploadResponse = await request<PhotoUploadResult>('/upload', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    return uploadResponse;
+    return {
+      url: uploadResult.url,
+      key: metadataResponse.key,
+      thumbnails: metadataResponse.thumbnails,
+    };
   } catch (error: unknown) {
     const { logger } = await import('./logger');
     const errorMessage = error instanceof Error ? error : new Error(String(error));

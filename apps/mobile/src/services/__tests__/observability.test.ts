@@ -41,14 +41,14 @@ jest.mock('../logger', () => ({
   },
 }));
 
-jest.mock('../utils/PerformanceMonitor', () => ({
+jest.mock('../../utils/PerformanceMonitor', () => ({
   performanceMonitor: {
     getCurrentFPS: jest.fn(),
   },
 }));
 
 import { logger } from '../logger';
-import { performanceMonitor } from '../utils/PerformanceMonitor';
+import { performanceMonitor } from '../../utils/PerformanceMonitor';
 
 const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
 const mockSentry = Sentry as jest.Mocked<typeof Sentry>;

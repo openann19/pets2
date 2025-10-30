@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions, StatusBar } from 'react-native';
+import React, { useEffect, useState, useMemo } from 'react';
+import { View, Text, StyleSheet, Animated, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+import { useTheme } from '@/theme';
 
 interface AnimatedSplashProps {
   onAnimationComplete?: () => void;
@@ -23,14 +22,94 @@ interface AnimatedSplashProps {
  */
 export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
   onAnimationComplete,
-  duration = 2500,
+  duration: _duration = 2500,
 }) => {
+  const theme = useTheme();
   // Animation values (useState pattern to avoid refs during render)
   const [pawScale] = useState(() => new Animated.Value(0));
   const [pawOpacity] = useState(() => new Animated.Value(0));
   const [textOpacity] = useState(() => new Animated.Value(0));
   const [textTranslateY] = useState(() => new Animated.Value(30));
   const [backgroundOpacity] = useState(() => new Animated.Value(0));
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          flex: 1,
+          backgroundColor: theme.colors.primary,
+        },
+        backgroundContainer: {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        },
+        gradient: {
+          flex: 1,
+        },
+        contentContainer: {
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingHorizontal: 40,
+        },
+        pawContainer: {
+          marginBottom: 40,
+        },
+        pawIconContainer: {
+          width: 120,
+          height: 120,
+          borderRadius: 60,
+          backgroundColor: 'rgba(255, 255, 255, 0.2)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          shadowColor: theme.colors.border,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 8,
+          elevation: 8,
+        },
+        textContainer: {
+          alignItems: 'center',
+          marginBottom: 60,
+        },
+        brandText: {
+          fontSize: 32,
+          fontWeight: 'bold',
+          color: theme.colors.onSurface,
+          textAlign: 'center',
+          marginBottom: 8,
+          textShadowColor: 'rgba(0, 0, 0, 0.3)',
+          textShadowOffset: { width: 0, height: 2 },
+          textShadowRadius: 4,
+        },
+        taglineText: {
+          fontSize: 16,
+          color: 'rgba(255, 255, 255, 0.9)',
+          textAlign: 'center',
+          fontWeight: '300',
+          letterSpacing: 0.5,
+        },
+        loadingContainer: {
+          position: 'absolute',
+          bottom: 100,
+        },
+        dotsContainer: {
+          flexDirection: 'row',
+          alignItems: 'center',
+        },
+        dot: {
+          width: 8,
+          height: 8,
+          borderRadius: 4,
+          backgroundColor: theme.colors.onSurface,
+          marginHorizontal: 4,
+        },
+      }),
+    [theme],
+  );
 
   useEffect(() => {
     // Start animation sequence
@@ -93,14 +172,14 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
     <View style={styles.container}>
       <StatusBar
         barStyle="light-content"
-        backgroundColor="Theme.colors.primary[500]"
+        backgroundColor={theme.colors.primary}
       />
 
       <Animated.View
         style={StyleSheet.flatten([styles.backgroundContainer, { opacity: backgroundOpacity }])}
       >
         <LinearGradient
-          colors={['Theme.colors.primary[500]', '#f97316', '#eab308']}
+          colors={[...theme.palette.gradients.primary, theme.colors.warning, theme.colors.info]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
@@ -127,7 +206,7 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
             <Ionicons
               name="paw"
               size={80}
-              color="Theme.colors.neutral[0]"
+              color={theme.colors.onSurface}
             />
           </View>
         </Animated.View>
@@ -148,7 +227,7 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
 
         {/* Loading indicator dots */}
         <View style={styles.loadingContainer}>
-          <LoadingDots />
+          <LoadingDots styles={styles} />
         </View>
       </View>
     </View>
@@ -158,7 +237,7 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
 /**
  * Animated loading dots component
  */
-const LoadingDots: React.FC = () => {
+const LoadingDots: React.FC<{ styles: ReturnType<typeof StyleSheet.create> }> = ({ styles }) => {
   const [dot1] = useState(() => new Animated.Value(0));
   const [dot2] = useState(() => new Animated.Value(0));
   const [dot3] = useState(() => new Animated.Value(0));
@@ -200,12 +279,12 @@ const LoadingDots: React.FC = () => {
   }, [dot1, dot2, dot3]);
 
   return (
-    <View style={styles.dotsContainer}>
+    <View style={styles['dotsContainer']}>
       {[dot1, dot2, dot3].map((dot, index) => (
         <Animated.View
           key={index}
           style={StyleSheet.flatten([
-            styles.dot,
+            styles['dot'],
             {
               opacity: dot,
             },
@@ -215,80 +294,5 @@ const LoadingDots: React.FC = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'Theme.colors.primary[500]',
-  },
-  backgroundContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  gradient: {
-    flex: 1,
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 40,
-  },
-  pawContainer: {
-    marginBottom: 40,
-  },
-  pawIconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: 'Theme.colors.neutral[950]',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  textContainer: {
-    alignItems: 'center',
-    marginBottom: 60,
-  },
-  brandText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: 'Theme.colors.neutral[0]',
-    textAlign: 'center',
-    marginBottom: 8,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-  },
-  taglineText: {
-    fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.9)',
-    textAlign: 'center',
-    fontWeight: '300',
-    letterSpacing: 0.5,
-  },
-  loadingContainer: {
-    position: 'absolute',
-    bottom: 100,
-  },
-  dotsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'Theme.colors.neutral[0]',
-    marginHorizontal: 4,
-  },
-});
 
 export default AnimatedSplash;

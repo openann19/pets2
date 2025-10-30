@@ -1,10 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { AppTheme } from '@/theme';
-import { useTheme } from '@/theme';
+import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@mobile/theme';
 import { logger } from '@pawfectmatch/core';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useMemo, useState } from 'react';
 import {
@@ -18,6 +19,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { request } from '../../services/api';
+import { pickAndUpload } from '../../services/upload';
 
 // Runtime theme has radius (not radii) and bgAlt/surfaceAlt in colors
 type RuntimeTheme = AppTheme & {
@@ -80,6 +82,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
     photos: [],
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
   const personalityOptions = [
     'Friendly',
@@ -163,8 +166,41 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
     }
   };
 
-  const addPhoto = () => {
-    Alert.alert('Add Photo', 'Photo upload feature coming soon!');
+  const addPhoto = async () => {
+    if (isUploadingPhoto) return;
+    
+    try {
+      setIsUploadingPhoto(true);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      
+      // Request permissions
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permission Required',
+          'Please grant permission to access your photos.',
+        );
+        return;
+      }
+
+      // Pick and upload photo
+      const photoUrl = await pickAndUpload();
+      
+      if (photoUrl) {
+        setFormData((prev) => ({
+          ...prev,
+          photos: [...prev.photos, photoUrl],
+        }));
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        logger.info('Photo added to listing', { photoUrl });
+      }
+    } catch (error) {
+      logger.error('Failed to add photo', { error });
+      Alert.alert('Error', 'Failed to upload photo. Please try again.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    } finally {
+      setIsUploadingPhoto(false);
+    }
   };
 
   return (

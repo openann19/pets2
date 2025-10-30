@@ -25,7 +25,7 @@ interface UseRegisterScreenReturn {
   isValid: boolean;
   loading: boolean;
   setValue: (name: keyof RegisterFormValues, value: string) => void;
-  handleSubmit: (e?: any) => Promise<void>;
+  handleSubmit: (e?: unknown) => Promise<void>;
   navigateToLogin: () => void;
 }
 
@@ -165,7 +165,7 @@ export function useRegisterScreen({
   }, [values, navigation]);
 
   const handleSubmit = useCallback(
-    async (e?: any) => {
+    async (e?: unknown) => {
       await handleSubmitForm(handleRegister)(e);
     },
     [handleSubmitForm, handleRegister],

@@ -8,22 +8,19 @@ import { render, screen, fireEvent } from '@testing-library/react-native';
 import { ToneSelector } from '../ToneSelector';
 
 // Mock the theme
-jest.mock('../../../theme/unified-theme', () => ({
-  Theme: {
+jest.mock('../../../theme', () => ({
+  useTheme: jest.fn(() => ({
     colors: {
-      text: { primary: '#000000', secondary: '#666666' },
+      bg: '#FFFFFF',
+      surface: '#F8F9FA',
+      onSurface: '#000000',
+      onMuted: '#666666',
+      primary: '#007AFF',
       border: '#CCCCCC',
-      background: { primary: '#FFFFFF' },
-      primary: { '500': '#007AFF' },
     },
     spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
-    typography: {
-      fontSize: { 'xs': 12, 'sm': 14, 'base': 16, 'xl': 20, '2xl': 24 },
-      fontWeight: { medium: '500', semibold: '600', bold: '700' },
-      lineHeight: { normal: 1.5 },
-    },
-    borderRadius: { lg: 12, full: 9999 },
-  },
+    radii: { lg: 12, full: 9999 },
+  })),
 }));
 
 describe('ToneSelector Component', () => {

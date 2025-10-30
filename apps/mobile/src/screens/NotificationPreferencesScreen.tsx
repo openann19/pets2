@@ -3,9 +3,11 @@ import { useTheme } from '@mobile/theme';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { logger } from '@pawfectmatch/core';
+import { notificationPreferencesAPI } from '../../services/api';
 
 interface NotificationPreferencesScreenProps {
   navigation: {
@@ -83,6 +85,58 @@ function NotificationPreferencesScreen({
       category: 'general',
     },
   ]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [quietHoursEnabled, setQuietHoursEnabled] = useState(false);
+  const [quietHoursStart, setQuietHoursStart] = useState('22:00');
+  const [quietHoursEnd, setQuietHoursEnd] = useState('08:00');
+
+  // Load preferences on mount
+  useEffect(() => {
+    const loadPreferences = async () => {
+      setIsLoading(true);
+      try {
+        const prefs = await notificationPreferencesAPI.getPreferences();
+        // Map backend preferences to local settings
+        setSettings((prev) =>
+          prev.map((setting) => {
+            switch (setting.id) {
+              case 'new_matches':
+                return { ...setting, enabled: prefs.matches ?? setting.enabled };
+              case 'messages':
+                return { ...setting, enabled: prefs.messages ?? setting.enabled };
+              case 'likes':
+                return { ...setting, enabled: prefs.likes ?? setting.enabled };
+              case 'super_likes':
+                return { ...setting, enabled: prefs.matches ?? setting.enabled };
+              case 'premium_features':
+              case 'marketing':
+                return { ...setting, enabled: prefs.enabled ?? setting.enabled };
+              case 'safety_alerts':
+              case 'events':
+                return { ...setting, enabled: prefs.reminders ?? setting.enabled };
+              default:
+                return setting;
+            }
+          }),
+        );
+        
+        // Load quiet hours settings
+        if (prefs.quietHours) {
+          setQuietHoursEnabled(prefs.quietHours.enabled ?? false);
+          setQuietHoursStart(prefs.quietHours.start ?? '22:00');
+          setQuietHoursEnd(prefs.quietHours.end ?? '08:00');
+        }
+      } catch (error) {
+        logger.error('Failed to load notification preferences', { error });
+        // Continue with default settings on error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadPreferences();
+  }, []);
 
   const toggleSetting = useCallback((settingId: string) => {
     Haptics.selectionAsync().catch(() => {});
@@ -107,11 +161,81 @@ function NotificationPreferencesScreen({
     );
   }, []);
 
-  const saveSettings = useCallback(() => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    // In a real app, this would save to backend
-    Alert.alert('Success', 'Notification preferences saved successfully!');
-  }, []);
+  const handleQuietHoursToggle = useCallback(async (enabled: boolean) => {
+    setQuietHoursEnabled(enabled);
+    Haptics.selectionAsync().catch(() => {});
+    
+    // Auto-save quiet hours when toggled
+    try {
+      const matchesEnabled = settings.find((s) => s.id === 'new_matches')?.enabled ?? true;
+      const messagesEnabled = settings.find((s) => s.id === 'messages')?.enabled ?? true;
+      const likesEnabled = settings.find((s) => s.id === 'likes')?.enabled ?? false;
+      const remindersEnabled =
+        settings.find((s) => s.id === 'safety_alerts')?.enabled ?? true;
+      const enabled = matchesEnabled || messagesEnabled || likesEnabled || remindersEnabled;
+
+      await notificationPreferencesAPI.updatePreferences({
+        enabled,
+        matches: matchesEnabled,
+        messages: messagesEnabled,
+        likes: likesEnabled,
+        reminders: remindersEnabled,
+        frequency: 'instant',
+        sound: true,
+        vibration: true,
+        quietHours: {
+          enabled,
+          start: quietHoursStart,
+          end: quietHoursEnd,
+        },
+      });
+      
+      logger.info('Quiet hours updated', { enabled, start: quietHoursStart, end: quietHoursEnd });
+    } catch (error) {
+      logger.error('Failed to update quiet hours', { error });
+      // Revert on error
+      setQuietHoursEnabled(!enabled);
+      Alert.alert('Error', 'Failed to update quiet hours. Please try again.');
+    }
+  }, [settings, quietHoursStart, quietHoursEnd]);
+
+  const saveSettings = useCallback(async () => {
+    setIsSaving(true);
+    try {
+      // Map local settings to backend format
+      const matchesEnabled = settings.find((s) => s.id === 'new_matches')?.enabled ?? true;
+      const messagesEnabled = settings.find((s) => s.id === 'messages')?.enabled ?? true;
+      const likesEnabled = settings.find((s) => s.id === 'likes')?.enabled ?? false;
+      const remindersEnabled =
+        settings.find((s) => s.id === 'safety_alerts')?.enabled ?? true;
+      const marketingEnabled = settings.find((s) => s.id === 'marketing')?.enabled ?? false;
+      const enabled = matchesEnabled || messagesEnabled || likesEnabled || remindersEnabled;
+
+      await notificationPreferencesAPI.updatePreferences({
+        enabled,
+        matches: matchesEnabled,
+        messages: messagesEnabled,
+        likes: likesEnabled,
+        reminders: remindersEnabled,
+        frequency: 'instant',
+        sound: true,
+        vibration: true,
+        quietHours: {
+          enabled: quietHoursEnabled,
+          start: quietHoursStart,
+          end: quietHoursEnd,
+        },
+      });
+
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      Alert.alert('Success', 'Notification preferences saved successfully!');
+    } catch (error) {
+      logger.error('Failed to save notification preferences', { error });
+      Alert.alert('Error', 'Failed to save notification preferences. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  }, [settings]);
 
   const getCategorySettings = useCallback(
     (category: string) => {
@@ -288,12 +412,10 @@ function NotificationPreferencesScreen({
                 </Text>
               </View>
               <Switch
-                value={false}
-                onValueChange={() => {
-                  Alert.alert('Quiet Hours', 'Quiet hours feature coming soon!');
-                }}
+                value={quietHoursEnabled}
+                onValueChange={handleQuietHoursToggle}
                 trackColor={{ false: theme.colors.inactive, true: theme.colors.primary }}
-                thumbColor={theme.colors.overlay}
+                thumbColor={quietHoursEnabled ? theme.colors.surface : theme.colors.overlay}
               />
             </View>
           </BlurView>

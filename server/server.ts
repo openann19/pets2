@@ -141,6 +141,7 @@ const reelsRoutes = await import('./src/routes/reels');
 const templatesRoutes = await import('./src/routes/templates');
 const tracksRoutes = await import('./src/routes/tracks');
 const uploadsRoutes = await import('./src/routes/uploads');
+const uiConfigRoutes = await import('./src/routes/uiConfig');
 
 // Import middleware
 const errorHandler = await import('./src/middleware/errorHandler');
@@ -612,6 +613,7 @@ app.use('/api', revenuecatRoutes.default);
 
 // Admin Enhanced Features Routes
 app.use('/api/admin/enhanced-features', adminEnhancedFeaturesRoutes.default);
+app.use('/api/ui-config', uiConfigRoutes.default);
 
 // Admin Moderation Routes
 app.use('/api/admin/moderation', authenticateToken, requireAdmin, adminModerationRoutes.default);

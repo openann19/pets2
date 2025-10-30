@@ -7,8 +7,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import type { AppTheme } from '@/theme';
-import { useTheme } from '@/theme';
+import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 import type { RootStackParamList } from '../../navigation/types';
 
@@ -73,7 +73,7 @@ const AnimatedCheckmark = ({
           {
             transform: [{ scale }],
             opacity,
-          } as any,
+          },
         ]}
       >
         <LinearGradient
@@ -105,9 +105,11 @@ export function SubscriptionSuccessScreen(): React.JSX.Element {
   useEffect(() => {
     const trackSubscriptionSuccess = async () => {
       try {
-        // TODO: Add analyticsAPI to services/api.ts
-        // const { analyticsAPI } = await import("../../services/api");
-        // await analyticsAPI.trackUserEvent("subscription_success", {
+        const { track } = await import('../../services/analyticsService');
+        await track('premium.subscribed', {
+          sessionId,
+          timestamp: new Date().toISOString(),
+        });
         logger.info('Subscription success tracked', {
           sessionId,
           timestamp: new Date().toISOString(),

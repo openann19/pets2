@@ -1,7 +1,8 @@
-import React from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 export interface MapPin {
   _id: string;
@@ -31,20 +32,22 @@ interface Props {
 export function PinDetailsModal({
   visible,
   pin,
-  activityTypes,
+  activityTypes: _activityTypes,
   onClose,
   onLike,
   onChat,
   testID,
 }: Props) {
   const nav = useNavigation<any>();
+  const theme = useTheme();
+  const styles = makeStyles(theme);
   if (!visible || !pin) return null;
 
   const handleLike = async () => {
     if (onLike) {
       onLike();
     } else {
-      const API_URL = process.env.EXPO_PUBLIC_API_URL || process.env.API_URL || '';
+      const API_URL = process.env['EXPO_PUBLIC_API_URL'] || process.env['API_URL'] || '';
       await fetch(`${API_URL}/api/matches/like`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -74,6 +77,8 @@ export function PinDetailsModal({
       transparent
       visible={visible}
       animationType="fade"
+      onRequestClose={onClose}
+      accessibilityViewIsModal
       testID={testID || 'modal-pin-details'}
     >
       <View style={styles.backdrop}>
@@ -83,12 +88,11 @@ export function PinDetailsModal({
             <TouchableOpacity
               onPress={onClose}
               testID="btn-close-pin"
+              accessibilityLabel="Close pin details"
+              accessibilityRole="button"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Ionicons
-                name="close"
-                size={24}
-                color={Theme.colors.neutral[800]}
-              />
+              <Ionicons name="close" size={24} color={theme.colors.onSurface} />
             </TouchableOpacity>
           </View>
 
@@ -103,6 +107,8 @@ export function PinDetailsModal({
               style={[styles.btn, styles.like]}
               onPress={handleLike}
               testID="btn-like-pin"
+              accessibilityLabel="Like this pet"
+              accessibilityRole="button"
             >
               <Text style={styles.btnText}>❤️ Like</Text>
             </TouchableOpacity>
@@ -110,6 +116,8 @@ export function PinDetailsModal({
               style={[styles.btn, styles.chat]}
               onPress={handleChat}
               testID="btn-chat-pin"
+              accessibilityLabel="Start chat with this pet"
+              accessibilityRole="button"
             >
               <Text style={styles.btnText}>💬 Chat</Text>
             </TouchableOpacity>
@@ -117,6 +125,8 @@ export function PinDetailsModal({
               style={[styles.btn, styles.directions]}
               onPress={openMaps}
               testID="btn-directions-pin"
+              accessibilityLabel="Get directions to this location"
+              accessibilityRole="button"
             >
               <Text style={styles.btnText}>🧭 Directions</Text>
             </TouchableOpacity>
@@ -127,18 +137,71 @@ export function PinDetailsModal({
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'center', padding: 16 },
-  card: { backgroundColor: '#fff', borderRadius: 16, padding: 16 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  title: { fontSize: 18, fontWeight: '800', color: Theme.colors.neutral[800] },
-  message: { marginTop: 8, color: Theme.colors.neutral[700] },
-  meta: { marginTop: 6, fontSize: 12, color: Theme.colors.neutral[500] },
-  actions: { flexDirection: 'row', gap: 8, marginTop: 16, flexWrap: 'wrap' },
-  btn: { paddingHorizontal: 12, paddingVertical: 10, borderRadius: 10 },
-  like: { backgroundColor: '#ffe4e6' },
-  chat: { backgroundColor: '#e0f2fe' },
-  directions: { backgroundColor: '#ecfccb' },
-  btnText: { fontWeight: '700', color: Theme.colors.neutral[800] },
-});
+function makeStyles(theme: AppTheme) {
+  // Helper for rgba with opacity
+  const alpha = (color: string, opacity: number) => {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
+
+  return StyleSheet.create({
+    backdrop: {
+      flex: 1,
+      backgroundColor: theme.colors.overlay,
+      justifyContent: 'center',
+      padding: theme.spacing.lg,
+    },
+    card: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.xl,
+      padding: theme.spacing.lg,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    title: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
+      color: theme.colors.onSurface,
+    },
+    message: {
+      marginTop: theme.spacing.sm,
+      color: theme.colors.onMuted,
+    },
+    meta: {
+      marginTop: theme.spacing.xs + theme.spacing.xs / 2,
+      fontSize: theme.typography.body.size * 0.75,
+      color: theme.colors.onMuted,
+    },
+    actions: {
+      flexDirection: 'row',
+      gap: theme.spacing.sm,
+      marginTop: theme.spacing.lg,
+      flexWrap: 'wrap',
+    },
+    btn: {
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm + theme.spacing.xs / 2,
+      borderRadius: theme.radii.md + theme.radii.xs / 2,
+    },
+    like: {
+      backgroundColor: alpha(theme.colors.danger, 0.1),
+    },
+    chat: {
+      backgroundColor: alpha(theme.colors.info, 0.1),
+    },
+    directions: {
+      backgroundColor: alpha(theme.colors.success, 0.1),
+    },
+    btnText: {
+      fontWeight: theme.typography.h1.weight,
+      color: theme.colors.onSurface,
+    },
+  });
+}
 export default PinDetailsModal;

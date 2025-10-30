@@ -27,6 +27,8 @@ export type Palette = {
     primary: readonly [string, string];
     success: readonly [string, string];
     danger: readonly [string, string];
+    warning: readonly [string, string];
+    info: readonly [string, string];
   };
 };
 

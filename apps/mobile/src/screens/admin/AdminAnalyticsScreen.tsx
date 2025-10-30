@@ -19,8 +19,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -213,7 +213,7 @@ function makeStyles(theme: AppTheme) {
       gap: theme.spacing.sm,
     },
     metricCard: {
-      width: (SCREEN_WIDTH - theme.spacing.md * 2 - theme.spacing.sm) / 2,
+      width: (SCREEN_WIDTH - theme.spacing['2xl'] - theme.spacing.sm) / 2,
       borderRadius: theme.radii.lg,
       padding: theme.spacing.md,
       ...theme.shadows.elevation2,
@@ -226,7 +226,7 @@ function makeStyles(theme: AppTheme) {
     metricTitle: {
       fontSize: theme.typography.body.size * 0.875,
       fontWeight: theme.typography.h2.weight,
-      marginLeft: theme.spacing.xs,
+      marginStart: theme.spacing.xs,
     },
     metricValue: {
       fontSize: theme.typography.h2.size,
@@ -252,7 +252,7 @@ function makeStyles(theme: AppTheme) {
       gap: theme.spacing.sm,
     },
     engagementCard: {
-      width: (SCREEN_WIDTH - theme.spacing.md * 2 - theme.spacing.sm) / 2,
+      width: (SCREEN_WIDTH - theme.spacing['2xl'] - theme.spacing.sm) / 2,
       borderRadius: theme.radii.lg,
       padding: theme.spacing.md,
       alignItems: "center",
@@ -293,7 +293,7 @@ function makeStyles(theme: AppTheme) {
       gap: theme.spacing.sm,
     },
     securityCard: {
-      width: (SCREEN_WIDTH - theme.spacing.md * 2 - theme.spacing.sm) / 2,
+      width: (SCREEN_WIDTH - theme.spacing['2xl'] - theme.spacing.sm) / 2,
       borderRadius: theme.radii.lg,
       padding: theme.spacing.md,
       alignItems: "center",

@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View, StyleSheet, Switch, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "react-native";
+import { useTheme } from "@mobile/theme";
+import type { AppTheme } from "@mobile/theme";
 
 interface SettingItem {
   id: string;
@@ -25,125 +27,153 @@ export const SettingItemComponent: React.FC<SettingItemProps> = ({
   category,
   onPress,
   onToggle,
-}) => (
-  <TouchableOpacity
-    style={StyleSheet.flatten([
-      styles.settingItem,
-      item.destructive && styles.settingItemDestructive,
-    ])}
-    onPress={() => {
-      if (item.type === "navigation" || item.type === "action") {
-        onPress?.(item.id);
+}) => {
+  const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+  const onPressSafe = onPress ?? (() => undefined);
+  const onToggleSafe = onToggle ?? (() => undefined);
+  const isToggle = item.type === "toggle";
+  const isNavigation = item.type === "navigation";
+  const iconColor = item.destructive ? theme.colors.danger : theme.colors.onMuted;
+  const switchValue = Boolean(item.value);
+
+  return (
+    <TouchableOpacity
+      style={StyleSheet.flatten([
+        styles.settingItem,
+        item.destructive && styles.settingItemDestructive,
+      ])}
+      onPress={() => {
+        if (!isToggle) {
+          onPressSafe(item.id);
+        }
+      }}
+      disabled={isToggle}
+      testID={`setting-item-${item.id}`}
+      accessibilityLabel={`${item.title}${item.subtitle ? `: ${item.subtitle}` : ''}`}
+      accessibilityRole={isToggle ? "text" : "button"}
+      accessibilityHint={
+        isToggle
+          ? undefined
+          : item.type === "action"
+            ? "Activates this account action"
+            : "Opens the related settings screen"
       }
-    }}
-    disabled={item.type === "toggle"}
-    testID={`setting-item-${item.id}`}
-    accessibilityLabel={`${item.title}${item.subtitle ? `: ${item.subtitle}` : ''}`}
-    accessibilityRole={item.type === "toggle" ? "text" : "button"}
-  >
-    <View style={styles.settingLeft}>
-      <View
-        style={StyleSheet.flatten([
-          styles.settingIcon,
-          item.destructive && styles.settingIconDestructive,
-        ])}
-      >
-        <Ionicons
-          name={item.icon as any}
-          size={20}
-          color={item.destructive ? Theme.colors.status.error : Theme.colors.neutral[500]}
-          accessibilityLabel={`${item.title} icon`}
-        />
-      </View>
-      <View style={styles.settingText}>
-        <Text
+    >
+      <View style={styles.settingLeft}>
+        <View
           style={StyleSheet.flatten([
-            styles.settingTitle,
-            item.destructive && styles.settingTitleDestructive,
+            styles.settingIcon,
+            item.destructive && styles.settingIconDestructive,
           ])}
         >
-          {item.title}
-        </Text>
-        {item.subtitle && (
+          <Ionicons
+            name={item.icon as any}
+            size={20}
+            color={iconColor}
+            accessibilityLabel={`${item.title} icon`}
+          />
+        </View>
+        <View style={styles.settingText}>
           <Text
             style={StyleSheet.flatten([
-              styles.settingSubtitle,
-              item.destructive && styles.settingSubtitleDestructive,
+              styles.settingTitle,
+              item.destructive && styles.settingTitleDestructive,
             ])}
           >
-            {item.subtitle}
+            {item.title}
           </Text>
+          {item.subtitle && (
+            <Text
+              style={StyleSheet.flatten([
+                styles.settingSubtitle,
+                item.destructive && styles.settingSubtitleDestructive,
+              ])}
+            >
+              {item.subtitle}
+            </Text>
+          )}
+        </View>
+      </View>
+
+      <View style={styles.settingRight}>
+        {isToggle && (
+          <Switch
+            value={switchValue}
+            onValueChange={(value) => {
+              if (category) {
+                onToggleSafe(item.id, value);
+              }
+            }}
+            trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+            thumbColor={switchValue ? theme.colors.onPrimary : theme.colors.surface}
+            accessibilityLabel={`${item.title} toggle`}
+          />
+        )}
+        {isNavigation && (
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme.colors.onMuted}
+            accessibilityElementsHidden
+            importantForAccessibility="no"
+          />
         )}
       </View>
-    </View>
+    </TouchableOpacity>
+  );
+};
 
-    <View style={styles.settingRight}>
-      {item.type === "toggle" && (
-        <Switch
-          value={item.value}
-          onValueChange={(value) =>
-            category && onToggle?.(item.id, value)
-          }
-          trackColor={{ false: Theme.colors.neutral[300], true: Theme.colors.secondary[500] }}
-          thumbColor={item.value ? Theme.colors.neutral[0] : Theme.colors.neutral[100]}
-        />
-      )}
-      {item.type === "navigation" && (
-        <Ionicons name="chevron-forward" size={20} color={Theme.colors.neutral[400]} />
-      )}
-    </View>
-  </TouchableOpacity>
-);
-
-const styles = StyleSheet.create({
-  settingItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: Theme.colors.neutral[100],
-  },
-  settingItemDestructive: {
-    borderBottomColor: "#FEF2F2",
-  },
-  settingLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  settingIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: Theme.colors.neutral[100],
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  settingIconDestructive: {
-    backgroundColor: "#FEF2F2",
-  },
-  settingText: {
-    flex: 1,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: Theme.colors.neutral[900],
-    marginBottom: 2,
-  },
-  settingTitleDestructive: {
-    color: Theme.colors.status.error,
-  },
-  settingSubtitle: {
-    fontSize: 13,
-    color: Theme.colors.neutral[500],
-  },
-  settingSubtitleDestructive: {
-    color: "#FCA5A5",
-  },
-  settingRight: {
-    marginLeft: 12,
-  },
-});
+const createStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    settingItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: theme.spacing.md,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: theme.colors.border,
+    },
+    settingItemDestructive: {
+      borderBottomColor: theme.colors.danger,
+    },
+    settingLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+    },
+    settingIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.surface,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: theme.spacing.sm,
+    },
+    settingIconDestructive: {
+      backgroundColor: `${theme.colors.danger}1A`,
+    },
+    settingText: {
+      flex: 1,
+    },
+    settingTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.onSurface,
+      marginBottom: 2,
+    },
+    settingTitleDestructive: {
+      color: theme.colors.danger,
+    },
+    settingSubtitle: {
+      fontSize: 13,
+      color: theme.colors.onMuted,
+    },
+    settingSubtitleDestructive: {
+      color: theme.colors.danger,
+    },
+    settingRight: {
+      marginLeft: theme.spacing.sm,
+    },
+  });

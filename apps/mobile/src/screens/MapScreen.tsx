@@ -48,25 +48,30 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
 
   // Dynamic styles that depend on theme
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff' },
+    container: { flex: 1, backgroundColor: theme.colors.bg },
     map: { flex: 1 },
-    fabs: { position: 'absolute', right: 12, bottom: 24, gap: 10 },
+    fabs: {
+      position: 'absolute',
+      right: theme.spacing.md,
+      bottom: theme.spacing.lg,
+      gap: theme.spacing.sm,
+    },
     fab: {
       width: 44,
       height: 44,
-      borderRadius: 22,
+      borderRadius: theme.radii.full,
       alignItems: 'center',
       justifyContent: 'center',
-      shadowColor: '#000',
+      shadowColor: theme.colors.border,
       shadowOpacity: 0.15,
       shadowRadius: 8,
       elevation: 6,
     },
-    fabLocate: { backgroundColor: '#fff' },
-    fabAR: { backgroundColor: '#fff' },
-    fabFilters: { backgroundColor: '#fff' },
+    fabLocate: { backgroundColor: theme.colors.surface },
+    fabAR: { backgroundColor: theme.colors.surface },
+    fabFilters: { backgroundColor: theme.colors.surface },
     fabCreate: { backgroundColor: theme.colors.primary },
-    fabText: { fontSize: 18 },
+    fabText: { fontSize: theme.typography.body.size + 2 },
   });
 
   const handleARPress = () => {

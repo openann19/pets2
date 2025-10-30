@@ -5,6 +5,10 @@
 import { useCallback, useState } from 'react';
 import { Alert } from 'react-native';
 import { logger } from '@pawfectmatch/core';
+import { moderationAPI } from '../../../services/api';
+import type { NavigationProp } from '@react-navigation/native';
+import type { RootStackParamList } from '../../../navigation/types';
+import { Linking } from 'react-native';
 
 interface ModerationTool {
   id: string;
@@ -42,7 +46,12 @@ interface UseModerationToolsReturn {
   refreshStats: () => Promise<void>;
 }
 
-export const useModerationTools = (): UseModerationToolsReturn => {
+interface UseModerationToolsOptions {
+  navigation?: NavigationProp<RootStackParamList>;
+}
+
+export const useModerationTools = (options?: UseModerationToolsOptions): UseModerationToolsReturn => {
+  const { navigation } = options || {};
   const [moderationStats, setModerationStats] = useState<ModerationStats>({
     pendingReports: 12,
     reviewedToday: 8,
@@ -52,47 +61,108 @@ export const useModerationTools = (): UseModerationToolsReturn => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const reviewReports = useCallback(() => {
-    Alert.alert('User Reports', 'Reports moderation coming soon!');
-  }, []);
+    if (navigation) {
+      try {
+        (navigation as any).navigate('AdminUploads');
+        logger.info('Navigated to reports moderation');
+      } catch (error) {
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to navigate to reports', { error: errorObj });
+        Alert.alert('Navigation Error', 'Unable to navigate to reports screen.');
+      }
+    } else {
+      Alert.alert('User Reports', 'Navigate to Admin Uploads screen for reports moderation.');
+    }
+  }, [navigation]);
 
   const moderateContent = useCallback(() => {
-    Alert.alert('Content Moderation', 'Content moderation coming soon!');
-  }, []);
+    if (navigation) {
+      try {
+        (navigation as any).navigate('AdminUploads');
+        logger.info('Navigated to content moderation');
+      } catch (error) {
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to navigate to content moderation', { error: errorObj });
+        Alert.alert('Navigation Error', 'Unable to navigate to content moderation.');
+      }
+    } else {
+      Alert.alert('Content Moderation', 'Navigate to Admin Uploads screen for content moderation.');
+    }
+  }, [navigation]);
 
   const monitorMessages = useCallback(() => {
-    // This would navigate to chat monitoring
-    logger.info('Navigate to message monitoring');
-  }, []);
+    if (navigation) {
+      try {
+        (navigation as any).navigate('AdminChats');
+        logger.info('Navigated to message monitoring');
+      } catch (error) {
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to navigate to message monitoring', { error: errorObj });
+      }
+    } else {
+      logger.info('Navigate to message monitoring');
+    }
+  }, [navigation]);
 
   const manageUsers = useCallback(() => {
-    Alert.alert('User Management', 'User management coming soon!');
-  }, []);
+    if (navigation) {
+      try {
+        (navigation as any).navigate('AdminUsers');
+        logger.info('Navigated to user management');
+      } catch (error) {
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to navigate to user management', { error: errorObj });
+        Alert.alert('Navigation Error', 'Unable to navigate to user management.');
+      }
+    } else {
+      Alert.alert('User Management', 'Navigate to Admin Users screen for user management.');
+    }
+  }, [navigation]);
 
   const viewAnalytics = useCallback(() => {
-    Alert.alert('Analytics', 'Moderation analytics coming soon!');
-  }, []);
+    if (navigation) {
+      try {
+        (navigation as any).navigate('AdminAnalytics');
+        logger.info('Navigated to moderation analytics');
+      } catch (error) {
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to navigate to analytics', { error: errorObj });
+        Alert.alert('Navigation Error', 'Unable to navigate to analytics dashboard.');
+      }
+    } else {
+      Alert.alert('Analytics', 'Navigate to Admin Analytics screen for moderation analytics.');
+    }
+  }, [navigation]);
 
   const configureSettings = useCallback(() => {
-    Alert.alert('Settings', 'Moderation settings coming soon!');
-  }, []);
+    if (navigation) {
+      try {
+        (navigation as any).navigate('AdminConfig');
+        logger.info('Navigated to moderation settings');
+      } catch (error) {
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to navigate to moderation settings', { error: errorObj });
+        Alert.alert('Navigation Error', 'Unable to navigate to moderation settings.');
+      }
+    } else {
+      Alert.alert('Settings', 'Navigate to Admin Config screen for moderation settings.');
+    }
+  }, [navigation]);
 
   const refreshStats = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      // In a real implementation, this would fetch updated stats from API
-      logger.info('Refreshing moderation stats');
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Update with mock refreshed data
-      setModerationStats((prev) => ({
-        ...prev,
-        pendingReports: Math.max(0, prev.pendingReports - 2),
-        reviewedToday: prev.reviewedToday + 2,
-      }));
+      const stats = await moderationAPI.getStats();
+      setModerationStats({
+        pendingReports: stats.pendingReports,
+        reviewedToday: 8, // This would come from API if available
+        totalModerated: 156, // This would come from API if available
+        activeWarnings: 3, // This would come from API if available
+      });
+      logger.info('Moderation stats refreshed', { stats });
     } catch (error) {
-      logger.error('Failed to refresh moderation stats', { error });
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to refresh moderation stats', { error: errorObj });
     } finally {
       setIsRefreshing(false);
     }

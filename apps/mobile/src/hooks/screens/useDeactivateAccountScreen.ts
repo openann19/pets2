@@ -7,7 +7,7 @@ import { useCallback, useState } from 'react';
 import { Alert } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { logger } from '@pawfectmatch/core';
-import gdprService from '../../services/gdprService';
+import * as gdprService from '../../services/gdprService';
 
 interface UseDeactivateAccountScreenReturn {
   reason: string;

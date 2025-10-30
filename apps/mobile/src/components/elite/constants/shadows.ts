@@ -1,44 +1,46 @@
 /**
- * Premium Shadow Styles
+ * Premium Shadow Styles (theme-based)
  * Centralized shadow definitions for elite components with glow effects
+ * using semantic theme tokens.
  */
+import type { AppTheme } from '@/theme';
 
-export const PREMIUM_SHADOWS = {
+export const getPremiumShadows = (theme: AppTheme) => ({
   primaryGlow: {
-    shadowColor: '#ec4899',
+    shadowColor: theme.colors.primary,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 20,
     elevation: 15,
   },
   secondaryGlow: {
-    shadowColor: '#0ea5e9',
+    shadowColor: theme.colors.info,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 20,
     elevation: 15,
   },
   holographicGlow: {
-    shadowColor: '#667eea',
+    shadowColor: theme.colors.primary,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.6,
     shadowRadius: 25,
     elevation: 20,
   },
   neonGlow: {
-    shadowColor: '#00f5ff',
+    shadowColor: theme.colors.info,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 30,
     elevation: 25,
   },
   medium: {
-    shadowColor: '#000',
+    shadowColor: theme.palette.neutral[900],
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 10,
     elevation: 8,
   },
-} as const;
+} as const);
 
-export type PremiumShadowKey = keyof typeof PREMIUM_SHADOWS;
+export type PremiumShadowKey = keyof ReturnType<typeof getPremiumShadows>;

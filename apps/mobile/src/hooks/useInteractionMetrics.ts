@@ -7,7 +7,7 @@ interface InteractionMetric {
   endTime?: number;
   duration?: number;
   success: boolean;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface UseInteractionMetricsOptions {
@@ -24,7 +24,7 @@ export function useInteractionMetrics({
   const metricsRef = useRef<Map<string, InteractionMetric>>(new Map());
 
   const startInteraction = useCallback(
-    (id: string = 'default', metadata?: Record<string, any>) => {
+    (id: string = 'default', metadata?: Record<string, unknown>) => {
       const metric: InteractionMetric = {
         name,
         startTime: performance.now(),
@@ -42,7 +42,7 @@ export function useInteractionMetrics({
   );
 
   const endInteraction = useCallback(
-    (id: string = 'default', success: boolean = true, metadata?: Record<string, any>) => {
+    (id: string = 'default', success: boolean = true, metadata?: Record<string, unknown>) => {
       const metric = metricsRef.current.get(id);
       if (!metric) {
         logger.warn(`⚠️ No interaction found for id: ${id}`);
@@ -109,7 +109,7 @@ export function useInteractionMetrics({
     async <T>(
       fn: () => T | Promise<T>,
       id: string = 'default',
-      metadata?: Record<string, any>,
+      metadata?: Record<string, unknown>,
     ): Promise<{ result: T; metric: InteractionMetric }> => {
       startInteraction(id, metadata);
 

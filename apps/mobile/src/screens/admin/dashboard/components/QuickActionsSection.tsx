@@ -131,7 +131,7 @@ export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
   ];
 
   return (
-    <View style={styles.actionsContainer}>
+    <View style={styles.actionsContainer} testID="quick-actions-section" accessibilityLabel="Quick actions for admin dashboard">
       <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Quick Actions</Text>
       <View style={styles.actionsGrid}>
         {actions.map((action) => (

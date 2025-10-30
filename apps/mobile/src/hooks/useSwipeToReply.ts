@@ -12,7 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
-export interface UseSwipeToReplyOpts<T = any> {
+export interface UseSwipeToReplyOpts<T = unknown> {
   enabled?: boolean;
   threshold?: number; // px to trigger
   maxPull?: number; // max translation

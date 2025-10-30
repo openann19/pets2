@@ -1,10 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Animated,
-  Dimensions,
   Image,
   StatusBar,
   StyleSheet,
@@ -16,7 +15,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import type { CallData } from "../../services/WebRTCService";
-import { useTheme } from "@/theme";
+import { useTheme } from '../../theme/Provider';
 
 interface IncomingCallScreenProps {
   callData: CallData;
@@ -29,7 +28,8 @@ export default function IncomingCallScreen({
   onAnswer,
   onReject,
 }: IncomingCallScreenProps) {
-  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+  const theme = useTheme();
+  // const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
   const [pulseAnim] = useState(new Animated.Value(1));
   const [slideAnim] = useState(new Animated.Value(0));
 
@@ -83,6 +83,122 @@ export default function IncomingCallScreen({
   const formatCallType = (type: string) => {
     return type === "video" ? "Video Call" : "Voice Call";
   };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    backgroundGradient: {
+      position: "absolute" as const,
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+    },
+    blurOverlay: {
+      position: "absolute" as const,
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+    },
+    content: {
+      flex: 1,
+      justifyContent: "space-between" as const,
+      paddingHorizontal: 30,
+    },
+    header: {
+      alignItems: "center" as const,
+      marginTop: 60,
+    },
+    incomingCallText: {
+      fontSize: 18,
+      color: "white",
+      opacity: 0.8,
+      marginBottom: 5,
+    },
+    callTypeText: {
+      fontSize: 16,
+      color: "white",
+      opacity: 0.6,
+    },
+    callerInfo: {
+      alignItems: "center" as const,
+      flex: 1,
+      justifyContent: "center" as const,
+    },
+    avatarContainer: {
+      marginBottom: 30,
+    },
+    avatarRing: {
+      width: 200,
+      height: 200,
+      borderRadius: 100,
+      borderWidth: 4,
+      borderColor: "rgba(255, 255, 255, 0.3)",
+      padding: 8,
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
+    },
+    avatar: {
+      width: "100%" as const,
+      height: "100%" as const,
+      borderRadius: 92,
+      backgroundColor: "#ddd",
+    },
+    callerName: {
+      fontSize: 32,
+      fontWeight: "bold" as const,
+      color: "white",
+      marginBottom: 8,
+      textAlign: "center" as const,
+    },
+    callerSubtext: {
+      fontSize: 18,
+      color: "white",
+      opacity: 0.7,
+    },
+    actionsContainer: {
+      flexDirection: "row" as const,
+      justifyContent: "space-around" as const,
+      alignItems: "center" as const,
+      marginBottom: 50,
+    },
+    actionButton: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      elevation: 8,
+      shadowColor: theme.colors.bg,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+    },
+    rejectButton: {},
+    answerButton: {},
+    buttonGradient: {
+      width: "100%" as const,
+      height: "100%" as const,
+      borderRadius: 40,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+    },
+    additionalActions: {
+      flexDirection: "row" as const,
+      justifyContent: "space-around" as const,
+      marginBottom: 40,
+    },
+    additionalButton: {
+      alignItems: "center" as const,
+      padding: 15,
+    },
+    additionalButtonText: {
+      color: "white",
+      fontSize: 12,
+      marginTop: 5,
+      opacity: 0.8,
+    },
+  });
 
   return (
     <View style={styles.container} testID="incoming-call-container">
@@ -201,7 +317,7 @@ export default function IncomingCallScreen({
               <Ionicons
                 name="call"
                 size={32}
-                color={theme.colors.onSurface}
+                color="white"
                 style={{ transform: [{ rotate: "135deg" }] }}
               />
             </LinearGradient>
@@ -223,7 +339,7 @@ export default function IncomingCallScreen({
               colors={["#2ed573", "#1dd1a1"]}
               style={styles.buttonGradient}
             >
-              <Ionicons name="call" size={32} color={theme.colors.onSurface} />
+              <Ionicons name="call" size={32} color="white" />
             </LinearGradient>
           </TouchableOpacity>
         </Animated.View>
@@ -238,13 +354,13 @@ export default function IncomingCallScreen({
           ])}
         >
           <TouchableOpacity style={styles.additionalButton} testID="IncomingCallScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
-            <Ionicons name="chatbubble" size={24} color={theme.colors.onSurface} />
-            <Text style={styles.additionalButtonText}>Message</Text>
+            <Ionicons name="chatbubble" size={24} color="white" />
+            <Text style={[styles.additionalButtonText, { color: 'white' }]}>Message</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.additionalButton} testID="IncomingCallScreen-button-2" accessibilityLabel="Button" accessibilityRole="button">
-            <Ionicons name="person" size={24} color={theme.colors.onSurface} />
-            <Text style={styles.additionalButtonText}>Profile</Text>
+            <Ionicons name="person" size={24} color="white" />
+            <Text style={[styles.additionalButtonText, { color: 'white' }]}>Profile</Text>
           </TouchableOpacity>
         </Animated.View>
       </SafeAreaView>
@@ -252,118 +368,3 @@ export default function IncomingCallScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.bg,
-  },
-  backgroundGradient: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
-  blurOverlay: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "space-between",
-    paddingHorizontal: 30,
-  },
-  header: {
-    alignItems: "center",
-    marginTop: 60,
-  },
-  incomingCallText: {
-    fontSize: 18,
-    color: theme.colors.onSurface,
-    opacity: 0.8,
-    marginBottom: 5,
-  },
-  callTypeText: {
-    fontSize: 16,
-    color: theme.colors.onSurface,
-    opacity: 0.6,
-  },
-  callerInfo: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-  },
-  avatarContainer: {
-    marginBottom: 30,
-  },
-  avatarRing: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderWidth: 4,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    padding: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-  },
-  avatar: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 92,
-    backgroundColor: "#ddd",
-  },
-  callerName: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: theme.colors.onSurface,
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  callerSubtext: {
-    fontSize: 18,
-    color: theme.colors.onSurface,
-    opacity: 0.7,
-  },
-  actionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    marginBottom: 50,
-  },
-  actionButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    elevation: 8,
-    shadowColor: theme.colors.bg,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-  },
-  rejectButton: {},
-  answerButton: {},
-  buttonGradient: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  additionalActions: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 40,
-  },
-  additionalButton: {
-    alignItems: "center",
-    padding: 15,
-  },
-  additionalButtonText: {
-    color: theme.colors.onSurface,
-    fontSize: 12,
-    marginTop: 5,
-    opacity: 0.8,
-  },
-});

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import gdprService from '../../../services/gdprService';
+import * as gdprService from '../../../services/gdprService';
 import { logger } from '@pawfectmatch/core';
 
 export interface GDPRStatus {

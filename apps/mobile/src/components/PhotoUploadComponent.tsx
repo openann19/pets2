@@ -2,6 +2,8 @@ import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import { Alert, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 const { width } = Dimensions.get('window');
 const PHOTO_SIZE = (width - 60) / 3;
@@ -33,6 +35,8 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const scaleValue = useSharedValue(1);
+  const theme = useTheme();
+  const styles = makeStyles(theme);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scaleValue.value }],
@@ -263,157 +267,159 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'Theme.colors.neutral[800]',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: 'Theme.colors.neutral[500]',
-  },
-  photoGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 20,
-  },
-  photoContainer: {
-    position: 'relative',
-    width: PHOTO_SIZE,
-    height: PHOTO_SIZE,
-  },
-  photo: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 12,
-    backgroundColor: 'Theme.colors.neutral[100]',
-  },
-  primaryBadge: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    backgroundColor: 'Theme.colors.primary[500]',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  primaryBadgeText: {
-    color: 'Theme.colors.neutral[0]',
-    fontSize: 10,
-    fontWeight: '600',
-  },
-  photoActions: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    flexDirection: 'row',
-    gap: 4,
-  },
-  actionButton: {
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  removeButton: {
-    backgroundColor: 'rgba(239, 68, 68, 0.8)',
-  },
-  actionButtonText: {
-    color: 'Theme.colors.neutral[0]',
-    fontSize: 12,
-  },
-  removeButtonText: {
-    color: 'Theme.colors.neutral[0]',
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-  addPhotoContainer: {
-    width: PHOTO_SIZE,
-    height: PHOTO_SIZE,
-  },
-  addPhotoButton: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: 'Theme.colors.neutral[200]',
-    borderStyle: 'dashed',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'Theme.colors.background.secondary',
-  },
-  addPhotoIcon: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
-  addPhotoText: {
-    fontSize: 12,
-    color: 'Theme.colors.neutral[500]',
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  emptyState: {
-    alignItems: 'center',
-    padding: 40,
-    backgroundColor: 'Theme.colors.background.secondary',
-    borderRadius: 16,
-    marginBottom: 20,
-  },
-  emptyStateIcon: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
-  emptyStateTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'Theme.colors.neutral[800]',
-    marginBottom: 8,
-  },
-  emptyStateText: {
-    fontSize: 14,
-    color: 'Theme.colors.neutral[500]',
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 20,
-  },
-  emptyStateButton: {
-    backgroundColor: 'Theme.colors.primary[500]',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  emptyStateButtonText: {
-    color: 'Theme.colors.neutral[0]',
-    fontWeight: '600',
-  },
-  tips: {
-    backgroundColor: '#fef3c7',
-    borderRadius: 12,
-    padding: 16,
-  },
-  tipsTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#92400e',
-    marginBottom: 8,
-  },
-  tip: {
-    fontSize: 12,
-    color: '#92400e',
-    marginBottom: 2,
-    lineHeight: 16,
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      marginBottom: 20,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+      marginBottom: 4,
+    },
+    subtitle: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+    },
+    photoGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 10,
+      marginBottom: 20,
+    },
+    photoContainer: {
+      position: 'relative',
+      width: PHOTO_SIZE,
+      height: PHOTO_SIZE,
+    },
+    photo: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 12,
+      backgroundColor: theme.colors.surface,
+    },
+    primaryBadge: {
+      position: 'absolute',
+      top: 8,
+      left: 8,
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+    },
+    primaryBadgeText: {
+      color: theme.colors.onPrimary,
+      fontSize: 10,
+      fontWeight: '600',
+    },
+    photoActions: {
+      position: 'absolute',
+      top: 8,
+      right: 8,
+      flexDirection: 'row',
+      gap: 4,
+    },
+    actionButton: {
+      backgroundColor: theme.colors.primary,
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    removeButton: {
+      backgroundColor: theme.colors.danger,
+    },
+    actionButtonText: {
+      color: theme.colors.onPrimary,
+      fontSize: 12,
+    },
+    removeButtonText: {
+      color: theme.colors.onPrimary,
+      fontSize: 10,
+      fontWeight: 'bold',
+    },
+    addPhotoContainer: {
+      width: PHOTO_SIZE,
+      height: PHOTO_SIZE,
+    },
+    addPhotoButton: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: theme.colors.border,
+      borderStyle: 'dashed',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.surface,
+    },
+    addPhotoIcon: {
+      fontSize: 32,
+      marginBottom: 8,
+    },
+    addPhotoText: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      fontWeight: '500',
+      textAlign: 'center',
+    },
+    emptyState: {
+      alignItems: 'center',
+      padding: 40,
+      backgroundColor: theme.colors.surface,
+      borderRadius: 16,
+      marginBottom: 20,
+    },
+    emptyStateIcon: {
+      fontSize: 48,
+      marginBottom: 16,
+    },
+    emptyStateTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+      marginBottom: 8,
+    },
+    emptyStateText: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      textAlign: 'center',
+      lineHeight: 20,
+      marginBottom: 20,
+    },
+    emptyStateButton: {
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: 24,
+      paddingVertical: 12,
+      borderRadius: 8,
+    },
+    emptyStateButtonText: {
+      color: theme.colors.onPrimary,
+      fontWeight: '600',
+    },
+    tips: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: 12,
+      padding: 16,
+    },
+    tipsTitle: {
+      fontSize: 14,
+      fontWeight: 'bold',
+      color: theme.colors.warning,
+      marginBottom: 8,
+    },
+    tip: {
+      fontSize: 12,
+      color: theme.colors.warning,
+      marginBottom: 2,
+      lineHeight: 16,
+    },
+  });
+}
 
 export default PhotoUploadComponent;

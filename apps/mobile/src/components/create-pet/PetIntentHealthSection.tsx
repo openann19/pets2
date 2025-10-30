@@ -34,7 +34,7 @@ const makeStyles = (theme: any) =>
     sectionTitle: {
       fontSize: 20,
       fontWeight: 'bold',
-      color: theme.colors.neutral[900],
+      color: theme.colors.onSurface,
       marginBottom: 16,
     },
     inputGroup: {
@@ -43,7 +43,7 @@ const makeStyles = (theme: any) =>
     label: {
       fontSize: 16,
       fontWeight: '600',
-      color: theme.colors.neutral[700],
+      color: theme.colors.onMuted,
       marginBottom: 8,
     },
     errorText: {
@@ -62,13 +62,13 @@ const makeStyles = (theme: any) =>
       alignItems: 'center',
       padding: 16,
       borderWidth: 1,
-      borderColor: theme.colors.neutral[300],
+      borderColor: theme.colors.border,
       borderRadius: 12,
-      backgroundColor: theme.colors.neutral[0],
+      backgroundColor: theme.colors.bg,
     },
     intentButtonSelected: {
-      borderColor: theme.colors.secondary[500],
-      backgroundColor: theme.colors.neutral[100],
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.surface,
     },
     intentEmoji: {
       fontSize: 24,
@@ -76,12 +76,12 @@ const makeStyles = (theme: any) =>
     },
     intentText: {
       fontSize: 16,
-      color: theme.colors.neutral[700],
+      color: theme.colors.onMuted,
       fontWeight: '500',
       flex: 1,
     },
     intentTextSelected: {
-      color: theme.colors.secondary[500],
+      color: theme.colors.primary,
     },
     healthOptions: {
       gap: 12,
@@ -90,19 +90,19 @@ const makeStyles = (theme: any) =>
       width: 20,
       height: 20,
       borderWidth: 2,
-      borderColor: theme.colors.neutral[300],
+      borderColor: theme.colors.border,
       borderRadius: 4,
       marginRight: 12,
       justifyContent: 'center',
       alignItems: 'center',
     },
     checkboxChecked: {
-      backgroundColor: theme.colors.secondary[500],
-      borderColor: theme.colors.secondary[500],
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
     },
     checkboxLabel: {
       fontSize: 16,
-      color: theme.colors.neutral[700],
+      color: theme.colors.onMuted,
     },
   });
 

@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@mobile/theme';
 import type { AppTheme } from '@mobile/theme';
 import { logger } from '../services/logger';
+import * as Haptics from 'expo-haptics';
 
 interface VerificationBadge {
   id: string;
@@ -224,9 +225,9 @@ export default function VerificationCenterScreen(): React.JSX.Element {
   const loadVerificationStatus = async () => {
     try {
       setLoading(true);
-      // TODO: Call API to get verification status
-      // const response = await verificationService.getStatus();
-      // setVerificationStatus(response);
+      const { verificationService } = await import('../services/verificationService');
+      const response = await verificationService.getStatus();
+      setVerificationStatus(response);
     } catch (error) {
       logger.error('Error loading verification status', { error: error as Error });
     } finally {
@@ -299,14 +300,128 @@ export default function VerificationCenterScreen(): React.JSX.Element {
     };
   };
 
-  const handleStartVerification = (tier: string) => {
-    // TODO: Navigate to specific verification submission screen
-    Alert.alert('Coming Soon', 'Verification submission will be available soon.');
+  const handleStartVerification = async () => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      
+      // Determine next tier to verify
+      const nextTier = verificationStatus.tier === 'tier0' ? 'tier1' : 
+                       verificationStatus.tier === 'tier1' ? 'tier2' :
+                       verificationStatus.tier === 'tier2' ? 'tier3' :
+                       verificationStatus.tier === 'tier3' ? 'tier4' : null;
+      
+      if (!nextTier) {
+        Alert.alert('Already Verified', 'You have completed all verification tiers.');
+        return;
+      }
+
+      // Check if verification is already in progress
+      if (verificationStatus.status === 'in_progress' || verificationStatus.status === 'pending_review') {
+        Alert.alert(
+          'Verification In Progress',
+          'Your verification is currently being reviewed. Please wait for the review to complete.',
+        );
+        return;
+      }
+
+      // Show info about what's needed for the next tier
+      const tierInfo: Record<string, string> = {
+        tier1: 'ID Verification requires a government-issued ID and a selfie photo.',
+        tier2: 'Pet Owner Verification requires proof of pet ownership such as registration papers or adoption documents.',
+        tier3: 'Vet Verification requires veterinary records confirming your pet\'s health status.',
+        tier4: 'Organization Verification requires proof of affiliation with a rescue organization or shelter.',
+      };
+
+      Alert.alert(
+        `Start ${getStatusDisplay().tierName} Verification`,
+        tierInfo[nextTier] || 'Please prepare the required documents.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Continue',
+            onPress: async () => {
+              try {
+                // For now, update status to in_progress and show that submission screen is needed
+                // In a full implementation, this would navigate to a submission form screen
+                Alert.alert(
+                  'Verification Started',
+                  'Please navigate to the verification submission screen to upload required documents. For Tier 1, you will need to upload ID documents and a selfie.',
+                  [
+                    {
+                      text: 'OK',
+                      onPress: async () => {
+                        // Reload status to reflect any changes
+                        await loadVerificationStatus();
+                      },
+                    },
+                  ],
+                );
+                logger.info('Verification start initiated', { tier: nextTier, currentTier: verificationStatus.tier });
+              } catch (error) {
+                const errorObj = error instanceof Error ? error : new Error(String(error));
+                logger.error('Failed to start verification', { error: errorObj });
+                Alert.alert('Error', 'Failed to start verification process. Please try again.');
+              }
+            },
+          },
+        ],
+      );
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error starting verification', { error: errorObj });
+      Alert.alert('Error', 'Failed to start verification. Please try again.');
+    }
   };
 
-  const handleRetry = () => {
-    // TODO: Restart verification process
-    Alert.alert('Coming Soon', 'Verification retry will be available soon.');
+  const handleRetry = async () => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      
+      Alert.alert(
+        'Retry Verification',
+        'Are you sure you want to restart the verification process? This will reset your current verification status.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Retry',
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                // Reload verification status (in a real app, this would call an API to reset status)
+                await loadVerificationStatus();
+                
+                Alert.alert(
+                  'Verification Reset',
+                  'Your verification has been reset. You can now start the verification process again.',
+                  [
+                    {
+                      text: 'OK',
+                      onPress: () => {
+                        // Update status to not_started
+                        setVerificationStatus((prev) => {
+                          const updated = { ...prev, status: 'not_started' as const };
+                          delete updated.rejectionReason;
+                          return updated;
+                        });
+                      },
+                    },
+                  ],
+                );
+                logger.info('Verification retry initiated', { currentTier: verificationStatus.tier });
+              } catch (error) {
+                const errorObj = error instanceof Error ? error : new Error(String(error));
+                logger.error('Failed to retry verification', { error: errorObj });
+                Alert.alert('Error', 'Failed to reset verification. Please try again later.');
+              }
+            },
+          },
+        ],
+      );
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error retrying verification', { error: errorObj });
+      Alert.alert('Error', 'Failed to retry verification. Please try again.');
+    }
   };
 
   if (loading) {
@@ -423,7 +538,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
         {verificationStatus.status === 'not_started' && (
           <TouchableOpacity
             style={styles.actionButton}
-             testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { handleStartVerification('tier1'); }}
+             testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleStartVerification}
           >
             <Ionicons name="shield-checkmark" size={20} color={colors.onPrimary} />
             <Text style={styles.actionButtonText}>
@@ -435,7 +550,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
         {verificationStatus.status === 'approved' && verificationStatus.tier === 'tier1' && (
           <TouchableOpacity
             style={styles.actionButton}
-             testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { handleStartVerification('tier2'); }}
+             testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleStartVerification}
           >
             <Ionicons name="paw" size={20} color={colors.onPrimary} />
             <Text style={styles.actionButtonText}>

@@ -127,8 +127,8 @@ function AdminVerificationsScreen({
         } else if (action === "reject") {
           response = await _adminAPI.rejectVerification(verificationId, reason || "Rejected");
         } else if (action === "request_info") {
-          // Handle request_info action
-          response = { success: true }; // Placeholder response
+          // Use the request additional documents endpoint
+          response = await _adminAPI.requestVerificationInfo(verificationId, reason || "Additional information required");
         } else {
           throw new Error("Unknown action");
         }
@@ -168,6 +168,11 @@ function AdminVerificationsScreen({
             `Verification ${action.replace("_", " ")}d successfully`,
           );
           setSelectedVerification(null);
+          
+          // Reload verifications to get latest data
+          void loadVerifications();
+        } else {
+          throw new Error(response?.message || `Failed to ${action} verification`);
         }
       } catch (error) {
         errorHandler.handleError(
@@ -180,9 +185,10 @@ function AdminVerificationsScreen({
             metadata: { verificationId, action },
           },
         );
+        Alert.alert("Error", `Failed to ${action} verification. Please try again.`);
       }
     },
-    [],
+    [loadVerifications],
   );
 
   const handleRejectWithReason = useCallback(
@@ -784,7 +790,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
     borderBottomColor: theme.colors.border,
   },
   backButton: {
-    marginRight: 16,
+    marginEnd: theme.spacing.lg,
   },
   headerTitle: {
     fontSize: 20,
@@ -805,7 +811,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    marginLeft: 8,
+    marginStart: theme.spacing.sm,
     fontSize: 16,
   },
   filterContainer: {
@@ -1002,7 +1008,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   documentInfo: {
     flex: 1,
-    marginLeft: 12,
+    marginStart: theme.spacing.sm,
   },
   documentName: {
     fontSize: 14,

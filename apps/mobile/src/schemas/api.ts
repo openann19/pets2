@@ -131,6 +131,72 @@ export const SendMessageSchema = z.object({
     .optional(),
 });
 
+// Chat Reaction Schemas
+export const ReactionTypeSchema = z.enum(['like', 'love', 'laugh', 'wow', 'sad', 'angry']);
+export const MessageReactionSchema = z.object({
+  type: ReactionTypeSchema,
+  userId: z.string(),
+  createdAt: z.string().datetime(),
+});
+export const SendReactionRequestSchema = z.object({
+  messageId: z.string(),
+  reactionType: ReactionTypeSchema,
+});
+export const SendReactionResponseSchema = z.object({
+  success: z.boolean(),
+  updatedMessage: MessageSchema.extend({
+    reactions: z.array(MessageReactionSchema).optional(),
+  }),
+  error: z.string().optional(),
+});
+
+// Chat Attachment Schemas
+export const AttachmentTypeSchema = z.enum(['image', 'video', 'document', 'audio']);
+export const AttachmentSchema = z.object({
+  _id: z.string(),
+  url: z.string().url(),
+  type: AttachmentTypeSchema,
+  fileName: z.string().optional(),
+  fileSize: z.number().int().positive().optional(),
+  mimeType: z.string().optional(),
+  thumbnailUrl: z.string().url().optional(),
+  createdAt: z.string().datetime(),
+});
+export const SendAttachmentRequestSchema = z.object({
+  conversationId: z.string(),
+  attachmentUrl: z.string().url(),
+  type: AttachmentTypeSchema,
+  fileName: z.string().optional(),
+  fileSize: z.number().int().positive().optional(),
+  mimeType: z.string().optional(),
+});
+export const SendAttachmentResponseSchema = z.object({
+  success: z.boolean(),
+  messageId: z.string(),
+  attachmentId: z.string(),
+  url: z.string().url(),
+  type: AttachmentTypeSchema,
+  fileSize: z.number().int().positive().optional(),
+  error: z.string().optional(),
+});
+
+// Chat Voice Note Schemas
+export const SendVoiceNoteRequestSchema = z.object({
+  conversationId: z.string(),
+  audioUrl: z.string().url(),
+  duration: z.number().int().positive(), // Duration in seconds
+  waveform: z.array(z.number()).optional(), // Waveform data for visualization
+  transcription: z.string().optional(),
+});
+export const SendVoiceNoteResponseSchema = z.object({
+  success: z.boolean(),
+  messageId: z.string(),
+  audioUrl: z.string().url(),
+  duration: z.number().int().positive(),
+  transcription: z.string().optional(),
+  error: z.string().optional(),
+});
+
 // ============================================================================
 // AI Schemas
 // ============================================================================
@@ -259,14 +325,18 @@ export const DataExportRequestSchema = z.object({
 export const DataExportResponseSchema = z.object({
   success: z.boolean(),
   exportId: z.string().optional(),
+  url: z.string().url().optional(),
   estimatedTime: z.string().optional(),
+  estimatedCompletion: z.string().datetime().optional(),
   message: z.string().optional(),
+  format: z.string().optional(),
+  expiresAt: z.string().datetime().optional(),
   exportData: z
     .object({
-      profile: UserSchema,
-      pets: z.array(PetSchema),
-      matches: z.array(MatchSchema),
-      messages: z.array(MessageSchema),
+      profile: UserSchema.optional(),
+      pets: z.array(PetSchema).optional(),
+      matches: z.array(MatchSchema).optional(),
+      messages: z.array(MessageSchema).optional(),
       preferences: z.object({
         ageRange: z.object({
           min: z.number().int().nonnegative(),
@@ -280,10 +350,20 @@ export const DataExportResponseSchema = z.object({
           message: z.boolean(),
           like: z.boolean(),
         }),
-      }),
+      }).optional(),
     })
     .optional(),
   error: z.string().optional(),
+});
+
+export const ConfirmDeletionRequestSchema = z.object({
+  token: z.string().min(1),
+});
+
+export const ConfirmDeletionResponseSchema = z.object({
+  success: z.boolean(),
+  deletedAt: z.string().datetime().optional(),
+  message: z.string().optional(),
 });
 
 // ============================================================================

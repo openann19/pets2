@@ -1,13 +1,13 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
-export interface UseAsyncActionOptions<TResult, TArgs extends any[] = []> {
+export interface UseAsyncActionOptions<TResult, TArgs extends unknown[] = []> {
   action: (...args: TArgs) => Promise<TResult>;
   onSuccess?: (result: TResult) => void;
   onError?: (error: Error) => void;
   immediate?: boolean;
 }
 
-export interface UseAsyncActionReturn<TResult, TArgs extends any[] = []> {
+export interface UseAsyncActionReturn<TResult, TArgs extends unknown[] = []> {
   data: TResult | null;
   isLoading: boolean;
   error: Error | null;
@@ -25,7 +25,7 @@ export interface UseAsyncActionReturn<TResult, TArgs extends any[] = []> {
  *   onError: (error) => logger.error('Failed to load user', { error })
  * });
  */
-export function useAsyncAction<TResult, TArgs extends any[] = []>({
+export function useAsyncAction<TResult, TArgs extends unknown[] = []>({
   action,
   onSuccess,
   onError,
@@ -34,14 +34,20 @@ export function useAsyncAction<TResult, TArgs extends any[] = []>({
   const [data, setData] = useState<TResult | null>(null);
   const [isLoading, setIsLoading] = useState(immediate);
   const [error, setError] = useState<Error | null>(null);
+  
+  // Use ref to track loading state to prevent race conditions
+  // This avoids stale closures and unnecessary callback recreations
+  const isLoadingRef = useRef(immediate);
 
   const execute = useCallback(
     async (...args: TArgs): Promise<TResult | undefined> => {
-      // Prevent duplicate execution while loading
-      if (isLoading) {
+      // Prevent duplicate execution while loading using ref (synchronous check)
+      if (isLoadingRef.current) {
         return undefined;
       }
 
+      // Atomically set loading state in both ref and state
+      isLoadingRef.current = true;
       setIsLoading(true);
       setError(null);
 
@@ -56,15 +62,17 @@ export function useAsyncAction<TResult, TArgs extends any[] = []>({
         onError?.(error);
         throw error;
       } finally {
+        isLoadingRef.current = false;
         setIsLoading(false);
       }
     },
-    [action, onSuccess, onError, isLoading],
+    [action, onSuccess, onError],
   );
 
   const reset = useCallback(() => {
     setData(null);
     setError(null);
+    isLoadingRef.current = false;
     setIsLoading(false);
   }, []);
 

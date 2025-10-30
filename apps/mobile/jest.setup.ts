@@ -1,5 +1,4 @@
 import { jest, beforeAll, afterAll } from '@jest/globals';
-// import '@testing-library/jest-native/extend-expect'; // Moved to end after mocks
 
 // Mock React Native FIRST to avoid ReactCurrentOwner errors
 jest.mock('react-native', () => ({
@@ -189,10 +188,15 @@ jest.setSystemTime(new Date('2024-01-01T00:00:00Z') as unknown as number);
 const fixedRandom = () => 0.421337;
 Math.random = fixedRandom;
 
-// RN Reanimated official mock
+// RN Reanimated official mock - SINGLE SOURCE OF TRUTH
+// All test files should use this mock from jest.setup.ts
+// Do not add Reanimated mocks in individual test files
 jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
 // Silence useNativeDriver warnings
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
+
+// Gesture Handler official mock (per user instructions)
+jest.mock('react-native-gesture-handler', () => require('react-native-gesture-handler/jestSetup'));
 
 // Expo Haptics: no-op (assert calls via mocks)
 jest.mock('expo-haptics', () => ({
@@ -224,6 +228,8 @@ jest.mock('expo-modules-core', () => ({
     removeAllListeners() {}
   },
   requireNativeViewManager: jest.fn(() => ({})),
+  requireNativeModule: jest.fn(() => ({})),
+  createPermissionHook: jest.fn(() => () => [{ status: 'granted' }, jest.fn()]),
 }));
 
 // Mock expo-font to prevent font loading issues
@@ -235,13 +241,168 @@ jest.mock('expo-font', () => ({
   },
 }));
 
-// Mock @expo/vector-icons
-jest.mock('@expo/vector-icons', () => ({
-  Ionicons: 'Ionicons',
-  MaterialIcons: 'MaterialIcons',
-  FontAwesome: 'FontAwesome',
-  Feather: 'Feather',
+// Mock @react-native-async-storage/async-storage
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+);
+
+// Mock @react-native-community/netinfo
+jest.mock('@react-native-community/netinfo', () => {
+  const mockNetInfoState = {
+    isConnected: true,
+    type: 'wifi',
+    isInternetReachable: true,
+    details: null,
+  };
+
+  return {
+    __esModule: true,
+    default: {
+      fetch: jest.fn(() => Promise.resolve(mockNetInfoState)),
+      addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+      configure: jest.fn(),
+      getCurrentState: jest.fn(() => Promise.resolve(mockNetInfoState)),
+    },
+    NetInfoStateType: {
+      unknown: 'unknown',
+      none: 'none',
+      cellular: 'cellular',
+      wifi: 'wifi',
+      bluetooth: 'bluetooth',
+      ethernet: 'ethernet',
+      wimax: 'wimax',
+      vpn: 'vpn',
+      other: 'other',
+    },
+  };
+});
+
+// Mock Expo modules
+jest.mock('expo-constants', () => ({
+  default: {},
 }));
+
+jest.mock('expo-linear-gradient', () => 'LinearGradient');
+
+jest.mock('expo-av', () => ({
+  Audio: {},
+  Video: {},
+}));
+
+jest.mock('expo-camera', () => ({
+  Camera: {},
+  CameraType: {},
+}));
+
+jest.mock('expo-image-picker', () => ({
+  launchImageLibraryAsync: jest.fn(),
+  launchCameraAsync: jest.fn(),
+  requestMediaLibraryPermissionsAsync: jest.fn(() => Promise.resolve({ granted: true, status: 'granted' })),
+  requestCameraPermissionsAsync: jest.fn(() => Promise.resolve({ granted: true, status: 'granted' })),
+  MediaTypeOptions: {
+    Images: 'images',
+    Videos: 'videos',
+    All: 'all',
+  },
+  ImagePickerOptions: {},
+}));
+
+// Mock expo-location
+jest.mock('expo-location', () => ({
+  requestForegroundPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+  requestBackgroundPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+  getCurrentPositionAsync: jest.fn(() => Promise.resolve({
+    coords: {
+      latitude: 37.7749,
+      longitude: -122.4194,
+      altitude: null,
+      accuracy: 10,
+      altitudeAccuracy: null,
+      heading: null,
+      speed: null,
+    },
+    timestamp: Date.now(),
+  })),
+  watchPositionAsync: jest.fn(() => Promise.resolve({
+    remove: jest.fn(),
+  })),
+  getLastKnownPositionAsync: jest.fn(() => Promise.resolve(null)),
+  hasServicesEnabledAsync: jest.fn(() => Promise.resolve(true)),
+  Accuracy: {
+    Lowest: 1,
+    Low: 2,
+    Balanced: 3,
+    High: 4,
+    Highest: 5,
+    BestForNavigation: 6,
+  },
+  LocationActivityType: {
+    Other: 1,
+    AutomotiveNavigation: 2,
+    Fitness: 3,
+    OtherNavigation: 4,
+    Airborne: 5,
+  },
+}));
+
+// Mock expo-device
+jest.mock('expo-device', () => ({
+  isDevice: true,
+  brand: 'Apple',
+  manufacturerName: 'Apple',
+  modelName: 'iPhone',
+  modelId: 'iPhone13,2',
+  designName: 'iPhone',
+  productName: 'iPhone',
+  deviceYearClass: 2021,
+  totalMemory: 4096,
+  supportedCpuArchitectures: ['arm64'],
+  osName: 'iOS',
+  osVersion: '15.0',
+  osBuildId: '19A346',
+  osInternalBuildId: '19A346',
+  osBuildFingerprint: '',
+  platformApiLevel: null,
+  deviceName: 'iPhone',
+  deviceType: 1,
+}));
+
+// Mock expo-notifications
+jest.mock('expo-notifications', () => ({
+  setNotificationHandler: jest.fn(),
+  getPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+  requestPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+  scheduleNotificationAsync: jest.fn(() => Promise.resolve('notification-id')),
+  cancelScheduledNotificationAsync: jest.fn(() => Promise.resolve()),
+  cancelAllScheduledNotificationsAsync: jest.fn(() => Promise.resolve()),
+  getAllScheduledNotificationsAsync: jest.fn(() => Promise.resolve([])),
+  addNotificationReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
+  addNotificationResponseReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
+  getExpoPushTokenAsync: jest.fn(() => Promise.resolve({ data: 'expo-push-token' })),
+  setNotificationChannelAsync: jest.fn(() => Promise.resolve()),
+  getBadgeCountAsync: jest.fn(() => Promise.resolve(0)),
+  setBadgeCountAsync: jest.fn(() => Promise.resolve()),
+  NotificationPermissionsStatus: {
+    UNDETERMINED: 'undetermined',
+    GRANTED: 'granted',
+    DENIED: 'denied',
+  },
+  AndroidImportance: {
+    DEFAULT: 'default',
+    HIGH: 'high',
+    MAX: 'max',
+    LOW: 'low',
+    MIN: 'min',
+    NONE: 'none',
+    UNSPECIFIED: 'unspecified',
+  },
+}));
+
+// Mock react-native-device-info
+// Removed - package not installed
+
+// Mock Metro bundler
+jest.mock('metro-react-native-babel-preset');
 
 // Mock Sentry to prevent ES module issues
 jest.mock('@sentry/react-native', () => ({
@@ -277,6 +438,42 @@ jest.mock('@sentry/react-native', () => ({
   lastEventId: jest.fn(),
 }));
 
+// Mock expo-secure-store - must be before other mocks that use it
+jest.mock('expo-secure-store', () => ({
+  setItemAsync: jest.fn(() => Promise.resolve()),
+  getItemAsync: jest.fn(() => Promise.resolve(null)),
+  deleteItemAsync: jest.fn(() => Promise.resolve()),
+  isAvailableAsync: jest.fn(() => Promise.resolve(true)),
+  whenAvailable: jest.fn(),
+  ACCESSIBLE: {
+    WHEN_UNLOCKED: 'WHEN_UNLOCKED',
+    WHEN_UNLOCKED_THIS_DEVICE_ONLY: 'WHEN_UNLOCKED_THIS_DEVICE_ONLY',
+    AFTER_FIRST_UNLOCK: 'AFTER_FIRST_UNLOCK',
+    AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY: 'AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY',
+    ALWAYS: 'ALWAYS',
+    ALWAYS_THIS_DEVICE_ONLY: 'ALWAYS_THIS_DEVICE_ONLY',
+  },
+}));
+
+// Mock expo-local-authentication
+jest.mock('expo-local-authentication', () => ({
+  hasHardwareAsync: jest.fn(() => Promise.resolve(true)),
+  isEnrolledAsync: jest.fn(() => Promise.resolve(true)),
+  supportedAuthenticationTypesAsync: jest.fn(() => Promise.resolve([1, 2])),
+  authenticateAsync: jest.fn(() => Promise.resolve({ success: true })),
+  LocalAuthenticationResult: {
+    Success: 'success',
+    Cancel: 'cancel',
+    NotEnrolled: 'notEnrolled',
+    NotAvailable: 'notAvailable',
+  },
+  SecurityLevel: {
+    NONE: 0,
+    SECRET: 1,
+    BIOMETRIC: 2,
+  },
+}));
+
 // Mock react-native-keychain
 jest.mock('react-native-keychain', () => ({
   setInternetCredentials: jest.fn(),
@@ -308,16 +505,47 @@ jest.mock('react-native-encrypted-storage', () => ({
 }));
 
 // Mock logger with all required methods
-jest.mock('./src/services/logger', () => ({
+jest.mock('@pawfectmatch/core', () => ({
+  ...jest.requireActual('@pawfectmatch/core'),
   logger: {
     info: jest.fn(),
     warn: jest.fn(),
     error: jest.fn(),
     debug: jest.fn(),
+    security: jest.fn(),
+    trackFeature: jest.fn(),
+    bufferOfflineLog: jest.fn().mockResolvedValue(undefined),
+    flushOfflineLogs: jest.fn().mockResolvedValue(undefined),
+    setUserInfo: jest.fn(),
+    clearUserInfo: jest.fn(),
+    getSessionId: jest.fn().mockReturnValue('test-session'),
+    destroy: jest.fn(),
   },
 }));
 
 jest.mock('react-native-linear-gradient', () => 'LinearGradient');
+
+// Mock @react-native-masked-view/masked-view (required by react-navigation)
+jest.mock('@react-native-masked-view/masked-view', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    default: React.forwardRef((props: any, ref: any) => React.createElement(View, { ...props, ref })),
+  };
+});
+
+// Mock react-navigation/elements native view manager
+jest.mock('@react-navigation/elements', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    ...jest.requireActual('@react-navigation/elements'),
+    MaskedView: View,
+    MaskedViewNative: {
+      getViewManagerConfig: jest.fn(() => ({})),
+    },
+  };
+});
 
 // Navigation helpers (only if you have tests relying on navigation)
 jest.mock('@react-navigation/native', () => {
@@ -327,3 +555,31 @@ jest.mock('@react-navigation/native', () => {
     useNavigation: () => ({ navigate: jest.fn(), goBack: jest.fn(), dispatch: jest.fn() }),
   } as typeof import('@react-navigation/native');
 });
+
+// Global test utilities
+global.__DEV__ = true;
+
+// Silence console warnings in tests unless debugging
+if (!process.env.DEBUG_TESTS) {
+  console.warn = jest.fn();
+  console.error = jest.fn();
+}
+
+// Mock fetch for API calls
+global.fetch = jest.fn();
+
+// Setup test environment
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+// Ensure async operations complete before tests finish
+afterEach(() => {
+  // Clear any pending timers (using fake timers)
+  jest.clearAllTimers();
+  // Note: Real async operations should be awaited in tests
+  // Fake timers are used, so setTimeout won't work here
+});
+
+// Extend expect with React Native matchers after all mocks are set up
+import '@testing-library/jest-native/extend-expect';

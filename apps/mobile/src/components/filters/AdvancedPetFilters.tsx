@@ -2,7 +2,7 @@ import Slider from '@react-native-community/slider';
 import { Picker } from '@react-native-picker/picker';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
   interpolate,
@@ -11,6 +11,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import { useTheme } from '@/theme';
 
 import type { PetFilters } from '@pawfectmatch/core';
 
@@ -27,10 +28,11 @@ export const AdvancedPetFilters: React.FC<AdvancedPetFiltersProps> = ({
   onReset,
   onApply,
 }) => {
+  const theme = useTheme();
   const slideIn = useSharedValue(0);
   const fadeIn = useSharedValue(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     slideIn.value = withSpring(1, { stiffness: 300, damping: 30 });
     fadeIn.value = withTiming(1, { duration: 500 });
   }, [slideIn, fadeIn]);
@@ -47,7 +49,7 @@ export const AdvancedPetFilters: React.FC<AdvancedPetFiltersProps> = ({
     opacity: fadeIn.value,
   }));
 
-  const handleChange = (field: keyof PetFilters, val: any) => {
+  const handleChange = (field: keyof PetFilters, val: PetFilters[keyof PetFilters]) => {
     onChange({ ...value, [field]: val });
     Haptics.selectionAsync();
   };
@@ -62,10 +64,74 @@ export const AdvancedPetFilters: React.FC<AdvancedPetFiltersProps> = ({
     onApply?.();
   };
 
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          borderRadius: 24,
+          padding: 20,
+          margin: 16,
+          shadowColor: theme.colors.border,
+          shadowOpacity: 0.15,
+          shadowRadius: 16,
+          elevation: 8,
+        },
+        title: {
+          fontSize: 22,
+          fontWeight: 'bold',
+          color: '#a21caf',
+          marginBottom: 12,
+          textAlign: 'center',
+        },
+        label: {
+          fontSize: 16,
+          fontWeight: '600',
+          color: '#6b21a8',
+          marginTop: 12,
+        },
+        picker: {
+          backgroundColor: theme.colors.surface,
+          borderRadius: 8,
+          marginVertical: 4,
+        },
+        slider: {
+          marginVertical: 8,
+        },
+        buttonRow: {
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginTop: 20,
+        },
+        resetButton: {
+          backgroundColor: '#f3e8ff',
+          borderRadius: 12,
+          paddingVertical: 10,
+          paddingHorizontal: 24,
+        },
+        resetText: {
+          color: '#a21caf',
+          fontWeight: 'bold',
+          fontSize: 16,
+        },
+        applyButton: {
+          backgroundColor: theme.colors.primary,
+          borderRadius: 12,
+          paddingVertical: 10,
+          paddingHorizontal: 24,
+        },
+        applyText: {
+          color: theme.colors.onPrimary,
+          fontWeight: 'bold',
+          fontSize: 16,
+        },
+      }),
+    [theme],
+  );
+
   return (
     <Animated.View style={animatedStyle}>
       <LinearGradient
-        colors={['#fceabb', '#f8b500', 'Theme.colors.primary[500]', '#a21caf']}
+        colors={[...theme.palette.gradients.warning, ...theme.palette.gradients.primary]}
         style={styles.container}
       >
         <Text style={styles.title}>Advanced Filters</Text>
@@ -219,63 +285,3 @@ export const AdvancedPetFilters: React.FC<AdvancedPetFiltersProps> = ({
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 24,
-    padding: 20,
-    margin: 16,
-    shadowColor: 'Theme.colors.primary[500]',
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#a21caf',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#6b21a8',
-    marginTop: 12,
-  },
-  picker: {
-    backgroundColor: 'Theme.colors.neutral[0]',
-    borderRadius: 8,
-    marginVertical: 4,
-  },
-  slider: {
-    marginVertical: 8,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  resetButton: {
-    backgroundColor: '#f3e8ff',
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-  },
-  resetText: {
-    color: '#a21caf',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  applyButton: {
-    backgroundColor: 'Theme.colors.primary[500]',
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-  },
-  applyText: {
-    color: 'Theme.colors.neutral[0]',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});

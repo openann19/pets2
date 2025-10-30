@@ -4,8 +4,11 @@
  */
 import { useCallback, useState } from 'react';
 import * as Haptics from 'expo-haptics';
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 import { logger } from '@pawfectmatch/core';
+import { request } from '../../../services/api';
+import type { NavigationProp } from '@react-navigation/native';
+import type { RootStackParamList } from '../../../navigation/types';
 
 interface SafetyOption {
   id: string;
@@ -38,7 +41,12 @@ interface UseSafetyCenterReturn {
   isReporting: boolean;
 }
 
-export const useSafetyCenter = (): UseSafetyCenterReturn => {
+interface UseSafetyCenterOptions {
+  navigation?: NavigationProp<RootStackParamList>;
+}
+
+export const useSafetyCenter = (options?: UseSafetyCenterOptions): UseSafetyCenterReturn => {
+  const { navigation } = options || {};
   const [emergencyMode, setEmergencyMode] = useState(false);
   const [isReporting, setIsReporting] = useState(false);
 
@@ -72,16 +80,26 @@ export const useSafetyCenter = (): UseSafetyCenterReturn => {
   const reportUser = useCallback(async (userId: string, reason: string): Promise<boolean> => {
     setIsReporting(true);
     try {
-      // In a real implementation, this would call the API
-      logger.info('Reporting user', { userId, reason });
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      Alert.alert('Report Submitted', 'Thank you for your report. We will review it shortly.');
-      return true;
+      const success = await request<boolean>('/reports', {
+        method: 'POST',
+        body: {
+          type: 'user',
+          targetId: userId,
+          reason,
+          description: `User reported: ${reason}`,
+        },
+      });
+      
+      if (success) {
+        Alert.alert('Report Submitted', 'Thank you for your report. We will review it shortly.');
+        logger.info('User reported successfully', { userId, reason });
+        return true;
+      } else {
+        throw new Error('Report submission failed');
+      }
     } catch (error) {
-      logger.error('Failed to report user', { error, userId });
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to report user', { error: errorObj, userId });
       Alert.alert('Error', 'Failed to submit report. Please try again.');
       return false;
     } finally {
@@ -89,24 +107,97 @@ export const useSafetyCenter = (): UseSafetyCenterReturn => {
     }
   }, []);
 
-  const contactSupport = useCallback(() => {
-    Alert.alert('Contact Support', 'Support contact options coming soon!');
+  const contactSupport = useCallback(async () => {
+    try {
+      const email = 'support@pawfectmatch.com';
+      const subject = 'Safety Support Request';
+      const url = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+      
+      const canOpen = await Linking.canOpenURL(url);
+      if (canOpen) {
+        await Linking.openURL(url);
+        logger.info('Contact support opened', { email });
+      } else {
+        Alert.alert('Contact Support', `Please email us at ${email}`);
+      }
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to open support email', { error: errorObj });
+      Alert.alert('Error', 'Unable to open email app. Please contact support@pawfectmatch.com manually.');
+    }
   }, []);
 
-  const viewSafetyGuidelines = useCallback(() => {
-    Alert.alert('Safety Guidelines', 'Safety guidelines will be available soon!');
+  const viewSafetyGuidelines = useCallback(async () => {
+    try {
+      const url = 'https://pawfectmatch.com/safety-guidelines';
+      const canOpen = await Linking.canOpenURL(url);
+      if (canOpen) {
+        await Linking.openURL(url);
+        logger.info('Safety guidelines opened', { url });
+      } else {
+        Alert.alert('Safety Guidelines', `Visit ${url} to view safety guidelines.`);
+      }
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to open safety guidelines', { error: errorObj });
+      Alert.alert('Error', 'Unable to open safety guidelines.');
+    }
   }, []);
 
   const navigateToPrivacySettings = useCallback(() => {
-    Alert.alert('Privacy Settings', 'Navigate to Privacy Settings screen (coming soon)');
-  }, []);
+    if (navigation) {
+      try {
+        (navigation as any).navigate('PrivacySettings');
+        logger.info('Navigated to Privacy Settings');
+      } catch (error) {
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to navigate to Privacy Settings', { error: errorObj });
+        Alert.alert('Navigation Error', 'Unable to navigate to Privacy Settings.');
+      }
+    } else {
+      Alert.alert('Privacy Settings', 'Navigation not available. Please navigate to Privacy Settings from Settings screen.');
+    }
+  }, [navigation]);
 
   const setupEmergencyContacts = useCallback(() => {
-    Alert.alert('Emergency Contacts', 'Emergency contact setup coming soon');
-  }, []);
+    // Navigate to settings or show info about emergency contacts
+    Alert.alert(
+      'Emergency Contacts',
+      'To set up emergency contacts, please go to Settings > Privacy & Safety > Emergency Contacts.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Go to Settings',
+          onPress: () => {
+            if (navigation) {
+              try {
+                (navigation as any).navigate('Settings');
+              } catch (error) {
+                const errorObj = error instanceof Error ? error : new Error(String(error));
+                logger.error('Failed to navigate to Settings', { error: errorObj });
+              }
+            }
+          },
+        },
+      ],
+    );
+  }, [navigation]);
 
-  const viewSafetyTips = useCallback(() => {
-    Alert.alert('Safety Tips', 'Safety tips and guidelines will be available soon');
+  const viewSafetyTips = useCallback(async () => {
+    try {
+      const url = 'https://pawfectmatch.com/safety-tips';
+      const canOpen = await Linking.canOpenURL(url);
+      if (canOpen) {
+        await Linking.openURL(url);
+        logger.info('Safety tips opened', { url });
+      } else {
+        Alert.alert('Safety Tips', `Visit ${url} to view safety tips and guidelines.`);
+      }
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to open safety tips', { error: errorObj });
+      Alert.alert('Error', 'Unable to open safety tips.');
+    }
   }, []);
 
   const handleSafetyOption = useCallback((option: SafetyOption) => {
@@ -122,9 +213,24 @@ export const useSafetyCenter = (): UseSafetyCenterReturn => {
       icon: 'flag-outline',
       color: '#EF4444',
       action: () => {
-        Alert.alert(
+        Alert.prompt(
           'Report User',
-          'This feature is coming soon. Please contact support for urgent issues.',
+          'Please provide a reason for reporting this user:',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Submit',
+              style: 'destructive',
+              onPress: async (reason) => {
+                if (reason && reason.trim()) {
+                  // Note: userId should be passed from the component using this hook
+                  const userId = 'unknown'; // Should be passed from component context
+                  await reportUser(userId, reason.trim());
+                }
+              },
+            },
+          ],
+          'plain-text',
         );
       },
     },

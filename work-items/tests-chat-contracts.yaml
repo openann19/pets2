@@ -1,0 +1,17 @@
+id: tests-chat-contracts
+owner: api
+severity: high
+area: contracts
+context: |
+  Contract tests missing for chat reactions, attachments, and voice note endpoints. Needed to enforce request/response schemas and error codes.
+acceptance:
+  - Add `apps/mobile/tests/contract/chat-api.contract.test.ts`
+  - Validate: POST /chat/reactions, POST /chat/attachments, POST /chat/voice-notes
+  - Error cases: invalid type, oversize, unauthorized, rate-limit
+  - Pagination/filters for attachments list if applicable
+assets:
+  tests: [apps/mobile/tests/contract/chat-api.contract.test.ts]
+risks:
+  - Divergence with backend contracts; sync with /contracts/openapi.yaml
+links:
+  - reports/mobile/test_gap_matrix.md

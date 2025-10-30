@@ -24,7 +24,7 @@ export { FadeInUp, ScaleIn, StaggeredContainer, GestureWrapper } from './animati
 export { EliteLoading, EliteEmptyState } from './utils';
 
 // === CONSTANTS ===
-export { getPremiumGradients, PREMIUM_SHADOWS } from './constants';
+export { getPremiumGradients, getPremiumShadows } from './constants';
 
 // Re-export EliteContainer for default usage
 export { EliteContainer as default } from './containers';

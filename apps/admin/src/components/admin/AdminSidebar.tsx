@@ -12,6 +12,7 @@ import {
   HeartIcon,
   Cog6ToothIcon,
   DocumentTextIcon,
+  PaintBrushIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
@@ -21,6 +22,7 @@ const navigation = [
   { name: 'Billing', href: '/billing', icon: CurrencyDollarIcon },
   { name: 'Events', href: '/events', icon: ChartBarIcon },
   { name: 'Feature Flags', href: '/flags', icon: FlagIcon },
+  { name: 'UI Control', href: '/ui-control', icon: PaintBrushIcon },
   { name: 'System Health', href: '/health', icon: HeartIcon },
   { name: 'Audit Logs', href: '/audit', icon: DocumentTextIcon },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },

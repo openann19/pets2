@@ -24,7 +24,7 @@ interface UseForgotPasswordScreenReturn {
   isValid: boolean;
   loading: boolean;
   setValue: (name: keyof ForgotPasswordFormValues, value: string) => void;
-  handleSubmit: (e?: any) => void | Promise<void>;
+  handleSubmit: (e?: unknown) => void | Promise<void>;
   navigateBack: () => void;
 }
 
@@ -70,7 +70,7 @@ export function useForgotPasswordScreen({
     try {
       logger.info('Forgot password request', { email: values.email });
 
-      const response = await authService.forgotPassword(values.email);
+      await authService.forgotPassword(values.email);
 
       // Success haptic feedback
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});

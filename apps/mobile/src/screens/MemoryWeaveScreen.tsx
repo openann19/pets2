@@ -17,8 +17,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "@mobile/theme";
+import type { AppTheme } from "@mobile/theme";
 import type { RootStackScreenProps } from "../navigation/types";
 import { useMemoryWeaveScreen } from "../hooks/screens/useMemoryWeaveScreen";
+import { useReduceMotion } from "../hooks/useReducedMotion";
 
 // Import extracted components
 // import { MemoryCard, ConnectionPath } from "../components/library";
@@ -45,6 +47,7 @@ export default function MemoryWeaveScreen({
   route,
 }: MemoryWeaveScreenProps) {
   const theme = useTheme();
+  const reducedMotion = useReduceMotion();
   const styles = makeStyles(theme);
   
   // Use the extracted hook for all business logic
@@ -55,18 +58,13 @@ export default function MemoryWeaveScreen({
     fadeAnim,
     scaleAnim,
     scrollViewRef,
-    isDark,
-    colors,
-    handleGoBack,
-    handleShare,
-    setCurrentIndex,
     scrollToIndex,
     handleScroll,
     getEmotionColor,
     getEmotionEmoji,
     formatTimestamp,
     petName,
-  } = useMemoryWeaveScreen(route);
+  } = useMemoryWeaveScreen(route.params ? { params: route.params } : { params: undefined });
 
   const isAnimating = false; // Not used in current implementation
 
@@ -77,19 +75,19 @@ export default function MemoryWeaveScreen({
       (index + 1) * screenWidth,
     ];
 
-    const scale = scrollX.interpolate({
+    const scale = reducedMotion ? 1 : scrollX.interpolate({
       inputRange,
       outputRange: [0.8, 1, 0.8],
       extrapolate: "clamp",
     });
 
-    const rotateY = scrollX.interpolate({
+    const rotateY = reducedMotion ? "0deg" : scrollX.interpolate({
       inputRange,
       outputRange: ["45deg", "0deg", "-45deg"],
       extrapolate: "clamp",
     });
 
-    const opacity = scrollX.interpolate({
+    const opacity = reducedMotion ? 1 : scrollX.interpolate({
       inputRange,
       outputRange: [0.6, 1, 0.6],
       extrapolate: "clamp",
@@ -107,7 +105,10 @@ export default function MemoryWeaveScreen({
         ])}
       >
         <LinearGradient
-          colors={["rgba(255,255,255,0.15)", "rgba(255,255,255,0.05)"]}
+          colors={[
+            theme.colors.overlay || `${theme.colors.surface}80`,
+            theme.colors.overlay || `${theme.colors.surface}30`,
+          ]}
           style={styles.cardGradient}
         >
           <BlurView intensity={20} style={styles.cardBlur}>
@@ -143,7 +144,10 @@ export default function MemoryWeaveScreen({
                     resizeMode="cover"
                   />
                   <LinearGradient
-                    colors={["transparent", "rgba(0,0,0,0.3)"]}
+                    colors={[
+                      "transparent",
+                      theme.colors.overlay || `${theme.palette.neutral[950]}4D`,
+                    ]}
                     style={styles.imageOverlay}
                   />
                 </View>
@@ -225,24 +229,24 @@ export default function MemoryWeaveScreen({
         })}
 
         {pathPoints.map((point, index) => (
-          <TouchableOpacity
-            key={`dot-${index}`}
-            style={StyleSheet.flatten([
-              styles.pathDot,
-              {
-                left: point.x - 6,
-                top: point.y - 6,
-                backgroundColor: index === currentIndex ? "#FF69B4" : theme.colors.onSurface,
-                transform: [{ scale: index === currentIndex ? 1.2 : 1 }],
-              },
-            ])}
-            testID="MemoryWeaveScreen-button-2"
-            accessibilityLabel="Interactive element"
-            accessibilityRole="button"
-            onPress={() => {
-              scrollToIndex(index);
-            }}
-          />
+            <TouchableOpacity
+              key={`dot-${index}`}
+              style={StyleSheet.flatten([
+                styles.pathDot,
+                {
+                  left: point.x - 6,
+                  top: point.y - 6,
+                  backgroundColor: index === currentIndex ? theme.colors.primary : theme.colors.onSurface,
+                  transform: [{ scale: index === currentIndex ? (reducedMotion ? 1 : 1.2) : 1 }],
+                },
+              ])}
+              testID={`memory-dot-${index}`}
+              accessibilityLabel={`Go to memory ${index + 1} of ${memories.length}`}
+              accessibilityRole="button"
+              onPress={() => {
+                scrollToIndex(index);
+              }}
+            />
         ))}
       </View>
     );
@@ -252,7 +256,11 @@ export default function MemoryWeaveScreen({
     <View style={styles.container}>
       {/* Background Gradient */}
       <LinearGradient
-        colors={["#1a1a2e", "#16213e", "#0f3460"]}
+        colors={[
+          theme.palette.neutral[950],
+          theme.palette.neutral[900],
+          theme.palette.neutral[800],
+        ]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -266,9 +274,10 @@ export default function MemoryWeaveScreen({
         >
           <TouchableOpacity
             style={styles.backButton}
-            testID="MemoryWeaveScreen-button-2"
-            accessibilityLabel="Interactive element"
+            testID="MemoryWeaveScreen-back-button"
+            accessibilityLabel="Go back"
             accessibilityRole="button"
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.goBack();
@@ -286,9 +295,10 @@ export default function MemoryWeaveScreen({
 
           <TouchableOpacity
             style={styles.shareButton}
-            testID="MemoryWeaveScreen-button-2"
-            accessibilityLabel="Interactive element"
+            testID="MemoryWeaveScreen-share-button"
+            accessibilityLabel="Share memory weave"
             accessibilityRole="button"
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               // Share functionality
@@ -357,14 +367,14 @@ export default function MemoryWeaveScreen({
   );
 }
 
-const makeStyles = (theme: any) => StyleSheet.create({
+const makeStyles = (theme: AppTheme) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.bg,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingHorizontal: theme.spacing.lg + theme.spacing.xs,
+    paddingTop: theme.spacing.sm + theme.spacing.xs / 2,
     zIndex: 10,
   },
   headerContent: {
@@ -375,7 +385,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   backButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: theme.radii.full,
     overflow: "hidden",
   },
   backButtonBlur: {
@@ -388,19 +398,19 @@ const makeStyles = (theme: any) => StyleSheet.create({
     alignItems: "center",
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: theme.typography.h2.size,
+    fontWeight: theme.typography.h1.weight,
     color: theme.colors.onSurface,
   },
   headerSubtitle: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.7)",
-    marginTop: 2,
+    fontSize: theme.typography.body.size * 0.875,
+    color: theme.colors.onMuted,
+    marginTop: theme.spacing.xs / 2,
   },
   shareButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: theme.radii.full,
     overflow: "hidden",
   },
   shareButtonBlur: {
@@ -410,60 +420,60 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   cardsContainer: {
     flex: 1,
-    paddingTop: 40,
+    paddingTop: theme.spacing['2xl'] + theme.spacing.xs,
   },
   memoryCard: {
     width: screenWidth * 0.85,
     height: screenHeight * 0.6,
     marginHorizontal: screenWidth * 0.075,
-    borderRadius: 20,
+    borderRadius: theme.radii.xl,
     overflow: "hidden",
   },
   cardGradient: {
     flex: 1,
-    borderRadius: 20,
+    borderRadius: theme.radii.xl,
   },
   cardBlur: {
     flex: 1,
-    padding: 20,
+    padding: theme.spacing.lg + theme.spacing.xs,
   },
   memoryHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg + theme.spacing.xs,
   },
   memoryTitleContainer: {
     flex: 1,
   },
   memoryTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: theme.typography.h2.size * 1.2,
+    fontWeight: theme.typography.h1.weight,
     color: theme.colors.onSurface,
-    marginBottom: 4,
+    marginBottom: theme.spacing.xs,
   },
   memoryTimestamp: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.7)",
+    fontSize: theme.typography.body.size * 0.875,
+    color: theme.colors.onMuted,
   },
   emotionBadge: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: theme.radii.full,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 12,
+    marginStart: theme.spacing.md,
   },
   emotionEmoji: {
-    fontSize: 20,
+    fontSize: theme.typography.body.size * 1.25,
   },
   memoryContent: {
     flex: 1,
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg + theme.spacing.xs,
   },
   imageContainer: {
     flex: 1,
-    borderRadius: 12,
+    borderRadius: theme.radii.lg,
     overflow: "hidden",
   },
   memoryImage: {
@@ -481,29 +491,30 @@ const makeStyles = (theme: any) => StyleSheet.create({
     flex: 1,
   },
   memoryText: {
-    fontSize: 18,
+    fontSize: theme.typography.body.size * 1.125,
     color: theme.colors.onSurface,
-    lineHeight: 26,
+    lineHeight: theme.typography.body.lineHeight * 1.625,
     fontStyle: "italic",
     textAlign: "center",
   },
   memoryMetadata: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
+    gap: theme.spacing.md,
   },
   metadataItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    backgroundColor: theme.colors.surface,
+    opacity: 0.7,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.radii.lg,
   },
   metadataText: {
-    fontSize: 12,
+    fontSize: theme.typography.body.size * 0.75,
     color: theme.colors.onSurface,
-    marginLeft: 4,
+    marginStart: theme.spacing.xs,
   },
   pathContainer: {
     position: "absolute",
@@ -519,30 +530,31 @@ const makeStyles = (theme: any) => StyleSheet.create({
   pathSegment: {
     position: "absolute",
     height: 2,
-    backgroundColor: "rgba(255,255,255,0.3)",
+    backgroundColor: theme.colors.onSurface,
+    opacity: 0.3,
   },
   pathDot: {
     position: "absolute",
     width: 12,
     height: 12,
-    borderRadius: 6,
+    borderRadius: theme.radii.xs + theme.radii.xs / 2,
     borderWidth: 2,
     borderColor: theme.colors.onSurface,
   },
   counterContainer: {
     position: "absolute",
-    bottom: 40,
+    bottom: theme.spacing['2xl'] + theme.spacing.xs,
     alignSelf: "center",
-    borderRadius: 20,
+    borderRadius: theme.radii.xl,
     overflow: "hidden",
   },
   counterBlur: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
   },
   counterText: {
-    fontSize: 14,
+    fontSize: theme.typography.body.size * 0.875,
     color: theme.colors.onSurface,
-    fontWeight: "600",
+    fontWeight: theme.typography.h2.weight,
   },
 });

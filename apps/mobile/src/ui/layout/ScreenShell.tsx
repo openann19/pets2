@@ -5,6 +5,7 @@
  */
 
 import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -31,21 +32,21 @@ export function ScreenShell({ header, children, footer }: ScreenShellProps) {
   const styles = makeStyles(theme);
 
   return (
-    <View style={s.root}>
+    <View style={styles.root}>
       <LinearGradient
-        colors={[theme.palette.neutral[50], `${theme.colors.primary}10`]}
+        colors={[theme.colors.surface, `${theme.colors.primary}10`]}
         style={StyleSheet.absoluteFillObject}
       />
-      <SafeAreaView style={s.safe}>
+      <SafeAreaView style={styles.safe}>
         {header}
-        <View style={s.body}>{children}</View>
+        <View style={styles.body}>{children}</View>
         {footer}
       </SafeAreaView>
     </View>
   );
 }
 
-const makeStyles = (theme: any) =>
+const makeStyles = (theme: AppTheme) =>
   StyleSheet.create({
     root: {
       flex: 1,

@@ -1,289 +1,1014 @@
 {
-  "meta": {
-    "generated": "2025-01-28",
-    "phase": "2. Mobile God-Component Decomposition & Performance",
-    "agent": "Performance Profiler (PP)"
-  },
-  "hypothesis": {
-    "title": "Decomposition Performance Impact",
-    "claim": "Breaking god components into domain hooks + presentational components will reduce render time by 60%, improve test coverage to >90%, and enable 60fps interactions",
-    "rationale": "Isolating business logic from UI allows for memoization, code splitting, and selective re-renders, reducing unnecessary work"
-  },
-  "currentPerformance": {
-    "renderTimes": {
-      "SwipeScreen": 150,
-      "ChatScreen": 80,
-      "MatchesScreen": 75,
-      "AICompatibilityScreen": 200,
-      "AdminAnalyticsScreen": 180,
-      "SettingsScreen": 90
-    },
-    "fpsTarget": 60,
-    "fpsActual": 45,
-    "reRenderTrigger": "entire screen on any state change",
-    "bundleSize": "monolithic",
-    "testCoverage": 40
-  },
-  "performanceBudget": {
-    "renderTime": {
-      "target": 60,
-      "max": 100,
-      "unit": "ms",
-      "measurementMethod": "componentDidMount to first render"
-    },
-    "fps": {
-      "target": 60,
-      "min": 50,
-      "unit": "frames per second",
-      "measurementMethod": "gesture animation frame rate"
-    },
-    "reRenderScope": {
-      "target": "isolated to affected component",
-      "current": "entire screen",
-      "measurementMethod": "React DevTools Profiler"
-    },
-    "bundleSize": {
-      "initialLoad": {
-        "target": "<200KB",
-        "current": "~350KB",
-        "unit": "gzipped",
-        "improvement": "30% via code splitting"
-      },
-      "lazyLoadThreshold": {
-        "target": "<100KB per screen",
-        "current": ">500KB god components",
-        "improvement": "80% via extraction"
-      }
-    },
-    "testCoverage": {
-      "target": 90,
-      "min": 85,
-      "current": 40,
-      "unit": "percentage",
-      "improvement": "125% increase"
-    }
-  },
-  "perScreenTargets": {
-    "SwipeScreen": {
-      "current": {
-        "renderTime": 150,
-        "complexity": 4.0,
-        "testCoverage": 35
-      },
-      "target": {
-        "renderTime": 60,
-        "complexity": 2.5,
-        "testCoverage": 90
-      },
-      "improvements": [
-        "Extract pan responder to useSwipeGestures hook",
-        "Extract animations to useSwipeAnimations hook",
-        "Create SwipeCard presentational component"
-      ],
-      "estimatedImpact": {
-        "renderTimeReduction": "60%",
-        "testCoverageIncrease": "157%",
-        "codeMaintainability": "significantly improved"
-      }
-    },
-    "ChatScreen": {
-      "current": {
-        "renderTime": 80,
-        "complexity": 1.6,
-        "testCoverage": 85
-      },
-      "target": {
-        "renderTime": 60,
-        "complexity": 1.5,
-        "testCoverage": 90
-      },
-      "improvements": [
-        "Already well-refactored ✅",
-        "Minor optimizations possible",
-        "Consider memoization for message list"
-      ],
-      "estimatedImpact": "minor improvements"
-    },
-    "MatchesScreen": {
-      "current": {
-        "renderTime": 75,
-        "complexity": 1.5,
-        "testCoverage": 80
-      },
-      "target": {
-        "renderTime": 60,
-        "complexity": 1.5,
-        "testCoverage": 90
-      },
-      "improvements": [
-        "Already well-refactored ✅",
-        "Consider FlatList optimization",
-        "Add pull-to-refresh performance tracking"
-      ],
-      "estimatedImpact": "minor improvements"
-    },
-    "AICompatibilityScreen": {
-      "current": {
-        "renderTime": 200,
-        "complexity": 12.0,
-        "testCoverage": 20
-      },
-      "target": {
-        "renderTime": 80,
-        "complexity": 4.0,
-        "testCoverage": 90
-      },
-      "improvements": [
-        "Extract pet selection to usePetSelection hook",
-        "Extract analysis to useCompatibilityAnalysis hook",
-        "Create PetSelectionSection, AnalysisLoadingSection, CompatibilityResultsSection components"
-      ],
-      "estimatedImpact": {
-        "renderTimeReduction": "60%",
-        "testCoverageIncrease": "350%",
-        "codeMaintainability": "dramatically improved"
-      }
-    },
-    "SettingsScreen": {
-      "current": {
-        "renderTime": 90,
-        "complexity": 6.0,
-        "testCoverage": 80
-      },
-      "target": {
-        "renderTime": 60,
-        "complexity": 3.0,
-        "testCoverage": 90
-      },
-      "improvements": [
-        "Already partially refactored ✅",
-        "Move settings config to external file",
-        "Create reusable SettingItem component"
-      ],
-      "estimatedImpact": "minor to moderate improvements"
-    },
-    "EditProfileScreen": {
-      "current": {
-        "renderTime": 120,
-        "complexity": 5.0,
-        "testCoverage": 60
-      },
-      "target": {
-        "renderTime": 70,
-        "complexity": 3.5,
-        "testCoverage": 90
-      },
-      "improvements": [
-        "Extract photo editor to PhotoEditorModal component",
-        "Create reusable ProfileInput component",
-        "Optimize photo upload processing"
-      ],
-      "estimatedImpact": {
-        "renderTimeReduction": "42%",
-        "testCoverageIncrease": "50%"
-      }
-    }
-  },
-  "performanceGains": {
-    "strategies": [
-      {
-        "name": "Extract Domain Hooks",
-        "impact": "isolate logic from UI, enable memoization",
-        "estimatedImprovement": "30-40% render time reduction"
-      },
-      {
-        "name": "Create Presentational Components",
-        "impact": "enable selective re-renders, reduce DOM work",
-        "estimatedImprovement": "20-30% render time reduction"
-      },
-      {
-        "name": "Code Splitting",
-        "impact": "lazy load hooks and components",
-        "estimatedImprovement": "30% initial load improvement"
-      },
-      {
-        "name": "Memoization",
-        "impact": "prevent unnecessary re-renders",
-        "estimatedImprovement": "40-50% re-render reduction"
-      }
-    ]
-  },
-  "metricsToTrack": [
+  "generated": "2025-10-30T13:10:30.778Z",
+  "agent": "Performance Profiler (PP)",
+  "totalFiles": 372,
+  "totalIssues": 119,
+  "critical": 75,
+  "high": 0,
+  "medium": 44,
+  "issues": [
     {
-      "name": "componentRenderTime",
-      "frequency": "per screen interaction",
-      "threshold": "<100ms",
-      "alert": ">100ms"
+      "file": "screens/SettingsScreen.tsx",
+      "issue": "Component is too large (599 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
     },
     {
-      "name": "gestureFPS",
-      "frequency": "during swipe gesture",
-      "threshold": ">50fps",
-      "alert": "<50fps"
+      "file": "screens/PrivacySettingsScreen.tsx",
+      "issue": "Component is too large (508 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
     },
     {
-      "name": "reRenderScope",
-      "frequency": "on state change",
-      "threshold": "isolated to affected component",
-      "alert": "entire screen re-render"
+      "file": "screens/MyPetsScreen.tsx",
+      "issue": "Component is too large (766 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
     },
     {
-      "name": "bundleSize",
-      "frequency": "on build",
-      "threshold": "<200KB gzipped",
-      "alert": ">250KB"
+      "file": "screens/MemoryWeaveScreen.tsx",
+      "issue": "Component is too large (558 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
     },
     {
-      "name": "testCoverage",
-      "frequency": "on commit",
-      "threshold": ">85%",
-      "alert": "<80%"
+      "file": "screens/ManageSubscriptionScreen.tsx",
+      "issue": "Component is too large (623 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/HomeScreen.tsx",
+      "issue": "Component is too large (534 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/EditProfileScreen.tsx",
+      "issue": "Component is too large (512 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/CommunityScreen.tsx",
+      "issue": "Component is too large (747 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/AIBioScreen.tsx",
+      "issue": "Component is too large (543 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "navigation/UltraTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "navigation/UltraTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "navigation/UltraTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "navigation/UltraTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "navigation/UltraTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "navigation/UltraTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "navigation/ActivePillTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/ThemeToggle.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/ShimmerPlaceholder.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/PremiumTypography.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/PremiumTypography.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/PremiumTypography.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/PremiumTypography.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/PawPullToRefresh.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/MotionPrimitives.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/MotionPrimitives.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/MotionPrimitives.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/HolographicEffects.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/HolographicEffects.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/HolographicEffects.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/HolographicEffects.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/HolographicEffects.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/HolographicEffects.tsx",
+      "issue": "Component is too large (591 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/GlowShadowSystem.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/GlowShadowSystem.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/GlowShadowSystem.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/GlowShadowSystem.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/GlowShadowSystem.tsx",
+      "issue": "Component is too large (588 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/Footer.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/EnhancedTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/EnhancedTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/EnhancedTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/EnhancedTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/EnhancedTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/EnhancedTabBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/AnimatedSplash.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/AnimatedSplash.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/AnimatedButton.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/AnimatedButton.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "screens/premium/SubscriptionSuccessScreen.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "screens/premium/SubscriptionManagerScreen.tsx",
+      "issue": "Component is too large (765 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/onboarding/WelcomeScreen.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "screens/onboarding/WelcomeScreen.tsx",
+      "issue": "Component is too large (695 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/onboarding/UserIntentScreen.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "screens/onboarding/UserIntentScreen.tsx",
+      "issue": "Component is too large (538 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/onboarding/PreferencesSetupScreen.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "screens/onboarding/PreferencesSetupScreen.tsx",
+      "issue": "Component is too large (573 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/onboarding/PetProfileSetupScreen.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "screens/onboarding/PetProfileSetupScreen.tsx",
+      "issue": "Component is too large (718 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/leaderboard/LeaderboardScreen.tsx",
+      "issue": "Component is too large (664 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/calling/IncomingCallScreen.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "screens/calling/ActiveCallScreen.tsx",
+      "issue": "Component is too large (530 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/ai/AIPhotoAnalyzerScreen.original.tsx",
+      "issue": "Component is too large (1094 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/ai/AICompatibilityScreen.tsx",
+      "issue": "Component is too large (1187 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/adoption/PetDetailsScreen.tsx",
+      "issue": "Component is too large (678 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/adoption/CreateListingScreen.tsx",
+      "issue": "Component is too large (761 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/adoption/ApplicationReviewScreen.tsx",
+      "issue": "Component is too large (803 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/adoption/AdoptionManagerScreen.tsx",
+      "issue": "Component is too large (811 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/adoption/AdoptionContractScreen.tsx",
+      "issue": "Component is too large (543 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/adoption/AdoptionApplicationScreen.tsx",
+      "issue": "Component is too large (796 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/admin/AdminVerificationsScreen.tsx",
+      "issue": "Component is too large (1037 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/admin/AdminUploadsScreen.tsx",
+      "issue": "Component is too large (809 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/admin/AdminSecurityScreen.tsx",
+      "issue": "Component is too large (1041 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/admin/AdminDashboardScreen.tsx",
+      "issue": "Component is too large (783 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/admin/AdminChatsScreen.tsx",
+      "issue": "Component is too large (555 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/admin/AdminBillingScreen.tsx",
+      "issue": "Component is too large (1002 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "screens/admin/AdminAnalyticsScreen.tsx",
+      "issue": "Component is too large (1161 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/voice/VoiceRecorderUltra.web.tsx",
+      "issue": "Component is too large (508 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/swipe/SwipeGestureHintOverlay.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/swipe/PeekSheet.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/photo/SubjectSuggestionsBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/photo/PhotoAdjustmentSlider.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/photo/AdvancedPhotoEditor.tsx",
+      "issue": "Component is too large (836 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/micro/RippleIcon.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/micro/HapticSwitch.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/menus/MorphingContextMenu.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/glass/GlassModal.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/filters/AdvancedPetFilters.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/feedback/Toast.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/common/SmartImage.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/chat/VoiceRecorderUltra.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/chat/VoiceRecorderUltra.tsx",
+      "issue": "Component is too large (800 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/chat/VoicePlayer.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/chat/ReplyPreviewBar.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/chat/ReadByPopover.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/chat/MessageTimestampBadge.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/chat/MessageStatusTicks.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/chat/MessageBubbleEnhanced.tsx",
+      "issue": "Component is too large (668 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/chat/MessageBubble.tsx",
+      "issue": "Component is too large (589 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/animations/EnhancedAnimations.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/animations/EnhancedAnimations.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/animations/EnhancedAnimations.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/animations/EnhancedAnimations.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/animations/EnhancedAnimations.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/animations/EnhancedAnimations.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/animations/EnhancedAnimations.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/animations/EnhancedAnimations.tsx",
+      "issue": "Component is too large (532 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/Premium/PremiumCard.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/Advanced/AdvancedInteractionTest.tsx",
+      "issue": "Component is too large (609 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/Advanced/AdvancedInteractionSystem.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/Advanced/AdvancedInteractionSystem.tsx",
+      "issue": "Component is too large (692 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/Advanced/AdvancedHeader.tsx",
+      "issue": "Component is too large (593 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/Advanced/AdvancedCard.tsx",
+      "issue": "Component is too large (550 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/ui/v2/registry.tsx",
+      "issue": "Component is too large (513 lines)",
+      "severity": "medium",
+      "recommendation": "Consider breaking into smaller components"
+    },
+    {
+      "file": "components/ui/v2/Skeleton.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/ui/v2/Sheet.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/elite/cards/EliteCard.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/elite/buttons/EliteButton.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/elite/animations/ScaleIn.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
+    },
+    {
+      "file": "components/elite/animations/FadeInUp.tsx",
+      "issue": "useEffect without dependencies array",
+      "severity": "critical",
+      "recommendation": "Add dependency array to prevent memory leaks"
     }
   ],
-  "validationPlan": {
-    "step1": "Benchmark current performance (baseline)",
-    "step2": "Extract first hook (useSwipeGestures)",
-    "step3": "Measure render time improvement",
-    "step4": "Extract first component (SwipeCard)",
-    "step5": "Measure re-render scope improvement",
-    "step6": "Decompose AICompatibilityScreen",
-    "step7": "Validate hypothesis (60% improvement)",
-    "step8": "Generate final report"
-  },
-  "tools": {
-    "profiling": [
-      "React DevTools Profiler",
-      "Chrome Performance Timeline",
-      "React Native Performance Monitor"
+  "budget": {
+    "meta": {
+      "generated": "2025-01-28",
+      "phase": "2. Mobile God-Component Decomposition & Performance",
+      "agent": "Performance Profiler (PP)"
+    },
+    "hypothesis": {
+      "title": "Decomposition Performance Impact",
+      "claim": "Breaking god components into domain hooks + presentational components will reduce render time by 60%, improve test coverage to >90%, and enable 60fps interactions",
+      "rationale": "Isolating business logic from UI allows for memoization, code splitting, and selective re-renders, reducing unnecessary work"
+    },
+    "currentPerformance": {
+      "renderTimes": {
+        "SwipeScreen": 150,
+        "ChatScreen": 80,
+        "MatchesScreen": 75,
+        "AICompatibilityScreen": 200,
+        "AdminAnalyticsScreen": 180,
+        "SettingsScreen": 90
+      },
+      "fpsTarget": 60,
+      "fpsActual": 45,
+      "reRenderTrigger": "entire screen on any state change",
+      "bundleSize": "monolithic",
+      "testCoverage": 40
+    },
+    "performanceBudget": {
+      "renderTime": {
+        "target": 60,
+        "max": 100,
+        "unit": "ms",
+        "measurementMethod": "componentDidMount to first render"
+      },
+      "fps": {
+        "target": 60,
+        "min": 50,
+        "unit": "frames per second",
+        "measurementMethod": "gesture animation frame rate"
+      },
+      "reRenderScope": {
+        "target": "isolated to affected component",
+        "current": "entire screen",
+        "measurementMethod": "React DevTools Profiler"
+      },
+      "bundleSize": {
+        "initialLoad": {
+          "target": "<200KB",
+          "current": "~350KB",
+          "unit": "gzipped",
+          "improvement": "30% via code splitting"
+        },
+        "lazyLoadThreshold": {
+          "target": "<100KB per screen",
+          "current": ">500KB god components",
+          "improvement": "80% via extraction"
+        }
+      },
+      "testCoverage": {
+        "target": 90,
+        "min": 85,
+        "current": 40,
+        "unit": "percentage",
+        "improvement": "125% increase"
+      }
+    },
+    "perScreenTargets": {
+      "SwipeScreen": {
+        "current": {
+          "renderTime": 150,
+          "complexity": 4,
+          "testCoverage": 35
+        },
+        "target": {
+          "renderTime": 60,
+          "complexity": 2.5,
+          "testCoverage": 90
+        },
+        "improvements": [
+          "Extract pan responder to useSwipeGestures hook",
+          "Extract animations to useSwipeAnimations hook",
+          "Create SwipeCard presentational component"
+        ],
+        "estimatedImpact": {
+          "renderTimeReduction": "60%",
+          "testCoverageIncrease": "157%",
+          "codeMaintainability": "significantly improved"
+        }
+      },
+      "ChatScreen": {
+        "current": {
+          "renderTime": 80,
+          "complexity": 1.6,
+          "testCoverage": 85
+        },
+        "target": {
+          "renderTime": 60,
+          "complexity": 1.5,
+          "testCoverage": 90
+        },
+        "improvements": [
+          "Already well-refactored ✅",
+          "Minor optimizations possible",
+          "Consider memoization for message list"
+        ],
+        "estimatedImpact": "minor improvements"
+      },
+      "MatchesScreen": {
+        "current": {
+          "renderTime": 75,
+          "complexity": 1.5,
+          "testCoverage": 80
+        },
+        "target": {
+          "renderTime": 60,
+          "complexity": 1.5,
+          "testCoverage": 90
+        },
+        "improvements": [
+          "Already well-refactored ✅",
+          "Consider FlatList optimization",
+          "Add pull-to-refresh performance tracking"
+        ],
+        "estimatedImpact": "minor improvements"
+      },
+      "AICompatibilityScreen": {
+        "current": {
+          "renderTime": 200,
+          "complexity": 12,
+          "testCoverage": 20
+        },
+        "target": {
+          "renderTime": 80,
+          "complexity": 4,
+          "testCoverage": 90
+        },
+        "improvements": [
+          "Extract pet selection to usePetSelection hook",
+          "Extract analysis to useCompatibilityAnalysis hook",
+          "Create PetSelectionSection, AnalysisLoadingSection, CompatibilityResultsSection components"
+        ],
+        "estimatedImpact": {
+          "renderTimeReduction": "60%",
+          "testCoverageIncrease": "350%",
+          "codeMaintainability": "dramatically improved"
+        }
+      },
+      "SettingsScreen": {
+        "current": {
+          "renderTime": 90,
+          "complexity": 6,
+          "testCoverage": 80
+        },
+        "target": {
+          "renderTime": 60,
+          "complexity": 3,
+          "testCoverage": 90
+        },
+        "improvements": [
+          "Already partially refactored ✅",
+          "Move settings config to external file",
+          "Create reusable SettingItem component"
+        ],
+        "estimatedImpact": "minor to moderate improvements"
+      },
+      "EditProfileScreen": {
+        "current": {
+          "renderTime": 120,
+          "complexity": 5,
+          "testCoverage": 60
+        },
+        "target": {
+          "renderTime": 70,
+          "complexity": 3.5,
+          "testCoverage": 90
+        },
+        "improvements": [
+          "Extract photo editor to PhotoEditorModal component",
+          "Create reusable ProfileInput component",
+          "Optimize photo upload processing"
+        ],
+        "estimatedImpact": {
+          "renderTimeReduction": "42%",
+          "testCoverageIncrease": "50%"
+        }
+      }
+    },
+    "performanceGains": {
+      "strategies": [
+        {
+          "name": "Extract Domain Hooks",
+          "impact": "isolate logic from UI, enable memoization",
+          "estimatedImprovement": "30-40% render time reduction"
+        },
+        {
+          "name": "Create Presentational Components",
+          "impact": "enable selective re-renders, reduce DOM work",
+          "estimatedImprovement": "20-30% render time reduction"
+        },
+        {
+          "name": "Code Splitting",
+          "impact": "lazy load hooks and components",
+          "estimatedImprovement": "30% initial load improvement"
+        },
+        {
+          "name": "Memoization",
+          "impact": "prevent unnecessary re-renders",
+          "estimatedImprovement": "40-50% re-render reduction"
+        }
+      ]
+    },
+    "metricsToTrack": [
+      {
+        "name": "componentRenderTime",
+        "frequency": "per screen interaction",
+        "threshold": "<100ms",
+        "alert": ">100ms"
+      },
+      {
+        "name": "gestureFPS",
+        "frequency": "during swipe gesture",
+        "threshold": ">50fps",
+        "alert": "<50fps"
+      },
+      {
+        "name": "reRenderScope",
+        "frequency": "on state change",
+        "threshold": "isolated to affected component",
+        "alert": "entire screen re-render"
+      },
+      {
+        "name": "bundleSize",
+        "frequency": "on build",
+        "threshold": "<200KB gzipped",
+        "alert": ">250KB"
+      },
+      {
+        "name": "testCoverage",
+        "frequency": "on commit",
+        "threshold": ">85%",
+        "alert": "<80%"
+      }
     ],
-    "monitoring": [
-      "Sentry Performance",
-      "Custom performance markers",
-      "Jest performance tests"
-    ],
-    "analysis": [
-      "Bundle Analyzer",
-      "Flipper Performance Monitor",
-      "React DevTools Component Tree"
-    ]
-  },
-  "successCriteria": {
-    "mustHave": [
-      "All screens render in <100ms",
-      "60fps during gesture interactions",
-      "Isolated re-renders (not entire screen)",
-      ">85% test coverage"
-    ],
-    "shouldHave": [
-      "Bundle size <200KB gzipped",
-      "Code splitting enabled",
-      "Skeleton screens for perceived performance",
-      ">90% test coverage"
-    ],
-    "niceToHave": [
-      "Predictive loading",
-      "Offline support with optimistic UI",
-      "Advanced memoization strategies"
-    ]
+    "validationPlan": {
+      "step1": "Benchmark current performance (baseline)",
+      "step2": "Extract first hook (useSwipeGestures)",
+      "step3": "Measure render time improvement",
+      "step4": "Extract first component (SwipeCard)",
+      "step5": "Measure re-render scope improvement",
+      "step6": "Decompose AICompatibilityScreen",
+      "step7": "Validate hypothesis (60% improvement)",
+      "step8": "Generate final report"
+    },
+    "tools": {
+      "profiling": [
+        "React DevTools Profiler",
+        "Chrome Performance Timeline",
+        "React Native Performance Monitor"
+      ],
+      "monitoring": [
+        "Sentry Performance",
+        "Custom performance markers",
+        "Jest performance tests"
+      ],
+      "analysis": [
+        "Bundle Analyzer",
+        "Flipper Performance Monitor",
+        "React DevTools Component Tree"
+      ]
+    },
+    "successCriteria": {
+      "mustHave": [
+        "All screens render in <100ms",
+        "60fps during gesture interactions",
+        "Isolated re-renders (not entire screen)",
+        ">85% test coverage"
+      ],
+      "shouldHave": [
+        "Bundle size <200KB gzipped",
+        "Code splitting enabled",
+        "Skeleton screens for perceived performance",
+        ">90% test coverage"
+      ],
+      "niceToHave": [
+        "Predictive loading",
+        "Offline support with optimistic UI",
+        "Advanced memoization strategies"
+      ]
+    }
   }
 }

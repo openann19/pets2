@@ -7,8 +7,8 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { PetListing } from "../../../../hooks/screens/useAdoptionManagerScreen";
-import { useTheme } from "@mobile/theme";
-import type { AppTheme } from "@mobile/theme";
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
@@ -16,7 +16,7 @@ function __makeStyles_styles(theme: AppTheme) {
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: theme.palette.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -55,7 +55,7 @@ function __makeStyles_styles(theme: AppTheme) {
     marginBottom: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: "rgba(0,0,0,0.05)",
+    borderTopColor: theme.colors.border,
   },
   stat: {
     alignItems: "center",
@@ -88,7 +88,7 @@ function __makeStyles_styles(theme: AppTheme) {
     fontWeight: "600",
   },
   primaryButtonText: {
-    color: "#fff",
+    color: theme.colors.onPrimary,
   },
 });
 }
@@ -116,7 +116,7 @@ export const PetListingCard: React.FC<PetListingCardProps> = ({
   const { colors, palette } = theme;
 
   return (
-    <View style={[styles.listingCard, { backgroundColor: colors.surface }]}>
+    <View style={[styles.listingCard, { backgroundColor: colors.surface }]} testID={`pet-listing-card-${pet.id}`} accessibilityRole="none">
       <View style={styles.listingHeader}>
         <View style={styles.petInfo}>
           <Text style={[styles.petName, { color: colors.onSurface }]}>{pet.name}</Text>

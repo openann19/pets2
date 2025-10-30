@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { useTheme } from '@mobile/theme';
 
 export type MatchesFilter = {
   q?: string;
@@ -17,107 +18,109 @@ interface Props {
 }
 
 export default function MatchesFilterModal({ visible, initial, onApply, onClose }: Props) {
+  const theme = useTheme();
   const [f, setF] = useState<MatchesFilter>(initial);
-
+  const styles = makeStyles(theme);
+  
   return (
     <Modal
       visible={visible}
       animationType="slide"
       transparent
     >
-      <View style={S.backdrop}>
+      <View style={styles.backdrop}>
         <View
-          style={S.card}
+          style={styles.card}
           testID="matches-filter-modal"
         >
-          <Text style={S.h1}>Filter Matches</Text>
+          <Text style={styles.h1}>Filter Matches</Text>
 
-          <Text style={S.label}>Search</Text>
+          <Text style={styles.label}>Search</Text>
           <TextInput
             testID="filter-q"
-            style={S.input}
+            style={styles.input}
             value={f.q ?? ''}
             onChangeText={(q) => {
               setF({ ...f, q });
             }}
             placeholder="Search by pet name"
-            placeholderTextColor={Theme.colors.neutral[400]}
+            placeholderTextColor={theme.palette.neutral[400]}
           />
 
-          <Text style={S.label}>Species</Text>
-          <View style={S.row}>
+          <Text style={styles.label}>Species</Text>
+          <View style={styles.row}>
             {(['', 'dog', 'cat', 'other'] as const).map((s) => (
               <TouchableOpacity
                 key={s || 'all'}
-                style={[S.pill, (f.species ?? '') === s && S.pillActive]}
+                style={[styles.pill, (f.species ?? '') === s && styles.pillActive]}
                 onPress={() => {
                   setF({ ...f, species: s });
                 }}
                 testID={`filter-species-${s || 'all'}`}
               >
-                <Text style={S.pillText}>{s || 'All'}</Text>
+                <Text style={styles.pillText}>{s || 'All'}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <Text style={S.label}>Distance (km)</Text>
-          <View style={S.row}>
+          <Text style={styles.label}>Distance (km)</Text>
+          <View style={styles.row}>
             <TextInput
               testID="filter-minDist"
-              style={[S.input, S.inputHalf]}
+              style={[styles.input, styles.inputHalf]}
               value={f.minDist?.toString() ?? ''}
               onChangeText={(v) => {
                 setF({ ...f, minDist: v ? Number(v) : undefined });
               }}
               keyboardType="numeric"
               placeholder="Min"
-              placeholderTextColor={Theme.colors.neutral[400]}
+              placeholderTextColor={theme.palette.neutral[400]}
             />
             <TextInput
               testID="filter-maxDist"
-              style={[S.input, S.inputHalf]}
+              style={[styles.input, styles.inputHalf]}
               value={f.maxDist?.toString() ?? ''}
               onChangeText={(v) => {
                 setF({ ...f, maxDist: v ? Number(v) : undefined });
               }}
               keyboardType="numeric"
               placeholder="Max"
-              placeholderTextColor={Theme.colors.neutral[400]}
+              placeholderTextColor={theme.palette.neutral[400]}
             />
           </View>
 
-          <Text style={S.label}>Sort</Text>
-          <View style={S.row}>
+          <Text style={styles.label}>Sort</Text>
+          <View style={styles.row}>
             {(['newest', 'oldest', 'alpha'] as const).map((k) => (
               <TouchableOpacity
                 key={k}
-                style={[S.pill, (f.sort ?? 'newest') === k && S.pillActive]}
+                style={[styles.pill, (f.sort ?? 'newest') === k && styles.pillActive]}
                 onPress={() => {
                   setF({ ...f, sort: k });
                 }}
                 testID={`filter-sort-${k}`}
               >
-                <Text style={S.pillText}>{k}</Text>
+                <Text style={styles.pillText}>{k}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={S.actions}>
+          <View style={styles.actions}>
             <TouchableOpacity
               onPress={onClose}
-              style={[S.btn, S.btnGhost]}
+              style={[styles.btn, styles.btnGhost]}
               testID="filter-cancel"
             >
-              <Text style={S.btnGhostText}>Cancel</Text>
+              <Text style={styles.btnGhostText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
                 onApply(f);
               }}
-              style={[S.btn, S.btnPrimary]}
+              style={[styles.btn, styles.btnPrimary]}
               testID="filter-apply"
             >
-              <Text style={S.btnPrimaryText}>Apply</Text>
+              <Text style={styles.btnPrimaryText}>Apply</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -126,38 +129,40 @@ export default function MatchesFilterModal({ visible, initial, onApply, onClose 
   );
 }
 
-const S = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  card: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    gap: 8,
-  },
-  h1: { fontSize: 18, fontWeight: '700' },
-  label: { fontSize: 12, fontWeight: '600', color: Theme.colors.neutral[600], marginTop: 8 },
-  input: {
-    borderWidth: 1,
-    borderColor: Theme.colors.neutral[200],
-    borderRadius: 10,
-    padding: 10,
-    color: '#111',
-  },
-  inputHalf: { flex: 1 },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  pill: {
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 999,
-    backgroundColor: Theme.colors.neutral[100],
-  },
-  pillActive: { backgroundColor: `${Theme.colors.primary[500]}22` },
-  pillText: { fontWeight: '600' },
-  actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 12, marginTop: 12 },
-  btn: { paddingVertical: 10, paddingHorizontal: 14, borderRadius: 12 },
-  btnGhost: { backgroundColor: '#fff', borderWidth: 1, borderColor: Theme.colors.neutral[200] },
-  btnGhostText: { fontWeight: '700', color: Theme.colors.neutral[700] },
-  btnPrimary: { backgroundColor: Theme.colors.primary[500] },
-  btnPrimaryText: { color: '#fff', fontWeight: '700' },
-});
+function makeStyles(theme: ReturnType<typeof useTheme>) {
+  return StyleSheet.create({
+    backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+    card: {
+      backgroundColor: theme.colors.surface,
+      padding: theme.spacing.md,
+      borderTopLeftRadius: theme.radii.lg,
+      borderTopRightRadius: theme.radii.lg,
+      gap: theme.spacing.xs,
+    },
+    h1: { fontSize: 18, fontWeight: '700', color: theme.colors.onSurface },
+    label: { fontSize: 12, fontWeight: '600', color: theme.palette.neutral[600], marginTop: theme.spacing.xs },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.palette.neutral[200],
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      color: theme.colors.onSurface,
+    },
+    inputHalf: { flex: 1 },
+    row: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.xs },
+    pill: {
+      paddingVertical: theme.spacing.xs,
+      paddingHorizontal: theme.spacing.md,
+      borderRadius: theme.radii.full,
+      backgroundColor: theme.palette.neutral[100],
+    },
+    pillActive: { backgroundColor: `${theme.colors.primary}22` },
+    pillText: { fontWeight: '600', color: theme.colors.onSurface },
+    actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: theme.spacing.md, marginTop: theme.spacing.md },
+    btn: { paddingVertical: theme.spacing.md, paddingHorizontal: theme.spacing.md, borderRadius: theme.radii.md },
+    btnGhost: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.palette.neutral[200] },
+    btnGhostText: { fontWeight: '700', color: theme.palette.neutral[700] },
+    btnPrimary: { backgroundColor: theme.colors.primary },
+    btnPrimaryText: { color: theme.colors.onSurface, fontWeight: '700' },
+  });
+}

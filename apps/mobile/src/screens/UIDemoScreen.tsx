@@ -4,17 +4,15 @@
  */
 
 import React, { useState } from 'react';
-import { ScrollView, View, StyleSheet, Switch, Alert } from 'react-native';
+import { ScrollView, View, StyleSheet, Switch } from 'react-native';
 import { Stack } from '../components/ui/v2/layout/Stack';
 import { Text } from '../components/ui/v2/Text';
 import { Button } from '../components/ui/v2/Button';
 import { useTheme } from "@mobile/theme";
-import { useTranslation } from 'react-i18next';
 import { showcaseRegistry } from '../components/ui/v2/registry';
 
 export default function UIDemoScreen(): React.ReactElement {
-  const theme = useTheme();
-  const { t, i18n } = useTranslation();
+  const theme: ReturnType<typeof useTheme> = useTheme();
   const [density, setDensity] = useState<'comfortable' | 'compact'>('comfortable');
   const [reduceMotion, setReduceMotion] = useState(false);
   const [themeMode, setThemeMode] = useState<'light' | 'dark'>(
@@ -26,8 +24,9 @@ export default function UIDemoScreen(): React.ReactElement {
     // Store preference in AsyncStorage for persistence
   };
 
-  const handleLanguageChange = async (lang: 'en' | 'bg') => {
-    await i18n.changeLanguage(lang);
+  const handleLanguageChange = async (_lang: 'en' | 'bg') => {
+    // i18n functionality removed for now
+    // await i18n.changeLanguage(lang);
   };
 
   return (
@@ -64,14 +63,14 @@ export default function UIDemoScreen(): React.ReactElement {
           <Button
             testID="ui-lang-en"
             title="EN"
-            variant={i18n.language.startsWith('en') ? 'primary' : 'ghost'}
+            variant="ghost"
             size="sm"
             onPress={() => handleLanguageChange('en')}
           />
           <Button
             testID="ui-lang-bg"
             title="BG"
-            variant={i18n.language.startsWith('bg') ? 'primary' : 'ghost'}
+            variant="ghost"
             size="sm"
             onPress={() => handleLanguageChange('bg')}
           />

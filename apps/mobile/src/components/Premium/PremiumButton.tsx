@@ -21,6 +21,7 @@ import {
   Dimensions,
   type TextStyle,
 } from 'react-native';
+import { useTheme } from '@/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -63,6 +64,7 @@ function PremiumButtonComponent({
   glow = false,
   style,
 }: PremiumButtonProps): React.JSX.Element {
+  const theme = useTheme();
   const [isPressed, setIsPressed] = useState(false);
   const [animatedScale] = useState(() => new Animated.Value(1));
   const [animatedGlow] = useState(() => new Animated.Value(0));
@@ -155,39 +157,39 @@ function PremiumButtonComponent({
   const getVariantStyles = (): VariantStyle => {
     const variants: Record<NonNullable<typeof variant>, VariantStyle> = {
       primary: {
-        colors: ['Theme.colors.primary[500]', 'Theme.colors.primary[400]'],
-        textColor: 'Theme.colors.neutral[0]',
-        shadowColor: 'Theme.colors.primary[500]',
+        colors: [theme.colors.primary, theme.colors.primary],
+        textColor: theme.colors.onPrimary,
+        shadowColor: theme.colors.primary,
       },
       secondary: {
-        colors: ['Theme.colors.secondary[500]', '#38bdf8'],
-        textColor: 'Theme.colors.neutral[0]',
-        shadowColor: 'Theme.colors.secondary[500]',
+        colors: [theme.colors.info, theme.colors.info],
+        textColor: theme.colors.onSurface,
+        shadowColor: theme.colors.info,
       },
       glass: {
         colors: ['transparent', 'transparent'],
-        textColor: 'Theme.colors.neutral[700]',
-        shadowColor: 'Theme.colors.neutral[950]',
+        textColor: theme.colors.onSurface,
+        shadowColor: theme.colors.border,
         blur: true,
       },
       gradient: {
         colors: ['#667eea', '#764ba2', '#f093fb', '#f5576c'],
-        textColor: 'Theme.colors.neutral[0]',
+        textColor: theme.colors.onSurface,
         shadowColor: '#667eea',
       },
       neon: {
         colors: ['#1a1a1a', '#1a1a1a'],
-        textColor: 'Theme.colors.primary[500]',
-        shadowColor: 'Theme.colors.primary[500]',
+        textColor: theme.colors.primary,
+        shadowColor: theme.colors.primary,
         border: true,
-        borderColor: 'Theme.colors.primary[500]',
+        borderColor: theme.colors.primary,
       },
       ghost: {
         colors: ['transparent', 'transparent'],
-        textColor: 'Theme.colors.neutral[500]',
+        textColor: theme.colors.onMuted,
         shadowColor: 'transparent',
         border: true,
-        borderColor: 'Theme.colors.neutral[300]',
+        borderColor: theme.colors.border,
       },
     };
 

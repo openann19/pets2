@@ -19,6 +19,8 @@ import Animated, { type AnimatedStyleProp } from 'react-native-reanimated';
 
 import { useGlowAnimation, usePressAnimation } from '../../hooks/useUnifiedAnimations';
 import { useMagneticEffect, useRippleEffect, useShimmerEffect } from '../../hooks/animations';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 // === TYPES ===
 interface EffectWrapperProps {
@@ -36,18 +38,13 @@ interface WithGlowFXProps extends EffectWrapperProps {
 
 export const WithGlowFX = forwardRef<Animated.View, WithGlowFXProps>(
   (
-    {
-      children,
-      color = Theme.colors.primary[500],
-      intensity = 1,
-      duration = 2000,
-      style,
-      disabled = false,
-    },
+    { children, color, intensity = 1, duration = 2000, style, disabled = false },
     ref: Ref<Animated.View>,
   ) => {
+    const theme = useTheme();
+    const resolvedColor = color ?? theme.colors.primary;
     const { animatedStyle: glowStyle } = useGlowAnimation(
-      disabled ? 'transparent' : color,
+      disabled ? 'transparent' : resolvedColor,
       disabled ? 0 : intensity,
       duration,
     );
@@ -97,7 +94,9 @@ interface WithRippleFXProps extends EffectWrapperProps {
 }
 
 export const WithRippleFX = forwardRef<View, WithRippleFXProps>(
-  ({ children, color = 'rgba(255, 255, 255, 0.3)', style, disabled = false }, ref) => {
+  ({ children, color, style, disabled = false }, ref) => {
+    const theme = useTheme();
+    const rippleColor = color ?? theme.colors.onPrimary + '4D';
     const { triggerRipple, rippleStyle } = useRippleEffect();
 
     const handlePressIn = () => {
@@ -122,7 +121,7 @@ export const WithRippleFX = forwardRef<View, WithRippleFXProps>(
                 width: 100,
                 height: 100,
                 borderRadius: 50,
-                backgroundColor: color,
+                backgroundColor: rippleColor,
                 marginTop: -50,
                 marginLeft: -50,
               } as ViewStyle,
@@ -146,9 +145,11 @@ interface WithShimmerFXProps extends EffectWrapperProps {
 
 export const WithShimmerFX = forwardRef<View, WithShimmerFXProps>(
   (
-    { children, duration = 2000, color = 'rgba(255, 255, 255, 0.1)', style, disabled = false },
+    { children, duration = 2000, color, style, disabled = false },
     ref,
   ) => {
+    const theme = useTheme();
+    const shimmerColor = color ?? theme.colors.overlay;
     const { shimmerStyle } = useShimmerEffect(!disabled && duration > 0);
 
     return (
@@ -166,7 +167,7 @@ export const WithShimmerFX = forwardRef<View, WithShimmerFXProps>(
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: color,
+                backgroundColor: shimmerColor,
               } as ViewStyle,
               shimmerStyle as AnimatedStyleProp<ViewStyle>,
             ]}
@@ -212,13 +213,18 @@ interface WithGradientFXProps extends EffectWrapperProps {
 
 export const WithGradientFX = forwardRef<View, WithGradientFXProps>(
   ({ children, gradient, colors, angle = 135, style }, ref) => {
-    const { LinearGradient } = require('expo-linear-gradient');
-
-    const gradientConfig = gradient ? (Theme.gradients as any)[gradient] : null;
+    const theme = useTheme();
+    const map: Record<string, readonly [string, string]> = {
+      primary: theme.palette.gradients.primary,
+      success: theme.palette.gradients.success,
+      error: theme.palette.gradients.danger,
+      warning: theme.palette.gradients.danger,
+      secondary: theme.palette.gradients.primary,
+      glass: theme.palette.gradients.primary,
+      glow: theme.palette.gradients.primary,
+    } as const;
     const gradientColors =
-      colors || Array.isArray(gradientConfig?.colors)
-        ? gradientConfig?.colors
-        : [Theme.colors.primary[500], Theme.colors.primary[400]];
+      colors || (gradient ? map[gradient] : undefined) || theme.palette.gradients.primary;
 
     return (
       <LinearGradient

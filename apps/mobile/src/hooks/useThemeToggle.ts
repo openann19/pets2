@@ -5,8 +5,8 @@ import { Alert } from 'react-native';
 import type { ThemeColors } from '@mobile/theme';
 import { useTheme } from '@mobile/theme';
 import type { ThemeMode } from '../stores/useUIStore';
+import { useUIStore } from '../stores/useUIStore';
 import { getExtendedColors } from '../theme/adapters';
-import { useThemeContext } from '../theme/ThemeProvider';
 
 export interface UseThemeToggleReturn {
   isDark: boolean;
@@ -23,38 +23,37 @@ export interface UseThemeToggleReturn {
 
 export function useThemeToggle(): UseThemeToggleReturn {
   const theme = useTheme();
-  const { isDark, mode, setMode, toggleTheme: contextToggleTheme } = useThemeContext();
+  const { isDark, themeMode, setThemeMode, toggleTheme: storeToggleTheme } = useUIStore();
 
   // Get extended colors for backward compatibility
   const colors = getExtendedColors(theme);
   const styles: Record<string, unknown> = {};
   const shadows: Record<string, unknown> = {};
-  const themeMode = mode as ThemeMode;
 
   // Enhanced toggle with haptic feedback
   const toggleTheme = useCallback(async () => {
     try {
       // Provide haptic feedback
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      contextToggleTheme();
+      storeToggleTheme();
     } catch (error) {
       // Fallback if haptics fail
-      contextToggleTheme();
+      storeToggleTheme();
     }
-  }, [contextToggleTheme]);
+  }, [storeToggleTheme]);
 
   // Set specific theme modes
   const setLightTheme = useCallback(() => {
-    setMode('light');
-  }, [setMode]);
+    setThemeMode('light');
+  }, [setThemeMode]);
 
   const setDarkTheme = useCallback(() => {
-    setMode('dark');
-  }, [setMode]);
+    setThemeMode('dark');
+  }, [setThemeMode]);
 
   const setSystemTheme = useCallback(() => {
-    setMode('system');
-  }, [setMode]);
+    setThemeMode('system');
+  }, [setThemeMode]);
 
   // Show theme selection modal
   const showThemeSelector = useCallback(() => {

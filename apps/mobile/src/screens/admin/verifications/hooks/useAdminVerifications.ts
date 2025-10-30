@@ -130,8 +130,7 @@ export const useAdminVerifications = () => {
   const handleRequestInfo = useCallback(
     async (verificationId: string, message: string) => {
       try {
-        // TODO: Implement requestVerificationInfo method in adminAPI
-        const response = await _adminAPI.getVerificationDetails(verificationId);
+        const response = await _adminAPI.requestVerificationInfo(verificationId, message);
         if (response?.success) {
           await loadVerifications(true);
           setSelectedVerification(null);

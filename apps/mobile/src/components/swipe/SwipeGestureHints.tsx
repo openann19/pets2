@@ -9,7 +9,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../../theme';
-import { getExtendedColors } from '../../theme/adapters';
 
 export const HINTS_STORAGE_KEY = 'swipe_hints_dismissed';
 
@@ -33,7 +32,6 @@ const hints: Hint[] = [
 
 export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureHintsProps): React.JSX.Element {
   const theme = useTheme();
-  const colors = useMemo(() => getExtendedColors(theme), [theme]);
   const [visible, setVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(initialDismissed ?? false);
   const opacity = useRef(new Animated.Value(0)).current;
@@ -176,7 +174,7 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
       {leftHint && (
         <View style={styles.hintContainerLeft}>
           <View style={[styles.hint, { backgroundColor: leftHint.color + '20' }]}>
-            <Ionicons name={leftHint.icon as keyof typeof Ionicons.glyphMap} size={24} color={leftHint.color} />
+            <Ionicons name={leftHint.icon as any} size={24} color={leftHint.color} />
             <Text style={[styles.hintText, { color: leftHint.color }]}>{leftHint.text}</Text>
           </View>
         </View>
@@ -186,7 +184,7 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
       {rightHint && (
         <View style={styles.hintContainerRight}>
           <View style={[styles.hint, { backgroundColor: rightHint.color + '20' }]}>
-            <Ionicons name={rightHint.icon as keyof typeof Ionicons.glyphMap} size={24} color={rightHint.color} />
+            <Ionicons name={rightHint.icon as any} size={24} color={rightHint.color} />
             <Text style={[styles.hintText, { color: rightHint.color }]}>{rightHint.text}</Text>
           </View>
         </View>
@@ -196,7 +194,7 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
       {topHint && (
         <View style={styles.hintContainerTop}>
           <View style={[styles.hint, { backgroundColor: topHint.color + '20' }]}>
-            <Ionicons name={topHint.icon as keyof typeof Ionicons.glyphMap} size={24} color={topHint.color} />
+            <Ionicons name={topHint.icon as any} size={24} color={topHint.color} />
             <Text style={[styles.hintText, { color: topHint.color }]}>{topHint.text}</Text>
           </View>
         </View>
@@ -204,7 +202,7 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
 
       {/* Dismiss button */}
       <Pressable style={styles.dismissButton} onPress={handleDismiss} testID="dismiss-button">
-        <Ionicons name="close" size={20} color={colors.white ?? '#FFFFFF'} />
+        <Ionicons name="close" size={20} color={theme.colors.onSurface} />
       </Pressable>
     </Animated.View>
   );

@@ -1,5 +1,5 @@
-import React, { forwardRef, useImperativeHandle, useMemo } from "react";
-import { StyleSheet, View } from "react-native";
+import { forwardRef, useImperativeHandle, useMemo } from "react";
+import { StyleSheet, View, type ViewStyle } from "react-native";
 import Animated, {
   cancelAnimation,
   useAnimatedStyle,
@@ -16,7 +16,7 @@ interface SendSparkleProps {
   size?: number;           // base font size
   duration?: number;       // ms until particles fade
   colors?: string[];       // text colors to pick from
-  style?: any;             // wrapper style (position:relative recommended)
+  style?: ViewStyle;             // wrapper style (position:relative recommended)
 }
 
 const GLYPHS = ["✦", "✧", "✺", "✨"];

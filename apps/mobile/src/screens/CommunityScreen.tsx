@@ -1,4 +1,4 @@
-/**
+  /**
  * Community Feed Screen
  *
  * Production-grade community feed with:
@@ -11,7 +11,7 @@
  * - Offline support
  */
 
-import React, { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import {
   FlatList,
   View,
@@ -22,6 +22,7 @@ import {
   ActivityIndicator,
   Alert,
   RefreshControl,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -30,8 +31,11 @@ import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHe
 import { DoubleTapLikePlus } from '../components/Gestures/DoubleTapLikePlus';
 import { PinchZoomPro } from '../components/Gestures/PinchZoomPro';
 import { ReactionBarMagnetic } from '../components/chat';
+import { Interactive } from '../components/primitives/Interactive';
 import { useCommunityFeed } from '../hooks/useCommunityFeed';
-import { useTheme } from '@/theme';
+import { useTheme } from '@mobile/theme';
+import { getExtendedColors, type ExtendedColors } from '@mobile/theme/adapters';
+import { CreatePostForm } from '../components/Community/CreatePostForm';
 import {
   useDoubleTapMetrics,
   usePinchMetrics,
@@ -44,13 +48,13 @@ import { logger } from '../services/logger';
 import type { FlatList as FlatListType } from 'react-native';
 
 interface CommunityScreenProps {
-  navigation: {
+  navigation?: {
     navigate: (screen: string, params?: Record<string, unknown>) => void;
     goBack: () => void;
   };
 }
 
-export default function CommunityScreen({ navigation }: CommunityScreenProps) {
+export default function CommunityScreen({ navigation: _navigation }: CommunityScreenProps = {}) {
   const theme = useTheme();
   const colors: ExtendedColors = getExtendedColors(theme);
   const listRef = useRef<FlatListType<CommunityPost>>(null);
@@ -67,7 +71,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
     createPost,
     likePost,
     addComment,
-    deletePost,
+    deletePost: _deletePost,
     reportPost,
     blockUser,
     joinActivity,
@@ -76,6 +80,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
   const [selectedPost, setSelectedPost] = useState<CommunityPost | null>(null);
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [submittingPost, setSubmittingPost] = useState(false);
+  const [showCreatePostForm, setShowCreatePostForm] = useState(false);
   const [likingPosts, setLikingPosts] = useState<Record<string, boolean>>({});
   const [commentingPosts, setCommentingPosts] = useState<Record<string, boolean>>({});
   const [showReactions, setShowReactions] = useState<Record<string, boolean>>({});
@@ -90,6 +95,217 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
     getOffset,
     topThreshold: 100,
     cooldownMs: 700,
+  });
+
+  // Dynamic styles that depend on theme
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    listContent: {
+      padding: theme.spacing.lg,
+    },
+    postCard: {
+      borderRadius: theme.radii.lg,
+      marginBottom: theme.spacing.lg,
+      padding: theme.spacing.lg,
+      borderWidth: 1,
+      shadowColor: theme.colors.border,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    postHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: theme.spacing.md,
+    },
+    authorInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    avatar: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radii.full,
+      marginEnd: theme.spacing.md,
+    },
+    authorName: {
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
+    },
+    timeAgo: {
+      fontSize: theme.typography.body.size * 0.75,
+    },
+    postContent: {
+      fontSize: theme.typography.body.size * 0.9375,
+      lineHeight: theme.typography.body.lineHeight * 1.375,
+      marginBottom: theme.spacing.md,
+    },
+    imagesContainer: {
+      marginBottom: theme.spacing.md,
+      position: 'relative',
+    },
+    postImage: {
+      width: '100%',
+      height: 200,
+      borderRadius: theme.radii.md,
+      marginBottom: theme.spacing.sm,
+    },
+    reactionOverlay: {
+      position: 'absolute',
+      bottom: theme.spacing.lg + theme.spacing.xs,
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+      zIndex: 1000,
+    },
+    activityBanner: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: theme.spacing.md,
+      borderRadius: theme.radii.md,
+      marginBottom: theme.spacing.md,
+    },
+    activityText: {
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
+    },
+    activityTextSmall: {
+      fontSize: theme.typography.body.size * 0.75,
+      marginTop: theme.spacing.xs / 2,
+    },
+    joinButton: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.radii.full,
+    },
+    joinButtonText: {
+      color: theme.colors.onPrimary,
+      fontWeight: theme.typography.h1.weight,
+    },
+    actions: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: theme.spacing.md,
+    },
+    actionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginEnd: theme.spacing.lg + theme.spacing.xs,
+    },
+    actionText: {
+      marginStart: theme.spacing.xs + theme.spacing.xs / 2,
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.body.weight,
+    },
+    commentsSection: {
+      marginTop: theme.spacing.md,
+      paddingTop: theme.spacing.md,
+      borderTopWidth: 1,
+    },
+    comment: {
+      flexDirection: 'row',
+      marginBottom: theme.spacing.sm,
+    },
+    commentAuthor: {
+      fontWeight: theme.typography.h2.weight,
+      marginEnd: theme.spacing.xs + theme.spacing.xs / 2,
+    },
+    commentText: {
+      flex: 1,
+    },
+    emptyState: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: theme.spacing['3xl'] + theme.spacing.xl,
+    },
+    emptyTitle: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h2.weight,
+      marginTop: theme.spacing.lg,
+    },
+    emptyText: {
+      fontSize: theme.typography.body.size * 0.875,
+      marginTop: theme.spacing.sm,
+    },
+    loadingContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    loadingText: {
+      marginTop: theme.spacing.md,
+      fontSize: theme.typography.body.size * 0.875,
+    },
+    footerLoader: {
+      paddingVertical: theme.spacing.lg + theme.spacing.xs,
+      alignItems: 'center',
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContent: {
+      backgroundColor: colors.card,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.xl,
+      margin: theme.spacing.lg,
+      maxWidth: '90%',
+    },
+    modalTitle: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.md,
+      color: colors.onSurface,
+    },
+    modalSubtitle: {
+      fontSize: theme.typography.body.size,
+      color: colors.onMuted,
+      marginBottom: theme.spacing.lg,
+    },
+    modalTextInput: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      minHeight: 120,
+      fontSize: theme.typography.body.size,
+      color: colors.onSurface,
+      textAlignVertical: 'top',
+      marginBottom: theme.spacing.lg,
+    },
+    modalActions: {
+      flexDirection: 'row',
+      gap: theme.spacing.md,
+    },
+    modalButton: {
+      flex: 1,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      borderRadius: theme.radii.md,
+      alignItems: 'center',
+    },
+    modalButtonPrimary: {
+      backgroundColor: colors.primary,
+    },
+    modalButtonSecondary: {
+      backgroundColor: colors.border,
+    },
+    modalButtonText: {
+      color: colors.onPrimary,
+      fontWeight: theme.typography.h2.weight,
+    },
+    modalButtonTextSecondary: {
+      color: colors.onSurface,
+      fontWeight: theme.typography.h2.weight,
+    },
   });
 
   // Handle post like with metrics
@@ -246,6 +462,8 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             <Image
               source={{ uri: post.author.avatar || 'https://i.pravatar.cc/150' }}
               style={styles.avatar}
+              accessibilityLabel={`${post.author.name}'s profile picture`}
+              accessibilityRole="image"
             />
             <View>
               <Text style={StyleSheet.flatten([styles.authorName, { color: colors.onSurface }])}>
@@ -306,7 +524,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
                 onSingleTap={() => {
                   handlePostLongPress(post._id);
                 }}
-                heartColor="#ff3b5c"
+                heartColor={theme.colors.primary}
                 particles={6}
                 haptics={{ enabled: true, style: 'medium' }}
               >
@@ -325,7 +543,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
                       endPinch('postImage', true);
                     }
                   }}
-                  backgroundColor="#f5f5f5"
+                  backgroundColor={theme.colors.surface}
                 />
               </DoubleTapLikePlus>
             ))}
@@ -342,8 +560,8 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
                   }}
                   influenceRadius={80}
                   baseSize={28}
-                  backgroundColor={colors.card || '#ffffff'}
-                  borderColor={colors.border || 'rgba(0,0,0,0.1)'}
+                  backgroundColor={colors.card || theme.colors.surface}
+                  borderColor={colors.border || theme.colors.border}
                 />
               </View>
             )}
@@ -363,7 +581,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
               size={20}
               color={colors.accent}
             />
-            <View style={{ flex: 1, marginLeft: 8 }}>
+            <View style={{ flex: 1, marginStart: theme.spacing.sm }}>
               <Text style={StyleSheet.flatten([styles.activityText, { color: colors.accent }])}>
                 {new Date(post.activityDetails.date).toLocaleDateString()} at{' '}
                 {post.activityDetails.location}
@@ -379,77 +597,78 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
               </Text>
             </View>
             {!post.activityDetails.attending && (
-              <TouchableOpacity
-                style={StyleSheet.flatten([styles.joinButton, { backgroundColor: colors.accent }])}
-                testID="CommunityScreen-button-2"
-                accessibilityLabel="Interactive element"
-                accessibilityRole="button"
+              <Interactive
                 onPress={() => handleJoinActivity(post._id)}
+                accessibilityLabel="Join activity"
+                accessibilityRole="button"
               >
-                <Text style={styles.joinButtonText}>Join</Text>
-              </TouchableOpacity>
+                <View style={StyleSheet.flatten([styles.joinButton, { backgroundColor: colors.accent }])}>
+                  <Text style={styles.joinButtonText}>Join</Text>
+                </View>
+              </Interactive>
             )}
           </View>
         )}
 
         {/* Actions */}
         <View style={styles.actions}>
-          <TouchableOpacity
-            style={styles.actionButton}
-            testID="CommunityScreen-button-2"
-            accessibilityLabel="Interactive element"
-            accessibilityRole="button"
+          <Interactive
             onPress={() => handleLike(post._id)}
             disabled={likingPosts[post._id]}
-          >
-            <Ionicons
-              name={post.liked ? 'heart' : 'heart-outline'}
-              size={24}
-              color={post.liked ? theme.colors.primary : colors.onMuted}
-            />
-            <Text
-              style={StyleSheet.flatten([
-                styles.actionText,
-                { color: post.liked ? theme.colors.primary : colors.onMuted },
-              ])}
-            >
-              {post.likes}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            testID="CommunityScreen-button-2"
-            accessibilityLabel="Interactive element"
+            accessibilityLabel="Like post"
             accessibilityRole="button"
+            accessibilityState={{ selected: post.liked }}
+          >
+            <View style={styles.actionButton}>
+              <Ionicons
+                name={post.liked ? 'heart' : 'heart-outline'}
+                size={24}
+                color={post.liked ? theme.colors.primary : colors.onMuted}
+              />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.actionText,
+                  { color: post.liked ? theme.colors.primary : colors.onMuted },
+                ])}
+              >
+                {post.likes}
+              </Text>
+            </View>
+          </Interactive>
+
+          <Interactive
             onPress={() => {
               setSelectedPost(post);
             }}
-          >
-            <Ionicons
-              name="chatbubble-outline"
-              size={24}
-              color={colors.onMuted}
-            />
-            <Text
-              style={StyleSheet.flatten([styles.actionText, { color: colors.onMuted }])}
-            >
-              {post.comments.length}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            testID="CommunityScreen-button-1"
-            accessibilityLabel="Button"
+            accessibilityLabel="View comments"
             accessibilityRole="button"
           >
-            <Ionicons
-              name="share-outline"
-              size={24}
-              color={colors.onMuted}
-            />
-          </TouchableOpacity>
+            <View style={styles.actionButton}>
+              <Ionicons
+                name="chatbubble-outline"
+                size={24}
+                color={colors.onMuted}
+              />
+              <Text
+                style={StyleSheet.flatten([styles.actionText, { color: colors.onMuted }])}
+              >
+                {post.comments.length}
+              </Text>
+            </View>
+          </Interactive>
+
+          <Interactive
+            accessibilityLabel="Share post"
+            accessibilityRole="button"
+          >
+            <View style={styles.actionButton}>
+              <Ionicons
+                name="share-outline"
+                size={24}
+                color={colors.onMuted}
+              />
+            </View>
+          </Interactive>
         </View>
 
         {/* Comments Section */}
@@ -489,6 +708,9 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
       likingPosts,
     ],
   );
+
+  // Memoized key extractor for FlatList performance
+  const keyExtractor = useCallback((item: CommunityPost) => item._id, []);
 
   // Render footer for loading more
   const renderFooter = () => {
@@ -555,7 +777,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             {
               type: 'add',
               onPress: () => {
-                // TODO: Open create post modal
+                setShowCreatePostForm(true);
                 logger.info('Create post button pressed');
               },
               variant: 'primary',
@@ -570,7 +792,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
         ref={listRef}
         data={posts}
         renderItem={renderPost}
-        keyExtractor={(item) => item._id}
+        keyExtractor={keyExtractor}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         onScroll={onScroll}
@@ -583,6 +805,11 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
         onEndReachedThreshold={0.5}
         ListEmptyComponent={renderEmptyState}
         ListFooterComponent={renderFooter}
+        removeClippedSubviews
+        initialNumToRender={8}
+        windowSize={7}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={50}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
@@ -591,156 +818,32 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
           />
         }
       />
+      
+      {/* Create Post Form Modal */}
+      <Modal
+        visible={showCreatePostForm}
+        animationType="slide"
+        onRequestClose={() => setShowCreatePostForm(false)}
+        presentationStyle="pageSheet"
+        accessibilityViewIsModal
+      >
+        <CreatePostForm
+          onSubmit={async (data) => {
+            setSubmittingPost(true);
+            try {
+              await createPost(data);
+              setShowCreatePostForm(false);
+              Alert.alert('Success', 'Your post has been created!');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to create post. Please try again.');
+            } finally {
+              setSubmittingPost(false);
+            }
+          }}
+          onCancel={() => setShowCreatePostForm(false)}
+          isSubmitting={submittingPost}
+        />
+      </Modal>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  listContent: {
-    padding: 16,
-  },
-  postCard: {
-    borderRadius: 12,
-    marginBottom: 16,
-    padding: 16,
-    borderWidth: 1,
-    shadowColor: theme.colors.border.medium,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  postHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  authorInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 12,
-  },
-  authorName: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  timeAgo: {
-    fontSize: 12,
-  },
-  postContent: {
-    fontSize: 15,
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  imagesContainer: {
-    marginBottom: 12,
-    position: 'relative',
-  },
-  postImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  reactionOverlay: {
-    position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-  activityBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  activityText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  activityTextSmall: {
-    fontSize: 12,
-    marginTop: 2,
-  },
-  joinButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  joinButtonText: {
-    color: theme.colors.neutral[0],
-    fontWeight: '600',
-  },
-  actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 24,
-  },
-  actionText: {
-    marginLeft: 6,
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  commentsSection: {
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-  },
-  comment: {
-    flexDirection: 'row',
-    marginBottom: 8,
-  },
-  commentAuthor: {
-    fontWeight: '600',
-    marginRight: 6,
-  },
-  commentText: {
-    flex: 1,
-  },
-  emptyState: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginTop: 16,
-  },
-  emptyText: {
-    fontSize: 14,
-    marginTop: 8,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-  },
-  footerLoader: {
-    paddingVertical: 20,
-    alignItems: 'center',
-  },
-});

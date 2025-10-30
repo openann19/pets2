@@ -21,9 +21,11 @@ describe('PremiumGate', () => {
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
         primary: '#7c3aed',
-        secondary: 'Theme.colors.primary[500]',
-        background: 'Theme.colors.neutral[0]',
-        text: 'Theme.colors.neutral[950]',
+        info: '#7c3aed',
+        background: '#ffffff',
+        onSurface: '#000000',
+        onPrimary: '#ffffff',
+        surface: '#ffffff',
       },
       isDark: false,
     });
@@ -149,10 +151,11 @@ describe('PremiumGate', () => {
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
         primary: '#7c3aed',
-        secondary: 'Theme.colors.primary[500]',
-        background: 'Theme.colors.neutral[800]',
-        text: 'Theme.colors.neutral[0]',
-        card: 'Theme.colors.neutral[700]',
+        info: '#7c3aed',
+        background: '#1a1a1a',
+        onSurface: '#ffffff',
+        onPrimary: '#ffffff',
+        surface: '#2a2a2a',
       },
       isDark: true,
     });

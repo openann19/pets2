@@ -3,9 +3,10 @@
  * Shows a preview of the next card with subtle animation
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, StyleSheet, Animated, Dimensions } from 'react-native';
 import type { Pet } from '@pawfectmatch/core';
+import { useTheme } from '@mobile/theme';
 import ModernSwipeCard from '../ModernSwipeCard';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -16,6 +17,7 @@ export interface PeekSheetProps {
 }
 
 export function PeekSheet({ nextPet, show = false }: PeekSheetProps): React.JSX.Element {
+  const theme = useTheme();
   const [scale] = useState(() => new Animated.Value(0.9));
   const [opacity] = useState(() => new Animated.Value(0.3));
 
@@ -51,6 +53,8 @@ export function PeekSheet({ nextPet, show = false }: PeekSheetProps): React.JSX.
   }, [show, nextPet, scale, opacity]);
 
   if (!nextPet || !show) return <View />;
+
+  const styles = makeStyles(theme);
 
   return (
     <Animated.View
@@ -95,44 +99,46 @@ export function PeekSheet({ nextPet, show = false }: PeekSheetProps): React.JSX.
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    bottom: 100,
-    left: SCREEN_WIDTH / 2 - (SCREEN_WIDTH - Theme.spacing['4xl']) / 4,
-    width: (SCREEN_WIDTH - Theme.spacing['4xl']) / 2,
-    height: '50%',
-    zIndex: 1,
-    pointerEvents: 'none',
-  },
-  cardWrapper: {
-    flex: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 5,
-  },
-  nextCard: {
-    width: '100%',
-    height: '100%',
-    borderRadius: Theme.borderRadius.xl,
-  },
-  peekIndicator: {
-    position: 'absolute',
-    top: -20,
-    left: '50%',
-    marginLeft: -10,
-    width: 20,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: Theme.colors.neutral[400],
-    opacity: 0.6,
-  },
-  peekDot: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 2,
-    backgroundColor: Theme.colors.primary[500],
-  },
-});
+function makeStyles(theme: ReturnType<typeof useTheme>) {
+  return StyleSheet.create({
+    container: {
+      position: 'absolute',
+      bottom: 100,
+      left: SCREEN_WIDTH / 2 - (SCREEN_WIDTH - theme.spacing['4xl']) / 4,
+      width: (SCREEN_WIDTH - theme.spacing['4xl']) / 2,
+      height: '50%',
+      zIndex: 1,
+      pointerEvents: 'none',
+    },
+    cardWrapper: {
+      flex: 1,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.15,
+      shadowRadius: 12,
+      elevation: 5,
+    },
+    nextCard: {
+      width: '100%',
+      height: '100%',
+      borderRadius: theme.radii.xl,
+    },
+    peekIndicator: {
+      position: 'absolute',
+      top: -20,
+      left: '50%',
+      marginLeft: -10,
+      width: 20,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: theme.palette.neutral[400],
+      opacity: 0.6,
+    },
+    peekDot: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 2,
+      backgroundColor: theme.colors.primary,
+    },
+  });
+}

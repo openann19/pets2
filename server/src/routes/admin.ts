@@ -7,7 +7,6 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import type { AuthRequest } from '../middleware/adminAuth';
 import stripe from 'stripe';
-const Configuration = require('../models/Configuration');
 
 // Type definitions for Stripe data
 interface StripeSubscription {
@@ -92,23 +91,23 @@ interface Alert {
 interface SeverityOrder {
   [key: string]: number;
 }
-const Report = require('../models/Report');
-const SecurityAlert = require('../models/SecurityAlert');
-const { encrypt } = require('../utils/encryption');
-const { logAdminActivity, adminActionLogger } = require('../middleware/adminLogger');
-const { validate, schemas } = require('../middleware/validator');
-const subscriptionAnalyticsService = require('../services/subscriptionAnalyticsService');
-const paymentRetryService = require('../services/paymentRetryService');
-const { requireAuth, requireAdmin } = require('../middleware/adminAuth');
-const { checkPermission } = require('../middleware/rbac');
-const { getAnalytics, exportAnalytics } = require('../controllers/adminAnalyticsController');
-const { adminRateLimiter, strictRateLimiter } = require('../middleware/rateLimiter');
-const AdminActivityLog = require('../models/AdminActivityLog');
-const logger = require('../utils/logger');
+import Report from '../models/Report';
+import SecurityAlert from '../models/SecurityAlert';
+import { encrypt } from '../utils/encryption';
+import { logAdminActivity, adminActionLogger } from '../middleware/adminLogger';
+import { validate, schemas } from '../middleware/validator';
+import subscriptionAnalyticsService from '../services/subscriptionAnalyticsService';
+import paymentRetryService from '../services/paymentRetryService';
+import { requireAuth, requireAdmin } from '../middleware/adminAuth';
+import { checkPermission } from '../middleware/rbac';
+import { getAnalytics, exportAnalytics } from '../controllers/adminAnalyticsController';
+import { adminRateLimiter, strictRateLimiter } from '../middleware/rateLimiter';
+import AdminActivityLog from '../models/AdminActivityLog';
+import logger from '../utils/logger';
 
 // Import specialized admin controllers
-const AdminAPIController = require('../controllers/admin/AdminAPIController');
-const AdminKYCController = require('../controllers/admin/AdminKYCController');
+import AdminAPIController from '../controllers/admin/AdminAPIController';
+import AdminKYCController from '../controllers/admin/AdminKYCController';
 
 const router = express.Router();
 

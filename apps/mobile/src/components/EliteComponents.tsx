@@ -25,8 +25,8 @@ import {
   GestureWrapper,
   EliteLoading,
   EliteEmptyState,
-  PREMIUM_GRADIENTS,
-  PREMIUM_SHADOWS,
+  getPremiumGradients,
+  getPremiumShadows,
 } from './elite';
 
 // Re-export all elite components for named imports
@@ -43,8 +43,8 @@ export {
   GestureWrapper,
   EliteLoading,
   EliteEmptyState,
-  PREMIUM_GRADIENTS,
-  PREMIUM_SHADOWS,
+  getPremiumGradients,
+  getPremiumShadows,
 };
 
 // Default export for backward compatibility
@@ -61,6 +61,6 @@ export default {
   ScaleIn,
   StaggeredContainer,
   GestureWrapper,
-  PREMIUM_GRADIENTS,
-  PREMIUM_SHADOWS,
+  getPremiumGradients,
+  getPremiumShadows,
 };

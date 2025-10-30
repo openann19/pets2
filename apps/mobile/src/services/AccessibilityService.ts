@@ -514,6 +514,322 @@ export class AccessibilityService {
 
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
+
+  /**
+   * Get comprehensive accessibility labels for common UI elements
+   */
+  getAccessibilityLabels(): {
+    screens: Record<string, Record<string, { label: string; hint?: string; role?: string }>>;
+    actions: Record<string, { label: string; hint?: string; role?: string }>;
+    forms: Record<string, { label: string; hint?: string }>;
+    feedback: Record<string, string>;
+  } {
+    return {
+      screens: {
+        login: {
+          emailInput: {
+            label: 'Email address input',
+            hint: 'Enter your email address to sign in to your account',
+            role: 'textbox',
+          },
+          passwordInput: {
+            label: 'Password input',
+            hint: 'Enter your password to sign in to your account',
+            role: 'textbox',
+          },
+          signInButton: {
+            label: 'Sign in button',
+            hint: 'Tap to sign in to your PawfectMatch account',
+            role: 'button',
+          },
+          forgotPasswordLink: {
+            label: 'Forgot password link',
+            hint: 'Tap to reset your password if you forgot it',
+            role: 'link',
+          },
+          signUpLink: {
+            label: 'Create account link',
+            hint: 'Tap to create a new PawfectMatch account',
+            role: 'link',
+          },
+        },
+        swipe: {
+          likeButton: {
+            label: 'Like button',
+            hint: 'Like this pet profile to potentially match',
+            role: 'button',
+          },
+          superLikeButton: {
+            label: 'Super like button',
+            hint: 'Send a super like to this pet profile',
+            role: 'button',
+          },
+          passButton: {
+            label: 'Pass button',
+            hint: 'Skip this pet profile',
+            role: 'button',
+          },
+          rewindButton: {
+            label: 'Rewind button',
+            hint: 'Go back to the previous profile',
+            role: 'button',
+          },
+          profileCard: {
+            label: 'Pet profile card',
+            hint: 'Swipe right to like, left to pass, or tap buttons for more options',
+            role: 'image',
+          },
+        },
+        matches: {
+          matchItem: {
+            label: 'Pet match',
+            hint: 'Tap to view match details and start a conversation',
+            role: 'button',
+          },
+          filterButton: {
+            label: 'Filter matches',
+            hint: 'Filter your matches by various criteria',
+            role: 'button',
+          },
+          searchInput: {
+            label: 'Search matches',
+            hint: 'Search for specific pets or owners in your matches',
+            role: 'searchbox',
+          },
+        },
+        chat: {
+          messageInput: {
+            label: 'Message input',
+            hint: 'Type your message to send',
+            role: 'textbox',
+          },
+          sendButton: {
+            label: 'Send message',
+            hint: 'Tap to send your message',
+            role: 'button',
+          },
+          attachmentButton: {
+            label: 'Add attachment',
+            hint: 'Add a photo or file to your message',
+            role: 'button',
+          },
+          voiceButton: {
+            label: 'Voice message',
+            hint: 'Record and send a voice message',
+            role: 'button',
+          },
+        },
+        premium: {
+          subscribeButton: {
+            label: 'Subscribe to premium',
+            hint: 'Start your premium subscription',
+            role: 'button',
+          },
+          planCard: {
+            label: 'Subscription plan',
+            hint: 'Tap to select this subscription plan',
+            role: 'button',
+          },
+          restoreButton: {
+            label: 'Restore purchases',
+            hint: 'Restore your previous purchases and subscriptions',
+            role: 'button',
+          },
+          cancelButton: {
+            label: 'Cancel subscription',
+            hint: 'Cancel your premium subscription',
+            role: 'button',
+          },
+        },
+        settings: {
+          deleteAccountButton: {
+            label: 'Delete account',
+            hint: 'Permanently delete your account and data',
+            role: 'button',
+          },
+          signOutButton: {
+            label: 'Sign out',
+            hint: 'Sign out of your account',
+            role: 'button',
+          },
+        },
+      },
+      actions: {
+        like: {
+          label: 'Like',
+          hint: 'Like this pet profile',
+          role: 'button',
+        },
+        pass: {
+          label: 'Pass',
+          hint: 'Skip this pet profile',
+          role: 'button',
+        },
+        superLike: {
+          label: 'Super like',
+          hint: 'Send a super like to this pet profile',
+          role: 'button',
+        },
+        rewind: {
+          label: 'Rewind',
+          hint: 'Go back to the previous profile',
+          role: 'button',
+        },
+        sendMessage: {
+          label: 'Send message',
+          hint: 'Send your message to the match',
+          role: 'button',
+        },
+        addPhoto: {
+          label: 'Add photo',
+          hint: 'Add a photo to your profile or message',
+          role: 'button',
+        },
+        editProfile: {
+          label: 'Edit profile',
+          hint: 'Edit your profile information and pet details',
+          role: 'button',
+        },
+        subscribe: {
+          label: 'Subscribe',
+          hint: 'Subscribe to premium features',
+          role: 'button',
+        },
+        cancel: {
+          label: 'Cancel',
+          hint: 'Cancel the current action',
+          role: 'button',
+        },
+        confirm: {
+          label: 'Confirm',
+          hint: 'Confirm the current action',
+          role: 'button',
+        },
+      },
+      forms: {
+        email: {
+          label: 'Email address',
+          hint: 'Enter a valid email address',
+        },
+        password: {
+          label: 'Password',
+          hint: 'Enter a secure password',
+        },
+        confirmPassword: {
+          label: 'Confirm password',
+          hint: 'Re-enter your password to confirm',
+        },
+        petName: {
+          label: 'Pet name',
+          hint: 'Enter your pet\'s name',
+        },
+        petAge: {
+          label: 'Pet age',
+          hint: 'Enter your pet\'s age',
+        },
+        petBreed: {
+          label: 'Pet breed',
+          hint: 'Select or enter your pet\'s breed',
+        },
+        bio: {
+          label: 'Bio',
+          hint: 'Tell us about yourself and your pet',
+        },
+        location: {
+          label: 'Location',
+          hint: 'Enter your location or allow location access',
+        },
+      },
+      feedback: {
+        loading: 'Loading, please wait',
+        success: 'Action completed successfully',
+        error: 'An error occurred. Please try again',
+        networkError: 'Network error. Please check your connection',
+        noResults: 'No results found',
+        emptyState: 'Nothing to show here',
+        pullToRefresh: 'Pull down to refresh',
+        loadingMore: 'Loading more items',
+        endOfList: 'End of list reached',
+      },
+    };
+  }
+
+  /**
+   * Generate accessibility label for dynamic content
+   */
+  generateDynamicLabel(type: 'listItem' | 'progress' | 'notification', params: {
+    itemType?: string;
+    itemName?: string;
+    position?: number;
+    total?: number;
+    currentStep?: number;
+    totalSteps?: number;
+    stepName?: string;
+    notificationType?: 'message' | 'match' | 'like' | 'system';
+    count?: number;
+  }): string {
+    switch (type) {
+      case 'listItem':
+        if (params.position !== undefined && params.total !== undefined) {
+          return `${params.itemType} ${params.itemName}, position ${params.position} of ${params.total}`;
+        }
+        return `${params.itemType} ${params.itemName}`;
+
+      case 'progress':
+        const base = `Step ${params.currentStep} of ${params.totalSteps}`;
+        return params.stepName ? `${base}, ${params.stepName}` : base;
+
+      case 'notification':
+        if (params.count && params.count > 1) {
+          return `${params.count} new ${params.notificationType}s`;
+        }
+        return `New ${params.notificationType}`;
+
+      default:
+        return 'Unknown item';
+    }
+  }
+
+  /**
+   * Validate accessibility compliance for an element
+   */
+  validateAccessibilityProps(props: {
+    accessibilityLabel?: string;
+    accessibilityHint?: string;
+    accessibilityRole?: string;
+    accessible?: boolean;
+  }): {
+    isValid: boolean;
+    errors: string[];
+    warnings: string[];
+  } {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    // Check for required accessibilityLabel on interactive elements
+    if (props.accessible !== false && 
+        (props.accessibilityRole === 'button' || props.accessibilityRole === 'link') && 
+        !props.accessibilityLabel) {
+      errors.push('Interactive elements must have accessibilityLabel');
+    }
+
+    // Check for accessibilityHint on complex interactions
+    if (props.accessibilityRole === 'adjustable' && !props.accessibilityHint) {
+      warnings.push('Adjustable elements should have accessibilityHint');
+    }
+
+    // Check for proper role usage
+    if (props.accessibilityRole && 
+        !['button', 'link', 'search', 'image', 'text', 'adjustable', 'header', 'summary', 'none'].includes(props.accessibilityRole)) {
+      warnings.push(`Unknown accessibilityRole: ${props.accessibilityRole}`);
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+    };
+  }
 }
 
 // Export singleton instance

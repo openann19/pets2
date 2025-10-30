@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 interface ConnectionPathProps {
-  memories: Array<any>;
+  memories: Array<unknown>;
   currentIndex: number;
   onDotPress: (index: number) => void;
 }
@@ -15,6 +16,29 @@ export const ConnectionPath: React.FC<ConnectionPathProps> = ({
   currentIndex,
   onDotPress,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- useTheme is properly typed to return AppTheme, throws if Provider missing
+  const theme: AppTheme = useTheme();
+  
+  const styles = React.useMemo(() => StyleSheet.create({
+    connectionPath: {
+      flex: 1,
+      position: 'relative',
+    },
+    pathSegment: {
+      position: 'absolute',
+      height: 2,
+      backgroundColor: 'rgba(255,255,255,0.3)',
+    },
+    pathDot: {
+      position: 'absolute',
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      borderWidth: 2,
+      borderColor: theme.colors.bg,
+    },
+  }), [theme.colors.bg]);
+  
   const pathPoints = memories.map((_, index) => {
     const x = (index / (memories.length - 1)) * (screenWidth - 80) + 40;
     const y = screenHeight * 0.85;
@@ -59,7 +83,7 @@ export const ConnectionPath: React.FC<ConnectionPathProps> = ({
             {
               left: point.x - 6,
               top: point.y - 6,
-              backgroundColor: index === currentIndex ? '#FF69B4' : Theme.colors.neutral[0],
+              backgroundColor: index === currentIndex ? theme.colors.primary : theme.colors.bg,
               transform: [{ scale: index === currentIndex ? 1.2 : 1 }],
             },
           ])}
@@ -71,23 +95,3 @@ export const ConnectionPath: React.FC<ConnectionPathProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  connectionPath: {
-    flex: 1,
-    position: 'relative',
-  },
-  pathSegment: {
-    position: 'absolute',
-    height: 2,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-  },
-  pathDot: {
-    position: 'absolute',
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: Theme.colors.neutral[0],
-  },
-});

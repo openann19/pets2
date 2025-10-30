@@ -20,6 +20,7 @@ import {
 import type { RootStackScreenProps } from '../../navigation/types';
 import { api } from '../../services/api';
 import { logger } from '../../services/logger';
+import { chatService } from '../../services/chatService';
 import { haptic } from '../../ui/haptics';
 import { useChatData } from '../useChatData';
 import { useReactionMetrics } from '../useInteractionMetrics';
@@ -257,18 +258,23 @@ export const useChatScreen = ({
 
   // Handle reaction selection
   const handleReactionSelect = useCallback(
-    (emoji: string) => {
+    async (emoji: string) => {
       if (selectedMessageId) {
         haptic.confirm();
         startInteraction('reaction', { messageId: selectedMessageId, emoji });
-        // TODO: Send reaction to server
-        logger.info('Reacted with emoji', { emoji, messageId: selectedMessageId });
+        try {
+          await chatService.sendReaction(matchId, selectedMessageId, emoji);
+          logger.info('Reaction sent successfully', { emoji, messageId: selectedMessageId });
+        } catch (error) {
+          logger.error('Failed to send reaction', { error, messageId: selectedMessageId, emoji });
+          Alert.alert('Error', 'Failed to send reaction. Please try again.');
+        }
         endInteraction('reaction', true);
       }
       setShowReactions(false);
       setSelectedMessageId(null);
     },
-    [selectedMessageId, startInteraction, endInteraction],
+    [selectedMessageId, matchId, startInteraction, endInteraction],
   );
 
   // Handle reaction cancel
@@ -285,11 +291,22 @@ export const useChatScreen = ({
       {
         text: 'Call',
         onPress: async () => {
-          Alert.alert('Call Feature', 'Voice calling feature coming soon!');
+          try {
+            const { WebRTCService } = await import('../../services/WebRTCService');
+            const success = await WebRTCService.startCall(matchId, 'voice');
+            if (success) {
+              logger.info('Voice call initiated', { matchId, petName });
+            } else {
+              Alert.alert('Error', 'Failed to start voice call. Please check your permissions and try again.');
+            }
+          } catch (error) {
+            logger.error('Failed to start voice call', { error, matchId });
+            Alert.alert('Error', 'Failed to start voice call. Please try again.');
+          }
         },
       },
     ]);
-  }, [petName]);
+  }, [matchId, petName]);
 
   const handleVideoCall = useCallback(async () => {
     Alert.alert('Video Call', `Start a video call with ${petName}?`, [
@@ -297,14 +314,44 @@ export const useChatScreen = ({
       {
         text: 'Call',
         onPress: async () => {
-          Alert.alert('Call Feature', 'Video calling feature coming soon!');
+          try {
+            const { WebRTCService } = await import('../../services/WebRTCService');
+            const success = await WebRTCService.startCall(matchId, 'video');
+            if (success) {
+              logger.info('Video call initiated', { matchId, petName });
+            } else {
+              Alert.alert('Error', 'Failed to start video call. Please check your permissions and try again.');
+            }
+          } catch (error) {
+            logger.error('Failed to start video call', { error, matchId });
+            Alert.alert('Error', 'Failed to start video call. Please try again.');
+          }
         },
       },
     ]);
-  }, [petName]);
+  }, [matchId, petName]);
 
   const handleMoreOptions = useCallback(() => {
-    Alert.alert('More Options', 'Additional options coming soon!');
+    Alert.alert(
+      'More Options',
+      'Additional options:\n\n• Block User\n• Report User\n• Share Profile\n• View Profile',
+      [
+        { text: 'Close', style: 'cancel' },
+        {
+          text: 'Block User',
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert('Block User', 'User blocking feature - navigate to profile settings.');
+          },
+        },
+        {
+          text: 'Report User',
+          onPress: () => {
+            Alert.alert('Report User', 'User reporting feature - navigate to safety center.');
+          },
+        },
+      ],
+    );
   }, []);
 
   // Quick replies

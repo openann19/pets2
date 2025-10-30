@@ -11,7 +11,7 @@
  */
 
 import { Ionicons } from '@expo/vector-icons';
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -22,6 +22,8 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 // === TYPES ===
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline';
@@ -41,41 +43,44 @@ export interface BaseButtonProps extends TouchableOpacityProps {
   onPress?: () => void;
 }
 
-// === SIZE CONFIGURATIONS ===
-const SIZE_CONFIGS = {
-  sm: {
-    paddingHorizontal: Theme.spacing.lg,
-    paddingVertical: Theme.spacing.sm,
-    fontSize: Theme.typography.fontSize.sm,
-    borderRadius: Theme.borderRadius.md,
-    minHeight: 36,
-    iconSize: 16,
-  },
-  md: {
-    paddingHorizontal: Theme.spacing.xl,
-    paddingVertical: Theme.spacing.md,
-    fontSize: Theme.typography.fontSize.base,
-    borderRadius: Theme.borderRadius.lg,
-    minHeight: 44,
-    iconSize: 20,
-  },
-  lg: {
-    paddingHorizontal: Theme.spacing['2xl'],
-    paddingVertical: Theme.spacing.lg,
-    fontSize: Theme.typography.fontSize.lg,
-    borderRadius: Theme.borderRadius.xl,
-    minHeight: 52,
-    iconSize: 24,
-  },
-  xl: {
-    paddingHorizontal: Theme.spacing['3xl'],
-    paddingVertical: Theme.spacing.xl,
-    fontSize: Theme.typography.fontSize.xl,
-    borderRadius: Theme.borderRadius['2xl'],
-    minHeight: 60,
-    iconSize: 28,
-  },
-} as const;
+// === SIZE CONFIGURATIONS (theme-based) ===
+function getSizeConfig(theme: AppTheme, size: ButtonSize) {
+  const map = {
+    sm: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      fontSize: theme.typography.body.size - 2,
+      borderRadius: theme.radii.md,
+      minHeight: 36,
+      iconSize: 16,
+    },
+    md: {
+      paddingHorizontal: theme.spacing.xl,
+      paddingVertical: theme.spacing.md,
+      fontSize: theme.typography.body.size,
+      borderRadius: theme.radii.lg,
+      minHeight: 44,
+      iconSize: 20,
+    },
+    lg: {
+      paddingHorizontal: theme.spacing['2xl'],
+      paddingVertical: theme.spacing.lg,
+      fontSize: theme.typography.h2.size,
+      borderRadius: theme.radii.xl,
+      minHeight: 52,
+      iconSize: 24,
+    },
+    xl: {
+      paddingHorizontal: theme.spacing['3xl'],
+      paddingVertical: theme.spacing.xl,
+      fontSize: theme.typography.h1.size,
+      borderRadius: theme.radii['2xl'],
+      minHeight: 60,
+      iconSize: 28,
+    },
+  } as const;
+  return map[size];
+}
 
 // === MAIN COMPONENT ===
 const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
@@ -96,9 +101,10 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
     },
     ref,
   ) => {
+    const theme = useTheme();
     // Map icon to leftIcon for convenience
     const effectiveLeftIcon = icon || leftIcon;
-    const sizeConfig = SIZE_CONFIGS[size];
+    const sizeConfig = getSizeConfig(theme, size);
     const isDisabled = disabled || loading;
 
     // Get variant styles
@@ -116,14 +122,16 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         case 'primary':
           return {
             ...baseStyles,
-            backgroundColor: Theme.semantic.interactive.primary,
-            ...Theme.shadows.depth.sm,
+            backgroundColor: theme.colors.primary,
+            ...(theme.shadows.elevation1 as ViewStyle),
           };
         case 'secondary':
           return {
             ...baseStyles,
-            backgroundColor: Theme.semantic.interactive.secondary,
-            ...Theme.shadows.depth.sm,
+            backgroundColor: theme.colors.surface,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            ...(theme.shadows.elevation1 as ViewStyle),
           };
         case 'ghost':
           return {
@@ -135,7 +143,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
             ...baseStyles,
             backgroundColor: 'transparent',
             borderWidth: 2,
-            borderColor: Theme.semantic.interactive.primary,
+            borderColor: theme.colors.primary,
           };
         default:
           return baseStyles;
@@ -146,7 +154,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
     const getTextStyles = (): TextStyle => {
       const baseTextStyles: TextStyle = {
         fontSize: sizeConfig.fontSize,
-        fontWeight: Theme.typography.fontWeight.semibold,
+        fontWeight: '600',
         textAlign: 'center',
       };
 
@@ -155,18 +163,18 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         case 'secondary':
           return {
             ...baseTextStyles,
-            color: Theme.colors.text.inverse,
+            color: variant === 'primary' ? theme.colors.onPrimary : theme.colors.onSurface,
           };
         case 'ghost':
         case 'outline':
           return {
             ...baseTextStyles,
-            color: Theme.semantic.interactive.primary,
+            color: theme.colors.primary,
           };
         default:
           return {
             ...baseTextStyles,
-            color: Theme.colors.text.primary,
+            color: theme.colors.onSurface,
           };
       }
     };
@@ -175,13 +183,14 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
     const getIconColor = (): string => {
       switch (variant) {
         case 'primary':
+          return theme.colors.onPrimary;
         case 'secondary':
-          return Theme.colors.text.inverse;
+          return theme.colors.onSurface;
         case 'ghost':
         case 'outline':
-          return Theme.semantic.interactive.primary;
+          return theme.colors.primary;
         default:
-          return Theme.colors.text.primary;
+          return theme.colors.onSurface;
       }
     };
 
@@ -200,7 +209,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
               size="small"
               color={getIconColor()}
             />
-            <Text style={StyleSheet.flatten([getTextStyles(), { marginLeft: Theme.spacing.sm }])}>
+            <Text style={StyleSheet.flatten([getTextStyles(), { marginLeft: theme.spacing.sm }])}>
               Loading...
             </Text>
           </View>
@@ -214,7 +223,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
               name={effectiveLeftIcon}
               size={sizeConfig.iconSize}
               color={getIconColor()}
-              style={{ marginRight: Theme.spacing.sm }}
+              style={{ marginRight: theme.spacing.sm }}
             />
           )}
           <Text style={StyleSheet.flatten([getTextStyles(), textStyle])}>{title}</Text>
@@ -223,7 +232,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
               name={rightIcon}
               size={sizeConfig.iconSize}
               color={getIconColor()}
-              style={{ marginLeft: Theme.spacing.sm }}
+              style={{ marginLeft: theme.spacing.sm }}
             />
           )}
         </>

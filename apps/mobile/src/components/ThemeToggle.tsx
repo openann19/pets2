@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 
 import { useThemeToggle } from '../hooks/useThemeToggle';
-import { MOBILE_SPACING } from '../constants/design-tokens';
+import { useTheme } from '@/theme';
+import { MOBILE_SPACING } from '../@pawfectmatch/design-tokens';
 
 interface ThemeToggleProps {
   variant?: 'icon' | 'button' | 'selector';
@@ -26,6 +27,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   showLabel = false,
   style,
 }) => {
+  const theme = useTheme();
   const { isDark, themeMode, colors, styles, toggleTheme, showThemeSelector } = useThemeToggle();
 
   const animatedValue = React.useRef(new Animated.Value(isDark ? 1 : 0)).current;

@@ -20,6 +20,9 @@ export type CardSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 interface GetCardStylesOptions {
   variant: CardVariant;
   glowColor?: string;
+  surfaceColor?: string;
+  borderColor?: string;
+  shadowColor?: string;
 }
 
 interface GetSizeStylesOptions {
@@ -36,12 +39,15 @@ interface GetMarginValueOptions {
 
 export function getCardStyles({
   variant,
-  glowColor = 'Theme.colors.primary[500]',
+  glowColor,
+  surfaceColor = '#ffffff',
+  borderColor = '#e5e7eb',
+  shadowColor = '#000000',
 }: GetCardStylesOptions): ViewStyle {
   const baseStyles: ViewStyle = {
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: 'Theme.colors.neutral[0]',
+    backgroundColor: surfaceColor,
   };
 
   switch (variant) {
@@ -69,7 +75,7 @@ export function getCardStyles({
         ...baseStyles,
         backgroundColor: 'transparent',
         borderWidth: 1,
-        borderColor: 'Theme.colors.neutral[200]',
+        borderColor: borderColor,
       };
     case 'neon':
       return {
@@ -86,8 +92,8 @@ export function getCardStyles({
     case 'floating':
       return {
         ...baseStyles,
-        backgroundColor: 'Theme.colors.neutral[0]',
-        shadowColor: 'Theme.colors.neutral[950]',
+        backgroundColor: surfaceColor,
+        shadowColor: shadowColor,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 12,
@@ -96,8 +102,8 @@ export function getCardStyles({
     default:
       return {
         ...baseStyles,
-        backgroundColor: 'Theme.colors.neutral[0]',
-        shadowColor: 'Theme.colors.neutral[950]',
+        backgroundColor: surfaceColor,
+        shadowColor: shadowColor,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,

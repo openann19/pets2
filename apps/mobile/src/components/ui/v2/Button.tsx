@@ -1,6 +1,5 @@
 import React from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
-import type { ViewStyle } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -9,6 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTheme } from '../../../theme';
 import { useReduceMotion } from '../../../hooks/useReducedMotion';
+import { motionDurations, motionEasing, motionScale, motionOpacity, motionSpring } from '../../../theme/motion';
 import { Text } from './Text';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -57,32 +57,31 @@ export function Button({
   // Get color tokens
   const getVariantStyles = () => {
     const { colors } = theme;
-    const isDark = theme.scheme === 'dark';
 
     switch (variant) {
       case 'primary':
         return {
           backgroundColor: colors.primary,
           borderColor: 'transparent',
-          textColor: '#FFFFFF',
+          textColor: colors.onPrimary,
         };
       case 'secondary':
         return {
-          backgroundColor: colors.secondary || colors.primary,
-          borderColor: 'transparent',
-          textColor: '#FFFFFF',
+          backgroundColor: colors.secondary || colors.surface,
+          borderColor: colors.border,
+          textColor: colors.onSurface,
         };
       case 'outline':
         return {
           backgroundColor: 'transparent',
-          borderColor: colors.border,
+          borderColor: colors.primary,
           textColor: colors.primary,
         };
       case 'danger':
         return {
           backgroundColor: colors.danger,
           borderColor: 'transparent',
-          textColor: '#FFFFFF',
+          textColor: colors.onPrimary,
         };
       case 'ghost':
       default:
@@ -102,28 +101,16 @@ export function Button({
   }));
 
   const handlePressIn = () => {
-    if (disabled || loading) return;
-    const target = reduceMotion ? 0.98 : 0.95;
-    scale.value = withSpring(
-      target,
-      {
-        damping: 20,
-        stiffness: 300,
-      },
-      (finished) => {
-        if (!finished) {
-          scale.value = withTiming(1);
-        }
-      },
-    );
+    if (disabled || loading || reduceMotion) return;
+    scale.value = withTiming(motionScale.pressed, {
+      duration: motionDurations.fast,
+      easing: motionEasing.decel,
+    });
   };
 
   const handlePressOut = () => {
-    if (disabled || loading) return;
-    scale.value = withSpring(1, {
-      damping: 20,
-      stiffness: 300,
-    });
+    if (disabled || loading || reduceMotion) return;
+    scale.value = withSpring(1, motionSpring.standard);
   };
 
   const handlePress = () => {
@@ -143,12 +130,12 @@ export function Button({
           height: sizeStyles.height,
           paddingHorizontal: sizeStyles.paddingHorizontal,
           backgroundColor: variantStyles.backgroundColor,
-          borderWidth: variantStyles.borderColor !== 'transparent' ? 1 : 0,
+          borderWidth: variantStyles.borderColor !== 'transparent' && variant !== 'ghost' ? (variant === 'secondary' ? 1 : variant === 'outline' ? 2 : 0) : 0,
           borderColor: variantStyles.borderColor,
-          borderRadius: 12,
+          borderRadius: theme.radii.md,
           justifyContent: 'center',
           alignItems: 'center',
-          opacity: disabled ? 0.6 : 1,
+          opacity: disabled ? motionOpacity.disabled : 1,
           width: isFullWidth ? '100%' : undefined,
         },
       ]}

@@ -26,7 +26,7 @@ import Animated, {
 import { useTheme } from '@mobile/theme';
 import { SPRING } from '../../animation';
 import { BorderRadius, Colors, Spacing } from '../../styles/GlobalStyles';
-import { PREMIUM_SHADOWS } from '../elite/constants';
+import { getPremiumShadows } from '../elite/constants';
 
 // TypeScript strict interface - no any, no implicit any
 interface PhoenixCardProps extends TouchableOpacityProps {
@@ -58,7 +58,9 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
   accessibilityHint,
   ...props
 }) => {
-  const { isDark } = useTheme();
+  const theme = useTheme();
+  const { isDark } = theme;
+  const SHADOWS = getPremiumShadows(theme);
 
   // Animation values
   const scale = useSharedValue(1);
@@ -117,7 +119,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
     const variants = {
       elevated: {
         backgroundColor: isDark ? Colors.surfaceElevated : Colors.surface,
-        ...PREMIUM_SHADOWS.primaryGlow,
+        ...SHADOWS.primaryGlow,
       },
       glass: {
         backgroundColor: 'transparent',

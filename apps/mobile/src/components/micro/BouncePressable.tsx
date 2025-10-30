@@ -1,50 +1,89 @@
-import React, { memo } from "react";
-import { Pressable, type PressableProps } from "react-native";
-import Animated, { useSharedValue, withSpring, useAnimatedStyle } from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
-import { useReducedMotion } from "../../utils/A11yHelpers";
+/**
+ * BouncePressable - Micro-interaction component with bounce animation
+ * Provides haptic feedback and visual bounce effect on press
+ * Uses motion tokens for consistency
+ */
+import React from 'react';
+import { Pressable, type PressableProps } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
+import { motionDurations, motionEasing, motionScale, motionOpacity, motionSpring } from '@/theme/motion';
+import { usePrefersReducedMotion } from '@/utils/motionGuards';
 
-type Props = PressableProps & {
-  scaleFrom?: number;     // 0.96
-  scaleTo?: number;       // 1
-  haptics?: boolean;      // true
-};
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const BouncePressable = memo(function BouncePressable({
-  children, scaleFrom = 0.96, scaleTo = 1, haptics = true, onPressIn, onPressOut, onPress, ...rest
-}: Props) {
-  const reduceMotion = useReducedMotion();
-  const s = useSharedValue(scaleTo);
+interface BouncePressableProps extends PressableProps {
+  scaleFrom?: number;
+  haptic?: 'light' | 'medium' | 'heavy' | false;
+  children: React.ReactNode;
+}
 
-  const style = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
+export const BouncePressable: React.FC<BouncePressableProps> = ({
+  scaleFrom = motionScale.pressed,
+  haptic = 'light',
+  onPress,
+  children,
+  style,
+  ...props
+}) => {
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: prefersReducedMotion ? 1 : scale.value }],
+    opacity: prefersReducedMotion ? 1 : opacity.value,
+  }));
+
+  const handlePressIn = () => {
+    if (prefersReducedMotion) return;
+    
+    scale.value = withSpring(scaleFrom, motionSpring.snappy);
+    opacity.value = withTiming(motionOpacity.pressed, { 
+      duration: motionDurations.fast,
+      easing: motionEasing.decel,
+    });
+    
+    if (haptic) {
+      const hapticStyle = haptic === 'light' 
+        ? Haptics.ImpactFeedbackStyle.Light
+        : haptic === 'medium'
+        ? Haptics.ImpactFeedbackStyle.Medium
+        : Haptics.ImpactFeedbackStyle.Heavy;
+      Haptics.impactAsync(hapticStyle).catch(() => {});
+    }
+  };
+
+  const handlePressOut = () => {
+    if (prefersReducedMotion) return;
+    
+    scale.value = withSpring(1, motionSpring.standard);
+    opacity.value = withTiming(1, { 
+      duration: motionDurations.fast,
+      easing: motionEasing.emphasized,
+    });
+  };
+
+  const handlePress = (event: any) => {
+    if (onPress) {
+      onPress(event);
+    }
+  };
 
   return (
-    <Pressable
-      {...rest}
-      onPressIn={(e) => {
-        if (!reduceMotion) {
-          s.value = withSpring(scaleFrom, { stiffness: 500, damping: 28, mass: 0.7 });
-        }
-        if (haptics && !reduceMotion) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        onPressIn?.(e);
-      }}
-      onPressOut={(e) => {
-        if (!reduceMotion) {
-          s.value = withSpring(scaleTo, { stiffness: 380, damping: 22, mass: 0.7 });
-        }
-        onPressOut?.(e);
-      }}
-      onPress={onPress}
-      style={({ pressed }) => [{ opacity: pressed ? 0.95 : 1 }]}
+    <AnimatedPressable
+      style={[style, animatedStyle]}
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      {...props}
     >
-      {typeof children === 'function' ? (
-        <Animated.View style={style}>{children({ pressed: false })}</Animated.View>
-      ) : (
-        <Animated.View style={style}>{children}</Animated.View>
-      )}
-    </Pressable>
+      {children}
+    </AnimatedPressable>
   );
-});
-
-export default BouncePressable;
-
+};

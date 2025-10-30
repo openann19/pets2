@@ -291,13 +291,15 @@ export const VerificationList = ({
   };
 
   return (
-    <FlatList
+      <FlatList
       data={verifications}
       renderItem={renderVerificationItem}
       keyExtractor={(item) => item.id}
+      testID="verification-list"
+      accessibilityLabel="List of verification requests"
       ListEmptyComponent={
-        <View style={styles.emptyContainer}>
-          <Ionicons name="document-text-outline" size={64} color={colors.onMuted} />
+        <View style={styles.emptyContainer} testID="verification-list-empty">
+          <Ionicons name="document-text-outline" size={64} color={colors.onMuted} accessibilityLabel="No verifications icon" />
           <Text style={[styles.emptyText, { color: colors.onMuted }]}>
             No verifications found
           </Text>

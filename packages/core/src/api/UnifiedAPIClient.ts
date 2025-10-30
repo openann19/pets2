@@ -31,7 +31,7 @@ export interface APIClientConfig {
 
 export interface UnifiedRequestConfig {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  headers?: Record<string, string> | undefined;
+  headers?: Record<string, string>;
   body?: unknown;
   timeout?: number;
   retry?: boolean;
@@ -42,9 +42,9 @@ export interface UnifiedRequestConfig {
 export interface UnifiedResponse<T> {
   success: boolean;
   data?: T;
-  error?: string | undefined;
-  statusCode?: number | undefined;
-  retries?: number | undefined;
+  error?: string;
+  statusCode?: number;
+  retries?: number;
 }
 
 export class UnifiedAPIClient extends OfflineQueueManager {
@@ -258,7 +258,7 @@ export class UnifiedAPIClient extends OfflineQueueManager {
               endpoint,
               method: config.method || 'GET',
               data,
-              headers: config.headers,
+              headers: config.headers || {},
               priority: config.priority || 'normal',
               maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
               conflictResolution: 'overwrite',
@@ -292,7 +292,7 @@ export class UnifiedAPIClient extends OfflineQueueManager {
     return {
       success: false,
       error: this.errorClassifier.getUserMessage(error, { endpoint, method }),
-      statusCode: classification.statusCode,
+      ...(classification.statusCode !== undefined && { statusCode: classification.statusCode }),
     };
   }
 
@@ -303,7 +303,7 @@ export class UnifiedAPIClient extends OfflineQueueManager {
     const result = await this.makeRequest(item.endpoint, {
       method: item.method,
       body: item.data,
-      headers: item.headers,
+      headers: item.headers || {},
     });
 
     // Cache successful responses

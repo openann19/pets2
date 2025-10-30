@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Room, RemoteParticipant, LocalParticipant } from 'livekit-client';
+import type { Socket } from 'socket.io-client';
 import { liveKitService } from '../services/livekitService';
 import { logger } from '../services/logger';
 import { API_URL } from '../config/environment';
@@ -33,7 +34,7 @@ export function useLiveStream(): UseLiveStreamReturn {
   const [viewerCount, setViewerCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const socketRef = useRef<any>(null);
+  const socketRef = useRef<Socket | null>(null);
 
   /**
    * Start a live stream (publisher)

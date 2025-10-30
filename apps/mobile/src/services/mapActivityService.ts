@@ -1,4 +1,3 @@
-import { api } from './api';
 import * as Location from 'expo-location';
 
 export interface CreateActivityParams {
@@ -71,7 +70,7 @@ export async function getNearbyPins(
 ): Promise<MapPin[]> {
   const { request } = await import('./api');
   const params: Record<string, number> = { latitude, longitude };
-  if (maxDistance) params.maxDistance = maxDistance;
+  if (maxDistance) params['maxDistance'] = maxDistance;
 
   const response = await request<MapPin[]>('/map/pins', {
     method: 'GET',

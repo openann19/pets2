@@ -6,6 +6,8 @@
 
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 import { TONE_OPTIONS } from '../../hooks/useAIBio';
 
@@ -45,6 +47,8 @@ function getToneDescription(toneId: string): string {
 }
 
 export function ToneSelector({ selectedTone, onToneSelect }: ToneSelectorProps) {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Bio Tone</Text>
@@ -58,7 +62,7 @@ export function ToneSelector({ selectedTone, onToneSelect }: ToneSelectorProps) 
               styles.toneCard,
               selectedTone === tone.id ? styles.selectedCard : undefined,
               {
-                borderColor: selectedTone === tone.id ? tone.color : String(Theme.colors.border),
+                borderColor: selectedTone === tone.id ? tone.color : theme.colors.border,
               },
             ]}
             onPress={() => {
@@ -93,83 +97,84 @@ export function ToneSelector({ selectedTone, onToneSelect }: ToneSelectorProps) 
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: Theme.spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: Theme.typography.fontSize['2xl'],
-    fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.sm,
-  },
-  sectionSubtitle: {
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
-    marginBottom: Theme.spacing.xl,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Theme.spacing.md,
-  },
-  toneCard: {
-    flex: 1,
-    minWidth: 140,
-    backgroundColor: Theme.colors.background.primary,
-    borderRadius: Theme.borderRadius.lg,
-    borderWidth: 2,
-    padding: Theme.spacing.md,
-    alignItems: 'center',
-    shadowColor: 'rgba(0, 0, 0, 0.1)',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  selectedCard: {
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: Theme.borderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Theme.spacing.sm,
-  },
-  icon: {
-    fontSize: Theme.typography.fontSize.xl,
-  },
-  toneLabel: {
-    fontSize: Theme.typography.fontSize.base,
-    fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.xs,
-    textAlign: 'center',
-  },
-  toneDescription: {
-    fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
-    textAlign: 'center',
-    lineHeight: Theme.typography.lineHeight.normal,
-  },
-  selectedIndicator: {
-    position: 'absolute',
-    top: -8,
-    right: -8,
-    width: 24,
-    height: 24,
-    borderRadius: Theme.borderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkmark: {
-    color: Theme.colors.background.primary,
-    fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.bold,
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      padding: theme.spacing.lg,
+    },
+    sectionTitle: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    sectionSubtitle: {
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onMuted,
+      marginBottom: theme.spacing.xl,
+    },
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.md,
+    },
+    toneCard: {
+      flex: 1,
+      minWidth: 140,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.lg,
+      borderWidth: 2,
+      padding: theme.spacing.md,
+      alignItems: 'center',
+      shadowColor: 'rgba(0, 0, 0, 0.1)',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    selectedCard: {
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+    iconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: theme.radii.full,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: theme.spacing.sm,
+    },
+    icon: {
+      fontSize: theme.typography.h2.size,
+    },
+    toneLabel: {
+      fontSize: theme.typography.body.size,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+      textAlign: 'center',
+    },
+    toneDescription: {
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onMuted,
+      textAlign: 'center',
+    },
+    selectedIndicator: {
+      position: 'absolute',
+      top: -8,
+      right: -8,
+      width: 24,
+      height: 24,
+      borderRadius: theme.radii.full,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    checkmark: {
+      color: theme.colors.onPrimary,
+      fontSize: theme.typography.body.size,
+      fontWeight: '700',
+    },
+  });
+}

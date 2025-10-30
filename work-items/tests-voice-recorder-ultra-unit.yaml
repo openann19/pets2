@@ -1,0 +1,32 @@
+id: tests-voice-recorder-ultra-unit
+owner: te
+severity: high
+area: mobile
+context: |
+  `src/components/chat/VoiceRecorderUltra.tsx` has no focused unit tests. The voice note flow depends on robust handling of permissions, recording lifecycle, waveform UI, file size limits, and failure recovery across platforms.
+acceptance:
+  - Add `apps/mobile/src/components/chat/__tests__/VoiceRecorderUltra.test.tsx`
+  - Cover: start/stop/cancel, long-press UX, peak meter updates, permission denied, storage full, file too large
+  - Mock: Expo AV (recording/playback), Haptics, FileSystem, Permissions
+  - Verify telemetry events emitted
+  - Snapshot waveform across states (idle/recording/preview)
+states: [idle, recording, processing, preview, error]
+telemetry:
+  - event: VOICE_RECORD_START
+    props: [source]
+  - event: VOICE_RECORD_STOP
+    props: [durationMs]
+  - event: VOICE_RECORD_CANCEL
+    props: []
+contracts:
+  request: { matchId: string, duration: number, file?: string }
+  response: { success: boolean, url?: string }
+  errors: [ PERMISSION_DENIED, STORAGE_FULL, FILE_TOO_LARGE ]
+assets:
+  tests: [apps/mobile/src/components/chat/__tests__/VoiceRecorderUltra.test.tsx]
+risks:
+  - Non-deterministic timers in waveform/AV mocks
+rollback:
+  - Feature flag to hide voice record UI
+links:
+  - reports/mobile/test_gap_matrix.md

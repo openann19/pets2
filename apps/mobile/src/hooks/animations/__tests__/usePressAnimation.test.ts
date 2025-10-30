@@ -11,7 +11,7 @@
  * - Error handling and edge cases
  */
 
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/groups';
+import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react-native';
 import { usePressAnimation } from '../usePressAnimation';
 

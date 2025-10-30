@@ -32,7 +32,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   handleRetry = () => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+    this.setState({ hasError: false });
   };
 
   override render() {
@@ -60,7 +60,7 @@ export class ErrorBoundary extends Component<Props, State> {
               persists.
             </Text>
 
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env['NODE_ENV'] === 'development' && this.state.error && (
               <View style={styles.errorDetails}>
                 <Text style={styles.errorTitle}>Error Details (Development):</Text>
                 <Text style={styles.errorText}>{this.state.error.message}</Text>

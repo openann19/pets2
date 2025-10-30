@@ -19,8 +19,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 
@@ -798,7 +798,7 @@ function makeStyles(theme: AppTheme) {
       fontSize: theme.typography.h2.size,
       fontWeight: theme.typography.h1.weight,
       flex: 1,
-      marginLeft: theme.spacing.sm,
+      marginStart: theme.spacing.sm,
     },
     headerActions: {
       flexDirection: "row",
@@ -827,7 +827,7 @@ function makeStyles(theme: AppTheme) {
         marginBottom: theme.spacing.md,
       },
       metricCard: {
-        width: (SCREEN_WIDTH - theme.spacing.md * 2 - theme.spacing.sm) / 2,
+        width: (SCREEN_WIDTH - theme.spacing['2xl'] - theme.spacing.sm) / 2,
         borderRadius: theme.radii.md,
         padding: theme.spacing.md,
         ...theme.shadows.elevation2,
@@ -840,7 +840,7 @@ function makeStyles(theme: AppTheme) {
       metricTitle: {
         fontSize: theme.typography.body.size * 0.875,
         fontWeight: theme.typography.h2.weight,
-        marginLeft: theme.spacing.sm,
+        marginStart: theme.spacing.sm,
       },
       metricValue: {
         fontSize: theme.typography.h2.size * 0.875,
@@ -927,7 +927,7 @@ function makeStyles(theme: AppTheme) {
       backgroundColor: theme.colors.border,
       justifyContent: "center",
       alignItems: "center",
-      marginRight: theme.spacing.md,
+      marginEnd: theme.spacing.md,
     },
     userAvatarText: {
       fontSize: theme.typography.body.size,

@@ -11,26 +11,22 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
-  FadeInDown, FadeOutUp, useSharedValue, useAnimatedStyle, withTiming, withSpring,
+  FadeInDown, FadeOutUp,
 } from 'react-native-reanimated';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { GestureDetector } from 'react-native-gesture-handler';
 import * as Haptics from 'expo-haptics';
 
 import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
 import { usePhotoEditor } from '../../hooks/usePhotoEditor';
+import { usePhotoPinchZoom, usePhotoCompare, usePhotoFilters, useUltraExport } from '../../hooks/photo';
 import { PhotoAdjustmentSlider } from './PhotoAdjustmentSlider';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
 import { BouncePressable } from '../micro';
-import { SmartImage } from '../common/SmartImage'; // fade-in + shimmer
+import { SmartImage } from '../common/SmartImage';
 import { Cropper, type CropperHandle } from './Cropper';
 import { AutoCropEngine } from '../../utils/AutoCropEngine';
 import { SubjectSuggestionsBar } from './SubjectSuggestionsBar';
-import { batchAutoCrop } from '../../utils/BatchAutoCrop';
-import { exportUltraVariants, type UltraVariant } from '../../utils/UltraPublish';
-import { QualityTargets } from '../../utils/QualityTargets';
-import { Alert, Modal } from 'react-native';
-import { logger } from '../../services/logger';
+import { Modal } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 const PREVIEW_HEIGHT = height * 0.5;
@@ -74,21 +70,16 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
   imageUri,
   onSave,
   onCancel,
-  aspectRatio,
   maxWidth = 1920,
   maxHeight = 1920,
 }) => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState<'filters' | 'adjust' | 'crop'>('adjust');
-  const [comparing, setComparing] = useState(false);
   const [showSplit, setShowSplit] = useState(false);
   const [showGrid, setShowGrid] = useState<'off' | 'thirds' | 'golden'>('off');
   const [quickMode, setQuickMode] = useState<string | null>(null);
   const [sourceUri, setSourceUri] = useState(imageUri);
   const [showGuides, setShowGuides] = useState(false);
-  const [ultraExporting, setUltraExporting] = useState(false);
-  const [ultraProgress, setUltraProgress] = useState(0);
-  const [ultraVariants, setUltraVariants] = useState<UltraVariant[]>([]);
   const [showUltraModal, setShowUltraModal] = useState(false);
   const cropperRef = useRef<CropperHandle>(null);
 
@@ -133,71 +124,46 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     }
   }, [editedUri, handleCropped]);
 
-  // --- Compare (press & hold to show ORIGINAL) ---
-  const compare = useSharedValue(0); // 0=edited, 1=original
-  const originalOpacity = useAnimatedStyle(() => ({
-    opacity: compare.value,
-  }));
-  const editedOpacity = useAnimatedStyle(() => ({
-    opacity: 1 - compare.value,
-  }));
+  // Photo hooks
+  const { animatedStyle: previewTransform, gesture: pinchZoomGesture } = usePhotoPinchZoom({
+    initialScale: 1,
+    minScale: 1,
+    maxScale: 4,
+    enabled: activeTab !== 'crop',
+  });
 
-  const onCompareIn = () => {
-    setComparing(true);
-    Haptics.selectionAsync();
-    compare.value = withTiming(1, { duration: 160 });
-  };
-  const onCompareOut = () => {
-    setComparing(false);
-    compare.value = withTiming(0, { duration: 160 });
-  };
+  const { comparing, originalOpacity, editedOpacity, onCompareIn, onCompareOut } = usePhotoCompare({
+    duration: 160,
+  });
 
-  // --- Pinch-to-zoom + pan inside preview ---
-  const scale = useSharedValue(1);
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
+  const { applyPreset } = usePhotoFilters({
+    onApplyFilter: applyFilter,
+    presets: FILTER_PRESETS,
+  });
 
-  const pinch = Gesture.Pinch()
-    .onUpdate((e) => {
-      scale.value = Math.max(1, Math.min(4, e.scale));
-    })
-    .onEnd(() => {
-      if (scale.value <= 1.02) {
-        // snap back
-        scale.value = withSpring(1);
-        translateX.value = withSpring(0);
-        translateY.value = withSpring(0);
+  const {
+    isExporting: ultraExporting,
+    progress: ultraProgress,
+    variants: ultraVariants,
+    exportVariants: handleUltraExportInternal,
+    saveAll: handleUltraSaveAll,
+  } = useUltraExport({
+    imageUri: editedUri,
+    ratios: ['1:1', '4:5', '9:16'],
+    onProgress: (progress, variant) => {
+      if (progress === 1 && variant) {
+        // Export complete, show modal
+        setShowUltraModal(true);
       }
-    });
+    },
+  });
 
-  const pan = Gesture.Pan()
-    .onUpdate((e) => {
-      if (scale.value > 1) {
-        translateX.value = e.translationX;
-        translateY.value = e.translationY;
-      }
-    })
-    .onEnd(() => {
-      // gentle bounds clamp (simple)
-      translateX.value = withSpring(translateX.value * 0.9);
-      translateY.value = withSpring(translateY.value * 0.9);
-    });
-
-  const composed = Gesture.Simultaneous(pinch, pan);
-
-  const previewTransform = useAnimatedStyle(() => ({
-    transform: [
-      { scale: scale.value },
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-    ],
-  }));
-
-  const applyFilterPreset = useCallback((preset: FilterPreset) => {
-    applyFilter(preset.adjustments);
-    setActiveTab('adjust');
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  }, [applyFilter]);
+  const handleUltraExport = useCallback(async () => {
+    await handleUltraExportInternal();
+    if (ultraVariants.length > 0) {
+      setShowUltraModal(true);
+    }
+  }, [handleUltraExportInternal, ultraVariants.length]);
 
   const handleFlipH = useCallback(() => { setFlipHorizontal(!flipHorizontal); }, [flipHorizontal, setFlipHorizontal]);
   const handleFlipV = useCallback(() => { setFlipVertical(!flipVertical); }, [flipVertical, setFlipVertical]);
@@ -233,72 +199,12 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     }
   }, [applyFilter]);
 
-  // Ultra Export handler
-  const handleUltraExport = useCallback(async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setUltraExporting(true);
-    setUltraProgress(0);
-    setUltraVariants([]);
+  const applyFilterPreset = useCallback((preset: FilterPreset) => {
+    applyPreset(preset);
+    setActiveTab('adjust');
+  }, [applyPreset]);
 
-    try {
-      const variants = await exportUltraVariants(editedUri, ["1:1", "4:5", "9:16"], {
-        onProgress: (progress, variant) => {
-          setUltraProgress(Math.round(progress * 100));
-          if (variant) {
-            setUltraVariants((prev) => [...prev, variant]);
-          }
-        },
-      });
-
-      setUltraVariants(variants);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      
-      // Show results modal
-      setShowUltraModal(true);
-      
-      logger.info('[ULTRA Export] Generated variants', {
-        count: variants.length,
-        byRatio: variants.reduce<Record<string, number>>((acc, v) => {
-          acc[v.ratio] = (acc[v.ratio] || 0) + 1;
-          return acc;
-        }, {}),
-        byKind: variants.reduce<Record<string, number>>((acc, v) => {
-          acc[v.kind] = (acc[v.kind] || 0) + 1;
-          return acc;
-        }, {}),
-      });
-    } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error(String(error));
-      logger.error('[ULTRA Export] Failed', { error: err });
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Export Failed', 'Failed to generate ultra variants. Please try again.');
-    } finally {
-      setUltraExporting(false);
-    }
-  }, [editedUri]);
-
-  const handleUltraSaveAll = useCallback(async () => {
-    if (ultraVariants.length === 0) return;
-    
-    try {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      
-      // In a real app, you would:
-      // 1. Save all variants to camera roll
-      // 2. Or upload to your backend
-      // 3. Or attach to a post composer
-      
-      logger.info('[ULTRA] Saving all variants to camera roll or uploading', { variantCount: ultraVariants.length });
-      Alert.alert('Saved!', `Successfully exported ${ultraVariants.length} publish-ready variants.`);
-      setShowUltraModal(false);
-    } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error(String(error));
-      logger.error('Failed to save ultra variants', { error: err });
-      Alert.alert('Save Failed', 'Failed to save variants. Please try again.');
-    }
-  }, [ultraVariants]);
-
-  const styles = useMemo(() => ({
+  const styles = useMemo(() => StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.bg,
@@ -308,9 +214,9 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
       backgroundColor: theme.colors.bg,
     },
     previewHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const,
       paddingHorizontal: 20,
       paddingVertical: 12,
     },
@@ -319,23 +225,53 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     },
     headerTitle: {
       fontSize: 18,
-      fontWeight: 'bold',
+      fontWeight: 'bold' as const,
       color: theme.colors.onSurface,
     },
     saveButton: {
       fontSize: 16,
-      fontWeight: '600',
+      fontWeight: '600' as const,
       color: theme.colors.onSurface,
     },
+    previewStage: {
+      flex: 1,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      overflow: 'hidden' as const,
+    },
+    previewImage: {
+      width: '100%',
+      height: '100%',
+    },
+    compareBadge: {
+      position: 'absolute' as const,
+      top: 20,
+      left: 20,
+      backgroundColor: theme.colors.surface,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: theme.radii.lg,
+    },
+    compareText: {
+      fontSize: 12,
+      fontWeight: '600' as const,
+      color: theme.colors.onSurface,
+    },
+    gridLine: {
+      position: 'absolute' as const,
+      backgroundColor: theme.colors.onSurface + '40',
+      width: 1,
+      height: '100%',
+    },
     tabBar: {
-      flexDirection: 'row',
+      flexDirection: 'row' as const,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
     tab: {
       flex: 1,
       paddingVertical: 12,
-      alignItems: 'center',
+      alignItems: 'center' as const,
     },
     activeTab: {
       borderBottomWidth: 2,
@@ -347,15 +283,127 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     },
     activeTabText: {
       color: theme.colors.primary,
-      fontWeight: '600',
+      fontWeight: '600' as const,
     },
     content: {
       flex: 1,
     },
+    contentContainer: {
+      flex: 1,
+      padding: theme.spacing.md,
+    },
+    quickAction: {
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.surface,
+      marginRight: 8,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+    },
+    quickActionActive: {
+      backgroundColor: theme.colors.primary + '20',
+    },
+    quickActionText: {
+      fontSize: 12,
+      fontWeight: '600' as const,
+      color: theme.colors.onSurface,
+      marginTop: 4,
+    },
+    controlRow: {
+      flexDirection: 'row' as const,
+      justifyContent: 'space-around' as const,
+      marginVertical: theme.spacing.md,
+    },
+    controlButton: {
+      alignItems: 'center' as const,
+      padding: theme.spacing.sm,
+    },
+    controlLabel: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      marginTop: 4,
+    },
+    slidersPanel: {
+      padding: theme.spacing.md,
+      borderRadius: theme.radii.lg,
+      backgroundColor: theme.colors.surface + '80',
+    },
+    resetButton: {
+      padding: theme.spacing.md,
+      alignItems: 'center' as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'center' as const,
+      gap: 8,
+    },
+    resetButtonText: {
+      fontSize: 14,
+      fontWeight: '600' as const,
+      color: theme.colors.danger,
+    },
+    ultraExportButton: {
+      padding: theme.spacing.md,
+      alignItems: 'center' as const,
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radii.md,
+      margin: theme.spacing.md,
+      gap: 8,
+    },
+    ultraExportText: {
+      fontSize: 16,
+      fontWeight: '600' as const,
+      color: theme.colors.onSurface,
+    },
+    progressBar: {
+      height: 4,
+      backgroundColor: theme.colors.border,
+      borderRadius: theme.radii.full,
+      overflow: 'hidden' as const,
+      marginVertical: theme.spacing.sm,
+      marginHorizontal: theme.spacing.md,
+    },
+    progressFill: {
+      height: '100%',
+      backgroundColor: theme.colors.primary,
+    },
+    filtersContainer: {
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
+      padding: theme.spacing.md,
+    },
+    filterCard: {
+      width: '30%',
+      aspectRatio: 1,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.md,
+      margin: '1.5%',
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      padding: theme.spacing.sm,
+    },
+    filterIcon: {
+      marginBottom: theme.spacing.xs,
+      borderRadius: theme.radii.full,
+      padding: theme.spacing.sm,
+    },
+    filterName: {
+      fontSize: 12,
+      color: theme.colors.onSurface,
+      textAlign: 'center' as const,
+    },
     loadingContainer: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+    },
+    loadingOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: theme.colors.surface + 'E0',
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+    },
+    loadingContent: {
+      alignItems: 'center' as const,
     },
     loadingText: {
       marginTop: 12,
@@ -364,33 +412,87 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     },
     modalOverlay: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: theme.colors.overlay || 'rgba(0,0,0,0.5)',
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      backgroundColor: 'rgba(0,0,0,0.5)',
     },
-    modalContent: {
+    modalContainer: {
       backgroundColor: theme.colors.surface,
       margin: 20,
       borderRadius: 16,
       padding: 20,
-      maxWidth: 300,
+      maxWidth: 400,
+      maxHeight: '80%',
+    },
+    modalContent: {
+      flex: 1,
+    },
+    modalHeader: {
+      flexDirection: 'row' as const,
+      justifyContent: 'space-between' as const,
+      alignItems: 'center' as const,
+      marginBottom: theme.spacing.md,
     },
     modalTitle: {
       fontSize: 18,
-      fontWeight: 'bold',
+      fontWeight: 'bold' as const,
       marginBottom: 12,
-      textAlign: 'center',
+      textAlign: 'center' as const,
       color: theme.colors.onSurface,
     },
-    modalMessage: {
-      fontSize: 16,
-      marginBottom: 20,
-      textAlign: 'center',
+    modalScroll: {
+      maxHeight: 400,
+    },
+    modalSubtitle: {
+      fontSize: 14,
       color: theme.colors.onMuted,
+      marginBottom: theme.spacing.md,
+      textAlign: 'center' as const,
+    },
+    ratioSection: {
+      marginBottom: theme.spacing.lg,
+    },
+    ratioTitle: {
+      fontSize: 14,
+      fontWeight: '600' as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    variantGrid: {
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
+      gap: theme.spacing.sm,
+    },
+    variantCard: {
+      width: '48%',
+      backgroundColor: theme.colors.surfaceAlt || theme.colors.surface,
+      borderRadius: theme.radii.md,
+      overflow: 'hidden' as const,
+      marginBottom: theme.spacing.sm,
+    },
+    variantImage: {
+      width: '100%',
+      aspectRatio: 1,
+    },
+    variantKind: {
+      fontSize: 10,
+      color: theme.colors.onMuted,
+      padding: theme.spacing.xs,
+    },
+    variantMethod: {
+      fontSize: 10,
+      color: theme.colors.onMuted,
+      paddingHorizontal: theme.spacing.xs,
+      paddingBottom: theme.spacing.xs,
+    },
+    modalFooter: {
+      flexDirection: 'row' as const,
+      justifyContent: 'space-around' as const,
+      marginTop: theme.spacing.md,
     },
     modalButtonContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
+      flexDirection: 'row' as const,
+      justifyContent: 'space-around' as const,
     },
     modalButton: {
       paddingVertical: 12,
@@ -406,7 +508,8 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     },
     modalButtonText: {
       fontSize: 16,
-      fontWeight: '600',
+      fontWeight: '600' as const,
+      textAlign: 'center' as const,
       color: theme.colors.onSurface,
     },
   }), [theme]);
@@ -492,7 +595,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             />
           </View>
         ) : (
-          <GestureDetector gesture={composed}>
+          <GestureDetector gesture={pinchZoomGesture}>
             <View
               style={styles.previewStage}
               onTouchStart={onCompareIn}
@@ -501,7 +604,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               accessibilityHint="Press and hold to compare with original. Pinch to zoom."
             >
               {/* Edited */}
-              <Animated.View style={[StyleSheet.absoluteFill, editedOpacity, previewTransform]}>
+              <Animated.View style={[StyleSheet.absoluteFill, editedOpacity, previewTransform] as any}>
                 <SmartImage
                   source={{ uri: editedUri }}
                   style={styles.previewImage}
@@ -510,7 +613,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               </Animated.View>
 
               {/* Original (shown while holding) */}
-              <Animated.View style={[StyleSheet.absoluteFill, originalOpacity, previewTransform]}>
+              <Animated.View style={[StyleSheet.absoluteFill, originalOpacity, previewTransform] as any}>
                 <SmartImage
                   source={{ uri: imageUri }}
                   style={styles.previewImage}
@@ -798,7 +901,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 return (
                   <View key={ratio} style={styles.ratioSection}>
                     <Text style={styles.ratioTitle}>
-                      {ratio} - {QualityTargets[ratio as keyof typeof QualityTargets]?.minW}x{QualityTargets[ratio as keyof typeof QualityTargets]?.minH}
+                      {ratio} ({ratio === '1:1' ? '1080x1080' : ratio === '4:5' ? '1080x1350' : '1080x1920'})
                     </Text>
                     <View style={styles.variantGrid}>
                       {variants.map((variant, idx) => (

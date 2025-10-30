@@ -359,7 +359,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
             <TabBarIcon
               routeName={route.name}
               focused={isFocused}
-              color={isFocused ? colors.primary : colors.onSurface}
+              color={isFocused ? colors.primary : colors.text}
               size={24}
               badgeCount={badgeCount}
               showBadge={showBadge}
@@ -369,7 +369,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
               style={StyleSheet.flatten([
                 styles.tabLabel,
                 {
-                  color: isFocused ? colors.primary : colors.onSurface,
+                  color: isFocused ? colors.primary : colors.text,
                   fontWeight: isFocused ? "600" : "400",
                 },
               ])}
@@ -428,17 +428,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -6,
     right: -8,
-    backgroundColor: Theme.colors.status.error,
+    backgroundColor: "#EF4444", // danger/error color
     borderRadius: 10,
     minWidth: 20,
     height: 20,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: Theme.colors.neutral[0],
+    borderColor: "#FFFFFF", // neutral[0] equivalent
   },
   badgeText: {
-    color: Theme.colors.neutral[0],
+    color: "#FFFFFF", // neutral[0] equivalent
     fontSize: 10,
     fontWeight: "bold",
     textAlign: "center",
@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
     height: 3,
     borderRadius: 2,
     zIndex: 1,
-    backgroundColor: Theme.colors.primary[500],
+    backgroundColor: "#EC4899", // primary[500] equivalent
   },
 });
 

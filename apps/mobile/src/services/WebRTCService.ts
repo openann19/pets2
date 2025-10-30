@@ -13,6 +13,12 @@ import {
 import { logger } from './logger';
 import { useAuthStore } from '../stores/useAuthStore';
 import { hasNativeCameraSwitch } from '../types/native-webrtc';
+import {
+  checkMediaPermissions,
+  showPermissionDeniedDialog,
+  PermissionDeniedError,
+} from './mediaPermissions';
+import { preCallDeviceCheck, type DeviceCheckResult } from './PreCallDeviceCheckService';
 
 // Extended RTCIceServer with React Native WebRTC compatibility
 interface ExtendedRTCIceServer {
@@ -30,7 +36,11 @@ interface MediaStreamConstraints {
         height?: { min?: number; ideal?: number; max?: number };
         frameRate?: { min?: number; ideal?: number; max?: number };
       };
-  audio?: boolean;
+  audio?: boolean | {
+    echoCancellation?: boolean;
+    noiseSuppression?: boolean;
+    autoGainControl?: boolean;
+  };
 }
 
 // Type-safe video track with extended methods for React Native WebRTC
@@ -54,6 +64,16 @@ export interface CallData {
   timestamp: number;
 }
 
+export type NetworkQuality = 'poor' | 'ok' | 'good';
+
+export interface NetworkStats {
+  bitrate: number; // kbps
+  packetLoss: number; // percentage
+  jitter: number; // ms
+  rtt: number; // ms
+  quality: NetworkQuality;
+}
+
 export interface CallState {
   isActive: boolean;
   isConnected: boolean;
@@ -64,6 +84,9 @@ export interface CallState {
   isMuted: boolean;
   isVideoEnabled: boolean;
   callDuration: number;
+  networkQuality?: NetworkQuality;
+  networkStats?: NetworkStats;
+  videoQuality: '720p' | '480p' | 'audio-only';
 }
 
 export interface WebRTCSignalingData {
@@ -98,9 +121,9 @@ class WebRTCService extends EventEmitter {
       ];
 
       // Add TURN servers from environment if configured
-      const turnUrl = process.env.EXPO_PUBLIC_TURN_SERVER_URL;
-      const turnUsername = process.env.EXPO_PUBLIC_TURN_USERNAME;
-      const turnCredential = process.env.EXPO_PUBLIC_TURN_CREDENTIAL;
+      const turnUrl = process.env['EXPO_PUBLIC_TURN_SERVER_URL'];
+      const turnUsername = process.env['EXPO_PUBLIC_TURN_USERNAME'];
+      const turnCredential = process.env['EXPO_PUBLIC_TURN_CREDENTIAL'];
 
       if (turnUrl && turnUsername && turnCredential) {
         const turnServer: ExtendedRTCIceServer = {
@@ -126,7 +149,16 @@ class WebRTCService extends EventEmitter {
     isMuted: false,
     isVideoEnabled: true,
     callDuration: 0,
+    videoQuality: '720p',
   };
+
+  // Network quality monitoring
+  private networkQualityInterval: ReturnType<typeof setInterval> | null = null;
+  private iceConnectionTimeout: ReturnType<typeof setTimeout> | null = null;
+  private reconnectionAttempts = 0;
+  private readonly maxReconnectionAttempts = 5;
+  private readonly iceTimeoutMs = 30000; // 30 seconds
+  private readonly networkCheckIntervalMs = 5000; // Check every 5 seconds
   constructor() {
     super();
     this.setupInCallManager();
@@ -181,9 +213,61 @@ class WebRTCService extends EventEmitter {
   // Start a call
   async startCall(matchId: string, callType: 'voice' | 'video'): Promise<boolean> {
     try {
-      // Get user media
+      // Perform pre-call device checks
+      const deviceCheckResult: DeviceCheckResult = await preCallDeviceCheck.performPreCallCheck({
+        checkCamera: callType === 'video',
+        checkMicrophone: true,
+        checkNetwork: true,
+        checkAudioOutput: true,
+        minNetworkQuality: 'fair',
+        timeout: 10000,
+      });
+
+      // Log device check results
+      logger.info('Pre-call device check completed', {
+        allChecksPassed: deviceCheckResult.allChecksPassed,
+        blockingIssues: deviceCheckResult.blockingIssues,
+        warnings: deviceCheckResult.warnings,
+      });
+
+      // If device checks failed, emit error and return
+      if (!deviceCheckResult.allChecksPassed) {
+        const error = new Error(
+          `Device check failed: ${deviceCheckResult.blockingIssues.join(', ')}\nWarnings: ${deviceCheckResult.warnings.join(', ')}`
+        );
+        this.emit('callError', error);
+        this.emit('deviceCheckFailed', deviceCheckResult);
+        return false;
+      }
+
+      // Emit device check success for UI feedback
+      this.emit('deviceCheckPassed', deviceCheckResult);
+
+      // Check permissions before requesting media
+      const permissions = await checkMediaPermissions(callType === 'video');
+      if (!permissions.allGranted) {
+        const deniedTypes: Array<'audio' | 'video'> = [];
+        if (!permissions.audio.granted) deniedTypes.push('audio');
+        if (!permissions.video.granted && callType === 'video') deniedTypes.push('video');
+        
+        const type = deniedTypes.length === 2 ? 'both' : deniedTypes[0] ?? 'audio';
+        showPermissionDeniedDialog(type);
+        
+        const error = new PermissionDeniedError(
+          type,
+          `Permission denied: ${deniedTypes.join(', ')}`,
+        );
+        this.emit('callError', error);
+        return false;
+      }
+
+      // Get user media with AEC/AGC/NS enabled
       const constraints = {
-        audio: true,
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
         video:
           callType === 'video'
             ? {
@@ -194,7 +278,9 @@ class WebRTCService extends EventEmitter {
             : false,
       };
 
-      this.localStream = await mediaDevices.getUserMedia(constraints as MediaStreamConstraints);
+      // Type assertion needed for react-native-webrtc compatibility
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.localStream = await mediaDevices.getUserMedia(constraints as any);
 
       // Create peer connection
       this.peerConnection = new RTCPeerConnection(this.rtcConfiguration);
@@ -261,10 +347,34 @@ class WebRTCService extends EventEmitter {
     try {
       if (this.callState.callData === undefined) return false;
 
+      const callType = this.callState.callData.callType;
+      
+      // Check permissions before requesting media
+      const permissions = await checkMediaPermissions(callType === 'video');
+      if (!permissions.allGranted) {
+        const deniedTypes: Array<'audio' | 'video'> = [];
+        if (!permissions.audio.granted) deniedTypes.push('audio');
+        if (!permissions.video.granted && callType === 'video') deniedTypes.push('video');
+        
+        const type = deniedTypes.length === 2 ? 'both' : deniedTypes[0] ?? 'audio';
+        showPermissionDeniedDialog(type);
+        
+        const error = new PermissionDeniedError(
+          type,
+          `Permission denied: ${deniedTypes.join(', ')}`,
+        );
+        this.emit('callError', error);
+        return false;
+      }
+
       const constraints = {
-        audio: true,
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
         video:
-          this.callState.callData.callType === 'video'
+          callType === 'video'
             ? {
                 width: { min: 640, ideal: 1280 },
                 height: { min: 480, ideal: 720 },
@@ -273,7 +383,9 @@ class WebRTCService extends EventEmitter {
             : false,
       };
 
-      this.localStream = await mediaDevices.getUserMedia(constraints as MediaStreamConstraints);
+      // Type assertion needed for react-native-webrtc compatibility
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.localStream = await mediaDevices.getUserMedia(constraints as any);
 
       // Create peer connection
       this.peerConnection = new RTCPeerConnection(this.rtcConfiguration);
@@ -340,6 +452,11 @@ class WebRTCService extends EventEmitter {
 
   // End active call
   endCall() {
+    // Clean up network monitoring
+    this.stopNetworkQualityMonitoring();
+    this.clearIceTimeout();
+    this.reconnectionAttempts = 0;
+
     // Clean up peer connection
     if (this.peerConnection !== null) {
       this.peerConnection.close();
@@ -382,6 +499,7 @@ class WebRTCService extends EventEmitter {
       isMuted: false,
       isVideoEnabled: true,
       callDuration: 0,
+      videoQuality: '720p',
     };
 
     // Notify socket
@@ -491,17 +609,23 @@ class WebRTCService extends EventEmitter {
       }
     };
 
-    // Connection state change handler - typed properly
-    peerConnection.onconnectionstatechange = () => {
-      const state = this.peerConnection?.connectionState;
-      if (state === 'connected') {
-        this.callState.isConnected = true;
-        this.startCallTimer();
-        this.emit('callStateChanged', this.callState);
-      } else if (state === 'disconnected' || state === 'failed') {
-        this.endCall();
-      }
-    };
+      // Connection state change handler - typed properly
+      peerConnection.onconnectionstatechange = () => {
+        const state = this.peerConnection?.connectionState;
+        if (state === 'connected') {
+          this.callState.isConnected = true;
+          this.reconnectionAttempts = 0;
+          this.clearIceTimeout();
+          this.startCallTimer();
+          this.startNetworkQualityMonitoring();
+          this.emit('callStateChanged', this.callState);
+        } else if (state === 'disconnected') {
+          // Attempt reconnection for transient network loss
+          void this.handleDisconnection();
+        } else if (state === 'failed') {
+          this.handleConnectionFailure();
+        }
+      };
 
     // Additional event listeners for comprehensive state tracking
     // Using type assertion for optional handlers
@@ -514,9 +638,16 @@ class WebRTCService extends EventEmitter {
       const iceState = this.peerConnection?.iceConnectionState;
       logger.debug('ICE connection state changed', { state: iceState });
 
-      if (iceState === 'failed') {
+      if (iceState === 'connected' || iceState === 'completed') {
+        this.clearIceTimeout();
+      } else if (iceState === 'checking') {
+        // Set timeout for ICE connection
+        this.setIceTimeout();
+      } else if (iceState === 'failed') {
+        this.clearIceTimeout();
         logger.error('ICE connection failed');
         this.emit('callError', new Error('ICE connection failed'));
+        void this.attemptReconnection();
       }
     };
 
@@ -600,6 +731,274 @@ class WebRTCService extends EventEmitter {
     }
   }
 
+  // Network quality monitoring
+  private startNetworkQualityMonitoring(): void {
+    // Clear any existing interval
+    if (this.networkQualityInterval !== null) {
+      clearInterval(this.networkQualityInterval);
+    }
+
+    // Start monitoring network quality
+    this.networkQualityInterval = setInterval(() => {
+      void this.updateNetworkQuality();
+    }, this.networkCheckIntervalMs) as unknown as ReturnType<typeof setInterval>;
+  }
+
+  private stopNetworkQualityMonitoring(): void {
+    if (this.networkQualityInterval !== null) {
+      clearInterval(this.networkQualityInterval);
+      this.networkQualityInterval = null;
+    }
+  }
+
+  private async updateNetworkQuality(): Promise<void> {
+    if (this.peerConnection === null) return;
+
+    try {
+      const stats = await this.peerConnection.getStats();
+      const networkStats = this.calculateNetworkStats(stats);
+      
+      this.callState.networkStats = networkStats;
+      this.callState.networkQuality = networkStats.quality;
+
+      // Auto-downgrade based on network quality
+      void this.evaluateAutoDowngrade(networkStats);
+
+      this.emit('callStateChanged', this.callState);
+      this.emit('networkQualityChanged', networkStats);
+    } catch (error) {
+      logger.error('Failed to update network quality', {
+        error: error instanceof Error ? error : new Error(String(error)),
+      });
+    }
+  }
+
+  private calculateNetworkStats(stats: RTCStatsReport): NetworkStats {
+    let totalBytesReceived = 0;
+    let totalBytesSent = 0;
+    let totalPacketsReceived = 0;
+    let totalPacketsSent = 0;
+    let totalPacketsLost = 0;
+    let totalRtt = 0;
+    let rttCount = 0;
+    let totalJitter = 0;
+    let jitterCount = 0;
+
+    stats.forEach((report) => {
+      // Accumulate bytes and packets
+      if ('bytesReceived' in report && typeof report.bytesReceived === 'number') {
+        totalBytesReceived += report.bytesReceived;
+      }
+      if ('bytesSent' in report && typeof report.bytesSent === 'number') {
+        totalBytesSent += report.bytesSent;
+      }
+      if ('packetsReceived' in report && typeof report.packetsReceived === 'number') {
+        totalPacketsReceived += report.packetsReceived;
+      }
+      if ('packetsSent' in report && typeof report.packetsSent === 'number') {
+        totalPacketsSent += report.packetsSent;
+      }
+      if ('packetsLost' in report && typeof report.packetsLost === 'number') {
+        totalPacketsLost += report.packetsLost;
+      }
+      if ('roundTripTime' in report && typeof report.roundTripTime === 'number') {
+        totalRtt += report.roundTripTime;
+        rttCount++;
+      }
+      if ('jitter' in report && typeof report.jitter === 'number') {
+        totalJitter += report.jitter;
+        jitterCount++;
+      }
+    });
+
+    // Calculate metrics
+    const totalPackets = totalPacketsReceived + totalPacketsSent;
+    const packetLoss = totalPackets > 0 ? (totalPacketsLost / totalPackets) * 100 : 0;
+    const avgRtt = rttCount > 0 ? totalRtt / rttCount : 0;
+    const avgJitter = jitterCount > 0 ? totalJitter / jitterCount : 0;
+
+    // Estimate bitrate (simple calculation, could be improved with timestamps)
+    const totalBytes = totalBytesReceived + totalBytesSent;
+    const bitrate = totalBytes > 0 ? (totalBytes * 8) / 1000 : 0; // kbps
+
+    // Determine quality
+    let quality: NetworkQuality = 'good';
+    if (packetLoss > 10 || avgRtt > 500 || bitrate < 500) {
+      quality = 'poor';
+    } else if (packetLoss > 5 || avgRtt > 300 || bitrate < 1000) {
+      quality = 'ok';
+    }
+
+    return {
+      bitrate,
+      packetLoss,
+      jitter: avgJitter,
+      rtt: avgRtt,
+      quality,
+    };
+  }
+
+  private async evaluateAutoDowngrade(stats: NetworkStats): Promise<void> {
+    const currentQuality = this.callState.videoQuality;
+    const isVideoCall = this.callState.callData?.callType === 'video';
+
+    if (!isVideoCall) {
+      return; // No video to downgrade
+    }
+
+    // Auto-downgrade conditions
+    const shouldDowngradeTo480p =
+      currentQuality === '720p' &&
+      (stats.bitrate < 1000 || stats.packetLoss > 5 || stats.quality === 'poor');
+
+    const shouldDowngradeToAudioOnly =
+      (currentQuality === '720p' || currentQuality === '480p') &&
+      (stats.bitrate < 500 || stats.packetLoss > 10 || stats.quality === 'poor');
+
+    // Auto-upgrade conditions (restore quality when network improves)
+    const shouldUpgradeTo720p =
+      currentQuality === '480p' &&
+      stats.bitrate > 1200 &&
+      stats.packetLoss < 3 &&
+      stats.quality === 'good';
+
+    const shouldUpgradeTo480p =
+      currentQuality === 'audio-only' &&
+      stats.bitrate > 600 &&
+      stats.packetLoss < 5 &&
+      stats.quality !== 'poor';
+
+    if (shouldDowngradeToAudioOnly) {
+      await this.downgradeToAudioOnly();
+    } else if (shouldDowngradeTo480p) {
+      await this.downgradeTo480p();
+    } else if (shouldUpgradeTo720p) {
+      await this.upgradeTo720p();
+    } else if (shouldUpgradeTo480p) {
+      await this.upgradeTo480p();
+    }
+  }
+
+  private async downgradeToAudioOnly(): Promise<void> {
+    if (this.callState.videoQuality === 'audio-only') return;
+
+    logger.info('Auto-downgrading to audio-only due to poor network quality');
+    this.callState.videoQuality = 'audio-only';
+
+    // Disable video tracks
+    if (this.localStream !== null) {
+      this.localStream.getVideoTracks().forEach((track) => {
+        track.enabled = false;
+      });
+    }
+
+    this.emit('callStateChanged', this.callState);
+    this.emit('videoQualityChanged', 'audio-only');
+  }
+
+  private async downgradeTo480p(): Promise<void> {
+    if (this.callState.videoQuality !== '720p') return;
+
+    logger.info('Auto-downgrading to 480p due to network quality');
+    this.callState.videoQuality = '480p';
+
+    // Adjust video constraints (would need to renegotiate for full effect)
+    // For now, just update state
+    this.emit('callStateChanged', this.callState);
+    this.emit('videoQualityChanged', '480p');
+  }
+
+  private async upgradeTo480p(): Promise<void> {
+    if (this.callState.videoQuality !== 'audio-only') return;
+
+    logger.info('Auto-upgrading to 480p due to improved network quality');
+    this.callState.videoQuality = '480p';
+
+    // Re-enable video tracks
+    if (this.localStream !== null) {
+      this.localStream.getVideoTracks().forEach((track) => {
+        track.enabled = true;
+      });
+    }
+
+    this.emit('callStateChanged', this.callState);
+    this.emit('videoQualityChanged', '480p');
+  }
+
+  private async upgradeTo720p(): Promise<void> {
+    if (this.callState.videoQuality !== '480p') return;
+
+    logger.info('Auto-upgrading to 720p due to improved network quality');
+    this.callState.videoQuality = '720p';
+
+    this.emit('callStateChanged', this.callState);
+    this.emit('videoQualityChanged', '720p');
+  }
+
+  // ICE timeout handling
+  private setIceTimeout(): void {
+    this.clearIceTimeout();
+    this.iceConnectionTimeout = setTimeout(() => {
+      logger.error('ICE connection timeout - no connection established within 30s');
+      this.emit('callError', new Error('Call setup timeout - network may be unreachable'));
+      void this.attemptReconnection();
+    }, this.iceTimeoutMs) as unknown as ReturnType<typeof setTimeout>;
+  }
+
+  private clearIceTimeout(): void {
+    if (this.iceConnectionTimeout !== null) {
+      clearTimeout(this.iceConnectionTimeout);
+      this.iceConnectionTimeout = null;
+    }
+  }
+
+  // Reconnection handling
+  private async handleDisconnection(): Promise<void> {
+    logger.warn('Call disconnected, attempting reconnection');
+    await this.attemptReconnection();
+  }
+
+  private handleConnectionFailure(): void {
+    logger.error('Connection failed');
+    this.clearIceTimeout();
+    this.stopNetworkQualityMonitoring();
+    this.emit('callError', new Error('Connection failed'));
+    // Don't auto-reconnect on failure - let user decide
+    this.endCall();
+  }
+
+  private async attemptReconnection(): Promise<void> {
+    if (this.reconnectionAttempts >= this.maxReconnectionAttempts) {
+      logger.error('Max reconnection attempts reached');
+      this.emit('callError', new Error('Failed to reconnect after multiple attempts'));
+      this.endCall();
+      return;
+    }
+
+    this.reconnectionAttempts++;
+    const delay = Math.min(1000 * Math.pow(2, this.reconnectionAttempts - 1), 30000); // Exponential backoff, max 30s
+
+    logger.info(`Attempting reconnection ${this.reconnectionAttempts}/${this.maxReconnectionAttempts} after ${delay}ms`);
+
+    setTimeout(() => {
+      if (this.peerConnection === null || !this.callState.isActive) {
+        return; // Call already ended
+      }
+
+      const iceState = this.peerConnection.iceConnectionState;
+      if (iceState === 'connected' || iceState === 'completed') {
+        logger.info('Connection restored');
+        this.reconnectionAttempts = 0;
+        return;
+      }
+
+      // Try to restart ICE
+      if (this.peerConnection !== null && this.callState.callData !== undefined) {
+        void this.peerConnection.restartIce();
+      }
+    }, delay);
+  }
+
   private startCallTimer() {
     this.callStartTime = Date.now();
     const timer: ReturnType<typeof setInterval> = setInterval(() => {
@@ -619,6 +1018,10 @@ class WebRTCService extends EventEmitter {
 
   isCallActive(): boolean {
     return this.callState.isActive;
+  }
+
+  getNetworkStats(): NetworkStats | undefined {
+    return this.callState.networkStats;
   }
 }
 

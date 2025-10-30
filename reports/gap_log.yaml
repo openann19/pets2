@@ -1,9 +1,30 @@
-version: 1.0.0
-generated: 2025-01-30T00:00:00Z
+version: 1.0.1
+generated: 2025-01-30T12:00:00Z
 app: PawfectMatch Premium Mobile
 status: active
 
 gaps:
+  - id: theme-migration-phase1-complete
+    owner: lfe
+    severity: low
+    area: mobile
+    status: completed
+    context: |
+      Phase 1 semantic migration completed. Replaced legacy Theme.colors.secondary[\d+], 
+      colors.white, and stringified theme references with semantic tokens (theme.colors.{primary|info|onSurface|surface|danger|...}).
+      Files fixed: MapControls.tsx, GlowShadowSystem.tsx, InteractiveButton.tsx, 
+      EnhancedMessageBubble.tsx, SwipeGestureHints.tsx, PremiumButton.tsx and tests.
+    acceptance:
+      - All legacy color references replaced with semantic tokens
+      - useTheme() hook properly declared at component top
+      - ESLint rules strengthened to catch legacy patterns
+      - TypeScript compilation passes
+    states: [completed]
+    artifacts:
+      - reports/gap_log.yaml
+      - eslint-local-rules/no-hardcoded-colors.js
+    date_completed: 2025-01-30
+
   - id: gdpr-delete-account
     owner: api
     severity: critical

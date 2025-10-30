@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { useTheme } from '@mobile/theme';
 import { AdvancedCard, CardConfigs } from '../Advanced/AdvancedCard';
+import { TabChangeIndicator } from '../micro/TabChange';
 
 interface MatchesTabsProps {
   selectedTab: 'matches' | 'likedYou';
@@ -30,14 +31,19 @@ export function MatchesTabs({ selectedTab, onTabChange }: MatchesTabsProps): Rea
           accessibilityLabel="View matches"
           accessibilityState={{ selected: selectedTab === 'matches' }}
         >
-          <Text
-            style={StyleSheet.flatten([
-              styles.tabText,
-              selectedTab === 'matches' && styles.activeTabText,
-            ])}
+          <TabChangeIndicator
+            isActive={selectedTab === 'matches'}
+            underlineColor={theme.colors.primary}
           >
-            Matches
-          </Text>
+            <Text
+              style={StyleSheet.flatten([
+                styles.tabText,
+                selectedTab === 'matches' && styles.activeTabText,
+              ])}
+            >
+              Matches
+            </Text>
+          </TabChangeIndicator>
         </TouchableOpacity>
         <TouchableOpacity
           style={StyleSheet.flatten([styles.tab, selectedTab === 'likedYou' && styles.activeTab])}
@@ -47,14 +53,19 @@ export function MatchesTabs({ selectedTab, onTabChange }: MatchesTabsProps): Rea
           accessibilityLabel="View liked you"
           accessibilityState={{ selected: selectedTab === 'likedYou' }}
         >
-          <Text
-            style={StyleSheet.flatten([
-              styles.tabText,
-              selectedTab === 'likedYou' && styles.activeTabText,
-            ])}
+          <TabChangeIndicator
+            isActive={selectedTab === 'likedYou'}
+            underlineColor={theme.colors.primary}
           >
-            Liked You
-          </Text>
+            <Text
+              style={StyleSheet.flatten([
+                styles.tabText,
+                selectedTab === 'likedYou' && styles.activeTabText,
+              ])}
+            >
+              Liked You
+            </Text>
+          </TabChangeIndicator>
         </TouchableOpacity>
       </View>
     </AdvancedCard>

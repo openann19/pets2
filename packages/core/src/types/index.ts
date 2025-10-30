@@ -440,6 +440,9 @@ export type PaginatedResponse<T = unknown> = ApiResponse<{
 export * from './moderation';
 export * from './socket';
 
+// UI Config types
+export * from './ui-config';
+
 // UI Types
 export interface NotificationProps {
   type: 'success' | 'error' | 'warning' | 'info';

@@ -23,6 +23,7 @@ import { useMyPetsScreen } from '../hooks/screens/useMyPetsScreen';
 import { useDoubleTapMetrics, usePinchMetrics } from '../hooks/useInteractionMetrics';
 import type { RootStackScreenProps } from '../navigation/types';
 import { logger } from '../services/logger';
+import { useReduceMotion } from '../hooks/useReducedMotion';
 
 const { width: _screenWidth } = Dimensions.get('window');
 
@@ -42,6 +43,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
   } = useMyPetsScreen();
   const { startInteraction: startDoubleTap, endInteraction: endDoubleTap } = useDoubleTapMetrics();
   const { startInteraction: startPinch, endInteraction: endPinch } = usePinchMetrics();
+  const reducedMotion = useReduceMotion();
 
   const theme = useTheme();
 
@@ -59,11 +61,11 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
 
   const renderPetCard = ({ item, index }: { item: Pet; index: number }) => {
     return (
-      <Animated.View entering={FadeInDown.duration(220).delay(index * 50)}>
+      reducedMotion ? (
         <TouchableOpacity
           style={styles.petCard}
-          testID="MyPetsScreen-button-2"
-          accessibilityLabel="Interactive element"
+          testID={`pet-card-${item._id}`}
+          accessibilityLabel={`Pet profile for ${item.name}, ${item.breed}`}
           accessibilityRole="button"
           onPress={() => {
             handleNavigateToPetDetails(item);
@@ -231,7 +233,181 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
             </View>
           </View>
         </TouchableOpacity>
-      </Animated.View>
+      ) : (
+        <Animated.View entering={FadeInDown.duration(220).delay(index * 50)}>
+          <TouchableOpacity
+            style={styles.petCard}
+            testID={`pet-card-${item._id}`}
+            accessibilityLabel={`Pet profile for ${item.name}, ${item.breed}`}
+            accessibilityRole="button"
+            onPress={() => {
+              handleNavigateToPetDetails(item);
+            }}
+          >
+            {/* Pet Photo with Gestures */}
+            <View style={styles.petImageContainer}>
+              {item.photos && item.photos.length > 0 ? (
+                <DoubleTapLikePlus
+                  onDoubleTap={() => {
+                    handlePetLike(item);
+                  }}
+                  heartColor={theme.colors.danger}
+                  particles={4}
+                  haptics={{ enabled: true, style: 'light' }}
+                >
+                  <PinchZoomPro
+                    source={{
+                      uri: item.photos.find((p) => p.isPrimary)?.url ?? item.photos[0]?.url ?? '',
+                    }}
+                    width={120}
+                    height={120}
+                    minScale={1}
+                    maxScale={2.5}
+                    enableMomentum={false}
+                    haptics={true}
+                    onScaleChange={(scale) => {
+                      if (scale > 1.1) {
+                        startPinch('petPhoto', { petId: item.id });
+                      } else {
+                        endPinch('petPhoto', true);
+                      }
+                    }}
+                    backgroundColor={theme.colors.surface}
+                  />
+                </DoubleTapLikePlus>
+              ) : (
+                <View style={styles.petImagePlaceholder}>
+                  <Text style={styles.petImageEmoji}>{getSpeciesEmoji(item.species)}</Text>
+                </View>
+              )}
+
+              {/* Status badge */}
+              <View
+                style={StyleSheet.flatten([
+                  styles.statusBadge,
+                  { backgroundColor: getIntentColor(item.intent) },
+                ])}
+              >
+                <Text style={styles.statusBadgeText}>{getIntentLabel(item.intent)}</Text>
+              </View>
+
+              {/* Photo count */}
+              {item.photos && item.photos.length > 1 ? (
+                <View style={styles.photoCountBadge}>
+                  <Ionicons
+                    name="camera"
+                    size={12}
+                    color={theme.colors.bg}
+                  />
+                  <Text style={styles.photoCountText}>{item.photos.length}</Text>
+                </View>
+              ) : null}
+            </View>
+
+            {/* Pet Info */}
+            <View style={styles.petInfo}>
+              <View style={styles.petHeader}>
+                <Text style={styles.petName}>{item.name}</Text>
+                <Text style={styles.petSpecies}>{getSpeciesEmoji(item.species)}</Text>
+              </View>
+
+              <Text style={styles.petBreed}>{item.breed}</Text>
+
+              <View style={styles.petDetails}>
+                <Text style={styles.petDetail}>
+                  {item.age} years • {item.gender} • {item.size}
+                </Text>
+              </View>
+
+              {/* Stats */}
+              <View style={styles.petStats}>
+                <View style={styles.stat}>
+                  <Ionicons
+                    name="eye"
+                    size={14}
+                    color={theme.colors.onMuted}
+                  />
+                  <Text style={styles.statText}>{item.analytics.views}</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Ionicons
+                    name="heart"
+                    size={14}
+                    color={theme.colors.danger}
+                  />
+                  <Text style={styles.statText}>{item.analytics.likes}</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Ionicons
+                    name="people"
+                    size={14}
+                    color={theme.colors.primary}
+                  />
+                  <Text style={styles.statText}>{item.analytics.matches}</Text>
+                </View>
+              </View>
+
+              {/* Action Buttons */}
+              <View style={styles.petActions}>
+                <TouchableOpacity
+                  style={StyleSheet.flatten([styles.actionButton, styles.viewButton])}
+                  testID={`view-button-${item._id}`}
+                  accessibilityLabel={`View details for ${item.name}`}
+                  accessibilityRole="button"
+                  onPress={() => {
+                    haptic.tap();
+                    navigation.navigate('PetDetails', {
+                      petId: item.id,
+                      pet: item,
+                    });
+                  }}
+                >
+                  <Ionicons
+                    name="eye"
+                    size={16}
+                    color={theme.colors.onMuted}
+                  />
+                  <Text style={styles.viewButtonText}>View</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={StyleSheet.flatten([styles.actionButton, styles.editButton])}
+                  testID={`edit-button-${item._id}`}
+                  accessibilityLabel={`Edit ${item.name}`}
+                  accessibilityRole="button"
+                  onPress={() => {
+                    haptic.confirm();
+                    navigation.navigate('EditPet', { petId: item.id, pet: item });
+                  }}
+                >
+                  <Ionicons
+                    name="pencil"
+                    size={16}
+                    color={theme.colors.bg}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={StyleSheet.flatten([styles.actionButton, styles.deleteButton])}
+                  testID={`delete-button-${item._id}`}
+                  accessibilityLabel={`Delete ${item.name}`}
+                  accessibilityRole="button"
+                  onPress={() => {
+                    haptic.error();
+                    handleDeletePet(item._id);
+                  }}
+                >
+                  <Ionicons
+                    name="trash"
+                    size={16}
+                    color={theme.colors.bg}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
+      )
     );
   };
 
@@ -305,6 +481,17 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           padding: 20,
           paddingBottom: 100,
         },
+        listHeader: {
+          marginBottom: 16,
+          paddingBottom: 12,
+          borderBottomWidth: 1,
+          borderBottomColor: theme.colors.border,
+        },
+        listHeaderText: {
+          fontSize: 16,
+          fontWeight: '600',
+          color: theme.colors.onMuted,
+        },
         petCard: {
           backgroundColor: theme.colors.surface,
           borderRadius: 16,
@@ -349,7 +536,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           position: 'absolute',
           bottom: 12,
           left: 12,
-          backgroundColor: 'rgba(0,0,0,0.7)',
+          backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}B3`,
           borderRadius: 12,
           paddingHorizontal: 8,
           paddingVertical: 4,
@@ -379,6 +566,12 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         petSpecies: {
           fontSize: 14,
           color: theme.colors.onMuted,
+        },
+        petBreed: {
+          fontSize: 16,
+          fontWeight: '500',
+          color: theme.colors.onSurface,
+          marginBottom: 8,
         },
         petDetails: {
           marginBottom: 12,
@@ -421,10 +614,10 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         viewButtonText: {
           fontSize: 14,
           fontWeight: '600',
-          color: theme.colors.bg.primary,
+          color: theme.colors.onPrimary,
         },
         editButton: {
-          backgroundColor: theme.colors.bg.secondary,
+          backgroundColor: theme.colors.surface,
         },
         deleteButton: {
           backgroundColor: theme.colors.danger,
@@ -435,6 +628,10 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           alignItems: 'center',
           padding: 40,
         },
+        emptyEmoji: {
+          fontSize: 64,
+          marginBottom: 16,
+        },
         emptyIcon: {
           marginBottom: 16,
           opacity: 0.5,
@@ -442,13 +639,13 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         emptyTitle: {
           fontSize: 24,
           fontWeight: '600',
-          color: theme.colors.onSurface.primary,
+          color: theme.colors.onSurface,
           textAlign: 'center',
           marginBottom: 8,
         },
         emptyText: {
           fontSize: 16,
-          color: theme.colors.onSurface.secondary,
+          color: theme.colors.onMuted,
           textAlign: 'center',
           lineHeight: 24,
           marginBottom: 32,
@@ -465,7 +662,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         emptyButtonText: {
           fontSize: 16,
           fontWeight: '600',
-          color: theme.colors.bg.primary,
+          color: theme.colors.onPrimary,
         },
         loadingOverlay: {
           position: 'absolute',
@@ -473,16 +670,16 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: theme.colors.bg.primary + 'F0',
+          backgroundColor: theme.colors.overlay || `${theme.colors.bg}F0`,
           justifyContent: 'center',
           alignItems: 'center',
         },
         loadingContent: {
-          backgroundColor: theme.colors.bg.primary,
+          backgroundColor: theme.colors.bg,
           borderRadius: 16,
           padding: 24,
           alignItems: 'center',
-          shadowColor: theme.colors.onSurface.primary,
+          shadowColor: theme.palette.neutral[950],
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.15,
           shadowRadius: 12,
@@ -491,7 +688,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         loadingText: {
           marginTop: 12,
           fontSize: 16,
-          color: theme.colors.onSurface.secondary,
+          color: theme.colors.onMuted,
         },
       }),
     [theme],

@@ -203,7 +203,7 @@ function makeStyles(theme: AppTheme) {
       fontWeight: '600',
       color: theme.colors.onSurface,
       flex: 1,
-      marginRight: theme.spacing.xs,
+      marginEnd: theme.spacing.xs,
     },
     categoryBadge: {
       width: 24,
@@ -226,7 +226,7 @@ function makeStyles(theme: AppTheme) {
     detailText: {
       fontSize: 12,
       color: theme.colors.onMuted,
-      marginLeft: theme.spacing.xs,
+      marginStart: theme.spacing.xs,
       flex: 1,
     },
     joinButton: {

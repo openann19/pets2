@@ -12,6 +12,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import AdminAnalyticsScreen from "../screens/admin/AdminAnalyticsScreen";
 import AdminBillingScreen from "../screens/admin/AdminBillingScreen";
 import AdminChatsScreen from "../screens/admin/AdminChatsScreen";
+import AdminConfigScreen from "../screens/admin/AdminConfigScreen";
 import AdminDashboardScreen from "../screens/admin/AdminDashboardScreen";
 import AdminSecurityScreen from "../screens/admin/AdminSecurityScreen";
 import AdminServicesScreen from "../screens/admin/AdminServicesScreen";
@@ -19,8 +20,9 @@ import AdminUploadsScreen from "../screens/admin/AdminUploadsScreen";
 import AdminUsersScreen from "../screens/admin/AdminUsersScreen";
 import AdminVerificationsScreen from "../screens/admin/AdminVerificationsScreen";
 import { useTheme } from '@mobile/theme';
+import type { AdminStackParamList } from './types';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<AdminStackParamList>();
 
 export default function AdminNavigator(): React.JSX.Element {
   const theme = useTheme();
@@ -65,7 +67,7 @@ export default function AdminNavigator(): React.JSX.Element {
     >
       <Stack.Screen
         name="AdminDashboard"
-        component={AdminDashboardScreen as React.ComponentType<any>}
+        component={AdminDashboardScreen}
         options={{
           title: "Admin Dashboard",
           headerShown: false, // Custom header in component
@@ -74,7 +76,7 @@ export default function AdminNavigator(): React.JSX.Element {
 
       <Stack.Screen
         name="AdminAnalytics"
-        component={AdminAnalyticsScreen as React.ComponentType<any>}
+        component={AdminAnalyticsScreen}
         options={{
           title: "Analytics Dashboard",
           headerShown: false, // Custom header in component
@@ -83,7 +85,7 @@ export default function AdminNavigator(): React.JSX.Element {
 
       <Stack.Screen
         name="AdminUsers"
-        component={AdminUsersScreen as React.ComponentType<any>}
+        component={AdminUsersScreen}
         options={{
           title: "User Management",
           headerShown: false, // Custom header in component
@@ -92,7 +94,7 @@ export default function AdminNavigator(): React.JSX.Element {
 
       <Stack.Screen
         name="AdminSecurity"
-        component={AdminSecurityScreen as React.ComponentType<any>}
+        component={AdminSecurityScreen}
         options={{
           title: "Security Dashboard",
           headerShown: false, // Custom header in component
@@ -101,7 +103,7 @@ export default function AdminNavigator(): React.JSX.Element {
 
       <Stack.Screen
         name="AdminBilling"
-        component={AdminBillingScreen as React.ComponentType<any>}
+        component={AdminBillingScreen}
         options={{
           title: "Billing Management",
           headerShown: false, // Custom header in component
@@ -111,7 +113,7 @@ export default function AdminNavigator(): React.JSX.Element {
       {/* Chat Moderation */}
       <Stack.Screen
         name="AdminChats"
-        component={AdminChatsScreen as React.ComponentType<any>}
+        component={AdminChatsScreen}
         options={{
           title: "Chat Moderation",
           headerShown: false,
@@ -121,7 +123,7 @@ export default function AdminNavigator(): React.JSX.Element {
       {/* Upload Management */}
       <Stack.Screen
         name="AdminUploads"
-        component={AdminUploadsScreen as React.ComponentType<any>}
+        component={AdminUploadsScreen}
         options={{
           title: "Upload Management",
           headerShown: false,
@@ -131,7 +133,7 @@ export default function AdminNavigator(): React.JSX.Element {
       {/* Verification Management */}
       <Stack.Screen
         name="AdminVerifications"
-        component={AdminVerificationsScreen as React.ComponentType<any>}
+        component={AdminVerificationsScreen}
         options={{
           title: "Verification Management",
           headerShown: false,
@@ -141,9 +143,19 @@ export default function AdminNavigator(): React.JSX.Element {
       {/* Services Management */}
       <Stack.Screen
         name="AdminServices"
-        component={AdminServicesScreen as React.ComponentType<any>}
+        component={AdminServicesScreen}
         options={{
           title: "Services Management",
+          headerShown: false,
+        }}
+      />
+
+      {/* Configuration Management */}
+      <Stack.Screen
+        name="AdminConfig"
+        component={AdminConfigScreen}
+        options={{
+          title: "API Configuration",
           headerShown: false,
         }}
       />

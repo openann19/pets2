@@ -6,13 +6,22 @@ import { useTheme } from '@mobile/theme';
 import { useNavigation } from '@react-navigation/native';
 import { useSafetyCenter } from '../domains/safety/useSafetyCenter';
 
+interface SafetyOption {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
+  action: () => void;
+}
+
 interface UseSafetyCenterScreenReturn {
   // From domain hook
   emergencyMode: boolean;
-  safetyOptions: any[];
+  safetyOptions: SafetyOption[];
   isReporting: boolean;
   toggleEmergencyMode: () => Promise<void>;
-  handleSafetyOption: (option: any) => void;
+  handleSafetyOption: (option: SafetyOption) => void;
   contactSupport: () => void;
   viewSafetyGuidelines: () => void;
 

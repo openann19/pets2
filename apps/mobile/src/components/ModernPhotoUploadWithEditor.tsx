@@ -11,6 +11,8 @@ import {
   View,
 } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 import { AdvancedPhotoEditor } from './photo/AdvancedPhotoEditor';
 
@@ -49,6 +51,8 @@ export function ModernPhotoUploadWithEditor({
   const [photoToEdit, setPhotoToEdit] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'add' | 'edit'>('add');
   const scaleValue = useSharedValue(1);
+  const theme = useTheme();
+  const styles = makeStyles(theme);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scaleValue.value }],
@@ -294,98 +298,100 @@ export function ModernPhotoUploadWithEditor({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  photoGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 20,
-  },
-  photoContainer: {
-    position: 'relative',
-    width: PHOTO_SIZE,
-    height: PHOTO_SIZE,
-    borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  photo: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 12,
-    backgroundColor: Theme.colors.neutral[100],
-  },
-  primaryBadge: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    backgroundColor: Theme.colors.primary[500],
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  primaryBadgeText: {
-    color: 'white',
-    fontSize: 10,
-    fontWeight: '600',
-  },
-  photoActions: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    flexDirection: 'row',
-    gap: 6,
-  },
-  actionButton: {
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  removeButton: {
-    backgroundColor: 'rgba(239, 68, 68, 0.9)',
-  },
-  actionButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  removeButtonText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    padding: 20,
-    borderRadius: 16,
-    backgroundColor: Theme.colors.primary[500],
-    borderWidth: 2,
-    borderColor: Theme.colors.primary[600],
-    marginBottom: 20,
-  },
-  addButtonIcon: {
-    fontSize: 24,
-  },
-  addButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    photoGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
+      marginBottom: 20,
+    },
+    photoContainer: {
+      position: 'relative',
+      width: PHOTO_SIZE,
+      height: PHOTO_SIZE,
+      borderRadius: 12,
+      overflow: 'hidden',
+      shadowColor: theme.palette.neutral[900],
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    photo: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 12,
+      backgroundColor: theme.colors.surface,
+    },
+    primaryBadge: {
+      position: 'absolute',
+      top: 8,
+      left: 8,
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: theme.colors.onPrimary + '4D',
+    },
+    primaryBadgeText: {
+      color: theme.colors.onPrimary,
+      fontSize: 10,
+      fontWeight: '600',
+    },
+    photoActions: {
+      position: 'absolute',
+      top: 8,
+      right: 8,
+      flexDirection: 'row',
+      gap: 6,
+    },
+    actionButton: {
+      backgroundColor: theme.colors.primary,
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1,
+      borderColor: theme.colors.onPrimary + '4D',
+    },
+    removeButton: {
+      backgroundColor: theme.colors.danger,
+    },
+    actionButtonText: {
+      color: theme.colors.onPrimary,
+      fontSize: 14,
+      fontWeight: 'bold',
+    },
+    removeButtonText: {
+      color: theme.colors.onPrimary,
+      fontSize: 12,
+      fontWeight: 'bold',
+    },
+    addButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 12,
+      padding: 20,
+      borderRadius: 16,
+      backgroundColor: theme.colors.primary,
+      borderWidth: 2,
+      borderColor: theme.colors.primary,
+      marginBottom: 20,
+    },
+    addButtonIcon: {
+      fontSize: 24,
+    },
+    addButtonText: {
+      color: theme.colors.onPrimary,
+      fontSize: 16,
+      fontWeight: '600',
+    },
+  });
+}

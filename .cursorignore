@@ -1,1 +1,60 @@
 # Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+
+# Monorepo package managers and caches
+**/node_modules/**
+**/.pnpm-store/**
+**/.yarn/cache/**
+**/.yarn/unplugged/**
+**/.yarn/install-state.gz
+**/.turbo/**
+
+# Build outputs and bundles
+**/dist/**
+**/build/**
+**/.next/**
+**/.expo/**
+**/.expo-shared/**
+
+# Test artifacts and coverage
+**/coverage/**
+**/lcov-report/**
+**/test-results/**
+**/e2e/artifacts/**
+**/reports/**
+**/_reports/**
+**/_aggregate-output/**
+
+# Logs and diagnostics
+**/logs/**
+**/_logs/**
+*.log
+*.log.*
+debug.log*
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Mobile native (if present)
+**/ios/Pods/**
+**/ios/build/**
+**/android/.gradle/**
+**/android/.cxx/**
+**/android/**/build/**
+**/*.apk
+**/*.aab
+
+# Large media/binaries not needed for code assistance
+**/*.mp4
+**/*.zip
+**/*.tar
+**/*.tar.gz
+
+# Editor/OS clutter
+**/.DS_Store
+**/.idea/**
+**/.vscode/**
+**/.cache/**
+
+# Generated static analysis outputs
+**/component-patterns-report.json
+**/mobile_anim_perf_inventory/**

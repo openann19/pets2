@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { EliteButton } from '../EliteComponents';
 import { GlowContainer } from '../GlowShadowSystem';
 import PremiumTypography from '../PremiumTypography';
+import { useTheme } from '@/theme';
 
 const { PremiumHeading, PremiumBody } = PremiumTypography;
 
@@ -17,6 +18,7 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ type, title, subtitle, buttonTitle, onButtonPress }: EmptyStateProps) {
+  const theme = useTheme();
   const isError = type === 'error';
 
   return (
@@ -29,7 +31,7 @@ export function EmptyState({ type, title, subtitle, buttonTitle, onButtonPress }
         <Ionicons
           name={isError ? 'alert-circle-outline' : 'heart-outline'}
           size={80}
-          color={isError ? '#ff6b6b' : 'Theme.colors.primary[500]'}
+          color={isError ? '#ff6b6b' : theme.colors.primary}
         />
       </GlowContainer>
       <PremiumHeading

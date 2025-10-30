@@ -1,7 +1,6 @@
 {
-  "extends": "../../tsconfig.base.json", // <-- Inherits all strict rules
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    // --- Overrides & additions for React Native ---
     "lib": ["ES2023"],
     "types": ["react-native"],
     "typeRoots": ["./src/types", "./node_modules/@types"],
@@ -20,18 +19,19 @@
         "../../packages/design-tokens/src/*"
       ]
     },
-    "jsx": "react-jsx", // Use modern JSX transform
+    "jsx": "react-jsx",
     "allowJs": true,
-    "noEmit": true, // Metro handles bundling
+    "resolveJsonModule": true,
+    "noEmit": true,
     "isolatedModules": true,
-    "skipLibCheck": true, // Skip type checking of declaration files to avoid conflicts
-    "module": "esnext", // Enable dynamic imports for lazy loading
+    "skipLibCheck": true,
+    "module": "esnext",
     "moduleResolution": "bundler"
   },
   "include": [
-    "src/**/*", 
-    "**/*.ts", 
-    "**/*.tsx", 
+    "src/**/*",
+    "**/*.ts",
+    "**/*.tsx",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
@@ -44,8 +44,8 @@
     "metro.config.cjs"
   ],
   "exclude": [
-    "node_modules", 
-    "dist", 
+    "node_modules",
+    "dist",
     "coverage",
     "**/__mocks__/**",
     "**/*.stories.tsx",

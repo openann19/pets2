@@ -3,10 +3,14 @@
  */
 
 /**
+ * Type definitions for React Native SSL Pinning
+ */
+
+/**
  * SSL Pinning configuration
  */
 export interface SSLPinningConfig {
-  method: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | string;
   headers: Record<string, string>;
   body?: string;
   timeoutInterval: number;

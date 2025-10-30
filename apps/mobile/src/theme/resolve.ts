@@ -130,6 +130,8 @@ export function resolveTheme(base: typeof BaseLight | typeof BaseDark): AppTheme
         primary: [base.colors.primary[500], base.colors.primary[600]],
         success: [base.colors.status.success, base.colors.status.success],
         danger: [base.colors.status.error, base.colors.status.error],
+        warning: [base.colors.status.warning, base.colors.status.warning],
+        info: [base.colors.status.info, base.colors.status.info],
       },
     },
   };

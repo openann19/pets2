@@ -391,6 +391,15 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
 };
 
 function makeStyles(theme: AppTheme) {
+  // Helper for rgba with opacity
+  const alpha = (color: string, opacity: number) => {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
+
   return {
     container: {
       flex: 1,
@@ -408,13 +417,13 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing['2xl'],
     },
     title: {
-      fontSize: 28,
-      fontWeight: '700' as const,
+      fontSize: theme.typography.h1.size * 1.166,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onMuted,
       textAlign: 'center' as const,
     },
@@ -422,16 +431,16 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing['2xl'],
     },
     sectionTitle: {
-      fontSize: 20,
-      fontWeight: '700' as const,
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
     sectionSubtitle: {
-      fontSize: 14,
+      fontSize: theme.typography.body.size * 0.875,
       color: theme.colors.onMuted,
       marginBottom: theme.spacing.md,
-      lineHeight: 20,
+      lineHeight: theme.typography.body.lineHeight * 1.25,
     },
     sliderContainer: {
       paddingHorizontal: theme.spacing.md,
@@ -451,7 +460,7 @@ function makeStyles(theme: AppTheme) {
       marginTop: theme.spacing.xs,
     },
     sliderLabel: {
-      fontSize: 12,
+      fontSize: theme.typography.body.size * 0.75,
       color: theme.colors.onMuted,
     },
     ageRangeContainer: {
@@ -461,8 +470,8 @@ function makeStyles(theme: AppTheme) {
       paddingHorizontal: theme.spacing.md,
     },
     ageLabel: {
-      fontSize: 14,
-      fontWeight: '600' as const,
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
@@ -487,7 +496,7 @@ function makeStyles(theme: AppTheme) {
       borderWidth: 2,
     },
     optionText: {
-      fontSize: 14,
+      fontSize: theme.typography.body.size * 0.875,
       color: theme.colors.onMuted,
       fontWeight: '500' as const,
       textAlign: 'center' as const,
@@ -509,29 +518,29 @@ function makeStyles(theme: AppTheme) {
     },
     notificationInfo: {
       flex: 1,
-      marginRight: theme.spacing.md,
+      marginEnd: theme.spacing.md,
     },
     notificationLabel: {
-      fontSize: 16,
-      fontWeight: '600' as const,
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
     notificationDescription: {
-      fontSize: 14,
+      fontSize: theme.typography.body.size * 0.875,
       color: theme.colors.onMuted,
     },
     privacyNote: {
-      backgroundColor: theme.colors.info + '1A',
+      backgroundColor: alpha(theme.colors.info, 0.1),
       borderRadius: theme.radii.md,
       padding: theme.spacing.md,
       marginTop: theme.spacing.md,
       marginBottom: theme.spacing['2xl'],
     },
     privacyText: {
-      fontSize: 14,
+      fontSize: theme.typography.body.size * 0.875,
       color: theme.colors.info,
-      lineHeight: 20,
+      lineHeight: theme.typography.body.lineHeight * 1.25,
       textAlign: 'center' as const,
     },
     footer: {
@@ -549,9 +558,9 @@ function makeStyles(theme: AppTheme) {
       borderColor: theme.colors.border,
     },
     backButtonText: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onSurface,
-      fontWeight: '600' as const,
+      fontWeight: theme.typography.h2.weight,
     },
     completeButton: {
       backgroundColor: theme.colors.primary,
@@ -562,9 +571,9 @@ function makeStyles(theme: AppTheme) {
       alignItems: 'center' as const,
     },
     completeButtonText: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onPrimary,
-      fontWeight: '600' as const,
+      fontWeight: theme.typography.h2.weight,
     },
   };
 }

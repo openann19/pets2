@@ -24,7 +24,7 @@ import {
 } from "../../../animation";
 import { GlobalStyles, BorderRadius, Shadows } from "../../../styles/GlobalStyles";
 import { getPremiumGradients } from "../constants/gradients";
-import { PREMIUM_SHADOWS } from "../constants/shadows";
+import { getPremiumShadows } from "../constants/shadows";
 import { useTheme } from "@mobile/theme";
 
 /**
@@ -92,6 +92,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
       overflow: "hidden" as const,
       position: "relative" as const,
     };
+    const SHADOWS = getPremiumShadows(theme);
 
     switch (variant) {
       case "glass":
@@ -109,12 +110,12 @@ export const EliteCard: React.FC<EliteCardProps> = ({
       case "holographic":
         return {
           ...baseStyle,
-          ...PREMIUM_SHADOWS.holographicGlow,
+          ...SHADOWS.holographicGlow,
         };
       case "glow":
         return {
           ...baseStyle,
-          ...PREMIUM_SHADOWS.primaryGlow,
+          ...SHADOWS.primaryGlow,
         };
       default:
         return {

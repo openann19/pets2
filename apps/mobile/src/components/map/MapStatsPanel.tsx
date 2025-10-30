@@ -1,5 +1,6 @@
 import React from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "@mobile/theme";
 
 export interface MapStats {
   totalPets: number;
@@ -17,19 +18,21 @@ export function MapStatsPanel({
   stats,
   opacity,
 }: MapStatsPanelProps): React.JSX.Element {
+  const theme = useTheme();
+  
   return (
     <Animated.View style={[styles.statsContainer, { opacity }]}>
       <View style={styles.statItem}>
-        <Text style={styles.statValue}>{stats.activePets}</Text>
-        <Text style={styles.statLabel}>Active</Text>
+        <Text style={[styles.statValue, { color: theme.colors.onSurface }]}>{stats.activePets}</Text>
+        <Text style={[styles.statLabel, { color: theme.colors.onMuted }]}>Active</Text>
       </View>
       <View style={styles.statItem}>
-        <Text style={styles.statValue}>{stats.nearbyMatches}</Text>
-        <Text style={styles.statLabel}>Matches</Text>
+        <Text style={[styles.statValue, { color: theme.colors.onSurface }]}>{stats.nearbyMatches}</Text>
+        <Text style={[styles.statLabel, { color: theme.colors.onMuted }]}>Matches</Text>
       </View>
       <View style={styles.statItem}>
-        <Text style={styles.statValue}>{stats.recentActivity}</Text>
-        <Text style={styles.statLabel}>Recent</Text>
+        <Text style={[styles.statValue, { color: theme.colors.onSurface }]}>{stats.recentActivity}</Text>
+        <Text style={[styles.statLabel, { color: theme.colors.onMuted }]}>Recent</Text>
       </View>
     </Animated.View>
   );
@@ -47,10 +50,8 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#000000", // TODO: Use theme colors
   },
   statLabel: {
     fontSize: 12,
-    color: "#666666", // TODO: Use theme colors
   },
 });

@@ -4,30 +4,23 @@
  * Enterprise-level implementation with full TypeScript support
  */
 
-import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import type { ViewStyle, TextStyle } from 'react-native';
 import {
   View,
   Text,
   StyleSheet,
   Animated,
-  TouchableOpacity,
-  Platform,
-  Dimensions,
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { matchesAPI } from '../../services/api';
-
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { AdvancedButton } from './AdvancedInteractionSystem';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Header Variants
 export type HeaderVariant = 'default' | 'glass' | 'gradient' | 'premium' | 'minimal' | 'floating';
@@ -51,7 +44,7 @@ interface HeaderButton {
   icon?: string;
   title?: string;
   onPress?: () => void | Promise<void>;
-  apiAction?: () => Promise<any>;
+  apiAction?: () => Promise<unknown>;
   variant?: 'primary' | 'secondary' | 'glass' | 'minimal';
   haptic?: 'light' | 'medium' | 'heavy';
   disabled?: boolean;
@@ -78,7 +71,7 @@ interface AdvancedHeaderProps {
   floating?: boolean;
   transparent?: boolean;
   apiActions?: {
-    [key: string]: () => Promise<any>;
+    [key: string]: () => Promise<unknown>;
   };
 }
 
@@ -90,10 +83,10 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
   rightButtons = [],
   onBackPress,
   showBackButton = true,
-  backgroundColor = Theme.colors.neutral[0],
-  textColor = Theme.colors.text.primary,
+  backgroundColor,
+  textColor,
   blurIntensity = 20,
-  gradientColors = [Theme.colors.primary[500], Theme.colors.primary[600]],
+  gradientColors,
   style,
   titleStyle,
   subtitleStyle,
@@ -101,14 +94,17 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
   transparent = false,
   apiActions = {},
 }) => {
+  const theme = useTheme() as AppTheme;
+  const resolvedBackgroundColor = backgroundColor ?? theme.colors.bg;
+  const resolvedTextColor = textColor ?? theme.colors.onSurface;
+  const resolvedGradientColors = gradientColors ?? theme.palette.gradients.primary;
+  
   // Animation Values
   const headerOpacity = useRef(new Animated.Value(1)).current;
   const headerTranslateY = useRef(new Animated.Value(0)).current;
-  const buttonScale = useRef(new Animated.Value(1)).current;
   const titleScale = useRef(new Animated.Value(1)).current;
 
   // State
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Handle Back Press
@@ -152,7 +148,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
         if (action) {
           await action();
         }
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Header button action failed:', { error });
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       } finally {
@@ -227,25 +223,25 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
     return (
       <AdvancedButton
         icon={icon}
-        title={button.title}
+        {...(button.title ? { title: button.title } : {})}
         variant={variant}
         size="sm"
         interactions={['hover', 'press', 'glow']}
         haptic={button.haptic || 'light'}
         onPress={() => handleButtonPress(button)}
-        disabled={button.disabled}
-        loading={button.loading || isLoading}
+        disabled={button.disabled ?? false}
+        loading={(button.loading ?? false) || isLoading}
         style={StyleSheet.flatten([
           styles.headerButton,
           isLeft ? styles.leftButton : styles.rightButton,
         ])}
-        glowColor={variant === 'primary' ? Theme.colors.primary[500] : Theme.colors.neutral[500]}
+        glowColor={variant === 'primary' ? theme.colors.primary : theme.colors.onMuted}
       >
-        {button.badge && button.badge > 0 && (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{button.badge > 99 ? '99+' : button.badge}</Text>
+        {button.badge && button.badge > 0 ? (
+          <View style={styles.badge(theme)}>
+            <Text style={styles.badgeText(theme)}>{button.badge > 99 ? '99+' : button.badge}</Text>
           </View>
-        )}
+        ) : null}
       </AdvancedButton>
     );
   };
@@ -256,8 +252,8 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
       minHeight: 56,
     };
 
@@ -272,7 +268,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
       case 'gradient':
         return {
           ...baseStyles,
-          backgroundColor: transparent ? 'transparent' : backgroundColor,
+          backgroundColor: transparent ? 'transparent' : resolvedBackgroundColor,
         };
       case 'premium':
         return {
@@ -286,16 +282,16 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
           ...baseStyles,
           backgroundColor: transparent ? 'transparent' : 'transparent',
           borderBottomWidth: 1,
-          borderBottomColor: Theme.colors.neutral[100],
+          borderBottomColor: theme.colors.border,
         };
       case 'floating':
         return {
           ...baseStyles,
-          backgroundColor: transparent ? 'transparent' : backgroundColor,
-          borderRadius: 12,
-          marginHorizontal: 16,
-          marginTop: 8,
-          shadowColor: Theme.colors.neutral[900],
+          backgroundColor: transparent ? 'transparent' : resolvedBackgroundColor,
+          borderRadius: theme.radii.lg,
+          marginHorizontal: theme.spacing.md,
+          marginTop: theme.spacing.sm,
+          shadowColor: theme.colors.onSurface,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
@@ -304,9 +300,9 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
       default:
         return {
           ...baseStyles,
-          backgroundColor: transparent ? 'transparent' : backgroundColor,
+          backgroundColor: transparent ? 'transparent' : resolvedBackgroundColor,
           borderBottomWidth: 1,
-          borderBottomColor: Theme.colors.neutral[200],
+          borderBottomColor: theme.colors.border,
         };
     }
   };
@@ -336,7 +332,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
               haptic="light"
               onPress={handleBackPress}
               style={styles.backButton}
-              glowColor="Theme.colors.neutral[500]"
+              glowColor={theme.colors.onMuted}
             />
           )}
           {leftButtons.map((button, index) => (
@@ -357,13 +353,13 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
             }}
           >
             {title && (
-              <Text style={StyleSheet.flatten([styles.title, { color: textColor }, titleStyle])}>
+              <Text style={StyleSheet.flatten([styles.title, { color: resolvedTextColor }, titleStyle])}>
                 {title}
               </Text>
             )}
             {subtitle && (
               <Text
-                style={StyleSheet.flatten([styles.subtitle, { color: textColor }, subtitleStyle])}
+                style={StyleSheet.flatten([styles.subtitle, { color: resolvedTextColor }, subtitleStyle])}
               >
                 {subtitle}
               </Text>
@@ -399,7 +395,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
       case 'gradient':
         return (
           <LinearGradient
-            colors={gradientColors}
+            colors={resolvedGradientColors}
             style={StyleSheet.absoluteFillObject}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -422,14 +418,14 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
   return (
     <SafeAreaView
       style={StyleSheet.flatten([
-        styles.container,
+        styles.container(theme),
         floating && styles.floatingContainer,
         transparent && styles.transparentContainer,
       ])}
     >
       <StatusBar
         barStyle={variant === 'glass' || variant === 'gradient' ? 'light-content' : 'dark-content'}
-        backgroundColor={transparent ? 'transparent' : backgroundColor}
+        backgroundColor={transparent ? 'transparent' : resolvedBackgroundColor}
         translucent={transparent}
       />
 
@@ -455,7 +451,6 @@ export const HeaderConfigs = {
     variant: 'glass' as HeaderVariant,
     showBackButton: true,
     blurIntensity: 20,
-    textColor: Theme.colors.neutral[0],
     ...props,
   }),
 
@@ -463,8 +458,6 @@ export const HeaderConfigs = {
   gradient: (props: Partial<AdvancedHeaderProps>) => ({
     variant: 'gradient' as HeaderVariant,
     showBackButton: true,
-    gradientColors: [Theme.colors.primary[500], Theme.colors.primary[600]],
-    textColor: Theme.colors.neutral[0],
     ...props,
   }),
 
@@ -472,7 +465,6 @@ export const HeaderConfigs = {
   premium: (props: Partial<AdvancedHeaderProps>) => ({
     variant: 'premium' as HeaderVariant,
     showBackButton: true,
-    textColor: '#8b5cf6',
     ...props,
   }),
 
@@ -480,7 +472,6 @@ export const HeaderConfigs = {
   minimal: (props: Partial<AdvancedHeaderProps>) => ({
     variant: 'minimal' as HeaderVariant,
     showBackButton: true,
-    textColor: Theme.colors.neutral[500],
     ...props,
   }),
 
@@ -494,81 +485,108 @@ export const HeaderConfigs = {
 };
 
 // Styles
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Theme.colors.neutral[0],
-  },
-  floatingContainer: {
-    backgroundColor: 'transparent',
-  },
-  transparentContainer: {
-    backgroundColor: 'transparent',
-  },
-  headerWrapper: {
-    position: 'relative',
-  },
-  leftSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  centerSection: {
-    flex: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rightSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    flex: 1,
-  },
-  buttonContainer: {
-    marginHorizontal: 4,
-  },
-  headerButton: {
-    minWidth: 40,
-    minHeight: 40,
-  },
-  leftButton: {
-    marginRight: 8,
-  },
-  rightButton: {
-    marginLeft: 8,
-  },
-  backButton: {
-    marginRight: 8,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 14,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginTop: 2,
-    opacity: 0.8,
-  },
-  badge: {
-    position: 'absolute',
+const styles = {
+  container: (theme: AppTheme) => ({
+    backgroundColor: theme.colors.bg,
+  }),
+  floatingContainer: StyleSheet.create({
+    floatingContainer: {
+      backgroundColor: 'transparent',
+    },
+  }).floatingContainer,
+  transparentContainer: StyleSheet.create({
+    transparentContainer: {
+      backgroundColor: 'transparent',
+    },
+  }).transparentContainer,
+  headerWrapper: StyleSheet.create({
+    headerWrapper: {
+      position: 'relative',
+    },
+  }).headerWrapper,
+  leftSection: StyleSheet.create({
+    leftSection: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+  }).leftSection,
+  centerSection: StyleSheet.create({
+    centerSection: {
+      flex: 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }).centerSection,
+  rightSection: StyleSheet.create({
+    rightSection: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      flex: 1,
+    },
+  }).rightSection,
+  buttonContainer: StyleSheet.create({
+    buttonContainer: {
+      marginHorizontal: 4,
+    },
+  }).buttonContainer,
+  headerButton: StyleSheet.create({
+    headerButton: {
+      minWidth: 40,
+      minHeight: 40,
+    },
+  }).headerButton,
+  leftButton: StyleSheet.create({
+    leftButton: {
+      marginRight: 8,
+    },
+  }).leftButton,
+  rightButton: StyleSheet.create({
+    rightButton: {
+      marginLeft: 8,
+    },
+  }).rightButton,
+  backButton: StyleSheet.create({
+    backButton: {
+      marginRight: 8,
+    },
+  }).backButton,
+  title: StyleSheet.create({
+    title: {
+      fontSize: 18,
+      fontWeight: '600',
+      textAlign: 'center',
+    },
+  }).title,
+  subtitle: StyleSheet.create({
+    subtitle: {
+      fontSize: 14,
+      fontWeight: '400',
+      textAlign: 'center',
+      marginTop: 2,
+      opacity: 0.8,
+    },
+  }).subtitle,
+  badge: (theme: AppTheme) => ({
+    position: 'absolute' as const,
     top: -4,
     right: -4,
-    backgroundColor: Theme.colors.status.error,
+    backgroundColor: theme.colors.danger,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
     borderWidth: 2,
-    borderColor: Theme.colors.neutral[0],
-  },
-  badgeText: {
-    color: Theme.colors.neutral[0],
+    borderColor: theme.colors.bg,
+  }),
+  badgeText: (theme: AppTheme) => ({
+    color: theme.colors.bg,
     fontSize: 10,
-    fontWeight: 'bold',
-  },
-});
+    fontWeight: 'bold' as const,
+  }),
+};
 
 export default AdvancedHeader;
+

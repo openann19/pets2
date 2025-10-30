@@ -13,11 +13,13 @@ import { usePhotoManager } from '../hooks/usePhotoManager';
 import type { RootStackScreenProps } from '../navigation/types';
 import { haptic } from '../ui/haptics';
 import { ScreenShell } from '../ui/layout/ScreenShell';
+import { useReduceMotion } from '../hooks/useReducedMotion';
 
 type CreatePetScreenProps = RootStackScreenProps<'CreatePet'>;
 
 export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
   const theme = useTheme();
+  const reducedMotion = useReduceMotion();
   const styles = makeStyles(theme);
 
   const { formData, errors, isSubmitting, updateFormData, handleSubmit } = usePetForm();
@@ -56,45 +58,77 @@ export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
           showsVerticalScrollIndicator={false}
         >
           {/* Form Sections */}
-          <Animated.View entering={FadeInDown.duration(220)}>
-            <PetBasicInfoSection
-              formData={formData}
-              errors={errors}
-              onUpdateFormData={updateFormData}
-            />
-          </Animated.View>
+          {reducedMotion ? (
+            <>
+              <PetBasicInfoSection
+                formData={formData}
+                errors={errors}
+                onUpdateFormData={updateFormData}
+              />
+              <PetPersonalitySection
+                formData={formData}
+                onUpdateFormData={updateFormData}
+              />
+              <PetIntentHealthSection
+                formData={formData}
+                errors={errors}
+                onUpdateFormData={updateFormData}
+              />
+              <PetPhotosSection
+                photos={photos}
+                errors={errors}
+                onPickImage={pickImage}
+                onRemovePhoto={removePhoto}
+                onSetPrimaryPhoto={setPrimaryPhoto}
+              />
+              <PetFormSubmit
+                isSubmitting={isSubmitting}
+                onSubmit={onSubmit}
+              />
+            </>
+          ) : (
+            <>
+              <Animated.View entering={FadeInDown.duration(220)}>
+                <PetBasicInfoSection
+                  formData={formData}
+                  errors={errors}
+                  onUpdateFormData={updateFormData}
+                />
+              </Animated.View>
 
-          <Animated.View entering={FadeInDown.duration(240).delay(50)}>
-            <PetPersonalitySection
-              formData={formData}
-              onUpdateFormData={updateFormData}
-            />
-          </Animated.View>
+              <Animated.View entering={FadeInDown.duration(240).delay(50)}>
+                <PetPersonalitySection
+                  formData={formData}
+                  onUpdateFormData={updateFormData}
+                />
+              </Animated.View>
 
-          <Animated.View entering={FadeInDown.duration(260).delay(100)}>
-            <PetIntentHealthSection
-              formData={formData}
-              errors={errors}
-              onUpdateFormData={updateFormData}
-            />
-          </Animated.View>
+              <Animated.View entering={FadeInDown.duration(260).delay(100)}>
+                <PetIntentHealthSection
+                  formData={formData}
+                  errors={errors}
+                  onUpdateFormData={updateFormData}
+                />
+              </Animated.View>
 
-          <Animated.View entering={FadeInDown.duration(280).delay(150)}>
-            <PetPhotosSection
-              photos={photos}
-              errors={errors}
-              onPickImage={pickImage}
-              onRemovePhoto={removePhoto}
-              onSetPrimaryPhoto={setPrimaryPhoto}
-            />
-          </Animated.View>
+              <Animated.View entering={FadeInDown.duration(280).delay(150)}>
+                <PetPhotosSection
+                  photos={photos}
+                  errors={errors}
+                  onPickImage={pickImage}
+                  onRemovePhoto={removePhoto}
+                  onSetPrimaryPhoto={setPrimaryPhoto}
+                />
+              </Animated.View>
 
-          <Animated.View entering={FadeInDown.duration(300).delay(200)}>
-            <PetFormSubmit
-              isSubmitting={isSubmitting}
-              onSubmit={onSubmit}
-            />
-          </Animated.View>
+              <Animated.View entering={FadeInDown.duration(300).delay(200)}>
+                <PetFormSubmit
+                  isSubmitting={isSubmitting}
+                  onSubmit={onSubmit}
+                />
+              </Animated.View>
+            </>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </ScreenShell>

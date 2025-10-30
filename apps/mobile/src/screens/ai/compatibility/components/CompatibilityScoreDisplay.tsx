@@ -8,7 +8,6 @@ import type { AppTheme } from '@mobile/theme';
 import { useTheme } from '@mobile/theme';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-// import type { Theme } from "@/theme"; // Removed deprecated import
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({

@@ -10,23 +10,35 @@ import { ToneSelector } from '../ToneSelector';
 import { BioResults } from '../BioResults';
 
 // Mock all necessary modules
-jest.mock('@/theme/unified-theme', () => ({
-  Theme: {
+jest.mock('@/theme', () => ({
+  useTheme: jest.fn(() => ({
     colors: {
-      text: { primary: '#000000', secondary: '#666666' },
-      status: { error: '#FF0000', success: '#28A745' },
-      border: { medium: '#CCCCCC', light: '#E5E5E5' },
-      background: { primary: '#FFFFFF' },
-      primary: { '500': '#007AFF' },
+      bg: '#FFFFFF',
+      surface: '#F8F9FA',
+      onSurface: '#000000',
+      onMuted: '#666666',
+      primary: '#007AFF',
+      success: '#28A745',
+      danger: '#DC3545',
+      border: '#CCCCCC',
     },
     spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
-    typography: {
-      fontSize: { 'xs': 12, 'sm': 14, 'base': 16, 'xl': 20, '2xl': 24 },
-      fontWeight: { medium: '500', semibold: '600', bold: '700' },
-      lineHeight: { normal: 1.5, relaxed: 1.625 },
+    radii: { md: 8, lg: 12, full: 9999 },
+  })),
+  createTheme: jest.fn(() => ({
+    colors: {
+      bg: '#FFFFFF',
+      surface: '#F8F9FA',
+      onSurface: '#000000',
+      onMuted: '#666666',
+      primary: '#007AFF',
+      success: '#28A745',
+      danger: '#DC3545',
+      border: '#CCCCCC',
     },
-    borderRadius: { md: 8, lg: 12, full: 9999 },
-  },
+    spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
+    radii: { md: 8, lg: 12, full: 9999 },
+  })),
 }));
 
 describe('AI Components Integration', () => {

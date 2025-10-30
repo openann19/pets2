@@ -1,10 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import * as Location from "expo-location";
 import { DeviceMotion } from "expo-sensors";
 import { useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
+import { useReduceMotion } from "../hooks/useReducedMotion";
 
 const { width, height } = Dimensions.get("window");
 
@@ -36,6 +39,64 @@ interface Pin {
 export default function ARScentTrailsScreen() {
   const route = useRoute();
   const pins: Pin[] = (route.params as any)?.pins ?? [];
+  const reducedMotion = useReduceMotion();
+  const theme = useTheme();
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: theme.colors.bg,
+    },
+    centered: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.bg,
+    },
+    message: {
+      color: theme.colors.onSurface,
+      fontSize: 16,
+    },
+    hud: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    marker: {
+      position: "absolute",
+      backgroundColor: theme.colors.overlay,
+      paddingVertical: theme.spacing.xs,
+      paddingHorizontal: theme.spacing.sm,
+      borderRadius: theme.radii.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    markerText: {
+      color: theme.colors.onSurface,
+      fontWeight: "700",
+      fontSize: 12,
+    },
+    compass: {
+      position: "absolute",
+      top: theme.spacing['4xl'],
+      right: theme.spacing.lg,
+      alignItems: "center",
+    },
+    controls: {
+      position: "absolute",
+      bottom: theme.spacing.xl,
+      left: 0,
+      right: 0,
+      flexDirection: "row",
+      justifyContent: "center",
+    },
+    controlButton: {
+      backgroundColor: theme.colors.overlay,
+      width: 50,
+      height: 50,
+      borderRadius: theme.radii.full,
+      alignItems: "center",
+      justifyContent: "center",
+      marginHorizontal: theme.spacing.sm,
+    },
+  }), [theme]);
 
   const [perm, setPerm] = useState(false);
   const [loc, setLoc] = useState<{ lat: number; lng: number } | null>(null);
@@ -84,7 +145,7 @@ export default function ARScentTrailsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="ar-scent-trails-screen" accessibilityLabel="AR scent trails view">
       <Camera style={StyleSheet.absoluteFill} type={CameraType.back} />
 
       {/* HUD Overlay */}
@@ -111,7 +172,8 @@ export default function ARScentTrailsScreen() {
               <View
                 key={i}
                 style={[styles.marker, { left: screenX - 30, top: y - 30 }]}
-                testID={`marker-${i}`}
+                testID={`ar-marker-${i}`}
+                accessibilityLabel={`${p.activity} marker, ${Math.round(dist)} meters away`}
               >
                 <Text style={styles.markerText}>
                   {p.activity} • {Math.round(dist)}m
@@ -121,8 +183,14 @@ export default function ARScentTrailsScreen() {
           })}
 
           {/* Compass indicator */}
-          <View style={styles.compass}>
-            <Ionicons name="compass" size={48} color="#fff" style={{ transform: [{ rotate: `${heading}deg` }] }} />
+          <View style={styles.compass} testID="ar-compass" accessibilityLabel={`Compass pointing ${Math.round(heading)} degrees`}>
+            <Ionicons 
+              name="compass" 
+              size={48} 
+              color={theme.colors.onSurface} 
+              style={{ transform: [{ rotate: `${reducedMotion ? 0 : heading}deg` }] }}
+              accessibilityLabel="Compass icon"
+            />
           </View>
         </View>
       )}
@@ -136,66 +204,9 @@ export default function ARScentTrailsScreen() {
           accessibilityRole="button"
           onPress={() => { setShowHUD(!showHUD); }}
         >
-          <Ionicons name={showHUD ? "eye" : "eye-off"} size={24} color="#fff" />
+          <Ionicons name={showHUD ? "eye" : "eye-off"} size={24} color={theme.colors.onSurface} />
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#000",
-  },
-  centered: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#000",
-  },
-  message: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  hud: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  marker: {
-    position: "absolute",
-    backgroundColor: "rgba(0,0,0,0.7)",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#fff",
-  },
-  markerText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 12,
-  },
-  compass: {
-    position: "absolute",
-    top: 60,
-    right: 20,
-    alignItems: "center",
-  },
-  controls: {
-    position: "absolute",
-    bottom: 40,
-    left: 0,
-    right: 0,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  controlButton: {
-    backgroundColor: "rgba(0,0,0,0.7)",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 10,
-  },
-});

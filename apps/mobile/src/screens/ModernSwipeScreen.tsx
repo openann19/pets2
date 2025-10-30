@@ -143,7 +143,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
     filterPlaceholder: {
       padding: theme.spacing.lg,
       backgroundColor: theme.colors.bg,
-      borderRadius: 8,
+      borderRadius: theme.radii.md,
       margin: theme.spacing.md,
     },
     hintsPlaceholder: {
@@ -161,7 +161,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
     actionButton: {
       width: 60,
       height: 60,
-      borderRadius: 30,
+      borderRadius: theme.radii.full,
     },
     matchModalPlaceholder: {
       position: 'absolute',
@@ -169,7 +169,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.8)',
+      backgroundColor: theme.colors.overlay,
       justifyContent: 'center' as const,
       alignItems: 'center' as const,
       padding: theme.spacing['4xl'],

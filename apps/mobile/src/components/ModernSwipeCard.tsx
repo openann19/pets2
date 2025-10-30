@@ -13,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   AccessibilityInfo,
   Dimensions,
@@ -26,10 +26,12 @@ import { GestureDetector } from 'react-native-gesture-handler';
 import Animated, { type AnimatedStyleProp } from 'react-native-reanimated';
 
 import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import { useDoubleTapMetrics } from '../hooks/useInteractionMetrics';
 import { useLikeWithUndo } from '../hooks/useLikeWithUndo';
 import { useSwipeGesturesRNGH } from '../hooks/useSwipeGesturesRNGH';
 import { useEntranceAnimation } from '../hooks/useUnifiedAnimations';
+import { usePhotoNavigation, useSwipeActions, type Pet as SwipePet } from '../hooks/swipe';
 import { DoubleTapLikePlus } from './Gestures/DoubleTapLikePlus';
 import LikeArbitrator from './Gestures/LikeArbitrator';
 import SmartImage from './common/SmartImage';
@@ -37,8 +39,6 @@ import UndoPill from './feedback/UndoPill';
 import MicroPressable from './micro/MicroPressable';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-// === TYPES ===
 interface Pet {
   _id: string;
   name: string;
@@ -73,28 +73,48 @@ function ModernSwipeCardComponent({
   style,
 }: SwipeCardProps): React.JSX.Element {
   const theme = useTheme();
-  const { colors, spacing, radius, typography, shadows } = theme;
+  const { colors } = theme;
   const styles = makeStyles(theme);
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  
+  // Photo navigation hook
+  const photoNav = usePhotoNavigation({
+    totalPhotos: pet.photos.length,
+    initialIndex: 0,
+  });
+
+  // Swipe actions hook
+  const { isProcessing, handleLike, handlePass, handleSuperLike } = useSwipeActions({
+    onLike: async (p: SwipePet) => {
+      logger.info('Liked pet:', { petName: p.name });
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    },
+    onPass: async (p: SwipePet) => {
+      logger.info('Passed pet:', { petName: p.name });
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    },
+    onSuperLike: async (p: SwipePet) => {
+      logger.info('Super liked pet:', { petName: p.name });
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    },
+  });
+
   const { startInteraction, endInteraction } = useDoubleTapMetrics();
-  const [isAccessibilityEnabled, setIsAccessibilityEnabled] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
 
   // Like with undo integration
   const { likeNow, triggerUndoPill, undoNow } = useLikeWithUndo({
-    onLike: () => {
-      const cleanup = () => {
-        // Optimistic like toggle
-        startInteraction('doubleTap', { petId: pet._id });
-        onSwipeRight(pet);
-        endInteraction('doubleTap', true, { method: 'doubleTap' });
-      };
-      cleanup();
-      return () => {
-        // Return cleanup function for undo
-        logger.info('Like undone for:', { petName: pet.name });
-      };
-    },
+        onLike: () => {
+          const cleanup = () => {
+            // Optimistic like toggle
+            startInteraction('doubleTap', { petId: pet._id });
+            onSwipeRight?.();
+            endInteraction('doubleTap', true, { method: 'doubleTap' });
+          };
+          cleanup();
+          return () => {
+            // Return cleanup function for undo
+            logger.info('Like undone for:', { petName: pet.name });
+          };
+        },
     onUndo: () => {
       logger.info('Undo like for:', { petName: pet.name });
     },
@@ -108,86 +128,33 @@ function ModernSwipeCardComponent({
 
   // Check accessibility settings
   React.useEffect(() => {
-    AccessibilityInfo.isReduceMotionEnabled().then(setIsAccessibilityEnabled);
+    AccessibilityInfo.isReduceMotionEnabled().then(() => {
+      // Handle reduced motion if needed
+    });
   }, []);
-
-  // Swipe handlers with proper error handling
-  const handleLike = useCallback(
-    async (pet: Pet) => {
-      if (isProcessing) return;
-
-      setIsProcessing(true);
-      try {
-        logger.info('Liked pet:', { petName: pet.name });
-        // API call would go here
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate API call
-      } catch (error) {
-        logger.error('Error liking pet:', { error });
-      } finally {
-        setIsProcessing(false);
-      }
-    },
-    [isProcessing],
-  );
-
-  const handlePass = useCallback(
-    async (pet: Pet) => {
-      if (isProcessing) return;
-
-      setIsProcessing(true);
-      try {
-        logger.info('Passed pet:', { petName: pet.name });
-        // API call would go here
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate API call
-      } catch (error) {
-        logger.error('Error passing pet:', { error });
-      } finally {
-        setIsProcessing(false);
-      }
-    },
-    [isProcessing],
-  );
-
-  const handleSuperLike = useCallback(
-    async (pet: Pet) => {
-      if (isProcessing) return;
-
-      setIsProcessing(true);
-      try {
-        logger.info('Super liked pet:', { petName: pet.name });
-        // API call would go here
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate API call
-      } catch (error) {
-        logger.error('Error super liking pet:', { error });
-      } finally {
-        setIsProcessing(false);
-      }
-    },
-    [isProcessing],
-  );
 
   // Swipe gesture handlers
   const handleSwipeLeft = useCallback(() => {
     if (disabled || isProcessing) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    handlePass(pet).then(() => {
-      onSwipeLeft(pet);
+    handlePass(pet as SwipePet).then(() => {
+      onSwipeLeft?.();
     });
   }, [disabled, isProcessing, pet, handlePass, onSwipeLeft]);
 
   const handleSwipeRight = useCallback(() => {
     if (disabled || isProcessing) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    handleLike(pet).then(() => {
-      onSwipeRight(pet);
+    handleLike(pet as SwipePet).then(() => {
+      onSwipeRight?.();
     });
   }, [disabled, isProcessing, pet, handleLike, onSwipeRight]);
 
   const handleSwipeUp = useCallback(() => {
     if (disabled || isProcessing) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    handleSuperLike(pet).then(() => {
-      onSwipeUp(pet);
+    handleSuperLike(pet as SwipePet).then(() => {
+      onSwipeUp?.();
     });
   }, [disabled, isProcessing, pet, handleSuperLike, onSwipeUp]);
 
@@ -198,8 +165,6 @@ function ModernSwipeCardComponent({
     likeStyle,
     nopeStyle,
     superStyle,
-    tx: translateX,
-    ty: translateY,
   } = useSwipeGesturesRNGH({
     onSwipeLeft: () => {
       handleSwipeLeft();
@@ -226,18 +191,16 @@ function ModernSwipeCardComponent({
 
   // Photo navigation handlers
   const nextPhoto = useCallback(() => {
-    if (currentPhotoIndex < pet.photos.length - 1) {
-      setCurrentPhotoIndex((prev) => prev + 1);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (photoNav.currentIndex < pet.photos.length - 1) {
+      photoNav.nextPhoto();
     }
-  }, [currentPhotoIndex, pet.photos.length]);
+  }, [photoNav, pet.photos.length]);
 
   const prevPhoto = useCallback(() => {
-    if (currentPhotoIndex > 0) {
-      setCurrentPhotoIndex((prev) => prev - 1);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (photoNav.currentIndex > 0) {
+      photoNav.prevPhoto();
     }
-  }, [currentPhotoIndex]);
+  }, [photoNav]);
 
   // Memoized styles for performance
   const cardStyle = useMemo(
@@ -289,7 +252,7 @@ function ModernSwipeCardComponent({
           >
             <View style={styles.photoContainer}>
               <SmartImage
-                source={{ uri: pet.photos[currentPhotoIndex] }}
+                source={{ uri: pet.photos[photoNav.currentIndex] }}
                 style={styles.photo}
                 resizeMode="cover"
               />
@@ -303,7 +266,7 @@ function ModernSwipeCardComponent({
                       styles.photoDot,
                       {
                         backgroundColor:
-                          index === currentPhotoIndex
+                          index === photoNav.currentIndex
                             ? colors.onSurfacenverse
                             : 'rgba(255,255,255,0.4)',
                       },
@@ -442,6 +405,183 @@ function ModernSwipeCardComponent({
 const ModernSwipeCard = React.memo(ModernSwipeCardComponent);
 
 // === STYLES ===
+
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    card: {
+      width: SCREEN_WIDTH - 40,
+      height: SCREEN_HEIGHT * 0.7,
+      borderRadius: theme.radii['2xl'],
+      backgroundColor: theme.colors.surface,
+      overflow: 'hidden',
+      shadowColor: theme.palette.neutral[900],
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.3,
+      shadowRadius: 16,
+      elevation: 12,
+    },
+    cardDisabled: {
+      opacity: 0.5,
+    },
+    photoContainer: {
+      width: '100%',
+      height: '100%',
+      position: 'relative',
+    },
+    photo: {
+      width: '100%',
+      height: '100%',
+    },
+    photoIndicators: {
+      position: 'absolute',
+      bottom: 100,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: 8,
+      paddingHorizontal: theme.spacing.md,
+    },
+    photoDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+    photoNavigation: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      flexDirection: 'row',
+    },
+    photoNavLeft: {
+      flex: 1,
+    },
+    photoNavRight: {
+      flex: 1,
+    },
+    verifiedBadge: {
+      position: 'absolute',
+      top: theme.spacing.md,
+      right: theme.spacing.md,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.full,
+      padding: 4,
+    },
+    distanceBadge: {
+      position: 'absolute',
+      top: theme.spacing.md,
+      left: theme.spacing.md,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.lg,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+    },
+    distanceText: {
+      color: theme.colors.onSurface,
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: theme.radii['2xl'],
+    },
+    likeOverlay: {
+      backgroundColor: theme.colors.success + '40',
+    },
+    nopeOverlay: {
+      backgroundColor: theme.colors.danger + '40',
+    },
+    superLikeOverlay: {
+      backgroundColor: theme.colors.primary + '40',
+    },
+    overlayText: {
+      fontSize: 48,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+      textTransform: 'uppercase',
+      letterSpacing: 4,
+    },
+    infoGradient: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: 200,
+      justifyContent: 'flex-end',
+    },
+    infoContainer: {
+      padding: theme.spacing.lg,
+      paddingBottom: theme.spacing.xl,
+    },
+    nameRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      gap: theme.spacing.sm,
+      marginBottom: theme.spacing.xs,
+    },
+    name: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+    },
+    age: {
+      fontSize: 24,
+      fontWeight: '600',
+      color: theme.colors.onMuted,
+    },
+    breed: {
+      fontSize: 18,
+      color: theme.colors.onMuted,
+      marginBottom: theme.spacing.sm,
+    },
+    compatibilityContainer: {
+      marginBottom: theme.spacing.md,
+    },
+    compatibilityBar: {
+      height: 4,
+      backgroundColor: theme.colors.border,
+      borderRadius: theme.radii.full,
+      overflow: 'hidden',
+      marginBottom: theme.spacing.xs,
+    },
+    compatibilityFill: {
+      height: '100%',
+    },
+    compatibilityText: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.onMuted,
+    },
+    tagsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.xs,
+      marginBottom: theme.spacing.md,
+    },
+    tag: {
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.full,
+    },
+    tagText: {
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    bio: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      lineHeight: 20,
+    },
+  });
+}
 
 // Display name for debugging
 ModernSwipeCard.displayName = 'ModernSwipeCard';

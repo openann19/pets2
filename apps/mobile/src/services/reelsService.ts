@@ -3,7 +3,7 @@
  * Client for PawReels backend
  */
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env['EXPO_PUBLIC_API_URL'] || 'http://localhost:3001';
 
 export interface Template {
   id: string;
@@ -11,7 +11,7 @@ export interface Template {
   minClips: number;
   maxClips: number;
   theme?: string;
-  jsonSpec: any;
+  jsonSpec: Record<string, unknown>;
 }
 
 export interface Track {
@@ -20,7 +20,7 @@ export interface Track {
   artist: string;
   bpm: number;
   url: string;
-  waveformJson?: any;
+  waveformJson?: Record<string, unknown>;
   genre?: string;
   mood?: string;
 }
@@ -49,8 +49,8 @@ export interface Clip {
   startMs: number;
   end_ms: number;
   endMs: number;
-  caption_json?: any;
-  captionJson?: any;
+  caption_json?: Record<string, unknown>;
+  captionJson?: Record<string, unknown>;
 }
 
 async function fetchAPI<T>(path: string, options?: RequestInit): Promise<T> {

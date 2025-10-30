@@ -7,7 +7,7 @@ export function useOptimizedListConfig<ItemT>(avgItemHeight = 72) {
       maxToRenderPerBatch: 12,
       updateCellsBatchingPeriod: 16,
       removeClippedSubviews: true,
-      keyExtractor: (it: any, i: number) => it?.id ?? String(i),
+      keyExtractor: (it: ItemT, i: number) => (it as { id?: string })?.id ?? String(i),
       getItemLayout: (_: ItemT[] | null | undefined, index: number) => ({
         length: avgItemHeight,
         offset: avgItemHeight * index,

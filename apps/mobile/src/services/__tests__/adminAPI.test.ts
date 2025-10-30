@@ -1624,4 +1624,250 @@ describe('AdminAPIService', () => {
       });
     });
   });
+
+  describe('Configuration Management', () => {
+    describe('AI Configuration', () => {
+      it('should get AI configuration', async () => {
+        const mockResponse = {
+          success: true,
+          data: {
+            apiKey: '***configured***',
+            baseUrl: 'https://api.deepseek.com',
+            model: 'deepseek-chat',
+            maxTokens: 4000,
+            temperature: 0.7,
+            isConfigured: true,
+            isActive: true,
+          },
+        };
+
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: jest.fn().mockResolvedValue(mockResponse),
+        });
+
+        const result = await adminAPI.getAIConfig();
+
+        expect(result).toEqual(mockResponse);
+        expect(mockFetch).toHaveBeenCalledWith(
+          'http://localhost:3001/api/admin/ai/config',
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              'Content-Type': 'application/json',
+            }),
+          }),
+        );
+      });
+
+      it('should save AI configuration', async () => {
+        const config = {
+          apiKey: 'sk-test123',
+          baseUrl: 'https://api.deepseek.com',
+          model: 'deepseek-chat',
+          maxTokens: 4000,
+          temperature: 0.7,
+        };
+
+        const mockResponse = {
+          success: true,
+          data: { success: true, message: 'Configuration saved successfully' },
+        };
+
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: jest.fn().mockResolvedValue(mockResponse),
+        });
+
+        const result = await adminAPI.saveAIConfig(config);
+
+        expect(result).toEqual(mockResponse);
+        expect(mockFetch).toHaveBeenCalledWith(
+          'http://localhost:3001/api/admin/ai/config',
+          expect.objectContaining({
+            method: 'POST',
+            body: JSON.stringify(config),
+          }),
+        );
+      });
+
+      it('should handle AI config errors', async () => {
+        mockFetch.mockRejectedValueOnce(new Error('Network error'));
+
+        await expect(adminAPI.getAIConfig()).rejects.toThrow('Network error');
+      });
+    });
+
+    describe('Stripe Configuration', () => {
+      it('should get Stripe configuration', async () => {
+        const mockResponse = {
+          success: true,
+          data: {
+            secretKey: '***configured***',
+            publishableKey: 'pk_test_123',
+            webhookSecret: '***configured***',
+            isLiveMode: false,
+            isConfigured: true,
+          },
+        };
+
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: jest.fn().mockResolvedValue(mockResponse),
+        });
+
+        const result = await adminAPI.getStripeConfig();
+
+        expect(result).toEqual(mockResponse);
+        expect(mockFetch).toHaveBeenCalledWith(
+          'http://localhost:3001/api/admin/stripe/config',
+          expect.any(Object),
+        );
+      });
+
+      it('should save Stripe configuration', async () => {
+        const config = {
+          secretKey: 'sk_test_123',
+          publishableKey: 'pk_test_123',
+          webhookSecret: 'whsec_test_123',
+          isLiveMode: false,
+        };
+
+        const mockResponse = {
+          success: true,
+          data: { success: true, message: 'Configuration saved successfully' },
+        };
+
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: jest.fn().mockResolvedValue(mockResponse),
+        });
+
+        const result = await adminAPI.saveStripeConfig(config);
+
+        expect(result).toEqual(mockResponse);
+        expect(mockFetch).toHaveBeenCalledWith(
+          'http://localhost:3001/api/admin/stripe/config',
+          expect.objectContaining({
+            method: 'POST',
+            body: JSON.stringify(config),
+          }),
+        );
+      });
+
+      it('should save Stripe config without webhook secret', async () => {
+        const config = {
+          secretKey: 'sk_test_123',
+          publishableKey: 'pk_test_123',
+          isLiveMode: false,
+        };
+
+        const mockResponse = {
+          success: true,
+          data: { success: true, message: 'Configuration saved successfully' },
+        };
+
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: jest.fn().mockResolvedValue(mockResponse),
+        });
+
+        const result = await adminAPI.saveStripeConfig(config);
+
+        expect(result.success).toBe(true);
+      });
+    });
+
+    describe('External Service Configuration', () => {
+      it('should get external service configuration', async () => {
+        const mockResponse = {
+          success: true,
+          data: {
+            id: 'aws-rekognition',
+            endpoint: 'https://rekognition.amazonaws.com',
+            isActive: true,
+            isConfigured: true,
+          },
+        };
+
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: jest.fn().mockResolvedValue(mockResponse),
+        });
+
+        const result = await adminAPI.getExternalServiceConfig('aws-rekognition');
+
+        expect(result).toEqual(mockResponse);
+        expect(mockFetch).toHaveBeenCalledWith(
+          'http://localhost:3001/api/admin/external-services/aws-rekognition/config',
+          expect.any(Object),
+        );
+      });
+
+      it('should save external service configuration', async () => {
+        const config = {
+          serviceId: 'cloudinary',
+          endpoint: 'https://api.cloudinary.com',
+          isActive: true,
+        };
+
+        const mockResponse = {
+          success: true,
+          data: { success: true, message: 'Configuration saved successfully' },
+        };
+
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: jest.fn().mockResolvedValue(mockResponse),
+        });
+
+        const result = await adminAPI.saveExternalServiceConfig(config);
+
+        expect(result).toEqual(mockResponse);
+        expect(mockFetch).toHaveBeenCalledWith(
+          'http://localhost:3001/api/admin/external-services/cloudinary/config',
+          expect.objectContaining({
+            method: 'POST',
+            body: JSON.stringify(config),
+          }),
+        );
+      });
+
+      it('should save external service config with API key', async () => {
+        const config = {
+          serviceId: 'fcm',
+          apiKey: 'AIzaSyTest123',
+          endpoint: 'https://fcm.googleapis.com',
+          isActive: true,
+        };
+
+        const mockResponse = {
+          success: true,
+          data: { success: true, message: 'Configuration saved successfully' },
+        };
+
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: jest.fn().mockResolvedValue(mockResponse),
+        });
+
+        const result = await adminAPI.saveExternalServiceConfig(config);
+
+        expect(result.success).toBe(true);
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining('/external-services/fcm/config'),
+          expect.objectContaining({
+            body: JSON.stringify(config),
+          }),
+        );
+      });
+
+      it('should handle external service config errors', async () => {
+        mockFetch.mockRejectedValueOnce(new Error('Service not found'));
+
+        await expect(
+          adminAPI.getExternalServiceConfig('invalid-service'),
+        ).rejects.toThrow('Service not found');
+      });
+    });
+  });
 });

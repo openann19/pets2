@@ -4,29 +4,12 @@
  */
 import { fetch as sslFetch } from 'react-native-ssl-pinning';
 import { logger } from '../services/logger';
-import type { SSLFetch, SSLResponse, SSLPinningConfig } from '../types/ssl-pinning';
+import type { SSLResponse } from '../types/ssl-pinning';
+import { SSL_CONFIG, getSSLConfigForDomain } from '../config/sslCertificates';
 
 const BASE_URL =
   process.env['EXPO_PUBLIC_API_URL'] ??
   (__DEV__ ? 'http://localhost:3001/api' : 'https://api.pawfectmatch.com/api');
-
-// Certificate fingerprints for SSL pinning
-// In production, these should be obtained from your server certificates
-const SSL_CERTIFICATES: Record<string, Array<{ algorithm: string; value: string }> | undefined> = {
-  // Example certificate fingerprints (replace with your actual certificates)
-  'api.pawfectmatch.com': [
-    {
-      algorithm: 'sha256',
-      value: 'PLACEHOLDER_CERTIFICATE_FINGERPRINT_SHA256',
-    },
-    {
-      algorithm: 'sha1',
-      value: 'PLACEHOLDER_CERTIFICATE_FINGERPRINT_SHA1',
-    },
-  ],
-  // Development certificates
-  'localhost': undefined,
-};
 
 interface SSLConfig {
   timeout?: number;
@@ -35,13 +18,13 @@ interface SSLConfig {
 }
 
 interface SSLRequestConfig {
-  method: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
   headers: Record<string, string>;
-  body?: string;
   timeoutInterval: number;
   sslPinning: {
     certs: string | Array<{ algorithm: string; value: string }>;
   };
+  body?: string;
 }
 
 class SecureAPIService {
@@ -77,24 +60,9 @@ class SecureAPIService {
   private getSSLConfig(domain: string): {
     sslPinning: { certs: string | Array<{ algorithm: string; value: string }> };
   } {
-    const certs = SSL_CERTIFICATES[domain];
-    if (certs === undefined || certs.length === 0) {
-      // In development, allow untrusted certificates
-      if (__DEV__) {
-        return {
-          sslPinning: {
-            certs: 'public',
-          },
-        };
-      }
-      throw new Error(`No SSL certificates configured for domain: ${domain}`);
-    }
-
-    return {
-      sslPinning: {
-        certs: certs,
-      },
-    };
+    // Use centralized SSL config from config/sslCertificates.ts
+    const config = getSSLConfigForDomain(domain);
+    return config;
   }
 
   /**
@@ -121,11 +89,11 @@ class SecureAPIService {
     const sslConfig = this.getSSLConfig(domain);
 
     const requestConfig: SSLRequestConfig = {
-      method: fetchOptions.method ?? 'GET',
+      method: (fetchOptions.method ?? 'GET') as 'GET' | 'POST' | 'PUT' | 'DELETE',
       headers,
-      body: fetchOptions.body ? String(fetchOptions.body) : undefined,
       timeoutInterval: timeout,
       ...sslConfig,
+      ...(fetchOptions.body !== undefined ? { body: String(fetchOptions.body) } : {}),
     };
 
     let lastError: Error | null = null;
@@ -139,12 +107,16 @@ class SecureAPIService {
         });
 
         // Type-safe SSL fetch with method validation
-        const validMethod = requestConfig.method as 'GET' | 'POST' | 'PUT' | 'DELETE';
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const response = (await sslFetch(url, {
-          ...requestConfig,
-          method: validMethod,
-        } as any)) as SSLResponse;
+        // Cast to satisfy react-native-ssl-pinning type requirements
+        const sslFetchConfig = {
+          method: requestConfig.method,
+          headers: requestConfig.headers,
+          timeoutInterval: requestConfig.timeoutInterval,
+          sslPinning: requestConfig.sslPinning,
+          ...(requestConfig.body !== undefined ? { body: requestConfig.body } : {}),
+        } as unknown as Parameters<typeof sslFetch>[1];
+        
+        const response = (await sslFetch(url, sslFetchConfig)) as SSLResponse;
         const status = response.status;
         const ok = status >= 200 && status < 300;
         if (!ok) {
@@ -186,7 +158,7 @@ class SecureAPIService {
     // All retries failed
     logger.error('Secure API request failed after all retries', {
       url,
-      error: lastError ?? undefined,
+      ...(lastError ? { error: lastError } : {}),
       retries,
     });
 
@@ -210,7 +182,7 @@ class SecureAPIService {
     return this.request<T>(endpoint, {
       ...(config ?? {}),
       method: 'POST',
-      body: data !== null && data !== undefined ? JSON.stringify(data) : undefined,
+      ...(data !== null && data !== undefined ? { body: JSON.stringify(data) } : {}),
     });
   }
 
@@ -221,7 +193,7 @@ class SecureAPIService {
     return this.request<T>(endpoint, {
       ...(config ?? {}),
       method: 'PUT',
-      body: data !== null && data !== undefined ? JSON.stringify(data) : undefined,
+      ...(data !== null && data !== undefined ? { body: JSON.stringify(data) } : {}),
     });
   }
 
@@ -239,18 +211,19 @@ class SecureAPIService {
     try {
       const sslConfig = this.getSSLConfig(domain);
       // Perform a test request to validate SSL pinning
-      const testConfig: SSLPinningConfig = {
-        method: 'HEAD',
+      const testConfig = {
+        method: 'HEAD' as const,
         headers: {},
         timeoutInterval: 5000,
         ...sslConfig,
-      };
-      await sslFetch(`https://${domain}`, testConfig as any);
+      } as unknown as Parameters<typeof sslFetch>[1];
+      await sslFetch(`https://${domain}`, testConfig);
       return true;
     } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error));
       logger.error('SSL certificate validation failed', {
         domain,
-        error: error instanceof Error ? error : new Error(String(error)),
+        error: err,
       });
       return false;
     }
@@ -265,9 +238,9 @@ class SecureAPIService {
     supportedDomains: string[];
   } {
     return {
-      sslEnabled: true,
-      certificatePinning: true,
-      supportedDomains: Object.keys(SSL_CERTIFICATES),
+      sslEnabled: SSL_CONFIG.enabled,
+      certificatePinning: SSL_CONFIG.enabled,
+      supportedDomains: SSL_CONFIG.pinnedDomains,
     };
   }
 }
@@ -276,12 +249,12 @@ class SecureAPIService {
  * Custom error class for secure API errors
  */
 export class SecureAPIError extends Error {
-  public originalError?: Error;
+  public originalError?: Error | undefined;
 
-  constructor(message: string, originalError?: Error) {
+  constructor(message: string, originalError?: Error | undefined) {
     super(message);
     this.name = 'SecureAPIError';
-    this.originalError = originalError;
+    this.originalError = originalError ?? undefined;
   }
 }
 

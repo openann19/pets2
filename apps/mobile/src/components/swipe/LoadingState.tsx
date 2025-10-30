@@ -1,17 +1,19 @@
-import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { EliteContainer } from '../elite/containers';
 import FXContainer from '../containers/FXContainer';
 import { FXContainerPresets } from '../containers/FXContainer';
 import { EliteButtonPresets } from '../buttons/EliteButton';
 import { Heading1, Body } from '../typography/ModernTypography';
-import { Theme } from '../../theme';
+import { useTheme } from '../../theme';
 
 interface LoadingStateProps {
   loadPets: () => void;
 }
 
 export const LoadingState: React.FC<LoadingStateProps> = ({ loadPets }) => {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
   return (
     <EliteContainer gradient="primary">
       <View style={styles.loadingContainer}>
@@ -32,23 +34,25 @@ export const LoadingState: React.FC<LoadingStateProps> = ({ loadPets }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: Theme.spacing.xl,
-  },
-  loadingCard: {
-    padding: Theme.spacing['4xl'],
-    alignItems: 'center',
-  },
-  loadingTitle: {
-    textAlign: 'center',
-    marginBottom: Theme.spacing.lg,
-  },
-  loadingSubtitle: {
-    textAlign: 'center',
-    color: Theme.colors.text.secondary,
-  },
-});
+function makeStyles(theme: ReturnType<typeof useTheme>) {
+  return StyleSheet.create({
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: theme.spacing.xl,
+    },
+    loadingCard: {
+      padding: theme.spacing['4xl'],
+      alignItems: 'center',
+    },
+    loadingTitle: {
+      textAlign: 'center',
+      marginBottom: theme.spacing.lg,
+    },
+    loadingSubtitle: {
+      textAlign: 'center',
+      color: theme.colors.onMuted,
+    },
+  });
+}

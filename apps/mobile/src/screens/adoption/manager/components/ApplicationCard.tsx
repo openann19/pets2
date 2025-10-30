@@ -113,7 +113,7 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
   const { colors, palette } = theme;
 
   return (
-    <View style={[styles.applicationCard, { backgroundColor: colors.surface }]}>
+    <View style={[styles.applicationCard, { backgroundColor: colors.surface }]} testID={`application-card-${application.id}`} accessibilityRole="none">
       <View style={styles.applicationHeader}>
         <View style={styles.applicantInfo}>
           <Text style={[styles.applicantName, { color: colors.onSurface }]}>{application.applicantName}</Text>

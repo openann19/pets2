@@ -12,7 +12,7 @@ export const createSecureStorage = (): StateStorage => {
   return {
     getItem: async (name: string): Promise<string | null> => {
       try {
-        const value = await SecureStore.getItemAsync(name);
+        const value: string | null = await SecureStore.getItemAsync(name);
         return value;
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Unknown error';

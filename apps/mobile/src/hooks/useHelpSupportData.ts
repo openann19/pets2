@@ -8,6 +8,7 @@ import {
   withDelay,
   withSpring,
 } from 'react-native-reanimated';
+import { logger } from '@pawfectmatch/core';
 
 export interface HelpOption {
   id: string;
@@ -32,8 +33,21 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
       title: 'FAQ',
       description: 'Frequently asked questions',
       icon: 'help-circle-outline',
-      action: () => {
-        Alert.alert('FAQ', 'FAQ section coming soon!');
+      action: async () => {
+        try {
+          const url = 'https://pawfectmatch.com/faq';
+          const canOpen = await Linking.canOpenURL(url);
+          if (canOpen) {
+            await Linking.openURL(url);
+            logger.info('FAQ opened', { url });
+          } else {
+            Alert.alert('FAQ', `Visit ${url} to view frequently asked questions.`);
+          }
+        } catch (error) {
+          const errorObj = error instanceof Error ? error : new Error(String(error));
+          logger.error('Failed to open FAQ', { error: errorObj });
+          Alert.alert('Error', 'Unable to open FAQ page.');
+        }
       },
     },
     {
@@ -41,8 +55,24 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
       title: 'Contact Support',
       description: 'Get help from our support team',
       icon: 'chatbubble-outline',
-      action: () => {
-        Alert.alert('Contact Support', 'Support chat coming soon!');
+      action: async () => {
+        try {
+          const email = 'support@pawfectmatch.com';
+          const subject = 'Support Request';
+          const url = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+          
+          const canOpen = await Linking.canOpenURL(url);
+          if (canOpen) {
+            await Linking.openURL(url);
+            logger.info('Contact support opened', { email });
+          } else {
+            Alert.alert('Contact Support', `Please email us at ${email}`);
+          }
+        } catch (error) {
+          const errorObj = error instanceof Error ? error : new Error(String(error));
+          logger.error('Failed to open contact support', { error: errorObj });
+          Alert.alert('Error', 'Unable to open email app. Please contact support@pawfectmatch.com manually.');
+        }
       },
     },
     {
@@ -50,8 +80,25 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
       title: 'Report a Bug',
       description: 'Help us improve by reporting issues',
       icon: 'bug-outline',
-      action: () => {
-        Alert.alert('Report Bug', 'Bug reporting feature coming soon!');
+      action: async () => {
+        try {
+          const email = 'support@pawfectmatch.com';
+          const subject = 'Bug Report';
+          const body = 'Please describe the bug you encountered:';
+          const url = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+          
+          const canOpen = await Linking.canOpenURL(url);
+          if (canOpen) {
+            await Linking.openURL(url);
+            logger.info('Bug report email opened', { email });
+          } else {
+            Alert.alert('Report Bug', `Please email us at ${email} with details about the bug.`);
+          }
+        } catch (error) {
+          const errorObj = error instanceof Error ? error : new Error(String(error));
+          logger.error('Failed to open bug report', { error: errorObj });
+          Alert.alert('Error', 'Unable to open email app. Please email support@pawfectmatch.com with bug details.');
+        }
       },
     },
     {
@@ -60,7 +107,9 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
       description: 'Safety tips and reporting tools',
       icon: 'shield-checkmark-outline',
       action: () => {
-        Alert.alert('Safety Center', 'Navigate back to safety center');
+        // This would navigate to Safety Center screen
+        logger.info('Navigate to Safety Center');
+        Alert.alert('Safety Center', 'Please navigate to Safety Center from Settings screen.');
       },
     },
   ];

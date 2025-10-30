@@ -153,10 +153,11 @@ class OfflineSyncService {
   /**
    * Get current sync status
    */
-  getSyncStatus(): SyncStatus {
+  async getSyncStatus(): Promise<SyncStatus> {
+    const lastSyncTime = await this.getLastSyncTime();
     return {
       isOnline: this.isOnline,
-      lastSyncTime: this.getLastSyncTime(),
+      lastSyncTime,
       pendingItems: this.queue.length,
       failedItems: this.queue.filter((item) => item.retryCount >= this.MAX_RETRY_COUNT).length,
       isSyncing: this.syncInProgress,
@@ -359,24 +360,31 @@ class OfflineSyncService {
     }
   }
 
-  private getLastSyncTime(): number | null {
+  private async getLastSyncTime(): Promise<number | null> {
     try {
-      // This would be implemented to read from AsyncStorage
-      // For now, return current time as placeholder
-      return Date.now();
-    } catch {
+      // Read from AsyncStorage - using the same key pattern as updateLastSyncTime
+      const syncStatusData = await AsyncStorage.getItem(this.SYNC_STATUS_KEY);
+      if (syncStatusData) {
+        const syncStatus = JSON.parse(syncStatusData) as SyncStatus;
+        return syncStatus.lastSyncTime || null;
+      }
+      return null;
+    } catch (error) {
+      logger.error('Failed to get last sync time', { error });
       return null;
     }
   }
 
   private notifyListeners(): void {
-    const status = this.getSyncStatus();
-    this.syncListeners.forEach((listener) => {
-      try {
-        listener(status);
-      } catch (error) {
-        logger.error('Error notifying sync listener', { error });
-      }
+    // Async wrapper - notify listeners asynchronously
+    void this.getSyncStatus().then((status) => {
+      this.syncListeners.forEach((listener) => {
+        try {
+          listener(status);
+        } catch (error) {
+          logger.error('Error notifying sync listener', { error });
+        }
+      });
     });
   }
 }

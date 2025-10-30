@@ -14,6 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 // import { animationConfig } from '@pawfectmatch/core';
 import { logger } from '../services/logger';
+import { useTheme } from '@/theme';
 
 interface AnimatedButtonProps {
   onPress: () => void;
@@ -44,6 +45,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   accessibilityHint,
   accessibilityRole = 'button',
 }) => {
+  const theme = useTheme();
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
   const rotation = useSharedValue(0);
@@ -189,12 +191,15 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     }
   }, [loading, rotation, reduceMotion]);
 
-  const variantStyles = {
-    primary: styles.primaryButton,
-    secondary: styles.secondaryButton,
-    ghost: styles.ghostButton,
-    danger: styles.dangerButton,
-  };
+  const variantStyles = useMemo(
+    () => ({
+      primary: { backgroundColor: '#FF6B9D' },
+      secondary: { backgroundColor: '#6366F1' },
+      ghost: { backgroundColor: 'transparent', borderWidth: 2, borderColor: '#FF6B9D' },
+      danger: { backgroundColor: theme.colors.danger },
+    }),
+    [theme],
+  );
 
   const sizeStyles = {
     sm: styles.smallButton,
@@ -202,24 +207,36 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     lg: styles.largeButton,
   };
 
+  const buttonStyles = useMemo(
+    () => [
+      styles.button,
+      variantStyles[variant],
+      sizeStyles[size],
+      disabled && styles.disabled,
+    ],
+    [variantStyles, variant, size, disabled],
+  );
+
+  const textStyles = useMemo(
+    () => [styles.text, textStyle, disabled && styles.disabledText],
+    [textStyle, disabled],
+  );
+
   return (
     <Animated.View
       style={StyleSheet.flatten([
         animatedStyle,
         styles.shadow,
+        {
+          shadowColor: theme.colors.border,
+        },
         Platform.OS === 'android' && {
           elevation: interpolate(scale.value, [0.92, 1, 1.02], [2, 4, 6]) as unknown as number,
         },
       ])}
     >
       <TouchableOpacity
-        style={StyleSheet.flatten([
-          styles.button,
-          variantStyles[variant],
-          sizeStyles[size],
-          style,
-          disabled && styles.disabled,
-        ])}
+        style={StyleSheet.flatten([...buttonStyles, style])}
         onPress={handlePress}
         disabled={disabled || loading}
         activeOpacity={0.7}
@@ -229,9 +246,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         accessibilityState={{ disabled: disabled || loading, busy: loading }}
       >
         {typeof children === 'string' ? (
-          <Text
-            style={StyleSheet.flatten([styles.text, textStyle, disabled && styles.disabledText])}
-          >
+          <Text style={StyleSheet.flatten(textStyles)}>
             {loading ? '...' : children}
           </Text>
         ) : (
@@ -250,20 +265,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  primaryButton: {
-    backgroundColor: '#FF6B9D',
-  },
-  secondaryButton: {
-    backgroundColor: '#6366F1',
-  },
-  ghostButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: '#FF6B9D',
-  },
-  dangerButton: {
-    backgroundColor: 'Theme.colors.status.error',
-  },
   smallButton: {
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -279,10 +280,8 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     fontWeight: '600',
-    color: 'Theme.colors.neutral[0]',
   },
   shadow: {
-    shadowColor: 'Theme.colors.neutral[950]',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,

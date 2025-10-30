@@ -1,6 +1,9 @@
 /**
  * Audio Upload Helpers
  * Cross-platform utilities for converting audio files to uploadable formats
+ * 
+ * @deprecated Use upload-adapters.ts for new code
+ * This file is kept for backward compatibility
  */
 
 import * as FileSystem from 'expo-file-system';
@@ -27,6 +30,8 @@ export async function toUploadPart(uri: string, name = 'voice.m4a', type = 'audi
  * Mobile-safe: Creates a Blob polyfill for React Native using Uint8Array
  * Only needed for special cases where Blob is required on native platforms
  * Note: Uses web-only.d.ts type declarations for Blob compatibility
+ * 
+ * @deprecated Use upload-adapters.ts uriToBlob instead
  */
 export async function blobFromUri(uri: string, mime = 'application/octet-stream'): Promise<Blob> {
   try {

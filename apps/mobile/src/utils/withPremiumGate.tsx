@@ -1,12 +1,15 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
+import type { NavigationProp } from '@react-navigation/native';
+import { useTheme } from '@/theme';
 import { api } from '../services/api';
+import type { RootStackParamList } from '../navigation/types';
+
+type PremiumNavigationProp = NavigationProp<RootStackParamList, 'Premium'>;
 
 interface PremiumGateProps {
-  navigation?: {
-    navigate?: (screen: string) => void;
-  };
+  navigation?: PremiumNavigationProp;
 }
 
 interface PremiumStatus {
@@ -24,6 +27,7 @@ interface ApiResponse<T> {
  */
 export function withPremiumGate<P extends object>(Component: React.ComponentType<P>) {
   return function Gate(props: P & PremiumGateProps) {
+    const theme = useTheme();
     const { data, isLoading } = useQuery<PremiumStatus>({
       queryKey: ['premiumStatus'],
       queryFn: async () => {
@@ -35,8 +39,8 @@ export function withPremiumGate<P extends object>(Component: React.ComponentType
 
     if (isLoading) {
       return (
-        <View style={styles.container}>
-          <Text style={styles.loadingText}>Loading...</Text>
+        <View style={styles.container(theme)}>
+          <Text style={styles.loadingText(theme)}>Loading...</Text>
         </View>
       );
     }
@@ -46,53 +50,57 @@ export function withPremiumGate<P extends object>(Component: React.ComponentType
     }
 
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Premium Required</Text>
-        <Text style={styles.message}>Upgrade to unlock this feature</Text>
+      <View style={styles.container(theme)}>
+        <Text style={styles.title(theme)}>Premium Required</Text>
+        <Text style={styles.message(theme)}>Upgrade to unlock this feature</Text>
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => props.navigation?.navigate?.('Subscribe')}
+          style={styles.button(theme)}
+          onPress={() => {
+            if (props.navigation) {
+              props.navigation.navigate('Premium');
+            }
+          }}
         >
-          <Text style={styles.buttonText}>Upgrade to Premium</Text>
+          <Text style={styles.buttonText(theme)}>Upgrade to Premium</Text>
         </TouchableOpacity>
       </View>
     );
   };
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+const styles = {
+  container: (theme: ReturnType<typeof useTheme>) => ({
+    flex: 1 as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
     padding: 32,
-    backgroundColor: '#fff',
-  },
-  title: {
+    backgroundColor: theme.colors.bg,
+  }),
+  title: (theme: ReturnType<typeof useTheme>) => ({
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: '700' as const,
     marginBottom: 12,
-    color: '#111',
-  },
-  message: {
+    color: theme.colors.onSurface,
+  }),
+  message: (theme: ReturnType<typeof useTheme>) => ({
     fontSize: 16,
-    color: '#666',
+    color: theme.colors.onMuted,
     marginBottom: 24,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#4f46e5',
+    textAlign: 'center' as const,
+  }),
+  button: (theme: ReturnType<typeof useTheme>) => ({
+    backgroundColor: theme.colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
+  }),
+  buttonText: (theme: ReturnType<typeof useTheme>) => ({
+    color: theme.colors.onPrimary,
+    fontWeight: '600' as const,
     fontSize: 16,
-  },
-  loadingText: {
+  }),
+  loadingText: (theme: ReturnType<typeof useTheme>) => ({
     fontSize: 16,
-    color: '#666',
-  },
-});
+    color: theme.colors.onMuted,
+  }),
+};

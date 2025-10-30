@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import type { PhotoData } from '../../hooks/usePhotoManager';
-import { useExtendedColors } from '../../hooks/useExtendedTheme';
+import { useTheme } from '@/theme';
 
 interface PetPhotosSectionProps {
   photos: PhotoData[];
@@ -31,7 +31,7 @@ const makeStyles = (theme: any) =>
     sectionTitle: {
       fontSize: 20,
       fontWeight: 'bold',
-      color: theme.colors.neutral[900],
+      color: theme.colors.onSurface,
       marginBottom: 16,
     },
     errorText: {
@@ -45,14 +45,14 @@ const makeStyles = (theme: any) =>
       justifyContent: 'center',
       padding: 16,
       borderWidth: 2,
-      borderColor: theme.colors.neutral[300],
+      borderColor: theme.colors.border,
       borderRadius: 12,
-      backgroundColor: theme.colors.neutral[100],
+      backgroundColor: theme.colors.surface,
       borderStyle: 'dashed',
     },
     addPhotoText: {
       fontSize: 16,
-      color: theme.colors.neutral[500],
+      color: theme.colors.onMuted,
       marginLeft: 8,
       fontWeight: '500',
     },
@@ -83,7 +83,7 @@ const makeStyles = (theme: any) =>
     },
     primaryBadgeText: {
       fontSize: 10,
-      color: theme.colors.neutral[0],
+      color: theme.colors.onPrimary,
       fontWeight: 'bold',
     },
     photoActions: {
@@ -106,7 +106,7 @@ const makeStyles = (theme: any) =>
     },
     photoHint: {
       fontSize: 12,
-      color: theme.colors.neutral[500],
+      color: theme.colors.onMuted,
       marginTop: 12,
       lineHeight: 18,
     },
@@ -183,7 +183,6 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
   onRemovePhoto,
   onSetPrimaryPhoto,
 }) => {
-  const colors = useExtendedColors();
   const theme = useTheme();
   const styles = makeStyles(theme);
   const hasUploadingPhotos = photos.some((p) => p.isUploading);
@@ -201,7 +200,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
         <Ionicons
           name="camera"
           size={24}
-          color={colors.onMuted}
+          color={theme.colors.onMuted}
         />
         <Text style={styles.addPhotoText}>
           {photos.length === 0 ? 'Add Photos' : `Add More Photos (${photos.length}/10)`}
@@ -299,7 +298,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
                     <Ionicons
                       name="star"
                       size={16}
-                      color={colors.onPrimary}
+                      color={theme.colors.onPrimary}
                     />
                   </TouchableOpacity>
                 )}
@@ -314,7 +313,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
                     <Ionicons
                       name="trash"
                       size={16}
-                      color={colors.onPrimary}
+                      color={theme.colors.onPrimary}
                     />
                   </TouchableOpacity>
                 )}

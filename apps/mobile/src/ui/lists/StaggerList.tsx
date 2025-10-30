@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Animated, { FadeInDown, Easing } from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useMotion } from '../motion/useMotion';
 
 export interface StaggerListProps<T> {

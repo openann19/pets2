@@ -8,22 +8,19 @@ import { render, screen, fireEvent, waitFor, within } from '@testing-library/rea
 import { PetInfoForm } from '../PetInfoForm';
 
 // Mock the theme
-jest.mock('../../../theme/unified-theme', () => ({
-  Theme: {
+jest.mock('../../../theme', () => ({
+  useTheme: jest.fn(() => ({
     colors: {
-      text: { primary: '#000000', secondary: '#666666' },
-      status: { error: '#FF0000' },
-      border: { medium: '#CCCCCC', light: '#E5E5E5' },
-      background: { primary: '#FFFFFF' },
+      bg: '#FFFFFF',
+      surface: '#F8F9FA',
+      onSurface: '#000000',
+      onMuted: '#666666',
+      danger: '#FF0000',
+      border: '#CCCCCC',
     },
     spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
-    typography: {
-      fontSize: { 'xs': 12, 'sm': 14, 'base': 16, '2xl': 24 },
-      fontWeight: { medium: '500', bold: '700' },
-      lineHeight: { normal: 1.5, relaxed: 1.625 },
-    },
-    borderRadius: { md: 8, full: 9999 },
-  },
+    radii: { md: 8, full: 9999 },
+  })),
 }));
 
 describe('PetInfoForm Component', () => {

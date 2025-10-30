@@ -22,23 +22,37 @@ jest.mock('react-native', () => ({
 }));
 
 // Mock the theme
-jest.mock('../../../theme/unified-theme', () => ({
-  Theme: {
+jest.mock('../../../theme', () => ({
+  createTheme: jest.fn(() => ({
     colors: {
-      text: { primary: '#000000' },
-      status: { success: '#28A745', warning: '#FFC107', error: '#DC3545' },
-      border: { light: '#E5E5E5' },
-      background: { primary: '#FFFFFF' },
-      primary: { '500': '#007AFF' },
+      bg: '#FFFFFF',
+      surface: '#F8F9FA',
+      onSurface: '#000000',
+      onMuted: '#666666',
+      primary: '#007AFF',
+      success: '#28A745',
+      warning: '#FFC107',
+      danger: '#DC3545',
+      border: '#E5E5E5',
     },
     spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
-    typography: {
-      fontSize: { 'xs': 12, 'sm': 14, 'base': 16, 'xl': 20, '2xl': 24 },
-      fontWeight: { medium: '500', semibold: '600', bold: '700' },
-      lineHeight: { relaxed: 1.625, normal: 1.5 },
+    radii: { md: 8, lg: 12, full: 9999 },
+  })),
+  useTheme: jest.fn(() => ({
+    colors: {
+      bg: '#FFFFFF',
+      surface: '#F8F9FA',
+      onSurface: '#000000',
+      onMuted: '#666666',
+      primary: '#007AFF',
+      success: '#28A745',
+      warning: '#FFC107',
+      danger: '#DC3545',
+      border: '#E5E5E5',
     },
-    borderRadius: { md: 8, lg: 12, full: 9999 },
-  },
+    spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
+    radii: { md: 8, lg: 12, full: 9999 },
+  })),
 }));
 
 describe('BioResults Component', () => {

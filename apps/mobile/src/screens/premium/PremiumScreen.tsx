@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { AppTheme } from '@/theme';
-import { useTheme } from '@/theme';
+import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@mobile/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import Footer from '../../components/Footer';
 import { usePremiumScreen } from '../../hooks/screens/premium';
+import { SuccessMorphButton } from '../../components/micro/SuccessMorph';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
@@ -270,18 +271,13 @@ export function PremiumScreen(): React.JSX.Element {
           ))}
         </View>
 
-        <TouchableOpacity
-          style={[
+        <SuccessMorphButton
+          onPress={() => handleSubscribe(tier.id)}
+          style={StyleSheet.flatten([
             styles.subscribeButton,
             isSelected && styles.subscribeButtonSelected,
-          ]}
-          testID={`subscribe-${tier.name.toLowerCase()}-button`}
-          accessibilityLabel={
-            isSelected ? t('subscribed_to_plan') : t('subscribe_to_plan')
-          }
-          accessibilityRole="button"
-          onPress={() => handleSubscribe(tier.id)}
-          disabled={isLoading}
+          ]) as any}
+          textStyle={styles.subscribeButtonText}
         >
           {isLoading && selectedTier === tier.id ? (
             <ActivityIndicator
@@ -293,7 +289,7 @@ export function PremiumScreen(): React.JSX.Element {
               {isSelected ? t('subscribe_now') : t('select_plan')}
             </Text>
           )}
-        </TouchableOpacity>
+        </SuccessMorphButton>
       </TouchableOpacity>
     );
   }, [billingPeriod, selectedTier, isLoading, theme, styles, handleSubscribe, setSelectedTier, t]);

@@ -1,5 +1,5 @@
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import { useCallback, useMemo } from 'react';
 import {
   ActivityIndicator,
@@ -314,7 +314,7 @@ const makeStyles = (theme: AppTheme) => StyleSheet.create({
     borderRadius: theme.radii.lg,
     padding: theme.spacing.md,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: theme.colors.border,
     elevation: 1,
   },
   bulkSummary: {
@@ -345,7 +345,7 @@ const makeStyles = (theme: AppTheme) => StyleSheet.create({
   },
   emptyState: {
     alignItems: 'center',
-    paddingVertical: theme.spacing.xl * 1.5,
+    paddingVertical: theme.spacing['2xl'],
     gap: theme.spacing.sm,
   },
   emptyText: {

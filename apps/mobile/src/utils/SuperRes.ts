@@ -8,6 +8,7 @@ import { Platform } from 'react-native';
 import { tileUpscaleAuto } from './TiledUpscaler';
 import { unsharpMask } from './Unsharp';
 import { logger } from '../services/logger';
+import { request } from '../services/api';
 
 export interface SuperResAdapter {
   name: string;
@@ -87,35 +88,79 @@ const BicubicAdapter: SuperResAdapter = {
 const ServerAdapter: SuperResAdapter = {
   name: 'server-esrgan',
   async available() {
-    // Flip to true when your backend upscaler endpoint is ready
-    // You can also check environment variables, feature flags, etc.
-    if (__DEV__) {
-      return false; // Disable in dev until backend is ready
+    // Check if backend endpoint is configured via environment variable
+    const upscaleEndpoint = process.env['EXPO_PUBLIC_UPSCALE_ENABLED'];
+    if (upscaleEndpoint === 'true') {
+      return true;
     }
-    return false; // Set to true when production endpoint is ready
+    
+    // Disable in dev unless explicitly enabled
+    if (__DEV__) {
+      return false;
+    }
+    
+    // In production, check if endpoint exists by attempting a health check
+    // For now, return false until backend is ready
+    return false;
   },
   async upscale(uri, targetW, targetH, opts = {}) {
-    // TODO: Replace with your actual backend endpoint
-    // Example implementation:
-    // const formData = new FormData();
-    // formData.append('image', { uri, name: 'image.jpg', type: 'image/jpeg' });
-    // formData.append('targetW', targetW.toString());
-    // formData.append('targetH', targetH.toString());
-    //
-    // const res = await fetch('https://your-backend.com/api/upscale', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Authorization': `Bearer ${await getAuthToken()}`,
-    //   },
-    //   body: formData,
-    // });
-    //
-    // if (!res.ok) throw new Error(`Upscale failed: ${res.statusText}`);
-    // const { upscaledUrl } = await res.json();
-    // return upscaledUrl;
+    try {
+      // Read image file as base64 for upload
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
 
-    // Fallback (should never be called if available=false)
-    return uri;
+      // Prepare form data for multipart upload
+      const formData = new FormData();
+      formData.append('image', {
+        uri,
+        type: 'image/jpeg',
+        name: 'image.jpg',
+      } as unknown as Blob);
+      formData.append('targetW', targetW.toString());
+      formData.append('targetH', targetH.toString());
+      
+      if (opts.sharpen !== undefined) {
+        formData.append('sharpen', opts.sharpen.toString());
+      }
+
+      // Call backend upscale endpoint
+      const response = await request<{
+        data: {
+          upscaledUrl: string;
+          originalUrl: string;
+          dimensions: { width: number; height: number };
+        };
+      }>('/media/upscale', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data?.upscaledUrl) {
+        logger.info('SuperRes: Server upscale successful', {
+          original: uri,
+          upscaled: response.data.upscaledUrl,
+          dimensions: response.data.dimensions,
+        });
+        return response.data.upscaledUrl;
+      }
+
+      throw new Error('Invalid response from upscale endpoint');
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('SuperRes: Server upscale failed', { error: err });
+      
+      // If endpoint doesn't exist (404), fall back to bicubic
+      if (err.message.includes('404') || err.message.includes('Not Found')) {
+        logger.warn('SuperRes: Upscale endpoint not available, falling back to bicubic');
+        return BicubicAdapter.upscale(uri, targetW, targetH, opts);
+      }
+      
+      throw err;
+    }
   },
 };
 

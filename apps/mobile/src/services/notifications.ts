@@ -133,7 +133,7 @@ class NotificationService {
         name: channel.name,
         importance: channel.importance,
         description: channel.description,
-        sound: channel.sound ?? undefined,
+        ...(channel.sound ? { sound: channel.sound } : {}),
         vibrationPattern: [0, 250, 250, 250],
       });
     }
@@ -254,7 +254,7 @@ class NotificationService {
           data: notificationData.data ?? {},
           sound,
         },
-        trigger,
+        ...(trigger ? { trigger } : {}),
       });
 
       return identifier;
@@ -451,4 +451,5 @@ class NotificationService {
 // Export a singleton instance
 export const notificationService = new NotificationService();
 export const initializeNotificationsService = () => notificationService.initialize();
+export { NotificationService };
 export default notificationService;

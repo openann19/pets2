@@ -88,12 +88,6 @@ interface PetFormData {
   };
 }
 
-const SPRING_CONFIG = {
-  damping: 15,
-  stiffness: 300,
-  mass: 1,
-};
-
 const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps) => {
   const { userIntent } = route.params;
   const theme = useTheme();
@@ -117,7 +111,6 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
 
   const { width: screenWidth } = useWindowDimensions();
   const progressValue = useSharedValue(0);
-  const slideValue = useSharedValue(0);
 
   React.useEffect(() => {
     progressValue.value = withTiming((currentStep + 1) / 4, { duration: 300 });
@@ -490,8 +483,17 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
   );
 
   const styles = useMemo(
-    () =>
-      StyleSheet.create({
+    () => {
+      // Helper for rgba with opacity
+      const alpha = (color: string, opacity: number) => {
+        const hex = color.replace('#', '');
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      };
+
+      return StyleSheet.create({
         container: {
           flex: 1,
           backgroundColor: theme.colors.bg,
@@ -500,7 +502,7 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
           flex: 1,
         },
         header: {
-          padding: 20,
+          padding: theme.spacing.lg + theme.spacing.xs,
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.border,
         },
@@ -511,46 +513,46 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
           width: '100%',
           height: 4,
           backgroundColor: theme.colors.surface,
-          borderRadius: 2,
-          marginBottom: 8,
+          borderRadius: theme.radii.xs,
+          marginBottom: theme.spacing.sm,
         },
         progressFill: {
           height: '100%',
           backgroundColor: theme.colors.primary,
-          borderRadius: 2,
+          borderRadius: theme.radii.xs,
           maxWidth: '100%',
         },
         progressText: {
-          fontSize: 14,
+          fontSize: theme.typography.body.size * 0.875,
           color: theme.colors.onMuted,
-          fontWeight: '500',
+          fontWeight: theme.typography.medium,
         },
         content: {
           flex: 1,
-          padding: 20,
+          padding: theme.spacing.lg + theme.spacing.xs,
         },
         stepContainer: {
           flex: 1,
         },
         stepTitle: {
-          fontSize: 24,
-          fontWeight: 'bold',
+          fontSize: theme.typography.h2.size * 1.2,
+          fontWeight: theme.typography.h1.weight,
           color: theme.colors.onSurface,
-          marginBottom: 8,
+          marginBottom: theme.spacing.sm,
         },
         stepSubtitle: {
-          fontSize: 16,
+          fontSize: theme.typography.body.size,
           color: theme.colors.onMuted,
-          marginBottom: 24,
+          marginBottom: theme.spacing.lg + theme.spacing.xs,
         },
         input: {
           borderWidth: 1,
           borderColor: theme.colors.border,
-          borderRadius: 8,
-          padding: 16,
-          fontSize: 16,
+          borderRadius: theme.radii.sm,
+          padding: theme.spacing.lg,
+          fontSize: theme.typography.body.size,
           backgroundColor: theme.colors.surface,
-          marginBottom: 16,
+          marginBottom: theme.spacing.lg,
           color: theme.colors.onSurface,
         },
         inputError: {
@@ -561,19 +563,19 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
         },
         errorText: {
           color: theme.colors.danger,
-          fontSize: 14,
-          marginTop: 4,
+          fontSize: theme.typography.body.size * 0.875,
+          marginTop: theme.spacing.xs,
         },
         optionsGrid: {
           flexDirection: 'row',
           flexWrap: 'wrap',
-          gap: 12,
-          marginBottom: 24,
+          gap: theme.spacing.md,
+          marginBottom: theme.spacing.lg + theme.spacing.xs,
         },
         optionButton: {
-          paddingVertical: 12,
-          paddingHorizontal: 16,
-          borderRadius: 8,
+          paddingVertical: theme.spacing.md,
+          paddingHorizontal: theme.spacing.lg,
+          borderRadius: theme.radii.sm,
           borderWidth: 1,
           borderColor: theme.colors.border,
           backgroundColor: theme.colors.surface,
@@ -582,53 +584,53 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
         },
         optionButtonSelected: {
           borderColor: theme.colors.primary,
-          backgroundColor: theme.colors.primary + '10',
+          backgroundColor: alpha(theme.colors.primary, 0.1),
         },
         optionText: {
-          fontSize: 14,
+          fontSize: theme.typography.body.size * 0.875,
           color: theme.colors.onMuted,
         },
         optionTextSelected: {
           color: theme.colors.primary,
-          fontWeight: '600',
+          fontWeight: theme.typography.h2.weight,
         },
         tagsContainer: {
           flexDirection: 'row',
           flexWrap: 'wrap',
-          gap: 8,
-          marginBottom: 24,
+          gap: theme.spacing.sm,
+          marginBottom: theme.spacing.lg + theme.spacing.xs,
         },
         tagButton: {
-          paddingVertical: 8,
-          paddingHorizontal: 12,
-          borderRadius: 16,
+          paddingVertical: theme.spacing.sm,
+          paddingHorizontal: theme.spacing.md,
+          borderRadius: theme.radii.full,
           borderWidth: 1,
           borderColor: theme.colors.border,
           backgroundColor: theme.colors.surface,
         },
         tagButtonSelected: {
           borderColor: theme.colors.primary,
-          backgroundColor: theme.colors.primary + '10',
+          backgroundColor: alpha(theme.colors.primary, 0.1),
         },
         tagText: {
-          fontSize: 14,
+          fontSize: theme.typography.body.size * 0.875,
           color: theme.colors.onMuted,
         },
         tagTextSelected: {
           color: theme.colors.primary,
-          fontWeight: '500',
+          fontWeight: theme.typography.medium,
         },
         navigation: {
           flexDirection: 'row',
           justifyContent: 'space-between',
-          paddingVertical: 20,
+          paddingVertical: theme.spacing.lg + theme.spacing.xs,
           borderTopWidth: 1,
           borderTopColor: theme.colors.border,
         },
         navButton: {
-          paddingVertical: 12,
-          paddingHorizontal: 24,
-          borderRadius: 8,
+          paddingVertical: theme.spacing.md,
+          paddingHorizontal: theme.spacing.lg + theme.spacing.xs,
+          borderRadius: theme.radii.sm,
           minWidth: 100,
           alignItems: 'center',
         },
@@ -645,8 +647,8 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
           opacity: 0.6,
         },
         navButtonText: {
-          fontSize: 16,
-          fontWeight: '600',
+          fontSize: theme.typography.body.size,
+          fontWeight: theme.typography.h2.weight,
           color: theme.colors.onPrimary,
         },
         navButtonTextSecondary: {
@@ -655,7 +657,119 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
         navButtonTextDisabled: {
           color: theme.colors.onMuted,
         },
-      }),
+        inputGroup: {
+          marginBottom: theme.spacing.lg,
+        },
+        label: {
+          fontSize: theme.typography.body.size * 0.875,
+          fontWeight: theme.typography.h2.weight,
+          color: theme.colors.onSurface,
+          marginBottom: theme.spacing.sm,
+        },
+        selectedOption: {
+          borderColor: theme.colors.primary,
+          backgroundColor: alpha(theme.colors.primary, 0.1),
+        },
+        selectedOptionText: {
+          color: theme.colors.primary,
+          fontWeight: theme.typography.h2.weight,
+        },
+        optionsRow: {
+          flexDirection: 'row',
+          gap: theme.spacing.md,
+          marginBottom: theme.spacing.lg,
+        },
+        selectedTag: {
+          borderColor: theme.colors.primary,
+          backgroundColor: alpha(theme.colors.primary, 0.1),
+        },
+        selectedTagText: {
+          color: theme.colors.primary,
+          fontWeight: theme.typography.h2.weight,
+        },
+        textArea: {
+          minHeight: 100,
+          textAlignVertical: 'top',
+        },
+        healthOptions: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: theme.spacing.md,
+          marginBottom: theme.spacing.lg,
+        },
+        healthOption: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingVertical: theme.spacing.sm,
+          paddingHorizontal: theme.spacing.md,
+          borderRadius: theme.radii.md,
+          borderWidth: 1,
+          borderColor: theme.colors.border,
+          backgroundColor: theme.colors.surface,
+        },
+        selectedHealthOption: {
+          borderColor: theme.colors.primary,
+          backgroundColor: alpha(theme.colors.primary, 0.1),
+        },
+        healthIcon: {
+          fontSize: theme.typography.body.size,
+          marginEnd: theme.spacing.xs,
+        },
+        healthLabel: {
+          fontSize: theme.typography.body.size * 0.875,
+          color: theme.colors.onMuted,
+        },
+        selectedHealthLabel: {
+          color: theme.colors.primary,
+          fontWeight: theme.typography.h2.weight,
+        },
+        healthNote: {
+          fontSize: theme.typography.body.size * 0.875,
+          color: theme.colors.onMuted,
+          lineHeight: theme.typography.body.lineHeight * 1.25,
+          marginTop: theme.spacing.md,
+        },
+        footer: {
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingVertical: theme.spacing.lg + theme.spacing.xs,
+          borderTopWidth: 1,
+          borderTopColor: theme.colors.border,
+        },
+        backButton: {
+          paddingVertical: theme.spacing.md,
+          paddingHorizontal: theme.spacing.lg + theme.spacing.xs,
+          borderRadius: theme.radii.sm,
+          backgroundColor: theme.colors.surface,
+          borderWidth: 1,
+          borderColor: theme.colors.border,
+          minWidth: 100,
+          alignItems: 'center',
+        },
+        backButtonText: {
+          fontSize: theme.typography.body.size,
+          fontWeight: theme.typography.h2.weight,
+          color: theme.colors.onSurface,
+        },
+        nextButton: {
+          paddingVertical: theme.spacing.md,
+          paddingHorizontal: theme.spacing.lg + theme.spacing.xs,
+          borderRadius: theme.radii.sm,
+          backgroundColor: theme.colors.primary,
+          minWidth: 100,
+          alignItems: 'center',
+        },
+        disabledButton: {
+          backgroundColor: theme.colors.surface,
+          opacity: 0.6,
+        },
+        nextButtonText: {
+          fontSize: theme.typography.body.size,
+          fontWeight: theme.typography.h2.weight,
+          color: theme.colors.onPrimary,
+        },
+      });
+    },
     [theme],
   );
 

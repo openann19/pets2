@@ -1,6 +1,6 @@
 // navigation/UltraTabBar.tsx
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Platform, type LayoutChangeEvent, type NativeScrollEvent } from "react-native";
+import { View, Text, StyleSheet, Platform, Pressable, type LayoutChangeEvent } from "react-native";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { tabBarController } from "./tabbarController";
+import { useTheme as useAppTheme } from "@mobile/theme";
 
 type IoniconsName = string;
 
@@ -49,6 +50,7 @@ const badgeCount = (route: string): number => (route === "Matches" ? 3 : route =
 const UltraTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation }) => {
   const insets = useSafeAreaInsets();
   const { colors, dark } = useTheme();
+  const appTheme = useAppTheme();
 
   const [containerW, setContainerW] = useState(0);
   const tabXs = useRef<number[]>([]);
@@ -125,7 +127,12 @@ const UltraTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigati
   const navigateTo = (idx: number) => {
     const route = state.routes[idx];
     if (!route) return;
-    if (Platform.OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Haptic feedback
+    if (Platform.OS === "ios") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    } else {
+      Haptics.selectionAsync().catch(() => {});
+    }
     if (state.index !== idx) navigation.navigate(route.name);
   };
 
@@ -167,7 +174,8 @@ const UltraTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigati
           {state.routes.map((route, i) => {
             const d = descriptors[route.key]; const opts = d?.options ?? {};
             const label = (opts.tabBarLabel as string) ?? (opts.title as string) ?? route.name;
-            const focused = state.index === i; const color = focused ? colors.primary : colors.onSurface
+            const focused = state.index === i;
+            const color = focused ? colors.primary : appTheme.colors.onMuted;
             const count = badgeCount(route.name);
 
             // per-tab animations
@@ -185,7 +193,14 @@ const UltraTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigati
             }, [count]);
 
             const press = () => {
-              if (Platform.OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              // Haptic feedback on tab switch
+              if (Platform.OS === "ios") {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              } else {
+                // Android: Use selection haptic for tab switches
+                Haptics.selectionAsync().catch(() => {});
+              }
+              
               const evt = navigation.emit({ type: "tabPress", target: route.key, canPreventDefault: true });
               if (!focused && !evt.defaultPrevented) navigation.navigate(route.name);
               const cx = (tabXs.current[i] ?? 0) + (tabWs.current[i] ?? 0) / 2;
@@ -193,20 +208,38 @@ const UltraTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigati
             };
 
             return (
-              <TouchableOpacity key={route.key} onLayout={onTab(i)} onPress={press} onLongPress={() => navigation.emit({ type: "tabLongPress", target: route.key })} style={styles.tabBtn} activeOpacity={0.92}
-                accessibilityRole="tab" accessibilityState={focused ? { selected: true } : {}} accessibilityLabel={opts.tabBarAccessibilityLabel || `${label} tab`} testID={opts.tabBarTestID}>
+              <Pressable
+                key={route.key}
+                onLayout={onTab(i)}
+                onPress={press}
+                onLongPress={() => navigation.emit({ type: "tabLongPress", target: route.key })}
+                style={styles.tabBtn}
+                android_ripple={
+                  Platform.OS === 'android'
+                    ? {
+                        color: appTheme.colors.primary + '33', // 20% opacity
+                        borderless: false,
+                        radius: 32,
+                      }
+                    : undefined
+                }
+                accessibilityRole="tab"
+                accessibilityState={focused ? { selected: true } : {}}
+                accessibilityLabel={opts.tabBarAccessibilityLabel || `${label} tab`}
+                testID={opts.tabBarTestID}
+              >
                 <View style={styles.iconWrap}>
                   <Animated.View style={iconStyle}>
                     <Ionicons name={iconFor(route.name, focused)} size={24} color={color} />
                   </Animated.View>
                   {count > 0 && (
-                    <Animated.View style={[styles.badge, { borderColor: dark ? "#111" : "#fff", backgroundColor: colors.primary }, badgeStyle]}>
-                      <Text style={styles.badgeTxt}>{count > 99 ? "99+" : String(count)}</Text>
+                    <Animated.View style={[styles.badge, { borderColor: dark ? appTheme.colors.bg : appTheme.colors.surface, backgroundColor: appTheme.colors.danger }, badgeStyle]}>
+                      <Text style={[styles.badgeTxt, { color: appTheme.colors.onPrimary }]}>{count > 99 ? "99+" : String(count)}</Text>
                     </Animated.View>
                   )}
                 </View>
                 <Text style={[styles.label, { color, fontWeight: focused ? "600" : "400" }]} numberOfLines={1}>{label}</Text>
-              </TouchableOpacity>
+              </Pressable>
             );
           })}
         </BlurView>

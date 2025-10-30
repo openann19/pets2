@@ -60,6 +60,8 @@
     "fix:chained": "tsx scripts/fix-chained-properties.ts",
     "fix:chained:write": "tsx scripts/fix-chained-properties.ts --write",
     "mobile:tsc": "cd apps/mobile && pnpm exec tsc --noEmit",
+    "mobile:typecheck": "tsc -p apps/mobile/tsconfig.app.json && tsc -p apps/mobile/tsconfig.test.json",
+    "mobile:e2e:typecheck": "tsc -p apps/mobile/tsconfig.e2e.json",
     "mobile:test": "pnpm --filter apps/mobile test",
     "mobile:tsc:surgical": "cd apps/mobile && tsc -p tsconfig.surgical.json --pretty",
     "mobile:test:surgical": "cd apps/mobile && jest --config jest.config.cjs --runTestsByPath",
@@ -72,10 +74,19 @@
     "mobile:scan:ui": "cd apps/mobile && node scripts/scan-ui-violations.js",
     "mobile:scan:colors": "rg -n \"#([0-9a-fA-F]{3,8})\" apps/mobile/src | rg -v \"theme|tokens\" | cat",
     "mobile:scan:spacing": "rg -n \"(padding|margin|gap)\\s*:\\s*\\d+\\b\" apps/mobile/src | rg -v \"tokens|theme\" | cat",
+    "check:linking": "node scripts/check-linking.mjs",
+    "check:routes": "node scripts/check-linking.mjs",
+    "ui:map": "node scripts/ui-map.mjs --verbose",
+    "ui:metrics:home": "node scripts/ui-metrics.mjs --screen Home --out home --duration 6",
+    "ui:metrics:matches": "node scripts/ui-metrics.mjs --screen Matches --out matches --duration 6",
+    "ui:metrics:format": "node scripts/metrics-format.mjs docs/ui_media/metrics formatted-metrics.json",
+    "ui:check-linking": "node scripts/check-linking.mjs",
     "i18n:scan": "i18next-scanner --config i18next-scanner.config.cjs",
     "i18n:check": "node scripts/i18n-check.mjs",
     "next15:scan": "node scripts/check-next15-async.mjs apps/web",
-    "next15:scan:rg": "rg -n \"\\bcookies\\(|\\bheaders\\(|\\bdraftMode\\(\" apps/web --glob '!**/node_modules/**' || true"
+    "next15:scan:rg": "rg -n \"\\bcookies\\(|\\bheaders\\(|\\bdraftMode\\(\" apps/web --glob '!**/node_modules/**' || true",
+    "cursor:deeplink": "tsx tools/cursor-deeplink-generator.ts",
+    "cursor:deeplink:web": "tsx tools/cursor-deeplink-generator.ts --web"
   },
   "devDependencies": {
     "@babel/parser": "^7.28.5",
@@ -153,10 +164,10 @@
   "license": "MIT",
   "pnpm": {
     "overrides": {
-      "react": "^19.2.0",
-      "react-dom": "^19.2.0",
-      "@types/react": "^19.2.0",
-      "@types/react-dom": "^19.2.0",
+      "react": "18.2.0",
+      "react-dom": "18.2.0",
+      "@types/react": "18.2.79",
+      "@types/react-dom": "18.2.22",
       "framer-motion": "10.18.0",
       "csstype": "3.1.3",
       "expect": "29.7.0",
@@ -170,7 +181,7 @@
       "@storybook/react": "8.6.14",
       "@storybook/test": "8.6.14",
       "storybook": "8.6.14",
-      "react-test-renderer": "^19.2.0",
+      "react-test-renderer": "18.2.0",
       "form-data": "4.0.4",
       "semver": "7.5.4",
       "got": "11.8.5",
@@ -189,10 +200,10 @@
     }
   },
   "resolutions": {
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@types/react": "18.2.79",
+    "@types/react-dom": "18.2.22",
     "framer-motion": "10.18.0",
     "csstype": "3.1.3",
     "expect": "29.7.0",
@@ -206,7 +217,7 @@
     "@storybook/react": "8.6.14",
     "@storybook/test": "8.6.14",
     "storybook": "8.6.14",
-      "react-test-renderer": "^19.2.0"
+      "react-test-renderer": "18.2.0"
   },
   "quality-gate": {
     "enabled": true,

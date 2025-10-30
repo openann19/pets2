@@ -15,24 +15,22 @@ import { Colors } from '../animation';
 
 // === PREMIUM GRADIENT COLORS FOR TEXT ===
 const TEXT_GRADIENTS = (theme: ReturnType<typeof useTheme>) => ({
-  primary: [theme.colors.primary, theme.colors.primary, theme.colors.primary],
-  secondary: [theme.colors.primary, theme.colors.info, theme.colors.info],
-  premium: [theme.colors.primary, theme.colors.primary, theme.colors.primary],
-  sunset: [theme.colors.warning, theme.colors.warning, theme.colors.warning],
-  ocean: [theme.colors.primary, theme.colors.info, theme.colors.info],
+  primary: theme.palette.gradients.primary,
+  secondary: theme.palette.gradients.info,
+  premium: theme.palette.gradients.primary,
+  sunset: theme.palette.gradients.warning,
+  ocean: theme.palette.gradients.info,
   holographic: [
-    theme.colors.primary,
-    theme.colors.primary,
-    theme.colors.primary,
+    ...theme.palette.gradients.primary,
     theme.colors.primary,
     theme.colors.info,
   ],
-  neon: [theme.colors.info, theme.colors.primary, theme.colors.primary],
-  gold: [theme.colors.warning, theme.colors.warning, theme.colors.warning],
+  neon: [...theme.palette.gradients.info, theme.colors.primary],
+  gold: theme.palette.gradients.warning,
   rainbow: [
     theme.colors.danger,
     theme.colors.warning,
-    theme.colors.primary,
+    ...theme.palette.gradients.primary,
     theme.colors.success,
     theme.colors.primary,
     theme.colors.primary,
@@ -418,9 +416,9 @@ export const PremiumBody: React.FC<PremiumBodyProps> = ({
     <GradientText
       size={size}
       weight={weight}
-      gradient={gradient}
-      animated={animated}
-      style={style}
+      {...(gradient ? { gradient } : {})}
+      {...(animated ? { animated } : {})}
+      {...(style ? { style } : {})}
     >
       {children}
     </GradientText>
@@ -460,7 +458,7 @@ export const PremiumLabel: React.FC<PremiumLabelProps> = ({
 
   return (
     <AnimatedText
-      animation={animated ? 'fadeIn' : undefined}
+      {...(animated ? { animation: 'fadeIn' } : {})}
       style={StyleSheet.flatten([
         {
           fontSize: size === 'xs' ? 12 : size === 'base' ? 16 : 14,

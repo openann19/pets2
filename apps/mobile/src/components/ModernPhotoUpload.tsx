@@ -22,9 +22,10 @@ import EliteButton from './buttons/EliteButton';
 import FXContainer from './containers/FXContainer';
 import { AdvancedPhotoEditor } from './photo/AdvancedPhotoEditor';
 import { Modal } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const PHOTO_SIZE = (SCREEN_WIDTH - Theme.spacing['4xl'] * 2 - Theme.spacing.lg * 2) / 3;
 
 // === TYPES ===
 interface PhotoItem {
@@ -50,6 +51,12 @@ function ModernPhotoUpload({
   style,
   disabled = false,
 }: ModernPhotoUploadProps) {
+  const theme = useTheme();
+  const photoSize = useMemo(
+    () => (SCREEN_WIDTH - theme.spacing['4xl'] * 2 - theme.spacing.lg * 2) / 3,
+    [theme.spacing],
+  );
+  const styles = makeStyles(theme, photoSize);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPhotoEditor, setShowPhotoEditor] = useState(false);
   const [photoToEdit, setPhotoToEdit] = useState<string | null>(null);
@@ -173,11 +180,7 @@ function ModernPhotoUpload({
             {photo.isUploading && (
               <View style={styles.uploadingOverlay}>
                 <View style={styles.uploadingSpinner}>
-                  <Ionicons
-                    name="cloud-upload"
-                    size={24}
-                    color={Theme.colors.primary[500]}
-                  />
+                  <Ionicons name="cloud-upload" size={24} color={theme.colors.primary} />
                 </View>
                 <Text style={styles.uploadingText}>Uploading...</Text>
               </View>
@@ -186,11 +189,7 @@ function ModernPhotoUpload({
             {/* Error overlay */}
             {photo.error && (
               <View style={styles.errorOverlay}>
-                <Ionicons
-                  name="alert-circle"
-                  size={24}
-                  color={Theme.colors.status.error}
-                />
+                <Ionicons name="alert-circle" size={24} color={theme.colors.danger} />
                 <Text style={styles.errorText}>Failed</Text>
               </View>
             )}
@@ -284,12 +283,7 @@ function ModernPhotoUpload({
           entranceType="slideIn"
           style={styles.emptyState}
         >
-          <Ionicons
-            name="images"
-            size={48}
-            color={Theme.colors.neutral[400]}
-            style={styles.emptyIcon}
-          />
+          <Ionicons name="images" size={48} color={theme.colors.onMuted} style={styles.emptyIcon} />
           <Text style={styles.emptyTitle}>No photos yet</Text>
           <Text style={styles.emptySubtitle}>
             Add photos to help other pet owners get to know your pet better
@@ -301,102 +295,103 @@ function ModernPhotoUpload({
 }
 
 // === STYLES ===
-const styles = StyleSheet.create({
-  container: {
-    padding: Theme.spacing.xl,
-  },
-  title: {
-    fontSize: Theme.typography.fontSize['2xl'],
-    fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.sm,
-  },
-  subtitle: {
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
-    marginBottom: Theme.spacing.xl,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: Theme.spacing.lg,
-  },
-  photoContainer: {
-    width: PHOTO_SIZE,
-    height: PHOTO_SIZE,
-    position: 'relative',
-  },
-  photo: {
-    width: '100%',
-    height: '100%',
-    borderRadius: Theme.borderRadius.xl,
-  },
-  uploadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: Theme.borderRadius.xl,
-  },
-  uploadingSpinner: {
-    marginBottom: Theme.spacing.sm,
-  },
-  uploadingText: {
-    color: Theme.colors.neutral[0],
-    fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.medium,
-  },
-  errorOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(239, 68, 68, 0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: Theme.borderRadius.xl,
-  },
-  errorText: {
-    color: Theme.colors.neutral[0],
-    fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.medium,
-    marginTop: Theme.spacing.xs,
-  },
-  removeButton: {
-    position: 'absolute',
-    top: -8,
-    right: -8,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: Theme.colors.status.error,
-    padding: 0,
-    minHeight: 32,
-  },
-  addButton: {
-    width: PHOTO_SIZE,
-    height: PHOTO_SIZE,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyState: {
-    padding: Theme.spacing['4xl'],
-    alignItems: 'center',
-    marginTop: Theme.spacing.xl,
-  },
-  emptyIcon: {
-    marginBottom: Theme.spacing.lg,
-  },
-  emptyTitle: {
-    fontSize: Theme.typography.fontSize.lg,
-    fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.sm,
-  },
-  emptySubtitle: {
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
-    textAlign: 'center',
-    lineHeight: Theme.typography.fontSize.base * Theme.typography.lineHeight.relaxed,
-  },
-});
+function makeStyles(theme: AppTheme, photoSize: number) {
+  return StyleSheet.create({
+    container: {
+      padding: theme.spacing.xl,
+    },
+    title: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    subtitle: {
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onMuted,
+      marginBottom: theme.spacing.xl,
+    },
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      gap: theme.spacing.lg,
+    },
+    photoContainer: {
+      width: photoSize,
+      height: photoSize,
+      position: 'relative',
+    },
+    photo: {
+      width: '100%',
+      height: '100%',
+      borderRadius: theme.radii.xl,
+    },
+    uploadingOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: theme.colors.overlay,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: theme.radii.xl,
+    },
+    uploadingSpinner: {
+      marginBottom: theme.spacing.sm,
+    },
+    uploadingText: {
+      color: theme.colors.onPrimary,
+      fontSize: theme.typography.body.size,
+      fontWeight: '600',
+    },
+    errorOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: theme.colors.danger,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: theme.radii.xl,
+    },
+    errorText: {
+      color: theme.colors.onPrimary,
+      fontSize: theme.typography.body.size,
+      fontWeight: '600',
+      marginTop: theme.spacing.xs,
+    },
+    removeButton: {
+      position: 'absolute',
+      top: -8,
+      right: -8,
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: theme.colors.danger,
+      padding: 0,
+      minHeight: 32,
+    },
+    addButton: {
+      width: photoSize,
+      height: photoSize,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    emptyState: {
+      padding: theme.spacing['4xl'],
+      alignItems: 'center',
+      marginTop: theme.spacing.xl,
+    },
+    emptyIcon: {
+      marginBottom: theme.spacing.lg,
+    },
+    emptyTitle: {
+      fontSize: theme.typography.body.size,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    emptySubtitle: {
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onMuted,
+      textAlign: 'center',
+    },
+  });
+}
 
 export default ModernPhotoUpload;

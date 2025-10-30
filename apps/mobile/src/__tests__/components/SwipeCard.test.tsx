@@ -27,8 +27,8 @@ const mockTheme = {
     primary: 'Theme.colors.primary[500]',
     background: 'Theme.colors.neutral[0]',
     text: 'Theme.colors.neutral[950]',
-    card: '#f8f9fa',
-    border: '#e9ecef',
+    card: 'Theme.colors.surface',
+    border: 'Theme.colors.border',
   },
   isDark: false,
 };

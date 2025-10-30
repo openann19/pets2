@@ -11,13 +11,13 @@ import type { CardVariant } from './CardVariants';
 
 interface CardBackgroundProps {
   variant: CardVariant;
-  gradientColors?: string[];
+  gradientColors: string[];
   blurIntensity?: number;
 }
 
 export function CardBackground({
   variant,
-  gradientColors = ['Theme.colors.primary[500]', 'Theme.colors.primary[600]'],
+  gradientColors,
   blurIntensity = 20,
 }: CardBackgroundProps) {
   switch (variant) {

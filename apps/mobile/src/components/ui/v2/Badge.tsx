@@ -2,8 +2,9 @@ import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '@/theme';
 import { Text } from './Text';
+import { PremiumShimmer } from '../micro/PremiumShimmer';
 
-export type BadgeVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'muted';
+export type BadgeVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'muted' | 'premium';
 export type BadgeSize = 'sm' | 'md' | 'lg';
 
 export interface BadgeProps {
@@ -11,6 +12,7 @@ export interface BadgeProps {
   variant?: BadgeVariant;
   size?: BadgeSize;
   children?: React.ReactNode;
+  shimmer?: boolean;
 }
 
 const sizeMap = {
@@ -24,6 +26,7 @@ export function Badge({
   variant = 'primary',
   size = 'md',
   children,
+  shimmer = variant === 'premium',
 }: BadgeProps) {
   const theme = useTheme();
   const sizeStyles = sizeMap[size];
@@ -40,6 +43,8 @@ export function Badge({
         return { bg: theme.colors.warning, text: theme.colors.onPrimary };
       case 'danger':
         return { bg: theme.colors.danger, text: theme.colors.onPrimary };
+      case 'premium':
+        return { bg: theme.colors.primary, text: theme.colors.onPrimary };
       case 'muted':
       default:
         return { bg: theme.colors.border, text: theme.colors.onSurface };
@@ -48,7 +53,7 @@ export function Badge({
 
   const { bg, text, border } = getColors();
 
-  return (
+  const badgeContent = (
     <View
       style={[
         {
@@ -74,4 +79,18 @@ export function Badge({
       {children}
     </View>
   );
+
+  // Wrap with shimmer if premium variant
+  if (shimmer && variant === 'premium') {
+    return (
+      <PremiumShimmer
+        gradient={theme.palette.gradients.primary}
+        onViewDidAppear={() => {}}
+      >
+        {badgeContent}
+      </PremiumShimmer>
+    );
+  }
+
+  return badgeContent;
 }

@@ -1,0 +1,422 @@
+[
+  {
+    "id": "UI-001",
+    "category": "Tokens",
+    "title": "Replace raw star color with warning token on Home",
+    "rationale": "Hard-coded #fbbf24 bypasses theme; breaks dark/high-contrast.",
+    "impact": 3,
+    "effort": "S",
+    "tokens_touched": ["colors.warning"],
+    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
+    "acceptance": [
+      "Ionicons star uses theme.colors.warning",
+      "Snapshots updated"
+    ],
+    "before_media": "docs/ui_media/UI-001-before.png",
+    "after_mock": "docs/ui_media/UI-001-after.png"
+  },
+  {
+    "id": "UI-002",
+    "category": "Tokens",
+    "title": "Tokenize Home paddings/margins to spacing tokens",
+    "rationale": "Numeric 12/16/20 are inconsistent; use theme.spacing.*",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": ["spacing.sm","spacing.md","spacing.lg"],
+    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
+    "acceptance": [
+      "All numeric spacings replaced with nearest spacing tokens",
+      "Lint rule passes: no-legacy-spacing"
+    ],
+    "before_media": "docs/ui_media/UI-002-before.png",
+    "after_mock": "docs/ui_media/UI-002-after.png"
+  },
+  {
+    "id": "UI-003",
+    "category": "Color",
+    "title": "Normalize AdvancedFilters gradient to theme palette",
+    "rationale": "Hard-coded linear gradient breaks theming and contrast.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": ["palette.gradients.primary"],
+    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx"],
+    "acceptance": [
+      "LinearGradient colors source from theme.palette.gradients.*",
+      "Contrast ≥4.5:1 for body text"
+    ],
+    "before_media": "docs/ui_media/UI-003-before.png",
+    "after_mock": "docs/ui_media/UI-003-after.png"
+  },
+  {
+    "id": "UI-004",
+    "category": "A11y",
+    "title": "Increase back button target to ≥44dp (or add hitSlop)",
+    "rationale": "40×40 misses WCAG 2.5.5 target size.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": ["radii.full","spacing.sm"],
+    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx"],
+    "acceptance": [
+      "Button size ≥44×44 or hitSlop expands to ≥44",
+      "TalkBack/VoiceOver target confirmed"
+    ],
+    "before_media": "docs/ui_media/UI-004-before.png",
+    "after_mock": "docs/ui_media/UI-004-after.png"
+  },
+  {
+    "id": "UI-005",
+    "category": "A11y",
+    "title": "Add accessibility labels to Home icon-only actions",
+    "rationale": "Icon-only buttons lack labels for SR users.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": [],
+    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
+    "acceptance": [
+      "All tappables have accessibilityLabel & Role",
+      "A11y lints pass"
+    ],
+    "before_media": "docs/ui_media/UI-005-before.png",
+    "after_mock": "docs/ui_media/UI-005-after.png"
+  },
+  {
+    "id": "UI-006",
+    "category": "Tokens",
+    "title": "Replace rgba(255,255,255,*) overlays with surface tokens",
+    "rationale": "Manual rgba whites don’t adapt to themes.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": ["colors.surface","colors.onSurface","colors.border"],
+    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx"],
+    "acceptance": [
+      "All overlays use surface/onSurface/border tokens",
+      "Contrast verified"
+    ],
+    "before_media": "docs/ui_media/UI-006-before.png",
+    "after_mock": "docs/ui_media/UI-006-after.png"
+  },
+  {
+    "id": "UI-007",
+    "category": "Motion",
+    "title": "Add press feedback (scale 0.98 + shadow soften) to cards",
+    "rationale": "Improves affordance and delight; consistent motion grammar.",
+    "impact": 3,
+    "effort": "S",
+    "tokens_touched": ["motion.timing","shadow.lg"],
+    "files": ["apps/mobile/src/components/matches/MatchCard.tsx","apps/mobile/src/screens/HomeScreen.tsx"],
+    "acceptance": [
+      "PressIn/Out anim 180–220ms; spring return",
+      "No UI thread jank"
+    ],
+    "before_media": "docs/ui_media/UI-007-before.gif",
+    "after_mock": "docs/ui_media/UI-007-after.gif"
+  },
+  {
+    "id": "UI-008",
+    "category": "Performance",
+    "title": "Memoize heavy rows and virtualize long lists",
+    "rationale": "Reduce re-renders; maintain 60fps on scroll.",
+    "impact": 5,
+    "effort": "S",
+    "tokens_touched": [],
+    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
+    "acceptance": [
+      "JS/UI FPS ≥58 during list scroll per ui-metrics.mjs",
+      "Re-render count reduced ≥50%"
+    ],
+    "before_media": "docs/ui_media/UI-008-before.gif",
+    "after_mock": "docs/ui_media/UI-008-after.gif"
+  },
+  {
+    "id": "UI-009",
+    "category": "A11y",
+    "title": "Ensure Dynamic Type up to 200% without clipping",
+    "rationale": "Prevent truncation and overflow in cards and headers.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": ["typography.scale"],
+    "files": ["apps/mobile/src/screens/HomeScreen.tsx","apps/mobile/src/components/matches/MatchCard.tsx"],
+    "acceptance": [
+      "200% DT verified on iOS/Android with no clipping",
+      "A11y screenshots attached"
+    ],
+    "before_media": "docs/ui_media/UI-009-before.png",
+    "after_mock": "docs/ui_media/UI-009-after.png"
+  },
+  {
+    "id": "UI-010",
+    "category": "Tokens",
+    "title": "Adopt radii tokens on MatchCard and overlays",
+    "rationale": "Numeric radii reduce cohesion; use radii.lg/xl/full.",
+    "impact": 3,
+    "effort": "S",
+    "tokens_touched": ["radii.lg","radii.xl","radii.full"],
+    "files": ["apps/mobile/src/components/matches/MatchCard.tsx","apps/mobile/src/components/swipe/MatchModal.tsx"],
+    "acceptance": [
+      "All corners mapped to radii tokens",
+      "Snapshots updated"
+    ],
+    "before_media": "docs/ui_media/UI-010-before.png",
+    "after_mock": "docs/ui_media/UI-010-after.png"
+  },
+  {
+    "id": "UI-011",
+    "category": "A11y",
+    "title": "Add hitSlop to dense list/action buttons",
+    "rationale": "Improve reachability without visual changes.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": [],
+    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx","apps/mobile/src/screens/HomeScreen.tsx"],
+    "acceptance": [
+      "All tappables effective target ≥44×44",
+      "Detox tap reliability improved"
+    ],
+    "before_media": "docs/ui_media/UI-011-before.png",
+    "after_mock": "docs/ui_media/UI-011-after.png"
+  },
+  {
+    "id": "UI-012",
+    "category": "Performance",
+    "title": "Guard confetti and heavy effects on low-end devices",
+    "rationale": "Heavy particle effects can drop frames.",
+    "impact": 3,
+    "effort": "S",
+    "tokens_touched": ["motion.prefersReducedMotion"],
+    "files": ["apps/mobile/src/components/swipe/MatchModal.tsx"],
+    "acceptance": [
+      "FPS ≥55 on mid-range device during effect",
+      "Respect OS reduced-motion"
+    ],
+    "before_media": "docs/ui_media/UI-012-before.gif",
+    "after_mock": "docs/ui_media/UI-012-after.gif"
+  },
+  {
+    "id": "UI-013",
+    "category": "Color",
+    "title": "Replace white text in Search with onSurface tokens",
+    "rationale": "White-on-gradient may fail contrast in light/dark variants.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": ["colors.onSurface","colors.surface"],
+    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx"],
+    "acceptance": [
+      "Contrast ≥4.5:1 verified",
+      "No raw 'white' in touched file"
+    ],
+    "before_media": "docs/ui_media/UI-013-before.png",
+    "after_mock": "docs/ui_media/UI-013-after.png"
+  },
+  {
+    "id": "UI-014",
+    "category": "Typography",
+    "title": "Align Search titles to type ramp",
+    "rationale": "Manual 18/20 sizes; use Heading tokens.",
+    "impact": 3,
+    "effort": "S",
+    "tokens_touched": ["typography.heading"],
+    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx"],
+    "acceptance": [
+      "Headings use standardized sizes",
+      "Snapshots updated"
+    ],
+    "before_media": "docs/ui_media/UI-014-before.png",
+    "after_mock": "docs/ui_media/UI-014-after.png"
+  },
+  {
+    "id": "UI-015",
+    "category": "A11y",
+    "title": "Add accessibilityLabel to Home quick action cards",
+    "rationale": "Cards rely on inner text; ensure top-level label.",
+    "impact": 3,
+    "effort": "S",
+    "tokens_touched": [],
+    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
+    "acceptance": [
+      "VoiceOver reads actionable label",
+      "No duplicate focus targets"
+    ],
+    "before_media": "docs/ui_media/UI-015-before.png",
+    "after_mock": "docs/ui_media/UI-015-after.png"
+  },
+  {
+    "id": "UI-016",
+    "category": "Tokens",
+    "title": "Unify badge colors to semantic tokens",
+    "rationale": "Ensure badges inherit danger/success tokens consistently.",
+    "impact": 2,
+    "effort": "S",
+    "tokens_touched": ["colors.danger","colors.success"],
+    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
+    "acceptance": [
+      "Badge bg/text use semantic tokens",
+      "Snapshots updated"
+    ],
+    "before_media": "docs/ui_media/UI-016-before.png",
+    "after_mock": "docs/ui_media/UI-016-after.png"
+  },
+  {
+    "id": "UI-017",
+    "category": "Performance",
+    "title": "Image fade-in with dominant-color placeholders",
+    "rationale": "Reduce perceived latency and layout shift.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": ["colors.surface","colors.muted"],
+    "files": ["apps/mobile/src/components/matches/MatchCard.tsx"],
+    "acceptance": [
+      "No blank flashes; smooth fade-in",
+      "FPS unaffected"
+    ],
+    "before_media": "docs/ui_media/UI-017-before.gif",
+    "after_mock": "docs/ui_media/UI-017-after.gif"
+  },
+  {
+    "id": "UI-018",
+    "category": "Feedback",
+    "title": "Add standardized empty/error banners with retry",
+    "rationale": "Consistent feedback improves trust and flow recovery.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": ["colors.danger","colors.surface","colors.onSurface"],
+    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
+    "acceptance": [
+      "Empty and error states share component",
+      "Retry callback wired and tested"
+    ],
+    "before_media": "docs/ui_media/UI-018-before.png",
+    "after_mock": "docs/ui_media/UI-018-after.png"
+  },
+  {
+    "id": "UI-019",
+    "category": "Platform",
+    "title": "Map tab ripple + haptic on switch",
+    "rationale": "Improve tab switch feedback and platform idioms.",
+    "impact": 3,
+    "effort": "S",
+    "tokens_touched": ["motion.timing"],
+    "files": ["apps/mobile/src/navigation/BottomTabNavigator.tsx"],
+    "acceptance": [
+      "Haptic on tab change",
+      "Ripple/elevation per platform"
+    ],
+    "before_media": "docs/ui_media/UI-019-before.gif",
+    "after_mock": "docs/ui_media/UI-019-after.gif"
+  },
+  {
+    "id": "UI-020",
+    "category": "i18n",
+    "title": "Externalize Search static strings to i18n",
+    "rationale": "Raw strings block localization/RTL readiness.",
+    "impact": 3,
+    "effort": "S",
+    "tokens_touched": [],
+    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx","apps/mobile/src/components/filters/AdvancedPetFilters.tsx"],
+    "acceptance": [
+      "No hard-coded English strings in touched files",
+      "Keys present for RTL locales"
+    ],
+    "before_media": "docs/ui_media/UI-020-before.png",
+    "after_mock": "docs/ui_media/UI-020-after.png"
+  }
+]
+
+[
+  {
+    "id": "UI-001",
+    "category": "Tokens",
+    "title": "Normalize card radii & elevation on Home/Matches",
+    "rationale": "Mixed radii/shadows reduce cohesion.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": ["radii.lg", "elevation.2", "shadow.lg"],
+    "files": ["apps/mobile/src/components/ui/PetCard.tsx"],
+    "acceptance": ["All cards use radii.lg & elevation.2", "Snapshots updated"],
+    "before_media": "docs/ui_media/UI-001-before.png",
+    "after_mock": "docs/ui_media/UI-001-after.png"
+  },
+  {
+    "id": "UI-002",
+    "category": "Motion",
+    "title": "Unified press feedback with haptics",
+    "rationale": "Inconsistent touch feedback reduces perceived quality.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": ["timing.medium", "easing.standard"],
+    "files": ["apps/mobile/src/components/primitives/Interactive.tsx"],
+    "acceptance": ["Scale 0.98 + soften shadow", "Haptic on primary actions", "No perf regressions"]
+  },
+  {
+    "id": "UI-003",
+    "category": "Loading",
+    "title": "Skeletons for lists and cards",
+    "rationale": "Avoids layout shifts; improves perceived speed.",
+    "impact": 5,
+    "effort": "S",
+    "tokens_touched": ["colors.skeleton.base", "radii.md"],
+    "files": ["apps/mobile/src/components/skeletons/*.tsx", "apps/mobile/src/screens/HomeScreen.tsx"],
+    "acceptance": ["No CLS on show/hide", "Fade-in ≤200ms", "Detox visual check"]
+  },
+  {
+    "id": "UI-004",
+    "category": "Images",
+    "title": "Dominant-color placeholders + prefetch",
+    "rationale": "Prevents flicker; stabilizes layout.",
+    "impact": 4,
+    "effort": "S",
+    "tokens_touched": ["opacity.medium"],
+    "files": ["apps/mobile/src/lib/images/imageLoader.ts", "apps/mobile/src/components/cards/PetCard.tsx"],
+    "acceptance": ["Images fade-in", "No jank on scroll"]
+  },
+  {
+    "id": "UI-005",
+    "category": "A11y",
+    "title": "Touch targets ≥44dp and hitSlop",
+    "rationale": "WCAG target size; reduces mis-taps.",
+    "impact": 5,
+    "effort": "S",
+    "files": ["apps/mobile/src/components/ui/PetCard.tsx", "apps/mobile/src/components/chips/*"],
+    "acceptance": ["Audit passes", "No overlapping targets"]
+  },
+  {
+    "id": "UI-006",
+    "category": "Empty States",
+    "title": "Standardized empty state templates",
+    "rationale": "Consistent UX across screens.",
+    "impact": 4,
+    "effort": "S",
+    "files": ["apps/mobile/src/components/empty/EmptyState.tsx"],
+    "acceptance": ["Used in Matches, Chat, MyPets", "Consistent spacing and copy"]
+  },
+  {
+    "id": "UI-007",
+    "category": "Error Handling",
+    "title": "Error banner with retry handler",
+    "rationale": "Consistent error display and recovery.",
+    "impact": 4,
+    "effort": "S",
+    "files": ["apps/mobile/src/components/feedback/ErrorBanner.tsx"],
+    "acceptance": ["Network and parsing errors supported", "Retry handler wired"]
+  },
+  {
+    "id": "UI-008",
+    "category": "Navigation",
+    "title": "Real linking configuration",
+    "rationale": "Deep links work reliably.",
+    "impact": 5,
+    "effort": "S",
+    "files": ["apps/mobile/src/navigation/linking.ts"],
+    "acceptance": ["All routes mapped", "Params parsed correctly"]
+  },
+  {
+    "id": "UI-009",
+    "category": "Type Safety",
+    "title": "Param union type hygiene",
+    "rationale": "Type-safe deep links.",
+    "impact": 3,
+    "effort": "S",
+    "files": ["apps/mobile/src/navigation/types.ts"],
+    "acceptance": ["MemoryWeave and ARScentTrails unions normalized"]
+  }
+]
+

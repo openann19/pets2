@@ -45,12 +45,12 @@ export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
       sectionTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: theme.colors.neutral[900],
+        color: theme.colors.onSurface,
         marginBottom: 16,
       },
       sectionDesc: {
         fontSize: 14,
-        color: theme.colors.neutral[500],
+        color: theme.colors.onMuted,
         marginBottom: 16,
       },
       tagsContainer: {
@@ -62,20 +62,20 @@ export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderWidth: 1,
-        borderColor: theme.colors.neutral[300],
+        borderColor: theme.colors.border,
         borderRadius: 16,
-        backgroundColor: theme.colors.neutral[0],
+        backgroundColor: theme.colors.bg,
       },
       tagSelected: {
-        borderColor: theme.colors.secondary[500],
-        backgroundColor: theme.colors.neutral[100],
+        borderColor: theme.colors.primary,
+        backgroundColor: theme.colors.surface,
       },
       tagText: {
         fontSize: 14,
-        color: theme.colors.neutral[700],
+        color: theme.colors.onMuted,
       },
       tagTextSelected: {
-        color: theme.colors.secondary[500],
+        color: theme.colors.primary,
         fontWeight: '600',
       },
     });
@@ -97,7 +97,7 @@ export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
               formData.personalityTags.includes(tag) && styles.tagSelected,
             ])}
             onPress={() => {
-              togglePersonalityTag(tag);
+              toggleTag(tag);
             }}
           >
             <Text

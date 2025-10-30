@@ -3,12 +3,29 @@
  * 
  * Provides mock API endpoints for testing and development
  * when backend is unavailable or for E2E testing
+ * 
+ * Includes Zod validation for GDPR and Chat endpoints
  */
 
 import express from 'express';
 import cors from 'cors';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { 
+  DeleteAccountRequestSchema,
+  DeleteAccountResponseSchema,
+  AccountStatusResponseSchema,
+  DataExportRequestSchema,
+  DataExportResponseSchema,
+  ConfirmDeletionRequestSchema,
+  ConfirmDeletionResponseSchema,
+  SendReactionRequestSchema,
+  SendReactionResponseSchema,
+  SendAttachmentRequestSchema,
+  SendAttachmentResponseSchema,
+  SendVoiceNoteRequestSchema,
+  SendVoiceNoteResponseSchema,
+} from '../apps/mobile/src/schemas/api';
 
 const app = express();
 const PORT = 3001;
@@ -57,46 +74,176 @@ app.post('/api/auth/register', (req, res) => {
   });
 });
 
-// GDPR endpoints
+// GDPR endpoints with Zod validation
 app.delete('/api/users/delete-account', (req, res) => {
-  const gracePeriodEndsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-  
-  res.json({
-    success: true,
-    message: 'Account deletion scheduled',
-    requestId: `req-${Date.now()}`,
-    gracePeriodEndsAt: gracePeriodEndsAt.toISOString(),
-    canCancel: true,
-    exportUrl: `/api/users/export-data`
-  });
+  try {
+    const validated = DeleteAccountRequestSchema.parse(req.body || {});
+    
+    // Check for invalid password scenario
+    if (validated.password === 'wrong') {
+      return res.status(400).json({
+        success: false,
+        error: 'INVALID_PASSWORD',
+        message: 'Password is incorrect'
+      });
+    }
+    
+    const gracePeriodEndsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const response = {
+      success: true,
+      message: 'Account deletion scheduled',
+      requestId: `req-${Date.now()}`,
+      gracePeriodEndsAt: gracePeriodEndsAt.toISOString(),
+      canCancel: true,
+    };
+    
+    // Validate response
+    const validatedResponse = DeleteAccountResponseSchema.parse(response);
+    res.json(validatedResponse);
+  } catch (error: any) {
+    if (error.name === 'ZodError') {
+      return res.status(400).json({
+        success: false,
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid request format',
+        details: error.errors
+      });
+    }
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'Internal server error'
+    });
+  }
 });
 
 app.post('/api/users/confirm-deletion', (req, res) => {
-  const { token } = req.body;
-  
-  if (token === 'valid-token') {
-    res.json({
+  try {
+    const validated = ConfirmDeletionRequestSchema.parse(req.body);
+    
+    if (!validated.token || validated.token === 'invalid-token') {
+      return res.status(400).json({ 
+        success: false,
+        error: 'TOKEN_INVALID',
+        message: 'Invalid or expired token' 
+      });
+    }
+    
+    const response = {
       success: true,
       deletedAt: new Date().toISOString()
+    };
+    
+    const validatedResponse = ConfirmDeletionResponseSchema.parse(response);
+    res.json(validatedResponse);
+  } catch (error: any) {
+    if (error.name === 'ZodError') {
+      return res.status(400).json({
+        success: false,
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid request format',
+        details: error.errors
+      });
+    }
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'Internal server error'
     });
-  } else {
-    res.status(400).json({ error: 'Invalid token' });
   }
 });
 
 app.get('/api/users/export-data', (req, res) => {
+  const { exportId } = req.query;
+  
+  if (exportId === 'error') {
+    return res.status(500).json({
+      success: false,
+      error: 'EXPORT_FAILED',
+      message: 'Data export failed, please try again'
+    });
+  }
+  
   res.json({
-    url: 'https://example.com/export.json',
+    success: true,
+    url: `https://example.com/export-${exportId || Date.now()}.json`,
     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    format: 'json'
+    format: 'json',
+    exportId: exportId || `export-${Date.now()}`
   });
+});
+
+app.post('/api/users/request-export', (req, res) => {
+  try {
+    const validated = DataExportRequestSchema.parse(req.body);
+    
+    // Simulate export processing
+    const exportId = `export-${Date.now()}`;
+    const response = {
+      success: true,
+      exportId,
+      url: `https://example.com/export-${exportId}.json`,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      format: validated.format || 'json',
+      estimatedTime: '5 minutes',
+      estimatedCompletion: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+      exportData: {
+        profile: { id: 'user-1', email: 'user@example.com', name: 'Test User' },
+        pets: [],
+        matches: [],
+        messages: validated.includeMessages !== false ? [] : undefined,
+        preferences: validated.includePreferences !== false ? {} : undefined
+      }
+    };
+    
+    const validatedResponse = DataExportResponseSchema.parse(response);
+    res.json(validatedResponse);
+  } catch (error: any) {
+    if (error.name === 'ZodError') {
+      return res.status(400).json({
+        success: false,
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid request format',
+        details: error.errors
+      });
+    }
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'Internal server error'
+    });
+  }
 });
 
 app.post('/api/users/cancel-deletion', (req, res) => {
   res.json({
     success: true,
-    cancelledAt: new Date().toISOString()
+    cancelledAt: new Date().toISOString(),
+    message: 'Account deletion cancelled successfully'
   });
+});
+
+app.get('/api/account/status', (req, res) => {
+  try {
+    // Mock: Return pending status for testing
+    const response = {
+      success: true,
+      status: 'pending' as const,
+      scheduledDeletionDate: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000).toISOString(),
+      daysRemaining: 25,
+      canCancel: true,
+      requestId: 'req-1234567890'
+    };
+    
+    const validatedResponse = AccountStatusResponseSchema.parse(response);
+    res.json(validatedResponse);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'Internal server error'
+    });
+  }
 });
 
 // Matches endpoints
@@ -144,34 +291,112 @@ app.post('/api/chat/:conversationId/message', (req, res) => {
   });
 });
 
+// Chat endpoints with Zod validation
 app.post('/api/chat/:conversationId/reaction', (req, res) => {
-  res.json({
-    success: true,
-    updatedMessage: {
-      ...req.body,
-      reactions: [{ type: req.body.reactionType, count: 1 }]
+  try {
+    const validated = SendReactionRequestSchema.parse({
+      messageId: req.body.messageId,
+      reactionType: req.body.reactionType
+    });
+    
+    const response = {
+      success: true,
+      updatedMessage: {
+        _id: validated.messageId,
+        matchId: req.params.conversationId,
+        author: 'user-1',
+        content: 'Original message',
+        createdAt: new Date().toISOString(),
+        reactions: [{ type: validated.reactionType, userId: 'user-1', createdAt: new Date().toISOString() }]
+      }
+    };
+    
+    const validatedResponse = SendReactionResponseSchema.parse(response);
+    res.json(validatedResponse);
+  } catch (error: any) {
+    if (error.name === 'ZodError') {
+      return res.status(400).json({
+        success: false,
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid request format',
+        details: error.errors
+      });
     }
-  });
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'Internal server error'
+    });
+  }
 });
 
 app.post('/api/chat/:conversationId/attachment', (req, res) => {
-  res.json({
-    success: true,
-    messageId: `msg-${Date.now()}`,
-    attachmentId: `att-${Date.now()}`,
-    url: 'https://example.com/attachment.jpg',
-    type: req.body.type,
-    fileSize: 1024 * 1024 // 1MB
-  });
+  try {
+    const validated = SendAttachmentRequestSchema.parse({
+      ...req.body,
+      conversationId: req.params.conversationId
+    });
+    
+    const response = {
+      success: true,
+      messageId: `msg-${Date.now()}`,
+      attachmentId: `att-${Date.now()}`,
+      url: validated.attachmentUrl || 'https://example.com/attachment.jpg',
+      type: validated.type,
+      fileSize: validated.fileSize || 1024 * 1024
+    };
+    
+    const validatedResponse = SendAttachmentResponseSchema.parse(response);
+    res.json(validatedResponse);
+  } catch (error: any) {
+    if (error.name === 'ZodError') {
+      return res.status(400).json({
+        success: false,
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid request format',
+        details: error.errors
+      });
+    }
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'Internal server error'
+    });
+  }
 });
 
 app.post('/api/chat/:conversationId/voice', (req, res) => {
-  res.json({
-    success: true,
-    messageId: `msg-${Date.now()}`,
-    audioUrl: 'https://example.com/voice.mp3',
-    duration: req.body.duration
-  });
+  try {
+    const validated = SendVoiceNoteRequestSchema.parse({
+      ...req.body,
+      conversationId: req.params.conversationId
+    });
+    
+    const response = {
+      success: true,
+      messageId: `msg-${Date.now()}`,
+      audioUrl: validated.audioUrl || 'https://example.com/voice.mp3',
+      duration: validated.duration,
+      transcription: validated.transcription
+    };
+    
+    const validatedResponse = SendVoiceNoteResponseSchema.parse(response);
+    res.json(validatedResponse);
+  } catch (error: any) {
+    if (error.name === 'ZodError') {
+      return res.status(400).json({
+        success: false,
+        error: 'VALIDATION_ERROR',
+        message: 'Invalid request format',
+        details: error.errors
+      });
+    }
+    res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'Internal server error'
+    });
+  }
 });
 
 // Pets endpoints

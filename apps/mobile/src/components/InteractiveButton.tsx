@@ -11,7 +11,6 @@ import {
   Text,
   ActivityIndicator,
   Animated,
-  Dimensions,
   StyleSheet,
 } from "react-native";
 
@@ -20,13 +19,7 @@ import {
   useRippleEffect,
   useGlowEffect,
 } from "../hooks/useMotionSystem";
-
-// import {
-//   DynamicColors,
-//   EnhancedShadows,
-//   SemanticColors,
-//   MotionSystem,
-// } from "@/theme"; // === PROJECT HYPERION: INTERACTIVE BUTTON COMPONENT ===
+import { useTheme } from "@/theme";
 
 export type InteractiveButtonVariant =
   | "primary"
@@ -112,6 +105,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
   ) => {
     const [isPressed, setIsPressed] = useState(false);
     const buttonRef = useRef<View>(null);
+    const theme = useTheme();
 
     // Animation hooks
     const magnetic = useMagneticEffect(0.2, 30);
@@ -137,13 +131,13 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
         case "primary":
           return {
             ...baseStyles,
-            backgroundColor: "Theme.colors.primary[600]", // Theme colors.primary[600]
+            backgroundColor: theme.colors.primary,
           };
 
         case "secondary":
           return {
             ...baseStyles,
-            backgroundColor: "Theme.colors.secondary[600]", // Theme colors.secondary[600]
+            backgroundColor: theme.colors.info,
           };
 
         case "ghost":
@@ -151,7 +145,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
             ...baseStyles,
             backgroundColor: "transparent",
             borderWidth: 1,
-            borderColor: "Theme.colors.neutral[200]", // Theme colors.border.light
+            borderColor: theme.colors.border,
           };
 
         case "holographic":
@@ -172,7 +166,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
             ...baseStyles,
             backgroundColor: "transparent",
             borderWidth: 2,
-            borderColor: "Theme.colors.primary[600]", // Theme colors.primary[600]
+            borderColor: theme.colors.primary,
           };
 
         default:
@@ -194,26 +188,26 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
         case "glass":
           return {
             ...baseTextStyles,
-            color: "Theme.colors.neutral[0]", // Text inverse
+            color: theme.colors.onPrimary,
           };
 
         case "secondary":
           return {
             ...baseTextStyles,
-            color: "Theme.colors.neutral[0]", // Text inverse
+            color: theme.colors.onSurface,
           };
 
         case "ghost":
         case "outline":
           return {
             ...baseTextStyles,
-            color: "Theme.colors.primary[600]", // Primary color
+            color: theme.colors.primary,
           };
 
         default:
           return {
             ...baseTextStyles,
-            color: "Theme.colors.neutral[900]", // Text primary
+            color: theme.colors.onSurface,
           };
       }
     };
@@ -289,8 +283,8 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
               variant === "primary" ||
               variant === "secondary" ||
               variant === "holographic"
-                ? "Theme.colors.neutral[0]" // Text inverse
-                : "Theme.colors.primary[600]" // Primary color
+                ? theme.colors.onPrimary
+                : theme.colors.primary
             }
           />
         );
@@ -373,7 +367,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
             }}
           >
             <LinearGradient
-              colors={["Theme.colors.primary[500]", "Theme.colors.primary[600]", "Theme.colors.primary[700]"]} // Primary gradient
+              colors={[theme.colors.primary, theme.colors.primary, theme.colors.primary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{ borderRadius: sizeConfig.borderRadius }}

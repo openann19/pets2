@@ -112,11 +112,11 @@ function makeStyles(theme: AppTheme) {
     },
     matchesContainer: {
       flexDirection: 'row',
-      paddingRight: theme.spacing.md,
+      paddingEnd: theme.spacing.md,
     },
     matchCard: {
       width: 120,
-      marginRight: theme.spacing.sm,
+      marginEnd: theme.spacing.sm,
     },
     petImageContainer: {
       position: 'relative',

@@ -1,14 +1,17 @@
-import { useRef, useState } from 'react';
+import { useRef, useCallback } from 'react';
 import type { FlatList as FlatListType } from 'react-native';
-import { FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
+import { useTheme } from '@mobile/theme';
 import { haptic } from '../ui/haptics';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 
-import { useTheme } from '@mobile/theme';
+import { ElasticRefreshControl } from '../components/micro/ElasticRefreshControl';
 import { useTranslation } from 'react-i18next';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { MatchCard } from '../components/matches/MatchCard';
 import { MatchesTabs } from '../components/matches/MatchesTabs';
+import { EmptyState } from '../components/empty/EmptyState';
+import { ListSkeleton } from '../components/skeletons';
 import { useScrollOffsetTracker } from '../hooks/navigation/useScrollOffsetTracker';
 import { useTabReselectRefresh } from '../hooks/navigation/useTabReselectRefresh';
 import type { Match } from '../hooks/useMatchesData';
@@ -17,25 +20,23 @@ import { logger } from '../services/logger';
 
 interface MatchesScreenProps {
   navigation: {
-    navigate: (screen: string, params: { matchId: string; petName: string }) => void;
+    navigate: (screen: string, params?: { matchId?: string; petName?: string }) => void;
   };
 }
 
 export default function MatchesScreen({ navigation }: MatchesScreenProps) {
-  const themeHook = useTheme();
+  const theme = useTheme();
   const { t } = useTranslation('common');
   const {
     matches,
     likedYou,
     selectedTab,
     refreshing,
+    isLoading,
     onRefresh,
     setSelectedTab,
     handleScroll,
-    filter,
-    setFilter,
   } = useMatchesData();
-  const [filterOpen, setFilterOpen] = useState(false);
 
   const listRef = useRef<FlatListType<Match>>(null);
   const { onScroll, getOffset } = useScrollOffsetTracker();
@@ -53,9 +54,22 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
     navigation.navigate('Chat', { matchId, petName });
   };
 
+  const renderItem = useCallback(
+    ({ item }: { item: Match }) => (
+      <MatchCard
+        match={item}
+        onPress={() => {
+          handleMatchPress(item._id, item.petName);
+        }}
+      />
+    ),
+    [handleMatchPress],
+  );
+
+  const keyExtractor = useCallback((item: Match) => item._id, []);
+
   const handleFilterPress = () => {
     haptic.tap();
-    setFilterOpen(true);
     logger.info('Filter matches button pressed');
   };
 
@@ -63,6 +77,9 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
     haptic.tap();
     logger.info('Search matches button pressed');
   };
+
+  const currentData = selectedTab === 'matches' ? matches : likedYou;
+  const isEmpty = !isLoading && currentData.length === 0;
 
   return (
     <ScreenShell
@@ -101,33 +118,51 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
         onTabChange={setSelectedTab}
       />
 
-      <FlatList
-        ref={listRef}
-        data={selectedTab === 'matches' ? matches : likedYou}
-        renderItem={({ item }) => (
-          <MatchCard
-            match={item}
-            onPress={() => {
-              handleMatchPress(item._id, item.petName);
-            }}
+      {isLoading && currentData.length === 0 ? (
+        <ListSkeleton count={5} itemHeight={100} />
+      ) : isEmpty ? (
+        selectedTab === 'matches' ? (
+          <EmptyState
+            icon="heart-outline"
+            title={t('matches.empty.title') || 'No matches yet'}
+            subtitle={t('matches.empty.subtitle') || 'Start swiping to find your perfect match!'}
+            actionLabel={t('matches.empty.action') || 'Go to Swipe'}
+            onAction={() => navigation.navigate('Swipe')}
           />
-        )}
-        keyExtractor={(item) => item._id}
-        style={styles.list}
-        contentContainerStyle={styles.listContent}
-        onScroll={(e) => {
-          onScroll(e); // track offset for smart reselect
-          handleScroll(e.nativeEvent.contentOffset.y); // persistence
-        }}
-        scrollEventThrottle={120}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={theme.colors.primary}
+        ) : (
+          <EmptyState
+            icon="chatbubbles-outline"
+            title={t('matches.empty.liked_you.title') || 'No one liked you yet'}
+            subtitle={t('matches.empty.liked_you.subtitle') || 'Keep swiping and people will start liking you!'}
           />
-        }
-      />
+        )
+      ) : (
+        <FlatList
+          ref={listRef}
+          data={currentData}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          removeClippedSubviews
+          initialNumToRender={8}
+          windowSize={7}
+          maxToRenderPerBatch={10}
+          updateCellsBatchingPeriod={50}
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
+          onScroll={(e) => {
+            onScroll(e); // track offset for smart reselect
+            handleScroll(e.nativeEvent.contentOffset.y); // persistence
+          }}
+          scrollEventThrottle={16}
+          refreshControl={
+            <ElasticRefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={theme.colors.primary}
+            />
+          }
+        />
+      )}
     </ScreenShell>
   );
 }
@@ -135,5 +170,8 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
 const styles = StyleSheet.create({
   list: {
     flex: 1,
+  },
+  listContent: {
+    paddingBottom: 16,
   },
 });

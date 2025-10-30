@@ -36,7 +36,7 @@ jest.mock('../services/api');
 jest.mock('../services/offlineService');
 jest.mock('../services/authService');
 jest.mock('../services/notifications');
-jest.mock('react-native/Libraries/Utilities/Platform', () => ({
+jest.mock('react-native', () => ({
   OS: 'ios',
   Version: '15.0',
 }));
@@ -560,7 +560,7 @@ describe('PawfectMatch Regression Test Suite', () => {
   describe('Platform-Specific Bugs', () => {
     it('should handle iOS-specific keyboard behavior', async () => {
       // Mock iOS platform
-      jest.doMock('react-native/Libraries/Utilities/Platform', () => ({
+      jest.doMock('react-native', () => ({
         OS: 'ios',
       }));
 
@@ -581,7 +581,7 @@ describe('PawfectMatch Regression Test Suite', () => {
 
     it('should handle Android back button', async () => {
       // Mock Android platform
-      jest.doMock('react-native/Libraries/Utilities/Platform', () => ({
+      jest.doMock('react-native', () => ({
         OS: 'android',
       }));
 
@@ -597,7 +597,7 @@ describe('PawfectMatch Regression Test Suite', () => {
     });
 
     it('should handle web-specific features', async () => {
-      jest.doMock('react-native/Libraries/Utilities/Platform', () => ({
+      jest.doMock('react-native', () => ({
         OS: 'web',
       }));
 
@@ -985,22 +985,14 @@ function renderHook(hookFn: () => any) {
   };
 }
 
-// Mock components for testing
-function LoginScreen() {
-  return null;
-}
-function SwipeScreen() {
-  return null;
-}
-function ChatScreen() {
-  return null;
-}
-function ProfileScreen() {
-  return null;
-}
-function SettingsScreen() {
-  return null;
-}
+// Mock components for testing - these are placeholders used within tests
+// Note: Actual components are imported at the top of the file
+// These mock functions are used in specific test scenarios where a simpler mock is needed
+const MockLoginScreen = () => null;
+const MockSwipeScreen = () => null;
+const MockChatScreen = () => null;
+const MockProfileScreen = () => null;
+const MockSettingsScreen = () => null;
 function LargeListScreen() {
   return null;
 }

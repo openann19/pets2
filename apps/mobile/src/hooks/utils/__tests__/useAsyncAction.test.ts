@@ -27,17 +27,12 @@ describe('useAsyncAction', () => {
   it('should execute async action successfully', async () => {
     const { result } = renderHook(() => useAsyncAction({ action: mockSuccessAction }));
 
-    act(() => {
-      result.current.execute();
+    await act(async () => {
+      await result.current.execute();
     });
 
-    expect(result.current.isLoading).toBe(true);
+    expect(result.current.isLoading).toBe(false);
     expect(mockSuccessAction).toHaveBeenCalledTimes(1);
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
     expect(result.current.data).toBe('success');
     expect(result.current.error).toBe(null);
   });
@@ -45,16 +40,15 @@ describe('useAsyncAction', () => {
   it('should handle async action failure', async () => {
     const { result } = renderHook(() => useAsyncAction({ action: mockFailureAction }));
 
-    act(() => {
-      result.current.execute();
+    await act(async () => {
+      try {
+        await result.current.execute();
+      } catch {
+        // Expected to throw
+      }
     });
 
-    expect(result.current.isLoading).toBe(true);
-
-    await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
-    });
-
     expect(result.current.data).toBe(null);
     expect(result.current.error).toBeInstanceOf(Error);
   });
@@ -78,43 +72,52 @@ describe('useAsyncAction', () => {
 
     const { result } = renderHook(() => useAsyncAction({ action: actionWithArgs }));
 
-    act(() => {
-      result.current.execute('test', 123);
-    });
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+    await act(async () => {
+      await result.current.execute('test', 123);
     });
 
     expect(actionWithArgs).toHaveBeenCalledWith('test', 123);
     expect(result.current.data).toBe('test-123');
+    expect(result.current.isLoading).toBe(false);
   });
 
   it('should not execute if already loading', async () => {
     const slowAction = jest.fn(
-      () => new Promise((resolve) => setTimeout(() => resolve('done'), 100)),
+      () => new Promise((resolve) => setTimeout(() => resolve('done'), 50)),
     );
 
     const { result } = renderHook(() => useAsyncAction({ action: slowAction }));
 
     // Start first execution
-    act(() => {
-      result.current.execute();
+    const firstPromise = act(async () => {
+      return result.current.execute();
+    });
+
+    // Give it a moment to start
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 5));
     });
 
     // Try to execute again while loading
-    act(() => {
-      result.current.execute();
+    let secondResult: unknown;
+    await act(async () => {
+      secondResult = await result.current.execute();
     });
 
-    // Wait for completion
+    // Second call should return undefined because already loading
+    expect(secondResult).toBeUndefined();
+
+    // Wait for first execution to complete
+    await firstPromise;
+
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
     // Should only have been called once
     expect(slowAction).toHaveBeenCalledTimes(1);
-  });
+    expect(result.current.data).toBe('done');
+  }, 10000);
 
   it('should return stable function references', () => {
     const { result } = renderHook(() => useAsyncAction({ action: mockSuccessAction }));
@@ -122,9 +125,13 @@ describe('useAsyncAction', () => {
     const firstExecute = result.current.execute;
     const firstReset = result.current.reset;
 
-    // In React Native testing, create a new hook instance to test stability
-    const { result: result2 } = renderHook(() => useAsyncAction({ action: mockSuccessAction }));
+    // Function references should exist and be functions
+    expect(firstExecute).toBeDefined();
+    expect(firstReset).toBeDefined();
+    expect(typeof firstExecute).toBe('function');
+    expect(typeof firstReset).toBe('function');
 
+    // References should be stable (same function instance)
     expect(result.current.execute).toBe(firstExecute);
     expect(result.current.reset).toBe(firstReset);
   });

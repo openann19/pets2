@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import { request } from './api';
+import { uploadAdapter } from './upload/index';
 
 /**
  * Pick an image from the gallery and upload it to the server
@@ -15,20 +15,12 @@ export async function pickAndUpload(): Promise<string | null> {
     if (result.canceled || !result.assets[0]) return null;
 
     const asset = result.assets[0];
-    const formData = new FormData();
-    formData.append('file', {
+    const { url } = await uploadAdapter.uploadPhoto({
       uri: asset.uri,
       name: 'photo.jpg',
-      type: 'image/jpeg',
-    } as unknown as Blob);
-
-    const data = await request<{ url: string }>('/upload/photo', {
-      method: 'POST',
-      body: formData,
-      headers: { 'Content-Type': 'multipart/form-data' },
+      contentType: 'image/jpeg',
     });
-
-    return data.url;
+    return url;
   } catch (error: unknown) {
     const { logger } = await import('./logger');
     const err = error instanceof Error ? error : new Error(String(error));

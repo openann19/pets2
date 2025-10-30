@@ -1,5 +1,7 @@
 import React from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 const { width } = Dimensions.get('window');
 
@@ -22,6 +24,8 @@ export function ActivityTypeSelector({
   selectedActivities,
   onToggleActivity,
 }: ActivityTypeSelectorProps): React.JSX.Element {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Activity Types</Text>
@@ -34,7 +38,7 @@ export function ActivityTypeSelector({
               {
                 backgroundColor: selectedActivities.includes(activity.id)
                   ? activity.color
-                  : 'Theme.colors.neutral[100]',
+                  : theme.colors.surface,
               },
             ]}
             onPress={() => {
@@ -47,8 +51,8 @@ export function ActivityTypeSelector({
                 styles.label,
                 {
                   color: selectedActivities.includes(activity.id)
-                    ? 'Theme.colors.neutral[0]'
-                    : 'Theme.colors.neutral[700]',
+                    ? theme.colors.onPrimary
+                    : theme.colors.onSurface,
                 },
               ]}
             >
@@ -61,34 +65,36 @@ export function ActivityTypeSelector({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'Theme.colors.neutral[700]',
-    marginBottom: 12,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  button: {
-    width: (width - 64) / 3,
-    padding: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  emoji: {
-    fontSize: 20,
-    marginBottom: 4,
-  },
-  label: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      marginBottom: 20,
+    },
+    sectionTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      marginBottom: 12,
+    },
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    button: {
+      width: (width - 64) / 3,
+      padding: 12,
+      borderRadius: 12,
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    emoji: {
+      fontSize: 20,
+      marginBottom: 4,
+    },
+    label: {
+      fontSize: 12,
+      fontWeight: '500',
+    },
+  });
+}

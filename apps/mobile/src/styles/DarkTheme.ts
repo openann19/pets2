@@ -172,7 +172,7 @@ export const GlobalStylesDark = StyleSheet.create({
   // === HEADERS ===
   header: {
     alignItems: 'center',
-    marginBottom: theme.spacing['4xl'],
+    marginBottom: Spacing['4xl'],
   },
   headerBlur: {
     position: 'absolute',

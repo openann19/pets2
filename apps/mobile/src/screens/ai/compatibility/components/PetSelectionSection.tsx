@@ -156,9 +156,11 @@ export const PetSelectionSection: React.FC<PetSelectionSectionProps> = ({
           onPetSelect(item, false);
         }
       }}
-      testID="PetSelectionSection-button-pet-select"
-      accessibilityLabel={`Select pet ${item.name}`}
+      testID={`pet-select-${item.id}`}
+      accessibilityLabel={`Select ${item.name}, ${item.breed} for compatibility analysis`}
       accessibilityRole="button"
+      accessibilityHint={selectedPetA?.id === item.id ? "Selected as Pet A" : selectedPetB?.id === item.id ? "Selected as Pet B" : "Tap to select"}
+      accessibilityState={{ selected: selectedPetA?.id === item.id || selectedPetB?.id === item.id }}
     >
       <View style={styles.petInfo}>
         <View style={styles.petAvatar}>

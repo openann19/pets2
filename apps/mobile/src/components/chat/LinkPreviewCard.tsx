@@ -3,9 +3,11 @@
  * Displays rich previews for URLs found in chat messages
  */
 
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import { useMemo } from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import type { LinkPreviewData } from '../../services/linkPreviewService';
 
 export interface LinkPreviewCardProps {
@@ -14,8 +16,146 @@ export interface LinkPreviewCardProps {
   onClose?: () => void;
 }
 
+function makeStyles(theme: AppTheme) {
+  const { colors, spacing, radii, shadows, typography, palette } = theme;
+  
+  return StyleSheet.create({
+    container: {
+      backgroundColor: colors.surface,
+      borderRadius: radii.md,
+      overflow: 'hidden',
+      marginVertical: spacing.sm,
+      marginHorizontal: spacing.md,
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...shadows.elevation1,
+    },
+    closeButton: {
+      position: 'absolute',
+      top: spacing.xs,
+      right: spacing.xs,
+      zIndex: 10,
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      borderRadius: radii.full,
+      padding: spacing.xs,
+    },
+    image: {
+      width: '100%',
+      height: 160,
+    },
+    imagePlaceholder: {
+      width: '100%',
+      height: 160,
+      backgroundColor: palette.neutral[100],
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    content: {
+      padding: spacing.md,
+    },
+    title: {
+      fontSize: typography.h2.size,
+      fontWeight: '600',
+      color: colors.onSurface,
+      marginBottom: spacing.xs,
+      lineHeight: typography.h2.lineHeight,
+    },
+    description: {
+      fontSize: typography.body.size,
+      color: colors.onMuted,
+      marginBottom: spacing.sm,
+      lineHeight: typography.body.lineHeight,
+    },
+    footer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    siteNameContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    siteName: {
+      fontSize: typography.body.size * 0.75,
+      fontWeight: '500',
+      color: colors.onMuted,
+    },
+    url: {
+      flex: 1,
+      fontSize: typography.body.size * 0.75,
+      color: colors.onMuted,
+    },
+    externalIcon: {
+      position: 'absolute',
+      top: spacing.md,
+      right: spacing.md,
+    },
+    loadingContainer: {
+      backgroundColor: colors.surface,
+      borderRadius: radii.md,
+      overflow: 'hidden',
+      marginVertical: spacing.sm,
+      marginHorizontal: spacing.md,
+    },
+    loadingImage: {
+      width: '100%',
+      height: 160,
+      backgroundColor: palette.neutral[100],
+    },
+    loadingContent: {
+      padding: spacing.md,
+    },
+    loadingTitle: {
+      height: 20,
+      backgroundColor: palette.neutral[200],
+      borderRadius: radii.xs,
+      marginBottom: spacing.xs,
+    },
+    loadingDescription: {
+      height: 16,
+      backgroundColor: palette.neutral[100],
+      borderRadius: radii.xs,
+      marginBottom: spacing.sm,
+    },
+    loadingFooter: {
+      height: 14,
+      backgroundColor: palette.neutral[100],
+      borderRadius: radii.xs,
+      width: '60%',
+    },
+    errorContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: spacing.md,
+      borderColor: colors.danger,
+    },
+    errorContent: {
+      flex: 1,
+      marginLeft: spacing.sm,
+    },
+    errorTitle: {
+      fontSize: typography.body.size,
+      fontWeight: '500',
+      color: colors.danger,
+      marginBottom: spacing.xs,
+    },
+    errorUrl: {
+      fontSize: typography.body.size * 0.75,
+      color: colors.onMuted,
+    },
+    retryButton: {
+      padding: spacing.xs,
+    },
+  });
+}
+
 export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps): JSX.Element {
+  const theme = useTheme();
+  const { colors } = theme;
   const { title, description, image, siteName, url } = data;
+  
+  const styles = useMemo(() => makeStyles(theme), [theme]);
 
   return (
     <TouchableOpacity
@@ -37,7 +177,7 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
           <Ionicons
             name="close-circle"
             size={20}
-            color={Theme.colors.text.secondary}
+            color={colors.onMuted}
           />
         </TouchableOpacity>
       )}
@@ -56,7 +196,7 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
           <Ionicons
             name="link"
             size={32}
-            color={Theme.colors.text.tertiary}
+            color={colors.onMuted}
           />
         </View>
       )}
@@ -86,7 +226,7 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
               <Ionicons
                 name="globe-outline"
                 size={12}
-                color={Theme.colors.text.secondary}
+                color={colors.onMuted}
               />
               <Text style={styles.siteName}>{siteName}</Text>
             </View>
@@ -106,7 +246,7 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
         <Ionicons
           name="open-outline"
           size={16}
-          color={Theme.colors.primary[500]}
+          color={colors.primary}
         />
       </View>
     </TouchableOpacity>
@@ -114,6 +254,9 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
 }
 
 export function LinkPreviewCardLoading(): JSX.Element {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  
   return (
     <View style={styles.loadingContainer}>
       <View style={styles.loadingImage} />
@@ -133,12 +276,16 @@ export function LinkPreviewCardError({
   url: string;
   onRetry?: () => void;
 }): JSX.Element {
+  const theme = useTheme();
+  const { colors } = theme;
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  
   return (
     <View style={[styles.container, styles.errorContainer]}>
       <Ionicons
         name="alert-circle-outline"
         size={24}
-        color={Theme.colors.status.error}
+        color={colors.danger}
       />
       <View style={styles.errorContent}>
         <Text style={styles.errorTitle}>Failed to load preview</Text>
@@ -158,140 +305,10 @@ export function LinkPreviewCardError({
           <Ionicons
             name="refresh"
             size={16}
-            color={Theme.colors.primary[500]}
+            color={colors.primary}
           />
         </TouchableOpacity>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Theme.colors.neutral[50],
-    borderRadius: Theme.borderRadius.md,
-    overflow: 'hidden',
-    marginVertical: Theme.spacing.sm,
-    marginHorizontal: Theme.spacing.md,
-    borderWidth: 1,
-    borderColor: Theme.colors.border.light,
-    ...Theme.shadows.depth.xs,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: Theme.spacing.xs,
-    right: Theme.spacing.xs,
-    zIndex: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: Theme.borderRadius.full,
-    padding: Theme.spacing.xs,
-  },
-  image: {
-    width: '100%',
-    height: 160,
-  },
-  imagePlaceholder: {
-    width: '100%',
-    height: 160,
-    backgroundColor: Theme.colors.neutral[100],
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  content: {
-    padding: Theme.spacing.md,
-  },
-  title: {
-    fontSize: Theme.typography.fontSize.lg,
-    fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.xs,
-    lineHeight: 22,
-  },
-  description: {
-    fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
-    marginBottom: Theme.spacing.sm,
-    lineHeight: 18,
-  },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Theme.spacing.xs,
-  },
-  siteNameContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  siteName: {
-    fontSize: Theme.typography.fontSize.xs,
-    fontWeight: Theme.typography.fontWeight.medium,
-    color: Theme.colors.text.secondary,
-  },
-  url: {
-    flex: 1,
-    fontSize: Theme.typography.fontSize.xs,
-    color: Theme.colors.text.tertiary,
-  },
-  externalIcon: {
-    position: 'absolute',
-    top: Theme.spacing.md,
-    right: Theme.spacing.md,
-  },
-  loadingContainer: {
-    backgroundColor: Theme.colors.neutral[50],
-    borderRadius: Theme.borderRadius.md,
-    overflow: 'hidden',
-    marginVertical: Theme.spacing.sm,
-    marginHorizontal: Theme.spacing.md,
-  },
-  loadingImage: {
-    width: '100%',
-    height: 160,
-    backgroundColor: Theme.colors.neutral[100],
-  },
-  loadingContent: {
-    padding: Theme.spacing.md,
-  },
-  loadingTitle: {
-    height: 20,
-    backgroundColor: Theme.colors.neutral[200],
-    borderRadius: Theme.borderRadius.xs,
-    marginBottom: Theme.spacing.xs,
-  },
-  loadingDescription: {
-    height: 16,
-    backgroundColor: Theme.colors.neutral[100],
-    borderRadius: Theme.borderRadius.xs,
-    marginBottom: Theme.spacing.sm,
-  },
-  loadingFooter: {
-    height: 14,
-    backgroundColor: Theme.colors.neutral[100],
-    borderRadius: Theme.borderRadius.xs,
-    width: '60%',
-  },
-  errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Theme.spacing.md,
-    borderColor: Theme.colors.status.error,
-  },
-  errorContent: {
-    flex: 1,
-    marginLeft: Theme.spacing.sm,
-  },
-  errorTitle: {
-    fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.medium,
-    color: Theme.colors.status.error,
-    marginBottom: Theme.spacing.xs,
-  },
-  errorUrl: {
-    fontSize: Theme.typography.fontSize.xs,
-    color: Theme.colors.text.secondary,
-  },
-  retryButton: {
-    padding: Theme.spacing.xs,
-  },
-});

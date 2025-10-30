@@ -6,13 +6,14 @@
  */
 
 import {
-  processImageForUpload,
   type ProcessedImage,
   checkUploadQuota,
   uploadWithRetry,
 } from './uploadHygiene';
-import { api, request } from './api';
+import { request } from './api';
 import { logger } from './logger';
+import { uploadAdapter } from './upload/index';
+import { authService } from './AuthService';
 
 export interface UploadProgress {
   phase: 'presign' | 'upload' | 'register' | 'analyze' | 'pending' | 'approved' | 'rejected';
@@ -82,7 +83,7 @@ export class EnhancedUploadService {
     onProgress?: (progress: UploadProgress) => void,
   ): Promise<UploadResult> {
     try {
-      // 1. Presign
+      // 1. Upload using UploadAdapter (handles presign internally)
       if (onProgress) {
         try {
           onProgress({ phase: 'presign', percent: 10, message: 'Requesting upload URL...' });
@@ -92,12 +93,7 @@ export class EnhancedUploadService {
         }
       }
 
-      const presignResponse = await api.presignPhoto(processedImage.mimeType);
-
-      const { key, url } = presignResponse;
-      const headers = { 'Content-Type': processedImage.mimeType };
-
-      // 2. Upload to S3
+      // Upload file using UploadAdapter
       if (onProgress) {
         try {
           onProgress({ phase: 'upload', percent: 30, message: 'Uploading to secure storage...' });
@@ -107,20 +103,18 @@ export class EnhancedUploadService {
         }
       }
 
-      // Upload file to presigned URL
-      const uploadResponse = await fetch(url, {
-        method: 'PUT',
-        headers: headers || {
-          'Content-Type': processedImage.mimeType,
-        },
-        body: await this.fileUriToBlob(processedImage.uri),
+      const photoUploadResult = await uploadAdapter.uploadPhoto({
+        uri: processedImage.uri,
+        name: `photo.${processedImage.mimeType.split('/')[1]}`,
+        contentType: processedImage.mimeType,
       });
 
-      if (!uploadResponse.ok) {
-        throw new Error('S3 upload failed');
+      // Verify upload succeeded
+      if (!photoUploadResult.url) {
+        throw new Error('Upload failed');
       }
 
-      // 3. Register upload
+      // 2. Register upload with backend
       if (onProgress) {
         try {
           onProgress({ phase: 'register', percent: 60, message: 'Registering upload...' });
@@ -145,7 +139,7 @@ export class EnhancedUploadService {
       }>('/uploads', {
         method: 'POST',
         body: {
-          key,
+          url: photoUploadResult.url,
           type,
           petId,
           contentType: processedImage.mimeType,
@@ -165,7 +159,7 @@ export class EnhancedUploadService {
         }
       }
 
-      // 4. Trigger analysis (optional, async by default)
+      // 3. Trigger analysis (optional, async by default)
       if (onProgress) {
         try {
           onProgress({ phase: 'pending', percent: 90, message: 'Awaiting moderation...' });
@@ -177,10 +171,9 @@ export class EnhancedUploadService {
 
       return {
         uploadId: upload._id || upload.id || '',
-        s3Key: upload.s3Key || key,
-        url: upload.url || `https://s3.amazonaws.com/${process.env.AWS_BUCKET}/${key}`,
+        s3Key: upload.s3Key || photoUploadResult.url.split('/').pop() || '',
+        url: photoUploadResult.url,
         status: upload.status || 'pending',
-        analysis: undefined,
       };
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
@@ -212,8 +205,14 @@ export class EnhancedUploadService {
     };
 
     try {
-      // Check quota
-      const quota = await checkUploadQuota('current-user-id'); // TODO: Get from auth
+      // Check quota - get user ID from auth service
+      const currentUser = await authService.getCurrentUser();
+      const userId = currentUser?.id;
+      if (!userId) {
+        throw new Error('User not authenticated');
+      }
+
+      const quota = await checkUploadQuota(userId);
       if (!quota.allowed) {
         throw new Error('Upload quota exceeded');
       }
@@ -274,7 +273,7 @@ export class EnhancedUploadService {
           s3Key: upload.s3Key || '',
           url: upload.url || '',
           status: 'approved',
-          analysis,
+          ...(analysis ? { analysis } : {}),
         };
       }
 
@@ -352,31 +351,6 @@ export class EnhancedUploadService {
       const err = error instanceof Error ? error : new Error(String(error));
       logger.error('Duplicate check failed', { error: err });
       return { isDuplicate: false };
-    }
-  }
-
-  /**
-   * Helper: Convert file URI to blob for fetch upload
-   */
-  private async fileUriToBlob(uri: string): Promise<Blob> {
-    try {
-      const FileSystem = await import('expo-file-system');
-      const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-      const byteCharacters = atob(base64);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      return new Blob([byteArray], { type: 'image/jpeg' });
-    } catch (error: unknown) {
-      // Re-throw with proper error message
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error(error ? String(error) : 'File system error');
     }
   }
 

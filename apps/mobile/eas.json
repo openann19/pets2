@@ -24,12 +24,22 @@
       }
     },
     "production": {
+      "autoIncrement": true,
+      "env": {
+        "NODE_ENV": "production",
+        "EXPO_PUBLIC_ENVIRONMENT": "production"
+      },
       "android": {
         "buildType": "aab",
-        "gradleCommand": ":app:bundleRelease"
+        "gradleCommand": ":app:bundleRelease",
+        "enableProguardInReleaseBuild": true,
+        "enableShrinkResourcesInReleaseBuild": true,
+        "applicationId": "com.pawfectmatch.premium"
       },
       "ios": {
-        "buildConfiguration": "Release"
+        "buildConfiguration": "Release",
+        "jsEngine": "hermes",
+        "bundleIdentifier": "com.pawfectmatch.premium"
       }
     },
     "production-apk": {
@@ -44,7 +54,8 @@
     "production": {
       "android": {
         "serviceAccountKeyPath": "./google-service-account.json",
-        "track": "internal"
+        "track": "production",
+        "releaseStatus": "completed"
       },
       "ios": {
         "appleId": "your-apple-id@email.com",

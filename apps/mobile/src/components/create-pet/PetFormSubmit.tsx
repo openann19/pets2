@@ -18,11 +18,11 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({ isSubmitting, onSu
         marginBottom: 40,
       },
       submitButton: {
-        backgroundColor: theme.colors.secondary[500],
+        backgroundColor: theme.colors.primary,
         borderRadius: 12,
         padding: 16,
         alignItems: 'center',
-        shadowColor: theme.colors.secondary[500],
+        shadowColor: theme.palette.neutral[950],
         shadowOffset: {
           width: 0,
           height: 4,
@@ -32,7 +32,8 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({ isSubmitting, onSu
         elevation: 8,
       },
       submitButtonDisabled: {
-        backgroundColor: theme.colors.neutral[400],
+        backgroundColor: theme.colors.onMuted,
+        opacity: 0.5,
         shadowOpacity: 0,
         elevation: 0,
       },
@@ -43,7 +44,7 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({ isSubmitting, onSu
       submitButtonText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: theme.colors.neutral[0],
+        color: theme.colors.onPrimary,
         marginLeft: 8,
       },
     });
@@ -65,7 +66,7 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({ isSubmitting, onSu
             <Ionicons
               name="sync"
               size={20}
-              color="#ffffff"
+              color={theme.colors.onPrimary}
               style={{ transform: [{ rotate: '45deg' }] }}
             />
             <Text style={styles.submitButtonText}>Creating Profile...</Text>
@@ -75,7 +76,7 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({ isSubmitting, onSu
             <Ionicons
               name="add-circle"
               size={20}
-              color="#ffffff"
+              color={theme.colors.onPrimary}
             />
             <Text style={styles.submitButtonText}>Create Pet Profile</Text>
           </View>

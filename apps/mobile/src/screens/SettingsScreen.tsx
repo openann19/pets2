@@ -1,22 +1,18 @@
-import { Ionicons, type IconProps } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useMemo } from "react";
-import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useMemo } from "react";
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, Linking } from "react-native";
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { haptic } from '../ui/haptics';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useReduceMotion } from '../hooks/useReducedMotion';
-import { getAccessibilityProps } from '../utils/accessibilityUtils';
+import { SwitchFlick } from '../components/micro/SwitchFlick';
 
 import {
   AdvancedHeader,
   HeaderConfigs,
 } from "../components/Advanced/AdvancedHeader";
 import { matchesAPI } from "../services/api";
-import { useAuthStore } from "@pawfectmatch/core";
-import gdprService from "../services/gdprService";
 import { useSettingsScreen } from "../hooks/screens/useSettingsScreen";
 import type { RootStackScreenProps } from "../navigation/types";
 import {
@@ -255,6 +251,23 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     },
   ];
 
+  const legalSettings: SettingItem[] = [
+    {
+      id: "privacy-policy",
+      title: "Privacy Policy",
+      subtitle: "How we collect and use your data",
+      icon: "lock-closed",
+      type: "action",
+    },
+    {
+      id: "terms-of-service",
+      title: "Terms of Service",
+      subtitle: "Rules and guidelines for using PawfectMatch",
+      icon: "document-text",
+      type: "action",
+    },
+  ];
+
   const dangerSettings: SettingItem[] = [
     {
       id: "export-data",
@@ -322,14 +335,20 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         navigation.navigate("UIDemo");
         break;
       case "privacy":
+        navigation.navigate("PrivacySettings");
+        break;
       case "subscription":
+        navigation.navigate("ManageSubscription");
+        break;
       case "help":
+        navigation.navigate("HelpSupport");
+        break;
       case "feedback":
+        // Feedback can be handled via HelpSupport or email
+        navigation.navigate("HelpSupport");
+        break;
       case "about":
-        Alert.alert(
-          "Coming Soon",
-          `${id.charAt(0).toUpperCase() + id.slice(1)} feature is coming soon!`,
-        );
+        navigation.navigate("AboutTermsPrivacy");
         break;
       default:
         Alert.alert("Navigation", `Navigate to ${id}`);
@@ -352,6 +371,12 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         break;
       case "delete":
         handleDeleteAccount();
+        break;
+      case "privacy-policy":
+        await Linking.openURL('https://pawfectmatch.com/privacy');
+        break;
+      case "terms-of-service":
+        await Linking.openURL('https://pawfectmatch.com/terms');
         break;
       default:
         logger.info(`Unknown action: ${id}`);
@@ -417,13 +442,12 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
 
       <View style={styles.settingRight}>
         {item.type === "toggle" && (
-          <Switch
-            value={item.value}
+          <SwitchFlick
+            value={item.value || false}
             onValueChange={(value) =>
               category && handleToggle(category, item.id, value)
             }
-            trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-            thumbColor={item.value ? theme.colors.bg.primary : theme.colors.bg.tertiary}
+            testID={`setting-switch-${item.id}`}
           />
         )}
         {item.type === "navigation" && (
@@ -476,6 +500,9 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        testID="settings-scroll-view"
+        accessibilityLabel="Settings options"
+        accessibilityRole="scrollbar"
       >
         {/* Profile Summary */}
         {reducedMotion ? (
@@ -562,9 +589,25 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         )}
         
         {reducedMotion ? (
+          <SettingSection
+            title="Legal"
+            items={legalSettings}
+            onItemPress={handleAction}
+          />
+        ) : (
+          <Animated.View entering={FadeInDown.duration(330).delay(250)}>
+            <SettingSection
+              title="Legal"
+              items={legalSettings}
+              onItemPress={handleAction}
+            />
+          </Animated.View>
+        )}
+        
+        {reducedMotion ? (
           <DangerZoneSection settings={dangerSettings} onAction={handleAction} />
         ) : (
-          <Animated.View entering={FadeInDown.duration(320).delay(250)}>
+          <Animated.View entering={FadeInDown.duration(320).delay(275)}>
             <DangerZoneSection settings={dangerSettings} onAction={handleAction} />
           </Animated.View>
         )}

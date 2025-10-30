@@ -2,13 +2,13 @@ import { request } from './api';
 
 export interface AnalyticsEvent {
   event: string;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
 }
 
 /**
  * Track analytics events
  */
-export async function track(event: string, props?: Record<string, any>): Promise<void> {
+export async function track(event: string, props?: Record<string, unknown>): Promise<void> {
   try {
     await request('/admin/analytics/track', { method: 'POST', body: { event, props } });
   } catch (error: unknown) {
@@ -67,13 +67,13 @@ export const AnalyticsEvents = {
 /**
  * Track page views
  */
-export function trackScreenView(screenName: string, props?: Record<string, any>): void {
+export function trackScreenView(screenName: string, props?: Record<string, unknown>): void {
   track('screen_view', { screen: screenName, ...props });
 }
 
 /**
  * Track user actions
  */
-export function trackUserAction(action: string, props?: Record<string, any>): void {
+export function trackUserAction(action: string, props?: Record<string, unknown>): void {
   track('user_action', { action, ...props });
 }

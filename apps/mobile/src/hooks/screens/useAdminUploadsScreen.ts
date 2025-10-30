@@ -106,7 +106,7 @@ export function useAdminUploadsScreen({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isProcessingAction, setIsProcessingAction] = useState(false);
 
-  // Mock data loading - replace with real API calls
+  // Load uploads from API - replace mock data with real API calls
   const loadUploads = useCallback(
     async (options?: { force?: boolean }) => {
       try {
@@ -114,82 +114,72 @@ export function useAdminUploadsScreen({
           setIsLoading(true);
         }
 
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        const mockUploads: MediaUpload[] = [
-          {
-            id: 'upload1',
-            userId: 'user1',
-            userName: 'Alice Johnson',
-            petId: 'pet1',
-            petName: 'Buddy',
-            type: 'image',
-            url: 'https://example.com/pet1.jpg',
-            thumbnailUrl: 'https://example.com/pet1_thumb.jpg',
-            fileName: 'buddy_profile.jpg',
-            fileSize: 2048576, // 2MB
-            uploadedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-            status: 'pending',
-            aiModerationScore: 0.85,
-            manualReviewRequired: false,
-            tags: ['dog', 'golden_retriever'],
-          },
-          {
-            id: 'upload2',
-            userId: 'user2',
-            userName: 'Bob Smith',
-            type: 'image',
-            url: 'https://example.com/inappropriate.jpg',
-            thumbnailUrl: 'https://example.com/inappropriate_thumb.jpg',
-            fileName: 'cat_photo.jpg',
-            fileSize: 1572864, // 1.5MB
-            uploadedAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
-            status: 'flagged',
-            moderationReason: 'Inappropriate content detected',
-            aiModerationScore: 0.15,
-            manualReviewRequired: true,
-            tags: ['inappropriate'],
-          },
-          {
-            id: 'upload3',
-            userId: 'user3',
-            userName: 'Charlie Brown',
-            petId: 'pet3',
-            petName: 'Max',
-            type: 'video',
-            url: 'https://example.com/max_video.mp4',
-            thumbnailUrl: 'https://example.com/max_video_thumb.jpg',
-            fileName: 'max_playing.mp4',
-            fileSize: 10485760, // 10MB
-            uploadedAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
-            status: 'approved',
-            aiModerationScore: 0.95,
-            manualReviewRequired: false,
-            tags: ['dog', 'labrador', 'playing'],
-          },
-        ];
-
-        const mockStats: UploadStats = {
-          totalUploads: 1247,
-          pendingReview: 23,
-          flaggedContent: 5,
-          approvedToday: 45,
-          rejectedToday: 2,
-          aiModerationRate: 87.5,
-        };
-
-        setUploads(mockUploads);
-        setStats(mockStats);
-
-        logger.info('Admin uploads loaded', {
-          count: mockUploads.length,
-          stats: mockStats,
+        // Call real API endpoint
+        const response = await adminAPI.getUploads({
+          page: 1,
+          limit: 50,
+          filter: 'all',
         });
+
+        if (response.success && response.data) {
+          // Map API response to MediaUpload format
+          const mappedUploads: MediaUpload[] = response.data.uploads.map((upload: any) => ({
+            id: upload._id || upload.id,
+            userId: upload.userId?._id || upload.userId || '',
+            userName: upload.userId?.firstName && upload.userId?.lastName
+              ? `${upload.userId.firstName} ${upload.userId.lastName}`
+              : upload.userId?.email || 'Unknown User',
+            petId: upload.petId?._id || upload.petId || undefined,
+            petName: upload.petId?.name || undefined,
+            type: upload.type === 'video' ? 'video' : upload.type === 'document' ? 'document' : 'image',
+            url: upload.url || '',
+            thumbnailUrl: upload.thumbnailUrl || upload.url,
+            fileName: upload.originalName || upload.fileName || 'unknown',
+            fileSize: upload.size || 0,
+            uploadedAt: new Date(upload.uploadedAt || upload.createdAt),
+            status: upload.status === 'approved' ? 'approved' : upload.status === 'rejected' ? 'rejected' : upload.status === 'flagged' ? 'flagged' : 'pending',
+            moderationReason: upload.moderationReason || upload.rejectionReason,
+            aiModerationScore: upload.aiModerationScore || upload.moderatedScore,
+            manualReviewRequired: upload.manualReviewRequired || upload.status === 'flagged',
+            tags: upload.tags || [],
+            metadata: upload.metadata || {},
+          }));
+
+          // Calculate stats from response
+          const mockStats: UploadStats = {
+            totalUploads: response.data.pagination?.total || mappedUploads.length,
+            pendingReview: mappedUploads.filter((u) => u.status === 'pending').length,
+            flaggedContent: mappedUploads.filter((u) => u.status === 'flagged').length,
+            approvedToday: mappedUploads.filter((u) => u.status === 'approved' && new Date(u.uploadedAt).toDateString() === new Date().toDateString()).length,
+            rejectedToday: mappedUploads.filter((u) => u.status === 'rejected' && new Date(u.uploadedAt).toDateString() === new Date().toDateString()).length,
+            aiModerationRate: mappedUploads.filter((u) => u.aiModerationScore !== undefined).length / mappedUploads.length * 100,
+          };
+
+          setUploads(mappedUploads);
+          setStats(mockStats);
+
+          logger.info('Admin uploads loaded from API', {
+            count: mappedUploads.length,
+            stats: mockStats,
+          });
+        } else {
+          throw new Error('Invalid API response');
+        }
       } catch (error) {
         const err = error instanceof Error ? error : new Error('Failed to load uploads');
         logger.error('Failed to load admin uploads', { error: err });
         handleNetworkError(err, 'admin.uploads.load');
+        
+        // Fallback to empty state on error
+        setUploads([]);
+        setStats({
+          totalUploads: 0,
+          pendingReview: 0,
+          flaggedContent: 0,
+          approvedToday: 0,
+          rejectedToday: 0,
+          aiModerationRate: 0,
+        });
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -281,18 +271,22 @@ export function useAdminUploadsScreen({
     async (uploadId: string) => {
       setIsProcessingAction(true);
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 600));
+        // Call real API endpoint
+        const response = await adminAPI.approveUpload(uploadId);
 
-        updateUploadStatus(uploadId, 'approved');
-        setStats((prev) => ({
-          ...prev,
-          pendingReview: Math.max(0, prev.pendingReview - 1),
-          approvedToday: prev.approvedToday + 1,
-        }));
+        if (response.success) {
+          updateUploadStatus(uploadId, 'approved');
+          setStats((prev) => ({
+            ...prev,
+            pendingReview: Math.max(0, prev.pendingReview - 1),
+            approvedToday: prev.approvedToday + 1,
+          }));
 
-        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-        logger.info('Upload approved by admin', { uploadId });
+          void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+          logger.info('Upload approved by admin via API', { uploadId });
+        } else {
+          throw new Error('Failed to approve upload');
+        }
       } catch (error) {
         const err = error instanceof Error ? error : new Error('Failed to approve upload');
         logger.error('Failed to approve upload', { error: err, uploadId });

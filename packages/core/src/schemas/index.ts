@@ -135,3 +135,14 @@ export {
   replyStorySchema as storyReplySchema,
 } from './story';
 export type { CreateStoryInput, ReplyStoryInput } from './story';
+
+// UI Config Schema
+export {
+  uiConfigSchema,
+  type UIConfig,
+  type Tokens,
+  type MicroInteractions,
+  type Components,
+  type Screens,
+  type Audience,
+} from './ui-config';

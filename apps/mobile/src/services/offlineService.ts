@@ -38,8 +38,8 @@ class OfflineService {
   private isOnline = true;
   private isSyncing = false;
   private syncListeners: ((status: SyncStatus) => void)[] = [];
-  private netInfoUnsubscribe?: () => void;
-  private syncInterval?: NodeJS.Timeout;
+  private netInfoUnsubscribe: (() => void) | null = null;
+  private syncInterval: NodeJS.Timeout | null = null;
   private offlineData: OfflineData = {
     pets: [],
     user: null,
@@ -531,11 +531,11 @@ class OfflineService {
   public cleanup(): void {
     if (this.netInfoUnsubscribe) {
       this.netInfoUnsubscribe();
-      this.netInfoUnsubscribe = undefined;
+      this.netInfoUnsubscribe = null;
     }
     if (this.syncInterval) {
       clearInterval(this.syncInterval);
-      this.syncInterval = undefined;
+      this.syncInterval = null;
     }
     this.syncListeners = [];
   }

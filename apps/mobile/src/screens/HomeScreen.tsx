@@ -3,7 +3,6 @@ import { useAuthStore } from "@pawfectmatch/core";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Dimensions,
-  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,6 +19,8 @@ import {
   useStaggeredAnimation,
   useEntranceAnimation,
 } from "../components";
+import { Interactive } from "../components/primitives/Interactive";
+import { ElasticRefreshControl } from "../components/micro/ElasticRefreshControl";
 
 // Import premium components
 import {
@@ -33,16 +34,16 @@ import { useHomeScreen } from "../hooks/screens/useHomeScreen";
 import { useScrollOffsetTracker, useTabReselectRefresh } from "../hooks/navigation";
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
-import { useTheme } from "@/theme";
+import { useTheme } from "@mobile/theme";
 import { useTranslation } from 'react-i18next';
 
 const { width: screenWidth } = Dimensions.get("window");
 
 export default function HomeScreen() {
+  const theme = useTheme();
   const { user } = useAuthStore();
   const scrollRef = useRef<ScrollView>(null);
   const { onScroll, getOffset } = useScrollOffsetTracker();
-  const theme = useTheme();
   const { t } = useTranslation('common');
 
   const {
@@ -83,16 +84,16 @@ export default function HomeScreen() {
       flex: 1,
     },
     scrollContent: {
-      paddingBottom: 20,
+      paddingBottom: theme.spacing.lg,
     },
     quickActions: {
-      padding: 20,
+      padding: theme.spacing.lg,
     },
     sectionTitle: {
-      fontSize: 20,
-      fontWeight: "bold",
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h2.weight,
       color: theme.colors.onSurface,
-      marginBottom: 16,
+      marginBottom: theme.spacing.md,
     },
     actionsGrid: {
       flexDirection: "row",
@@ -100,66 +101,66 @@ export default function HomeScreen() {
       justifyContent: "space-between",
     },
     actionCard: {
-      width: (screenWidth - 60) / 2,
-      marginBottom: 16,
+      width: (screenWidth - theme.spacing.xl * 3) / 2,
+      marginBottom: theme.spacing.md,
     },
     actionContent: {
       alignItems: "center",
-      padding: 16,
+      padding: theme.spacing.md,
     },
     actionIcon: {
       width: 50,
       height: 50,
-      borderRadius: 25,
+      borderRadius: theme.radii.full,
       justifyContent: "center",
       alignItems: "center",
-      marginBottom: 12,
+      marginBottom: theme.spacing.sm,
     },
     badge: {
       position: "absolute",
-      top: -8,
-      right: -8,
+      top: -theme.spacing.sm,
+      right: -theme.spacing.sm,
       backgroundColor: theme.colors.danger,
-      borderRadius: 12,
+      borderRadius: theme.radii.md,
       minWidth: 24,
       height: 24,
       justifyContent: "center",
       alignItems: "center",
-      paddingHorizontal: 6,
+      paddingHorizontal: theme.spacing.xs,
     },
     badgeText: {
-      color: theme.colors.bg,
-      fontSize: 12,
-      fontWeight: "bold",
+      color: theme.colors.onPrimary,
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.h2.weight,
     },
     recentActivity: {
-      padding: 20,
+      padding: theme.spacing.lg,
     },
     activityItem: {
       flexDirection: "row",
       alignItems: "center",
-      paddingVertical: 12,
+      paddingVertical: theme.spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
     activityIcon: {
       width: 40,
       height: 40,
-      borderRadius: 20,
+      borderRadius: theme.radii.full,
       backgroundColor: theme.colors.surface,
       justifyContent: "center",
       alignItems: "center",
-      marginRight: 12,
+      marginEnd: theme.spacing.sm,
     },
     activityContent: {
       flex: 1,
     },
     activityTime: {
-      fontSize: 12,
+      fontSize: theme.typography.body.size * 0.75,
       color: theme.colors.onMuted,
     },
     premiumSection: {
-      padding: 20,
+      padding: theme.spacing.lg,
     },
     premiumContent: {
       alignItems: "center",
@@ -167,10 +168,10 @@ export default function HomeScreen() {
     premiumHeader: {
       flexDirection: "row",
       alignItems: "center",
-      marginBottom: 16,
+      marginBottom: theme.spacing.lg,
     },
     premiumActions: {
-      marginTop: 16,
+      marginTop: theme.spacing.lg,
     },
   });
 
@@ -209,7 +210,7 @@ export default function HomeScreen() {
         onScroll={onScroll}
         scrollEventThrottle={16}
         refreshControl={
-          <RefreshControl
+          <ElasticRefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
             tintColor={theme.colors.primary}
@@ -224,11 +225,18 @@ export default function HomeScreen() {
             <Heading2 style={styles.sectionTitle}>{t('home.quick_actions')}</Heading2>
             <StaggeredContainer delay={100}>
               <FadeInUp delay={0}>
-                <EliteCard
-                  variant="glass"
+                <Interactive
+                  variant="lift"
+                  haptic="light"
                   onPress={handleSwipePress}
-                  style={styles.actionCard}
+                  accessibilityLabel={t('home.swipe_action')}
+                  accessibilityRole="button"
+                  accessible={true}
                 >
+                  <EliteCard
+                    variant="glass"
+                    style={styles.actionCard}
+                  >
                   <GlowContainer
                     color="primary"
                     intensity="medium"
@@ -253,14 +261,22 @@ export default function HomeScreen() {
                     </View>
                   </GlowContainer>
                 </EliteCard>
+                </Interactive>
               </FadeInUp>
 
               <FadeInUp delay={100}>
-                <EliteCard
-                  variant="glass"
+                <Interactive
+                  variant="lift"
+                  haptic="light"
                   onPress={handleMatchesPress}
-                  style={styles.actionCard}
+                  accessibilityLabel={t('home.matches_action')}
+                  accessibilityRole="button"
+                  accessible={true}
                 >
+                  <EliteCard
+                    variant="glass"
+                    style={styles.actionCard}
+                  >
                   <GlowContainer
                     color="success"
                     intensity="medium"
@@ -290,14 +306,22 @@ export default function HomeScreen() {
                     </View>
                   </GlowContainer>
                 </EliteCard>
+                </Interactive>
               </FadeInUp>
 
               <FadeInUp delay={200}>
-                <EliteCard
-                  variant="glass"
+                <Interactive
+                  variant="lift"
+                  haptic="light"
                   onPress={handleMessagesPress}
-                  style={styles.actionCard}
+                  accessibilityLabel={t('home.messages_action')}
+                  accessibilityRole="button"
+                  accessible={true}
                 >
+                  <EliteCard
+                    variant="glass"
+                    style={styles.actionCard}
+                  >
                   <GlowContainer
                     color="secondary"
                     intensity="medium"
@@ -327,14 +351,22 @@ export default function HomeScreen() {
                     </View>
                   </GlowContainer>
                 </EliteCard>
+                </Interactive>
               </FadeInUp>
 
               <FadeInUp delay={300}>
-                <EliteCard
-                  variant="glass"
+                <Interactive
+                  variant="lift"
+                  haptic="light"
                   onPress={handleProfilePress}
-                  style={styles.actionCard}
+                  accessibilityLabel={t('home.profile_action')}
+                  accessibilityRole="button"
+                  accessible={true}
                 >
+                  <EliteCard
+                    variant="glass"
+                    style={styles.actionCard}
+                  >
                   <GlowContainer
                     color="purple"
                     intensity="medium"
@@ -359,14 +391,22 @@ export default function HomeScreen() {
                     </View>
                   </GlowContainer>
                 </EliteCard>
+                </Interactive>
               </FadeInUp>
 
               <FadeInUp delay={400}>
-                <EliteCard
-                  variant="glass"
+                <Interactive
+                  variant="lift"
+                  haptic="light"
                   onPress={handleCommunityPress}
-                  style={styles.actionCard}
+                  accessibilityLabel={t('home.community_action')}
+                  accessibilityRole="button"
+                  accessible={true}
                 >
+                  <EliteCard
+                    variant="glass"
+                    style={styles.actionCard}
+                  >
                   <GlowContainer
                     color="warning"
                     intensity="medium"
@@ -391,6 +431,7 @@ export default function HomeScreen() {
                     </View>
                   </GlowContainer>
                 </EliteCard>
+                </Interactive>
               </FadeInUp>
             </StaggeredContainer>
           </View>
@@ -499,7 +540,12 @@ export default function HomeScreen() {
                       intensity="heavy"
                       animated={true}
                     >
-                      <Ionicons name="star" size={32} color="#fbbf24" />
+                      <Ionicons 
+                        name="star" 
+                        size={32} 
+                        color={theme.colors.warning} 
+                        accessibilityLabel={t('home.featured')}
+                      />
                     </GlowContainer>
                     <PremiumHeading
                       level={3}

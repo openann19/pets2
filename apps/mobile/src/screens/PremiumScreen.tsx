@@ -10,8 +10,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import { haptic } from "@/ui/haptics";
 import { trackUserAction } from "@/services/analyticsService";
 import { usePremiumScreen } from "../hooks/screens/usePremiumScreen";

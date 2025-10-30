@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/theme';
 import { VoiceWaveform } from './VoiceWaveform';
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function VoicePlayer({ uri, durationSec, waveform, onError, testID }: Props) {
+  const theme = useTheme();
   const sound = useRef<Audio.Sound | null>(null);
   const [isPlaying, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -99,7 +101,7 @@ export function VoicePlayer({ uri, durationSec, waveform, onError, testID }: Pro
           duration={duration}
           onSeek={onSeek}
           height={28}
-          color={Theme.colors.primary[500]}
+          color={theme.colors.primary}
         />
       </View>
 

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/theme';
+import { useTheme } from '@mobile/theme';
 import { logger } from '@pawfectmatch/core';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { ComponentProps } from 'react';
@@ -18,10 +18,11 @@ interface ProfileMenuSectionProps {
   onNavigateToMyPets: () => void;
   onNavigateToSettings: () => void;
   onNavigateToCreatePet: () => void;
+  onNavigateToHelpSupport?: () => void;
 }
 
 export const ProfileMenuSection: React.FC<ProfileMenuSectionProps> = React.memo(
-  ({ onNavigateToMyPets, onNavigateToSettings, onNavigateToCreatePet }) => {
+  ({ onNavigateToMyPets, onNavigateToSettings, onNavigateToCreatePet, onNavigateToHelpSupport }) => {
     const theme = useTheme();
     const menuItems = useMemo<MenuItem[]>(
       () => [
@@ -48,7 +49,11 @@ export const ProfileMenuSection: React.FC<ProfileMenuSectionProps> = React.memo(
           icon: 'help-circle',
           color: theme.colors.info,
           onPress: () => {
-            Alert.alert('Help', 'Help center coming soon!');
+            if (onNavigateToHelpSupport) {
+              onNavigateToHelpSupport();
+            } else {
+              Alert.alert('Help & Support', 'Please navigate to Help & Support from Settings.');
+            }
           },
         },
         {

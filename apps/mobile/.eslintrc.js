@@ -25,5 +25,21 @@ module.exports = {
   ],
   rules: {
     'local/no-hardcoded-colors': 'error',
+    'local/no-theme-imports': 'error',
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: "Literal[value=/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/]",
+        message: 'Use theme tokens, not raw hex.',
+      },
+    ],
+    'no-restricted-properties': [
+      'error',
+      {
+        object: 'StyleSheet',
+        property: 'create',
+        message: 'Prefer theme tokens; avoid hardcoded whites.',
+      },
+    ],
   },
 };

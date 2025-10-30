@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || process.env.API_URL || '';
+const API_URL = process.env['EXPO_PUBLIC_API_URL'] || process.env['API_URL'] || '';
 const KEY = 'user_settings_v1';
 
 export interface UserSettings {

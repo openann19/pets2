@@ -6,7 +6,7 @@
 import { logger } from '@pawfectmatch/core';
 import type { Message } from '@pawfectmatch/core';
 import { request } from './api';
-import * as FileSystem from 'expo-file-system';
+import { uploadAdapter } from './upload/index';
 
 export interface ChatReaction {
   emoji: string;
@@ -31,22 +31,17 @@ export interface VoiceNote {
   waveform?: number[];
 }
 
-interface SendReactionParams {
-  matchId: string;
-  messageId: string;
-  reaction: string;
-}
-
 interface SendAttachmentParams {
   matchId: string;
   attachmentType: 'image' | 'video' | 'file';
-  file: File | Blob;
+  uri: string;
   name?: string;
+  contentType?: string;
 }
 
 interface SendVoiceNoteParams {
   matchId: string;
-  audioBlob: Blob;
+  audioUri: string;
   duration: number;
 }
 
@@ -98,23 +93,31 @@ class ChatService {
     type: string;
   }> {
     try {
-      const formData = new FormData();
-      formData.append('file', params.file);
-      formData.append('matchId', params.matchId);
-      formData.append('type', params.attachmentType);
-      if (params.name) {
-        formData.append('name', params.name);
-      }
+      // Upload file using UploadAdapter
+      const uploadResult = params.attachmentType === 'video'
+        ? await uploadAdapter.uploadVideo({
+            uri: params.uri,
+            ...(params.name ? { name: params.name } : {}),
+            ...(params.contentType ? { contentType: params.contentType } : {}),
+          })
+        : await uploadAdapter.uploadPhoto({
+            uri: params.uri,
+            ...(params.name ? { name: params.name } : {}),
+            ...(params.contentType ? { contentType: params.contentType } : {}),
+          });
 
+      // Register attachment with chat service
       const response = await request<{
         success: boolean;
         url: string;
         type: string;
       }>('/chat/attachments', {
         method: 'POST',
-        body: formData,
-        headers: {
-          // Don't set Content-Type - FormData sets it automatically
+        body: {
+          matchId: params.matchId,
+          url: uploadResult.url,
+          type: params.attachmentType,
+          name: params.name,
         },
       });
 
@@ -129,124 +132,58 @@ class ChatService {
 
   /**
    * Send a voice note
-   * Supports both FormData (native) and Blob (web)
    */
-  async sendVoiceNote(matchId: string, file: FormData | Blob, duration?: number): Promise<void>;
-
-  /**
-   * Send a voice note (legacy signature)
-   */
+  async sendVoiceNote(matchId: string, audioUri: string, duration?: number): Promise<void>;
   async sendVoiceNote(params: SendVoiceNoteParams): Promise<{
     success: boolean;
     url: string;
     duration: number;
   }>;
-
   async sendVoiceNote(
     matchIdOrParams: string | SendVoiceNoteParams,
-    file?: FormData | Blob,
+    audioUri?: string,
     duration?: number,
-  ): Promise<void | {
-    success: boolean;
-    url: string;
-    duration: number;
-  }> {
+  ): Promise<void | { success: boolean; url: string; duration: number }> {
     try {
-      // Handle both signatures
-      let formData: FormData;
-      let matchId: string;
-      let voiceDuration: number;
-
+      let params: SendVoiceNoteParams;
       if (typeof matchIdOrParams === 'string') {
-        // New signature: sendVoiceNote(matchId, file, duration?)
-        matchId = matchIdOrParams;
-        if (file instanceof FormData) {
-          // Native: FormData already has the file wrapped
-          formData = file;
-          formData.append('matchId', matchId);
-        } else if (file instanceof Blob) {
-          // Web: wrap Blob in FormData
-          formData = new FormData();
-          const audioFile = new File([file], 'voice-note.webm', {
-            type: 'audio/webm',
-          });
-          formData.append('audioBlob', audioFile);
-          formData.append('matchId', matchId);
-        } else {
-          throw new Error('Invalid file type');
+        if (!audioUri) {
+          throw new Error('audioUri is required');
         }
-        voiceDuration = duration || 0;
+        params = { matchId: matchIdOrParams, audioUri, duration: duration ?? 0 };
       } else {
-        // Legacy signature: sendVoiceNote({ matchId, audioBlob, duration })
-        const params = matchIdOrParams;
-        matchId = params.matchId;
-        formData = new FormData();
-        const audioFile = new File([params.audioBlob], 'voice-note.m4a', {
-          type: 'audio/m4a',
-        });
-        formData.append('audioBlob', audioFile);
-        formData.append('matchId', matchId);
-        formData.append('duration', String(params.duration));
-        voiceDuration = params.duration;
+        params = matchIdOrParams;
       }
 
+      // Upload voice note using UploadAdapter
+      const uploadResult = await uploadAdapter.uploadVideo({
+        uri: params.audioUri,
+        name: 'voice.m4a',
+        contentType: 'audio/m4a',
+      });
+
+      // Register voice note with chat service
       const response = await request<{
         success: boolean;
         url: string;
         duration: number;
-      }>('/api/chat/voice', {
+      }>('/chat/voice-notes', {
         method: 'POST',
-        body: formData,
-        headers: {
-          // Don't set Content-Type - FormData sets it automatically
+        body: {
+          matchId: params.matchId,
+          url: uploadResult.url,
+          duration: params.duration,
         },
       });
 
-      logger.info('Voice note sent successfully', { matchId, duration: voiceDuration });
+      logger.info('Voice note sent successfully', { matchId: params.matchId });
 
-      // Return result for legacy signature
-      if (typeof matchIdOrParams !== 'string') {
-        return response;
-      }
+      return response;
     } catch (error) {
-      logger.error('Failed to send voice note', { error, matchIdOrParams });
+      logger.error('Failed to send voice note', { error });
       throw error;
     }
   }
 }
 
 export const chatService = new ChatService();
-
-// Native voice note upload helper
-export async function sendVoiceNoteNative(
-  matchId: string,
-  p: { fileUri: string; duration: number },
-) {
-  // presign
-  const presign = await request<{ url: string; key: string }>('/api/chat/voice/presign', {
-    method: 'POST',
-    body: { contentType: 'audio/webm' },
-  });
-  const { url, key } = presign;
-
-  // PUT to S3
-  await FileSystem.uploadAsync(url, p.fileUri, {
-    httpMethod: 'PUT',
-    headers: { 'Content-Type': 'audio/webm' },
-    uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-  });
-
-  // register message
-  await request(`/api/chat/${matchId}/voice-note`, {
-    method: 'POST',
-    body: { key, duration: p.duration, waveform: [] },
-  });
-}
-
-// Extended ChatService interface with native methods
-interface ChatServiceWithNative extends ChatService {
-  sendVoiceNoteNative: typeof sendVoiceNoteNative;
-}
-
-// Inject to chatService with proper type
-Object.assign(chatService, { sendVoiceNoteNative });

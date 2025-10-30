@@ -6,26 +6,26 @@ import { useAccountDeletion } from '../useAccountDeletion';
 
 // Mock the GDPR service
 jest.mock('../../../../services/gdprService', () => ({
-  gdprService: {
-    requestAccountDeletion: jest.fn(),
-    cancelDeletion: jest.fn(),
-  },
+  deleteAccount: jest.fn(),
+  cancelDeletion: jest.fn(),
+  confirmDeletion: jest.fn(),
+  getAccountStatus: jest.fn(),
+  exportUserData: jest.fn(),
+  downloadExport: jest.fn(),
 }));
 
-import { gdprService } from '../../../../services/gdprService';
-
-const mockGdprService = gdprService as jest.Mocked<typeof gdprService>;
+import * as gdprService from '../../../../services/gdprService';
 
 describe('useAccountDeletion', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGdprService.requestAccountDeletion.mockResolvedValue({
+    (gdprService.deleteAccount as jest.Mock).mockResolvedValue({
       success: true,
       message: 'Deletion requested successfully',
       gracePeriodEndsAt: '2024-12-26T00:00:00.000Z',
       deletionId: 'test-deletion-id',
     });
-    mockGdprService.cancelDeletion.mockResolvedValue({
+    (gdprService.cancelDeletion as jest.Mock).mockResolvedValue({
       success: true,
       message: 'Deletion cancelled successfully',
     });
@@ -51,16 +51,16 @@ describe('useAccountDeletion', () => {
       expect(result.current.isDeleting).toBe(false);
     });
 
-    expect(mockGdprService.requestAccountDeletion).toHaveBeenCalledWith(
-      'password123',
-      'Privacy concerns',
-      'Detailed feedback',
-    );
+    expect(gdprService.deleteAccount).toHaveBeenCalledWith({
+      password: 'password123',
+      reason: 'Privacy concerns',
+      feedback: 'Detailed feedback',
+    });
     expect(result.current.error).toBe(null);
   });
 
   it('should handle request deletion failure', async () => {
-    mockGdprService.requestAccountDeletion.mockRejectedValue(new Error('Invalid password'));
+    (gdprService.deleteAccount as jest.Mock).mockRejectedValue(new Error('Invalid password'));
 
     const { result } = renderHook(() => useAccountDeletion());
 
@@ -88,12 +88,12 @@ describe('useAccountDeletion', () => {
       expect(result.current.isDeleting).toBe(false);
     });
 
-    expect(mockGdprService.cancelDeletion).toHaveBeenCalledTimes(1);
+    expect(gdprService.cancelDeletion).toHaveBeenCalledTimes(1);
     expect(result.current.error).toBe(null);
   });
 
   it('should handle cancel deletion failure', async () => {
-    mockGdprService.cancelDeletion.mockRejectedValue(new Error('Cancellation failed'));
+    (gdprService.cancelDeletion as jest.Mock).mockRejectedValue(new Error('Cancellation failed'));
 
     const { result } = renderHook(() => useAccountDeletion());
 
@@ -119,11 +119,11 @@ describe('useAccountDeletion', () => {
       expect(result.current.isDeleting).toBe(false);
     });
 
-    expect(mockGdprService.requestAccountDeletion).toHaveBeenCalledWith(
-      'password123',
-      undefined,
-      undefined,
-    );
+    expect(gdprService.deleteAccount).toHaveBeenCalledWith({
+      password: 'password123',
+      reason: undefined,
+      feedback: undefined,
+    });
   });
 
   it('should return stable function references', () => {

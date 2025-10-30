@@ -16,12 +16,13 @@
 
 import { LinearGradient } from 'expo-linear-gradient';
 import type { ReactNode } from 'react';
-import React, { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { View, StyleSheet, type ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, type AnimatedStyleProp } from 'react-native-reanimated';
 
 import { useGlowAnimation, useEntranceAnimation } from '../../hooks/useUnifiedAnimations';
 import { useShimmerEffect } from '../../hooks/usePremiumAnimations';
+import { useTheme } from '@mobile/theme';
 
 // === TYPES ===
 export type FXContainerType = 'glass' | 'glow' | 'holographic' | 'neon' | 'gradient' | 'default';
@@ -39,7 +40,7 @@ export interface FXContainerProps {
   glowColor?: string;
   glowIntensity?: number;
   shimmerDuration?: number;
-  gradientName?: keyof typeof Theme.gradients;
+  gradientName?: string;
   gradientColors?: string[];
   style?: ViewStyle;
   disabled?: boolean;
@@ -63,10 +64,12 @@ const FXContainer: React.FC<FXContainerProps> = ({
   style,
   disabled = false,
 }) => {
+  const theme = useTheme();
+  
   // Get base styles based on type and variant
   const baseStyles = useMemo(() => {
     const styles: ViewStyle = {
-      borderRadius: Theme.borderRadius.xl,
+      borderRadius: theme.radii.xl,
       overflow: 'hidden',
     };
 
@@ -74,30 +77,30 @@ const FXContainer: React.FC<FXContainerProps> = ({
       case 'glass':
         return {
           ...styles,
-          backgroundColor: Theme.glass.light.backgroundColor,
+          backgroundColor: theme.colors.surface,
           borderWidth: 1,
           borderColor: `rgba(255, 255, 255, ${variant === 'subtle' ? 0.2 : variant === 'strong' ? 0.4 : 0.3})`,
-          ...Theme.shadows.depth.md,
+          ...theme.shadows.elevation2,
         };
 
       case 'glow':
         return {
           ...styles,
-          backgroundColor: Theme.colors.neutral[0],
-          ...Theme.glow.md,
+          backgroundColor: theme.colors.bg,
+          ...theme.shadows.elevation2,
         };
 
       case 'holographic':
         return {
           ...styles,
           backgroundColor: 'transparent',
-          ...Theme.shadows.depth.lg,
+          ...theme.shadows.elevation2,
         };
 
       case 'neon':
         return {
           ...styles,
-          backgroundColor: Theme.colors.neutral[0],
+          backgroundColor: theme.colors.bg,
           borderWidth: 2,
           borderColor: '#00f5ff',
         };
@@ -106,21 +109,21 @@ const FXContainer: React.FC<FXContainerProps> = ({
         return {
           ...styles,
           backgroundColor: 'transparent',
-          ...Theme.shadows.depth.md,
+          ...theme.shadows.elevation2,
         };
 
       default:
         return {
           ...styles,
-          backgroundColor: Theme.colors.neutral[0],
-          ...Theme.shadows.depth.sm,
+          backgroundColor: theme.colors.bg,
+          ...theme.shadows.elevation1,
         };
     }
-  }, [type, variant]);
+  }, [type, variant, theme]);
 
   // Glow animation
   const { animatedStyle: glowStyle } = useGlowAnimation(
-    disabled ? 'transparent' : glowColor || Theme.colors.primary[500],
+    disabled ? 'transparent' : glowColor || theme.colors.primary,
     disabled ? 0 : glowIntensity,
     2000,
   );
@@ -135,7 +138,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
   );
 
   // Start entrance animation if enabled
-  React.useEffect(() => {
+  useEffect(() => {
     if (hasEntrance && isAnimated && !disabled) {
       startEntrance();
     }
@@ -166,10 +169,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
 
     // Apply gradient background
     if (type === 'gradient') {
-      const fallbackGradient = Theme.gradients?.primary ?? [
-        Theme.colors.primary[500],
-        Theme.colors.primary[400],
-      ];
+      const fallbackGradient = theme.palette.gradients.primary;
       const colors = gradientColors ?? fallbackGradient;
 
       content = (
@@ -197,14 +197,12 @@ const FXContainer: React.FC<FXContainerProps> = ({
     | AnimatedStyleProp<ViewStyle>
     | undefined;
 
-  type AnimatedViewStyle = ViewStyle | AnimatedStyleProp<ViewStyle>;
-
-  const animatedContainerStyle = [
-    baseStyles as AnimatedViewStyle,
-    appliedGlowStyle as AnimatedViewStyle,
-    appliedEntranceStyle as AnimatedViewStyle,
-    (style ?? null) as AnimatedViewStyle,
-  ].filter((value): value is AnimatedViewStyle => Boolean(value));
+  const animatedContainerStyle: AnimatedStyleProp<ViewStyle>[] = [
+    baseStyles as AnimatedStyleProp<ViewStyle>,
+    appliedGlowStyle,
+    appliedEntranceStyle,
+    style as AnimatedStyleProp<ViewStyle>,
+  ].filter((value): value is AnimatedStyleProp<ViewStyle> => Boolean(value));
 
   return isAnimated ? (
     <AnimatedContainer style={animatedContainerStyle}>{renderContent()}</AnimatedContainer>

@@ -81,7 +81,7 @@ export const hookAnalytics = new HookAnalytics();
 /**
  * Hook wrapper that tracks usage and performance
  */
-export function withAnalytics<T extends (...args: any[]) => any>(
+export function withAnalytics<T extends (...args: unknown[]) => unknown>(
   hook: T,
   hookName: string,
   screenName: string,
@@ -103,7 +103,7 @@ export function withAnalytics<T extends (...args: any[]) => any>(
         for (const key in wrappedResult) {
           if (typeof wrappedResult[key] === 'function') {
             const originalMethod = wrappedResult[key];
-            wrappedResult[key] = (...methodArgs: any[]) => {
+            wrappedResult[key] = (...methodArgs: unknown[]) => {
               hookAnalytics.trackAction(hookName, screenName, `${hookName}.${key}`);
 
               try {

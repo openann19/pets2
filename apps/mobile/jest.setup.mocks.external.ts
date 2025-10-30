@@ -3,6 +3,37 @@
  * Mocks for external dependencies
  */
 
+// Mock @react-native-community/netinfo
+jest.mock('@react-native-community/netinfo', () => {
+  const mockNetInfoState = {
+    isConnected: true,
+    type: 'wifi',
+    isInternetReachable: true,
+    details: null,
+  };
+
+  return {
+    __esModule: true,
+    default: {
+      fetch: jest.fn(() => Promise.resolve(mockNetInfoState)),
+      addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+      configure: jest.fn(),
+      getCurrentState: jest.fn(() => Promise.resolve(mockNetInfoState)),
+    },
+    NetInfoStateType: {
+      unknown: 'unknown',
+      none: 'none',
+      cellular: 'cellular',
+      wifi: 'wifi',
+      bluetooth: 'bluetooth',
+      ethernet: 'ethernet',
+      wimax: 'wimax',
+      vpn: 'vpn',
+      other: 'other',
+    },
+  };
+});
+
 // Mock @sentry/react-native
 jest.mock('@sentry/react-native', () => ({
   init: jest.fn(),

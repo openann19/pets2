@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import type { AppTheme } from '@mobile/theme';
 import { useTheme } from '@mobile/theme';
 import { logger } from '@pawfectmatch/core';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Haptics from 'expo-haptics';
 import { useEffect, useMemo, useState } from 'react';
@@ -61,7 +60,7 @@ const ManageSubscriptionScreen = ({
             : undefined;
         setSubscription({
           id: data.id,
-          status,
+          status: status ?? 'inactive',
           plan: typeof data.plan === 'string' ? { name: data.plan } : (data.plan as any),
           nextBillingDate: data.currentPeriodEnd,
         });
@@ -89,23 +88,15 @@ const ManageSubscriptionScreen = ({
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
             try {
-              // Call the backend to cancel the subscription
-              const response = await fetch('/api/subscription/cancel', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${await AsyncStorage.getItem('authToken')}`,
-                },
-                body: JSON.stringify({
-                  subscriptionId: subscription?.id,
-                }),
-              });
-
-              if (response.ok) {
+              const success = await premiumAPI.cancelSubscription();
+              
+              if (success) {
                 Alert.alert(
                   'Success',
                   'Your subscription has been canceled. You will retain access until the end of your current billing period.',
                 );
+                // Reload subscription data to reflect the cancellation
+                await loadSubscriptionData();
                 navigation.goBack();
               } else {
                 throw new Error('Failed to cancel subscription');
@@ -125,10 +116,38 @@ const ManageSubscriptionScreen = ({
 
   const handleRestorePurchases = async () => {
     try {
-      // Restore purchases logic
-      Alert.alert('Restore Purchases', 'No previous purchases found.');
+      setLoading(true);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      
+      // Refresh subscription status from the server
+      // This will restore any active subscriptions linked to the user's account
+      const currentSubscription = await premiumAPI.getCurrentSubscription();
+      
+      if (currentSubscription && currentSubscription.status === 'active') {
+        setSubscription({
+          id: currentSubscription.id,
+          status: 'active',
+          plan: { name: currentSubscription.plan },
+          nextBillingDate: currentSubscription.currentPeriodEnd,
+        });
+        Alert.alert(
+          'Success',
+          'Your subscription has been restored. You now have access to all premium features.',
+        );
+      } else {
+        Alert.alert(
+          'No Active Subscription',
+          'No active subscription found linked to your account. If you believe this is an error, please contact support.',
+        );
+      }
     } catch (error) {
-      Alert.alert('Error', 'Failed to restore purchases.');
+      Alert.alert(
+        'Error',
+        'Failed to restore purchases. Please check your internet connection and try again.',
+      );
+      logger.error('Restore purchases error:', { error });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -512,6 +531,15 @@ const ManageSubscriptionScreen = ({
 };
 
 function makeStyles(theme: AppTheme) {
+  // Helper for rgba with opacity
+  const alpha = (color: string, opacity: number) => {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
+
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -525,96 +553,106 @@ function makeStyles(theme: AppTheme) {
       alignItems: 'center',
     },
     loadingText: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onSurface,
     },
     header: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingHorizontal: theme.spacing.lg ?? 20,
-      paddingVertical: theme.spacing.md ?? 15,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
     headerTitle: {
-      fontSize: 20,
-      fontWeight: '700',
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
+      color: theme.colors.onSurface,
     },
     section: {
-      margin: theme.spacing.lg ?? 20,
-      borderRadius: theme.radii?.lg ?? theme.radius?.md ?? 15,
-      padding: theme.spacing.lg ?? 20,
-      shadowColor: theme.palette?.overlay ?? theme.colors.border,
+      margin: theme.spacing.lg,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.lg,
+      backgroundColor: theme.colors.surface,
+      shadowColor: theme.colors.border,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 3,
     },
     sectionTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      marginBottom: theme.spacing.lg ?? 20,
+      fontSize: theme.typography.h2.size * 0.9,
+      fontWeight: theme.typography.h1.weight,
+      marginBottom: theme.spacing.lg,
+      color: theme.colors.onSurface,
     },
     planInfo: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: theme.spacing.lg ?? 20,
+      marginBottom: theme.spacing.lg,
     },
     planDetails: {
-      marginLeft: theme.spacing.md ?? 15,
+      marginStart: theme.spacing.md,
     },
     planName: {
-      fontSize: 20,
-      fontWeight: '700',
-      marginBottom: theme.spacing.xs ?? 5,
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
+      marginBottom: theme.spacing.xs,
+      color: theme.colors.onSurface,
     },
     planStatus: {
-      fontSize: 16,
-      fontWeight: '600',
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
+      color: theme.colors.onSurface,
     },
     billingInfo: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      paddingVertical: theme.spacing.md ?? 10,
+      paddingVertical: theme.spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
     billingLabel: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onMuted,
     },
     billingValue: {
-      fontSize: 16,
-      fontWeight: '600',
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
+      color: theme.colors.onSurface,
     },
     actionButton: {
-      padding: theme.spacing.md ?? 15,
-      borderRadius: theme.radii?.sm ?? theme.radius?.sm ?? 10,
+      padding: theme.spacing.md,
+      borderRadius: theme.radii.sm,
       alignItems: 'center',
-      marginBottom: theme.spacing.md ?? 15,
+      marginBottom: theme.spacing.md,
       borderWidth: 1,
       borderColor: theme.colors.border,
     },
     cancelButton: {
-      backgroundColor: theme.colors.danger + '1A',
-      borderColor: theme.colors.danger + '4D',
+      backgroundColor: alpha(theme.colors.danger, 0.1),
+      borderColor: alpha(theme.colors.danger, 0.3),
     },
     restoreButton: {
-      backgroundColor: theme.colors.bg + '0D',
+      backgroundColor: alpha(theme.colors.bg, 0.05),
     },
     actionButtonText: {
-      fontSize: 16,
-      fontWeight: '700',
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h1.weight,
+      color: theme.colors.onSurface,
     },
     featuresList: {
-      gap: theme.spacing.md ?? 15,
+      gap: theme.spacing.md,
     },
     featureItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: theme.spacing.sm ?? 10,
+      gap: theme.spacing.sm,
     },
     featureText: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onSurface,
     },
   });
 }

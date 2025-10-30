@@ -37,27 +37,27 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     },
     scrollContainer: {
       flexGrow: 1,
-      padding: 20,
+      padding: theme.spacing.lg + theme.spacing.xs,
       justifyContent: 'center',
     },
     header: {
       alignItems: 'center',
-      marginBottom: 40,
+      marginBottom: theme.spacing['2xl'] + theme.spacing.xs,
     },
     logo: {
-      fontSize: 28,
-      fontWeight: 'bold',
+      fontSize: theme.typography.h1.size * 1.166,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.primary as string,
-      marginBottom: 8,
+      marginBottom: theme.spacing.sm,
     },
     tagline: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onMuted,
     },
     form: {
       backgroundColor: theme.colors.surface,
-      borderRadius: 16,
-      padding: 20,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.lg + theme.spacing.xs,
       shadowColor: theme.colors.bg,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
@@ -65,59 +65,59 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       elevation: 2,
     },
     title: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      marginBottom: 24,
+      fontSize: theme.typography.h2.size * 1.2,
+      fontWeight: theme.typography.h1.weight,
+      marginBottom: theme.spacing.lg + theme.spacing.xs,
       textAlign: 'center',
       color: theme.colors.onSurface,
     },
     inputGroup: {
-      marginBottom: 16,
+      marginBottom: theme.spacing.lg,
     },
     label: {
-      fontSize: 14,
-      fontWeight: '600',
-      marginBottom: 6,
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.xs + theme.spacing.xs / 2,
       color: theme.colors.onSurface,
     },
     input: {
       backgroundColor: theme.colors.surface,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      borderRadius: 8,
-      padding: 12,
-      fontSize: 16,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onSurface,
     },
     errorText: {
       color: theme.colors.danger,
-      fontSize: 12,
-      marginTop: 4,
+      fontSize: theme.typography.body.size * 0.75,
+      marginTop: theme.spacing.xs,
     },
     forgotPassword: {
       alignSelf: 'flex-end',
-      marginBottom: 20,
+      marginBottom: theme.spacing.lg + theme.spacing.xs,
     },
     forgotPasswordText: {
       color: theme.colors.primary as string,
-      fontSize: 14,
+      fontSize: theme.typography.body.size * 0.875,
     },
     button: {
       backgroundColor: theme.colors.primary as string,
-      borderRadius: 8,
-      padding: 15,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md + theme.spacing.xs,
       alignItems: 'center',
-      marginVertical: 16,
+      marginVertical: theme.spacing.lg,
     },
     buttonText: {
       color: theme.colors.bg,
-      fontSize: 16,
-      fontWeight: 'bold',
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h1.weight,
     },
     registerContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
-      marginTop: 16,
+      marginTop: theme.spacing.lg,
     },
     registerText: {
       color: theme.colors.onMuted,
@@ -175,9 +175,10 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
             <TouchableOpacity
               style={styles.forgotPassword}
-              testID="LoginScreen-button-2"
-              accessibilityLabel="Interactive element"
+              testID="LoginScreen-forgot-password-button"
+              accessibilityLabel={t('forgot_password_link')}
               accessibilityRole="button"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               onPress={handleForgotPassword}
             >
               <Text style={styles.forgotPasswordText}>{t('forgot_password_link')}</Text>
@@ -185,8 +186,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
             <TouchableOpacity
               style={styles.button}
-              testID="LoginScreen-button-2"
-              accessibilityLabel="Interactive element"
+              testID="LoginScreen-sign-in-button"
+              accessibilityLabel={t('sign_in_button')}
               accessibilityRole="button"
               onPress={handleSubmit}
             >
@@ -196,9 +197,10 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             <View style={styles.registerContainer}>
               <Text style={styles.registerText}>{t('no_account_text')}</Text>
               <TouchableOpacity
-                testID="LoginScreen-button-2"
-                accessibilityLabel="Interactive element"
+                testID="LoginScreen-register-button"
+                accessibilityLabel={t('sign_up_link')}
                 accessibilityRole="button"
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 onPress={navigateToRegister}
               >
                 <Text style={styles.registerLink}>{t('sign_up_link')}</Text>

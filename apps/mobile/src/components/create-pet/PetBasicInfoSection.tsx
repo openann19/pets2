@@ -207,7 +207,7 @@ const makeStyles = (theme: any) =>
     sectionTitle: {
       fontSize: 20,
       fontWeight: 'bold',
-      color: theme.colors.neutral[900],
+      color: theme.colors.onSurface,
       marginBottom: 16,
     },
     inputGroup: {
@@ -216,16 +216,16 @@ const makeStyles = (theme: any) =>
     label: {
       fontSize: 16,
       fontWeight: '600',
-      color: theme.colors.neutral[700],
+      color: theme.colors.onMuted,
       marginBottom: 8,
     },
     input: {
       borderWidth: 1,
-      borderColor: theme.colors.neutral[300],
+      borderColor: theme.colors.border,
       borderRadius: 8,
       padding: 12,
       fontSize: 16,
-      backgroundColor: theme.colors.neutral[0],
+      backgroundColor: theme.colors.bg,
     },
     inputError: {
       borderColor: theme.colors.danger,
@@ -237,11 +237,11 @@ const makeStyles = (theme: any) =>
     },
     textArea: {
       borderWidth: 1,
-      borderColor: theme.colors.neutral[300],
+      borderColor: theme.colors.border,
       borderRadius: 8,
       padding: 12,
       fontSize: 16,
-      backgroundColor: theme.colors.neutral[0],
+      backgroundColor: theme.colors.bg,
       height: 100,
     },
     row: {
@@ -263,16 +263,16 @@ const makeStyles = (theme: any) =>
       alignItems: 'center',
       padding: 12,
       borderWidth: 1,
-      borderColor: theme.colors.neutral[300],
+      borderColor: theme.colors.border,
       borderRadius: 8,
-      backgroundColor: theme.colors.neutral[0],
+      backgroundColor: theme.colors.bg,
       flex: 1,
       minWidth: 150,
       justifyContent: 'center',
     },
     optionButtonSelected: {
-      borderColor: theme.colors.secondary[500],
-      backgroundColor: theme.colors.neutral[100],
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.surface,
     },
     optionEmoji: {
       fontSize: 20,
@@ -280,11 +280,11 @@ const makeStyles = (theme: any) =>
     },
     optionText: {
       fontSize: 14,
-      color: theme.colors.neutral[700],
+      color: theme.colors.onMuted,
       fontWeight: '500',
     },
     optionTextSelected: {
-      color: theme.colors.secondary[500],
+      color: theme.colors.primary,
     },
     genderOptions: {
       flexDirection: 'row',
@@ -297,13 +297,13 @@ const makeStyles = (theme: any) =>
       justifyContent: 'center',
       padding: 12,
       borderWidth: 1,
-      borderColor: theme.colors.neutral[300],
+      borderColor: theme.colors.border,
       borderRadius: 8,
-      backgroundColor: theme.colors.neutral[0],
+      backgroundColor: theme.colors.bg,
     },
     genderButtonSelected: {
-      borderColor: theme.colors.secondary[500],
-      backgroundColor: theme.colors.neutral[100],
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.surface,
     },
     genderEmoji: {
       fontSize: 16,
@@ -311,11 +311,11 @@ const makeStyles = (theme: any) =>
     },
     genderText: {
       fontSize: 14,
-      color: theme.colors.neutral[700],
+      color: theme.colors.onMuted,
       fontWeight: '500',
     },
     genderTextSelected: {
-      color: theme.colors.secondary[500],
+      color: theme.colors.primary,
     },
     sizeOptions: {
       gap: 8,
@@ -323,29 +323,29 @@ const makeStyles = (theme: any) =>
     sizeButton: {
       padding: 12,
       borderWidth: 1,
-      borderColor: theme.colors.neutral[300],
+      borderColor: theme.colors.border,
       borderRadius: 8,
-      backgroundColor: theme.colors.neutral[0],
+      backgroundColor: theme.colors.bg,
       alignItems: 'center',
     },
     sizeButtonSelected: {
-      borderColor: theme.colors.secondary[500],
-      backgroundColor: theme.colors.neutral[100],
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.surface,
     },
     sizeLabel: {
       fontSize: 14,
-      color: theme.colors.neutral[700],
+      color: theme.colors.onMuted,
       fontWeight: '600',
     },
     sizeLabelSelected: {
-      color: theme.colors.secondary[500],
+      color: theme.colors.primary,
     },
     sizeDesc: {
       fontSize: 12,
-      color: theme.colors.neutral[500],
+      color: theme.colors.onMuted,
       marginTop: 2,
     },
     sizeDescSelected: {
-      color: theme.colors.secondary[500],
+      color: theme.colors.primary,
     },
   });

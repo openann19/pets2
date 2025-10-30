@@ -38,12 +38,7 @@ jest.mock('react-native/Libraries/Utilities/Performance', () => ({
   measure: jest.fn(),
 }));
 
-const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
-const mockApi = api as jest.Mocked<typeof api>;
-const mockOfflineService = offlineService as jest.Mocked<typeof offlineService>;
-const mockUploadHygieneService = uploadHygieneService as jest.Mocked<typeof uploadHygieneService>;
-
-const { Performance } = require('react-native/Libraries/Utilities/Performance');
+import { Performance } from 'react-native/Libraries/Utilities/Performance';
 
 // Performance thresholds (based on industry standards)
 const PERFORMANCE_THRESHOLDS = {
@@ -339,7 +334,7 @@ describe('PawfectMatch Performance Test Suite', () => {
 
     it('should respect reduced motion preferences', async () => {
       // Mock reduced motion enabled
-      jest.doMock('react-native/Libraries/Utilities/Platform', () => ({
+      jest.doMock('react-native', () => ({
         OS: 'ios',
         isReduceMotionEnabled: () => true,
       }));

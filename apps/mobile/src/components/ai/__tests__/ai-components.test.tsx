@@ -27,18 +27,18 @@ jest.mock('expo-image-picker', () => ({
 }));
 
 // Mock theme
-jest.mock('../../theme/unified-theme', () => ({
-  Theme: {
+jest.mock('../../theme', () => ({
+  useTheme: jest.fn(() => ({
     colors: {
-      text: 'Theme.colors.neutral[950]',
-      textMuted: '#666666',
-      border: '#cccccc',
-      error: '#ff0000',
-      background: 'Theme.colors.neutral[0]',
-      surface: '#f9f9f9',
-      primary: '#007bff',
-      success: '#28a745',
-      warning: '#ffc107',
+      bg: '#FFFFFF',
+      surface: '#F9F9F9',
+      onSurface: '#000000',
+      onMuted: '#666666',
+      border: '#CCCCCC',
+      danger: '#FF0000',
+      primary: '#007BFF',
+      success: '#28A745',
+      warning: '#FFC107',
     },
     spacing: {
       xs: 4,
@@ -47,32 +47,12 @@ jest.mock('../../theme/unified-theme', () => ({
       lg: 24,
       xl: 32,
     },
-    typography: {
-      sizes: {
-        'xs': 12,
-        'sm': 14,
-        'base': 16,
-        'lg': 18,
-        'xl': 20,
-        '2xl': 24,
-      },
-      weights: {
-        normal: '400',
-        medium: '500',
-        semibold: '600',
-        bold: '700',
-      },
-      lineHeights: {
-        normal: 1.5,
-        relaxed: 1.625,
-      },
-    },
-    borderRadius: {
+    radii: {
       md: 8,
       lg: 12,
       full: 9999,
     },
-  },
+  })),
 }));
 
 describe('PetInfoForm Component', () => {

@@ -4,9 +4,8 @@
  * Enterprise-level implementation with full TypeScript support
  */
 
-import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import type { ViewStyle, TextStyle } from 'react-native';
 import {
   View,
@@ -14,9 +13,10 @@ import {
   StyleSheet,
   Animated,
   TouchableOpacity,
-  Dimensions,
   Image,
 } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 import { AdvancedButton } from './AdvancedInteractionSystem';
 import { useCardAnimations, type CardInteraction } from './Card/CardAnimations';
@@ -30,8 +30,6 @@ import {
 } from './Card/CardVariants';
 import { CardBackground } from './Card/CardBackground';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
 // Re-export types for backward compatibility
 export type { CardVariant, CardSize, CardInteraction };
 
@@ -39,7 +37,7 @@ interface CardAction {
   icon?: string;
   title?: string;
   onPress?: () => void | Promise<void>;
-  apiAction?: () => Promise<any>;
+  apiAction?: () => Promise<unknown>;
   variant?: 'primary' | 'secondary' | 'danger' | 'minimal';
   haptic?: 'light' | 'medium' | 'heavy';
   disabled?: boolean;
@@ -81,9 +79,9 @@ interface AdvancedCardProps {
     color?: string;
     backgroundColor?: string;
   };
-  apiAction?: () => Promise<any>;
+  apiAction?: () => Promise<unknown>;
   apiActions?: {
-    [key: string]: () => Promise<any>;
+    [key: string]: () => Promise<unknown>;
   };
 }
 
@@ -106,8 +104,8 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
   titleStyle,
   subtitleStyle,
   descriptionStyle,
-  glowColor = Theme.colors.primary[500],
-  gradientColors = [Theme.colors.primary[500], Theme.colors.primary[600]],
+  glowColor,
+  gradientColors,
   blurIntensity = 20,
   padding = 'md',
   margin = 'sm',
@@ -116,6 +114,10 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
   status,
   apiActions = {},
 }) => {
+  const theme: AppTheme = useTheme();
+  const defaultGlowColor = glowColor ?? theme.colors.primary;
+  const defaultGradientColors = gradientColors ?? [...theme.palette.gradients.primary];
+
   // Use modular card animations hook
   const {
     scale,
@@ -123,12 +125,9 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
     glow,
     elevation,
     shimmer,
-    isPressed,
-    isHovered,
     isLoading,
     triggerHaptic,
     animatePress,
-    animateHover,
     setIsLoading,
   } = useCardAnimations({
     disabled,
@@ -150,7 +149,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
       if (onPress) {
         await onPress();
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Card action failed:', { error });
       await triggerHaptic('heavy');
     } finally {
@@ -192,7 +191,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
         if (apiActions[action.title || '']) {
           await apiActions[action.title || ''];
         }
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Card action failed:', { error });
         await triggerHaptic('heavy');
       } finally {
@@ -203,8 +202,18 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
   );
 
   // Note: Card styling moved to CardVariants module
-  const cardStyles = getCardStyles({ variant, glowColor });
-  const sizeStyles = getSizeStyles({ size });
+  const cardStyles = useMemo(
+    () =>
+      getCardStyles({
+        variant,
+        glowColor: defaultGlowColor,
+        surfaceColor: theme.colors.surface,
+        borderColor: theme.colors.border,
+        shadowColor: theme.colors.border,
+      }),
+    [variant, defaultGlowColor, theme],
+  );
+  const sizeStyles = useMemo(() => getSizeStyles({ size }), [size]);
 
   // Note: Padding and margin helpers moved to CardVariants module
 
@@ -225,13 +234,13 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
           <View
             style={StyleSheet.flatten([
               styles.badge,
-              { backgroundColor: badge.backgroundColor || Theme.colors.status.error },
+              { backgroundColor: badge.backgroundColor ?? theme.colors.danger },
             ])}
           >
             <Text
               style={StyleSheet.flatten([
                 styles.badgeText,
-                { color: badge.color || Theme.colors.neutral[0] },
+                { color: badge.color ?? theme.colors.onPrimary },
               ])}
             >
               {badge.text}
@@ -244,13 +253,13 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
           <View
             style={StyleSheet.flatten([
               styles.status,
-              { backgroundColor: status.backgroundColor || Theme.colors.status.success },
+              { backgroundColor: status.backgroundColor ?? theme.colors.success },
             ])}
           >
             <Text
               style={StyleSheet.flatten([
                 styles.statusText,
-                { color: status.color || Theme.colors.neutral[0] },
+                { color: status.color ?? theme.colors.onPrimary },
               ])}
             >
               {status.text}
@@ -268,16 +277,16 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
         )}
 
         {/* Title */}
-        {title && <Text style={StyleSheet.flatten([styles.title, titleStyle])}>{title}</Text>}
+        {title && <Text style={StyleSheet.flatten([styles.title(theme), titleStyle])}>{title}</Text>}
 
         {/* Subtitle */}
         {subtitle && (
-          <Text style={StyleSheet.flatten([styles.subtitle, subtitleStyle])}>{subtitle}</Text>
+          <Text style={StyleSheet.flatten([styles.subtitle(theme), subtitleStyle])}>{subtitle}</Text>
         )}
 
         {/* Description */}
         {description && (
-          <Text style={StyleSheet.flatten([styles.description, descriptionStyle])}>
+          <Text style={StyleSheet.flatten([styles.description(theme), descriptionStyle])}>
             {description}
           </Text>
         )}
@@ -291,15 +300,15 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
             {actions.map((action, index) => (
               <AdvancedButton
                 key={index}
-                icon={action.icon}
-                title={action.title}
+                {...(action.icon ? { icon: action.icon } : {})}
+                title={action.title ?? ''}
                 variant={(action.variant || 'minimal') as 'minimal' | 'primary' | 'secondary'}
                 size="sm"
                 interactions={['hover', 'press']}
                 haptic={action.haptic || 'light'}
                 onPress={() => handleActionPress(action)}
-                disabled={action.disabled}
-                loading={action.loading}
+                {...(action.disabled !== undefined ? { disabled: action.disabled } : {})}
+                {...(action.loading !== undefined ? { loading: action.loading } : {})}
                 style={styles.actionButton}
               />
             ))}
@@ -319,7 +328,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
       transform: [{ scale }],
       opacity: disabled ? 0.6 : opacity,
       elevation,
-      shadowColor: glowColor,
+      shadowColor: defaultGlowColor,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: glow.interpolate({
         inputRange: [0, 1],
@@ -338,7 +347,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
       {/* Background */}
       <CardBackground
         variant={variant}
-        gradientColors={gradientColors}
+        gradientColors={defaultGradientColors}
         blurIntensity={blurIntensity}
       />
 
@@ -348,7 +357,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
           style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
             {
-              backgroundColor: glowColor,
+              backgroundColor: defaultGlowColor,
               opacity: glow.interpolate({
                 inputRange: [0, 1],
                 outputRange: [0, 0.2],
@@ -396,7 +405,6 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
     </Animated.View>
   );
 };
-
 // Predefined Card Configurations
 export const CardConfigs = {
   // Default card
@@ -418,7 +426,7 @@ export const CardConfigs = {
   gradient: (props: Partial<AdvancedCardProps>) => ({
     variant: 'gradient' as CardVariant,
     interactions: ['hover', 'press', 'glow'] as CardInteraction[],
-    gradientColors: [Theme.colors.primary[500], Theme.colors.primary[600]],
+    gradientColors: undefined, // Will use theme defaults
     ...props,
   }),
 
@@ -426,7 +434,7 @@ export const CardConfigs = {
   premium: (props: Partial<AdvancedCardProps>) => ({
     variant: 'premium' as CardVariant,
     interactions: ['hover', 'press', 'glow', 'bounce'] as CardInteraction[],
-    glowColor: '#8b5cf6',
+    glowColor: undefined, // Will use theme defaults
     ...props,
   }),
 
@@ -441,7 +449,7 @@ export const CardConfigs = {
   neon: (props: Partial<AdvancedCardProps>) => ({
     variant: 'neon' as CardVariant,
     interactions: ['hover', 'press', 'glow', 'bounce'] as CardInteraction[],
-    glowColor: '#00ffff',
+    glowColor: undefined, // Will use theme defaults
     ...props,
   }),
 
@@ -461,73 +469,91 @@ export const CardConfigs = {
 };
 
 // Styles
-const styles = StyleSheet.create({
-  touchable: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    position: 'relative',
-  },
-  badge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    zIndex: 1,
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  status: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    zIndex: 1,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  image: {
-    width: '100%',
-    height: 120,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  title: {
+const styles = {
+  touchable: StyleSheet.create({
+    touchable: {
+      flex: 1,
+    },
+  }).touchable,
+  content: StyleSheet.create({
+    content: {
+      flex: 1,
+      position: 'relative',
+    },
+  }).content,
+  badge: StyleSheet.create({
+    badge: {
+      position: 'absolute',
+      top: 8,
+      right: 8,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+      zIndex: 1,
+    },
+  }).badge,
+  badgeText: StyleSheet.create({
+    badgeText: {
+      fontSize: 12,
+      fontWeight: 'bold',
+    },
+  }).badgeText,
+  status: StyleSheet.create({
+    status: {
+      position: 'absolute',
+      top: 8,
+      left: 8,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+      zIndex: 1,
+    },
+  }).status,
+  statusText: StyleSheet.create({
+    statusText: {
+      fontSize: 12,
+      fontWeight: 'bold',
+    },
+  }).statusText,
+  image: StyleSheet.create({
+    image: {
+      width: '100%',
+      height: 120,
+      borderRadius: 8,
+      marginBottom: 12,
+    },
+  }).image,
+  title: (theme: AppTheme) => ({
     fontSize: 18,
-    fontWeight: '600',
-    color: Theme.colors.neutral[800],
+    fontWeight: '600' as const,
+    color: theme.colors.onSurface,
     marginBottom: 4,
-  },
-  subtitle: {
+  }),
+  subtitle: (theme: AppTheme) => ({
     fontSize: 14,
-    fontWeight: '500',
-    color: Theme.colors.neutral[500],
+    fontWeight: '500' as const,
+    color: theme.colors.onMuted,
     marginBottom: 8,
-  },
-  description: {
+  }),
+  description: (theme: AppTheme) => ({
     fontSize: 14,
-    color: Theme.colors.neutral[500],
+    color: theme.colors.onMuted,
     lineHeight: 20,
     marginBottom: 12,
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  actionButton: {
-    marginLeft: 8,
-  },
-});
+  }),
+  actionsContainer: StyleSheet.create({
+    actionsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      marginTop: 12,
+    },
+  }).actionsContainer,
+  actionButton: StyleSheet.create({
+    actionButton: {
+      marginLeft: 8,
+    },
+  }).actionButton,
+};
 
 export default AdvancedCard;

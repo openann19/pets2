@@ -15,7 +15,7 @@ import { renderHook, act } from '@testing-library/react-native';
 import { useInteractionMetrics } from '../useInteractionMetrics';
 
 // Mock analytics service
-jest.mock('../../../services/analyticsService', () => ({
+jest.mock('../../../services/usageTracking', () => ({
   analyticsService: {
     trackEvent: jest.fn(),
     trackScreenView: jest.fn(),
@@ -32,7 +32,7 @@ jest.mock('@pawfectmatch/core', () => ({
   },
 }));
 
-import { analyticsService } from '../../../services/analyticsService';
+import { analyticsService } from '../../../services/usageTracking';
 
 const mockAnalyticsService = analyticsService as jest.Mocked<typeof analyticsService>;
 

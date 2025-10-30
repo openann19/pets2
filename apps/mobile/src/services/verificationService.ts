@@ -7,6 +7,7 @@
 
 import { request } from './api';
 import { logger } from './logger';
+import { uploadAdapter } from './upload/index';
 
 export interface VerificationRequirements {
   [key: string]: unknown;
@@ -242,6 +243,7 @@ class VerificationService {
 
   /**
    * Upload verification document
+   * Uses UploadAdapter for platform-agnostic file upload
    */
   async uploadDocument(
     fileUri: string,
@@ -253,25 +255,28 @@ class VerificationService {
     }
 
     try {
-      const FormData = require('form-data');
-      const formData = new FormData();
-
-      // In React Native, you'd use expo-file-system or similar
-      // formData.append('file', {
-      //   uri: fileUri,
-      //   name: 'document.jpg',
-      //   type: 'image/jpeg',
-      // });
-
-      const response = await request<{ url: string }>('/verification/upload', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        params: {
+      // Upload file using UploadAdapter
+      const uploadResult = await uploadAdapter.uploadGeneric?.({
+        uri: fileUri,
+        name: `document_${documentType}.jpg`,
+        contentType: 'image/jpeg',
+        extraFields: {
           documentType,
-          verificationType,
+          ...(verificationType ? { verificationType } : {}),
+        },
+      });
+
+      if (!uploadResult?.url) {
+        throw new Error('Upload failed: No URL returned');
+      }
+
+      // Register upload with verification service
+      const response = await request<{ url: string }>('/verification/register-upload', {
+        method: 'POST',
+        body: {
+          url: uploadResult.url,
+          documentType,
+          ...(verificationType ? { verificationType } : {}),
         },
       });
 

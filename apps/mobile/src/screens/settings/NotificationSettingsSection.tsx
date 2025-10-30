@@ -5,8 +5,8 @@
 
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 
 interface SettingItem {
   id: string;

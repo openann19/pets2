@@ -4,10 +4,9 @@ import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../theme";
 import { VoiceWaveform, generateWaveformFromAudio } from "../chat/VoiceWaveform";
-import { canProcessOnWeb, processAudioWeb } from "../../utils/audio/web-processing";
-import type { WebProcessingReport } from "../../utils/audio/web-processing";
+import { canProcessOnWeb, processAudioWeb } from "../../utils/audio/web-processing.web";
+import type { WebProcessingReport } from "../../utils/audio/web-processing.web";
 import { TranscriptionBadge } from "../chat/TranscriptionBadge";
-import { useTheme } from '../../theme';
 
 type SendFn =
   | ((matchId: string, file: Blob, extras?: { transcript?: string }) => Promise<void>)
@@ -50,7 +49,6 @@ export default function VoiceRecorderUltraWeb({
   transcription,
   onVoiceNoteSent,
 }: Props): React.JSX.Element {
-  const theme = useTheme();
   const theme = useTheme();
   // UI + state
   const [isRecording, setIsRecording] = useState(false);

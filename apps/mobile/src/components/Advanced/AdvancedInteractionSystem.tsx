@@ -10,6 +10,8 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import type { ViewStyle, TextStyle } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import {
   View,
   Text,
@@ -18,7 +20,6 @@ import {
   PanResponder,
   Dimensions,
   TouchableOpacity,
-  Platform,
   AccessibilityInfo,
 } from 'react-native';
 
@@ -32,7 +33,7 @@ const getScreenDimensions = () => {
   }
 };
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = getScreenDimensions();
+const { width: _SCREEN_WIDTH } = getScreenDimensions();
 
 // Advanced Animation Configuration
 const ANIMATION_CONFIG = {
@@ -103,7 +104,7 @@ interface AdvancedButtonProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   children?: React.ReactNode;
-  apiAction?: () => Promise<any>;
+  apiAction?: () => Promise<unknown>;
   glowColor?: string;
   gradientColors?: string[];
   blurIntensity?: number;
@@ -124,10 +125,14 @@ function AdvancedButtonComponent({
   textStyle,
   children,
   apiAction,
-  glowColor = 'Theme.colors.primary[500]',
-  gradientColors = ['Theme.colors.primary[500]', 'Theme.colors.primary[600]'],
+  glowColor,
+  gradientColors,
   blurIntensity = 20,
 }: AdvancedButtonProps): React.JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- useTheme is properly typed to return AppTheme, throws if Provider missing
+  const theme: AppTheme = useTheme();
+  const defaultGlowColor = glowColor ?? theme.colors.primary;
+  const defaultGradientColors = gradientColors ?? [...theme.palette.gradients.primary];
   // Animation Values
   const scale = useRef(new Animated.Value(1)).current;
   const opacity = useRef(new Animated.Value(1)).current;
@@ -138,8 +143,8 @@ function AdvancedButtonComponent({
   const tiltY = useRef(new Animated.Value(0)).current;
 
   // State
-  const [isPressed, setIsPressed] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  const [_isPressed, setIsPressed] = useState(false);
+  const [_isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isAccessibilityEnabled, setIsAccessibilityEnabled] = useState(false);
 
@@ -222,8 +227,9 @@ function AdvancedButtonComponent({
     [disabled, loading, isLoading, interactions, scale, glow, elevation, triggerHaptic],
   );
 
-  // Hover Animation
-  const animateHover = useCallback(
+  // Hover Animation (unused on mobile but kept for future web/tablet support)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _animateHover = useCallback(
     (hovered: boolean) => {
       if (disabled || loading || isLoading) return;
 
@@ -264,7 +270,7 @@ function AdvancedButtonComponent({
       onPanResponderGrant: () => {
         triggerHaptic('light');
       },
-      onPanResponderMove: (evt, gestureState) => {
+      onPanResponderMove: (_evt, gestureState) => {
         if (!interactions.includes('tilt')) return;
 
         const { dx, dy } = gestureState;
@@ -363,7 +369,7 @@ function AdvancedButtonComponent({
           ...baseStyles,
           backgroundColor: 'transparent',
           borderWidth: 1,
-          borderColor: 'Theme.colors.neutral[200]',
+          borderColor: theme.colors.border,
         };
       case 'premium':
         return {
@@ -375,10 +381,10 @@ function AdvancedButtonComponent({
       default:
         return {
           ...baseStyles,
-          backgroundColor: 'Theme.colors.primary[500]',
+          backgroundColor: defaultGlowColor,
         };
     }
-  }, [variant, glowColor]);
+  }, [variant, defaultGlowColor, glowColor, theme]);
 
   // Get Size Styles
   const getSizeStyles = useCallback(() => {
@@ -408,6 +414,7 @@ function AdvancedButtonComponent({
           <Text
             style={StyleSheet.flatten([
               styles.icon,
+              { color: theme.colors.onSurface },
               textStyle,
               { fontSize: getSizeStyles().minHeight * 0.4 },
             ])}
@@ -419,6 +426,7 @@ function AdvancedButtonComponent({
           <Text
             style={StyleSheet.flatten([
               styles.title,
+              { color: theme.colors.onSurface },
               textStyle,
               { fontSize: getSizeStyles().minHeight * 0.35 },
             ])}
@@ -454,7 +462,7 @@ function AdvancedButtonComponent({
         ],
         opacity: disabled ? 0.6 : opacity,
         elevation,
-        shadowColor: glowColor,
+        shadowColor: defaultGlowColor,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: glow.interpolate({
           inputRange: [0, 1],
@@ -475,7 +483,7 @@ function AdvancedButtonComponent({
             style={StyleSheet.flatten([
               StyleSheet.absoluteFillObject,
               {
-                backgroundColor: glowColor,
+                backgroundColor: defaultGlowColor,
                 opacity: glow.interpolate({
                   inputRange: [0, 1],
                   outputRange: [0, 0.2],
@@ -490,7 +498,7 @@ function AdvancedButtonComponent({
         {/* Gradient Background */}
         {variant === 'gradient' && (
           <LinearGradient
-            colors={gradientColors}
+            colors={defaultGradientColors}
             style={StyleSheet.absoluteFillObject}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -580,6 +588,7 @@ function AdvancedButtonComponent({
         rotationAnimation.stop();
       };
     }
+    return undefined;
   }, [loading, isLoading, rotation]);
 
   return renderButton();
@@ -610,23 +619,27 @@ export function AdvancedCard({
   onPress,
   disabled = false,
   style,
-  glowColor = 'Theme.colors.primary[500]',
-  gradientColors = ['Theme.colors.primary[500]', 'Theme.colors.primary[600]'],
+  glowColor,
+  gradientColors,
   blurIntensity = 20,
   padding = 'md',
 }: AdvancedCardProps): React.JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- useTheme is properly typed to return AppTheme, throws if Provider missing
+  const theme: AppTheme = useTheme();
+  const defaultGlowColor = glowColor ?? theme.colors.primary;
+  const defaultGradientColors = gradientColors ?? [...theme.palette.gradients.primary];
   // Reuse AdvancedButton logic for card
   return (
     <AdvancedButton
       variant={variant}
       interactions={interactions}
       haptic={haptic}
-      onPress={onPress}
-      disabled={disabled}
-      style={style}
-      glowColor={glowColor}
-      gradientColors={gradientColors}
-      blurIntensity={blurIntensity}
+      {...(onPress ? { onPress } : {})}
+      {...(disabled !== undefined ? { disabled } : {})}
+      {...(style ? { style } : {})}
+      {...(defaultGlowColor ? { glowColor: defaultGlowColor } : {})}
+      {...(defaultGradientColors ? { gradientColors: defaultGradientColors } : {})}
+      {...(blurIntensity !== undefined ? { blurIntensity } : {})}
     >
       <View style={StyleSheet.flatten([styles.cardContent, { padding: getPaddingValue(padding) }])}>
         {children}
@@ -661,11 +674,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   icon: {
-    marginRight: 8,
-    color: 'Theme.colors.neutral[0]',
+    marginEnd: 8,
   },
   title: {
-    color: 'Theme.colors.neutral[0]',
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -679,7 +690,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderWidth: 2,
-    borderColor: 'Theme.colors.neutral[0]',
     borderTopColor: 'transparent',
     borderRadius: 10,
   },

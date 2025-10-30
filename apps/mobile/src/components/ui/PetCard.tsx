@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from 'react-native-reanimated';
 import { useTheme } from '../../theme/useTheme';
 import type { PetProfile } from '../../data/pets';
 import { Card } from './Card';
 import { Spacer } from './Spacer';
 import { Text } from './Text';
+import { prefetchImage, getDominantColor } from '../../utils/imageLoader';
+
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 interface PetCardProps {
   pet: PetProfile;
@@ -12,18 +16,57 @@ interface PetCardProps {
 
 export function PetCard({ pet }: PetCardProps): React.ReactElement {
   const { colors, radii, spacing } = useTheme();
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const opacity = useSharedValue(0);
+  const dominantColor = getDominantColor(pet.photo);
+
+  // Prefetch image on mount
+  useEffect(() => {
+    prefetchImage(pet.photo, { priority: 'normal' }).catch(() => {
+      // Silently fail prefetch
+    });
+  }, [pet.photo]);
+
+  // Animate fade-in when image loads
+  useEffect(() => {
+    if (imageLoaded) {
+      opacity.value = withTiming(1, {
+        duration: 300,
+        easing: Easing.out(Easing.ease),
+      });
+    }
+  }, [imageLoaded, opacity]);
+
+  const animatedImageStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
 
   return (
     <Card
       style={styles.card}
       shadow="medium"
     >
-      <Image
-        source={{ uri: pet.photo }}
-        accessibilityLabel={`${pet.name}, ${pet.breed}`}
-        resizeMode="cover"
-        style={StyleSheet.flatten([styles.image, { borderRadius: radii.md }])}
-      />
+      <View style={[styles.imageContainer, { borderRadius: radii.md, backgroundColor: dominantColor }]}>
+        {/* Dominant color placeholder */}
+        <View
+          style={[
+            styles.placeholder,
+            { backgroundColor: dominantColor, borderRadius: radii.md },
+          ]}
+        />
+        {/* Fade-in image */}
+        <AnimatedImage
+          source={{ uri: pet.photo }}
+          accessibilityLabel={`${pet.name}, ${pet.breed}`}
+          resizeMode="cover"
+          style={[
+            styles.image,
+            { borderRadius: radii.md },
+            animatedImageStyle,
+          ]}
+          onLoad={() => setImageLoaded(true)}
+        />
+      </View>
       <Spacer size="md" />
       <View style={styles.headerRow}>
         <Text variant="heading3">{pet.name}</Text>
@@ -41,14 +84,14 @@ export function PetCard({ pet }: PetCardProps): React.ReactElement {
         {pet.breed}
       </Text>
       <Spacer size="sm" />
-      <View style={StyleSheet.flatten([styles.tagRow, { gap: spacing.xs }])}>
+      <View style={[styles.tagRow, { gap: spacing.xs }]}>
         {pet.personality.map((trait) => (
           <View
             key={trait}
-            style={StyleSheet.flatten([
+            style={[
               styles.tag,
               { backgroundColor: colors.surfaceMuted, borderRadius: radii.sm },
-            ])}
+            ]}
           >
             <Text
               variant="caption"
@@ -66,6 +109,19 @@ export function PetCard({ pet }: PetCardProps): React.ReactElement {
 const styles = StyleSheet.create({
   card: {
     width: '100%',
+  },
+  imageContainer: {
+    height: 200,
+    width: '100%',
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  placeholder: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   image: {
     height: 200,

@@ -18,6 +18,8 @@ import {
   View,
 } from 'react-native';
 import { useBiometric } from '../../hooks/useBiometric';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 interface BiometricSetupProps {
   onComplete?: () => void;
@@ -30,6 +32,8 @@ export default function BiometricSetup({
   onSkip,
   showSkip = true,
 }: BiometricSetupProps) {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
   const {
     isAvailable,
     isEnabled,
@@ -101,7 +105,7 @@ export default function BiometricSetup({
         <View style={styles.loadingContainer}>
           <ActivityIndicator
             size="large"
-            color="#667eea"
+            color={theme.colors.primary}
           />
           <Text style={styles.loadingText}>Setting up biometric authentication...</Text>
         </View>
@@ -116,7 +120,7 @@ export default function BiometricSetup({
           <Ionicons
             name="finger-print"
             size={80}
-            color="#ccc"
+            color={theme.colors.onMuted}
           />
           <Text style={styles.title}>Biometric Not Available</Text>
           <Text style={styles.subtitle}>
@@ -128,7 +132,7 @@ export default function BiometricSetup({
             onPress={handleComplete}
           >
             <LinearGradient
-              colors={['#667eea', '#764ba2']}
+              colors={theme.palette.gradients.primary}
               style={styles.buttonGradient}
             >
               <Text style={styles.buttonText}>Continue</Text>
@@ -142,7 +146,7 @@ export default function BiometricSetup({
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#667eea', '#764ba2']}
+        colors={theme.palette.gradients.primary}
         style={styles.gradient}
       >
         <View style={styles.content}>
@@ -152,7 +156,7 @@ export default function BiometricSetup({
               <Ionicons
                 name={biometryType === 'Face ID' ? 'face-id' : 'finger-print'}
                 size={60}
-                color="Theme.colors.neutral[0]"
+                color={theme.colors.onPrimary}
               />
             </View>
             <Text style={styles.title}>Enable {biometryType}</Text>
@@ -167,7 +171,7 @@ export default function BiometricSetup({
               <Ionicons
                 name="shield-checkmark"
                 size={24}
-                color="Theme.colors.neutral[0]"
+                color={theme.colors.onPrimary}
               />
               <Text style={styles.featureText}>Enhanced Security</Text>
             </View>
@@ -175,7 +179,7 @@ export default function BiometricSetup({
               <Ionicons
                 name="flash"
                 size={24}
-                color="Theme.colors.neutral[0]"
+                color={theme.colors.onPrimary}
               />
               <Text style={styles.featureText}>Quick Access</Text>
             </View>
@@ -183,7 +187,7 @@ export default function BiometricSetup({
               <Ionicons
                 name="lock-closed"
                 size={24}
-                color="Theme.colors.neutral[0]"
+                color={theme.colors.onPrimary}
               />
               <Text style={styles.featureText}>Secure Storage</Text>
             </View>
@@ -196,8 +200,8 @@ export default function BiometricSetup({
               value={isEnabled}
               onValueChange={handleToggleBiometric}
               disabled={isToggling}
-              trackColor={{ false: '#767577', true: '#4CAF50' }}
-              thumbColor={isEnabled ? 'Theme.colors.neutral[0]' : '#f4f3f4'}
+              trackColor={{ false: theme.colors.border, true: theme.colors.success }}
+              thumbColor={isEnabled ? theme.colors.onPrimary : theme.colors.surface}
             />
           </View>
 
@@ -207,7 +211,7 @@ export default function BiometricSetup({
               <Ionicons
                 name="warning"
                 size={20}
-                color="#ff4757"
+                color={theme.colors.danger}
               />
               <Text style={styles.errorText}>{error}</Text>
             </View>
@@ -226,13 +230,13 @@ export default function BiometricSetup({
                 onPress={handleDemoAuth}
               >
                 <LinearGradient
-                  colors={['#4CAF50', '#45a049']}
+                  colors={theme.palette.gradients.success}
                   style={styles.demoButtonGradient}
                 >
                   <Ionicons
                     name="play"
                     size={20}
-                    color="Theme.colors.neutral[0]"
+                    color={theme.colors.onPrimary}
                   />
                   <Text style={styles.demoButtonText}>Demo Authentication</Text>
                 </LinearGradient>
@@ -256,7 +260,7 @@ export default function BiometricSetup({
               onPress={handleComplete}
             >
               <LinearGradient
-                colors={['#4CAF50', '#45a049']}
+                colors={theme.palette.gradients.success}
                 style={styles.buttonGradient}
               >
                 <Text style={styles.buttonText}>{isEnabled ? 'Continue' : 'Set Up Later'}</Text>
@@ -269,7 +273,8 @@ export default function BiometricSetup({
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -286,12 +291,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.surface,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#666',
+    color: theme.colors.onMuted,
     textAlign: 'center',
   },
   unavailableContainer: {
@@ -299,7 +304,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.surface,
   },
   header: {
     alignItems: 'center',
@@ -309,7 +314,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: theme.colors.overlay,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
@@ -317,13 +322,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: 'Theme.colors.neutral[0]',
+    color: theme.colors.onPrimary,
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: theme.colors.onPrimary,
     textAlign: 'center',
     lineHeight: 24,
   },
@@ -337,7 +342,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 16,
-    color: 'Theme.colors.neutral[0]',
+    color: theme.colors.onPrimary,
     marginLeft: 12,
     fontWeight: '500',
   },
@@ -345,7 +350,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: theme.colors.overlay,
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderRadius: 12,
@@ -353,13 +358,13 @@ const styles = StyleSheet.create({
   },
   toggleLabel: {
     fontSize: 18,
-    color: 'Theme.colors.neutral[0]',
+    color: theme.colors.onPrimary,
     fontWeight: '600',
   },
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 71, 87, 0.1)',
+    backgroundColor: theme.colors.surface,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
@@ -367,12 +372,12 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 14,
-    color: '#ff4757',
+    color: theme.colors.danger,
     marginLeft: 8,
     flex: 1,
   },
   demoContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: theme.colors.overlay,
     padding: 20,
     borderRadius: 12,
     marginBottom: 24,
@@ -381,12 +386,12 @@ const styles = StyleSheet.create({
   demoTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'Theme.colors.neutral[0]',
+    color: theme.colors.onPrimary,
     marginBottom: 8,
   },
   demoDescription: {
     fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: theme.colors.onPrimary,
     textAlign: 'center',
     marginBottom: 16,
   },
@@ -402,7 +407,7 @@ const styles = StyleSheet.create({
   },
   demoButtonText: {
     fontSize: 16,
-    color: 'Theme.colors.neutral[0]',
+    color: theme.colors.onPrimary,
     fontWeight: '600',
     marginLeft: 8,
   },
@@ -416,7 +421,7 @@ const styles = StyleSheet.create({
   },
   skipButtonText: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: theme.colors.onPrimary,
     fontWeight: '500',
   },
   continueButton: {
@@ -429,7 +434,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    color: 'Theme.colors.neutral[0]',
+    color: theme.colors.onPrimary,
     fontWeight: 'bold',
   },
-});
+  });
+}

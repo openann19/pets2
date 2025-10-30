@@ -311,10 +311,10 @@ describe('Theme Refactoring - Screen Compliance', () => {
     it('should use correct radius property names', () => {
       const theme = createTheme('light');
       
-      expect(theme.radius.lg).toBeGreaterThan(0);
-      expect(theme.radius.md).toBeGreaterThan(0);
-      expect(theme.radius.sm).toBeGreaterThan(0);
-      expect(theme.radius.full).toBeGreaterThan(0);
+      expect(theme.radii.lg).toBeGreaterThan(0);
+      expect(theme.radii.md).toBeGreaterThan(0);
+      expect(theme.radii.sm).toBeGreaterThan(0);
+      expect(theme.radii.full).toBeGreaterThan(0);
     });
 
     it('should not use deprecated radius patterns', () => {

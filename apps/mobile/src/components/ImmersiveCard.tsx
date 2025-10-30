@@ -283,7 +283,7 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
           sunset: { colors: [theme.colors.warning, theme.colors.warning, theme.colors.warning], locations: [0, 0.5, 1] },
           ocean: { colors: [theme.colors.success, theme.colors.success, theme.colors.success], locations: [0, 0.5, 1] },
         };
-        const gradient = gradients[gradientName] ?? gradients.primary;
+        const gradient = gradients[gradientName] ?? gradients['primary'];
         if (gradient) {
           return (
             <LinearGradient

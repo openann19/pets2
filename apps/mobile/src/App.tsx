@@ -1,4 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
+import { linking } from './navigation/linking';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
@@ -39,7 +40,7 @@ import PremiumCancelScreen from './screens/PremiumCancelScreen';
 import PremiumScreen from './screens/PremiumScreen';
 import PremiumSuccessScreen from './screens/PremiumSuccessScreen';
 import SubscriptionManagerScreen from './screens/premium/SubscriptionManagerScreen';
-import SubscriptionSuccessScreen from './screens/premium/SubscriptionSuccessScreen';
+import { SubscriptionSuccessScreen } from './screens/premium/SubscriptionSuccessScreen';
 
 // AI Screens
 import AIBioScreen from './screens/AIBioScreen';
@@ -89,6 +90,8 @@ import MigrationExampleScreen from './screens/MigrationExampleScreen';
 import NewComponentsTestScreen from './screens/NewComponentsTestScreen';
 import PremiumDemoScreen from './screens/PremiumDemoScreen';
 import UIDemoScreen from './screens/UIDemoScreen';
+import PreviewCodeScreen from './screens/PreviewCodeScreen';
+import PolishPlaygroundScreen from './screens/PolishPlaygroundScreen';
 
 // Live Streaming Screens
 import GoLiveScreen from './screens/GoLiveScreen';
@@ -365,6 +368,19 @@ const AppNavigator = (): React.ReactElement => (
       component={UIDemoScreen}
       options={screenTransitions.fluid}
     />
+    <Stack.Screen
+      name="PreviewCode"
+      component={PreviewCodeScreen}
+      options={{ presentation: 'modal' }}
+    />
+
+    {__DEV__ && (
+      <Stack.Screen
+        name="PolishPlayground"
+        component={PolishPlaygroundScreen}
+        options={screenTransitions.fluid}
+      />
+    )}
 
     {/* Live Streaming Screens */}
     <Stack.Screen
@@ -389,7 +405,7 @@ export default function App(): React.ReactElement {
       <I18nextProvider i18n={i18n}>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
-            <NavigationContainer>
+            <NavigationContainer linking={linking}>
               <StatusBar style="dark" />
               <AppNavigator />
             </NavigationContainer>

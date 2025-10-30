@@ -1,444 +1,89 @@
 {
-  "version": "1.0.0",
-  "generated": "2025-01-30T00:00:00Z",
-  "app": "PawfectMatch Premium Mobile",
-  "description": "Navigation structure graph for mobile app",
-
-  "navigators": {
-    "RootStack": {
-      "type": "NativeStack",
-      "screens": [
-        "Login", "Register", "ForgotPassword", "ResetPassword",
-        "Main", "Chat", "Profile", "PetProfile", "Swipe", "Matches",
-        "Map", "Home", "Settings", "Community", "MyPets", "CreatePet",
-        "AdoptionManager", "Premium", "PremiumSuccess", "PremiumCancel",
-        "Subscription", "AIBio", "AIPhotoAnalyzer", "AICompatibility",
-        "MemoryWeave", "ARScentTrails", "AdoptionApplication",
-        "PetProfileSetup", "ManageSubscription", "AdminDashboard",
-        "AdminUsers", "AdminAnalytics", "AdminBilling", "AdminSecurity",
-        "MainTabs", "SubscriptionManager", "SubscriptionSuccess",
-        "PrivacySettings", "BlockedUsers", "SafetyCenter",
-        "VerificationCenter", "NotificationPreferences", "HelpSupport",
-        "AboutTermsPrivacy", "DeactivateAccount", "AdvancedFilters",
-        "ModerationTools", "EditProfile", "CreateListing",
-        "AdminChats", "AdminUploads", "AdminVerifications", "AdminServices",
-        "GoLive", "LiveViewer", "LiveBrowse"
-      ],
-      "guards": ["RequiresAuth", "RequiresPremium", "RequiresAdmin"],
-      "initialRoute": "Login"
-    },
-    "TabNavigator": {
-      "type": "BottomTab",
-      "screens": ["Home", "Swipe", "Matches", "Map", "Profile"],
-      "customTabBar": "UltraTabBar",
-      "navigationFlow": "bottom-tab-based navigation"
-    },
-    "OnboardingStack": {
-      "type": "Stack",
-      "screens": ["Welcome", "UserIntent", "PetProfileSetup", "PreferencesSetup"],
-      "guards": ["RequiresNewUser"],
-      "initialRoute": "Welcome"
-    },
-    "AdminStack": {
-      "type": "Stack",
-      "screens": [
-        "AdminDashboard", "AdminUsers", "AdminAnalytics", "AdminBilling",
-        "AdminSecurity", "AdminChats", "AdminUploads", "AdminVerifications",
-        "AdminServices"
-      ],
-      "guards": ["RequiresAdmin"],
-      "initialRoute": "AdminDashboard"
-    },
-    "PremiumStack": {
-      "type": "Stack",
-      "screens": ["Premium", "Subscription", "ManageSubscription"],
-      "guards": ["OptionalPremium"],
-      "initialRoute": "Premium"
-    }
-  },
-
-  "routes": {
+  "root_stack": {
     "auth": {
-      "Login": {
-        "path": "/login",
-        "guards": ["!RequiresAuth"],
-        "next": ["Register", "ForgotPassword"]
-      },
-      "Register": {
-        "path": "/register",
-        "guards": ["!RequiresAuth"],
-        "next": ["Login", "Main"]
-      },
-      "ForgotPassword": {
-        "path": "/forgot-password",
-        "guards": ["!RequiresAuth"],
-        "next": ["Login", "ResetPassword"]
-      },
-      "ResetPassword": {
-        "path": "/reset-password",
-        "params": { "token": "string" },
-        "guards": ["!RequiresAuth"],
-        "next": ["Login"]
-      }
+      "Login": {},
+      "Register": {},
+      "ForgotPassword": {},
+      "ResetPassword": { "params": ["token"] }
     },
     "main": {
-      "MainTabs": {
-        "path": "/main",
-        "guards": ["RequiresAuth"],
-        "component": "BottomTabNavigator",
-        "next": ["Home", "Swipe", "Matches", "Map", "Profile"]
-      },
-      "Home": {
-        "path": "/home",
-        "guards": ["RequiresAuth"],
-        "next": ["Swipe", "Matches", "Profile", "Settings", "Premium"]
-      },
-      "Swipe": {
-        "path": "/swipe",
-        "guards": ["RequiresAuth"],
-        "next": ["Matches", "Profile", "PetProfile", "CreatePet"]
-      },
-      "Matches": {
-        "path": "/matches",
-        "guards": ["RequiresAuth"],
-        "next": ["Chat", "Profile"]
-      },
-      "Map": {
-        "path": "/map",
-        "guards": ["RequiresAuth"],
-        "next": ["Profile", "PetProfile", "ARScentTrails"]
-      },
-      "Profile": {
-        "path": "/profile",
-        "guards": ["RequiresAuth"],
-        "params": { "userId": "string?" },
-        "next": ["Settings", "EditProfile", "MyPets", "Premium"]
-      },
-      "Chat": {
-        "path": "/chat",
-        "guards": ["RequiresAuth"],
-        "params": { "matchId": "string", "petName": "string" },
-        "next": ["Profile", "PetProfile", "Calling"]
-      }
+      "Main": { "type": "tabs" },
+      "Chat": { "params": ["matchId", "petName"] },
+      "Profile": { "params": ["userId"] },
+      "PetProfile": { "params": ["petId"] }
     },
-    "profile": {
-      "MyPets": {
-        "path": "/my-pets",
-        "guards": ["RequiresAuth"],
-        "next": ["PetProfile", "CreatePet", "EditProfile"]
-      },
-      "CreatePet": {
-        "path": "/create-pet",
-        "guards": ["RequiresAuth"],
-        "next": ["MyPets", "PetProfile"]
-      },
-      "EditProfile": {
-        "path": "/edit-profile",
-        "guards": ["RequiresAuth"],
-        "next": ["Profile", "Settings"]
-      },
-      "PetProfile": {
-        "path": "/pet-profile",
-        "params": { "petId": "string" },
-        "guards": ["RequiresAuth"],
-        "next": ["Chat", "AICompatibility", "AdoptionApplication"]
-      }
+    "premium": {
+      "Premium": {},
+      "PremiumSuccess": { "params": ["sessionId"] },
+      "PremiumCancel": {},
+      "ManageSubscription": {}
     },
     "ai": {
-      "AIBio": {
-        "path": "/ai/bio",
-        "guards": ["RequiresAuth"],
-        "next": ["CreatePet"]
-      },
-      "AIPhotoAnalyzer": {
-        "path": "/ai/photo-analyzer",
-        "guards": ["RequiresAuth"],
-        "next": ["CreatePet"]
-      },
-      "AICompatibility": {
-        "path": "/ai/compatibility",
-        "params": { "petAId": "string?", "petBId": "string?" },
-        "guards": ["RequiresAuth"],
-        "next": ["Matches", "Chat"]
-      }
+      "AIBio": {},
+      "AIPhotoAnalyzer": {},
+      "AICompatibility": { "params": ["petAId", "petBId"] }
     },
-    "premium": {
-      "Premium": {
-        "path": "/premium",
-        "guards": ["RequiresAuth"],
-        "next": ["Subscription", "ManageSubscription", "SubscriptionSuccess"]
-      },
-      "ManageSubscription": {
-        "path": "/manage-subscription",
-        "guards": ["RequiresAuth"],
-        "next": ["Premium", "SubscriptionSuccess", "Settings"]
-      },
-      "SubscriptionManager": {
-        "path": "/subscription/manager",
-        "guards": ["RequiresAuth"],
-        "next": ["Premium", "ManageSubscription"]
-      }
-    },
-    "settings": {
-      "Settings": {
-        "path": "/settings",
-        "guards": ["RequiresAuth"],
-        "next": ["PrivacySettings", "NotificationPreferences", "HelpSupport", "AboutTermsPrivacy", "DeactivateAccount"]
-      },
-      "PrivacySettings": {
-        "path": "/settings/privacy",
-        "guards": ["RequiresAuth"],
-        "next": ["BlockedUsers", "SafetyCenter"]
-      },
-      "BlockedUsers": {
-        "path": "/settings/blocked",
-        "guards": ["RequiresAuth"],
-        "next": ["PrivacySettings"]
-      },
-      "SafetyCenter": {
-        "path": "/settings/safety",
-        "guards": ["RequiresAuth"],
-        "next": ["PrivacySettings", "VerificationCenter"]
-      },
-      "VerificationCenter": {
-        "path": "/settings/verification",
-        "guards": ["RequiresAuth"],
-        "next": ["Profile"]
-      },
-      "NotificationPreferences": {
-        "path": "/settings/notifications",
-        "guards": ["RequiresAuth"],
-        "next": ["Settings"]
-      },
-      "HelpSupport": {
-        "path": "/settings/help",
-        "guards": ["RequiresAuth"],
-        "next": ["Settings"]
-      },
-      "AboutTermsPrivacy": {
-        "path": "/settings/about",
-        "guards": ["RequiresAuth"],
-        "next": ["Settings"]
-      },
-      "DeactivateAccount": {
-        "path": "/settings/deactivate",
-        "guards": ["RequiresAuth"],
-        "next": ["Login"]
-      }
+    "admin": {
+      "AdminDashboard": {},
+      "AdminUsers": {},
+      "AdminAnalytics": {},
+      "AdminSecurity": {},
+      "AdminBilling": {}
     },
     "adoption": {
-      "AdoptionManager": {
-        "path": "/adoption",
-        "guards": ["RequiresAuth"],
-        "next": ["AdoptionApplication", "CreateListing"]
-      },
-      "AdoptionApplication": {
-        "path": "/adoption/apply",
-        "params": { "petId": "string", "petName": "string" },
-        "guards": ["RequiresAuth"],
-        "next": ["AdoptionManager", "Matches"]
-      },
-      "CreateListing": {
-        "path": "/adoption/create",
-        "params": { "petId": "string?" },
-        "guards": ["RequiresAuth"],
-        "next": ["AdoptionManager"]
-      }
+      "AdoptionManager": {},
+      "AdoptionApplication": { "params": ["petId", "petName"] }
     },
-    "admin": {
-      "AdminDashboard": {
-        "path": "/admin/dashboard",
-        "guards": ["RequiresAdmin"],
-        "next": ["AdminUsers", "AdminAnalytics", "AdminBilling", "AdminSecurity"]
-      },
-      "AdminUsers": {
-        "path": "/admin/users",
-        "guards": ["RequiresAdmin"],
-        "next": ["AdminDashboard", "Profile"]
-      },
-      "AdminAnalytics": {
-        "path": "/admin/analytics",
-        "guards": ["RequiresAdmin"],
-        "next": ["AdminDashboard"]
-      },
-      "AdminBilling": {
-        "path": "/admin/billing",
-        "guards": ["RequiresAdmin"],
-        "next": ["AdminDashboard"]
-      },
-      "AdminSecurity": {
-        "path": "/admin/security",
-        "guards": ["RequiresAdmin"],
-        "next": ["AdminDashboard", "ModerationTools"]
-      },
-      "AdminChats": {
-        "path": "/admin/chats",
-        "guards": ["RequiresAdmin"],
-        "next": ["AdminDashboard"]
-      },
-      "AdminUploads": {
-        "path": "/admin/uploads",
-        "guards": ["RequiresAdmin"],
-        "next": ["AdminDashboard"]
-      },
-      "AdminVerifications": {
-        "path": "/admin/verifications",
-        "guards": ["RequiresAdmin"],
-        "next": ["AdminDashboard"]
-      },
-      "AdminServices": {
-        "path": "/admin/services",
-        "guards": ["RequiresAdmin"],
-        "next": ["AdminDashboard"]
-      },
-      "ModerationTools": {
-        "path": "/admin/moderation",
-        "guards": ["RequiresAdmin"],
-        "next": ["AdminSecurity", "Chat"]
-      }
-    },
-    "social": {
-      "Community": {
-        "path": "/community",
-        "guards": ["RequiresAuth"],
-        "next": ["Profile", "Stories"]
-      },
-      "Stories": {
-        "path": "/stories",
-        "guards": ["RequiresAuth"],
-        "next": ["Community", "Chat"]
-      }
-    },
-    "live": {
-      "GoLive": {
-        "path": "/live/go",
-        "guards": ["RequiresAuth", "OptionalPremium"],
-        "next": ["LiveViewer"]
-      },
-      "LiveViewer": {
-        "path": "/live/view",
-        "params": { "streamId": "string" },
-        "guards": ["RequiresAuth"],
-        "next": ["Community"]
-      },
-      "LiveBrowse": {
-        "path": "/live/browse",
-        "guards": ["RequiresAuth"],
-        "next": ["LiveViewer"]
-      }
-    },
-    "ar": {
-      "ARScentTrails": {
-        "path": "/ar/scent-trails",
-        "guards": ["RequiresAuth"],
-        "params": { "initialLocation": "{ latitude: number, longitude: number }" },
-        "next": ["Map"]
-      }
-    },
-    "advanced": {
-      "AdvancedFilters": {
-        "path": "/swipe/filters",
-        "guards": ["RequiresAuth"],
-        "next": ["Swipe"]
-      },
-      "MemoryWeave": {
-        "path": "/memories",
-        "guards": ["RequiresAuth"],
-        "params": { "matchId": "string", "petName": "string", "memories": "unknown[]" },
-        "next": ["Chat", "Matches"]
-      }
+    "settings": {
+      "Settings": {},
+      "PrivacySettings": {},
+      "BlockedUsers": {},
+      "SafetyCenter": {},
+      "VerificationCenter": {},
+      "NotificationPreferences": {},
+      "HelpSupport": {},
+      "DeactivateAccount": {}
     }
   },
-
-  "navigationFlow": {
-    "unauthenticated": {
-      "flows": ["Login → Register", "Login → ForgotPassword → ResetPassword"],
-      "goal": "Authenticate user"
-    },
-    "authenticated": {
-      "flows": [
-        "Home → Swipe → Matches → Chat",
-        "Home → Profile → Settings",
-        "Swipe → CreatePet → MyPets",
-        "Matches → Chat → Calling",
-        "Home → Premium → SubscriptionSuccess",
-        "Profile → EditProfile → MyPets"
-      ],
-      "goal": "Core app functionality"
-    },
-    "premium": {
-      "flows": [
-        "Home → Premium → ManageSubscription",
-        "Swipe → Premium → SubscriptionSuccess",
-        "Profile → Premium → ManageSubscription"
-      ],
-      "goal": "Premium feature access"
-    },
-    "admin": {
-      "flows": [
-        "Profile → AdminDashboard",
-        "AdminDashboard → AdminUsers → Profile",
-        "AdminDashboard → ModerationTools → Chat"
-      ],
-      "goal": "Administrative management"
-    }
+  "tab_navigation": {
+    "tabs": [
+      {
+        "name": "Home",
+        "screen": "HomeScreen",
+        "icon": "home"
+      },
+      {
+        "name": "Swipe", 
+        "screen": "SwipeScreen",
+        "icon": "heart"
+      },
+      {
+        "name": "Matches",
+        "screen": "MatchesScreen", 
+        "icon": "people"
+      },
+      {
+        "name": "Map",
+        "screen": "MapScreen",
+        "icon": "map"
+      },
+      {
+        "name": "Profile",
+        "screen": "ProfileScreen",
+        "icon": "person"
+      }
+    ]
   },
-
-  "deepLinking": {
-    "schema": "pawfectmatch://",
-    "paths": {
-      "/chat/:matchId": "Opens chat with specific match",
-      "/pet/:petId": "Opens pet profile",
-      "/premium": "Opens premium screen",
-      "/matches": "Opens matches screen"
-    }
-  },
-
   "guards": {
-    "RequiresAuth": {
-      "type": "auth",
-      "check": "user.isAuthenticated",
-      "redirect": "Login",
-      "description": "User must be logged in"
-    },
-    "RequiresPremium": {
-      "type": "subscription",
-      "check": "user.isPremium",
-      "redirect": "Premium",
-      "description": "User must have active premium subscription"
-    },
-    "RequiresAdmin": {
-      "type": "role",
-      "check": "user.role === 'admin'",
-      "redirect": "Home",
-      "description": "User must have admin role"
-    },
-    "RequiresNewUser": {
-      "type": "onboarding",
-      "check": "!user.hasCompletedOnboarding",
-      "redirect": "Welcome",
-      "description": "User must complete onboarding"
-    },
-    "OptionalPremium": {
-      "type": "feature-gate",
-      "check": "featureFlags.liveStreaming",
-      "fallback": "Premium",
-      "description": "Feature may require premium"
-    }
+    "auth_required": ["Chat", "Profile", "Swipe", "Matches", "Map", "Home"],
+    "admin_required": ["AdminDashboard", "AdminUsers", "AdminAnalytics", "AdminSecurity", "AdminBilling"],
+    "premium_required": ["Premium", "PremiumSuccess", "ManageSubscription"],
+    "pet_owner_required": ["PetProfile", "CreatePet", "MyPets"]
   },
-
-  "transitions": {
-    "default": "slide",
-    "modal": "presentation-style-pageSheet",
-    "chat": "slide-from-right",
-    "premium": "fade-with-scale"
-  },
-
-  "analytics": {
-    "screenViews": true,
-    "navigationEvents": true,
-    "deepLinks": true,
-    "timeOnScreen": true,
-    "navigationDepth": true
+  "deep_links": {
+    "pet_profile": "/pet/:petId",
+    "match_chat": "/match/:matchId",
+    "adoption": "/adopt/:petId",
+    "premium": "/premium"
   }
 }

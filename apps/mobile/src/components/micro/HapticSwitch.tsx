@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { View, Switch, StyleSheet } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { useTheme } from '@mobile/theme';
 
 type Props = {
   value: boolean;
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export default function HapticSwitch({ value, onValueChange, disabled }: Props) {
+  const theme = useTheme();
   const pulse = useSharedValue(0);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function HapticSwitch({ value, onValueChange, disabled }: Props) 
     <View style={styles.wrap}>
       <Animated.View
         pointerEvents="none"
-        style={[styles.ring, { borderColor: Theme.colors.primary[500] }, ring]}
+        style={[styles.ring, { borderColor: theme.colors.primary }, ring]}
       />
       <Switch
         value={value}
@@ -40,8 +42,8 @@ export default function HapticSwitch({ value, onValueChange, disabled }: Props) 
           Haptics.selectionAsync();
           onValueChange(v);
         }}
-        trackColor={{ false: Theme.colors.neutral[200], true: '#fce7f3' }}
-        thumbColor={value ? Theme.colors.primary[500] : Theme.colors.neutral[400]}
+        trackColor={{ false: theme.palette.neutral[200], true: '#fce7f3' }}
+        thumbColor={value ? theme.colors.primary : theme.palette.neutral[400]}
       />
     </View>
   );

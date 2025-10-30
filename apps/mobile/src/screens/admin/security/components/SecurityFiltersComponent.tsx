@@ -66,7 +66,7 @@ export const SecurityFiltersComponent: React.FC<SecurityFiltersComponentProps> =
   const { colors, palette } = theme;
 
   return (
-    <View style={styles.filtersContainer}>
+    <View style={styles.filtersContainer} testID="security-filters" accessibilityLabel="Security alert filters">
       {/* Severity Filter */}
       <View style={styles.filterRow}>
         <Text style={[styles.filterLabel, { color: colors.onSurface }]}>Severity:</Text>

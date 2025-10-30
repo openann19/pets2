@@ -25,7 +25,7 @@ import { useTheme } from '@mobile/theme';
 import { SPRING } from '../../../animation';
 import { BorderRadius, Colors, GlobalStyles, Spacing } from '../../../styles/GlobalStyles';
 import { getPremiumGradients } from '../constants/gradients';
-import { PREMIUM_SHADOWS } from '../constants/shadows';
+import { getPremiumShadows } from '../constants/shadows';
 
 /**
  * EliteButton Component
@@ -121,6 +121,7 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
       overflow: 'hidden',
       position: 'relative',
     };
+    const SHADOWS = getPremiumShadows(theme);
 
     switch (variant) {
       case 'secondary':
@@ -135,14 +136,14 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
           borderColor: 'rgba(255,255,255,0.2)',
         };
       case 'holographic':
-        return { ...baseStyle, ...PREMIUM_SHADOWS.holographicGlow };
+        return { ...baseStyle, ...SHADOWS.holographicGlow };
       case 'neon':
-        return { ...baseStyle, ...PREMIUM_SHADOWS.neonGlow };
+        return { ...baseStyle, ...SHADOWS.neonGlow };
       default:
         return {
           ...baseStyle,
           ...(GlobalStyles.buttonPrimary as ViewStyle),
-          ...(glow ? (PREMIUM_SHADOWS.primaryGlow as ViewStyle) : ({} as ViewStyle)),
+          ...(glow ? (SHADOWS.primaryGlow as ViewStyle) : ({} as ViewStyle)),
         };
     }
   };

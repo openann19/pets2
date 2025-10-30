@@ -33,8 +33,11 @@ export async function setItem(key: string, value: string): Promise<void> {
 }
 
 export async function removeItem(key: string): Promise<void> {
-  if (Platform.OS === 'web') await AsyncStorage.removeItem(key);
-  else await SecureStore.deleteItemAsync(key);
+  if (Platform.OS === 'web') {
+    await AsyncStorage.removeItem(key);
+  } else {
+    await SecureStore.deleteItemAsync(key);
+  }
   const idx = await readIndex();
   if (key in idx) {
     delete idx[key];

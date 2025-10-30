@@ -1,4 +1,4 @@
-const API_URL = process.env.EXPO_PUBLIC_API_URL || process.env.API_URL || '';
+const API_URL = process.env['EXPO_PUBLIC_API_URL'] || process.env['API_URL'] || '';
 
 export async function getHomeStats() {
   const res = await fetch(`${API_URL}/api/home/stats`);

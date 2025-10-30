@@ -347,7 +347,10 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
               accessibilityLabel="Interactive element"
               accessibilityRole="button"
               onPress={() => {
-                Alert.alert('Coming Soon', 'Application review feature coming soon!');
+                // Navigate to ApplicationReview screen
+                (navigation as any).navigate('ApplicationReview', {
+                  applicationId: pet.id,
+                });
               }}
             >
               <LinearGradient
@@ -372,7 +375,8 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
               accessibilityLabel="Interactive element"
               accessibilityRole="button"
               onPress={() => {
-                Alert.alert('Edit', 'Edit pet details coming soon!');
+                // Navigate to EditPet screen (using CreatePet as edit screen)
+                (navigation as any).navigate('CreatePet', { petId: pet.id });
               }}
             >
               <LinearGradient

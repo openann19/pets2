@@ -8,6 +8,7 @@ import { useTheme } from '@mobile/theme';
 
 import React, { useState } from 'react';
 import { Alert, Dimensions, ScrollView, StyleSheet, View } from 'react-native';
+import { useReduceMotion } from '../hooks/useReducedMotion';
 
 // Import new architecture components
 import {
@@ -73,24 +74,27 @@ const mockPhotos = [
 
 export default function NewComponentsTestScreen() {
   const theme = useTheme();
+  const reducedMotion = useReduceMotion();
   const styles = makeStyles(theme);
 
   const [photos, setPhotos] = useState(mockPhotos);
   const [isLoading, setIsLoading] = useState(false);
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } = useStaggeredAnimation(7, 100);
+  const { start: startStaggeredAnimation, getAnimatedStyle } = useStaggeredAnimation(7, reducedMotion ? 100 : 100);
 
   const { start: startEntranceAnimation, animatedStyle: entranceStyle } = useEntranceAnimation(
     'fadeIn',
-    0,
+    reducedMotion ? 0 : 0,
   );
 
   // Start animations
   React.useEffect(() => {
-    startStaggeredAnimation();
-    startEntranceAnimation();
-  }, [startStaggeredAnimation, startEntranceAnimation]);
+    if (!reducedMotion) {
+      startStaggeredAnimation();
+      startEntranceAnimation();
+    }
+  }, [startStaggeredAnimation, startEntranceAnimation, reducedMotion]);
 
   // Event handlers
   const handleButtonPress = (buttonName: string) => {
@@ -366,7 +370,7 @@ const makeStyles = (theme: any) =>
     },
     demoContainer: {
       flex: 1,
-      minWidth: (SCREEN_WIDTH - theme.spacing.xl * 2 - theme.spacing.md * 2) / 3,
+      minWidth: (SCREEN_WIDTH - theme.spacing['2xl'] - theme.spacing['2xl']) / 3,
       padding: theme.spacing.md,
       alignItems: 'center',
     },

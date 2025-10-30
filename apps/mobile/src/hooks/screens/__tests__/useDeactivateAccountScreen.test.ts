@@ -5,7 +5,7 @@
 
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
-import gdprService from '../../../services/gdprService';
+import * as gdprService from '../../../services/gdprService';
 import { useDeactivateAccountScreen } from '../useDeactivateAccountScreen';
 
 jest.mock('../../../services/gdprService');
@@ -84,7 +84,7 @@ describe('useDeactivateAccountScreen', () => {
         'Required',
         'Please select a reason for deactivation.',
       );
-      expect(mockGdprService.deleteAccount).not.toHaveBeenCalled();
+      expect(gdprService.deleteAccount).not.toHaveBeenCalled();
     });
 
     it('should require confirmation text', async () => {
@@ -105,11 +105,11 @@ describe('useDeactivateAccountScreen', () => {
     });
 
     it('should deactivate account successfully', async () => {
-      mockGdprService.deleteAccount.mockResolvedValue({
+      (gdprService.deleteAccount as jest.Mock).mockResolvedValue({
         success: true,
         message: 'Account deactivated',
         gracePeriodEndsAt: new Date().toISOString(),
-      } as any);
+      });
 
       const { result } = renderHook(() => useDeactivateAccountScreen());
 
@@ -122,7 +122,7 @@ describe('useDeactivateAccountScreen', () => {
         await result.current.handleDeactivate();
       });
 
-      expect(mockGdprService.deleteAccount).toHaveBeenCalledWith({
+      expect(gdprService.deleteAccount).toHaveBeenCalledWith({
         password: 'N/A',
         reason: 'Found a partner',
         feedback: 'deactivate',

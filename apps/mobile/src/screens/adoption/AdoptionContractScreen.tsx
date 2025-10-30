@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { adoptionAPI } from '../../services/api';
 
 // Runtime theme has radius (not radii) and bgAlt/surfaceAlt in colors
 type RuntimeTheme = AppTheme & {
@@ -96,40 +97,65 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
   const generateContract = async () => {
     setIsGenerating(true);
     try {
-      // Simulate contract generation
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Validate required fields
+      if (!contractTerms.emergencyContact.name || !contractTerms.emergencyContact.phone) {
+        Alert.alert('Validation Error', 'Please fill in all required emergency contact fields.');
+        setIsGenerating(false);
+        return;
+      }
+
+      const result = await adoptionAPI.generateContract({
+        applicationId,
+        contractTerms,
+      });
 
       Alert.alert(
         'Contract Generated',
-        'The adoption contract has been generated and sent to both parties for review and signature.',
+        result.message || 'The adoption contract has been generated and sent to both parties for review and signature.',
         [
           {
             text: 'View Contract',
             onPress: () => {
-              logger.info('View contract');
+              logger.info('View contract', { contractId: result.contractId });
+              // In a real app, navigate to contract view screen or open PDF
             },
           },
           {
             text: 'Send for Signature',
             onPress: () => {
-              handleSendForSignature();
+              if (result.contractId) {
+                handleSendForSignature(result.contractId);
+              }
             },
           },
         ],
       );
     } catch (error) {
+      logger.error('Failed to generate contract', { error });
       Alert.alert('Error', 'Failed to generate contract. Please try again.');
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleSendForSignature = () => {
-    Alert.alert(
-      'Contract Sent',
-      `The adoption contract for ${petName} has been sent to ${applicantName} for digital signature. You will be notified when it's signed.`,
-      [{ text: 'OK', onPress: () => navigation.goBack() }],
-    );
+  const handleSendForSignature = async (contractIdToSend: string) => {
+    try {
+      // Extract applicant ID from route params or application data
+      // For now, using a placeholder - in real app, this would come from application data
+      const result = await adoptionAPI.sendContractForSignature({
+        contractId: contractIdToSend,
+        applicantId: applicationId, // Using applicationId as proxy for applicantId
+      });
+
+      Alert.alert(
+        'Contract Sent',
+        result.message || `The adoption contract for ${petName} has been sent to ${applicantName} for digital signature. You will be notified when it's signed.`,
+        [{ text: 'OK', onPress: () => navigation.goBack() }],
+      );
+    } catch (error) {
+      logger.error('Failed to send contract for signature', { error });
+      Alert.alert('Error', 'Failed to send contract for signature. Please try again.');
+    }
   };
 
   return (

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
-import gdprService from '../../../services/gdprService';
+import * as gdprService from '../../../services/gdprService';
 import { logger } from '@pawfectmatch/core';
 
 export interface UseAccountDeletionReturn {

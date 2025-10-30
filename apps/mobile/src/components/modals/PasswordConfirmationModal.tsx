@@ -17,6 +17,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { logger } from '@pawfectmatch/core';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 interface PasswordConfirmationModalProps {
   visible: boolean;
@@ -43,6 +45,8 @@ export function PasswordConfirmationModal({
 }: PasswordConfirmationModalProps): React.JSX.Element {
   const [password, setPassword] = useState('');
   const [isSecureTextEntry, setIsSecureTextEntry] = useState(true);
+  const theme = useTheme();
+  const styles = makeStyles(theme);
 
   const handleConfirm = async () => {
     if (!password.trim()) {
@@ -84,7 +88,7 @@ export function PasswordConfirmationModal({
               <Ionicons
                 name="lock-closed"
                 size={28}
-                color="Theme.colors.status.error"
+                color={theme.colors.danger}
               />
             </View>
             <Text style={styles.title}>{title}</Text>
@@ -111,7 +115,7 @@ export function PasswordConfirmationModal({
               <Ionicons
                 name={isSecureTextEntry ? 'eye-off' : 'eye'}
                 size={20}
-                color="Theme.colors.neutral[500]"
+                color={theme.colors.onMuted}
               />
             </TouchableOpacity>
           </View>
@@ -122,7 +126,7 @@ export function PasswordConfirmationModal({
               <Ionicons
                 name="alert-circle"
                 size={16}
-                color="Theme.colors.status.error"
+                color={theme.colors.danger}
               />
               <Text style={styles.errorText}>{error}</Text>
             </View>
@@ -146,8 +150,8 @@ export function PasswordConfirmationModal({
               <LinearGradient
                 colors={
                   isLoading || !password.trim()
-                    ? ['Theme.colors.neutral[400]', 'Theme.colors.neutral[500]']
-                    : ['Theme.colors.status.error', '#DC2626']
+                    ? [theme.palette.neutral[200], theme.palette.neutral[300]]
+                    : [...theme.palette.gradients.danger]
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -165,117 +169,119 @@ export function PasswordConfirmationModal({
   );
 }
 
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    width: '85%',
-    maxWidth: 400,
-    backgroundColor: 'Theme.colors.neutral[0]',
-    borderRadius: 20,
-    padding: 24,
-    shadowColor: 'Theme.colors.neutral[950]',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  iconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#FEF2F2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'Theme.colors.neutral[900]',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  message: {
-    fontSize: 14,
-    color: 'Theme.colors.neutral[500]',
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  passwordContainer: {
-    position: 'relative',
-    marginBottom: 16,
-  },
-  passwordInput: {
-    height: 50,
-    backgroundColor: 'Theme.colors.background.secondary',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingRight: 50,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: 'Theme.colors.neutral[200]',
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 16,
-    top: 15,
-    padding: 4,
-  },
-  errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FEF2F2',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  errorText: {
-    fontSize: 13,
-    color: 'Theme.colors.status.error',
-    marginLeft: 8,
-    flex: 1,
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  button: {
-    flex: 1,
-    height: 50,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cancelButton: {
-    backgroundColor: 'Theme.colors.neutral[100]',
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'Theme.colors.neutral[700]',
-  },
-  confirmButton: {
-    overflow: 'hidden',
-  },
-  gradientButton: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 12,
-  },
-  confirmButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'Theme.colors.neutral[0]',
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: theme.colors.overlay,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContent: {
+      width: '85%',
+      maxWidth: 400,
+      backgroundColor: theme.colors.surface,
+      borderRadius: 20,
+      padding: 24,
+      shadowColor: theme.palette.neutral[900],
+      shadowOffset: { width: 0, height: 10 },
+      shadowOpacity: 0.3,
+      shadowRadius: 20,
+      elevation: 10,
+    },
+    header: {
+      alignItems: 'center',
+      marginBottom: 24,
+    },
+    iconContainer: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      backgroundColor: theme.colors.surface,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    message: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      textAlign: 'center',
+      lineHeight: 20,
+    },
+    passwordContainer: {
+      position: 'relative',
+      marginBottom: 16,
+    },
+    passwordInput: {
+      height: 50,
+      backgroundColor: theme.colors.surface,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      paddingRight: 50,
+      fontSize: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    eyeIcon: {
+      position: 'absolute',
+      right: 16,
+      top: 15,
+      padding: 4,
+    },
+    errorContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.surface,
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 16,
+    },
+    errorText: {
+      fontSize: 13,
+      color: theme.colors.danger,
+      marginLeft: 8,
+      flex: 1,
+    },
+    actions: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    button: {
+      flex: 1,
+      height: 50,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    cancelButton: {
+      backgroundColor: theme.colors.surface,
+    },
+    cancelButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+    },
+    confirmButton: {
+      overflow: 'hidden',
+    },
+    gradientButton: {
+      flex: 1,
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 12,
+    },
+    confirmButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.onPrimary,
+    },
+  });
+}

@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import { logger } from '@pawfectmatch/core';
 import { socketClient } from './socket';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || process.env.API_URL || '';
+const API_URL = process.env['EXPO_PUBLIC_API_URL'] || process.env['API_URL'] || '';
 
 export type ActivityKind = 'walk' | 'play' | 'feeding' | 'rest' | 'training' | 'lost_pet';
 

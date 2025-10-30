@@ -14,28 +14,28 @@ const projectRoot = __dirname;
 /** @type {import('metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 
-  // Enable tree shaking for better bundle size
-  config.resolver = {
-    ...config.resolver,
-    // Enable platform-specific extensions resolution
-    platforms: ['ios', 'android'],
-    // Optimize asset loading - ensure font and asset extensions are included
-    assetExts: [
-      ...config.resolver.assetExts.filter(ext => !['svg', 'ttf'].includes(ext)),
-      'ttf', 'otf', 'woff', 'woff2' // Re-add font extensions
-    ],
-    // Configure workspace package resolution for pnpm hoisting
-    nodeModulesPaths: [
-      path.resolve(projectRoot, 'node_modules'),
-      path.resolve(workspaceRoot, 'node_modules'),
-    ],
-    // Create aliases for workspace packages to resolve them directly
-    // Use built artifacts when available (core is built via pre-build hooks)
-    extraNodeModules: {
-      '@pawfectmatch/core': path.resolve(workspaceRoot, 'packages/core/dist'),
-      '@pawfectmatch/design-tokens': path.resolve(workspaceRoot, 'packages/design-tokens/dist'),
-    },
-  };
+// Enable tree shaking for better bundle size
+config.resolver = {
+  ...config.resolver,
+  // Enable platform-specific extensions resolution
+  platforms: ['ios', 'android'],
+  // Optimize asset loading - ensure font and asset extensions are included
+  assetExts: [
+    ...config.resolver.assetExts.filter(ext => !['svg', 'ttf'].includes(ext)),
+    'ttf', 'otf', 'woff', 'woff2' // Re-add font extensions
+  ],
+  // Configure workspace package resolution for pnpm hoisting
+  nodeModulesPaths: [
+    path.resolve(projectRoot, 'node_modules'),
+    path.resolve(workspaceRoot, 'node_modules'),
+  ],
+  // Create aliases for workspace packages to resolve them directly
+  // Use built artifacts when available (core is built via pre-build hooks)
+  extraNodeModules: {
+    '@pawfectmatch/core': path.resolve(workspaceRoot, 'packages/core/dist'),
+    '@pawfectmatch/design-tokens': path.resolve(workspaceRoot, 'packages/design-tokens/dist'),
+  },
+};
 
 // Transformer configuration for optimization
 config.transformer = {
@@ -48,19 +48,31 @@ config.transformer = {
       keep_classnames: false,
       keep_fnames: false,
     },
+    compress: {
+      // Remove console.log statements
+      drop_console: process.env.NODE_ENV === 'production',
+      // Dead code elimination
+      dead_code: true,
+      // Remove unused code
+      unused: true,
+    },
   },
   // Optimize asset loading
   assetPlugins: ['expo-asset/tools/hashAssetFiles'],
-  // Enable experimental features for smaller bundles
-  enableBabelRCLookup: false,
-  enableBabelRuntime: false,
-  babelTransformerPath: require.resolve('metro-react-native-babel-transformer'),
+  // Enable inline requires for faster startup
+  getTransformOptions: async () => ({
+    transform: {
+      experimentalImportSupport: false,
+      inlineRequires: true,
+    },
+  }),
 };
 
-// Serializer configuration
+// Serializer configuration for bundle optimization
 config.serializer = {
   ...config.serializer,
-  // Use default module ID factory (removed custom implementation due to Metro API changes)
+  // Optimize bundle output
+  customSerializer: config.serializer?.customSerializer,
 };
 
 // Watch folders for better development experience and hot reloading

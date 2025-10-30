@@ -13,7 +13,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@/theme";
+import { useTheme } from '@mobile/theme';
+import { logger } from '@pawfectmatch/core';
 
 interface AboutTermsPrivacyScreenProps {
   navigation: {
@@ -34,42 +35,70 @@ function AboutTermsPrivacyScreen({
 }: AboutTermsPrivacyScreenProps): React.JSX.Element {
   const theme = useTheme();
   const { colors } = theme;
+  const handleDocumentOpen = useCallback(async (documentId: string) => {
+    Haptics.selectionAsync().catch(() => {});
+    
+    const urls: Record<string, string> = {
+      terms: 'https://pawfectmatch.com/terms',
+      privacy: 'https://pawfectmatch.com/privacy',
+      gdpr: 'https://pawfectmatch.com/gdpr',
+      cookies: 'https://pawfectmatch.com/cookies',
+    };
+    
+    const url = urls[documentId];
+    if (!url) {
+      Alert.alert('Error', 'Document URL not found.');
+      return;
+    }
+    
+    try {
+      const canOpen = await Linking.canOpenURL(url);
+      if (canOpen) {
+        await Linking.openURL(url);
+        logger.info('Legal document opened', { documentId, url });
+      } else {
+        Alert.alert(
+          'Unable to Open',
+          `Please visit ${url} in your browser to view this document.`,
+        );
+      }
+    } catch (error) {
+      logger.error('Failed to open legal document', { error, documentId, url });
+      Alert.alert(
+        'Error',
+        `Unable to open document. Please visit ${url} in your browser.`,
+      );
+    }
+  }, []);
+
   const legalDocuments: LegalDocument[] = [
     {
       id: "terms",
       title: "Terms of Service",
       description: "Rules and guidelines for using PawfectMatch",
       icon: "document-text-outline",
-      action: () => {
-        Alert.alert("Terms of Service", "Terms document coming soon!");
-      },
+      action: () => handleDocumentOpen("terms"),
     },
     {
       id: "privacy",
       title: "Privacy Policy",
       description: "How we collect and use your data",
       icon: "lock-closed-outline",
-      action: () => {
-        Alert.alert("Privacy Policy", "Privacy document coming soon!");
-      },
+      action: () => handleDocumentOpen("privacy"),
     },
     {
       id: "gdpr",
       title: "GDPR Rights",
       description: "Your data protection rights under GDPR",
       icon: "shield-checkmark-outline",
-      action: () => {
-        Alert.alert("GDPR Rights", "GDPR information coming soon!");
-      },
+      action: () => handleDocumentOpen("gdpr"),
     },
     {
       id: "cookies",
       title: "Cookie Policy",
       description: "Information about our use of cookies",
       icon: "book-outline",
-      action: () => {
-        Alert.alert("Cookie Policy", "Cookie policy coming soon!");
-      },
+      action: () => handleDocumentOpen("cookies"),
     },
   ];
 
@@ -144,7 +173,7 @@ function AboutTermsPrivacyScreen({
       backgroundColor: "rgba(59, 130, 246, 0.2)",
       alignItems: "center",
       justifyContent: "center",
-      marginRight: 16,
+      marginEnd: theme.spacing.lg,
     },
     appDetails: {
       flex: 1,
@@ -178,7 +207,7 @@ function AboutTermsPrivacyScreen({
     },
     websiteText: {
       flex: 1,
-      marginLeft: 16,
+      marginStart: theme.spacing.lg,
     },
     websiteTitle: {
       fontSize: 16,
@@ -214,7 +243,7 @@ function AboutTermsPrivacyScreen({
       borderRadius: 20,
       alignItems: "center",
       justifyContent: "center",
-      marginRight: 16,
+      marginEnd: theme.spacing.lg,
     },
     documentText: {
       flex: 1,
@@ -243,7 +272,7 @@ function AboutTermsPrivacyScreen({
     contactText: {
       fontSize: 14,
       color: colors.onPrimary,
-      marginLeft: 12,
+      marginStart: theme.spacing.sm,
     },
     copyright: {
       textAlign: "center",

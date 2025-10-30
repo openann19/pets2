@@ -4,7 +4,8 @@
  */
 
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { useNavigation } from '@react-navigation/native';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
@@ -31,7 +32,9 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
   onClose,
   onUpgrade,
 }) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
+  const styles = makeStyles(theme);
   const navigation = useNavigation();
 
   const handleUpgrade = (): void => {
@@ -91,14 +94,11 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
             {/* Content */}
             <View style={styles.content}>
               {/* Premium Icon */}
-              <LinearGradient
-                colors={['#FFD700', '#FFA000']}
-                style={styles.iconContainer}
-              >
+              <LinearGradient colors={theme.palette.gradients.primary} style={styles.iconContainer}>
                 <Ionicons
                   name="star"
                   size={30}
-                  color="Theme.colors.neutral[0]"
+                  color={theme.colors.onPrimary}
                 />
               </LinearGradient>
 
@@ -167,13 +167,13 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                   activeOpacity={0.8}
                 >
                   <LinearGradient
-                    colors={['#FF6B6B', '#FF8E8E']}
+                    colors={theme.palette.gradients.primary}
                     style={styles.upgradeButtonGradient}
                   >
                     <Ionicons
                       name="star"
                       size={20}
-                      color="Theme.colors.neutral[0]"
+                      color={theme.colors.onPrimary}
                     />
                     <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
                   </LinearGradient>
@@ -255,7 +255,8 @@ export const usePremiumGate = (): {
   };
 };
 
-const styles = StyleSheet.create({
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: 'center',
@@ -278,7 +279,7 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH - 40,
     maxWidth: 400,
     borderRadius: 25,
-    shadowColor: 'Theme.colors.neutral[950]',
+    shadowColor: theme.palette.neutral[900],
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
@@ -296,7 +297,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: theme.colors.overlay,
   },
   content: {
     padding: 20,
@@ -361,7 +362,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   upgradeButtonText: {
-    color: 'Theme.colors.neutral[0]',
+    color: theme.colors.onPrimary,
     fontSize: 18,
     fontWeight: '700',
   },
@@ -370,12 +371,13 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.1)',
+    borderColor: theme.colors.border,
   },
   laterButtonText: {
     fontSize: 16,
     fontWeight: '600',
   },
-});
+  });
+}
 
 export default PremiumGate;

@@ -2,20 +2,22 @@
 
 ## Summary
 - **Severity**: LOW
-- **Scanned Files**: 107
-- **Critical Issues**: 0
-- **Animation Issues**: 19
+- **Scanned Files**: 154
+- **Critical Issues**: 4
+- **Animation Issues**: 12
 
 ## Issues Found
 
 ### Missing testID (for testing)
-**Count**: 0
-None ✅
+**Count**: 3
+- `screens/ai/compatibility/components/PetSelectionSection.tsx`
+- `screens/adoption/manager/components/PetListingCard.tsx`
+- `screens/adoption/manager/components/ApplicationCard.tsx`
 
 
 ### Missing accessibilityLabel
-**Count**: 0
-None ✅
+**Count**: 1
+- `screens/ai/compatibility/components/PetSelectionSection.tsx`
 
 
 ### Missing accessibilityRole
@@ -24,18 +26,18 @@ None ✅
 
 
 ### Missing Reduce Motion Support
-**Count**: 19
-- `screens/SwipeScreen.tsx`
-- `screens/StoriesScreen.tsx`
-- `screens/NewComponentsTestScreen.tsx`
-- `screens/MyPetsScreen.tsx`
+**Count**: 12
 - `screens/ModernCreatePetScreen.tsx`
-- `screens/MemoryWeaveScreen.tsx`
-- `screens/EditProfileScreen.tsx`
-- `screens/CreatePetScreen.tsx`
 - `screens/premium/SubscriptionSuccessScreen.tsx`
 - `screens/onboarding/WelcomeScreen.tsx`
-- ... and 9 more
+- `screens/onboarding/UserIntentScreen.tsx`
+- `screens/onboarding/PreferencesSetupScreen.tsx`
+- `screens/onboarding/PetProfileSetupScreen.tsx`
+- `screens/calling/IncomingCallScreen.tsx`
+- `screens/calling/ActiveCallScreen.tsx`
+- `screens/calling/__tests__/IncomingCallScreen.test.tsx`
+- `screens/calling/__tests__/ActiveCallScreen.test.tsx`
+- ... and 2 more
 
 ## Recommendations
 
@@ -53,4 +55,4 @@ None ✅
 - Android Accessibility Guidelines
 
 ## Last Scanned
-2025-10-27T04:16:04.952Z
+2025-10-30T14:26:29.611Z

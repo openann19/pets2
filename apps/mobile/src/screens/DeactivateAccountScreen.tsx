@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@mobile/theme';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDeactivateAccountScreen } from '../hooks/screens/useDeactivateAccountScreen';
 
@@ -187,6 +187,27 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
             </TouchableOpacity>
           </View>
 
+          {/* Legal Links */}
+          <View style={styles.legalLinks}>
+            <Text style={styles.legalLinksText}>
+              Before proceeding, please review our{' '}
+              <Text
+                style={styles.legalLink}
+                onPress={() => Linking.openURL('https://pawfectmatch.com/privacy')}
+              >
+                Privacy Policy
+              </Text>
+              {' '}and{' '}
+              <Text
+                style={styles.legalLink}
+                onPress={() => Linking.openURL('https://pawfectmatch.com/terms')}
+              >
+                Terms of Service
+              </Text>
+              .
+            </Text>
+          </View>
+
           {/* Help Text */}
           <Text style={styles.helpText}>
             Need help? Contact our support team before deactivating.
@@ -338,7 +359,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   deactivateButton: {
-    backgroundColor: theme.colors.danger,
+    backgroundColor: '#ef4444', // danger color fallback
   },
   deactivateButtonText: {
     color: 'white',
@@ -353,6 +374,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'rgba(255,255,255,0.7)',
     marginBottom: 32,
+  },
+  legalLinks: {
+    marginTop: 24,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+  },
+  legalLinksText: {
+    textAlign: 'center',
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.8)',
+    lineHeight: 20,
+  },
+  legalLink: {
+    color: 'rgba(255,255,255,0.95)',
+    textDecorationLine: 'underline',
+    fontWeight: '600',
   },
 });
 

@@ -22,7 +22,7 @@ interface UseLoginScreenReturn {
   isValid: boolean;
   loading: boolean;
   setValue: (name: keyof LoginFormValues, value: string) => void;
-  handleSubmit: (e?: any) => Promise<void>;
+  handleSubmit: (e?: unknown) => Promise<void>;
   navigateToRegister: () => void;
   navigateToForgotPassword: () => void;
 }
@@ -108,7 +108,7 @@ export function useLoginScreen({ navigation }: UseLoginScreenOptions): UseLoginS
   }, [values.email, values.password, navigation]);
 
   const handleSubmit = useCallback(
-    async (e?: any) => {
+    async (e?: unknown) => {
       await handleSubmitForm(handleLogin)(e);
     },
     [handleSubmitForm, handleLogin],

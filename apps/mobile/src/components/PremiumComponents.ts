@@ -1,13 +1,14 @@
-import { logger } from '@pawfectmatch/core';
 
 /**
- * 🎨 PAWFECTMATCH PREMIUM COMPONENTS INDEX
- *
- * This file exports all premium components and systems for the mobile app.
- * Import from this file to get access to all premium UI components.
+ * 🎨 PAWFECTMATCH PREMIUM COMPONENTS INDEX (hardened)
+ * - Explicit re-exports (better tree-shaking than `export *`)
+ * - Variant types derived from data (no drift)
+ * - DEV-gated `USAGE_EXAMPLES` to avoid prod bloat
  */
 
-// === CORE ELITE COMPONENTS ===
+/////////////////////////
+// CORE ELITE COMPONENTS
+/////////////////////////
 export {
   EliteContainer,
   EliteScrollContainer,
@@ -15,18 +16,17 @@ export {
   ElitePageHeader,
   EliteCard,
   EliteButton,
-  // Note: EliteLoading, EliteEmptyState, EliteAvatar are not exported from EliteComponents
-  // Advanced Animation Components
   FadeInUp,
   ScaleIn,
   StaggeredContainer,
   GestureWrapper,
-  // Premium Gradients and Shadows
   PREMIUM_GRADIENTS,
-  PREMIUM_SHADOWS,
+  getPremiumShadows,
 } from './EliteComponents';
 
-// === PREMIUM TYPOGRAPHY SYSTEM ===
+/////////////////////////
+// PREMIUM TYPOGRAPHY
+/////////////////////////
 export {
   GradientText,
   AnimatedText,
@@ -37,7 +37,9 @@ export {
   TEXT_SHADOWS,
 } from './PremiumTypography';
 
-// === GLASS MORPHISM SYSTEM ===
+/////////////////////////
+// GLASS MORPHISM
+/////////////////////////
 export {
   GLASS_CONFIGS,
   GlassContainer,
@@ -48,7 +50,9 @@ export {
   GlassNavigation,
 } from './GlassMorphism';
 
-// === HOLOGRAPHIC EFFECTS SYSTEM ===
+/////////////////////////
+// HOLOGRAPHIC EFFECTS
+/////////////////////////
 export {
   HOLOGRAPHIC_CONFIGS,
   HolographicContainer,
@@ -58,7 +62,9 @@ export {
   ParticleEffect,
 } from './HolographicEffects';
 
-// === GLOW & SHADOW SYSTEM ===
+/////////////////////////
+// GLOW & SHADOW SYSTEM
+/////////////////////////
 export {
   GLOW_SHADOW_CONFIGS,
   GlowContainer,
@@ -70,7 +76,11 @@ export {
   FloatingShadow,
 } from './GlowShadowSystem';
 
-// === PREMIUM ANIMATION HOOKS ===
+/////////////////////////
+// PREMIUM ANIMATION HOOKS
+/////////////////////////
+// NOTE: Ensure ../hooks/usePremiumAnimations re-exports ALL of these,
+// including `useShimmerEffect`. Otherwise import it from its concrete file.
 export {
   PREMIUM_ANIMATIONS,
   useMagneticEffect,
@@ -87,9 +97,10 @@ export {
   useParallaxEffect,
 } from '../hooks/usePremiumAnimations';
 
-// === COMPONENT VARIANTS ===
+/////////////////////////
+// VARIANTS (typed)
+/////////////////////////
 export const COMPONENT_VARIANTS = {
-  // Button variants
   button: {
     primary: 'primary',
     secondary: 'secondary',
@@ -98,33 +109,15 @@ export const COMPONENT_VARIANTS = {
     holographic: 'holographic',
     neon: 'neon',
   },
-
-  // Card variants
   card: {
-    'default': 'default',
-    'glass': 'glass',
-    'holographic': 'holographic',
-    'glow': 'glow',
+    default: 'default',
+    glass: 'glass',
+    holographic: 'holographic',
+    glow: 'glow',
     '3d': '3d',
   },
-
-  // Size variants
-  size: {
-    sm: 'sm',
-    md: 'md',
-    lg: 'lg',
-    xl: 'xl',
-  },
-
-  // Animation variants
-  animation: {
-    fadeIn: 'fadeIn',
-    slideIn: 'slideIn',
-    scaleIn: 'scaleIn',
-    bounceIn: 'bounceIn',
-  },
-
-  // Gradient variants
+  size: { sm: 'sm', md: 'md', lg: 'lg', xl: 'xl' },
+  animation: { fadeIn: 'fadeIn', slideIn: 'slideIn', scaleIn: 'scaleIn', bounceIn: 'bounceIn' },
   gradient: {
     primary: 'primary',
     secondary: 'secondary',
@@ -139,88 +132,62 @@ export const COMPONENT_VARIANTS = {
   },
 } as const;
 
-// === USAGE EXAMPLES ===
-export const USAGE_EXAMPLES = {
-  // Premium Button with all effects
-  premiumButton: `
-    <EliteButton
-      title="Premium Action"
-      variant="primary"
-      size="lg"
-      magnetic={true}
-      ripple={true}
-      glow={true}
-      shimmer={true}
-      onPress={() => logger.info('Premium action!')}
-    />
-  `,
+// Strong, re-usable types for callers
+export type ButtonVariant = keyof typeof COMPONENT_VARIANTS.button;
+export type CardVariant = keyof typeof COMPONENT_VARIANTS.card;
+export type SizeVariant = keyof typeof COMPONENT_VARIANTS.size;
+export type AnimationVariant = keyof typeof COMPONENT_VARIANTS.animation;
+export type GradientVariant = keyof typeof COMPONENT_VARIANTS.gradient;
 
-  // Glass Card with 3D tilt
-  glassCard: `
-    <EliteCard
-      variant="glass"
-      tilt={true}
-      magnetic={true}
-      shimmer={true}
-      entrance="fadeInUp"
-    >
-      <PremiumHeading level={2} gradient="primary">
-        Glass Card Title
-      </PremiumHeading>
-      <PremiumBody gradient="secondary">
-        This is a premium glass card with 3D tilt effects.
-      </PremiumBody>
-    </EliteCard>
-  `,
+/////////////////////////
+// USAGE EXAMPLES (DEV ONLY)
+/////////////////////////
+export const USAGE_EXAMPLES =
+  typeof __DEV__ !== 'undefined' && __DEV__
+    ? ({
+        premiumButton: `
+<EliteButton
+  title="Premium Action"
+  variant="primary"
+  size="lg"
+  magnetic
+  ripple
+  glow
+  shimmer
+  onPress={() => console.log('Premium action!')}
+/>`,
+        glassCard: `
+<EliteCard variant="glass" tilt magnetic shimmer entrance="fadeInUp">
+  <PremiumHeading level={2} gradient="primary">Glass Card Title</PremiumHeading>
+  <PremiumBody gradient="secondary">This is a premium glass card with 3D tilt effects.</PremiumBody>
+</EliteCard>`,
+        holographicContainer: `
+<HolographicContainer variant="cyber" speed="fast" animated shimmer glow>
+  <PremiumHeading level={1} gradient="holographic">Holographic Title</PremiumHeading>
+</HolographicContainer>`,
+        glowingCard: `
+<GlowingCard glowColor="neon" shadowDepth="2xl" glowIntensity="heavy" animated>
+  <GradientText gradient="neon" size="xl" glow>Glowing Content</GradientText>
+</GlowingCard>`,
+        staggeredContainer: `
+<StaggeredContainer delay={100}>
+  <FadeInUp delay={0}><EliteCard variant="glass">Card 1</EliteCard></FadeInUp>
+  <FadeInUp delay={100}><EliteCard variant="glass">Card 2</EliteCard></FadeInUp>
+  <FadeInUp delay={200}><EliteCard variant="glass">Card 3</EliteCard></FadeInUp>
+</StaggeredContainer>`,
+      } as const)
+    : (undefined as unknown as {
+        premiumButton: string;
+        glassCard: string;
+        holographicContainer: string;
+        glowingCard: string;
+        staggeredContainer: string;
+      });
 
-  // Holographic Container
-  holographicContainer: `
-    <HolographicContainer
-      variant="cyber"
-      speed="fast"
-      animated={true}
-      shimmer={true}
-      glow={true}
-    >
-      <PremiumHeading level={1} gradient="holographic">
-        Holographic Title
-      </PremiumHeading>
-    </HolographicContainer>
-  `,
-
-  // Glowing Card with Animation
-  glowingCard: `
-    <GlowingCard
-      glowColor="neon"
-      shadowDepth="2xl"
-      glowIntensity="heavy"
-      animated={true}
-    >
-      <GradientText gradient="neon" size="xl" glow={true}>
-        Glowing Content
-      </GradientText>
-    </GlowingCard>
-  `,
-
-  // Staggered Animation Container
-  staggeredContainer: `
-    <StaggeredContainer delay={100}>
-      <FadeInUp delay={0}>
-        <EliteCard variant="glass">Card 1</EliteCard>
-      </FadeInUp>
-      <FadeInUp delay={100}>
-        <EliteCard variant="glass">Card 2</EliteCard>
-      </FadeInUp>
-      <FadeInUp delay={200}>
-        <EliteCard variant="glass">Card 3</EliteCard>
-      </FadeInUp>
-    </StaggeredContainer>
-  `,
-} as const;
-
-// === PREMIUM FEATURES SUMMARY ===
+/////////////////////////
+// FEATURES (data only)
+/////////////////////////
 export const PREMIUM_FEATURES = {
-  // Enhanced Button Features
   buttonFeatures: [
     'Magnetic mouse tracking',
     'Ripple animations on press',
@@ -231,8 +198,6 @@ export const PREMIUM_FEATURES = {
     'Haptic feedback integration',
     'Multiple size variants (sm, md, lg, xl)',
   ],
-
-  // Enhanced Card Features
   cardFeatures: [
     '3D tilt effects with gyroscope support',
     'Glass morphism with backdrop blur',
@@ -242,8 +207,6 @@ export const PREMIUM_FEATURES = {
     'Entrance animations (fadeInUp, scaleIn, slideIn)',
     'Glow variants with colored shadows',
   ],
-
-  // Animation System Features
   animationFeatures: [
     'Spring physics configurations',
     'Staggered animations for lists',
@@ -256,8 +219,6 @@ export const PREMIUM_FEATURES = {
     'Ripple animations on touch',
     'Tilt effects for cards',
   ],
-
-  // Visual Effects Features
   visualEffects: [
     'Glass morphism with backdrop blur',
     'Holographic animated gradients',
@@ -267,8 +228,6 @@ export const PREMIUM_FEATURES = {
     'Shadow depth system (sm, md, lg, xl, 2xl)',
     'Particle effects for premium screens',
   ],
-
-  // Typography Features
   typographyFeatures: [
     'Gradient text effects using masks',
     'Text shadow effects for depth',
@@ -280,8 +239,13 @@ export const PREMIUM_FEATURES = {
   ],
 } as const;
 
-export default {
+/////////////////////////
+// DEFAULT EXPORT
+/////////////////////////
+const PremiumIndex = {
   COMPONENT_VARIANTS,
   USAGE_EXAMPLES,
   PREMIUM_FEATURES,
 };
+
+export default PremiumIndex;

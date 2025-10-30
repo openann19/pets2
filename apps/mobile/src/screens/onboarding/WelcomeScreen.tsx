@@ -1,5 +1,5 @@
 import type { Spacing } from '@/animation';
-import { getExtendedColors } from '@/theme';
+import { getExtendedColors } from '@mobile/theme/adapters';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@mobile/theme';
 import { logger } from '@pawfectmatch/core';

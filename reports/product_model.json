@@ -1,323 +1,144 @@
 {
-  "version": "1.0.0",
-  "generated": "2025-01-30T00:00:00Z",
-  "app": "PawfectMatch Premium Mobile",
-  "description": "AI-powered pet matching platform with premium features",
-  
   "entities": {
     "User": {
-      "attributes": ["id", "email", "name", "role", "premium", "verified", "createdAt"],
-      "relationships": ["hasMany:Pets", "hasMany:Matches", "hasOne:Auth", "hasOne:Settings"],
-      "screens": ["LoginScreen", "RegisterScreen", "ProfileScreen", "SettingsScreen"]
+      "id": "string",
+      "email": "string",
+      "name": "string",
+      "role": "user | admin",
+      "preferences": "UserPreferences",
+      "pets": "Pet[]",
+      "matches": "Match[]",
+      "subscription": "Subscription"
     },
     "Pet": {
-      "attributes": ["id", "name", "species", "breed", "age", "photos", "bio", "location", "ownerId"],
-      "relationships": ["belongsTo:User", "hasMany:Photos", "hasMany:Matches"],
-      "screens": ["CreatePetScreen", "PetProfileSetupScreen", "MyPetsScreen", "PetProfile"]
+      "id": "string",
+      "name": "string",
+      "species": "dog | cat | bird | rabbit | other",
+      "breed": "string",
+      "age": "number",
+      "gender": "male | female",
+      "size": "tiny | small | medium | large | extra-large",
+      "weight": "number",
+      "bio": "string",
+      "intent": "adoption | mating | playdate | all",
+      "personality": "string[]",
+      "health": "string[]",
+      "photos": "string[]",
+      "location": "Location",
+      "ownerId": "string",
+      "status": "active | pending | adopted | paused",
+      "featured": "boolean",
+      "listedAt": "string"
     },
     "Match": {
-      "attributes": ["id", "pet1Id", "pet2Id", "status", "compatibilityScore", "createdAt"],
-      "relationships": ["belongsTo:Pet", "hasOne:Conversation"],
-      "screens": ["MatchesScreen", "ChatScreen"]
-    },
-    "Conversation": {
-      "attributes": ["id", "matchId", "messages", "participants", "lastMessage", "unreadCount"],
-      "relationships": ["belongsTo:Match", "hasMany:Messages"],
-      "screens": ["ChatScreen"]
+      "id": "string",
+      "petId": "string",
+      "petName": "string",
+      "petPhoto": "string",
+      "petAge": "number",
+      "petBreed": "string",
+      "lastMessage": "Message",
+      "isOnline": "boolean",
+      "matchedAt": "string",
+      "unreadCount": "number"
     },
     "Message": {
-      "attributes": ["id", "conversationId", "senderId", "content", "type", "timestamp", "read"],
-      "relationships": ["belongsTo:Conversation", "belongsTo:User"],
-      "screens": ["ChatScreen"]
+      "id": "string",
+      "content": "string",
+      "timestamp": "string",
+      "senderId": "string",
+      "type": "text | image | voice | reaction",
+      "reactions": "Reaction[]"
     },
-    "Premium": {
-      "attributes": ["id", "userId", "tier", "status", "expiresAt", "features"],
-      "relationships": ["belongsTo:User"],
-      "screens": ["PremiumScreen", "ManageSubscriptionScreen", "SubscriptionManagerScreen"]
+    "Subscription": {
+      "id": "string",
+      "plan": "basic | premium | elite",
+      "status": "active | cancelled | expired",
+      "expiresAt": "string",
+      "features": "string[]"
     },
-    "Admin": {
-      "attributes": ["id", "userId", "role", "permissions", "accessLevel"],
-      "relationships": ["belongsTo:User"],
-      "screens": ["AdminDashboardScreen", "AdminUsersScreen", "AdminAnalyticsScreen", "AdminBillingScreen", "AdminSecurityScreen"]
+    "Location": {
+      "latitude": "number",
+      "longitude": "number",
+      "address": "string"
+    },
+    "CompatibilityScore": {
+      "overall": "number",
+      "personality": "number",
+      "energy": "number",
+      "age": "number",
+      "traits": "number"
     }
   },
-
   "journeys": {
     "onboarding": {
-      "steps": ["WelcomeScreen", "UserIntentScreen", "PetProfileSetupScreen", "PreferencesSetupScreen"],
-      "goal": "Guide new user through setup and pet profile creation",
-      "duration": "5-10 minutes"
+      "steps": [
+        "Welcome",
+        "UserIntent",
+        "PetProfileSetup",
+        "PreferencesSetup"
+      ],
+      "screens": [
+        "WelcomeScreen",
+        "UserIntentScreen",
+        "PetProfileSetupScreen"
+      ]
     },
-    "swipe": {
-      "steps": ["SwipeScreen", "SwipeGesture", "CompatibilityCheck", "Match"],
-      "goal": "Discover and match with compatible pets via swipe interface",
-      "duration": "Variable"
+    "main_app": {
+      "tabs": ["Home", "Swipe", "Matches", "Map", "Profile"],
+      "screens": [
+        "HomeScreen",
+        "SwipeScreen", 
+        "MatchesScreen",
+        "MapScreen",
+        "ProfileScreen"
+      ]
     },
-    "match": {
-      "steps": ["MatchesScreen", "ViewProfile", "StartChat"],
-      "goal": "View matches and initiate conversations",
-      "duration": "30 seconds - 2 minutes"
-    },
-    "chat": {
-      "steps": ["ChatScreen", "SendMessage", "ReceiveMessage", "MediaShare"],
-      "goal": "Communicate with matched pet owners",
-      "duration": "Variable"
+    "pet_management": {
+      "screens": [
+        "MyPetsScreen",
+        "CreatePetScreen",
+        "PetProfileScreen"
+      ]
     },
     "premium": {
-      "steps": ["PremiumScreen", "SelectPlan", "Checkout", "Activate"],
-      "goal": "Upgrade to premium subscription",
-      "duration": "2-5 minutes"
+      "screens": [
+        "PremiumScreen",
+        "PremiumSuccessScreen",
+        "PremiumCancelScreen",
+        "ManageSubscriptionScreen"
+      ]
     },
-    "profile": {
-      "steps": ["ProfileScreen", "EditProfile", "ManagePets", "Settings"],
-      "goal": "Manage user profile and pet information",
-      "duration": "5-15 minutes"
-    },
-    "settings": {
-      "steps": ["SettingsScreen", "PrivacySettings", "NotificationPreferences", "SafetyCenter"],
-      "goal": "Configure app settings and privacy options",
-      "duration": "2-10 minutes"
-    },
-    "adoption": {
-      "steps": ["AdoptionManagerScreen", "BrowseListings", "ApplyForAdoption", "ReviewApplication"],
-      "goal": "Browse and apply for pet adoption",
-      "duration": "10-30 minutes"
+    "ai_features": {
+      "screens": [
+        "AIBioScreen",
+        "AICompatibilityScreen",
+        "AIPhotoAnalyzerScreen"
+      ]
     },
     "admin": {
-      "steps": ["AdminDashboardScreen", "ViewAnalytics", "ManageUsers", "ModerationTools"],
-      "goal": "Admin dashboard management and moderation",
-      "duration": "Variable"
+      "screens": [
+        "AdminDashboardScreen",
+        "AdminUsersScreen",
+        "AdminAnalyticsScreen",
+        "AdminSecurityScreen",
+        "AdminBillingScreen"
+      ]
     },
-    "ai": {
-      "steps": ["AIBioScreen", "AIPhotoAnalyzerScreen", "AICompatibilityScreen", "ViewResults"],
-      "goal": "Utilize AI features for pet profiles and matching",
-      "duration": "1-3 minutes per feature"
+    "adoption": {
+      "screens": [
+        "AdoptionManagerScreen",
+        "PetDetailsScreen",
+        "AdoptionContractScreen"
+      ]
     }
   },
-
   "states": {
-    "auth": {
-      "unauthenticated": "No user logged in",
-      "authenticating": "Login in progress",
-      "authenticated": "User logged in successfully",
-      "error": "Authentication failed"
-    },
-    "swipe": {
-      "loading": "Loading pet cards",
-      "ready": "Cards loaded and ready",
-      "swiping": "User actively swiping",
-      "matched": "Match made",
-      "empty": "No more pets to swipe",
-      "error": "Failed to load pets"
-    },
-    "chat": {
-      "idle": "No active typing",
-      "typing": "User or recipient typing",
-      "sending": "Sending message",
-      "sent": "Message sent successfully",
-      "delivered": "Message delivered to recipient",
-      "read": "Message read by recipient",
-      "error": "Failed to send message"
-    },
-    "match": {
-      "pending": "Waiting for mutual like",
-      "mutual": "Both pets liked each other",
-      "expired": "Match expired",
-      "blocked": "User blocked"
-    },
-    "premium": {
-      "free": "Free tier user",
-      "trial": "Premium trial active",
-      "active": "Premium subscription active",
-      "expired": "Premium subscription expired",
-      "cancelled": "Premium subscription cancelled"
-    },
-    "upload": {
-      "idle": "No upload in progress",
-      "uploading": "Uploading file",
-      "processing": "Processing uploaded content",
-      "complete": "Upload complete",
-      "error": "Upload failed"
-    },
-    "ai": {
-      "idle": "No AI processing",
-      "analyzing": "AI analyzing content",
-      "generating": "AI generating content",
-      "complete": "AI processing complete",
-      "error": "AI processing failed"
-    }
-  },
-
-  "features": {
-    "core": {
-      "swipe": {
-        "implemented": true,
-        "screens": ["SwipeScreen", "ModernSwipeScreen"],
-        "components": ["SwipeCard", "SwipeFilters", "SwipeGestures"],
-        "services": ["swipeService", "matchingService"]
-      },
-      "matches": {
-        "implemented": true,
-        "screens": ["MatchesScreen"],
-        "components": ["MatchCard", "MatchProfile"],
-        "services": ["matchesAPI", "matchesSearchAPI"]
-      },
-      "chat": {
-        "implemented": true,
-        "screens": ["ChatScreen"],
-        "components": ["ChatBubble", "ChatInput", "TypingIndicator"],
-        "services": ["chatService", "socket"]
-      },
-      "map": {
-        "implemented": true,
-        "screens": ["MapScreen"],
-        "components": ["MapMarker", "MapFilters"],
-        "services": ["mapActivityService"]
-      },
-      "profile": {
-        "implemented": true,
-        "screens": ["ProfileScreen", "EditProfileScreen", "MyPetsScreen"],
-        "components": ["ProfileHeader", "PetCard"],
-        "services": ["userService", "petService"]
-      }
-    },
-    "premium": {
-      "subscription": {
-        "implemented": true,
-        "screens": ["PremiumScreen", "ManageSubscriptionScreen", "SubscriptionManagerScreen"],
-        "services": ["PremiumService"],
-        "payment": "RevenueCat integration"
-      },
-      "favorites": {
-        "implemented": true,
-        "screens": ["FavoritesScreen"],
-        "services": ["favoritesAPI"]
-      },
-      "superLikes": {
-        "implemented": true,
-        "feature": "Enhanced visibility with super likes",
-        "screens": ["SwipeScreen"]
-      },
-      "undo": {
-        "implemented": true,
-        "feature": "Undo last swipe action",
-        "screens": ["SwipeScreen"],
-        "components": ["UndoPill"]
-      }
-    },
-    "ai": {
-      "bioGenerator": {
-        "implemented": true,
-        "screens": ["AIBioScreen"],
-        "services": ["aiService"],
-        "provider": "DeepSeek AI"
-      },
-      "photoAnalyzer": {
-        "implemented": true,
-        "screens": ["AIPhotoAnalyzerScreen"],
-        "services": ["aiPhotoService"]
-      },
-      "compatibility": {
-        "implemented": true,
-        "screens": ["AICompatibilityScreen"],
-        "services": ["aiCompatService", "aiPhotoService"]
-      }
-    },
-    "social": {
-      "stories": {
-        "implemented": true,
-        "screens": ["StoriesScreen"],
-        "components": ["StoryViewer", "StoryRing"],
-        "services": ["storiesAPI"]
-      },
-      "community": {
-        "implemented": true,
-        "screens": ["CommunityScreen"],
-        "services": ["communityAPI"]
-      },
-      "liveStreaming": {
-        "implemented": true,
-        "screens": ["GoLiveScreen", "LiveViewerScreen", "LiveBrowseScreen"],
-        "services": ["livekitService"]
-      }
-    },
-    "admin": {
-      "dashboard": {
-        "implemented": true,
-        "screens": ["AdminDashboardScreen"],
-        "services": ["adminAPI"]
-      },
-      "moderation": {
-        "implemented": true,
-        "screens": ["ModerationToolsScreen"],
-        "services": ["moderationService"]
-      },
-      "analytics": {
-        "implemented": true,
-        "screens": ["AdminAnalyticsScreen"],
-        "services": ["analyticsService"]
-      }
-    },
-    "safety": {
-      "privacy": {
-        "implemented": true,
-        "screens": ["PrivacySettingsScreen", "BlockedUsersScreen", "SafetyCenterScreen"],
-        "services": ["gdprService"]
-      },
-      "verification": {
-        "implemented": true,
-        "screens": ["VerificationCenterScreen"],
-        "services": ["verificationService"]
-      },
-      "reporting": {
-        "implemented": true,
-        "feature": "Report inappropriate content/users",
-        "screens": ["SafetyCenterScreen"]
-      }
-    },
-    "adoption": {
-      "manager": {
-        "implemented": true,
-        "screens": ["AdoptionManagerScreen", "AdoptionApplicationScreen", "AdoptionContractScreen"],
-        "services": ["adoptionAPI"]
-      }
-    }
-  },
-
-  "userRoles": {
-    "user": "Standard pet owner with free features",
-    "premium": "Premium subscriber with enhanced features",
-    "admin": "Administrative access to moderation and analytics",
-    "moderator": "Content moderation and safety tools"
-  },
-
-  "dataFlow": {
-    "auth": "Login/Register → AuthService → AuthStore → Protected Routes",
-    "swipe": "SwipeScreen → swipeService → matchingService → matchesAPI → Match state",
-    "chat": "ChatScreen → chatService → socket → Messages → Conversation state",
-    "premium": "PremiumScreen → PremiumService → RevenueCat → Subscription state",
-    "upload": "PhotoUpload → uploadService → Cloudinary → Pet profile",
-    "ai": "AIBio → aiService → AI API → Generated content"
-  },
-
-  "techStack": {
-    "runtime": "React Native 0.72.10 with Expo SDK ~49.0.23",
-    "language": "TypeScript 5.9.2",
-    "navigation": "@react-navigation/native with BottomTabNavigator + StackNavigator",
-    "state": "Zustand stores (useAuthStore, useUIStore)",
-    "api": "Axios-based API client with interceptors",
-    "realTime": "Socket.io for chat and live features",
-    "ai": "DeepSeek AI integration",
-    "storage": "AsyncStorage for local persistence",
-    "ui": "React Native components + custom design system",
-    "animations": "react-native-reanimated + react-native-gesture-handler"
-  },
-
-  "metrics": {
-    "screens": 111,
-    "components": 500+,
-    "services": 47,
-    "hooks": 200+,
-    "navigation": "78+ routes across multiple stacks"
+    "auth": ["loading", "authenticated", "unauthenticated"],
+    "pet_creation": ["idle", "uploading_photos", "processing", "saving", "success", "error"],
+    "swipe": ["loading", "showing_cards", "no_more_cards", "error"],
+    "matching": ["calculating", "compatible", "incompatible", "error"],
+    "chat": ["loading", "connected", "disconnected", "error"],
+    "premium": ["free", "trial", "active", "cancelled", "expired"]
   }
 }

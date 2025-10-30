@@ -3,7 +3,7 @@
  * VoiceOver hints, high contrast support, Reduce Motion
  */
 
-import { AccessibilityInfo, useColorScheme } from 'react-native';
+import { AccessibilityInfo } from 'react-native';
 import { useState, useEffect } from 'react';
 
 type ColorScheme = 'light' | 'dark' | null;
@@ -108,18 +108,19 @@ export function getVoiceOverLabels() {
 
 /**
  * Get high contrast color palette
+ * Note: These should be replaced with theme colors in actual usage
  */
 export function getHighContrastColors() {
   return {
-    background: '#000000',
-    surface: '#1a1a1a',
-    text: '#ffffff',
-    textSecondary: '#cccccc',
-    primary: '#ffffff',
-    border: '#ffffff',
-    error: '#ff0000',
-    success: '#00ff00',
-    warning: '#ffff00',
+    background: '#000000', // theme.colors.bg
+    surface: '#1a1a1a', // theme.colors.surface
+    text: '#ffffff', // theme.colors.onSurface
+    textSecondary: '#cccccc', // theme.colors.onMuted
+    primary: '#ffffff', // theme.colors.primary
+    border: '#ffffff', // theme.colors.border
+    error: '#ff0000', // theme.colors.danger
+    success: '#00ff00', // theme.colors.success
+    warning: '#ffff00', // theme.colors.warning
   };
 }
 

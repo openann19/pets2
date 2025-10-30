@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { AppTheme } from '@/theme';
-import { useTheme } from '@/theme';
+import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@mobile/theme';
 import { logger } from '@pawfectmatch/core';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { BlurView } from 'expo-blur';
@@ -11,6 +11,7 @@ import {
   Alert,
   Dimensions,
   Image,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -85,7 +86,6 @@ const ApplicationReviewScreen = ({ navigation, route }: ApplicationReviewScreenP
   const [application, setApplication] = useState<Application | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Mock data for now - would fetch from API
   useEffect(() => {
     const loadApplication = async () => {
       try {
@@ -134,6 +134,84 @@ const ApplicationReviewScreen = ({ navigation, route }: ApplicationReviewScreenP
         },
       },
     ]);
+  };
+
+  const handleContactEmail = async () => {
+    if (!application) return;
+    
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      const emailUrl = `mailto:${application.applicantEmail}?subject=Adoption Application - ${application.petName}`;
+      
+      const canOpen = await Linking.canOpenURL(emailUrl);
+      if (canOpen) {
+        await Linking.openURL(emailUrl);
+        logger.info('Email opened', { email: application.applicantEmail });
+      } else {
+        Alert.alert(
+          'Email Not Available',
+          `Please email us at ${application.applicantEmail}`,
+        );
+      }
+    } catch (error) {
+      logger.error('Failed to open email', { error });
+      Alert.alert(
+        'Error',
+        `Unable to open email app. Please contact ${application.applicantEmail} manually.`,
+      );
+    }
+  };
+
+  const handleContactCall = async () => {
+    if (!application) return;
+    
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      const phoneUrl = `tel:${application.applicantPhone}`;
+      
+      const canOpen = await Linking.canOpenURL(phoneUrl);
+      if (canOpen) {
+        await Linking.openURL(phoneUrl);
+        logger.info('Phone call initiated', { phone: application.applicantPhone });
+      } else {
+        Alert.alert(
+          'Call Not Available',
+          `Please call ${application.applicantPhone}`,
+        );
+      }
+    } catch (error) {
+      logger.error('Failed to initiate call', { error });
+      Alert.alert(
+        'Error',
+        `Unable to open phone app. Please call ${application.applicantPhone} manually.`,
+      );
+    }
+  };
+
+  const handleContactMessage = async () => {
+    if (!application) return;
+    
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      const smsUrl = `sms:${application.applicantPhone}`;
+      
+      const canOpen = await Linking.canOpenURL(smsUrl);
+      if (canOpen) {
+        await Linking.openURL(smsUrl);
+        logger.info('SMS opened', { phone: application.applicantPhone });
+      } else {
+        Alert.alert(
+          'SMS Not Available',
+          `Please send a message to ${application.applicantPhone}`,
+        );
+      }
+    } catch (error) {
+      logger.error('Failed to open SMS', { error });
+      Alert.alert(
+        'Error',
+        `Unable to open messaging app. Please message ${application.applicantPhone} manually.`,
+      );
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -484,11 +562,9 @@ const ApplicationReviewScreen = ({ navigation, route }: ApplicationReviewScreenP
             <TouchableOpacity
               style={styles.contactButton}
               testID="ApplicationReviewScreen-button-2"
-              accessibilityLabel="Interactive element"
+              accessibilityLabel="Email applicant"
               accessibilityRole="button"
-              onPress={() => {
-                Alert.alert('Email', `Send email to ${application.applicantEmail}`);
-              }}
+              onPress={handleContactEmail}
             >
               <LinearGradient
                 colors={theme.palette?.gradients?.info ?? [theme.colors.info, theme.colors.info]}
@@ -508,11 +584,9 @@ const ApplicationReviewScreen = ({ navigation, route }: ApplicationReviewScreenP
             <TouchableOpacity
               style={styles.contactButton}
               testID="ApplicationReviewScreen-button-2"
-              accessibilityLabel="Interactive element"
+              accessibilityLabel="Call applicant"
               accessibilityRole="button"
-              onPress={() => {
-                Alert.alert('Call', `Call ${application.applicantPhone}`);
-              }}
+              onPress={handleContactCall}
             >
               <LinearGradient
                 colors={
@@ -534,11 +608,9 @@ const ApplicationReviewScreen = ({ navigation, route }: ApplicationReviewScreenP
             <TouchableOpacity
               style={styles.contactButton}
               testID="ApplicationReviewScreen-button-2"
-              accessibilityLabel="Interactive element"
+              accessibilityLabel="Message applicant"
               accessibilityRole="button"
-              onPress={() => {
-                Alert.alert('Message', `Send message to ${application.applicantPhone}`);
-              }}
+              onPress={handleContactMessage}
             >
               <LinearGradient
                 colors={theme.palette?.gradients?.info ?? [theme.colors.info, theme.colors.info]}
@@ -704,7 +776,7 @@ function makeStyles(theme: AppTheme) {
       gap: theme.spacing.sm,
     },
     lifestyleItem: {
-      width: (screenWidth - theme.spacing.lg * 2 - theme.spacing.sm) / 2,
+      width: (screenWidth - theme.spacing['2xl'] - theme.spacing.sm) / 2,
       padding: theme.spacing.sm,
       backgroundColor: themeRuntime.colors.bgAlt ?? theme.colors.surface,
       borderRadius: themeRuntime.radius.sm,

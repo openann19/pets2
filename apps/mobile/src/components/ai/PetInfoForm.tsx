@@ -8,6 +8,8 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { ColorValue } from 'react-native';
 import { TextInput } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 interface PetInfoFormProps {
   petName: string;
@@ -32,6 +34,8 @@ export function PetInfoForm({
   setPetPersonality,
   validationErrors,
 }: PetInfoFormProps) {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Pet Information</Text>
@@ -45,7 +49,7 @@ export function PetInfoForm({
           value={petName}
           onChangeText={setPetName}
           placeholder="Enter your pet's name"
-          placeholderTextColor={Theme.colors.text.secondary as ColorValue}
+          placeholderTextColor={theme.colors.onMuted as ColorValue}
           maxLength={50}
         />
         {validationErrors.petName && (
@@ -61,7 +65,7 @@ export function PetInfoForm({
           value={petBreed}
           onChangeText={setPetBreed}
           placeholder="e.g., Golden Retriever, Mixed Breed"
-          placeholderTextColor={Theme.colors.text.secondary as ColorValue}
+          placeholderTextColor={theme.colors.onMuted as ColorValue}
           maxLength={100}
         />
         {validationErrors.petBreed && (
@@ -77,7 +81,7 @@ export function PetInfoForm({
           value={petAge}
           onChangeText={setPetAge}
           placeholder="e.g., 2 years old, 6 months"
-          placeholderTextColor={Theme.colors.text.secondary as ColorValue}
+          placeholderTextColor={theme.colors.onMuted as ColorValue}
           maxLength={50}
         />
         {validationErrors.petAge && <Text style={styles.errorText}>{validationErrors.petAge}</Text>}
@@ -91,7 +95,7 @@ export function PetInfoForm({
           value={petPersonality}
           onChangeText={setPetPersonality}
           placeholder="Describe your pet's personality, habits, and quirks (e.g., energetic, loves belly rubs, afraid of thunderstorms)"
-          placeholderTextColor={Theme.colors.text.secondary as ColorValue}
+          placeholderTextColor={theme.colors.onMuted as ColorValue}
           multiline
           numberOfLines={4}
           maxLength={500}
@@ -106,63 +110,65 @@ export function PetInfoForm({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: Theme.spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: Theme.typography.fontSize['2xl'],
-    fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.sm,
-  },
-  sectionSubtitle: {
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
-    marginBottom: Theme.spacing.xl,
-  },
-  inputGroup: {
-    marginBottom: Theme.spacing.lg,
-  },
-  label: {
-    fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.medium,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.xs,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: Theme.colors.border.medium,
-    borderRadius: Theme.borderRadius.md,
-    paddingHorizontal: Theme.spacing.md,
-    paddingVertical: Theme.spacing.sm,
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary,
-    backgroundColor: Theme.colors.background.primary,
-  },
-  textarea: {
-    borderWidth: 1,
-    borderColor: Theme.colors.border.medium,
-    borderRadius: Theme.borderRadius.md,
-    paddingHorizontal: Theme.spacing.md,
-    paddingVertical: Theme.spacing.sm,
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary,
-    backgroundColor: Theme.colors.background.primary,
-    minHeight: 100,
-  },
-  inputError: {
-    borderColor: Theme.colors.status.error,
-  },
-  errorText: {
-    fontSize: Theme.typography.fontSize.xs,
-    color: Theme.colors.status.error,
-    marginTop: Theme.spacing.xs,
-  },
-  characterCount: {
-    fontSize: Theme.typography.fontSize.xs,
-    color: Theme.colors.text.secondary,
-    textAlign: 'right',
-    marginTop: Theme.spacing.xs,
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      padding: theme.spacing.lg,
+    },
+    sectionTitle: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    sectionSubtitle: {
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onMuted,
+      marginBottom: theme.spacing.xl,
+    },
+    inputGroup: {
+      marginBottom: theme.spacing.lg,
+    },
+    label: {
+      fontSize: theme.typography.body.size,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radii.md,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onSurface,
+      backgroundColor: theme.colors.surface,
+    },
+    textarea: {
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radii.md,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onSurface,
+      backgroundColor: theme.colors.surface,
+      minHeight: 100,
+    },
+    inputError: {
+      borderColor: theme.colors.danger,
+    },
+    errorText: {
+      fontSize: theme.typography.body.size,
+      color: theme.colors.danger,
+      marginTop: theme.spacing.xs,
+    },
+    characterCount: {
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onMuted,
+      textAlign: 'right',
+      marginTop: theme.spacing.xs,
+    },
+  });
+}

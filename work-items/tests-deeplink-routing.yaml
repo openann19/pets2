@@ -1,0 +1,17 @@
+id: tests-deeplink-routing
+owner: te
+severity: medium
+area: mobile
+context: |
+  Deep link parser has unit tests, but navigation handoff lacks integration/E2E coverage.
+acceptance:
+  - Add `apps/mobile/src/navigation/__tests__/deeplink.integration.test.tsx`
+  - Mount NavigationContainer; simulate incoming links for: chat, match, premium, settings
+  - Assert correct screens and params; guard behavior for premium-only paths
+states: [parsing, routing, guarded, error]
+assets:
+  tests: [apps/mobile/src/navigation/__tests__/deeplink.integration.test.tsx]
+risks:
+  - Navigator mocks timing; use `@testing-library/react-native` async helpers
+links:
+  - reports/mobile/test_gap_matrix.md

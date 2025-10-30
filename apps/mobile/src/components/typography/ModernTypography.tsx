@@ -19,6 +19,8 @@ import { Text, StyleSheet, type TextStyle, type TextProps } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 import { useEntranceAnimation } from "../../hooks/useUnifiedAnimations";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
 // === TYPES ===
 export type TextVariant =
@@ -36,115 +38,45 @@ export type TextVariant =
   | "button"
   | "label";
 
-export type TextWeight = keyof typeof Theme.typography.fontWeight;
-export type TextColor = keyof typeof Theme.colors.onSurface
+export type TextWeight = '400' | '500' | '600' | '700';
+export type TextColor = keyof AppTheme['colors'];
 
 export interface ModernTextProps extends TextProps {
   variant?: TextVariant;
   weight?: TextWeight;
   color?: TextColor;
-  gradient?: keyof typeof Theme.gradients;
+  gradient?: keyof AppTheme['palette']['gradients'];
   gradientColors?: string[];
   animated?: boolean;
   animationType?: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn";
   children: ReactNode;
 }
 
-// === VARIANT CONFIGURATIONS ===
-const VARIANT_CONFIGS = {
-  h1: {
-    fontSize: Theme.typography.fontSize["4xl"],
-    fontWeight: Theme.typography.fontWeight.bold,
-    lineHeight:
-      Theme.typography.fontSize["4xl"] * Theme.typography.lineHeight.tight,
-    letterSpacing: Theme.typography.letterSpacing.tight,
-  },
-  h2: {
-    fontSize: Theme.typography.fontSize["3xl"],
-    fontWeight: Theme.typography.fontWeight.bold,
-    lineHeight:
-      Theme.typography.fontSize["3xl"] * Theme.typography.lineHeight.tight,
-    letterSpacing: Theme.typography.letterSpacing.tight,
-  },
-  h3: {
-    fontSize: Theme.typography.fontSize["2xl"],
-    fontWeight: Theme.typography.fontWeight.semibold,
-    lineHeight:
-      Theme.typography.fontSize["2xl"] * Theme.typography.lineHeight.normal,
-    letterSpacing: Theme.typography.letterSpacing.normal,
-  },
-  h4: {
-    fontSize: Theme.typography.fontSize.xl,
-    fontWeight: Theme.typography.fontWeight.semibold,
-    lineHeight:
-      Theme.typography.fontSize.xl * Theme.typography.lineHeight.normal,
-    letterSpacing: Theme.typography.letterSpacing.normal,
-  },
-  h5: {
-    fontSize: Theme.typography.fontSize.lg,
-    fontWeight: Theme.typography.fontWeight.medium,
-    lineHeight:
-      Theme.typography.fontSize.lg * Theme.typography.lineHeight.normal,
-    letterSpacing: Theme.typography.letterSpacing.normal,
-  },
-  h6: {
-    fontSize: Theme.typography.fontSize.base,
-    fontWeight: Theme.typography.fontWeight.medium,
-    lineHeight:
-      Theme.typography.fontSize.base * Theme.typography.lineHeight.normal,
-    letterSpacing: Theme.typography.letterSpacing.normal,
-  },
-  body: {
-    fontSize: Theme.typography.fontSize.base,
-    fontWeight: Theme.typography.fontWeight.normal,
-    lineHeight:
-      Theme.typography.fontSize.base * Theme.typography.lineHeight.normal,
-    letterSpacing: Theme.typography.letterSpacing.normal,
-  },
-  bodyLarge: {
-    fontSize: Theme.typography.fontSize.lg,
-    fontWeight: Theme.typography.fontWeight.normal,
-    lineHeight:
-      Theme.typography.fontSize.lg * Theme.typography.lineHeight.relaxed,
-    letterSpacing: Theme.typography.letterSpacing.normal,
-  },
-  bodySmall: {
-    fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.normal,
-    lineHeight:
-      Theme.typography.fontSize.sm * Theme.typography.lineHeight.normal,
-    letterSpacing: Theme.typography.letterSpacing.normal,
-  },
-  caption: {
-    fontSize: Theme.typography.fontSize.xs,
-    fontWeight: Theme.typography.fontWeight.medium,
-    lineHeight:
-      Theme.typography.fontSize.xs * Theme.typography.lineHeight.normal,
-    letterSpacing: Theme.typography.letterSpacing.wide,
-  },
-  overline: {
-    fontSize: Theme.typography.fontSize.xs,
-    fontWeight: Theme.typography.fontWeight.semibold,
-    lineHeight:
-      Theme.typography.fontSize.xs * Theme.typography.lineHeight.normal,
-    letterSpacing: Theme.typography.letterSpacing.wide,
-    textTransform: "uppercase" as const,
-  },
-  button: {
-    fontSize: Theme.typography.fontSize.base,
-    fontWeight: Theme.typography.fontWeight.semibold,
-    lineHeight:
-      Theme.typography.fontSize.base * Theme.typography.lineHeight.normal,
-    letterSpacing: Theme.typography.letterSpacing.normal,
-  },
-  label: {
-    fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.medium,
-    lineHeight:
-      Theme.typography.fontSize.sm * Theme.typography.lineHeight.normal,
-    letterSpacing: Theme.typography.letterSpacing.normal,
-  },
-} as const;
+// === VARIANT CONFIGURATIONS (theme-based) ===
+function getVariantConfig(theme: AppTheme, variant: TextVariant): TextStyle {
+  switch (variant) {
+    case 'h1':
+      return { fontSize: theme.typography.h1.size, fontWeight: '700', lineHeight: theme.typography.h1.lineHeight } as TextStyle;
+    case 'h2':
+      return { fontSize: theme.typography.h2.size, fontWeight: '600', lineHeight: theme.typography.h2.lineHeight } as TextStyle;
+    case 'h3':
+    case 'h4':
+    case 'h5':
+    case 'h6':
+      return { fontSize: theme.typography.body.size, fontWeight: '600', lineHeight: theme.typography.body.lineHeight } as TextStyle;
+    case 'body':
+    case 'bodyLarge':
+    case 'bodySmall':
+      return { fontSize: theme.typography.body.size, fontWeight: theme.typography.body.weight, lineHeight: theme.typography.body.lineHeight } as TextStyle;
+    case 'caption':
+    case 'overline':
+    case 'button':
+    case 'label':
+      return { fontSize: theme.typography.body.size, fontWeight: '600', textTransform: variant === 'overline' ? 'uppercase' : undefined } as TextStyle;
+    default:
+      return { fontSize: theme.typography.body.size } as TextStyle;
+  }
+}
 
 // === MAIN COMPONENT ===
 function ModernText({
@@ -159,17 +91,17 @@ function ModernText({
   children,
   ...props
 }: ModernTextProps): React.JSX.Element {
-  const variantConfig = VARIANT_CONFIGS[variant];
+  const theme = useTheme();
+  const variantConfig = getVariantConfig(theme, variant);
 
   // Get text color
-  const textColorKey = color || 'primary';
-  const textColor = Theme.colors.onSurface[textColorKey];
+  const textColor = (color && theme.colors[color as keyof AppTheme['colors']]) || theme.colors.onSurface;
 
   // Build text style
   const textStyle: TextStyle = {
     ...variantConfig,
     color: textColor,
-    ...(weight && { fontWeight: Theme.typography.fontWeight[weight] }),
+    ...(weight && { fontWeight: weight }),
   };
 
   // Entrance animation
@@ -185,12 +117,12 @@ function ModernText({
 
   // Render gradient text
   if (gradient || gradientColors) {
-    const gradientConfig = gradient ? (Theme.gradients && Theme.gradients[gradient]) : null;
-    const colors = gradientColors ||
-      (gradientConfig && typeof gradientConfig === 'object' && 'colors' in gradientConfig ? (gradientConfig as any).colors : null) || [
-        Theme.colors.primary[500],
-        Theme.colors.primary[400],
-      ];
+    const gradientMap: Record<string, readonly [string, string]> = {
+      primary: theme.palette.gradients.primary,
+      success: theme.palette.gradients.success,
+      danger: theme.palette.gradients.danger,
+    } as const;
+    const colors = gradientColors || (gradient ? gradientMap[gradient] : undefined) || theme.palette.gradients.primary;
 
     const GradientText = () => (
       <LinearGradient

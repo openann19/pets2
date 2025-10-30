@@ -14,8 +14,8 @@
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
-import { Platform } from 'react-native';
 import { logger } from './logger';
+import { request } from './api';
 
 export interface UploadHygieneOptions {
   maxDimension?: number;
@@ -409,21 +409,40 @@ export interface QuotaCheck {
 }
 
 export async function checkUploadQuota(userId: string): Promise<QuotaCheck> {
-  // This would call your backend API to check user quotas
-  // Implementation depends on your rate limiting strategy
-
+  // Call backend API to check user upload quotas and rate limits
   try {
-    // TODO: Integrate with actual rate limit API
-    // For now, return a mock response
+    const response = await request<{
+      data: {
+        allowed: boolean;
+        remaining: number;
+        resetAt: string; // ISO timestamp
+        limit: number;
+      };
+    }>(`/users/${userId}/upload-quota`, {
+      method: 'GET',
+    });
+
     return {
-      allowed: true,
-      remaining: 10,
-      resetAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-      limit: 10,
+      allowed: response.data.allowed,
+      remaining: response.data.remaining,
+      resetAt: new Date(response.data.resetAt),
+      limit: response.data.limit,
     };
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error));
     logger.error('Quota check error', { error: err, userId });
+    
+    // Fallback: If endpoint doesn't exist yet, allow uploads but log warning
+    if (err.message.includes('404') || err.message.includes('Not Found')) {
+      logger.warn('Upload quota endpoint not implemented, allowing upload', { userId });
+      return {
+        allowed: true,
+        remaining: 999,
+        resetAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        limit: 1000,
+      };
+    }
+    
     throw err;
   }
 }

@@ -21,8 +21,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@mobile/theme";
-import { getExtendedColors, type ExtendedColors } from "../../theme/adapters";
-import type { Theme } from "../../theme/types";
+import type { AppTheme } from "@mobile/theme";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
 
@@ -63,8 +62,7 @@ function AdminUploadsScreen({
   navigation,
 }: AdminUploadsScreenProps): React.JSX.Element {
   const theme = useTheme();
-  const colors = getExtendedColors(theme);
-  const styles = makeStyles(theme, colors);
+  const styles = makeStyles(theme);
   const [uploads, setUploads] = useState<Upload[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -117,7 +115,7 @@ function AdminUploadsScreen({
         const response = await _adminAPI.moderateUpload({
           uploadId,
           action,
-          ...(reason && { reason }),
+          ...(reason ? { reason } : {}),
         });
 
         if (response?.success) {
@@ -141,6 +139,11 @@ function AdminUploadsScreen({
 
           Alert.alert("Success", `Upload ${action}d successfully`);
           setSelectedUpload(null);
+          
+          // Reload uploads to get latest data
+          void loadUploads();
+        } else {
+          throw new Error(response?.message || `Failed to ${action} upload`);
         }
       } catch (error) {
         errorHandler.handleError(
@@ -153,9 +156,10 @@ function AdminUploadsScreen({
             metadata: { uploadId, action },
           },
         );
+        Alert.alert("Error", `Failed to ${action} upload. Please try again.`);
       }
     },
-    [],
+    [loadUploads],
   );
 
   const handleRejectWithReason = useCallback(
@@ -186,10 +190,7 @@ function AdminUploadsScreen({
   const renderUpload = useCallback(
     ({ item }: { item: Upload }) => (
       <TouchableOpacity
-        style={StyleSheet.flatten([
-          styles.uploadCard,
-          { backgroundColor: colors.card },
-        ])}
+        style={styles.uploadCard}
         testID="AdminUploadsScreen-button-2"
         accessibilityLabel="View upload details"
         accessibilityRole="button"
@@ -211,7 +212,7 @@ function AdminUploadsScreen({
                 { backgroundColor: theme.colors.danger },
               ])}
             >
-              <Ionicons name="flag" size={12} color="white" />
+              <Ionicons name="flag" size={12} color={theme.colors.onPrimary} />
             </View>
           ) : null}
 
@@ -238,7 +239,7 @@ function AdminUploadsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.uploadType,
-              { color: colors.textSecondary },
+              { color: theme.colors.onMuted },
             ])}
           >
             {item.type} • {new Date(item.uploadedAt).toLocaleDateString()}
@@ -246,7 +247,7 @@ function AdminUploadsScreen({
         </View>
       </TouchableOpacity>
     ),
-    [colors, theme.colors.onSurface],
+    [theme],
   );
 
   const getStatusColor = (status: Upload["status"]) => {
@@ -267,7 +268,7 @@ function AdminUploadsScreen({
       style={StyleSheet.flatten([
         styles.filterButton,
         {
-          backgroundColor: filter === filterType ? theme.colors.primary : colors.card,
+          backgroundColor: filter === filterType ? theme.colors.primary : theme.colors.surface,
         },
       ])}
       testID="AdminUploadsScreen-button-2"
@@ -280,7 +281,7 @@ function AdminUploadsScreen({
       <Text
         style={StyleSheet.flatten([
           styles.filterButtonText,
-          { color: filter === filterType ? "white" : theme.colors.onSurface },
+          { color: filter === filterType ? theme.colors.onPrimary : theme.colors.onSurface },
         ])}
       >
         {label}
@@ -294,10 +295,10 @@ function AdminUploadsScreen({
     return (
       <View style={styles.modalOverlay}>
         <View
-          style={StyleSheet.flatten([
-            styles.modalContent,
-            { backgroundColor: colors.card },
-          ])}
+            style={StyleSheet.flatten([
+              styles.modalContent,
+              { backgroundColor: theme.colors.surface },
+            ])}
         >
           <View style={styles.modalHeader}>
             <Text
@@ -330,7 +331,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailLabel,
-                { color: colors.textSecondary },
+                { color: theme.colors.onMuted },
               ])}
             >
               User:
@@ -347,7 +348,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailLabel,
-                { color: colors.textSecondary },
+                { color: theme.colors.onMuted },
               ])}
             >
               Type:
@@ -364,7 +365,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailLabel,
-                { color: colors.textSecondary },
+                { color: theme.colors.onMuted },
               ])}
             >
               Uploaded:
@@ -383,7 +384,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailLabel,
-                    { color: colors.textSecondary },
+                    { color: theme.colors.onMuted },
                   ])}
                 >
                   Pet:
@@ -425,7 +426,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailLabel,
-                    { color: colors.textSecondary },
+                    { color: theme.colors.onMuted },
                   ])}
                 >
                   File Size:
@@ -485,14 +486,14 @@ function AdminUploadsScreen({
     <SafeAreaView
       style={StyleSheet.flatten([
         styles.container,
-        { backgroundColor: colors.background },
+        { backgroundColor: theme.colors.bg },
       ])}
     >
       {/* Header */}
       <View
         style={StyleSheet.flatten([
           styles.header,
-          { backgroundColor: colors.card },
+          { backgroundColor: theme.colors.surface },
         ])}
       >
         <TouchableOpacity
@@ -520,16 +521,16 @@ function AdminUploadsScreen({
       <View
         style={StyleSheet.flatten([
           styles.searchContainer,
-          { backgroundColor: colors.card },
+          { backgroundColor: theme.colors.surface },
         ])}
       >
         <View
           style={StyleSheet.flatten([
             styles.searchInputContainer,
-            { backgroundColor: colors.background },
+            { backgroundColor: theme.colors.bg },
           ])}
         >
-          <Ionicons name="search" size={20} color={colors.textSecondary} />
+          <Ionicons name="search" size={20} color={theme.colors.onMuted} />
           <TextInput
             style={StyleSheet.flatten([
               styles.searchInput,
@@ -538,7 +539,7 @@ function AdminUploadsScreen({
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search uploads..."
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor={theme.colors.onMuted}
           />
         </View>
 
@@ -552,11 +553,11 @@ function AdminUploadsScreen({
       {/* Uploads Grid */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={theme.colors.primary} />
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.textSecondary },
+              { color: theme.colors.onMuted },
             ])}
           >
             Loading uploads...
@@ -574,7 +575,7 @@ function AdminUploadsScreen({
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => loadUploads(true)}
-              colors={[colors.primary]}
+              colors={[theme.colors.primary]}
             />
           }
           ListEmptyComponent={
@@ -582,12 +583,12 @@ function AdminUploadsScreen({
               <Ionicons
                 name="images-outline"
                 size={64}
-                color={colors.textSecondary}
+                color={theme.colors.onMuted}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.emptyText,
-                  { color: colors.textSecondary },
+                  { color: theme.colors.onMuted },
                 ])}
               >
                 No uploads found
@@ -603,135 +604,147 @@ function AdminUploadsScreen({
   );
 }
 
-const makeStyles = (
-  theme: Theme,
-  colors: ExtendedColors,
-) =>
-  StyleSheet.create({
+const makeStyles = (theme: AppTheme) => {
+  // Helper for rgba with opacity
+  const alpha = (color: string, opacity: number) => {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
+
+  return StyleSheet.create({
     container: {
       flex: 1,
     },
     header: {
       flexDirection: "row",
       alignItems: "center",
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
-  backButton: {
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-  },
+    backButton: {
+      marginEnd: theme.spacing.lg,
+    },
+    headerTitle: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h2.weight,
+      color: theme.colors.onSurface,
+    },
     searchContainer: {
-      padding: 16,
+      padding: theme.spacing.lg,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
     searchInputContainer: {
       flexDirection: "row",
       alignItems: "center",
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      borderRadius: 8,
-      marginBottom: 12,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.radii.sm,
+      marginBottom: theme.spacing.md,
     },
     searchInput: {
       flex: 1,
-      marginLeft: 8,
-      fontSize: 16,
+      marginStart: theme.spacing.sm,
+      fontSize: theme.typography.body.size,
     },
     filterContainer: {
       flexDirection: "row",
-      gap: 8,
+      gap: theme.spacing.sm,
     },
     filterButton: {
-      paddingHorizontal: 16,
-      paddingVertical: 8,
-      borderRadius: 20,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.radii.full,
     },
     filterButtonText: {
-      fontSize: 14,
-      fontWeight: "500",
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: '500' as const,
+      color: theme.colors.onSurface,
     },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
     loadingText: {
-      marginTop: 12,
-      fontSize: 16,
+      marginTop: theme.spacing.md,
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onMuted,
     },
     listContainer: {
-      padding: 16,
+      padding: theme.spacing.lg,
     },
     row: {
       justifyContent: "space-between",
     },
     uploadCard: {
       width: IMAGE_SIZE,
-      marginBottom: 16,
-      borderRadius: 12,
+      marginBottom: theme.spacing.lg,
+      borderRadius: theme.radii.lg,
       overflow: "hidden",
-      shadowColor: colors.shadow,
+      shadowColor: theme.colors.border,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 3,
     },
-  uploadImage: {
-    width: IMAGE_SIZE,
-    height: IMAGE_SIZE,
-  },
-  uploadOverlay: {
-    position: "absolute",
-    top: 8,
-    left: 8,
-    right: 8,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  flagBadge: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 10,
-    color: "white",
-    fontWeight: "600",
-  },
-  uploadInfo: {
-    padding: 12,
-  },
-  userName: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  uploadType: {
-    fontSize: 12,
-  },
+    uploadImage: {
+      width: IMAGE_SIZE,
+      height: IMAGE_SIZE,
+    },
+    uploadOverlay: {
+      position: "absolute",
+      top: theme.spacing.sm,
+      start: theme.spacing.sm,
+      end: theme.spacing.sm,
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
+    flagBadge: {
+      width: 24,
+      height: 24,
+      borderRadius: theme.radii.full,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    statusBadge: {
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.lg,
+    },
+    statusText: {
+      fontSize: theme.typography.body.size * 0.625,
+      color: theme.colors.onPrimary,
+      fontWeight: theme.typography.h2.weight,
+    },
+    uploadInfo: {
+      padding: theme.spacing.md,
+    },
+    userName: {
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.xs,
+      color: theme.colors.onSurface,
+    },
+    uploadType: {
+      fontSize: theme.typography.body.size * 0.75,
+      color: theme.colors.onMuted,
+    },
     emptyContainer: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      paddingVertical: 64,
+      paddingVertical: theme.spacing['4xl'],
     },
     emptyText: {
-      fontSize: 16,
-      marginTop: 16,
+      fontSize: theme.typography.body.size,
+      marginTop: theme.spacing.lg,
+      color: theme.colors.onMuted,
     },
     modalOverlay: {
       position: "absolute",
@@ -739,58 +752,62 @@ const makeStyles = (
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      backgroundColor: alpha(theme.colors.bg, 0.5),
       justifyContent: "center",
       alignItems: "center",
       zIndex: 1000,
     },
     modalContent: {
-      width: SCREEN_WIDTH - 32,
+      width: SCREEN_WIDTH - theme.spacing['2xl'],
       maxHeight: "80%",
-      borderRadius: 16,
+      borderRadius: theme.radii.lg + theme.radii.xs,
       overflow: "hidden",
+      backgroundColor: theme.colors.surface,
     },
     modalHeader: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      padding: 16,
+      padding: theme.spacing.lg,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
     modalTitle: {
-      fontSize: 18,
-      fontWeight: "600",
+      fontSize: theme.typography.h2.size * 0.9,
+      fontWeight: theme.typography.h2.weight,
+      color: theme.colors.onSurface,
     },
     modalImage: {
       width: "100%",
       height: 300,
     },
     uploadDetails: {
-      padding: 16,
+      padding: theme.spacing.lg,
     },
     detailLabel: {
-      fontSize: 12,
-      fontWeight: "600",
-      marginTop: 8,
-      marginBottom: 4,
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.h2.weight,
+      marginTop: theme.spacing.sm,
+      marginBottom: theme.spacing.xs,
+      color: theme.colors.onMuted,
     },
     detailValue: {
-      fontSize: 14,
+      fontSize: theme.typography.body.size * 0.875,
+      color: theme.colors.onSurface,
     },
     modalActions: {
       flexDirection: "row",
-      padding: 16,
-      gap: 12,
+      padding: theme.spacing.lg,
+      gap: theme.spacing.md,
     },
     actionButton: {
       flex: 1,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      paddingVertical: 12,
-      borderRadius: 8,
-      gap: 8,
+      paddingVertical: theme.spacing.md,
+      borderRadius: theme.radii.sm,
+      gap: theme.spacing.sm,
     },
     approveButton: {
       backgroundColor: theme.colors.success,
@@ -799,10 +816,11 @@ const makeStyles = (
       backgroundColor: theme.colors.danger,
     },
     actionButtonText: {
-      fontSize: 16,
-      color: "white",
-      fontWeight: "600",
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onPrimary,
+      fontWeight: theme.typography.h2.weight,
     },
   });
+};
 
 export default AdminUploadsScreen;

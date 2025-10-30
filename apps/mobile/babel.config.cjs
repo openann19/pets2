@@ -26,7 +26,24 @@ module.exports = function (api) {
       ['babel-preset-expo', { jsxRuntime: 'automatic' }], 
       ...baseConfig.presets
     ],
-    plugins: [moduleResolverPlugin, ...filteredBasePlugins, 'react-native-reanimated/plugin'],
-    env: baseConfig.env,
+    plugins: [
+      moduleResolverPlugin,
+      ...filteredBasePlugins,
+      'react-native-reanimated/plugin',
+      // Production optimizations
+      ...(process.env.NODE_ENV === 'production' ? [
+        ['babel-plugin-transform-remove-console', { exclude: ['error', 'warn'] }],
+        'babel-plugin-transform-remove-debugger',
+      ] : []),
+    ],
+    env: {
+      ...baseConfig.env,
+      production: {
+        plugins: [
+          'babel-plugin-transform-remove-console',
+          'babel-plugin-transform-remove-debugger',
+        ],
+      },
+    },
   };
 };

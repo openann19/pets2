@@ -3,7 +3,6 @@
  * Animated success checkmark
  */
 
-import React from 'react';
 import { LottieAnimation } from './LottieAnimation';
 
 interface SuccessAnimationProps {
@@ -92,7 +91,7 @@ export function SuccessAnimation({ size = 140, onFinish, style }: SuccessAnimati
       autoPlay={true}
       loop={false}
       speed={1.2}
-      onAnimationFinish={onFinish}
+      {...(onFinish ? { onAnimationFinish: onFinish } : {})}
       style={style}
     />
   );

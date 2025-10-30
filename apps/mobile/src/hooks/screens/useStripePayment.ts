@@ -3,9 +3,10 @@
  * Handles Stripe payment processing and integration
  */
 import { useCallback, useState } from 'react';
-import { Alert, Linking } from 'react-native';
+import { Linking } from 'react-native';
 import { logger } from '@pawfectmatch/core';
 import { premiumService, type SubscriptionPlan } from '../../services/PremiumService';
+import { paymentErrorService, type PaymentError } from '../../services/PaymentErrorLocalizationService';
 
 interface PaymentState {
   isProcessing: boolean;
@@ -52,7 +53,13 @@ export const useStripePayment = (): UseStripePaymentReturn => {
         const plan = plans.find((p) => p.id === planId);
 
         if (!plan) {
-          throw new Error(`Plan ${planId} not found`);
+          const error: PaymentError = {
+            type: 'plan_not_found',
+            message: `Plan ${planId} not found`,
+            code: 'PLAN_NOT_FOUND',
+          };
+          paymentErrorService.showErrorAlert(error);
+          return null;
         }
 
         const session = await premiumService.createCheckoutSession(
@@ -78,19 +85,25 @@ export const useStripePayment = (): UseStripePaymentReturn => {
           paymentIntentId: session.sessionId, // In real implementation, this would be separate
         };
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Failed to create checkout session';
+        const paymentError: PaymentError = {
+          type: 'processing_error',
+          message: error instanceof Error ? error.message : 'Failed to create checkout session',
+          code: 'CHECKOUT_SESSION_FAILED',
+          details: { originalError: error },
+        };
+        
         setState((prev) => ({
           ...prev,
           isProcessing: false,
-          error: errorMessage,
+          error: paymentError.message,
         }));
+        
         logger.error('Failed to create Stripe checkout session', {
           error,
           planId,
         });
 
-        Alert.alert('Payment Error', errorMessage);
+        paymentErrorService.showErrorAlert(paymentError, () => createCheckoutSession(planId, successUrl, cancelUrl));
         return null;
       }
     },
@@ -120,22 +133,34 @@ export const useStripePayment = (): UseStripePaymentReturn => {
           });
           return true;
         } else {
-          throw new Error('Payment failed - insufficient funds');
+          const paymentError: PaymentError = {
+            type: 'insufficient_funds',
+            message: 'Payment failed - insufficient funds',
+            code: 'INSUFFICIENT_FUNDS',
+          };
+          throw paymentError;
         }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Payment processing failed';
+        const paymentError: PaymentError = {
+          type: 'payment_declined',
+          message: error instanceof Error ? error.message : 'Payment processing failed',
+          code: 'PAYMENT_FAILED',
+          details: { originalError: error },
+        };
+        
         setState((prev) => ({
           ...prev,
           isProcessing: false,
-          error: errorMessage,
+          error: paymentError.message,
         }));
+        
         logger.error('Payment processing failed', {
           error,
           paymentMethodId,
           amount,
         });
 
-        Alert.alert('Payment Failed', errorMessage);
+        paymentErrorService.showErrorAlert(paymentError, () => processPayment(paymentMethodId, amount));
         return false;
       }
     },

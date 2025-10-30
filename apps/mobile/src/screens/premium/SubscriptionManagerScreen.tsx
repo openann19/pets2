@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { AppTheme } from '@/theme';
-import { useTheme } from '@/theme';
+import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@mobile/theme';
+import { API_BASE_URL } from '../../config/environment';
 import { logger } from '@pawfectmatch/core';
 import type { NavigationProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
@@ -60,7 +61,7 @@ const createCheckoutSession = async <T extends { url: string }>(payload: {
   metadata?: Record<string, unknown>;
 }): Promise<T> => {
   const response = await fetch(
-    `${String(process.env['EXPO_PUBLIC_API_BASE_URL'])}/subscriptions/checkout-session`,
+    `${API_BASE_URL}/api/subscriptions/checkout-session`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -310,7 +311,7 @@ export const SubscriptionManagerScreen = () => {
 
       // Fetch usage stats
       const usageData = (await fetch(
-        `${String(process.env['EXPO_PUBLIC_API_BASE_URL'])}/subscriptions/usage`,
+        `${API_BASE_URL}/api/subscriptions/usage`,
         {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
@@ -350,7 +351,7 @@ export const SubscriptionManagerScreen = () => {
                 setIsLoading(true);
                 if (subscription?.id !== undefined && subscription.id !== '') {
                   await fetch(
-                    `${String(process.env['EXPO_PUBLIC_API_BASE_URL'])}/subscriptions/cancel`,
+                    `${API_BASE_URL}/api/subscriptions/cancel`,
                     {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
@@ -381,7 +382,7 @@ export const SubscriptionManagerScreen = () => {
     try {
       setIsLoading(true);
       if (subscription?.id !== undefined && subscription.id !== '') {
-        await fetch(`${String(process.env['EXPO_PUBLIC_API_BASE_URL'])}/subscriptions/reactivate`, {
+        await fetch(`${API_BASE_URL}/api/subscriptions/reactivate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ subscriptionId: subscription.id }),

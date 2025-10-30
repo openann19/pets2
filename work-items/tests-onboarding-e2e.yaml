@@ -1,0 +1,23 @@
+id: tests-onboarding-e2e
+owner: e2e
+severity: high
+area: mobile
+context: |
+  No Detox E2E covers the first-run onboarding journey (welcome→preferences→profile create). This is a critical conversion path and prone to regressions in navigation and validation.
+acceptance:
+  - Create `apps/mobile/e2e/onboarding.flow.e2e.ts`
+  - Covers: welcome, auth (optional), pet prefs, photo add (optional stub), profile create, reach home
+  - Validates: form validation, persistence on relaunch, deep link resume
+  - Screenshots and artifacts saved to `/reports/run/<timestamp>`
+states: [loading, form, success, error]
+telemetry:
+  - event: ONBOARDING_COMPLETED
+    props: [steps, durationMs]
+assets:
+  tests: [apps/mobile/e2e/onboarding.flow.e2e.ts]
+risks:
+  - Flaky network; ensure mocks/fixtures used
+rollback:
+  - Guard onboarding changes behind remote flag
+links:
+  - reports/mobile/test_gap_matrix.md

@@ -62,7 +62,10 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({
       style={StyleSheet.flatten([styles.memoryCard, animatedStyle])}
     >
       <LinearGradient
-        colors={['rgba(255,255,255,0.15)', 'rgba(255,255,255,0.05)']}
+        colors={[
+          theme.colors.overlay || `${theme.colors.surface}80`,
+          theme.colors.overlay || `${theme.colors.surface}30`,
+        ]}
         style={styles.cardGradient}
       >
         <BlurView
@@ -97,7 +100,10 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({
                   resizeMode="cover"
                 />
                 <LinearGradient
-                  colors={['transparent', 'rgba(0,0,0,0.3)']}
+                  colors={[
+                    'transparent',
+                    theme.colors.overlay || `${theme.palette.neutral[950]}4D`,
+                  ]}
                   style={styles.imageOverlay}
                 />
               </View>
@@ -119,7 +125,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({
                   <Ionicons
                     name="location-outline"
                     size={14}
-                    color="#ffffff"
+                    color={theme.colors.onSurface}
                   />
                   <Text style={styles.metadataText}>{memory.metadata.location}</Text>
                 </View>
@@ -129,7 +135,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({
                   <Ionicons
                     name="people-outline"
                     size={14}
-                    color="#ffffff"
+                    color={theme.colors.onSurface}
                   />
                   <Text style={styles.metadataText}>
                     {memory.metadata.participants.join(' & ')}
@@ -173,12 +179,12 @@ const makeStyles = (theme: any) =>
     memoryTitle: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: theme.colors.neutral[0],
+      color: theme.colors.onSurface,
       marginBottom: 4,
     },
     memoryTimestamp: {
       fontSize: 14,
-      color: 'rgba(255,255,255,0.7)',
+      color: theme.colors.onMuted,
     },
     emotionBadge: {
       width: 40,
@@ -216,7 +222,7 @@ const makeStyles = (theme: any) =>
     },
     memoryText: {
       fontSize: 18,
-      color: theme.colors.neutral[0],
+      color: theme.colors.onSurface,
       lineHeight: 26,
       fontStyle: 'italic',
       textAlign: 'center',
@@ -229,14 +235,15 @@ const makeStyles = (theme: any) =>
     metadataItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: 'rgba(255,255,255,0.1)',
+      backgroundColor: theme.colors.surface,
+      opacity: 0.7,
       paddingHorizontal: 8,
       paddingVertical: 4,
       borderRadius: 12,
     },
     metadataText: {
       fontSize: 12,
-      color: Theme.colors.neutral[0],
+      color: theme.colors.onSurface,
       marginLeft: 4,
     },
   });

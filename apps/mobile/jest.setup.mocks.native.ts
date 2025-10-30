@@ -103,79 +103,8 @@ jest.mock('react-native-svg', () => ({
 }));
 
 // Mock react-native-reanimated
-jest.mock('react-native-reanimated', () => {
-  const React = require('react');
-  
-  // Create animation helpers
-  const createAnimation = (name: string) => ({
-    duration: jest.fn((ms: number) => ({ duration: ms, name })),
-    delay: jest.fn((ms: number) => ({ delay: ms, name })),
-    springify: jest.fn(() => ({ name, type: 'spring' })),
-    stiffness: jest.fn((value: number) => ({ stiffness: value, name })),
-    damping: jest.fn((value: number) => ({ damping: value, name })),
-    entering: { duration: jest.fn((ms: number) => ({ duration: ms, name })) },
-    exiting: { duration: jest.fn((ms: number) => ({ duration: ms, name })) },
-  });
-  
-  // Mock functions
-  const mockRunOnJS = jest.fn((fn) => fn);
-  const mockRunOnUI = jest.fn((fn) => fn);
-  const mockWithTiming = jest.fn((toValue) => toValue);
-  const mockWithSpring = jest.fn((toValue) => toValue);
-  const mockWithDelay = jest.fn(() => jest.fn());
-  const mockWithSequence = jest.fn(() => jest.fn());
-  const mockWithRepeat = jest.fn(() => jest.fn());
-  const mockUseSharedValue = jest.fn((initialValue) => ({ value: initialValue }));
-  const mockUseAnimatedStyle = jest.fn((updater) => updater());
-  
-  // Simple component creation without caching (to avoid scope issues)
-  const View = React.forwardRef((props: any, ref: any) => React.createElement('div', { ...props, ref }));
-  const Text = React.forwardRef((props: any, ref: any) => React.createElement('span', { ...props, ref }));
-  const ScrollView = React.forwardRef((props: any, ref: any) => React.createElement('div', { ...props, ref }));
-  const Image = React.forwardRef((props: any, ref: any) => React.createElement('img', { ...props, ref }));
-  
-  return {
-    __esModule: true,
-    default: {},
-    View,
-    Text,
-    ScrollView,
-    Image,
-    useSharedValue: mockUseSharedValue,
-    useAnimatedStyle: mockUseAnimatedStyle,
-    withTiming: mockWithTiming,
-    withSpring: mockWithSpring,
-    withDelay: mockWithDelay,
-    withSequence: mockWithSequence,
-    withRepeat: mockWithRepeat,
-    runOnJS: mockRunOnJS,
-    runOnUI: mockRunOnUI,
-    Extrapolate: {
-      CLAMP: 'clamp',
-      EXTEND: 'extend',
-      IDENTITY: 'identity',
-    },
-    // Entering animations
-    FadeIn: createAnimation('FadeIn'),
-    FadeInDown: createAnimation('FadeInDown'),
-    FadeInUp: createAnimation('FadeInUp'),
-    FadeInLeft: createAnimation('FadeInLeft'),
-    FadeInRight: createAnimation('FadeInRight'),
-    FlipInEasyX: createAnimation('FlipInEasyX'),
-    FlipInEasyY: createAnimation('FlipInEasyY'),
-    FlipInXDown: createAnimation('FlipInXDown'),
-    FlipInXUp: createAnimation('FlipInXUp'),
-    SlideInDown: createAnimation('SlideInDown'),
-    SlideInUp: createAnimation('SlideInUp'),
-    ZoomIn: createAnimation('ZoomIn'),
-    // Exiting animations
-    FadeOut: createAnimation('FadeOut'),
-    FadeOutDown: createAnimation('FadeOutDown'),
-    FadeOutUp: createAnimation('FadeOutUp'),
-    SlideOutDown: createAnimation('SlideOutDown'),
-    ZoomOut: createAnimation('ZoomOut'),
-  };
-});
+// NOTE: Reanimated mock is centralized in jest.setup.ts using the official mock
+// This file is kept for other native mocks only
 
 // Mock react-native NativeModules
 jest.mock('react-native/Libraries/BatchedBridge/NativeModules', () => ({

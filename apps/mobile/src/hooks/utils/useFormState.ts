@@ -25,7 +25,7 @@ export interface UseFormStateReturn<T> {
   reset: () => void;
   handleSubmit: (
     onSubmit: (values: T) => void | Promise<void>,
-  ) => (e?: any) => void | Promise<void>;
+  ) => (e?: unknown) => void | Promise<void>;
 }
 
 /**
@@ -42,7 +42,7 @@ export interface UseFormStateReturn<T> {
  *   }
  * });
  */
-export function useFormState<T extends Record<string, any>>({
+export function useFormState<T extends Record<keyof T, unknown>>({
   initialValues,
   validate: validateFn,
 }: UseFormStateOptions<T>): UseFormStateReturn<T> {
@@ -104,8 +104,11 @@ export function useFormState<T extends Record<string, any>>({
   }, [initialValues]);
 
   const handleSubmit = useCallback(
-    (onSubmit: (values: T) => void | Promise<void>) => async (e?: any) => {
-      e?.preventDefault?.();
+    (onSubmit: (values: T) => void | Promise<void>) => async (e?: unknown) => {
+      // Type guard for preventDefault support (web compatibility)
+      if (e && typeof e === 'object' && 'preventDefault' in e && typeof (e as { preventDefault?: () => void }).preventDefault === 'function') {
+        (e as { preventDefault: () => void }).preventDefault();
+      }
 
       if (!validate()) {
         return;

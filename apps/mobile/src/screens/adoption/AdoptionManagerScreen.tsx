@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import { Modal, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import type { AppTheme } from '@/theme';
-import { useTheme } from '@/theme';
+import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@mobile/theme';
 import { Colors, GlobalStyles, Spacing } from '../../animation';
 import {
   EliteButton,
@@ -72,58 +72,51 @@ const VALID_LISTING_STATUSES = new Set<PetListing['status']>([
 
 const normalizeListing = (listing: unknown): PetListing => {
   const item = listing as Record<string, unknown>;
-  const id = (item.id ?? item._id ?? '') as string;
+  const id = (item['id'] ?? item['_id'] ?? '') as string;
 
   return {
     id,
-    name: (item.name as string) ?? 'Unknown Pet',
-    species: (item.species as string) ?? 'Unknown',
-    breed: (item.breed as string) ?? 'Unknown',
-    age: typeof item.age === 'number' ? item.age : 0,
-    status: VALID_LISTING_STATUSES.has(item.status as PetListing['status'])
-      ? (item.status as PetListing['status'])
+    name: (item['name'] as string) ?? 'Unknown Pet',
+    species: (item['species'] as string) ?? 'Unknown',
+    breed: (item['breed'] as string) ?? 'Unknown',
+    age: typeof item['age'] === 'number' ? item['age'] : 0,
+    status: VALID_LISTING_STATUSES.has(item['status'] as PetListing['status'])
+      ? (item['status'] as PetListing['status'])
       : 'pending',
-    photos: Array.isArray(item.photos) ? (item.photos as string[]) : [],
-    applications: typeof item.applications === 'number' ? item.applications : 0,
-    views: typeof item.views === 'number' ? item.views : 0,
-    featured: typeof item.featured === 'boolean' ? item.featured : false,
-    listedAt: typeof item.listedAt === 'string' ? item.listedAt : new Date().toISOString(),
+    photos: Array.isArray(item['photos']) ? (item['photos'] as string[]) : [],
+    applications: typeof item['applications'] === 'number' ? item['applications'] : 0,
+    views: typeof item['views'] === 'number' ? item['views'] : 0,
+    featured: typeof item['featured'] === 'boolean' ? item['featured'] : false,
+    listedAt: typeof item['listedAt'] === 'string' ? item['listedAt'] : new Date().toISOString(),
   };
 };
 
 const normalizeApplication = (application: unknown): AdoptionApplication => {
   const item = application as Record<string, unknown>;
-  const status = item.status as AdoptionApplication['status'];
+  const status = item['status'] as AdoptionApplication['status'];
 
   return {
-    id: (item.id ?? item._id ?? '') as string,
-    petId: (item.petId ?? '') as string,
-    petName: (item.petName as string) ?? (item.pet as { name?: string })?.name ?? 'Unknown',
+    id: (item['id'] ?? item['_id'] ?? '') as string,
+    petId: (item['petId'] ?? '') as string,
+    petName: (item['petName'] as string) ?? ((item['pet'] as { name?: string })?.name ?? 'Unknown'),
     applicantName:
-      (item.applicantName as string) ??
-      (item.applicant as { name?: string })?.name ??
-      'Pending Applicant',
+      (item['applicantName'] as string) ??
+      ((item['applicant'] as { name?: string })?.name ?? 'Pending Applicant'),
     applicantEmail:
-      (item.applicantEmail as string) ??
-      (item.applicant as { email?: string })?.email ??
-      'unknown@example.com',
+      (item['applicantEmail'] as string) ??
+      ((item['applicant'] as { email?: string })?.email ?? 'unknown@example.com'),
     status:
       status && ['pending', 'approved', 'rejected', 'withdrawn'].includes(status)
         ? status
         : 'pending',
-    submittedAt: typeof item.submittedAt === 'string' ? item.submittedAt : new Date().toISOString(),
+    submittedAt: typeof item['submittedAt'] === 'string' ? item['submittedAt'] : new Date().toISOString(),
     experience:
-      (item.experience as string) ??
-      (item.applicationData as { experience?: string })?.experience ??
-      '',
+      (item['experience'] as string) ??
+      ((item['applicationData'] as { experience?: string })?.experience ?? ''),
     livingSpace:
-      (item.livingSpace as string) ??
-      (item.applicationData as { livingSituation?: string })?.livingSituation ??
-      '',
-    references:
-      typeof item.references === 'number'
-        ? item.references
-        : ((item.applicationData as { references?: number })?.references ?? 0),
+      (item['livingSpace'] as string) ??
+      ((item['applicationData'] as { livingSpace?: string })?.livingSpace ?? ''),
+    references: Array.isArray(item['references']) ? item['references'].length : 0,
   };
 };
 
@@ -243,18 +236,18 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   );
 
   const renderEliteListings = () => (
-    <View style={GlobalStyles.py4}>
+    <View style={GlobalStyles['py4'] as any}>
       {petListings.map((pet) => (
         <EliteCard
           key={pet.id}
           gradient
           blur
-          style={GlobalStyles.mb4}
+          style={GlobalStyles['mb4'] as any}
         >
           <View style={styles.eliteListingHeader}>
             <View style={{ flex: 1 }}>
-              <Text style={GlobalStyles.heading3}>{pet.name}</Text>
-              <Text style={GlobalStyles.body}>
+              <Text style={GlobalStyles['heading3'] as any}>{pet.name}</Text>
+              <Text style={GlobalStyles['body'] as any}>
                 {pet.breed} • {pet.age} years old
               </Text>
             </View>
@@ -328,18 +321,18 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   );
 
   const renderEliteApplications = () => (
-    <View style={GlobalStyles.py4}>
+    <View style={GlobalStyles['py4'] as any}>
       {applications.map((app) => (
         <EliteCard
           key={app.id}
           gradient
           blur
-          style={GlobalStyles.mb4}
+          style={GlobalStyles['mb4'] as any}
         >
           <View style={styles.eliteApplicationHeader}>
             <View style={{ flex: 1 }}>
-              <Text style={GlobalStyles.heading3}>{app.applicantName}</Text>
-              <Text style={GlobalStyles.body}>Applying for: {app.petName}</Text>
+              <Text style={GlobalStyles['heading3'] as any}>{app.applicantName}</Text>
+              <Text style={GlobalStyles['body'] as any}>Applying for: {app.petName}</Text>
             </View>
             <View
               style={StyleSheet.flatten([
@@ -404,9 +397,9 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                 onPress={() => {
                   handleApplicationAction(app.id, 'reject');
                 }}
-                style={StyleSheet.flatten([{ flex: 1 }, { borderColor: Colors.error }])}
+                style={StyleSheet.flatten([{ flex: 1 }, { borderColor: Colors.error[500] }])}
               />
-              <View style={GlobalStyles.mx2} />
+              <View style={GlobalStyles['mx2'] as any} />
               <EliteButton
                 title="Approve"
                 variant="primary"
@@ -552,9 +545,9 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
           setShowStatusModal(false);
         }}
       >
-        <View style={GlobalStyles.modalOverlay}>
-          <View style={GlobalStyles.modalContent}>
-            <Text style={GlobalStyles.heading2}>Change Status for {selectedPet?.name}</Text>
+        <View style={GlobalStyles['modalOverlay'] as any}>
+          <View style={GlobalStyles['modalContent'] as any}>
+            <Text style={GlobalStyles['heading2'] as any}>Change Status for {selectedPet?.name}</Text>
 
             <View style={styles.statusOptions}>
               {['active', 'pending', 'adopted', 'paused'].map((status) => (
@@ -574,7 +567,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               onPress={() => {
                 setShowStatusModal(false);
               }}
-              style={GlobalStyles.mt4}
+              style={GlobalStyles['mt4'] as any}
             />
           </View>
         </View>
@@ -592,7 +585,7 @@ function makeStyles(theme: AppTheme) {
     },
     listingCard: {
       backgroundColor: theme.colors.surface,
-      borderRadius: theme.radii?.md ?? theme.radius?.md ?? 12,
+      borderRadius: theme.radii?.md ?? 12,
       padding: theme.spacing.md ?? 16,
       marginBottom: theme.spacing.sm ?? 12,
       borderWidth: 1,
@@ -625,7 +618,7 @@ function makeStyles(theme: AppTheme) {
     statusBadge: {
       paddingHorizontal: theme.spacing.sm ?? 12,
       paddingVertical: theme.spacing.xs ?? 6,
-      borderRadius: theme.radii?.sm ?? theme.radius?.sm ?? 8,
+      borderRadius: theme.radii?.sm ?? 8,
       borderWidth: 1,
       borderColor: theme.colors.border,
     },
@@ -664,7 +657,7 @@ function makeStyles(theme: AppTheme) {
       flex: 1,
       paddingVertical: theme.spacing.sm ?? 12,
       paddingHorizontal: theme.spacing.lg ?? 24,
-      borderRadius: theme.radii?.sm ?? theme.radius?.sm ?? 8,
+      borderRadius: theme.radii?.sm ?? 8,
       borderWidth: 1,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
@@ -697,7 +690,7 @@ function makeStyles(theme: AppTheme) {
       justifyContent: 'center' as const,
       paddingVertical: theme.spacing.lg ?? 20,
       paddingHorizontal: theme.spacing.md ?? 16,
-      borderRadius: theme.radii?.lg ?? theme.radius?.lg ?? 16,
+      borderRadius: theme.radii?.lg ?? 16,
       backgroundColor: theme.colors.overlay ?? theme.colors.surface,
       borderWidth: 1,
       borderColor: theme.colors.border,
@@ -730,7 +723,7 @@ function makeStyles(theme: AppTheme) {
     eliteStatusBadge: {
       paddingHorizontal: theme.spacing.sm ?? 12,
       paddingVertical: theme.spacing.xs ?? 6,
-      borderRadius: theme.radii?.md ?? theme.radius?.md ?? 12,
+      borderRadius: theme.radii?.md ?? 12,
       borderWidth: 1,
       borderColor: theme.colors.border,
     },
@@ -744,7 +737,7 @@ function makeStyles(theme: AppTheme) {
       paddingVertical: theme.spacing.lg ?? 20,
       marginVertical: theme.spacing.lg ?? 20,
       backgroundColor: theme.colors.overlay ?? theme.colors.surface,
-      borderRadius: theme.radii?.md ?? theme.radius?.md ?? 12,
+      borderRadius: theme.radii?.md ?? 12,
       borderWidth: 1,
       borderColor: theme.colors.border,
     },
@@ -785,7 +778,7 @@ function makeStyles(theme: AppTheme) {
       paddingVertical: theme.spacing.xs ?? 6,
       paddingHorizontal: theme.spacing.sm ?? 12,
       backgroundColor: theme.colors.overlay ?? theme.colors.surface,
-      borderRadius: theme.radii?.sm ?? theme.radius?.sm ?? 8,
+      borderRadius: theme.radii?.sm ?? 8,
       borderWidth: 1,
       borderColor: theme.colors.border,
     },

@@ -15,7 +15,6 @@ import type { RootStackParamList } from "../navigation/types";
 
 const PremiumCancelScreen = (): React.JSX.Element => {
   const theme = useTheme();
-  const { colors } = theme;
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const handleTryAgain = () => {
@@ -28,9 +27,11 @@ const PremiumCancelScreen = (): React.JSX.Element => {
     navigation.goBack();
   };
 
+  const styles = makeStyles(theme);
+
   return (
     <LinearGradient
-      colors={["#f8fafc", "#e2e8f0"]}
+      colors={theme.palette.gradients.primary}
       style={styles.backgroundGradient}
     >
       <SafeAreaView style={styles.container}>
@@ -39,46 +40,36 @@ const PremiumCancelScreen = (): React.JSX.Element => {
             <Ionicons name="close-circle" size={80} color={theme.colors.danger} />
           </View>
 
-          <Text
-            style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
-          >
+          <Text style={styles.title}>
             Payment Cancelled
           </Text>
 
-          <Text
-            style={StyleSheet.flatten([
-              styles.subtitle,
-              { color: colors.onMuted },
-            ])}
-          >
+          <Text style={styles.subtitle}>
             No worries! Your payment was cancelled and you weren't charged. You
             can try again anytime.
           </Text>
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.primaryButton,
-                { backgroundColor: colors.primary },
-              ])}
-               testID="PremiumCancelScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleTryAgain}
+              style={styles.primaryButton}
+              testID="PremiumCancelScreen-try-again-button"
+              accessibilityLabel="Try again"
+              accessibilityRole="button"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              onPress={handleTryAgain}
             >
               <Text style={styles.primaryButtonText}>Try Again</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.secondaryButton,
-                { borderColor: colors.primary },
-              ])}
-               testID="PremiumCancelScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleGoBack}
+              style={styles.secondaryButton}
+              testID="PremiumCancelScreen-go-back-button"
+              accessibilityLabel="Go back"
+              accessibilityRole="button"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              onPress={handleGoBack}
             >
-              <Text
-                style={StyleSheet.flatten([
-                  styles.secondaryButtonText,
-                  { color: colors.primary },
-                ])}
-              >
+              <Text style={styles.secondaryButtonText}>
                 Go Back
               </Text>
             </TouchableOpacity>
@@ -89,59 +80,66 @@ const PremiumCancelScreen = (): React.JSX.Element => {
   );
 };
 
-const styles = StyleSheet.create({
-  backgroundGradient: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 24,
-  },
-  iconContainer: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 12,
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: "center",
-    lineHeight: 24,
-    marginBottom: 40,
-  },
-  buttonContainer: {
-    width: "100%",
-    gap: 16,
-  },
-  primaryButton: {
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  primaryButtonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  secondaryButton: {
-    paddingVertical: 16,
-    borderRadius: 12,
-    borderWidth: 2,
-    alignItems: "center",
-    backgroundColor: "transparent",
-  },
-  secondaryButtonText: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-});
+function makeStyles(theme: ReturnType<typeof useTheme>) {
+  return StyleSheet.create({
+    backgroundGradient: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+    },
+    content: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: theme.spacing.lg + theme.spacing.xs,
+    },
+    iconContainer: {
+      marginBottom: theme.spacing.lg + theme.spacing.xs,
+    },
+    title: {
+      fontSize: theme.typography.h1.size * 1.166,
+      fontWeight: theme.typography.h1.weight,
+      textAlign: "center",
+      marginBottom: theme.spacing.md,
+      color: theme.colors.onSurface,
+    },
+    subtitle: {
+      fontSize: theme.typography.body.size,
+      textAlign: "center",
+      lineHeight: theme.typography.body.lineHeight * 1.5,
+      marginBottom: theme.spacing['2xl'] + theme.spacing.xs,
+      color: theme.colors.onMuted,
+    },
+    buttonContainer: {
+      width: "100%",
+      gap: theme.spacing.lg,
+    },
+    primaryButton: {
+      paddingVertical: theme.spacing.lg,
+      borderRadius: theme.radii.lg,
+      alignItems: "center",
+      backgroundColor: theme.colors.primary,
+    },
+    primaryButtonText: {
+      color: theme.colors.onPrimary,
+      fontSize: theme.typography.body.size * 1.125,
+      fontWeight: theme.typography.h1.weight,
+    },
+    secondaryButton: {
+      paddingVertical: theme.spacing.lg,
+      borderRadius: theme.radii.lg,
+      borderWidth: 2,
+      alignItems: "center",
+      backgroundColor: "transparent",
+      borderColor: theme.colors.primary,
+    },
+    secondaryButtonText: {
+      fontSize: theme.typography.body.size * 1.125,
+      fontWeight: theme.typography.h2.weight,
+      color: theme.colors.primary,
+    },
+  });
+}
 
 export default PremiumCancelScreen;

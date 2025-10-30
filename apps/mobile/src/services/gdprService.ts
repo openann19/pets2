@@ -5,6 +5,16 @@
 
 import { request } from './api';
 import { logger } from '@pawfectmatch/core';
+import {
+  DeleteAccountRequestSchema,
+  DeleteAccountResponseSchema,
+  AccountStatusResponseSchema,
+  DataExportRequestSchema,
+  DataExportResponseSchema,
+  ConfirmDeletionRequestSchema,
+  ConfirmDeletionResponseSchema,
+  parseResponse,
+} from '../schemas/api';
 
 export interface GDPRError {
   code: 'INVALID_PASSWORD' | 'ALREADY_DELETING' | 'RATE_LIMIT' | 'SERVER_ERROR';
@@ -68,16 +78,30 @@ export interface DataExportResponse {
  */
 export const deleteAccount = async (data: DeleteAccountRequest): Promise<DeleteAccountResponse> => {
   try {
+    // Validate input with Zod
+    const validatedInput = DeleteAccountRequestSchema.parse(data);
+
     const response = await request<DeleteAccountResponse>('/api/users/delete-account', {
       method: 'DELETE',
       body: {
-        password: data.password,
-        reason: data.reason,
-        feedback: data.feedback,
+        password: validatedInput.password,
+        reason: validatedInput.reason,
+        feedback: validatedInput.feedback,
       },
     });
 
-    return response;
+    // Validate response with Zod
+    const parsed = parseResponse(DeleteAccountResponseSchema, response);
+    if (!parsed.success) {
+      logger.error('Invalid delete account response:', parsed.error);
+      return {
+        success: false,
+        message: 'Invalid response from server',
+        error: 'SERVER_ERROR',
+      };
+    }
+
+    return parsed.data;
   } catch (error: unknown) {
     logger.error(
       'Delete account error:',
@@ -131,7 +155,17 @@ export const getAccountStatus = async (): Promise<AccountStatusResponse> => {
   try {
     const response = await request<AccountStatusResponse>('/api/account/status', { method: 'GET' });
 
-    return response;
+    // Validate response with Zod
+    const parsed = parseResponse(AccountStatusResponseSchema, response);
+    if (!parsed.success) {
+      logger.error('Invalid account status response:', parsed.error);
+      return {
+        success: false,
+        status: 'not-found',
+      };
+    }
+
+    return parsed.data;
   } catch (error: unknown) {
     logger.error(
       'Get account status error:',
@@ -153,18 +187,32 @@ export const exportUserData = async (
   dataRequest: DataExportRequest = {},
 ): Promise<DataExportResponse> => {
   try {
+    // Validate input with Zod
+    const validatedInput = DataExportRequestSchema.parse(dataRequest);
+
     const response = await request<DataExportResponse>('/api/users/request-export', {
       method: 'POST',
       body: {
-        format: dataRequest.format || 'json',
-        includeMessages: dataRequest.includeMessages !== false,
-        includeMatches: dataRequest.includeMatches !== false,
-        includeProfileData: dataRequest.includeProfileData !== false,
-        includePreferences: dataRequest.includePreferences !== false,
+        format: validatedInput.format || 'json',
+        includeMessages: validatedInput.includeMessages !== false,
+        includeMatches: validatedInput.includeMatches !== false,
+        includeProfileData: validatedInput.includeProfileData !== false,
+        includePreferences: validatedInput.includePreferences !== false,
       },
     });
 
-    return response;
+    // Validate response with Zod
+    const parsed = parseResponse(DataExportResponseSchema, response);
+    if (!parsed.success) {
+      logger.error('Invalid export data response:', parsed.error);
+      return {
+        success: false,
+        message: 'Invalid response from server',
+        error: 'SERVER_ERROR',
+      };
+    }
+
+    return parsed.data;
   } catch (error: unknown) {
     logger.error(
       'Export user data error:',
@@ -208,10 +256,49 @@ export const downloadExport = async (exportId: string): Promise<Blob> => {
   }
 };
 
-export default {
-  deleteAccount,
-  cancelDeletion,
-  getAccountStatus,
-  exportUserData,
-  downloadExport,
+/**
+ * Confirm account deletion after grace period
+ * Finalizes the deletion process
+ */
+export const confirmDeletion = async (token: string): Promise<{
+  success: boolean;
+  deletedAt?: string;
+  message?: string;
+}> => {
+  try {
+    // Validate input with Zod
+    const validatedInput = ConfirmDeletionRequestSchema.parse({ token });
+
+    const response = await request<{
+      success: boolean;
+      deletedAt?: string;
+      message?: string;
+    }>(
+      '/api/users/confirm-deletion',
+      {
+        method: 'POST',
+        body: { token: validatedInput.token },
+      },
+    );
+
+    // Validate response with Zod
+    const parsed = parseResponse(ConfirmDeletionResponseSchema, response);
+    if (!parsed.success) {
+      logger.error('Invalid confirm deletion response:', parsed.error);
+      return {
+        success: false,
+        message: 'Invalid response from server',
+      };
+    }
+
+    return parsed.data;
+  } catch (error: unknown) {
+    const errorInstance = error instanceof Error ? error : new Error(String(error));
+    logger.error('Confirm deletion error:', errorInstance);
+
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Failed to confirm deletion',
+    };
+  }
 };
