@@ -714,7 +714,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               <BouncePressable
                 onPress={handleUltraExport}
                 disabled={ultraExporting}
-                style={[styles.ultraExportButton, ultraExporting && { opacity: 0.6 }]
+                style={[styles.ultraExportButton, ultraExporting && { opacity: 0.6 }]}
                 accessibilityRole="button"
                 accessibilityLabel="Export ultra variants for social media"
               >

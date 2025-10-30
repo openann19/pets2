@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 
 interface BillingToggleProps {
   billingPeriod: "monthly" | "yearly";
@@ -15,7 +15,7 @@ export const BillingToggle: React.FC<BillingToggleProps> = ({
   const { colors } = theme;
   
   return (
-    <View style={[styles.billingToggle, { backgroundColor: theme.palette.neutral[800] }]>
+    <View style={[styles.billingToggle, { backgroundColor: theme.palette.neutral[800] }] }>
       <TouchableOpacity
         style={[
           styles.billingButton,

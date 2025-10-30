@@ -130,7 +130,7 @@ export function Sheet({
                 <Text variant="h4">{title}</Text>
                 {showCloseButton && (
                   <Pressable onPress={onClose} hitSlop={8}>
-                    <Text style={{ fontSize: 24 }>×</Text>
+                    <Text style={{ fontSize: 24 }>x</Text>
                   </Pressable>
                 )}
               </View>

@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, Switch, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "react-native";
+import { useTheme } from "@/theme";
 
 interface SettingItem {
   id: string;
@@ -25,11 +26,14 @@ export const SettingItemComponent: React.FC<SettingItemProps> = ({
   category,
   onPress,
   onToggle,
-}) => (
+}) => {
+  const theme = useTheme();
+  return (
   <TouchableOpacity
     style={StyleSheet.flatten([
       styles.settingItem,
       item.destructive && styles.settingItemDestructive,
+      { borderBottomColor: theme.colors.border },
     ])}
     onPress={() => {
       if (item.type === "navigation" || item.type === "action") {
@@ -46,12 +50,13 @@ export const SettingItemComponent: React.FC<SettingItemProps> = ({
         style={StyleSheet.flatten([
           styles.settingIcon,
           item.destructive && styles.settingIconDestructive,
+          { backgroundColor: theme.colors.surface },
         ])}
       >
         <Ionicons
           name={item.icon as any}
           size={20}
-          color={item.destructive ? Theme.colors.status.error : Theme.colors.neutral[500]}
+          color={item.destructive ? theme.colors.danger : theme.palette.neutral[500]}
           accessibilityLabel={`${item.title} icon`}
         />
       </View>
@@ -60,6 +65,7 @@ export const SettingItemComponent: React.FC<SettingItemProps> = ({
           style={StyleSheet.flatten([
             styles.settingTitle,
             item.destructive && styles.settingTitleDestructive,
+            { color: theme.colors.onSurface },
           ])}
         >
           {item.title}
@@ -69,6 +75,7 @@ export const SettingItemComponent: React.FC<SettingItemProps> = ({
             style={StyleSheet.flatten([
               styles.settingSubtitle,
               item.destructive && styles.settingSubtitleDestructive,
+              { color: theme.colors.onMuted },
             ])}
           >
             {item.subtitle}
@@ -84,16 +91,17 @@ export const SettingItemComponent: React.FC<SettingItemProps> = ({
           onValueChange={(value) =>
             category && onToggle?.(item.id, value)
           }
-          trackColor={{ false: Theme.colors.neutral[300], true: Theme.colors.secondary[500] }}
-          thumbColor={item.value ? Theme.colors.neutral[0] : Theme.colors.neutral[100]}
+          trackColor={{ false: theme.palette.neutral[300], true: theme.colors.primary }}
+          thumbColor={item.value ? theme.colors.onPrimary : theme.palette.neutral[100]}
         />
       )}
       {item.type === "navigation" && (
-        <Ionicons name="chevron-forward" size={20} color={Theme.colors.neutral[400}]} />
+        <Ionicons name="chevron-forward" size={20} color={theme.palette.neutral[400]} />
       )}
     </View>
   </TouchableOpacity>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   settingItem: {
@@ -102,7 +110,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: Theme.colors.neutral[100],
   },
   settingItemDestructive: {
     borderBottomColor: "#FEF2F2",
@@ -116,7 +123,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 8,
-    backgroundColor: Theme.colors.neutral[100],
+    // background color set via theme override
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -130,15 +137,12 @@ const styles = StyleSheet.create({
   settingTitle: {
     fontSize: 16,
     fontWeight: "500",
-    color: Theme.colors.neutral[900],
+    // color set via theme override
     marginBottom: 2,
   },
-  settingTitleDestructive: {
-    color: Theme.colors.status.error,
-  },
+  settingTitleDestructive: {},
   settingSubtitle: {
     fontSize: 13,
-    color: Theme.colors.neutral[500],
   },
   settingSubtitleDestructive: {
     color: "#FCA5A5",
