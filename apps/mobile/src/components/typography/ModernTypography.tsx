@@ -163,7 +163,7 @@ function ModernText({
 
   // Get text color
   const textColorKey = color || 'primary';
-  const textColor = Theme.colors.onSurfacetextColorKey];
+  const textColor = Theme.colors.onSurface[textColorKey];
 
   // Build text style
   const textStyle: TextStyle = {

@@ -1,4 +1,5 @@
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { useCallback, useMemo } from 'react';
 import {
   ActivityIndicator,
@@ -28,6 +29,7 @@ const FILTER_BUTTON_HIT_SLOP = {
 
 const AdminUsersScreen = ({ navigation }: AdminScreenProps<'AdminUsers'>) => {
   const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { colors } = theme;
   const state = useAdminUsersScreen({ navigation });
 
@@ -46,7 +48,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<'AdminUsers'>) => {
     ({ item }: { item: AdminUserListItemViewModel }) => (
       <AdminUserListItem
         data={item}
-        colors={theme.colors as any}
+        colors={theme.colors}
         onSelect={item.onSelect}
         onPrimaryAction={item.onPrimaryAction}
         onSecondaryAction={item.onSecondaryAction}
@@ -89,7 +91,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<'AdminUsers'>) => {
               value={state.searchQuery}
               onChangeText={state.onSearchChange}
               placeholder="Search users by name or email"
-              placeholderTextColor={colors.onSurfaceecondary}
+              placeholderTextColor={colors.onMuted}
               style={StyleSheet.flatten([styles.searchInput, { color: colors.onSurface }])}
               autoCorrect={false}
               accessibilityRole="search"
@@ -237,7 +239,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<'AdminUsers'>) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: AppTheme) => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -245,109 +247,109 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 8,
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.sm,
+    paddingBottom: theme.spacing.xs,
   },
   title: {
-    fontSize: 22,
-    fontWeight: '700',
-    marginBottom: 4,
+    fontSize: theme.typography.h2.size,
+    fontWeight: theme.typography.h1.weight,
+    marginBottom: theme.spacing.xs,
   },
   description: {
-    fontSize: 14,
+    fontSize: theme.typography.body.size * 0.875,
   },
   backButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 999,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.radii.full,
     borderWidth: 1,
   },
   backButtonText: {
-    fontWeight: '600',
+    fontWeight: theme.typography.h2.weight,
   },
   controls: {
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-    gap: 12,
+    paddingHorizontal: theme.spacing.lg,
+    paddingBottom: theme.spacing.sm,
+    gap: theme.spacing.sm,
   },
   searchContainer: {
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    borderRadius: theme.radii.lg,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
   },
   searchInput: {
-    fontSize: 15,
+    fontSize: theme.typography.body.size * 0.9375,
   },
   filterRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: theme.spacing.xs,
   },
   filterButton: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.radii.full,
     borderWidth: 1,
   },
   filterText: {
-    fontSize: 13,
-    fontWeight: '600',
+    fontSize: theme.typography.body.size * 0.8125,
+    fontWeight: theme.typography.h2.weight,
   },
   bulkStatus: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    gap: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
   },
   bulkStatusText: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: theme.typography.body.size * 0.875,
+    fontWeight: theme.typography.body.weight,
   },
   bulkActions: {
-    marginHorizontal: 20,
-    marginBottom: 12,
-    borderRadius: 16,
-    padding: 16,
+    marginHorizontal: theme.spacing.lg,
+    marginBottom: theme.spacing.sm,
+    borderRadius: theme.radii.lg,
+    padding: theme.spacing.md,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: 'rgba(255,255,255,0.06)',
     elevation: 1,
   },
   bulkSummary: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 12,
+    fontSize: theme.typography.body.size * 0.875,
+    fontWeight: theme.typography.h2.weight,
+    marginBottom: theme.spacing.sm,
   },
   bulkButtons: {
     flexDirection: 'row',
-    gap: 12,
+    gap: theme.spacing.sm,
   },
   bulkButton: {
     flex: 1,
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radii.lg,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   bulkButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: theme.typography.body.size * 0.875,
+    fontWeight: theme.typography.h2.weight,
   },
   listContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 32,
-    paddingTop: 4,
+    paddingHorizontal: theme.spacing.lg,
+    paddingBottom: theme.spacing.xl,
+    paddingTop: theme.spacing.xs,
   },
   emptyState: {
     alignItems: 'center',
-    paddingVertical: 48,
-    gap: 12,
+    paddingVertical: theme.spacing.xl * 1.5,
+    gap: theme.spacing.sm,
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: theme.typography.body.size * 0.875,
     textAlign: 'center',
     maxWidth: 260,
   },

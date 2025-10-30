@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, {
   interpolate,
@@ -6,6 +6,8 @@ import Animated, {
   Extrapolate,
 } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
+import type { AppTheme } from "@/theme";
+import { useTheme } from "@/theme";
 
 interface ReplySwipeHintProps {
   progress: Animated.SharedValue<number> | number;
@@ -25,6 +27,8 @@ export default function ReplySwipeHint({
   progress, // shared value (0..1) OR number
   align = "right", // hint appears on left side of own bubble; align handles mirroring if needed
 }: ReplySwipeHintProps) {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const sty = useAnimatedStyle(() => {
     const p = typeof progress === "number" ? progress : progress.value / 56; // tolerate either
     const alpha = interpolate(p, [0, 0.15, 1], [0, 0.5, 1], Extrapolate.CLAMP);
@@ -34,29 +38,36 @@ export default function ReplySwipeHint({
 
   return (
     <Animated.View 
-      style={[styles.wrap, sty, align === "left" && { flexDirection: "row-reverse" }]
+      style={[styles.wrap, sty, align === "left" && { flexDirection: "row-reverse" }]}
       accessibilityRole="button"
       accessibilityLabel="Swipe to reply"
     >
       <View style={styles.pill}>
-        <Ionicons name="arrow-undo" size={14} color="#fff" />
+        <Ionicons name="arrow-undo" size={14} color={theme.colors.onPrimary} />
         <Text style={styles.txt}>Reply</Text>
       </View>
     </Animated.View>
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { position: "absolute", bottom: -18, right: 8 },
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+  wrap: { position: "absolute", bottom: -18, right: theme.spacing.sm },
   pill: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 999,
-    backgroundColor: "rgba(17,17,17,0.7)",
+    gap: theme.spacing.xs,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.radii.full,
+    backgroundColor: theme.colors.primary,
+    opacity: 0.9,
   },
-  txt: { color: "#fff", fontSize: 11, fontWeight: "600" },
+  txt: { 
+    color: theme.colors.onPrimary, 
+    fontSize: theme.typography.body.size * 0.6875,
+    fontWeight: theme.typography.h2.weight,
+  },
 });
+}
 

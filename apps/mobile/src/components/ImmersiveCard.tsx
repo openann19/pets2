@@ -12,7 +12,7 @@ import {
   useGyroscopeTilt,
   useEntranceAnimation,
 } from "../hooks/useMotionSystem";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 
 // === PROJECT HYPERION: IMMERSIVE CARD COMPONENT ===
 
@@ -110,7 +110,7 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
           return {
             ...baseStyles,
             backgroundColor: theme.colors.bg,
-            shadowColor: theme.colors.onSurface
+            shadowColor: theme.colors.onSurface,
             shadowOffset: { width: 0, height: 8 },
             shadowOpacity: 0.15,
             shadowRadius: 12,
@@ -121,7 +121,7 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
           return {
             ...baseStyles,
             backgroundColor: "rgba(255, 255, 255, 0.7)",
-            shadowColor: theme.colors.onSurface
+            shadowColor: theme.colors.onSurface,
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.1,
             shadowRadius: 8,
@@ -132,7 +132,7 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
           return {
             ...baseStyles,
             backgroundColor: "transparent",
-            shadowColor: theme.colors.onSurface
+            shadowColor: theme.colors.onSurface,
             shadowOffset: { width: 0, height: 8 },
             shadowOpacity: 0.15,
             shadowRadius: 12,
@@ -143,7 +143,7 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
           return {
             ...baseStyles,
             backgroundColor: theme.colors.bg,
-            shadowColor: theme.colors.onSurface
+            shadowColor: theme.colors.onSurface,
             shadowOffset: { width: 0, height: 16 },
             shadowOpacity: 0.2,
             shadowRadius: 20,
@@ -154,7 +154,7 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
           return {
             ...baseStyles,
             backgroundColor: theme.colors.bg,
-            shadowColor: theme.colors.onSurface
+            shadowColor: theme.colors.onSurface,
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.1,
             shadowRadius: 8,

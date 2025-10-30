@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { AppTheme } from '@mobile/src/theme';
-import { useTheme } from '@mobile/src/theme';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
 import { logger } from '@pawfectmatch/core';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { BlurView } from 'expo-blur';
@@ -560,8 +560,8 @@ function makeStyles(theme: AppTheme) {
       borderBottomColor: theme.colors.border,
     },
     headerTitle: {
-      fontSize: 20,
-      fontWeight: 'bold' as const,
+      fontSize: theme.typography.h2.size * 0.875,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.onSurface,
     },
     headerActions: {
@@ -578,13 +578,13 @@ function makeStyles(theme: AppTheme) {
       padding: theme.spacing.lg,
     },
     sectionTitle: {
-      fontSize: 18,
-      fontWeight: 'bold' as const,
+      fontSize: theme.typography.body.size * 1.125,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.sm,
     },
     sectionSubtitle: {
-      fontSize: 14,
+      fontSize: theme.typography.body.size * 0.875,
       color: theme.colors.onMuted,
       marginBottom: theme.spacing.md,
     },
@@ -601,8 +601,8 @@ function makeStyles(theme: AppTheme) {
       gap: theme.spacing.sm,
     },
     label: {
-      fontSize: 14,
-      fontWeight: '600' as const,
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },

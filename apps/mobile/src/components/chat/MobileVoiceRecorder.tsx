@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 
 // Mock Audio for missing expo-av dependency
 type RecordingInstance = {
@@ -44,7 +44,7 @@ export function MobileVoiceRecorder({
   onSend,
   onCancel,
 }: MobileVoiceRecorderProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const [isRecording, setIsRecording] = useState(false);
   const [duration, setDuration] = useState(0);
   const [recording, setRecording] = useState<RecordingInstance | null>(null);
@@ -134,20 +134,20 @@ export function MobileVoiceRecorder({
     <Modal visible animationType="slide" transparent onRequestClose={onCancel}>
       <View style={styles.overlay}>
         <View
-          style={StyleSheet.flatten([
+          style={[
             styles.container,
-            { backgroundColor: colors.bgElevated },
-          ])}
+            { backgroundColor: theme.colors.surface },
+          ]}
         >
           {/* Header */}
           <View style={styles.header}>
             <Text
-              style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
+              style={[styles.title, { color: theme.colors.onSurface }]}
             >
               {isRecording ? "Recording..." : "Voice Message"}
             </Text>
             <TouchableOpacity onPress={onCancel} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={colors.onSurface />
+              <Ionicons name="close" size={24} color={theme.colors.onSurface} />
             </TouchableOpacity>
           </View>
 
@@ -158,35 +158,35 @@ export function MobileVoiceRecorder({
                 Array.from({ length: 20 }).map((_, i) => (
                   <View
                     key={i}
-                    style={StyleSheet.flatten([
+                    style={[
                       styles.waveBar,
                       {
-                        backgroundColor: colors.primary,
+                        backgroundColor: theme.colors.primary,
                         height: `${Math.random() * 60 + 20}%`,
                       },
-                    ])}
+                    ]}
                   />
                 ))
               ) : (
-                <Ionicons name="mic" size={48} color={theme.palette.neutral[500]} />
+                <Ionicons name="mic" size={48} color={theme.colors.onMuted} />
               )}
             </View>
 
             {/* Duration */}
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.duration,
-                { color: colors.onSurface},
-              ])}
+                { color: theme.colors.onSurface },
+              ]}
             >
               {formatDuration(duration)}
             </Text>
 
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.hint,
-                { color: theme.palette.neutral[500] },
-              ])}
+                { color: theme.colors.onMuted },
+              ]}
             >
               {isRecording
                 ? "Tap stop when finished (max 60 seconds)"
@@ -198,43 +198,43 @@ export function MobileVoiceRecorder({
           <View style={styles.controls}>
             {isRecording ? (
               <TouchableOpacity
-                style={StyleSheet.flatten([
+                style={[
                   styles.recordButton,
-                  { backgroundColor: "Theme.colors.status.error" },
-                ])}
+                  { backgroundColor: theme.colors.danger },
+                ]}
                 onPress={stopRecording}
               >
-                <Ionicons name="stop" size={24} color="white" />
+                <Ionicons name="stop" size={24} color={theme.colors.onPrimary} />
               </TouchableOpacity>
             ) : (
               <>
                 <TouchableOpacity
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.cancelButton,
-                    { borderColor: theme.palette.neutral[400] },
-                  ])}
+                    { borderColor: theme.colors.border },
+                  ]}
                   onPress={onCancel}
                 >
                   <Text
-                    style={StyleSheet.flatten([
+                    style={[
                       styles.cancelText,
-                      { color: colors.onSurface},
-                    ])}
+                      { color: theme.colors.onSurface },
+                    ]}
                   >
                     Cancel
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.sendButton,
-                    { backgroundColor: colors.primary },
-                  ])}
+                    { backgroundColor: theme.colors.primary },
+                  ]}
                   onPress={() => {
                     // This would normally send the recorded audio
                     onCancel();
                   }}
                 >
-                  <Ionicons name="send" size={20} color="white" />
+                  <Ionicons name="send" size={20} color={theme.colors.onPrimary} />
                 </TouchableOpacity>
               </>
             )}

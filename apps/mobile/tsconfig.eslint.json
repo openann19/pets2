@@ -11,6 +11,8 @@
 
     "baseUrl": "./",
     "paths": {
+      "@/*": ["./src/*"],
+      "@mobile/*": ["./src/*"],
       "@pawfectmatch/core": ["../../packages/core/src/index.ts"],
       "@pawfectmatch/core/*": ["../../packages/core/src/*"],
       "@pawfectmatch/ui": ["../../packages/ui/src/index.ts"],

@@ -1,3 +1,4 @@
+import React from "react";
 /**
  * Admin Upload Management Screen
  * Production-ready implementation for managing user uploads
@@ -58,7 +59,7 @@ interface AdminUploadsScreenProps {
 
 function AdminUploadsScreen({
   navigation,
-}: AdminUploadsScreenProps): JSX.Element {
+}: AdminUploadsScreenProps): React.JSX.Element {
   const theme = useTheme();
   const { colors } = theme;
   const [uploads, setUploads] = useState<Upload[]>([]);

@@ -9,7 +9,7 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import { View, Text, StyleSheet } from 'react-native';
 import { ThemeProvider, useTheme } from '@/theme';
-import { createTheme } from '../../theme/rnTokens';
+import { createTheme } from '@/theme';
 
 describe('HomeScreen - Theme Integration', () => {
   describe('Dynamic Styles', () => {

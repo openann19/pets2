@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme'";
+import { useTheme } from '@mobile/src/theme';
 import { api } from "../../services/api";
 
 import { logger } from '../../services/logger';
@@ -103,7 +103,7 @@ export default function AdminServicesScreen({
           responseTime: 23,
           lastChecked: new Date().toISOString(),
           icon: 'server-outline',
-          color: '#4DB33D',
+          color: '#10B981',
           endpoint: 'mongodb://cluster',
           description: 'Primary database'
         },
@@ -113,7 +113,7 @@ export default function AdminServicesScreen({
           responseTime: 1200,
           lastChecked: new Date().toISOString(),
           icon: 'brain-outline',
-          color: '#10B981',
+          color: '#2563EB',
           endpoint: 'https://api.deepseek.com',
           description: 'AI bio generation and compatibility analysis'
         },
@@ -178,7 +178,7 @@ export default function AdminServicesScreen({
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]>
       <View style={styles.header}>
         <TouchableOpacity  testID="AdminServicesScreen-button-2" accessibilityLabel="navigation.goBack();" accessibilityRole="button" onPress={() => { navigation.goBack(); }}>
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.onSurface}]>
           External Services
@@ -199,7 +199,7 @@ export default function AdminServicesScreen({
         {services.map((service, index) => (
           <View
             key={index}
-            style={[styles.serviceCard, { backgroundColor: colors.card }]
+            style={[styles.serviceCard, { backgroundColor: colors.card }]}
           >
             <View style={styles.serviceHeader}>
               <View style={[styles.iconContainer, { backgroundColor: `${service.color}20` }]>
@@ -209,7 +209,7 @@ export default function AdminServicesScreen({
                 <Text style={[styles.serviceName, { color: colors.onSurface}]>
                   {service.name}
                 </Text>
-                <Text style={[styles.serviceDescription, { color: colors.onSurfaceecondary }]>
+                <Text style={[styles.serviceDescription, { color: colors.onMuted }]>
                   {service.description}
                 </Text>
               </View>
@@ -222,22 +222,21 @@ export default function AdminServicesScreen({
                   size={16}
                   color={getStatusColor(service.status)}
                 />
-                <Text style={[styles.statusText, { color: getStatusColor(service.status) }]>
+                <Text style={[styles.statusText, { color: getStatusColor(service.status) }]}>
                   {service.status.toUpperCase()}
                 </Text>
               </View>
-              <Text style={[styles.responseTime, { color: colors.onSurfaceecondary }]>
+              <Text style={[styles.responseTime, { color: colors.onMuted }]}>
                 {service.responseTime}ms
               </Text>
             </View>
 
             {service.endpoint && (
-              <Text style={[styles.endpoint, { color: colors.onSurfaceecondary }] numberOfLines={1}>
+              <Text style={[styles.endpoint, { color: colors.onMuted }]} numberOfLines={1}>
                 {service.endpoint}
               </Text>
-            )}
 
-            <Text style={[styles.lastChecked, { color: colors.onSurfaceecondary }]>
+            <Text style={[styles.lastChecked, { color: colors.onMuted }]}>
               Last checked: {new Date(service.lastChecked).toLocaleTimeString()}
             </Text>
           </View>
@@ -267,7 +266,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: '#E2E8F0',
   },
   title: {
     fontSize: 20,

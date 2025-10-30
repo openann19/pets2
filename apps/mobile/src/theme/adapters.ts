@@ -13,14 +13,13 @@ import type { Theme, SemanticColors } from './types';
 export interface ExtendedColors extends SemanticColors {
   // Background variants
   background: string;
-  surface: string;
   surfaceElevated: string;
   card: string;
 
   // Text variants
   textSecondary: string;
 
-  // Color variants
+  // Monochrome palette
   white: string;
   black: string;
   gray50: string;
@@ -59,8 +58,7 @@ export interface ExtendedColors extends SemanticColors {
   glassDarkMedium: string;
   glassDarkStrong: string;
 
-  // Status colors
-  info: string;
+  // Status colors (additional aliases)
   error: string;
 
   // Additional properties
@@ -79,59 +77,84 @@ export interface ExtendedColors extends SemanticColors {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getExtendedColors(theme: Theme | any): ExtendedColors {
-  const { colors } = theme;
+  const { colors, palette } = theme;
 
-  // Map semantic tokens to legacy property names for backward compatibility
-  // New semantic API: bg, surface, onSurface, onMuted, onBg, primary, danger, etc.
-  // Legacy API: text, textSecondary, error, background, etc.
+  // Get neutral colors from palette or provide fallbacks
+  const neutralColors = palette?.neutral || {};
+
   return {
-    ...colors,
-    // Core semantic mappings
-    bg: colors.bg ?? colors.background,
-    surface: colors.surface ?? colors.bg,
-    onSurface: colors.onSurface ?? colors.text,
-    onMuted: colors.onMuted ?? colors.textMuted,
-    onBg: colors.onBg ?? colors.textInverse,
+    // Core semantic colors (required by interface)
+    bg: colors.bg ?? colors.background ?? '#FFFFFF',
+    bgElevated: colors.bgElevated ?? colors.surface ?? '#F8FAFC',
+    text: colors.text ?? colors.onSurface ?? '#0F172A',
+    textMuted: colors.textMuted ?? colors.onMuted ?? '#64748B',
+    primary: colors.primary ?? '#2563EB',
+    primaryText: colors.primaryText ?? colors.onPrimary ?? '#FFFFFF',
+    border: colors.border ?? '#E2E8F0',
+    success: colors.success ?? '#10B981',
+    warning: colors.warning ?? '#F59E0B',
+    danger: colors.danger ?? '#EF4444',
 
-    // Legacy text aliases (maps to semantic)
-    text: colors.onSurface ?? colors.text,
-    textSecondary: colors.onMuted ?? colors.textMuted ?? colors.textSecondary,
-    textMuted: colors.onMuted ?? colors.onMuted,
+    // Extended properties from interface
+    background: colors.background ?? colors.bg ?? '#FFFFFF',
+    surface: colors.surface ?? colors.bgElevated ?? '#F8FAFC',
+    surfaceElevated: colors.surfaceElevated ?? colors.surface ?? '#FFFFFF',
+    card: colors.card ?? colors.surface ?? '#FFFFFF',
+    textSecondary: colors.textSecondary ?? colors.onMuted ?? '#64748B',
 
-    // Legacy background aliases (maps to semantic)
-    background: colors.bg ?? colors.background,
-    surfaceElevated: colors.surface ?? colors.surfaceElevated ?? colors.bgElevated,
-    card: colors.surface ?? colors.card ?? colors.bgElevated,
-    bgElevated: colors.surface ?? colors.bgElevated,
+    // Monochrome palette with fallbacks
+    white: '#FFFFFF',
+    black: '#000000',
+    gray50: neutralColors[50] ?? '#FAFAFA',
+    gray100: neutralColors[100] ?? '#F5F5F5',
+    gray200: neutralColors[200] ?? '#E5E5E5',
+    gray300: neutralColors[300] ?? '#D4D4D4',
+    gray400: neutralColors[400] ?? '#A3A3A3',
+    gray500: neutralColors[500] ?? '#737373',
+    gray600: neutralColors[600] ?? '#525252',
+    gray700: neutralColors[700] ?? '#404040',
+    gray800: neutralColors[800] ?? '#262626',
+    gray900: neutralColors[900] ?? '#171717',
+    gray950: neutralColors[950] ?? '#0A0A0A',
 
-    // Status color mappings
-    error: colors.danger ?? colors.error,
-    danger: colors.danger ?? colors.error,
-    info: colors.info,
-    success: colors.success,
-    warning: colors.warning,
+    // Primary variants with fallbacks
+    primaryLight: palette?.brand?.[300] ?? colors.primary ?? '#60A5FA',
+    primaryDark: palette?.brand?.[700] ?? colors.primary ?? '#1D4ED8',
 
-    // Primary mappings
-    primary: colors.primary,
-    onPrimary: colors.onPrimary ?? colors.primaryText,
-    primaryText: colors.onPrimary ?? colors.primaryText,
+    // Secondary variants
+    secondary: palette?.brand?.[500] ?? colors.secondary ?? colors.primary ?? '#64748B',
+    secondaryLight: palette?.brand?.[300] ?? colors.secondaryLight ?? '#94A3B8',
+    secondaryDark: palette?.brand?.[700] ?? colors.secondaryDark ?? '#475569',
 
-    // Fallback legacy fields (if still in theme)
-    white: colors.onPrimary ?? '#FFFFFF',
-    black: colors.black ?? '#000000',
-    secondary: colors.secondary ?? colors.primary,
-    interactive: colors.primary ?? colors.interactive,
-    feedback: colors.success ?? colors.feedback,
+    // Accent variants (using primary as fallback)
+    accent: colors.accent ?? colors.primary ?? '#8B5CF6',
+    accentLight: colors.accentLight ?? palette?.brand?.[300] ?? '#A78BFA',
+    accentDark: colors.accentDark ?? palette?.brand?.[700] ?? '#7C3AED',
 
-    // Neutral scale access (from palette if available)
-    neutral: colors.neutral ?? theme.palette?.neutral,
+    // Glass effects with fallbacks
+    glass: colors.glass ?? 'rgba(255, 255, 255, 0.1)',
+    glassLight: colors.glassLight ?? 'rgba(255, 255, 255, 0.05)',
+    glassWhite: colors.glassWhite ?? 'rgba(255, 255, 255, 0.8)',
+    glassWhiteLight: colors.glassWhiteLight ?? 'rgba(255, 255, 255, 0.6)',
+    glassWhiteDark: colors.glassWhiteDark ?? 'rgba(255, 255, 255, 0.9)',
+    glassDark: colors.glassDark ?? 'rgba(0, 0, 0, 0.1)',
+    glassDarkMedium: colors.glassDarkMedium ?? 'rgba(0, 0, 0, 0.3)',
+    glassDarkStrong: colors.glassDarkStrong ?? 'rgba(0, 0, 0, 0.5)',
 
-    // Glass effects (if still needed)
-    glass: colors.glass,
-    glassLight: colors.glassLight,
-    glassWhite: colors.glassWhite,
-    glassDark: colors.glassDark,
-    glassDarkMedium: colors.glassDarkMedium,
+    // Status colors
+    info: colors.info ?? '#3B82F6',
+    error: colors.error ?? colors.danger ?? '#EF4444',
+
+    // Additional properties
+    tertiary: colors.tertiary ?? colors.secondary ?? '#94A3B8',
+    inverse: colors.inverse ?? colors.onBg ?? '#FFFFFF',
+    shadow: colors.shadow ?? 'rgba(0, 0, 0, 0.1)',
+
+    // Surface variants (already defined above)
+    onBg: colors.onBg ?? colors.textInverse ?? '#FFFFFF',
+    onSurface: colors.onSurface ?? colors.text ?? '#0F172A',
+    onMuted: colors.onMuted ?? colors.textMuted ?? '#64748B',
+    onPrimary: colors.onPrimary ?? colors.primaryText ?? '#FFFFFF',
   } as ExtendedColors;
 }
 

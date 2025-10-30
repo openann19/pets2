@@ -4,6 +4,7 @@
  * Reduced from 17,000+ lines to focused, maintainable component
  */
 
+import React from "react";
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";

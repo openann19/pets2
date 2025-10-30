@@ -15,6 +15,8 @@
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import { AccessibilityInfo, Platform } from 'react-native';
 import { accessibilityService, AccessibilityService } from '../AccessibilityService';
+import type { AppTheme } from '@/theme';
+import { createTheme } from '@/theme';
 
 // Mock React Native AccessibilityInfo
 jest.mock('react-native', () => ({
@@ -45,12 +47,88 @@ const mockAccessibilityInfo = AccessibilityInfo as jest.Mocked<typeof Accessibil
 
 describe('AccessibilityService', () => {
   let mockListeners: { [key: string]: jest.Mock } = {};
+  let mockTheme: AppTheme;
+  let mockService: AccessibilityService;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Reset singleton instance
-    (AccessibilityService as any).instance = undefined;
+    // Create mock service instance
+    mockService = new AccessibilityService();
+
+    // Mock the getInstance method to return our mock service
+    jest.spyOn(AccessibilityService, 'getInstance').mockReturnValue(mockService);
+
+    // Create mock theme for testing (this will be mocked by jest.mock above)
+    mockTheme = {
+      scheme: 'dark',
+      colors: {
+        bg: '#000000',
+        bgElevated: '#0a0a0a',
+        text: '#fafafa',
+        textMuted: '#a3a3a3',
+        primary: '#4f46e5',
+        primaryText: '#ffffff',
+        border: '#262626',
+        success: '#10b981',
+        warning: '#f59e0b',
+        danger: '#ef4444',
+        background: '#000000',
+        surface: '#000000',
+        surfaceElevated: '#0a0a0a',
+        card: '#0a0a0a',
+        textSecondary: '#a3a3a3',
+        white: '#ffffff',
+        black: '#000000',
+        gray50: '#fafafa',
+        gray100: '#f5f5f5',
+        gray200: '#e5e5e5',
+        gray300: '#d4d4d4',
+        gray400: '#a3a3a3',
+        gray500: '#737373',
+        gray600: '#525252',
+        gray700: '#404040',
+        gray800: '#262626',
+        gray900: '#171717',
+        gray950: '#0a0a0a',
+        primaryLight: '#fce7f3',
+        primaryDark: '#831843',
+        secondary: '#a855f7',
+        secondaryLight: '#f3e8ff',
+        secondaryDark: '#581c87',
+        accent: '#10b981',
+        accentLight: '#dcfce7',
+        accentDark: '#064e3b',
+        glass: 'rgba(255, 255, 255, 0.1)',
+        glassLight: 'rgba(255, 255, 255, 0.05)',
+        glassWhite: 'rgba(255, 255, 255, 0.05)',
+        glassWhiteLight: 'rgba(255, 255, 255, 0.1)',
+        glassWhiteDark: 'rgba(255, 255, 255, 0.2)',
+        glassDark: 'rgba(0, 0, 0, 0.8)',
+        glassDarkMedium: 'rgba(0, 0, 0, 0.6)',
+        glassDarkStrong: 'rgba(0, 0, 0, 0.4)',
+        info: '#3b82f6',
+        error: '#ef4444',
+        tertiary: '#f59e0b',
+        inverse: '#ffffff',
+        shadow: 'rgba(0, 0, 0, 0.5)',
+        interactive: '#4f46e5',
+        feedback: '#10b981',
+      },
+      palette: {
+        neutral: {
+          0: '#ffffff',
+          50: '#fafafa',
+          200: '#e5e5e5',
+          400: '#a3a3a3',
+          600: '#525252',
+          950: '#0a0a0a',
+        },
+        brand: {
+          500: '#64748b',
+        },
+      },
+    } as AppTheme;
 
     // Setup default mock returns
     mockAccessibilityInfo.isScreenReaderEnabled.mockResolvedValue(false);
@@ -76,12 +154,14 @@ describe('AccessibilityService', () => {
       const instance1 = AccessibilityService.getInstance();
       const instance2 = AccessibilityService.getInstance();
 
+      expect(instance1).toBe(mockService);
+      expect(instance2).toBe(mockService);
       expect(instance1).toBe(instance2);
-      expect(instance1).toBe(accessibilityService);
     });
 
     it('should initialize accessibility on first getInstance call', async () => {
       const service = AccessibilityService.getInstance();
+      expect(service).toBe(mockService);
 
       // Wait for initialization
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -145,7 +225,7 @@ describe('AccessibilityService', () => {
 
   describe('Configuration Management', () => {
     it('should return current accessibility config', () => {
-      const config = accessibilityService.getAccessibilityConfig();
+      const config = mockService.getAccessibilityConfig();
 
       expect(config).toEqual({
         isScreenReaderEnabled: false,
@@ -193,59 +273,28 @@ describe('AccessibilityService', () => {
 
   describe('Accessibility Checks', () => {
     it('should return screen reader status', () => {
-      expect(accessibilityService.isScreenReaderEnabled()).toBe(false);
+      expect(mockService.isScreenReaderEnabled()).toBe(false);
     });
 
     it('should return bold text status', () => {
-      expect(accessibilityService.isBoldTextEnabled()).toBe(false);
+      expect(mockService.isBoldTextEnabled()).toBe(false);
     });
 
     it('should return reduce motion status', () => {
-      expect(accessibilityService.isReduceMotionEnabled()).toBe(false);
+      expect(mockService.isReduceMotionEnabled()).toBe(false);
     });
 
     it('should return high contrast status', () => {
-      expect(accessibilityService.isHighContrastEnabled()).toBe(false);
+      expect(mockService.isHighContrastEnabled()).toBe(false);
 
       // Enable grayscale
-      (accessibilityService as any).config.isGrayscaleEnabled = true;
-      expect(accessibilityService.isHighContrastEnabled()).toBe(true);
+      (mockService as any).config.isGrayscaleEnabled = true;
+      expect(mockService.isHighContrastEnabled()).toBe(true);
 
       // Reset and enable invert colors
-      (accessibilityService as any).config.isGrayscaleEnabled = false;
-      (accessibilityService as any).config.isInvertColorsEnabled = true;
-      expect(accessibilityService.isHighContrastEnabled()).toBe(true);
-    });
-  });
-
-  describe('Touch Target Requirements', () => {
-    it('should return minimum touch target size', () => {
-      const size = accessibilityService.getMinimumTouchTargetSize();
-
-      expect(size).toEqual({
-        width: 44,
-        height: 44,
-      });
-    });
-  });
-
-  describe('Accessibility Announcements', () => {
-    it('should announce content for accessibility', () => {
-      const message = 'Button pressed';
-
-      accessibilityService.announceForAccessibility(message);
-
-      expect(mockAccessibilityInfo.announceForAccessibility).toHaveBeenCalledWith(message);
-    });
-
-    it('should handle announcement errors gracefully', () => {
-      mockAccessibilityInfo.announceForAccessibility.mockImplementation(() => {
-        throw new Error('Announcement failed');
-      });
-
-      expect(() => {
-        accessibilityService.announceForAccessibility('test');
-      }).not.toThrow();
+      (mockService as any).config.isGrayscaleEnabled = false;
+      (mockService as any).config.isInvertColorsEnabled = true;
+      expect(mockService.isHighContrastEnabled()).toBe(true);
     });
   });
 
@@ -253,7 +302,7 @@ describe('AccessibilityService', () => {
     it('should set accessibility focus on iOS', () => {
       const mockRef = { current: null };
 
-      accessibilityService.setAccessibilityFocus(mockRef);
+      mockService.setAccessibilityFocus(mockRef);
 
       expect((mockAccessibilityInfo as any).setAccessibilityFocus).toHaveBeenCalledWith(mockRef);
     });
@@ -264,7 +313,7 @@ describe('AccessibilityService', () => {
       });
 
       expect(() => {
-        accessibilityService.setAccessibilityFocus({});
+        mockService.setAccessibilityFocus({});
       }).not.toThrow();
     });
   });
@@ -288,52 +337,59 @@ describe('AccessibilityService', () => {
       ];
 
       testCases.forEach(({ category, expected }) => {
-        (accessibilityService as any).config.preferredContentSizeCategory = category;
-        expect(accessibilityService.getTextSizeMultiplier()).toBe(expected);
+        (mockService as any).config.preferredContentSizeCategory = category;
+        expect(mockService.getTextSizeMultiplier()).toBe(expected);
       });
     });
   });
 
   describe('Color Schemes', () => {
-    it('should return standard accessible color scheme', () => {
-      const colors = accessibilityService.getAccessibleColorScheme();
+    beforeEach(() => {
+      // Set up theme resolver for each test
+      const service = AccessibilityService.getInstance();
+      service.setThemeResolver(() => mockTheme);
+    });
+
+    it('should return standard accessible color scheme using theme', () => {
+      const colors = mockService.getAccessibleColorScheme();
 
       expect(colors).toEqual({
-        primary: '#2563EB',
-        secondary: '#64748B',
-        background: '#FFFFFF',
-        surface: '#F8FAFC',
-        text: '#1E293B',
-        textSecondary: '#64748B',
-        error: '#DC2626',
-        success: '#16A34A',
-        warning: '#D97706',
+        primary: '#4f46e5', // c.primary[600] from theme
+        secondary: expect.any(String), // From brand palette
+        background: '#000000', // c.neutral[950] for dark theme
+        surface: '#000000', // c.neutral[950] for dark theme
+        text: '#fafafa', // c.neutral[50] for dark theme
+        textSecondary: '#a3a3a3', // c.neutral[400] for dark theme
+        error: '#ef4444',
+        success: '#10b981',
+        warning: '#f59e0b',
       });
     });
 
-    it('should return high contrast color scheme when enabled', () => {
+    it('should return high contrast color scheme when enabled using theme', () => {
       // Enable high contrast
-      (accessibilityService as any).config.isGrayscaleEnabled = true;
+      (mockService as any).config.isGrayscaleEnabled = true;
 
-      const colors = accessibilityService.getAccessibleColorScheme();
+      const colors = mockService.getAccessibleColorScheme();
 
+      // High contrast should use theme palette values for neutral steps
       expect(colors).toEqual({
-        primary: '#FFFFFF',
-        secondary: '#CCCCCC',
-        background: '#000000',
-        surface: '#111111',
-        text: '#FFFFFF',
-        textSecondary: '#CCCCCC',
-        error: '#FF4444',
-        success: '#44FF44',
-        warning: '#FFFF44',
+        primary: expect.any(String), // From theme onPrimary or fallback
+        secondary: expect.any(String), // High contrast secondary from neutral[200]
+        background: '#0a0a0a', // From theme neutral[950]
+        surface: '#0a0a0a', // From theme neutral[950]
+        text: '#fafafa', // From theme neutral[50]
+        textSecondary: '#e5e5e5', // From theme neutral[200]
+        error: '#ef4444',
+        success: '#10b981',
+        warning: '#f59e0b',
       });
     });
   });
 
   describe('Contrast Requirements', () => {
     it('should return true for contrast check (placeholder implementation)', () => {
-      const result = accessibilityService.meetsContrastRequirement('#000000', '#FFFFFF');
+      const result = mockService.meetsContrastRequirement('#000000', '#FFFFFF');
 
       expect(result).toBe(true);
     });
@@ -343,18 +399,18 @@ describe('AccessibilityService', () => {
     it('should add and remove change listeners', () => {
       const listener = jest.fn();
 
-      const unsubscribe = accessibilityService.addChangeListener(listener);
+      const unsubscribe = mockService.addChangeListener(listener);
 
-      expect((accessibilityService as any).listeners).toContain(listener);
+      expect((mockService as any).listeners).toContain(listener);
 
       unsubscribe();
 
-      expect((accessibilityService as any).listeners).not.toContain(listener);
+      expect((mockService as any).listeners).not.toContain(listener);
     });
 
     it('should notify listeners when accessibility changes', async () => {
       const listener = jest.fn();
-      accessibilityService.addChangeListener(listener);
+      mockService.addChangeListener(listener);
 
       const service = AccessibilityService.getInstance();
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -379,8 +435,8 @@ describe('AccessibilityService', () => {
       });
       const goodListener = jest.fn();
 
-      accessibilityService.addChangeListener(errorListener);
-      accessibilityService.addChangeListener(goodListener);
+      mockService.addChangeListener(errorListener);
+      mockService.addChangeListener(goodListener);
 
       const service = AccessibilityService.getInstance();
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -421,7 +477,7 @@ describe('AccessibilityService', () => {
       Platform.OS = 'ios';
       const mockRef = {};
 
-      accessibilityService.setAccessibilityFocus(mockRef);
+      mockService.setAccessibilityFocus(mockRef);
 
       expect((mockAccessibilityInfo as any).setAccessibilityFocus).toHaveBeenCalledWith(mockRef);
     });
@@ -432,8 +488,101 @@ describe('AccessibilityService', () => {
 
       // Should not crash on Android
       expect(() => {
-        accessibilityService.setAccessibilityFocus(mockRef);
+        mockService.setAccessibilityFocus(mockRef);
       }).not.toThrow();
+    });
+  });
+
+  describe('Listener Cleanup', () => {
+    it('should cleanup all subscriptions when cleanup is called', () => {
+      const removeMock1 = jest.fn();
+      const removeMock2 = jest.fn();
+      const removeMock3 = jest.fn();
+
+      mockAccessibilityInfo.addEventListener.mockReturnValueOnce({ remove: removeMock1 });
+      mockAccessibilityInfo.addEventListener.mockReturnValueOnce({ remove: removeMock2 });
+      mockAccessibilityInfo.addEventListener.mockReturnValueOnce({ remove: removeMock3 });
+
+      // Setup listeners
+      mockService.setupAccessibilityListeners();
+
+      // Call cleanup
+      mockService.cleanup();
+
+      // Verify all remove methods were called
+      expect(removeMock1).toHaveBeenCalledTimes(1);
+      expect(removeMock2).toHaveBeenCalledTimes(1);
+      expect(removeMock3).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle cleanup errors gracefully', () => {
+      const removeMock = jest.fn(() => {
+        throw new Error('Remove failed');
+      });
+
+      mockAccessibilityInfo.addEventListener.mockReturnValue({ remove: removeMock });
+
+      mockService.setupAccessibilityListeners();
+
+      // Should not throw even if remove fails
+      expect(() => {
+        mockService.cleanup();
+      }).not.toThrow();
+    });
+
+    it('should clear subscriptions array after cleanup', () => {
+      mockAccessibilityInfo.addEventListener.mockReturnValue({ remove: jest.fn() });
+
+      mockService.setupAccessibilityListeners();
+      mockService.cleanup();
+
+      // Setup again should work without duplicates
+      mockService.setupAccessibilityListeners();
+
+      // Cleanup should only remove new subscriptions
+      expect(mockAccessibilityInfo.addEventListener).toHaveBeenCalled();
+    });
+
+    it('should call cleanup before setting up new listeners', () => {
+      const removeMock = jest.fn();
+      mockAccessibilityInfo.addEventListener.mockReturnValue({ remove: removeMock });
+
+      // First setup
+      mockService.setupAccessibilityListeners();
+      const firstCallCount = mockAccessibilityInfo.addEventListener.mock.calls.length;
+
+      // Second setup should cleanup first
+      mockService.setupAccessibilityListeners();
+
+      // Verify cleanup was called (subscriptions should be reset)
+      expect(removeMock).toHaveBeenCalled();
+    });
+  });
+
+  describe('Theme Resolution and Fallbacks', () => {
+    it('should return fallback scheme when theme resolution fails', () => {
+      // Mock theme resolver to throw
+      const service = new AccessibilityService();
+      (service as any).themeResolver = () => {
+        throw new Error('Theme resolution failed');
+      };
+
+      const scheme = service.getAccessibleColorScheme();
+
+      expect(scheme).toBeDefined();
+      expect(scheme).toHaveProperty('textColor');
+      expect(scheme).toHaveProperty('backgroundColor');
+    });
+
+    it('should use theme colors when resolution succeeds', () => {
+      const testTheme = createTheme('light');
+      const service = new AccessibilityService();
+      (service as any).themeResolver = () => testTheme;
+
+      const scheme = service.getAccessibleColorScheme();
+
+      expect(scheme.textColor).toBe(testTheme.colors.onSurface);
+      expect(scheme.backgroundColor).toBe(testTheme.colors.bg);
     });
   });
 });

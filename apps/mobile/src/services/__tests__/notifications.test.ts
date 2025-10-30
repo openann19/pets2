@@ -75,7 +75,8 @@ jest.mock('@pawfectmatch/core', () => ({
 const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
 const mockDevice = Device as jest.Mocked<typeof Device>;
 const mockNotifications = Notifications as jest.Mocked<typeof Notifications>;
-const mockApi = require('../api').api as jest.Mocked<typeof require('../api').api>;
+const apiModule = require('../api');
+const mockApi = apiModule.api as jest.Mocked<typeof apiModule.api>;
 
 describe('NotificationService', () => {
   let service: NotificationService;

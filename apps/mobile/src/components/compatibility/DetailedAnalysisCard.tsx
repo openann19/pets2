@@ -6,36 +6,35 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
-function __makeStyles_styles(theme: AppTheme) {
+function createStyles(theme: AppTheme) {
   return StyleSheet.create({
-  resultCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  resultHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  resultTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-  detailedText: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-});
+    resultCard: {
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.md,
+      backgroundColor: theme.colors.surface,
+      ...theme.shadows.elevation2,
+    },
+    resultHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: theme.spacing.md,
+      gap: theme.spacing.xs,
+    },
+    resultTitle: {
+      fontSize: theme.typography.body.size,
+      fontWeight: "600",
+      color: theme.colors.onSurface,
+    },
+    detailedText: {
+      fontSize: theme.typography.body.size,
+      lineHeight: theme.typography.body.lineHeight,
+      color: theme.colors.onSurface,
+    },
+  });
 }
 
 
@@ -46,23 +45,23 @@ interface DetailedAnalysisCardProps {
 export const DetailedAnalysisCard: React.FC<DetailedAnalysisCardProps> = ({
   detailed,
 }) => {
-    const theme = useTheme();
-    const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
-  const { colors, palette } = theme;
+  const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+  const { colors } = theme;
 
   return (
-    <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+    <View style={styles.resultCard}>
       <View style={styles.resultHeader}>
         <Ionicons
           name="document-text"
           size={24}
-          color={colors.onMuted || colors.onMuted}
+          color={colors.onMuted}
         />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={styles.resultTitle}>
           Detailed Analysis
         </Text>
       </View>
-      <Text style={[styles.detailedText, { color: colors.onSurface }]>
+      <Text style={styles.detailedText}>
         {detailed}
       </Text>
     </View>

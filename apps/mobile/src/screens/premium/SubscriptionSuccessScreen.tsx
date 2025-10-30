@@ -7,8 +7,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import type { AppTheme } from '@mobile/src/theme';
-import { useTheme } from '@mobile/src/theme';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
+import { useTranslation } from 'react-i18next';
 import type { RootStackParamList } from '../../navigation/types';
 
 type SubscriptionSuccessNavigationProp = NavigationProp<RootStackParamList>;
@@ -61,22 +62,19 @@ const AnimatedCheckmark = ({
     outputRange: [0, 0.9, 1],
   });
 
-  const gradientColors = (theme as any).palette?.gradients?.primary ?? [
-    theme.colors.primary,
-    theme.colors.primary,
-  ];
+  const gradientColors = theme.palette.gradients.primary;
 
   return (
     <View style={styles.checkmarkContainer}>
       {/* React Native Animated API type compatibility issue - runtime works correctly */}
       <Animated.View
-        style={StyleSheet.flatten([
+        style={[
           styles.checkmarkCircle,
           {
             transform: [{ scale }],
             opacity,
           } as any,
-        ])}
+        ]}
       >
         <LinearGradient
           colors={gradientColors}
@@ -95,9 +93,10 @@ const AnimatedCheckmark = ({
   );
 };
 
-export function SubscriptionSuccessScreen(): JSX.Element {
+export function SubscriptionSuccessScreen(): React.JSX.Element {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
+  const { t } = useTranslation('premium');
   const navigation = useNavigation<SubscriptionSuccessNavigationProp>();
   const route = useRoute();
   const { sessionId } = (route.params as { sessionId?: string }) || {};
@@ -131,11 +130,10 @@ export function SubscriptionSuccessScreen(): JSX.Element {
           theme={theme}
         />
 
-        <Text style={styles.title}>Subscription Successful!</Text>
+        <Text style={styles.title}>{t('success_title')}</Text>
 
         <Text style={styles.message}>
-          Thank you for your purchase. Your premium subscription is now active, and you can enjoy
-          all the exclusive features.
+          {t('success_message')}
         </Text>
 
         <View style={styles.featuresContainer}>
@@ -145,7 +143,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
               size={24}
               color={theme.colors.primary}
             />
-            <Text style={styles.featureText}>Unlimited Swipes</Text>
+            <Text style={styles.featureText}>{t('unlimited_swipes')}</Text>
           </View>
 
           <View style={styles.featureItem}>
@@ -154,7 +152,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
               size={24}
               color={theme.colors.primary}
             />
-            <Text style={styles.featureText}>See Who Liked You</Text>
+            <Text style={styles.featureText}>{t('see_who_liked')}</Text>
           </View>
 
           <View style={styles.featureItem}>
@@ -163,7 +161,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
               size={24}
               color={theme.colors.primary}
             />
-            <Text style={styles.featureText}>Video Calls</Text>
+            <Text style={styles.featureText}>{t('video_calls')}</Text>
           </View>
 
           <View style={styles.featureItem}>
@@ -172,7 +170,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
               size={24}
               color={theme.colors.primary}
             />
-            <Text style={styles.featureText}>Advanced Filters</Text>
+            <Text style={styles.featureText}>{t('advanced_filters')}</Text>
           </View>
         </View>
       </View>
@@ -187,11 +185,11 @@ export function SubscriptionSuccessScreen(): JSX.Element {
             navigation.navigate('SubscriptionManager');
           }}
         >
-          <Text style={styles.buttonText}>Manage Subscription</Text>
+          <Text style={styles.buttonText}>{t('manage_subscription')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={StyleSheet.flatten([styles.button, styles.secondaryButton])}
+          style={[styles.button, styles.secondaryButton]}
           testID="SubscriptionSuccessScreen-button-2"
           accessibilityLabel="Interactive element"
           accessibilityRole="button"
@@ -199,7 +197,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
             navigation.navigate('Home');
           }}
         >
-          <Text style={styles.secondaryButtonText}>Go to Home</Text>
+          <Text style={styles.secondaryButtonText}>{t('go_to_home')}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -237,18 +235,18 @@ function makeStyles(theme: AppTheme) {
       alignItems: 'center',
     },
     title: {
-      fontSize: 28,
-      fontWeight: '700',
+      fontSize: theme.typography.h1.size * 0.875,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.onSurface,
       textAlign: 'center',
       marginBottom: theme.spacing.md,
     },
     message: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onMuted,
       textAlign: 'center',
       marginBottom: theme.spacing['2xl'],
-      lineHeight: 24,
+      lineHeight: theme.typography.body.lineHeight,
     },
     featuresContainer: {
       width: '100%',
@@ -263,7 +261,7 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.md,
     },
     featureText: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onSurface,
       marginLeft: theme.spacing.sm,
     },
@@ -280,18 +278,17 @@ function makeStyles(theme: AppTheme) {
     },
     buttonText: {
       color: theme.colors.onPrimary,
-      fontSize: 16,
-      fontWeight: '600',
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
     },
     secondaryButton: {
       backgroundColor: theme.colors.surface,
     },
     secondaryButtonText: {
       color: theme.colors.primary,
-      fontSize: 16,
-      fontWeight: '600',
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
     },
   });
 }
 
-export default SubscriptionSuccessScreen;

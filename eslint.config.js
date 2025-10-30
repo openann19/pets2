@@ -163,8 +163,9 @@ export default [
   },
 
   // Server-side TypeScript files - must come after global TypeScript config to override rules
+  // Matches both when run from root (server/**/*.ts) and from server directory (routes/**/*.ts, src/**/*.ts)
   {
-    files: ['server/**/*.{ts}'],
+    files: ['server/**/*.{ts}', 'routes/**/*.{ts}', 'src/**/*.{ts}', './**/*.{ts}'],
     plugins: {
       '@typescript-eslint': typescriptPlugin,
     },

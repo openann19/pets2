@@ -20,7 +20,7 @@ type ForgotPasswordScreenProps = RootStackScreenProps<"ForgotPassword">;
 
 function ForgotPasswordScreen({
   navigation,
-}: ForgotPasswordScreenProps): JSX.Element {
+}: ForgotPasswordScreenProps): React.JSX.Element {
   const theme = useTheme();
   const { t } = useTranslation('auth');
   const {

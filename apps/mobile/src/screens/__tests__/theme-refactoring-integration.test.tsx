@@ -6,7 +6,7 @@ import { useTheme } from "@/theme";
  * properly use the unified theming system.
  */
 
-import { createTheme } from '../../theme/rnTokens';
+import { createTheme } from '@/theme';
 
 describe('Theme Refactoring - Integration Verification', () => {
   describe('Refactored Screens Compliance', () => {

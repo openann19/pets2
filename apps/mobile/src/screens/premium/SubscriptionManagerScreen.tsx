@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { AppTheme } from '@mobile/src/theme';
-import { useTheme } from '@mobile/src/theme';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
 import { logger } from '@pawfectmatch/core';
 import type { NavigationProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
@@ -93,7 +93,7 @@ function makeStyles(theme: AppTheme) {
     },
     loadingText: {
       marginTop: theme.spacing.md,
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.primary,
     },
     header: {
@@ -102,18 +102,19 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.md,
     },
     headerTitle: {
-      fontSize: 24,
-      fontWeight: '700',
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.onPrimary,
     },
     errorContainer: {
       padding: theme.spacing.lg,
-      backgroundColor: theme.colors.danger + '15',
+      backgroundColor: theme.colors.danger,
+      opacity: 0.15,
       borderRadius: theme.radii.md,
       alignItems: 'center',
     },
     errorText: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.danger,
       textAlign: 'center',
       marginTop: theme.spacing.sm,
@@ -141,14 +142,14 @@ function makeStyles(theme: AppTheme) {
       shadowRadius: 2,
     },
     noSubscriptionTitle: {
-      fontSize: 20,
-      fontWeight: '700',
+      fontSize: theme.typography.h2.size * 0.875,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.onSurface,
       marginTop: theme.spacing.md,
       marginBottom: theme.spacing.sm,
     },
     noSubscriptionText: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onMuted,
       textAlign: 'center',
       marginBottom: theme.spacing.lg,
@@ -161,8 +162,8 @@ function makeStyles(theme: AppTheme) {
     },
     upgradeButtonText: {
       color: theme.colors.onPrimary,
-      fontWeight: '600',
-      fontSize: 16,
+      fontWeight: theme.typography.h2.weight,
+      fontSize: theme.typography.body.size,
     },
     card: {
       backgroundColor: theme.colors.surface,
@@ -182,8 +183,8 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.md,
     },
     cardTitle: {
-      fontSize: 18,
-      fontWeight: '700',
+      fontSize: theme.typography.body.size * 1.125,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.onSurface,
     },
     statusBadge: {
@@ -192,22 +193,22 @@ function makeStyles(theme: AppTheme) {
       borderRadius: theme.radii.xl,
     },
     statusText: {
-      fontSize: 14,
-      fontWeight: '500',
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.body.weight,
     },
     planDetails: {
       marginBottom: theme.spacing.md,
     },
     planName: {
-      fontSize: 22,
-      fontWeight: '700',
+      fontSize: theme.typography.h2.size * 0.92,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
     planPrice: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.primary,
-      fontWeight: '500',
+      fontWeight: theme.typography.body.weight,
     },
     divider: {
       height: 1,
@@ -221,24 +222,24 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.sm,
     },
     detailLabel: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onMuted,
     },
     detailValue: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onSurface,
-      fontWeight: '500',
+      fontWeight: theme.typography.body.weight,
     },
     detailValueHighlight: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.warning,
-      fontWeight: '500',
+      fontWeight: theme.typography.body.weight,
     },
     usageItem: {
       marginBottom: theme.spacing.md,
     },
     usageLabel: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onMuted,
       marginBottom: theme.spacing.sm,
     },
@@ -254,11 +255,11 @@ function makeStyles(theme: AppTheme) {
       borderRadius: theme.radii.xs,
     },
     usageText: {
-      fontSize: 14,
+      fontSize: theme.typography.body.size * 0.875,
       color: theme.colors.onMuted,
     },
     usageResetText: {
-      fontSize: 14,
+      fontSize: theme.typography.body.size * 0.875,
       color: theme.colors.onMuted,
       textAlign: 'center',
       marginTop: theme.spacing.sm,
@@ -276,8 +277,8 @@ function makeStyles(theme: AppTheme) {
       backgroundColor: theme.colors.primary,
     },
     actionButtonText: {
-      fontSize: 16,
-      fontWeight: '500',
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.body.weight,
       marginLeft: theme.spacing.sm,
       color: theme.colors.onSurface,
     },
@@ -440,27 +441,25 @@ export const SubscriptionManagerScreen = () => {
     });
   };
 
-  // Get status badge color using theme colors
-  const getStatusColor = (status?: Subscription['status']): { bg: string; text: string } => {
+  // Get status badge color using theme colors with opacity
+  const getStatusColor = (status?: Subscription['status']): { bg: string; text: string; bgOpacity: number } => {
     switch (status) {
       case 'active':
-        return { bg: theme.colors.success + '20', text: theme.colors.success };
+        return { bg: theme.colors.success, text: theme.colors.success, bgOpacity: 0.2 };
       case 'canceled':
-        return { bg: theme.colors.danger + '20', text: theme.colors.danger };
+        return { bg: theme.colors.danger, text: theme.colors.danger, bgOpacity: 0.2 };
       case 'past_due':
-        return { bg: theme.colors.warning + '20', text: theme.colors.warning };
+        return { bg: theme.colors.warning, text: theme.colors.warning, bgOpacity: 0.2 };
       case 'trialing':
-        return { bg: theme.colors.info + '20', text: theme.colors.info };
+        return { bg: theme.colors.info, text: theme.colors.info, bgOpacity: 0.2 };
       default:
-        return { bg: theme.colors.border, text: theme.colors.onMuted };
+        return { bg: theme.colors.border, text: theme.colors.onMuted, bgOpacity: 1 };
     }
   };
 
   // Get gradient colors from theme palette
   const gradientColors = useMemo(() => {
-    return (
-      (theme as any).palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary]
-    );
+    return theme.palette.gradients.primary;
   }, [theme]);
 
   if (isLoading && !isRefreshing) {
@@ -546,12 +545,12 @@ export const SubscriptionManagerScreen = () => {
             <View style={styles.cardHeader}>
               <Text style={styles.cardTitle}>Current Plan</Text>
               <View
-                style={StyleSheet.flatten([
+                style={[
                   styles.statusBadge,
-                  { backgroundColor: statusColors.bg },
-                ])}
+                  { backgroundColor: statusColors.bg, opacity: statusColors.bgOpacity },
+                ]}
               >
-                <Text style={StyleSheet.flatten([styles.statusText, { color: statusColors.text }])}>
+                <Text style={[styles.statusText, { color: statusColors.text }]}>
                   {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
                 </Text>
               </View>
@@ -600,13 +599,13 @@ export const SubscriptionManagerScreen = () => {
                 <Text style={styles.usageLabel}>Swipes</Text>
                 <View style={styles.usageBar}>
                   <View
-                    style={StyleSheet.flatten([
+                    style={[
                       styles.usageProgress,
                       {
                         width: `${Math.round((usageStats.swipesRemaining / usageStats.totalSwipes) * 100)}%`,
                         backgroundColor: theme.colors.primary,
                       },
-                    ])}
+                    ]}
                   />
                 </View>
                 <Text style={styles.usageText}>
@@ -618,13 +617,13 @@ export const SubscriptionManagerScreen = () => {
                 <Text style={styles.usageLabel}>Super Likes</Text>
                 <View style={styles.usageBar}>
                   <View
-                    style={StyleSheet.flatten([
+                    style={[
                       styles.usageProgress,
                       {
                         width: `${Math.round((usageStats.superLikesRemaining / usageStats.totalSuperLikes) * 100)}%`,
                         backgroundColor: theme.colors.info,
                       },
-                    ])}
+                    ]}
                   />
                 </View>
                 <Text style={styles.usageText}>
@@ -636,13 +635,13 @@ export const SubscriptionManagerScreen = () => {
                 <Text style={styles.usageLabel}>Boosts</Text>
                 <View style={styles.usageBar}>
                   <View
-                    style={StyleSheet.flatten([
+                    style={[
                       styles.usageProgress,
                       {
                         width: `${Math.round((usageStats.boostsRemaining / usageStats.totalBoosts) * 100)}%`,
                         backgroundColor: theme.colors.warning,
                       },
-                    ])}
+                    ]}
                   />
                 </View>
                 <Text style={styles.usageText}>
@@ -676,10 +675,10 @@ export const SubscriptionManagerScreen = () => {
                   color={theme.colors.danger}
                 />
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.actionButtonText,
                     { color: theme.colors.danger },
-                  ])}
+                  ]}
                 >
                   Cancel Subscription
                 </Text>
@@ -688,7 +687,7 @@ export const SubscriptionManagerScreen = () => {
 
             {subscription.status === 'canceled' || subscription.cancelAtPeriodEnd ? (
               <TouchableOpacity
-                style={StyleSheet.flatten([styles.actionButton, styles.reactivateButton])}
+                style={[styles.actionButton, styles.reactivateButton]}
                 testID="SubscriptionManagerScreen-button-2"
                 accessibilityLabel="Interactive element"
                 accessibilityRole="button"
@@ -700,10 +699,10 @@ export const SubscriptionManagerScreen = () => {
                   color={theme.colors.onPrimary}
                 />
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.actionButtonText,
                     { color: theme.colors.onPrimary },
-                  ])}
+                  ]}
                 >
                   Reactivate Subscription
                 </Text>

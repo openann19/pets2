@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -30,9 +30,8 @@ import { useTheme } from "@/theme";
 import { useScrollOffsetTracker } from "../../hooks/navigation/useScrollOffsetTracker";
 import { useTabReselectRefresh } from "../../hooks/navigation/useTabReselectRefresh";
 
-const { width: _screenWidth } = Dimensions.get("window");
-
 export default function LeaderboardScreen() {
+  const theme = useTheme();
   const scrollRef = useRef<ScrollView>(null);
   const { onScroll, getOffset } = useScrollOffsetTracker();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
@@ -48,6 +47,260 @@ export default function LeaderboardScreen() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      backgroundColor: theme.colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    headerTitle: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: theme.colors.onSurface,
+    },
+    filterButton: {
+      padding: 8,
+    },
+    categoryTabs: {
+      backgroundColor: theme.colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    categoryTabsContent: {
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+    },
+    categoryTab: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      marginRight: 12,
+      borderRadius: 20,
+      backgroundColor: theme.colors.bg,
+    },
+    categoryTabActive: {
+      backgroundColor: theme.colors.primary,
+    },
+    categoryTabIcon: {
+      marginRight: 6,
+    },
+    categoryTabText: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: theme.colors.onMuted,
+    },
+    categoryTabTextActive: {
+      color: theme.colors.onPrimary,
+    },
+    periodTabs: {
+      flexDirection: "row",
+      backgroundColor: theme.colors.surface,
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    periodTab: {
+      flex: 1,
+      alignItems: "center",
+      paddingVertical: 8,
+      marginHorizontal: 4,
+      borderRadius: 8,
+      backgroundColor: theme.colors.bg,
+    },
+    periodTabActive: {
+      backgroundColor: theme.colors.primary,
+    },
+    periodTabText: {
+      fontSize: 12,
+      fontWeight: "500",
+      color: theme.colors.onMuted,
+    },
+    periodTabTextActive: {
+      color: theme.colors.onPrimary,
+    },
+    userRankCard: {
+      margin: 20,
+      borderRadius: 12,
+      overflow: "hidden",
+      elevation: 4,
+      shadowColor: theme.colors.bg,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    userRankGradient: {
+      padding: 20,
+    },
+    userRankContent: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    userRankInfo: {
+      flex: 1,
+    },
+    userRankTitle: {
+      fontSize: 14,
+      color: "rgba(255, 255, 255, 0.8)",
+      marginBottom: 4,
+    },
+    userRankNumber: {
+      fontSize: 32,
+      fontWeight: "bold",
+      color: theme.colors.onPrimary,
+      marginBottom: 4,
+    },
+    userRankScore: {
+      fontSize: 16,
+      color: "rgba(255, 255, 255, 0.9)",
+    },
+    userRankPet: {
+      alignItems: "center",
+    },
+    userRankPetImage: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    userRankPetName: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.colors.onPrimary,
+    },
+    leaderboardList: {
+      flex: 1,
+      paddingHorizontal: 20,
+    },
+    entryCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.colors.surface,
+      padding: 16,
+      marginBottom: 12,
+      borderRadius: 12,
+      elevation: 2,
+      shadowColor: theme.colors.bg,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+    },
+    entryRank: {
+      width: 40,
+      alignItems: "center",
+    },
+    rankBadge: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    rankNumber: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: theme.colors.onSurface,
+    },
+    entryPetImage: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      backgroundColor: theme.colors.bg,
+      justifyContent: "center",
+      alignItems: "center",
+      marginHorizontal: 12,
+    },
+    entryInfo: {
+      flex: 1,
+    },
+    entryPetName: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.onSurface,
+      marginBottom: 2,
+    },
+    entryOwnerName: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      marginBottom: 4,
+    },
+    entryStats: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    entryStat: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      marginRight: 8,
+    },
+    entryScore: {
+      alignItems: "center",
+      marginLeft: 12,
+    },
+    entryScoreText: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme.colors.primary,
+    },
+    entryScoreLabel: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+    },
+    entryBadges: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginLeft: 8,
+    },
+    badge: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 4,
+    },
+    badgeCount: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      marginLeft: 4,
+    },
+    loadingMore: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    loadingMoreText: {
+      marginLeft: 8,
+      fontSize: 14,
+      color: theme.colors.onMuted,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: 16,
+      color: theme.colors.onMuted,
+    },
+  }), [theme]);
 
   // Define refreshData after the functions it uses are defined
   const loadLeaderboard = async (pageNum = 1) => {
@@ -396,9 +649,8 @@ export default function LeaderboardScreen() {
         scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+            colors={[theme.colors.primary]}
             onRefresh={refreshData}
-            colors={["#667eea"]}
           />
         }
         onScrollEndDrag={loadMore}
@@ -409,257 +661,3 @@ export default function LeaderboardScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: theme.colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e9ecef",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  filterButton: {
-    padding: 8,
-  },
-  categoryTabs: {
-    backgroundColor: theme.colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e9ecef",
-  },
-  categoryTabsContent: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  categoryTab: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 12,
-    borderRadius: 20,
-    backgroundColor: "#f8f9fa",
-  },
-  categoryTabActive: {
-    backgroundColor: "#667eea",
-  },
-  categoryTabIcon: {
-    marginRight: 6,
-  },
-  categoryTabText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#666",
-  },
-  categoryTabTextActive: {
-    color: theme.colors.onSurface,
-  },
-  periodTabs: {
-    flexDirection: "row",
-    backgroundColor: theme.colors.surface,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e9ecef",
-  },
-  periodTab: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 8,
-    marginHorizontal: 4,
-    borderRadius: 8,
-    backgroundColor: "#f8f9fa",
-  },
-  periodTabActive: {
-    backgroundColor: "#667eea",
-  },
-  periodTabText: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#666",
-  },
-  periodTabTextActive: {
-    color: theme.colors.onSurface,
-  },
-  userRankCard: {
-    margin: 20,
-    borderRadius: 12,
-    overflow: "hidden",
-    elevation: 4,
-    shadowColor: theme.colors.bg,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  userRankGradient: {
-    padding: 20,
-  },
-  userRankContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  userRankInfo: {
-    flex: 1,
-  },
-  userRankTitle: {
-    fontSize: 14,
-    color: "rgba(255, 255, 255, 0.8)",
-    marginBottom: 4,
-  },
-  userRankNumber: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: theme.colors.onSurface,
-    marginBottom: 4,
-  },
-  userRankScore: {
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.9)",
-  },
-  userRankPet: {
-    alignItems: "center",
-  },
-  userRankPetImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  userRankPetName: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: theme.colors.onSurface,
-  },
-  leaderboardList: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  entryCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: theme.colors.surface,
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: theme.colors.bg,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  entryRank: {
-    width: 40,
-    alignItems: "center",
-  },
-  rankBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  rankNumber: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#666",
-  },
-  entryPetImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#f8f9fa",
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 12,
-  },
-  entryInfo: {
-    flex: 1,
-  },
-  entryPetName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 2,
-  },
-  entryOwnerName: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4,
-  },
-  entryStats: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  entryStat: {
-    fontSize: 12,
-    color: "#999",
-    marginRight: 8,
-  },
-  entryScore: {
-    alignItems: "center",
-    marginLeft: 12,
-  },
-  entryScoreText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#667eea",
-  },
-  entryScoreLabel: {
-    fontSize: 12,
-    color: "#666",
-  },
-  entryBadges: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 8,
-  },
-  badge: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 4,
-  },
-  badgeCount: {
-    fontSize: 12,
-    color: "#666",
-    marginLeft: 4,
-  },
-  loadingMore: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  loadingMoreText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: "#666",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: "#666",
-  },
-});

@@ -1,3 +1,4 @@
+import React from "react";
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@mobile/src/theme';
 import { BlurView } from 'expo-blur';
@@ -12,7 +13,7 @@ interface DeactivateAccountScreenProps {
   };
 }
 
-function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): JSX.Element {
+function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): React.JSX.Element {
   const {
     reason,
     confirmText,

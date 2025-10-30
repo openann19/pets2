@@ -107,9 +107,9 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
       {/* Left hint */}
       {leftHint && (
         <View style={styles.hintContainerLeft}>
-          <View style={[styles.hint, { backgroundColor: leftHint.color + '20' }]>
+          <View style={[styles.hint, { backgroundColor: leftHint.color + '20' }]}>
             <Ionicons name={leftHint.icon} size={24} color={leftHint.color} />
-            <Text style={[styles.hintText, { color: leftHint.color }]>{leftHint.text}</Text>
+            <Text style={[styles.hintText, { color: leftHint.color }]}>{leftHint.text}</Text>
           </View>
         </View>
       )}
@@ -117,9 +117,9 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
       {/* Right hint */}
       {rightHint && (
         <View style={styles.hintContainerRight}>
-          <View style={[styles.hint, { backgroundColor: rightHint.color + '20' }]>
+          <View style={[styles.hint, { backgroundColor: rightHint.color + '20' }]}>
             <Ionicons name={rightHint.icon} size={24} color={rightHint.color} />
-            <Text style={[styles.hintText, { color: rightHint.color }]>{rightHint.text}</Text>
+            <Text style={[styles.hintText, { color: rightHint.color }]}>{rightHint.text}</Text>
           </View>
         </View>
       )}
@@ -127,16 +127,16 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
       {/* Top hint */}
       {topHint && (
         <View style={styles.hintContainerTop}>
-          <View style={[styles.hint, { backgroundColor: topHint.color + '20' }]>
+          <View style={[styles.hint, { backgroundColor: topHint.color + '20' }]}>
             <Ionicons name={topHint.icon} size={24} color={topHint.color} />
-            <Text style={[styles.hintText, { color: topHint.color }]>{topHint.text}</Text>
+            <Text style={[styles.hintText, { color: topHint.color }]}>{topHint.text}</Text>
           </View>
         </View>
       )}
 
       {/* Dismiss button */}
       <Pressable style={styles.dismissButton} onPress={handleDismiss} testID="dismiss-button">
-        <Ionicons name="close" size={20} color={Theme.colors.neutral[0}]} />
+        <Ionicons name="close" size={20} color={Theme.colors.neutral[0]} />
       </Pressable>
     </Animated.View>
   );

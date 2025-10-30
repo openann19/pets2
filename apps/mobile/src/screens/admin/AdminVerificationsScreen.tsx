@@ -4,7 +4,7 @@
  */
 
 import { Ionicons } from "@expo/vector-icons";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme'";
+import { useTheme } from '@/theme';
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
 
@@ -50,6 +50,10 @@ interface Verification {
   expiresAt?: string;
 }
 
+interface VerificationsApiResponse {
+  verifications?: Verification[];
+}
+
 interface AdminVerificationsScreenProps {
   navigation: {
     goBack: () => void;
@@ -58,8 +62,9 @@ interface AdminVerificationsScreenProps {
 
 function AdminVerificationsScreen({
   navigation,
-}: AdminVerificationsScreenProps): JSX.Element {
+}: AdminVerificationsScreenProps): React.JSX.Element {
   const theme = useTheme();
+  const styles = React.useMemo(() => makeStyles(theme), [theme]);
   const { colors } = theme;
   const [verifications, setVerifications] = useState<Verification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,8 +89,8 @@ function AdminVerificationsScreen({
 
         if (response?.success && response.data) {
           // Handle different response shapes
-          const verifications = (response.data as any)?.verifications || response.data;
-          setVerifications(Array.isArray(verifications) ? verifications : []);
+          const responseData: VerificationsApiResponse = response.data;
+          setVerifications(Array.isArray(responseData.verifications) ? responseData.verifications : []);
         }
       } catch (error) {
         errorHandler.handleError(
@@ -246,7 +251,7 @@ function AdminVerificationsScreen({
       case "pending":
         return theme.colors.warning;
       case "requires_info":
-        return theme.theme.colors.primary[500];
+        return theme.colors.info;
       default:
         return theme.colors.border;
     }
@@ -280,50 +285,48 @@ function AdminVerificationsScreen({
     }
   };
 
-  const renderVerification = useCallback(
-    ({ item }: { item: Verification }) => (
-      <TouchableOpacity
-        style={StyleSheet.flatten([
-          styles.verificationCard,
-          { backgroundColor: colors.card },
-        ])}
-         testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-          setSelectedVerification(item);
-        }}
-      >
-        <View style={styles.cardHeader}>
-          <View style={styles.userInfo}>
-            <View style={styles.typeContainer}>
-              <Ionicons
-                name={getVerificationTypeIcon(item.type)}
-                size={16}
-                color={colors.primary}
-              />
-              <Text
-                style={StyleSheet.flatten([
-                  styles.verificationType,
-                  { color: colors.onSurface},
-                ])}
-              >
-                {item.type.replace("_", " ").toUpperCase()}
-              </Text>
-            </View>
+    <TouchableOpacity
+      style={StyleSheet.flatten([
+        styles.verificationCard,
+        { backgroundColor: colors.surface },
+      ])}
+       testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+        setSelectedVerification(item);
+      }}
+    >
+      <View style={styles.cardHeader}>
+        <View style={styles.userInfo}>
+          <View style={styles.typeContainer}>
+            <Ionicons
+              name={getVerificationTypeIcon(item.type)}
+              size={16}
+              color={colors.primary}
+            />
             <Text
               style={StyleSheet.flatten([
-                styles.userName,
-                { color: colors.onSurface},
+                styles.verificationType,
+                { color: colors.onSurface },
               ])}
             >
-              {item.userName}
+              {item.type.replace("_", " ").toUpperCase()}
             </Text>
-            <Text
-              style={StyleSheet.flatten([
-                styles.userEmail,
-                { color: colors.onSurfaceecondary },
-              ])}
-            >
-              {item.userEmail}
-            </Text>
+          </View>
+          <Text
+            style={StyleSheet.flatten([
+              styles.userName,
+              { color: colors.onSurface },
+            ])}
+          >
+            {item.userName}
+          </Text>
+          <Text
+            style={StyleSheet.flatten([
+              styles.userEmail,
+              { color: colors.onMuted },
+            ])}
+          >
+            {item.userEmail}
+          </Text>
           </View>
 
           <View style={styles.badges}>

@@ -9,7 +9,7 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import { View, Text } from 'react-native';
 import { ThemeProvider } from "@/theme";
-import { createTheme } from '../../theme/rnTokens';
+import { createTheme } from '@/theme';
 
 describe('Theme Refactoring - Integration Tests', () => {
   describe('Theme Hook Usage', () => {

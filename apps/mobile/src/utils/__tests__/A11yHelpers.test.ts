@@ -154,7 +154,7 @@ describe("A11yHelpers", () => {
       const colors = getHighContrastColors();
 
       expect(colors.background).toBe("#000000");
-      expect(colors.onSurface.toBe("#ffffff");
+      expect(colors.onSurface).toBe("#ffffff");
       expect(colors.primary).toBe("#ffffff");
       expect(colors.border).toBe("#ffffff");
     });

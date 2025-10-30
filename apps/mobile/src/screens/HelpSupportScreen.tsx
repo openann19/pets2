@@ -2,14 +2,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppInfoCard } from '../components/help/AppInfoCard';
 import { HelpContactCard } from '../components/help/HelpContactCard';
 import { HelpOptionCard } from '../components/help/HelpOptionCard';
-import { useHelpSupportData } from '../hooks/useHelpSupportData';
+import { useTheme } from '@mobile/src/theme';
 
 interface HelpSupportScreenProps {
   navigation: {
@@ -17,14 +17,61 @@ interface HelpSupportScreenProps {
   };
 }
 
-function HelpSupportScreen({ navigation }: HelpSupportScreenProps): JSX.Element {
+function HelpSupportScreen({ navigation }: HelpSupportScreenProps): React.JSX.Element {
+  const theme = useTheme();
+  const { colors } = theme;
   const { helpOptions, animatedStyles, handleHelpOption, handleEmailSupport } =
     useHelpSupportData();
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    safeArea: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+    },
+    backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      overflow: 'hidden',
+    },
+    backButtonBlur: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: colors.onPrimary,
+    },
+    headerSpacer: {
+      width: 40,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: 20,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: colors.onPrimary,
+      marginBottom: 16,
+    },
+  }), [colors]);
 
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#4facfe', '#00f2fe', '#4facfe']}
+        colors={[colors.primary, colors.primary, colors.primary]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -86,50 +133,5 @@ function HelpSupportScreen({ navigation }: HelpSupportScreenProps): JSX.Element 
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    overflow: 'hidden',
-  },
-  backButtonBlur: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  headerSpacer: {
-    width: 40,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 16,
-  },
-});
 
 export default HelpSupportScreen;

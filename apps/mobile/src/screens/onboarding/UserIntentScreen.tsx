@@ -1,5 +1,5 @@
-import type { AppTheme } from '@mobile/src/theme';
-import { useTheme } from '@mobile/src/theme';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
@@ -382,26 +382,26 @@ function makeStyles(theme: AppTheme) {
       backgroundColor: theme.colors.surface + '4D',
     },
     logo: {
-      fontSize: 28,
-      fontWeight: '800' as const,
+      fontSize: theme.typography.h1.size * 0.875,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.primary,
       textAlign: 'center' as const,
     },
     title: {
-      fontSize: 32,
-      fontWeight: '800' as const,
+      fontSize: theme.typography.h1.size,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.onSurface,
       textAlign: 'center' as const,
       marginBottom: theme.spacing.md,
       letterSpacing: -0.5,
     },
     subtitle: {
-      fontSize: 18,
+      fontSize: theme.typography.body.size * 1.125,
       color: theme.colors.onMuted,
       textAlign: 'center' as const,
-      lineHeight: 26,
+      lineHeight: theme.typography.body.lineHeight * 1.08,
       paddingHorizontal: theme.spacing.lg,
-      fontWeight: '500' as const,
+      fontWeight: theme.typography.body.weight,
     },
 
     // === ELITE INTENT CARDS ===

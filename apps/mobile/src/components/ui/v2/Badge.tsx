@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useTheme } from ../../../theme
+import { View } from 'react-native';
+import { useTheme } from '@/theme';
 import { Text } from './Text';
 
 export type BadgeVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'muted';
@@ -31,32 +31,34 @@ export function Badge({
   const getColors = () => {
     switch (variant) {
       case 'primary':
-        return { bg: theme.colors.primary, text: theme.colors.primaryText };
+        return { bg: theme.colors.primary, text: theme.colors.onPrimary };
       case 'secondary':
-        return { bg: theme.colors.secondary, text: '#FFFFFF' };
+        return { bg: theme.colors.surface, text: theme.colors.onSurface, border: theme.colors.border };
       case 'success':
-        return { bg: theme.colors.success, text: '#FFFFFF' };
+        return { bg: theme.colors.success, text: theme.colors.onPrimary };
       case 'warning':
-        return { bg: theme.colors.warning, text: '#FFFFFF' };
+        return { bg: theme.colors.warning, text: theme.colors.onPrimary };
       case 'danger':
-        return { bg: theme.colors.danger, text: '#FFFFFF' };
+        return { bg: theme.colors.danger, text: theme.colors.onPrimary };
       case 'muted':
       default:
-        return { bg: theme.colors.onMuted, text: '#FFFFFF' };
+        return { bg: theme.colors.border, text: theme.colors.onSurface };
     }
   };
 
-  const colors = getColors();
+  const { bg, text, border } = getColors();
 
   return (
     <View
       style={[
         {
-          backgroundColor: colors.bg,
+          backgroundColor: bg,
           paddingHorizontal: sizeStyles.paddingHorizontal,
           paddingVertical: sizeStyles.paddingVertical,
-          borderRadius: theme.radius.full,
+          borderRadius: theme.radii.full,
           alignSelf: 'flex-start',
+          borderWidth: border ? 1 : 0,
+          borderColor: border,
         },
       ]}
     >
@@ -64,7 +66,7 @@ export function Badge({
         style={{
           fontSize: sizeStyles.fontSize,
           fontWeight: '600',
-          color: colors.onSurface
+          color: text,
         }}
       >
         {label}

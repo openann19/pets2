@@ -30,7 +30,7 @@ interface FilterOption {
 
 function AdvancedFiltersScreen({
   navigation,
-}: AdvancedFiltersScreenProps): JSX.Element {
+}: AdvancedFiltersScreenProps): React.JSX.Element {
   const {
     filters,
     toggleFilter,

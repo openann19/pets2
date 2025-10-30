@@ -6,62 +6,63 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Theme } from "../../theme";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
-function __makeStyles_styles(theme: AppTheme) {
+function createStyles(theme: AppTheme) {
+  const { spacing, radii, colors, typography } = theme;
+
   return StyleSheet.create({
-  resultCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  resultHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  resultTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-  breakdownList: {
-    gap: 12,
-  },
-  breakdownItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  breakdownLabel: {
-    fontSize: 14,
-    width: 80,
-  },
-  breakdownBar: {
-    flex: 1,
-    height: 8,
-    backgroundColor: "#E5E5E5",
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  breakdownFill: {
-    height: "100%",
-    borderRadius: 4,
-  },
-  breakdownScore: {
-    fontSize: 14,
-    fontWeight: "600",
-    width: 40,
-    textAlign: "right",
-  },
-});
+    resultCard: {
+      borderRadius: radii.lg,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      backgroundColor: colors.surface,
+      gap: spacing.sm,
+      ...theme.shadows.elevation2,
+    },
+    resultHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+    },
+    resultTitle: {
+      fontSize: typography.h2.size,
+      fontWeight: typography.h2.weight,
+      color: colors.onSurface,
+    },
+    breakdownList: {
+      gap: spacing.sm,
+    },
+    breakdownItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+    },
+    breakdownLabel: {
+      fontSize: typography.body.size,
+      width: 80,
+      color: colors.onMuted,
+    },
+    breakdownBar: {
+      flex: 1,
+      height: spacing.xs,
+      backgroundColor: colors.border,
+      borderRadius: radii.xs,
+      overflow: "hidden",
+    },
+    breakdownFill: {
+      height: "100%",
+      borderRadius: radii.xs,
+    },
+    breakdownScore: {
+      fontSize: typography.body.size,
+      fontWeight: "600",
+      width: 48,
+      textAlign: "right",
+      color: colors.onSurface,
+    },
+  });
 }
 
 
@@ -81,31 +82,27 @@ interface CompatibilityBreakdownCardProps {
 export const CompatibilityBreakdownCard: React.FC<CompatibilityBreakdownCardProps> = ({
   breakdown,
 }) => {
-    const theme = useTheme();
-    const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
-  const { colors, palette } = theme;
+  const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+  const { colors } = theme;
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return theme.colors.success;
-    if (score >= 80) return theme.colors.info;
-    if (score >= 70) return theme.colors.warning;
-    return theme.colors.danger;
+    if (score >= 90) return colors.success;
+    if (score >= 80) return colors.info;
+    if (score >= 70) return colors.warning;
+    return colors.danger;
   };
 
   return (
-    <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+    <View style={styles.resultCard}>
       <View style={styles.resultHeader}>
-        <Ionicons name="bar-chart" size={24} color={theme.colors.info} />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
-          Compatibility Breakdown
-        </Text>
+        <Ionicons name="bar-chart" size={24} color={colors.info} />
+        <Text style={styles.resultTitle}>Compatibility Breakdown</Text>
       </View>
       <View style={styles.breakdownList}>
         {Object.entries(breakdown).map(([factor, score]) => (
           <View key={factor} style={styles.breakdownItem}>
-            <Text
-              style={[styles.breakdownLabel, { color: colors.onMuted }]
-            >
+            <Text style={styles.breakdownLabel}>
               {factor.charAt(0).toUpperCase() + factor.slice(1)}
             </Text>
             <View style={styles.breakdownBar}>
@@ -119,9 +116,7 @@ export const CompatibilityBreakdownCard: React.FC<CompatibilityBreakdownCardProp
                 ]}
               />
             </View>
-            <Text style={[styles.breakdownScore, { color: colors.onSurface }]>
-              {score}%
-            </Text>
+            <Text style={styles.breakdownScore}>{score}%</Text>
           </View>
         ))}
       </View>

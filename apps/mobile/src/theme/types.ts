@@ -6,91 +6,20 @@
 export type ColorScheme = 'light' | 'dark';
 
 export interface SemanticColors {
-  // Core semantic colors
+  // Core semantic colors (matches AppTheme contract)
   bg: string;
-  bgElevated: string;
-  text: string;
-  textMuted: string;
-  primary: string;
-  primaryText: string;
-  border: string;
-  success: string;
-  warning: string;
-  danger: string;
-
-  // Extended semantic colors for backward compatibility
-  background: string;
   surface: string;
-  surfaceElevated: string;
-  card: string;
-  textSecondary: string;
-
-  // Monochrome palette
-  white: string;
-  black: string;
-  gray50: string;
-  gray100: string;
-  gray200: string;
-  gray300: string;
-  gray400: string;
-  gray500: string;
-  gray600: string;
-  gray700: string;
-  gray800: string;
-  gray900: string;
-  gray950: string;
-
-  // Primary variants
-  primaryLight: string;
-  primaryDark: string;
-
-  // Secondary variants
-  secondary: string;
-  secondaryLight: string;
-  secondaryDark: string;
-
-  // Accent variants
-  accent: string;
-  accentLight: string;
-  accentDark: string;
-
-  // Glass effects
-  glass: string;
-  glassLight: string;
-  glassWhite: string;
-  glassWhiteLight: string;
-  glassWhiteDark: string;
-  glassDark: string;
-  glassDarkMedium: string;
-  glassDarkStrong: string;
-
-  // Status colors
+  overlay: string;
+  border: string;
+  onBg: string;
+  onSurface: string;
+  onMuted: string;
+  primary: string;
+  onPrimary: string;
+  success: string;
+  danger: string;
+  warning: string;
   info: string;
-  error: string;
-
-  // Additional properties
-  tertiary: string;
-  inverse: string;
-  shadow: string;
-  interactive: string;
-  feedback: string;
-
-  // Gradient properties (optional)
-  gradientPrimary?: string[];
-  gradientSecondary?: string[];
-  gradientAccent?: string[];
-  gradientSuccess?: string[];
-  gradientWarning?: string[];
-  gradientError?: string[];
-
-  // Nested properties for theme access (optional)
-  neutral?: Record<number | string, string>;
-  status?: {
-    success: string;
-    warning: string;
-    error: string;
-    info?: string;
-  };
 }
 
 export interface Spacing {

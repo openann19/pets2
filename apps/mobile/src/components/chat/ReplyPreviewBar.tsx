@@ -89,7 +89,7 @@ export default function ReplyPreviewBar({
       >
         <View style={styles.leading} />
         <View style={styles.iconWrap}>
-          <Ionicons name="arrow-undo" size={16} color={theme.colors.onSurface />
+          <Ionicons name="arrow-undo" size={16} color={theme.colors.onSurface} />
         </View>
 
         <Pressable style={styles.content} onPress={onPress} testID="reply-preview-content">
@@ -150,7 +150,7 @@ const makeStyles = (theme: any) =>
       fontWeight: '600',
     },
     snippet: {
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       fontSize: 14,
       fontWeight: '500',
     },

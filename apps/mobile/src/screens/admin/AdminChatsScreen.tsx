@@ -1,3 +1,4 @@
+import React from "react";
 /**
  * Admin Chat Moderation Screen
  * Production-ready implementation for moderating user chats
@@ -45,7 +46,7 @@ interface AdminChatsScreenProps {
   };
 }
 
-function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
+function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Element {
   const theme = useTheme();
   const { colors } = theme;
   const [messages, setMessages] = useState<ChatMessage[]>([]);

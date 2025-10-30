@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@/theme';
 import { logger } from '@pawfectmatch/core';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { ComponentProps } from 'react';
@@ -46,7 +46,7 @@ export const ProfileMenuSection: React.FC<ProfileMenuSectionProps> = React.memo(
         {
           title: 'Help & Support',
           icon: 'help-circle',
-          color: '#8b5cf6',
+          color: theme.colors.info,
           onPress: () => {
             Alert.alert('Help', 'Help center coming soon!');
           },
@@ -148,7 +148,7 @@ export const ProfileMenuSection: React.FC<ProfileMenuSectionProps> = React.memo(
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color="#ccc"
+                color={theme.colors.onMuted}
               />
             </View>
           </AdvancedCard>

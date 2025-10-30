@@ -8,7 +8,7 @@ import { useTheme } from '@/theme';
 
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { createTheme } from '../../theme/rnTokens';
+import { createTheme } from '@/theme';
 
 describe('ModernSwipeScreen - Theme Integration', () => {
   describe('Dynamic Styles Pattern', () => {

@@ -41,11 +41,11 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
           <Ionicons name={icon as any} size={24} color={colors.onPrimary} />
         </View>
         <View style={styles.titleContainer}>
-          <Text style={[styles.title, { color: colors.onSurface}]>{title}</Text>
+          <Text style={[styles.title, { color: colors.onSurface }]}>{title}</Text>
         </View>
         {badge !== undefined && badge > 0 && (
-          <View style={[styles.badge, { backgroundColor: colors.primary }]>
-            <Text style={[styles.badgeText, { color: colors.onPrimary }]>{badge}</Text>
+          <View style={[styles.badge, { backgroundColor: colors.primary }]}>
+            <Text style={[styles.badgeText, { color: colors.onPrimary }]}>{badge}</Text>
           </View>
         )}
       </View>

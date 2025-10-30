@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import { Modal, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import type { AppTheme } from '@mobile/src/theme';
-import { useTheme } from '@mobile/src/theme';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
 import { Colors, GlobalStyles, Spacing } from '../../animation';
 import {
   EliteButton,
@@ -613,13 +613,13 @@ function makeStyles(theme: AppTheme) {
       flex: 1,
     },
     petName: {
-      fontSize: 18,
-      fontWeight: '600' as const,
+      fontSize: theme.typography.body.size * 1.125,
+      fontWeight: theme.typography.h2.weight,
       color: theme.colors.onSurface,
-      marginBottom: 4,
+      marginBottom: theme.spacing.xs,
     },
     petBreed: {
-      fontSize: 14,
+      fontSize: theme.typography.body.size * 0.875,
       color: theme.colors.onMuted,
     },
     statusBadge: {
@@ -630,8 +630,8 @@ function makeStyles(theme: AppTheme) {
       borderColor: theme.colors.border,
     },
     statusText: {
-      fontSize: 12,
-      fontWeight: '600' as const,
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.h2.weight,
     },
     listingStats: {
       flexDirection: 'row' as const,
@@ -646,13 +646,13 @@ function makeStyles(theme: AppTheme) {
       alignItems: 'center' as const,
     },
     statNumber: {
-      fontSize: 20,
-      fontWeight: '700' as const,
+      fontSize: theme.typography.h2.size * 0.875,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.primary,
-      marginBottom: 4,
+      marginBottom: theme.spacing.xs,
     },
     statLabel: {
-      fontSize: 12,
+      fontSize: theme.typography.body.size * 0.75,
       color: theme.colors.onMuted,
       textAlign: 'center' as const,
     },

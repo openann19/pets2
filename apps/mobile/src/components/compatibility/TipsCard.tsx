@@ -6,45 +6,46 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Theme } from "../../theme";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
-function __makeStyles_styles(theme: AppTheme) {
+function createStyles(theme: AppTheme) {
+  const { spacing, radii, colors, typography } = theme;
+
   return StyleSheet.create({
-  resultCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  resultHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  resultTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-  tipsList: {
-    gap: 8,
-  },
-  tipItem: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 8,
-  },
-  tipText: {
-    fontSize: 14,
-    flex: 1,
-  },
-});
+    resultCard: {
+      borderRadius: radii.lg,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      backgroundColor: colors.surface,
+      gap: spacing.sm,
+      ...theme.shadows.elevation2,
+    },
+    resultHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+    },
+    resultTitle: {
+      fontSize: typography.h2.size,
+      fontWeight: typography.h2.weight,
+      color: colors.onSurface,
+    },
+    tipsList: {
+      gap: spacing.sm,
+    },
+    tipItem: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: spacing.xs,
+    },
+    tipText: {
+      fontSize: typography.body.size,
+      flex: 1,
+      color: colors.onSurface,
+      lineHeight: typography.body.lineHeight,
+    },
+  });
 }
 
 
@@ -53,33 +54,20 @@ interface TipsCardProps {
 }
 
 export const TipsCard: React.FC<TipsCardProps> = ({ tips }) => {
-    const theme = useTheme();
-    const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
-  const { colors, palette } = theme;
+  const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   return (
-    <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+    <View style={styles.resultCard}>
       <View style={styles.resultHeader}>
-        <Ionicons
-          name="bulb-outline"
-          size={24}
-          color={theme.colors.warning}
-        />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
-          Tips for Success
-        </Text>
+        <Ionicons name="bulb-outline" size={24} color={theme.colors.warning} />
+        <Text style={styles.resultTitle}>Tips for Success</Text>
       </View>
       <View style={styles.tipsList}>
         {tips.map((tip, index) => (
           <View key={index} style={styles.tipItem}>
-            <Ionicons
-              name="checkmark-circle"
-              size={16}
-              color={theme.colors.warning}
-            />
-            <Text style={[styles.tipText, { color: colors.onSurface }]>
-              {tip}
-            </Text>
+            <Ionicons name="checkmark-circle" size={16} color={theme.colors.success} />
+            <Text style={styles.tipText}>{tip}</Text>
           </View>
         ))}
       </View>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { logger } from "@pawfectmatch/core";
 import {
   View,
@@ -17,7 +17,7 @@ import type {
   Source,
 } from "react-native-fast-image";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 
 interface OptimizedImageProps {
   uri: string;
@@ -65,7 +65,8 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
     accessibilityLabel,
     ...restProps
   } = props;
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -100,7 +101,7 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
   } as Source;
 
   return (
-    <View style={StyleSheet.flatten([styles.container, containerStyle])}>
+    <View style={[styles.container, containerStyle]}>
       <FastImage
         {...restProps}
         source={imageSource}
@@ -117,11 +118,11 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
       {/* Loading Indicator */}
       {isLoading && showLoadingIndicator && (
         <View
-          style={StyleSheet.flatten([styles.overlay, styles.loadingOverlay])}
+          style={[styles.overlay, styles.loadingOverlay]}
         >
           <ActivityIndicator
             size="small"
-            color={colors.primary}
+            color={theme.colors.primary}
             accessible={true}
             accessibilityLabel="Loading image"
           />
@@ -131,11 +132,11 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
       {/* Error State */}
       {hasError && showErrorState && (
         <View
-          style={StyleSheet.flatten([
+          style={[
             styles.overlay,
             styles.errorOverlay,
-            { backgroundColor: colors.bgElevated },
-          ])}
+            { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+          ]}
           accessible={true}
           accessibilityLabel="Image failed to load"
           accessibilityRole="alert"
@@ -143,14 +144,14 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
           <Ionicons
             name={fallbackIcon}
             size={32}
-            color={colors.onSurface
+            color={theme.colors.onSurface}
             style={styles.errorIcon}
           />
           <Text
-            style={StyleSheet.flatten([
+            style={[
               styles.errorText,
-              { color: colors.onSurface},
-            ])}
+              { color: theme.colors.onSurface },
+            ]}
           >
             Image unavailable
           </Text>
@@ -211,7 +212,7 @@ export const getCacheSize = (): Promise<{
  */
 export function HighPriorityImage(
   props: Omit<OptimizedImageProps, "priority">,
-): JSX.Element {
+): React.JSX.Element {
   return <OptimizedImage {...props} priority={FastImage.priority.high} />;
 }
 
@@ -221,7 +222,7 @@ export function HighPriorityImage(
  */
 export function LowPriorityImage(
   props: Omit<OptimizedImageProps, "priority">,
-): JSX.Element {
+): React.JSX.Element {
   return <OptimizedImage {...props} priority={FastImage.priority.low} />;
 }
 
@@ -233,25 +234,26 @@ export function AvatarImage({
   size = 40,
   style,
   ...props
-}: OptimizedImageProps & { size?: number }): JSX.Element {
+}: OptimizedImageProps & { size?: number }): React.JSX.Element {
   return (
     <OptimizedImage
       {...props}
-      style={StyleSheet.flatten([
+      style={[
         {
           width: size,
           height: size,
           borderRadius: size / 2,
         },
         style,
-      ])}
+      ]}
       resizeMode={FastImage.resizeMode.cover}
       cache="web" // Use web cache for avatars as they might change
     />
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(theme: ReturnType<typeof useTheme>) {
+  return StyleSheet.create({
   container: {
     position: "relative",
   },
@@ -272,9 +274,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.1)",
   },
   errorOverlay: {
-    backgroundColor: "#f8f9fa",
     borderWidth: 1,
-    borderColor: "#e9ecef",
     borderStyle: "dashed",
   },
   errorIcon: {
@@ -282,10 +282,9 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   errorText: {
-    fontSize: 12,
+    fontSize: theme.typography.body.size * 0.75,
     textAlign: "center",
     opacity: 0.6,
   },
-});
-
-export default OptimizedImage;
+  });
+}

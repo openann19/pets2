@@ -1,3 +1,4 @@
+import React from "react";
 /**
  * Admin Billing Screen for Mobile
  * Comprehensive billing management and subscription analytics
@@ -18,18 +19,12 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme';
-import type { AppTheme } from '@mobile/src/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
-// Runtime theme has radius (not radii) and bgAlt/surfaceAlt in colors
-type RuntimeTheme = AppTheme & { 
-  radius: { xs: number; sm: number; md: number; lg: number; xl: number; '2xl': number; full: number; pill: number; none: number };
-  colors: AppTheme['colors'] & { bgAlt?: string; surfaceAlt?: string };
-};
 
 interface Subscription {
   id: string;
@@ -74,7 +69,6 @@ export default function AdminBillingScreen({
 }: AdminScreenProps<"AdminBilling">): React.JSX.Element {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const { colors } = theme;
   const { user: _user } = useAuthStore();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [filteredSubscriptions, setFilteredSubscriptions] = useState<
@@ -225,7 +219,7 @@ export default function AdminBillingScreen({
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: string): string => {
     switch (status) {
       case "active":
         return "checkmark-circle";
@@ -255,7 +249,7 @@ export default function AdminBillingScreen({
     }
   };
 
-  const formatCurrency = (amount: number, currency都是 = "USD") =>
+  const formatCurrency = (amount: number, currency: string = "USD") =>
     new Intl.NumberFormat("en-US", {
       style: "currency",
       currency,
@@ -272,19 +266,19 @@ export default function AdminBillingScreen({
 
     return (
       <View
-        style={StyleSheet.flatten([
+        style={[
           styles.subscriptionCard,
-          { backgroundColor: colors.surface },
-        ])}
+          { backgroundColor: theme.colors.surface },
+]}
       >
         <View style={styles.subscriptionHeader}>
           <View style={styles.subscriptionInfo}>
             <View style={styles.userAvatar}>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.userAvatarText,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+        ]}
               >
                 {item.userName
                   .split(" ")
@@ -294,38 +288,38 @@ export default function AdminBillingScreen({
             </View>
             <View style={styles.subscriptionDetails}>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.userName,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+        ]}
               >
                 {item.userName}
               </Text>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.userEmail,
-                  { color: colors.onMuted },
-                ])}
+                  { color: theme.colors.onMuted },
+        ]}
               >
                 {item.userEmail}
               </Text>
               <View style={styles.subscriptionMeta}>
                 <View
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.planBadge,
                     { backgroundColor: getPlanColor(item.planId) },
-                  ])}
+          ]}
                 >
                   <Text style={styles.planText}>{item.planName}</Text>
                 </View>
                 <View
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statusBadge,
                     { backgroundColor: getStatusColor(item.status) },
-                  ])}
+          ]}
                 >
                   <Ionicons
-                    name={getStatusIcon(item.status) as any}
+                    name={getStatusIcon(item.status)}
                     size={12}
                     color={theme.colors.onSurface}
                   />
@@ -340,10 +334,10 @@ export default function AdminBillingScreen({
           <View style={styles.subscriptionActions}>
             {item.cancelAtPeriodEnd ? (
               <TouchableOpacity
-                style={StyleSheet.flatten([
+                style={[
                   styles.actionButton,
                   { backgroundColor: theme.colors.success },
-                ])}
+        ]}
                  testID="AdminBillingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleReactivateSubscription(item.id)}
                 disabled={isActionLoading}
               >
@@ -355,10 +349,10 @@ export default function AdminBillingScreen({
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
-                style={StyleSheet.flatten([
+                style={[
                   styles.actionButton,
                   { backgroundColor: theme.colors.warning },
-                ])}
+        ]}
                  testID="AdminBillingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleCancelSubscription(item.id)}
                 disabled={isActionLoading}
               >
@@ -376,10 +370,10 @@ export default function AdminBillingScreen({
           <View style={styles.statItem}>
             <Ionicons name="cash" size={16} color={theme.colors.success} />
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.statText,
-                { color: colors.onMuted },
-              ])}
+                { color: theme.colors.onMuted },
+      ]}
             >
               {formatCurrency(item.amount, item.currency)}/{item.interval}
             </Text>
@@ -387,10 +381,10 @@ export default function AdminBillingScreen({
           <View style={styles.statItem}>
             <Ionicons name="calendar" size={16} color={theme.colors.info} />
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.statText,
-                { color: colors.onMuted },
-              ])}
+                { color: theme.colors.onMuted },
+      ]}
             >
               Next: {formatDate(item.currentPeriodEnd)}
             </Text>
@@ -398,10 +392,10 @@ export default function AdminBillingScreen({
           <View style={styles.statItem}>
             <Ionicons name="time" size={16} color={theme.colors.border} />
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.statText,
-                { color: colors.onMuted },
-              ])}
+                { color: theme.colors.onMuted },
+      ]}
             >
               Created: {formatDate(item.createdAt)}
             </Text>
@@ -414,18 +408,18 @@ export default function AdminBillingScreen({
   if (loading) {
     return (
       <SafeAreaView
-        style={StyleSheet.flatten([
+        style={[
           styles.container,
-          { backgroundColor: colors.bg },
-        ])}
+          { backgroundColor: theme.colors.bg },
+]}
       >
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={theme.colors.primary} />
           <Text
-            style={StyleSheet.flatten([
+            style={[
               styles.loadingText,
-              { color: colors.onSurface},
-            ])}
+              { color: theme.colors.onSurface },
+    ]}
           >
             Loading billing data...
           </Text>
@@ -436,10 +430,7 @@ export default function AdminBillingScreen({
 
   return (
     <SafeAreaView
-      style={StyleSheet.flatten([
-        styles.container,
-        { backgroundColor: colors.bg },
-      ])}
+      style={[styles.container, { backgroundColor: theme.colors.bg }]}
     >
       {/* Header */}
       <View style={styles.header}>
@@ -449,19 +440,19 @@ export default function AdminBillingScreen({
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
         </TouchableOpacity>
         <Text
-          style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
+          style={[styles.title, { color: theme.colors.onSurface }]}
         >
           Billing Management
         </Text>
         <View style={styles.headerActions}>
           <TouchableOpacity
-            style={StyleSheet.flatten([
+            style={[
               styles.refreshButton,
-              { backgroundColor: colors.primary },
-            ])}
+              { backgroundColor: theme.colors.primary },
+    ]}
              testID="AdminBillingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onRefresh}
             disabled={refreshing}
           >
@@ -474,117 +465,117 @@ export default function AdminBillingScreen({
       {metrics ? (
         <View style={styles.metricsContainer}>
           <Text
-            style={StyleSheet.flatten([
+            style={[
               styles.sectionTitle,
-              { color: colors.onSurface},
-            ])}
+              { color: theme.colors.onSurface },
+    ]}
           >
             Revenue Overview
           </Text>
           <View style={styles.metricsGrid}>
             <View
-              style={StyleSheet.flatten([
+              style={[
                 styles.metricCard,
-                { backgroundColor: colors.surface },
-              ])}
+                { backgroundColor: theme.colors.surface },
+      ]}
             >
               <View style={styles.metricHeader}>
                 <Ionicons name="cash" size={20} color={theme.colors.success} />
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.metricTitle,
-                    { color: colors.onSurface},
-                  ])}
+                    { color: theme.colors.onSurface },
+          ]}
                 >
                   Total Revenue
                 </Text>
               </View>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.metricValue,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+        ]}
               >
                 {formatCurrency(metrics.totalRevenue)}
               </Text>
             </View>
 
             <View
-              style={StyleSheet.flatten([
+              style={[
                 styles.metricCard,
-                { backgroundColor: colors.surface },
-              ])}
+                { backgroundColor: theme.colors.surface },
+      ]}
             >
               <View style={styles.metricHeader}>
                 <Ionicons name="trending-up" size={20} color={theme.colors.info} />
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.metricTitle,
-                    { color: colors.onSurface},
-                  ])}
+                    { color: theme.colors.onSurface },
+          ]}
                 >
                   MRR
                 </Text>
               </View>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.metricValue,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+        ]}
               >
                 {formatCurrency(metrics.monthlyRecurringRevenue)}
               </Text>
             </View>
 
             <View
-              style={StyleSheet.flatten([
+              style={[
                 styles.metricCard,
-                { backgroundColor: colors.surface },
-              ])}
+                { backgroundColor: theme.colors.surface },
+      ]}
             >
               <View style={styles.metricHeader}>
                 <Ionicons name="people" size={20} color={theme.colors.primary} />
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.metricTitle,
-                    { color: colors.onSurface},
-                  ])}
+                    { color: theme.colors.onSurface },
+          ]}
                 >
                   ARPU
                 </Text>
               </View>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.metricValue,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+        ]}
               >
                 {formatCurrency(metrics.averageRevenuePerUser)}
               </Text>
             </View>
 
             <View
-              style={StyleSheet.flatten([
+              style={[
                 styles.metricCard,
-                { backgroundColor: colors.surface },
-              ])}
+                { backgroundColor: theme.colors.surface },
+      ]}
             >
               <View style={styles.metricHeader}>
                 <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.metricTitle,
-                    { color: colors.onSurface},
-                  ])}
+                    { color: theme.colors.onSurface },
+          ]}
                 >
                   Active Subs
                 </Text>
               </View>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.metricValue,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+        ]}
               >
                 {metrics.activeSubscriptions}
               </Text>
@@ -593,70 +584,70 @@ export default function AdminBillingScreen({
 
           <View style={styles.secondaryMetrics}>
             <View
-              style={StyleSheet.flatten([
+              style={[
                 styles.secondaryMetricCard,
-                { backgroundColor: colors.surface },
-              ])}
+                { backgroundColor: theme.colors.surface },
+      ]}
             >
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.secondaryMetricLabel,
-                  { color: colors.onMuted },
-                ])}
+                  { color: theme.colors.onMuted },
+        ]}
               >
                 Conversion Rate
               </Text>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.secondaryMetricValue,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+        ]}
               >
                 {metrics.conversionRate.toFixed(1)}%
               </Text>
             </View>
             <View
-              style={StyleSheet.flatten([
+              style={[
                 styles.secondaryMetricCard,
-                { backgroundColor: colors.surface },
-              ])}
+                { backgroundColor: theme.colors.surface },
+      ]}
             >
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.secondaryMetricLabel,
-                  { color: colors.onMuted },
-                ])}
+                  { color: theme.colors.onMuted },
+        ]}
               >
                 Churn Rate
               </Text>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.secondaryMetricValue,
                   { color: theme.colors.danger },
-                ])}
+        ]}
               >
                 {metrics.churnRate.toFixed(1)}%
               </Text>
             </View>
             <View
-              style={StyleSheet.flatten([
+              style={[
                 styles.secondaryMetricCard,
-                { backgroundColor: colors.surface },
-              ])}
+                { backgroundColor: theme.colors.surface },
+      ]}
             >
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.secondaryMetricLabel,
-                  { color: colors.onMuted },
-                ])}
+                  { color: theme.colors.onMuted },
+        ]}
               >
                 Revenue Growth
               </Text>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.secondaryMetricValue,
                   { color: metrics.revenueGrowth > 0 ? theme.colors.success : theme.colors.danger },
-                ])}
+        ]}
               >
                 {metrics.revenueGrowth > 0 ? "+" : ""}
                 {metrics.revenueGrowth.toFixed(1)}%
@@ -670,10 +661,10 @@ export default function AdminBillingScreen({
       <View style={styles.filtersContainer}>
         <View style={styles.filterRow}>
           <Text
-            style={StyleSheet.flatten([
+            style={[
               styles.filterLabel,
-              { color: colors.onSurface},
-            ])}
+              { color: theme.colors.onSurface },
+    ]}
           >
             Status:
           </Text>
@@ -690,26 +681,26 @@ export default function AdminBillingScreen({
             ).map((status) => (
               <TouchableOpacity
                 key={status}
-                style={StyleSheet.flatten([
+                style={[
                   styles.filterButton,
                   selectedStatus === status && styles.filterButtonActive,
                   {
                     backgroundColor:
-                      selectedStatus === status ? colors.primary : colors.surface,
+                      selectedStatus === status ? theme.colors.primary : theme.colors.surface,
                   },
-                ])}
+        ]}
                  testID="AdminBillingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                   setSelectedStatus(status);
                 }}
               >
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.filterText,
                     {
                       color:
-                        selectedStatus === status ? theme.colors.onSurface : colors.onMuted
+                        selectedStatus === status ? theme.colors.onSurface : theme.colors.onMuted
                     },
-                  ])}
+          ]}
                 >
                   {status.charAt(0).toUpperCase() + status.slice(1)}
                 </Text>
@@ -720,10 +711,10 @@ export default function AdminBillingScreen({
 
         <View style={styles.filterRow}>
           <Text
-            style={StyleSheet.flatten([
+            style={[
               styles.filterLabel,
-              { color: colors.onSurface},
-            ])}
+              { color: theme.colors.onSurface },
+    ]}
           >
             Plan:
           </Text>
@@ -731,23 +722,23 @@ export default function AdminBillingScreen({
             {(["all", "basic", "premium", "ultimate"] as const).map((plan) => (
               <TouchableOpacity
                 key={plan}
-                style={StyleSheet.flatten([
+                style={[
                   styles.filterButton,
                   selectedPlan === plan && styles.filterButtonActive,
                   {
                     backgroundColor:
-                      selectedPlan === plan ? colors.primary : colors.surface,
+                      selectedPlan === plan ? theme.colors.primary : theme.colors.surface,
                   },
-                ])}
+        ]}
                  testID="AdminBillingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                   setSelectedPlan(plan);
                 }}
               >
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.filterText,
-                    { color: selectedPlan === plan ? theme.colors.onSurface : colors.onMuted},
-                  ])}
+                    { color: selectedPlan === plan ? theme.colors.onSurface : theme.colors.onMuted },
+          ]}
                 >
                   {plan.charAt(0).toUpperCase() + plan.slice(1)}
                 </Text>
@@ -766,7 +757,7 @@ export default function AdminBillingScreen({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={colors.primary}
+            tintColor={theme.colors.primary}
           />
         }
         contentContainerStyle={styles.listContainer}
@@ -777,25 +768,23 @@ export default function AdminBillingScreen({
 }
 
 function makeStyles(theme: AppTheme) {
-  const themeRuntime = theme as RuntimeTheme;
-  
-  return {
+  return StyleSheet.create({
     container: {
       flex: 1,
     },
     loadingContainer: {
       flex: 1,
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
+      justifyContent: "center",
+      alignItems: "center",
     },
     loadingText: {
       marginTop: theme.spacing.md,
-      fontSize: 16,
-      fontWeight: "500" as const,
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.body.weight,
     },
     header: {
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
+      flexDirection: "row",
+      alignItems: "center",
       paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.md,
       borderBottomWidth: 1,
@@ -806,84 +795,76 @@ function makeStyles(theme: AppTheme) {
       padding: theme.spacing.sm,
     },
     title: {
-      fontSize: 20,
-      fontWeight: "bold" as const,
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
       flex: 1,
       marginLeft: theme.spacing.sm,
     },
     headerActions: {
-      flexDirection: "row" as const,
+      flexDirection: "row",
       gap: theme.spacing.sm,
     },
     refreshButton: {
-      width: 40,
-      height: 40,
-      borderRadius: themeRuntime.radius.full,
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
+      width: theme.spacing['2xl'],
+      height: theme.spacing['2xl'],
+      borderRadius: theme.radii.full,
+      justifyContent: "center",
+      alignItems: "center",
     },
     metricsContainer: {
       paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.md,
     },
     sectionTitle: {
-      fontSize: 18,
-      fontWeight: "600" as const,
+      fontSize: theme.typography.body.size * 1.125,
+      fontWeight: theme.typography.h2.weight,
       marginBottom: theme.spacing.md,
     },
     metricsGrid: {
-        flexDirection: "row" as const,
-        flexWrap: "wrap" as const,
+        flexDirection: "row",
+        flexWrap: "wrap",
         gap: theme.spacing.md,
         marginBottom: theme.spacing.md,
       },
       metricCard: {
-        width: (SCREEN_WIDTH - 44) / 2,
-        borderRadius: themeRuntime.radius.md,
+        width: (SCREEN_WIDTH - theme.spacing.md * 2 - theme.spacing.sm) / 2,
+        borderRadius: theme.radii.md,
         padding: theme.spacing.md,
-        shadowColor: theme.colors.border,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
-        elevation: 5,
+        ...theme.shadows.elevation2,
       },
       metricHeader: {
-        flexDirection: "row" as const,
-        alignItems: "center" as const,
-        margin<｜place▁holder▁no▁24｜>: theme.spacing.sm,
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: theme.spacing.sm,
       },
       metricTitle: {
-        fontSize: 14,
-        fontWeight: "600" as const,
+        fontSize: theme.typography.body.size * 0.875,
+        fontWeight: theme.typography.h2.weight,
         marginLeft: theme.spacing.sm,
       },
       metricValue: {
-        fontSize: 20,
-        fontWeight: "bold" as const,
+        fontSize: theme.typography.h2.size * 0.875,
+        fontWeight: theme.typography.h1.weight,
       },
       secondaryMetrics: {
-        flexDirection: "row" as const,
+        flexDirection: "row",
         gap: theme.spacing.md,
       },
       secondaryMetricCard: {
         flex: 1,
-        borderRadius: themeRuntime.radius.md,
+        borderRadius: theme.radii.md,
         padding: theme.spacing.md,
-        alignItems: "center" as const,
-        shadowColor: theme.colors.border,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
-        elevation: 5,
+        alignItems: "center",
+        ...theme.shadows.elevation2,
       },
       secondaryMetricLabel: {
-        fontSize: 12,
-        fontWeight: "500" as const,
-        marginBottom: 4,
+        fontSize: theme.typography.body.size * 0.75,
+        fontWeight: theme.typography.body.weight,
+        marginBottom: theme.spacing.xs,
       },
       secondaryMetricValue: {
-        fontSize: 16,
-        fontWeight: "bold" as const,
+        fontSize: theme.typography.body.size,
+        fontWeight: theme.typography.h1.weight,
       },
       filtersContainer: {
         paddingHorizontal: theme.spacing.md,
@@ -892,134 +873,129 @@ function makeStyles(theme: AppTheme) {
         backgroundColor: theme.colors.surface,
       },
       filterRow: {
-        flexDirection: "row" as const,
-        alignItems: "center" as const,
+        flexDirection: "row",
+        alignItems: "center",
         gap: theme.spacing.md,
       },
       filterLabel: {
-        fontSize: 14,
-        fontWeight: "600" as const,
-        minWidth: 60,
+        fontSize: theme.typography.body.size * 0.875,
+        fontWeight: theme.typography.h2.weight,
+        minWidth: theme.spacing['3xl'],
       },
       filterButtons: {
-        flexDirection: "row" as const,
-        flexWrap: "wrap" as const,
+        flexDirection: "row",
+        flexWrap: "wrap",
         gap: theme.spacing.sm,
       },
       filterButton: {
         paddingHorizontal: theme.spacing.md,
-        paddingVertical: 6,
-        borderRadius: themeRuntime.radius.lg,
+        paddingVertical: theme.spacing.xs,
+        borderRadius: theme.radii.lg,
       },
       filterButtonActive: {
         // Active state handled by backgroundColor
       },
       filterText: {
-        fontSize: 12,
-        fontWeight: "600" as const,
+        fontSize: theme.typography.body.size * 0.75,
+        fontWeight: theme.typography.h2.weight,
       },
       listContainer: {
         paddingHorizontal: theme.spacing.md,
         paddingBottom: theme.spacing.md,
       },
-      subscriptionCard: {
-        borderRadius: themeRuntime.radius.md,
-        padding: theme.spacing.md,
-        marginBottom: theme.spacing.md,
-        shadowColor: theme.colors.border,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
-        elevation: 5,
-      },
-      subscriptionHeader: {
-        flexDirection: "row" as const,
-        alignItems: "center" as const,
-        justifyContent: "space-between" as const,
-        marginBottom: theme.spacing.md,
-      },
-      subscriptionInfo: {
-        flexDirection: "row" as const,
-        alignItems: "center" as const,
-        flex: 1,
-      },
-      userAvatar: {
-        width: 48,
-        height: 48,
-        borderRadius: themeRuntime.radius.full,
-        backgroundColor: theme.colors.border,
-        justifyContent: "center" as const,
-        alignItems: "center" as const,
-        marginRight: theme.spacing.md,
-      },
-      userAvatarText: {
-        fontSize: 16,
-        fontWeight: "bold" as const,
-      },
-      subscriptionDetails: {
-        flex: 1,
-      },
-      userName: {
-        fontSize: 16,
-        fontWeight: "600" as const,
-        marginBottom: 2,
-      },
-      userEmail: {
-        fontSize: 14,
-        marginBottom: 4,
-      },
-      subscriptionMeta: {
-        flexDirection: "row" as const,
-        gap: theme.spacing.sm,
-      },
-      planBadge: {
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        borderRadius: themeRuntime.radius.sm,
-      },
-      planText: {
-        color: theme.colors.onSurface,
-        fontSize: 10,
-        fontWeight: "600" as const,
-      },
-      statusBadge: {
-        flexDirection: "row" as const,
-        alignItems: "center" as const,
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        borderRadius: themeRuntime.radius.sm,
-        gap: 4,
-      },
-      statusText: {
-        color: theme.colors.onSurface,
-        fontSize: 10,
-        fontWeight: "600" as const,
-      },
-      subscriptionActions: {
-        flexDirection: "row" as const,
-        gap: theme.spacing.sm,
-      },
-      actionButton: {
-        width: 32,
-        height: 32,
-        borderRadius: themeRuntime.radius.full,
-        justifyContent: "center" as const,
-        alignItems: "center" as const,
-      },
-      subscriptionStats: {
-        flexDirection: "row" as const,
-        flexWrap: "wrap" as const,
-        gap: theme.spacing.md,
-      },
-      statItem: {
-        flexDirection: "row" as const,
-        alignItems: "center" as const,
-        gap: 4,
-      },
-      statText: {
-        fontSize: 12,
-        fontWeight: "500" as const,
-      },
-    };
-  }
+    subscriptionCard: {
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.md,
+      ...theme.shadows.elevation2,
+    },
+    subscriptionHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: theme.spacing.md,
+    },
+    subscriptionInfo: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+    },
+    userAvatar: {
+      width: theme.spacing['3xl'],
+      height: theme.spacing['3xl'],
+      borderRadius: theme.radii.full,
+      backgroundColor: theme.colors.border,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: theme.spacing.md,
+    },
+    userAvatarText: {
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h1.weight,
+    },
+    subscriptionDetails: {
+      flex: 1,
+    },
+    userName: {
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.xs / 2,
+    },
+    userEmail: {
+      fontSize: theme.typography.body.size * 0.875,
+      marginBottom: theme.spacing.xs,
+    },
+    subscriptionMeta: {
+      flexDirection: "row",
+      gap: theme.spacing.sm,
+    },
+    planBadge: {
+      paddingHorizontal: theme.spacing.xs,
+      paddingVertical: theme.spacing.xs / 2,
+      borderRadius: theme.radii.sm,
+    },
+    planText: {
+      color: theme.colors.onSurface,
+      fontSize: theme.typography.body.size * 0.625,
+      fontWeight: theme.typography.h2.weight,
+    },
+    statusBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: theme.spacing.xs,
+      paddingVertical: theme.spacing.xs / 2,
+      borderRadius: theme.radii.sm,
+      gap: theme.spacing.xs,
+    },
+    statusText: {
+      color: theme.colors.onSurface,
+      fontSize: theme.typography.body.size * 0.625,
+      fontWeight: theme.typography.h2.weight,
+    },
+    subscriptionActions: {
+      flexDirection: "row",
+      gap: theme.spacing.sm,
+    },
+    actionButton: {
+      width: theme.spacing.xl,
+      height: theme.spacing.xl,
+      borderRadius: theme.radii.full,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    subscriptionStats: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.md,
+    },
+    statItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+    },
+    statText: {
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.body.weight,
+    },
+  });
 }

@@ -6,76 +6,79 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
-function __makeStyles_styles(theme: AppTheme) {
+function createStyles(theme: AppTheme) {
+  const neutralFill = theme.palette.neutral?.[200] ?? theme.colors.surface;
+
   return StyleSheet.create({
-  petCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  petCardSelected: {
-    borderWidth: 2,
-    borderColor: "#007AFF",
-  },
-  petInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  petAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: "#E5E5E5",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  petAvatarText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  petDetails: {
-    flex: 1,
-  },
-  petName: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 2,
-  },
-  petBreed: {
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  petTags: {
-    flexDirection: "row",
-    gap: 6,
-  },
-  petTag: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  petTagText: {
-    color: "#FFFFFF",
-    fontSize: 10,
-    fontWeight: "600",
-  },
-  selectionIndicator: {
-    padding: 8,
-  },
-});
+    petCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: theme.spacing.md,
+      borderRadius: theme.radii.lg,
+      marginBottom: theme.spacing.md,
+      backgroundColor: theme.colors.surface,
+      ...theme.shadows.elevation2,
+    },
+    petCardSelected: {
+      borderWidth: 2,
+      borderColor: theme.colors.primary,
+    },
+    petInfo: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+      gap: theme.spacing.sm,
+    },
+    petAvatar: {
+      width: theme.spacing["3xl"],
+      height: theme.spacing["3xl"],
+      borderRadius: theme.radii.full,
+      backgroundColor: neutralFill,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: theme.spacing.sm,
+    },
+    petAvatarText: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: "700",
+      color: theme.colors.onSurface,
+    },
+    petDetails: {
+      flex: 1,
+      gap: theme.spacing.xs,
+    },
+    petName: {
+      fontSize: theme.typography.body.size,
+      fontWeight: "600",
+      color: theme.colors.onSurface,
+    },
+    petBreed: {
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onMuted,
+    },
+    petTags: {
+      flexDirection: "row",
+      gap: theme.spacing.xs,
+    },
+    petTag: {
+      paddingHorizontal: theme.spacing.xs,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.sm,
+      backgroundColor: theme.colors.primary,
+    },
+    petTagText: {
+      color: theme.colors.onPrimary,
+      fontSize: theme.typography.body.size,
+      fontWeight: "600",
+    },
+    selectionIndicator: {
+      padding: theme.spacing.xs,
+    },
+  });
 }
 
 
@@ -100,17 +103,13 @@ export const PetSelectionCard: React.FC<PetSelectionCardProps> = ({
   selectionType,
   onPress,
 }) => {
-    const theme = useTheme();
-    const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
-  const { colors, palette } = theme;
+  const theme = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+  const { colors } = theme;
 
   return (
     <TouchableOpacity
-      style={[
-        styles.petCard,
-        { backgroundColor: colors.surface },
-        isSelected && styles.petCardSelected,
-      ]}
+      style={[styles.petCard, isSelected && styles.petCardSelected]}
       onPress={onPress}
       testID="PetSelectionCard-button"
       accessibilityLabel="Interactive element"
@@ -118,27 +117,16 @@ export const PetSelectionCard: React.FC<PetSelectionCardProps> = ({
     >
       <View style={styles.petInfo}>
         <View style={styles.petAvatar}>
-          <Text
-            style={[styles.petAvatarText, { color: colors.onSurface }]
-          >
-            {pet.name.charAt(0)}
-          </Text>
+          <Text style={styles.petAvatarText}>{pet.name.charAt(0)}</Text>
         </View>
         <View style={styles.petDetails}>
-          <Text style={[styles.petName, { color: colors.onSurface }]>
-            {pet.name}
-          </Text>
-          <Text
-            style={[styles.petBreed, { color: colors.onMuted }]
-          >
+          <Text style={styles.petName}>{pet.name}</Text>
+          <Text style={styles.petBreed}>
             {pet.breed} • {pet.age} years old
           </Text>
           <View style={styles.petTags}>
             {pet.temperament.slice(0, 2).map((trait, index) => (
-              <View
-                key={index}
-                style={[styles.petTag, { backgroundColor: colors.primary }]
-              >
+              <View key={index} style={styles.petTag}>
                 <Text style={styles.petTagText}>{trait}</Text>
               </View>
             ))}

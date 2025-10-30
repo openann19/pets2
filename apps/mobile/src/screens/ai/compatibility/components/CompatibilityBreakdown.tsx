@@ -6,64 +6,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { useTheme } from "@mobile/src/theme";
-import type { AppTheme } from "@mobile/src/theme";
-import type { Theme } from "@mobile/src/theme";
-
-function __makeStyles_styles(theme: AppTheme) {
-  return StyleSheet.create({
-  resultCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  resultHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  resultTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-  breakdownList: {
-    gap: 12,
-  },
-  breakdownItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  breakdownLabel: {
-    fontSize: 14,
-    width: 80,
-  },
-  breakdownBar: {
-    flex: 1,
-    height: 8,
-    backgroundColor: "#E5E5E5",
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  breakdownFill: {
-    height: "100%",
-    borderRadius: 4,
-  },
-  breakdownScore: {
-    fontSize: 14,
-    fontWeight: "600",
-    width: 40,
-    textAlign: "right",
-  },
-});
-}
-
+import { useTheme } from "@/theme";
+import type { SemanticColors } from "@/theme/contracts";
+import { useTranslation } from 'react-i18next';
 
 interface Breakdown {
   temperament: number;
@@ -78,7 +23,7 @@ interface CompatibilityBreakdownProps {
   breakdown: Breakdown;
 }
 
-const getScoreColor = (score: number, colors: any) => {
+const getScoreColor = (score: number, colors: SemanticColors): string => {
   if (score >= 90) return colors.success;
   if (score >= 80) return colors.primary;
   if (score >= 70) return colors.warning;
@@ -88,23 +33,75 @@ const getScoreColor = (score: number, colors: any) => {
 export const CompatibilityBreakdown: React.FC<CompatibilityBreakdownProps> = ({
   breakdown,
 }) => {
-    const theme = useTheme();
-    const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
-  const { colors, palette } = theme;
+  const theme = useTheme();
+  const { t } = useTranslation('common');
+  const styles = useMemo(() => {
+    return StyleSheet.create({
+      resultCard: {
+        borderRadius: theme.radii.lg,
+        padding: theme.spacing.md,
+        marginBottom: theme.spacing.md,
+        backgroundColor: theme.colors.surface,
+        ...theme.shadows.elevation2,
+      },
+      resultHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: theme.spacing.sm,
+      },
+      resultTitle: {
+        fontSize: theme.typography.body.size,
+        fontWeight: theme.typography.h2.weight,
+        marginLeft: theme.spacing.xs,
+        color: theme.colors.onSurface,
+      },
+      breakdownList: {
+        gap: theme.spacing.sm,
+      },
+      breakdownItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: theme.spacing.sm,
+      },
+      breakdownLabel: {
+        fontSize: 14,
+        width: 80,
+        color: theme.colors.onMuted,
+      },
+      breakdownBar: {
+        flex: 1,
+        height: 8,
+        backgroundColor: theme.colors.border,
+        borderRadius: theme.radii.sm,
+        overflow: "hidden",
+      },
+      breakdownFill: {
+        height: "100%",
+        borderRadius: theme.radii.sm,
+      },
+      breakdownScore: {
+        fontSize: 14,
+        fontWeight: theme.typography.h2.weight,
+        width: 40,
+        textAlign: "right",
+        color: theme.colors.onSurface,
+      },
+    });
+  }, [theme]);
 
   return (
-    <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+    <View style={styles.resultCard}>
       <View style={styles.resultHeader}>
-        <Ionicons name="bar-chart" size={24} color={colors.primary} />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
-          Compatibility Breakdown
+        <Ionicons name="bar-chart" size={24} color={theme.colors.primary} />
+        <Text style={styles.resultTitle}>
+          {t('compatibility.breakdown_title', 'Compatibility Breakdown')}
         </Text>
       </View>
       <View style={styles.breakdownList}>
         {Object.entries(breakdown).map(([factor, score]) => (
           <View key={factor} style={styles.breakdownItem}>
-            <Text style={[styles.breakdownLabel, { color: colors.onMuted }]>
-              {factor.charAt(0).toUpperCase() + factor.slice(1)}
+            <Text style={styles.breakdownLabel}>
+              {t(`compatibility.factors.${factor}`)}
             </Text>
             <View style={styles.breakdownBar}>
               <View
@@ -112,13 +109,13 @@ export const CompatibilityBreakdown: React.FC<CompatibilityBreakdownProps> = ({
                   styles.breakdownFill,
                   {
                     width: `${score}%`,
-                    backgroundColor: getScoreColor(score, colors),
+                    backgroundColor: getScoreColor(score, theme.colors),
                   },
                 ]}
               />
             </View>
-            <Text style={[styles.breakdownScore, { color: colors.onSurface }]>
-              {score}%
+            <Text style={styles.breakdownScore}>
+              {t('compatibility.percentage', { score })}
             </Text>
           </View>
         ))}

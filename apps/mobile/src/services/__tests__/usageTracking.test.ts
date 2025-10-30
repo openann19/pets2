@@ -64,7 +64,8 @@ jest.mock('@pawfectmatch/core', () => ({
 
 const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
 const mockDimensions = Dimensions as jest.Mocked<typeof Dimensions>;
-const mockApi = require('../api').api as jest.Mocked<typeof require('../api').api>;
+const apiModule = require('../api');
+const mockApi = apiModule.api as jest.Mocked<typeof apiModule.api>;
 
 // Mock setInterval and clearInterval
 jest.useFakeTimers();

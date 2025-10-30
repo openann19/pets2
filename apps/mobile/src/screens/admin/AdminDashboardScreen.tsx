@@ -6,7 +6,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { logger, useAuthStore } from "@pawfectmatch/core";
 import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -19,10 +19,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme'";
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
-import { getExtendedColors, type ExtendedColors } from '../../theme/adapters';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface AdminStats {
@@ -67,11 +67,128 @@ interface SystemHealth {
   environment: string;
 }
 
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+      paddingHorizontal: theme.spacing.md,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    loadingText: {
+      marginTop: theme.spacing.md,
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.body.weight,
+    },
+    header: {
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.xs,
+    },
+    title: {
+      fontSize: theme.typography.h1.size,
+      fontWeight: theme.typography.h1.weight,
+      marginBottom: theme.spacing.xs,
+    },
+    subtitle: {
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.body.weight,
+    },
+    card: {
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.md,
+      ...theme.shadows.elevation2,
+    },
+    cardHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: theme.spacing.sm,
+    },
+    cardTitle: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h2.weight,
+      marginLeft: theme.spacing.xs,
+    },
+    healthInfo: {
+      gap: theme.spacing.xs,
+    },
+    healthStatus: {
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h1.weight,
+    },
+    healthDetails: {
+      fontSize: theme.typography.body.size * 0.875,
+    },
+    section: {
+      marginBottom: theme.spacing.lg,
+    },
+    sectionTitle: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.md,
+    },
+    quickActionsGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.sm,
+    },
+    quickActionCard: {
+      width: (SCREEN_WIDTH - theme.spacing.md * 2 - theme.spacing.sm) / 2,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      alignItems: "center",
+      ...theme.shadows.elevation2,
+    },
+    quickActionTitle: {
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
+      marginTop: theme.spacing.xs,
+      textAlign: "center",
+    },
+    statCard: {
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
+      ...theme.shadows.elevation2,
+    },
+    statHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: theme.spacing.xs,
+    },
+    statTitle: {
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
+      marginLeft: theme.spacing.xs,
+    },
+    statNumber: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
+      marginBottom: theme.spacing.xs,
+    },
+    statDetails: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.sm,
+    },
+    statDetail: {
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.body.weight,
+    },
+  });
+}
+
 export default function AdminDashboardScreen({
   navigation,
 }: AdminScreenProps<"AdminDashboard">): React.JSX.Element {
   const theme = useTheme();
-  const colors = theme.colors;
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { user: _user } = useAuthStore();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
@@ -106,7 +223,7 @@ export default function AdminDashboardScreen({
     setRefreshing(false);
   };
 
-  const handleQuickAction = (action: string): void => {
+  const handleQuickAction = useCallback((action: string): void => {
     if (Haptics) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
@@ -139,36 +256,30 @@ export default function AdminDashboardScreen({
       default:
         logger.info(`Quick action: ${action}`);
     }
-  };
+  }, [navigation]);
 
-  const getStatusColor = (status: string): string => {
+  const getStatusColor = useCallback((status: string): string => {
     switch (status) {
       case "healthy":
-        return colors.success;
+        return theme.colors.success;
       case "warning":
-        return colors.warning;
+        return theme.colors.warning;
       case "error":
         return theme.colors.danger;
       default:
-        return theme.palette.neutral[500];
+        return theme.colors.border;
     }
-  };
+  }, [theme]);
 
   if (loading) {
     return (
       <SafeAreaView
-        style={StyleSheet.flatten([
-          styles.container,
-          { backgroundColor: colors.background },
-        ])}
+        style={[styles.container, { backgroundColor: theme.colors.bg }]}
       >
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={theme.colors.primary} />
           <Text
-            style={StyleSheet.flatten([
-              styles.loadingText,
-              { color: colors.onSurface},
-            ])}
+            style={[styles.loadingText, { color: theme.colors.onSurface }]}
           >
             Loading dashboard...
           </Text>
@@ -179,10 +290,7 @@ export default function AdminDashboardScreen({
 
   return (
     <SafeAreaView
-      style={StyleSheet.flatten([
-        styles.container,
-        { backgroundColor: colors.background },
-      ])}
+      style={[styles.container, { backgroundColor: theme.colors.bg }]}
     >
       <ScrollView
         style={styles.scrollView}
@@ -190,22 +298,22 @@ export default function AdminDashboardScreen({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={colors.primary}
+            tintColor={theme.colors.primary}
           />
         }
       >
         {/* Header */}
         <View style={styles.header}>
           <Text
-            style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
+            style={[styles.title, { color: theme.colors.onSurface }]}
           >
             Admin Dashboard
           </Text>
           <Text
-            style={StyleSheet.flatten([
+            style={[
               styles.subtitle,
-              { color: colors.onSurfaceecondary },
-            ])}
+              { color: theme.colors.onMuted },
+            ]}
           >
             Welcome, {_user?.firstName} {_user?.lastName}
           </Text>
@@ -214,10 +322,10 @@ export default function AdminDashboardScreen({
         {/* System Health */}
         {systemHealth ? (
           <View
-            style={StyleSheet.flatten([
+            style={[
               styles.card,
-              { backgroundColor: colors.card },
-            ])}
+              { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+            ]}
           >
             <View style={styles.cardHeader}>
               <Ionicons
@@ -226,45 +334,45 @@ export default function AdminDashboardScreen({
                 color={getStatusColor(systemHealth.status)}
               />
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.cardTitle,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 System Status
               </Text>
             </View>
             <View style={styles.healthInfo}>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.healthStatus,
                   { color: getStatusColor(systemHealth.status) },
-                ])}
+                ]}
               >
                 {systemHealth.status.toUpperCase()}
               </Text>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.healthDetails,
-                  { color: colors.onSurfaceecondary },
-                ])}
+                  { color: theme.colors.onMuted },
+                ]}
               >
                 Uptime: {Math.floor(systemHealth.uptime / 3600)}h{" "}
                 {Math.floor((systemHealth.uptime % 3600) / 60)}m
               </Text>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.healthDetails,
-                  { color: colors.onSurfaceecondary },
-                ])}
+                  { color: theme.colors.onMuted },
+                ]}
               >
                 Database: {systemHealth.database.status}
               </Text>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.healthDetails,
-                  { color: colors.onSurfaceecondary },
-                ])}
+                  { color: theme.colors.onMuted },
+                ]}
               >
                 Memory: {systemHealth.memory.used}MB /{" "}
                 {systemHealth.memory.total}MB
@@ -276,170 +384,169 @@ export default function AdminDashboardScreen({
         {/* Quick Actions */}
         <View style={styles.section}>
           <Text
-            style={StyleSheet.flatten([
+            style={[
               styles.sectionTitle,
-              { color: colors.onSurface},
-            ])}
+              { color: theme.colors.onSurface },
+            ]}
           >
             Quick Actions
           </Text>
           <View style={styles.quickActionsGrid}>
             <TouchableOpacity
-              style={StyleSheet.flatten([
+              style={[
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("analytics");
               }}
             >
-              <Ionicons name="analytics-outline" size={32} color={colors.info} />
+              <Ionicons name="analytics-outline" size={32} color={theme.colors.info} />
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.quickActionTitle,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 Analytics
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
+              style={[
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("users");
               }}
             >
               <Ionicons name="people-outline" size={32} color={theme.colors.primary} />
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.quickActionTitle,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 Users
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
+              style={[
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("security");
               }}
             >
               <Ionicons name="shield-outline" size={32} color={theme.colors.danger} />
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.quickActionTitle,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 Security
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
+              style={[
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("billing");
               }}
             >
-              <Ionicons name="card-outline" size={32} color={colors.success} />
+              <Ionicons name="card-outline" size={32} color={theme.colors.success} />
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.quickActionTitle,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 Billing
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
+              style={[
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("chats");
               }}
             >
-              ?{" "}
-              <Ionicons name="chatbubbles-outline" size={32} color={colors.warning} />
+              <Ionicons name="chatbubbles-outline" size={32} color={theme.colors.warning} />
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.quickActionTitle,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 Chats
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
+              style={[
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("uploads");
               }}
             >
-              <Ionicons name="cloud-upload-outline" size={32} color="#06B6D4" />
+              <Ionicons name="cloud-upload-outline" size={32} color={theme.colors.info} />
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.quickActionTitle,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 Uploads
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
+              style={[
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("verifications");
               }}
             >
-              <Ionicons name="shield-checkmark-outline" size={32} color="#10B981" />
+              <Ionicons name="shield-checkmark-outline" size={32} color={theme.colors.success} />
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.quickActionTitle,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 Verifications
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
+              style={[
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("services");
               }}
             >
-              <Ionicons name="server-outline" size={32} color="#8b5cf6" />
+              <Ionicons name="server-outline" size={32} color={theme.colors.primary} />
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.quickActionTitle,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 Services
               </Text>
@@ -451,70 +558,70 @@ export default function AdminDashboardScreen({
         {stats ? (
           <View style={styles.section}>
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.sectionTitle,
-                { color: colors.onSurface},
-              ])}
+                { color: theme.colors.onSurface },
+              ]}
             >
               Platform Statistics
             </Text>
 
             {/* Users Stats */}
             <View
-              style={StyleSheet.flatten([
+              style={[
                 styles.statCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="people" size={24} color={colors.info} />
+                <Ionicons name="people" size={24} color={theme.colors.info} />
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statTitle,
-                    { color: colors.onSurface},
-                  ])}
+                    { color: theme.colors.onSurface },
+                  ]}
                 >
                   Users
                 </Text>
               </View>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.statNumber,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 {stats.users.total.toLocaleString()}
               </Text>
               <View style={styles.statDetails}>
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
-                  ])}
+                    { color: theme.colors.onMuted },
+                  ]}
                 >
                   Active: {stats.users.active}
                 </Text>
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
-                  ])}
+                    { color: theme.colors.onMuted },
+                  ]}
                 >
                   Verified: {stats.users.verified}
                 </Text>
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statDetail,
-                    { color: colors.warning },
-                  ])}
+                    { color: theme.colors.warning },
+                  ]}
                 >
                   Suspended: {stats.users.suspended}
                 </Text>
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statDetail,
                     { color: theme.colors.danger },
-                  ])}
+                  ]}
                 >
                   Banned: {stats.users.banned}
                 </Text>
@@ -523,44 +630,44 @@ export default function AdminDashboardScreen({
 
             {/* Pets Stats */}
             <View
-              style={StyleSheet.flatten([
+              style={[
                 styles.statCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="paw" size={24} color={colors.success} />
+                <Ionicons name="paw" size={24} color={theme.colors.success} />
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statTitle,
-                    { color: colors.onSurface},
-                  ])}
+                    { color: theme.colors.onSurface },
+                  ]}
                 >
                   Pets
                 </Text>
               </View>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.statNumber,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 {stats.pets.total.toLocaleString()}
               </Text>
               <View style={styles.statDetails}>
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
-                  ])}
+                    { color: theme.colors.onMuted },
+                  ]}
                 >
                   Active: {stats.pets.active}
                 </Text>
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statDetail,
-                    { color: colors.success },
-                  ])}
+                    { color: theme.colors.success },
+                  ]}
                 >
                   +{stats.pets.recent24h} today
                 </Text>
@@ -569,52 +676,52 @@ export default function AdminDashboardScreen({
 
             {/* Matches Stats */}
             <View
-              style={StyleSheet.flatten([
+              style={[
                 styles.statCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="heart" size={24} color={colors.primary} />
+                <Ionicons name="heart" size={24} color={theme.colors.primary} />
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statTitle,
-                    { color: colors.onSurface},
-                  ])}
+                    { color: theme.colors.onSurface },
+                  ]}
                 >
                   Matches
                 </Text>
               </View>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.statNumber,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 {stats.matches.total.toLocaleString()}
               </Text>
               <View style={styles.statDetails}>
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
-                  ])}
+                    { color: theme.colors.onMuted },
+                  ]}
                 >
                   Active: {stats.matches.active}
                 </Text>
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statDetail,
                     { color: theme.colors.danger },
-                  ])}
+                  ]}
                 >
                   Blocked: {stats.matches.blocked}
                 </Text>
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statDetail,
-                    { color: colors.success },
-                  ])}
+                    { color: theme.colors.success },
+                  ]}
                 >
                   +{stats.matches.recent24h} today
                 </Text>
@@ -623,44 +730,44 @@ export default function AdminDashboardScreen({
 
             {/* Messages Stats */}
             <View
-              style={StyleSheet.flatten([
+              style={[
                 styles.statCard,
-                { backgroundColor: colors.card },
-              ])}
+                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+              ]}
             >
               <View style={styles.statHeader}>
                 <Ionicons name="chatbubble" size={24} color={theme.colors.primary} />
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statTitle,
-                    { color: colors.onSurface},
-                  ])}
+                    { color: theme.colors.onSurface },
+                  ]}
                 >
                   Messages
                 </Text>
               </View>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.statNumber,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 {stats.messages.total.toLocaleString()}
               </Text>
               <View style={styles.statDetails}>
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
-                  ])}
+                    { color: theme.colors.onMuted },
+                  ]}
                 >
                   Deleted: {stats.messages.deleted}
                 </Text>
                 <Text
-                  style={StyleSheet.flatten([
+                  style={[
                     styles.statDetail,
-                    { color: colors.success },
-                  ])}
+                    { color: theme.colors.success },
+                  ]}
                 >
                   +{stats.messages.recent24h} today
                 </Text>
@@ -673,135 +780,3 @@ export default function AdminDashboardScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  header: {
-    paddingVertical: 24,
-    paddingHorizontal: 4,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  card: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-  healthInfo: {
-    gap: 4,
-  },
-  healthStatus: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  healthDetails: {
-    fontSize: 14,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 16,
-  },
-  quickActionsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  quickActionCard: {
-    width: (SCREEN_WIDTH - 44) / 2,
-    borderRadius: 12,
-    padding: 16,
-    alignItems: "center",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  quickActionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginTop: 8,
-    textAlign: "center",
-  },
-  statCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  statHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  statTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  statDetails: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  statDetail: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-});

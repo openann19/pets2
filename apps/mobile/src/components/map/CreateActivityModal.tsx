@@ -60,7 +60,7 @@ export default function CreateActivityModal({ visible, onClose, pets, activityTy
           </TouchableOpacity>
         ))}
 
-        <Text style={[s.subHeader, { marginTop: 12 }]>Activity</Text>
+        <Text style={[s.subHeader, { marginTop: 12 }]}>Activity</Text>
         {activityTypes.map((t) => {
           const id = typeof t === 'string' ? t : t.id;
           const label = typeof t === 'string' ? t : `${t.emoji ?? ''} ${t.label}`;

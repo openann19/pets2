@@ -110,7 +110,7 @@ export default function MorphingContextMenu({
     >
       {/* Backdrop */}
       <Pressable style={styles.backdrop} onPress={onClose}>
-        <Animated.View style={[styles.backdropFill, { opacity: alpha.value }] />
+        <Animated.View style={[styles.backdropFill, { opacity: alpha.value }]} />
       </Pressable>
 
       {/* Shell morphing from bubble */}
@@ -145,7 +145,7 @@ export default function MorphingContextMenu({
             },
           ]}
         >
-          <Text style={[styles.title, { color: theme.sub }]>Message options</Text>
+          <Text style={[styles.title, { color: theme.sub }]}>Message options</Text>
 
           {actions.map((a) => (
             <Pressable

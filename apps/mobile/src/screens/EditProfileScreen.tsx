@@ -27,7 +27,7 @@ interface EditProfileScreenProps {
   };
 }
 
-function EditProfileScreen({ navigation }: EditProfileScreenProps): JSX.Element {
+function EditProfileScreen({ navigation }: EditProfileScreenProps): React.JSX.Element {
   const theme = useTheme();
   const { t } = useTranslation('common');
   const [showPhotoEditor, setShowPhotoEditor] = useState(false);

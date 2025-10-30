@@ -100,7 +100,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
           backgroundColor: "rgba(255,255,255,0.1)",
           borderWidth: 1,
           borderColor: "rgba(255,255,255,0.2)",
-          shadowColor: theme.colors.onSurface
+          shadowColor: theme.colors.onSurface,
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.37,
           shadowRadius: 32,

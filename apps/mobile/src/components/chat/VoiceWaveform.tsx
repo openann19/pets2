@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Animated,
 } from 'react-native';
+import { useTheme } from '@/theme';
 
 export interface VoiceWaveformProps {
   waveform: number[];
@@ -30,10 +31,12 @@ export function VoiceWaveform({
   isPlaying,
   progress,
   duration,
-  color = Theme.colors.primary[500],
+  color,
   height = 40,
   onSeek,
 }: VoiceWaveformProps): JSX.Element {
+  const theme = useTheme();
+  const defaultColor = color ?? theme.colors.primary;
   const [containerWidth, setContainerWidth] = useState(0);
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
   const animatedValues = useRef(
@@ -114,7 +117,7 @@ export function VoiceWaveform({
             width: BAR_WIDTH,
             marginRight: BAR_GAP,
             maxHeight: height,
-            backgroundColor: color,
+            backgroundColor: defaultColor,
             opacity: isPlayed ? 1 : 0.5,
           },
           animatedStyle,
@@ -137,7 +140,7 @@ export function VoiceWaveform({
   return (
     <View style={styles.container}>
       <View
-        style={[styles.waveform, { height }]
+        style={[styles.waveform, { height }]}
         onLayout={(event) => {
           setContainerWidth(event.nativeEvent.layout.width);
         }}
@@ -169,16 +172,18 @@ export function CompactVoiceWaveform({
   isPlaying,
   progress,
   duration,
-  color = Theme.colors.primary[500],
+  color,
   onSeek,
 }: VoiceWaveformProps): JSX.Element {
+  const theme = useTheme();
+  const defaultColor = color ?? theme.colors.primary;
   return (
     <VoiceWaveform
       waveform={waveform}
       isPlaying={isPlaying}
       progress={progress}
       duration={duration}
-      color={color}
+      color={defaultColor}
       height={24}
       onSeek={onSeek}
     />

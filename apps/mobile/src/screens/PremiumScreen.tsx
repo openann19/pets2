@@ -136,11 +136,11 @@ function makeStyles(theme: AppTheme) {
       borderBottomColor: theme.colors.border,
     },
     placeholder: {
-      width: 60,
+      width: theme.spacing.xl,
     },
     headerTitle: {
-      fontSize: 20,
-      fontWeight: "700" as const,
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
       color: theme.colors.onSurface,
     },
     content: {
@@ -167,8 +167,8 @@ function makeStyles(theme: AppTheme) {
     },
     subscribeButtonText: {
       color: theme.colors.onPrimary,
-      fontSize: 18,
-      fontWeight: "700" as const,
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h1.weight,
     },
   };
 }

@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Modal,
   StyleSheet,
@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useTheme } from "@mobile/src/theme";
+import type { AppTheme } from "@/theme";
+import { useTheme } from "@/theme";
 
 interface SwipeFiltersProps {
   visible: boolean;
@@ -28,7 +29,8 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
   filters,
   onFiltersChange,
 }) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
 
   return (
     <Modal
@@ -38,38 +40,38 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
       onRequestClose={onClose}
     >
       <View
-        style={StyleSheet.flatten([
+        style={[
           styles.modalContainer,
-          { backgroundColor: colors.bg },
-        ])}
+          { backgroundColor: theme.colors.bg },
+        ]}
       >
         <View
-          style={StyleSheet.flatten([
+          style={[
             styles.modalContent,
-            { backgroundColor: colors.bgElevated },
-          ])}
+            { backgroundColor: theme.colors.surface },
+          ]}
         >
           <View style={styles.modalHeader}>
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.modalTitle,
-                { color: colors.onSurface},
-              ])}
+                { color: theme.colors.onSurface },
+              ]}
             >
               Filter Preferences
             </Text>
             <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={24} color={colors.onSurface />
+              <Ionicons name="close" size={24} color={theme.colors.onSurface} />
             </TouchableOpacity>
           </View>
 
           {/* Species Filter */}
           <View style={styles.filterSection}>
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.sectionTitle,
-                { color: colors.onSurface},
-              ])}
+                { color: theme.colors.onSurface },
+              ]}
             >
               Species
             </Text>
@@ -78,16 +80,16 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
                 (species) => (
                   <TouchableOpacity
                     key={species}
-                    style={StyleSheet.flatten([
+                    style={[
                       styles.speciesButton,
                       {
                         backgroundColor: filters.species.includes(species)
-                          ? colors.primary
-                          : colors.bgElevated,
-                        borderColor: colors.border,
+                          ? theme.colors.primary
+                          : theme.colors.surface,
+                        borderColor: theme.colors.border,
                       },
-                    ])}
-                    onPress={() => {
+                    ]}
+                    onPress={() =>{
                       const updated = filters.species.includes(species)
                         ? filters.species.filter((s) => s !== species)
                         : [...filters.species, species];
@@ -95,14 +97,14 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
                     }}
                   >
                     <Text
-                      style={StyleSheet.flatten([
+                      style={[
                         styles.speciesText,
                         {
                           color: filters.species.includes(species)
-                            ? "white"
-                            : colors.onSurface
+                            ? theme.colors.onPrimary
+                            : theme.colors.onSurface
                         },
-                      ])}
+                      ]}
                     >
                       {species.charAt(0).toUpperCase() + species.slice(1)}
                     </Text>
@@ -115,10 +117,10 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
           {/* Age Range Filter */}
           <View style={styles.filterSection}>
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.sectionTitle,
-                { color: colors.onSurface},
-              ])}
+                { color: theme.colors.onSurface },
+              ]}
             >
               Age Range
             </Text>
@@ -129,10 +131,10 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
           <View style={styles.filterSection}>
             <View style={styles.switchRow}>
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.switchLabel,
-                  { color: colors.onSurface},
-                ])}
+                  { color: theme.colors.onSurface },
+                ]}
               >
                 Verified Profiles Only
               </Text>
@@ -141,20 +143,20 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
                 onValueChange={(value) => {
                   onFiltersChange({ ...filters, onlyVerified: value });
                 }}
-                trackColor={{ false: colors.border, true: colors.primary }}
-                thumbColor={filters.onlyVerified ? "white" : "#f4f3f4"}
+                trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+                thumbColor={filters.onlyVerified ? theme.colors.onPrimary : theme.colors.surface}
               />
             </View>
           </View>
 
           <TouchableOpacity
-            style={StyleSheet.flatten([
+            style={[
               styles.applyButton,
-              { backgroundColor: colors.primary },
-            ])}
+              { backgroundColor: theme.colors.primary },
+            ]}
             onPress={onClose}
           >
-            <Text style={styles.applyButtonText}>Apply Filters</Text>
+            <Text style={[styles.applyButtonText, { color: theme.colors.onPrimary }]}>Apply Filters</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -162,69 +164,70 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  modalContent: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-    minHeight: "50%",
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  filterSection: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 10,
-  },
-  speciesGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-  speciesButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    borderWidth: 1,
-  },
-  speciesText: {
-    fontSize: 14,
-  },
-  switchRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  switchLabel: {
-    fontSize: 16,
-  },
-  applyButton: {
-    padding: 15,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  applyButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    modalContainer: {
+      flex: 1,
+      justifyContent: "flex-end",
+      backgroundColor: "rgba(0,0,0,0.5)",
+    },
+    modalContent: {
+      borderTopLeftRadius: theme.radii['2xl'],
+      borderTopRightRadius: theme.radii['2xl'],
+      padding: theme.spacing['2xl'],
+      minHeight: "50%",
+    },
+    modalHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: theme.spacing['2xl'],
+    },
+    modalTitle: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
+    },
+    filterSection: {
+      marginBottom: theme.spacing['2xl'],
+    },
+    sectionTitle: {
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.md,
+    },
+    speciesGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.md,
+    },
+    speciesButton: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.lg,
+      borderRadius: theme.radii.full,
+      borderWidth: 1,
+    },
+    speciesText: {
+      fontSize: theme.typography.body.size * 0.875,
+    },
+    switchRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    switchLabel: {
+      fontSize: theme.typography.body.size,
+    },
+    applyButton: {
+      padding: theme.spacing.md,
+      borderRadius: theme.radii.lg,
+      alignItems: "center",
+      marginTop: theme.spacing.md,
+    },
+    applyButtonText: {
+      fontWeight: theme.typography.h1.weight,
+      fontSize: theme.typography.body.size,
+    },
+  });
+}
 
 export default SwipeFilters;

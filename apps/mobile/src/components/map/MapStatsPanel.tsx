@@ -18,7 +18,7 @@ export function MapStatsPanel({
   opacity,
 }: MapStatsPanelProps): React.JSX.Element {
   return (
-    <Animated.View style={[styles.statsContainer, { opacity }]>
+    <Animated.View style={[styles.statsContainer, { opacity }]}>
       <View style={styles.statItem}>
         <Text style={styles.statValue}>{stats.activePets}</Text>
         <Text style={styles.statLabel}>Active</Text>
@@ -47,10 +47,10 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[0]",
+    color: "#000000", // TODO: Use theme colors
   },
   statLabel: {
     fontSize: 12,
-    color: "Theme.colors.neutral[300]",
+    color: "#666666", // TODO: Use theme colors
   },
 });

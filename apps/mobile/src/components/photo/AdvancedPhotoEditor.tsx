@@ -16,7 +16,8 @@ import Animated, {
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import * as Haptics from 'expo-haptics';
 
-import { useTheme } from '@mobile/src/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { usePhotoEditor } from '../../hooks/usePhotoEditor';
 import { PhotoAdjustmentSlider } from './PhotoAdjustmentSlider';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
@@ -300,11 +301,11 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
   const styles = useMemo(() => ({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.onSurface.primary,
+      backgroundColor: theme.colors.bg,
     },
     previewContainer: {
       height: PREVIEW_HEIGHT,
-      backgroundColor: theme.colors.onSurface.primary,
+      backgroundColor: theme.colors.bg,
     },
     previewHeader: {
       flexDirection: 'row',
@@ -319,12 +320,12 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     headerTitle: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: theme.colors.bg.primary,
+      color: theme.colors.onSurface,
     },
     saveButton: {
       fontSize: 16,
       fontWeight: '600',
-      color: theme.colors.bg.primary,
+      color: theme.colors.onSurface,
     },
     tabBar: {
       flexDirection: 'row',
@@ -342,7 +343,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     },
     tabText: {
       fontSize: 14,
-      color: theme.colors.onSurface.secondary,
+      color: theme.colors.onMuted,
     },
     activeTabText: {
       color: theme.colors.primary,
@@ -359,16 +360,16 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     loadingText: {
       marginTop: 12,
       fontSize: 16,
-      color: theme.colors.onSurface.secondary,
+      color: theme.colors.onMuted,
     },
     modalOverlay: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0,0,0,0.5)',
+      backgroundColor: theme.colors.overlay || 'rgba(0,0,0,0.5)',
     },
     modalContent: {
-      backgroundColor: theme.colors.bg.elevated,
+      backgroundColor: theme.colors.surface,
       margin: 20,
       borderRadius: 16,
       padding: 20,
@@ -379,13 +380,13 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
       fontWeight: 'bold',
       marginBottom: 12,
       textAlign: 'center',
-      color: theme.colors.onSurface.primary,
+      color: theme.colors.onSurface,
     },
     modalMessage: {
       fontSize: 16,
       marginBottom: 20,
       textAlign: 'center',
-      color: theme.colors.onSurface.secondary,
+      color: theme.colors.onMuted,
     },
     modalButtonContainer: {
       flexDirection: 'row',
@@ -398,7 +399,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
       minWidth: 100,
     },
     modalButtonSecondary: {
-      backgroundColor: theme.colors.bg.secondary,
+      backgroundColor: theme.colors.surface,
     },
     modalButtonPrimary: {
       backgroundColor: theme.colors.primary,
@@ -406,7 +407,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     modalButtonText: {
       fontSize: 16,
       fontWeight: '600',
-      color: theme.colors.bg.primary,
+      color: theme.colors.onSurface,
     },
   }), [theme]);
 
@@ -416,7 +417,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
       <SafeAreaView style={styles.previewContainer}>
         <View style={styles.previewHeader}>
           <BouncePressable onPress={onCancel} style={styles.headerButton} accessibilityRole="button" accessibilityLabel="Close editor">
-            <Ionicons name="close" size={24} color="white" />
+            <Ionicons name="close" size={24} color={theme.colors.onSurface} />
           </BouncePressable>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -441,7 +442,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
           <BouncePressable
             onPress={handleSave}
             disabled={isProcessing}
-            style={[styles.headerButton, isProcessing && { opacity: 0.5 }]
+            style={[styles.headerButton, isProcessing && { opacity: 0.5 }]}
             accessibilityRole="button"
             accessibilityLabel="Save edits"
           >
@@ -464,19 +465,19 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               <BouncePressable
                 onPress={handleAutoCrop}
                 style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 8, paddingHorizontal: 12,
-                         borderRadius: 10, backgroundColor: "rgba(255,255,255,0.08)", borderWidth: 1, borderColor: "rgba(255,255,255,0.15)" }}
+                         borderRadius: 10, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, opacity: 0.8 }}
                 accessibilityLabel="Auto-crop with face detection">
                 <Ionicons name="sparkles" size={18} color={theme.colors.primary} />
-                <Text style={{ color: theme.colors.bg.primary, fontWeight: "700", fontSize: 13 }}>Auto</Text>
+                <Text style={{ color: theme.colors.onMuted, fontWeight: "700", fontSize: 13 }}>Auto</Text>
               </BouncePressable>
 
               <BouncePressable
                 onPress={() => { setShowGuides((s) => !s); Haptics.selectionAsync(); }}
                 style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 8, paddingHorizontal: 12,
-                         borderRadius: 10, backgroundColor: "rgba(255,255,255,0.08)", borderWidth: 1, borderColor: "rgba(255,255,255,0.15)" }}
+                         borderRadius: 10, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, opacity: 0.8 }}
                 accessibilityLabel="Toggle story mode guides">
-                <Ionicons name="eye" size={18} color={showGuides ? theme.colors.primary : theme.colors.bg.primary} />
-                <Text style={{ color: showGuides ? theme.colors.primary : theme.colors.bg.primary, fontWeight: "700", fontSize: 13 }}>Guides</Text>
+                <Ionicons name="eye" size={18} color={showGuides ? theme.colors.primary : theme.colors.onMuted} />
+                <Text style={{ color: showGuides ? theme.colors.primary : theme.colors.onMuted, fontWeight: "700", fontSize: 13 }}>Guides</Text>
               </BouncePressable>
             </View>
 
@@ -528,18 +529,18 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 <View style={StyleSheet.absoluteFill} pointerEvents="none">
                   {showGrid === 'thirds' && (
                     <>
-                      <View style={[styles.gridLine, { left: '33.33%' }] />
-                      <View style={[styles.gridLine, { left: '66.66%' }] />
-                      <View style={[styles.gridLine, { top: '33.33%', left: 0, width: '100%', height: 1 }] />
-                      <View style={[styles.gridLine, { top: '66.66%', left: 0, width: '100%', height: 1 }] />
+                      <View style={[styles.gridLine, { left: '33.33%' }]} />
+                      <View style={[styles.gridLine, { left: '66.66%' }]} />
+                      <View style={[styles.gridLine, { top: '33.33%', left: 0, width: '100%', height: 1 }]} />
+                      <View style={[styles.gridLine, { top: '66.66%', left: 0, width: '100%', height: 1 }]} />
                     </>
                   )}
                   {showGrid === 'golden' && (
                     <>
-                      <View style={[styles.gridLine, { left: '38.2%' }] />
-                      <View style={[styles.gridLine, { left: '61.8%' }] />
-                      <View style={[styles.gridLine, { top: '38.2%', left: 0, width: '100%', height: 1 }] />
-                      <View style={[styles.gridLine, { top: '61.8%', left: 0, width: '100%', height: 1 }] />
+                      <View style={[styles.gridLine, { left: '38.2%' }]} />
+                      <View style={[styles.gridLine, { left: '61.8%' }]} />
+                      <View style={[styles.gridLine, { top: '38.2%', left: 0, width: '100%', height: 1 }]} />
+                      <View style={[styles.gridLine, { top: '61.8%', left: 0, width: '100%', height: 1 }]} />
                     </>
                   )}
                 </View>
@@ -558,7 +559,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === 'adjust' }}
           >
-            <Ionicons name="options" size={24} color={activeTab === 'adjust' ? theme.colors.primary : theme.colors.bg.primary} />
+            <Ionicons name="options" size={24} color={activeTab === 'adjust' ? theme.colors.primary : theme.colors.onMuted} />
             <Text style={[styles.tabText, activeTab === 'adjust' && styles.activeTabText]}>Adjust</Text>
           </BouncePressable>
         </Animated.View>
@@ -570,7 +571,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === 'filters' }}
           >
-            <Ionicons name="sparkles" size={24} color={activeTab === 'filters' ? theme.colors.primary : theme.colors.bg.primary} />
+            <Ionicons name="sparkles" size={24} color={activeTab === 'filters' ? theme.colors.primary : theme.colors.onMuted} />
             <Text style={[styles.tabText, activeTab === 'filters' && styles.activeTabText]}>Filters</Text>
           </BouncePressable>
         </Animated.View>
@@ -582,7 +583,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === 'crop' }}
           >
-            <Ionicons name="crop" size={24} color={activeTab === 'crop' ? theme.colors.primary : theme.colors.bg.primary} />
+            <Ionicons name="crop" size={24} color={activeTab === 'crop' ? theme.colors.primary : theme.colors.onMuted} />
             <Text style={[styles.tabText, activeTab === 'crop' && styles.activeTabText]}>Crop</Text>
           </BouncePressable>
         </Animated.View>
@@ -596,36 +597,36 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                 <BouncePressable onPress={autoEnhance} style={[styles.quickAction, quickMode === 'auto' && styles.quickActionActive]}>
-                  <Ionicons name="sparkles" size={16} color={quickMode === 'auto' ? theme.colors.primary : theme.colors.bg.primary} />
+                  <Ionicons name="sparkles" size={16} color={quickMode === 'auto' ? theme.colors.primary : theme.colors.onMuted} />
                   <Text style={[styles.quickActionText, quickMode === 'auto' && { color: theme.colors.primary }]}>Auto</Text>
                 </BouncePressable>
                 <BouncePressable onPress={() => { batchApply('portrait'); }} style={[styles.quickAction, quickMode === 'portrait' && styles.quickActionActive]}>
-                  <Ionicons name="person" size={16} color={quickMode === 'portrait' ? theme.colors.primary : theme.colors.bg.primary} />
+                  <Ionicons name="person" size={16} color={quickMode === 'portrait' ? theme.colors.primary : theme.colors.onMuted} />
                   <Text style={[styles.quickActionText, quickMode === 'portrait' && { color: theme.colors.primary }]}>Portrait</Text>
                 </BouncePressable>
                 <BouncePressable onPress={() => { batchApply('vivid'); }} style={[styles.quickAction, quickMode === 'vivid' && styles.quickActionActive]}>
-                  <Ionicons name="flash" size={16} color={quickMode === 'vivid' ? theme.colors.primary : theme.colors.bg.primary} />
+                  <Ionicons name="flash" size={16} color={quickMode === 'vivid' ? theme.colors.primary : theme.colors.onMuted} />
                   <Text style={[styles.quickActionText, quickMode === 'vivid' && { color: theme.colors.primary }]}>Vivid+</Text>
                 </BouncePressable>
                 <BouncePressable onPress={() => { batchApply('dramatic'); }} style={[styles.quickAction, quickMode === 'dramatic' && styles.quickActionActive]}>
-                  <Ionicons name="contrast" size={16} color={quickMode === 'dramatic' ? theme.colors.primary : theme.colors.bg.primary} />
+                  <Ionicons name="contrast" size={16} color={quickMode === 'dramatic' ? theme.colors.primary : theme.colors.onMuted} />
                   <Text style={[styles.quickActionText, quickMode === 'dramatic' && { color: theme.colors.primary }]}>Dramatic</Text>
                 </BouncePressable>
               </ScrollView>
               <BouncePressable onPress={() => { setShowGrid((g) => g === 'off' ? 'thirds' : g === 'thirds' ? 'golden' : 'off'); }} style={{ padding: 10 }}>
-                <Ionicons name="grid" size={20} color={showGrid === 'off' ? theme.colors.bg.primary : theme.colors.primary} />
+                <Ionicons name="grid" size={20} color={showGrid === 'off' ? theme.colors.onMuted : theme.colors.primary} />
               </BouncePressable>
             </View>
 
             {/* Transform Controls */}
             <View style={styles.controlRow}>
               <BouncePressable onPress={rotateLeft} style={styles.controlButton} accessibilityLabel="Rotate left">
-                <Ionicons name="refresh" size={26} color="white" style={{ transform: [{ scaleX: -1 }] }} />
+                <Ionicons name="refresh" size={26} color={theme.colors.onSurface} style={{ transform: [{ scaleX: -1 }] }} />
                 <Text style={styles.controlLabel}>Rotate L</Text>
               </BouncePressable>
 
               <BouncePressable onPress={rotateRight} style={styles.controlButton} accessibilityLabel="Rotate right">
-                <Ionicons name="refresh" size={26} color="white" />
+                <Ionicons name="refresh" size={26} color={theme.colors.onSurface} />
                 <Text style={styles.controlLabel}>Rotate R</Text>
               </BouncePressable>
 
@@ -714,7 +715,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               <BouncePressable
                 onPress={handleUltraExport}
                 disabled={ultraExporting}
-                style={[styles.ultraExportButton, ultraExporting && { opacity: 0.6 }]
+                style={[styles.ultraExportButton, ultraExporting && { opacity: 0.6 }]}
                 accessibilityRole="button"
                 accessibilityLabel="Export ultra variants for social media"
               >
@@ -725,7 +726,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               </BouncePressable>
               {ultraExporting && (
                 <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: `${ultraProgress}%` }] />
+                  <View style={[styles.progressFill, { width: `${ultraProgress}%` }]} />
                 </View>
               )}
             </View>
@@ -741,7 +742,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               <Animated.View key={preset.name} entering={FadeInDown.delay(50 * (index + 1)).springify()} exiting={FadeOutUp}>
                 <BouncePressable style={styles.filterCard} onPress={() => { applyFilterPreset(preset); }} accessibilityLabel={`Apply ${preset.name} filter`}>
                   <BlurView intensity={20} style={styles.filterIcon}>
-                    <Ionicons name={preset.icon} size={28} color="white" />
+                    <Ionicons name={preset.icon} size={28} color={theme.colors.onSurface} />
                   </BlurView>
                   <Text style={styles.filterName}>{preset.name}</Text>
                 </BouncePressable>
@@ -780,7 +781,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Export Complete</Text>
               <BouncePressable onPress={() => { setShowUltraModal(false); }} style={{ padding: 8 }}>
-                <Ionicons name="close" size={24} color="white" />
+                <Ionicons name="close" size={24} color={theme.colors.onSurface} />
               </BouncePressable>
             </View>
 

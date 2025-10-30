@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import {
   Alert,
   FlatList,
@@ -34,8 +34,9 @@ interface BlockedUsersScreenProps {
 
 function BlockedUsersScreen({
   navigation,
-}: BlockedUsersScreenProps): JSX.Element {
-  const { colors } = useTheme();
+}: BlockedUsersScreenProps): React.JSX.Element {
+  const theme = useTheme();
+  const { colors } = theme;
   const {
     blockedUsers,
     loading,
@@ -44,6 +45,157 @@ function BlockedUsersScreen({
     refreshBlockedUsers,
     unblockUser,
   } = useBlockedUsersScreen();
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    safeArea: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+    },
+    backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      overflow: "hidden",
+    },
+    backButtonBlur: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: colors.onPrimary,
+    },
+    headerSpacer: {
+      width: 40,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: 20,
+    },
+    infoCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: "rgba(255,255,255,0.1)",
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 20,
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.2)",
+    },
+    infoText: {
+      flex: 1,
+      marginLeft: 12,
+      fontSize: 14,
+      color: colors.onPrimary,
+      lineHeight: 20,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    loadingText: {
+      color: colors.onPrimary,
+      fontSize: 16,
+    },
+    listContainer: {
+      paddingBottom: 20,
+    },
+    userCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: "rgba(255,255,255,0.1)",
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 12,
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.2)",
+    },
+    userInfo: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    avatar: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: 16,
+    },
+    avatarText: {
+      color: colors.onPrimary,
+      fontSize: 18,
+      fontWeight: "bold",
+    },
+    userDetails: {
+      flex: 1,
+    },
+    userName: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: colors.onPrimary,
+      marginBottom: 4,
+    },
+    userEmail: {
+      fontSize: 14,
+      color: colors.onPrimary,
+      marginBottom: 2,
+    },
+    blockedDate: {
+      fontSize: 12,
+      color: colors.onMuted,
+      marginBottom: 2,
+    },
+    blockReason: {
+      fontSize: 12,
+      color: colors.onMuted,
+      fontStyle: "italic",
+    },
+    unblockButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+      gap: 6,
+    },
+    unblockButtonText: {
+      color: colors.onPrimary,
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 60,
+    },
+    emptyText: {
+      color: colors.onPrimary,
+      fontSize: 18,
+      fontWeight: "600",
+      marginTop: 16,
+      marginBottom: 8,
+    },
+    emptySubtext: {
+      color: colors.onMuted,
+      fontSize: 14,
+      textAlign: "center",
+    },
+  }), [colors]);
 
   useEffect(() => {
     void loadBlockedUsers();
@@ -190,8 +342,8 @@ function BlockedUsersScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color={theme.colors.status.info
-           } }/>
+              color={colors.info}
+            />
             <Text style={styles.infoText}>
               Blocked users cannot contact you or view your profile. You can
               unblock them at any time.
@@ -235,152 +387,5 @@ function BlockedUsersScreen({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-  backButtonBlur: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
-  },
-  headerSpacer: {
-    width: 40,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  infoCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-  },
-  infoText: {
-    flex: 1,
-    marginLeft: 12,
-    fontSize: 14,
-    color: "white",
-    lineHeight: 20,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    color: "white",
-    fontSize: 16,
-  },
-  listContainer: {
-    paddingBottom: 20,
-  },
-  userCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-  },
-  userInfo: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 16,
-  },
-  avatarText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  userDetails: {
-    flex: 1,
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  userEmail: {
-    fontSize: 14,
-    marginBottom: 2,
-  },
-  blockedDate: {
-    fontSize: 12,
-    marginBottom: 2,
-  },
-  blockReason: {
-    fontSize: 12,
-    fontStyle: "italic",
-  },
-  unblockButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    gap: 6,
-  },
-  unblockButtonText: {
-    color: "white",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 60,
-  },
-  emptyText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "600",
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  emptySubtext: {
-    color: "rgba(255,255,255,0.7)",
-    fontSize: 14,
-    textAlign: "center",
-  },
-});
 
 export default BlockedUsersScreen;

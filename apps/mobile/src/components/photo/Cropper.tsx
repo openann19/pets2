@@ -210,7 +210,7 @@ export const Cropper = forwardRef<CropperHandle, Props>(
             <View style={styles.gridRow} />
             <View style={styles.gridRow} />
             <View style={styles.gridRow} />
-            <View style={[StyleSheet.absoluteFill, { flexDirection: "row" }]>
+            <View style={[StyleSheet.absoluteFill, { flexDirection: "row" }]}>
               <View style={styles.gridCol} />
               <View style={styles.gridCol} />
               <View style={styles.gridCol} />
@@ -225,9 +225,9 @@ export const Cropper = forwardRef<CropperHandle, Props>(
       {showStoryGuides && (
         <View pointerEvents="none" style={StyleSheet.absoluteFill}>
           {/* Top safe band */}
-          <View style={[styles.storyBand, { top: cropTop + 64 }] />
+          <View style={[styles.storyBand, { top: cropTop + 64 }]} />
           {/* Bottom safe band */}
-          <View style={[styles.storyBand, { bottom: (containerH - cropBottom) + 120 }] />
+          <View style={[styles.storyBand, { bottom: (containerH - cropBottom) + 120 }]} />
         </View>
       )}
 

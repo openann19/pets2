@@ -103,7 +103,7 @@ export function SwipeGestureHintOverlay({
         <View style={styles.header}>
           <Text style={styles.title}>Swipe to Connect</Text>
           <Pressable onPress={handleDismiss}>
-            <Ionicons name="close" size={24} color={Theme.colors.neutral[600}]}} />
+            <Ionicons name="close" size={24} color={Theme.colors.neutral[600]} />
           </Pressable>
         </View>
 
@@ -111,7 +111,7 @@ export function SwipeGestureHintOverlay({
           {/* Like */}
           <View style={styles.hintItem}>
             <View style={[styles.iconContainer, { backgroundColor: Theme.colors.status.success }]}>
-              <Ionicons name="heart" size={24} color={Theme.colors.neutral[0}]}} />
+              <Ionicons name="heart" size={24} color={Theme.colors.neutral[0]} />
             </View>
             <Text style={styles.hintText}>
               Swipe <Text style={styles.bold}>RIGHT</Text> to like
@@ -121,7 +121,7 @@ export function SwipeGestureHintOverlay({
           {/* Pass */}
           <View style={styles.hintItem}>
             <View style={[styles.iconContainer, { backgroundColor: Theme.colors.status.error }]}>
-              <Ionicons name="close" size={24} color={Theme.colors.neutral[0}]}} />
+              <Ionicons name="close" size={24} color={Theme.colors.neutral[0]} />
             </View>
             <Text style={styles.hintText}>
               Swipe <Text style={styles.bold}>LEFT</Text> to pass
@@ -130,8 +130,8 @@ export function SwipeGestureHintOverlay({
 
           {/* Super Like */}
           <View style={styles.hintItem}>
-            <View style={[styles.iconContainer, { backgroundColor: Theme.colors.status.warning }]}>
-              <Ionicons name="star" size={24} color={Theme.colors.neutral[0}]}} />
+            <View style={[styles.iconContainer, { backgroundColor: Theme.colors.accent[500] }]}>
+              <Ionicons name="star" size={24} color={Theme.colors.neutral[0]} />
             </View>
             <Text style={styles.hintText}>
               Swipe <Text style={styles.bold}>UP</Text> to super like
@@ -141,7 +141,7 @@ export function SwipeGestureHintOverlay({
           {/* Double Tap */}
           <View style={styles.hintItem}>
             <View style={[styles.iconContainer, { backgroundColor: Theme.colors.primary[500] }]}>
-              <Ionicons name="heart-circle" size={24} color={Theme.colors.neutral[0}]}} />
+              <Ionicons name="heart-circle" size={24} color={Theme.colors.neutral[0]} />
             </View>
             <Text style={styles.hintText}>
               <Text style={styles.bold}>DOUBLE TAP</Text> to like instantly

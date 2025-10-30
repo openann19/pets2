@@ -33,7 +33,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(function Input(
       backgroundColor: editable ? colors.surface : colors.surfaceMuted,
       borderColor,
       borderRadius: radii.md,
-      color: colors.onSurface
+      color: colors.onSurface,
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.sm,
     },

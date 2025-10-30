@@ -70,7 +70,7 @@ export const MapSkeletonState: React.FC = () => {
         <ShimmerPlaceholder
           height={320}
           borderRadius={mapRadius}
-          style={[styles.mapSkeleton, { borderRadius: mapRadius }]
+          style={[styles.mapSkeleton, { borderRadius: mapRadius }]}
         />
         <View style={styles.statRow}>
           <ShimmerPlaceholder style={styles.statItem} />

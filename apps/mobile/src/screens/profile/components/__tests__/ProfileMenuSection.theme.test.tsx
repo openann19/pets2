@@ -8,7 +8,7 @@ import { useTheme } from "@/theme";
 
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { createTheme } from '../../../../theme/rnTokens';
+import { createTheme } from '@/theme';
 
 describe('ProfileMenuSection - Theme Integration', () => {
   describe('Menu Item Colors', () => {
@@ -57,7 +57,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
           borderRadius: 12,
           padding: 16,
           marginBottom: 12,
-          shadowColor: theme.colors.onSurface
+          shadowColor: theme.colors.onSurface,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 4,
@@ -85,8 +85,8 @@ describe('ProfileMenuSection - Theme Integration', () => {
       });
 
       expect(styles.menuItem.backgroundColor).toBe(theme.colors.bg);
-      expect(styles.menuItem.shadowColor).toBe(theme.colors.onSurface;
-      expect(styles.menuText.color).toBe(theme.colors.onSurface;
+      expect(styles.menuItem.shadowColor).toBe(theme.colors.onSurface);
+      expect(styles.menuText.color).toBe(theme.colors.onSurface);
     });
   });
 
@@ -104,8 +104,8 @@ describe('ProfileMenuSection - Theme Integration', () => {
     it('should use text for text color', () => {
       const theme = createTheme('light');
       
-      expect(theme.colors.onSurface.toBe('#111827');
-      expect(typeof theme.colors.onSurface.toBe('string');
+      expect(theme.colors.onSurface).toBe('#111827');
+      expect(typeof theme.colors.onSurface).toBe('string');
     });
   });
 
@@ -114,11 +114,11 @@ describe('ProfileMenuSection - Theme Integration', () => {
       const theme = createTheme('light');
       
       // Shadow color should be from theme
-      expect(theme.colors.onSurface.toBeTruthy();
+      expect(theme.colors.onSurface).toBeTruthy();
       
       const styles = StyleSheet.create({
         menuItem: {
-          shadowColor: theme.colors.onSurface
+          shadowColor: theme.colors.onSurface,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 4,
@@ -126,7 +126,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
         },
       });
 
-      expect(styles.menuItem.shadowColor).toBe(theme.colors.onSurface;
+      expect(styles.menuItem.shadowColor).toBe(theme.colors.onSurface);
       expect(styles.menuItem.shadowOpacity).toBe(0.1);
     });
   });
@@ -209,13 +209,13 @@ describe('ProfileMenuSection - Theme Integration', () => {
       
       // Light theme: white background, dark text
       expect(lighttheme.colors.bg).toBe('#ffffff');
-      expect(lighttheme.colors.onSurface.toBe('#111827');
+      expect(lighttheme.colors.onSurface).toBe('#111827');
       
       const darkTheme = createTheme('dark');
       
       // Dark theme: dark background, light text
       expect(darktheme.colors.bg).toBe('#0a0a0a');
-      expect(darktheme.colors.onSurface.toBe('#ffffff');
+      expect(darktheme.colors.onSurface).toBe('#ffffff');
     });
   });
 

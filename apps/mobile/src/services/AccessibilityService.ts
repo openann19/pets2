@@ -3,8 +3,9 @@
  * Provides WCAG 2.1 AA compliant accessibility features
  */
 import { AccessibilityInfo, Platform } from 'react-native';
+import React from 'react';
 import type { AppTheme } from '@/theme';
-import { createTheme } from '@/theme/rnTokens';
+import { getLightTheme } from '@/theme/resolve';
 import type { NeutralStep } from '@/theme/contracts';
 
 import { logger } from './logger';
@@ -45,9 +46,14 @@ const FALLBACK_SCHEME: AccessibleColorScheme = {
 
 const MIN_CONTRAST_RATIO = 4.5;
 
-class AccessibilityService {
+type RGB = [number, number, number];
+
+type AccessibilitySubscription = { remove: () => void };
+
+export class AccessibilityService {
   private static instance: AccessibilityService | undefined;
   private themeResolver: () => AppTheme;
+  private subscriptions: AccessibilitySubscription[] = [];
   private config: AccessibilityConfig = {
     isScreenReaderEnabled: false,
     isBoldTextEnabled: false,
@@ -59,7 +65,8 @@ class AccessibilityService {
   };
 
   private constructor() {
-    this.themeResolver = () => createTheme('light') as unknown as AppTheme;
+    // Use getLightTheme from resolve.ts to get actual AppTheme (no cast needed)
+    this.themeResolver = () => getLightTheme();
     void this.initializeAccessibility();
   }
 
@@ -109,45 +116,84 @@ class AccessibilityService {
       // Set up change listeners
       this.setupAccessibilityListeners();
     } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
       logger.warn('Failed to initialize accessibility', {
-        error: error instanceof Error ? error : new Error(String(error)),
+        component: 'AccessibilityService',
+        context: 'initializeAccessibility',
+        error: err,
       });
     }
   }
 
   /**
    * Setup accessibility change listeners
+   * Stores subscriptions for cleanup to prevent memory leaks
    */
   private setupAccessibilityListeners(): void {
-    AccessibilityInfo.addEventListener('screenReaderChanged', (enabled) => {
-      this.config.isScreenReaderEnabled = enabled;
-      this.notifyListeners();
-    });
+    // Clear any existing subscriptions before setting up new ones
+    this.cleanup();
 
-    AccessibilityInfo.addEventListener('boldTextChanged', (enabled) => {
-      this.config.isBoldTextEnabled = enabled;
-      this.notifyListeners();
-    });
+    this.subscriptions.push(
+      AccessibilityInfo.addEventListener('screenReaderChanged', (enabled) => {
+        this.config.isScreenReaderEnabled = enabled;
+        this.notifyListeners();
+      }),
+    );
 
-    AccessibilityInfo.addEventListener('grayscaleChanged', (enabled) => {
-      this.config.isGrayscaleEnabled = enabled;
-      this.notifyListeners();
-    });
+    this.subscriptions.push(
+      AccessibilityInfo.addEventListener('boldTextChanged', (enabled) => {
+        this.config.isBoldTextEnabled = enabled;
+        this.notifyListeners();
+      }),
+    );
 
-    AccessibilityInfo.addEventListener('invertColorsChanged', (enabled) => {
-      this.config.isInvertColorsEnabled = enabled;
-      this.notifyListeners();
-    });
+    this.subscriptions.push(
+      AccessibilityInfo.addEventListener('grayscaleChanged', (enabled) => {
+        this.config.isGrayscaleEnabled = enabled;
+        this.notifyListeners();
+      }),
+    );
 
-    AccessibilityInfo.addEventListener('reduceMotionChanged', (enabled) => {
-      this.config.isReduceMotionEnabled = enabled;
-      this.notifyListeners();
-    });
+    this.subscriptions.push(
+      AccessibilityInfo.addEventListener('invertColorsChanged', (enabled) => {
+        this.config.isInvertColorsEnabled = enabled;
+        this.notifyListeners();
+      }),
+    );
 
-    AccessibilityInfo.addEventListener('reduceTransparencyChanged', (enabled) => {
-      this.config.isReduceTransparencyEnabled = enabled;
-      this.notifyListeners();
+    this.subscriptions.push(
+      AccessibilityInfo.addEventListener('reduceMotionChanged', (enabled) => {
+        this.config.isReduceMotionEnabled = enabled;
+        this.notifyListeners();
+      }),
+    );
+
+    this.subscriptions.push(
+      AccessibilityInfo.addEventListener('reduceTransparencyChanged', (enabled) => {
+        this.config.isReduceTransparencyEnabled = enabled;
+        this.notifyListeners();
+      }),
+    );
+  }
+
+  /**
+   * Cleanup all accessibility event listeners
+   * Prevents memory leaks across app reloads
+   */
+  cleanup(): void {
+    this.subscriptions.forEach((subscription) => {
+      try {
+        subscription.remove();
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.warn('Failed to remove accessibility listener subscription', {
+          component: 'AccessibilityService',
+          context: 'cleanup',
+          error: err,
+        });
+      }
     });
+    this.subscriptions = [];
   }
 
   /**
@@ -199,8 +245,12 @@ class AccessibilityService {
     try {
       AccessibilityInfo.announceForAccessibility(message);
     } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
       logger.warn('Failed to announce for accessibility', {
-        error: error instanceof Error ? error : new Error(String(error)),
+        component: 'AccessibilityService',
+        context: 'announceForAccessibility',
+        message,
+        error: err,
       });
     }
   }
@@ -208,16 +258,16 @@ class AccessibilityService {
   /**
    * Set accessibility focus
    */
-  setAccessibilityFocus(ref: unknown): void {
+  setAccessibilityFocus(ref: React.RefObject<any> | null): void {
     try {
       if (Platform.OS === 'ios') {
         // iOS specific focus
         // React Native AccessibilityInfo doesn't expose setAccessibilityFocus
         // This would require a native module implementation
-        if (typeof ref === 'object' && ref !== null) {
+        if (ref?.current) {
           // Attempt to set focus if native module is available
           const accessibilityModule = AccessibilityInfo as AccessibilityInfo & {
-            setAccessibilityFocus?: (ref: unknown) => void;
+            setAccessibilityFocus?: (ref: React.RefObject<any>) => void;
           };
           if (accessibilityModule.setAccessibilityFocus) {
             accessibilityModule.setAccessibilityFocus(ref);
@@ -228,8 +278,12 @@ class AccessibilityService {
         // Would need additional implementation
       }
     } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
       logger.warn('Failed to set accessibility focus', {
-        error: error instanceof Error ? error : new Error(String(error)),
+        component: 'AccessibilityService',
+        context: 'setAccessibilityFocus',
+        platform: Platform.OS,
+        error: err,
       });
     }
   }
@@ -254,7 +308,16 @@ class AccessibilityService {
       accessibilityExtraExtraExtraLarge: 2.0,
     };
 
-    return multipliers[this.config.preferredContentSizeCategory] ?? 1.0;
+    const multiplier = multipliers[this.config.preferredContentSizeCategory] ?? 1.0;
+
+    logger.info('Calculated text size multiplier', {
+      component: 'AccessibilityService',
+      context: 'getTextSizeMultiplier',
+      category: this.config.preferredContentSizeCategory,
+      multiplier,
+    });
+
+    return multiplier;
   }
 
   /**
@@ -278,27 +341,53 @@ class AccessibilityService {
 
   /**
    * Get accessibility-friendly color scheme
+   * Uses structured logging for theme resolution failures
    */
   getAccessibleColorScheme(): AccessibleColorScheme {
-    const theme = this.themeResolver();
-    const colors = theme?.colors ?? {};
-    const palette = theme?.palette as
-      | {
-          neutral?: Partial<Record<NeutralStep | number, string>>;
-          brand?: Partial<Record<NeutralStep | number, string>>;
-        }
-      | undefined;
+    let theme: AppTheme | undefined;
+    let themeResolutionError: Error | undefined;
 
-    const neutral: Partial<Record<NeutralStep | number, string>> = palette?.neutral ?? {};
-    const brand: Partial<Record<NeutralStep | number, string>> = palette?.brand ?? {};
+    try {
+      theme = this.themeResolver();
+      logger.debug('Successfully resolved theme for accessible colors', {
+        component: 'AccessibilityService',
+        context: 'getAccessibleColorScheme',
+        themeScheme: theme.scheme,
+        isDark: theme.isDark,
+        hasPalette: !!theme.palette,
+        spacingKeys: Object.keys(theme.spacing),
+      });
+    } catch (error: unknown) {
+      themeResolutionError = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to resolve theme for accessible colors', {
+        component: 'AccessibilityService',
+        context: 'getAccessibleColorScheme',
+        error: themeResolutionError,
+        fallback: 'using fallback colors',
+        impact: 'accessibility color scheme may not match app theme',
+      });
+    }
 
-    const getNeutral = (step: NeutralStep | number, fallback: string): string => {
-      const candidate = neutral?.[step];
+    if (!theme) {
+      logger.warn('No theme available, using fallback color scheme', {
+        component: 'AccessibilityService',
+        context: 'getAccessibleColorScheme',
+        reason: themeResolutionError?.message || 'theme resolver failed',
+        fallbackColors: FALLBACK_SCHEME,
+      });
+      return FALLBACK_SCHEME;
+    }
+
+    const colors = theme.colors;
+    const palette = theme.palette;
+
+    const getNeutral = (step: NeutralStep, fallback: string): string => {
+      const candidate = palette.neutral?.[step];
       return typeof candidate === 'string' && candidate.length > 0 ? candidate : fallback;
     };
 
-    const getBrand = (step: NeutralStep | number, fallback: string): string => {
-      const candidate = brand?.[step];
+    const getBrand = (step: NeutralStep, fallback: string): string => {
+      const candidate = palette.brand?.[step];
       return typeof candidate === 'string' && candidate.length > 0 ? candidate : fallback;
     };
 
@@ -361,38 +450,34 @@ class AccessibilityService {
       try {
         listener(config);
       } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
         logger.warn('Error notifying accessibility listener', {
-          error: error instanceof Error ? error : new Error(String(error)),
+          component: 'AccessibilityService',
+          context: 'notifyListeners',
+          listenerCount: this.listeners.length,
+          error: err,
         });
       }
     });
   }
-}
 
-// Export singleton instance
-export const accessibilityService = AccessibilityService.getInstance();
-
-// Helpers for contrast calculations
-type RGB = [number, number, number];
-
-namespace AccessibilityService {
-  export function parseColor(value: string): RGB | null {
+  private static parseColor(value: string): RGB | null {
     const normalized = value.trim();
 
     if (normalized.startsWith('#')) {
       const hex = normalized.slice(1);
       if (hex.length === 3) {
-        const r = parseInt(hex[0] + hex[0], 16);
-        const g = parseInt(hex[1] + hex[1], 16);
-        const b = parseInt(hex[2] + hex[2], 16);
-        return Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b) ? null : [r, g, b];
+        const r = Number.parseInt(hex[0] + hex[0], 16);
+        const g = Number.parseInt(hex[1] + hex[1], 16);
+        const b = Number.parseInt(hex[2] + hex[2], 16);
+        return Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b) ? null : [r, g, b] as RGB;
       }
 
       if (hex.length === 6) {
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
-        return Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b) ? null : [r, g, b];
+        const r = Number.parseInt(hex.substring(0, 2), 16);
+        const g = Number.parseInt(hex.substring(2, 4), 16);
+        const b = Number.parseInt(hex.substring(4, 6), 16);
+        return Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b) ? null : [r, g, b] as RGB;
       }
     }
 
@@ -405,21 +490,21 @@ namespace AccessibilityService {
 
       if (parsed.length === 3 && parsed.every((part) => Number.isFinite(part))) {
         const [red, green, blue] = parsed as [number, number, number];
-        return [red, green, blue];
+        return [red, green, blue] as RGB;
       }
     }
 
     return null;
   }
 
-  export function contrastRatio(foreground: RGB, background: RGB): number {
-    const fgLuminance = relativeLuminance(foreground);
-    const bgLuminance = relativeLuminance(background);
+  private static contrastRatio(foreground: RGB, background: RGB): number {
+    const fgLuminance = AccessibilityService.relativeLuminance(foreground);
+    const bgLuminance = AccessibilityService.relativeLuminance(background);
     const [lighter, darker] = fgLuminance > bgLuminance ? [fgLuminance, bgLuminance] : [bgLuminance, fgLuminance];
     return (lighter + 0.05) / (darker + 0.05);
   }
 
-  function relativeLuminance([red, green, blue]: RGB): number {
+  private static relativeLuminance([red, green, blue]: RGB): number {
     const [r, g, b] = ([red, green, blue] as const).map((channel) => {
       const normalized = channel / 255;
       return normalized <= 0.03928
@@ -430,6 +515,9 @@ namespace AccessibilityService {
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
 }
+
+// Export singleton instance
+export const accessibilityService = AccessibilityService.getInstance();
 
 // Export types
 export type { AccessibilityConfig };

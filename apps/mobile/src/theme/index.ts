@@ -5,18 +5,19 @@
 
 export { ThemeProvider, useTheme, ThemeContext } from './Provider';
 export { getLightTheme as defaultTheme, getDarkTheme, getLightTheme } from './resolve';
+import { getLightTheme, getDarkTheme } from './resolve';
+import type { AppTheme, ColorScheme } from './contracts';
 
-// Create a createTheme helper - TODO: This needs to be implemented properly with full AppTheme from contracts
-// For now, we'll use a type assertion (temporary workaround)
-export function createTheme(scheme: 'light' | 'dark'): import('./contracts').AppTheme {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getLightTheme, getDarkTheme } = require('./resolve');
-  const theme = scheme === 'dark' ? getDarkTheme() : getLightTheme();
-  // Type assertion needed until resolve.ts is updated to return full AppTheme
-  return theme as import('./contracts').AppTheme;
+/**
+ * Create a theme based on the specified color scheme
+ * Returns a complete AppTheme contract-compliant object
+ */
+export function createTheme(scheme: ColorScheme): AppTheme {
+  return scheme === 'dark' ? getDarkTheme() : getLightTheme();
 }
 
 export type { AppTheme, Theme, ColorScheme, SemanticColors } from './contracts';
+
 
 // Back-compat exports
 export { getExtendedColors, getThemeColors, getIsDark } from './adapters';
