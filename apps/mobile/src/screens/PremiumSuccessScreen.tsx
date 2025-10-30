@@ -10,7 +10,7 @@ import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 import type { RootStackParamList } from "../navigation/types";
 
 const PremiumSuccessScreen = (): React.JSX.Element => {
@@ -40,14 +40,14 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
     <SafeAreaView
       style={StyleSheet.flatten([
         styles.container,
-        { backgroundColor: colors.background },
+        { backgroundColor: colors.bg },
       ])}
     >
       <View style={styles.content}>
         {isVerified ? (
           <>
             <View style={styles.successIcon}>
-              <Ionicons name="checkmark-circle" size={80} color={theme.colors.success} }/>
+              <Ionicons name="checkmark-circle" size={80} color={colors.success} />
             </View>
 
             <Text
@@ -59,7 +59,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
             <Text
               style={StyleSheet.flatten([
                 styles.subtitle,
-                { color: colors.onSurfaceecondary },
+                { color: colors.onMuted },
               ])}
             >
               Your subscription has been activated successfully. Enjoy all
@@ -68,7 +68,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
 
             <View style={styles.featuresList}>
               <View style={styles.featureItem}>
-                <Ionicons name="heart" size={20} color={theme.colors.success} }/>
+                <Ionicons name="heart" size={20} color={colors.success} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,
@@ -79,7 +79,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
                 </Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="eye" size={20} color={theme.colors.success} />
+                <Ionicons name="eye" size={20} color={colors.success} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,
@@ -90,7 +90,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
                 </Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="flash" size={20} color={theme.colors.success} />
+                <Ionicons name="flash" size={20} color={colors.success} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,

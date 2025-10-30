@@ -10,7 +10,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { AdvancedCard, CardConfigs } from '../components/Advanced/AdvancedCard';
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 import { StaggerList } from '../ui/lists/StaggerList';
 import { BouncePressable } from '../ui/pressables/BouncePressable';
 import { logger } from '../services/logger';
@@ -122,7 +122,7 @@ const createStyles = (theme: any) => StyleSheet.create({
   heroTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
     marginBottom: theme.spacing.sm,
   },
   heroDescription: {
@@ -133,7 +133,7 @@ const createStyles = (theme: any) => StyleSheet.create({
   itemName: {
     fontSize: 18,
     fontWeight: '600',
-    color: theme.colors.onSurface
+    color: theme.colors.onSurface,
     marginBottom: theme.spacing.xs,
   },
   itemDescription: {

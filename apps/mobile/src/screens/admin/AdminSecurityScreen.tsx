@@ -323,9 +323,9 @@ export default function AdminSecurityScreen({
                 disabled={isActionLoading}
               >
                 {isActionLoading ? (
-                  <ActivityIndicator size="small" color={theme.colors.onSurface} }/>
+                  <ActivityIndicator size="small" color={colors.onSurface} />
                 ) : (
-                  <Ionicons name="checkmark" size={16} color={theme.colors.onSurface} }/>
+                  <Ionicons name="checkmark" size={16} color={colors.onSurface} />
                 )}
               </TouchableOpacity>
 
@@ -338,7 +338,7 @@ export default function AdminSecurityScreen({
                    testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleBlockIP(item.id, item.ipAddress!)}
                   disabled={isActionLoading}
                 >
-                  <Ionicons name="ban" size={16} color={theme.colors.onSurface} }/>
+                  <Ionicons name="ban" size={16} color={colors.onSurface} />
                 </TouchableOpacity>
               ) : null}
             </View>
@@ -447,7 +447,7 @@ export default function AdminSecurityScreen({
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface }//>
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
         </TouchableOpacity>
         <Text
           style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
@@ -463,7 +463,7 @@ export default function AdminSecurityScreen({
              testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onRefresh}
             disabled={refreshing}
           >
-            <Ionicons name="refresh" size={20} color={theme.colors.onSurface} }/>
+            <Ionicons name="refresh" size={20} color={colors.onSurface} />
           </TouchableOpacity>
         </View>
       </View>
@@ -487,7 +487,7 @@ export default function AdminSecurityScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="alert-circle" size={20} color={theme.colors.danger} }/>
+                <Ionicons name="alert-circle" size={20} color={colors.danger} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -500,7 +500,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.metricValue,
-                  { color: theme.colors.danger },
+                  { color: colors.danger },
                 ])}
               >
                 {metrics.criticalAlerts}
@@ -514,7 +514,7 @@ export default function AdminSecurityScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="warning" size={20} color={theme.colors.warning} }/>
+                <Ionicons name="warning" size={20} color={colors.warning} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -527,7 +527,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.metricValue,
-                  { color: theme.colors.warning },
+                  { color: colors.warning },
                 ])}
               >
                 {metrics.highAlerts}
@@ -541,7 +541,7 @@ export default function AdminSecurityScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="information-circle" size={20} color={theme.colors.info} }/>
+                <Ionicons name="information-circle" size={20} color={colors.info} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -554,7 +554,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.metricValue,
-                  { color: theme.colors.info },
+                  { color: colors.info },
                 ])}
               >
                 {metrics.mediumAlerts}
@@ -568,7 +568,7 @@ export default function AdminSecurityScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} }/>
+                <Ionicons name="checkmark-circle" size={20} color={colors.success} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -581,7 +581,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.metricValue,
-                  { color: theme.colors.success },
+                  { color: colors.success },
                 ])}
               >
                 {metrics.resolvedAlerts}

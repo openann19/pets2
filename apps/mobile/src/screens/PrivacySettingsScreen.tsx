@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 import type { RootStackParamList } from "../navigation/types";
 import { request } from "../services/api";
 import {
@@ -34,7 +34,8 @@ type PrivacySettingsScreenProps = NativeStackScreenProps<
 function PrivacySettingsScreen({
   navigation,
 }: PrivacySettingsScreenProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const { settings, loading, updateSetting } = usePrivacySettingsScreen();
   const [loadingExport, setLoadingExport] = useState(false);
 
@@ -115,7 +116,7 @@ function PrivacySettingsScreen({
       testID="privacy-settings-screen"
       style={StyleSheet.flatten([
         styles.container,
-        { backgroundColor: colors.background },
+        { backgroundColor: colors.bg },
       ])}
     >
       {/* Header */}
@@ -136,7 +137,7 @@ function PrivacySettingsScreen({
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface }//>
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
         </TouchableOpacity>
         <Text
           testID="privacy-settings-title"
@@ -365,7 +366,7 @@ function PrivacySettingsScreen({
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color={colors.onSurfaceecondary}
+                color={colors.onMuted}
               />
             </TouchableOpacity>,
             true,
@@ -412,7 +413,7 @@ function PrivacySettingsScreen({
               <Ionicons
                 name="download-outline"
                 size={20}
-                color={colors.onSurfaceecondary}
+                color={colors.onMuted}
               />
             </TouchableOpacity>,
             true,
@@ -465,7 +466,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 8,
-    shadowColor: theme.palette.neutral,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -493,7 +494,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: theme.palette.neutral[200],
   },
   pickerOptionText: {
     fontSize: 12,

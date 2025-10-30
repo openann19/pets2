@@ -30,7 +30,7 @@ import { SwipeCard, SwipeActions } from "../components/swipe";
 import { ScreenShell } from "../ui/layout/ScreenShell";
 import { AdvancedHeader, HeaderConfigs } from "../components/Advanced/AdvancedHeader";
 import { haptic } from "../ui/haptics";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 import { useTranslation } from 'react-i18next';
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -124,7 +124,7 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
     emptyTitle: {
       fontSize: 24,
       fontWeight: "bold",
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       marginBottom: 16,
     },
     emptySubtitle: {

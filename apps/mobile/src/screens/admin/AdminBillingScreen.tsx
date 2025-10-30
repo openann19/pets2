@@ -850,7 +850,7 @@ function makeStyles(theme: AppTheme) {
       metricHeader: {
         flexDirection: "row" as const,
         alignItems: "center" as const,
-        margin<｜place▁holder▁no▁24｜>: theme.spacing.sm,
+        marginBottom: theme.spacing.sm,
       },
       metricTitle: {
         fontSize: 14,

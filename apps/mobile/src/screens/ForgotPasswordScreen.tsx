@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForgotPasswordScreen } from "../hooks/screens/useForgotPasswordScreen";
 import type { RootStackScreenProps } from "../navigation/types";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 import { useTranslation } from 'react-i18next';
 
 type ForgotPasswordScreenProps = RootStackScreenProps<"ForgotPassword">;
@@ -58,7 +58,7 @@ function ForgotPasswordScreen({
     title: {
       fontSize: 28,
       fontWeight: "bold",
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       marginBottom: 8,
     },
     subtitle: {
@@ -82,7 +82,7 @@ function ForgotPasswordScreen({
     label: {
       fontSize: 14,
       fontWeight: "600",
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
       marginBottom: 8,
     },
     input: {
@@ -92,7 +92,7 @@ function ForgotPasswordScreen({
       borderRadius: 8,
       padding: 12,
       fontSize: 16,
-      color: theme.colors.onSurface
+      color: theme.colors.onSurface,
     },
     inputError: {
       borderColor: theme.colors.danger,

@@ -10,7 +10,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { NavigationProp } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 import type { RootStackParamList } from "../navigation/types";
 
 const PremiumCancelScreen = (): React.JSX.Element => {
@@ -35,7 +35,7 @@ const PremiumCancelScreen = (): React.JSX.Element => {
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <View style={styles.iconContainer}>
-            <Ionicons name="close-circle" size={80} color={theme.colors.danger} }/>
+            <Ionicons name="close-circle" size={80} color={colors.danger} />
           </View>
 
           <Text
@@ -47,7 +47,7 @@ const PremiumCancelScreen = (): React.JSX.Element => {
           <Text
             style={StyleSheet.flatten([
               styles.subtitle,
-              { color: colors.onSurfaceecondary },
+              { color: colors.onMuted },
             ])}
           >
             No worries! Your payment was cancelled and you weren't charged. You

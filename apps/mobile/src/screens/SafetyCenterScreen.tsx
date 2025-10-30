@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSafetyCenterScreen } from "../hooks/screens/safety";
-import { useTheme } from "@mobile/src/theme";
+import { useTheme } from "@/theme";
 
 interface SafetyCenterScreenProps {
   navigation: {
@@ -41,7 +41,7 @@ function SafetyCenterScreen(): JSX.Element {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#1e3c72", "#2a5298", theme.colors.info]}
+        colors={["#1e3c72", "#2a5298", colors.info]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -63,7 +63,7 @@ function SafetyCenterScreen(): JSX.Element {
             <Ionicons
               name={emergencyMode ? "shield-checkmark" : "warning-outline"}
               size={24}
-              color={emergencyMode ? theme.colors.success : theme.colors.danger}
+              color={emergencyMode ? colors.success : colors.danger}
             />
             <View style={styles.emergencyText}>
               <Text style={styles.emergencyTitle}>
@@ -80,7 +80,7 @@ function SafetyCenterScreen(): JSX.Element {
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.emergencyButton,
-                { backgroundColor: emergencyMode ? theme.colors.success : theme.colors.danger },
+                { backgroundColor: emergencyMode ? colors.success : colors.danger },
               ])}
                testID="SafetyCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={toggleEmergencyMode}
             >
@@ -139,7 +139,7 @@ function SafetyCenterScreen(): JSX.Element {
           <TouchableOpacity style={styles.quickActionCard} testID="SafetyCenterScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
             <BlurView intensity={20} style={styles.quickActionBlur}>
               <View style={styles.quickActionContent}>
-                <Ionicons name="help-buoy-outline" size={24} color={theme.colors.info} }/>
+                <Ionicons name="help-buoy-outline" size={24} color={colors.info} />
                 <View style={styles.quickActionText}>
                   <Text style={styles.quickActionTitle}>Contact Support</Text>
                   <Text style={styles.quickActionDescription}>
@@ -161,8 +161,8 @@ function SafetyCenterScreen(): JSX.Element {
                 <Ionicons
                   name="document-text-outline"
                   size={24}
-                  color={theme.colors.success
-               } }/>
+                  color={colors.success}
+                />
                 <View style={styles.quickActionText}>
                   <Text style={styles.quickActionTitle}>Safety Guidelines</Text>
                   <Text style={styles.quickActionDescription}>

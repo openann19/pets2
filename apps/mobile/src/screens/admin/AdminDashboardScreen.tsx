@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '@mobile/src/theme'";
+import { useTheme } from "@/theme";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 import { getExtendedColors, type ExtendedColors } from '../../theme/adapters';
@@ -204,7 +204,7 @@ export default function AdminDashboardScreen({
           <Text
             style={StyleSheet.flatten([
               styles.subtitle,
-              { color: colors.onSurfaceecondary },
+              { color: colors.onMuted },
             ])}
           >
             Welcome, {_user?.firstName} {_user?.lastName}
@@ -246,7 +246,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.healthDetails,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Uptime: {Math.floor(systemHealth.uptime / 3600)}h{" "}
@@ -255,7 +255,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.healthDetails,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Database: {systemHealth.database.status}
@@ -263,7 +263,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.healthDetails,
-                  { color: colors.onSurfaceecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Memory: {systemHealth.memory.used}MB /{" "}
@@ -313,7 +313,7 @@ export default function AdminDashboardScreen({
                 handleQuickAction("users");
               }}
             >
-              <Ionicons name="people-outline" size={32} color={theme.colors.primary} />
+              <Ionicons name="people-outline" size={32} color={colors.primary} />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -333,7 +333,7 @@ export default function AdminDashboardScreen({
                 handleQuickAction("security");
               }}
             >
-              <Ionicons name="shield-outline" size={32} color={theme.colors.danger} />
+              <Ionicons name="shield-outline" size={32} color={colors.danger} />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -373,7 +373,7 @@ export default function AdminDashboardScreen({
                 handleQuickAction("chats");
               }}
             >
-              ?{" "}
+              
               <Ionicons name="chatbubbles-outline" size={32} color={colors.warning} />
               <Text
                 style={StyleSheet.flatten([
@@ -489,7 +489,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   Active: {stats.users.active}
@@ -497,7 +497,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   Verified: {stats.users.verified}
@@ -551,7 +551,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   Active: {stats.pets.active}
@@ -597,7 +597,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.onSurfaceecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   Active: {stats.matches.active}
@@ -629,7 +629,7 @@ export default function AdminDashboardScreen({
               ])}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="chatbubble" size={24} color={theme.colors.primary} />
+                <Ionicons name="chatbubble" size={24} color={colors.primary} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
