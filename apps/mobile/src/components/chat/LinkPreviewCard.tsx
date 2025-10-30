@@ -18,7 +18,7 @@ export interface LinkPreviewCardProps {
 
 function makeStyles(theme: AppTheme) {
   const { colors, spacing, radii, shadows, typography, palette } = theme;
-  
+
   return StyleSheet.create({
     container: {
       backgroundColor: colors.surface,
@@ -154,7 +154,7 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
   const theme = useTheme();
   const { colors } = theme;
   const { title, description, image, siteName, url } = data;
-  
+
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   return (
@@ -256,7 +256,7 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
 export function LinkPreviewCardLoading(): JSX.Element {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  
+
   return (
     <View style={styles.loadingContainer}>
       <View style={styles.loadingImage} />
@@ -279,7 +279,7 @@ export function LinkPreviewCardError({
   const theme = useTheme();
   const { colors } = theme;
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  
+
   return (
     <View style={[styles.container, styles.errorContainer]}>
       <Ionicons

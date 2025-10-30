@@ -66,11 +66,11 @@ jest.mock('@mobile/theme', () => ({
       info: '#5AC8FA',
     },
     spacing: {
-      xs: 4,
-      sm: 8,
-      md: 16,
-      lg: 24,
-      xl: 32,
+      'xs': 4,
+      'sm': 8,
+      'md': 16,
+      'lg': 24,
+      'xl': 32,
       '2xl': 48,
     },
     radii: {
@@ -505,4 +505,3 @@ describe('AdminConfigScreen', () => {
     });
   });
 });
-

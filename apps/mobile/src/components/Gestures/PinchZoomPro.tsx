@@ -1,4 +1,3 @@
-import type { haptics } from '@/utils/haptics';
 import { useTheme } from '@mobile/theme';
 import * as Haptics from 'expo-haptics';
 import { useCallback } from 'react';
@@ -41,9 +40,11 @@ export function PinchZoomPro({
   onScaleChange,
   disabled = false,
   resizeMode = 'cover',
+  backgroundColor,
+  haptics = false,
 }: PinchZoomProProps) {
   const theme = useTheme();
-  const finalBackgroundColor = backgroundColor || theme.colors.onSurface.primary;
+  const finalBackgroundColor = backgroundColor || theme.colors.bg;
   const scale = useSharedValue(initialScale);
   const lastScale = useSharedValue(initialScale);
 

@@ -3,9 +3,7 @@
  * Manages MapScreen state and business logic
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Animated, Platform } from 'react-native';
-import Geolocation from '@react-native-community/geolocation';
-import { PERMISSIONS, RESULTS, request } from 'react-native-permissions';
+import { Alert, Animated } from 'react-native';
 import type { Region } from 'react-native-maps';
 import type { Socket } from 'socket.io-client';
 import io from 'socket.io-client';
@@ -20,6 +18,10 @@ export interface MapFilters {
   showNearby: boolean;
   activityTypes: string[];
   radius: number;
+  timeRange?: 'all' | 'today' | 'this_week' | 'this_month' | 'last_hour';
+  showHeatmap?: boolean;
+  showClusters?: boolean;
+  densityFilter?: 'low' | 'medium' | 'high' | 'all';
 }
 
 export interface MapStats {
@@ -35,11 +37,14 @@ export interface PulsePin {
   longitude: number;
   coordinates?: [number, number];
   activity: string;
+  activityCategory?: 'walking' | 'playing' | 'feeding' | 'resting' | 'training' | 'grooming' | 'vet' | 'park' | 'other';
   petId: string;
   userId: string;
+  ownerId?: string;
   timestamp: string;
   message?: string;
   createdAt: string;
+  expiresAt?: string;
 }
 
 export interface ActivityType {
@@ -108,6 +113,7 @@ export const useMapScreen = (): UseMapScreenReturn => {
     showNearby: true,
     activityTypes: ['walking', 'playing', 'feeding'],
     radius: 5,
+    timeRange: 'today',
   });
 
   const [stats, setStats] = useState<MapStats>({
@@ -167,45 +173,54 @@ export const useMapScreen = (): UseMapScreenReturn => {
     [],
   );
 
-  // Get current location
-  const getCurrentLocation = useCallback(() => {
-    Geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation({ latitude, longitude });
+  // Get current location - Enhanced with LocationService
+  const getCurrentLocation = useCallback(async () => {
+    try {
+      const { locationService } = await import('../../services/LocationService');
+      const location = await locationService.getCurrentLocation();
+      
+      if (location) {
+        setUserLocation({ latitude: location.latitude, longitude: location.longitude });
         setRegion({
-          latitude,
-          longitude,
+          latitude: location.latitude,
+          longitude: location.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         });
-      },
-      (error: unknown) => {
-        logger.error('Location error:', { error });
+      } else {
         Alert.alert('Location Error', 'Unable to get your current location.');
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-    );
+      }
+    } catch (error: unknown) {
+      logger.error('Location error:', { error });
+      Alert.alert('Location Error', 'Unable to get your current location.');
+    }
   }, []);
 
-  // Location permission request
+  // Location permission request - Enhanced with LocationService
   const requestLocationPermission = useCallback(async () => {
     try {
-      const permission = await request(
-        Platform.OS === 'ios'
-          ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
-          : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-      );
-
-      if (permission === RESULTS.GRANTED) {
-        getCurrentLocation();
-      } else {
-        Alert.alert('Location Permission', 'Please enable location access to see nearby pets.');
+      // Use LocationService for proper permission handling
+      const { locationService } = await import('../../services/LocationService');
+      const granted = await locationService.requestForegroundPermission();
+      
+      if (granted) {
+        // Get current location using LocationService
+        const location = await locationService.getCurrentLocation();
+        if (location) {
+          setUserLocation({ latitude: location.latitude, longitude: location.longitude });
+          setRegion({
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+        }
       }
     } catch (error: unknown) {
       logger.error('Location permission error:', { error });
+      Alert.alert('Location Permission', 'Please enable location access to see nearby pets.');
     }
-  }, [getCurrentLocation]);
+  }, []);
 
   // Toggle filter panel
   const toggleFilterPanel = useCallback(() => {
@@ -240,10 +255,56 @@ export const useMapScreen = (): UseMapScreenReturn => {
     [],
   );
 
-  // Filter pins based on filters
+  // Filter pins based on filters including time range
   const filteredPins = useMemo(() => {
+    const now = Date.now();
+    let timeCutoff = 0;
+    
+    if (filters.timeRange) {
+      switch (filters.timeRange) {
+        case 'last_hour':
+          timeCutoff = now - 60 * 60 * 1000;
+          break;
+        case 'today':
+          const todayStart = new Date();
+          todayStart.setHours(0, 0, 0, 0);
+          timeCutoff = todayStart.getTime();
+          break;
+        case 'this_week':
+          const weekStart = new Date();
+          weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+          weekStart.setHours(0, 0, 0, 0);
+          timeCutoff = weekStart.getTime();
+          break;
+        case 'this_month':
+          const monthStart = new Date();
+          monthStart.setDate(1);
+          monthStart.setHours(0, 0, 0, 0);
+          timeCutoff = monthStart.getTime();
+          break;
+        case 'all':
+        default:
+          timeCutoff = 0;
+          break;
+      }
+    }
+    
     return pins.filter((pin) => {
-      if (!filters.activityTypes.includes(pin.activity)) return false;
+      // Activity type filter
+      const activityToCheck = pin.activityCategory || pin.activity;
+      if (!filters.activityTypes.includes(pin.activity) && !filters.activityTypes.includes(activityToCheck)) {
+        return false;
+      }
+      
+      // Time range filter
+      if (timeCutoff > 0) {
+        const pinTime = new Date(pin.timestamp || pin.createdAt).getTime();
+        if (pinTime < timeCutoff) {
+          return false;
+        }
+      }
+      
+      // Radius filter
       if (userLocation && filters.radius) {
         const distance = calculateDistance(
           userLocation.latitude,
@@ -253,6 +314,7 @@ export const useMapScreen = (): UseMapScreenReturn => {
         );
         return distance <= filters.radius;
       }
+      
       return true;
     });
   }, [pins, filters, userLocation, calculateDistance]);
@@ -308,30 +370,76 @@ export const useMapScreen = (): UseMapScreenReturn => {
     if (!user) return;
 
     const socket = io(SOCKET_URL, {
-      transports: ['websocket'],
+      transports: ['websocket', 'polling'],
       reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 10000,
     });
 
     socket.on('connect', () => {
       logger.info('MapSocket connected');
       if (user?._id) {
         socket.emit('join_map', { userId: user._id });
+        
+        // Request initial pins when connected
+        if (userLocation) {
+          socket.emit('request:initial-pins', {
+            location: userLocation,
+            radius: filters.radius,
+            timeRange: filters.timeRange,
+            activityTypes: filters.activityTypes,
+          });
+        } else {
+          // Still request pins even without location
+          socket.emit('request:initial-pins', {
+            timeRange: filters.timeRange,
+            activityTypes: filters.activityTypes,
+          });
+        }
       }
     });
 
+    // Handle initial pins response
+    function onInitialPins(pins: PulsePin[]) {
+      logger.info('Received initial pins', { count: pins.length });
+      const normalizedPins = pins.map((pin) => ({
+        ...pin,
+        latitude: Array.isArray(pin.coordinates) ? pin.coordinates[1] : pin.latitude || 0,
+        longitude: Array.isArray(pin.coordinates) ? pin.coordinates[0] : pin.longitude || 0,
+        timestamp: pin.timestamp || pin.createdAt,
+      }));
+      setPins(normalizedPins);
+    }
+    socket.on('pins:initial', onInitialPins);
+
     // Fixed: use pin:update event (matches server)
-    function onPinUpdate(pin: PulsePin) {
+    function onPinUpdate(pin: any) {
+      const normalizedPin: PulsePin = {
+        ...pin,
+        latitude: Array.isArray(pin.coordinates) ? pin.coordinates[1] : pin.latitude || 0,
+        longitude: Array.isArray(pin.coordinates) ? pin.coordinates[0] : pin.longitude || 0,
+        timestamp: pin.timestamp || pin.createdAt,
+        activityCategory: pin.activity as PulsePin['activityCategory'],
+      };
+      
       setPins((prev) => {
-        const idx = prev.findIndex((p) => p._id === pin._id);
+        const idx = prev.findIndex((p) => p._id === normalizedPin._id);
         if (idx >= 0) {
           const next = [...prev];
-          next[idx] = { ...prev[idx], ...pin };
+          next[idx] = { ...prev[idx], ...normalizedPin };
           return next;
         }
-        return [pin, ...prev];
+        return [normalizedPin, ...prev];
       });
     }
     socket.on('pin:update', onPinUpdate);
+
+    // Handle pin removal
+    function onPinRemove(pinId: string) {
+      setPins((prev) => prev.filter((p) => p._id !== pinId));
+    }
+    socket.on('pin:remove', onPinRemove);
 
     // Heatmap updates
     function onHeatmapUpdate(data: { lat: number; lng: number; w?: number }[]) {
@@ -343,17 +451,23 @@ export const useMapScreen = (): UseMapScreenReturn => {
       logger.info('MapSocket disconnected');
     });
 
+    socket.on('connect_error', (error: Error) => {
+      logger.error('MapSocket connection error', { error: error.message });
+    });
+
     socketRef.current = socket;
 
     return () => {
+      socket.off('pins:initial', onInitialPins);
       socket.off('pin:update', onPinUpdate);
+      socket.off('pin:remove', onPinRemove);
       socket.off('heatmap:update', onHeatmapUpdate);
       if (user?._id) {
         socket.emit('leave_map', { userId: user._id });
       }
       socket.disconnect();
     };
-  }, [user]);
+  }, [user, userLocation, filters.radius, filters.timeRange, filters.activityTypes]);
 
   // Load initial data
   useEffect(() => {

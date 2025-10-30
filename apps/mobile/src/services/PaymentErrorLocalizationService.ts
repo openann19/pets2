@@ -1,14 +1,14 @@
 /**
  * Payment Error Localization Service
- * 
+ *
  * Provides localized, user-friendly error messages for payment flows
  * using the enhanced i18n translations
  */
 
 import { Alert } from 'react-native';
-import i18n from '@/i18n';
+import i18n from '../i18n';
 
-export type PaymentErrorType = 
+export type PaymentErrorType =
   | 'payment_declined'
   | 'insufficient_funds'
   | 'card_expired'
@@ -39,7 +39,7 @@ export interface PaymentError {
   type: PaymentErrorType;
   message?: string;
   code?: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 export interface LocalizedError {
@@ -65,10 +65,15 @@ export class PaymentErrorLocalizationService {
   /**
    * Map Stripe error codes to our error types
    */
-  private mapStripeError(error: any): PaymentErrorType {
-    const code = error?.code;
-    const type = error?.type;
-    const declineCode = error?.decline_code;
+  private mapStripeError(error: unknown): PaymentErrorType {
+    if (typeof error !== 'object' || error === null) {
+      return 'generic_error';
+    }
+
+    const err = error as Record<string, unknown>;
+    const code = typeof err.code === 'string' ? err.code : undefined;
+    const type = typeof err.type === 'string' ? err.type : undefined;
+    const declineCode = typeof err.decline_code === 'string' ? err.decline_code : undefined;
 
     // Card declined errors
     if (type === 'card_error' || code === 'card_declined') {
@@ -111,22 +116,18 @@ export class PaymentErrorLocalizationService {
   /**
    * Get localized error message for payment error
    */
-  getLocalizedError(error: PaymentError | string | any): LocalizedError {
+  getLocalizedError(error: PaymentError | string | unknown): LocalizedError {
     let errorType: PaymentErrorType;
-    let originalMessage: string | undefined;
 
     if (typeof error === 'string') {
-      errorType = this.mapStripeError({ code: error }) || 'generic_error';
-      originalMessage = error;
-    } else if (error?.type) {
-      errorType = error.type;
-      originalMessage = error.message;
-    } else if (error?.code || error?.type) {
+      errorType = this.mapStripeError({ code: error });
+    } else if (error && typeof error === 'object' && 'type' in error) {
+      const paymentError = error as PaymentError;
+      errorType = paymentError.type;
+    } else if (error && typeof error === 'object') {
       errorType = this.mapStripeError(error);
-      originalMessage = error.message;
     } else {
       errorType = 'generic_error';
-      originalMessage = error?.message || error?.toString();
     }
 
     const title = i18n.t('premium:errors.payment_failed');
@@ -137,8 +138,9 @@ export class PaymentErrorLocalizationService {
     const contactSupport = this.shouldContactSupport(errorType);
 
     return {
-      title,
-      message: message || i18n.t('premium:errors.generic_error'),
+      title: typeof title === 'string' ? title : 'Payment Error',
+      message:
+        typeof message === 'string' && message ? message : i18n.t('premium:errors.generic_error'),
       type: errorType,
       shouldRetry,
       contactSupport,
@@ -148,13 +150,13 @@ export class PaymentErrorLocalizationService {
   /**
    * Show localized error alert
    */
-  showErrorAlert(error: PaymentError | string | any, onRetry?: () => void): void {
+  showErrorAlert(error: PaymentError | string | unknown, onRetry?: () => void): void {
     const localizedError = this.getLocalizedError(error);
-    
-    const buttons = [
+
+    const buttons: { text: string; style: 'default'; onPress?: () => void }[] = [
       {
         text: i18n.t('common:ok'),
-        style: 'default' as const,
+        style: 'default',
       },
     ];
 
@@ -162,7 +164,7 @@ export class PaymentErrorLocalizationService {
     if (localizedError.shouldRetry && onRetry) {
       buttons.unshift({
         text: i18n.t('common:retry'),
-        style: 'default' as const,
+        style: 'default',
         onPress: onRetry,
       });
     }
@@ -171,9 +173,8 @@ export class PaymentErrorLocalizationService {
     if (localizedError.contactSupport) {
       buttons.push({
         text: i18n.t('common:contact_support'),
-        style: 'default' as const,
+        style: 'default',
         onPress: () => {
-          // Open support contact
           this.openSupportContact();
         },
       });
@@ -185,10 +186,10 @@ export class PaymentErrorLocalizationService {
   /**
    * Show localized success message
    */
-  showSuccessAlert(messageKey: string, values?: Record<string, any>): void {
+  showSuccessAlert(messageKey: string, values?: Record<string, unknown>): void {
     const title = i18n.t('premium:success_title');
     const message = i18n.t(`premium:${messageKey}`, values);
-    
+
     Alert.alert(title, message, [
       {
         text: i18n.t('common:ok'),
@@ -298,7 +299,6 @@ export class PaymentErrorLocalizationService {
    */
   private openSupportContact(): void {
     // This would open email, chat, or help center
-    console.log('Opening support contact...');
     // Implementation would depend on your support system
     // Could open email app, in-app chat, or external help center
   }
@@ -328,7 +328,10 @@ export class PaymentErrorLocalizationService {
   /**
    * Get localized confirmation message for payment
    */
-  getPaymentConfirmation(amount: number, currency: string = 'USD'): {
+  getPaymentConfirmation(
+    amount: number,
+    currency: string = 'USD',
+  ): {
     title: string;
     message: string;
   } {
@@ -343,6 +346,5 @@ export class PaymentErrorLocalizationService {
 // Export singleton instance
 export const paymentErrorService = PaymentErrorLocalizationService.getInstance();
 
-// Export types
-export type { PaymentError, LocalizedError };
+// Export types (already exported above)
 export default paymentErrorService;

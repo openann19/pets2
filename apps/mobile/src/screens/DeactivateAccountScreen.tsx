@@ -1,9 +1,17 @@
-import React from "react";
+import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@mobile/theme';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Linking } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Linking,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDeactivateAccountScreen } from '../hooks/screens/useDeactivateAccountScreen';
 
@@ -25,6 +33,165 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
     handleGoBack,
   } = useDeactivateAccountScreen();
   const theme = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    safeArea: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+    },
+    backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      overflow: 'hidden',
+    },
+    backButtonBlur: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: 'white',
+    },
+    headerSpacer: {
+      width: 40,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: 20,
+    },
+    warningCard: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      backgroundColor: 'rgba(245, 158, 11, 0.2)',
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 24,
+      borderWidth: 1,
+      borderColor: 'rgba(245, 158, 11, 0.3)',
+    },
+    warningText: {
+      flex: 1,
+      marginLeft: 12,
+      fontSize: 14,
+      color: 'white',
+      lineHeight: 20,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: 'white',
+      marginBottom: 16,
+      marginTop: 8,
+    },
+    reasonCard: {
+      borderRadius: 12,
+      marginBottom: 8,
+      overflow: 'hidden',
+    },
+    reasonCardSelected: {
+      transform: [{ scale: 1.02 }],
+    },
+    reasonBlur: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: 16,
+    },
+    reasonText: {
+      fontSize: 16,
+      color: 'white',
+      flex: 1,
+    },
+    reasonTextSelected: {
+      fontWeight: '600',
+    },
+    customReasonCard: {
+      borderRadius: 12,
+      padding: 16,
+      marginTop: 8,
+      marginBottom: 16,
+    },
+    customReasonInput: {
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      borderRadius: 8,
+      padding: 12,
+      color: 'white',
+      fontSize: 16,
+      textAlignVertical: 'top',
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.2)',
+    },
+    confirmationCard: {
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 24,
+    },
+    confirmationText: {
+      fontSize: 16,
+      color: 'white',
+      marginBottom: 12,
+      fontWeight: '600',
+    },
+    confirmationInput: {
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      borderRadius: 8,
+      padding: 12,
+      color: 'white',
+      fontSize: 16,
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.2)',
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      gap: 12,
+      marginBottom: 24,
+    },
+    button: {
+      flex: 1,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: 'center',
+    },
+    cancelButton: {
+      backgroundColor: 'rgba(255,255,255,0.2)',
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.3)',
+    },
+    cancelButtonText: {
+      color: 'white',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    deactivateButton: {
+      backgroundColor: theme.colors.danger,
+    },
+    deactivateButtonText: {
+      color: 'white',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    buttonDisabled: {
+      opacity: 0.5,
+    },
+    helpText: {
+      textAlign: 'center',
+      fontSize: 14,
+      color: 'white',
+      marginBottom: 24,
+    },
+  });
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -196,8 +363,8 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
                 onPress={() => Linking.openURL('https://pawfectmatch.com/privacy')}
               >
                 Privacy Policy
-              </Text>
-              {' '}and{' '}
+              </Text>{' '}
+              and{' '}
               <Text
                 style={styles.legalLink}
                 onPress={() => Linking.openURL('https://pawfectmatch.com/terms')}
@@ -359,7 +526,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   deactivateButton: {
-    backgroundColor: '#ef4444', // danger color fallback
+    backgroundColor: theme.colors.danger,
   },
   deactivateButtonText: {
     color: 'white',

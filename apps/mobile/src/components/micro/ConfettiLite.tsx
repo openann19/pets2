@@ -49,14 +49,14 @@ export function ConfettiLite({
 }: ConfettiLiteProps): React.JSX.Element {
   const theme = useTheme();
   const guards = useMotionGuards();
-  
+
   const particlesRef = React.useRef<Particle[]>([]);
   const [visible, setVisible] = React.useState(false);
 
   // Adaptive particle count
   const baseCount = customCount || 6;
   const particleCount = guards.getAdaptiveParticleCount(baseCount);
-  
+
   // Default colors from theme
   const colors = customColors || [
     theme.colors.primary,
@@ -111,7 +111,7 @@ export function ConfettiLite({
         withTiming(1, {
           duration: motion.duration.base,
           easing: getEasingArray('emphasized'),
-        })
+        }),
       );
 
       particle.opacity.value = withSequence(
@@ -122,8 +122,8 @@ export function ConfettiLite({
           motion.duration.base,
           withTiming(0, {
             duration: motion.duration.base,
-          })
-        )
+          }),
+        ),
       );
 
       particle.translateX.value = withTiming(endX, {
@@ -136,12 +136,9 @@ export function ConfettiLite({
         easing: getEasingArray('decel'),
       });
 
-      particle.rotation.value = withTiming(
-        (Math.random() > 0.5 ? 1 : -1) * 360,
-        {
-          duration: motion.duration.slow,
-        }
-      );
+      particle.rotation.value = withTiming((Math.random() > 0.5 ? 1 : -1) * 360, {
+        duration: motion.duration.slow,
+      });
     });
 
     // Success haptic
@@ -161,9 +158,15 @@ export function ConfettiLite({
   }
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View
+      style={StyleSheet.absoluteFill}
+      pointerEvents="none"
+    >
       {particlesRef.current.map((particle) => (
-        <ParticleView key={particle.id} particle={particle} />
+        <ParticleView
+          key={particle.id}
+          particle={particle}
+        />
       ))}
     </View>
   );
@@ -210,4 +213,3 @@ const styles = StyleSheet.create({
     marginTop: -4,
   },
 });
-

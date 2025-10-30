@@ -9,6 +9,7 @@ import { logger } from '@pawfectmatch/core';
 import * as Haptics from 'expo-haptics';
 import type { AdminScreenProps } from '../../navigation/types';
 import { useErrorHandler } from '../useErrorHandler';
+import { _adminAPI as adminAPI } from '../../services/adminAPI';
 
 interface VerificationDocument {
   id: string;
@@ -88,7 +89,7 @@ export interface AdminVerificationsScreenState {
 export function useAdminVerificationsScreen({
   navigation,
 }: UseAdminVerificationsScreenParams): AdminVerificationsScreenState {
-  const { handleNetworkError, handleOfflineError } = useErrorHandler();
+  const { handleNetworkError } = useErrorHandler();
 
   const [requests, setRequests] = useState<VerificationRequest[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<VerificationRequest | null>(null);
@@ -110,7 +111,7 @@ export function useAdminVerificationsScreen({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isProcessingAction, setIsProcessingAction] = useState(false);
 
-  // Mock data loading - replace with real API calls
+  // Load verification requests from API - replace mock data with real API calls
   const loadVerificationRequests = useCallback(
     async (options?: { force?: boolean }) => {
       try {
@@ -118,91 +119,82 @@ export function useAdminVerificationsScreen({
           setIsLoading(true);
         }
 
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        const mockRequests: VerificationRequest[] = [
-          {
-            id: 'ver1',
-            petId: 'pet1',
-            petName: 'Buddy',
-            petBreed: 'Golden Retriever',
-            petSpecies: 'dog',
-            ownerId: 'user1',
-            ownerName: 'Alice Johnson',
-            ownerEmail: 'alice@example.com',
-            documents: [
-              {
-                id: 'doc1',
-                type: 'vaccination',
-                url: 'vaccination.pdf',
-                uploadedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-                status: 'pending',
-              },
-              {
-                id: 'doc2',
-                type: 'ownership',
-                url: 'ownership.jpg',
-                uploadedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-                status: 'pending',
-              },
-            ],
-            status: 'pending',
-            priority: 'high',
-            submittedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-          },
-          {
-            id: 'ver2',
-            petId: 'pet2',
-            petName: 'Whiskers',
-            petBreed: 'Persian Cat',
-            petSpecies: 'cat',
-            ownerId: 'user2',
-            ownerName: 'Bob Smith',
-            ownerEmail: 'bob@example.com',
-            submittedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-            documents: [
-              {
-                id: 'doc3',
-                type: 'vet_record',
-                url: 'vet_record.pdf',
-                uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-                status: 'approved',
-                verifiedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-              },
-            ],
-            status: 'under_review',
-            priority: 'medium',
-            assignedAdmin: 'admin1',
-          },
-        ];
-
-        const mockStats: VerificationStats = {
-          totalPending: 23,
-          highPriority: 5,
-          reviewedToday: 12,
-          approvedThisWeek: 45,
-          rejectedThisWeek: 3,
-        };
-
-        setRequests(mockRequests);
-        setStats(mockStats);
-
-        logger.info('Verification requests loaded', {
-          count: mockRequests.length,
-          stats: mockStats,
+        // Call real API endpoint
+        const response = await adminAPI.getVerifications({
+          page: 1,
+          limit: 50,
+          status: statusFilter !== 'all' ? statusFilter : null,
         });
+
+        if (response.success && response.data) {
+          // Map API response to VerificationRequest format
+          const mappedRequests: VerificationRequest[] = response.data.verifications.map((verification: any) => ({
+            id: verification._id || verification.id,
+            petId: verification.petId?._id || verification.petId || '',
+            petName: verification.petId?.name || verification.petName || 'Unknown Pet',
+            petBreed: verification.petId?.breed || verification.petBreed || 'Unknown',
+            petSpecies: verification.petId?.species || verification.petSpecies || 'unknown',
+            ownerId: verification.ownerId?._id || verification.ownerId || '',
+            ownerName: verification.ownerId?.firstName && verification.ownerId?.lastName
+              ? `${verification.ownerId.firstName} ${verification.ownerId.lastName}`
+              : verification.ownerId?.email || verification.ownerName || 'Unknown Owner',
+            ownerEmail: verification.ownerId?.email || verification.ownerEmail || '',
+            submittedAt: new Date(verification.submittedAt || verification.createdAt),
+            documents: (verification.documents || []).map((doc: any) => ({
+              id: doc._id || doc.id,
+              type: doc.type || 'other',
+              url: doc.url || '',
+              uploadedAt: new Date(doc.uploadedAt || doc.createdAt),
+              verifiedAt: doc.verifiedAt ? new Date(doc.verifiedAt) : undefined,
+              status: doc.status || 'pending',
+              rejectionReason: doc.rejectionReason,
+            })),
+            status: verification.status === 'approved' ? 'approved' : verification.status === 'rejected' ? 'rejected' : verification.status === 'under_review' ? 'under_review' : 'pending',
+            priority: verification.priority || 'medium',
+            assignedAdmin: verification.assignedAdmin?._id || verification.assignedAdmin || undefined,
+            ...(verification.reviewedAt ? { reviewedAt: new Date(verification.reviewedAt) } : {}),
+            ...(verification.reviewNotes ? { reviewNotes: verification.reviewNotes } : {}),
+          }));
+
+          // Calculate stats from response
+          const mappedStats: VerificationStats = {
+            totalPending: mappedRequests.filter((r) => r.status === 'pending').length,
+            highPriority: mappedRequests.filter((r) => r.priority === 'high').length,
+            reviewedToday: mappedRequests.filter((r) => r.reviewedAt && new Date(r.reviewedAt).toDateString() === new Date().toDateString()).length,
+            approvedThisWeek: mappedRequests.filter((r) => r.status === 'approved' && new Date(r.submittedAt) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length,
+            rejectedThisWeek: mappedRequests.filter((r) => r.status === 'rejected' && new Date(r.submittedAt) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length,
+          };
+
+          setRequests(mappedRequests);
+          setStats(mappedStats);
+
+          logger.info('Admin verification requests loaded from API', {
+            count: mappedRequests.length,
+            stats: mappedStats,
+          });
+        } else {
+          throw new Error('Invalid API response');
+        }
       } catch (error) {
-        const err =
-          error instanceof Error ? error : new Error('Failed to load verification requests');
-        logger.error('Failed to load verification requests', { error: err });
+        const err = error instanceof Error ? error : new Error('Failed to load verification requests');
+        logger.error('Failed to load admin verification requests', { error: err });
         handleNetworkError(err, 'admin.verifications.load');
+        
+        // Fallback to empty state on error
+        setRequests([]);
+        setStats({
+          totalPending: 0,
+          highPriority: 0,
+          reviewedToday: 0,
+          approvedThisWeek: 0,
+          rejectedThisWeek: 0,
+        });
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
       }
     },
-    [handleNetworkError],
+    [statusFilter, handleNetworkError],
   );
 
   useEffect(() => {
@@ -265,44 +257,48 @@ export function useAdminVerificationsScreen({
     async (requestId: string, notes?: string) => {
       setIsProcessingAction(true);
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 800));
+        // Call real API endpoint
+        const response = await adminAPI.approveVerification(requestId, notes);
 
-        setRequests((prev) =>
-          prev.map((req) =>
-            req.id === requestId
-              ? {
-                  ...req,
-                  status: 'approved' as const,
-                  reviewedAt: new Date(),
-                  reviewNotes: notes,
-                }
-              : req,
-          ),
-        );
-
-        if (selectedRequest?.id === requestId) {
-          setSelectedRequest((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  status: 'approved',
-                  reviewedAt: new Date(),
-                  reviewNotes: notes,
-                }
-              : null,
+        if (response.success) {
+          setRequests((prev) =>
+            prev.map((req) =>
+              req.id === requestId
+                ? {
+                    ...req,
+                    status: 'approved' as const,
+                    reviewedAt: new Date(),
+                    ...(notes ? { reviewNotes: notes } : {}),
+                  }
+                : req,
+            ),
           );
+
+          if (selectedRequest?.id === requestId) {
+            setSelectedRequest((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    status: 'approved',
+                    reviewedAt: new Date(),
+                    ...(notes ? { reviewNotes: notes } : {}),
+                  }
+                : null,
+            );
+          }
+
+          setStats((prev) => ({
+            ...prev,
+            totalPending: Math.max(0, prev.totalPending - 1),
+            approvedThisWeek: prev.approvedThisWeek + 1,
+            reviewedToday: prev.reviewedToday + 1,
+          }));
+
+          void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+          logger.info('Verification request approved via API', { requestId, notes });
+        } else {
+          throw new Error('Failed to approve verification');
         }
-
-        setStats((prev) => ({
-          ...prev,
-          totalPending: Math.max(0, prev.totalPending - 1),
-          approvedThisWeek: prev.approvedThisWeek + 1,
-          reviewedToday: prev.reviewedToday + 1,
-        }));
-
-        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-        logger.info('Verification request approved', { requestId, notes });
       } catch (error) {
         const err = error instanceof Error ? error : new Error('Failed to approve request');
         logger.error('Failed to approve verification request', {
@@ -310,6 +306,7 @@ export function useAdminVerificationsScreen({
           requestId,
         });
         handleNetworkError(err, 'admin.verifications.approve');
+        Alert.alert('Error', 'Failed to approve verification request. Please try again.');
       } finally {
         setIsProcessingAction(false);
       }
@@ -321,58 +318,62 @@ export function useAdminVerificationsScreen({
     async (requestId: string, reason: string, notes?: string) => {
       setIsProcessingAction(true);
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 800));
+        // Call real API endpoint
+        const response = await adminAPI.rejectVerification(requestId, reason, notes);
 
-        setRequests((prev) =>
-          prev.map((req) =>
-            req.id === requestId
-              ? {
-                  ...req,
-                  status: 'rejected' as const,
-                  reviewedAt: new Date(),
-                  reviewNotes: notes,
-                  documents: req.documents.map((doc) => ({
-                    ...doc,
+        if (response.success) {
+          setRequests((prev) =>
+            prev.map((req) =>
+              req.id === requestId
+                ? {
+                    ...req,
                     status: 'rejected' as const,
-                    rejectionReason: reason,
-                  })),
-                }
-              : req,
-          ),
-        );
-
-        if (selectedRequest?.id === requestId) {
-          setSelectedRequest((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  status: 'rejected',
-                  reviewedAt: new Date(),
-                  reviewNotes: notes,
-                  documents: prev.documents.map((doc) => ({
-                    ...doc,
-                    status: 'rejected',
-                    rejectionReason: reason,
-                  })),
-                }
-              : null,
+                    reviewedAt: new Date(),
+                    ...(notes ? { reviewNotes: notes } : {}),
+                    documents: req.documents.map((doc) => ({
+                      ...doc,
+                      status: 'rejected' as const,
+                      rejectionReason: reason,
+                    })),
+                  }
+                : req,
+            ),
           );
+
+          if (selectedRequest?.id === requestId) {
+            setSelectedRequest((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    status: 'rejected',
+                    reviewedAt: new Date(),
+                    ...(notes ? { reviewNotes: notes } : {}),
+                    documents: prev.documents.map((doc) => ({
+                      ...doc,
+                      status: 'rejected',
+                      rejectionReason: reason,
+                    })),
+                  }
+                : null,
+            );
+          }
+
+          setStats((prev) => ({
+            ...prev,
+            totalPending: Math.max(0, prev.totalPending - 1),
+            rejectedThisWeek: prev.rejectedThisWeek + 1,
+            reviewedToday: prev.reviewedToday + 1,
+          }));
+
+          void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+          logger.info('Verification request rejected via API', {
+            requestId,
+            reason,
+            notes,
+          });
+        } else {
+          throw new Error('Failed to reject verification');
         }
-
-        setStats((prev) => ({
-          ...prev,
-          totalPending: Math.max(0, prev.totalPending - 1),
-          rejectedThisWeek: prev.rejectedThisWeek + 1,
-          reviewedToday: prev.reviewedToday + 1,
-        }));
-
-        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
-        logger.info('Verification request rejected', {
-          requestId,
-          reason,
-          notes,
-        });
       } catch (error) {
         const err = error instanceof Error ? error : new Error('Failed to reject request');
         logger.error('Failed to reject verification request', {
@@ -380,6 +381,7 @@ export function useAdminVerificationsScreen({
           requestId,
         });
         handleNetworkError(err, 'admin.verifications.reject');
+        Alert.alert('Error', 'Failed to reject verification request. Please try again.');
       } finally {
         setIsProcessingAction(false);
       }

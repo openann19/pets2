@@ -33,7 +33,7 @@ export function Skeleton({
           duration: 1000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     animation.start();
@@ -45,8 +45,7 @@ export function Skeleton({
     outputRange: [0.3, 0.7],
   });
 
-  const borderRadius =
-    radius || (variant === 'circle' ? height / 2 : theme.radius.sm);
+  const borderRadius = radius || (variant === 'circle' ? height / 2 : theme.radius.sm);
 
   return (
     <Animated.View

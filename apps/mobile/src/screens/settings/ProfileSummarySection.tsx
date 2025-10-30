@@ -18,7 +18,7 @@ interface ProfileSummarySectionProps {
 export function ProfileSummarySection({ onEditProfile }: ProfileSummarySectionProps) {
   const theme = useTheme();
   const styles = makeStyles(theme);
-  
+
   return (
     <View style={styles.profileSection}>
       <AdvancedCard
@@ -60,65 +60,64 @@ export function ProfileSummarySection({ onEditProfile }: ProfileSummarySectionPr
 
 function makeStyles(theme: AppTheme) {
   return StyleSheet.create({
-  profileSection: {
-    padding: 20,
-    paddingBottom: 0,
-  },
-  profileCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    shadowColor: theme.colors.bg,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  profileCardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  profileAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: theme.colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  profileName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: theme.colors.onSurface,
-    marginBottom: 2,
-  },
-  profileEmail: {
-    fontSize: 14,
-    color: theme.colors.onMuted,
-    marginBottom: 4,
-  },
-  profileStatus: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: theme.colors.success,
-    marginRight: 6,
-  },
-  statusText: {
-    fontSize: 12,
-    color: theme.colors.onMuted,
-    fontWeight: '500',
-  },
+    profileSection: {
+      padding: 20,
+      paddingBottom: 0,
+    },
+    profileCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: 16,
+      padding: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      shadowColor: theme.colors.bg,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+    profileCardContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    profileAvatar: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: theme.colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 16,
+    },
+    profileInfo: {
+      flex: 1,
+    },
+    profileName: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+      marginBottom: 2,
+    },
+    profileEmail: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      marginBottom: 4,
+    },
+    profileStatus: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    statusDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: theme.colors.success,
+      marginRight: 6,
+    },
+    statusText: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      fontWeight: '500',
+    },
   });
 }
-

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, act } from '@testing-library/react';
 import { Alert } from 'react-native';
 import { useAuthStore } from '@pawfectmatch/core';
 import AIPhotoAnalyzerScreen from '../AIPhotoAnalyzerScreen';

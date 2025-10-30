@@ -78,7 +78,11 @@ export function Radio({
         )}
       </View>
       {label && (
-        <Text variant="body" tone="text" style={{ marginLeft: theme.spacing.sm }}>
+        <Text
+          variant="body"
+          tone="text"
+          style={{ marginLeft: theme.spacing.sm }}
+        >
           {label}
         </Text>
       )}

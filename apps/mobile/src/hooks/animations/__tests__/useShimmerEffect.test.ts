@@ -6,8 +6,6 @@ import { renderHook } from '@testing-library/react-native';
 import { useShimmerEffect } from '../useShimmerEffect';
 
 jest.mock('react-native-reanimated', () => {
-
-
   const Reanimated = require('react-native-reanimated/mock');
   Reanimated.default.call = () => {};
   return Reanimated;
@@ -53,10 +51,9 @@ describe('useShimmerEffect', () => {
     });
 
     it('should maintain style when enabled changes', () => {
-      const { result, rerender } = renderHook(
-        (props) => useShimmerEffect(props.enabled),
-        { initialProps: { enabled: true } }
-      );
+      const { result, rerender } = renderHook((props) => useShimmerEffect(props.enabled), {
+        initialProps: { enabled: true },
+      });
 
       const firstStyle = result.current.shimmerStyle;
 
@@ -68,10 +65,9 @@ describe('useShimmerEffect', () => {
 
   describe('state changes', () => {
     it('should handle enabling shimmer animation', () => {
-      const { result, rerender } = renderHook(
-        (props) => useShimmerEffect(props.enabled),
-        { initialProps: { enabled: false } }
-      );
+      const { result, rerender } = renderHook((props) => useShimmerEffect(props.enabled), {
+        initialProps: { enabled: false },
+      });
 
       expect(result.current.shimmerStyle).toBeDefined();
 
@@ -81,10 +77,9 @@ describe('useShimmerEffect', () => {
     });
 
     it('should handle disabling shimmer animation', () => {
-      const { result, rerender } = renderHook(
-        (props) => useShimmerEffect(props.enabled),
-        { initialProps: { enabled: true } }
-      );
+      const { result, rerender } = renderHook((props) => useShimmerEffect(props.enabled), {
+        initialProps: { enabled: true },
+      });
 
       expect(result.current.shimmerStyle).toBeDefined();
 
@@ -94,4 +89,3 @@ describe('useShimmerEffect', () => {
     });
   });
 });
-

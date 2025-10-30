@@ -3,9 +3,9 @@
  * Displays detailed compatibility breakdown
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '@mobile/theme';
 import type { SemanticColors } from '@mobile/theme/contracts';
 import { useTranslation } from 'react-i18next';
@@ -30,9 +30,7 @@ const getScoreColor = (score: number, colors: SemanticColors): string => {
   return colors.danger;
 };
 
-export const CompatibilityBreakdown: React.FC<CompatibilityBreakdownProps> = ({
-  breakdown,
-}) => {
+export const CompatibilityBreakdown: React.FC<CompatibilityBreakdownProps> = ({ breakdown }) => {
   const theme = useTheme();
   const { t } = useTranslation('common');
   const styles = useMemo(() => {
@@ -45,8 +43,8 @@ export const CompatibilityBreakdown: React.FC<CompatibilityBreakdownProps> = ({
         ...theme.shadows.elevation2,
       },
       resultHeader: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         marginBottom: theme.spacing.sm,
       },
       resultTitle: {
@@ -59,8 +57,8 @@ export const CompatibilityBreakdown: React.FC<CompatibilityBreakdownProps> = ({
         gap: theme.spacing.sm,
       },
       breakdownItem: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         gap: theme.spacing.sm,
       },
       breakdownLabel: {
@@ -73,17 +71,17 @@ export const CompatibilityBreakdown: React.FC<CompatibilityBreakdownProps> = ({
         height: 8,
         backgroundColor: theme.colors.border,
         borderRadius: theme.radii.sm,
-        overflow: "hidden",
+        overflow: 'hidden',
       },
       breakdownFill: {
-        height: "100%",
+        height: '100%',
         borderRadius: theme.radii.sm,
       },
       breakdownScore: {
         fontSize: 14,
         fontWeight: theme.typography.h2.weight,
         width: 40,
-        textAlign: "right",
+        textAlign: 'right',
         color: theme.colors.onSurface,
       },
     });
@@ -92,17 +90,22 @@ export const CompatibilityBreakdown: React.FC<CompatibilityBreakdownProps> = ({
   return (
     <View style={styles.resultCard}>
       <View style={styles.resultHeader}>
-        <Ionicons name="bar-chart" size={24} color={theme.colors.primary} />
+        <Ionicons
+          name="bar-chart"
+          size={24}
+          color={theme.colors.primary}
+        />
         <Text style={styles.resultTitle}>
           {t('compatibility.breakdown_title', 'Compatibility Breakdown')}
         </Text>
       </View>
       <View style={styles.breakdownList}>
         {Object.entries(breakdown).map(([factor, score]) => (
-          <View key={factor} style={styles.breakdownItem}>
-            <Text style={styles.breakdownLabel}>
-              {t(`compatibility.factors.${factor}`)}
-            </Text>
+          <View
+            key={factor}
+            style={styles.breakdownItem}
+          >
+            <Text style={styles.breakdownLabel}>{t(`compatibility.factors.${factor}`)}</Text>
             <View style={styles.breakdownBar}>
               <View
                 style={[
@@ -114,9 +117,7 @@ export const CompatibilityBreakdown: React.FC<CompatibilityBreakdownProps> = ({
                 ]}
               />
             </View>
-            <Text style={styles.breakdownScore}>
-              {t('compatibility.percentage', { score })}
-            </Text>
+            <Text style={styles.breakdownScore}>{t('compatibility.percentage', { score })}</Text>
           </View>
         ))}
       </View>

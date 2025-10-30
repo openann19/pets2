@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing } from 'react-native-reanimated';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import { useTheme } from '../../theme/useTheme';
 import type { PetProfile } from '../../data/pets';
 import { Card } from './Card';
@@ -46,24 +51,19 @@ export function PetCard({ pet }: PetCardProps): React.ReactElement {
       style={styles.card}
       shadow="medium"
     >
-      <View style={[styles.imageContainer, { borderRadius: radii.md, backgroundColor: dominantColor }]}>
+      <View
+        style={[styles.imageContainer, { borderRadius: radii.md, backgroundColor: dominantColor }]}
+      >
         {/* Dominant color placeholder */}
         <View
-          style={[
-            styles.placeholder,
-            { backgroundColor: dominantColor, borderRadius: radii.md },
-          ]}
+          style={[styles.placeholder, { backgroundColor: dominantColor, borderRadius: radii.md }]}
         />
         {/* Fade-in image */}
         <AnimatedImage
           source={{ uri: pet.photo }}
           accessibilityLabel={`${pet.name}, ${pet.breed}`}
           resizeMode="cover"
-          style={[
-            styles.image,
-            { borderRadius: radii.md },
-            animatedImageStyle,
-          ]}
+          style={[styles.image, { borderRadius: radii.md }, animatedImageStyle]}
           onLoad={() => setImageLoaded(true)}
         />
       </View>
@@ -88,10 +88,7 @@ export function PetCard({ pet }: PetCardProps): React.ReactElement {
         {pet.personality.map((trait) => (
           <View
             key={trait}
-            style={[
-              styles.tag,
-              { backgroundColor: colors.surfaceMuted, borderRadius: radii.sm },
-            ]}
+            style={[styles.tag, { backgroundColor: colors.surfaceMuted, borderRadius: radii.sm }]}
           >
             <Text
               variant="caption"

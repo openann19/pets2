@@ -2,7 +2,7 @@
 const path = require('path');
 
 const baseConfig = {
-  preset: 'jest-expo',
+  preset: 'react-native',
   testEnvironment: 'jsdom',
   roots: ['<rootDir>/src'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],

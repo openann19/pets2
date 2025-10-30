@@ -40,7 +40,7 @@ export function SwitchFlick({
 }: SwitchFlickProps): React.JSX.Element {
   const theme = useTheme();
   const guards = useMotionGuards();
-  
+
   const progress = useSharedValue(value ? 1 : 0);
   const thumbScale = useSharedValue(1);
 
@@ -51,13 +51,10 @@ export function SwitchFlick({
     }
 
     // Animate thumb position with overshoot
-    progress.value = withSpring(
-      value ? 1 : 0,
-      {
-        ...getSpringConfig('emphasized'),
-        damping: 20, // Less damping for more bounce
-      }
-    );
+    progress.value = withSpring(value ? 1 : 0, {
+      ...getSpringConfig('emphasized'),
+      damping: 20, // Less damping for more bounce
+    });
 
     // Thumb scale animation for tactile feedback
     thumbScale.value = withSpring(1.1, getSpringConfig('snappy'));
@@ -70,7 +67,7 @@ export function SwitchFlick({
     const backgroundColor = interpolateColor(
       progress.value,
       [0, 1],
-      [theme.colors.border, theme.colors.primary]
+      [theme.colors.border, theme.colors.primary],
     );
 
     return {
@@ -104,4 +101,3 @@ export function SwitchFlick({
     />
   );
 }
-

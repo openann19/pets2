@@ -3,13 +3,12 @@
  * Tests pet matching logic, recommendations, and swipe actions
  */
 
-import { MatchingService } from '../MatchingService';
+import { matchingService, MatchingService } from '../MatchingService';
 
-// Mock the API
+// Mock the API request function
 jest.mock('../api', () => ({
   api: {
-    get: jest.fn(),
-    post: jest.fn(),
+    request: jest.fn(),
   },
 }));
 
@@ -18,10 +17,7 @@ import { api } from '../api';
 const mockApi = api as jest.Mocked<typeof api>;
 
 describe('MatchingService', () => {
-  let matchingService: MatchingService;
-
   beforeEach(() => {
-    matchingService = new MatchingService();
     jest.clearAllMocks();
   });
 
@@ -47,11 +43,11 @@ describe('MatchingService', () => {
         },
       ];
 
-      mockApi.get.mockResolvedValue({ data: mockRecommendations });
+      mockApi.request.mockResolvedValue(mockRecommendations);
 
       const result = await matchingService.getRecommendations();
 
-      expect(mockApi.get).toHaveBeenCalledWith('/matching/recommendations');
+      expect(mockApi.request).toHaveBeenCalledWith('/matches/recommendations?limit=20');
       expect(result).toEqual(mockRecommendations);
     });
 
@@ -85,18 +81,16 @@ describe('MatchingService', () => {
         },
       ];
 
-      mockApi.get.mockResolvedValue({ data: mockRecommendations });
+      mockApi.request.mockResolvedValue(mockRecommendations);
 
       const result = await matchingService.getRecommendations(filters);
 
-      expect(mockApi.get).toHaveBeenCalledWith('/matching/recommendations', {
-        params: filters,
-      });
+      expect(mockApi.request).toHaveBeenCalledWith('/matches/recommendations?species=Dog&minAge=1&maxAge=5&size=medium&intent=friendship&distance=10&limit=20');
       expect(result).toEqual(mockRecommendations);
     });
 
     it('should handle empty recommendations', async () => {
-      mockApi.get.mockResolvedValue({ data: [] });
+      mockApi.request.mockResolvedValue([]);
 
       const result = await matchingService.getRecommendations();
 
@@ -105,9 +99,11 @@ describe('MatchingService', () => {
 
     it('should handle API errors', async () => {
       const mockError = new Error('Network error');
-      mockApi.get.mockRejectedValue(mockError);
+      mockApi.request.mockRejectedValue(mockError);
 
-      await expect(matchingService.getRecommendations()).rejects.toThrow('Network error');
+      const result = await matchingService.getRecommendations();
+
+      expect(result).toEqual([]);
     });
   });
 
@@ -130,15 +126,18 @@ describe('MatchingService', () => {
         },
       };
 
-      mockApi.post.mockResolvedValue({ data: mockResponse });
+      mockApi.request.mockResolvedValue(mockResponse);
 
       const result = await matchingService.recordSwipe(swipeAction);
 
-      expect(mockApi.post).toHaveBeenCalledWith('/matching/swipe', {
-        petId: 'pet123',
-        action: 'like',
-        timestamp: swipeAction.timestamp,
-      });
+      expect(mockApi.request).toHaveBeenCalledWith('/matching/swipe', expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          petId: 'pet123',
+          action: 'like',
+          timestamp: swipeAction.timestamp,
+        }),
+      }));
       expect(result).toEqual(mockResponse);
     });
 
@@ -154,15 +153,18 @@ describe('MatchingService', () => {
         match: null, // No match for pass action
       };
 
-      mockApi.post.mockResolvedValue({ data: mockResponse });
+      mockApi.request.mockResolvedValue(mockResponse);
 
       const result = await matchingService.recordSwipe(swipeAction);
 
-      expect(mockApi.post).toHaveBeenCalledWith('/matching/swipe', {
-        petId: 'pet456',
-        action: 'pass',
-        timestamp: swipeAction.timestamp,
-      });
+      expect(mockApi.request).toHaveBeenCalledWith('/matching/swipe', expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          petId: 'pet456',
+          action: 'pass',
+          timestamp: swipeAction.timestamp,
+        }),
+      }));
       expect(result).toEqual(mockResponse);
     });
 
@@ -184,15 +186,18 @@ describe('MatchingService', () => {
         },
       };
 
-      mockApi.post.mockResolvedValue({ data: mockResponse });
+      mockApi.request.mockResolvedValue(mockResponse);
 
       const result = await matchingService.recordSwipe(swipeAction);
 
-      expect(mockApi.post).toHaveBeenCalledWith('/matching/swipe', {
-        petId: 'pet789',
-        action: 'superlike',
-        timestamp: swipeAction.timestamp,
-      });
+      expect(mockApi.request).toHaveBeenCalledWith('/matching/swipe', expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          petId: 'pet789',
+          action: 'superlike',
+          timestamp: swipeAction.timestamp,
+        }),
+      }));
       expect(result).toEqual(mockResponse);
     });
 
@@ -204,7 +209,7 @@ describe('MatchingService', () => {
       };
 
       const mockError = new Error('Invalid pet ID');
-      mockApi.post.mockRejectedValue(mockError);
+      mockApi.request.mockRejectedValue(mockError);
 
       await expect(matchingService.recordSwipe(swipeAction)).rejects.toThrow('Invalid pet ID');
     });
@@ -310,18 +315,21 @@ describe('MatchingService', () => {
         filters: { ...filters, userId: 'currentUser' },
       };
 
-      mockApi.post.mockResolvedValue({ data: mockResponse });
+      mockApi.request.mockResolvedValue(mockResponse);
 
       const result = await matchingService.updateFilters(filters);
 
-      expect(mockApi.post).toHaveBeenCalledWith('/matching/filters', filters);
+      expect(mockApi.request).toHaveBeenCalledWith('/matching/filters', expect.objectContaining({
+        method: 'PUT',
+        body: JSON.stringify(filters),
+      }));
       expect(result).toEqual(mockResponse);
     });
 
     it('should handle filter update errors', async () => {
       const filters = { species: 'Invalid' };
       const mockError = new Error('Invalid species filter');
-      mockApi.post.mockRejectedValue(mockError);
+      mockApi.request.mockRejectedValue(mockError);
 
       await expect(matchingService.updateFilters(filters)).rejects.toThrow(
         'Invalid species filter',

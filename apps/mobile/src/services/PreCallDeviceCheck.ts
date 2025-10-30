@@ -58,7 +58,7 @@ class PreCallDeviceCheckService {
       camera: { available: false, permission: false },
       microphone: { available: false, permission: false },
       network: { connected: false, type: 'unknown', quality: 'poor' },
-      overall: { ready: false, warnings: [], errors: [] }
+      overall: { ready: false, warnings: [], errors: [] },
     };
 
     try {
@@ -78,14 +78,14 @@ class PreCallDeviceCheckService {
 
       logger.info('Pre-call device check completed', { result });
       return result;
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error during device check';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error during device check';
       logger.error('Pre-call device check failed', { error: errorMessage });
-      
+
       result.overall.errors.push(errorMessage);
       result.overall.ready = false;
-      
+
       return result;
     }
   }
@@ -93,10 +93,13 @@ class PreCallDeviceCheckService {
   /**
    * Check network connectivity and quality
    */
-  private async checkNetworkConnectivity(result: DeviceCheckResult, speedTest: boolean): Promise<void> {
+  private async checkNetworkConnectivity(
+    result: DeviceCheckResult,
+    speedTest: boolean,
+  ): Promise<void> {
     try {
       const netInfo = await NetInfo.fetch();
-      
+
       result.network.connected = netInfo.isConnected ?? false;
       result.network.type = netInfo.type;
 
@@ -139,7 +142,6 @@ class PreCallDeviceCheckService {
       if (speedTest && result.network.connected) {
         await this.performNetworkSpeedTest(result);
       }
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Network check failed';
       result.network.error = errorMessage;
@@ -155,32 +157,37 @@ class PreCallDeviceCheckService {
     try {
       const testUrl = 'https://httpbin.org/bytes/1024'; // 1KB test file
       const startTime = Date.now();
-      
+
       const response = await fetch(testUrl, {
         method: 'GET',
-        cache: 'no-cache'
+        cache: 'no-cache',
       });
-      
+
       if (response.ok) {
         const endTime = Date.now();
         const duration = endTime - startTime;
         const bytes = 1024;
         const kbps = (bytes * 8) / (duration / 1000) / 1000; // Convert to kbps
-        
+
         result.network.bandwidth = kbps;
-        
+
         // Adjust quality based on measured speed
-        if (kbps > 1000) { // > 1 Mbps
+        if (kbps > 1000) {
+          // > 1 Mbps
           result.network.quality = 'excellent';
-        } else if (kbps > 500) { // > 500 kbps
+        } else if (kbps > 500) {
+          // > 500 kbps
           result.network.quality = 'good';
-        } else if (kbps > 200) { // > 200 kbps
+        } else if (kbps > 200) {
+          // > 200 kbps
           result.network.quality = 'fair';
         } else {
           result.network.quality = 'poor';
-          result.overall.warnings.push('Slow network speed detected - consider using audio-only mode');
+          result.overall.warnings.push(
+            'Slow network speed detected - consider using audio-only mode',
+          );
         }
-        
+
         logger.info('Network speed test completed', { kbps, quality: result.network.quality });
       }
     } catch (error) {
@@ -192,11 +199,14 @@ class PreCallDeviceCheckService {
   /**
    * Check media device availability and permissions
    */
-  private async checkMediaDevices(result: DeviceCheckResult, options: PreCallCheckOptions): Promise<void> {
+  private async checkMediaDevices(
+    result: DeviceCheckResult,
+    options: PreCallCheckOptions,
+  ): Promise<void> {
     try {
       // Check permissions first
       const permissions = await checkMediaPermissions(options.requireVideo);
-      
+
       result.microphone.permission = permissions.audio.granted;
       result.camera.permission = permissions.video.granted;
 
@@ -214,7 +224,6 @@ class PreCallDeviceCheckService {
       if (result.microphone.permission || result.camera.permission) {
         await this.enumerateMediaDevices(result);
       }
-
     } catch (error) {
       if (error instanceof PermissionDeniedError) {
         if (error.type === 'audio' || error.type === 'both') {
@@ -239,9 +248,9 @@ class PreCallDeviceCheckService {
   private async enumerateMediaDevices(result: DeviceCheckResult): Promise<void> {
     try {
       const devices = await mediaDevices.enumerateDevices();
-      
-      const audioInputs = devices.filter(device => device.kind === 'audioinput');
-      const videoInputs = devices.filter(device => device.kind === 'videoinput');
+
+      const audioInputs = devices.filter((device) => device.kind === 'audioinput');
+      const videoInputs = devices.filter((device) => device.kind === 'videoinput');
 
       result.microphone.available = audioInputs.length > 0;
       result.microphone.devices = audioInputs;
@@ -261,9 +270,8 @@ class PreCallDeviceCheckService {
 
       logger.info('Media devices enumerated', {
         audioInputs: audioInputs.length,
-        videoInputs: videoInputs.length
+        videoInputs: videoInputs.length,
       });
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Device enumeration failed';
       logger.warn('Failed to enumerate media devices', { error: errorMessage });
@@ -274,21 +282,28 @@ class PreCallDeviceCheckService {
   /**
    * Test actual media stream creation
    */
-  private async testMediaStream(result: DeviceCheckResult, options: PreCallCheckOptions): Promise<void> {
+  private async testMediaStream(
+    result: DeviceCheckResult,
+    options: PreCallCheckOptions,
+  ): Promise<void> {
     let testStream: MediaStream | null = null;
 
     try {
       const constraints = {
-        audio: options.requireAudio ? {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-        } : false,
-        video: options.requireVideo ? {
-          width: { min: 320, ideal: 640 },
-          height: { min: 240, ideal: 480 },
-          frameRate: { min: 15, ideal: 30 },
-        } : false,
+        audio: options.requireAudio
+          ? {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+            }
+          : false,
+        video: options.requireVideo
+          ? {
+              width: { min: 320, ideal: 640 },
+              height: { min: 240, ideal: 480 },
+              frameRate: { min: 15, ideal: 30 },
+            }
+          : false,
       };
 
       // Type assertion for react-native-webrtc compatibility
@@ -318,16 +333,15 @@ class PreCallDeviceCheckService {
           logger.info('Video stream test successful', { tracks: videoTracks.length });
         }
       }
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Media stream test failed';
       logger.error('Media stream test failed', { error: errorMessage });
-      
+
       if (options.requireAudio) {
         result.microphone.error = 'Failed to create audio stream';
         result.overall.errors.push('Audio stream test failed');
       }
-      
+
       if (options.requireVideo) {
         result.camera.error = 'Failed to create video stream';
         result.overall.errors.push('Video stream test failed');
@@ -335,7 +349,7 @@ class PreCallDeviceCheckService {
     } finally {
       // Clean up test stream
       if (testStream) {
-        testStream.getTracks().forEach(track => {
+        testStream.getTracks().forEach((track) => {
           track.stop();
         });
       }
@@ -382,11 +396,11 @@ class PreCallDeviceCheckService {
 
     // Overall readiness
     overall.ready = overall.errors.length === 0;
-    
+
     logger.info('Overall readiness evaluated', {
       ready: overall.ready,
       errors: overall.errors.length,
-      warnings: overall.warnings.length
+      warnings: overall.warnings.length,
     });
   }
 
@@ -410,7 +424,7 @@ class PreCallDeviceCheckService {
       const permissions = await checkMediaPermissions(requireVideo);
       return {
         audio: permissions.audio.granted,
-        video: permissions.video.granted
+        video: permissions.video.granted,
       };
     } catch {
       return { audio: false, video: false };

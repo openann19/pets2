@@ -21,7 +21,7 @@ export default function MatchesFilterModal({ visible, initial, onApply, onClose 
   const theme = useTheme();
   const [f, setF] = useState<MatchesFilter>(initial);
   const styles = makeStyles(theme);
-  
+
   return (
     <Modal
       visible={visible}
@@ -140,7 +140,12 @@ function makeStyles(theme: ReturnType<typeof useTheme>) {
       gap: theme.spacing.xs,
     },
     h1: { fontSize: 18, fontWeight: '700', color: theme.colors.onSurface },
-    label: { fontSize: 12, fontWeight: '600', color: theme.palette.neutral[600], marginTop: theme.spacing.xs },
+    label: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.palette.neutral[600],
+      marginTop: theme.spacing.xs,
+    },
     input: {
       borderWidth: 1,
       borderColor: theme.palette.neutral[200],
@@ -158,9 +163,22 @@ function makeStyles(theme: ReturnType<typeof useTheme>) {
     },
     pillActive: { backgroundColor: `${theme.colors.primary}22` },
     pillText: { fontWeight: '600', color: theme.colors.onSurface },
-    actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: theme.spacing.md, marginTop: theme.spacing.md },
-    btn: { paddingVertical: theme.spacing.md, paddingHorizontal: theme.spacing.md, borderRadius: theme.radii.md },
-    btnGhost: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.palette.neutral[200] },
+    actions: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      gap: theme.spacing.md,
+      marginTop: theme.spacing.md,
+    },
+    btn: {
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
+      borderRadius: theme.radii.md,
+    },
+    btnGhost: {
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.palette.neutral[200],
+    },
     btnGhostText: { fontWeight: '700', color: theme.palette.neutral[700] },
     btnPrimary: { backgroundColor: theme.colors.primary },
     btnPrimaryText: { color: theme.colors.onSurface, fontWeight: '700' },

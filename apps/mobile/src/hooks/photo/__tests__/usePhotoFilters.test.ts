@@ -94,4 +94,3 @@ describe('usePhotoFilters', () => {
     expect(result.current.selectedPreset).toBe(preset2.name);
   });
 });
-

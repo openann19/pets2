@@ -3,11 +3,11 @@
  * Shows detailed breakdown of compatibility factors
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 function createStyles(theme: AppTheme) {
   const { spacing, radii, colors, typography } = theme;
@@ -22,8 +22,8 @@ function createStyles(theme: AppTheme) {
       ...theme.shadows.elevation2,
     },
     resultHeader: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: spacing.xs,
     },
     resultTitle: {
@@ -35,8 +35,8 @@ function createStyles(theme: AppTheme) {
       gap: spacing.sm,
     },
     breakdownItem: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: spacing.sm,
     },
     breakdownLabel: {
@@ -49,22 +49,21 @@ function createStyles(theme: AppTheme) {
       height: spacing.xs,
       backgroundColor: colors.border,
       borderRadius: radii.xs,
-      overflow: "hidden",
+      overflow: 'hidden',
     },
     breakdownFill: {
-      height: "100%",
+      height: '100%',
       borderRadius: radii.xs,
     },
     breakdownScore: {
       fontSize: typography.body.size,
-      fontWeight: "600",
+      fontWeight: '600',
       width: 48,
-      textAlign: "right",
+      textAlign: 'right',
       color: colors.onSurface,
     },
   });
 }
-
 
 interface BreakdownData {
   temperament: number;
@@ -96,12 +95,19 @@ export const CompatibilityBreakdownCard: React.FC<CompatibilityBreakdownCardProp
   return (
     <View style={styles.resultCard}>
       <View style={styles.resultHeader}>
-        <Ionicons name="bar-chart" size={24} color={colors.info} />
+        <Ionicons
+          name="bar-chart"
+          size={24}
+          color={colors.info}
+        />
         <Text style={styles.resultTitle}>Compatibility Breakdown</Text>
       </View>
       <View style={styles.breakdownList}>
         {Object.entries(breakdown).map(([factor, score]) => (
-          <View key={factor} style={styles.breakdownItem}>
+          <View
+            key={factor}
+            style={styles.breakdownItem}
+          >
             <Text style={styles.breakdownLabel}>
               {factor.charAt(0).toUpperCase() + factor.slice(1)}
             </Text>

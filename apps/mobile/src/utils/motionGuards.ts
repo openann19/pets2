@@ -1,7 +1,7 @@
 /**
  * 🛡️ MOTION GUARDS
  * Utilities for respecting reduced motion and low-end device constraints
- * 
+ *
  * All micro-interactions should check these guards before animating.
  */
 
@@ -91,8 +91,6 @@ export function useMotionGuards() {
       }
       return duration;
     },
-    getAdaptiveParticleCount: (maxCount: number) =>
-      getAdaptiveParticleCount(maxCount, lowEnd),
+    getAdaptiveParticleCount: (maxCount: number) => getAdaptiveParticleCount(maxCount, lowEnd),
   };
 }
-

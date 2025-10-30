@@ -1,18 +1,13 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useCallback } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
-import * as Haptics from "expo-haptics";
-import { useAdvancedFiltersScreen } from "../hooks/screens/useAdvancedFiltersScreen";
-import { useTheme } from "@mobile/theme";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useCallback } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
+import { useAdvancedFiltersScreen } from '../hooks/screens/useAdvancedFiltersScreen';
+import { useTheme } from '@mobile/theme';
+import { getExtendedColors } from '@mobile/theme/adapters';
 
 interface AdvancedFiltersScreenProps {
   navigation: {
@@ -20,25 +15,151 @@ interface AdvancedFiltersScreenProps {
   };
 }
 
-function AdvancedFiltersScreen({
-  navigation,
-}: AdvancedFiltersScreenProps): React.JSX.Element {
+function AdvancedFiltersScreen({ navigation }: AdvancedFiltersScreenProps): React.JSX.Element {
   const theme = useTheme();
-  const {
-    toggleFilter,
-    resetFilters,
-    saveFilters,
-    getFiltersByCategory,
-  } = useAdvancedFiltersScreen();
-  
-  const styles = makeStyles(theme);
+  const colors = getExtendedColors(theme);
+  const { toggleFilter, resetFilters, saveFilters, getFiltersByCategory } =
+    useAdvancedFiltersScreen();
+
+  const styles = React.useMemo(
+    () =>
+      StyleSheet.create({
+        infoCard: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          backgroundColor: theme.colors.bgElevated + '1A', // 10% opacity
+          borderRadius: theme.radii.md,
+          padding: theme.spacing.md,
+          marginBottom: theme.spacing['2xl'],
+          borderWidth: 1,
+          borderColor: theme.colors.border,
+        },
+        infoText: {
+          flex: 1,
+          marginStart: theme.spacing.sm,
+          fontSize: 14,
+          color: theme.colors.text,
+          lineHeight: 20,
+        },
+        categoryTitle: {
+          fontSize: 18,
+          fontWeight: 'bold',
+          color: theme.colors.text,
+          marginBottom: theme.spacing.sm,
+        },
+        backButtonBlur: {
+          borderRadius: theme.radii.lg,
+          padding: theme.spacing.sm,
+          backgroundColor: theme.colors.bgElevated + '40', // 25% opacity
+        },
+        saveButtonBlur: {
+          borderRadius: theme.radii.lg,
+          padding: theme.spacing.sm,
+          backgroundColor: theme.colors.primary + '40', // 25% opacity
+        },
+        categorySection: {
+          marginBottom: theme.spacing['2xl'],
+        },
+        filterCard: {
+          backgroundColor: theme.colors.bgElevated,
+          borderRadius: theme.radii.md,
+          padding: theme.spacing.md,
+          marginBottom: theme.spacing.sm,
+          borderWidth: 1,
+          borderColor: theme.colors.border,
+        },
+        filterCardActive: {
+          backgroundColor: theme.colors.primary + '20',
+          borderColor: theme.colors.primary,
+        },
+        filterBlur: {
+          borderRadius: theme.radii.md,
+          padding: theme.spacing.md,
+        },
+        filterContent: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        },
+        filterLabel: {
+          fontSize: 16,
+          color: theme.colors.text,
+          flex: 1,
+        },
+        filterLabelActive: {
+          color: theme.colors.primary,
+          fontWeight: '600',
+        },
+        checkbox: {
+          width: 20,
+          height: 20,
+          borderRadius: 10,
+          borderWidth: 2,
+          borderColor: theme.colors.border,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        checkboxActive: {
+          backgroundColor: theme.colors.primary,
+          borderColor: theme.colors.primary,
+        },
+        container: {
+          flex: 1,
+          backgroundColor: theme.colors.bg,
+        },
+        safeArea: {
+          flex: 1,
+        },
+        header: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: theme.spacing.md,
+          paddingVertical: theme.spacing.sm,
+        },
+        backButton: {
+          padding: theme.spacing.sm,
+        },
+        headerTitle: {
+          fontSize: 18,
+          fontWeight: '600',
+          color: theme.colors.text,
+        },
+        resetButton: {
+          padding: theme.spacing.sm,
+        },
+        saveButton: {
+          borderRadius: theme.radii.lg,
+          marginHorizontal: theme.spacing.md,
+          marginBottom: theme.spacing.md,
+        },
+        saveButtonText: {
+          color: theme.colors.text,
+          fontSize: 16,
+          fontWeight: '600',
+          marginStart: theme.spacing.sm,
+        },
+        resetButtonText: {
+          color: theme.colors.text,
+          fontSize: 16,
+          fontWeight: '600',
+        },
+        content: {
+          flex: 1,
+        },
+      }),
+    [theme],
+  );
 
   const renderCategory = useCallback(
     (category: string, title: string) => {
       const categoryFilters = getFiltersByCategory(category);
 
       return (
-        <View key={category} style={styles.categorySection}>
+        <View
+          key={category}
+          style={styles.categorySection}
+        >
           <Text style={styles.categoryTitle}>{title}</Text>
           {categoryFilters.map((filter) => (
             <TouchableOpacity
@@ -76,7 +197,11 @@ function AdvancedFiltersScreen({
                     ])}
                   >
                     {filter.value && (
-                      <Ionicons name="checkmark" size={16} color={theme.colors.onSurface} />
+                      <Ionicons
+                        name="checkmark"
+                        size={16}
+                        color={theme.colors.text}
+                      />
                     )}
                   </View>
                 </View>
@@ -92,7 +217,7 @@ function AdvancedFiltersScreen({
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={theme.palette.gradients.primary}
+        colors={[colors.primary, colors.accent]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -102,18 +227,23 @@ function AdvancedFiltersScreen({
           <TouchableOpacity
             style={styles.backButton}
             hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            testID="AdvancedFiltersScreen-button-back" 
-            accessibilityLabel="Go back" 
-            accessibilityRole="button" 
+            testID="AdvancedFiltersScreen-button-back"
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
-                () => {},
-              );
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
               navigation.goBack();
             }}
           >
-            <BlurView intensity={20} style={styles.backButtonBlur}>
-              <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
+            <BlurView
+              intensity={20}
+              style={styles.backButtonBlur}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color={theme.colors.text}
+              />
             </BlurView>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Advanced Filters</Text>
@@ -130,23 +260,29 @@ function AdvancedFiltersScreen({
         </View>
 
         {/* Content */}
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <BlurView intensity={10} style={styles.infoCard}>
+        <ScrollView
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+          <BlurView
+            intensity={10}
+            style={styles.infoCard}
+          >
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color={theme.colors.info}
+              color={colors.primary}
             />
             <Text style={styles.infoText}>
-              Advanced filters help you find pets that match your specific
-              preferences and lifestyle.
+              Advanced filters help you find pets that match your specific preferences and
+              lifestyle.
             </Text>
           </BlurView>
 
-          {renderCategory("characteristics", "Pet Characteristics")}
-          {renderCategory("size", "Size Preferences")}
-          {renderCategory("energy", "Energy Level")}
-          {renderCategory("special", "Special Considerations")}
+          {renderCategory('characteristics', 'Pet Characteristics')}
+          {renderCategory('size', 'Size Preferences')}
+          {renderCategory('energy', 'Energy Level')}
+          {renderCategory('special', 'Special Considerations')}
 
           {/* Save Button */}
           <TouchableOpacity
@@ -157,8 +293,15 @@ function AdvancedFiltersScreen({
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             onPress={saveFilters}
           >
-            <BlurView intensity={20} style={styles.saveButtonBlur}>
-              <Ionicons name="save-outline" size={20} color={theme.colors.onSurface} />
+            <BlurView
+              intensity={20}
+              style={styles.saveButtonBlur}
+            >
+              <Ionicons
+                name="save-outline"
+                size={20}
+                color={theme.colors.text}
+              />
               <Text style={styles.saveButtonText}>Save Filters</Text>
             </BlurView>
           </TouchableOpacity>
@@ -167,135 +310,5 @@ function AdvancedFiltersScreen({
     </View>
   );
 }
-
-const makeStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: theme.radii.full,
-    overflow: "hidden",
-  },
-  backButtonBlur: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: theme.typography.h2.size,
-    fontWeight: theme.typography.h2.weight,
-    color: theme.colors.onSurface,
-  },
-  resetButton: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    backgroundColor: theme.colors.surface + '33', // 20% opacity
-    borderRadius: theme.radii.full,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-  },
-  resetButtonText: {
-    color: theme.colors.onSurface,
-    fontSize: theme.typography.body.size * 0.875,
-    fontWeight: theme.typography.h2.weight,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: theme.spacing.lg,
-  },
-  infoCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: theme.colors.surface + '1A', // 10% opacity
-    borderRadius: theme.radii.md,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing['2xl'],
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-  },
-  infoText: {
-    flex: 1,
-    marginStart: theme.spacing.sm,
-    fontSize: theme.typography.body.size * 0.875,
-    color: theme.colors.onSurface,
-    lineHeight: theme.typography.body.lineHeight * 1.25,
-  },
-  categorySection: {
-    marginBottom: theme.spacing['2xl'],
-  },
-  categoryTitle: {
-    fontSize: theme.typography.h3.size,
-    fontWeight: theme.typography.h3.weight,
-    color: theme.colors.onSurface,
-    marginBottom: theme.spacing.sm,
-  },
-  filterCard: {
-    borderRadius: theme.radii.md,
-    marginBottom: theme.spacing.sm,
-    overflow: "hidden",
-  },
-  filterCardActive: {
-    transform: [{ scale: 1.02 }],
-  },
-  filterBlur: {
-    padding: theme.spacing.md,
-  },
-  filterContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  filterLabel: {
-    fontSize: theme.typography.body.size,
-    color: theme.colors.onSurface,
-    flex: 1,
-  },
-  filterLabelActive: {
-    fontWeight: "600",
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: theme.radii.sm,
-    borderWidth: 2,
-    borderColor: theme.colors.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checkboxActive: {
-    backgroundColor: theme.colors.success,
-    borderColor: theme.colors.success,
-  },
-  saveButton: {
-    borderRadius: theme.radii.lg,
-    overflow: "hidden",
-    marginTop: theme.spacing.lg,
-    marginBottom: theme.spacing['2xl'],
-  },
-  saveButtonBlur: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: theme.spacing.lg,
-    gap: theme.spacing.sm,
-  },
-  saveButtonText: {
-    color: theme.colors.onSurface,
-    fontSize: theme.typography.body.size,
-    fontWeight: theme.typography.h2.weight,
-  },
-});
 
 export default AdvancedFiltersScreen;

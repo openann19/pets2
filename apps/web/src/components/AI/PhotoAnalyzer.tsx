@@ -1,25 +1,41 @@
 'use client';
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react';
 import { logger } from '@pawfectmatch/core';
-;
 import { motion } from 'framer-motion';
 import { CameraIcon, SparklesIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-import { useDropzone } from 'react-dropzone';
+import { useDropzone, type FileRejection } from 'react-dropzone';
+
+interface AnalysisResult {
+    breed: string;
+    age: string;
+    temperament: string[];
+    healthScore: number;
+    confidence: number;
+    suggestions: string[];
+}
+
 export const PhotoAnalyzer = () => {
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState<string | null>(null);
     const [analyzing, setAnalyzing] = useState(false);
-    const [result, setResult] = useState(null);
-    const onDrop = useCallback(async (acceptedFiles) => {
-        const file = acceptedFiles[0];
-        if (!file)
+    const [result, setResult] = useState<AnalysisResult | null>(null);
+    
+    const onDrop = useCallback(async (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+        if (rejectedFiles.length > 0) {
+            logger.warn('Some files were rejected', { rejectedFiles });
             return;
+        }
+        const file = acceptedFiles[0];
+        if (!file) {
+            return;
+        }
         const reader = new FileReader();
         reader.onload = () => {
-            setImage(reader.result);
+            setImage(reader.result as string);
             analyzePhoto(file);
         };
         reader.readAsDataURL(file);
     }, []);
+    
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept: {
@@ -27,12 +43,13 @@ export const PhotoAnalyzer = () => {
         },
         maxFiles: 1,
     });
-    const analyzePhoto = async (file) => {
+    
+    const analyzePhoto = async (file: File) => {
         setAnalyzing(true);
         setResult(null);
         try {
             // Simulate AI analysis
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise<void>(resolve => setTimeout(resolve, 2000));
             // Mock result
             setResult({
                 breed: 'Golden Retriever',
@@ -48,7 +65,10 @@ export const PhotoAnalyzer = () => {
             });
         }
         catch (error) {
-            logger.error('Analysis failed:', { error });
+            logger.error('Analysis failed:', { 
+                error: error instanceof Error ? error : new Error('Unknown error'),
+                errorMessage: error instanceof Error ? error.message : String(error)
+            });
         }
         finally {
             setAnalyzing(false);

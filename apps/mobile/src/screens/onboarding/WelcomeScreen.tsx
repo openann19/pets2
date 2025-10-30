@@ -1,7 +1,7 @@
-import type { Spacing } from '@/animation';
+import { Spacing } from '@/animation';
 import { getExtendedColors } from '@mobile/theme/adapters';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import { logger } from '@pawfectmatch/core';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -61,9 +61,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
   // Theme context
   const theme = useTheme();
   const colors = getExtendedColors(theme);
-  const styles = theme.styles || {};
-  const isDark = theme.scheme === 'dark';
-  const localStyles = createLocalStyles(colors);
+  const localStyles = createLocalStyles(colors, theme);
   const { t } = useTranslation('common');
 
   // Animation values
@@ -153,6 +151,12 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
       // Mark onboarding as complete
       await AsyncStorage.setItem('onboarding_complete', 'true');
 
+      // Mark notification prompt as available (user completed onboarding)
+      const { markNotificationPromptAsAvailable } = await import(
+        '../../hooks/useNotificationPermissionPrompt'
+      );
+      await markNotificationPromptAsAvailable();
+
       // Celebration animation before navigation
       confettiScale.value = withSequence(withSpring(1.5, SPRING_BOUNCY), withSpring(1, SPRING));
 
@@ -175,10 +179,10 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
   );
 
   return (
-    <View style={StyleSheet.flatten([styles.container as ViewStyle, containerStyle])}>
+    <View style={containerStyle}>
       <LinearGradient
         colors={
-          isDark
+          theme.isDark
             ? [colors.primary, colors.primaryDark || colors.primary]
             : [colors.success, colors.success]
         }
@@ -221,7 +225,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
           </Animated.View>
 
           <Animated.View style={titleAnimatedStyle}>
-            <Text style={styles.title as TextStyle}>{t('welcome.title')}</Text>
+            <Text style={localStyles.eliteTitle}>{t('welcome.title')}</Text>
             <View style={localStyles.titleAccent} />
           </Animated.View>
 
@@ -229,8 +233,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
           <Animated.View style={subtitleAnimatedStyle}>
             <Text
               style={StyleSheet.flatten([
-                styles.subtitle as TextStyle,
-                localStyles.subtitle,
+                localStyles.eliteSubtitle,
                 { color: theme.palette.neutral[600] },
               ])}
             >
@@ -481,8 +484,8 @@ interface WelcomeStyles {
   eliteLogoGradient: ViewStyle;
   eliteLogo: TextStyle;
   eliteTitle: TextStyle;
-  eliteSubtitle: TextStyle;
   eliteTitleAccent: ViewStyle;
+  eliteSubtitle: TextStyle;
   eliteFeaturesContainer: ViewStyle;
   eliteFeaturesBlur: ViewStyle;
   eliteFeatureRow: ViewStyle;
@@ -499,13 +502,17 @@ interface WelcomeStyles {
   eliteGetStartedButton: ViewStyle;
   eliteGetStartedButtonText: TextStyle;
   eliteFooterText: TextStyle;
+  container: ViewStyle;
   [key: string]: ViewStyle | TextStyle | undefined;
 }
 
 // Helper function to create type-safe styles
-const createStyles = <T extends Record<string, any>>(styles: T): T => styles;
+const createStyles = <T extends Record<string, ViewStyle | TextStyle>>(styles: T): T => styles;
 
-const createLocalStyles = (colors: any): WelcomeStyles =>
+const createLocalStyles = (
+  colors: ReturnType<typeof getExtendedColors>,
+  theme: AppTheme,
+): WelcomeStyles =>
   createStyles({
     // === ELITE WELCOME STYLES ===
     eliteContent: {
@@ -513,6 +520,9 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
       justifyContent: 'center',
       paddingHorizontal: Spacing['4xl'],
       paddingVertical: Spacing['4xl'],
+    },
+    container: {
+      flex: 1,
     },
 
     // === ELITE CONFETTI ===
@@ -556,6 +566,15 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
       textAlign: 'center' as const,
       marginBottom: Spacing.md,
       color: colors.onSurface,
+    } as const,
+    // === ELITE TITLE ===
+    eliteTitleAccent: {
+      width: 60,
+      height: 4,
+      backgroundColor: colors.success,
+      borderRadius: 2,
+      alignSelf: 'center' as const,
+      marginTop: Spacing.md,
     } as const,
     eliteSubtitle: {
       fontSize: 16,
@@ -608,24 +627,14 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
       color: theme.palette.neutral[500],
       marginTop: Spacing['4xl'],
     } as const,
-
-    // === ELITE TITLE ===
-    eliteTitleAccent: {
-      width: 60,
-      height: 4,
-      backgroundColor: colors.success,
-      borderRadius: 2,
-      alignSelf: 'center' as const,
-      marginTop: Spacing.md,
-    } as const,
     // === ELITE FEATURES ===
     eliteFeaturesBlur: {
       borderRadius: 20,
       padding: Spacing['4xl'],
       overflow: 'hidden' as const,
-      backgroundColor: colors.glassWhiteLight,
+      backgroundColor: colors.surface,
       borderWidth: 1,
-      borderColor: colors.glassWhiteDark,
+      borderColor: colors.border,
     },
     eliteFeature: {
       flexDirection: 'row' as const,
@@ -660,9 +669,9 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
       borderRadius: 16,
       padding: Spacing.xl,
       overflow: 'hidden' as const,
-      backgroundColor: colors.glassWhiteLight,
+      backgroundColor: colors.surface,
       borderWidth: 1,
-      borderColor: colors.glassWhiteDark,
+      borderColor: colors.border,
     },
     eliteTipsHeader: {
       flexDirection: 'row' as const,

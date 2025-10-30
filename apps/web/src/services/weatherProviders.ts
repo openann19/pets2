@@ -1,8 +1,109 @@
-/**
- * ULTRA PREMIUM Weather Provider Implementations 🌟
- * Additional weather data providers for maximum redundancy
- */
 import { logger } from './logger';
+
+interface MoonPhase {
+  phase: string;
+  illumination: number;
+  age: number;
+  distance: number;
+  angle: number;
+  emoji: string;
+  nextPhases: Array<Record<string, unknown>>;
+}
+
+interface ARVisualizationData {
+  cloudModel: string;
+  precipitationParticles: Record<string, unknown>;
+  windVectors: Record<string, unknown>;
+  temperatureHeatmap: Record<string, unknown>;
+  enabled: boolean;
+}
+
+interface TrendPrediction {
+  direction: string;
+  confidence: number;
+  keyChanges: string[];
+  timeline: string;
+}
+
+interface HistoricalComparison {
+  comparisonPeriod: string;
+  temperatureDelta: number;
+  precipitationDelta: number;
+  extremeEventsCount: number;
+  trendsIdentified: string[];
+  climateSummary: string;
+  recordsApproached: string[];
+  seasonalAlignment: string;
+}
+
+interface RiskLevel {
+  level: string;
+  score: number;
+  factors: string[];
+  mitigation: string[];
+}
+
+interface PetSafetyInfo {
+  overallSafety: 'good' | 'poor' | 'dangerous';
+  walkSafety: 'safe' | 'unsafe' | 'emergency';
+  safetyScore: number;
+  heatRisk: RiskLevel;
+  coldRisk: RiskLevel;
+  uvRisk: RiskLevel;
+  windRisk: RiskLevel;
+  precipitationRisk: RiskLevel;
+  airQualityRisk: RiskLevel;
+  recommendations: string[];
+  breedSpecificWarnings: string[];
+  bestWalkTimes: string[];
+  pottyBreakSchedule: string[];
+  playTimeWindows: Array<Record<string, unknown>>;
+  hydrationReminders: string[];
+  pawProtectionNeeded: boolean;
+  respiratoryPrecautions: string[];
+  arthritisPainLevel: number;
+  emergencyKit: string[];
+  nearestVets: Array<Record<string, unknown>>;
+  petFirstAid: string[];
+  alertsEnabled: boolean;
+  customAlertThresholds: Array<Record<string, unknown>>;
+  voiceAlerts: boolean;
+  wearableIntegration: Array<Record<string, unknown>>;
+}
+
+interface ActivityBlock {
+  timeRange: { start: string; end: string };
+  activities: Array<Record<string, unknown>>;
+  weatherSuitability: number;
+  notes: string[];
+}
+
+interface PetActivityForecast {
+  morning: ActivityBlock;
+  afternoon: ActivityBlock;
+  evening: ActivityBlock;
+  night: ActivityBlock;
+}
+
+interface DataProvider {
+  name: string;
+  priority: number;
+  responseTime: number;
+  accuracy: number;
+  lastSuccess: string;
+  failureCount: number;
+  status: string;
+  dataContribution: string[];
+}
+
+interface DataQuality {
+  accuracy: number;
+  completeness: number;
+  timeliness: number;
+  consistency: number;
+  providers: number;
+  lastCalibration: string;
+}
 
 export interface EnhancedWeatherData {
   temperature: number;
@@ -47,7 +148,7 @@ export interface EnhancedWeatherData {
   sunset: string;
   moonrise: string;
   moonset: string;
-  moonPhase: any;
+  moonPhase: MoonPhase;
   solarNoon: string;
   goldenHour: { start: string; end: string };
   blueHour: { start: string; end: string };
@@ -55,19 +156,19 @@ export interface EnhancedWeatherData {
   icon: string;
   animatedIcon: string;
   backgroundGradient: string[];
-  arVisualizationData: any;
+  arVisualizationData: ARVisualizationData;
   aiSummary: string;
   aiConfidenceScore: number;
-  trendPrediction: any;
-  anomalyDetection: any[];
-  historicalComparison: any;
-  petSafety: any;
-  breedSpecificAdvice: any[];
-  petActivityForecast: any;
-  dataProviders: any[];
+  trendPrediction: TrendPrediction;
+  anomalyDetection: Array<Record<string, unknown>>;
+  historicalComparison: HistoricalComparison;
+  petSafety: PetSafetyInfo;
+  breedSpecificAdvice: Array<Record<string, unknown>>;
+  petActivityForecast: PetActivityForecast;
+  dataProviders: DataProvider[];
   lastUpdated: string;
   nextUpdate: string;
-  dataQuality: any;
+  dataQuality: DataQuality;
 }
 
 interface WeatherApiCredentials {
@@ -172,7 +273,10 @@ export class WeatherProviders {
       const data: TomorrowIOResponse = await response.json();
       return this.mapTomorrowIOData(data, lat, lon);
     } catch (error) {
-      logger.error('Tomorrow.io API error', { error: error as any });
+      logger.error('Tomorrow.io API error', { 
+        error: error instanceof Error ? error : new Error('Unknown error'),
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
       return null;
     }
   }
@@ -189,7 +293,10 @@ export class WeatherProviders {
       const data: VisualCrossingResponse = await response.json();
       return this.mapVisualCrossingData(data, lat, lon);
     } catch (error) {
-      logger.error('Visual Crossing API error', { error: error as any });
+      logger.error('Visual Crossing API error', { 
+        error: error instanceof Error ? error : new Error('Unknown error'),
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
       return null;
     }
   }
@@ -225,7 +332,10 @@ export class WeatherProviders {
       const data: MeteomaticsResponse = await response.json();
       return this.mapMeteomaticsData(data, lat, lon);
     } catch (error) {
-      logger.error('Meteomatics API error', { error: error as any });
+      logger.error('Meteomatics API error', { 
+        error: error instanceof Error ? error : new Error('Unknown error'),
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
       return null;
     }
   }
@@ -528,7 +638,7 @@ export class WeatherProviders {
     return 'extreme';
   }
 
-  static generatePetSafetyInfo(values: TomorrowIOValues): any {
+  static generatePetSafetyInfo(values: TomorrowIOValues): PetSafetyInfo {
     const temp = values.temperature;
     const humidity = values.humidity;
     const uv = values.uvIndex;
@@ -561,7 +671,7 @@ export class WeatherProviders {
     };
   }
 
-  static generateRiskLevel(level: string): any {
+  static generateRiskLevel(level: string): RiskLevel {
     return {
       level,
       score: level === 'high' ? 80 : level === 'moderate' ? 50 : 20,
@@ -570,7 +680,7 @@ export class WeatherProviders {
     };
   }
 
-  static generateActivityBlock(time: string): any {
+  static generateActivityBlock(time: string): ActivityBlock {
     return {
       timeRange: {
         start: time === 'morning' ? '06:00' : time === 'afternoon' ? '12:00' : time === 'evening' ? '18:00' : '22:00',

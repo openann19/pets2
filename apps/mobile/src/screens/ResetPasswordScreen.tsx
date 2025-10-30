@@ -1,5 +1,4 @@
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import React from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,29 +8,23 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useResetPasswordScreen } from "../hooks/screens/useResetPasswordScreen";
-import type { RootStackScreenProps } from "../navigation/types";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useResetPasswordScreen } from '../hooks/screens/useResetPasswordScreen';
+import type { RootStackScreenProps } from '../navigation/types';
 import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 
-type ResetPasswordScreenProps = RootStackScreenProps<"ResetPassword">;
+type ResetPasswordScreenProps = RootStackScreenProps<'ResetPassword'>;
 
-function ResetPasswordScreen({
-  navigation,
-  route,
-}: ResetPasswordScreenProps): JSX.Element {
-  const theme = useTheme();
+function ResetPasswordScreen({ navigation, route }: ResetPasswordScreenProps): JSX.Element {
+  const theme = useTheme() as AppTheme;
   const { t } = useTranslation('auth');
-  const {
-    values,
-    errors,
-    loading,
-    setValue,
-    handleSubmit,
-    navigateBack,
-  } = useResetPasswordScreen({ navigation, route });
+  const { values, errors, loading, setValue, handleSubmit, navigateBack } = useResetPasswordScreen({
+    navigation,
+    route,
+  });
 
   const styles = StyleSheet.create({
     container: {
@@ -44,7 +37,7 @@ function ResetPasswordScreen({
     scrollContainer: {
       flexGrow: 1,
       padding: 20,
-      justifyContent: "center",
+      justifyContent: 'center',
     },
     backButton: {
       marginBottom: 20,
@@ -58,7 +51,7 @@ function ResetPasswordScreen({
     },
     title: {
       fontSize: 28,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       color: theme.colors.onSurface,
       marginBottom: 8,
     },
@@ -82,7 +75,7 @@ function ResetPasswordScreen({
     },
     label: {
       fontSize: 14,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
       marginBottom: 8,
     },
@@ -107,7 +100,7 @@ function ResetPasswordScreen({
       backgroundColor: theme.colors.primary as string,
       borderRadius: 8,
       padding: 15,
-      alignItems: "center",
+      alignItems: 'center',
       marginVertical: 16,
     },
     buttonDisabled: {
@@ -116,7 +109,7 @@ function ResetPasswordScreen({
     buttonText: {
       color: theme.colors.bg,
       fontSize: 16,
-      fontWeight: "bold",
+      fontWeight: 'bold',
     },
     buttonTextDisabled: {
       color: theme.colors.onMuted,
@@ -126,19 +119,23 @@ function ResetPasswordScreen({
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <TouchableOpacity style={styles.backButton}  testID="ResetPasswordScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={navigateBack}>
+          <TouchableOpacity
+            style={styles.backButton}
+            testID="ResetPasswordScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={navigateBack}
+          >
             <Text style={styles.backButtonText}>{t('back_button')}</Text>
           </TouchableOpacity>
 
           <View style={styles.header}>
             <Text style={styles.title}>{t('set_new_password_title')}</Text>
-            <Text style={styles.subtitle}>
-              {t('set_new_password_subtitle')}
-            </Text>
+            <Text style={styles.subtitle}>{t('set_new_password_subtitle')}</Text>
           </View>
 
           <View style={styles.form}>
@@ -147,15 +144,15 @@ function ResetPasswordScreen({
               <TextInput
                 style={errors.password ? [styles.input, styles.inputError] : styles.input}
                 value={values.password}
-                onChangeText={(value) => { setValue("password", value); }}
+                onChangeText={(value) => {
+                  setValue('password', value);
+                }}
                 placeholder={t('new_password_placeholder')}
                 secureTextEntry
                 autoCapitalize="none"
                 editable={!loading}
               />
-              {errors.password ? (
-                <Text style={styles.errorText}>{errors.password}</Text>
-              ) : null}
+              {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
             </View>
 
             <View style={styles.inputGroup}>
@@ -163,7 +160,9 @@ function ResetPasswordScreen({
               <TextInput
                 style={errors.confirmPassword ? [styles.input, styles.inputError] : styles.input}
                 value={values.confirmPassword}
-                onChangeText={(value) => { setValue("confirmPassword", value); }}
+                onChangeText={(value) => {
+                  setValue('confirmPassword', value);
+                }}
                 placeholder={t('confirm_new_password_placeholder')}
                 secureTextEntry
                 autoCapitalize="none"
@@ -175,19 +174,14 @@ function ResetPasswordScreen({
             </View>
 
             <TouchableOpacity
-              style={[
-                styles.button,
-                loading && styles.buttonDisabled,
-              ]}
-               testID="ResetPasswordScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleSubmit}
+              style={[styles.button, loading && styles.buttonDisabled]}
+              testID="ResetPasswordScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={handleSubmit}
               disabled={loading}
             >
-              <Text
-                style={[
-                  styles.buttonText,
-                  loading && styles.buttonTextDisabled,
-                ]}
-              >
+              <Text style={[styles.buttonText, loading && styles.buttonTextDisabled]}>
                 {loading ? t('resetting') : t('reset_password_button')}
               </Text>
             </TouchableOpacity>

@@ -9,7 +9,11 @@ export default function PolishPlaygroundScreen(): React.ReactElement {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Motion & Visual Primitives</Text>
-      <AnimatedPressable style={styles.demoCard} accessibilityLabel="Demo pressable card" haptic="light">
+      <AnimatedPressable
+        style={styles.demoCard}
+        accessibilityLabel="Demo pressable card"
+        haptic="light"
+      >
         <Text style={styles.cardText}>Press me</Text>
       </AnimatedPressable>
     </View>
@@ -42,5 +46,3 @@ const makeStyles = (theme: ReturnType<typeof useTheme>) =>
       fontSize: theme.typography.body.size,
     },
   });
-
-

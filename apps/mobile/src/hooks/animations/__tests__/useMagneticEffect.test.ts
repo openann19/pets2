@@ -6,8 +6,6 @@ import { renderHook } from '@testing-library/react-native';
 import { useMagneticEffect } from '../useMagneticEffect';
 
 jest.mock('react-native-reanimated', () => {
-
-
   const Reanimated = require('react-native-reanimated/mock');
   Reanimated.default.call = () => {};
   return Reanimated;
@@ -46,10 +44,9 @@ describe('useMagneticEffect', () => {
     });
 
     it('should handle enabled state changes', () => {
-      const { result, rerender } = renderHook(
-        (props) => useMagneticEffect(props.enabled),
-        { initialProps: { enabled: true } }
-      );
+      const { result, rerender } = renderHook((props) => useMagneticEffect(props.enabled), {
+        initialProps: { enabled: true },
+      });
 
       expect(result.current).toBeDefined();
 
@@ -59,4 +56,3 @@ describe('useMagneticEffect', () => {
     });
   });
 });
-

@@ -271,6 +271,9 @@ class ImageCompressionService {
   }
 }
 
+// Export the class for testing
+export { ImageCompressionService };
+
 // Create singleton instance
 export const imageCompression = new ImageCompressionService();
 

@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { logger } from '@pawfectmatch/core';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useRef, useState } from 'react';
-import { Alert } from 'react-native';
 import type { FlatList } from 'react-native';
 
 import { matchesAPI } from '../services/api';
@@ -73,6 +72,8 @@ export interface UseMatchesDataReturn {
   selectedTab: 'matches' | 'likedYou';
   refreshing: boolean;
   isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<unknown>;
   initialOffset: number;
   filter: MatchesFilter;
   listRef: React.RefObject<FlatList<Match>>;
@@ -120,25 +121,7 @@ export function useMatchesData(): UseMatchesDataReturn {
     refetchOnWindowFocus: false,
   });
 
-  // Handle query errors
-  useEffect(() => {
-    if (error) {
-      Alert.alert(
-        'Connection Error',
-        'Unable to load matches. Please check your connection and try again.',
-        [
-          {
-            text: 'Retry',
-            onPress: () => refetch(),
-          },
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-        ],
-      );
-    }
-  }, [error, refetch]);
+  // Errors are now handled by the screen component using useErrorHandling hook
 
   // Mutation for refreshing matches
   const refreshMutation = useMutation({
@@ -199,7 +182,7 @@ export function useMatchesData(): UseMatchesDataReturn {
   };
 
   // Query for liked you data
-  const { data: likedYouData, isLoading: isLoadingLikedYou } = useQuery({
+  const { data: likedYouData } = useQuery({
     queryKey: ['liked-you'],
     queryFn: async () => {
       try {
@@ -223,6 +206,8 @@ export function useMatchesData(): UseMatchesDataReturn {
     selectedTab,
     refreshing: refreshing || refreshMutation.isPending,
     isLoading,
+    error: error as Error | null,
+    refetch,
     initialOffset,
     filter,
     listRef,

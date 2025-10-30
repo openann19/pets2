@@ -192,6 +192,23 @@ function __makeStyles_styles(theme: AppTheme) {
       color: theme.colors.onPrimary,
       opacity: 0.8,
       textAlign: 'center',
+      marginBottom: theme.spacing.md,
+    },
+    restoreButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      marginTop: theme.spacing.md,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.onPrimary,
+      opacity: 0.15,
+    },
+    restoreButtonText: {
+      fontSize: theme.typography.body.size * 0.875,
+      color: theme.colors.primary,
+      fontWeight: theme.typography.h2.weight,
     },
   });
 }
@@ -204,95 +221,104 @@ export function PremiumScreen(): React.JSX.Element {
     billingPeriod,
     selectedTier,
     isLoading,
+    isRestoring,
     subscriptionTiers,
     setBillingPeriod,
     setSelectedTier,
     handleSubscribe,
+    handleRestorePurchases,
     handleGoBack,
   } = usePremiumScreen();
 
-  const renderTierCard = useCallback((tier: (typeof subscriptionTiers)[0]) => {
-    const isSelected = selectedTier === tier.id;
-    const price = tier.price[billingPeriod];
-    const yearlyDiscount =
-      billingPeriod === 'yearly'
-        ? Math.round((1 - tier.price.yearly / 12 / tier.price.monthly) * 100)
-        : 0;
+  const renderTierCard = useCallback(
+    (tier: (typeof subscriptionTiers)[0]) => {
+      const isSelected = selectedTier === tier.id;
+      const price = tier.price[billingPeriod];
+      const yearlyDiscount =
+        billingPeriod === 'yearly'
+          ? Math.round((1 - tier.price.yearly / 12 / tier.price.monthly) * 100)
+          : 0;
 
-    return (
-      <TouchableOpacity
-        key={tier.id}
-        testID={`tier-${tier.id}-card`}
-        onPress={() => {
-          setSelectedTier(tier.id);
-        }}
-        style={[
-          styles.tierCard,
-          isSelected && styles.tierCardSelected,
-          tier.popular && styles.tierCardPopular,
-        ]}
-        accessibilityRole="button"
-        accessibilityLabel={`${tier.name} tier subscription plan`}
-        accessibilityState={{ selected: isSelected }}
-      >
-        {tier.popular ? (
-          <View style={styles.popularBadge}>
-            <Text style={styles.popularText}>{t('most_popular')}</Text>
-          </View>
-        ) : null}
-
-        <Text style={styles.tierName}>{tier.name}</Text>
-
-        <View style={styles.priceContainer}>
-          <Text style={styles.priceSymbol}>$</Text>
-          <Text style={styles.priceAmount}>
-            {billingPeriod === 'yearly' ? (price / 12).toFixed(2) : price}
-          </Text>
-          <Text style={styles.pricePeriod}>{t('price_per_month', { period: billingPeriod === 'yearly' ? 'mo' : 'month' })}</Text>
-        </View>
-
-        {billingPeriod === 'yearly' && yearlyDiscount > 0 && (
-          <Text style={styles.discount}>{t('save_discount', { discount: yearlyDiscount })}</Text>
-        )}
-
-        <View style={styles.featuresContainer}>
-          {tier.features.map((feature, index) => (
-            <View
-              key={index}
-              style={styles.featureRow}
-            >
-              <Ionicons
-                name="checkmark-circle"
-                size={20}
-                color={theme.colors.success}
-              />
-              <Text style={styles.featureText}>{feature}</Text>
-            </View>
-          ))}
-        </View>
-
-        <SuccessMorphButton
-          onPress={() => handleSubscribe(tier.id)}
-          style={StyleSheet.flatten([
-            styles.subscribeButton,
-            isSelected && styles.subscribeButtonSelected,
-          ]) as any}
-          textStyle={styles.subscribeButtonText}
+      return (
+        <TouchableOpacity
+          key={tier.id}
+          testID={`tier-${tier.id}-card`}
+          onPress={() => {
+            setSelectedTier(tier.id);
+          }}
+          style={[
+            styles.tierCard,
+            isSelected && styles.tierCardSelected,
+            tier.popular && styles.tierCardPopular,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={`${tier.name} tier subscription plan`}
+          accessibilityState={{ selected: isSelected }}
         >
-          {isLoading && selectedTier === tier.id ? (
-            <ActivityIndicator
-              color={theme.colors.onSurface}
-              testID="loading-indicator"
-            />
-          ) : (
-            <Text style={styles.subscribeButtonText}>
-              {isSelected ? t('subscribe_now') : t('select_plan')}
+          {tier.popular ? (
+            <View style={styles.popularBadge}>
+              <Text style={styles.popularText}>{t('most_popular')}</Text>
+            </View>
+          ) : null}
+
+          <Text style={styles.tierName}>{tier.name}</Text>
+
+          <View style={styles.priceContainer}>
+            <Text style={styles.priceSymbol}>$</Text>
+            <Text style={styles.priceAmount}>
+              {billingPeriod === 'yearly' ? (price / 12).toFixed(2) : price}
             </Text>
+            <Text style={styles.pricePeriod}>
+              {t('price_per_month', { period: billingPeriod === 'yearly' ? 'mo' : 'month' })}
+            </Text>
+          </View>
+
+          {billingPeriod === 'yearly' && yearlyDiscount > 0 && (
+            <Text style={styles.discount}>{t('save_discount', { discount: yearlyDiscount })}</Text>
           )}
-        </SuccessMorphButton>
-      </TouchableOpacity>
-    );
-  }, [billingPeriod, selectedTier, isLoading, theme, styles, handleSubscribe, setSelectedTier, t]);
+
+          <View style={styles.featuresContainer}>
+            {tier.features.map((feature, index) => (
+              <View
+                key={index}
+                style={styles.featureRow}
+              >
+                <Ionicons
+                  name="checkmark-circle"
+                  size={20}
+                  color={theme.colors.success}
+                />
+                <Text style={styles.featureText}>{feature}</Text>
+              </View>
+            ))}
+          </View>
+
+          <SuccessMorphButton
+            onPress={() => handleSubscribe(tier.id)}
+            style={
+              StyleSheet.flatten([
+                styles.subscribeButton,
+                isSelected && styles.subscribeButtonSelected,
+              ]) as any
+            }
+            textStyle={styles.subscribeButtonText}
+          >
+            {isLoading && selectedTier === tier.id ? (
+              <ActivityIndicator
+                color={theme.colors.onSurface}
+                testID="loading-indicator"
+              />
+            ) : (
+              <Text style={styles.subscribeButtonText}>
+                {isSelected ? t('subscribe_now') : t('select_plan')}
+              </Text>
+            )}
+          </SuccessMorphButton>
+        </TouchableOpacity>
+      );
+    },
+    [billingPeriod, selectedTier, isLoading, theme, styles, handleSubscribe, setSelectedTier, t],
+  );
 
   // Access palette gradients - AppTheme has palette property
   const gradientColors = theme.palette.gradients.primary;
@@ -339,20 +365,14 @@ export function PremiumScreen(): React.JSX.Element {
             }}
           >
             <Text
-              style={[
-                styles.billingText,
-                billingPeriod === 'monthly' && styles.billingTextActive,
-              ]}
+              style={[styles.billingText, billingPeriod === 'monthly' && styles.billingTextActive]}
             >
               {t('premium_monthly')}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles.billingOption,
-              billingPeriod === 'yearly' && styles.billingOptionActive,
-            ]}
+            style={[styles.billingOption, billingPeriod === 'yearly' && styles.billingOptionActive]}
             testID="PremiumScreen-button-2"
             accessibilityLabel="Interactive element"
             accessibilityRole="button"
@@ -361,10 +381,7 @@ export function PremiumScreen(): React.JSX.Element {
             }}
           >
             <Text
-              style={[
-                styles.billingText,
-                billingPeriod === 'yearly' && styles.billingTextActive,
-              ]}
+              style={[styles.billingText, billingPeriod === 'yearly' && styles.billingTextActive]}
             >
               {t('premium_yearly')}
             </Text>
@@ -384,6 +401,33 @@ export function PremiumScreen(): React.JSX.Element {
           <Text style={styles.footerText}>
             {t('cancel_anytime')} • {t('secure_payment')} • {t('money_back')}
           </Text>
+
+          {/* Restore Purchases Button */}
+          <TouchableOpacity
+            style={styles.restoreButton}
+            onPress={handleRestorePurchases}
+            disabled={isRestoring}
+            accessibilityLabel="Restore purchases"
+            accessibilityRole="button"
+            accessibilityHint="Restore your previous purchases"
+          >
+            {isRestoring ? (
+              <ActivityIndicator
+                color={theme.colors.primary}
+                size="small"
+              />
+            ) : (
+              <>
+                <Ionicons
+                  name="refresh-outline"
+                  size={16}
+                  color={theme.colors.primary}
+                  style={{ marginRight: 8 }}
+                />
+                <Text style={styles.restoreButtonText}>Restore Purchases</Text>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
       </ScrollView>
 

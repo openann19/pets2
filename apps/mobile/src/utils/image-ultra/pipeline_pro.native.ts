@@ -35,5 +35,3 @@ export async function processImageUltraPro(
     canvas: undefined,
   };
 }
-
-

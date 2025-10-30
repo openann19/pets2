@@ -1,11 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  View,
-  Pressable,
-  Modal,
-  StyleSheet,
-  useWindowDimensions,
-} from 'react-native';
+import { View, Pressable, Modal, StyleSheet, useWindowDimensions } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -129,7 +123,10 @@ export function Sheet({
               <View style={styles.header}>
                 <Text variant="h4">{title}</Text>
                 {showCloseButton && (
-                  <Pressable onPress={onClose} hitSlop={8}>
+                  <Pressable
+                    onPress={onClose}
+                    hitSlop={8}
+                  >
                     <Text style={{ fontSize: 24 }}>✕</Text>
                   </Pressable>
                 )}

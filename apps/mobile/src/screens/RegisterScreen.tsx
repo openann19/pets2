@@ -9,6 +9,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRegisterScreen } from '../hooks/screens/useRegisterScreen';
@@ -101,6 +102,11 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       color: theme.colors.onMuted,
       fontSize: 12,
       textAlign: 'center',
+    },
+    termsLink: {
+      color: theme.colors.primary as string,
+      textDecorationLine: 'underline',
+      fontWeight: '600',
     },
   });
 
@@ -224,7 +230,26 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             </TouchableOpacity>
 
             <View style={styles.termsContainer}>
-              <Text style={styles.termsText}>{t('terms_agreement')}</Text>
+              <Text style={styles.termsText}>
+                {t('terms_agreement')}{' '}
+                <Text
+                  style={styles.termsLink}
+                  onPress={() => Linking.openURL('https://pawfectmatch.com/terms')}
+                  accessibilityRole="link"
+                  accessibilityLabel="Terms of Service"
+                >
+                  Terms of Service
+                </Text>{' '}
+                and{' '}
+                <Text
+                  style={styles.termsLink}
+                  onPress={() => Linking.openURL('https://pawfectmatch.com/privacy')}
+                  accessibilityRole="link"
+                  accessibilityLabel="Privacy Policy"
+                >
+                  Privacy Policy
+                </Text>
+              </Text>
             </View>
           </View>
         </ScrollView>

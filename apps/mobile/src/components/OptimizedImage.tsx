@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { logger } from "@pawfectmatch/core";
+import React, { useState, useCallback, useMemo } from 'react';
+import { logger } from '@pawfectmatch/core';
 import {
   View,
   StyleSheet,
@@ -8,16 +8,13 @@ import {
   type StyleProp,
   type ViewStyle,
   type ImageStyle,
-} from "react-native";
-import FastImage from "react-native-fast-image";
-import type {
-  FastImageProps,
-  Priority,
-  ResizeMode,
-  Source,
-} from "react-native-fast-image";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@/theme";
+} from 'react-native';
+import FastImage from 'react-native-fast-image';
+import type { FastImageProps, Priority, ResizeMode, Source } from 'react-native-fast-image';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/theme';
+import { DominantColorFadeImage } from './micro/DominantColorFade';
+import { getDominantColor } from '../utils/imageLoader';
 
 interface OptimizedImageProps {
   uri: string;
@@ -28,7 +25,8 @@ interface OptimizedImageProps {
   fallbackIcon?: string;
   priority?: Priority;
   resizeMode?: ResizeMode;
-  cache?: "immutable" | "web" | "cacheOnly";
+  cache?: 'immutable' | 'web' | 'cacheOnly';
+  useDominantColorFade?: boolean;
   onLoadStart?: () => void;
   onLoadEnd?: () => void;
   onError?: (error: unknown) => void;
@@ -54,10 +52,11 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
     containerStyle,
     showLoadingIndicator = true,
     showErrorState = true,
-    fallbackIcon = "image-outline",
-    priority = "normal" as Priority,
-    resizeMode = "cover" as ResizeMode,
-    cache = "immutable",
+    fallbackIcon = 'image-outline',
+    priority = 'normal' as Priority,
+    resizeMode = 'cover' as ResizeMode,
+    cache = 'immutable',
+    useDominantColorFade = true,
     onLoadStart,
     onLoadEnd,
     onError,
@@ -88,7 +87,7 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
       onError?.(error);
 
       if (__DEV__) {
-        logger.warn("OptimizedImage load error:", { error });
+        logger.warn('OptimizedImage load error:', { error });
       }
     },
     [onError],
@@ -96,30 +95,44 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
 
   const imageSource: Source = {
     uri,
-    priority: priority ?? "normal",
-    cache: cache ?? "immutable",
+    priority: priority ?? 'normal',
+    cache: cache ?? 'immutable',
   } as Source;
+
+  const dominantColor = useDominantColorFade ? getDominantColor(uri) : '#E5E7EB';
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <FastImage
-        {...restProps}
-        source={imageSource}
-        style={[styles.image, style] as any}
-        resizeMode={resizeMode ?? "cover"}
-        onLoadStart={handleLoadStart}
-        onLoadEnd={handleLoadEnd}
-        onError={handleError as any}
-        accessible={accessible}
-        accessibilityLabel={accessibilityLabel || `Image: ${uri}`}
-        accessibilityRole="image"
-      />
+      {useDominantColorFade ? (
+        <DominantColorFadeImage
+          source={{ uri }}
+          style={[styles.image, style] as ImageStyle}
+          resizeMode={resizeMode ?? 'cover'}
+          dominantColor={dominantColor}
+          onLoadStart={handleLoadStart}
+          onLoadEnd={handleLoadEnd}
+          onError={handleError}
+          accessible={accessible}
+          accessibilityLabel={accessibilityLabel || `Image: ${uri}`}
+        />
+      ) : (
+        <FastImage
+          {...restProps}
+          source={imageSource}
+          style={[styles.image, style] as any}
+          resizeMode={resizeMode ?? 'cover'}
+          onLoadStart={handleLoadStart}
+          onLoadEnd={handleLoadEnd}
+          onError={handleError as any}
+          accessible={accessible}
+          accessibilityLabel={accessibilityLabel || `Image: ${uri}`}
+          accessibilityRole="image"
+        />
+      )}
 
-      {/* Loading Indicator */}
-      {isLoading && showLoadingIndicator && (
-        <View
-          style={[styles.overlay, styles.loadingOverlay]}
-        >
+      {/* Loading Indicator - only show for FastImage */}
+      {!useDominantColorFade && isLoading && showLoadingIndicator && (
+        <View style={[styles.overlay, styles.loadingOverlay]}>
           <ActivityIndicator
             size="small"
             color={theme.colors.primary}
@@ -147,12 +160,7 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
             color={theme.colors.onSurface}
             style={styles.errorIcon}
           />
-          <Text
-            style={[
-              styles.errorText,
-              { color: theme.colors.onSurface },
-            ]}
-          >
+          <Text style={[styles.errorText, { color: theme.colors.onSurface }]}>
             Image unavailable
           </Text>
         </View>
@@ -172,7 +180,7 @@ export const preloadImages = (
   const sources = uris.map((uri) => ({
     uri,
     priority,
-    cache: "immutable" as const,
+    cache: 'immutable' as const,
   }));
 
   FastImage.preload(sources);
@@ -210,20 +218,26 @@ export const getCacheSize = (): Promise<{
  * High Priority Image Component
  * For critical images like the current swipe card
  */
-export function HighPriorityImage(
-  props: Omit<OptimizedImageProps, "priority">,
-): React.JSX.Element {
-  return <OptimizedImage {...props} priority={FastImage.priority.high} />;
+export function HighPriorityImage(props: Omit<OptimizedImageProps, 'priority'>): React.JSX.Element {
+  return (
+    <OptimizedImage
+      {...props}
+      priority={FastImage.priority.high}
+    />
+  );
 }
 
 /**
  * Low Priority Image Component
  * For background or prefetch images
  */
-export function LowPriorityImage(
-  props: Omit<OptimizedImageProps, "priority">,
-): React.JSX.Element {
-  return <OptimizedImage {...props} priority={FastImage.priority.low} />;
+export function LowPriorityImage(props: Omit<OptimizedImageProps, 'priority'>): React.JSX.Element {
+  return (
+    <OptimizedImage
+      {...props}
+      priority={FastImage.priority.low}
+    />
+  );
 }
 
 /**
@@ -254,37 +268,37 @@ export function AvatarImage({
 
 function makeStyles(theme: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
-  container: {
-    position: "relative",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingOverlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.1)",
-  },
-  errorOverlay: {
-    borderWidth: 1,
-    borderStyle: "dashed",
-  },
-  errorIcon: {
-    marginBottom: 8,
-    opacity: 0.6,
-  },
-  errorText: {
-    fontSize: theme.typography.body.size * 0.75,
-    textAlign: "center",
-    opacity: 0.6,
-  },
+    container: {
+      position: 'relative',
+    },
+    image: {
+      width: '100%',
+      height: '100%',
+    },
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingOverlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    errorOverlay: {
+      borderWidth: 1,
+      borderStyle: 'dashed',
+    },
+    errorIcon: {
+      marginBottom: 8,
+      opacity: 0.6,
+    },
+    errorText: {
+      fontSize: theme.typography.body.size * 0.75,
+      textAlign: 'center',
+      opacity: 0.6,
+    },
   });
 }

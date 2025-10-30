@@ -13,7 +13,7 @@ interface LoadingStateProps {
 export const LoadingState: React.FC<LoadingStateProps> = ({ loadPets }) => {
   const theme = useTheme();
   const styles = makeStyles(theme);
-  
+
   return (
     <EliteContainer gradient="primary">
       <View style={styles.loadingContainer}>

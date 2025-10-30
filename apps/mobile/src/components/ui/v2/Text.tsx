@@ -1,19 +1,30 @@
 import React from 'react';
-import {
-  Text as RNText,
-  type TextProps as RNTextProps,
-  StyleSheet,
-} from 'react-native';
+import { Text as RNText, type TextProps as RNTextProps, StyleSheet } from 'react-native';
 import { useTheme } from '../../../theme';
 
-export type TextVariant = 
-  | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
-  | 'body' | 'bodyMuted' | 'caption'
-  | 'button' | 'label';
+export type TextVariant =
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'h6'
+  | 'body'
+  | 'bodyMuted'
+  | 'caption'
+  | 'button'
+  | 'label';
 
-export type TextTone = 
-  | 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'danger'
-  | 'text' | 'textMuted' | 'textInverse';
+export type TextTone =
+  | 'primary'
+  | 'secondary'
+  | 'muted'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'text'
+  | 'textMuted'
+  | 'textInverse';
 
 export interface TextProps extends RNTextProps {
   variant?: TextVariant;
@@ -22,7 +33,10 @@ export interface TextProps extends RNTextProps {
   fontWeight?: 'normal' | 'medium' | 'semibold' | 'bold';
 }
 
-const variantMap: Record<TextVariant, { fontSize: number; lineHeight: number; fontWeight: string }> = {
+const variantMap: Record<
+  TextVariant,
+  { fontSize: number; lineHeight: number; fontWeight: string }
+> = {
   h1: { fontSize: 32, lineHeight: 40, fontWeight: '700' },
   h2: { fontSize: 28, lineHeight: 36, fontWeight: '700' },
   h3: { fontSize: 24, lineHeight: 32, fontWeight: '600' },
@@ -36,20 +50,12 @@ const variantMap: Record<TextVariant, { fontSize: number; lineHeight: number; fo
   label: { fontSize: 14, lineHeight: 20, fontWeight: '500' },
 };
 
-export const Text = React.forwardRef<RNText, TextProps>(
-  function TextComponent(
-    {
-      style,
-      variant = 'body',
-      tone = 'text',
-      align = 'auto',
-      fontWeight,
-      ...rest
-    }: TextProps,
-    ref
-  ) {
-    const theme = useTheme();
-    const variantStyles = variantMap[variant];
+export const Text = React.forwardRef<RNText, TextProps>(function TextComponent(
+  { style, variant = 'body', tone = 'text', align = 'auto', fontWeight, ...rest }: TextProps,
+  ref,
+) {
+  const theme = useTheme();
+  const variantStyles = variantMap[variant];
 
   const getToneColor = () => {
     const { colors } = theme;
@@ -76,17 +82,22 @@ export const Text = React.forwardRef<RNText, TextProps>(
     }
   };
 
-    const textStyle = StyleSheet.flatten([
-      {
-        fontSize: variantStyles.fontSize,
-        lineHeight: variantStyles.lineHeight,
-        fontWeight: fontWeight || variantStyles.fontWeight,
-        color: getToneColor(),
-        textAlign: align,
-      },
-      style,
-    ]);
+  const textStyle = StyleSheet.flatten([
+    {
+      fontSize: variantStyles.fontSize,
+      lineHeight: variantStyles.lineHeight,
+      fontWeight: fontWeight || variantStyles.fontWeight,
+      color: getToneColor(),
+      textAlign: align,
+    },
+    style,
+  ]);
 
-    return <RNText ref={ref} style={textStyle} {...rest} />;
-  }
-);
+  return (
+    <RNText
+      ref={ref}
+      style={textStyle}
+      {...rest}
+    />
+  );
+});

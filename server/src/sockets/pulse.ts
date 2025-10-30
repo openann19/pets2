@@ -1,10 +1,12 @@
 import logger from '../utils/logger';
+import type { SocketIOServer, Socket } from 'socket.io';
+import type { PulsePin } from '../types/socket';
 
 // Socket.io namespace for Local Pulse real-time pins
-export default function attachPulseNamespace(io: any) {
+export default function attachPulseNamespace(io: SocketIOServer) {
   const nsp = io.of('/pulse');
 
-  nsp.on('connection', (socket: any) => {
+  nsp.on('connection', (socket: Socket) => {
     logger.info('Pulse client connected', { socketId: socket.id });
 
     // Client may join geo-grid room (e.g., "grid:37_122")
@@ -18,7 +20,7 @@ export default function attachPulseNamespace(io: any) {
   });
 
   // Helper to broadcast pin updates to specific grid
-  function broadcastPin(gridId: string, pin: any) {
+  function broadcastPin(gridId: string, pin: PulsePin) {
     nsp.to(gridId).emit('pin:update', pin);
   }
 

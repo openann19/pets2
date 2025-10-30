@@ -34,7 +34,7 @@ export function useAsyncAction<TResult, TArgs extends unknown[] = []>({
   const [data, setData] = useState<TResult | null>(null);
   const [isLoading, setIsLoading] = useState(immediate);
   const [error, setError] = useState<Error | null>(null);
-  
+
   // Use ref to track loading state to prevent race conditions
   // This avoids stale closures and unnecessary callback recreations
   const isLoadingRef = useRef(immediate);

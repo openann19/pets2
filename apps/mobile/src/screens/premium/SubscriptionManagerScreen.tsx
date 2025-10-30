@@ -60,14 +60,11 @@ const createCheckoutSession = async <T extends { url: string }>(payload: {
   cancelUrl: string;
   metadata?: Record<string, unknown>;
 }): Promise<T> => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/subscriptions/checkout-session`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    },
-  );
+  const response = await fetch(`${API_BASE_URL}/api/subscriptions/checkout-session`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
 
   if (!response.ok) {
     throw new Error('Failed to create checkout session');
@@ -310,13 +307,10 @@ export const SubscriptionManagerScreen = () => {
       setSubscription(subscriptionData);
 
       // Fetch usage stats
-      const usageData = (await fetch(
-        `${API_BASE_URL}/api/subscriptions/usage`,
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        },
-      ).then((res) => res.json())) as UsageStats;
+      const usageData = (await fetch(`${API_BASE_URL}/api/subscriptions/usage`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      }).then((res) => res.json())) as UsageStats;
       setUsageStats(usageData);
     } catch (err) {
       logger.error('Failed to fetch subscription data:', { error: err });
@@ -350,14 +344,11 @@ export const SubscriptionManagerScreen = () => {
               try {
                 setIsLoading(true);
                 if (subscription?.id !== undefined && subscription.id !== '') {
-                  await fetch(
-                    `${API_BASE_URL}/api/subscriptions/cancel`,
-                    {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ subscriptionId: subscription.id }),
-                    },
-                  );
+                  await fetch(`${API_BASE_URL}/api/subscriptions/cancel`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ subscriptionId: subscription.id }),
+                  });
                   Alert.alert(
                     'Subscription Canceled',
                     'Your subscription has been canceled. You can continue using premium features until the end of your current billing period.',
@@ -443,7 +434,9 @@ export const SubscriptionManagerScreen = () => {
   };
 
   // Get status badge color using theme colors with opacity
-  const getStatusColor = (status?: Subscription['status']): { bg: string; text: string; bgOpacity: number } => {
+  const getStatusColor = (
+    status?: Subscription['status'],
+  ): { bg: string; text: string; bgOpacity: number } => {
     switch (status) {
       case 'active':
         return { bg: theme.colors.success, text: theme.colors.success, bgOpacity: 0.2 };
@@ -675,12 +668,7 @@ export const SubscriptionManagerScreen = () => {
                   size={24}
                   color={theme.colors.danger}
                 />
-                <Text
-                  style={[
-                    styles.actionButtonText,
-                    { color: theme.colors.danger },
-                  ]}
-                >
+                <Text style={[styles.actionButtonText, { color: theme.colors.danger }]}>
                   Cancel Subscription
                 </Text>
               </TouchableOpacity>
@@ -699,12 +687,7 @@ export const SubscriptionManagerScreen = () => {
                   size={24}
                   color={theme.colors.onPrimary}
                 />
-                <Text
-                  style={[
-                    styles.actionButtonText,
-                    { color: theme.colors.onPrimary },
-                  ]}
-                >
+                <Text style={[styles.actionButtonText, { color: theme.colors.onPrimary }]}>
                   Reactivate Subscription
                 </Text>
               </TouchableOpacity>

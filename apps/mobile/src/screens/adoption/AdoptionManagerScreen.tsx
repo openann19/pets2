@@ -98,24 +98,29 @@ const normalizeApplication = (application: unknown): AdoptionApplication => {
   return {
     id: (item['id'] ?? item['_id'] ?? '') as string,
     petId: (item['petId'] ?? '') as string,
-    petName: (item['petName'] as string) ?? ((item['pet'] as { name?: string })?.name ?? 'Unknown'),
+    petName: (item['petName'] as string) ?? (item['pet'] as { name?: string })?.name ?? 'Unknown',
     applicantName:
       (item['applicantName'] as string) ??
-      ((item['applicant'] as { name?: string })?.name ?? 'Pending Applicant'),
+      (item['applicant'] as { name?: string })?.name ??
+      'Pending Applicant',
     applicantEmail:
       (item['applicantEmail'] as string) ??
-      ((item['applicant'] as { email?: string })?.email ?? 'unknown@example.com'),
+      (item['applicant'] as { email?: string })?.email ??
+      'unknown@example.com',
     status:
       status && ['pending', 'approved', 'rejected', 'withdrawn'].includes(status)
         ? status
         : 'pending',
-    submittedAt: typeof item['submittedAt'] === 'string' ? item['submittedAt'] : new Date().toISOString(),
+    submittedAt:
+      typeof item['submittedAt'] === 'string' ? item['submittedAt'] : new Date().toISOString(),
     experience:
       (item['experience'] as string) ??
-      ((item['applicationData'] as { experience?: string })?.experience ?? ''),
+      (item['applicationData'] as { experience?: string })?.experience ??
+      '',
     livingSpace:
       (item['livingSpace'] as string) ??
-      ((item['applicationData'] as { livingSpace?: string })?.livingSpace ?? ''),
+      (item['applicationData'] as { livingSpace?: string })?.livingSpace ??
+      '',
     references: Array.isArray(item['references']) ? item['references'].length : 0,
   };
 };
@@ -301,7 +306,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               onPress={() => navigation.navigate('PetDetails', { petId: pet.id })}
               style={{ flex: 1 }}
             />
-            <View style={GlobalStyles.mx2} />
+            <View style={GlobalStyles['mx2'] as any} />
             <EliteButton
               title={`Review (${pet.applications})`}
               variant="primary"
@@ -547,7 +552,9 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
       >
         <View style={GlobalStyles['modalOverlay'] as any}>
           <View style={GlobalStyles['modalContent'] as any}>
-            <Text style={GlobalStyles['heading2'] as any}>Change Status for {selectedPet?.name}</Text>
+            <Text style={GlobalStyles['heading2'] as any}>
+              Change Status for {selectedPet?.name}
+            </Text>
 
             <View style={styles.statusOptions}>
               {['active', 'pending', 'adopted', 'paused'].map((status) => (

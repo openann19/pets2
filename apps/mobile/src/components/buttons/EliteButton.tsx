@@ -11,7 +11,7 @@
  * - Composition: Combine effects declaratively
  */
 
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import type { View, ViewStyle } from 'react-native';
 import { StyleSheet } from 'react-native';
 
@@ -86,7 +86,7 @@ const EliteButton = forwardRef<View, EliteButtonProps>(
       onPress,
       ...baseProps
     },
-    ref,
+    _ref,
   ) => {
     // Enhanced press handler with haptic feedback
     const handlePress = () => {

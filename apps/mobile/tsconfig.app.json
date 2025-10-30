@@ -22,7 +22,9 @@
     "**/*.stories.tsx",
     "src/setupTests.ts",
     "src/test-utils/**",
-    "**/__mocks__/**"
+    "**/__mocks__/**",
+    "benchmark-*.ts",
+    "**/benchmark/**"
   ]
 }
 

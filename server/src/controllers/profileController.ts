@@ -1,11 +1,11 @@
 import type { Response } from 'express';
-import User from '../models/User';
+import User, { type IUserDocument } from '../models/User';
 import Pet from '../models/Pet';
 import type { HydratedDocument } from 'mongoose';
 import type { IPet } from '../types/mongoose';
 import logger from '../utils/logger';
 import type { AuthRequest } from '../types/express';
-import { getErrorMessage } from '../../utils/errorHandler';
+import { getErrorMessage } from '../utils/errorHandler';
 
 type IPetDocument = HydratedDocument<IPet>;
 
@@ -235,7 +235,7 @@ export const getPrivacySettings = async (req: GetPrivacySettingsRequest, res: Re
 
     res.json({
       success: true,
-      data: (user as any).privacySettings || {
+      data: user.privacySettings || {
         profileVisibility: 'everyone',
         showOnlineStatus: true,
         showDistance: true,
@@ -279,7 +279,7 @@ export const updatePrivacySettings = async (req: UpdatePrivacySettingsRequest, r
 
     res.json({
       success: true,
-      data: (user as any)?.privacySettings,
+      data: user?.privacySettings,
       message: 'Privacy settings updated successfully'
     });
   } catch (error: unknown) {
@@ -363,7 +363,7 @@ export const deleteAccount = async (req: DeleteAccountRequest, res: Response): P
       return;
     }
 
-    const isPasswordValid = await (user as any).comparePassword(password);
+    const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
       res.status(401).json({
         success: false,
@@ -373,8 +373,11 @@ export const deleteAccount = async (req: DeleteAccountRequest, res: Response): P
     }
 
     // Soft delete: mark as inactive instead of hard delete
-    (user as any).isActive = false;
-    (user as any).deletedAt = new Date();
+    user.isActive = false;
+    // Note: deletedAt should be added to User schema if needed, or use deletionRequestedAt
+    if ('deletedAt' in user) {
+      (user as typeof user & { deletedAt: Date }).deletedAt = new Date();
+    }
     await user.save();
 
     // Also deactivate all user's pets

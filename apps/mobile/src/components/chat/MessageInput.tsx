@@ -144,15 +144,13 @@ export function MessageInput({
 
                 if (!result.canceled && result.assets && result.assets[0]) {
                   const asset = result.assets[0];
-                  // Convert URI to Blob for upload
-                  const response = await fetch(asset.uri);
-                  const blob = await response.blob();
-
                   // Send attachment using chatService
                   await chatService.sendAttachment({
                     matchId,
                     attachmentType: 'image',
-                    file: blob,
+                    uri: asset.uri,
+                    name: asset.fileName,
+                    contentType: asset.type || 'image/jpeg',
                   });
 
                   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -185,13 +183,13 @@ export function MessageInput({
 
                 if (!result.canceled && result.assets && result.assets[0]) {
                   const asset = result.assets[0];
-                  const response = await fetch(asset.uri);
-                  const blob = await response.blob();
-
+                  // Send attachment using chatService
                   await chatService.sendAttachment({
                     matchId,
                     attachmentType: 'image',
-                    file: blob,
+                    uri: asset.uri,
+                    name: asset.fileName,
+                    contentType: asset.type || 'image/jpeg',
                   });
 
                   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -218,10 +216,11 @@ export function MessageInput({
     Alert.alert('Emoji Picker', 'Emoji picker coming soon! 😊');
   }, []);
 
-  const handleVoicePress = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setShowVoiceRecorder(true);
-  }, []);
+  // handleVoicePress reserved for future implementation
+  // const handleVoicePress = useCallback(() => {
+  //   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  //   setShowVoiceRecorder(true);
+  // }, []);
 
   const handleVoiceNoteSent = useCallback(() => {
     setShowVoiceRecorder(false);

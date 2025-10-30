@@ -92,9 +92,7 @@ export function PetSelectionSection({
       <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
         🐕 Select Two Pets
       </Text>
-      <Text
-        style={StyleSheet.flatten([styles.sectionDescription, { color: colors.onMuted }])}
-      >
+      <Text style={StyleSheet.flatten([styles.sectionDescription, { color: colors.onMuted }])}>
         Choose two pets to analyze their compatibility using AI technology.
       </Text>
 

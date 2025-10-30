@@ -73,13 +73,13 @@
 
 ### 9. API Contract Agent (API)
 
-* **Goal**: Define/validate contracts; maintain mocks.
+* **Goal**: Define/validate contracts; maintain simulations.
 * **Outputs**: `/contracts/openapi.yaml` (if available), `/scripts/mock-server.ts`, `/reports/contract_results.json`.
 
 ### 10. Mock & Simulation Agent (SIM)
 
 * **Goal**: Deterministic fixtures for E2E/integration.
-* **Outputs**: `/mocks/fixtures/*.json`, `/mocks/scenarios/*.yaml`.
+* **Outputs**: `/simulations/fixtures/*.json`, `/simulations/scenarios/*.yaml`.
 
 ### 11. Test Engineer (TE)
 
@@ -138,11 +138,17 @@
 /work-items/
   <slug>.yaml
 /contracts/
+
   openapi.yaml (optional)
-/mocks/
+
+/simulations/
+
   fixtures/*.json
+
   scenarios/*.yaml
+
 /scripts/
+
   mock-server.ts
 ```
 
@@ -151,7 +157,7 @@
 ## 3) Handoffs (Agent → Agent)
 
 * **PR → GA**: product_model + navigation_graph → initial gaps.
-* **GA → API/SIM**: missing endpoints → contracts + mocks.
+* **GA → API/SIM**: missing endpoints → contracts + simulations.
 * **API/SIM → TE/E2E**: fixtures & scenarios → tests authored.
 * **TG → TE**: strict typing changes → new tests required.
 * **UX/A11Y/PP → TE**: issues → failing tests added first.
@@ -195,7 +201,7 @@ You define/validate API contracts. For each gap requiring backend work, specify 
 ### 4.4 Test Engineer (SYSTEM)
 
 ```
-You add unit/integration tests to satisfy acceptance. Use deterministic fixtures under /mocks. Ensure coverage thresholds and state matrices.
+You add unit/integration tests to satisfy acceptance. Use deterministic fixtures under /simulations. Ensure coverage thresholds and state matrices.
 ```
 
 ### 4.5 E2E Orchestrator (SYSTEM)
@@ -238,7 +244,9 @@ contracts:
   response: { ... }
   errors: [ ... ]
 assets:
-  mocks: [mocks/fixtures/<file>.json]
+
+  simulations: [simulations/fixtures/<file>.json]
+
   tests: [path1, path2]
 risks:
   - description
@@ -250,7 +258,7 @@ links:
 
 ---
 
-## 6) Contracts & Mocks
+## 6) Contracts & Simulations
 
 ### 6.1 GDPR (required)
 
@@ -266,7 +274,7 @@ links:
 * `exportUserData()`
 * `confirmDeleteAccount(token)`
 
-**Mocks**: define in `/scripts/mock-server.ts` and fixtures under `/mocks/fixtures/gdpr/*.json`.
+**Simulations**: define in `/scripts/mock-server.ts` and fixtures under `/simulations/fixtures/gdpr/*.json`.
 
 ### 6.2 Chat Enhancements
 
@@ -319,7 +327,7 @@ PR merges only if *all* gates pass.
 2. Populate first `gap_log.yaml` (GDPR, chat, swipe buttons, state matrices).
 3. Add/verify mock server; wire `environment.ts` to mock in `__DEV__`.
 4. Land tests for top‑3 gaps before implementing code.
-5. Make first PR with GDPR client services + mocks + tests.
+5. Make first PR with GDPR client services + simulations + tests.
 
 ---
 
@@ -332,7 +340,7 @@ PR merges only if *all* gates pass.
 * **E2E**: `pnpm mobile:e2e:build`, `pnpm mobile:e2e:test`.
 * **Contracts**: `pnpm mobile:contract:check`.
 * **A11y/Perf**: `pnpm mobile:a11y`, `pnpm mobile:perf`.
-* **Mocks**: `pnpm mobile:mock`.
+* **Simulations**: `pnpm mobile:mock`.
 
 ---
 

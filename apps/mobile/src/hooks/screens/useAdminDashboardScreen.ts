@@ -9,23 +9,28 @@ import { logger } from '@pawfectmatch/core';
 import * as Haptics from 'expo-haptics';
 import type { AdminScreenProps } from '../../navigation/types';
 import { useErrorHandler } from '../useErrorHandler';
+import { _adminAPI as adminAPI } from '../../services/adminAPI';
 
 interface DashboardMetrics {
-  totalUsers: number;
-  activeUsers: number;
-  totalPets: number;
-  totalMatches: number;
-  pendingVerifications: number;
-  reportedContent: number;
-  systemHealth: 'healthy' | 'warning' | 'critical';
+  users: {
+    total: number;
+    recent24h: number;
+  };
+  pets: {
+    total: number;
+    recent24h: number;
+  };
+  matches: {
+    total: number;
+    recent24h: number;
+  };
+  systemHealth: number;
 }
 
 interface RecentActivity {
-  id: string;
-  type: 'user_joined' | 'pet_created' | 'match_made' | 'report_filed' | 'verification_submitted';
-  message: string;
-  timestamp: Date;
-  priority: 'low' | 'medium' | 'high';
+  title: string;
+  time: string;
+  color?: string;
 }
 
 interface QuickAction {
@@ -33,6 +38,7 @@ interface QuickAction {
   title: string;
   subtitle: string;
   icon: string;
+  color?: string;
   action: () => void;
   disabled?: boolean;
 }
@@ -51,6 +57,8 @@ export interface AdminDashboardScreenState {
   isLoading: boolean;
   isRefreshing: boolean;
   lastUpdated: Date | null;
+  exportModalVisible: boolean;
+  setExportModalVisible: (visible: boolean) => void;
 
   // Actions
   onRefresh: () => Promise<void>;
@@ -62,7 +70,7 @@ export interface AdminDashboardScreenState {
   onNavigateToSecurity: () => void;
   onNavigateToBilling: () => void;
   onQuickAction: (actionId: string) => void;
-  exportData: (format?: 'json' | 'csv' | 'pdf') => Promise<void>;
+  exportData: (format: 'json' | 'csv' | 'pdf', timeRange?: string) => Promise<void>;
 }
 
 /**
@@ -74,92 +82,84 @@ export function useAdminDashboardScreen({
 }: UseAdminDashboardScreenParams): AdminDashboardScreenState {
   const { handleNetworkError, handleOfflineError } = useErrorHandler();
   const [metrics, setMetrics] = useState<DashboardMetrics>({
-    totalUsers: 0,
-    activeUsers: 0,
-    totalPets: 0,
-    totalMatches: 0,
-    pendingVerifications: 0,
-    reportedContent: 0,
-    systemHealth: 'healthy',
+    users: { total: 0, recent24h: 0 },
+    pets: { total: 0, recent24h: 0 },
+    matches: { total: 0, recent24h: 0 },
+    systemHealth: 100,
   });
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // Mock data loading - in real app, this would call admin APIs
+  // Load dashboard data from API - replace mock data with real API calls
   const loadDashboardData = useCallback(async (options: { force?: boolean } = {}) => {
     try {
-      if (options.force || metrics.totalUsers === 0) {
+      if (options.force || metrics.users.total === 0) {
         setIsLoading(true);
       } else {
         setIsRefreshing(true);
       }
 
-      // Simulate API calls - small delay for tests
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      // Call real API endpoints using analytics endpoint
+      try {
+        const analyticsResponse = await adminAPI.getAnalytics({ period: '24h' });
+        
+        if (analyticsResponse.success && analyticsResponse.data) {
+          const mappedMetrics: DashboardMetrics = {
+            users: {
+              total: analyticsResponse.data.users?.total || 0,
+              recent24h: analyticsResponse.data.users?.recent24h || 0,
+            },
+            pets: {
+              total: analyticsResponse.data.pets?.total || 0,
+              recent24h: analyticsResponse.data.pets?.recent24h || 0,
+            },
+            matches: {
+              total: analyticsResponse.data.matches?.total || 0,
+              recent24h: analyticsResponse.data.matches?.recent24h || 0,
+            },
+            systemHealth: 100, // Would need dedicated health check endpoint
+          };
 
-      // Mock data - replace with real API calls
-      const mockMetrics: DashboardMetrics = {
-        totalUsers: 15420,
-        activeUsers: 12890,
-        totalPets: 8760,
-        totalMatches: 45230,
-        pendingVerifications: 23,
-        reportedContent: 7,
-        systemHealth: 'healthy',
-      };
+          // Map recent activity - in production, use GET /admin/dashboard/activity
+          const mappedActivity: RecentActivity[] = [];
 
-      const mockActivity: RecentActivity[] = [
-        {
-          id: '1',
-          type: 'verification_submitted',
-          message: 'New pet verification submitted',
-          timestamp: new Date(Date.now() - 5 * 60 * 1000),
-          priority: 'medium',
-        },
-        {
-          id: '2',
-          type: 'report_filed',
-          message: 'Content report filed',
-          timestamp: new Date(Date.now() - 12 * 60 * 1000),
-          priority: 'high',
-        },
-        {
-          id: '3',
-          type: 'user_joined',
-          message: 'New user registered',
-          timestamp: new Date(Date.now() - 18 * 60 * 1000),
-          priority: 'low',
-        },
-        {
-          id: '4',
-          type: 'match_made',
-          message: 'New match created',
-          timestamp: new Date(Date.now() - 25 * 60 * 1000),
-          priority: 'low',
-        },
-      ];
+          setMetrics(mappedMetrics);
+          setRecentActivity(mappedActivity);
+          setLastUpdated(new Date());
 
-      setMetrics(mockMetrics);
-      setRecentActivity(mockActivity);
-      setLastUpdated(new Date());
+          logger.info('Admin dashboard data loaded from API', {
+            metrics: mappedMetrics,
+            activityCount: mappedActivity.length,
+          });
+        } else {
+          throw new Error('Invalid API response');
+        }
+      } catch (error) {
+        // If API endpoints don't exist yet, use fallback empty state
+        logger.warn('Dashboard API endpoints not available, using fallback', { error });
+        
+        const fallbackMetrics: DashboardMetrics = {
+          users: { total: 0, recent24h: 0 },
+          pets: { total: 0, recent24h: 0 },
+          matches: { total: 0, recent24h: 0 },
+          systemHealth: 100,
+        };
 
-      logger.info('Admin dashboard data loaded', {
-        metrics: mockMetrics,
-        activityCount: mockActivity.length,
-      });
+        setMetrics(fallbackMetrics);
+        setRecentActivity([]);
+        setLastUpdated(new Date());
+      }
     } catch (error) {
-      const err = error instanceof Error ? error : new Error('Failed to load dashboard');
-      logger.error('Failed to load admin dashboard', { error: err });
-
-      // Simplified error handling for tests
-      console.error('Dashboard load error:', err);
+      const err = error instanceof Error ? error : new Error('Failed to load dashboard data');
+      logger.error('Failed to load admin dashboard data', { error: err });
+      handleNetworkError(err, 'admin.dashboard.load');
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  }, []);
+  }, [metrics.users.total, handleNetworkError]);
 
   useEffect(() => {
     void loadDashboardData();
@@ -242,75 +242,128 @@ export function useAdminDashboardScreen({
     navigation.navigate('AdminBilling');
   }, [navigation]);
 
+  const [exportModalVisible, setExportModalVisible] = useState(false);
+
   // Export data function
-  const exportData = useCallback(async (format: 'json' | 'csv' | 'pdf' = 'json') => {
-    try {
-      setIsRefreshing(true);
-      // In real implementation, this would call the admin API
-      // For now, show alert that export is being processed
-      Alert.alert(
-        'Export Started',
-        `Exporting data in ${format.toUpperCase()} format. This may take a moment.`
-      );
-      
-      // Simulate export processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      Alert.alert(
-        'Export Complete',
-        `Data export completed successfully. File saved to downloads.`
-      );
-      
-      logger.info('Data export completed', { format });
-    } catch (error) {
-      logger.error('Data export failed', { error });
-      Alert.alert(
-        'Export Failed',
-        'Failed to export data. Please try again.'
-      );
-    } finally {
-      setIsRefreshing(false);
-    }
-  }, []);
+  const exportData = useCallback(
+    async (format: 'json' | 'csv' | 'pdf' = 'json', timeRange: string = '30d') => {
+      try {
+        setIsRefreshing(true);
+        setExportModalVisible(false);
+
+        // Show loading alert
+        Alert.alert(
+          'Export Started',
+          `Exporting data in ${format.toUpperCase()} format for ${timeRange}. This may take a moment.`,
+        );
+
+        // Call the admin API export endpoint
+        const { _adminAPI } = await import('../../services/api');
+        const response = await _adminAPI.exportAnalytics({
+          format,
+          timeRange,
+        });
+
+        if (response.success) {
+          if (response.downloadUrl) {
+            // Handle file download for CSV format
+            const { FileDownloadService } = await import('../../services/fileDownloadService');
+
+            try {
+              // Generate filename with timestamp
+              const fileName = `analytics-export-${format}-${new Date().toISOString().split('T')[0]}.${format}`;
+
+              // Download the file
+              await FileDownloadService.downloadFile(response.downloadUrl, {
+                fileName,
+                showProgress: true,
+                autoShare: false,
+                saveToDownloads: true,
+              });
+
+              logger.info('Data file downloaded successfully', { format, fileName, timeRange });
+            } catch (downloadError) {
+              logger.error('File download failed', { error: downloadError });
+              Alert.alert(
+                'Download Failed',
+                'The export was generated but could not be downloaded. Please try again.',
+              );
+            }
+          } else {
+            // Handle JSON data response
+            Alert.alert(
+              'Export Complete',
+              `Data exported successfully in ${format.toUpperCase()} format.`,
+            );
+          }
+
+          logger.info('Data export completed', { format, timeRange, response });
+        } else {
+          throw new Error(response.error || response.message || 'Export failed');
+        }
+      } catch (error) {
+        logger.error('Data export failed', { error });
+        Alert.alert(
+          'Export Failed',
+          `Failed to export data: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
+      } finally {
+        setIsRefreshing(false);
+      }
+    },
+    [],
+  );
 
   // Quick actions
   const quickActions: QuickAction[] = [
     {
-      id: 'moderate_reports',
-      title: 'Review Reports',
-      subtitle: `${metrics.reportedContent} pending`,
-      icon: 'flag',
+      id: 'users',
+      title: 'User Management',
+      subtitle: `${metrics.users.total} total users`,
+      icon: 'people-outline',
+      color: '#3b82f6',
       action: () => {
-        Alert.alert('Moderate Reports', 'Navigate to reports moderation');
+        onNavigateToUsers();
       },
-      disabled: metrics.reportedContent === 0,
     },
     {
-      id: 'verify_pets',
-      title: 'Verify Pets',
-      subtitle: `${metrics.pendingVerifications} pending`,
-      icon: 'checkmark-circle',
+      id: 'analytics',
+      title: 'Analytics',
+      subtitle: 'View detailed metrics',
+      icon: 'analytics-outline',
+      color: '#10b981',
       action: () => {
-        onNavigateToVerifications();
+        onNavigateToAnalytics();
       },
-      disabled: metrics.pendingVerifications === 0,
     },
     {
-      id: 'system_health',
-      title: 'System Health',
-      subtitle: metrics.systemHealth === 'healthy' ? 'All systems normal' : 'Check system status',
-      icon: metrics.systemHealth === 'healthy' ? 'shield-checkmark' : 'warning',
+      id: 'chats',
+      title: 'Chat Moderation',
+      subtitle: 'Monitor conversations',
+      icon: 'chatbubble-outline',
+      color: '#f59e0b',
       action: () => {
-        Alert.alert('System Health', `Status: ${metrics.systemHealth.toUpperCase()}`);
+        onNavigateToChats();
+      },
+    },
+    {
+      id: 'uploads',
+      title: 'Media Uploads',
+      subtitle: 'Manage user content',
+      icon: 'cloud-upload-outline',
+      color: '#8b5cf6',
+      action: () => {
+        onNavigateToUploads();
       },
     },
     {
       id: 'export_data',
       title: 'Export Data',
       subtitle: 'Download system reports',
-      icon: 'download',
+      icon: 'download-outline',
+      color: '#ef4444',
       action: () => {
-        exportData('json');
+        setExportModalVisible(true);
       },
     },
   ];
@@ -336,6 +389,8 @@ export function useAdminDashboardScreen({
     isLoading,
     isRefreshing,
     lastUpdated,
+    exportModalVisible,
+    setExportModalVisible,
 
     // Actions
     onRefresh,

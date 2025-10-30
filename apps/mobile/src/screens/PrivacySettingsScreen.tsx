@@ -3,37 +3,23 @@
  * Comprehensive privacy controls and settings
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { logger } from "@pawfectmatch/core";
-import React, { useState } from "react";
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@mobile/theme";
-import type { RootStackParamList } from "../navigation/types";
-import { request } from "../services/api";
+import { Ionicons } from '@expo/vector-icons';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { logger } from '@pawfectmatch/core';
+import React, { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '@mobile/theme';
+import type { RootStackParamList } from '../navigation/types';
+import { request } from '../services/api';
 import {
   usePrivacySettingsScreen,
   type PrivacySettings,
-} from "../hooks/screens/usePrivacySettingsScreen";
+} from '../hooks/screens/usePrivacySettingsScreen';
 
+type PrivacySettingsScreenProps = NativeStackScreenProps<RootStackParamList, 'PrivacySettings'>;
 
-type PrivacySettingsScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "PrivacySettings"
->;
-
-function PrivacySettingsScreen({
-  navigation,
-}: PrivacySettingsScreenProps): React.JSX.Element {
+function PrivacySettingsScreen({ navigation }: PrivacySettingsScreenProps): React.JSX.Element {
   const { colors } = useTheme();
   const { settings, loading, updateSetting } = usePrivacySettingsScreen();
   const [loadingExport, setLoadingExport] = useState(false);
@@ -44,12 +30,7 @@ function PrivacySettingsScreen({
     control: React.ReactNode,
     danger?: boolean,
   ) => (
-    <View
-      style={StyleSheet.flatten([
-        styles.settingItem,
-        { backgroundColor: colors.card },
-      ])}
-    >
+    <View style={StyleSheet.flatten([styles.settingItem, { backgroundColor: colors.card }])}>
       <View style={styles.settingContent}>
         <Text
           style={StyleSheet.flatten([
@@ -59,12 +40,7 @@ function PrivacySettingsScreen({
         >
           {title}
         </Text>
-        <Text
-          style={StyleSheet.flatten([
-            styles.settingSubtitle,
-            { color: colors.onMuted },
-          ])}
-        >
+        <Text style={StyleSheet.flatten([styles.settingSubtitle, { color: colors.onMuted }])}>
           {subtitle}
         </Text>
       </View>
@@ -78,7 +54,7 @@ function PrivacySettingsScreen({
     onChange: (value: string) => void,
   ) => (
     <View style={styles.pickerContainer}>
-        {options.map((option) => (
+      {options.map((option) => (
         <TouchableOpacity
           key={option.value}
           testID={`privacy-option-${option.value}`}
@@ -100,7 +76,7 @@ function PrivacySettingsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.pickerOptionText,
-              { color: value === option.value ? "white" : colors.onSurface},
+              { color: value === option.value ? 'white' : colors.onSurface },
             ])}
           >
             {option.label}
@@ -113,10 +89,7 @@ function PrivacySettingsScreen({
   return (
     <SafeAreaView
       testID="privacy-settings-screen"
-      style={StyleSheet.flatten([
-        styles.container,
-        { backgroundColor: colors.background },
-      ])}
+      style={StyleSheet.flatten([styles.container, { backgroundColor: colors.background }])}
     >
       {/* Header */}
       <View
@@ -136,15 +109,16 @@ function PrivacySettingsScreen({
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface }/>
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={colors.onSurface}
+          />
         </TouchableOpacity>
         <Text
           testID="privacy-settings-title"
           accessibilityRole="header"
-          style={StyleSheet.flatten([
-            styles.headerTitle,
-            { color: colors.onSurface},
-          ])}
+          style={StyleSheet.flatten([styles.headerTitle, { color: colors.onSurface }])}
         >
           Privacy Settings
         </Text>
@@ -158,150 +132,124 @@ function PrivacySettingsScreen({
         contentContainerStyle={styles.scrollContent}
       >
         {/* Profile Visibility */}
-        <View testID="profile-visibility-section" accessibilityLabel="Profile visibility settings" style={styles.section}>
+        <View
+          testID="profile-visibility-section"
+          accessibilityLabel="Profile visibility settings"
+          style={styles.section}
+        >
           <Text
             testID="profile-visibility-title"
             accessibilityRole="text"
-            style={StyleSheet.flatten([
-              styles.sectionTitle,
-              { color: colors.onSurface},
-            ])}
+            style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}
           >
             Profile Visibility
           </Text>
           {renderSettingItem(
-            "Who can see my profile",
-            "Control who can view your profile and pet information",
+            'Who can see my profile',
+            'Control who can view your profile and pet information',
             renderPicker(
               settings.profileVisibility,
               [
-                { label: "Everyone", value: "public" },
-                { label: "Matches Only", value: "friends" },
-                { label: "Nobody", value: "nobody" },
+                { label: 'Everyone', value: 'public' },
+                { label: 'Matches Only', value: 'friends' },
+                { label: 'Nobody', value: 'nobody' },
               ],
               (value) =>
-                updateSetting(
-                  "profileVisibility",
-                  value as PrivacySettings["profileVisibility"],
-                ),
+                updateSetting('profileVisibility', value as PrivacySettings['profileVisibility']),
             ),
           )}
 
           {renderSettingItem(
-            "Show online status",
-            "Let others know when you are active on the app",
+            'Show online status',
+            'Let others know when you are active on the app',
             <Switch
               testID="show-online-status-switch"
               accessibilityLabel="Show online status"
               accessibilityRole="switch"
               accessibilityState={{ checked: settings.showOnlineStatus }}
               value={settings.showOnlineStatus}
-              onValueChange={(value) =>
-                updateSetting("showOnlineStatus", value)
-              }
+              onValueChange={(value) => updateSetting('showOnlineStatus', value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={
-                settings.showOnlineStatus ? colors.card : theme.palette.neutral[500]
-              }
+              thumbColor={settings.showOnlineStatus ? colors.card : theme.palette.neutral[500]}
             />,
           )}
 
           {renderSettingItem(
-            "Show distance",
-            "Display how far you are from other users",
+            'Show distance',
+            'Display how far you are from other users',
             <Switch
               value={settings.showDistance}
-              onValueChange={(value) => updateSetting("showDistance", value)}
+              onValueChange={(value) => updateSetting('showDistance', value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={settings.showDistance ? colors.card : theme.palette.neutral[500]}
             />,
           )}
 
           {renderSettingItem(
-            "Show last active time",
-            "Show when you were last active on the app",
+            'Show last active time',
+            'Show when you were last active on the app',
             <Switch
               value={settings.showLastActive}
-              onValueChange={(value) => updateSetting("showLastActive", value)}
+              onValueChange={(value) => updateSetting('showLastActive', value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={
-                settings.showLastActive ? colors.card : theme.palette.neutral[500]
-              }
+              thumbColor={settings.showLastActive ? colors.card : theme.palette.neutral[500]}
             />,
           )}
         </View>
 
         {/* Communication */}
         <View style={styles.section}>
-          <Text
-            style={StyleSheet.flatten([
-              styles.sectionTitle,
-              { color: colors.onSurface},
-            ])}
-          >
+          <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
             Communication
           </Text>
           {renderSettingItem(
-            "Who can message me",
-            "Control who can send you messages",
+            'Who can message me',
+            'Control who can send you messages',
             renderPicker(
               settings.allowMessages,
               [
-                { label: "Everyone", value: "everyone" },
-                { label: "Matches Only", value: "matches" },
-                { label: "Nobody", value: "nobody" },
+                { label: 'Everyone', value: 'everyone' },
+                { label: 'Matches Only', value: 'matches' },
+                { label: 'Nobody', value: 'nobody' },
               ],
-              (value) =>
-                updateSetting(
-                  "allowMessages",
-                  value as PrivacySettings["allowMessages"],
-                ),
+              (value) => updateSetting('allowMessages', value as PrivacySettings['allowMessages']),
             ),
           )}
 
           {renderSettingItem(
-            "Show read receipts",
-            "Let others know when you have read their messages",
+            'Show read receipts',
+            'Let others know when you have read their messages',
             <Switch
               value={settings.showReadReceipts}
-              onValueChange={(value) =>
-                updateSetting("showReadReceipts", value)
-              }
+              onValueChange={(value) => updateSetting('showReadReceipts', value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={
-                settings.showReadReceipts ? colors.card : theme.palette.neutral[500]
-              }
+              thumbColor={settings.showReadReceipts ? colors.card : theme.palette.neutral[500]}
             />,
           )}
         </View>
 
         {/* Privacy Features */}
         <View style={styles.section}>
-          <Text
-            style={StyleSheet.flatten([
-              styles.sectionTitle,
-              { color: colors.onSurface},
-            ])}
-          >
+          <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
             Privacy Features
           </Text>
           {renderSettingItem(
-            "Incognito Mode",
+            'Incognito Mode',
             "Browse profiles without appearing in others' views",
             <Switch
               value={settings.incognitoMode}
-              onValueChange={(value) => updateSetting("incognitoMode", value)}
+              onValueChange={(value) => updateSetting('incognitoMode', value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={settings.incognitoMode ? colors.card : theme.palette.neutral[500]}
             />,
           )}
 
           {renderSettingItem(
-            "Location sharing",
-            "Share your location for better matching",
+            'Location sharing',
+            'Share your location for better matching',
             <Switch
               value={settings.shareLocation}
-              onValueChange={(value) => updateSetting("shareLocation", value)}
+              onValueChange={(value) => updateSetting('shareLocation', value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={settings.shareLocation ? colors.card : theme.palette.neutral[500]}
             />,
@@ -310,57 +258,46 @@ function PrivacySettingsScreen({
 
         {/* Data & Analytics */}
         <View style={styles.section}>
-          <Text
-            style={StyleSheet.flatten([
-              styles.sectionTitle,
-              { color: colors.onSurface},
-            ])}
-          >
+          <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
             Data & Analytics
           </Text>
           {renderSettingItem(
-            "Data sharing for improvements",
-            "Help us improve the app by sharing anonymized usage data",
+            'Data sharing for improvements',
+            'Help us improve the app by sharing anonymized usage data',
             <Switch
               value={settings.dataSharing}
-              onValueChange={(value) => updateSetting("dataSharing", value)}
+              onValueChange={(value) => updateSetting('dataSharing', value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={settings.dataSharing ? colors.card : theme.palette.neutral[500]}
             />,
           )}
 
           {renderSettingItem(
-            "Analytics tracking",
-            "Allow analytics to help us understand app usage",
+            'Analytics tracking',
+            'Allow analytics to help us understand app usage',
             <Switch
               value={settings.analyticsTracking}
-              onValueChange={(value) =>
-                updateSetting("analyticsTracking", value)
-              }
+              onValueChange={(value) => updateSetting('analyticsTracking', value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={
-                settings.analyticsTracking ? colors.card : theme.palette.neutral[500]
-              }
+              thumbColor={settings.analyticsTracking ? colors.card : theme.palette.neutral[500]}
             />,
           )}
         </View>
 
         {/* Danger Zone */}
         <View style={styles.section}>
-          <Text
-            style={StyleSheet.flatten([
-              styles.sectionTitle,
-              { color: colors.danger },
-            ])}
-          >
+          <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.danger }])}>
             Danger Zone
           </Text>
           {renderSettingItem(
-            "Blocked Users",
-            "Manage users you have blocked",
+            'Blocked Users',
+            'Manage users you have blocked',
             <TouchableOpacity
               style={styles.actionButton}
-               testID="PrivacySettingsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.navigate("BlockedUsers")}
+              testID="PrivacySettingsScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => navigation.navigate('BlockedUsers')}
             >
               <Ionicons
                 name="chevron-forward"
@@ -372,8 +309,8 @@ function PrivacySettingsScreen({
           )}
 
           {renderSettingItem(
-            "Data Download",
-            "Download all your personal data (GDPR)",
+            'Data Download',
+            'Download all your personal data (GDPR)',
             <TouchableOpacity
               testID="export-data-button"
               accessibilityLabel="Export my data"
@@ -389,21 +326,18 @@ function PrivacySettingsScreen({
                   const response = await request<{
                     url: string;
                     estimatedTime: string;
-                  }>("/api/profile/export", {
-                    method: "GET",
+                  }>('/api/profile/export', {
+                    method: 'GET',
                   });
 
                   Alert.alert(
-                    "Data Export Initiated",
+                    'Data Export Initiated',
                     `Your data export has been initiated. You will receive an email with your data within ${response.estimatedTime}.`,
-                    [{ text: "OK" }],
+                    [{ text: 'OK' }],
                   );
                 } catch (error) {
-                  logger.error("Failed to initiate data export:", error);
-                  Alert.alert(
-                    "Error",
-                    "Failed to initiate data export. Please try again.",
-                  );
+                  logger.error('Failed to initiate data export:', error);
+                  Alert.alert('Error', 'Failed to initiate data export. Please try again.');
                 } finally {
                   setLoadingExport(false);
                 }
@@ -428,8 +362,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
   },
@@ -438,9 +372,9 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     flex: 1,
-    textAlign: "center",
+    textAlign: 'center',
   },
   headerSpacer: {
     width: 40,
@@ -456,12 +390,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 16,
   },
   settingItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 16,
     borderRadius: 12,
     marginBottom: 8,
@@ -476,7 +410,7 @@ const styles = StyleSheet.create({
   },
   settingTitle: {
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: '500',
     marginBottom: 4,
   },
   settingSubtitle: {
@@ -484,8 +418,8 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   pickerContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
   },
   pickerOption: {
@@ -497,7 +431,7 @@ const styles = StyleSheet.create({
   },
   pickerOptionText: {
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   actionButton: {
     padding: 8,

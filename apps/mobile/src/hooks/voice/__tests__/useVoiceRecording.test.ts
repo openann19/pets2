@@ -152,4 +152,3 @@ describe('useVoiceRecording', () => {
     expect(result.current.durationMs).toBe(0);
   });
 });
-

@@ -1,7 +1,7 @@
 /**
  * Interactive Component v2
  * Ultra micro-interactions: unified press behavior with scale, shadow soften, haptics
- * 
+ *
  * Features:
  * - Token-driven: durations/easings from theme.motion
  * - Variants: subtle, lift, ghost
@@ -10,7 +10,7 @@
  * - Respects reduced motion (disables scale/shadow)
  * - Platform-aware (Android ripple optional)
  * - A11y-safe
- * 
+ *
  * PressIn: scale to 0.98 in 180–220ms, shadow soften one step
  * PressOut: spring back to 1.00 with emphasized easing
  */
@@ -43,7 +43,7 @@ export interface InteractiveProps extends PressableProps {
    * - ghost: Minimal feedback (opacity only)
    */
   variant?: InteractiveVariant;
-  
+
   /**
    * Haptic feedback type
    * - 'light': Tab switch, FAB tap, card tap
@@ -52,12 +52,12 @@ export interface InteractiveProps extends PressableProps {
    * - false: No haptic (destructive previews, navigation-only)
    */
   haptic?: HapticType;
-  
+
   /**
    * Disable all motion effects (for reduce motion or manual override)
    */
   disabledMotion?: boolean;
-  
+
   /**
    * Additional animated style
    */
@@ -66,9 +66,9 @@ export interface InteractiveProps extends PressableProps {
 
 /**
  * Interactive v2 - Ultra micro-interactions wrapper
- * 
+ *
  * Token-driven, spring-animated press feedback with haptic mapping
- * 
+ *
  * Usage:
  * ```tsx
  * <Interactive variant="lift" haptic="medium" onPress={handlePress}>
@@ -89,11 +89,11 @@ export function Interactive({
   const theme = useTheme();
   const reducedMotion = useReduceMotion();
   const guards = useMotionGuards();
-  
+
   const scale = useSharedValue(1);
   const shadowOpacity = useSharedValue(1);
   const opacity = useSharedValue(1);
-  
+
   // Determine scale targets based on variant
   const getScaleTargets = (): { pressed: number; normal: number } => {
     switch (variant) {
@@ -106,11 +106,11 @@ export function Interactive({
         return { pressed: motion.scale.pressed, normal: 1 };
     }
   };
-  
+
   const scaleTargets = getScaleTargets();
   const shouldAnimate = !disabledMotion && !reducedMotion && !disabled;
   const springConfig = getSpringConfig('standard');
-  
+
   // Initialize scale based on variant
   React.useEffect(() => {
     if (variant === 'lift' && shouldAnimate) {
@@ -119,47 +119,48 @@ export function Interactive({
       scale.value = scaleTargets.normal;
     }
   }, [variant, shouldAnimate]);
-  
+
   const animatedStyles = useAnimatedStyle(() => {
     const baseStyle: Record<string, unknown> = {
       transform: [{ scale: scale.value }],
       opacity: opacity.value,
     };
-    
+
     // Shadow opacity reduction (only for subtle/lift variants)
     if (shouldAnimate && variant !== 'ghost') {
-      const elevationValue = Platform.OS === 'android' 
-        ? Math.max(0, ((theme.shadows?.elevation2 as any)?.['elevation'] ?? 0) * shadowOpacity.value)
-        : undefined;
-      
+      const elevationValue =
+        Platform.OS === 'android'
+          ? Math.max(
+              0,
+              ((theme.shadows?.elevation2 as any)?.['elevation'] ?? 0) * shadowOpacity.value,
+            )
+          : undefined;
+
       if (Platform.OS === 'android' && elevationValue !== undefined) {
         baseStyle['elevation'] = elevationValue;
       } else {
         baseStyle['shadowOpacity'] = shadowOpacity.value;
       }
     }
-    
+
     return baseStyle;
   }, [theme.shadows, shouldAnimate, variant]);
-  
+
   const handlePressIn = (e: any) => {
     if (shouldAnimate) {
       // PressIn: scale to pressed state with timing
-      scale.value = withTiming(
-        scaleTargets.pressed,
-        {
-          duration: guards.getAdaptiveDuration(motion.duration.fast),
-          easing: getEasingArray('standard'),
-        }
-      );
-      
+      scale.value = withTiming(scaleTargets.pressed, {
+        duration: guards.getAdaptiveDuration(motion.duration.fast),
+        easing: getEasingArray('standard'),
+      });
+
       // Shadow soften one step
       if (variant !== 'ghost') {
         shadowOpacity.value = withTiming(0.7, {
           duration: motion.duration.fast,
         });
       }
-      
+
       // Ghost variant: opacity only
       if (variant === 'ghost') {
         opacity.value = withTiming(motion.opacity.pressed, {
@@ -167,7 +168,7 @@ export function Interactive({
         });
       }
     }
-    
+
     // Haptic feedback mapping
     if (haptic !== false) {
       if (haptic === 'success') {
@@ -178,21 +179,18 @@ export function Interactive({
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
       }
     }
-    
+
     pressableProps.onPressIn?.(e);
   };
-  
+
   const handlePressOut = (e: any) => {
     if (shouldAnimate) {
       // PressOut: spring back with emphasized easing
-      scale.value = withSpring(
-        scaleTargets.normal,
-        {
-          ...springConfig,
-          damping: springConfig.damping * 1.1, // Slightly more bounce
-        }
-      );
-      
+      scale.value = withSpring(scaleTargets.normal, {
+        ...springConfig,
+        damping: springConfig.damping * 1.1, // Slightly more bounce
+      });
+
       // Shadow restore
       if (variant !== 'ghost') {
         shadowOpacity.value = withTiming(1, {
@@ -200,7 +198,7 @@ export function Interactive({
           easing: getEasingArray('emphasized'),
         });
       }
-      
+
       // Ghost variant: opacity restore
       if (variant === 'ghost') {
         opacity.value = withTiming(1, {
@@ -209,10 +207,10 @@ export function Interactive({
         });
       }
     }
-    
+
     pressableProps.onPressOut?.(e);
   };
-  
+
   // Disabled state: reduce opacity
   React.useEffect(() => {
     if (disabled) {
@@ -225,13 +223,9 @@ export function Interactive({
       });
     }
   }, [disabled]);
-  
-  const combinedStyle = [
-    animatedStyles,
-    animatedStyle,
-    style,
-  ];
-  
+
+  const combinedStyle = [animatedStyles, animatedStyle, style];
+
   return (
     <AnimatedPressable
       {...pressableProps}
@@ -244,4 +238,3 @@ export function Interactive({
     </AnimatedPressable>
   );
 }
-

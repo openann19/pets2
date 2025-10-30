@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { StyleSheet } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   cancelAnimation,
@@ -11,6 +11,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { useTheme } from '@mobile/theme';
 
 type HapticStyle = 'light' | 'medium' | 'heavy';
 
@@ -36,10 +37,14 @@ export function DoubleTapLikePlus({
   style,
   disabled = false,
   heartSize = 64,
-  heartColor = '#ff3b5c',
+  heartColor,
   particles = 8,
   haptics = { enabled: true, style: 'medium' },
 }: DoubleTapLikePlusProps) {
+  const theme = useTheme();
+
+  // Use theme danger color if heartColor not provided
+  const finalHeartColor = heartColor || theme.colors.danger;
   // base scale micro-bounce
   const scale = useSharedValue(1);
 
@@ -146,7 +151,7 @@ export function DoubleTapLikePlus({
             styles.heart,
             {
               fontSize: heartSize,
-              color: heartColor,
+              color: finalHeartColor,
             },
           ]}
         >
@@ -170,7 +175,7 @@ export function DoubleTapLikePlus({
           return (
             <Animated.Text
               key={i}
-              style={[styles.particle, s, { fontSize: heartSize * 0.45, color: heartColor }]}
+              style={[styles.particle, s, { fontSize: heartSize * 0.45, color: finalHeartColor }]}
             >
               ❤️
             </Animated.Text>

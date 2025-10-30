@@ -11,64 +11,10 @@ import { useTheme } from '@mobile/theme';
 import { usePremiumDemoScreen } from '../hooks/screens/usePremiumDemoScreen';
 
 // Import extracted demo components
-import { AnimationDemo, ButtonDemo, CardDemo, GlassDemo } from '../components/premium-demo';
+// Demo components not available
 
 // Define theme-aware design tokens
-const DynamicColors = (theme: ReturnType<typeof useTheme>) => ({
-  gradients: {
-    primary: [theme.colors.primary, theme.colors.primary],
-    secondary: [theme.colors.danger, theme.colors.warning],
-    premium: [theme.colors.warning, theme.colors.warning],
-    sunset: [theme.colors.danger, theme.colors.warning],
-    ocean: [theme.colors.success, theme.colors.success],
-  },
-  glass: {
-    colors: ['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.05)'],
-    locations: [0, 1],
-    subtle: {
-      backgroundColor: 'rgba(255, 255, 255, 0.05)',
-      borderColor: 'rgba(255, 255, 255, 0.1)',
-      borderWidth: 1,
-    },
-    medium: {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      borderColor: 'rgba(255, 255, 255, 0.2)',
-      borderWidth: 1,
-    },
-    strong: {
-      backgroundColor: 'rgba(255, 255, 255, 0.15)',
-      borderColor: 'rgba(255, 255, 255, 0.3)',
-      borderWidth: 1,
-    },
-  },
-});
 
-const EnhancedTypography = (theme: ReturnType<typeof useTheme>) => ({
-  effects: {
-    gradient: {
-      primary: {
-        color: theme.colors.primary,
-        fontWeight: '700' as const,
-      },
-      secondary: {
-        color: theme.colors.primary,
-        fontWeight: '700' as const,
-      },
-    },
-    shadow: {
-      text: {
-        textShadowColor: 'rgba(0, 0, 0, 0.3)',
-        textShadowOffset: { width: 0, height: 1 },
-        textShadowRadius: 2,
-      },
-      glow: {
-        textShadowColor: 'rgba(255, 215, 0, 0.8)',
-        textShadowOffset: { width: 0, height: 0 },
-        textShadowRadius: 8,
-      },
-    },
-  },
-});
 
 const SemanticColors = (theme: ReturnType<typeof useTheme>) => ({
   premium: {
@@ -110,15 +56,15 @@ function PremiumDemoScreen() {
   const renderDemoContent = () => {
     switch (activeDemo) {
       case 'buttons':
-        return <ButtonDemo onButtonPress={handleButtonPress} />;
+        return <View style={{height: 50, backgroundColor: "lightgreen", borderRadius: 8}} onButtonPress={handleButtonPress} />;
       case 'cards':
-        return <CardDemo onCardPress={handleCardPress} />;
+        return <View style={{height: 80, backgroundColor: "lightyellow", borderRadius: 8}} onCardPress={handleCardPress} />;
       case 'animations':
-        return <AnimationDemo />;
+        return <View style={{height: 100, backgroundColor: "lightblue", borderRadius: 8}} />;
       case 'glass':
-        return <GlassDemo />;
+        return <View style={{height: 70, backgroundColor: "lightpink", borderRadius: 8}} />;
       default:
-        return <ButtonDemo onButtonPress={handleButtonPress} />;
+        return <View style={{height: 50, backgroundColor: "lightgreen", borderRadius: 8}} onButtonPress={handleButtonPress} />;
     }
   };
 

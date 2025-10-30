@@ -7,7 +7,14 @@ import { usePrefersReducedMotion } from '@/utils/motionGuards';
 import { Interactive } from '@/components/primitives/Interactive';
 import { Text } from './Text';
 
-export type ChipVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'muted' | 'info';
+export type ChipVariant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'muted'
+  | 'info';
 export type ChipSize = 'sm' | 'md' | 'lg';
 
 export interface ChipProps {
@@ -44,7 +51,11 @@ export function Chip({
       case 'primary':
         return { bg: theme.colors.primary, text: theme.colors.onPrimary };
       case 'secondary':
-        return { bg: theme.colors.surface, text: theme.colors.onSurface, border: theme.colors.border };
+        return {
+          bg: theme.colors.surface,
+          text: theme.colors.onSurface,
+          border: theme.colors.border,
+        };
       case 'success':
         return { bg: theme.colors.success, text: theme.colors.onPrimary };
       case 'warning':
@@ -119,4 +130,3 @@ export function Chip({
 
   return chipContent;
 }
-

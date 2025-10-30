@@ -61,14 +61,35 @@ const matchSchema = new mongoose.Schema({
     },
     messageType: {
       type: String,
-      enum: ['text', 'image', 'location', 'system'],
+      enum: ['text', 'image', 'location', 'system', 'voice', 'file'],
       default: 'text'
     },
     attachments: [{
       type: String, // URL to attachment
       fileType: String,
-      fileName: String
+      fileName: String,
+      fileSize: Number
     }],
+    replyTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Message'
+    },
+    reactions: [{
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      emoji: String,
+      reactedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
+    status: {
+      type: String,
+      enum: ['sending', 'sent', 'delivered', 'read', 'failed'],
+      default: 'sent'
+    },
     readBy: [{
       user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -83,6 +104,7 @@ const matchSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     },
+    deliveredAt: Date,
     editedAt: Date,
     isEdited: {
       type: Boolean,
@@ -91,7 +113,8 @@ const matchSchema = new mongoose.Schema({
     isDeleted: {
       type: Boolean,
       default: false
-    }
+    },
+    deletedAt: Date
   }],
   
   // Meeting Planning

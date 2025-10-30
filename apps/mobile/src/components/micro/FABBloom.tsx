@@ -41,7 +41,7 @@ export function FABBloom({
 }: FABBloomProps): React.JSX.Element {
   const theme = useTheme();
   const guards = useMotionGuards();
-  
+
   const scale = useSharedValue(1);
   const shadowOpacity = useSharedValue(0.15);
 
@@ -67,7 +67,7 @@ export function FABBloom({
         withTiming(1, {
           duration: motion.duration.fast,
           easing: getEasingArray('emphasized'),
-        })
+        }),
       );
 
       // Shadow up then down
@@ -77,7 +77,7 @@ export function FABBloom({
         }),
         withTiming(0.15, {
           duration: motion.duration.fast,
-        })
+        }),
       );
     }
 
@@ -107,4 +107,3 @@ export function FABBloom({
     </AnimatedTouchableOpacity>
   );
 }
-

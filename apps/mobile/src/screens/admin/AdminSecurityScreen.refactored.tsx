@@ -3,9 +3,9 @@
  * Reduced from 923 lines to ~200 lines by extracting components
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
-import React, { useMemo } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import React, { useMemo } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -14,110 +14,109 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { SecurityAlertCard, SecurityMetricsSection } from "./security/components";
-import { useAdminSecurity } from "./security/hooks";
-import { useTheme } from "@mobile/theme";
-import type { AdminScreenProps } from "../../navigation/types";
-import type { SecurityAlert } from "./security/types";
+import { SecurityAlertCard, SecurityMetricsSection } from './security/components';
+import { useAdminSecurity } from './security/hooks';
+import { useTheme } from '@mobile/theme';
+import type { AdminScreenProps } from '../../navigation/types';
+import type { SecurityAlert } from './security/types';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(0,0,0,0.1)",
-  },
-  backButton: {
-    padding: 8,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    flex: 1,
-    marginLeft: 8,
-  },
-  headerActions: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  refreshButton: {
-    padding: 8,
-  },
-  filtersContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 12,
-  },
-  filterRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  filterLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    minWidth: 60,
-  },
-  filterButtons: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  filterButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  filterButtonActive: {
-    // Active state handled by backgroundColor
-  },
-  filterText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  metricsSection: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 16,
-  },
-  alertsSection: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  alertsList: {
-    paddingBottom: 16,
-  },
-});
+    container: {
+      flex: 1,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: 16,
+      fontWeight: '500',
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: 'rgba(0,0,0,0.1)',
+    },
+    backButton: {
+      padding: 8,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      flex: 1,
+      marginLeft: 8,
+    },
+    headerActions: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    refreshButton: {
+      padding: 8,
+    },
+    filtersContainer: {
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      gap: 12,
+    },
+    filterRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    filterLabel: {
+      fontSize: 14,
+      fontWeight: '600',
+      minWidth: 60,
+    },
+    filterButtons: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    filterButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+    },
+    filterButtonActive: {
+      // Active state handled by backgroundColor
+    },
+    filterText: {
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    metricsSection: {
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      marginBottom: 16,
+    },
+    alertsSection: {
+      flex: 1,
+      paddingHorizontal: 16,
+    },
+    alertsList: {
+      paddingBottom: 16,
+    },
+  });
 }
-
 
 export default function AdminSecurityScreen({
   navigation,
-}: AdminScreenProps<"AdminSecurity">): React.JSX.Element {
-    const theme = useTheme();
+}: AdminScreenProps<'AdminSecurity'>): React.JSX.Element {
+  const theme = useTheme();
   const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
   const { colors, palette } = theme;
   const {
@@ -146,7 +145,7 @@ export default function AdminSecurityScreen({
       alert={item}
       onPress={(alert) => {
         // Handle alert detail view
-        console.log("Alert pressed:", alert);
+        console.log('Alert pressed:', alert);
       }}
       onResolve={handleResolveAlert}
       isActionLoading={actionLoading === item.id}
@@ -157,7 +156,10 @@ export default function AdminSecurityScreen({
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator
+            size="large"
+            color={colors.primary}
+          />
           <Text style={[styles.loadingText, { color: colors.onSurface }]}>
             Loading security data...
           </Text>
@@ -177,7 +179,11 @@ export default function AdminSecurityScreen({
           onPress={handleBack}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={colors.onSurface}
+          />
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.onSurface }]}>Security Dashboard</Text>
         <View style={styles.headerActions}>
@@ -189,7 +195,11 @@ export default function AdminSecurityScreen({
             style={styles.refreshButton}
             disabled={refreshing}
           >
-            <Ionicons name="refresh" size={20} color={colors.primary} />
+            <Ionicons
+              name="refresh"
+              size={20}
+              color={colors.primary}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -199,7 +209,7 @@ export default function AdminSecurityScreen({
         <View style={styles.filterRow}>
           <Text style={[styles.filterLabel, { color: colors.onSurface }]}>Severity:</Text>
           <View style={styles.filterButtons}>
-            {(["all", "critical", "high", "medium", "low"] as const).map((severity) => (
+            {(['all', 'critical', 'high', 'medium', 'low'] as const).map((severity) => (
               <TouchableOpacity
                 key={severity}
                 style={[
@@ -238,7 +248,7 @@ export default function AdminSecurityScreen({
         <View style={styles.filterRow}>
           <Text style={[styles.filterLabel, { color: colors.onSurface }]}>Type:</Text>
           <View style={styles.filterButtons}>
-            {(["all", "suspicious_login", "blocked_ip", "reported_content"] as const).map(
+            {(['all', 'suspicious_login', 'blocked_ip', 'reported_content'] as const).map(
               (type) => (
                 <TouchableOpacity
                   key={type}
@@ -265,7 +275,7 @@ export default function AdminSecurityScreen({
                       { color: selectedType === type ? palette.neutral[0] : colors.onSurface },
                     ]}
                   >
-                    {type.replace("_", " ")}
+                    {type.replace('_', ' ')}
                   </Text>
                 </TouchableOpacity>
               ),
@@ -292,7 +302,11 @@ export default function AdminSecurityScreen({
           renderItem={renderAlert}
           keyExtractor={(item) => item.id}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.primary}
+            />
           }
           contentContainerStyle={styles.alertsList}
           showsVerticalScrollIndicator={false}

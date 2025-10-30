@@ -19,8 +19,23 @@ export function createTheme(scheme: ColorScheme): AppTheme {
 export type { AppTheme, Theme, ColorScheme, SemanticColors } from './contracts';
 
 // Motion tokens export
-export { motion, motionDurations, motionEasing, motionScale, motionOpacity, motionSpring, getEasingArray, getSpringConfig } from './motion';
-export type { MotionDuration, MotionEasing, MotionScale, MotionOpacity, MotionSpring } from './motion';
+export {
+  motion,
+  motionDurations,
+  motionEasing,
+  motionScale,
+  motionOpacity,
+  motionSpring,
+  getEasingArray,
+  getSpringConfig,
+} from './motion';
+export type {
+  MotionDuration,
+  MotionEasing,
+  MotionScale,
+  MotionOpacity,
+  MotionSpring,
+} from './motion';
 
 // Back-compat exports
 export { getExtendedColors, getThemeColors, getIsDark } from './adapters';

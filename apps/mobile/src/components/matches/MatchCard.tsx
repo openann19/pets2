@@ -67,7 +67,6 @@ function MatchCardBase({
     ]);
   };
 
-
   // Use simplified match data
   const petPhoto = match.petPhoto || '';
   const lastMessage = match.lastMessage;
@@ -84,87 +83,87 @@ function MatchCardBase({
           activeOpacity={1}
           accessibilityLabel={`View match with ${match.petName}`}
         >
-        <LinearGradient
-          colors={[...theme.palette.gradients.warning, ...theme.palette.gradients.primary]}
-          style={styles.gradient}
-        >
-          <OptimizedImage
-            uri={petPhoto}
-            style={styles.photo}
-            containerStyle={{}}
-            accessibilityLabel={`${match.petName} photo`}
-            priority="normal"
-            onLoadStart={() => {}}
-            onLoadEnd={() => {}}
-            onError={() => {}}
-          />
-          <View style={styles.info}>
-            <Text style={styles.name}>{match.petName}</Text>
-            <Text style={styles.meta}>
-              {match.petBreed}, {match.petAge} years old
-            </Text>
-            <Text style={styles.owner}>Owner information</Text>
-            {lastMessage ? (
-              <Text
-                style={styles.lastMessage}
-                numberOfLines={1}
-              >
-                {lastMessage.content}
+          <LinearGradient
+            colors={[...theme.palette.gradients.warning, ...theme.palette.gradients.primary]}
+            style={styles.gradient}
+          >
+            <OptimizedImage
+              uri={petPhoto}
+              style={styles.photo}
+              containerStyle={{}}
+              accessibilityLabel={`${match.petName} photo`}
+              priority="normal"
+              onLoadStart={() => {}}
+              onLoadEnd={() => {}}
+              onError={() => {}}
+            />
+            <View style={styles.info}>
+              <Text style={styles.name}>{match.petName}</Text>
+              <Text style={styles.meta}>
+                {match.petBreed}, {match.petAge} years old
               </Text>
-            ) : null}
-            <Text style={styles.matchedAt}>
-              Matched {new Date(match.matchedAt).toLocaleDateString()}
-            </Text>
-          </View>
-          {(onUnmatch || onArchive || onReport) && (
-            <View style={styles.actions}>
-              {onReport && (
-                <TouchableOpacity
-                  style={StyleSheet.flatten([styles.actionButton, styles.reportButton])}
-                  onPress={handleReport}
-                  accessibilityLabel="Report match"
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              <Text style={styles.owner}>Owner information</Text>
+              {lastMessage ? (
+                <Text
+                  style={styles.lastMessage}
+                  numberOfLines={1}
                 >
-                  <Ionicons
-                    name="flag-outline"
-                    size={20}
-                    color={theme.colors.warning}
-                  />
-                </TouchableOpacity>
-              )}
-              {onArchive && (
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  onPress={handleArchive}
-                  accessibilityLabel="Archive match"
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                >
-                  <Ionicons
-                    name="archive-outline"
-                    size={20}
-                    color={theme.colors.primary}
-                  />
-                </TouchableOpacity>
-              )}
-              {onUnmatch && (
-                <TouchableOpacity
-                  style={StyleSheet.flatten([styles.actionButton, styles.unmatchButton])}
-                  onPress={handleUnmatch}
-                  accessibilityLabel="Unmatch"
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                >
-                  <Ionicons
-                    name="close-circle-outline"
-                    size={20}
-                    color={theme.colors.danger}
-                  />
-                </TouchableOpacity>
-              )}
+                  {lastMessage.content}
+                </Text>
+              ) : null}
+              <Text style={styles.matchedAt}>
+                Matched {new Date(match.matchedAt).toLocaleDateString()}
+              </Text>
             </View>
-          )}
-        </LinearGradient>
-      </TouchableOpacity>
-    </View>
+            {(onUnmatch || onArchive || onReport) && (
+              <View style={styles.actions}>
+                {onReport && (
+                  <TouchableOpacity
+                    style={StyleSheet.flatten([styles.actionButton, styles.reportButton])}
+                    onPress={handleReport}
+                    accessibilityLabel="Report match"
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  >
+                    <Ionicons
+                      name="flag-outline"
+                      size={20}
+                      color={theme.colors.warning}
+                    />
+                  </TouchableOpacity>
+                )}
+                {onArchive && (
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={handleArchive}
+                    accessibilityLabel="Archive match"
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  >
+                    <Ionicons
+                      name="archive-outline"
+                      size={20}
+                      color={theme.colors.primary}
+                    />
+                  </TouchableOpacity>
+                )}
+                {onUnmatch && (
+                  <TouchableOpacity
+                    style={StyleSheet.flatten([styles.actionButton, styles.unmatchButton])}
+                    onPress={handleUnmatch}
+                    accessibilityLabel="Unmatch"
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  >
+                    <Ionicons
+                      name="close-circle-outline"
+                      size={20}
+                      color={theme.colors.danger}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
     </Interactive>
   );
 }

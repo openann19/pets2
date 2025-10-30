@@ -1,3 +1,4 @@
+import * as React from 'react';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { TextStyle, ViewStyle } from 'react-native';
@@ -193,9 +194,9 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
 
   const variantStyles = useMemo(
     () => ({
-      primary: { backgroundColor: '#FF6B9D' },
-      secondary: { backgroundColor: '#6366F1' },
-      ghost: { backgroundColor: 'transparent', borderWidth: 2, borderColor: '#FF6B9D' },
+      primary: { backgroundColor: theme.colors.primary },
+      secondary: { backgroundColor: theme.colors.info },
+      ghost: { backgroundColor: 'transparent', borderWidth: 2, borderColor: theme.colors.primary },
       danger: { backgroundColor: theme.colors.danger },
     }),
     [theme],
@@ -208,12 +209,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   };
 
   const buttonStyles = useMemo(
-    () => [
-      styles.button,
-      variantStyles[variant],
-      sizeStyles[size],
-      disabled && styles.disabled,
-    ],
+    () => [styles.button, variantStyles[variant], sizeStyles[size], disabled && styles.disabled],
     [variantStyles, variant, size, disabled],
   );
 
@@ -246,9 +242,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         accessibilityState={{ disabled: disabled || loading, busy: loading }}
       >
         {typeof children === 'string' ? (
-          <Text style={StyleSheet.flatten(textStyles)}>
-            {loading ? '...' : children}
-          </Text>
+          <Text style={StyleSheet.flatten(textStyles)}>{loading ? '...' : children}</Text>
         ) : (
           children
         )}

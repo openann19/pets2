@@ -191,9 +191,7 @@ export function AnalysisResultsSection({ result, colors }: AnalysisResultsSectio
         <Text style={StyleSheet.flatten([styles.score, { color: getScoreColor() }])}>
           {score}/100
         </Text>
-        <Text
-          style={StyleSheet.flatten([styles.scoreDescription, { color: colors.onMuted }])}
-        >
+        <Text style={StyleSheet.flatten([styles.scoreDescription, { color: colors.onMuted }])}>
           {score >= 80
             ? 'Excellent for matching!'
             : score >= 60

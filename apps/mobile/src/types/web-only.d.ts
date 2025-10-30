@@ -40,7 +40,10 @@ interface MediaRecorder extends EventTarget {
 
 declare var MediaRecorder: {
   prototype: MediaRecorder;
-  new (stream: MediaStream, options?: { mimeType?: string; audioBitsPerSecond?: number }): MediaRecorder;
+  new (
+    stream: MediaStream,
+    options?: { mimeType?: string; audioBitsPerSecond?: number },
+  ): MediaRecorder;
   isTypeSupported(mimeType: string): boolean;
 };
 

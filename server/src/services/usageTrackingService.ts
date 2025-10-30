@@ -46,14 +46,16 @@ class UsageTrackingService {
           plan: 'basic' as const,
           usage: {
             swipesUsed: 0,
-            swipesLimit: 50,
+            swipesLimit: 5, // Business Model: 5 daily swipes for free users
             superLikesUsed: 0,
             superLikesLimit: 0,
             boostsUsed: 0,
             boostsLimit: 0,
             messagesSent: 0,
             profileViews: 0,
-            rewindsUsed: 0
+            rewindsUsed: 0,
+            iapSuperLikes: 0,
+            iapBoosts: 0
           }
         };
       }
@@ -62,14 +64,16 @@ class UsageTrackingService {
       if (!user.premium.usage) {
         user.premium.usage = {
           swipesUsed: 0,
-          swipesLimit: 50,
+          swipesLimit: 5, // Business Model: 5 daily swipes for free users
           superLikesUsed: 0,
           superLikesLimit: 0,
           boostsUsed: 0,
           boostsLimit: 0,
           messagesSent: 0,
           profileViews: 0,
-          rewindsUsed: 0
+          rewindsUsed: 0,
+          iapSuperLikes: 0,
+          iapBoosts: 0
         };
       }
 
@@ -283,10 +287,10 @@ class UsageTrackingService {
         user.premium = {
           isActive: false,
           plan: 'free',
-          usage: { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0 }
+          usage: { swipesUsed: 0, swipesLimit: 5, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0, iapSuperLikes: 0, iapBoosts: 0 }
         };
       } else if (!user.premium.usage) {
-        user.premium.usage = { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0 };
+        user.premium.usage = { swipesUsed: 0, swipesLimit: 5, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0, iapSuperLikes: 0, iapBoosts: 0 };
       }
       
       user.premium.usage.swipesUsed = 0;

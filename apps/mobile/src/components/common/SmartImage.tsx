@@ -1,18 +1,30 @@
-import React, { useEffect, useState, memo } from "react";
-import { Image, View, StyleSheet, type ImageProps } from "react-native";
-import Animated, { useSharedValue, withTiming, useAnimatedStyle } from "react-native-reanimated";
-import Shimmer from "../micro/Shimmer";
+/**
+ * SmartImage Component with FastImage Support
+ * Fixes P-05: Use react-native-fast-image for caching on Android
+ */
 
-type Props = ImageProps & { previewBlurRadius?: number; rounded?: number; useShimmer?: boolean };
+import { useEffect, useState, memo } from 'react';
+import { Image, View, StyleSheet, type ImageProps } from 'react-native';
+import Animated, { useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated';
+import FastImage from 'react-native-fast-image';
+import Shimmer from '../micro/Shimmer';
 
-const SmartImage = memo(function SmartImage({ 
-  previewBlurRadius = 16, 
-  style, 
-  onLoad, 
+type Props = ImageProps & {
+  previewBlurRadius?: number;
+  rounded?: number;
+  useShimmer?: boolean;
+  useFastImage?: boolean; // Enable FastImage caching (default: true)
+};
+
+const SmartImage = memo(function SmartImage({
+  previewBlurRadius = 16,
+  style,
+  onLoad,
   onError,
   rounded = 12,
   useShimmer = false,
-  ...rest 
+  useFastImage = true, // Default to FastImage for better caching
+  ...rest
 }: Props) {
   const [loaded, setLoaded] = useState(false);
   const [errored, setErrored] = useState(false);
@@ -24,22 +36,55 @@ const SmartImage = memo(function SmartImage({
 
   const as = useAnimatedStyle(() => ({ opacity: o.value }));
 
-  // Extract resizeMode if provided
-  const { resizeMode, ...imageProps } = rest as any;
+  // Extract resizeMode and source
+  const { resizeMode, source, ...imageProps } = rest as any;
+
+  // Convert source to FastImage format if needed
+  const fastImageSource =
+    useFastImage && source && typeof source === 'object' && 'uri' in source
+      ? {
+          uri: source.uri,
+          priority: FastImage.priority.normal,
+          cache: FastImage.cacheControl.immutable,
+        }
+      : source;
 
   if (useShimmer) {
     return (
       <View style={[styles.wrap, { borderRadius: rounded }, style]}>
         {!errored && <Shimmer radius={rounded} />}
-        {!errored && (
+        {!errored && useFastImage && fastImageSource ? (
+          <Animated.View style={[StyleSheet.absoluteFillObject, as]}>
+            <FastImage
+              source={fastImageSource}
+              resizeMode={FastImage.resizeMode[resizeMode || 'cover']}
+              onLoad={(e) => {
+                setLoaded(true);
+                onLoad?.(e as any);
+              }}
+              onError={(e) => {
+                setErrored(true);
+                onError?.(e as any);
+              }}
+              style={StyleSheet.absoluteFillObject}
+            />
+          </Animated.View>
+        ) : !errored ? (
           <Animated.Image
             {...imageProps}
+            source={source}
             resizeMode={resizeMode}
-            onLoad={(e) => { setLoaded(true); onLoad?.(e); }}
-            onError={(e) => { setErrored(true); onError?.(e); }}
+            onLoad={(e) => {
+              setLoaded(true);
+              onLoad?.(e);
+            }}
+            onError={(e) => {
+              setErrored(true);
+              onError?.(e);
+            }}
             style={[StyleSheet.absoluteFillObject, as]}
           />
-        )}
+        ) : null}
         {errored && (
           <View style={[styles.fallback, { borderRadius: rounded }]}>
             {/* fallback - could show icon here */}
@@ -50,30 +95,65 @@ const SmartImage = memo(function SmartImage({
   }
 
   return (
-    <View style={[styles.wrap, style]}>
+      <View style={[styles.wrap, style]}>
       {/* Low-fi placeholder */}
-      <Image
-        {...imageProps}
-        resizeMode={resizeMode}
-        blurRadius={previewBlurRadius}
-        style={StyleSheet.absoluteFillObject}
-      />
-      {/* Full res crossfade */}
-      <Animated.Image
-        {...imageProps}
-        resizeMode={resizeMode}
-        onLoad={(e) => { setLoaded(true); onLoad?.(e); }}
-        onError={(e) => { setErrored(true); onError?.(e); }}
-        style={[StyleSheet.absoluteFillObject, as]}
-      />
+      {useFastImage && fastImageSource ? (
+        <>
+          <FastImage
+            source={fastImageSource}
+            resizeMode={FastImage.resizeMode[resizeMode || 'cover']}
+            style={StyleSheet.absoluteFillObject}
+          />
+          {/* Full res crossfade */}
+          <Animated.View style={[StyleSheet.absoluteFillObject, as]}>
+            <FastImage
+              source={fastImageSource}
+              resizeMode={FastImage.resizeMode[resizeMode || 'cover']}
+              onLoad={(e) => {
+                setLoaded(true);
+                onLoad?.(e as any);
+              }}
+              onError={(e) => {
+                setErrored(true);
+                onError?.(e as any);
+              }}
+              style={StyleSheet.absoluteFillObject}
+            />
+          </Animated.View>
+        </>
+      ) : (
+        <>
+          <Image
+            {...imageProps}
+            source={source}
+            resizeMode={resizeMode}
+            blurRadius={previewBlurRadius}
+            style={StyleSheet.absoluteFillObject}
+          />
+          {/* Full res crossfade */}
+          <Animated.Image
+            {...imageProps}
+            source={source}
+            resizeMode={resizeMode}
+            onLoad={(e) => {
+              setLoaded(true);
+              onLoad?.(e);
+            }}
+            onError={(e) => {
+              setErrored(true);
+              onError?.(e);
+            }}
+            style={[StyleSheet.absoluteFillObject, as]}
+          />
+        </>
+      )}
     </View>
   );
 });
 
-const styles = StyleSheet.create({ 
-  wrap: { overflow: "hidden", position: "relative" },
-  fallback: { flex: 1, backgroundColor: "rgba(0,0,0,0.08)" },
+const styles = StyleSheet.create({
+  wrap: { overflow: 'hidden', position: 'relative' },
+  fallback: { flex: 1, backgroundColor: 'rgba(0,0,0,0.08)' },
 });
 export { SmartImage };
 export default SmartImage;
-

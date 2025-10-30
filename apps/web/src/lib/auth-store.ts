@@ -148,19 +148,33 @@ export const useAuthStore = create()(persist((set, get) => ({
                     // Sync with API service
                     try {
                         const apiService = require('../services/api').default;
-                        if (apiService && apiService.setAuthToken) {
-                            apiService.setAuthToken(storedToken);
+                        if (apiService && apiService.setToken) {
+                            apiService.setToken(storedToken, storedRefreshToken);
                         }
-                        // Optionally validate token with backend
-                        if (apiService && apiService.validateToken) {
-                            const isValid = await apiService.validateToken(storedToken);
-                            if (!isValid) {
-                                get().clearTokens();
+                        // Validate token with backend by fetching current user
+                        if (apiService && apiService.getCurrentUser) {
+                            const userResponse = await apiService.getCurrentUser();
+                            if (userResponse.success && userResponse.data) {
+                                set({ user: userResponse.data, isAuthenticated: true });
+                            } else {
+                                // Token invalid - try refresh if we have refresh token
+                                if (storedRefreshToken && apiService.refreshAccessToken) {
+                                    const refreshed = await apiService.refreshAccessToken();
+                                    if (!refreshed) {
+                                        logger.warn('[AuthStore] Token validation failed and refresh failed');
+                                        get().clearTokens();
+                                    }
+                                } else {
+                                    logger.warn('[AuthStore] Token validation failed, no refresh token');
+                                    get().clearTokens();
+                                }
                             }
                         }
                     }
                     catch (error) {
-                        logger.debug('[AuthStore] Could not validate token');
+                        logger.debug('[AuthStore] Could not validate token', { error });
+                        // If validation fails, clear tokens
+                        get().clearTokens();
                     }
                 }
             }
@@ -172,6 +186,33 @@ export const useAuthStore = create()(persist((set, get) => ({
         finally {
             set({ isLoading: false });
         }
+    },
+    // Automatic token refresh before expiration
+    refreshTokenIfNeeded: async () => {
+        const state = get();
+        if (!state.refreshToken || !state.accessToken) {
+            return false;
+        }
+        try {
+            const apiService = require('../services/api').default;
+            if (apiService && apiService.refreshAccessToken) {
+                const refreshed = await apiService.refreshAccessToken();
+                if (refreshed) {
+                    const newToken = tokenStorage.getAccessToken();
+                    const newRefreshToken = tokenStorage.getRefreshToken();
+                    if (newToken) {
+                        set({
+                            accessToken: newToken,
+                            refreshToken: newRefreshToken || state.refreshToken,
+                        });
+                        return true;
+                    }
+                }
+            }
+        } catch (error) {
+            logger.error('[AuthStore] Token refresh failed', { error });
+        }
+        return false;
     },
 }), {
     name: 'auth-storage',

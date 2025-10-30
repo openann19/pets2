@@ -3,54 +3,53 @@
  * Provides quick navigation to admin features
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@mobile/theme";
-import type { AppTheme } from "@mobile/theme";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  actionsContainer: {
-    marginTop: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 16,
-  },
-  actionsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  actionCard: {
-    width: "23%",
-    alignItems: "center",
-    padding: 12,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  actionIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  actionTitle: {
-    fontSize: 12,
-    fontWeight: "500",
-    textAlign: "center",
-  },
-});
+    actionsContainer: {
+      marginTop: 16,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      marginBottom: 16,
+    },
+    actionsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
+    },
+    actionCard: {
+      width: '23%',
+      alignItems: 'center',
+      padding: 12,
+      borderRadius: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    actionIconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    actionTitle: {
+      fontSize: 12,
+      fontWeight: '500',
+      textAlign: 'center',
+    },
+  });
 }
-
 
 interface QuickAction {
   id: string;
@@ -64,74 +63,76 @@ interface QuickActionsSectionProps {
   onNavigate: (screen: string) => void;
 }
 
-export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
-  onNavigate,
-}) => {
+export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({ onNavigate }) => {
   const theme = useTheme();
   const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
   const { colors, palette } = theme;
 
   const actions: QuickAction[] = [
     {
-      id: "users",
-      title: "Users",
-      icon: "people",
+      id: 'users',
+      title: 'Users',
+      icon: 'people',
       color: colors.primary,
-      onPress: () => onNavigate("AdminUsers"),
+      onPress: () => onNavigate('AdminUsers'),
     },
     {
-      id: "analytics",
-      title: "Analytics",
-      icon: "stats-chart",
+      id: 'analytics',
+      title: 'Analytics',
+      icon: 'stats-chart',
       color: colors.info,
-      onPress: () => onNavigate("AdminAnalytics"),
+      onPress: () => onNavigate('AdminAnalytics'),
     },
     {
-      id: "security",
-      title: "Security",
-      icon: "shield",
+      id: 'security',
+      title: 'Security',
+      icon: 'shield',
       color: colors.danger,
-      onPress: () => onNavigate("AdminSecurity"),
+      onPress: () => onNavigate('AdminSecurity'),
     },
     {
-      id: "billing",
-      title: "Billing",
-      icon: "cash",
+      id: 'billing',
+      title: 'Billing',
+      icon: 'cash',
       color: colors.success,
-      onPress: () => onNavigate("AdminBilling"),
+      onPress: () => onNavigate('AdminBilling'),
     },
     {
-      id: "verifications",
-      title: "Verifications",
-      icon: "checkmark-circle",
+      id: 'verifications',
+      title: 'Verifications',
+      icon: 'checkmark-circle',
       color: colors.warning,
-      onPress: () => onNavigate("AdminVerifications"),
+      onPress: () => onNavigate('AdminVerifications'),
     },
     {
-      id: "chats",
-      title: "Chats",
-      icon: "chatbubbles",
+      id: 'chats',
+      title: 'Chats',
+      icon: 'chatbubbles',
       color: colors.primary,
-      onPress: () => onNavigate("AdminChats"),
+      onPress: () => onNavigate('AdminChats'),
     },
     {
-      id: "uploads",
-      title: "Uploads",
-      icon: "cloud-upload",
+      id: 'uploads',
+      title: 'Uploads',
+      icon: 'cloud-upload',
       color: colors.primary,
-      onPress: () => onNavigate("AdminUploads"),
+      onPress: () => onNavigate('AdminUploads'),
     },
     {
-      id: "logs",
-      title: "Logs",
-      icon: "document-text",
+      id: 'logs',
+      title: 'Logs',
+      icon: 'document-text',
       color: colors.onMuted,
-      onPress: () => onNavigate("AdminLogs"),
+      onPress: () => onNavigate('AdminLogs'),
     },
   ];
 
   return (
-    <View style={styles.actionsContainer} testID="quick-actions-section" accessibilityLabel="Quick actions for admin dashboard">
+    <View
+      style={styles.actionsContainer}
+      testID="quick-actions-section"
+      accessibilityLabel="Quick actions for admin dashboard"
+    >
       <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Quick Actions</Text>
       <View style={styles.actionsGrid}>
         {actions.map((action) => (
@@ -144,7 +145,11 @@ export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
             accessibilityRole="button"
           >
             <View style={[styles.actionIconContainer, { backgroundColor: action.color }]}>
-              <Ionicons name={action.icon as any} size={24} color="#FFFFFF" />
+              <Ionicons
+                name={action.icon as any}
+                size={24}
+                color="#FFFFFF"
+              />
             </View>
             <Text style={[styles.actionTitle, { color: colors.onSurface }]}>{action.title}</Text>
           </TouchableOpacity>

@@ -30,7 +30,7 @@ describe('AdvancedFiltersScreen accessibility', () => {
     const { getByA11yLabel } = render(
       <ThemeProvider>
         <AdvancedFiltersScreen navigation={{ goBack }} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const back = getByA11yLabel('Go back');
@@ -42,5 +42,3 @@ describe('AdvancedFiltersScreen accessibility', () => {
     expect(save).toBeTruthy();
   });
 });
-
-

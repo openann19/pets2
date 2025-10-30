@@ -2,9 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useCallback, useRef } from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { useReducedMotion } from '../hooks/useReducedMotion';
+import { useReduceMotion } from '../hooks/useReducedMotion';
+import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { haptic } from '../ui/haptics';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 
@@ -17,6 +18,8 @@ import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 import MicroPressable from '../components/micro/MicroPressable';
 import type { RootStackScreenProps } from '../navigation/types';
+import { useHeaderWithCounts } from '../hooks/useHeaderWithCounts';
+import { useScrollYForHeader } from '../hooks/useScrollYForHeader';
 
 // Import decomposed components
 import {
@@ -31,12 +34,25 @@ type ProfileScreenProps = RootStackScreenProps<'Profile'>;
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const theme = useTheme();
   const { t } = useTranslation('common');
-  const scrollRef = useRef<ScrollView>(null);
-  const { onScroll, getOffset } = useScrollOffsetTracker();
-  const reducedMotion = useReducedMotion();
+  const scrollRef = useRef<Animated.ScrollView>(null);
+  const { getOffset } = useScrollOffsetTracker();
+  const reducedMotion = useReduceMotion();
 
   const { user, notifications, privacy, handleLogout, handleSettingToggle, handlePrivacyToggle } =
     useProfileScreen();
+
+  // Create scrollY SharedValue for header collapse
+  const { scrollY, scrollHandler } = useScrollYForHeader();
+
+  // Update SmartHeader with scrollY
+  useHeaderWithCounts({
+    title: t('profile.title', 'Profile'),
+    ...(user?.firstName && {
+      subtitle: `${user.firstName}${user.lastName ? ` ${user.lastName}` : ''}`,
+    }),
+    fetchCounts: true,
+    scrollY,
+  });
 
   useTabReselectRefresh({
     listRef: scrollRef,
@@ -157,11 +173,13 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         />
       }
     >
-      <ScrollView
+      <Animated.ScrollView
         ref={scrollRef}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        onScroll={onScroll}
+        onScroll={(e: NativeSyntheticEvent<NativeScrollEvent>) => {
+          scrollHandler(e); // Header collapse animation
+        }}
         scrollEventThrottle={16}
       >
         {/* Profile Header Section */}
@@ -219,7 +237,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             </LinearGradient>
           </MicroPressable>
         </Animated.View>
-      </ScrollView>
+      </Animated.ScrollView>
     </ScreenShell>
   );
 };

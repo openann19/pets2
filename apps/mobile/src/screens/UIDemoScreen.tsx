@@ -8,7 +8,7 @@ import { ScrollView, View, StyleSheet, Switch } from 'react-native';
 import { Stack } from '../components/ui/v2/layout/Stack';
 import { Text } from '../components/ui/v2/Text';
 import { Button } from '../components/ui/v2/Button';
-import { useTheme } from "@mobile/theme";
+import { useTheme } from '@mobile/theme';
 import { showcaseRegistry } from '../components/ui/v2/registry';
 
 export default function UIDemoScreen(): React.ReactElement {
@@ -16,8 +16,32 @@ export default function UIDemoScreen(): React.ReactElement {
   const [density, setDensity] = useState<'comfortable' | 'compact'>('comfortable');
   const [reduceMotion, setReduceMotion] = useState(false);
   const [themeMode, setThemeMode] = useState<'light' | 'dark'>(
-    theme.scheme === 'dark' ? 'dark' : 'light'
+    theme.scheme === 'dark' ? 'dark' : 'light',
   );
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    controls: {
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
+      borderBottomWidth: 1,
+      zIndex: 50,
+    },
+    controlsInner: {
+      flexWrap: 'wrap',
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      paddingBottom: theme.spacing['2xl'],
+    },
+    section: {
+      marginBottom: theme.spacing.xl,
+    },
+  });
 
   const handleThemeChange = (newTheme: 'light' | 'dark') => {
     setThemeMode(newTheme);
@@ -42,7 +66,12 @@ export default function UIDemoScreen(): React.ReactElement {
         ]}
         testID="ui-controls"
       >
-        <Stack direction="row" gap="sm" align="center" style={styles.controlsInner}>
+        <Stack
+          direction="row"
+          gap="sm"
+          align="center"
+          style={styles.controlsInner}
+        >
           <Text variant="caption">Theme:</Text>
           <Button
             testID="ui-theme-light"
@@ -106,7 +135,7 @@ export default function UIDemoScreen(): React.ReactElement {
         style={styles.scrollView}
         contentContainerStyle={[
           styles.content,
-          { padding: density === 'compact' ? 12 : 16 },
+          { padding: density === 'compact' ? theme.spacing.md : theme.spacing.lg },
         ]}
       >
         {showcaseRegistry.map((section) => (
@@ -115,43 +144,24 @@ export default function UIDemoScreen(): React.ReactElement {
             style={styles.section}
             testID={`ui-${section.id}`}
           >
-            <Text variant="h4" style={{ marginBottom: 8 }}>
+            <Text
+              variant="h4"
+              style={{ marginBottom: theme.spacing.sm }}
+            >
               {section.title}
             </Text>
             {section.description && (
-              <Text variant="bodyMuted" style={{ marginBottom: 12 }}>
+              <Text
+                variant="bodyMuted"
+                style={{ marginBottom: theme.spacing.md }}
+              >
                 {section.description}
               </Text>
             )}
-            <View style={{ marginTop: 12 }}>{section.demo}</View>
+            <View style={{ marginTop: theme.spacing.md }}>{section.demo}</View>
           </View>
         ))}
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  controls: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    zIndex: 50,
-  },
-  controlsInner: {
-    flexWrap: 'wrap',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingBottom: 32,
-  },
-  section: {
-    marginBottom: 24,
-  },
-});
-

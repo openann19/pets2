@@ -78,9 +78,11 @@ const envConfig = environments[currentEnv] || {};
 const finalConfig: EnvironmentConfig = {
   ...defaultConfig,
   ...envConfig,
-  ...(USE_MOCK_SERVER && currentEnv === 'development' ? {
-    API_BASE_URL: 'http://localhost:3001', // Mock server port
-  } : {}),
+  ...(USE_MOCK_SERVER && currentEnv === 'development'
+    ? {
+        API_BASE_URL: 'http://localhost:3001', // Mock server port
+      }
+    : {}),
 };
 
 export const config: EnvironmentConfig = finalConfig;

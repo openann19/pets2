@@ -156,7 +156,7 @@ function ModernPhotoUpload({
 
   // Render photo item
   const renderPhotoItem = useCallback(
-    (photo: PhotoItem, index: number) => {
+    (photo: PhotoItem) => {
       const AnimatedView = require('react-native-reanimated').default.View;
 
       return (

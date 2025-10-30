@@ -1,5 +1,3 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { linking } from './navigation/linking';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
@@ -14,6 +12,12 @@ import AdminNavigator from './navigation/AdminNavigator';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import { screenTransitions } from './navigation/transitions';
 import type { RootStackParamList } from './navigation/types';
+import AppChrome from './chrome/AppChrome';
+import { NavigationGuard } from './navigation/NavigationGuard';
+import { ProtectedRoute } from './navigation/ProtectedRoute';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { useBadgeCount } from './hooks/useBadgeCount';
+import { notificationService } from './services/notifications';
 
 // Authentication Screens
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
@@ -22,30 +26,31 @@ import RegisterScreen from './screens/RegisterScreen';
 import ResetPasswordScreen from './screens/ResetPasswordScreen';
 
 // Onboarding Screens
-// import WelcomeScreen from "./screens/onboarding/WelcomeScreen";
+import WelcomeScreen from './screens/onboarding/WelcomeScreen';
 // import UserIntentScreen from "./screens/onboarding/UserIntentScreen";
 // import PetProfileSetupScreen from "./screens/onboarding/PetProfileSetupScreen";
 // import PreferencesSetupScreen from "./screens/onboarding/PreferencesSetupScreen";
 
 // Main Screens
-import ChatScreen from './screens/ChatScreen';
+import { LazyChatScreen } from './navigation/lazyScreens'; // Lazy loaded (P-03)
 import HomeScreen from './screens/HomeScreen';
 import MatchesScreen from './screens/MatchesScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SwipeScreen from './screens/SwipeScreen';
+import PetProfileScreen from './screens/PetProfileScreen';
 
-// Premium & Subscription Screens
-import ManageSubscriptionScreen from './screens/ManageSubscriptionScreen';
+// Premium & Subscription Screens - Lazy loaded for performance (P-03)
 import PremiumCancelScreen from './screens/PremiumCancelScreen';
-import PremiumScreen from './screens/PremiumScreen';
+import { LazyPremiumScreen, LazyManageSubscriptionScreen, LazySubscriptionManagerScreen } from './navigation/lazyScreens';
 import PremiumSuccessScreen from './screens/PremiumSuccessScreen';
-import SubscriptionManagerScreen from './screens/premium/SubscriptionManagerScreen';
 import { SubscriptionSuccessScreen } from './screens/premium/SubscriptionSuccessScreen';
 
-// AI Screens
-import AIBioScreen from './screens/AIBioScreen';
-import AICompatibilityScreen from './screens/AICompatibilityScreen';
-import AIPhotoAnalyzerScreen from './screens/AIPhotoAnalyzerScreen';
+// AI Screens - Lazy loaded for performance (P-03)
+import {
+  LazyAIBioScreen,
+  LazyAICompatibilityScreen,
+  LazyAIPhotoAnalyzerScreen,
+} from './navigation/lazyScreens';
 
 // Settings & Privacy Screens
 import AboutTermsPrivacyScreen from './screens/AboutTermsPrivacyScreen';
@@ -90,8 +95,7 @@ import MigrationExampleScreen from './screens/MigrationExampleScreen';
 import NewComponentsTestScreen from './screens/NewComponentsTestScreen';
 import PremiumDemoScreen from './screens/PremiumDemoScreen';
 import UIDemoScreen from './screens/UIDemoScreen';
-import PreviewCodeScreen from './screens/PreviewCodeScreen';
-import PolishPlaygroundScreen from './screens/PolishPlaygroundScreen';
+import MotionLabScreen from './labs/motion/MotionLabScreen';
 
 // Live Streaming Screens
 import GoLiveScreen from './screens/GoLiveScreen';
@@ -125,73 +129,101 @@ const AppNavigator = (): React.ReactElement => (
       component={ResetPasswordScreen}
     />
 
-    {/* Main Tab Navigator (with EnhancedTabBar) */}
+    {/* Onboarding Screens */}
     <Stack.Screen
-      name="Home"
-      component={BottomTabNavigator}
+      name="Welcome"
+      component={WelcomeScreen}
     />
+
+    {/* Main Tab Navigator (with EnhancedTabBar) - Protected */}
+    <Stack.Screen name="Home">
+      {(props) => (
+        <ErrorBoundary screenName="Home">
+          <ProtectedRoute {...props} component={BottomTabNavigator} />
+        </ErrorBoundary>
+      )}
+    </Stack.Screen>
     <Stack.Screen
       name="Main"
       component={HomeScreen}
-    />
-    <Stack.Screen
-      name="Swipe"
-      component={SwipeScreen}
       options={screenTransitions.fluid}
     />
-    <Stack.Screen
-      name="Matches"
-      component={MatchesScreen}
-      options={screenTransitions.fluid}
-    />
-    <Stack.Screen
-      name="Profile"
-      component={ProfileScreen}
-      options={screenTransitions.scale}
-    />
-    <Stack.Screen
-      name="Settings"
-      component={SettingsScreen}
-      options={screenTransitions.fluid}
-    />
-    <Stack.Screen
-      name="Chat"
-      component={ChatScreen}
-      options={screenTransitions.fluid}
-    />
+    <Stack.Screen name="Swipe">
+      {(props) => (
+        <ErrorBoundary screenName="Swipe">
+          <ProtectedRoute {...props} component={SwipeScreen} />
+        </ErrorBoundary>
+      )}
+    </Stack.Screen>
+    <Stack.Screen name="Matches">
+      {(props) => (
+        <ErrorBoundary screenName="Matches">
+          <ProtectedRoute {...props} component={MatchesScreen} />
+        </ErrorBoundary>
+      )}
+    </Stack.Screen>
+    <Stack.Screen name="Profile">
+      {(props) => (
+        <ErrorBoundary screenName="Profile">
+          <ProtectedRoute {...props} component={ProfileScreen} />
+        </ErrorBoundary>
+      )}
+    </Stack.Screen>
+    <Stack.Screen name="PetProfile">
+      {(props) => (
+        <ErrorBoundary screenName="PetProfile">
+          <ProtectedRoute {...props} component={PetProfileScreen} />
+        </ErrorBoundary>
+      )}
+    </Stack.Screen>
+    <Stack.Screen name="Settings">
+      {(props) => (
+        <ErrorBoundary screenName="Settings">
+          <ProtectedRoute {...props} component={SettingsScreen} />
+        </ErrorBoundary>
+      )}
+    </Stack.Screen>
+    <Stack.Screen name="Chat">
+      {(props) => (
+        <ErrorBoundary screenName="Chat">
+          <ProtectedRoute {...props} component={LazyChatScreen} />
+        </ErrorBoundary>
+      )}
+    </Stack.Screen>
     <Stack.Screen
       name="MainTabs"
       component={MainTabsScreen}
     />
 
-    {/* Onboarding Screens - Commented out due to navigation prop requirements */}
-    {/* These screens expect specific navigation props that will be handled by their own navigators */}
-
-    {/* Pet Management Screens */}
-    <Stack.Screen
-      name="MyPets"
-      component={MyPetsScreen}
-      options={screenTransitions.fluid}
-    />
-    <Stack.Screen
-      name="CreatePet"
-      component={CreatePetScreen}
-      options={screenTransitions.fluid}
-    />
+    {/* Pet Management Screens - Protected */}
+    <Stack.Screen name="MyPets">
+      {(props) => (
+        <ErrorBoundary screenName="MyPets">
+          <ProtectedRoute {...props} component={MyPetsScreen} />
+        </ErrorBoundary>
+      )}
+    </Stack.Screen>
+    <Stack.Screen name="CreatePet">
+      {(props) => (
+        <ErrorBoundary screenName="CreatePet">
+          <ProtectedRoute {...props} component={CreatePetScreen} />
+        </ErrorBoundary>
+      )}
+    </Stack.Screen>
     <Stack.Screen
       name="Map"
       component={MapScreen}
       options={screenTransitions.fluid}
     />
 
-    {/* Premium & Subscription Screens */}
+    {/* Premium & Subscription Screens - Lazy loaded for performance (P-03) */}
     <Stack.Screen
       name="Premium"
-      component={PremiumScreen}
+      component={LazyPremiumScreen}
     />
     <Stack.Screen
       name="Subscription"
-      component={PremiumScreen}
+      component={LazyPremiumScreen}
     />
     <Stack.Screen
       name="PremiumSuccess"
@@ -203,7 +235,7 @@ const AppNavigator = (): React.ReactElement => (
     />
     <Stack.Screen
       name="SubscriptionManager"
-      component={SubscriptionManagerScreen}
+      component={LazySubscriptionManagerScreen}
     />
     <Stack.Screen
       name="SubscriptionSuccess"
@@ -211,21 +243,21 @@ const AppNavigator = (): React.ReactElement => (
     />
     <Stack.Screen
       name="ManageSubscription"
-      component={ManageSubscriptionScreen}
+      component={LazyManageSubscriptionScreen}
     />
 
-    {/* AI Screens */}
+    {/* AI Screens - Lazy loaded for performance (P-03) */}
     <Stack.Screen
       name="AIBio"
-      component={AIBioScreen}
+      component={LazyAIBioScreen}
     />
     <Stack.Screen
       name="AIPhotoAnalyzer"
-      component={AIPhotoAnalyzerScreen}
+      component={LazyAIPhotoAnalyzerScreen}
     />
     <Stack.Screen
       name="AICompatibility"
-      component={AICompatibilityScreen}
+      component={LazyAICompatibilityScreen}
     />
 
     {/* Settings & Privacy Screens */}
@@ -369,18 +401,10 @@ const AppNavigator = (): React.ReactElement => (
       options={screenTransitions.fluid}
     />
     <Stack.Screen
-      name="PreviewCode"
-      component={PreviewCodeScreen}
-      options={{ presentation: 'modal' }}
+      name="MotionLab"
+      component={MotionLabScreen}
+      options={{ presentation: 'modal', headerShown: false }}
     />
-
-    {__DEV__ && (
-      <Stack.Screen
-        name="PolishPlayground"
-        component={PolishPlaygroundScreen}
-        options={screenTransitions.fluid}
-      />
-    )}
 
     {/* Live Streaming Screens */}
     <Stack.Screen
@@ -399,19 +423,42 @@ const AppNavigator = (): React.ReactElement => (
   </Stack.Navigator>
 );
 
+function AppContent(): React.ReactElement {
+  // Initialize badge count management
+  useBadgeCount();
+
+  // Initialize notification service on app start (without auto-requesting permission)
+  // Permission will be requested via NotificationPermissionPrompt component
+  React.useEffect(() => {
+    // Initialize without auto-request - we'll show our custom prompt first
+    notificationService.initialize(false).catch((error) => {
+      // Non-critical error - notifications may not be available
+      console.warn('Failed to initialize notification service:', error);
+    });
+  }, []);
+
+  return (
+    <NavigationGuard>
+      <StatusBar style="dark" />
+      <AppChrome>
+        <AppNavigator />
+      </AppChrome>
+    </NavigationGuard>
+  );
+}
+
 export default function App(): React.ReactElement {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <I18nextProvider i18n={i18n}>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            <NavigationContainer linking={linking}>
-              <StatusBar style="dark" />
-              <AppNavigator />
-            </NavigationContainer>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </I18nextProvider>
+      <ErrorBoundary screenName="App">
+        <I18nextProvider i18n={i18n}>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider>
+              <AppContent />
+            </ThemeProvider>
+          </QueryClientProvider>
+        </I18nextProvider>
+      </ErrorBoundary>
     </GestureHandlerRootView>
   );
 }

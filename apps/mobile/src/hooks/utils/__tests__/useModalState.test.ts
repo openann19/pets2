@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from '@testing-library/react-native';
+import { renderHook, act } from '@testing-library/react';
 import { useModalState } from '../useModalState';
 
 describe('useModalState', () => {

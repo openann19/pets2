@@ -1,7 +1,7 @@
 /**
  * EmptyState Component
  * Standardized empty state template with illustration, message, and CTA
- * 
+ *
  * Features:
  * - Semantic token-based styling
  * - Consistent copy and spacing
@@ -23,37 +23,37 @@ export interface EmptyStateProps {
    * Icon name (Ionicons)
    */
   icon?: string;
-  
+
   /**
    * Title text
    */
   title: string;
-  
+
   /**
    * Subtitle/description text
    */
   subtitle?: string;
-  
+
   /**
    * Action button label
    */
   actionLabel?: string;
-  
+
   /**
    * Action button onPress handler
    */
   onAction?: () => void;
-  
+
   /**
    * Custom style
    */
   style?: ViewStyle;
-  
+
   /**
    * Icon size (default: 64)
    */
   iconSize?: number;
-  
+
   /**
    * Variant: 'default' | 'error' | 'info'
    */
@@ -62,7 +62,7 @@ export interface EmptyStateProps {
 
 /**
  * EmptyState - Standardized empty state component
- * 
+ *
  * Usage:
  * ```tsx
  * <EmptyState
@@ -85,14 +85,16 @@ export function EmptyState({
   variant = 'default',
 }: EmptyStateProps): React.JSX.Element {
   const theme = useTheme();
-  
-  const iconColor = 
-    variant === 'error' ? theme.colors.danger :
-    variant === 'info' ? theme.colors.info :
-    theme.colors.onMuted;
-  
+
+  const iconColor =
+    variant === 'error'
+      ? theme.colors.danger
+      : variant === 'info'
+        ? theme.colors.info
+        : theme.colors.onMuted;
+
   const styles = createStyles(theme);
-  
+
   return (
     <View
       style={[styles.container, style]}
@@ -105,7 +107,7 @@ export function EmptyState({
         color={iconColor}
         style={styles.icon}
       />
-      
+
       <Text
         variant="heading3"
         style={styles.title}
@@ -113,7 +115,7 @@ export function EmptyState({
       >
         {title}
       </Text>
-      
+
       {subtitle && (
         <Text
           variant="body"
@@ -122,7 +124,7 @@ export function EmptyState({
           {subtitle}
         </Text>
       )}
-      
+
       {actionLabel && onAction && (
         <View style={styles.action}>
           <Button
@@ -164,4 +166,3 @@ function createStyles(theme: ReturnType<typeof useTheme>) {
     },
   });
 }
-

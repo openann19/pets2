@@ -2,7 +2,7 @@
  * ULTRA PREMIUM API Service 🚀
  * Production-ready with full type safety, error handling, and real-time features
  */
-import { ApiResponse, User, Pet, UserRegistrationData, PetCreationData, SwipeParams, UserPreferences, MessageAttachment, BioGenerationData, CompatibilityOptions, BehaviorAnalysisData } from '../types';
+import type { ApiResponse, User, Pet, UserRegistrationData, PetCreationData, SwipeParams, UserPreferences, MessageAttachment, BioGenerationData, CompatibilityOptions, BehaviorAnalysisData } from '../types';
 import { logger } from '@pawfectmatch/core';
 
 interface RequestOptions {
@@ -10,6 +10,7 @@ interface RequestOptions {
   headers?: Record<string, string>;
   body?: string;
   params?: Record<string, unknown>;
+  signal?: AbortSignal; // Support for request cancellation
 }
 
 interface CacheEntry<T> {
@@ -26,8 +27,8 @@ interface TokenData {
 // Centralized API configuration
 const getApiBaseUrl = (): string => {
   // Check environment variable first
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
+  if (process.env['NEXT_PUBLIC_API_URL']) {
+    return process.env['NEXT_PUBLIC_API_URL'];
   }
   // Fallback to localhost with correct port
   if (typeof window !== 'undefined') {
@@ -196,8 +197,10 @@ class ApiService {
 
   async refreshAccessToken(): Promise<boolean> {
     if (!this.refreshToken) {
+      logger.warn('[API] No refresh token available');
       return false;
     }
+    
     try {
       const response = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
         method: 'POST',
@@ -206,17 +209,51 @@ class ApiService {
         },
         body: JSON.stringify({ refreshToken: this.refreshToken }),
       });
+      
       if (response.ok) {
         const data = await response.json();
         const tokens: TokenData = (data.data ?? data).accessToken ? (data.data) : data;
-        this.setToken(tokens.accessToken, tokens.refreshToken);
+        
+        if (!tokens.accessToken) {
+          logger.error('[API] Token refresh response missing accessToken');
+          return false;
+        }
+        
+        this.setToken(tokens.accessToken, tokens.refreshToken || this.refreshToken);
+        logger.info('[API] Token refreshed successfully');
+        
+        // Notify auth store if available
+        if (typeof window !== 'undefined') {
+          try {
+            const authStore = require('../lib/auth-store').useAuthStore;
+            const store = authStore.getState();
+            if (store.setTokens) {
+              store.setTokens(tokens.accessToken, tokens.refreshToken || this.refreshToken);
+            }
+          } catch {
+            // Auth store not available, continue
+          }
+        }
+        
         return true;
+      } else {
+        // Refresh token invalid or expired
+        logger.warn('[API] Token refresh failed', { status: response.status });
+        if (response.status === 401 || response.status === 403) {
+          this.clearToken();
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('auth:refresh_failed'));
+          }
+        }
+        return false;
       }
     }
     catch (error: unknown) {
-      logger.error('Token refresh failed', error);
+      logger.error('[API] Token refresh error', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+      return false;
     }
-    return false;
   }
 
   async request<T>(endpoint: string, options: RequestOptions = {}, retryCount: number = 0): Promise<ApiResponse<T>> {
@@ -248,73 +285,161 @@ class ApiService {
         ...(token && { Authorization: `Bearer ${token}` }),
         ...options.headers,
       },
-      body: options.body,
+      body: options.body ?? null,
+      signal: options.signal ?? null, // Support AbortController for request cancellation
     };
 
     try {
       const response = await fetch(finalUrl, config);
+      
+      // Handle non-OK responses with comprehensive error handling
       if (!response.ok) {
+        // Handle 401 Unauthorized - attempt token refresh
         if (response.status === 401 && retryCount === 0) {
-          // Try to refresh token
+          logger.info('[API] 401 received, attempting token refresh');
           const refreshed = await this.refreshAccessToken();
           if (refreshed) {
+            logger.info('[API] Token refreshed successfully, retrying request');
             return this.request<T>(endpoint, options, retryCount + 1);
           }
-          // Clear tokens and let caller/middleware handle navigation
+          // Token refresh failed - clear tokens and notify
+          logger.warn('[API] Token refresh failed, clearing auth state');
           this.clearToken();
+          // Dispatch event for auth providers to handle
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('auth:token_expired'));
+          }
         }
+        
+        // Parse error response with better error messages
         let errorMessage = `API Error: ${response.statusText}`;
+        let errorCode: string | undefined;
+        let errorDetails: unknown = undefined;
+        
         try {
           const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
+          errorMessage = errorData.message || errorData.error || errorMessage;
+          errorCode = errorData.code || errorData.errorCode;
+          errorDetails = errorData.details || errorData.data;
+        } catch {
+          // If JSON parsing fails, try to get text response
+          try {
+            const text = await response.text();
+            if (text) {
+              errorMessage = text.length > 200 ? `${text.substring(0, 200)}...` : text;
+            }
+          } catch {
+            // Use default message
+          }
         }
-        catch {
-          // If JSON parsing fails, use default message
-        }
+        
+        // Enhanced error logging
+        logger.error('[API] Request failed', {
+          endpoint,
+          status: response.status,
+          statusText: response.statusText,
+          errorMessage,
+          errorCode,
+        });
+        
         return {
           success: false,
           data: null as unknown as T,
-          error: errorMessage
-        };
+          error: errorMessage,
+          errorCode,
+          errorDetails,
+        } as ApiResponse<T>;
       }
-      const data = await response.json();
+      
+      // Parse successful response
+      let data: T;
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType?.includes('application/json')) {
+        const jsonData = await response.json();
+        data = jsonData.data || jsonData;
+      } else if (response.status === 204 || response.status === 201) {
+        // No content or created - return empty object
+        data = {} as T;
+      } else {
+        // Try to parse as JSON anyway
+        try {
+          const jsonData = await response.json();
+          data = jsonData.data || jsonData;
+        } catch {
+          // If all else fails, return empty object
+          data = {} as T;
+        }
+      }
+      
       return {
         success: true,
-        data: data.data || data
+        data
       };
     }
     catch (error: unknown) {
-      if (retryCount < this.retryAttempts) {
-        logger.warn(`Retrying request to ${endpoint} (attempt ${retryCount + 1})`);
-        await new Promise(resolve => setTimeout(resolve, this.retryDelay * (retryCount + 1)));
+      // Network errors or fetch failures
+      const isNetworkError = error instanceof TypeError && error.message.includes('fetch');
+      const isAborted = error instanceof Error && error.name === 'AbortError';
+      
+      if (isAborted) {
+        logger.info('[API] Request aborted', { endpoint });
+        return {
+          success: false,
+          data: null as unknown as T,
+          error: 'Request was cancelled',
+        };
+      }
+      
+      // Retry logic for network errors or 5xx errors
+      if (retryCount < this.retryAttempts && (isNetworkError || (error as Response)?.status >= 500)) {
+        const delay = this.retryDelay * Math.pow(2, retryCount); // Exponential backoff
+        logger.warn(`[API] Retrying request to ${endpoint} (attempt ${retryCount + 1}/${this.retryAttempts}) after ${delay}ms`);
+        await new Promise(resolve => setTimeout(resolve, delay));
         return this.request<T>(endpoint, options, retryCount + 1);
       }
-      logger.error('API request failed:', error);
+      
+      logger.error('[API] Request failed after retries', {
+        endpoint,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        retryCount,
+      });
+      
       return {
         success: false,
         data: null as unknown as T,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: error instanceof Error 
+          ? (isNetworkError ? 'Network error. Please check your connection.' : error.message)
+          : 'Unknown error occurred'
       };
     }
   }
 
   // Auth endpoints
   async login(email: string, password: string): Promise<User> {
-    const response = await this.request<User>('/auth/login', {
+    const response = await this.request<{ user: User; accessToken: string; refreshToken?: string }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    this.setToken(response.data.accessToken, response.data.refreshToken);
-    return response.data;
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Login failed');
+    }
+    const { user, accessToken, refreshToken } = response.data;
+    this.setToken(accessToken, refreshToken);
+    return user;
   }
 
   async register(data: UserRegistrationData): Promise<User> {
-    const response = await this.request<User>('/auth/register', {
+    const response = await this.request<{ user: User; accessToken: string; refreshToken?: string }>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    this.setToken(response.data.accessToken, response.data.refreshToken);
-    return response.data;
+    if (!response.success || !response.data) {
+      throw new Error(response.error || 'Registration failed');
+    }
+    const { user, accessToken, refreshToken } = response.data;
+    this.setToken(accessToken, refreshToken);
+    return user;
   }
 
   async logout(): Promise<void> {
@@ -375,7 +500,9 @@ class ApiService {
   }
 
   async getSwipeQueue(params: SwipeParams): Promise<ApiResponse<Pet[]>> {
-    return this.request<Pet[]>('/pets/discover', { params });
+    return this.request<Pet[]>('/pets/discover', { 
+      params: params as unknown as Record<string, unknown>
+    });
   }
 
   async updatePetProfile(data: Partial<User>): Promise<ApiResponse<User>> {
@@ -409,8 +536,7 @@ class ApiService {
     });
   }
 
-  // Weather endpoints
-  async getWeather(lat: number, lon: number): Promise<ApiResponse<{ weather: null }>> {
+  async getWeather(_lat: number, _lon: number): Promise<ApiResponse<{ weather: null }>> {
     // No backend route present; return a stub to avoid runtime errors
     return { success: true, data: { weather: null } };
   }
@@ -450,12 +576,12 @@ const apiInstance = new ApiService();
 export const petsAPI = {
   async getSwipeablePets(filters: SwipeParams) {
     return apiInstance.request<Pet[]>('/pets/discover', {
-      params: filters,
+      params: filters as unknown as Record<string, unknown>,
     });
   },
   async discoverPets(filters: SwipeParams) {
     return apiInstance.request<Pet[]>('/pets/discover', {
-      params: filters,
+      params: filters as unknown as Record<string, unknown>,
     });
   },
   async likePet(petId: string) {

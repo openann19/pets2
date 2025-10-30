@@ -93,6 +93,8 @@ interface SeverityOrder {
 }
 import Report from '../models/Report';
 import SecurityAlert from '../models/SecurityAlert';
+import User from '../models/User';
+import AdminActivityLog from '../models/AdminActivityLog';
 import { encrypt } from '../utils/encryption';
 import { logAdminActivity, adminActionLogger } from '../middleware/adminLogger';
 import { validate, schemas } from '../middleware/validator';

@@ -345,38 +345,9 @@ class ObservabilityService {
   }
 
   private getMemoryUsage(): number {
-    // Attempt to get memory usage from available sources
-    try {
-      // Try to use performance.memory if available (web/Expo web)
-      if (typeof performance !== 'undefined' && 'memory' in performance) {
-        const perfMemory = (performance as unknown as { memory?: { usedJSHeapSize?: number } }).memory;
-        if (perfMemory?.usedJSHeapSize) {
-          // Convert bytes to MB
-          return Math.round(perfMemory.usedJSHeapSize / (1024 * 1024));
-        }
-      }
-
-      // For React Native, memory tracking requires native modules
-      // This is a simplified estimation based on typical app memory usage
-      // In production, consider integrating a native module like react-native-device-info
-      // or using Sentry's memory tracking capabilities
-      
-      // Return estimated memory usage based on app state
-      // This is still an approximation but better than always returning 0
-      const estimatedMemoryMB = 50; // Base estimate for typical React Native app
-      
-      // Log that we're using an estimate
-      if (__DEV__) {
-        logger.debug('Using estimated memory usage (native module not available)', {
-          estimated: estimatedMemoryMB,
-        });
-      }
-      
-      return estimatedMemoryMB;
-    } catch (error) {
-      logger.error('Failed to get memory usage', { error });
-      return 0;
-    }
+    // In React Native, memory usage is harder to track
+    // This is a placeholder for actual memory monitoring
+    return 0;
   }
 
   private sanitizeSentryEvent<T extends Sentry.ErrorEvent>(event: T): T {

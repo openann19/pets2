@@ -1,6 +1,6 @@
 /**
  * Enhanced Accessibility & Payment Localization Example
- * 
+ *
  * This file demonstrates how to use the enhanced accessibility labels
  * and payment error localization in a real screen component
  */
@@ -38,7 +38,7 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
 }) => {
   const theme = useTheme();
   const accessibility = useAccessibility();
-  
+
   const [cardDetails, setCardDetails] = useState<CardDetails>({
     cardNumber: '',
     expiryDate: '',
@@ -57,10 +57,10 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
   const paymentAccessibilityLabels = accessibility.getScreenLabels().premium;
 
   const handleInputChange = (field: keyof CardDetails, value: string) => {
-    setCardDetails(prev => ({ ...prev, [field]: value }));
+    setCardDetails((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -105,7 +105,7 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
     const simulatePaymentError = () => {
       const errorTypes = ['payment_declined', 'insufficient_funds', 'card_expired', 'invalid_cvv'];
       const randomError = errorTypes[Math.floor(Math.random() * errorTypes.length)];
-      
+
       // 80% success rate
       if (Math.random() > 0.8) {
         paymentErrorService.showErrorAlert(randomError, handleSubmit);
@@ -189,13 +189,13 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
   });
 
   return (
-    <ScrollView 
+    <ScrollView
       style={styles.container}
       accessible={true}
       accessibilityLabel="Payment form screen"
       accessibilityHint="Enter your payment details to complete the purchase"
     >
-      <Text 
+      <Text
         style={styles.title}
         accessible={true}
         accessibilityRole="header"
@@ -207,14 +207,9 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
       <View style={styles.form}>
         {/* Card Number */}
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>
-            {paymentLabels.cardNumber.label}
-          </Text>
+          <Text style={styles.label}>{paymentLabels.cardNumber.label}</Text>
           <TextInput
-            style={[
-              styles.input,
-              errors.cardNumber && styles.inputError,
-            ]}
+            style={[styles.input, errors.cardNumber && styles.inputError]}
             value={cardDetails.cardNumber}
             onChangeText={(value) => handleInputChange('cardNumber', value)}
             placeholder={paymentLabels.cardNumber.hint}
@@ -227,7 +222,10 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
             textContentType="creditCardNumber"
           />
           {errors.cardNumber && (
-            <Text style={styles.errorText} accessible={true}>
+            <Text
+              style={styles.errorText}
+              accessible={true}
+            >
               {errors.cardNumber}
             </Text>
           )}
@@ -236,14 +234,9 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
         {/* Expiry Date and CVV */}
         <View style={{ flexDirection: 'row', gap: theme.spacing.md }}>
           <View style={[styles.inputGroup, { flex: 1 }]}>
-            <Text style={styles.label}>
-              {paymentLabels.expiryDate.label}
-            </Text>
+            <Text style={styles.label}>{paymentLabels.expiryDate.label}</Text>
             <TextInput
-              style={[
-                styles.input,
-                errors.expiryDate && styles.inputError,
-              ]}
+              style={[styles.input, errors.expiryDate && styles.inputError]}
               value={cardDetails.expiryDate}
               onChangeText={(value) => handleInputChange('expiryDate', value)}
               placeholder={paymentLabels.expiryDate.hint}
@@ -256,21 +249,19 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
               textContentType="creditCardExpiration"
             />
             {errors.expiryDate && (
-              <Text style={styles.errorText} accessible={true}>
+              <Text
+                style={styles.errorText}
+                accessible={true}
+              >
                 {errors.expiryDate}
               </Text>
             )}
           </View>
 
           <View style={[styles.inputGroup, { flex: 1 }]}>
-            <Text style={styles.label}>
-              {paymentLabels.cvv.label}
-            </Text>
+            <Text style={styles.label}>{paymentLabels.cvv.label}</Text>
             <TextInput
-              style={[
-                styles.input,
-                errors.cvv && styles.inputError,
-              ]}
+              style={[styles.input, errors.cvv && styles.inputError]}
               value={cardDetails.cvv}
               onChangeText={(value) => handleInputChange('cvv', value)}
               placeholder={paymentLabels.cvv.hint}
@@ -284,7 +275,10 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
               textContentType="creditCardSecurityCode"
             />
             {errors.cvv && (
-              <Text style={styles.errorText} accessible={true}>
+              <Text
+                style={styles.errorText}
+                accessible={true}
+              >
                 {errors.cvv}
               </Text>
             )}
@@ -293,14 +287,9 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
 
         {/* Cardholder Name */}
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>
-            {paymentLabels.cardholderName.label}
-          </Text>
+          <Text style={styles.label}>{paymentLabels.cardholderName.label}</Text>
           <TextInput
-            style={[
-              styles.input,
-              errors.cardholderName && styles.inputError,
-            ]}
+            style={[styles.input, errors.cardholderName && styles.inputError]}
             value={cardDetails.cardholderName}
             onChangeText={(value) => handleInputChange('cardholderName', value)}
             placeholder={paymentLabels.cardholderName.hint}
@@ -312,7 +301,10 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
             textContentType="creditCardName"
           />
           {errors.cardholderName && (
-            <Text style={styles.errorText} accessible={true}>
+            <Text
+              style={styles.errorText}
+              accessible={true}
+            >
               {errors.cardholderName}
             </Text>
           )}
@@ -320,10 +312,7 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
 
         {/* Submit Button */}
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            isLoading && styles.submitButtonDisabled,
-          ]}
+          style={[styles.submitButton, isLoading && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={isLoading}
           accessible={true}
@@ -334,15 +323,14 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
         >
           {isLoading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color={theme.colors.primaryText} />
-              <Text style={styles.loadingText}>
-                {paymentLabels.processing}
-              </Text>
+              <ActivityIndicator
+                size="small"
+                color={theme.colors.primaryText}
+              />
+              <Text style={styles.loadingText}>{paymentLabels.processing}</Text>
             </View>
           ) : (
-            <Text style={styles.submitButtonText}>
-              {paymentLabels.payButton}
-            </Text>
+            <Text style={styles.submitButtonText}>{paymentLabels.payButton}</Text>
           )}
         </TouchableOpacity>
       </View>

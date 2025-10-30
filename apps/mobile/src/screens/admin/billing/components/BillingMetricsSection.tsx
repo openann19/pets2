@@ -1,12 +1,12 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import type { BillingMetrics } from "../hooks/useAdminBilling";
-import { useTheme } from "../../../theme";
-import type { AppTheme } from "../../../theme";
-import { getExtendedColors } from "../../../theme/adapters";
-import type { ExtendedColors } from "../../../theme/adapters";
+import type { BillingMetrics } from '../hooks/useAdminBilling';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
+import { getExtendedColors } from '@/theme/adapters';
+import type { ExtendedColors } from '@/theme/adapters';
 
 function __makeStyles_styles(theme: AppTheme, colors: ExtendedColors) {
   return StyleSheet.create({
@@ -15,19 +15,19 @@ function __makeStyles_styles(theme: AppTheme, colors: ExtendedColors) {
     },
     sectionTitle: {
       fontSize: 18,
-      fontWeight: "600",
+      fontWeight: '600',
       marginBottom: 16,
       color: colors.text,
     },
     metricsGrid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       gap: 12,
       marginBottom: 16,
     },
     metricCard: {
       flex: 1,
-      minWidth: "47%",
+      minWidth: '47%',
       borderRadius: 12,
       padding: 16,
       backgroundColor: colors.card,
@@ -38,23 +38,23 @@ function __makeStyles_styles(theme: AppTheme, colors: ExtendedColors) {
       elevation: 5,
     },
     metricHeader: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 8,
       marginBottom: 8,
     },
     metricTitle: {
       fontSize: 12,
-      fontWeight: "500",
+      fontWeight: '500',
       color: colors.textMuted,
     },
     metricValue: {
       fontSize: 20,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       color: colors.text,
     },
     secondaryMetrics: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: 8,
     },
     secondaryMetricCard: {
@@ -70,21 +70,20 @@ function __makeStyles_styles(theme: AppTheme, colors: ExtendedColors) {
     },
     secondaryMetricValue: {
       fontSize: 16,
-      fontWeight: "600",
-      color: colors.text
-    }
-  })
+      fontWeight: '600',
+      color: colors.text,
+    },
+  });
 }
 
-
 interface BillingMetricsSectionProps {
-  metrics: BillingMetrics
+  metrics: BillingMetrics;
 }
 
 const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
   }).format(amount);
 };
 
@@ -102,66 +101,66 @@ export const BillingMetricsSection = ({
       <View style={styles.metricsGrid}>
         <View style={styles.metricCard}>
           <View style={styles.metricHeader}>
-            <Ionicons name="cash" size={20} color={colors.success} />
+            <Ionicons
+              name="cash"
+              size={20}
+              color={colors.success}
+            />
             <Text style={styles.metricTitle}>Total Revenue</Text>
           </View>
-          <Text style={styles.metricValue}> 
-            {formatCurrency(metrics.totalRevenue)}
-          </Text>
+          <Text style={styles.metricValue}>{formatCurrency(metrics.totalRevenue)}</Text>
         </View>
 
         <View style={styles.metricCard}>
           <View style={styles.metricHeader}>
-            <Ionicons name="trending-up" size={20} color={colors.info} />
+            <Ionicons
+              name="trending-up"
+              size={20}
+              color={colors.info}
+            />
             <Text style={styles.metricTitle}>MRR</Text>
           </View>
-          <Text style={styles.metricValue}> 
-            {formatCurrency(metrics.monthlyRecurringRevenue)}
-          </Text>
+          <Text style={styles.metricValue}>{formatCurrency(metrics.monthlyRecurringRevenue)}</Text>
         </View>
 
         <View style={styles.metricCard}>
           <View style={styles.metricHeader}>
-            <Ionicons name="people" size={20} color={colors.primary} />
+            <Ionicons
+              name="people"
+              size={20}
+              color={colors.primary}
+            />
             <Text style={styles.metricTitle}>ARPU</Text>
           </View>
-          <Text style={styles.metricValue}> 
-            {formatCurrency(metrics.averageRevenuePerUser)}
-          </Text>
+          <Text style={styles.metricValue}>{formatCurrency(metrics.averageRevenuePerUser)}</Text>
         </View>
 
         <View style={styles.metricCard}>
           <View style={styles.metricHeader}>
-            <Ionicons name="checkmark-circle" size={20} color={colors.success} />
+            <Ionicons
+              name="checkmark-circle"
+              size={20}
+              color={colors.success}
+            />
             <Text style={styles.metricTitle}>Active Subs</Text>
           </View>
-          <Text style={styles.metricValue}> 
-            {metrics.activeSubscriptions}
-          </Text>
+          <Text style={styles.metricValue}>{metrics.activeSubscriptions}</Text>
         </View>
       </View>
 
       <View style={styles.secondaryMetrics}>
-        <View style={styles.secondaryMetricCard}> 
-          <Text style={styles.secondaryMetricLabel}> 
-            Conversion Rate
-          </Text>
-          <Text style={styles.secondaryMetricValue}> 
-            {metrics.conversionRate.toFixed(1)}%
-          </Text>
+        <View style={styles.secondaryMetricCard}>
+          <Text style={styles.secondaryMetricLabel}>Conversion Rate</Text>
+          <Text style={styles.secondaryMetricValue}>{metrics.conversionRate.toFixed(1)}%</Text>
         </View>
-        <View style={styles.secondaryMetricCard}> 
-          <Text style={styles.secondaryMetricLabel}> 
-            Churn Rate
-          </Text>
-          <Text style={[styles.secondaryMetricValue, { color: colors.danger }]}> 
+        <View style={styles.secondaryMetricCard}>
+          <Text style={styles.secondaryMetricLabel}>Churn Rate</Text>
+          <Text style={[styles.secondaryMetricValue, { color: colors.danger }]}>
             {metrics.churnRate.toFixed(1)}%
           </Text>
         </View>
-        <View style={styles.secondaryMetricCard}> 
-          <Text style={styles.secondaryMetricLabel}> 
-            Revenue Growth
-          </Text>
+        <View style={styles.secondaryMetricCard}>
+          <Text style={styles.secondaryMetricLabel}>Revenue Growth</Text>
           <Text
             style={[
               styles.secondaryMetricValue,
@@ -170,7 +169,7 @@ export const BillingMetricsSection = ({
               },
             ]}
           >
-            {metrics.revenueGrowth > 0 ? "+" : ""}
+            {metrics.revenueGrowth > 0 ? '+' : ''}
             {metrics.revenueGrowth.toFixed(1)}%
           </Text>
         </View>

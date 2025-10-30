@@ -3,11 +3,11 @@
  * Shows detailed text analysis and tips
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 function createStyles(theme: AppTheme) {
   return StyleSheet.create({
@@ -19,14 +19,14 @@ function createStyles(theme: AppTheme) {
       ...theme.shadows.elevation2,
     },
     resultHeader: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       marginBottom: theme.spacing.md,
       gap: theme.spacing.xs,
     },
     resultTitle: {
       fontSize: theme.typography.body.size,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
     },
     detailedText: {
@@ -37,14 +37,11 @@ function createStyles(theme: AppTheme) {
   });
 }
 
-
 interface DetailedAnalysisCardProps {
   detailed: string;
 }
 
-export const DetailedAnalysisCard: React.FC<DetailedAnalysisCardProps> = ({
-  detailed,
-}) => {
+export const DetailedAnalysisCard: React.FC<DetailedAnalysisCardProps> = ({ detailed }) => {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const { colors } = theme;
@@ -57,13 +54,9 @@ export const DetailedAnalysisCard: React.FC<DetailedAnalysisCardProps> = ({
           size={24}
           color={colors.onMuted}
         />
-        <Text style={styles.resultTitle}>
-          Detailed Analysis
-        </Text>
+        <Text style={styles.resultTitle}>Detailed Analysis</Text>
       </View>
-      <Text style={styles.detailedText}>
-        {detailed}
-      </Text>
+      <Text style={styles.detailedText}>{detailed}</Text>
     </View>
   );
 };

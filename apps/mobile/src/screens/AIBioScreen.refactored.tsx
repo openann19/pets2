@@ -4,18 +4,18 @@
  * Reduced from 17,000+ lines to focused, maintainable component
  */
 
-import React from "react";
-import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import type { NavigationProp } from "@react-navigation/native";
+import React from 'react';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import type { NavigationProp } from '@react-navigation/native';
 
-import { useAIBio } from "../hooks/useAIBio";
-import { PetInfoForm } from "../components/ai/PetInfoForm";
-import { ToneSelector } from "../components/ai/ToneSelector";
-import { BioResults } from "../components/ai/BioResults";
-import { useTheme } from "@mobile/theme";
-import { getExtendedColors } from "../theme/adapters";
+import { useAIBio } from '../hooks/useAIBio';
+import { PetInfoForm } from '../components/ai/PetInfoForm';
+// import { ToneSelector } from '../components/ai/ToneSelector';
+// import { BioResults } from '../components/ai/BioResults';
+import { useTheme } from '@mobile/theme';
+import { getExtendedColors } from '../theme/adapters';
 
 interface AIBioScreenProps {
   navigation: NavigationProp<any>;
@@ -150,7 +150,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
               onPress={handleGenerate}
             >
               <Text style={styles.generateButtonText}>
-                {isGenerating ? "Generating..." : "Generate Bio"}
+                {isGenerating ? 'Generating...' : 'Generate Bio'}
               </Text>
             </TouchableOpacity>
 
@@ -171,8 +171,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
             {bioHistory.length > 1 && (
               <View style={styles.historySummary}>
                 <Text style={styles.historyText}>
-                  {bioHistory.length} bio{bioHistory.length !== 1 ? "s" : ""}{" "}
-                  generated
+                  {bioHistory.length} bio{bioHistory.length !== 1 ? 's' : ''} generated
                 </Text>
               </View>
             )}
@@ -202,130 +201,143 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
   );
 }
 
-const createStyles = (colors: ReturnType<typeof getExtendedColors>, spacing: any, borderRadius: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    backgroundColor: colors.background,
-  },
-  backButton: {
-    padding: spacing.sm,
-    marginRight: spacing.md,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.onSurface
-  },
-  headerSpacer: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-  },
-  formContainer: {
-    flex: 1,
-  },
-  photoSection: {
-    padding: spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.onSurface,
-    marginBottom: spacing.md,
-  },
-  photoPicker: {
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderStyle: "dashed",
-    borderRadius: borderRadius.lg,
-    padding: spacing.xl,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.background,
-  },
-  photoPlaceholder: {
-    alignItems: "center",
-  },
-  photoPreview: {
-    alignItems: "center",
-  },
-  photoText: {
-    fontSize: 16,
-    color: colors.onMuted,
-    marginTop: spacing.sm,
-  },
-  generateButton: {
-    backgroundColor: colors.primary,
-    borderRadius: borderRadius.lg,
-    padding: spacing.lg,
-    margin: spacing.lg,
-    alignItems: "center",
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  disabledButton: {
-    backgroundColor: colors.onMuted,
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  generateButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: colors.onPrimary,
-  },
-  submitError: {
-    fontSize: 14,
-    color: colors.danger,
-    textAlign: "center",
-    marginHorizontal: spacing.lg,
-    marginBottom: spacing.lg,
-  },
-  resultsContainer: {
-    flex: 1,
-  },
-  historySummary: {
-    padding: spacing.lg,
-    alignItems: "center",
-  },
-  historyText: {
-    fontSize: 14,
-    color: colors.onMuted,
-  },
-  newBioButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: spacing.md,
-    margin: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    borderRadius: borderRadius.lg,
-    backgroundColor: colors.background,
-  },
-  newBioText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: colors.primary,
-    marginLeft: spacing.sm,
-  },
-});
+const createStyles = (
+  colors: ReturnType<typeof getExtendedColors>,
+  spacing: any,
+  borderRadius: any,
+) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      backgroundColor: colors.background,
+    },
+    backButton: {
+      padding: spacing.sm,
+      marginRight: spacing.md,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: colors.onSurface,
+    },
+    headerSpacer: {
+      flex: 1,
+    },
+    content: {
+      flex: 1,
+    },
+    formContainer: {
+      flex: 1,
+    },
+    photoSection: {
+      padding: spacing.lg,
+    },
+    sectionTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: colors.onSurface,
+      marginBottom: spacing.md,
+    },
+    photoPicker: {
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderStyle: 'dashed',
+      borderRadius: borderRadius.lg,
+      padding: spacing.xl,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+    },
+    photoPlaceholder: {
+      alignItems: 'center',
+    },
+    photoPreview: {
+      alignItems: 'center',
+    },
+    photoText: {
+      fontSize: 16,
+      color: colors.onMuted,
+      marginTop: spacing.sm,
+    },
+    generateButton: {
+      backgroundColor: colors.primary,
+      borderRadius: borderRadius.lg,
+      padding: spacing.lg,
+      margin: spacing.lg,
+      alignItems: 'center',
+      shadowColor: colors.primary,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+    disabledButton: {
+      backgroundColor: colors.onMuted,
+      shadowOpacity: 0,
+      elevation: 0,
+    },
+    generateButtonText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: colors.onPrimary,
+    },
+    submitError: {
+      fontSize: 14,
+      color: colors.danger,
+      textAlign: 'center',
+      marginHorizontal: spacing.lg,
+      marginBottom: spacing.lg,
+    },
+    resultsContainer: {
+      flex: 1,
+    },
+    historySummary: {
+      padding: spacing.lg,
+      alignItems: 'center',
+    },
+    historyText: {
+      fontSize: 14,
+      color: colors.onMuted,
+    },
+    newBioButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.md,
+      margin: spacing.lg,
+      borderWidth: 1,
+      borderColor: colors.primary,
+      borderRadius: borderRadius.lg,
+      backgroundColor: colors.background,
+    },
+    newBioText: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: colors.primary,
+      marginLeft: spacing.sm,
+    },
+  });
 
 // Call the function to create styles
 const styles = createStyles(
-  { background: '#fff', border: '#ccc', text: '#000', textMuted: '#666', primary: '#007AFF', white: '#fff', danger: '#FF3B30' } as any,
+  {
+    background: '#fff',
+    border: '#ccc',
+    text: '#000',
+    textMuted: '#666',
+    primary: '#007AFF',
+    white: '#fff',
+    danger: '#FF3B30',
+  } as any,
   { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as any,
-  { none: 0, xs: 2, sm: 4, md: 8, lg: 12, xl: 16, '2xl': 20, full: 9999 } as any
+  { 'none': 0, 'xs': 2, 'sm': 4, 'md': 8, 'lg': 12, 'xl': 16, '2xl': 20, 'full': 9999 } as any,
 );

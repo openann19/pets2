@@ -2,34 +2,14 @@
  * 🎬 UNIFIED MOTION SYSTEM
  * Single source of truth for all animations
  * Respects Reduce Motion and enforces consistent timing/easing
+ * 
+ * ⚠️ Uses foundation/motion tokens - single source of truth
  */
 
-import { Easing } from 'react-native-reanimated';
+import { useEffect, useMemo } from 'react';
 import { useReduceMotion } from '../../hooks/useReducedMotion';
-
-type EasingFunction = (t: number) => number;
-
-const Motion = {
-  // Times tuned for 60fps and our brand feel
-  time: {
-    xs: 120,
-    sm: 180,
-    md: 240,
-    lg: 320,
-  },
-  // Easing curves
-  easing: {
-    standard: Easing.bezier(0.2, 0, 0, 1),
-    emphasized: Easing.bezier(0.2, 0, 0, 1),
-    decel: Easing.bezier(0, 0, 0.2, 1),
-    accel: Easing.bezier(0.3, 0, 1, 1),
-  },
-  // Springs for gestures / cards
-  spring: {
-    card: { damping: 18, stiffness: 220, mass: 1 },
-    chip: { damping: 16, stiffness: 260, mass: 0.9 },
-  },
-};
+import { durations, easings, scales, getSpringConfig } from '@/foundation/motion';
+import { useAnimationTelemetry } from '@/foundation/telemetry';
 
 export type MotionPreset =
   | 'enterUp'
@@ -41,7 +21,7 @@ export type MotionPreset =
 
 export interface MotionConfig {
   duration?: number;
-  easing?: EasingFunction;
+  easing?: readonly [number, number, number, number];
   dy?: number;
   opacity?: number;
   stagger?: number;
@@ -51,50 +31,56 @@ export interface MotionConfig {
 
 export function useMotion(preset: MotionPreset): MotionConfig {
   const reduceMotion = useReduceMotion();
+  const telemetry = useAnimationTelemetry(`motion-${preset}`, `useMotion(${preset})`);
+  
+  // Track animation start
+  useEffect(() => {
+    telemetry.start();
+  }, [preset, telemetry]);
 
-  const config: MotionConfig = ((): MotionConfig => {
+  const config: MotionConfig = useMemo((): MotionConfig => {
     switch (preset) {
       case 'enterUp':
         return {
-          duration: Motion.time.md,
+          duration: durations.md,
           dy: 24,
           opacity: 0,
         };
       case 'enterFade':
         return {
-          duration: Motion.time.sm,
+          duration: durations.sm,
           opacity: 0,
         };
       case 'exitDown':
         return {
-          duration: Motion.time.sm,
+          duration: durations.sm,
           dy: 16,
           opacity: 0,
         };
       case 'cardStagger':
         return {
-          duration: Motion.time.md,
+          duration: durations.md,
           dy: 16,
           opacity: 0,
           stagger: 60,
         };
       case 'press':
         return {
-          scaleFrom: 0.98,
-          spring: Motion.spring.chip,
+          scaleFrom: scales.pressed,
+          spring: getSpringConfig('standard'),
         };
       case 'fabPop':
         return {
           scaleFrom: 0.8,
-          spring: Motion.spring.card,
+          spring: getSpringConfig('gentle'),
         };
     }
-  })();
+  }, [preset]);
 
   // Respect Reduce Motion
   if (reduceMotion) {
     if (config.duration !== undefined) {
-      config.duration = Motion.time.xs;
+      config.duration = durations.xs;
     }
     // Disable parallax effects
     if (config.dy !== undefined) {
@@ -105,4 +91,17 @@ export function useMotion(preset: MotionPreset): MotionConfig {
   return config;
 }
 
-export { Motion };
+// Legacy Motion object for backwards compatibility
+export const Motion = {
+  time: durations,
+  easing: {
+    standard: easings.enter,
+    emphasized: easings.emphasized,
+    decel: easings.enter, // Legacy fallback
+    accel: easings.exit,
+  },
+  spring: {
+    card: getSpringConfig('gentle'),
+    chip: getSpringConfig('standard'),
+  },
+};

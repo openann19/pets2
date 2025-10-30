@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import SwipeCard from '../../components/ModernSwipeCard';
 import { ThemeContext } from '@/theme';
+import { getMockLightTheme } from '../../test-utils/theme-helpers';
 
 // Mock expo modules
 jest.mock('expo-haptics', () => ({
@@ -21,17 +22,8 @@ jest.mock('@expo/vector-icons', () => ({
   Ionicons: 'Ionicons',
 }));
 
-// Mock theme context
-const mockTheme = {
-  colors: {
-    primary: 'Theme.colors.primary[500]',
-    background: 'Theme.colors.neutral[0]',
-    text: 'Theme.colors.neutral[950]',
-    card: 'Theme.colors.surface',
-    border: 'Theme.colors.border',
-  },
-  isDark: false,
-};
+// Mock theme context using actual theme values
+const mockTheme = getMockLightTheme();
 
 const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <ThemeContext.Provider value={mockTheme}>{children}</ThemeContext.Provider>

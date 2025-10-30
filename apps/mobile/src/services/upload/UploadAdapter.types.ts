@@ -17,5 +17,3 @@ export interface UploadAdapter {
   uploadVideo(input: UploadVideoInput): Promise<{ url: string; durationMs?: number }>;
   uploadGeneric?(input: UploadPhotoInput): Promise<{ url: string }>;
 }
-
-

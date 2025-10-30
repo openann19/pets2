@@ -30,7 +30,10 @@ const hints: Hint[] = [
   { icon: 'arrow-up', text: 'Swipe up to super like', position: 'top', color: '#3B82F6' },
 ];
 
-export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureHintsProps): React.JSX.Element {
+export function SwipeGestureHints({
+  onDismiss,
+  initialDismissed,
+}: SwipeGestureHintsProps): React.JSX.Element {
   const theme = useTheme();
   const [visible, setVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(initialDismissed ?? false);
@@ -84,7 +87,7 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
     try {
       await AsyncStorage.setItem(HINTS_STORAGE_KEY, 'true');
       setIsDismissed(true);
-      
+
       Animated.timing(opacity, {
         toValue: 0,
         duration: 300,
@@ -110,7 +113,9 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
     return Number.isFinite(parsed) ? parsed : fallback;
   };
 
-  const shadow = (theme.shadows?.md ?? (theme.shadows as any)?.depth?.md) as Record<string, unknown> | undefined;
+  const shadow = (theme.shadows?.md ?? (theme.shadows as any)?.depth?.md) as
+    | Record<string, unknown>
+    | undefined;
 
   const styles = useMemo(
     () =>
@@ -165,16 +170,23 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
           alignItems: 'center',
         },
       }),
-    [resolveNumber, shadow, theme]
+    [resolveNumber, shadow, theme],
   );
 
   return (
-    <Animated.View style={[styles.container, { opacity }]} pointerEvents="box-none">
+    <Animated.View
+      style={[styles.container, { opacity }]}
+      pointerEvents="box-none"
+    >
       {/* Left hint */}
       {leftHint && (
         <View style={styles.hintContainerLeft}>
           <View style={[styles.hint, { backgroundColor: leftHint.color + '20' }]}>
-            <Ionicons name={leftHint.icon as any} size={24} color={leftHint.color} />
+            <Ionicons
+              name={leftHint.icon as any}
+              size={24}
+              color={leftHint.color}
+            />
             <Text style={[styles.hintText, { color: leftHint.color }]}>{leftHint.text}</Text>
           </View>
         </View>
@@ -184,7 +196,11 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
       {rightHint && (
         <View style={styles.hintContainerRight}>
           <View style={[styles.hint, { backgroundColor: rightHint.color + '20' }]}>
-            <Ionicons name={rightHint.icon as any} size={24} color={rightHint.color} />
+            <Ionicons
+              name={rightHint.icon as any}
+              size={24}
+              color={rightHint.color}
+            />
             <Text style={[styles.hintText, { color: rightHint.color }]}>{rightHint.text}</Text>
           </View>
         </View>
@@ -194,15 +210,27 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
       {topHint && (
         <View style={styles.hintContainerTop}>
           <View style={[styles.hint, { backgroundColor: topHint.color + '20' }]}>
-            <Ionicons name={topHint.icon as any} size={24} color={topHint.color} />
+            <Ionicons
+              name={topHint.icon as any}
+              size={24}
+              color={topHint.color}
+            />
             <Text style={[styles.hintText, { color: topHint.color }]}>{topHint.text}</Text>
           </View>
         </View>
       )}
 
       {/* Dismiss button */}
-      <Pressable style={styles.dismissButton} onPress={handleDismiss} testID="dismiss-button">
-        <Ionicons name="close" size={20} color={theme.colors.onSurface} />
+      <Pressable
+        style={styles.dismissButton}
+        onPress={handleDismiss}
+        testID="dismiss-button"
+      >
+        <Ionicons
+          name="close"
+          size={20}
+          color={theme.colors.onSurface}
+        />
       </Pressable>
     </Animated.View>
   );

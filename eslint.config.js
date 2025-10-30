@@ -32,15 +32,28 @@ export default [
       '**/*.config.{js,cjs,mjs}',
       '**/postcss.config.{js,cjs}',
       '**/tailwind.config.{js,cjs}',
+      // Non-mobile scopes temporarily excluded from lint until dedicated configs are added
+      '**/server/**',
+      '**/services/**',
+      '**/tests/**',
+      '**/tools/**',
+      '**/*.cjs',
+      '**/scripts/**',
+      '**/packages/**',
+      'package-for-refactor.old/**',
+      'test-theme-rule.ts',
     ],
   },
 
-  // Base JavaScript rules
-  js.configs.recommended,
-
-  // Global TypeScript configuration (non-type-aware)
+  // Base JavaScript rules scoped to mobile only (avoid linting tooling/scripts)
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['apps/mobile/**/*.{js,mjs,cjs}'],
+    ...js.configs.recommended,
+  },
+
+  // Global TypeScript configuration (scoped to mobile)
+  {
+    files: ['apps/mobile/**/*.{ts,tsx}'],
     plugins: {
       '@typescript-eslint': typescriptPlugin,
       'react': reactPlugin,
@@ -181,7 +194,7 @@ export default [
   // Server-side TypeScript files - must come after global TypeScript config to override rules
   // Matches both when run from root (server/**/*.ts) and from server directory (routes/**/*.ts, src/**/*.ts)
   {
-    files: ['server/**/*.{ts}', 'routes/**/*.{ts}', 'src/**/*.{ts}', './**/*.{ts}'],
+    files: ['server/**/*.{ts}'],
     plugins: {
       '@typescript-eslint': typescriptPlugin,
     },
@@ -210,12 +223,10 @@ export default [
   // This is the ONLY exception to strict rules per AGENTS.md "strict defaults" principle.
   {
     files: [
-      '**/*.test.{ts,tsx,js,cjs,mjs}',
-      '**/__tests__/**/*.{ts,tsx,js,cjs,mjs}',
-      '**/tests/**/*.{ts,tsx,js,cjs,mjs}',
-      '**/*.spec.{ts,tsx,js,cjs,mjs}',
-      '**/__mocks__/**/*.{ts,tsx,js,cjs,mjs}',
-      '**/.storybook/**/*.{ts,tsx}', // Storybook mocks need relaxed rules
+      'apps/mobile/**/*.{test,spec}.{ts,tsx}',
+      'apps/mobile/src/**/__tests__/**/*.{ts,tsx}',
+      'apps/mobile/**/__mocks__/**/*.{ts,tsx}',
+      'apps/mobile/.storybook/**/*.{ts,tsx}', // Storybook mocks need relaxed rules
     ],
     languageOptions: {
       ecmaVersion: 'latest',

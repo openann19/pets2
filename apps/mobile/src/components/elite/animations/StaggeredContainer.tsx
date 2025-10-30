@@ -14,7 +14,7 @@ interface StaggeredContainerProps {
 
 export const StaggeredContainer: React.FC<StaggeredContainerProps> = ({
   children,
-  delay = 100,
+  delay: _delay = 100,
 }) => {
   return <View>{children}</View>;
 };

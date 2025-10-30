@@ -7,14 +7,7 @@
 import { logger } from '@pawfectmatch/core';
 import React, { useCallback, useMemo } from 'react';
 import type { ViewStyle, TextStyle } from 'react-native';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import { View, Text, StyleSheet, Animated, TouchableOpacity, Image } from 'react-native';
 import { useTheme } from '@/theme';
 import type { AppTheme } from '@/theme';
 
@@ -207,15 +200,10 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
       getCardStyles({
         variant,
         glowColor: defaultGlowColor,
-        surfaceColor: theme.colors.surface,
-        borderColor: theme.colors.border,
-        shadowColor: theme.colors.border,
       }),
-    [variant, defaultGlowColor, theme],
+    [variant, defaultGlowColor],
   );
   const sizeStyles = useMemo(() => getSizeStyles({ size }), [size]);
-
-  // Note: Padding and margin helpers moved to CardVariants module
 
   // Background rendering moved to CardBackground module
 
@@ -277,11 +265,15 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
         )}
 
         {/* Title */}
-        {title && <Text style={StyleSheet.flatten([styles.title(theme), titleStyle])}>{title}</Text>}
+        {title && (
+          <Text style={StyleSheet.flatten([styles.title(theme), titleStyle])}>{title}</Text>
+        )}
 
         {/* Subtitle */}
         {subtitle && (
-          <Text style={StyleSheet.flatten([styles.subtitle(theme), subtitleStyle])}>{subtitle}</Text>
+          <Text style={StyleSheet.flatten([styles.subtitle(theme), subtitleStyle])}>
+            {subtitle}
+          </Text>
         )}
 
         {/* Description */}

@@ -84,6 +84,288 @@ export default function Footer({
     handleLinkPress('https://pawfectmatch.com/privacy');
   };
 
+  const styles = StyleSheet.create({
+    // Default Footer Styles
+    container: {
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.lg,
+    },
+    content: {
+      alignItems: 'center',
+    },
+    brandSection: {
+      alignItems: 'center',
+      marginBottom: theme.spacing.md,
+    },
+    brandContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: theme.spacing.sm,
+    },
+    logoContainer: {
+      width: 32,
+      height: 32,
+      borderRadius: theme.radii.lg,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: theme.spacing.sm,
+    },
+    logoEmoji: {
+      fontSize: 18,
+    },
+    brandText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+    },
+    brandName: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+    },
+    tagline: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      marginTop: 2,
+    },
+    legalSection: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: theme.spacing.md,
+    },
+    legalLink: {
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.sm,
+      backgroundColor: 'transparent',
+    },
+    legalLinkText: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: theme.colors.primary,
+    },
+    separator: {
+      fontSize: 14,
+      fontWeight: 'bold',
+      color: theme.colors.onMuted,
+    },
+    linksSection: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      marginBottom: theme.spacing.md,
+    },
+    linkButton: {
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+      marginHorizontal: theme.spacing.xs,
+      borderRadius: theme.radii.sm,
+      backgroundColor: theme.colors.surface,
+    },
+    linkText: {
+      fontSize: 12,
+      color: theme.colors.primary,
+      fontWeight: '500',
+    },
+    copyrightSection: {
+      alignItems: 'center',
+    },
+    copyrightText: {
+      fontSize: 11,
+      color: theme.colors.onMuted,
+      textAlign: 'center',
+      marginBottom: 4,
+    },
+    versionText: {
+      fontSize: 10,
+      color: theme.colors.onMuted,
+      textAlign: 'center',
+    },
+    supportButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.primary,
+      marginTop: theme.spacing.sm,
+    },
+    supportButtonText: {
+      fontSize: 12,
+      color: theme.colors.onPrimary,
+      fontWeight: '600',
+      marginLeft: 4,
+    },
+
+    // Minimal Footer Styles
+    minimalContainer: {
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+    },
+    minimalContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    minimalBrand: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+    },
+    minimalCopyright: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+    },
+
+    // Premium Footer Styles
+    premiumContainer: {
+      borderTopWidth: 2,
+      borderTopColor: theme.colors.primary,
+      paddingVertical: theme.spacing.xl,
+      paddingHorizontal: theme.spacing.lg,
+    },
+    premiumContent: {
+      alignItems: 'center',
+    },
+    premiumBrandSection: {
+      alignItems: 'center',
+      marginBottom: theme.spacing.lg,
+    },
+    premiumBrandContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: theme.spacing.sm,
+    },
+    premiumLogoContainer: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radii.lg,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: theme.spacing.md,
+      backgroundColor: theme.colors.primary,
+    },
+    premiumLogoEmoji: {
+      fontSize: 20,
+    },
+    premiumBrandText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+    },
+    premiumTagline: {
+      fontSize: 13,
+      color: theme.colors.onMuted,
+      marginTop: 4,
+    },
+    premiumLinksSection: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      marginBottom: theme.spacing.lg,
+    },
+    premiumLinkButton: {
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      marginHorizontal: theme.spacing.sm,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    premiumLinkText: {
+      fontSize: 13,
+      color: theme.colors.primary,
+      fontWeight: '600',
+    },
+    premiumCopyrightSection: {
+      alignItems: 'center',
+    },
+    premiumCopyrightText: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      textAlign: 'center',
+      marginBottom: 6,
+    },
+    premiumVersionText: {
+      fontSize: 11,
+      color: theme.colors.onMuted,
+      textAlign: 'center',
+    },
+    premiumSupportButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+      borderRadius: theme.radii.lg,
+      backgroundColor: theme.colors.primary,
+      marginTop: theme.spacing.md,
+      shadowColor: theme.utils.alpha(theme.colors.primary, 0.3),
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+    premiumSupportButtonText: {
+      fontSize: 13,
+      color: theme.colors.onPrimary,
+      fontWeight: '700',
+      marginLeft: 6,
+    },
+    // Support section styles (used in default footer)
+    supportSection: {
+      width: '100%',
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
+    },
+    supportContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    supportText: {
+      fontSize: 12,
+      marginLeft: theme.spacing.xs,
+      fontWeight: '500',
+    },
+    // Premium footer additional styles
+    premiumBlur: {
+      borderRadius: theme.radii.lg,
+      overflow: 'hidden',
+    },
+    premiumBrand: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: theme.spacing.md,
+    },
+    premiumBrandName: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+    },
+    premiumLinks: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      marginBottom: theme.spacing.md,
+    },
+    premiumLink: {
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+      marginHorizontal: theme.spacing.xs,
+    },
+    premiumCopyright: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      textAlign: 'center',
+    },
+  });
+
   const renderDefaultFooter = (): React.ReactElement => (
     <Animated.View
       style={[
@@ -209,8 +491,8 @@ export default function Footer({
       style={[
         styles.minimalContainer,
         { backgroundColor: colors.onPrimary },
+        animatedStyle,
         style,
-        animatedStyle as AnimatedStyle<ViewStyle>,
       ]}
     >
       <View style={styles.minimalContent}>
@@ -234,9 +516,12 @@ export default function Footer({
   );
 
   const renderPremiumFooter = (): React.ReactElement => (
-    <Animated.View style={animatedStyle as AnimatedStyle<ViewStyle>}>
+    <Animated.View style={[animatedStyle, style]}>
       <LinearGradient
-        colors={['rgba(139, 92, 246, 0.1)', 'rgba(236, 72, 153, 0.1)'] as [string, string]}
+        colors={[
+          theme.utils.alpha(theme.colors.primary, 0.1),
+          theme.utils.alpha(theme.colors.info, 0.1),
+        ] as [string, string]}
         style={StyleSheet.flatten([styles.premiumContainer, style])}
       >
         <BlurView
@@ -258,10 +543,10 @@ export default function Footer({
               </Text>
             </View>
 
-            <View style={styles.premiumLinks}>
+            <View style={styles.premiumLinksSection}>
               <AnimatedButton
                 onPress={handleTermsPress}
-                style={styles.premiumLink}
+                style={styles.premiumLinkButton}
                 textStyle={[styles.premiumLinkText, { color: colors.primary }]}
               >
                 Terms
@@ -278,7 +563,7 @@ export default function Footer({
 
               <AnimatedButton
                 onPress={handlePrivacyPress}
-                style={styles.premiumLink}
+                style={styles.premiumLinkButton}
                 textStyle={[styles.premiumLinkText, { color: colors.primary }]}
               >
                 Privacy
@@ -295,7 +580,7 @@ export default function Footer({
 
               <AnimatedButton
                 onPress={handleSupportPress}
-                style={styles.premiumLink}
+                style={styles.premiumLinkButton}
                 textStyle={[styles.premiumLinkText, { color: colors.primary }]}
               >
                 Support
@@ -327,164 +612,3 @@ export default function Footer({
       return renderDefaultFooter();
   }
 }
-
-const styles = StyleSheet.create({
-  // Default Footer Styles
-  container: {
-    borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-  },
-  content: {
-    alignItems: 'center',
-  },
-  brandSection: {
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  brandContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  logoContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
-  },
-  logoEmoji: {
-    fontSize: 16,
-  },
-  brandName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  versionText: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  legalSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  legalLink: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    backgroundColor: 'transparent',
-  },
-  legalLinkText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  separator: {
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  supportSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    backgroundColor: 'transparent',
-  },
-  supportContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  supportText: {
-    fontSize: 14,
-    marginLeft: 6,
-  },
-  copyrightSection: {
-    alignItems: 'center',
-  },
-  copyrightText: {
-    fontSize: 12,
-    textAlign: 'center',
-  },
-
-  // Minimal Footer Styles
-  minimalContainer: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
-  },
-  minimalContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  minimalBrand: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  minimalCopyright: {
-    fontSize: 12,
-  },
-
-  // Premium Footer Styles
-  premiumContainer: {
-    marginHorizontal: 20,
-    marginVertical: 16,
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  premiumBlur: {
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  premiumContent: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  premiumBrand: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  premiumLogoContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(139, 92, 246, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  premiumLogoEmoji: {
-    fontSize: 18,
-  },
-  premiumBrandName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  premiumLinks: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  premiumLink: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    backgroundColor: 'transparent',
-  },
-  premiumLinkText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  premiumCopyright: {
-    fontSize: 12,
-    textAlign: 'center',
-  },
-});

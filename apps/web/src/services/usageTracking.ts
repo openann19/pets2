@@ -6,10 +6,19 @@ interface FetchOptions {
   body?: string;
 }
 
-interface ApiResponse<T = any> {
+interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message?: string;
+}
+
+interface UsageStats {
+  swipes: number;
+  superLikes: number;
+  boosts: number;
+  matches: number;
+  messages: number;
+  [key: string]: number | undefined;
 }
 
 // Base API URL from environment variable
@@ -112,7 +121,7 @@ export const UsageTrackingService = {
   /**
    * Get usage stats for user
    */
-  async getUsageStats(userId: string): Promise<any | null> {
+  async getUsageStats(userId: string): Promise<UsageStats | null> {
     try {
       const response: ApiResponse = await fetchUsageApi(`/usage/stats?userId=${encodeURIComponent(userId)}`);
       if (response.success && response.data) {

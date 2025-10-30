@@ -35,7 +35,7 @@ export interface LikeArbitratorProps {
 export default function LikeArbitrator({
   children,
   onLike,
-  onUndo,
+  onUndo: _onUndo,
   onReact,
   triggerUndo,
   a11yLongPressLabel = 'Open reactions',
@@ -57,7 +57,7 @@ export default function LikeArbitrator({
 
   const handleDoubleTap = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    const cleanup = onLike();
+    onLike();
     triggerUndo?.();
     // if onLike returns a cleanup, store it in closure of Undo (handled in hook usage)
     // nothing else needed here

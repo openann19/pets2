@@ -1,23 +1,23 @@
-import React, { useMemo } from "react";
-import { View, StyleSheet, Switch, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Text } from "react-native";
-import { useTheme } from "@mobile/theme";
-import type { AppTheme } from "@mobile/theme";
+import React, { useMemo } from 'react';
+import { View, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Text } from 'react-native';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 
 interface SettingItem {
   id: string;
   title: string;
   subtitle?: string;
   icon: string;
-  type: "toggle" | "navigation" | "action";
+  type: 'toggle' | 'navigation' | 'action';
   value?: boolean;
   destructive?: boolean;
 }
 
 interface SettingItemProps {
   item: SettingItem;
-  category?: "notifications" | "preferences";
+  category?: 'notifications' | 'preferences';
   onPress?: (id: string) => void;
   onToggle?: (id: string, value: boolean) => void;
 }
@@ -32,8 +32,8 @@ export const SettingItemComponent: React.FC<SettingItemProps> = ({
   const styles = useMemo(() => createStyles(theme), [theme]);
   const onPressSafe = onPress ?? (() => undefined);
   const onToggleSafe = onToggle ?? (() => undefined);
-  const isToggle = item.type === "toggle";
-  const isNavigation = item.type === "navigation";
+  const isToggle = item.type === 'toggle';
+  const isNavigation = item.type === 'navigation';
   const iconColor = item.destructive ? theme.colors.danger : theme.colors.onMuted;
   const switchValue = Boolean(item.value);
 
@@ -51,13 +51,13 @@ export const SettingItemComponent: React.FC<SettingItemProps> = ({
       disabled={isToggle}
       testID={`setting-item-${item.id}`}
       accessibilityLabel={`${item.title}${item.subtitle ? `: ${item.subtitle}` : ''}`}
-      accessibilityRole={isToggle ? "text" : "button"}
+      accessibilityRole={isToggle ? 'text' : 'button'}
       accessibilityHint={
         isToggle
           ? undefined
-          : item.type === "action"
-            ? "Activates this account action"
-            : "Opens the related settings screen"
+          : item.type === 'action'
+            ? 'Activates this account action'
+            : 'Opens the related settings screen'
       }
     >
       <View style={styles.settingLeft}>
@@ -127,9 +127,9 @@ export const SettingItemComponent: React.FC<SettingItemProps> = ({
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     settingItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
       padding: theme.spacing.md,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: theme.colors.border,
@@ -138,8 +138,8 @@ const createStyles = (theme: AppTheme) =>
       borderBottomColor: theme.colors.danger,
     },
     settingLeft: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       flex: 1,
     },
     settingIcon: {
@@ -147,8 +147,8 @@ const createStyles = (theme: AppTheme) =>
       height: 40,
       borderRadius: theme.radii.md,
       backgroundColor: theme.colors.surface,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       marginRight: theme.spacing.sm,
     },
     settingIconDestructive: {
@@ -159,7 +159,7 @@ const createStyles = (theme: AppTheme) =>
     },
     settingTitle: {
       fontSize: 16,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
       marginBottom: 2,
     },

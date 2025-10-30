@@ -23,3 +23,5 @@ export { useParallaxEffect } from './useParallaxEffect';
 export { useSwipeGestures } from './useSwipeGesture';
 export { useSwipeGestures as default } from './useSwipeGesture';
 export type { SwipeGestureState } from './useSwipeGesture';
+export { useEnhancedVariants, useCountUpAnimation } from './useEnhancedVariants';
+export type { AnimationVariant, UseEnhancedVariantOptions } from './useEnhancedVariants';

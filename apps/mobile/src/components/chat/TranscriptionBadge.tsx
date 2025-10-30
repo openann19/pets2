@@ -5,7 +5,7 @@ import { useTheme } from '@mobile/theme';
 export const TranscriptionBadge = ({ icon, label }: { icon: string; label: string }) => {
   const theme = useTheme();
   const styles = makeStyles(theme);
-  
+
   return (
     <View style={styles.badge}>
       <Ionicons

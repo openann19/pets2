@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from "@testing-library/react-native";
-import { useWelcomeScreen } from "../useWelcomeScreen";
+import { renderHook, act } from '@testing-library/react-native';
+import { useWelcomeScreen } from '../useWelcomeScreen';
 
 // Mock navigation
 const mockNavigate = jest.fn();
@@ -10,22 +10,22 @@ const mockNavigation = {
   navigate: mockNavigate,
 } as any;
 
-jest.mock("@react-navigation/native", () => ({
+jest.mock('@react-navigation/native', () => ({
   useNavigation: () => mockNavigation,
 }));
 
 // Mock theme context
 const mockTheme = {
   colors: {
-    primary: "#007AFF",
-    background: "#FFFFFF",
-    text: "#000000",
+    primary: '#007AFF',
+    background: '#FFFFFF',
+    text: '#000000',
   },
   styles: {},
   isDark: false,
 };
 
-jest.mock("../../../theme/Provider", () => ({
+jest.mock('../../../theme/Provider', () => ({
   useTheme: () => mockTheme,
 }));
 
@@ -33,7 +33,7 @@ jest.mock("../../../theme/Provider", () => ({
 const mockDomainHandleGetStarted = jest.fn();
 const mockDomainHandleSkipOnboarding = jest.fn();
 
-jest.mock("../../domains/onboarding/useWelcome", () => ({
+jest.mock('../../domains/onboarding/useWelcome', () => ({
   useWelcome: () => ({
     logoScale: { value: 1 },
     logoOpacity: { value: 1 },
@@ -52,12 +52,12 @@ jest.mock("../../domains/onboarding/useWelcome", () => ({
   }),
 }));
 
-describe("useWelcomeScreen", () => {
+describe('useWelcomeScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should initialize with theme data", () => {
+  it('should initialize with theme data', () => {
     const { result } = renderHook(() => useWelcomeScreen());
 
     expect(result.current.colors).toEqual(mockTheme.colors);
@@ -65,7 +65,7 @@ describe("useWelcomeScreen", () => {
     expect(result.current.isDark).toBe(false);
   });
 
-  it("should provide animation values from domain hook", () => {
+  it('should provide animation values from domain hook', () => {
     const { result } = renderHook(() => useWelcomeScreen());
 
     expect(result.current.logoScale).toBeDefined();
@@ -76,13 +76,13 @@ describe("useWelcomeScreen", () => {
     expect(result.current.buttonScale).toBeDefined();
   });
 
-  it("should indicate when ready", () => {
+  it('should indicate when ready', () => {
     const { result } = renderHook(() => useWelcomeScreen());
 
     expect(result.current.isReady).toBe(true);
   });
 
-  it("should handle get started action", () => {
+  it('should handle get started action', () => {
     const { result } = renderHook(() => useWelcomeScreen());
 
     act(() => {
@@ -90,10 +90,10 @@ describe("useWelcomeScreen", () => {
     });
 
     expect(mockDomainHandleGetStarted).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith("UserIntent");
+    expect(mockNavigate).toHaveBeenCalledWith('UserIntent');
   });
 
-  it("should handle skip onboarding action", () => {
+  it('should handle skip onboarding action', () => {
     const { result } = renderHook(() => useWelcomeScreen());
 
     act(() => {
@@ -101,10 +101,10 @@ describe("useWelcomeScreen", () => {
     });
 
     expect(mockDomainHandleSkipOnboarding).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith("Main");
+    expect(mockNavigate).toHaveBeenCalledWith('Main');
   });
 
-  it("should provide all animation values", () => {
+  it('should provide all animation values', () => {
     const { result } = renderHook(() => useWelcomeScreen());
 
     // Check all animation values are present
@@ -121,15 +121,15 @@ describe("useWelcomeScreen", () => {
     expect(result.current.confettiScale).toBeDefined();
   });
 
-  it("should expose theme information", () => {
+  it('should expose theme information', () => {
     const { result } = renderHook(() => useWelcomeScreen());
 
-    expect(result.current.colors.primary).toBe("#007AFF");
-    expect(result.current.colors.background).toBe("#FFFFFF");
-    expect(result.current.colors.onSurface).toBe("#000000");
+    expect(result.current.colors.primary).toBe('#007AFF');
+    expect(result.current.colors.background).toBe('#FFFFFF');
+    expect(result.current.colors.onSurface).toBe('#000000');
   });
 
-  it("should return stable function references", () => {
+  it('should return stable function references', () => {
     const { result, rerender } = renderHook(() => useWelcomeScreen());
 
     const firstHandleGetStarted = result.current.handleGetStarted;

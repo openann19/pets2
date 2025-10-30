@@ -1,11 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   runOnJS,
   useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
-  withSequence,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
@@ -40,7 +39,7 @@ export default function UndoPill({ duration = 2000, onUndo, style, testID }: Und
 
   // expose an imperative trigger via event channel (simple pattern: call window.dispatchEvent…)
   // OR control from parent via key change. For simplicity we use mount-level trigger helpers.
-  const firstMount = useRef(true);
+  // const firstMount = useRef(true);
 
   // Animate show/hide logic whenever visible flips to 1
   useAnimatedReaction(
@@ -111,7 +110,7 @@ export default function UndoPill({ duration = 2000, onUndo, style, testID }: Und
   // Public trigger helpers — expose via ref pattern for cross-platform compatibility
   // Note: window API is web-only, so we use a ref-based approach that works on all platforms
   const triggerRef = useRef<{ show: () => void; hide: () => void } | null>(null);
-  
+
   useEffect(() => {
     const show = () => {
       visible.value = 1;
@@ -119,9 +118,9 @@ export default function UndoPill({ duration = 2000, onUndo, style, testID }: Und
     const hide = () => {
       visible.value = 0;
     };
-    
+
     triggerRef.current = { show, hide };
-    
+
     // Web-only: attach to window for imperative calls (development/testing)
     if (typeof window !== 'undefined' && __DEV__) {
       const win = window as unknown as WindowWithUndoPill;

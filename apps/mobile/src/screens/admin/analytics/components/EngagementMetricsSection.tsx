@@ -3,42 +3,41 @@
  * Displays engagement metrics (DAU, WAU, MAU, Session duration)
  */
 
-import React, { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { useTheme } from "@mobile/theme";
-import type { AppTheme } from "@mobile/theme";
-import { Session } from "inspector";
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
+import { Session } from 'inspector';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  engagementGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  engagementCard: {
-    width: "48%",
-    borderRadius: 12,
-    padding: 16,
-    alignItems: "center",
-    shadowColor: theme.colors.onSurface,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  engagementLabel: {
-    fontSize: 12,
-    fontWeight: "500",
-    marginBottom: 4,
-  },
-  engagementValue: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-});
+    engagementGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
+    },
+    engagementCard: {
+      width: '48%',
+      borderRadius: 12,
+      padding: 16,
+      alignItems: 'center',
+      shadowColor: theme.colors.onSurface,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    engagementLabel: {
+      fontSize: 12,
+      fontWeight: '500',
+      marginBottom: 4,
+    },
+    engagementValue: {
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+  });
 }
-
 
 interface EngagementData {
   dailyActiveUsers: number;
@@ -62,8 +61,8 @@ const formatNumber = (num: number): string => {
 export const EngagementMetricsSection: React.FC<EngagementMetricsSectionProps> = ({
   engagement,
 }) => {
-    const theme = useTheme();
-    const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
+  const theme = useTheme();
+  const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
   const { colors, palette } = theme;
 
   return (

@@ -1,7 +1,7 @@
 import React, { type ReactNode } from 'react';
 import { type ViewProps, type ViewStyle, StyleSheet } from 'react-native';
 import { GlassContainer } from './GlassContainer';
-import { BLUR_CONFIGS, TRANSPARENCY_CONFIGS, BORDER_CONFIGS, SHADOW_CONFIGS } from './configs';
+import { BLUR_CONFIGS } from './configs';
 
 /**
  * GlassHeader Component

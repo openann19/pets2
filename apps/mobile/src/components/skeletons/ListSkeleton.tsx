@@ -1,7 +1,7 @@
 /**
  * Skeleton Components
  * Loading placeholders for lists, cards, and avatars
- * 
+ *
  * Features:
  * - Semantic token-based styling
  * - Fade-in animation (≤200ms)
@@ -25,27 +25,27 @@ export interface SkeletonBaseProps {
    * Width of skeleton
    */
   width?: number | string;
-  
+
   /**
    * Height of skeleton
    */
   height?: number;
-  
+
   /**
    * Border radius (uses theme.radii by default)
    */
   radius?: number;
-  
+
   /**
    * Custom style
    */
   style?: ViewStyle;
-  
+
   /**
    * Delay before showing (ms)
    */
   delay?: number;
-  
+
   /**
    * Animation duration (ms, default: 200)
    */
@@ -66,7 +66,7 @@ function SkeletonBase({
   const theme = useTheme();
   const opacity = useSharedValue(0);
   const mountedRef = useRef(false);
-  
+
   useEffect(() => {
     if (delay > 0 && !mountedRef.current) {
       const timer = setTimeout(() => {
@@ -76,7 +76,7 @@ function SkeletonBase({
           easing: Easing.out(Easing.ease),
         });
       }, delay);
-      
+
       return () => clearTimeout(timer);
     } else if (!mountedRef.current) {
       mountedRef.current = true;
@@ -86,14 +86,14 @@ function SkeletonBase({
       });
     }
   }, [delay, duration, opacity]);
-  
+
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
   }));
-  
+
   const defaultRadius = radius ?? theme.radii.md;
   const skeletonColor = theme.colors.surfaceAlt ?? theme.colors.surface;
-  
+
   return (
     <Animated.View
       style={[
@@ -122,17 +122,17 @@ export interface ListSkeletonProps {
    * Number of items to render
    */
   count?: number;
-  
+
   /**
    * Item height (default: 80)
    */
   itemHeight?: number;
-  
+
   /**
    * Spacing between items
    */
   spacing?: number;
-  
+
   /**
    * Stagger delay between items (ms)
    */
@@ -146,7 +146,7 @@ export function ListSkeleton({
   staggerDelay = 50,
 }: ListSkeletonProps): React.JSX.Element {
   const theme = useTheme();
-  
+
   return (
     <View style={styles.listContainer}>
       {Array.from({ length: count }).map((_, index) => (
@@ -196,17 +196,17 @@ export interface CardSkeletonProps {
    * Number of cards to render
    */
   count?: number;
-  
+
   /**
    * Card height (default: 240)
    */
   cardHeight?: number;
-  
+
   /**
    * Image height ratio (0-1, default: 0.65)
    */
   imageRatio?: number;
-  
+
   /**
    * Stagger delay between cards (ms)
    */
@@ -222,7 +222,7 @@ export function CardSkeleton({
   const theme = useTheme();
   const imageHeight = cardHeight * imageRatio;
   const contentHeight = cardHeight - imageHeight;
-  
+
   return (
     <View style={styles.cardContainer}>
       {Array.from({ length: count }).map((_, index) => (
@@ -281,19 +281,16 @@ export interface AvatarSkeletonProps {
    * Size of avatar (default: 48)
    */
   size?: number;
-  
+
   /**
    * Delay before showing (ms)
    */
   delay?: number;
 }
 
-export function AvatarSkeleton({
-  size = 48,
-  delay = 0,
-}: AvatarSkeletonProps): React.JSX.Element {
+export function AvatarSkeleton({ size = 48, delay = 0 }: AvatarSkeletonProps): React.JSX.Element {
   const theme = useTheme();
-  
+
   return (
     <SkeletonBase
       width={size}
@@ -346,4 +343,3 @@ const styles = StyleSheet.create({
     // No extra styles needed
   },
 });
-

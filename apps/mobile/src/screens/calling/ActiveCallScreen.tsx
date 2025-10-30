@@ -1,6 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -10,15 +10,15 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { RTCView } from "react-native-webrtc";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { RTCView } from 'react-native-webrtc';
 
-import type { CallState } from "../../services/WebRTCService";
+import type { CallState } from '../../services/WebRTCService';
 import { useTheme } from '@mobile/theme';
 import type { AppTheme } from '@mobile/theme';
-import { haptic } from "@/ui/haptics";
-import { trackUserAction } from "@/services/analyticsService";
+import { haptic } from '@/ui/haptics';
+import { trackUserAction } from '@/services/analyticsService';
 
 interface ActiveCallScreenProps {
   callState: CallState;
@@ -39,17 +39,15 @@ export default function ActiveCallScreen({
 }: ActiveCallScreenProps) {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+  const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
   const [controlsVisible, setControlsVisible] = useState(true);
   const fadeAnim = useRef(new Animated.Value(1)).current;
-  const localVideoAnim = useRef(
-    new Animated.ValueXY({ x: 20, y: 100 }),
-  ).current;
+  const localVideoAnim = useRef(new Animated.ValueXY({ x: 20, y: 100 })).current;
 
   // Auto-hide controls after 5 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (controlsVisible && callState.callData?.callType === "video") {
+      if (controlsVisible && callState.callData?.callType === 'video') {
         hideControls();
       }
     }, 5000);
@@ -112,7 +110,7 @@ export default function ActiveCallScreen({
   const formatCallDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const renderVideoCall = () => (
@@ -158,7 +156,11 @@ export default function ActiveCallScreen({
               onSwitchCamera();
             }}
           >
-            <Ionicons name="camera-reverse" size={20} color={theme.colors.onSurface} />
+            <Ionicons
+              name="camera-reverse"
+              size={20}
+              color={theme.colors.onSurface}
+            />
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -187,23 +189,23 @@ export default function ActiveCallScreen({
         <View style={styles.avatarContainer}>
           <View style={styles.avatarRing}>
             <View style={styles.avatar}>
-              <Ionicons name="person" size={60} color={theme.colors.onSurface} />
+              <Ionicons
+                name="person"
+                size={60}
+                color={theme.colors.onSurface}
+              />
             </View>
           </View>
         </View>
 
-        <Text style={styles.callerName}>
-          {callState.callData?.callerName || "Unknown"}
-        </Text>
+        <Text style={styles.callerName}>{callState.callData?.callerName || 'Unknown'}</Text>
 
         <Text style={styles.callStatus}>
-          {callState.isConnected ? "Connected" : "Connecting..."}
+          {callState.isConnected ? 'Connected' : 'Connecting...'}
         </Text>
 
         {callState.isConnected && (
-          <Text style={styles.callDuration}>
-            {formatCallDuration(callState.callDuration)}
-          </Text>
+          <Text style={styles.callDuration}>{formatCallDuration(callState.callDuration)}</Text>
         )}
       </View>
     </View>
@@ -217,9 +219,7 @@ export default function ActiveCallScreen({
         translucent
       />
 
-      {callState.callData?.callType === "video"
-        ? renderVideoCall()
-        : renderVoiceCall()}
+      {callState.callData?.callType === 'video' ? renderVideoCall() : renderVoiceCall()}
 
       {/* Controls Overlay */}
       <Animated.View
@@ -227,7 +227,7 @@ export default function ActiveCallScreen({
           styles.controlsOverlay,
           {
             opacity: fadeAnim,
-            pointerEvents: controlsVisible ? "auto" : "none",
+            pointerEvents: controlsVisible ? 'auto' : 'none',
           },
         ])}
       >
@@ -235,7 +235,7 @@ export default function ActiveCallScreen({
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.callerNameHeader}>
-              {callState.callData?.callerName || "Unknown"}
+              {callState.callData?.callerName || 'Unknown'}
             </Text>
             {callState.isConnected && (
               <Text style={styles.callDurationHeader}>
@@ -254,7 +254,7 @@ export default function ActiveCallScreen({
               ])}
               testID="ActiveCallScreen-toggle-mute"
               accessibilityRole="button"
-              accessibilityLabel={callState.isMuted ? "Unmute microphone" : "Mute microphone"}
+              accessibilityLabel={callState.isMuted ? 'Unmute microphone' : 'Mute microphone'}
               accessibilityState={{ checked: callState.isMuted }}
               onPress={() => {
                 haptic.selection();
@@ -267,7 +267,7 @@ export default function ActiveCallScreen({
               }}
             >
               <Ionicons
-                name={callState.isMuted ? "mic-off" : "mic"}
+                name={callState.isMuted ? 'mic-off' : 'mic'}
                 size={24}
                 color={callState.isMuted ? theme.colors.danger : theme.colors.onSurface}
               />
@@ -288,11 +288,15 @@ export default function ActiveCallScreen({
                 onToggleSpeaker();
               }}
             >
-              <Ionicons name="volume-high" size={24} color={theme.colors.onSurface} />
+              <Ionicons
+                name="volume-high"
+                size={24}
+                color={theme.colors.onSurface}
+              />
             </TouchableOpacity>
 
             {/* Video Toggle (only for video calls) */}
-            {callState.callData?.callType === "video" && (
+            {callState.callData?.callType === 'video' && (
               <TouchableOpacity
                 style={StyleSheet.flatten([
                   styles.controlButton,
@@ -300,7 +304,7 @@ export default function ActiveCallScreen({
                 ])}
                 testID="ActiveCallScreen-toggle-video"
                 accessibilityRole="button"
-                accessibilityLabel={callState.isVideoEnabled ? "Turn off video" : "Turn on video"}
+                accessibilityLabel={callState.isVideoEnabled ? 'Turn off video' : 'Turn on video'}
                 accessibilityState={{ checked: callState.isVideoEnabled }}
                 onPress={() => {
                   haptic.selection();
@@ -313,7 +317,7 @@ export default function ActiveCallScreen({
                 }}
               >
                 <Ionicons
-                  name={callState.isVideoEnabled ? "videocam" : "videocam-off"}
+                  name={callState.isVideoEnabled ? 'videocam' : 'videocam-off'}
                   size={24}
                   color={!callState.isVideoEnabled ? theme.colors.danger : theme.colors.onSurface}
                 />
@@ -322,10 +326,7 @@ export default function ActiveCallScreen({
 
             {/* End Call Button */}
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.controlButton,
-                styles.endCallButton,
-              ])}
+              style={StyleSheet.flatten([styles.controlButton, styles.endCallButton])}
               testID="ActiveCallScreen-end-call"
               accessibilityRole="button"
               accessibilityLabel="End call"
@@ -348,7 +349,7 @@ export default function ActiveCallScreen({
                   name="call"
                   size={24}
                   color={theme.colors.onPrimary}
-                  style={{ transform: [{ rotate: "135deg" }] }}
+                  style={{ transform: [{ rotate: '135deg' }] }}
                 />
               </LinearGradient>
             </TouchableOpacity>
@@ -375,11 +376,11 @@ function createStyles(theme: AppTheme) {
       backgroundColor: theme.colors.bg,
     },
     localVideoContainer: {
-      position: "absolute",
+      position: 'absolute',
       width: 120,
       height: 180,
       borderRadius: theme.radii.md,
-      overflow: "hidden",
+      overflow: 'hidden',
       elevation: 8,
       shadowColor: theme.colors.bg,
       shadowOffset: { width: 0, height: 4 },
@@ -387,22 +388,22 @@ function createStyles(theme: AppTheme) {
       shadowRadius: 8,
     },
     localVideo: {
-      width: "100%",
-      height: "100%",
+      width: '100%',
+      height: '100%',
     },
     switchCameraButton: {
-      position: "absolute",
+      position: 'absolute',
       top: 8,
       right: 8,
       width: 32,
       height: 32,
       borderRadius: theme.radii.full,
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      justifyContent: "center",
-      alignItems: "center",
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     videoTouchArea: {
-      position: "absolute",
+      position: 'absolute',
       top: 0,
       left: 0,
       right: 0,
@@ -414,7 +415,7 @@ function createStyles(theme: AppTheme) {
       flex: 1,
     },
     voiceGradient: {
-      position: "absolute",
+      position: 'absolute',
       left: 0,
       right: 0,
       top: 0,
@@ -422,8 +423,8 @@ function createStyles(theme: AppTheme) {
     },
     voiceContent: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       paddingHorizontal: theme.spacing.xl,
     },
     avatarContainer: {
@@ -434,23 +435,23 @@ function createStyles(theme: AppTheme) {
       height: 160,
       borderRadius: theme.radii.full,
       borderWidth: 3,
-      borderColor: "rgba(255, 255, 255, 0.3)",
+      borderColor: 'rgba(255, 255, 255, 0.3)',
       padding: theme.spacing.xs,
     },
     avatar: {
-      width: "100%",
-      height: "100%",
+      width: '100%',
+      height: '100%',
       borderRadius: 72,
-      backgroundColor: "rgba(255, 255, 255, 0.2)",
-      justifyContent: "center",
-      alignItems: "center",
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     callerName: {
       fontSize: 28,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.md,
-      textAlign: "center",
+      textAlign: 'center',
     },
     callStatus: {
       fontSize: 18,
@@ -466,25 +467,25 @@ function createStyles(theme: AppTheme) {
 
     // Controls Overlay
     controlsOverlay: {
-      position: "absolute",
+      position: 'absolute',
       top: 0,
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: "rgba(0, 0, 0, 0.3)",
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     controlsContent: {
       flex: 1,
-      justifyContent: "space-between",
+      justifyContent: 'space-between',
     },
     header: {
-      alignItems: "center",
+      alignItems: 'center',
       paddingTop: theme.spacing.lg,
       paddingHorizontal: theme.spacing.lg,
     },
     callerNameHeader: {
       fontSize: 20,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xs,
     },
@@ -494,9 +495,9 @@ function createStyles(theme: AppTheme) {
       opacity: 0.8,
     },
     callControls: {
-      flexDirection: "row",
-      justifyContent: "space-around",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
       paddingHorizontal: theme.spacing.xl,
       paddingBottom: 50,
     },
@@ -504,26 +505,26 @@ function createStyles(theme: AppTheme) {
       width: 56,
       height: 56,
       borderRadius: theme.radii.full,
-      backgroundColor: "rgba(255, 255, 255, 0.2)",
-      justifyContent: "center",
-      alignItems: "center",
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      justifyContent: 'center',
+      alignItems: 'center',
       borderWidth: 1,
-      borderColor: "rgba(255, 255, 255, 0.3)",
+      borderColor: 'rgba(255, 255, 255, 0.3)',
     },
     controlButtonActive: {
       backgroundColor: `${theme.colors.danger}33`,
       borderColor: theme.colors.danger,
     },
     endCallButton: {
-      backgroundColor: "transparent",
+      backgroundColor: 'transparent',
       borderWidth: 0,
     },
     endCallGradient: {
       width: 56,
       height: 56,
       borderRadius: theme.radii.full,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
 }

@@ -55,13 +55,10 @@ export function Toast({
         translateY.value = -100;
         opacity.value = 0;
       } else {
-        translateY.value = withSpring(
-          position === 'top' ? -100 : 100,
-          {
-            damping: 20,
-            stiffness: 300,
-          }
-        );
+        translateY.value = withSpring(position === 'top' ? -100 : 100, {
+          damping: 20,
+          stiffness: 300,
+        });
         opacity.value = withTiming(0, { duration: 200 });
       }
 
@@ -176,9 +173,7 @@ const styles = StyleSheet.create({
 
 // Toast Manager Hook
 export function useToast() {
-  const [toasts, setToasts] = React.useState<
-    Array<ToastProps & { id: string }>
-  >([]);
+  const [toasts, setToasts] = React.useState<Array<ToastProps & { id: string }>>([]);
 
   const showToast = (props: Omit<ToastProps, 'onDismiss'>) => {
     const id = Math.random().toString(36).substring(7);
@@ -223,7 +218,10 @@ export function ToastContainer({ toasts }: { toasts: Array<ToastProps & { id: st
   return (
     <>
       {toasts.map((toast) => (
-        <Toast key={toast.id} {...toast} />
+        <Toast
+          key={toast.id}
+          {...toast}
+        />
       ))}
     </>
   );

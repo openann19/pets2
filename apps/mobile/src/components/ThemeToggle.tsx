@@ -12,7 +12,6 @@ import {
 
 import { useThemeToggle } from '../hooks/useThemeToggle';
 import { useTheme } from '@/theme';
-import { MOBILE_SPACING } from '../@pawfectmatch/design-tokens';
 
 interface ThemeToggleProps {
   variant?: 'icon' | 'button' | 'selector';
@@ -27,8 +26,8 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   showLabel = false,
   style,
 }) => {
+  const { isDark, colors, toggleTheme } = useThemeToggle();
   const theme = useTheme();
-  const { isDark, themeMode, colors, styles, toggleTheme, showThemeSelector } = useThemeToggle();
 
   const animatedValue = React.useRef(new Animated.Value(isDark ? 1 : 0)).current;
 
@@ -49,26 +48,30 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 
   // Button sizes
   const buttonSizes = {
-    small: { paddingHorizontal: MOBILE_SPACING[16] || 16, paddingVertical: MOBILE_SPACING[8] || 8 },
+    small: {
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+    },
     medium: {
-      paddingHorizontal: MOBILE_SPACING[24] || 24,
-      paddingVertical: MOBILE_SPACING[16] || 16,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
     },
     large: {
-      paddingHorizontal: MOBILE_SPACING[32] || 32,
-      paddingVertical: MOBILE_SPACING[24] || 24,
+      paddingHorizontal: theme.spacing.xl,
+      paddingVertical: theme.spacing.lg,
     },
   };
 
-  const iconColor = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [colors.warning, colors.primary],
-  });
+  // Icon and background colors reserved for future implementation
+  // const iconColor = animatedValue.interpolate({
+  //   inputRange: [0, 1],
+  //   outputRange: [colors.warning, colors.primary],
+  // });
 
-  const backgroundColor = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [theme.palette.neutral[100], theme.palette.neutral[800]],
-  });
+  // const backgroundColor = animatedValue.interpolate({
+  //   inputRange: [0, 1],
+  //   outputRange: [theme.palette.neutral[100], theme.palette.neutral[800]],
+  // });
 
   if (variant === 'icon') {
     return (

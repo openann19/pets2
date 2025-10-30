@@ -54,11 +54,11 @@ interface MessageWithEnhancementsProps {
 export function MessageWithEnhancements({
   message,
   isOwnMessage,
-  currentUserId,
+  currentUserId: _currentUserId,
   matchId,
-  onReply,
-  onCopy,
-  onDelete,
+  onReply: _onReply,
+  onCopy: _onCopy,
+  onDelete: _onDelete,
 }: MessageWithEnhancementsProps) {
   const theme = useTheme();
   const colors = getExtendedColors(theme);
@@ -234,7 +234,8 @@ export function MessageWithEnhancements({
     );
   };
 
-  const bubbleBackgroundColor = isOwnMessage ? colors.primary : colors.surface;
+  // bubbleBackgroundColor reserved for future use
+  // const bubbleBackgroundColor = isOwnMessage ? colors.primary : colors.surface;
   const textColor = isOwnMessage ? colors.onPrimary : colors.onSurface;
 
   return (

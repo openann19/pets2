@@ -19,12 +19,13 @@ interface BlockedUser {
 
 // Map API User to BlockedUser format
 function mapUserToBlockedUser(user: User): BlockedUser {
-  const fullName = user.firstName && user.lastName 
-    ? `${user.firstName} ${user.lastName}`
-    : user.firstName || user.email || 'Unknown';
-    
+  const fullName =
+    user.firstName && user.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user.firstName || user.email || 'Unknown';
+
   const blockedUserData = user as unknown as { blockedAt?: string; blockReason?: string };
-    
+
   return {
     id: user.id || user._id,
     name: fullName,
@@ -107,23 +108,26 @@ export const useBlockedUsers = (): UseBlockedUsersReturn => {
     ]);
   }, []);
 
-  const blockUser = useCallback(async (userId: string, reason?: string): Promise<boolean> => {
-    try {
-      logger.info('Blocking user', { userId, reason });
+  const blockUser = useCallback(
+    async (userId: string, reason?: string): Promise<boolean> => {
+      try {
+        logger.info('Blocking user', { userId, reason });
 
-      // Call real API service
-      const success = await matchesAPI.blockUser(userId);
-      if (success) {
-        // Refresh the blocked users list
-        await loadBlockedUsers(true);
-        logger.info('User blocked successfully', { userId });
+        // Call real API service
+        const success = await matchesAPI.blockUser(userId);
+        if (success) {
+          // Refresh the blocked users list
+          await loadBlockedUsers(true);
+          logger.info('User blocked successfully', { userId });
+        }
+        return success;
+      } catch (error) {
+        logger.error('Failed to block user', { error, userId });
+        return false;
       }
-      return success;
-    } catch (error) {
-      logger.error('Failed to block user', { error, userId });
-      return false;
-    }
-  }, [loadBlockedUsers]);
+    },
+    [loadBlockedUsers],
+  );
 
   const refreshData = useCallback(async () => {
     await loadBlockedUsers(true);

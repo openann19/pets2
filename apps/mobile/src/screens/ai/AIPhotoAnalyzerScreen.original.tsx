@@ -3,11 +3,11 @@
  * Advanced photo analysis with breed detection, health assessment, and quality scoring
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { useAuthStore } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
-import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { useAuthStore } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -18,15 +18,15 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@mobile/theme";
-import { getExtendedColors } from "../../theme/adapters";
-import type { AIScreenProps } from "../../navigation/types";
-import { logger } from "../../services/logger";
-import { api } from "../../services/api";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '@mobile/theme';
+import { getExtendedColors } from '../../theme/adapters';
+import type { AIScreenProps } from '../../navigation/types';
+import { logger } from '../../services/logger';
+import { api } from '../../services/api';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface PhotoAnalysisResult {
   breed: {
@@ -35,7 +35,7 @@ interface PhotoAnalysisResult {
     confidence: number;
   };
   health: {
-    overall: "excellent" | "good" | "fair" | "poor";
+    overall: 'excellent' | 'good' | 'fair' | 'poor';
     score: number;
     indicators: {
       coat: string;
@@ -63,19 +63,14 @@ interface PhotoAnalysisResult {
   tags: string[];
 }
 
-export default function AIPhotoAnalyzerScreen({
-  navigation,
-}: AIScreenProps): React.JSX.Element {
+export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): React.JSX.Element {
   const theme = useTheme();
   const colors = getExtendedColors(theme);
   const { user: _user } = useAuthStore();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] =
-    useState<PhotoAnalysisResult | null>(null);
-  const [analysisHistory, setAnalysisHistory] = useState<PhotoAnalysisResult[]>(
-    [],
-  );
+  const [analysisResult, setAnalysisResult] = useState<PhotoAnalysisResult | null>(null);
+  const [analysisHistory, setAnalysisHistory] = useState<PhotoAnalysisResult[]>([]);
 
   const pickImage = async (): Promise<void> => {
     try {
@@ -85,12 +80,11 @@ export default function AIPhotoAnalyzerScreen({
     }
 
     try {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
         Alert.alert(
-          "Permission needed",
-          "We need camera roll permissions to analyze your pet photo",
+          'Permission needed',
+          'We need camera roll permissions to analyze your pet photo',
         );
         return;
       }
@@ -110,8 +104,8 @@ export default function AIPhotoAnalyzerScreen({
         }
       }
     } catch (error) {
-      logger.error("Error picking image:", { error: error as Error });
-      Alert.alert("Error", "Failed to pick image");
+      logger.error('Error picking image:', { error: error as Error });
+      Alert.alert('Error', 'Failed to pick image');
     }
   };
 
@@ -124,11 +118,8 @@ export default function AIPhotoAnalyzerScreen({
 
     try {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Permission needed",
-          "We need camera permissions to take a photo",
-        );
+      if (status !== 'granted') {
+        Alert.alert('Permission needed', 'We need camera permissions to take a photo');
         return;
       }
 
@@ -146,14 +137,14 @@ export default function AIPhotoAnalyzerScreen({
         }
       }
     } catch (error) {
-      logger.error("Error taking photo:", { error: error as Error });
-      Alert.alert("Error", "Failed to take photo");
+      logger.error('Error taking photo:', { error: error as Error });
+      Alert.alert('Error', 'Failed to take photo');
     }
   };
 
   const analyzePhoto = async (): Promise<void> => {
     if (selectedImage === null) {
-      Alert.alert("No Image", "Please select an image first");
+      Alert.alert('No Image', 'Please select an image first');
       return;
     }
 
@@ -172,16 +163,16 @@ export default function AIPhotoAnalyzerScreen({
           health: {
             overall:
               analysis.health_assessment.health_score > 80
-                ? "excellent"
+                ? 'excellent'
                 : analysis.health_assessment.health_score > 60
-                  ? "good"
-                  : "fair",
+                  ? 'good'
+                  : 'fair',
             score: analysis.health_assessment.health_score,
             indicators: {
-              coat: "Healthy appearance",
-              eyes: "Bright and alert",
-              posture: "Good stance",
-              energy: "Appears energetic",
+              coat: 'Healthy appearance',
+              eyes: 'Bright and alert',
+              posture: 'Good stance',
+              energy: 'Appears energetic',
             },
           },
           quality: {
@@ -194,11 +185,10 @@ export default function AIPhotoAnalyzerScreen({
             },
           },
           characteristics: {
-            age:
-              analysis.health_assessment.age_estimate > 5 ? "Adult" : "Young",
-            size: "Medium",
-            temperament: ["Friendly", "Calm"],
-            features: ["Well-groomed", "Alert"],
+            age: analysis.health_assessment.age_estimate > 5 ? 'Adult' : 'Young',
+            size: 'Medium',
+            temperament: ['Friendly', 'Calm'],
+            features: ['Well-groomed', 'Alert'],
           },
           suggestions: analysis.health_assessment.recommendations,
           tags: analysis.ai_insights,
@@ -206,31 +196,31 @@ export default function AIPhotoAnalyzerScreen({
 
         setAnalysisResult(result);
         setAnalysisHistory((prev) => [result, ...prev.slice(0, 4)]); // Keep last 5
-        logger.info("Photo analysis completed", {
-          userId: "unknown",
-          sessionId: "mobile-photo-analysis",
-          version: "1.0.0",
+        logger.info('Photo analysis completed', {
+          userId: 'unknown',
+          sessionId: 'mobile-photo-analysis',
+          version: '1.0.0',
           timestamp: new Date().toISOString(),
           breed: result.breed.primary,
         });
       }
     } catch (error) {
-      logger.error("Photo analysis failed:", { error: error as Error });
+      logger.error('Photo analysis failed:', { error: error as Error });
 
       // Fallback analysis for demo
       const fallbackResult: PhotoAnalysisResult = {
         breed: {
-          primary: "Mixed Breed",
+          primary: 'Mixed Breed',
           confidence: 0.75,
         },
         health: {
-          overall: "good" as const,
+          overall: 'good' as const,
           score: 82,
           indicators: {
-            coat: "Healthy appearance",
-            eyes: "Bright and alert",
-            posture: "Good stance",
-            energy: "Appears energetic",
+            coat: 'Healthy appearance',
+            eyes: 'Bright and alert',
+            posture: 'Good stance',
+            energy: 'Appears energetic',
           },
         },
         quality: {
@@ -243,17 +233,17 @@ export default function AIPhotoAnalyzerScreen({
           },
         },
         characteristics: {
-          age: "Adult",
-          size: "Medium",
-          temperament: ["Friendly", "Calm"],
-          features: ["Well-groomed", "Alert"],
+          age: 'Adult',
+          size: 'Medium',
+          temperament: ['Friendly', 'Calm'],
+          features: ['Well-groomed', 'Alert'],
         },
         suggestions: [
-          "Great photo quality!",
-          "Consider adding more personality shots",
-          "Try different lighting conditions",
+          'Great photo quality!',
+          'Consider adding more personality shots',
+          'Try different lighting conditions',
         ],
-        tags: ["cute", "friendly", "healthy"],
+        tags: ['cute', 'friendly', 'healthy'],
       };
 
       setAnalysisResult(fallbackResult);
@@ -265,13 +255,13 @@ export default function AIPhotoAnalyzerScreen({
 
   const getHealthColor = (overall: string): string => {
     switch (overall) {
-      case "excellent":
+      case 'excellent':
         return theme.colors.success;
-      case "good":
+      case 'good':
         return theme.colors.info;
-      case "fair":
+      case 'fair':
         return theme.colors.warning;
-      case "poor":
+      case 'poor':
         return theme.colors.danger;
       default:
         return theme.palette.neutral[500];
@@ -287,10 +277,7 @@ export default function AIPhotoAnalyzerScreen({
 
   return (
     <SafeAreaView
-      style={StyleSheet.flatten([
-        styles.container,
-        { backgroundColor: colors.background },
-      ])}
+      style={StyleSheet.flatten([styles.container, { backgroundColor: colors.background }])}
     >
       <ScrollView
         style={styles.scrollView}
@@ -299,16 +286,21 @@ export default function AIPhotoAnalyzerScreen({
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
-             testID="AIPhotoAnalyzerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+            testID="AIPhotoAnalyzerScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
               navigation.goBack();
             }}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.onSurface} />
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color={colors.onSurface}
+            />
           </TouchableOpacity>
-          <Text
-            style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
-          >
+          <Text style={StyleSheet.flatten([styles.title, { color: colors.onSurface }])}>
             AI Photo Analyzer
           </Text>
           <View style={styles.headerActions}>
@@ -318,15 +310,22 @@ export default function AIPhotoAnalyzerScreen({
                   styles.historyButton,
                   { backgroundColor: colors.primary },
                 ])}
-                 testID="AIPhotoAnalyzerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+                testID="AIPhotoAnalyzerScreen-button-2"
+                accessibilityLabel="Interactive element"
+                accessibilityRole="button"
+                onPress={() => {
                   // Show analysis history modal
                   Alert.alert(
-                    "Analysis History",
+                    'Analysis History',
                     `${analysisHistory.length.toString()} previous analyses`,
                   );
                 }}
               >
-                <Ionicons name="time" size={20} color="#ffffff" />
+                <Ionicons
+                  name="time"
+                  size={20}
+                  color="#ffffff"
+                />
               </TouchableOpacity>
             )}
           </View>
@@ -334,12 +333,7 @@ export default function AIPhotoAnalyzerScreen({
 
         {/* Image Selection */}
         <View style={styles.imageSection}>
-          <Text
-            style={StyleSheet.flatten([
-              styles.sectionTitle,
-              { color: colors.onSurface},
-            ])}
-          >
+          <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
             Select Pet Photo
           </Text>
 
@@ -354,9 +348,16 @@ export default function AIPhotoAnalyzerScreen({
                   styles.changeImageButton,
                   { backgroundColor: colors.primary },
                 ])}
-                 testID="AIPhotoAnalyzerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={pickImage}
+                testID="AIPhotoAnalyzerScreen-button-2"
+                accessibilityLabel="Interactive element"
+                accessibilityRole="button"
+                onPress={pickImage}
               >
-                <Ionicons name="camera" size={20} color="#ffffff" />
+                <Ionicons
+                  name="camera"
+                  size={20}
+                  color="#ffffff"
+                />
                 <Text style={styles.changeImageText}>Change Photo</Text>
               </TouchableOpacity>
             </View>
@@ -367,13 +368,12 @@ export default function AIPhotoAnalyzerScreen({
                 { backgroundColor: colors.card },
               ])}
             >
-              <Ionicons name="camera" size={48} color={colors.onMuted} />
-              <Text
-                style={StyleSheet.flatten([
-                  styles.placeholderText,
-                  { color: colors.onMuted },
-                ])}
-              >
+              <Ionicons
+                name="camera"
+                size={48}
+                color={colors.onMuted}
+              />
+              <Text style={StyleSheet.flatten([styles.placeholderText, { color: colors.onMuted }])}>
                 No photo selected
               </Text>
               <View style={styles.imageButtons}>
@@ -382,9 +382,16 @@ export default function AIPhotoAnalyzerScreen({
                     styles.imageButton,
                     { backgroundColor: colors.primary },
                   ])}
-                   testID="AIPhotoAnalyzerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={pickImage}
+                  testID="AIPhotoAnalyzerScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
+                  onPress={pickImage}
                 >
-                  <Ionicons name="image" size={20} color="#ffffff" />
+                  <Ionicons
+                    name="image"
+                    size={20}
+                    color="#ffffff"
+                  />
                   <Text style={styles.imageButtonText}>Gallery</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -392,9 +399,16 @@ export default function AIPhotoAnalyzerScreen({
                     styles.imageButton,
                     { backgroundColor: colors.secondary },
                   ])}
-                   testID="AIPhotoAnalyzerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={takePhoto}
+                  testID="AIPhotoAnalyzerScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
+                  onPress={takePhoto}
                 >
-                  <Ionicons name="camera" size={20} color="#ffffff" />
+                  <Ionicons
+                    name="camera"
+                    size={20}
+                    color="#ffffff"
+                  />
                   <Text style={styles.imageButtonText}>Camera</Text>
                 </TouchableOpacity>
               </View>
@@ -411,17 +425,27 @@ export default function AIPhotoAnalyzerScreen({
                 { backgroundColor: colors.primary },
                 isAnalyzing && styles.analyzeButtonDisabled,
               ])}
-               testID="AIPhotoAnalyzerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={analyzePhoto}
+              testID="AIPhotoAnalyzerScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={analyzePhoto}
               disabled={isAnalyzing}
             >
               {isAnalyzing ? (
                 <>
-                  <ActivityIndicator size="small" color="#ffffff" />
+                  <ActivityIndicator
+                    size="small"
+                    color="#ffffff"
+                  />
                   <Text style={styles.analyzeButtonText}>Analyzing...</Text>
                 </>
               ) : (
                 <>
-                  <Ionicons name="flash" size={20} color="#ffffff" />
+                  <Ionicons
+                    name="flash"
+                    size={20}
+                    color="#ffffff"
+                  />
                   <Text style={styles.analyzeButtonText}>Analyze Photo</Text>
                 </>
               )}
@@ -432,48 +456,31 @@ export default function AIPhotoAnalyzerScreen({
         {/* Analysis Results */}
         {analysisResult !== null ? (
           <View style={styles.resultsSection}>
-            <Text
-              style={StyleSheet.flatten([
-                styles.sectionTitle,
-                { color: colors.onSurface},
-              ])}
-            >
+            <Text style={StyleSheet.flatten([styles.sectionTitle, { color: colors.onSurface }])}>
               Analysis Results
             </Text>
 
             {/* Breed Detection */}
-            <View
-              style={StyleSheet.flatten([
-                styles.resultCard,
-                { backgroundColor: colors.card },
-              ])}
-            >
+            <View style={StyleSheet.flatten([styles.resultCard, { backgroundColor: colors.card }])}>
               <View style={styles.resultHeader}>
-                <Ionicons name="paw" size={24} color="#9333ea" />
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.resultTitle,
-                    { color: colors.onSurface},
-                  ])}
-                >
+                <Ionicons
+                  name="paw"
+                  size={24}
+                  color="#9333ea"
+                />
+                <Text style={StyleSheet.flatten([styles.resultTitle, { color: colors.onSurface }])}>
                   Breed Detection
                 </Text>
               </View>
               <View style={styles.breedInfo}>
                 <Text
-                  style={StyleSheet.flatten([
-                    styles.breedPrimary,
-                    { color: colors.onSurface},
-                  ])}
+                  style={StyleSheet.flatten([styles.breedPrimary, { color: colors.onSurface }])}
                 >
                   {analysisResult.breed.primary}
                 </Text>
                 {analysisResult.breed.secondary !== undefined ? (
                   <Text
-                    style={StyleSheet.flatten([
-                      styles.breedSecondary,
-                      { color: colors.onMuted },
-                    ])}
+                    style={StyleSheet.flatten([styles.breedSecondary, { color: colors.onMuted }])}
                   >
                     Mixed with {analysisResult.breed.secondary}
                   </Text>
@@ -483,44 +490,29 @@ export default function AIPhotoAnalyzerScreen({
                     style={StyleSheet.flatten([
                       styles.confidenceFill,
                       {
-                        width:
-                          `${Math.round(analysisResult.breed.confidence * 100)}%` as const,
-                        backgroundColor: "#9333ea",
+                        width: `${Math.round(analysisResult.breed.confidence * 100)}%` as const,
+                        backgroundColor: '#9333ea',
                       },
                     ])}
                   />
                 </View>
                 <Text
-                  style={StyleSheet.flatten([
-                    styles.confidenceText,
-                    { color: colors.onMuted },
-                  ])}
+                  style={StyleSheet.flatten([styles.confidenceText, { color: colors.onMuted }])}
                 >
-                  {Math.round(analysisResult.breed.confidence * 100)}%
-                  confidence
+                  {Math.round(analysisResult.breed.confidence * 100)}% confidence
                 </Text>
               </View>
             </View>
 
             {/* Health Assessment */}
-            <View
-              style={StyleSheet.flatten([
-                styles.resultCard,
-                { backgroundColor: colors.card },
-              ])}
-            >
+            <View style={StyleSheet.flatten([styles.resultCard, { backgroundColor: colors.card }])}>
               <View style={styles.resultHeader}>
                 <Ionicons
                   name="heart"
                   size={24}
                   color={getHealthColor(analysisResult.health.overall)}
                 />
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.resultTitle,
-                    { color: colors.onSurface},
-                  ])}
-                >
+                <Text style={StyleSheet.flatten([styles.resultTitle, { color: colors.onSurface }])}>
                   Health Assessment
                 </Text>
               </View>
@@ -535,60 +527,48 @@ export default function AIPhotoAnalyzerScreen({
                     {analysisResult.health.score}/100
                   </Text>
                   <Text
-                    style={StyleSheet.flatten([
-                      styles.healthScoreLabel,
-                      { color: colors.onMuted },
-                    ])}
+                    style={StyleSheet.flatten([styles.healthScoreLabel, { color: colors.onMuted }])}
                   >
                     Overall Health
                   </Text>
                 </View>
                 <View style={styles.healthIndicators}>
-                  {Object.entries(analysisResult.health.indicators).map(
-                    ([key, value]) => (
-                      <View key={key} style={styles.healthIndicator}>
-                        <Text
-                          style={StyleSheet.flatten([
-                            styles.healthIndicatorLabel,
-                            { color: colors.onMuted },
-                          ])}
-                        >
-                          {key.charAt(0).toUpperCase() + key.slice(1)}
-                        </Text>
-                        <Text
-                          style={StyleSheet.flatten([
-                            styles.healthIndicatorValue,
-                            { color: colors.onSurface},
-                          ])}
-                        >
-                          {value}
-                        </Text>
-                      </View>
-                    ),
-                  )}
+                  {Object.entries(analysisResult.health.indicators).map(([key, value]) => (
+                    <View
+                      key={key}
+                      style={styles.healthIndicator}
+                    >
+                      <Text
+                        style={StyleSheet.flatten([
+                          styles.healthIndicatorLabel,
+                          { color: colors.onMuted },
+                        ])}
+                      >
+                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </Text>
+                      <Text
+                        style={StyleSheet.flatten([
+                          styles.healthIndicatorValue,
+                          { color: colors.onSurface },
+                        ])}
+                      >
+                        {value}
+                      </Text>
+                    </View>
+                  ))}
                 </View>
               </View>
             </View>
 
             {/* Photo Quality */}
-            <View
-              style={StyleSheet.flatten([
-                styles.resultCard,
-                { backgroundColor: colors.card },
-              ])}
-            >
+            <View style={StyleSheet.flatten([styles.resultCard, { backgroundColor: colors.card }])}>
               <View style={styles.resultHeader}>
                 <Ionicons
                   name="camera"
                   size={24}
                   color={getQualityColor(analysisResult.quality.score)}
                 />
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.resultTitle,
-                    { color: colors.onSurface},
-                  ])}
-                >
+                <Text style={StyleSheet.flatten([styles.resultTitle, { color: colors.onSurface }])}>
                   Photo Quality
                 </Text>
               </View>
@@ -602,58 +582,53 @@ export default function AIPhotoAnalyzerScreen({
                   {analysisResult.quality.score}/100
                 </Text>
                 <View style={styles.qualityFactors}>
-                  {Object.entries(analysisResult.quality.factors).map(
-                    ([factor, score]) => (
-                      <View key={factor} style={styles.qualityFactor}>
-                        <Text
+                  {Object.entries(analysisResult.quality.factors).map(([factor, score]) => (
+                    <View
+                      key={factor}
+                      style={styles.qualityFactor}
+                    >
+                      <Text
+                        style={StyleSheet.flatten([
+                          styles.qualityFactorLabel,
+                          { color: colors.onMuted },
+                        ])}
+                      >
+                        {factor.charAt(0).toUpperCase() + factor.slice(1)}
+                      </Text>
+                      <View style={styles.qualityFactorBar}>
+                        <View
                           style={StyleSheet.flatten([
-                            styles.qualityFactorLabel,
-                            { color: colors.onMuted },
+                            styles.qualityFactorFill,
+                            {
+                              width: `${Math.round(score)}%` as const,
+                              backgroundColor: getQualityColor(score),
+                            },
                           ])}
-                        >
-                          {factor.charAt(0).toUpperCase() + factor.slice(1)}
-                        </Text>
-                        <View style={styles.qualityFactorBar}>
-                          <View
-                            style={StyleSheet.flatten([
-                              styles.qualityFactorFill,
-                              {
-                                width: `${Math.round(score)}%` as const,
-                                backgroundColor: getQualityColor(score),
-                              },
-                            ])}
-                          />
-                        </View>
-                        <Text
-                          style={StyleSheet.flatten([
-                            styles.qualityFactorScore,
-                            { color: colors.onSurface},
-                          ])}
-                        >
-                          {score}
-                        </Text>
+                        />
                       </View>
-                    ),
-                  )}
+                      <Text
+                        style={StyleSheet.flatten([
+                          styles.qualityFactorScore,
+                          { color: colors.onSurface },
+                        ])}
+                      >
+                        {score}
+                      </Text>
+                    </View>
+                  ))}
                 </View>
               </View>
             </View>
 
             {/* Characteristics */}
-            <View
-              style={StyleSheet.flatten([
-                styles.resultCard,
-                { backgroundColor: colors.card },
-              ])}
-            >
+            <View style={StyleSheet.flatten([styles.resultCard, { backgroundColor: colors.card }])}>
               <View style={styles.resultHeader}>
-                <Ionicons name="list" size={24} color={theme.colors.info} />
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.resultTitle,
-                    { color: colors.onSurface},
-                  ])}
-                >
+                <Ionicons
+                  name="list"
+                  size={24}
+                  color={theme.colors.info}
+                />
+                <Text style={StyleSheet.flatten([styles.resultTitle, { color: colors.onSurface }])}>
                   Characteristics
                 </Text>
               </View>
@@ -670,7 +645,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicValue,
-                      { color: colors.onSurface},
+                      { color: colors.onSurface },
                     ])}
                   >
                     {analysisResult.characteristics.age}
@@ -688,7 +663,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicValue,
-                      { color: colors.onSurface},
+                      { color: colors.onSurface },
                     ])}
                   >
                     {analysisResult.characteristics.size}
@@ -704,19 +679,17 @@ export default function AIPhotoAnalyzerScreen({
                     Temperament
                   </Text>
                   <View style={styles.tagsContainer}>
-                    {analysisResult.characteristics.temperament.map(
-                      (trait, index) => (
-                        <View
-                          key={index}
-                          style={StyleSheet.flatten([
-                            styles.tag,
-                            { backgroundColor: theme.colors.info },
-                          ])}
-                        >
-                          <Text style={styles.tagText}>{trait}</Text>
-                        </View>
-                      ),
-                    )}
+                    {analysisResult.characteristics.temperament.map((trait, index) => (
+                      <View
+                        key={index}
+                        style={StyleSheet.flatten([
+                          styles.tag,
+                          { backgroundColor: theme.colors.info },
+                        ])}
+                      >
+                        <Text style={styles.tagText}>{trait}</Text>
+                      </View>
+                    ))}
                   </View>
                 </View>
                 <View style={styles.characteristicItem}>
@@ -729,45 +702,40 @@ export default function AIPhotoAnalyzerScreen({
                     Features
                   </Text>
                   <View style={styles.tagsContainer}>
-                    {analysisResult.characteristics.features.map(
-                      (feature, index) => (
-                        <View
-                          key={index}
-                          style={StyleSheet.flatten([
-                            styles.tag,
-                            { backgroundColor: theme.colors.success },
-                          ])}
-                        >
-                          <Text style={styles.tagText}>{feature}</Text>
-                        </View>
-                      ),
-                    )}
+                    {analysisResult.characteristics.features.map((feature, index) => (
+                      <View
+                        key={index}
+                        style={StyleSheet.flatten([
+                          styles.tag,
+                          { backgroundColor: theme.colors.success },
+                        ])}
+                      >
+                        <Text style={styles.tagText}>{feature}</Text>
+                      </View>
+                    ))}
                   </View>
                 </View>
               </View>
             </View>
 
             {/* Suggestions */}
-            <View
-              style={StyleSheet.flatten([
-                styles.resultCard,
-                { backgroundColor: colors.card },
-              ])}
-            >
+            <View style={StyleSheet.flatten([styles.resultCard, { backgroundColor: colors.card }])}>
               <View style={styles.resultHeader}>
-                <Ionicons name="bulb" size={24} color={theme.colors.warning} />
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.resultTitle,
-                    { color: colors.onSurface},
-                  ])}
-                >
+                <Ionicons
+                  name="bulb"
+                  size={24}
+                  color={theme.colors.warning}
+                />
+                <Text style={StyleSheet.flatten([styles.resultTitle, { color: colors.onSurface }])}>
                   Suggestions
                 </Text>
               </View>
               <View style={styles.suggestionsList}>
                 {analysisResult.suggestions.map((suggestion, index) => (
-                  <View key={index} style={styles.suggestionItem}>
+                  <View
+                    key={index}
+                    style={styles.suggestionItem}
+                  >
                     <Ionicons
                       name="checkmark-circle"
                       size={16}
@@ -776,7 +744,7 @@ export default function AIPhotoAnalyzerScreen({
                     <Text
                       style={StyleSheet.flatten([
                         styles.suggestionText,
-                        { color: colors.onSurface},
+                        { color: colors.onSurface },
                       ])}
                     >
                       {suggestion}
@@ -787,20 +755,14 @@ export default function AIPhotoAnalyzerScreen({
             </View>
 
             {/* Tags */}
-            <View
-              style={StyleSheet.flatten([
-                styles.resultCard,
-                { backgroundColor: colors.card },
-              ])}
-            >
+            <View style={StyleSheet.flatten([styles.resultCard, { backgroundColor: colors.card }])}>
               <View style={styles.resultHeader}>
-                <Ionicons name="pricetag" size={24} color="#9333ea" />
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.resultTitle,
-                    { color: colors.onSurface},
-                  ])}
-                >
+                <Ionicons
+                  name="pricetag"
+                  size={24}
+                  color="#9333ea"
+                />
+                <Text style={StyleSheet.flatten([styles.resultTitle, { color: colors.onSurface }])}>
                   Photo Tags
                 </Text>
               </View>
@@ -808,10 +770,7 @@ export default function AIPhotoAnalyzerScreen({
                 {analysisResult.tags.map((tag, index) => (
                   <View
                     key={index}
-                    style={StyleSheet.flatten([
-                      styles.tag,
-                      { backgroundColor: "#9333ea" },
-                    ])}
+                    style={StyleSheet.flatten([styles.tag, { backgroundColor: '#9333ea' }])}
                   >
                     <Text style={styles.tagText}>#{tag}</Text>
                   </View>
@@ -834,8 +793,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 16,
     paddingHorizontal: 4,
   },
@@ -844,31 +803,31 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     flex: 1,
     marginLeft: 8,
   },
   headerActions: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 8,
   },
   historyButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   imageSection: {
     marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 16,
   },
   imageContainer: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   selectedImage: {
     width: SCREEN_WIDTH - 32,
@@ -877,23 +836,23 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   changeImageButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     gap: 8,
   },
   changeImageText: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   imagePlaceholder: {
     height: SCREEN_WIDTH - 32,
     borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   placeholderText: {
@@ -902,29 +861,29 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   imageButtons: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 16,
   },
   imageButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 12,
     gap: 8,
   },
   imageButtonText: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   analysisSection: {
     marginBottom: 24,
   },
   analyzeButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 16,
     borderRadius: 12,
     gap: 8,
@@ -933,9 +892,9 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   analyzeButtonText: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   resultsSection: {
     marginBottom: 24,
@@ -951,13 +910,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   resultHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 12,
   },
   resultTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     marginLeft: 8,
   },
   breedInfo: {
@@ -965,7 +924,7 @@ const styles = StyleSheet.create({
   },
   breedPrimary: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   breedSecondary: {
     fontSize: 14,
@@ -974,10 +933,10 @@ const styles = StyleSheet.create({
     height: 8,
     backgroundColor: theme.palette.neutral[200],
     borderRadius: 4,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   confidenceFill: {
-    height: "100%",
+    height: '100%',
     borderRadius: 4,
   },
   confidenceText: {
@@ -987,11 +946,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   healthScore: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   healthScoreValue: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   healthScoreLabel: {
     fontSize: 12,
@@ -1000,8 +959,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   healthIndicator: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   healthIndicatorLabel: {
     fontSize: 14,
@@ -1009,24 +968,24 @@ const styles = StyleSheet.create({
   },
   healthIndicatorValue: {
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: '500',
     flex: 2,
-    textAlign: "right",
+    textAlign: 'right',
   },
   qualityInfo: {
     gap: 12,
   },
   qualityScore: {
     fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   qualityFactors: {
     gap: 8,
   },
   qualityFactor: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
   },
   qualityFactorLabel: {
@@ -1038,17 +997,17 @@ const styles = StyleSheet.create({
     height: 8,
     backgroundColor: theme.palette.neutral[200],
     borderRadius: 4,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   qualityFactorFill: {
-    height: "100%",
+    height: '100%',
     borderRadius: 4,
   },
   qualityFactorScore: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: '600',
     width: 30,
-    textAlign: "right",
+    textAlign: 'right',
   },
   characteristicsInfo: {
     gap: 12,
@@ -1058,14 +1017,14 @@ const styles = StyleSheet.create({
   },
   characteristicLabel: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   characteristicValue: {
     fontSize: 14,
   },
   tagsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
   },
   tag: {
@@ -1074,16 +1033,16 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   tagText: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   suggestionsList: {
     gap: 8,
   },
   suggestionItem: {
-    flexDirection: "row",
-    alignItems: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     gap: 8,
   },
   suggestionText: {

@@ -12,18 +12,16 @@ import type { CreatePostRequest } from '../../../services/communityAPI';
 
 // Mock dependencies
 jest.mock('expo-image-picker', () => ({
-  requestMediaLibraryPermissionsAsync: jest.fn(() => 
-    Promise.resolve({ status: 'granted' })
-  ),
-  launchImageLibraryAsync: jest.fn(() => 
+  requestMediaLibraryPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+  launchImageLibraryAsync: jest.fn(() =>
     Promise.resolve({
       canceled: false,
-      assets: [{ uri: 'mock-image-uri' }]
-    })
+      assets: [{ uri: 'mock-image-uri' }],
+    }),
   ),
   MediaTypeOptions: {
-    Images: 'Images'
-  }
+    Images: 'Images',
+  },
 }));
 
 jest.mock('expo-haptics', () => ({
@@ -66,7 +64,7 @@ describe('CreatePostForm', () => {
 
   it('renders correctly', () => {
     render(<CreatePostForm {...defaultProps} />);
-    
+
     expect(screen.getByText('Create Post')).toBeTruthy();
     expect(screen.getByPlaceholderText('Share something with the community...')).toBeTruthy();
     expect(screen.getByText('Images (Optional)')).toBeTruthy();
@@ -75,46 +73,46 @@ describe('CreatePostForm', () => {
 
   it('handles text input correctly', async () => {
     render(<CreatePostForm {...defaultProps} />);
-    
+
     const textInput = screen.getByPlaceholderText('Share something with the community...');
     fireEvent.changeText(textInput, 'This is a test post');
-    
+
     expect(textInput.props.value).toBe('This is a test post');
   });
 
   it('shows character count', () => {
     render(<CreatePostForm {...defaultProps} />);
-    
+
     const textInput = screen.getByPlaceholderText('Share something with the community...');
     fireEvent.changeText(textInput, 'Test content');
-    
+
     expect(screen.getByText('12/5000')).toBeTruthy();
   });
 
   it('validates required content', async () => {
     render(<CreatePostForm {...defaultProps} />);
-    
+
     const submitButton = screen.getByText('Create Post');
     fireEvent.press(submitButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Post content is required')).toBeTruthy();
     });
-    
+
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
   it('submits valid post data', async () => {
     mockOnSubmit.mockResolvedValueOnce(undefined);
-    
+
     render(<CreatePostForm {...defaultProps} />);
-    
+
     const textInput = screen.getByPlaceholderText('Share something with the community...');
     fireEvent.changeText(textInput, 'This is a valid post');
-    
+
     const submitButton = screen.getByText('Create Post');
     fireEvent.press(submitButton);
-    
+
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
         content: 'This is a valid post',
@@ -126,26 +124,26 @@ describe('CreatePostForm', () => {
 
   it('handles activity creation', async () => {
     mockOnSubmit.mockResolvedValueOnce(undefined);
-    
+
     render(<CreatePostForm {...defaultProps} />);
-    
+
     const textInput = screen.getByPlaceholderText('Share something with the community...');
     fireEvent.changeText(textInput, 'Join our dog walk!');
-    
+
     // Toggle activity switch
     const activitySwitch = screen.getByLabelText('Create activity toggle');
     fireEvent(activitySwitch, 'valueChange', true);
-    
+
     // Fill activity details
     const locationInput = screen.getByPlaceholderText('Activity location');
     fireEvent.changeText(locationInput, 'Central Park');
-    
+
     const attendeesInput = screen.getByPlaceholderText('Maximum attendees');
     fireEvent.changeText(attendeesInput, '15');
-    
+
     const submitButton = screen.getByText('Create Activity');
     fireEvent.press(submitButton);
-    
+
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -158,39 +156,39 @@ describe('CreatePostForm', () => {
             currentAttendees: 0,
             attending: false,
           }),
-        })
+        }),
       );
     });
   });
 
   it('validates activity location when activity is enabled', async () => {
     render(<CreatePostForm {...defaultProps} />);
-    
+
     const textInput = screen.getByPlaceholderText('Share something with the community...');
     fireEvent.changeText(textInput, 'Activity without location');
-    
+
     // Toggle activity switch
     const activitySwitch = screen.getByLabelText('Create activity toggle');
     fireEvent(activitySwitch, 'valueChange', true);
-    
+
     const submitButton = screen.getByText('Create Activity');
     fireEvent.press(submitButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Location is required for activities')).toBeTruthy();
     });
-    
+
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
   it('handles image selection', async () => {
     const ImagePicker = require('expo-image-picker');
-    
+
     render(<CreatePostForm {...defaultProps} />);
-    
+
     const addImageButton = screen.getByText('Add Image (0/5)');
     fireEvent.press(addImageButton);
-    
+
     await waitFor(() => {
       expect(ImagePicker.requestMediaLibraryPermissionsAsync).toHaveBeenCalled();
       expect(ImagePicker.launchImageLibraryAsync).toHaveBeenCalled();
@@ -198,82 +196,87 @@ describe('CreatePostForm', () => {
   });
 
   it('shows loading state when submitting', () => {
-    render(<CreatePostForm {...defaultProps} isSubmitting={true} />);
-    
+    render(
+      <CreatePostForm
+        {...defaultProps}
+        isSubmitting={true}
+      />,
+    );
+
     expect(screen.getByText('Creating...')).toBeTruthy();
-    
+
     const submitButton = screen.getByText('Creating...');
     expect(submitButton.props.accessibilityState.disabled).toBe(true);
   });
 
   it('handles cancel action', () => {
     render(<CreatePostForm {...defaultProps} />);
-    
+
     const cancelButton = screen.getByLabelText('Cancel post creation');
     fireEvent.press(cancelButton);
-    
+
     expect(mockOnCancel).toHaveBeenCalled();
   });
 
   it('validates character limit', async () => {
     render(<CreatePostForm {...defaultProps} />);
-    
+
     const longContent = 'a'.repeat(5001); // Exceeds limit
     const textInput = screen.getByPlaceholderText('Share something with the community...');
     fireEvent.changeText(textInput, longContent);
-    
+
     const submitButton = screen.getByText('Create Post');
     fireEvent.press(submitButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Content must be 5000 characters or less')).toBeTruthy();
     });
-    
+
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
   it('validates max attendees for activities', async () => {
     render(<CreatePostForm {...defaultProps} />);
-    
+
     const textInput = screen.getByPlaceholderText('Share something with the community...');
     fireEvent.changeText(textInput, 'Activity with invalid attendees');
-    
+
     // Toggle activity switch
     const activitySwitch = screen.getByLabelText('Create activity toggle');
     fireEvent(activitySwitch, 'valueChange', true);
-    
+
     const locationInput = screen.getByPlaceholderText('Activity location');
     fireEvent.changeText(locationInput, 'Test Location');
-    
+
     const attendeesInput = screen.getByPlaceholderText('Maximum attendees');
     fireEvent.changeText(attendeesInput, '0'); // Invalid
-    
+
     const submitButton = screen.getByText('Create Activity');
     fireEvent.press(submitButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Max attendees must be between 1 and 1000')).toBeTruthy();
     });
-    
+
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
   it('handles submission errors gracefully', async () => {
     const error = new Error('Network error');
     mockOnSubmit.mockRejectedValueOnce(error);
-    
+
     render(<CreatePostForm {...defaultProps} />);
-    
+
     const textInput = screen.getByPlaceholderText('Share something with the community...');
     fireEvent.changeText(textInput, 'Test post');
-    
+
     const submitButton = screen.getByText('Create Post');
     fireEvent.press(submitButton);
-    
+
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalled();
     });
-    
+
     // Error should be handled by parent component
   });
 });

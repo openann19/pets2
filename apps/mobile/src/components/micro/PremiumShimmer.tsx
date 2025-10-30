@@ -57,7 +57,7 @@ export function useShimmer(): UseShimmerReturn {
       withTiming(100, {
         duration: motion.duration.xslow,
         easing: getEasingArray('standard'),
-      })
+      }),
     );
 
     shimmerOpacity.value = withSequence(
@@ -71,7 +71,7 @@ export function useShimmer(): UseShimmerReturn {
       withTiming(0, {
         duration: motion.duration.xslow * 0.3,
         easing: getEasingArray('accel'),
-      })
+      }),
     );
   }, [guards.shouldAnimate, guards.shouldSkipHeavy]);
 
@@ -131,4 +131,3 @@ export function PremiumShimmer({
     </View>
   );
 }
-

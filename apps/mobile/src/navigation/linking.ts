@@ -4,8 +4,47 @@ import type { RootStackParamList } from './types';
 
 const prefixes = ['pawfectmatch://', 'https://pawfectmatch.com'];
 
+/**
+ * Protected routes that require authentication
+ */
+const PROTECTED_ROUTES: (keyof RootStackParamList)[] = [
+  'Home',
+  'Swipe',
+  'Matches',
+  'Profile',
+  'Settings',
+  'Chat',
+  'MyPets',
+  'CreatePet',
+  'Premium',
+  'AdoptionManager',
+  'MemoryWeave',
+  'ARScentTrails',
+  'Stories',
+  'Leaderboard',
+  'Community',
+];
+
+/**
+ * Enhanced linking configuration with authentication checks
+ */
 export const linking: LinkingOptions<RootStackParamList> = {
   prefixes,
+  /**
+   * Filter deep links based on authentication state
+   */
+  async getInitialURL() {
+    // Handle initial URL from app launch or deep link
+    return null;
+  },
+  /**
+   * Subscribe to URL updates
+   */
+  subscribe(listener) {
+    // Handle deep link subscriptions
+    const subscription = { remove: () => {} };
+    return subscription;
+  },
   config: {
     screens: {
       MainTabs: {
@@ -128,6 +167,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
       MigrationExample: 'migration-example',
       PremiumDemo: 'premium-demo',
       UIDemo: 'ui-demo',
+      DemoShowcase: 'demo-showcase',
     },
   },
 };

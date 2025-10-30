@@ -1,16 +1,24 @@
-import React, { useMemo, useRef, useState } from "react";
-import { Alert, PanResponder, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import * as Haptics from "expo-haptics";
-import { Audio } from "expo-av";
-import { Ionicons } from "@expo/vector-icons";
-import { VoiceWaveform, generateWaveformFromAudio } from "../chat/VoiceWaveform";
+import React, { useMemo, useRef, useState } from 'react';
+import {
+  Alert,
+  PanResponder,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { Audio } from 'expo-av';
+import { Ionicons } from '@expo/vector-icons';
+import { VoiceWaveform, generateWaveformFromAudio } from '../chat/VoiceWaveform';
 import { useTheme } from '../../theme';
 
 type SendFn = (matchId: string, form: FormData) => Promise<void>;
 
 interface Props {
   matchId: string;
-  sendVoiceNote: SendFn;  // real sender, no placeholders
+  sendVoiceNote: SendFn; // real sender, no placeholders
   disabled?: boolean;
   maxDurationSec?: number;
   minDurationSec?: number;
@@ -71,7 +79,7 @@ export default function VoiceRecorderUltraNative({
     const s = Math.max(0, Math.round(ms / 1000));
     const m = Math.floor(s / 60);
     const sec = s % 60;
-    return `${m}:${String(sec).padStart(2, "0")}`;
+    return `${m}:${String(sec).padStart(2, '0')}`;
   };
 
   const startRecording = async () => {
@@ -80,7 +88,7 @@ export default function VoiceRecorderUltraNative({
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       const permission = await Audio.requestPermissionsAsync();
       if (!permission.granted) {
-        Alert.alert("Permission needed", "Microphone access is required.");
+        Alert.alert('Permission needed', 'Microphone access is required.');
         return;
       }
       await Audio.setAudioModeAsync({
@@ -100,7 +108,7 @@ export default function VoiceRecorderUltraNative({
       setPreviewUri(null);
       setIsRecording(true);
     } catch {
-      Alert.alert("Error", "Could not start recording.");
+      Alert.alert('Error', 'Could not start recording.');
     }
   };
 
@@ -114,13 +122,19 @@ export default function VoiceRecorderUltraNative({
       recRef.current = null;
       if (uri) setPreviewUri(uri);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } catch {/* ignore */}
+    } catch {
+      /* ignore */
+    }
     setIsRecording(false);
   };
 
   const handleCancel = () => {
     if (recRef.current) {
-      try { recRef.current.stopAndUnloadAsync(); } catch {/* ignore */}
+      try {
+        recRef.current.stopAndUnloadAsync();
+      } catch {
+        /* ignore */
+      }
       recRef.current = null;
     }
     setPreviewUri(null);
@@ -166,12 +180,12 @@ export default function VoiceRecorderUltraNative({
             setIsPlaying(false);
             setProgress(0);
           }
-        }
+        },
       );
       soundRef.current = sound;
       await sound.playAsync();
     } catch {
-      Alert.alert("Playback error", "Could not play the recording.");
+      Alert.alert('Playback error', 'Could not play the recording.');
     }
   };
 
@@ -179,17 +193,17 @@ export default function VoiceRecorderUltraNative({
     if (!previewUri || isSending) return;
     const secs = Math.max(1, Math.round(durationMs / 1000));
     if (secs < minDurationSec) {
-      Alert.alert("Too short", `Record at least ${minDurationSec}s.`);
+      Alert.alert('Too short', `Record at least ${minDurationSec}s.`);
       return;
     }
     setIsSending(true);
     try {
       const form = new FormData();
       // RN/Expo needs file-like object with uri/name/type
-      form.append("file", {
+      form.append('file', {
         uri: previewUri,
-        name: "voice-note.m4a",
-        type: Platform.select({ ios: "audio/m4a", android: "audio/m4a", default: "audio/m4a" }),
+        name: 'voice-note.m4a',
+        type: Platform.select({ ios: 'audio/m4a', android: 'audio/m4a', default: 'audio/m4a' }),
       } as any);
       await sendVoiceNote(matchId, form);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -197,7 +211,7 @@ export default function VoiceRecorderUltraNative({
       onVoiceNoteSent?.();
     } catch {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Error", "Failed to send voice note. Please try again.");
+      Alert.alert('Error', 'Failed to send voice note. Please try again.');
     } finally {
       setIsSending(false);
     }
@@ -221,7 +235,11 @@ export default function VoiceRecorderUltraNative({
             disabled={disabled}
             style={styles.recBtn(theme)}
           >
-            <Ionicons name={isRecording ? "stop" : "mic"} size={22} color={theme.colors.onPrimary} />
+            <Ionicons
+              name={isRecording ? 'stop' : 'mic'}
+              size={22}
+              color={theme.colors.onPrimary}
+            />
           </TouchableOpacity>
 
           <Text
@@ -233,16 +251,23 @@ export default function VoiceRecorderUltraNative({
           >
             {isRecording
               ? isCancelling
-                ? "Release to cancel"
+                ? 'Release to cancel'
                 : isLocked
                   ? `Tap lock to unlock • ${fmt(durationMs)}`
                   : `Slide ← to cancel • ${fmt(durationMs)}`
-              : "Hold to record"}
+              : 'Hold to record'}
           </Text>
 
           {isRecording && (
-            <TouchableOpacity onPress={toggleLock} style={styles.lockBtn}>
-              <Ionicons name={isLocked ? "lock-closed" : "lock-open"} size={18} color={theme.colors.onPrimary} />
+            <TouchableOpacity
+              onPress={toggleLock}
+              style={styles.lockBtn}
+            >
+              <Ionicons
+                name={isLocked ? 'lock-closed' : 'lock-open'}
+                size={18}
+                color={theme.colors.onPrimary}
+              />
             </TouchableOpacity>
           )}
         </View>
@@ -263,17 +288,35 @@ export default function VoiceRecorderUltraNative({
           </View>
 
           <View style={styles.actions}>
-            <TouchableOpacity onPress={playPause} style={styles.actionBtn(theme)}>
-              <Ionicons name={isPlaying ? "pause" : "play"} size={18} color={theme.colors.onPrimary} />
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={handleCancel} style={styles.actionBtn(theme)}>
-              <Ionicons name="trash" size={18} color={theme.colors.danger} />
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={send} disabled={isSending} style={styles.sendBtn}>
+            <TouchableOpacity
+              onPress={playPause}
+              style={styles.actionBtn(theme)}
+            >
               <Ionicons
-                name={isSending ? "hourglass" : "send"}
+                name={isPlaying ? 'pause' : 'play'}
+                size={18}
+                color={theme.colors.onPrimary}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleCancel}
+              style={styles.actionBtn(theme)}
+            >
+              <Ionicons
+                name="trash"
+                size={18}
+                color={theme.colors.danger}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={send}
+              disabled={isSending}
+              style={styles.sendBtn}
+            >
+              <Ionicons
+                name={isSending ? 'hourglass' : 'send'}
                 size={18}
                 color={isSending ? theme.colors.onMuted : theme.colors.success}
               />
@@ -286,11 +329,11 @@ export default function VoiceRecorderUltraNative({
 }
 
 const styles = StyleSheet.create({
-  wrap: { alignItems: "stretch", padding: 8 },
-  row: { flexDirection: "row", alignItems: "center", justifyContent: "center" },
+  wrap: { alignItems: 'stretch', padding: 8 },
+  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   recWrap: (theme: any) => ({
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 12,
     backgroundColor: theme.colors.surface,
     paddingHorizontal: 12,
@@ -298,36 +341,58 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   }),
   recWrapActive: (theme: any) => ({ backgroundColor: theme.colors.surfaceElevated }),
-  recWrapCancel: (theme: any) => ({ backgroundColor: "rgba(239, 68, 68, 0.15)", borderWidth: 1, borderColor: theme.colors.danger }),
+  recWrapCancel: (theme: any) => ({
+    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+    borderWidth: 1,
+    borderColor: theme.colors.danger,
+  }),
   recBtn: (theme: any) => ({
-    width: 48, height: 48, borderRadius: 24,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: theme.colors.danger,
-    alignItems: "center", justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: theme.colors.shadow,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3, shadowRadius: 8, elevation: 8,
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   }),
   lockBtn: {
-    width: 28, height: 28, borderRadius: 14,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    alignItems: "center", justifyContent: "center",
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  hint: (theme: any) => ({ color: theme.colors.onMuted, fontWeight: "600" as const }),
+  hint: (theme: any) => ({ color: theme.colors.onMuted, fontWeight: '600' as const }),
   hintActive: (theme: any) => ({ color: theme.colors.onPrimary }),
   hintCancel: (theme: any) => ({ color: theme.colors.danger }),
-  card: (theme: any) => ({ marginTop: 12, padding: 12, backgroundColor: theme.colors.card, borderRadius: 12 }),
-  waveRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-  dur: (theme: any) => ({ color: theme.colors.onMuted, fontWeight: "600" as const }),
-  actions: { marginTop: 10, flexDirection: "row", gap: 10, justifyContent: "flex-end" },
+  card: (theme: any) => ({
+    marginTop: 12,
+    padding: 12,
+    backgroundColor: theme.colors.card,
+    borderRadius: 12,
+  }),
+  waveRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  dur: (theme: any) => ({ color: theme.colors.onMuted, fontWeight: '600' as const }),
+  actions: { marginTop: 10, flexDirection: 'row', gap: 10, justifyContent: 'flex-end' },
   actionBtn: (theme: any) => ({
-    width: 40, height: 40, borderRadius: 20,
-    alignItems: "center", justifyContent: "center",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: theme.colors.surface,
   }),
   sendBtn: {
-    width: 44, height: 44, borderRadius: 22,
-    alignItems: "center", justifyContent: "center",
-    backgroundColor: "#D1FAE5",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#D1FAE5',
   },
 });
-

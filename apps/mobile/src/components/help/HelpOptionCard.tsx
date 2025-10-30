@@ -19,7 +19,7 @@ export const HelpOptionCard: React.FC<HelpOptionCardProps> = ({
 }) => {
   const theme = useTheme();
   const styles = makeStyles(theme);
-  
+
   return (
     <Animated.View style={StyleSheet.flatten([styles.optionCard, animatedStyle])}>
       <TouchableOpacity

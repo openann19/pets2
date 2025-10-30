@@ -1,7 +1,7 @@
 /**
  * Ultra Crop Overlay
  * Professional crop overlay with multiple guides, aspect ratios, safe text zones, and inertial re-center
- * 
+ *
  * Features:
  * - Multiple aspect ratios (1:1, 4:5, 9:16, 3:2)
  * - Composition guides: thirds, golden ratio, diagonals, eye-line
@@ -10,10 +10,10 @@
  * - Minimal visual clutter
  */
 
-import React, { useMemo, useRef, useState } from "react";
-import { PanResponder, StyleSheet, View, Text } from "react-native";
+import React, { useMemo, useRef, useState } from 'react';
+import { PanResponder, StyleSheet, View, Text } from 'react-native';
 
-export type Ratio = "1:1" | "4:5" | "9:16" | "3:2";
+export type Ratio = '1:1' | '4:5' | '9:16' | '3:2';
 
 interface CropOverlayUltraProps {
   ratio?: Ratio;
@@ -23,7 +23,7 @@ interface CropOverlayUltraProps {
 }
 
 export function CropOverlayUltra({
-  ratio = "4:5",
+  ratio = '4:5',
   showGuides = true,
   showSafeText = true,
   onDragEnd,
@@ -65,49 +65,52 @@ export function CropOverlayUltra({
           requestAnimationFrame(tick);
         },
       }),
-    [offset, onDragEnd]
+    [offset, onDragEnd],
   );
 
   const guideLines = showGuides ? (
     <>
       {/* Rule of thirds */}
-      <View style={[styles.line, { left: "33.33%" }]} />
-      <View style={[styles.line, { left: "66.66%" }]} />
-      <View style={[styles.hline, { top: "33.33%" }]} />
-      <View style={[styles.hline, { top: "66.66%" }]} />
+      <View style={[styles.line, { left: '33.33%' }]} />
+      <View style={[styles.line, { left: '66.66%' }]} />
+      <View style={[styles.hline, { top: '33.33%' }]} />
+      <View style={[styles.hline, { top: '66.66%' }]} />
 
       {/* Golden ratio (approx 38.2/61.8) */}
-      <View style={[styles.line, { left: "38.2%", opacity: 0.35 }]} />
-      <View style={[styles.line, { left: "61.8%", opacity: 0.35 }]} />
-      <View style={[styles.hline, { top: "38.2%", opacity: 0.35 }]} />
-      <View style={[styles.hline, { top: "61.8%", opacity: 0.35 }]} />
+      <View style={[styles.line, { left: '38.2%', opacity: 0.35 }]} />
+      <View style={[styles.line, { left: '61.8%', opacity: 0.35 }]} />
+      <View style={[styles.hline, { top: '38.2%', opacity: 0.35 }]} />
+      <View style={[styles.hline, { top: '61.8%', opacity: 0.35 }]} />
 
       {/* Diagonals */}
       <View style={styles.diagA} />
       <View style={styles.diagB} />
 
       {/* Eye-line (top third) */}
-      <View style={[styles.hline, { top: "28%", opacity: 0.25 }]} />
+      <View style={[styles.hline, { top: '28%', opacity: 0.25 }]} />
     </>
   ) : null;
 
   const safeText = showSafeText ? (
-    <View pointerEvents="none" style={styles.safeZone} />
+    <View
+      pointerEvents="none"
+      style={styles.safeZone}
+    />
   ) : null;
 
   const box = ratioToBox(ratio);
 
   return (
-    <View style={styles.wrap} {...pan.panHandlers}>
+    <View
+      style={styles.wrap}
+      {...pan.panHandlers}
+    >
       <View
         style={[
           styles.frame,
           box,
           {
-            transform: [
-              { translateX: offset.x },
-              { translateY: offset.y },
-            ],
+            transform: [{ translateX: offset.x }, { translateY: offset.y }],
           },
         ]}
       >
@@ -121,28 +124,21 @@ export function CropOverlayUltra({
 /**
  * Badge overlay for auto-straighten angle and HDR clipping warning
  */
-export function CropBadges({
-  angleDeg,
-  hdrWarning,
-}: {
-  angleDeg?: number;
-  hdrWarning?: boolean;
-}) {
+export function CropBadges({ angleDeg, hdrWarning }: { angleDeg?: number; hdrWarning?: boolean }) {
   return (
-    <View style={styles.badgeWrap} pointerEvents="none">
-      {typeof angleDeg === "number" && Math.abs(angleDeg) > 0.3 && (
-        <View
-          style={[styles.badge, { backgroundColor: "rgba(14,165,233,0.85)" }]}
-        >
+    <View
+      style={styles.badgeWrap}
+      pointerEvents="none"
+    >
+      {typeof angleDeg === 'number' && Math.abs(angleDeg) > 0.3 && (
+        <View style={[styles.badge, { backgroundColor: 'rgba(14,165,233,0.85)' }]}>
           <Text style={styles.badgeTxt}>
-            {angleDeg > 0 ? "↶" : "↷"} {Math.abs(angleDeg).toFixed(1)}°
+            {angleDeg > 0 ? '↶' : '↷'} {Math.abs(angleDeg).toFixed(1)}°
           </Text>
         </View>
       )}
       {hdrWarning && (
-        <View
-          style={[styles.badge, { backgroundColor: "rgba(239,68,68,0.9)" }]}
-        >
+        <View style={[styles.badge, { backgroundColor: 'rgba(239,68,68,0.9)' }]}>
           <Text style={styles.badgeTxt}>HDR CLIP</Text>
         </View>
       )}
@@ -152,13 +148,13 @@ export function CropBadges({
 
 const ratioToBox = (ratio: string) => {
   switch (ratio) {
-    case "1:1":
+    case '1:1':
       return { aspectRatio: 1 / 1 };
-    case "4:5":
+    case '4:5':
       return { aspectRatio: 4 / 5 };
-    case "9:16":
+    case '9:16':
       return { aspectRatio: 9 / 16 };
-    case "3:2":
+    case '3:2':
       return { aspectRatio: 3 / 2 };
     default:
       return { aspectRatio: 1 };
@@ -167,66 +163,66 @@ const ratioToBox = (ratio: string) => {
 
 const styles = StyleSheet.create({
   wrap: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   frame: {
-    width: "90%",
+    width: '90%',
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.7)",
-    position: "relative",
+    borderColor: 'rgba(255,255,255,0.7)',
+    position: 'relative',
   },
   line: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     bottom: 0,
     width: 1,
-    backgroundColor: "rgba(255,255,255,0.6)",
+    backgroundColor: 'rgba(255,255,255,0.6)',
   },
   hline: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     right: 0,
     height: 1,
-    backgroundColor: "rgba(255,255,255,0.6)",
+    backgroundColor: 'rgba(255,255,255,0.6)',
   },
   diagA: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
     borderLeftWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "rgba(255,255,255,0.25)",
-    transform: [{ rotate: "45deg" }],
+    borderColor: 'rgba(255,255,255,0.25)',
+    transform: [{ rotate: '45deg' }],
   },
   diagB: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
     borderRightWidth: 1,
     borderTopWidth: 1,
-    borderColor: "rgba(255,255,255,0.25)",
-    transform: [{ rotate: "45deg" }],
+    borderColor: 'rgba(255,255,255,0.25)',
+    transform: [{ rotate: '45deg' }],
   },
   safeZone: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    height: "15%",
-    backgroundColor: "rgba(0,0,0,0.18)",
+    height: '15%',
+    backgroundColor: 'rgba(0,0,0,0.18)',
   },
   badgeWrap: {
-    position: "absolute",
+    position: 'absolute',
     top: 12,
     right: 12,
     gap: 8,
@@ -237,9 +233,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   badgeTxt: {
-    color: "#fff",
-    fontWeight: "700",
+    color: '#fff',
+    fontWeight: '700',
     fontSize: 12,
   },
 });
-

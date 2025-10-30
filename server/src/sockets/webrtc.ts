@@ -1,32 +1,46 @@
 import jwt from 'jsonwebtoken';
+import type { JwtPayload } from 'jsonwebtoken';
 import logger from '../utils/logger';
 import Match from '../models/Match';
+import type { SocketIOServer, Socket } from 'socket.io';
+import type { NextFunction } from 'express';
+import type {
+  AuthenticatedSocket,
+  WebRTCCallData,
+  WebRTCAnswerData,
+  WebRTCRejectData,
+  WebRTCSignalOfferData,
+  WebRTCSignalAnswerData,
+  WebRTCIceCandidateData,
+  WebRTCCallEndData,
+  WebRTCActiveCall,
+} from '../types/socket';
 
-export default function attachWebRTCNamespace(io: any) {
+export default function attachWebRTCNamespace(io: SocketIOServer) {
   const nsp = io.of('/webrtc');
 
   // Store active calls and user connections
-  const activeCalls = new Map(); // callId -> { caller, callee, status }
-  const userSockets = new Map(); // userId -> socketId
-  const socketUsers = new Map(); // socketId -> userId
+  const activeCalls = new Map<string, WebRTCActiveCall>(); // callId -> call info
+  const userSockets = new Map<string, string>(); // userId -> socketId
+  const socketUsers = new Map<string, string>(); // socketId -> userId
 
   // Middleware for authentication
-  nsp.use((socket: any, next: any) => {
+  nsp.use((socket: AuthenticatedSocket, next: NextFunction) => {
     const token = socket.handshake.auth.token;
     if (!token) {
       return next(new Error('Authentication error'));
     }
 
     try {
-      const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-      socket.userId = decoded.id;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+      socket.userId = decoded.id as string;
       next();
     } catch {
       return next(new Error('Invalid token'));
     }
   });
 
-  nsp.on('connection', (socket: any) => {
+  nsp.on('connection', (socket: AuthenticatedSocket) => {
     logger.info('WebRTC client connected', { socketId: socket.id, userId: socket.userId });
     
     // Store user-socket mapping
@@ -37,8 +51,8 @@ export default function attachWebRTCNamespace(io: any) {
     socket.join(`user:${socket.userId}`);
 
     // Handle call initiation
-    socket.on('initiate-call', async (callData: any) => {
-      let callId = null;
+    socket.on('initiate-call', async (callData: WebRTCCallData) => {
+      let callId: string | null = null;
       try {
         const { callId: extractedCallId, matchId, callerId, callerName, callType } = callData;
         callId = extractedCallId;
@@ -52,9 +66,10 @@ export default function attachWebRTCNamespace(io: any) {
         }
 
         // Determine the other user ID based on which participant is the caller
-        const otherUserId = (match as any).user1?.toString() === callerId 
-          ? (match as any).user2?.toString() 
-          : (match as any).user1?.toString();
+        const matchObj = match.toObject() as { user1: { toString: () => string } | string; user2: { toString: () => string } | string };
+        const user1Id = typeof matchObj.user1 === 'string' ? matchObj.user1 : matchObj.user1?.toString();
+        const user2Id = typeof matchObj.user2 === 'string' ? matchObj.user2 : matchObj.user2?.toString();
+        const otherUserId = user1Id === callerId ? user2Id : user1Id;
         
         if (!otherUserId) {
           logger.error('Could not determine other user from match', { matchId, callerId });
@@ -63,14 +78,16 @@ export default function attachWebRTCNamespace(io: any) {
         }
 
         // Store call information
-        activeCalls.set(callId, {
-          callerId,
-          calleeId: otherUserId,
-          matchId,
-          callType,
-          status: 'ringing',
-          startTime: Date.now()
-        });
+        if (otherUserId && callId) {
+          activeCalls.set(callId, {
+            callerId,
+            calleeId: otherUserId,
+            matchId,
+            callType,
+            status: 'ringing',
+            startTime: Date.now()
+          });
+        }
 
         // Send incoming call to the other user
         const calleeSocketId = userSockets.get(otherUserId);
@@ -88,14 +105,15 @@ export default function attachWebRTCNamespace(io: any) {
           socket.emit('call-error', { message: 'User is offline' });
           activeCalls.delete(callId);
         }
-      } catch (error: any) {
-        logger.error('Error initiating call:', { error: error.message, callId, callerId: socket.userId });
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logger.error('Error initiating call:', { error: errorMessage, callId, callerId: socket.userId });
         socket.emit('call-error', { message: 'Failed to initiate call' });
       }
     });
 
     // Handle call answer
-    socket.on('answer-call', (data: any) => {
+    socket.on('answer-call', (data: WebRTCAnswerData) => {
       const { callId, matchId } = data;
       const call = activeCalls.get(callId);
       
@@ -105,7 +123,7 @@ export default function attachWebRTCNamespace(io: any) {
       }
 
       // Update call status
-      call.status = 'answered';
+      call.status = 'active';
       call.answeredTime = Date.now();
 
       // Notify caller that call was answered
@@ -116,7 +134,7 @@ export default function attachWebRTCNamespace(io: any) {
     });
 
     // Handle call rejection
-    socket.on('reject-call', (data: any) => {
+    socket.on('reject-call', (data: WebRTCRejectData) => {
       const { callId } = data;
       const call = activeCalls.get(callId);
       
@@ -132,7 +150,7 @@ export default function attachWebRTCNamespace(io: any) {
     });
 
     // Handle call end
-    socket.on('end-call', (data: any) => {
+    socket.on('end-call', (data: WebRTCCallEndData) => {
       const { callId } = data;
       const call = activeCalls.get(callId);
       
@@ -141,9 +159,9 @@ export default function attachWebRTCNamespace(io: any) {
         const callerSocketId = userSockets.get(call.callerId);
         const calleeSocketId = userSockets.get(call.calleeId);
         
-        [callerSocketId, calleeSocketId].forEach((socketId: any) => {
+        [callerSocketId, calleeSocketId].forEach((socketId: string | undefined) => {
           if (socketId && socketId !== socket.id) {
-            nsp.to(socketId).emit('call-ended', { callId, reason: 'ended' });
+            nsp.to(socketId).emit('call-ended', { callId, reason: data.reason || 'ended' });
           }
         });
         
@@ -156,7 +174,7 @@ export default function attachWebRTCNamespace(io: any) {
     });
 
     // WebRTC signaling events
-    socket.on('webrtc-offer', (data: any) => {
+    socket.on('webrtc-offer', (data: WebRTCSignalOfferData) => {
       const { callId, offer } = data;
       const call = activeCalls.get(callId);
       
@@ -170,7 +188,7 @@ export default function attachWebRTCNamespace(io: any) {
       }
     });
 
-    socket.on('webrtc-answer', (data: any) => {
+    socket.on('webrtc-answer', (data: WebRTCSignalAnswerData) => {
       const { callId, answer } = data;
       const call = activeCalls.get(callId);
       
@@ -184,7 +202,7 @@ export default function attachWebRTCNamespace(io: any) {
       }
     });
 
-    socket.on('webrtc-ice-candidate', (data: any) => {
+    socket.on('webrtc-ice-candidate', (data: WebRTCIceCandidateData) => {
       const { callId, candidate } = data;
       const call = activeCalls.get(callId);
       
@@ -238,7 +256,7 @@ export default function attachWebRTCNamespace(io: any) {
         const callerSocketId = userSockets.get(call.callerId);
         const calleeSocketId = userSockets.get(call.calleeId);
         
-        [callerSocketId, calleeSocketId].forEach((socketId: any) => {
+        [callerSocketId, calleeSocketId].forEach((socketId: string | undefined) => {
           if (socketId) {
             nsp.to(socketId).emit('call-ended', { callId, reason: 'admin' });
           }

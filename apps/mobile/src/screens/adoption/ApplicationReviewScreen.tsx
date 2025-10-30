@@ -138,20 +138,17 @@ const ApplicationReviewScreen = ({ navigation, route }: ApplicationReviewScreenP
 
   const handleContactEmail = async () => {
     if (!application) return;
-    
+
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       const emailUrl = `mailto:${application.applicantEmail}?subject=Adoption Application - ${application.petName}`;
-      
+
       const canOpen = await Linking.canOpenURL(emailUrl);
       if (canOpen) {
         await Linking.openURL(emailUrl);
         logger.info('Email opened', { email: application.applicantEmail });
       } else {
-        Alert.alert(
-          'Email Not Available',
-          `Please email us at ${application.applicantEmail}`,
-        );
+        Alert.alert('Email Not Available', `Please email us at ${application.applicantEmail}`);
       }
     } catch (error) {
       logger.error('Failed to open email', { error });
@@ -164,20 +161,17 @@ const ApplicationReviewScreen = ({ navigation, route }: ApplicationReviewScreenP
 
   const handleContactCall = async () => {
     if (!application) return;
-    
+
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       const phoneUrl = `tel:${application.applicantPhone}`;
-      
+
       const canOpen = await Linking.canOpenURL(phoneUrl);
       if (canOpen) {
         await Linking.openURL(phoneUrl);
         logger.info('Phone call initiated', { phone: application.applicantPhone });
       } else {
-        Alert.alert(
-          'Call Not Available',
-          `Please call ${application.applicantPhone}`,
-        );
+        Alert.alert('Call Not Available', `Please call ${application.applicantPhone}`);
       }
     } catch (error) {
       logger.error('Failed to initiate call', { error });
@@ -190,20 +184,17 @@ const ApplicationReviewScreen = ({ navigation, route }: ApplicationReviewScreenP
 
   const handleContactMessage = async () => {
     if (!application) return;
-    
+
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       const smsUrl = `sms:${application.applicantPhone}`;
-      
+
       const canOpen = await Linking.canOpenURL(smsUrl);
       if (canOpen) {
         await Linking.openURL(smsUrl);
         logger.info('SMS opened', { phone: application.applicantPhone });
       } else {
-        Alert.alert(
-          'SMS Not Available',
-          `Please send a message to ${application.applicantPhone}`,
-        );
+        Alert.alert('SMS Not Available', `Please send a message to ${application.applicantPhone}`);
       }
     } catch (error) {
       logger.error('Failed to open SMS', { error });

@@ -3,54 +3,53 @@
  * Displays overview metrics for admin dashboard
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import type { AdminStats } from "../types";
-import { useTheme } from "@mobile/theme";
-import type { AppTheme } from "@mobile/theme";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import type { AdminStats } from '../types';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  metricsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  metricCard: {
-    width: "48%",
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  metricHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  metricTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-  metricValue: {
-    fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  metricDetails: {
-    gap: 4,
-  },
-  metricDetail: {
-    fontSize: 12,
-  },
-});
+    metricsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
+    },
+    metricCard: {
+      width: '48%',
+      borderRadius: 16,
+      padding: 16,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    metricHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    metricTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      marginLeft: 8,
+    },
+    metricValue: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      marginBottom: 8,
+    },
+    metricDetails: {
+      gap: 4,
+    },
+    metricDetail: {
+      fontSize: 12,
+    },
+  });
 }
-
 
 interface DashboardMetricsSectionProps {
   stats: AdminStats;
@@ -62,9 +61,7 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-export const DashboardMetricsSection: React.FC<DashboardMetricsSectionProps> = ({
-  stats,
-}) => {
+export const DashboardMetricsSection: React.FC<DashboardMetricsSectionProps> = ({ stats }) => {
   const theme = useTheme();
   const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
   const { colors, palette } = theme;
@@ -74,7 +71,11 @@ export const DashboardMetricsSection: React.FC<DashboardMetricsSectionProps> = (
       {/* Users Stats */}
       <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
-          <Ionicons name="people" size={24} color={colors.primary} />
+          <Ionicons
+            name="people"
+            size={24}
+            color={colors.primary}
+          />
           <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Users</Text>
         </View>
         <Text style={[styles.metricValue, { color: colors.onSurface }]}>
@@ -93,7 +94,11 @@ export const DashboardMetricsSection: React.FC<DashboardMetricsSectionProps> = (
       {/* Pets Stats */}
       <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
-          <Ionicons name="paw" size={24} color={colors.primary} />
+          <Ionicons
+            name="paw"
+            size={24}
+            color={colors.primary}
+          />
           <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Pets</Text>
         </View>
         <Text style={[styles.metricValue, { color: colors.onSurface }]}>
@@ -112,7 +117,11 @@ export const DashboardMetricsSection: React.FC<DashboardMetricsSectionProps> = (
       {/* Matches Stats */}
       <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
-          <Ionicons name="heart" size={24} color={colors.primary} />
+          <Ionicons
+            name="heart"
+            size={24}
+            color={colors.primary}
+          />
           <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Matches</Text>
         </View>
         <Text style={[styles.metricValue, { color: colors.onSurface }]}>
@@ -131,7 +140,11 @@ export const DashboardMetricsSection: React.FC<DashboardMetricsSectionProps> = (
       {/* Messages Stats */}
       <View style={[styles.metricCard, { backgroundColor: colors.surface }]}>
         <View style={styles.metricHeader}>
-          <Ionicons name="chatbubble" size={24} color={colors.primary} />
+          <Ionicons
+            name="chatbubble"
+            size={24}
+            color={colors.primary}
+          />
           <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Messages</Text>
         </View>
         <Text style={[styles.metricValue, { color: colors.onSurface }]}>

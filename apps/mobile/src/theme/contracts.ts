@@ -102,6 +102,9 @@ export type AppTheme = {
   easing: EasingScale;
   typography: Typography;
   palette: Palette;
+  utils: {
+    alpha: (color: string, opacity: number) => string;
+  };
 };
 
 export type Theme = AppTheme;

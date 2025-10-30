@@ -4,7 +4,6 @@ import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
 import {
   Animated,
-  Dimensions,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -12,8 +11,6 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface PawPullToRefreshProps {
   children: React.ReactNode;
@@ -103,26 +100,9 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
       return () => {
         scratchAnimation.stop();
       };
-    } else {
-      // Reset animations when not refreshing
-      Animated.parallel([
-        Animated.timing(pawRotation, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scratchOffset, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pawScale, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
     }
+    // No cleanup needed when not refreshing
+    return undefined;
   }, [refreshing, pawRotation, pawScale, scratchOffset]);
 
   // Custom refresh control with paw animation

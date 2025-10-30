@@ -37,16 +37,16 @@ export class PermissionDeniedError extends Error {
 export async function checkMicrophonePermission(): Promise<PermissionResult> {
   try {
     const { status } = await Audio.getPermissionsAsync();
-    
+
     if (status === 'granted') {
       return { granted: true, denied: false, blocked: false, canAskAgain: true };
     }
 
     if (status === 'denied') {
-      const canAskAgain = await Audio.requestPermissionsAsync().then(
-        (r) => r.status !== 'denied',
-      ).catch(() => false);
-      
+      const canAskAgain = await Audio.requestPermissionsAsync()
+        .then((r) => r.status !== 'denied')
+        .catch(() => false);
+
       return {
         granted: false,
         denied: true,
@@ -58,7 +58,7 @@ export async function checkMicrophonePermission(): Promise<PermissionResult> {
     // Request permission
     const result = await Audio.requestPermissionsAsync();
     const granted = result.status === 'granted';
-    
+
     return {
       granted,
       denied: !granted,
@@ -84,16 +84,16 @@ export async function checkMicrophonePermission(): Promise<PermissionResult> {
 export async function checkCameraPermission(): Promise<PermissionResult> {
   try {
     const { status } = await Camera.getCameraPermissionsAsync();
-    
+
     if (status === 'granted') {
       return { granted: true, denied: false, blocked: false, canAskAgain: true };
     }
 
     if (status === 'denied') {
-      const canAskAgain = await Camera.requestCameraPermissionsAsync().then(
-        (r) => r.status !== 'denied',
-      ).catch(() => false);
-      
+      const canAskAgain = await Camera.requestCameraPermissionsAsync()
+        .then((r) => r.status !== 'denied')
+        .catch(() => false);
+
       return {
         granted: false,
         denied: true,
@@ -105,7 +105,7 @@ export async function checkCameraPermission(): Promise<PermissionResult> {
     // Request permission
     const result = await Camera.requestCameraPermissionsAsync();
     const granted = result.status === 'granted';
-    
+
     return {
       granted,
       denied: !granted,
@@ -132,12 +132,14 @@ export async function checkMediaPermissions(
   requireVideo: boolean = true,
 ): Promise<MediaPermissionsResult> {
   const audioResult = await checkMicrophonePermission();
-  const videoResult = requireVideo ? await checkCameraPermission() : {
-    granted: true,
-    denied: false,
-    blocked: false,
-    canAskAgain: true,
-  };
+  const videoResult = requireVideo
+    ? await checkCameraPermission()
+    : {
+        granted: true,
+        denied: false,
+        blocked: false,
+        canAskAgain: true,
+      };
 
   const allGranted = audioResult.granted && videoResult.granted;
 
@@ -209,10 +211,10 @@ export async function openAppSettings(): Promise<void> {
     } else {
       await Linking.openSettings();
     }
-    } catch (error) {
-      logger.error('Failed to open app settings', {
-        error: error instanceof Error ? error : new Error(String(error)),
-      });
+  } catch (error) {
+    logger.error('Failed to open app settings', {
+      error: error instanceof Error ? error : new Error(String(error)),
+    });
     // Fallback to platform-specific settings
     try {
       await Linking.openSettings();
@@ -223,4 +225,3 @@ export async function openAppSettings(): Promise<void> {
     }
   }
 }
-

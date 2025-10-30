@@ -13,7 +13,12 @@ jest.mock('@expo/vector-icons', () => ({
   Ionicons: ({ name }: any) => <test-element name={name} />,
 }));
 jest.mock('../common/SmartImage', () => ({
-  SmartImage: ({ source, style }: any) => <test-element source={source.uri} style={style} />,
+  SmartImage: ({ source, style }: any) => (
+    <test-element
+      source={source.uri}
+      style={style}
+    />
+  ),
 }));
 
 // Mock react-native-gesture-handler
@@ -51,7 +56,7 @@ describe('BeforeAfterSlider', () => {
           originalUri={mockOriginalUri}
           editedUri={mockEditedUri}
           onClose={mockOnClose}
-        />
+        />,
       );
 
       expect(getByText('Before')).toBeTruthy();
@@ -65,7 +70,7 @@ describe('BeforeAfterSlider', () => {
           originalUri={mockOriginalUri}
           editedUri={mockEditedUri}
           onClose={mockOnClose}
-        />
+        />,
       );
 
       const images = UNSAFE_getAllByType('test-element');
@@ -78,7 +83,7 @@ describe('BeforeAfterSlider', () => {
           originalUri={mockOriginalUri}
           editedUri={mockEditedUri}
           onClose={mockOnClose}
-        />
+        />,
       );
 
       const icons = UNSAFE_getAllByType('test-element');
@@ -94,7 +99,7 @@ describe('BeforeAfterSlider', () => {
           originalUri={mockOriginalUri}
           editedUri={mockEditedUri}
           onClose={mockOnClose}
-        />
+        />,
       );
 
       const closeButton = getByText('Close compare').parent;
@@ -110,7 +115,7 @@ describe('BeforeAfterSlider', () => {
           originalUri={mockOriginalUri}
           editedUri={mockEditedUri}
           onClose={mockOnClose}
-        />
+        />,
       );
 
       // Simulate background tap
@@ -129,7 +134,7 @@ describe('BeforeAfterSlider', () => {
           originalUri={mockOriginalUri}
           editedUri={mockEditedUri}
           onClose={mockOnClose}
-        />
+        />,
       );
 
       expect(mockPanGesture.onBegin).toHaveBeenCalled();
@@ -143,7 +148,7 @@ describe('BeforeAfterSlider', () => {
           originalUri={mockOriginalUri}
           editedUri={mockEditedUri}
           onClose={mockOnClose}
-        />
+        />,
       );
 
       // Trigger gesture begin handler
@@ -153,9 +158,7 @@ describe('BeforeAfterSlider', () => {
       }
 
       // Verify haptics were called during gesture setup
-      expect(Haptics.impactAsync).toHaveBeenCalledWith(
-        Haptics.ImpactFeedbackStyle.Light
-      );
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Light);
     });
   });
 
@@ -166,7 +169,7 @@ describe('BeforeAfterSlider', () => {
           originalUri=""
           editedUri=""
           onClose={mockOnClose}
-        />
+        />,
       );
 
       expect(getByText('Before')).toBeTruthy();
@@ -179,7 +182,7 @@ describe('BeforeAfterSlider', () => {
           originalUri={mockOriginalUri}
           editedUri={mockEditedUri}
           onClose={mockOnClose}
-        />
+        />,
       );
 
       // Rapidly mount/unmount
@@ -189,7 +192,7 @@ describe('BeforeAfterSlider', () => {
             originalUri={mockOriginalUri}
             editedUri={mockEditedUri}
             onClose={mockOnClose}
-          />
+          />,
         );
       }
 
@@ -205,7 +208,7 @@ describe('BeforeAfterSlider', () => {
           originalUri={mockOriginalUri}
           editedUri={mockEditedUri}
           onClose={mockOnClose}
-        />
+        />,
       );
 
       // Labels should be present

@@ -1,5 +1,41 @@
-import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from '@pawfectmatch/design-tokens';
+import { COLORS, RADIUS, SPACING } from '@pawfectmatch/design-tokens';
 import { Dimensions, Platform, StyleSheet } from 'react-native';
+
+// Typography data (fallback since design-tokens TYPOGRAPHY is not available)
+const TYPOGRAPHY_DATA = {
+  fontSizes: {
+    'xs': '0.75rem',
+    'sm': '0.875rem',
+    'base': '1rem',
+    'lg': '1.125rem',
+    'xl': '1.25rem',
+    '2xl': '1.5rem',
+    '3xl': '1.875rem',
+    '4xl': '2.25rem',
+    '5xl': '3rem',
+    '6xl': '3.75rem',
+  },
+  fontWeights: {
+    thin: '100',
+    light: '300',
+    normal: '400',
+    medium: '500',
+    semibold: '600',
+    bold: '700',
+    extrabold: '800',
+    black: '900',
+  },
+  lineHeights: {
+    tight: '1.25',
+    normal: '1.5',
+    relaxed: '1.625',
+  },
+  letterSpacing: {
+    tight: '-0.025em',
+    normal: '0em',
+    wide: '0.025em',
+  },
+} as const;
 
 // Lazy load dimensions to avoid issues in test environment
 const getScreenDimensions = () => {
@@ -85,28 +121,28 @@ const Colors = {
 
 // Legacy typography mappings
 const Typography = {
-  weights: TYPOGRAPHY.fontWeights,
+  weights: TYPOGRAPHY_DATA.fontWeights,
   sizes: {
-    'xs': parseFloat(TYPOGRAPHY.fontSizes.xs),
-    'sm': parseFloat(TYPOGRAPHY.fontSizes.sm),
-    'base': parseFloat(TYPOGRAPHY.fontSizes.base),
-    'lg': parseFloat(TYPOGRAPHY.fontSizes.lg),
-    'xl': parseFloat(TYPOGRAPHY.fontSizes.xl),
-    '2xl': parseFloat(TYPOGRAPHY.fontSizes['2xl']),
-    '3xl': parseFloat(TYPOGRAPHY.fontSizes['3xl']),
-    '4xl': parseFloat(TYPOGRAPHY.fontSizes['4xl']),
-    '5xl': parseFloat(TYPOGRAPHY.fontSizes['5xl']),
-    '6xl': parseFloat(TYPOGRAPHY.fontSizes['6xl']),
+    'xs': parseFloat(TYPOGRAPHY_DATA.fontSizes.xs.replace('rem', '')),
+    'sm': parseFloat(TYPOGRAPHY_DATA.fontSizes.sm.replace('rem', '')),
+    'base': parseFloat(TYPOGRAPHY_DATA.fontSizes.base.replace('rem', '')),
+    'lg': parseFloat(TYPOGRAPHY_DATA.fontSizes.lg.replace('rem', '')),
+    'xl': parseFloat(TYPOGRAPHY_DATA.fontSizes.xl.replace('rem', '')),
+    '2xl': parseFloat(TYPOGRAPHY_DATA.fontSizes['2xl'].replace('rem', '')),
+    '3xl': parseFloat(TYPOGRAPHY_DATA.fontSizes['3xl'].replace('rem', '')),
+    '4xl': parseFloat(TYPOGRAPHY_DATA.fontSizes['4xl'].replace('rem', '')),
+    '5xl': parseFloat(TYPOGRAPHY_DATA.fontSizes['5xl'].replace('rem', '')),
+    '6xl': parseFloat(TYPOGRAPHY_DATA.fontSizes['6xl'].replace('rem', '')),
   },
   lineHeights: {
-    tight: parseFloat(TYPOGRAPHY.lineHeights.tight),
-    normal: parseFloat(TYPOGRAPHY.lineHeights.normal),
-    relaxed: parseFloat(TYPOGRAPHY.lineHeights.relaxed),
+    tight: parseFloat(TYPOGRAPHY_DATA.lineHeights.tight),
+    normal: parseFloat(TYPOGRAPHY_DATA.lineHeights.normal),
+    relaxed: parseFloat(TYPOGRAPHY_DATA.lineHeights.relaxed),
   },
   letterSpacing: {
-    tight: parseFloat(TYPOGRAPHY.letterSpacing.tight),
-    normal: parseFloat(TYPOGRAPHY.letterSpacing.normal),
-    wide: parseFloat(TYPOGRAPHY.letterSpacing.wide),
+    tight: parseFloat(TYPOGRAPHY_DATA.letterSpacing.tight.replace('em', '')),
+    normal: parseFloat(TYPOGRAPHY_DATA.letterSpacing.normal.replace('em', '')),
+    wide: parseFloat(TYPOGRAPHY_DATA.letterSpacing.wide.replace('em', '')),
   },
 };
 

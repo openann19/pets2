@@ -36,7 +36,7 @@ export function Card({
   const theme = useTheme();
   const paddingValue = paddingMap[padding];
   const radiusValue = theme.radius[radius];
-  
+
   const getBackgroundColor = () => {
     const { colors } = theme;
     switch (variant) {
@@ -71,7 +71,10 @@ export function Card({
   ]);
 
   return (
-    <AnimatedCard style={cardStyle} {...rest}>
+    <AnimatedCard
+      style={cardStyle}
+      {...rest}
+    >
       {children}
     </AnimatedCard>
   );

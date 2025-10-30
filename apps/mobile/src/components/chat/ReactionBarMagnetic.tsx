@@ -9,7 +9,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { useReduceMotion } from '../hooks/useReducedMotion';
+import { useReduceMotion } from '../../hooks/useReducedMotion';
 
 export type ReactionItem = { emoji: string; label?: string };
 export interface ReactionBarMagneticProps {

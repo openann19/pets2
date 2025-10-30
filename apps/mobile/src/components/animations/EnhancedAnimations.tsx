@@ -3,7 +3,7 @@ import type { ViewStyle, TextStyle } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { Animated, Easing, Dimensions } from 'react-native';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get('window');
 
 // Enhanced Animation Hooks and Components
 
@@ -424,7 +424,7 @@ export const customEasing = {
   quickOut: Easing.bezier(0.25, 0.46, 0.45, 0.94),
 
   // Physics-based
-  spring: (tension = 100, friction = 8) => Easing.out(Easing.poly(tension / 100)),
+  spring: (tension = 100, _friction = 8) => Easing.out(Easing.poly(tension / 100)),
 };
 
 // Animation Presets

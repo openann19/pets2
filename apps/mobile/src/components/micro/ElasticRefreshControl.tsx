@@ -45,7 +45,7 @@ export function ElasticRefreshControl({
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       const offset = event.contentOffset.y;
-      
+
       // Only track negative scroll (pulling down)
       if (offset < 0 && !isRefreshing.value) {
         scrollY.value = Math.abs(offset);
@@ -65,18 +65,13 @@ export function ElasticRefreshControl({
 
       // Scale up to 1.15 as user pulls
       const maxPull = 80; // pixels
-      const targetScale = interpolate(
-        current,
-        [0, maxPull],
-        [1, 1.15],
-        Extrapolate.CLAMP
-      );
-      
+      const targetScale = interpolate(current, [0, maxPull], [1, 1.15], Extrapolate.CLAMP);
+
       scaleY.value = withTiming(targetScale, {
         duration: motion.duration.fast,
         easing: getEasingArray('standard'),
       });
-    }
+    },
   );
 
   // Handle refresh trigger
@@ -112,7 +107,10 @@ export function ElasticRefreshControl({
  * Hook to use elastic pull-to-refresh with scroll handler
  * Returns scroll handler and refresh control props
  */
-export function useElasticPullToRefresh(onRefresh: () => Promise<void> | void, refreshing: boolean) {
+export function useElasticPullToRefresh(
+  onRefresh: () => Promise<void> | void,
+  refreshing: boolean,
+) {
   const guards = useMotionGuards();
   const scrollY = useSharedValue(0);
   const isRefreshing = useSharedValue(refreshing);
@@ -124,7 +122,7 @@ export function useElasticPullToRefresh(onRefresh: () => Promise<void> | void, r
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       const offset = event.contentOffset.y;
-      
+
       if (offset < 0 && !isRefreshing.value) {
         scrollY.value = Math.abs(offset);
       } else {
@@ -143,4 +141,3 @@ export function useElasticPullToRefresh(onRefresh: () => Promise<void> | void, r
     ),
   };
 }
-

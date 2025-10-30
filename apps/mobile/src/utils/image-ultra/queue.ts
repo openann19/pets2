@@ -1,9 +1,29 @@
-/**
- * Abortable Worker Queue
- * Manages concurrent image processing tasks with cancellation support
- * Prevents memory leaks and allows mid-operation cancellation
- */
+export interface WorkItem {
+  id: string;
+  run: () => Promise<void>;
+}
 
+export class AsyncQueue<T extends WorkItem> {
+  private q: T[] = [];
+  private running = false;
+
+  enqueue(item: T) { this.q.push(item); void this.drain(); }
+
+  private async drain() {
+    if (this.running) return;
+    this.running = true;
+    try {
+      while (this.q.length) {
+        const next = this.q.shift()!;
+        await next.run();
+      }
+    } finally {
+      this.running = false;
+    }
+  }
+}
+
+// Legacy queue for backward compatibility
 export type Task<T> = (signal: AbortSignal) => Promise<T>;
 
 export class AbortableQueue {

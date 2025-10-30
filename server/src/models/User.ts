@@ -225,7 +225,7 @@ const userSchema = new mongoose.Schema({
   stripeCustomerId: String,
   premium: {
     isActive: { type: Boolean, default: false },
-    plan: { type: String, enum: ['basic', 'premium', 'ultimate'], default: 'basic' },
+    plan: { type: String, enum: ['free', 'premium', 'ultimate'], default: 'free' },
     expiresAt: Date,
     stripeSubscriptionId: String,
     cancelAtPeriodEnd: { type: Boolean, default: false },
@@ -241,14 +241,16 @@ const userSchema = new mongoose.Schema({
     },
     usage: {
       swipesUsed: { type: Number, default: 0 },
-      swipesLimit: { type: Number, default: 50 },
+      swipesLimit: { type: Number, default: 5 }, // Business Model: 5 daily swipes for free users
       superLikesUsed: { type: Number, default: 0 },
-      superLikesLimit: { type: Number, default: 0 },
+      superLikesLimit: { type: Number, default: 0 }, // Free users get 0, must purchase via IAP
       boostsUsed: { type: Number, default: 0 },
       boostsLimit: { type: Number, default: 0 },
       messagesSent: { type: Number, default: 0 },
       profileViews: { type: Number, default: 0 },
-      rewindsUsed: { type: Number, default: 0 }
+      rewindsUsed: { type: Number, default: 0 },
+      iapSuperLikes: { type: Number, default: 0 }, // IAP purchased Super Likes balance
+      iapBoosts: { type: Number, default: 0 } // IAP purchased Boosts balance
     }
   },
 

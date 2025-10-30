@@ -18,7 +18,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { ReactNode } from 'react';
 import { useMemo, useEffect } from 'react';
 import { View, StyleSheet, type ViewStyle } from 'react-native';
-import Animated, { useAnimatedStyle, type AnimatedStyleProp } from 'react-native-reanimated';
+import Animated, { type AnimatedStyleProp } from 'react-native-reanimated';
 
 import { useGlowAnimation, useEntranceAnimation } from '../../hooks/useUnifiedAnimations';
 import { useShimmerEffect } from '../../hooks/usePremiumAnimations';
@@ -58,14 +58,14 @@ const FXContainer: React.FC<FXContainerProps> = ({
   entranceType = 'slideIn',
   glowColor,
   glowIntensity = 1,
-  shimmerDuration = 2000,
-  gradientName,
+  shimmerDuration: _shimmerDuration = 2000,
+  gradientName: _gradientName,
   gradientColors,
   style,
   disabled = false,
 }) => {
   const theme = useTheme();
-  
+
   // Get base styles based on type and variant
   const baseStyles = useMemo(() => {
     const styles: ViewStyle = {

@@ -3,10 +3,10 @@
  * Tests for config application and safety guards
  */
 
-import { 
-  configToTheme, 
-  getMotionConfig, 
-  shouldRespectReducedMotion, 
+import {
+  configToTheme,
+  getMotionConfig,
+  shouldRespectReducedMotion,
   getLowEndDevicePolicy,
   applyMicroInteractionGuards,
 } from '../apply';
@@ -138,11 +138,7 @@ describe('UI Config Apply', () => {
         },
       };
 
-      const guarded = applyMicroInteractionGuards(
-        configWithGuard.microInteractions,
-        true,
-        false,
-      );
+      const guarded = applyMicroInteractionGuards(configWithGuard.microInteractions, true, false);
 
       expect(guarded.pressFeedback.enabled).toBe(false);
       expect(guarded.successMorph.enabled).toBe(false);
@@ -162,11 +158,7 @@ describe('UI Config Apply', () => {
         },
       };
 
-      const guarded = applyMicroInteractionGuards(
-        configWithPolicy.microInteractions,
-        false,
-        true,
-      );
+      const guarded = applyMicroInteractionGuards(configWithPolicy.microInteractions, false, true);
 
       expect(guarded.pressFeedback.enabled).toBe(false);
       expect(guarded.confettiLite.enabled).toBe(false);
@@ -185,11 +177,7 @@ describe('UI Config Apply', () => {
         },
       };
 
-      const guarded = applyMicroInteractionGuards(
-        configWithPolicy.microInteractions,
-        false,
-        true,
-      );
+      const guarded = applyMicroInteractionGuards(configWithPolicy.microInteractions, false, true);
 
       // Heavy animations disabled, but lighter ones may remain
       expect(guarded.confettiLite.enabled).toBe(false);
@@ -199,14 +187,9 @@ describe('UI Config Apply', () => {
       mockUseReduceMotion.mockReturnValue(false);
       mockIsLowEndDevice.mockReturnValue(false);
 
-      const guarded = applyMicroInteractionGuards(
-        config.microInteractions,
-        false,
-        false,
-      );
+      const guarded = applyMicroInteractionGuards(config.microInteractions, false, false);
 
       expect(guarded.pressFeedback.enabled).toBe(config.microInteractions.pressFeedback.enabled);
     });
   });
 });
-

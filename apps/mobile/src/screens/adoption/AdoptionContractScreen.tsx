@@ -111,7 +111,8 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
 
       Alert.alert(
         'Contract Generated',
-        result.message || 'The adoption contract has been generated and sent to both parties for review and signature.',
+        result.message ||
+          'The adoption contract has been generated and sent to both parties for review and signature.',
         [
           {
             text: 'View Contract',
@@ -149,7 +150,8 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
 
       Alert.alert(
         'Contract Sent',
-        result.message || `The adoption contract for ${petName} has been sent to ${applicantName} for digital signature. You will be notified when it's signed.`,
+        result.message ||
+          `The adoption contract for ${petName} has been sent to ${applicantName} for digital signature. You will be notified when it's signed.`,
         [{ text: 'OK', onPress: () => navigation.goBack() }],
       );
     } catch (error) {

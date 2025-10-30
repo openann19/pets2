@@ -297,7 +297,10 @@ export const useChatScreen = ({
             if (success) {
               logger.info('Voice call initiated', { matchId, petName });
             } else {
-              Alert.alert('Error', 'Failed to start voice call. Please check your permissions and try again.');
+              Alert.alert(
+                'Error',
+                'Failed to start voice call. Please check your permissions and try again.',
+              );
             }
           } catch (error) {
             logger.error('Failed to start voice call', { error, matchId });
@@ -320,7 +323,10 @@ export const useChatScreen = ({
             if (success) {
               logger.info('Video call initiated', { matchId, petName });
             } else {
-              Alert.alert('Error', 'Failed to start video call. Please check your permissions and try again.');
+              Alert.alert(
+                'Error',
+                'Failed to start video call. Please check your permissions and try again.',
+              );
             }
           } catch (error) {
             logger.error('Failed to start video call', { error, matchId });

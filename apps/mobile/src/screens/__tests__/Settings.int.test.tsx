@@ -42,9 +42,7 @@ jest.mock('react-i18next', () => ({
 
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
   <ThemeProvider scheme="light">
-    <NavigationContainer>
-      {children}
-    </NavigationContainer>
+    <NavigationContainer>{children}</NavigationContainer>
   </ThemeProvider>
 );
 
@@ -62,16 +60,24 @@ describe('SettingsScreen Integration Tests', () => {
   it('should render SettingsScreen successfully', () => {
     render(
       <TestWrapper>
-        <SettingsScreen navigation={mockNavigation as any} route={{ params: {}, key: 'Settings' } as any} />
-      </TestWrapper>
+        <SettingsScreen
+          navigation={mockNavigation as any}
+          route={{ params: {}, key: 'Settings' } as any}
+        />
+      </TestWrapper>,
     );
 
     // Screen should render without errors
-    expect(() => render(
-      <TestWrapper>
-        <SettingsScreen navigation={mockNavigation as any} route={{ params: {}, key: 'Settings' } as any} />
-      </TestWrapper>
-    )).not.toThrow();
+    expect(() =>
+      render(
+        <TestWrapper>
+          <SettingsScreen
+            navigation={mockNavigation as any}
+            route={{ params: {}, key: 'Settings' } as any}
+          />
+        </TestWrapper>,
+      ),
+    ).not.toThrow();
   });
 
   it('should handle GDPR export data action', async () => {
@@ -101,8 +107,11 @@ describe('SettingsScreen Integration Tests', () => {
 
     render(
       <TestWrapper>
-        <SettingsScreen navigation={mockNavigation as any} route={{ params: {}, key: 'Settings' } as any} />
-      </TestWrapper>
+        <SettingsScreen
+          navigation={mockNavigation as any}
+          route={{ params: {}, key: 'Settings' } as any}
+        />
+      </TestWrapper>,
     );
 
     await waitFor(() => {
@@ -134,13 +143,15 @@ describe('SettingsScreen Integration Tests', () => {
       handleExportData: jest.fn(),
     });
 
-      render(
-        <TestWrapper>
-          <SettingsScreen navigation={mockNavigation as any} route={{ params: {}, key: 'Settings' } as any} />
-        </TestWrapper>
-      );
+    render(
+      <TestWrapper>
+        <SettingsScreen
+          navigation={mockNavigation as any}
+          route={{ params: {}, key: 'Settings' } as any}
+        />
+      </TestWrapper>,
+    );
 
-      expect(mockNavigation).toBeDefined();
+    expect(mockNavigation).toBeDefined();
   });
 });
-

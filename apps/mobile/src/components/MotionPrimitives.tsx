@@ -68,7 +68,7 @@ interface PhysicsBasedScaleInProps {
 
 export const PhysicsBasedScaleIn: React.FC<PhysicsBasedScaleInProps> = ({
   children,
-  delay = 0,
+  delay: _delay = 0,
   style,
   trigger = true,
 }) => {
@@ -112,7 +112,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
   return (
     <Animated.View
       entering={entering}
-      style={style}
+      style={style as any}
     >
       {children}
     </Animated.View>

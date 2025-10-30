@@ -6,8 +6,6 @@ import { renderHook } from '@testing-library/react-native';
 import { useLoadingAnimation } from '../useLoadingAnimation';
 
 jest.mock('react-native-reanimated', () => {
-
-
   const Reanimated = require('react-native-reanimated/mock');
   Reanimated.default.call = () => {};
   return Reanimated;
@@ -49,4 +47,3 @@ describe('useLoadingAnimation', () => {
     expect(style).toBeDefined();
   });
 });
-

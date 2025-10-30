@@ -46,8 +46,36 @@ export function MessageList({
 }: MessageListProps): React.JSX.Element {
   const renderMessage = useCallback(
     ({ item, index }: { item: Message; index: number }) => {
-      // Use enhanced bubble when in production-ready mode
-      // For now, keep using MessageItem for compatibility
+      // Use enhanced bubble for messages with reactions, attachments, or voice notes
+      const hasEnhancements = 
+        (item as Message & { reactions?: Record<string, number>; attachment?: unknown; voiceNote?: unknown })
+          .reactions ||
+        (item as Message & { reactions?: Record<string, number>; attachment?: unknown; voiceNote?: unknown })
+          .attachment ||
+        (item as Message & { reactions?: Record<string, number>; attachment?: unknown; voiceNote?: unknown })
+          .voiceNote;
+      
+      if (hasEnhancements) {
+        // Use MessageWithEnhancements for enhanced messages
+        const { MessageWithEnhancements } = require('./MessageWithEnhancements');
+        const isOwnMessage = item.senderId === currentUserId;
+        return (
+          <MessageWithEnhancements
+            message={item as Message & {
+              reactions?: Record<string, number>;
+              attachment?: { type: 'image' | 'video' | 'file'; url: string; name?: string; size?: number };
+              voiceNote?: { url: string; duration: number; waveform?: number[] };
+            }}
+            isOwnMessage={isOwnMessage}
+            currentUserId={currentUserId}
+            matchId={matchId}
+            onReply={onMessagePress ? () => onMessagePress(item) : undefined}
+            onCopy={onMessagePress ? () => onMessagePress(item) : undefined}
+          />
+        );
+      }
+      
+      // Use standard MessageItem for regular messages
       return (
         <View>
           <MessageItem
@@ -62,7 +90,7 @@ export function MessageList({
         </View>
       );
     },
-    [messages, isOnline, onMessagePress, onMessageLongPress, onRetryMessage],
+    [messages, isOnline, onMessagePress, onMessageLongPress, onRetryMessage, currentUserId, matchId],
   );
 
   const renderTypingIndicator = useCallback(

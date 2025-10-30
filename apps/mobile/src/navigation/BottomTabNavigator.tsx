@@ -2,6 +2,11 @@
  * Bottom Tab Navigator for Mobile App
  * Uses UltraTabBar with glass blur, spotlight press ripple, breathing active underline,
  * springy badge physics, and buttery icon micro-motions
+ * 
+ * Features:
+ * - Tab state preservation
+ * - Scroll position restoration
+ * - Filter state preservation
  */
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -55,27 +60,47 @@ export default function BottomTabNavigator(): React.JSX.Element {
   return (
     <Tab.Navigator
       tabBar={(props) => <UltraTabBar {...props} />}
-      screenOptions={{ headerShown: false }}
+      screenOptions={{ 
+        headerShown: false,
+        // Enable state preservation for all tabs
+        lazy: false, // Keep tabs mounted to preserve state
+      }}
     >
       <Tab.Screen
         name="Home"
         component={HomeWrapper}
+        options={{
+          // Preserve state when switching tabs
+          unmountOnBlur: false,
+        }}
       />
       <Tab.Screen
         name="Swipe"
         component={SwipeWrapper}
+        options={{
+          unmountOnBlur: false,
+        }}
       />
       <Tab.Screen
         name="Matches"
         component={MatchesWrapper}
+        options={{
+          unmountOnBlur: false,
+        }}
       />
       <Tab.Screen
         name="Map"
         component={MapWrapper}
+        options={{
+          unmountOnBlur: false,
+        }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileWrapper}
+        options={{
+          unmountOnBlur: false,
+        }}
       />
     </Tab.Navigator>
   );

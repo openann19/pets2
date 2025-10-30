@@ -58,13 +58,10 @@ async function fetchConfigFromAPI(options: LoadConfigOptions): Promise<UIConfig 
       endpoint = `/api/ui-config/preview/${options.previewCode}`;
     }
 
-    const response = await request<{ success: boolean; data?: { config: UIConfig } }>(
-      endpoint,
-      {
-        method: 'GET',
-        params,
-      },
-    );
+    const response = await request<{ success: boolean; data?: { config: UIConfig } }>(endpoint, {
+      method: 'GET',
+      params,
+    });
 
     if (!response.success || !response.data?.config) {
       logger.warn('Failed to fetch UI config from API', { response });
@@ -158,4 +155,3 @@ export async function clearPreviewMode(): Promise<void> {
   await clearPreviewCode();
   // Optionally reload config
 }
-

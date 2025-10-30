@@ -89,7 +89,6 @@ export class CallRecordingConsentService {
       this.isInitialized = true;
       logger.info('Call recording consent service initialized successfully');
       return true;
-
     } catch (error) {
       logger.error('Failed to initialize call recording consent service', { error });
       return false;
@@ -132,7 +131,8 @@ export class CallRecordingConsentService {
         return {
           ...baseBanner,
           title: 'Call Recording Consent',
-          message: 'This call may be recorded for quality and training purposes. Under GDPR, you must explicitly consent to recording. Your call partner will also be notified.',
+          message:
+            'This call may be recorded for quality and training purposes. Under GDPR, you must explicitly consent to recording. Your call partner will also be notified.',
           acceptText: 'I Consent to Recording',
           declineText: 'No Recording',
         };
@@ -141,7 +141,8 @@ export class CallRecordingConsentService {
         return {
           ...baseBanner,
           title: 'Call Recording Notice',
-          message: 'This call may be recorded for quality purposes. By continuing, you consent to the recording. Some states require two-party consent.',
+          message:
+            'This call may be recorded for quality purposes. By continuing, you consent to the recording. Some states require two-party consent.',
           acceptText: 'Continue',
           declineText: 'End Call',
         };
@@ -150,7 +151,8 @@ export class CallRecordingConsentService {
         return {
           ...baseBanner,
           title: 'Recording Consent (PIPEDA)',
-          message: 'This call may be recorded in accordance with PIPEDA. Your consent is required for recording to proceed.',
+          message:
+            'This call may be recorded in accordance with PIPEDA. Your consent is required for recording to proceed.',
           acceptText: 'Consent to Recording',
           declineText: 'Decline Recording',
         };
@@ -159,7 +161,8 @@ export class CallRecordingConsentService {
         return {
           ...baseBanner,
           title: 'Recording Notice',
-          message: 'This call may be recorded under the Privacy Act. Your consent is required for recording.',
+          message:
+            'This call may be recorded under the Privacy Act. Your consent is required for recording.',
           acceptText: 'I Agree',
           declineText: 'I Disagree',
         };
@@ -222,7 +225,6 @@ export class CallRecordingConsentService {
       }
 
       return null;
-
     } catch (error) {
       logger.error('Failed to request recording consent', { error });
       return null;
@@ -280,7 +282,7 @@ export class CallRecordingConsentService {
             },
           },
         ],
-        { cancelable: false }
+        { cancelable: false },
       );
 
       // Auto-timeout after specified duration
@@ -315,7 +317,7 @@ export class CallRecordingConsentService {
 
     const now = Date.now();
     const consentAge = now - consent.consentTimestamp;
-    
+
     return consentAge < this.config.consentDuration;
   }
 
@@ -346,7 +348,6 @@ export class CallRecordingConsentService {
       this.activeConsents.delete(callId);
 
       logger.info('Recording ended', { callId, duration: consent.recordingDuration });
-
     } catch (error) {
       logger.error('Failed to end recording', { error });
     }
@@ -363,7 +364,6 @@ export class CallRecordingConsentService {
 
       // This would show a system notification that recording is in progress
       logger.info('Showing recording notification', { callId });
-
     } catch (error) {
       logger.error('Failed to show recording notification', { error });
     }
@@ -380,7 +380,6 @@ export class CallRecordingConsentService {
 
       // This would hide the recording notification
       logger.info('Hiding recording notification', { callId });
-
     } catch (error) {
       logger.error('Failed to hide recording notification', { error });
     }
@@ -431,7 +430,7 @@ export class CallRecordingConsentService {
       if (stored) {
         const consents: ConsentRecord[] = JSON.parse(stored);
         // Load only valid consents into active calls
-        consents.forEach(consent => {
+        consents.forEach((consent) => {
           if (this.isConsentValid(consent)) {
             this.activeConsents.set(consent.callId, consent);
           }
@@ -449,7 +448,7 @@ export class CallRecordingConsentService {
       const consents: ConsentRecord[] = stored ? JSON.parse(stored) : [];
 
       // Update or add consent
-      const existingIndex = consents.findIndex(c => c.callId === consent.callId);
+      const existingIndex = consents.findIndex((c) => c.callId === consent.callId);
       if (existingIndex >= 0) {
         consents[existingIndex] = consent;
       } else {
@@ -475,10 +474,10 @@ export class CallRecordingConsentService {
       }
 
       const consents: ConsentRecord[] = JSON.parse(stored);
-      
+
       // Find most recent valid consent for user
       const userConsents = consents
-        .filter(c => c.userId === userId && c.consentGiven)
+        .filter((c) => c.userId === userId && c.consentGiven)
         .sort((a, b) => b.consentTimestamp - a.consentTimestamp);
 
       return userConsents.length > 0 ? userConsents[0] : null;
@@ -511,7 +510,6 @@ export class CallRecordingConsentService {
 
       this.activeConsents.clear();
       this.isInitialized = false;
-
     } catch (error) {
       logger.error('Error during cleanup', { error });
     }

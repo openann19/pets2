@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useMutation } from "@tanstack/react-query";
-import { api } from "../services/api";
-import { FLAGS } from "../config/flags";
-import { useTheme } from "@mobile/theme";
-import { logger } from "@pawfectmatch/core";
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useMutation } from '@tanstack/react-query';
+import { api } from '../services/api';
+import { FLAGS } from '../config/flags';
+import { useTheme } from '@mobile/theme';
+import { logger } from '@pawfectmatch/core';
 
 interface GoLiveScreenProps {
   navigation: any;
@@ -34,20 +34,20 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
     container: {
       flex: 1,
       backgroundColor: theme.colors.bg,
-      justifyContent: "space-between",
+      justifyContent: 'space-between',
     },
     header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       paddingHorizontal: theme.spacing.lg,
       paddingTop: theme.spacing.sm,
     },
     closeButton: {
       width: 44,
       height: 44,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       minWidth: 44,
       minHeight: 44,
     },
@@ -61,13 +61,13 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
     },
     preview: {
       flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: theme.colors.surface,
     },
     liveBadge: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       backgroundColor: theme.colors.danger,
       paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.xs,
@@ -99,10 +99,10 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
       backgroundColor: theme.colors.primary,
       padding: theme.spacing.md,
       borderRadius: theme.radii.lg,
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: theme.spacing.sm,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     primaryText: {
       color: theme.colors.onPrimary,
@@ -113,23 +113,23 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
       backgroundColor: theme.colors.danger,
       padding: theme.spacing.md,
       borderRadius: theme.radii.lg,
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: theme.spacing.sm,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     row: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: theme.spacing.md,
-      justifyContent: "center",
+      justifyContent: 'center',
     },
     circle: {
       width: 56,
       height: 56,
       borderRadius: theme.radii.full,
       backgroundColor: alpha(theme.colors.surface, 0.15),
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     errorContainer: {
       backgroundColor: alpha(theme.colors.danger, 0.2),
@@ -141,13 +141,13 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
     errorText: {
       color: theme.colors.danger,
       fontSize: theme.typography.body.size * 0.875,
-      textAlign: "center",
+      textAlign: 'center',
     },
     loadingContainer: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: theme.spacing.sm,
-      justifyContent: "center",
+      justifyContent: 'center',
       marginVertical: theme.spacing.md,
     },
     loadingText: {
@@ -158,47 +158,47 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
 
   const startMutation = useMutation({
     mutationFn: async (payload: { title?: string; tags?: string[] }) => {
-      const data = await api.request("/live/start", {
-        method: "POST",
+      const data = await api.request('/live/start', {
+        method: 'POST',
         body: payload,
       });
       return data as { streamId: string; roomName: string; token: string; url: string };
     },
     onError: (e: any) => {
-      logger.error("Failed to start live stream", { error: e });
-      Alert.alert("Error", e?.response?.data?.error || "Failed to start live stream");
+      logger.error('Failed to start live stream', { error: e });
+      Alert.alert('Error', e?.response?.data?.error || 'Failed to start live stream');
       setPublishing(false);
     },
   });
 
   const stopMutation = useMutation({
     mutationFn: async (id: string) => {
-      await api.request("/live/stop", {
-        method: "POST",
+      await api.request('/live/stop', {
+        method: 'POST',
         body: { streamId: id },
       });
     },
     onError: (e: any) => {
-      logger.error("Failed to stop live stream", { error: e });
+      logger.error('Failed to stop live stream', { error: e });
     },
   });
 
   const connectAndPublish = async () => {
     try {
       if (!FLAGS.GO_LIVE) {
-        Alert.alert("Feature Unavailable", "Live streaming is not enabled yet.");
+        Alert.alert('Feature Unavailable', 'Live streaming is not enabled yet.');
         return;
       }
 
       setPublishing(true);
       setError(null);
-      
-      const start = await startMutation.mutateAsync({ title: "Live from PawfectMatch" });
+
+      const start = await startMutation.mutateAsync({ title: 'Live from PawfectMatch' });
       setStreamId(start.streamId);
 
       // Note: In a real implementation, you would integrate LiveKit here
       // For now, we're just setting the publishing state
-      logger.info("Live stream initiated", { streamId: start.streamId });
+      logger.info('Live stream initiated', { streamId: start.streamId });
 
       // Example of what would happen with LiveKit:
       // const r = new Room({
@@ -207,12 +207,11 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
       //   },
       // });
       // await r.connect(start.url, start.token);
-
     } catch (e: any) {
-      logger.error("Live stream error", { error: e });
-      Alert.alert("Live Error", e?.message || "Failed to start streaming");
+      logger.error('Live stream error', { error: e });
+      Alert.alert('Live Error', e?.message || 'Failed to start streaming');
       setPublishing(false);
-      setError(e?.message || "Unknown error");
+      setError(e?.message || 'Unknown error');
     }
   };
 
@@ -225,7 +224,7 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
       setStreamId(null);
       navigation.goBack();
     } catch (e) {
-      logger.error("Failed to end live stream", { error: e });
+      logger.error('Failed to end live stream', { error: e });
       // Continue with navigation even if stop fails
       setPublishing(false);
       navigation.goBack();
@@ -253,7 +252,11 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="close" size={24} color={theme.colors.onSurface} />
+          <Ionicons
+            name="close"
+            size={24}
+            color={theme.colors.onSurface}
+          />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Go Live</Text>
         <View style={styles.placeholder} />
@@ -282,7 +285,11 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
             accessibilityRole="button"
             onPress={connectAndPublish}
           >
-            <Ionicons name="radio" size={20} color={theme.colors.onPrimary} />
+            <Ionicons
+              name="radio"
+              size={20}
+              color={theme.colors.onPrimary}
+            />
             <Text style={styles.primaryText}>Go Live</Text>
           </TouchableOpacity>
         ) : (
@@ -294,7 +301,11 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
               accessibilityRole="button"
               onPress={endLive}
             >
-              <Ionicons name="stop" size={20} color={theme.colors.onPrimary} />
+              <Ionicons
+                name="stop"
+                size={20}
+                color={theme.colors.onPrimary}
+              />
               <Text style={styles.primaryText}>End Stream</Text>
             </TouchableOpacity>
 
@@ -302,20 +313,24 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
               <TouchableOpacity
                 style={styles.circle}
                 testID="GoLiveScreen-button-2"
-                accessibilityLabel={muted.audio ? "Unmute audio" : "Mute audio"}
+                accessibilityLabel={muted.audio ? 'Unmute audio' : 'Mute audio'}
                 accessibilityRole="button"
                 accessibilityState={{ selected: muted.audio }}
                 onPress={() => {
                   setMuted((m) => ({ ...m, audio: !m.audio }));
                 }}
               >
-                <Ionicons name={muted.audio ? "mic-off" : "mic"} size={20} color={theme.colors.onSurface} />
+                <Ionicons
+                  name={muted.audio ? 'mic-off' : 'mic'}
+                  size={20}
+                  color={theme.colors.onSurface}
+                />
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.circle}
                 testID="GoLiveScreen-button-2"
-                accessibilityLabel={muted.video ? "Show video" : "Hide video"}
+                accessibilityLabel={muted.video ? 'Show video' : 'Hide video'}
                 accessibilityRole="button"
                 accessibilityState={{ selected: muted.video }}
                 onPress={() => {
@@ -323,7 +338,7 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
                 }}
               >
                 <Ionicons
-                  name={muted.video ? "eye-off" : "eye"}
+                  name={muted.video ? 'eye-off' : 'eye'}
                   size={20}
                   color={theme.colors.onSurface}
                 />
@@ -340,7 +355,10 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
 
         {startMutation.isPending && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color={theme.colors.onSurface} />
+            <ActivityIndicator
+              size="small"
+              color={theme.colors.onSurface}
+            />
             <Text style={styles.loadingText}>Connecting...</Text>
           </View>
         )}

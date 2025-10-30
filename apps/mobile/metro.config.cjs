@@ -17,8 +17,8 @@ const config = getDefaultConfig(__dirname);
 // Enable tree shaking for better bundle size
 config.resolver = {
   ...config.resolver,
-  // Enable platform-specific extensions resolution
-  platforms: ['ios', 'android'],
+  // Enable platform-specific extensions resolution including web
+  platforms: ['ios', 'android', 'web'],
   // Optimize asset loading - ensure font and asset extensions are included
   assetExts: [
     ...config.resolver.assetExts.filter(ext => !['svg', 'ttf'].includes(ext)),
@@ -34,6 +34,8 @@ config.resolver = {
   extraNodeModules: {
     '@pawfectmatch/core': path.resolve(workspaceRoot, 'packages/core/dist'),
     '@pawfectmatch/design-tokens': path.resolve(workspaceRoot, 'packages/design-tokens/dist'),
+    '@mobile': path.resolve(projectRoot, 'src'),
+    '@': path.resolve(projectRoot, 'src'),
   },
 };
 

@@ -94,7 +94,7 @@ export function getExtendedColors(theme: Theme | any): ExtendedColors {
     success: colors.success ?? '#10B981',
     warning: colors.warning ?? '#F59E0B',
     danger: colors.danger ?? '#EF4444',
-    
+
     // Required SemanticColors properties
     surface: colors.surface ?? colors.bgElevated ?? '#F8FAFC',
     overlay: colors.overlay ?? colors.bg ?? '#FFFFFF80',

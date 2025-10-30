@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { Alert, Linking } from 'react-native';
 import { logger } from '@pawfectmatch/core';
+import { usePremium } from '../../providers/PremiumProvider';
 import { premiumService, type SubscriptionPlan } from '../../services/PremiumService';
 
 type BillingPeriod = 'monthly' | 'yearly';
@@ -29,11 +30,13 @@ interface UsePremiumScreenReturn {
   billingPeriod: BillingPeriod;
   selectedTier: string;
   isLoading: boolean;
+  isRestoring: boolean;
   subscriptionTiers: SubscriptionTier[];
   availablePlans: SubscriptionPlan[];
   setBillingPeriod: (period: BillingPeriod) => void;
   setSelectedTier: (tierId: string) => void;
   handleSubscribe: (tierId: string) => Promise<void>;
+  handleRestorePurchases: () => Promise<void>;
   handleGoBack: () => void;
 }
 
@@ -97,9 +100,11 @@ const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
 
 export const usePremiumScreen = (): UsePremiumScreenReturn => {
   const navigation = useNavigation();
+  const { restore } = usePremium();
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
   const [selectedTier, setSelectedTier] = useState<string>('premium');
   const [isLoading, setIsLoading] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
 
   const handleSubscribe = async (tierId: string) => {
     setIsLoading(true);
@@ -137,6 +142,25 @@ export const usePremiumScreen = (): UsePremiumScreenReturn => {
     }
   };
 
+  const handleRestorePurchases = async () => {
+    setIsRestoring(true);
+    try {
+      await restore();
+      Alert.alert(
+        'Success',
+        'Your purchases have been restored. You now have access to all premium features.',
+      );
+    } catch (error) {
+      logger.error('Restore purchases error:', { error });
+      Alert.alert(
+        'Error',
+        'Failed to restore purchases. Please check your internet connection and try again. If you continue to have issues, please contact support.',
+      );
+    } finally {
+      setIsRestoring(false);
+    }
+  };
+
   const handleGoBack = () => {
     navigation.goBack();
   };
@@ -147,11 +171,13 @@ export const usePremiumScreen = (): UsePremiumScreenReturn => {
     billingPeriod,
     selectedTier,
     isLoading,
+    isRestoring,
     subscriptionTiers: SUBSCRIPTION_TIERS,
     availablePlans,
     setBillingPeriod,
     setSelectedTier,
     handleSubscribe,
+    handleRestorePurchases,
     handleGoBack,
   };
 };

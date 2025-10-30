@@ -28,6 +28,7 @@ import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTheme } from '@mobile/theme';
 import { getExtendedColors, type ExtendedColors } from '@mobile/theme/adapters';
+import type { UploadProgress } from '../../services/postCreationService';
 import type { CreatePostRequest, ActivityDetails } from '../../services/communityAPI';
 import { logger } from '@pawfectmatch/core';
 
@@ -35,6 +36,7 @@ interface CreatePostFormProps {
   onSubmit: (data: CreatePostRequest) => Promise<void>;
   onCancel: () => void;
   isSubmitting?: boolean;
+  uploadProgress?: UploadProgress | null;
 }
 
 const MAX_CONTENT_LENGTH = 5000;
@@ -44,6 +46,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
   onSubmit,
   onCancel,
   isSubmitting = false,
+  uploadProgress,
 }) => {
   const theme = useTheme();
   const colors: ExtendedColors = getExtendedColors(theme);
@@ -240,6 +243,12 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
       marginLeft: theme.spacing.sm,
       color: theme.colors.onPrimary,
     },
+    uploadDetailText: {
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.onPrimary,
+      opacity: 0.8,
+      marginTop: theme.spacing.xs / 2,
+    },
   });
 
   // Validation
@@ -247,19 +256,19 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!content.trim()) {
-      newErrors.content = 'Post content is required';
+      newErrors['content'] = 'Post content is required';
     } else if (content.length > MAX_CONTENT_LENGTH) {
-      newErrors.content = `Content must be ${MAX_CONTENT_LENGTH} characters or less`;
+      newErrors['content'] = `Content must be ${MAX_CONTENT_LENGTH} characters or less`;
     }
 
     if (isActivity) {
       if (!location.trim()) {
-        newErrors.location = 'Location is required for activities';
+        newErrors['location'] = 'Location is required for activities';
       }
-      
+
       const attendees = parseInt(maxAttendees, 10);
       if (isNaN(attendees) || attendees < 1 || attendees > 1000) {
-        newErrors.maxAttendees = 'Max attendees must be between 1 and 1000';
+        newErrors['maxAttendees'] = 'Max attendees must be between 1 and 1000';
       }
     }
 
@@ -290,7 +299,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
       });
 
       if (!result.canceled && result.assets[0]) {
-        setImages(prev => [...prev, result.assets[0].uri]);
+        setImages((prev) => [...prev, result.assets[0].uri]);
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
     } catch (error) {
@@ -301,7 +310,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
 
   // Handle image removal
   const handleRemoveImage = useCallback((index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   }, []);
 
@@ -359,7 +368,11 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
             accessibilityLabel="Cancel post creation"
             accessibilityRole="button"
           >
-            <Ionicons name="close" size={24} color={colors.onMuted} />
+            <Ionicons
+              name="close"
+              size={24}
+              color={colors.onMuted}
+            />
           </TouchableOpacity>
         </View>
 
@@ -367,11 +380,11 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>What's on your mind?</Text>
           <TextInput
-            style={[
+            style={StyleSheet.flatten([
               styles.textInput,
               { height: 120 },
-              errors.content && styles.textInputError,
-            ]}
+              errors['content'] ? styles.textInputError : null,
+            ])}
             value={content}
             onChangeText={setContent}
             placeholder="Share something with the community..."
@@ -382,14 +395,11 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
             accessibilityHint="Enter the text content for your post"
           />
           <Text
-            style={[
-              styles.characterCount,
-              isCharacterLimitExceeded && styles.characterCountError,
-            ]}
+            style={[styles.characterCount, isCharacterLimitExceeded && styles.characterCountError]}
           >
             {characterCount}/{MAX_CONTENT_LENGTH}
           </Text>
-          {errors.content && <Text style={styles.errorText}>{errors.content}</Text>}
+          {errors['content'] && <Text style={styles.errorText}>{errors['content']}</Text>}
         </View>
 
         {/* Images Section */}
@@ -402,7 +412,11 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
             accessibilityLabel="Add image"
             accessibilityRole="button"
           >
-            <Ionicons name="camera" size={24} color={colors.onMuted} />
+            <Ionicons
+              name="camera"
+              size={24}
+              color={colors.onMuted}
+            />
             <Text style={styles.addImageText}>
               Add Image ({images.length}/{MAX_IMAGES})
             </Text>
@@ -411,15 +425,25 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
           {images.length > 0 && (
             <View style={styles.imageGrid}>
               {images.map((uri, index) => (
-                <View key={index} style={styles.imageContainer}>
-                  <Image source={{ uri }} style={styles.image} />
+                <View
+                  key={index}
+                  style={styles.imageContainer}
+                >
+                  <Image
+                    source={{ uri }}
+                    style={styles.image}
+                  />
                   <TouchableOpacity
                     style={styles.removeImageButton}
                     onPress={() => handleRemoveImage(index)}
                     accessibilityLabel={`Remove image ${index + 1}`}
                     accessibilityRole="button"
                   >
-                    <Ionicons name="close" size={16} color="white" />
+                    <Ionicons
+                      name="close"
+                      size={16}
+                      color="white"
+                    />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -457,10 +481,12 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                 accessibilityLabel="Select activity date"
                 accessibilityRole="button"
               >
-                <Ionicons name="calendar" size={20} color={colors.onMuted} />
-                <Text style={styles.dateButtonText}>
-                  {activityDate.toLocaleDateString()}
-                </Text>
+                <Ionicons
+                  name="calendar"
+                  size={20}
+                  color={colors.onMuted}
+                />
+                <Text style={styles.dateButtonText}>{activityDate.toLocaleDateString()}</Text>
               </TouchableOpacity>
 
               {showDatePicker && (
@@ -469,7 +495,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                   mode="date"
                   display="default"
                   minimumDate={new Date()}
-                  onChange={(event, selectedDate) => {
+                  onChange={(_event, selectedDate) => {
                     setShowDatePicker(false);
                     if (selectedDate) {
                       setActivityDate(selectedDate);
@@ -480,18 +506,24 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
 
               {/* Location */}
               <TextInput
-                style={[styles.activityInput, errors.location && styles.textInputError]}
+                style={StyleSheet.flatten([
+                  styles.activityInput,
+                  errors['location'] ? styles.textInputError : null,
+                ])}
                 value={location}
                 onChangeText={setLocation}
                 placeholder="Activity location"
                 placeholderTextColor={colors.onMuted}
                 accessibilityLabel="Activity location"
               />
-              {errors.location && <Text style={styles.errorText}>{errors.location}</Text>}
+              {errors['location'] && <Text style={styles.errorText}>{errors['location']}</Text>}
 
               {/* Max Attendees */}
               <TextInput
-                style={[styles.activityInput, errors.maxAttendees && styles.textInputError]}
+                style={StyleSheet.flatten([
+                  styles.activityInput,
+                  errors['maxAttendees'] ? styles.textInputError : null,
+                ])}
                 value={maxAttendees}
                 onChangeText={setMaxAttendees}
                 placeholder="Maximum attendees"
@@ -499,7 +531,9 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                 keyboardType="numeric"
                 accessibilityLabel="Maximum attendees"
               />
-              {errors.maxAttendees && <Text style={styles.errorText}>{errors.maxAttendees}</Text>}
+              {errors['maxAttendees'] && (
+                <Text style={styles.errorText}>{errors['maxAttendees']}</Text>
+              )}
             </View>
           )}
         </View>
@@ -518,8 +552,20 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
         >
           {isSubmitting ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color={theme.colors.onPrimary} />
-              <Text style={styles.loadingText}>Creating...</Text>
+              <ActivityIndicator
+                size="small"
+                color={theme.colors.onPrimary}
+              />
+              <Text style={styles.loadingText}>
+                {uploadProgress
+                  ? `Uploading... ${Math.round(uploadProgress.progress * 100)}%`
+                  : 'Creating...'}
+              </Text>
+              {uploadProgress && (
+                <Text style={styles.uploadDetailText}>
+                  {uploadProgress.currentFile && `Uploading: ${uploadProgress.currentFile}`}
+                </Text>
+              )}
             </View>
           ) : (
             <Text style={styles.submitButtonText}>

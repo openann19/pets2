@@ -1,12 +1,12 @@
 /**
  * Admin Dashboard Screen for Mobile
- * Professional admin interface for mobile devices
+ * Professional admin interface with enhanced export functionality
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { logger, useAuthStore } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
-import { useMemo, useEffect, useState, useCallback } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { logger, useAuthStore } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import { useMemo, useCallback } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -17,13 +17,15 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@mobile/theme';
 import type { AppTheme } from '@mobile/theme';
-import type { AdminScreenProps } from "../../navigation/types";
-import { _adminAPI as adminAPI } from "../../services/api";
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+import type { AdminScreenProps } from '../../navigation/types';
+import { ExportFormatModal } from '../../components/Admin/ExportFormatModal';
+import useAdminDashboardScreen from '../../hooks/screens/useAdminDashboardScreen';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface AdminStats {
   users: {
@@ -78,8 +80,8 @@ function makeStyles(theme: AppTheme) {
     },
     loadingContainer: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     loadingText: {
       marginTop: theme.spacing.md,
@@ -96,710 +98,339 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.xs,
     },
     subtitle: {
-      fontSize: theme.typography.body.size,
-      fontWeight: theme.typography.body.weight,
-    },
-    card: {
-      borderRadius: theme.radii.lg,
-      padding: theme.spacing.md,
-      marginBottom: theme.spacing.md,
-      ...theme.shadows.elevation2,
-    },
-    cardHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: theme.spacing.sm,
-    },
-    cardTitle: {
-      fontSize: theme.typography.h2.size,
-      fontWeight: theme.typography.h2.weight,
-      marginStart: theme.spacing.xs,
-    },
-    healthInfo: {
-      gap: theme.spacing.xs,
-    },
-    healthStatus: {
-      fontSize: theme.typography.body.size,
-      fontWeight: theme.typography.h1.weight,
-    },
-    healthDetails: {
-      fontSize: theme.typography.body.size * 0.875,
+      fontSize: theme.typography.sizes.md,
     },
     section: {
-      marginBottom: theme.spacing.lg,
+      padding: theme.spacing.lg,
+      paddingTop: 0,
     },
     sectionTitle: {
-      fontSize: theme.typography.h2.size,
-      fontWeight: theme.typography.h2.weight,
+      fontSize: theme.typography.sizes.lg,
+      fontWeight: theme.typography.weights.semibold,
       marginBottom: theme.spacing.md,
     },
     quickActionsGrid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: theme.spacing.sm,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.md,
     },
     quickActionCard: {
-      width: (SCREEN_WIDTH - theme.spacing['2xl'] - theme.spacing.sm) / 2,
+      width: (SCREEN_WIDTH - theme.spacing.lg * 2 - theme.spacing.md) / 2,
+      backgroundColor: theme.colors.surface,
       borderRadius: theme.radii.lg,
-      padding: theme.spacing.md,
-      alignItems: "center",
-      ...theme.shadows.elevation2,
+      padding: theme.spacing.lg,
+      alignItems: 'center',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
     },
     quickActionTitle: {
-      fontSize: theme.typography.body.size * 0.875,
-      fontWeight: theme.typography.h2.weight,
-      marginTop: theme.spacing.xs,
-      textAlign: "center",
+      fontSize: theme.typography.sizes.md,
+      fontWeight: theme.typography.weights.semibold,
+      marginTop: theme.spacing.sm,
+      marginBottom: theme.spacing.xs,
+    },
+    quickActionSubtitle: {
+      fontSize: theme.typography.sizes.sm,
+      textAlign: 'center',
+    },
+    statsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.md,
     },
     statCard: {
+      width: (SCREEN_WIDTH - theme.spacing.lg * 2 - theme.spacing.md) / 2,
+      backgroundColor: theme.colors.surface,
       borderRadius: theme.radii.lg,
-      padding: theme.spacing.md,
-      marginBottom: theme.spacing.sm,
-      ...theme.shadows.elevation2,
-    },
-    statHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: theme.spacing.xs,
-    },
-    statTitle: {
-      fontSize: theme.typography.body.size,
-      fontWeight: theme.typography.h2.weight,
-      marginStart: theme.spacing.xs,
+      padding: theme.spacing.lg,
+      alignItems: 'center',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
     },
     statNumber: {
-      fontSize: theme.typography.h2.size,
-      fontWeight: theme.typography.h1.weight,
+      fontSize: theme.typography.sizes.xl,
+      fontWeight: theme.typography.weights.bold,
       marginBottom: theme.spacing.xs,
     },
-    statDetails: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: theme.spacing.sm,
+    statLabel: {
+      fontSize: theme.typography.sizes.md,
+      fontWeight: theme.typography.weights.medium,
+      marginBottom: theme.spacing.xs,
     },
     statDetail: {
-      fontSize: theme.typography.body.size * 0.75,
-      fontWeight: theme.typography.body.weight,
+      fontSize: theme.typography.sizes.sm,
+    },
+    activityList: {
+      gap: theme.spacing.sm,
+    },
+    activityItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 1,
+    },
+    activityIndicator: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginRight: theme.spacing.md,
+    },
+    activityContent: {
+      flex: 1,
+    },
+    activityTitle: {
+      fontSize: theme.typography.sizes.md,
+      fontWeight: theme.typography.weights.medium,
+      marginBottom: theme.spacing.xs / 2,
+    },
+    activityTime: {
+      fontSize: theme.typography.sizes.sm,
     },
   });
-}
 
-export default function AdminDashboardScreen({
-  navigation,
-}: AdminScreenProps<"AdminDashboard">): React.JSX.Element {
-  const theme = useTheme();
-  const styles = useMemo(() => makeStyles(theme), [theme]);
-  const { user: _user } = useAuthStore();
-  const [stats, setStats] = useState<AdminStats | null>(null);
-  const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  export default function AdminDashboardScreen({
+    navigation,
+  }: AdminScreenProps<'AdminDashboard'>): React.JSX.Element {
+    const theme = useTheme();
+    const styles = useMemo(() => makeStyles(theme), [theme]);
+    const { user: _user } = useAuthStore();
 
-  useEffect(() => {
-    void loadDashboardData();
-  }, []);
+    // Use the enhanced admin dashboard hook
+    const {
+      metrics,
+      recentActivity,
+      quickActions,
+      isLoading,
+      isRefreshing,
+      onRefresh,
+      onQuickAction,
+      exportModalVisible,
+      setExportModalVisible,
+      exportData,
+    } = useAdminDashboardScreen();
 
-  const loadDashboardData = async (): Promise<void> => {
-    try {
-      setLoading(true);
-      const [statsResponse, healthResponse] = await Promise.all([
-        adminAPI.getAnalytics(),
-        adminAPI.getSystemHealth(),
-      ]);
+    const getStatusColor = useCallback(
+      (status: string): string => {
+        switch (status) {
+          case 'healthy':
+            return theme.colors.success;
+          case 'warning':
+            return theme.colors.warning;
+          case 'error':
+            return theme.colors.danger;
+          default:
+            return theme.colors.border;
+        }
+      },
+      [theme],
+    );
 
-      setStats(statsResponse.data);
-      setSystemHealth(healthResponse.data);
-    } catch (error: unknown) {
-      logger.error("Error loading dashboard data:", { error });
-      Alert.alert("Error", "Failed to load dashboard data");
-    } finally {
-      setLoading(false);
+    if (isLoading) {
+      return (
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]}>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator
+              size="large"
+              color={theme.colors.primary}
+            />
+            <Text style={[styles.loadingText, { color: theme.colors.onSurface }]}>
+              Loading dashboard...
+            </Text>
+          </View>
+        </SafeAreaView>
+      );
     }
-  };
 
-  const onRefresh = async (): Promise<void> => {
-    setRefreshing(true);
-    await loadDashboardData();
-    setRefreshing(false);
-  };
-
-  const handleQuickAction = useCallback((action: string): void => {
-    if (Haptics) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-
-    switch (action) {
-      case "analytics":
-        navigation.navigate("AdminAnalytics");
-        break;
-      case "users":
-        navigation.navigate("AdminUsers");
-        break;
-      case "security":
-        navigation.navigate("AdminSecurity");
-        break;
-      case "billing":
-        navigation.navigate("AdminBilling");
-        break;
-      case "chats":
-        navigation.navigate("AdminChats");
-        break;
-      case "uploads":
-        navigation.navigate("AdminUploads");
-        break;
-      case "verifications":
-        navigation.navigate("AdminVerifications");
-        break;
-      case "services":
-        navigation.navigate("AdminServices");
-        break;
-      case "config":
-        navigation.navigate("AdminConfig");
-        break;
-      default:
-        logger.info(`Quick action: ${action}`);
-    }
-  }, [navigation]);
-
-  const getStatusColor = useCallback((status: string): string => {
-    switch (status) {
-      case "healthy":
-        return theme.colors.success;
-      case "warning":
-        return theme.colors.warning;
-      case "error":
-        return theme.colors.danger;
-      default:
-        return theme.colors.border;
-    }
-  }, [theme]);
-
-  if (loading) {
     return (
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.colors.bg }]}
-      >
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text
-            style={[styles.loadingText, { color: theme.colors.onSurface }]}
-          >
-            Loading dashboard...
-          </Text>
-        </View>
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]}>
+        <ScrollView
+          style={styles.scrollView}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={onRefresh}
+              tintColor={theme.colors.primary}
+            />
+          }
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: theme.colors.onSurface }]}>Admin Dashboard</Text>
+            <Text style={[styles.subtitle, { color: theme.colors.onMuted }]}>
+              Welcome back, {_user?.firstName || 'Admin'}
+            </Text>
+          </View>
+
+          {/* Quick Actions Grid */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
+              Quick Actions
+            </Text>
+            <View style={styles.quickActionsGrid}>
+              {quickActions.map((action) => (
+                <TouchableOpacity
+                  key={action.id}
+                  style={[
+                    styles.quickActionCard,
+                    {
+                      backgroundColor: theme.colors.surface,
+                      shadowColor: theme.colors.border,
+                      opacity: action.disabled ? 0.5 : 1,
+                    },
+                  ]}
+                  testID="AdminDashboardScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
+                  onPress={() => {
+                    if (Haptics) {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    }
+                    onQuickAction(action.id);
+                  }}
+                  disabled={action.disabled}
+                >
+                  <Ionicons
+                    name={action.icon as any}
+                    size={32}
+                    color={
+                      action.disabled ? theme.colors.onMuted : action.color || theme.colors.primary
+                    }
+                  />
+                  <Text style={[styles.quickActionTitle, { color: theme.colors.onSurface }]}>
+                    {action.title}
+                  </Text>
+                  <Text style={[styles.quickActionSubtitle, { color: theme.colors.onMuted }]}>
+                    {action.subtitle}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Stats Overview */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>Overview</Text>
+            <View style={styles.statsGrid}>
+              <View
+                style={[
+                  styles.statCard,
+                  { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+                ]}
+              >
+                <Text style={[styles.statNumber, { color: theme.colors.primary }]}>
+                  {metrics.users.total}
+                </Text>
+                <Text style={[styles.statLabel, { color: theme.colors.onMuted }]}>Total Users</Text>
+                <Text style={[styles.statDetail, { color: theme.colors.success }]}>
+                  +{metrics.users.recent24h} today
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.statCard,
+                  { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+                ]}
+              >
+                <Text style={[styles.statNumber, { color: theme.colors.info }]}>
+                  {metrics.pets.total}
+                </Text>
+                <Text style={[styles.statLabel, { color: theme.colors.onMuted }]}>Pets</Text>
+                <Text style={[styles.statDetail, { color: theme.colors.success }]}>
+                  +{metrics.pets.recent24h} today
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.statCard,
+                  { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+                ]}
+              >
+                <Text style={[styles.statNumber, { color: theme.colors.warning }]}>
+                  {metrics.matches.total}
+                </Text>
+                <Text style={[styles.statLabel, { color: theme.colors.onMuted }]}>Matches</Text>
+                <Text style={[styles.statDetail, { color: theme.colors.success }]}>
+                  +{metrics.matches.recent24h} today
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.statCard,
+                  { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+                ]}
+              >
+                <Text style={[styles.statNumber, { color: theme.colors.danger }]}>
+                  {metrics.systemHealth}
+                </Text>
+                <Text style={[styles.statLabel, { color: theme.colors.onMuted }]}>
+                  System Health
+                </Text>
+                <Text style={[styles.statDetail, { color: theme.colors.success }]}>
+                  All systems operational
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Recent Activity */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
+              Recent Activity
+            </Text>
+            <View style={styles.activityList}>
+              {recentActivity.slice(0, 5).map((activity, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.activityItem,
+                    {
+                      backgroundColor: theme.colors.surface,
+                      shadowColor: theme.colors.border,
+                    },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.activityIndicator,
+                      { backgroundColor: activity.color || theme.colors.primary },
+                    ]}
+                  />
+                  <View style={styles.activityContent}>
+                    <Text style={[styles.activityTitle, { color: theme.colors.onSurface }]}>
+                      {activity.title}
+                    </Text>
+                    <Text style={[styles.activityTime, { color: theme.colors.onMuted }]}>
+                      {activity.time}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+
+        {/* Export Format Modal */}
+        <ExportFormatModal
+          visible={exportModalVisible}
+          onClose={() => setExportModalVisible(false)}
+          onExport={(format, timeRange) => {
+            exportData(format, timeRange);
+          }}
+          isLoading={isRefreshing}
+        />
       </SafeAreaView>
     );
   }
-
-  return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.bg }]}
-    >
-      <ScrollView
-        style={styles.scrollView}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={theme.colors.primary}
-          />
-        }
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <Text
-            style={[styles.title, { color: theme.colors.onSurface }]}
-          >
-            Admin Dashboard
-          </Text>
-          <Text
-            style={[
-              styles.subtitle,
-              { color: theme.colors.onMuted },
-            ]}
-          >
-            Welcome, {_user?.firstName} {_user?.lastName}
-          </Text>
-        </View>
-
-        {/* System Health */}
-        {systemHealth ? (
-          <View
-            style={[
-              styles.card,
-              { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-            ]}
-          >
-            <View style={styles.cardHeader}>
-              <Ionicons
-                name="server-outline"
-                size={24}
-                color={getStatusColor(systemHealth.status)}
-              />
-              <Text
-                style={[
-                  styles.cardTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                System Status
-              </Text>
-            </View>
-            <View style={styles.healthInfo}>
-              <Text
-                style={[
-                  styles.healthStatus,
-                  { color: getStatusColor(systemHealth.status) },
-                ]}
-              >
-                {systemHealth.status.toUpperCase()}
-              </Text>
-              <Text
-                style={[
-                  styles.healthDetails,
-                  { color: theme.colors.onMuted },
-                ]}
-              >
-                Uptime: {Math.floor(systemHealth.uptime / 3600)}h{" "}
-                {Math.floor((systemHealth.uptime % 3600) / 60)}m
-              </Text>
-              <Text
-                style={[
-                  styles.healthDetails,
-                  { color: theme.colors.onMuted },
-                ]}
-              >
-                Database: {systemHealth.database.status}
-              </Text>
-              <Text
-                style={[
-                  styles.healthDetails,
-                  { color: theme.colors.onMuted },
-                ]}
-              >
-                Memory: {systemHealth.memory.used}MB /{" "}
-                {systemHealth.memory.total}MB
-              </Text>
-            </View>
-          </View>
-        ) : null}
-
-        {/* Quick Actions */}
-        <View style={styles.section}>
-          <Text
-            style={[
-              styles.sectionTitle,
-              { color: theme.colors.onSurface },
-            ]}
-          >
-            Quick Actions
-          </Text>
-          <View style={styles.quickActionsGrid}>
-            <TouchableOpacity
-              style={[
-                styles.quickActionCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                handleQuickAction("analytics");
-              }}
-            >
-              <Ionicons name="analytics-outline" size={32} color={theme.colors.info} />
-              <Text
-                style={[
-                  styles.quickActionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                Analytics
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.quickActionCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                handleQuickAction("users");
-              }}
-            >
-              <Ionicons name="people-outline" size={32} color={theme.colors.primary} />
-              <Text
-                style={[
-                  styles.quickActionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                Users
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.quickActionCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                handleQuickAction("security");
-              }}
-            >
-              <Ionicons name="shield-outline" size={32} color={theme.colors.danger} />
-              <Text
-                style={[
-                  styles.quickActionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                Security
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.quickActionCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                handleQuickAction("billing");
-              }}
-            >
-              <Ionicons name="card-outline" size={32} color={theme.colors.success} />
-              <Text
-                style={[
-                  styles.quickActionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                Billing
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.quickActionCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                handleQuickAction("chats");
-              }}
-            >
-              <Ionicons name="chatbubbles-outline" size={32} color={theme.colors.warning} />
-              <Text
-                style={[
-                  styles.quickActionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                Chats
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.quickActionCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                handleQuickAction("uploads");
-              }}
-            >
-              <Ionicons name="cloud-upload-outline" size={32} color={theme.colors.info} />
-              <Text
-                style={[
-                  styles.quickActionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                Uploads
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.quickActionCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                handleQuickAction("verifications");
-              }}
-            >
-              <Ionicons name="shield-checkmark-outline" size={32} color={theme.colors.success} />
-              <Text
-                style={[
-                  styles.quickActionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                Verifications
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.quickActionCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                handleQuickAction("services");
-              }}
-            >
-              <Ionicons name="server-outline" size={32} color={theme.colors.primary} />
-              <Text
-                style={[
-                  styles.quickActionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                Services
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.quickActionCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
-                handleQuickAction("config");
-              }}
-            >
-              <Ionicons name="settings-outline" size={32} color={theme.colors.info} />
-              <Text
-                style={[
-                  styles.quickActionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                API Config
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Statistics */}
-        {stats ? (
-          <View style={styles.section}>
-            <Text
-              style={[
-                styles.sectionTitle,
-                { color: theme.colors.onSurface },
-              ]}
-            >
-              Platform Statistics
-            </Text>
-
-            {/* Users Stats */}
-            <View
-              style={[
-                styles.statCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-            >
-              <View style={styles.statHeader}>
-                <Ionicons name="people" size={24} color={theme.colors.info} />
-                <Text
-                  style={[
-                    styles.statTitle,
-                    { color: theme.colors.onSurface },
-                  ]}
-                >
-                  Users
-                </Text>
-              </View>
-              <Text
-                style={[
-                  styles.statNumber,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                {stats.users.total.toLocaleString()}
-              </Text>
-              <View style={styles.statDetails}>
-                <Text
-                  style={[
-                    styles.statDetail,
-                    { color: theme.colors.onMuted },
-                  ]}
-                >
-                  Active: {stats.users.active}
-                </Text>
-                <Text
-                  style={[
-                    styles.statDetail,
-                    { color: theme.colors.onMuted },
-                  ]}
-                >
-                  Verified: {stats.users.verified}
-                </Text>
-                <Text
-                  style={[
-                    styles.statDetail,
-                    { color: theme.colors.warning },
-                  ]}
-                >
-                  Suspended: {stats.users.suspended}
-                </Text>
-                <Text
-                  style={[
-                    styles.statDetail,
-                    { color: theme.colors.danger },
-                  ]}
-                >
-                  Banned: {stats.users.banned}
-                </Text>
-              </View>
-            </View>
-
-            {/* Pets Stats */}
-            <View
-              style={[
-                styles.statCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-            >
-              <View style={styles.statHeader}>
-                <Ionicons name="paw" size={24} color={theme.colors.success} />
-                <Text
-                  style={[
-                    styles.statTitle,
-                    { color: theme.colors.onSurface },
-                  ]}
-                >
-                  Pets
-                </Text>
-              </View>
-              <Text
-                style={[
-                  styles.statNumber,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                {stats.pets.total.toLocaleString()}
-              </Text>
-              <View style={styles.statDetails}>
-                <Text
-                  style={[
-                    styles.statDetail,
-                    { color: theme.colors.onMuted },
-                  ]}
-                >
-                  Active: {stats.pets.active}
-                </Text>
-                <Text
-                  style={[
-                    styles.statDetail,
-                    { color: theme.colors.success },
-                  ]}
-                >
-                  +{stats.pets.recent24h} today
-                </Text>
-              </View>
-            </View>
-
-            {/* Matches Stats */}
-            <View
-              style={[
-                styles.statCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-            >
-              <View style={styles.statHeader}>
-                <Ionicons name="heart" size={24} color={theme.colors.primary} />
-                <Text
-                  style={[
-                    styles.statTitle,
-                    { color: theme.colors.onSurface },
-                  ]}
-                >
-                  Matches
-                </Text>
-              </View>
-              <Text
-                style={[
-                  styles.statNumber,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                {stats.matches.total.toLocaleString()}
-              </Text>
-              <View style={styles.statDetails}>
-                <Text
-                  style={[
-                    styles.statDetail,
-                    { color: theme.colors.onMuted },
-                  ]}
-                >
-                  Active: {stats.matches.active}
-                </Text>
-                <Text
-                  style={[
-                    styles.statDetail,
-                    { color: theme.colors.danger },
-                  ]}
-                >
-                  Blocked: {stats.matches.blocked}
-                </Text>
-                <Text
-                  style={[
-                    styles.statDetail,
-                    { color: theme.colors.success },
-                  ]}
-                >
-                  +{stats.matches.recent24h} today
-                </Text>
-              </View>
-            </View>
-
-            {/* Messages Stats */}
-            <View
-              style={[
-                styles.statCard,
-                { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
-              ]}
-            >
-              <View style={styles.statHeader}>
-                <Ionicons name="chatbubble" size={24} color={theme.colors.primary} />
-                <Text
-                  style={[
-                    styles.statTitle,
-                    { color: theme.colors.onSurface },
-                  ]}
-                >
-                  Messages
-                </Text>
-              </View>
-              <Text
-                style={[
-                  styles.statNumber,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
-                {stats.messages.total.toLocaleString()}
-              </Text>
-              <View style={styles.statDetails}>
-                <Text
-                  style={[
-                    styles.statDetail,
-                    { color: theme.colors.onMuted },
-                  ]}
-                >
-                  Deleted: {stats.messages.deleted}
-                </Text>
-                <Text
-                  style={[
-                    styles.statDetail,
-                    { color: theme.colors.success },
-                  ]}
-                >
-                  +{stats.messages.recent24h} today
-                </Text>
-              </View>
-            </View>
-          </View>
-        ) : null}
-      </ScrollView>
-    </SafeAreaView>
-  );
 }
-

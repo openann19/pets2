@@ -1,5 +1,5 @@
-import { forwardRef, useImperativeHandle, useMemo } from "react";
-import { StyleSheet, View, type ViewStyle } from "react-native";
+import { forwardRef, useImperativeHandle, useMemo } from 'react';
+import { StyleSheet, View, type ViewStyle } from 'react-native';
 import Animated, {
   cancelAnimation,
   useAnimatedStyle,
@@ -7,19 +7,19 @@ import Animated, {
   withDelay,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
 export type SendSparkleHandle = { burst: () => void };
 
 interface SendSparkleProps {
-  count?: number;          // number of particles
-  size?: number;           // base font size
-  duration?: number;       // ms until particles fade
-  colors?: string[];       // text colors to pick from
-  style?: ViewStyle;             // wrapper style (position:relative recommended)
+  count?: number; // number of particles
+  size?: number; // base font size
+  duration?: number; // ms until particles fade
+  colors?: string[]; // text colors to pick from
+  style?: ViewStyle; // wrapper style (position:relative recommended)
 }
 
-const GLYPHS = ["✦", "✧", "✺", "✨"];
+const GLYPHS = ['✦', '✧', '✺', '✨'];
 
 export const SendSparkle = forwardRef<SendSparkleHandle, SendSparkleProps>(
   (
@@ -27,7 +27,7 @@ export const SendSparkle = forwardRef<SendSparkleHandle, SendSparkleProps>(
       count = 10,
       size = 14,
       duration = 450,
-      colors = ["#ffffff", "#fde047", "#f472b6", "#60a5fa"],
+      colors = ['#ffffff', '#fde047', '#f472b6', '#60a5fa'],
       style,
     },
     ref,
@@ -49,7 +49,7 @@ export const SendSparkle = forwardRef<SendSparkleHandle, SendSparkleProps>(
     );
 
     const burst = () => {
-      "worklet";
+      'worklet';
       const spread = 34; // px
       items.forEach((p) => {
         cancelAnimation(p.x);
@@ -59,7 +59,7 @@ export const SendSparkle = forwardRef<SendSparkleHandle, SendSparkleProps>(
         cancelAnimation(p.r);
 
         // random radial fan
-        const angle = (Math.random() * Math.PI * 2);
+        const angle = Math.random() * Math.PI * 2;
         const radius = spread * (0.4 + Math.random() * 1);
         const dx = Math.cos(angle) * radius;
         const dy = -Math.abs(Math.sin(angle) * radius); // bias upward
@@ -85,7 +85,10 @@ export const SendSparkle = forwardRef<SendSparkleHandle, SendSparkleProps>(
     useImperativeHandle(ref, () => ({ burst }), [items]);
 
     return (
-      <View pointerEvents="none" style={[styles.wrap, style]}>
+      <View
+        pointerEvents="none"
+        style={[styles.wrap, style]}
+      >
         {items.map((p) => {
           const sty = useAnimatedStyle(() => ({
             transform: [
@@ -111,16 +114,15 @@ export const SendSparkle = forwardRef<SendSparkleHandle, SendSparkleProps>(
 );
 
 const styles = StyleSheet.create({
-  wrap: { position: "absolute", right: 0, bottom: 0, width: 0, height: 0 },
+  wrap: { position: 'absolute', right: 0, bottom: 0, width: 0, height: 0 },
   glyph: {
-    position: "absolute",
+    position: 'absolute',
     left: -6,
     top: -6,
-    textShadowColor: "rgba(0,0,0,0.25)",
+    textShadowColor: 'rgba(0,0,0,0.25)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
 });
 
 export default SendSparkle;
-

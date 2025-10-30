@@ -48,9 +48,7 @@ jest.mock('react-i18next', () => ({
 
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
   <ThemeProvider scheme="light">
-    <NavigationContainer>
-      {children}
-    </NavigationContainer>
+    <NavigationContainer>{children}</NavigationContainer>
   </ThemeProvider>
 );
 
@@ -76,16 +74,24 @@ describe('ChatScreen Integration Tests', () => {
   it('should render ChatScreen successfully', () => {
     render(
       <TestWrapper>
-        <ChatScreen navigation={mockNavigation as any} route={mockRoute as any} />
-      </TestWrapper>
+        <ChatScreen
+          navigation={mockNavigation as any}
+          route={mockRoute as any}
+        />
+      </TestWrapper>,
     );
 
     // Screen should render without errors
-    expect(() => render(
-      <TestWrapper>
-        <ChatScreen navigation={mockNavigation as any} route={mockRoute as any} />
-      </TestWrapper>
-    )).not.toThrow();
+    expect(() =>
+      render(
+        <TestWrapper>
+          <ChatScreen
+            navigation={mockNavigation as any}
+            route={mockRoute as any}
+          />
+        </TestWrapper>,
+      ),
+    ).not.toThrow();
   });
 
   it('should handle message sending', async () => {
@@ -121,8 +127,11 @@ describe('ChatScreen Integration Tests', () => {
 
     render(
       <TestWrapper>
-        <ChatScreen navigation={mockNavigation as any} route={mockRoute as any} />
-      </TestWrapper>
+        <ChatScreen
+          navigation={mockNavigation as any}
+          route={mockRoute as any}
+        />
+      </TestWrapper>,
     );
 
     await waitFor(() => {
@@ -138,9 +147,7 @@ describe('ChatScreen Integration Tests', () => {
       isTyping: false,
       showReactions: false,
       data: {
-        messages: [
-          { id: 'msg-1', text: 'Hello', senderId: 'user-1', timestamp: Date.now() },
-        ],
+        messages: [{ id: 'msg-1', text: 'Hello', senderId: 'user-1', timestamp: Date.now() }],
         isOnline: true,
         otherUserTyping: false,
       },
@@ -162,14 +169,16 @@ describe('ChatScreen Integration Tests', () => {
       quickReplies: [],
     });
 
-      render(
-        <TestWrapper>
-          <ChatScreen navigation={mockNavigation as any} route={mockRoute as any} />
-        </TestWrapper>
-      );
+    render(
+      <TestWrapper>
+        <ChatScreen
+          navigation={mockNavigation as any}
+          route={mockRoute as any}
+        />
+      </TestWrapper>,
+    );
 
-      // Component should render successfully
-      expect(mockNavigation).toBeDefined();
+    // Component should render successfully
+    expect(mockNavigation).toBeDefined();
   });
 });
-

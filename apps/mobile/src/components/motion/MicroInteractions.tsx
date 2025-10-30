@@ -1,6 +1,11 @@
 import React, { memo } from 'react';
 import { Pressable, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
 
@@ -31,7 +36,14 @@ export function usePressFeedback(scaleFrom: number = 0.98) {
   return { animatedStyle, onPressIn, onPressOut };
 }
 
-const AnimatedPressableBase = ({ style, haptic = 'light', onPressIn, onPressOut, onPress, ...rest }: AnimatedPressableProps) => {
+const AnimatedPressableBase = ({
+  style,
+  haptic = 'light',
+  onPressIn,
+  onPressOut,
+  onPress,
+  ...rest
+}: AnimatedPressableProps) => {
   const theme = useTheme();
   const { animatedStyle, onPressIn: handleIn, onPressOut: handleOut } = usePressFeedback(0.98);
 
@@ -42,7 +54,12 @@ const AnimatedPressableBase = ({ style, haptic = 'light', onPressIn, onPressOut,
   };
 
   return (
-    <Animated.View style={[{ shadowColor: theme.colors.primary, shadowRadius: 12, shadowOpacity: 0.2, elevation: 6 }, animatedStyle]}> 
+    <Animated.View
+      style={[
+        { shadowColor: theme.colors.primary, shadowRadius: 12, shadowOpacity: 0.2, elevation: 6 },
+        animatedStyle,
+      ]}
+    >
       <Pressable
         style={style}
         onPressIn={(e) => {
@@ -67,5 +84,3 @@ const AnimatedPressableBase = ({ style, haptic = 'light', onPressIn, onPressOut,
 
 export const AnimatedPressable = memo(AnimatedPressableBase);
 AnimatedPressable.displayName = 'AnimatedPressable';
-
-

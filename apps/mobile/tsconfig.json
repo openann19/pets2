@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "target": "ES2020",
     "lib": ["ES2023"],
     "types": ["react-native"],
     "typeRoots": ["./src/types", "./node_modules/@types"],
@@ -20,6 +21,7 @@
       ]
     },
     "jsx": "react-jsx",
+    "esModuleInterop": true,
     "allowJs": true,
     "resolveJsonModule": true,
     "noEmit": true,

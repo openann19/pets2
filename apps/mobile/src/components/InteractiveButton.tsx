@@ -1,10 +1,6 @@
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useRef, useState, forwardRef } from "react";
-import type {
-  ViewStyle,
-  TextStyle,
-  TouchableOpacityProps,
-} from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useRef, useState, forwardRef } from 'react';
+import type { ViewStyle, TextStyle, TouchableOpacityProps } from 'react-native';
 import {
   TouchableOpacity,
   View,
@@ -12,24 +8,20 @@ import {
   ActivityIndicator,
   Animated,
   StyleSheet,
-} from "react-native";
+} from 'react-native';
 
-import {
-  useMagneticEffect,
-  useRippleEffect,
-  useGlowEffect,
-} from "../hooks/useMotionSystem";
-import { useTheme } from "@/theme";
+import { useMagneticEffect, useRippleEffect, useGlowEffect } from '../hooks/useMotionSystem';
+import { useTheme } from '@/theme';
 
 export type InteractiveButtonVariant =
-  | "primary"
-  | "secondary"
-  | "ghost"
-  | "holographic"
-  | "glass"
-  | "outline";
+  | 'primary'
+  | 'secondary'
+  | 'ghost'
+  | 'holographic'
+  | 'glass'
+  | 'outline';
 
-export type InteractiveButtonSize = "sm" | "md" | "lg" | "xl";
+export type InteractiveButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface InteractiveButtonProps extends TouchableOpacityProps {
   title: string;
@@ -85,8 +77,8 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
   (
     {
       title,
-      variant = "primary",
-      size = "md",
+      variant = 'primary',
+      size = 'md',
       loading = false,
       disabled = false,
       magneticEffect = true,
@@ -110,7 +102,8 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
     // Animation hooks
     const magnetic = useMagneticEffect(0.2, 30);
     const ripple = useRippleEffect();
-    const glow = useGlowEffect(glowEffect ? 1 : 0);
+    // Glow effect hook available but not used - reserved for future implementation
+    useGlowEffect(glowEffect ? 1 : 0);
 
     // Get size config
     const sizeConfig = sizeConfigs[size];
@@ -120,51 +113,51 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
       const baseStyles: ViewStyle = {
         borderRadius: sizeConfig.borderRadius,
         minHeight: sizeConfig.minHeight,
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "row",
-        overflow: "hidden",
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        overflow: 'hidden',
         // Shadow effect removed - using theme shadows instead
       };
 
       switch (variant) {
-        case "primary":
+        case 'primary':
           return {
             ...baseStyles,
             backgroundColor: theme.colors.primary,
           };
 
-        case "secondary":
+        case 'secondary':
           return {
             ...baseStyles,
             backgroundColor: theme.colors.info,
           };
 
-        case "ghost":
+        case 'ghost':
           return {
             ...baseStyles,
-            backgroundColor: "transparent",
+            backgroundColor: 'transparent',
             borderWidth: 1,
             borderColor: theme.colors.border,
           };
 
-        case "holographic":
+        case 'holographic':
           return {
             ...baseStyles,
-            backgroundColor: "transparent",
-            position: "relative" as const,
+            backgroundColor: 'transparent',
+            position: 'relative' as const,
           };
 
-        case "glass":
+        case 'glass':
           return {
             ...baseStyles,
-            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
           };
 
-        case "outline":
+        case 'outline':
           return {
             ...baseStyles,
-            backgroundColor: "transparent",
+            backgroundColor: 'transparent',
             borderWidth: 2,
             borderColor: theme.colors.primary,
           };
@@ -178,27 +171,27 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
     const getTextStyles = (): TextStyle => {
       const baseTextStyles: TextStyle = {
         fontSize: sizeConfig.fontSize,
-        fontWeight: "600",
-        textAlign: "center",
+        fontWeight: '600',
+        textAlign: 'center',
       };
 
       switch (variant) {
-        case "primary":
-        case "holographic":
-        case "glass":
+        case 'primary':
+        case 'holographic':
+        case 'glass':
           return {
             ...baseTextStyles,
             color: theme.colors.onPrimary,
           };
 
-        case "secondary":
+        case 'secondary':
           return {
             ...baseTextStyles,
             color: theme.colors.onSurface,
           };
 
-        case "ghost":
-        case "outline":
+        case 'ghost':
+        case 'outline':
           return {
             ...baseTextStyles,
             color: theme.colors.primary,
@@ -238,40 +231,12 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
       onPress?.();
     };
 
-    // Magnetic effect handlers
-    const handleTouchStart = (event: {
-      nativeEvent: { pageX: number; pageY: number };
-    }) => {
-      if (!magneticEffect || disabled) return;
-
-      const { pageX, pageY } = event.nativeEvent;
-      buttonRef.current?.measure(
-        (x, y, width, height, pageX_offset, pageY_offset) => {
-          const centerX = pageX_offset + width / 2;
-          const centerY = pageY_offset + height / 2;
-          magnetic.handlers.onTouchStart(pageX, pageY, centerX, centerY);
-        },
-      );
-    };
-
-    const handleTouchMove = (event: {
-      nativeEvent: { pageX: number; pageY: number };
-    }) => {
-      if (!magneticEffect || disabled) return;
-
-      const { pageX, pageY } = event.nativeEvent;
-      buttonRef.current?.measure(
-        (x, y, width, height, pageX_offset, pageY_offset) => {
-          const centerX = pageX_offset + width / 2;
-          const centerY = pageY_offset + height / 2;
-          magnetic.handlers.onTouchMove(pageX, pageY, centerX, centerY);
-        },
-      );
-    };
-
-    const handleTouchEnd = () => {
-      magnetic.handlers.onTouchEnd();
-    };
+    // Magnetic effect handlers (reserved for future implementation)
+    // These handlers are defined but not currently attached to the TouchableOpacity
+    // as the magnetic effect is handled internally by the useMagneticEffect hook
+    // const handleTouchStart = (event: { nativeEvent: { pageX: number; pageY: number } }) => { ... };
+    // const handleTouchMove = (event: { nativeEvent: { pageX: number; pageY: number } }) => { ... };
+    // const handleTouchEnd = () => { ... };
 
     // Render content
     const renderContent = () => {
@@ -280,9 +245,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
           <ActivityIndicator
             size="small"
             color={
-              variant === "primary" ||
-              variant === "secondary" ||
-              variant === "holographic"
+              variant === 'primary' || variant === 'secondary' || variant === 'holographic'
                 ? theme.colors.onPrimary
                 : theme.colors.primary
             }
@@ -293,9 +256,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
       return (
         <>
           {leftIcon && <View style={{ marginRight: 8 }}>{leftIcon}</View>}
-          <Text style={StyleSheet.flatten([getTextStyles(), textStyle])}>
-            {title}
-          </Text>
+          <Text style={StyleSheet.flatten([getTextStyles(), textStyle])}>{title}</Text>
           {rightIcon && <View style={{ marginLeft: 8 }}>{rightIcon}</View>}
         </>
       );
@@ -311,59 +272,59 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
               paddingHorizontal: sizeConfig.paddingHorizontal,
               paddingVertical: sizeConfig.paddingVertical,
               opacity: disabled ? 0.5 : 1,
-              transform: [
-                { translateX: magnetic.position.x },
-                { translateY: magnetic.position.y },
-              ],
+              transform: [{ translateX: magnetic.position.x }, { translateY: magnetic.position.y }],
             },
             style,
           ]}
         >
-        <TouchableOpacity
-          ref={ref}
-          style={[{ flex: 1 }]}
-          // Glow effect is applied separately via Animated wrapper if needed
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          onPress={handlePress}
-          disabled={disabled || loading}
-          activeOpacity={1}
-          {...(Object.fromEntries(
-            Object.entries(props).filter(([key]) => key !== 'onTouchMove')
-          ) as TouchableOpacityProps)}
-        >
-          {/* Ripple effect overlay */}
-          <Animated.View
-            style={[
-              {
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(255,255,255,0.3)",
-                borderRadius: sizeConfig.borderRadius,
-              },
-              ripple.rippleStyle,
-              isPressed && { opacity: 0.5 },
-            ]}
-          />
+          <TouchableOpacity
+            ref={ref}
+            style={[{ flex: 1 }]}
+            // Glow effect is applied separately via Animated wrapper if needed
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            onPress={handlePress}
+            disabled={disabled || loading}
+            activeOpacity={1}
+            {...(Object.fromEntries(
+              Object.entries(props).filter(([key]) => key !== 'onTouchMove'),
+            ) as TouchableOpacityProps)}
+          >
+            {/* Ripple effect overlay */}
+            <Animated.View
+              style={[
+                {
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(255,255,255,0.3)',
+                  borderRadius: sizeConfig.borderRadius,
+                },
+                ripple.rippleStyle,
+                isPressed && { opacity: 0.5 },
+              ]}
+            />
 
-          {/* Main content */}
-          <View ref={buttonRef} style={{ zIndex: 1 }}>
-            {renderContent()}
-          </View>
-        </TouchableOpacity>
+            {/* Main content */}
+            <View
+              ref={buttonRef}
+              style={{ zIndex: 1 }}
+            >
+              {renderContent()}
+            </View>
+          </TouchableOpacity>
         </Animated.View>
       );
 
       // Wrap with gradient for holographic variant
-      if (variant === "holographic") {
+      if (variant === 'holographic') {
         return (
           <View
             style={{
               borderRadius: sizeConfig.borderRadius,
-              overflow: "hidden",
+              overflow: 'hidden',
             }}
           >
             <LinearGradient
@@ -385,6 +346,6 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
   },
 );
 
-InteractiveButton.displayName = "InteractiveButton";
+InteractiveButton.displayName = 'InteractiveButton';
 
 export default InteractiveButton;

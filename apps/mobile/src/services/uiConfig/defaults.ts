@@ -4,8 +4,8 @@
  */
 
 import type { UIConfig } from '@pawfectmatch/core';
-import { getLightTheme } from '../theme/resolve';
-import { motionDurations, motionEasing, motionScale, motionOpacity } from '../theme/motion';
+import { getLightTheme } from '@/theme/resolve';
+import { motionDurations, motionEasing, motionScale, motionOpacity } from '@/theme/motion';
 
 /**
  * Generate default UIConfig from embedded theme
@@ -42,25 +42,25 @@ export function getDefaultUIConfig(): UIConfig {
         },
       },
       spacing: {
-        xs: theme.spacing.xs,
-        sm: theme.spacing.sm,
-        md: theme.spacing.md,
-        lg: theme.spacing.lg,
-        xl: theme.spacing.xl,
+        'xs': theme.spacing.xs,
+        'sm': theme.spacing.sm,
+        'md': theme.spacing.md,
+        'lg': theme.spacing.lg,
+        'xl': theme.spacing.xl,
         '2xl': theme.spacing['2xl'],
         '3xl': theme.spacing['3xl'] ?? theme.spacing['2xl'] * 1.5,
         '4xl': theme.spacing['4xl'] ?? theme.spacing['2xl'] * 2,
       },
       radii: {
-        none: theme.radii.none,
-        xs: theme.radii.xs,
-        sm: theme.radii.sm,
-        md: theme.radii.md,
-        lg: theme.radii.lg,
-        xl: theme.radii.xl,
+        'none': theme.radii.none,
+        'xs': theme.radii.xs,
+        'sm': theme.radii.sm,
+        'md': theme.radii.md,
+        'lg': theme.radii.lg,
+        'xl': theme.radii.xl,
         '2xl': theme.radii['2xl'],
-        pill: theme.radii.pill,
-        full: theme.radii.full,
+        'pill': theme.radii.pill,
+        'full': theme.radii.full,
       },
       typography: {
         scale: {
@@ -207,4 +207,3 @@ export function getDefaultUIConfig(): UIConfig {
     },
   };
 }
-

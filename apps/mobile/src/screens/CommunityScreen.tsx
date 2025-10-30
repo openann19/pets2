@@ -1,4 +1,4 @@
-  /**
+/**
  * Community Feed Screen
  *
  * Production-grade community feed with:
@@ -11,7 +11,7 @@
  * - Offline support
  */
 
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import {
   FlatList,
   View,
@@ -36,6 +36,12 @@ import { useCommunityFeed } from '../hooks/useCommunityFeed';
 import { useTheme } from '@mobile/theme';
 import { getExtendedColors, type ExtendedColors } from '@mobile/theme/adapters';
 import { CreatePostForm } from '../components/Community/CreatePostForm';
+import { PostPreview } from '../components/Community/PostPreview';
+import {
+  PostCreationService,
+  type PostCreationData,
+  type UploadProgress,
+} from '../services/postCreationService';
 import {
   useDoubleTapMetrics,
   usePinchMetrics,
@@ -81,6 +87,9 @@ export default function CommunityScreen({ navigation: _navigation }: CommunitySc
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [submittingPost, setSubmittingPost] = useState(false);
   const [showCreatePostForm, setShowCreatePostForm] = useState(false);
+  const [showPostPreview, setShowPostPreview] = useState(false);
+  const [pendingPostData, setPendingPostData] = useState<PostCreationData | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
   const [likingPosts, setLikingPosts] = useState<Record<string, boolean>>({});
   const [commentingPosts, setCommentingPosts] = useState<Record<string, boolean>>({});
   const [showReactions, setShowReactions] = useState<Record<string, boolean>>({});
@@ -88,6 +97,48 @@ export default function CommunityScreen({ navigation: _navigation }: CommunitySc
   const { startInteraction: startDoubleTap, endInteraction: endDoubleTap } = useDoubleTapMetrics();
   const { startInteraction: startPinch, endInteraction: endPinch } = usePinchMetrics();
   const { startInteraction: startReaction, endInteraction: endReaction } = useReactionMetrics();
+
+  // Enhanced post creation with preview and progress tracking
+  const handleCreatePost = useCallback(async (data: PostCreationData) => {
+    setPendingPostData(data);
+    setShowPostPreview(true);
+  }, []);
+
+  const handlePostSubmit = useCallback(async () => {
+    if (!pendingPostData) return;
+
+    setSubmittingPost(true);
+    setShowPostPreview(false);
+
+    try {
+      const result = await PostCreationService.createPost(pendingPostData, {
+        onProgress: (progress) => {
+          setUploadProgress(progress);
+        },
+        enableOffline: true,
+      });
+
+      if (result.success) {
+        setShowCreatePostForm(false);
+        Alert.alert('Success', 'Your post has been created!');
+        await refreshFeed(); // Refresh the feed to show the new post
+      } else {
+        Alert.alert('Error', result.error || 'Failed to create post. Please try again.');
+      }
+    } catch (error) {
+      logger.error('Post creation failed', { error });
+      Alert.alert('Error', 'Failed to create post. Please try again.');
+    } finally {
+      setSubmittingPost(false);
+      setUploadProgress(null);
+      setPendingPostData(null);
+    }
+  }, [pendingPostData, refreshFeed]);
+
+  // Initialize post creation service
+  useEffect(() => {
+    PostCreationService.initialize();
+  }, []);
 
   useTabReselectRefresh({
     listRef,
@@ -469,9 +520,7 @@ export default function CommunityScreen({ navigation: _navigation }: CommunitySc
               <Text style={StyleSheet.flatten([styles.authorName, { color: colors.onSurface }])}>
                 {post.author.name}
               </Text>
-              <Text
-                style={StyleSheet.flatten([styles.timeAgo, { color: colors.onMuted }])}
-              >
+              <Text style={StyleSheet.flatten([styles.timeAgo, { color: colors.onMuted }])}>
                 {formatTimeAgo(post.createdAt)}
               </Text>
             </View>
@@ -587,10 +636,7 @@ export default function CommunityScreen({ navigation: _navigation }: CommunitySc
                 {post.activityDetails.location}
               </Text>
               <Text
-                style={StyleSheet.flatten([
-                  styles.activityTextSmall,
-                  { color: colors.onMuted },
-                ])}
+                style={StyleSheet.flatten([styles.activityTextSmall, { color: colors.onMuted }])}
               >
                 {post.activityDetails.currentAttendees} of {post.activityDetails.maxAttendees}{' '}
                 attending
@@ -602,7 +648,12 @@ export default function CommunityScreen({ navigation: _navigation }: CommunitySc
                 accessibilityLabel="Join activity"
                 accessibilityRole="button"
               >
-                <View style={StyleSheet.flatten([styles.joinButton, { backgroundColor: colors.accent }])}>
+                <View
+                  style={StyleSheet.flatten([
+                    styles.joinButton,
+                    { backgroundColor: colors.accent },
+                  ])}
+                >
                   <Text style={styles.joinButtonText}>Join</Text>
                 </View>
               </Interactive>
@@ -649,9 +700,7 @@ export default function CommunityScreen({ navigation: _navigation }: CommunitySc
                 size={24}
                 color={colors.onMuted}
               />
-              <Text
-                style={StyleSheet.flatten([styles.actionText, { color: colors.onMuted }])}
-              >
+              <Text style={StyleSheet.flatten([styles.actionText, { color: colors.onMuted }])}>
                 {post.comments.length}
               </Text>
             </View>
@@ -684,12 +733,7 @@ export default function CommunityScreen({ navigation: _navigation }: CommunitySc
                 >
                   {comment.author.name}
                 </Text>
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.commentText,
-                    { color: colors.onMuted },
-                  ])}
-                >
+                <Text style={StyleSheet.flatten([styles.commentText, { color: colors.onMuted }])}>
                   {comment.content}
                 </Text>
               </View>
@@ -755,9 +799,7 @@ export default function CommunityScreen({ navigation: _navigation }: CommunitySc
             size="large"
             color={colors.primary}
           />
-          <Text
-            style={StyleSheet.flatten([styles.loadingText, { color: colors.onMuted }])}
-          >
+          <Text style={StyleSheet.flatten([styles.loadingText, { color: colors.onMuted }])}>
             Loading community...
           </Text>
         </View>
@@ -818,7 +860,7 @@ export default function CommunityScreen({ navigation: _navigation }: CommunitySc
           />
         }
       />
-      
+
       {/* Create Post Form Modal */}
       <Modal
         visible={showCreatePostForm}
@@ -828,21 +870,29 @@ export default function CommunityScreen({ navigation: _navigation }: CommunitySc
         accessibilityViewIsModal
       >
         <CreatePostForm
-          onSubmit={async (data) => {
-            setSubmittingPost(true);
-            try {
-              await createPost(data);
-              setShowCreatePostForm(false);
-              Alert.alert('Success', 'Your post has been created!');
-            } catch (error) {
-              Alert.alert('Error', 'Failed to create post. Please try again.');
-            } finally {
-              setSubmittingPost(false);
-            }
-          }}
+          onSubmit={handleCreatePost}
           onCancel={() => setShowCreatePostForm(false)}
           isSubmitting={submittingPost}
+          uploadProgress={uploadProgress}
         />
+      </Modal>
+
+      {/* Post Preview Modal */}
+      <Modal
+        visible={showPostPreview}
+        animationType="slide"
+        onRequestClose={() => setShowPostPreview(false)}
+        presentationStyle="pageSheet"
+        accessibilityViewIsModal
+      >
+        {pendingPostData && (
+          <PostPreview
+            postData={pendingPostData}
+            onClose={() => setShowPostPreview(false)}
+            onSubmit={handlePostSubmit}
+            isLoading={submittingPost}
+          />
+        )}
       </Modal>
     </SafeAreaView>
   );

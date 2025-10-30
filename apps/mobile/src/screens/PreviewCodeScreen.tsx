@@ -16,7 +16,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@mobile/theme';
 import type { RootStackScreenProps } from '../navigation/types';
-import { loadPreviewConfig, clearPreviewMode, useUIConfig, loadPreviewCode } from '../services/uiConfig';
+import {
+  loadPreviewConfig,
+  clearPreviewMode,
+  useUIConfig,
+  loadPreviewCode,
+} from '../services/uiConfig';
 import { haptic } from '../ui/haptics';
 import { logger } from '@pawfectmatch/core';
 
@@ -171,7 +176,10 @@ export default function PreviewCodeScreen({ navigation }: PreviewCodeScreenProps
           ],
         );
       } else {
-        Alert.alert('Error', 'Failed to load preview configuration. Please check the code and try again.');
+        Alert.alert(
+          'Error',
+          'Failed to load preview configuration. Please check the code and try again.',
+        );
       }
     } catch (error) {
       logger.error('Failed to load preview config', { error });
@@ -220,7 +228,14 @@ export default function PreviewCodeScreen({ navigation }: PreviewCodeScreenProps
           <TextInput
             style={[styles.codeInput, code.length === 6 && styles.codeInputFocused]}
             value={code}
-            onChangeText={(text) => setCode(text.replace(/[^A-Z0-9]/gi, '').slice(0, 6).toUpperCase())}
+            onChangeText={(text) =>
+              setCode(
+                text
+                  .replace(/[^A-Z0-9]/gi, '')
+                  .slice(0, 6)
+                  .toUpperCase(),
+              )
+            }
             placeholder="ABC123"
             placeholderTextColor={theme.colors.onMuted}
             maxLength={6}
@@ -262,8 +277,13 @@ export default function PreviewCodeScreen({ navigation }: PreviewCodeScreenProps
           </TouchableOpacity>
 
           {currentPreviewCode && (
-            <TouchableOpacity style={[styles.button, styles.buttonSecondary]} onPress={handleClearPreview}>
-              <Text style={[styles.buttonText, styles.buttonTextSecondary]}>Clear Preview Mode</Text>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonSecondary]}
+              onPress={handleClearPreview}
+            >
+              <Text style={[styles.buttonText, styles.buttonTextSecondary]}>
+                Clear Preview Mode
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -271,4 +291,3 @@ export default function PreviewCodeScreen({ navigation }: PreviewCodeScreenProps
     </SafeAreaView>
   );
 }
-

@@ -1,17 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { useTheme } from "../../theme/Provider";
-import PreCallDeviceCheckService from "../../services/PreCallDeviceCheck";
-import CallTelemetryService from "../../services/CallTelemetry";
-import type { DeviceCheckResult } from "../../services/PreCallDeviceCheck";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../../theme/Provider';
+import PreCallDeviceCheckService from '../../services/PreCallDeviceCheck';
+import CallTelemetryService from '../../services/CallTelemetry';
+import type { DeviceCheckResult } from '../../services/PreCallDeviceCheck';
 
 interface PreCallCheckProps {
   callType: 'voice' | 'video';
@@ -77,26 +70,25 @@ export default function PreCallCheck({
       if (checkResult.overall.ready && checkResult.overall.warnings.length === 0) {
         setTimeout(() => onCheckComplete(checkResult), 1000);
       }
-
     } catch (error) {
       setChecking(false);
       const errorMessage = error instanceof Error ? error.message : 'Device check failed';
-      
+
       CallTelemetryService.trackCallFailure(sessionId, errorMessage, 'setup');
-      
+
       Alert.alert(
         'Device Check Failed',
         'Unable to verify your device is ready for calls. Please check your permissions and network connection.',
         [
           { text: 'Cancel', onPress: onCancel },
           { text: 'Retry', onPress: handleRetry },
-        ]
+        ],
       );
     }
   };
 
   const handleRetry = () => {
-    setRetryCount(prev => prev + 1);
+    setRetryCount((prev) => prev + 1);
     performDeviceCheck();
   };
 
@@ -120,14 +112,10 @@ export default function PreCallCheck({
       issues.push('• Check your internet connection');
     }
 
-    Alert.alert(
-      'Fix These Issues',
-      issues.join('\n'),
-      [
-        { text: 'Cancel', onPress: onCancel },
-        { text: 'Retry Check', onPress: handleRetry },
-      ]
-    );
+    Alert.alert('Fix These Issues', issues.join('\n'), [
+      { text: 'Cancel', onPress: onCancel },
+      { text: 'Retry Check', onPress: handleRetry },
+    ]);
   };
 
   const styles = StyleSheet.create({
@@ -268,22 +256,19 @@ export default function PreCallCheck({
     },
   });
 
-  const renderCheckItem = (
-    label: string,
-    status: boolean,
-    error?: string,
-    subtext?: string
-  ) => (
+  const renderCheckItem = (label: string, status: boolean, error?: string, subtext?: string) => (
     <View style={styles.checkItem}>
       <Ionicons
-        name={status ? "checkmark-circle" : "close-circle"}
+        name={status ? 'checkmark-circle' : 'close-circle'}
         size={24}
         color={status ? theme.colors.success : theme.colors.danger}
         style={styles.checkIcon}
       />
       <View style={{ flex: 1 }}>
         <Text style={styles.checkText}>{label}</Text>
-        {error && <Text style={[styles.checkSubtext, { color: theme.colors.danger }]}>{error}</Text>}
+        {error && (
+          <Text style={[styles.checkSubtext, { color: theme.colors.danger }]}>{error}</Text>
+        )}
         {subtext && <Text style={styles.checkSubtext}>{subtext}</Text>}
       </View>
     </View>
@@ -294,13 +279,14 @@ export default function PreCallCheck({
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Preparing Your Call</Text>
-          <Text style={styles.subtitle}>
-            Checking your device and network connectivity...
-          </Text>
+          <Text style={styles.subtitle}>Checking your device and network connectivity...</Text>
         </View>
-        
+
         <View style={styles.checkingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator
+            size="large"
+            color={theme.colors.primary}
+          />
           <Text style={styles.checkingText}>
             {retryCount > 0 ? `Retrying... (${retryCount})` : 'Running checks...'}
           </Text>
@@ -316,13 +302,19 @@ export default function PreCallCheck({
           <Text style={styles.title}>Check Failed</Text>
           <Text style={styles.subtitle}>Unable to verify device readiness</Text>
         </View>
-        
+
         <View style={styles.actionsContainer}>
-          <TouchableOpacity style={styles.primaryButton} onPress={handleRetry}>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={handleRetry}
+          >
             <Text style={styles.primaryButtonText}>Retry Check</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.secondaryButton} onPress={onCancel}>
+
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            onPress={onCancel}
+          >
             <Text style={styles.secondaryButtonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -337,10 +329,9 @@ export default function PreCallCheck({
           {result.overall.ready ? 'Ready to Call!' : 'Issues Detected'}
         </Text>
         <Text style={styles.subtitle}>
-          {result.overall.ready 
+          {result.overall.ready
             ? 'Your device is ready for the call'
-            : 'Please fix the issues below to continue'
-          }
+            : 'Please fix the issues below to continue'}
         </Text>
       </View>
 
@@ -349,35 +340,39 @@ export default function PreCallCheck({
           'Network Connection',
           result.network.connected,
           result.network.error,
-          result.network.connected 
+          result.network.connected
             ? `${result.network.type} - ${result.network.quality} quality`
-            : undefined
+            : undefined,
         )}
-        
+
         {renderCheckItem(
           'Microphone',
           result.microphone.available && result.microphone.permission,
           result.microphone.error,
-          result.microphone.devices 
+          result.microphone.devices
             ? `${result.microphone.devices.length} device(s) found`
-            : undefined
+            : undefined,
         )}
-        
-        {callType === 'video' && renderCheckItem(
-          'Camera',
-          result.camera.available && result.camera.permission,
-          result.camera.error,
-          result.camera.devices 
-            ? `${result.camera.devices.length} device(s) found`
-            : undefined
-        )}
+
+        {callType === 'video' &&
+          renderCheckItem(
+            'Camera',
+            result.camera.available && result.camera.permission,
+            result.camera.error,
+            result.camera.devices ? `${result.camera.devices.length} device(s) found` : undefined,
+          )}
       </View>
 
       {result.overall.warnings.length > 0 && (
         <View style={styles.warningsContainer}>
           <Text style={styles.warningTitle}>Warnings</Text>
           {result.overall.warnings.map((warning, index) => (
-            <Text key={index} style={styles.warningText}>• {warning}</Text>
+            <Text
+              key={index}
+              style={styles.warningText}
+            >
+              • {warning}
+            </Text>
           ))}
         </View>
       )}
@@ -386,31 +381,48 @@ export default function PreCallCheck({
         <View style={styles.errorsContainer}>
           <Text style={styles.errorTitle}>Issues Found</Text>
           {result.overall.errors.map((error, index) => (
-            <Text key={index} style={styles.errorText}>• {error}</Text>
+            <Text
+              key={index}
+              style={styles.errorText}
+            >
+              • {error}
+            </Text>
           ))}
         </View>
       )}
 
       <View style={styles.actionsContainer}>
         {result.overall.ready ? (
-          <TouchableOpacity style={styles.primaryButton} onPress={handleProceedAnyway}>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={handleProceedAnyway}
+          >
             <Text style={styles.primaryButtonText}>Start Call</Text>
           </TouchableOpacity>
         ) : (
           <>
-            <TouchableOpacity style={styles.dangerButton} onPress={handleFixIssues}>
+            <TouchableOpacity
+              style={styles.dangerButton}
+              onPress={handleFixIssues}
+            >
               <Text style={styles.dangerButtonText}>Fix Issues</Text>
             </TouchableOpacity>
-            
+
             {result.overall.errors.length === 0 && (
-              <TouchableOpacity style={styles.secondaryButton} onPress={handleProceedAnyway}>
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={handleProceedAnyway}
+              >
                 <Text style={styles.secondaryButtonText}>Continue Anyway</Text>
               </TouchableOpacity>
             )}
           </>
         )}
-        
-        <TouchableOpacity style={styles.secondaryButton} onPress={onCancel}>
+
+        <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={onCancel}
+        >
           <Text style={styles.secondaryButtonText}>Cancel</Text>
         </TouchableOpacity>
       </View>

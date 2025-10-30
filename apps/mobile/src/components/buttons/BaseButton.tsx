@@ -11,6 +11,7 @@
  */
 
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { forwardRef } from 'react';
 import {
   TouchableOpacity,
@@ -22,8 +23,17 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  interpolate,
+  Extrapolate,
+} from 'react-native-reanimated';
 import { useTheme } from '@/theme';
 import type { AppTheme } from '@/theme';
+import { useReduceMotion } from '@/hooks/useReducedMotion';
 
 // === TYPES ===
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline';
@@ -41,6 +51,9 @@ export interface BaseButtonProps extends TouchableOpacityProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   onPress?: () => void;
+  premium?: boolean;
+  haptic?: boolean;
+  glow?: boolean;
 }
 
 // === SIZE CONFIGURATIONS (theme-based) ===
@@ -83,6 +96,8 @@ function getSizeConfig(theme: AppTheme, size: ButtonSize) {
 }
 
 // === MAIN COMPONENT ===
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+
 const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
   (
     {
@@ -97,15 +112,42 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       style,
       textStyle,
       onPress,
+      premium = true,
+      haptic = true,
+      glow = false,
       ...props
     },
     ref,
   ) => {
     const theme = useTheme();
+    const reducedMotion = useReduceMotion();
     // Map icon to leftIcon for convenience
     const effectiveLeftIcon = icon || leftIcon;
     const sizeConfig = getSizeConfig(theme, size);
     const isDisabled = disabled || loading;
+
+    // Premium animations
+    const scale = useSharedValue(1);
+    const glowOpacity = useSharedValue(0);
+
+    const animatedStyle = useAnimatedStyle(() => {
+      const glowValue = glow
+        ? interpolate(
+            glowOpacity.value,
+            [0, 1],
+            [0.1, 0.3],
+            Extrapolate.CLAMP,
+          )
+        : 0.1;
+
+      return {
+        transform: [{ scale: scale.value }],
+        shadowOpacity: glowValue,
+        shadowRadius: glowOpacity.value * 12 + 4,
+        shadowColor: variant === 'primary' ? theme.colors.primary : theme.colors.border,
+        elevation: glowOpacity.value * 8 + 2,
+      };
+    });
 
     // Get variant styles
     const getVariantStyles = (): ViewStyle => {
@@ -194,10 +236,41 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       }
     };
 
-    // Handle press
+    // Handle press with haptics and animations
     const handlePress = () => {
       if (isDisabled) return;
+      
+      if (haptic && !reducedMotion) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
+      
       onPress?.();
+    };
+
+    const handlePressIn = () => {
+      if (isDisabled || reducedMotion) return;
+      
+      scale.value = withSpring(0.96, {
+        damping: 15,
+        stiffness: 400,
+      });
+      
+      if (glow) {
+        glowOpacity.value = withTiming(1, { duration: 150 });
+      }
+    };
+
+    const handlePressOut = () => {
+      if (isDisabled || reducedMotion) return;
+      
+      scale.value = withSpring(1, {
+        damping: 15,
+        stiffness: 400,
+      });
+      
+      if (glow) {
+        glowOpacity.value = withTiming(0, { duration: 200 });
+      }
     };
 
     // Render content
@@ -239,9 +312,11 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       );
     };
 
+    const Container = premium ? AnimatedTouchableOpacity : TouchableOpacity;
+
     return (
-      <TouchableOpacity
-        ref={ref}
+      <Container
+        ref={ref as any}
         style={StyleSheet.flatten([
           getVariantStyles(),
           {
@@ -249,18 +324,21 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
             paddingVertical: sizeConfig.paddingVertical,
             opacity: isDisabled ? 0.6 : 1,
           },
+          premium ? animatedStyle : undefined,
           style,
         ])}
         onPress={handlePress}
+        onPressIn={premium ? handlePressIn : undefined}
+        onPressOut={premium ? handlePressOut : undefined}
         disabled={isDisabled}
-        activeOpacity={0.8}
+        activeOpacity={premium ? 1 : 0.8}
         accessibilityRole="button"
         accessibilityLabel={title}
         accessibilityState={{ disabled: isDisabled, busy: loading }}
         {...props}
       >
         {renderContent()}
-      </TouchableOpacity>
+      </Container>
     );
   },
 );

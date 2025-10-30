@@ -1,6 +1,6 @@
 /**
  * Tests for useFloatingEffect hook
- * 
+ *
  * Covers:
  * - Enabled/disabled state
  * - Floating animation style
@@ -11,8 +11,6 @@ import { renderHook } from '@testing-library/react-native';
 import { useFloatingEffect } from '../useFloatingEffect';
 
 jest.mock('react-native-reanimated', () => {
-
-
   const Reanimated = require('react-native-reanimated/mock');
   Reanimated.default.call = () => {};
   return Reanimated;
@@ -57,10 +55,9 @@ describe('useFloatingEffect', () => {
     });
 
     it('should maintain style when enabled changes', () => {
-      const { result, rerender } = renderHook(
-        (props) => useFloatingEffect(props.enabled),
-        { initialProps: { enabled: true } }
-      );
+      const { result, rerender } = renderHook((props) => useFloatingEffect(props.enabled), {
+        initialProps: { enabled: true },
+      });
 
       const firstStyle = result.current.floatingStyle;
 
@@ -72,10 +69,9 @@ describe('useFloatingEffect', () => {
 
   describe('state changes', () => {
     it('should handle enabling animation', () => {
-      const { result, rerender } = renderHook(
-        (props) => useFloatingEffect(props.enabled),
-        { initialProps: { enabled: false } }
-      );
+      const { result, rerender } = renderHook((props) => useFloatingEffect(props.enabled), {
+        initialProps: { enabled: false },
+      });
 
       expect(result.current.floatingStyle).toBeDefined();
 
@@ -85,10 +81,9 @@ describe('useFloatingEffect', () => {
     });
 
     it('should handle disabling animation', () => {
-      const { result, rerender } = renderHook(
-        (props) => useFloatingEffect(props.enabled),
-        { initialProps: { enabled: true } }
-      );
+      const { result, rerender } = renderHook((props) => useFloatingEffect(props.enabled), {
+        initialProps: { enabled: true },
+      });
 
       expect(result.current.floatingStyle).toBeDefined();
 
@@ -98,4 +93,3 @@ describe('useFloatingEffect', () => {
     });
   });
 });
-

@@ -127,4 +127,3 @@ export async function createUploadPayload(
     return createNativeUploadPayload(uriOrBlob, options.name, options.type);
   }
 }
-

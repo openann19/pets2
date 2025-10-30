@@ -58,9 +58,7 @@ jest.mock('react-i18next', () => ({
 const TestWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider scheme="light">
-      <NavigationContainer>
-        {children}
-      </NavigationContainer>
+      <NavigationContainer>{children}</NavigationContainer>
     </ThemeProvider>
   );
 };
@@ -82,15 +80,17 @@ describe('HomeScreen Integration Tests', () => {
       render(
         <TestWrapper>
           <HomeScreen />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       // Screen should render without errors
-      expect(() => render(
-        <TestWrapper>
-          <HomeScreen />
-        </TestWrapper>
-      )).not.toThrow();
+      expect(() =>
+        render(
+          <TestWrapper>
+            <HomeScreen />
+          </TestWrapper>,
+        ),
+      ).not.toThrow();
     });
 
     it('should display user stats', async () => {
@@ -116,7 +116,7 @@ describe('HomeScreen Integration Tests', () => {
       render(
         <TestWrapper>
           <HomeScreen />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       // Stats should be displayed (if rendered)
@@ -147,7 +147,7 @@ describe('HomeScreen Integration Tests', () => {
       render(
         <TestWrapper>
           <HomeScreen />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       // Trigger refresh (if pull-to-refresh is implemented)
@@ -176,7 +176,7 @@ describe('HomeScreen Integration Tests', () => {
       render(
         <TestWrapper>
           <HomeScreen />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       // Navigation handlers should be available
@@ -189,7 +189,7 @@ describe('HomeScreen Integration Tests', () => {
       render(
         <TestWrapper>
           <HomeScreen />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       // Component should use theme colors
@@ -218,7 +218,7 @@ describe('HomeScreen Integration Tests', () => {
       render(
         <TestWrapper>
           <HomeScreen />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       // Refreshing state should be handled
@@ -228,4 +228,3 @@ describe('HomeScreen Integration Tests', () => {
     });
   });
 });
-

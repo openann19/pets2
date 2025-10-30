@@ -2,15 +2,16 @@
  * useHomeScreen Hook
  * Manages HomeScreen state and business logic
  */
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { logger } from '@pawfectmatch/core';
-import { useAuthStore } from '@pawfectmatch/core';
-import { matchesAPI } from '../../services/api';
 import { authService } from '../../services/AuthService';
 import type { RootStackParamList } from '../../navigation/types';
 import { haptic } from '../../ui/haptics';
+import { telemetry } from '../../lib/telemetry';
+import { useDemoMode } from '../../demo/DemoModeProvider';
+import type { HomeQuickActionEventPayload } from '../../constants/events';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -20,10 +21,23 @@ interface Stats {
   pets: number;
 }
 
+export interface RecentActivityItem {
+  id: string;
+  type: 'match' | 'message';
+  title: string;
+  description: string;
+  timestamp: string; // ISO string
+  timeAgo: string; // "2m ago", "5m ago"
+}
+
 interface UseHomeScreenReturn {
   stats: Stats;
+  recentActivity: RecentActivityItem[];
   refreshing: boolean;
+  isLoading: boolean;
+  error: Error | null;
   onRefresh: () => Promise<void>;
+  refetch: () => Promise<void>;
   handleQuickAction: (action: string) => void;
   handleProfilePress: () => void;
   handleSettingsPress: () => void;
@@ -33,49 +47,140 @@ interface UseHomeScreenReturn {
   handleMyPetsPress: () => void;
   handleCreatePetPress: () => void;
   handleCommunityPress: () => void;
+  handlePremiumPress: () => void;
+}
+
+/**
+ * Format timestamp to relative time (e.g., "2m ago", "5m ago")
+ */
+function formatTimeAgo(timestamp: string): string {
+  const now = Date.now();
+  const time = new Date(timestamp).getTime();
+  const diffMs = now - time;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return new Date(timestamp).toLocaleDateString();
 }
 
 export const useHomeScreen = (): UseHomeScreenReturn => {
   const navigation = useNavigation<NavigationProp>();
-  const { user } = useAuthStore();
+  const { enabled: isDemoMode } = useDemoMode();
 
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const [stats, setStats] = useState<Stats>({
     matches: 0,
     messages: 0,
     pets: 0,
   });
+  const [recentActivity, setRecentActivity] = useState<RecentActivityItem[]>([]);
 
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
+  // Load initial data
+  useEffect(() => {
+    void loadHomeData();
+    telemetry.trackHomeOpen();
+  }, []);
+
+  const loadHomeData = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
     try {
+      if (isDemoMode) {
+        // Load demo fixtures
+        const { demoHomeStats, demoRecentActivity } = await import('../../demo/fixtures/home');
+        setStats(demoHomeStats);
+        setRecentActivity(demoRecentActivity);
+        setIsLoading(false);
+        return;
+      }
+
       // Get access token from AuthService
       const accessToken = await authService.getAccessToken();
 
-      // Use real home stats API endpoint
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/home/stats`, {
+      // Fetch stats
+      const apiUrl = process.env['EXPO_PUBLIC_API_URL'] || '';
+      const statsResponse = await fetch(`${apiUrl}/home/stats`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       });
-      const data = await response.json();
+
+      if (!statsResponse.ok) {
+        throw new Error(`Failed to fetch stats: ${statsResponse.statusText}`);
+      }
+
+      const statsData = await statsResponse.json();
 
       setStats({
-        matches: data.matches || 0,
-        messages: data.messages || 0,
-        pets: 0, // Not included in new API
+        matches: statsData.matches || 0,
+        messages: statsData.messages || 0,
+        pets: 0,
       });
+
+      // Fetch recent activity
+      const activityResponse = await fetch(`${apiUrl}/home/recent-activity`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!activityResponse.ok) {
+        throw new Error(`Failed to fetch activity: ${activityResponse.statusText}`);
+      }
+
+      const activityData = await activityResponse.json();
+
+      // Transform to RecentActivityItem format
+      const activities: RecentActivityItem[] = (activityData.activities || []).map((item: unknown) => {
+        const activity = item as {
+          id: string;
+          type: 'match' | 'message';
+          title: string;
+          description: string;
+          timestamp: string;
+        };
+        return {
+          ...activity,
+          timeAgo: formatTimeAgo(activity.timestamp),
+        };
+      });
+
+      setRecentActivity(activities);
+      setError(null);
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to load home data:', { error: err });
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isDemoMode]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    telemetry.trackHomeRefresh();
+    try {
+      await loadHomeData();
     } catch (error) {
       logger.error('Failed to refresh data:', { error });
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [loadHomeData]);
 
   const handleQuickAction = useCallback(
     (action: string) => {
       try {
+        telemetry.trackHomeQuickAction({ action: action as HomeQuickActionEventPayload['action'] });
         switch (action) {
           case 'swipe':
             navigation.navigate('Swipe');
@@ -102,7 +207,8 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
             navigation.navigate('Community');
             break;
           case 'premium':
-            navigation.navigate('Profile');
+            navigation.navigate('Premium');
+            telemetry.trackPremiumCTAClick({ source: 'home_quick_action' });
             break;
           default:
             logger.warn(`Unknown action: ${action}`);
@@ -154,10 +260,19 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
     handleQuickAction('community');
   }, [handleQuickAction]);
 
+  const handlePremiumPress = useCallback(() => {
+    haptic.confirm();
+    handleQuickAction('premium');
+  }, [handleQuickAction]);
+
   return {
     stats,
+    recentActivity,
     refreshing,
+    isLoading,
+    error,
     onRefresh,
+    refetch: loadHomeData,
     handleQuickAction,
     handleProfilePress,
     handleSettingsPress,
@@ -167,5 +282,6 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
     handleMyPetsPress,
     handleCreatePetPress,
     handleCommunityPress,
+    handlePremiumPress,
   };
 };

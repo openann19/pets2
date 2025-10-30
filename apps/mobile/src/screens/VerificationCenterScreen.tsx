@@ -209,7 +209,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
   const theme = useTheme();
   const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
   const { colors } = theme;
-  
+
   const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>({
     tier: 'tier0',
     verified: false,
@@ -303,20 +303,29 @@ export default function VerificationCenterScreen(): React.JSX.Element {
   const handleStartVerification = async () => {
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      
+
       // Determine next tier to verify
-      const nextTier = verificationStatus.tier === 'tier0' ? 'tier1' : 
-                       verificationStatus.tier === 'tier1' ? 'tier2' :
-                       verificationStatus.tier === 'tier2' ? 'tier3' :
-                       verificationStatus.tier === 'tier3' ? 'tier4' : null;
-      
+      const nextTier =
+        verificationStatus.tier === 'tier0'
+          ? 'tier1'
+          : verificationStatus.tier === 'tier1'
+            ? 'tier2'
+            : verificationStatus.tier === 'tier2'
+              ? 'tier3'
+              : verificationStatus.tier === 'tier3'
+                ? 'tier4'
+                : null;
+
       if (!nextTier) {
         Alert.alert('Already Verified', 'You have completed all verification tiers.');
         return;
       }
 
       // Check if verification is already in progress
-      if (verificationStatus.status === 'in_progress' || verificationStatus.status === 'pending_review') {
+      if (
+        verificationStatus.status === 'in_progress' ||
+        verificationStatus.status === 'pending_review'
+      ) {
         Alert.alert(
           'Verification In Progress',
           'Your verification is currently being reviewed. Please wait for the review to complete.',
@@ -327,9 +336,11 @@ export default function VerificationCenterScreen(): React.JSX.Element {
       // Show info about what's needed for the next tier
       const tierInfo: Record<string, string> = {
         tier1: 'ID Verification requires a government-issued ID and a selfie photo.',
-        tier2: 'Pet Owner Verification requires proof of pet ownership such as registration papers or adoption documents.',
-        tier3: 'Vet Verification requires veterinary records confirming your pet\'s health status.',
-        tier4: 'Organization Verification requires proof of affiliation with a rescue organization or shelter.',
+        tier2:
+          'Pet Owner Verification requires proof of pet ownership such as registration papers or adoption documents.',
+        tier3: "Vet Verification requires veterinary records confirming your pet's health status.",
+        tier4:
+          'Organization Verification requires proof of affiliation with a rescue organization or shelter.',
       };
 
       Alert.alert(
@@ -356,7 +367,10 @@ export default function VerificationCenterScreen(): React.JSX.Element {
                     },
                   ],
                 );
-                logger.info('Verification start initiated', { tier: nextTier, currentTier: verificationStatus.tier });
+                logger.info('Verification start initiated', {
+                  tier: nextTier,
+                  currentTier: verificationStatus.tier,
+                });
               } catch (error) {
                 const errorObj = error instanceof Error ? error : new Error(String(error));
                 logger.error('Failed to start verification', { error: errorObj });
@@ -376,7 +390,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
   const handleRetry = async () => {
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      
+
       Alert.alert(
         'Retry Verification',
         'Are you sure you want to restart the verification process? This will reset your current verification status.',
@@ -389,7 +403,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
               try {
                 // Reload verification status (in a real app, this would call an API to reset status)
                 await loadVerificationStatus();
-                
+
                 Alert.alert(
                   'Verification Reset',
                   'Your verification has been reset. You can now start the verification process again.',
@@ -407,7 +421,9 @@ export default function VerificationCenterScreen(): React.JSX.Element {
                     },
                   ],
                 );
-                logger.info('Verification retry initiated', { currentTier: verificationStatus.tier });
+                logger.info('Verification retry initiated', {
+                  currentTier: verificationStatus.tier,
+                });
               } catch (error) {
                 const errorObj = error instanceof Error ? error : new Error(String(error));
                 logger.error('Failed to retry verification', { error: errorObj });
@@ -427,7 +443,10 @@ export default function VerificationCenterScreen(): React.JSX.Element {
   if (loading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator
+          size="large"
+          color={colors.primary}
+        />
       </View>
     );
   }
@@ -439,16 +458,20 @@ export default function VerificationCenterScreen(): React.JSX.Element {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Verification Center</Text>
-        <Text style={styles.subtitle}>
-          Build trust with verified badges
-        </Text>
+        <Text style={styles.subtitle}>Build trust with verified badges</Text>
       </View>
 
       {/* Current Status Card */}
       <View style={styles.statusCard}>
         <View style={styles.statusHeader}>
-          <View style={[styles.statusIcon, { backgroundColor: getTierColor(verificationStatus.tier) }]}>
-            <Ionicons name="shield-checkmark" size={24} color={colors.onPrimary} />
+          <View
+            style={[styles.statusIcon, { backgroundColor: getTierColor(verificationStatus.tier) }]}
+          >
+            <Ionicons
+              name="shield-checkmark"
+              size={24}
+              color={colors.onPrimary}
+            />
           </View>
           <View style={styles.statusInfo}>
             <Text style={styles.statusTier}>{tierName}</Text>
@@ -458,16 +481,28 @@ export default function VerificationCenterScreen(): React.JSX.Element {
 
         {verificationStatus.rejectionReason && (
           <View style={styles.rejectionContainer}>
-            <Ionicons name="alert-circle" size={16} color={colors.danger} />
-            <Text style={styles.rejectionText}>
-              {verificationStatus.rejectionReason}
-            </Text>
+            <Ionicons
+              name="alert-circle"
+              size={16}
+              color={colors.danger}
+            />
+            <Text style={styles.rejectionText}>{verificationStatus.rejectionReason}</Text>
           </View>
         )}
 
         {verificationStatus.status === 'rejected' && (
-          <TouchableOpacity style={styles.retryButton} testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleRetry}>
-            <Ionicons name="refresh" size={16} color={colors.onPrimary} />
+          <TouchableOpacity
+            style={styles.retryButton}
+            testID="VerificationCenterScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={handleRetry}
+          >
+            <Ionicons
+              name="refresh"
+              size={16}
+              color={colors.onPrimary}
+            />
             <Text style={styles.retryButtonText}>Retry Verification</Text>
           </TouchableOpacity>
         )}
@@ -477,14 +512,26 @@ export default function VerificationCenterScreen(): React.JSX.Element {
       <View style={styles.progressContainer}>
         <Text style={styles.sectionTitle}>Verification Tiers</Text>
         {['tier0', 'tier1', 'tier2', 'tier3', 'tier4'].map((tier, index) => {
-          const isCompleted = ['tier0', 'tier1', 'tier2', 'tier3', 'tier4'].indexOf(verificationStatus.tier) >= index;
+          const isCompleted =
+            ['tier0', 'tier1', 'tier2', 'tier3', 'tier4'].indexOf(verificationStatus.tier) >= index;
           return (
-            <View key={tier} style={styles.tierRow}>
-              <View style={[
-                styles.tierBullet,
-                { backgroundColor: isCompleted ? getTierColor(tier) : colors.onMuted }
-              ]}>
-                {isCompleted && <Ionicons name="checkmark" size={12} color={colors.onPrimary} />}
+            <View
+              key={tier}
+              style={styles.tierRow}
+            >
+              <View
+                style={[
+                  styles.tierBullet,
+                  { backgroundColor: isCompleted ? getTierColor(tier) : colors.onMuted },
+                ]}
+              >
+                {isCompleted && (
+                  <Ionicons
+                    name="checkmark"
+                    size={12}
+                    color={colors.onPrimary}
+                  />
+                )}
               </View>
               <Text style={[styles.tierText, !isCompleted && { color: colors.onMuted }]}>
                 Tier {index}: {getStatusDisplay().tierName}
@@ -500,15 +547,14 @@ export default function VerificationCenterScreen(): React.JSX.Element {
         {badges.map((badge) => (
           <View
             key={badge.id}
-            style={[
-              styles.badgeCard,
-              !badge.unlocked && { opacity: 0.6 },
-            ]}
+            style={[styles.badgeCard, !badge.unlocked && { opacity: 0.6 }]}
           >
-            <View style={[
-              styles.badgeIcon,
-              { backgroundColor: badge.unlocked ? colors.primary : colors.onMuted }
-            ]}>
+            <View
+              style={[
+                styles.badgeIcon,
+                { backgroundColor: badge.unlocked ? colors.primary : colors.onMuted },
+              ]}
+            >
               <Ionicons
                 name={badge.icon}
                 size={24}
@@ -516,18 +562,17 @@ export default function VerificationCenterScreen(): React.JSX.Element {
               />
             </View>
             <View style={styles.badgeInfo}>
-              <Text style={[
-                styles.badgeName,
-                !badge.unlocked && { color: colors.onMuted }
-              ]}>
+              <Text style={[styles.badgeName, !badge.unlocked && { color: colors.onMuted }]}>
                 {badge.name}
               </Text>
-              <Text style={styles.badgeDesc}>
-                {badge.description}
-              </Text>
+              <Text style={styles.badgeDesc}>{badge.description}</Text>
             </View>
             {badge.unlocked && (
-              <Ionicons name="checkmark-circle" size={24} color={colors.success} />
+              <Ionicons
+                name="checkmark-circle"
+                size={24}
+                color={colors.success}
+              />
             )}
           </View>
         ))}
@@ -538,36 +583,50 @@ export default function VerificationCenterScreen(): React.JSX.Element {
         {verificationStatus.status === 'not_started' && (
           <TouchableOpacity
             style={styles.actionButton}
-             testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleStartVerification}
+            testID="VerificationCenterScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={handleStartVerification}
           >
-            <Ionicons name="shield-checkmark" size={20} color={colors.onPrimary} />
-            <Text style={styles.actionButtonText}>
-              Start Identity Verification
-            </Text>
+            <Ionicons
+              name="shield-checkmark"
+              size={20}
+              color={colors.onPrimary}
+            />
+            <Text style={styles.actionButtonText}>Start Identity Verification</Text>
           </TouchableOpacity>
         )}
 
         {verificationStatus.status === 'approved' && verificationStatus.tier === 'tier1' && (
           <TouchableOpacity
             style={styles.actionButton}
-             testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleStartVerification}
+            testID="VerificationCenterScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={handleStartVerification}
           >
-            <Ionicons name="paw" size={20} color={colors.onPrimary} />
-            <Text style={styles.actionButtonText}>
-              Verify Pet Ownership
-            </Text>
+            <Ionicons
+              name="paw"
+              size={20}
+              color={colors.onPrimary}
+            />
+            <Text style={styles.actionButtonText}>Verify Pet Ownership</Text>
           </TouchableOpacity>
         )}
       </View>
 
       {/* Info Section */}
       <View style={styles.infoContainer}>
-        <Ionicons name="information-circle" size={20} color={colors.primary} />
+        <Ionicons
+          name="information-circle"
+          size={20}
+          color={colors.primary}
+        />
         <Text style={styles.infoText}>
-          Verification helps build trust in the PawfectMatch community. All information is encrypted and processed securely in compliance with GDPR regulations.
+          Verification helps build trust in the PawfectMatch community. All information is encrypted
+          and processed securely in compliance with GDPR regulations.
         </Text>
       </View>
     </ScrollView>
   );
 }
-

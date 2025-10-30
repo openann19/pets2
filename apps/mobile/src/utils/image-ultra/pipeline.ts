@@ -12,10 +12,40 @@
  * - WebP thumbnail generation
  */
 
+import type { ImageUri, PipelineOptions, ProcessorContext } from './types';
 import { medianDenoise, unsharpMask } from './filters';
 import { ssimApprox } from './ssim';
 
-export type PipelineOptions = {
+// Export PipelineOptions for use in other modules
+export type { PipelineOptions };
+
+const asImageUri = (v: unknown): ImageUri => {
+  if (v && typeof v === 'object' && 'uri' in (v as Record<string, unknown>)) {
+    return v as ImageUri;
+  }
+  throw new TypeError('Expected ImageUri { uri: string }');
+};
+
+export async function runPipeline(input: ImageUri, ctx: ProcessorContext): Promise<ImageUri> {
+  const { ops, options } = ctx;
+  let current = asImageUri(input);
+
+  if (options.upscale?.factor && ops.upscale) {
+    current = await ops.upscale(current, options.upscale.factor);
+  }
+  if (options.denoise?.strength && ops.denoise) {
+    current = await ops.denoise(current, options.denoise.strength);
+  }
+  if (options.sharpen?.amount && ops.sharpen) {
+    current = await ops.sharpen(current, options.sharpen.amount);
+  }
+
+  const fmt = options.format ?? 'jpeg';
+  return ops.export(current, fmt, options.quality);
+}
+
+// Legacy types for backward compatibility
+export type LegacyPipelineOptions = {
   upscale?: { scale: number; tileSize?: number };
   denoise?: { radius?: number }; // median
   sharpen?: { radiusPx?: number; amount?: number; threshold?: number };
@@ -34,24 +64,37 @@ export type PipelineOptions = {
 /**
  * Load image blob to canvas with EXIF orientation correction
  * Strips EXIF by re-encoding (privacy-first)
+ * Web-only function - properly fenced for mobile
  */
 export async function loadImageToCanvas(blob: Blob): Promise<HTMLCanvasElement> {
+  if (typeof document === 'undefined' || typeof createImageBitmap === 'undefined') {
+    throw new Error('loadImageToCanvas is web-only and requires DOM APIs');
+  }
+
   const bmp = await createImageBitmap(blob, {
     imageOrientation: 'from-image',
     premultiplyAlpha: 'default',
   });
-  const c = document.createElement('canvas');
-  c.width = bmp.width;
-  c.height = bmp.height;
-  const ctx = c.getContext('2d')!;
-  ctx.drawImage(bmp, 0, 0);
-  bmp.close?.();
-  return c;
+  
+  try {
+    const c = document.createElement('canvas');
+    c.width = bmp.width;
+    c.height = bmp.height;
+    const ctx = c.getContext('2d');
+    if (!ctx) {
+      throw new Error('Failed to get 2D context from canvas');
+    }
+    ctx.drawImage(bmp, 0, 0);
+    return c;
+  } finally {
+    bmp.close?.();
+  }
 }
 
 /**
  * Tile-based upscale for large images (4K-safe)
  * Processes image in tiles to avoid OOM on mobile devices
+ * Web-only function - properly fenced for mobile
  *
  * @param src - Source canvas
  * @param scale - Scale factor (e.g., 2 for 2x upscale)
@@ -62,10 +105,17 @@ export function tileUpscaleCanvas(
   scale = 2,
   tile = 512,
 ): HTMLCanvasElement {
+  if (typeof document === 'undefined') {
+    throw new Error('tileUpscaleCanvas is web-only and requires DOM APIs');
+  }
+
   const out = document.createElement('canvas');
   out.width = Math.round(src.width * scale);
   out.height = Math.round(src.height * scale);
-  const octx = out.getContext('2d')!;
+  const octx = out.getContext('2d');
+  if (!octx) {
+    throw new Error('Failed to get 2D context from output canvas');
+  }
   octx.imageSmoothingEnabled = true;
   octx.imageSmoothingQuality = 'high';
 
@@ -73,7 +123,10 @@ export function tileUpscaleCanvas(
   const sh = src.height;
   const tw = tile;
   const th = tile;
-  const sctx = src.getContext('2d')!;
+  const sctx = src.getContext('2d');
+  if (!sctx) {
+    throw new Error('Failed to get 2D context from source canvas');
+  }
 
   for (let y = 0; y < sh; y += th) {
     const h = Math.min(th, sh - y);
@@ -83,7 +136,11 @@ export function tileUpscaleCanvas(
       const tmp = document.createElement('canvas');
       tmp.width = w;
       tmp.height = h;
-      tmp.getContext('2d')!.putImageData(img, 0, 0);
+      const tmpCtx = tmp.getContext('2d');
+      if (!tmpCtx) {
+        throw new Error('Failed to get 2D context from temporary canvas');
+      }
+      tmpCtx.putImageData(img, 0, 0);
       octx.drawImage(tmp, x * scale, y * scale, w * scale, h * scale);
     }
   }
@@ -100,7 +157,7 @@ export function tileUpscaleCanvas(
  */
 export async function processImagePipeline(
   input: Blob,
-  opts: PipelineOptions,
+  opts: LegacyPipelineOptions,
 ): Promise<{ blob: Blob; report: any; canvas: HTMLCanvasElement }> {
   let canvas = await loadImageToCanvas(input);
   const report: any = {};

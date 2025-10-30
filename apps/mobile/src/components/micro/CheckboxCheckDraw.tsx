@@ -76,7 +76,7 @@ export function CheckboxCheckDraw({
         withSpring(1, {
           ...getSpringConfig('bouncy'),
           damping: 15,
-        })
+        }),
       );
 
       // Background fade in
@@ -87,7 +87,7 @@ export function CheckboxCheckDraw({
       // Box scale bounce
       boxScale.value = withSequence(
         withSpring(1.1, getSpringConfig('bouncy')),
-        withSpring(1, getSpringConfig('standard'))
+        withSpring(1, getSpringConfig('standard')),
       );
     } else {
       // Fade out
@@ -166,7 +166,11 @@ export function CheckboxCheckDraw({
               ]}
             />
             <Animated.View style={[styles.checkContainer, animatedCheckStyle]}>
-              <Svg width={sizeStyles.iconSize} height={sizeStyles.iconSize} viewBox="0 0 24 24">
+              <Svg
+                width={sizeStyles.iconSize}
+                height={sizeStyles.iconSize}
+                viewBox="0 0 24 24"
+              >
                 <SvgPath
                   d={checkmarkPath}
                   stroke={theme.colors.onPrimary || '#FFFFFF'}
@@ -212,4 +216,3 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
 });
-

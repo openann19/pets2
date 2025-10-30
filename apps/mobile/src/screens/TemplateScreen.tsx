@@ -10,7 +10,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { AdvancedCard, CardConfigs } from '../components/Advanced/AdvancedCard';
-import { useTheme } from "@mobile/theme";
+import { useTheme } from '@mobile/theme';
 import { StaggerList } from '../ui/lists/StaggerList';
 import { BouncePressable } from '../ui/pressables/BouncePressable';
 import { logger } from '../services/logger';
@@ -27,7 +27,7 @@ export default function TemplateScreen() {
   const theme = useTheme();
   const reducedMotion = useReducedMotion();
   const styles = createStyles(theme);
-  
+
   const data: TemplateItem[] = [
     { _id: '1', name: 'Item 1', description: 'Description 1' },
     { _id: '2', name: 'Item 2', description: 'Description 2' },
@@ -44,32 +44,26 @@ export default function TemplateScreen() {
   const hapticFeedback = reducedMotion ? undefined : 'tap';
 
   return (
-    <ScreenShell
-      header={
-        <AdvancedHeader
-          {...HeaderConfigs.glass({ title: 'Template Screen' })}
-        />
-      }
-    >
+    <ScreenShell header={<AdvancedHeader {...HeaderConfigs.glass({ title: 'Template Screen' })} />}>
       {/* Hero section with animation */}
       <Animated.View {...animationConfig}>
-        <AdvancedCard 
-          {...CardConfigs.glass({})} 
-          style={{ 
-            padding: theme.spacing.lg, 
-            marginBottom: theme.spacing.lg 
+        <AdvancedCard
+          {...CardConfigs.glass({})}
+          style={{
+            padding: theme.spacing.lg,
+            marginBottom: theme.spacing.lg,
           }}
           testID="template-hero-card"
           {...getAccessibilityProps('hero section card', 'text')}
         >
-          <Text 
+          <Text
             style={styles.heroTitle}
             accessibilityRole="text"
             accessibilityLabel="Hero Section Title"
           >
             Hero Section
           </Text>
-          <Text 
+          <Text
             style={styles.heroDescription}
             accessibilityRole="text"
             accessibilityLabel="Template screen description"
@@ -83,8 +77,8 @@ export default function TemplateScreen() {
       <StaggerList
         data={data}
         renderItem={(item) => (
-          <BouncePressable 
-            onPress={handlePress} 
+          <BouncePressable
+            onPress={handlePress}
             hapticFeedback={hapticFeedback}
             testID={`template-item-${item._id}`}
             accessibilityLabel={`Tap to interact with ${item.name}: ${item.description}`}
@@ -95,14 +89,14 @@ export default function TemplateScreen() {
               style={{ padding: theme.spacing.lg }}
               testID={`template-card-${item._id}`}
             >
-              <Text 
+              <Text
                 style={styles.itemName}
                 accessibilityRole="text"
                 accessibilityLabel={`Item name: ${item.name}`}
               >
                 {item.name}
               </Text>
-              <Text 
+              <Text
                 style={styles.itemDescription}
                 accessibilityRole="text"
                 accessibilityLabel={`Item description: ${item.description}`}
@@ -118,28 +112,28 @@ export default function TemplateScreen() {
 }
 
 // Styles should be defined inside the component or use useMemo
-const createStyles = (theme: any) => StyleSheet.create({
-  heroTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: theme.colors.onSurface,
-    marginBottom: theme.spacing.sm,
-  },
-  heroDescription: {
-    fontSize: 16,
-    color: theme.colors.onMuted,
-    lineHeight: 24,
-  },
-  itemName: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: theme.colors.onSurface,
-    marginBottom: theme.spacing.xs,
-  },
-  itemDescription: {
-    fontSize: 14,
-    color: theme.colors.onMuted,
-    lineHeight: 20,
-  },
-});
-
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    heroTitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    heroDescription: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      lineHeight: 24,
+    },
+    itemName: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    itemDescription: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      lineHeight: 20,
+    },
+  });

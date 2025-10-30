@@ -1,5 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
 import {
   ActivityIndicator,
   Platform,
@@ -7,18 +7,19 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
-import { haptic } from "@/ui/haptics";
-import { trackUserAction } from "@/services/analyticsService";
-import { usePremiumScreen } from "../hooks/screens/usePremiumScreen";
-import type { NavigationProp } from "../navigation/types";
-import { PremiumTierCard } from "../components/premium/PremiumTierCard";
-import { BillingToggle } from "../components/premium/BillingToggle";
+import type { AppTheme } from '../theme/types';
+import { haptic } from '@/ui/haptics';
+import { trackUserAction } from '@/services/analyticsService';
+import { usePremiumScreen } from '../hooks/screens/usePremiumScreen';
+import type { NavigationProp } from '../navigation/types';
+import { PremiumTierCard } from '../components/premium/PremiumTierCard';
+import { BillingToggle } from '../components/premium/BillingToggle';
 import { useTranslation } from 'react-i18next';
+import { Interactive } from '../components/primitives/Interactive';
 
 interface PremiumScreenProps {
   navigation: NavigationProp;
@@ -44,27 +45,38 @@ function PremiumScreen({ navigation: _navigation }: PremiumScreenProps): React.J
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
-          testID="PremiumScreen-nav-close"
-          accessibilityRole="button"
-          accessibilityLabel="Close premium screen"
-          accessibilityHint="Returns to the previous screen"
+        <Interactive
+          variant="ghost"
+          haptic="light"
           onPress={() => {
             haptic.tap();
             trackUserAction('premium_screen_closed', {});
             handleGoBack();
           }}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityLabel="Close premium screen"
+          accessibilityRole="button"
+          accessibilityHint="Returns to the previous screen"
         >
-          <Ionicons name="close" size={24} color={theme.colors.onSurface} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>
-          {t('go_premium')}
-        </Text>
+          <TouchableOpacity
+            testID="PremiumScreen-nav-close"
+            accessibilityRole="button"
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Ionicons
+              name="close"
+              size={24}
+              color={theme.colors.onSurface}
+            />
+          </TouchableOpacity>
+        </Interactive>
+        <Text style={styles.headerTitle}>{t('go_premium')}</Text>
         <View style={styles.placeholder} />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Billing Toggle */}
         <BillingToggle
           billingPeriod={billingPeriod}
@@ -74,7 +86,7 @@ function PremiumScreen({ navigation: _navigation }: PremiumScreenProps): React.J
         {/* Subscription Tiers */}
         <View style={styles.tiersContainer}>
           {subscriptionTiers
-            .filter((tier) => tier.id !== "basic")
+            .filter((tier) => tier.id !== 'basic')
             .map((tier) => (
               <PremiumTierCard
                 key={tier.id}
@@ -87,13 +99,9 @@ function PremiumScreen({ navigation: _navigation }: PremiumScreenProps): React.J
         </View>
 
         {/* Subscribe Button */}
-        <TouchableOpacity
-          style={[styles.subscribeButton, isLoading && styles.subscribeButtonDisabled]}
-          testID="PremiumScreen-subscribe-button"
-          accessibilityRole="button"
-          accessibilityLabel="Subscribe to premium"
-          accessibilityHint={`Subscribe to ${selectedTier} tier`}
-          accessibilityState={{ disabled: isLoading }}
+        <Interactive
+          variant="lift"
+          haptic="medium"
           onPress={() => {
             haptic.confirm();
             trackUserAction('premium_subscribe_initiated', {
@@ -103,16 +111,33 @@ function PremiumScreen({ navigation: _navigation }: PremiumScreenProps): React.J
             handleSubscribe(selectedTier);
           }}
           disabled={isLoading}
+          accessibilityLabel="Subscribe to premium"
+          accessibilityRole="button"
+          accessibilityHint={`Subscribe to ${selectedTier} tier`}
+          accessibilityState={{ disabled: isLoading }}
         >
-          {isLoading ? (
-            <ActivityIndicator color={theme.colors.onPrimary} size="small" />
-          ) : (
-            <>
-              <Text style={styles.subscribeButtonText}>{t('premium_subscribe')}</Text>
-              <Ionicons name="arrow-forward" size={20} color={theme.colors.onPrimary} />
-            </>
-          )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.subscribeButton, isLoading && styles.subscribeButtonDisabled]}
+            testID="PremiumScreen-subscribe-button"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator
+                color={theme.colors.onPrimary}
+                size="small"
+              />
+            ) : (
+              <>
+                <Text style={styles.subscribeButtonText}>{t('premium_subscribe')}</Text>
+                <Ionicons
+                  name="arrow-forward"
+                  size={20}
+                  color={theme.colors.onPrimary}
+                />
+              </>
+            )}
+          </TouchableOpacity>
+        </Interactive>
       </ScrollView>
     </SafeAreaView>
   );
@@ -125,13 +150,13 @@ function makeStyles(theme: AppTheme) {
       backgroundColor: theme.colors.bg,
     },
     header: {
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
-      justifyContent: "space-between" as const,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'space-between' as const,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
-      paddingTop: Platform.OS === "ios" ? 50 : theme.spacing.lg,
-      backgroundColor: theme.colors.surface,
+      paddingTop: Platform.OS === 'ios' ? 50 : theme.spacing.lg,
+      backgroundColor: theme.colors.bgElevated,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
@@ -149,12 +174,12 @@ function makeStyles(theme: AppTheme) {
     },
     tiersContainer: {
       gap: theme.spacing.lg,
-      marginBottom: theme.spacing["2xl"],
+      marginBottom: theme.spacing['2xl'],
     },
     subscribeButton: {
-      flexDirection: "row" as const,
-      alignItems: "center" as const,
-      justifyContent: "center" as const,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
       borderRadius: theme.radii.md,

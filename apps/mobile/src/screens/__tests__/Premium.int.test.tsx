@@ -30,9 +30,7 @@ jest.mock('react-i18next', () => ({
 
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
   <ThemeProvider scheme="light">
-    <NavigationContainer>
-      {children}
-    </NavigationContainer>
+    <NavigationContainer>{children}</NavigationContainer>
   </ThemeProvider>
 );
 
@@ -51,15 +49,17 @@ describe('PremiumScreen Integration Tests', () => {
     render(
       <TestWrapper>
         <PremiumScreen />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
     // Screen should render without errors
-    expect(() => render(
-      <TestWrapper>
-        <PremiumScreen />
-      </TestWrapper>
-    )).not.toThrow();
+    expect(() =>
+      render(
+        <TestWrapper>
+          <PremiumScreen />
+        </TestWrapper>,
+      ),
+    ).not.toThrow();
   });
 
   it('should handle subscription action', async () => {
@@ -78,7 +78,7 @@ describe('PremiumScreen Integration Tests', () => {
     render(
       <TestWrapper>
         <PremiumScreen />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
     await waitFor(() => {
@@ -102,7 +102,7 @@ describe('PremiumScreen Integration Tests', () => {
     render(
       <TestWrapper>
         <PremiumScreen />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
     expect(mockSetBillingPeriod).toBeDefined();
@@ -123,11 +123,10 @@ describe('PremiumScreen Integration Tests', () => {
     render(
       <TestWrapper>
         <PremiumScreen />
-      </TestWrapper>
+      </TestWrapper>,
     );
 
     // Component should render successfully
     expect(mockNavigation).toBeDefined();
   });
 });
-

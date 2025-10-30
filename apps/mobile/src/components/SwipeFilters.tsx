@@ -1,15 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import {
-  Modal,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import type { AppTheme } from "@/theme";
-import { useTheme } from "@/theme";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
+import { Modal, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
 
 interface SwipeFiltersProps {
   visible: boolean;
@@ -39,103 +32,71 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
       visible={visible}
       onRequestClose={onClose}
     >
-      <View
-        style={[
-          styles.modalContainer,
-          { backgroundColor: theme.colors.bg },
-        ]}
-      >
-        <View
-          style={[
-            styles.modalContent,
-            { backgroundColor: theme.colors.surface },
-          ]}
-        >
+      <View style={[styles.modalContainer, { backgroundColor: theme.colors.bg }]}>
+        <View style={[styles.modalContent, { backgroundColor: theme.colors.surface }]}>
           <View style={styles.modalHeader}>
-            <Text
-              style={[
-                styles.modalTitle,
-                { color: theme.colors.onSurface },
-              ]}
-            >
+            <Text style={[styles.modalTitle, { color: theme.colors.onSurface }]}>
               Filter Preferences
             </Text>
             <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={24} color={theme.colors.onSurface} />
+              <Ionicons
+                name="close"
+                size={24}
+                color={theme.colors.onSurface}
+              />
             </TouchableOpacity>
           </View>
 
           {/* Species Filter */}
           <View style={styles.filterSection}>
-            <Text
-              style={[
-                styles.sectionTitle,
-                { color: theme.colors.onSurface },
-              ]}
-            >
-              Species
-            </Text>
+            <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>Species</Text>
             <View style={styles.speciesGrid}>
-              {["dog", "cat", "bird", "rabbit", "reptile", "small-animal"].map(
-                (species) => (
-                  <TouchableOpacity
-                    key={species}
+              {['dog', 'cat', 'bird', 'rabbit', 'reptile', 'small-animal'].map((species) => (
+                <TouchableOpacity
+                  key={species}
+                  style={[
+                    styles.speciesButton,
+                    {
+                      backgroundColor: filters.species.includes(species)
+                        ? theme.colors.primary
+                        : theme.colors.surface,
+                      borderColor: theme.colors.border,
+                    },
+                  ]}
+                  onPress={() => {
+                    const updated = filters.species.includes(species)
+                      ? filters.species.filter((s) => s !== species)
+                      : [...filters.species, species];
+                    onFiltersChange({ ...filters, species: updated });
+                  }}
+                >
+                  <Text
                     style={[
-                      styles.speciesButton,
+                      styles.speciesText,
                       {
-                        backgroundColor: filters.species.includes(species)
-                          ? theme.colors.primary
-                          : theme.colors.surface,
-                        borderColor: theme.colors.border,
+                        color: filters.species.includes(species)
+                          ? theme.colors.onPrimary
+                          : theme.colors.onSurface,
                       },
                     ]}
-                    onPress={() =>{
-                      const updated = filters.species.includes(species)
-                        ? filters.species.filter((s) => s !== species)
-                        : [...filters.species, species];
-                      onFiltersChange({ ...filters, species: updated });
-                    }}
                   >
-                    <Text
-                      style={[
-                        styles.speciesText,
-                        {
-                          color: filters.species.includes(species)
-                            ? theme.colors.onPrimary
-                            : theme.colors.onSurface
-                        },
-                      ]}
-                    >
-                      {species.charAt(0).toUpperCase() + species.slice(1)}
-                    </Text>
-                  </TouchableOpacity>
-                ),
-              )}
+                    {species.charAt(0).toUpperCase() + species.slice(1)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
 
           {/* Age Range Filter */}
           <View style={styles.filterSection}>
-            <Text
-              style={[
-                styles.sectionTitle,
-                { color: theme.colors.onSurface },
-              ]}
-            >
-              Age Range
-            </Text>
+            <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>Age Range</Text>
             {/* Age slider implementation would go here */}
           </View>
 
           {/* Verified Only */}
           <View style={styles.filterSection}>
             <View style={styles.switchRow}>
-              <Text
-                style={[
-                  styles.switchLabel,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
+              <Text style={[styles.switchLabel, { color: theme.colors.onSurface }]}>
                 Verified Profiles Only
               </Text>
               <Switch
@@ -150,13 +111,12 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
           </View>
 
           <TouchableOpacity
-            style={[
-              styles.applyButton,
-              { backgroundColor: theme.colors.primary },
-            ]}
+            style={[styles.applyButton, { backgroundColor: theme.colors.primary }]}
             onPress={onClose}
           >
-            <Text style={[styles.applyButtonText, { color: theme.colors.onPrimary }]}>Apply Filters</Text>
+            <Text style={[styles.applyButtonText, { color: theme.colors.onPrimary }]}>
+              Apply Filters
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -168,19 +128,19 @@ function makeStyles(theme: AppTheme) {
   return StyleSheet.create({
     modalContainer: {
       flex: 1,
-      justifyContent: "flex-end",
-      backgroundColor: "rgba(0,0,0,0.5)",
+      justifyContent: 'flex-end',
+      backgroundColor: 'rgba(0,0,0,0.5)',
     },
     modalContent: {
       borderTopLeftRadius: theme.radii['2xl'],
       borderTopRightRadius: theme.radii['2xl'],
       padding: theme.spacing['2xl'],
-      minHeight: "50%",
+      minHeight: '50%',
     },
     modalHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginBottom: theme.spacing['2xl'],
     },
     modalTitle: {
@@ -196,8 +156,8 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.md,
     },
     speciesGrid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       gap: theme.spacing.md,
     },
     speciesButton: {
@@ -210,9 +170,9 @@ function makeStyles(theme: AppTheme) {
       fontSize: theme.typography.body.size * 0.875,
     },
     switchRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
     },
     switchLabel: {
       fontSize: theme.typography.body.size,
@@ -220,7 +180,7 @@ function makeStyles(theme: AppTheme) {
     applyButton: {
       padding: theme.spacing.md,
       borderRadius: theme.radii.lg,
-      alignItems: "center",
+      alignItems: 'center',
       marginTop: theme.spacing.md,
     },
     applyButtonText: {

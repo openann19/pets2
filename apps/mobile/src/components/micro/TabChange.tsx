@@ -7,11 +7,7 @@
 
 import React from 'react';
 import type { ViewStyle } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
@@ -119,4 +115,3 @@ export function TabChangeIndicator({
     </Animated.View>
   );
 }
-

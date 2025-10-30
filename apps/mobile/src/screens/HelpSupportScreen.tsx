@@ -23,50 +23,54 @@ function HelpSupportScreen({ navigation }: HelpSupportScreenProps): React.JSX.El
   const { helpOptions, animatedStyles, handleHelpOption, handleEmailSupport } =
     useHelpSupportData();
 
-  const styles = useMemo(() => StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    safeArea: {
-      flex: 1,
-    },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: 20,
-      paddingVertical: 16,
-    },
-    backButton: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      overflow: 'hidden',
-    },
-    backButtonBlur: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    headerTitle: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: colors.onPrimary,
-    },
-    headerSpacer: {
-      width: 40,
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: 20,
-    },
-    sectionTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: colors.onPrimary,
-      marginBottom: 16,
-    },
-  }), [colors]);
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          flex: 1,
+        },
+        safeArea: {
+          flex: 1,
+        },
+        header: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 20,
+          paddingVertical: 16,
+        },
+        backButton: {
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          overflow: 'hidden',
+        },
+        backButtonBlur: {
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        headerTitle: {
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: colors.onPrimary,
+        },
+        headerSpacer: {
+          width: 40,
+        },
+        content: {
+          flex: 1,
+          paddingHorizontal: 20,
+        },
+        sectionTitle: {
+          fontSize: 18,
+          fontWeight: 'bold',
+          color: colors.onPrimary,
+          marginBottom: 16,
+        },
+      }),
+    [colors],
+  );
 
   return (
     <View style={styles.container}>

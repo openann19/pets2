@@ -66,16 +66,14 @@ export class PreCallDeviceCheckService {
   /**
    * Perform comprehensive device checks before starting a call
    */
-  async performPreCallCheck(
-    options: PreCallDeviceCheckOptions = {}
-  ): Promise<DeviceCheckResult> {
+  async performPreCallCheck(options: PreCallDeviceCheckOptions = {}): Promise<DeviceCheckResult> {
     const {
       checkCamera = true,
       checkMicrophone = true,
       checkNetwork = true,
       checkAudioOutput = true,
       minNetworkQuality = 'fair',
-      timeout = 10000
+      timeout = 10000,
     } = options;
 
     logger.info('Starting pre-call device checks', { options });
@@ -87,7 +85,7 @@ export class PreCallDeviceCheckService {
       audioOutput: { available: false, speakerSupported: false, bluetoothSupported: false },
       allChecksPassed: false,
       blockingIssues: [],
-      warnings: []
+      warnings: [],
     };
 
     try {
@@ -116,10 +114,7 @@ export class PreCallDeviceCheckService {
       }
 
       // Wait for all checks to complete or timeout
-      await Promise.race([
-        Promise.all(checkPromises),
-        timeoutPromise
-      ]);
+      await Promise.race([Promise.all(checkPromises), timeoutPromise]);
 
       // Evaluate results
       result.allChecksPassed = this.evaluateResults(result);
@@ -129,13 +124,14 @@ export class PreCallDeviceCheckService {
       logger.info('Pre-call device checks completed', {
         allChecksPassed: result.allChecksPassed,
         blockingIssues: result.blockingIssues.length,
-        warnings: result.warnings.length
+        warnings: result.warnings.length,
       });
-
     } catch (error) {
       logger.error('Pre-call device check failed', { error });
       result.allChecksPassed = false;
-      result.blockingIssues.push('Device check failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      result.blockingIssues.push(
+        'Device check failed: ' + (error instanceof Error ? error.message : 'Unknown error'),
+      );
     }
 
     return result;
@@ -158,7 +154,7 @@ export class PreCallDeviceCheckService {
             buttonNeutral: 'Ask Me Later',
             buttonNegative: 'Cancel',
             buttonPositive: 'OK',
-          }
+          },
         );
         permissionGranted = cameraPermission === PermissionsAndroid.RESULTS.GRANTED;
       } else {
@@ -175,9 +171,8 @@ export class PreCallDeviceCheckService {
 
       // Get available camera devices
       const devices = await mediaDevices.enumerateDevices();
-      const cameras = devices.filter(device =>
-        device.kind === 'videoinput' &&
-        device.deviceId !== 'default'
+      const cameras = devices.filter(
+        (device) => device.kind === 'videoinput' && device.deviceId !== 'default',
       );
 
       result.camera.devices = cameras;
@@ -186,7 +181,6 @@ export class PreCallDeviceCheckService {
       if (!result.camera.available) {
         result.camera.error = 'No camera devices found';
       }
-
     } catch (error) {
       result.camera.error = error instanceof Error ? error.message : 'Camera check failed';
       logger.error('Camera check failed', { error });
@@ -210,7 +204,7 @@ export class PreCallDeviceCheckService {
             buttonNeutral: 'Ask Me Later',
             buttonNegative: 'Cancel',
             buttonPositive: 'OK',
-          }
+          },
         );
         permissionGranted = audioPermission === PermissionsAndroid.RESULTS.GRANTED;
       } else {
@@ -227,9 +221,8 @@ export class PreCallDeviceCheckService {
 
       // Get available microphone devices
       const devices = await mediaDevices.enumerateDevices();
-      const microphones = devices.filter(device =>
-        device.kind === 'audioinput' &&
-        device.deviceId !== 'default'
+      const microphones = devices.filter(
+        (device) => device.kind === 'audioinput' && device.deviceId !== 'default',
       );
 
       result.microphone.devices = microphones;
@@ -238,7 +231,6 @@ export class PreCallDeviceCheckService {
       if (!result.microphone.available) {
         result.microphone.error = 'No microphone devices found';
       }
-
     } catch (error) {
       result.microphone.error = error instanceof Error ? error.message : 'Microphone check failed';
       logger.error('Microphone check failed', { error });
@@ -250,7 +242,7 @@ export class PreCallDeviceCheckService {
    */
   private async checkNetwork(
     result: DeviceCheckResult,
-    minQuality: 'poor' | 'fair' | 'good' | 'excellent'
+    minQuality: 'poor' | 'fair' | 'good' | 'excellent',
   ): Promise<void> {
     try {
       const netInfo = await NetInfo.fetch();
@@ -275,7 +267,7 @@ export class PreCallDeviceCheckService {
         // Use a lightweight endpoint to test connectivity
         const response = await fetch('https://www.google.com/favicon.ico', {
           method: 'HEAD',
-          cache: 'no-cache'
+          cache: 'no-cache',
         });
         const endTime = Date.now();
         result.network.latency = endTime - startTime;
@@ -298,7 +290,6 @@ export class PreCallDeviceCheckService {
       if (actualLevel < minLevel) {
         result.network.error = `Network quality (${result.network.quality}) below minimum (${minQuality})`;
       }
-
     } catch (error) {
       result.network.error = error instanceof Error ? error.message : 'Network check failed';
       logger.error('Network check failed', { error });
@@ -320,20 +311,20 @@ export class PreCallDeviceCheckService {
       try {
         const stream = await mediaDevices.getUserMedia({
           audio: true,
-          video: false
+          video: false,
         });
 
         // Clean up the test stream
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
 
         result.audioOutput.available = true;
       } catch {
         result.audioOutput.available = false;
         result.audioOutput.error = 'Audio output test failed';
       }
-
     } catch (error) {
-      result.audioOutput.error = error instanceof Error ? error.message : 'Audio output check failed';
+      result.audioOutput.error =
+        error instanceof Error ? error.message : 'Audio output check failed';
       logger.error('Audio output check failed', { error });
     }
   }
@@ -368,10 +359,10 @@ export class PreCallDeviceCheckService {
       result.camera.available && result.camera.permissionGranted,
       result.microphone.available && result.microphone.permissionGranted,
       result.network.connected,
-      result.audioOutput.available
+      result.audioOutput.available,
     ];
 
-    return criticalChecks.every(check => check);
+    return criticalChecks.every((check) => check);
   }
 
   /**

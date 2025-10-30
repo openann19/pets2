@@ -25,7 +25,7 @@ import Animated, {
 
 import { useTheme } from '@mobile/theme';
 import { SPRING } from '../../animation';
-import { BorderRadius, Colors, Spacing } from '../../styles/GlobalStyles';
+import { BorderRadius, Spacing } from '../../styles/GlobalStyles';
 import { getPremiumShadows } from '../elite/constants';
 
 // TypeScript strict interface - no any, no implicit any
@@ -59,7 +59,6 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
   ...props
 }) => {
   const theme = useTheme();
-  const { isDark } = theme;
   const SHADOWS = getPremiumShadows(theme);
 
   // Animation values
@@ -118,29 +117,29 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
   const getVariantStyles = useCallback((): ViewStyle => {
     const variants = {
       elevated: {
-        backgroundColor: isDark ? Colors.surfaceElevated : Colors.surface,
+        backgroundColor: theme.colors.surface,
         ...SHADOWS.primaryGlow,
       },
       glass: {
         backgroundColor: 'transparent',
       },
       neon: {
-        backgroundColor: Colors.primary + '10',
+        backgroundColor: theme.utils.alpha(theme.colors.primary, 0.1),
         borderWidth: 1,
-        borderColor: Colors.primary + '30',
-        shadowColor: Colors.primary,
+        borderColor: theme.utils.alpha(theme.colors.primary, 0.3),
+        shadowColor: theme.colors.primary,
         shadowOpacity: 0.3,
         shadowRadius: 12,
       },
       minimal: {
         backgroundColor: 'transparent',
         borderWidth: 1,
-        borderColor: isDark ? Colors.border : Colors.borderLight,
+        borderColor: theme.colors.border,
       },
     };
 
     return variants[variant];
-  }, [variant, isDark]);
+  }, [variant, theme]);
 
   // WCAG AA+ accessibility compliance
   const accessibilityProps = {
@@ -161,7 +160,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
           style={{
             fontSize: 18,
             fontWeight: '600',
-            color: isDark ? Colors.text : Colors.text,
+            color: theme.colors.onSurface,
             marginBottom: subtitle ? Spacing.xs : 0,
           }}
         >
@@ -173,7 +172,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
         <Text
           style={{
             fontSize: 14,
-            color: isDark ? Colors.textSecondary : Colors.textSecondary,
+            color: theme.colors.onMuted,
             marginBottom: children ? Spacing.md : 0,
           }}
         >
@@ -188,7 +187,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
   // Render with conditional wrapper
   if (interactive && onPress) {
     return (
-      <Animated.View style={StyleSheet.flatten([animatedStyle, style])}>
+      <Animated.View style={[animatedStyle, style] as any}>
         <TouchableOpacity
           testID={testID}
           style={{
@@ -211,7 +210,10 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
             </BlurView>
           ) : variant === 'neon' ? (
             <LinearGradient
-              colors={[Colors.primary + '05', Colors.primary + '10']}
+              colors={[
+                theme.utils.alpha(theme.colors.primary, 0.05),
+                theme.utils.alpha(theme.colors.primary, 0.1),
+              ]}
               style={{ borderRadius: Number(BorderRadius.lg) || 8 }}
             >
               <CardContent />
@@ -228,14 +230,14 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
   return (
     <Animated.View
       testID={testID}
-      style={StyleSheet.flatten([
+      style={[
         animatedStyle,
         {
           borderRadius: Number(BorderRadius.lg) || 8,
           overflow: 'hidden',
         },
         style,
-      ])}
+      ] as any}
       {...accessibilityProps}
     >
       {variant === 'glass' ? (
@@ -247,7 +249,10 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
         </BlurView>
       ) : variant === 'neon' ? (
         <LinearGradient
-          colors={[Colors.primary + '05', Colors.primary + '10']}
+          colors={[
+            theme.utils.alpha(theme.colors.primary, 0.05),
+            theme.utils.alpha(theme.colors.primary, 0.1),
+          ]}
           style={{ borderRadius: BorderRadius.lg }}
         >
           <CardContent />

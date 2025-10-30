@@ -170,7 +170,7 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
 
   const renderPhotoGrid = () => (
     <View style={styles.photoGrid}>
-      {photos.map((photo, index) => (
+      {photos.map((photo) => (
         <View
           key={photo.id}
           style={styles.photoContainer}

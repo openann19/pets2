@@ -106,7 +106,12 @@ export function useFormState<T extends Record<keyof T, unknown>>({
   const handleSubmit = useCallback(
     (onSubmit: (values: T) => void | Promise<void>) => async (e?: unknown) => {
       // Type guard for preventDefault support (web compatibility)
-      if (e && typeof e === 'object' && 'preventDefault' in e && typeof (e as { preventDefault?: () => void }).preventDefault === 'function') {
+      if (
+        e &&
+        typeof e === 'object' &&
+        'preventDefault' in e &&
+        typeof (e as { preventDefault?: () => void }).preventDefault === 'function'
+      ) {
         (e as { preventDefault: () => void }).preventDefault();
       }
 

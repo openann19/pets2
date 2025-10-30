@@ -5,8 +5,8 @@
  */
 
 import type { UIConfig } from '@pawfectmatch/core';
-import type { AppTheme } from '../theme/contracts';
-import { getLightTheme, getDarkTheme } from '../theme/resolve';
+import type { AppTheme } from '@/theme/contracts';
+import { getLightTheme, getDarkTheme } from '@/theme/resolve';
 
 /**
  * Convert UIConfig tokens to AppTheme
@@ -34,25 +34,25 @@ export function configToTheme(config: UIConfig, scheme: 'light' | 'dark' = 'ligh
       info: config.tokens.colors.info || baseTheme.colors.info,
     },
     spacing: {
-      xs: config.tokens.spacing.xs ?? baseTheme.spacing.xs,
-      sm: config.tokens.spacing.sm ?? baseTheme.spacing.sm,
-      md: config.tokens.spacing.md ?? baseTheme.spacing.md,
-      lg: config.tokens.spacing.lg ?? baseTheme.spacing.lg,
-      xl: config.tokens.spacing.xl ?? baseTheme.spacing.xl,
+      'xs': config.tokens.spacing.xs ?? baseTheme.spacing.xs,
+      'sm': config.tokens.spacing.sm ?? baseTheme.spacing.sm,
+      'md': config.tokens.spacing.md ?? baseTheme.spacing.md,
+      'lg': config.tokens.spacing.lg ?? baseTheme.spacing.lg,
+      'xl': config.tokens.spacing.xl ?? baseTheme.spacing.xl,
       '2xl': config.tokens.spacing['2xl'] ?? baseTheme.spacing['2xl'],
       '3xl': config.tokens.spacing['3xl'] ?? baseTheme.spacing['3xl'],
       '4xl': config.tokens.spacing['4xl'] ?? baseTheme.spacing['4xl'],
     },
     radii: {
-      none: config.tokens.radii.none ?? baseTheme.radii.none,
-      xs: config.tokens.radii.xs ?? baseTheme.radii.xs,
-      sm: config.tokens.radii.sm ?? baseTheme.radii.sm,
-      md: config.tokens.radii.md ?? baseTheme.radii.md,
-      lg: config.tokens.radii.lg ?? baseTheme.radii.lg,
-      xl: config.tokens.radii.xl ?? baseTheme.radii.xl,
+      'none': config.tokens.radii.none ?? baseTheme.radii.none,
+      'xs': config.tokens.radii.xs ?? baseTheme.radii.xs,
+      'sm': config.tokens.radii.sm ?? baseTheme.radii.sm,
+      'md': config.tokens.radii.md ?? baseTheme.radii.md,
+      'lg': config.tokens.radii.lg ?? baseTheme.radii.lg,
+      'xl': config.tokens.radii.xl ?? baseTheme.radii.xl,
       '2xl': config.tokens.radii['2xl'] ?? baseTheme.radii['2xl'],
-      pill: config.tokens.radii.pill ?? baseTheme.radii.pill,
-      full: config.tokens.radii.full ?? baseTheme.radii.full,
+      'pill': config.tokens.radii.pill ?? baseTheme.radii.pill,
+      'full': config.tokens.radii.full ?? baseTheme.radii.full,
     },
     shadows: {
       elevation1: config.tokens.shadow['1']
@@ -154,7 +154,7 @@ export function applyMicroInteractionGuards(
   lowEndDevice: boolean,
 ): UIConfig['microInteractions'] {
   const policy = microInteractions.guards.lowEndDevicePolicy;
-  
+
   // Reduce motion guard: disable all animations
   if (microInteractions.guards.respectReducedMotion && reducedMotion) {
     return {

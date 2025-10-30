@@ -88,27 +88,24 @@ export function useVoicePlayback({
     setProgress(0);
   }, []);
 
-  const seek = useCallback(
-    async (position: number) => {
-      if (Platform.OS !== 'web' && soundRef.current) {
-        try {
-          const sound = soundRef.current as unknown as Audio.Sound & {
-            _durationMillis?: number;
-          };
-          const dur = sound._durationMillis ?? 0;
-          if (dur > 0) {
-            await soundRef.current.setPositionAsync(Math.round(position * dur));
-            setProgress(position);
-          }
-        } catch {
-          /* ignore */
+  const seek = useCallback(async (position: number) => {
+    if (Platform.OS !== 'web' && soundRef.current) {
+      try {
+        const sound = soundRef.current as unknown as Audio.Sound & {
+          _durationMillis?: number;
+        };
+        const dur = sound._durationMillis ?? 0;
+        if (dur > 0) {
+          await soundRef.current.setPositionAsync(Math.round(position * dur));
+          setProgress(position);
         }
-      } else {
-        setProgress(position);
+      } catch {
+        /* ignore */
       }
-    },
-    [],
-  );
+    } else {
+      setProgress(position);
+    }
+  }, []);
 
   return {
     isPlaying,
@@ -118,4 +115,3 @@ export function useVoicePlayback({
     seek,
   };
 }
-

@@ -1,8 +1,14 @@
+/**
+ * SwipeWidget Component with FastImage Support
+ * Fixes P-05: Use react-native-fast-image for caching
+ */
+
 import { Ionicons } from '@expo/vector-icons';
 import type { AppTheme } from '@mobile/theme';
 import { useTheme } from '@mobile/theme';
 import React, { useMemo } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 interface SwipeWidgetProps {
   pet: {
@@ -37,10 +43,14 @@ export function SwipeWidget({ pet, onSwipe, onViewProfile }: SwipeWidgetProps): 
       </View>
 
       <View style={styles.petCard}>
-        <Image
-          source={{ uri: pet.photos[0] }}
+        <FastImage
+          source={{
+            uri: pet.photos[0],
+            priority: FastImage.priority.normal,
+            cache: FastImage.cacheControl.immutable,
+          }}
           style={styles.petImage}
-          resizeMode="cover"
+          resizeMode={FastImage.resizeMode.cover}
         />
         <View style={styles.petInfo}>
           <Text style={styles.petName}>{pet.name}</Text>

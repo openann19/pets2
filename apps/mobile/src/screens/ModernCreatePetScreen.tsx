@@ -9,8 +9,8 @@
  * - Staggered animations for form sections
  */
 
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React from 'react';
 import {
   View,
   TextInput,
@@ -19,7 +19,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-} from "react-native";
+} from 'react-native';
 
 // Import new architecture components
 import {
@@ -31,20 +31,16 @@ import {
   BodySmall,
   Label,
   useStaggeredAnimation,
-} from "../components";
-import { useTheme } from "@mobile/theme";
+} from '../components';
+import { useTheme } from '@mobile/theme';
 
 // Import legacy components for gradual migration
-import { EliteContainer, EliteHeader } from "../components";
-import { useCreatePetScreen } from "../hooks/screens/useCreatePetScreen";
 
-import type { RootStackScreenProps } from "../navigation/types";
+import type { RootStackScreenProps } from '../navigation/types';
 
-type CreatePetScreenProps = RootStackScreenProps<"CreatePet">;
+type CreatePetScreenProps = RootStackScreenProps<'CreatePet'>;
 
-export default function ModernCreatePetScreen({
-  navigation,
-}: CreatePetScreenProps) {
+export default function ModernCreatePetScreen({ navigation }: CreatePetScreenProps) {
   const theme = useTheme();
   const {
     formData,
@@ -58,8 +54,7 @@ export default function ModernCreatePetScreen({
   } = useCreatePetScreen();
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(6);
+  const { start: startStaggeredAnimation, getAnimatedStyle } = useStaggeredAnimation(6);
 
   // Start animations
   React.useEffect(() => {
@@ -76,7 +71,7 @@ export default function ModernCreatePetScreen({
     },
     scrollContent: {
       padding: theme.spacing.lg,
-      paddingBottom: theme.spacing["4xl"],
+      paddingBottom: theme.spacing['4xl'],
     },
     section: {
       padding: theme.spacing.xl,
@@ -104,18 +99,18 @@ export default function ModernCreatePetScreen({
     },
     textArea: {
       height: 100,
-      textAlignVertical: "top",
+      textAlignVertical: 'top',
     },
     optionsContainer: {
-      flexDirection: "row",
-      flexWrap: "wrap",
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       gap: theme.spacing.sm,
     },
     submitContainer: {
       paddingTop: theme.spacing.xl,
     },
     submitButton: {
-      width: "100%",
+      width: '100%',
     },
   });
 
@@ -123,43 +118,39 @@ export default function ModernCreatePetScreen({
   const onSubmit = async () => {
     const result = await handleSubmit();
     if (result?.success) {
-      Alert.alert(
-        "Success!",
-        "Your pet profile has been created successfully.",
-        [
-          {
-            text: "OK",
-            onPress: () => navigation.navigate("MyPets"),
-          },
-        ],
-      );
+      Alert.alert('Success!', 'Your pet profile has been created successfully.', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('MyPets'),
+        },
+      ]);
     }
   };
 
   // Species options
-  const speciesOptions = ["Dog", "Cat", "Bird", "Rabbit", "Other"];
+  const speciesOptions = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Other'];
 
   // Gender options
-  const genderOptions = ["Male", "Female", "Unknown"];
+  const genderOptions = ['Male', 'Female', 'Unknown'];
 
   // Size options
-  const sizeOptions = ["Small", "Medium", "Large", "Extra Large"];
+  const sizeOptions = ['Small', 'Medium', 'Large', 'Extra Large'];
 
   // Intent options
-  const intentOptions = ["Adoption", "Foster", "Rehoming", "Lost & Found"];
+  const intentOptions = ['Adoption', 'Foster', 'Rehoming', 'Lost & Found'];
 
   // Personality tags
   const personalityTagOptions = [
-    "Friendly",
-    "Playful",
-    "Calm",
-    "Energetic",
-    "Shy",
-    "Confident",
-    "Good with kids",
-    "Good with other pets",
-    "House trained",
-    "Leash trained",
+    'Friendly',
+    'Playful',
+    'Calm',
+    'Energetic',
+    'Shy',
+    'Confident',
+    'Good with kids',
+    'Good with other pets',
+    'House trained',
+    'Leash trained',
   ];
 
   return (
@@ -172,7 +163,7 @@ export default function ModernCreatePetScreen({
 
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
           style={styles.scrollView}
@@ -182,10 +173,10 @@ export default function ModernCreatePetScreen({
           {/* Photo Upload Section */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Heading2 style={styles.sectionTitle}>Pet Photos</Heading2>
-              <BodySmall style={styles.sectionSubtitle}>
+              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Pet Photos</Text>
+              <Text style={{fontSize: 14, color: theme.colors.onSurface}} style={styles.sectionSubtitle}>
                 Add up to 6 photos to showcase your pet
-              </BodySmall>
+              </Text>
               <ModernPhotoUpload
                 photos={photos}
                 onPhotosChange={setPhotos}
@@ -197,85 +188,93 @@ export default function ModernCreatePetScreen({
           {/* Basic Information */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Heading2 style={styles.sectionTitle}>Basic Information</Heading2>
+              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Basic Information</Text>
 
               <View style={styles.formGroup}>
-                <Label>Pet Name *</Label>
+                <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Pet Name *</Text>
                 <TextInput
                   style={styles.input}
                   value={formData.name}
-                  onChangeText={(value) => { updateFormData("name", value); }}
+                  onChangeText={(value) => {
+                    updateFormData('name', value);
+                  }}
                   placeholder="Enter your pet's name"
                   placeholderTextColor={theme.colors.onMuted}
                 />
               </View>
 
               <View style={styles.formGroup}>
-                <Label>Species *</Label>
+                <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Species *</Text>
                 <View style={styles.optionsContainer}>
                   {speciesOptions.map((species) => (
-                    <EliteButton
+                    <AnimatedButton
                       key={species}
                       title={species}
-                      variant={
-                        formData.species === species ? "primary" : "outline"
-                      }
+                      variant={formData.species === species ? 'primary' : 'outline'}
                       size="sm"
-                      onPress={() => { updateFormData("species", species); }}
+                      onPress={() => {
+                        updateFormData('species', species);
+                      }}
                     />
                   ))}
                 </View>
               </View>
 
               <View style={styles.formGroup}>
-                <Label>Breed *</Label>
+                <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Breed *</Text>
                 <TextInput
                   style={styles.input}
                   value={formData.breed}
-                  onChangeText={(value) => { updateFormData("breed", value); }}
+                  onChangeText={(value) => {
+                    updateFormData('breed', value);
+                  }}
                   placeholder="Enter breed"
                   placeholderTextColor={theme.colors.onMuted}
                 />
               </View>
 
               <View style={styles.formGroup}>
-                <Label>Age *</Label>
+                <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Age *</Text>
                 <TextInput
                   style={styles.input}
                   value={formData.age}
-                  onChangeText={(value) => { updateFormData("age", value); }}
+                  onChangeText={(value) => {
+                    updateFormData('age', value);
+                  }}
                   placeholder="e.g., 2 years, 6 months"
                   placeholderTextColor={theme.colors.onMuted}
                 />
               </View>
 
               <View style={styles.formGroup}>
-                <Label>Gender</Label>
+                <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Gender</Text>
                 <View style={styles.optionsContainer}>
                   {genderOptions.map((gender) => (
-                    <EliteButton
+                    <AnimatedButton
                       key={gender}
                       title={gender}
-                      variant={
-                        formData.gender === gender ? "primary" : "outline"
-                      }
+                      variant={formData.gender === gender ? 'primary' : 'outline'}
                       size="sm"
-                      onPress={() => { updateFormData("gender", gender); }}
+                      onPress={() => {
+                        updateFormData('gender', gender);
+                      }}
                     />
                   ))}
                 </View>
               </View>
 
               <View style={styles.formGroup}>
-                <Label>Size</Label>
+                <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Size</Text>
                 <View style={styles.optionsContainer}>
                   {sizeOptions.map((size) => (
-                    <EliteButton
+                    <AnimatedButton
                       key={size}
                       title={size}
-                      variant={formData.size === size ? "primary" : "outline"}
+                      variant={formData.size === size ? 'primary' : 'outline'}
                       size="sm"
-                      onPress={() => { updateFormData("size", size); }}
+                      onPress={() => {
+                        updateFormData('size', size);
+                      }}
                     />
                   ))}
                 </View>
@@ -286,13 +285,15 @@ export default function ModernCreatePetScreen({
           {/* Description */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Heading2 style={styles.sectionTitle}>Description</Heading2>
+              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Description</Text>
               <View style={styles.formGroup}>
-                <Label>Tell us about your pet *</Label>
+                <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Tell us about your pet *</Text>
                 <TextInput
                   style={StyleSheet.flatten([styles.input, styles.textArea])}
                   value={formData.description}
-                  onChangeText={(value) => { updateFormData("description", value); }}
+                  onChangeText={(value) => {
+                    updateFormData('description', value);
+                  }}
                   placeholder="Describe your pet's personality, habits, and what makes them special..."
                   placeholderTextColor={theme.colors.onMuted}
                   multiline
@@ -305,19 +306,19 @@ export default function ModernCreatePetScreen({
           {/* Intent */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Heading2 style={styles.sectionTitle}>Intent</Heading2>
+              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Intent</Text>
               <View style={styles.formGroup}>
-                <Label>What are you looking for?</Label>
+                <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>What are you looking for?</Text>
                 <View style={styles.optionsContainer}>
                   {intentOptions.map((intent) => (
-                    <EliteButton
+                    <AnimatedButton
                       key={intent}
                       title={intent.charAt(0).toUpperCase() + intent.slice(1)}
-                      variant={
-                        formData.intent === intent ? "primary" : "outline"
-                      }
+                      variant={formData.intent === intent ? 'primary' : 'outline'}
                       size="sm"
-                      onPress={() => { updateFormData("intent", intent); }}
+                      onPress={() => {
+                        updateFormData('intent', intent);
+                      }}
                     />
                   ))}
                 </View>
@@ -328,23 +329,19 @@ export default function ModernCreatePetScreen({
           {/* Personality Tags */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Heading2 style={styles.sectionTitle}>
-                Personality & Traits
-              </Heading2>
+              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Personality & Traits</Text>
               <View style={styles.formGroup}>
-                <Label>Select traits that describe your pet</Label>
+                <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Select traits that describe your pet</Text>
                 <View style={styles.optionsContainer}>
                   {personalityTagOptions.map((tag) => (
-                    <EliteButton
+                    <AnimatedButton
                       key={tag}
                       title={tag}
-                      variant={
-                        formData.personalityTags.includes(tag)
-                          ? "primary"
-                          : "outline"
-                      }
+                      variant={formData.personalityTags.includes(tag) ? 'primary' : 'outline'}
                       size="sm"
-                      onPress={() => { togglePersonalityTag(tag); }}
+                      onPress={() => {
+                        togglePersonalityTag(tag);
+                      }}
                     />
                   ))}
                 </View>
@@ -355,18 +352,16 @@ export default function ModernCreatePetScreen({
           {/* Contact Information */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Heading2 style={styles.sectionTitle}>
-                Contact Information
-              </Heading2>
+              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Contact Information</Text>
 
               <View style={styles.formGroup}>
-                <Label>Email *</Label>
+                <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Email *</Text>
                 <TextInput
                   style={styles.input}
                   value={formData.contactInfo.email}
-                  onChangeText={(value) =>
-                    { updateNestedFormData("contactInfo", "email", value); }
-                  }
+                  onChangeText={(value) => {
+                    updateNestedFormData('contactInfo', 'email', value);
+                  }}
                   placeholder="your@email.com"
                   placeholderTextColor={theme.colors.onMuted}
                   keyboardType="email-address"
@@ -375,13 +370,13 @@ export default function ModernCreatePetScreen({
               </View>
 
               <View style={styles.formGroup}>
-                <Label>Phone</Label>
+                <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Phone</Text>
                 <TextInput
                   style={styles.input}
                   value={formData.contactInfo.phone}
-                  onChangeText={(value) =>
-                    { updateNestedFormData("contactInfo", "phone", value); }
-                  }
+                  onChangeText={(value) => {
+                    updateNestedFormData('contactInfo', 'phone', value);
+                  }}
                   placeholder="(555) 123-4567"
                   placeholderTextColor={theme.colors.onMuted}
                   keyboardType="phone-pad"
@@ -392,10 +387,8 @@ export default function ModernCreatePetScreen({
 
           {/* Submit Button */}
           <View style={styles.submitContainer}>
-            <EliteButtonPresets.holographic
-              title={
-                isSubmitting ? "Creating Profile..." : "Create Pet Profile"
-              }
+            <AnimatedButtonPresets.holographic
+              title={isSubmitting ? 'Creating Profile...' : 'Create Pet Profile'}
               size="lg"
               loading={isSubmitting}
               onPress={onSubmit}
@@ -407,4 +400,3 @@ export default function ModernCreatePetScreen({
     </EliteContainer>
   );
 }
-

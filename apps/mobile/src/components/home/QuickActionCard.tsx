@@ -1,12 +1,12 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, type ViewStyle } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@mobile/theme";
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, type ViewStyle } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@mobile/theme';
 
 interface QuickActionCardProps {
   icon: string;
   title: string;
-  gradient: "primary" | "secondary" | "success" | "purple";
+  gradient: 'primary' | 'secondary' | 'success' | 'purple';
   backgroundColor: string;
   badge?: number;
   onPress: () => void;
@@ -24,21 +24,20 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
 }) => {
   const theme = useTheme();
   const { colors } = theme;
-  
+
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={[styles.actionCard, style]}
       onPress={onPress}
       activeOpacity={0.7}
     >
       <View style={styles.actionContent}>
-        <View
-          style={StyleSheet.flatten([
-            styles.actionIcon,
-            { backgroundColor },
-          ])}
-        >
-          <Ionicons name={icon as any} size={24} color={colors.onPrimary} />
+        <View style={StyleSheet.flatten([styles.actionIcon, { backgroundColor }])}>
+          <Ionicons
+            name={icon as any}
+            size={24}
+            color={colors.onPrimary}
+          />
         </View>
         <View style={styles.titleContainer}>
           <Text style={[styles.title, { color: colors.onSurface }]}>{title}</Text>
@@ -58,36 +57,36 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   actionContent: {
-    alignItems: "center",
+    alignItems: 'center',
     gap: 8,
   },
   actionIcon: {
     width: 48,
     height: 48,
     borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   titleContainer: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   title: {
     fontSize: 14,
-    fontWeight: "600",
-    textAlign: "center",
+    fontWeight: '600',
+    textAlign: 'center',
   },
   badge: {
-    position: "absolute",
+    position: 'absolute',
     top: -4,
     right: -4,
     width: 24,
     height: 24,
     borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   badgeText: {
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });

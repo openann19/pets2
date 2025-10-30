@@ -30,9 +30,7 @@ interface UsePullToRefreshReturn {
  * Hook for elastic pull-to-refresh animation
  * Returns animated style and scroll handler
  */
-export function usePullToRefresh(
-  onRefresh: () => Promise<void>
-): UsePullToRefreshReturn {
+export function usePullToRefresh(onRefresh: () => Promise<void>): UsePullToRefreshReturn {
   const guards = useMotionGuards();
   const scrollY = useSharedValue(0);
   const isRefreshing = useSharedValue(false);
@@ -42,7 +40,7 @@ export function usePullToRefresh(
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       const offset = event.contentOffset.y;
-      
+
       // Only track negative scroll (pulling down)
       if (offset < 0) {
         scrollY.value = Math.abs(offset);
@@ -62,18 +60,13 @@ export function usePullToRefresh(
 
       // Scale up to 1.15 as user pulls
       const maxPull = 80; // pixels
-      const targetScale = interpolate(
-        current,
-        [0, maxPull],
-        [1, 1.15],
-        Extrapolate.CLAMP
-      );
-      
+      const targetScale = interpolate(current, [0, maxPull], [1, 1.15], Extrapolate.CLAMP);
+
       scaleY.value = withTiming(targetScale, {
         duration: motion.duration.fast,
         easing: getEasingArray('standard'),
       });
-    }
+    },
   );
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -87,7 +80,7 @@ export function usePullToRefresh(
     if (scrollY.value > 80 && !isRefreshing.value && !refreshing) {
       isRefreshing.value = true;
       setRefreshing(true);
-      
+
       // Snap back animation
       scaleY.value = withTiming(1, {
         duration: motion.duration.fast,
@@ -140,4 +133,3 @@ export function PullToRefreshIndicator({
     />
   );
 }
-

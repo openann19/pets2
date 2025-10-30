@@ -1,10 +1,10 @@
-import React, { useMemo } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useMemo } from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import { EliteButtonPresets, Body, Heading2 } from "@mobile/components";
-import { ShimmerPlaceholder } from "@mobile/components/ShimmerPlaceholder";
-import { useTheme } from "@mobile/theme";
-import type { AppTheme } from "@mobile/theme";
+import { EliteButtonPresets, Body, Heading2 } from '@mobile/components';
+import { ShimmerPlaceholder } from '@mobile/components/ShimmerPlaceholder';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 
 type MapEmptyStateProps = {
   onAdjustFilters: () => void;
@@ -19,28 +19,28 @@ const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      paddingHorizontal: theme.spacing["4xl"],
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: theme.spacing['4xl'],
       gap: theme.spacing.xl,
       backgroundColor: theme.colors.bg,
     },
     skeletonWrapper: {
-      width: "100%",
-      alignItems: "center",
+      width: '100%',
+      alignItems: 'center',
       gap: theme.spacing.lg,
     },
     mapSkeleton: {
-      width: "100%",
+      width: '100%',
       height: 320,
-      borderRadius: theme.radii["3xl"],
-      overflow: "hidden",
+      borderRadius: theme.radii['3xl'],
+      overflow: 'hidden',
     },
     statRow: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: theme.spacing.md,
-      width: "100%",
-      justifyContent: "space-between",
+      width: '100%',
+      justifyContent: 'space-between',
     },
     statItem: {
       flex: 1,
@@ -48,12 +48,12 @@ const createStyles = (theme: AppTheme) =>
       borderRadius: theme.radii.xl,
     },
     textBlock: {
-      width: "80%",
+      width: '80%',
       height: 18,
       borderRadius: theme.radii.lg,
     },
     stateWrapper: {
-      alignItems: "center",
+      alignItems: 'center',
       gap: theme.spacing.md,
       paddingHorizontal: theme.spacing.xl,
     },
@@ -62,7 +62,7 @@ const createStyles = (theme: AppTheme) =>
 export const MapSkeletonState: React.FC = () => {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const mapRadius = theme.radii["3xl"];
+  const mapRadius = theme.radii['3xl'];
 
   return (
     <View style={styles.container}>
@@ -94,8 +94,8 @@ export const MapEmptyState: React.FC<MapEmptyStateProps> = ({ onAdjustFilters })
       <View style={styles.stateWrapper}>
         <Heading2>Explore more regions</Heading2>
         <Body>
-          No active pet pins match your filters. Try expanding the radius or enabling
-          additional activity types to discover nearby companions.
+          No active pet pins match your filters. Try expanding the radius or enabling additional
+          activity types to discover nearby companions.
         </Body>
         <EliteButtonPresets.glass
           title="Adjust filters"
@@ -125,5 +125,3 @@ export const MapErrorState: React.FC<MapErrorStateProps> = ({ error, onRetry }) 
     </View>
   );
 };
-
-

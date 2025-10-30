@@ -99,7 +99,9 @@ export const useAuthStore = create<AuthState>()(
     })),
     {
       name: 'auth-storage-secure',
-      storage: createSecureStorage() as unknown as Parameters<typeof persist<AuthState, unknown, unknown, AuthState>>[1]['storage'],
+      storage: createSecureStorage() as unknown as Parameters<
+        typeof persist<AuthState, unknown, unknown, AuthState>
+      >[1]['storage'],
       partialize: (state: AuthState): Partial<AuthState> => ({
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,

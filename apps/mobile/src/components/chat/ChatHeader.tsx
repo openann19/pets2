@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { EliteHeader, EliteButton } from '../EliteComponents';
 import { Spacing } from '../../animation';

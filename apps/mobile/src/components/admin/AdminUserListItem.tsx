@@ -205,7 +205,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
           />
           <MetricBadge
             icon="calendar"
-            color={theme.palette.neutral[500]}
+            color={colors.text}
             label={data.createdDateLabel}
           />
         </View>

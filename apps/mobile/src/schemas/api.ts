@@ -337,20 +337,22 @@ export const DataExportResponseSchema = z.object({
       pets: z.array(PetSchema).optional(),
       matches: z.array(MatchSchema).optional(),
       messages: z.array(MessageSchema).optional(),
-      preferences: z.object({
-        ageRange: z.object({
-          min: z.number().int().nonnegative(),
-          max: z.number().int().nonnegative(),
-        }),
-        breedPreferences: z.array(z.string()),
-        distance: z.number().positive(),
-        showMeInDiscover: z.boolean(),
-        notifications: z.object({
-          newMatch: z.boolean(),
-          message: z.boolean(),
-          like: z.boolean(),
-        }),
-      }).optional(),
+      preferences: z
+        .object({
+          ageRange: z.object({
+            min: z.number().int().nonnegative(),
+            max: z.number().int().nonnegative(),
+          }),
+          breedPreferences: z.array(z.string()),
+          distance: z.number().positive(),
+          showMeInDiscover: z.boolean(),
+          notifications: z.object({
+            newMatch: z.boolean(),
+            message: z.boolean(),
+            like: z.boolean(),
+          }),
+        })
+        .optional(),
     })
     .optional(),
   error: z.string().optional(),

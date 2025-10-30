@@ -11,7 +11,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import type { ViewStyle, TextStyle } from 'react-native';
 import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
 import {
   View,
   Text,
@@ -129,10 +128,9 @@ function AdvancedButtonComponent({
   gradientColors,
   blurIntensity = 20,
 }: AdvancedButtonProps): React.JSX.Element {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- useTheme is properly typed to return AppTheme, throws if Provider missing
-  const theme: AppTheme = useTheme();
+  const theme = useTheme();
   const defaultGlowColor = glowColor ?? theme.colors.primary;
-  const defaultGradientColors = gradientColors ?? [...theme.palette.gradients.primary];
+  const defaultGradientColors = gradientColors ?? theme.palette.gradients.primary;
   // Animation Values
   const scale = useRef(new Animated.Value(1)).current;
   const opacity = useRef(new Animated.Value(1)).current;
@@ -144,7 +142,7 @@ function AdvancedButtonComponent({
 
   // State
   const [_isPressed, setIsPressed] = useState(false);
-  const [_isHovered, setIsHovered] = useState(false);
+  const [_isHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isAccessibilityEnabled, setIsAccessibilityEnabled] = useState(false);
 
@@ -227,41 +225,40 @@ function AdvancedButtonComponent({
     [disabled, loading, isLoading, interactions, scale, glow, elevation, triggerHaptic],
   );
 
-  // Hover Animation (unused on mobile but kept for future web/tablet support)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _animateHover = useCallback(
-    (hovered: boolean) => {
-      if (disabled || loading || isLoading) return;
-
-      setIsHovered(hovered);
-
-      const animations: Animated.CompositeAnimation[] = [];
-
-      if (interactions.includes('hover')) {
-        animations.push(
-          Animated.spring(scale, {
-            toValue: hovered ? 1.05 : 1,
-            ...ANIMATION_CONFIG.spring,
-          }),
-        );
-      }
-
-      if (interactions.includes('glow')) {
-        animations.push(
-          Animated.timing(glow, {
-            toValue: hovered ? 0.5 : 0,
-            duration: 300,
-            useNativeDriver: false,
-          }),
-        );
-      }
-
-      if (animations.length > 0) {
-        Animated.parallel(animations).start();
-      }
-    },
-    [disabled, loading, isLoading, interactions, scale, glow],
-  );
+  // Hover Animation (reserved for future implementation)
+  // const animateHover = useCallback(
+  //   (hovered: boolean) => {
+  //     if (disabled || loading || isLoading) return;
+  //
+  //     setIsHovered(hovered);
+  //
+  //     const animations: Animated.CompositeAnimation[] = [];
+  //
+  //     if (interactions.includes('hover')) {
+  //       animations.push(
+  //         Animated.spring(scale, {
+  //           toValue: hovered ? 1.05 : 1,
+  //           ...ANIMATION_CONFIG.spring,
+  //         }),
+  //       );
+  //     }
+  //
+  //     if (interactions.includes('glow')) {
+  //       animations.push(
+  //         Animated.timing(glow, {
+  //           toValue: hovered ? 0.5 : 0,
+  //           duration: 300,
+  //           useNativeDriver: false,
+  //         }),
+  //       );
+  //     }
+  //
+  //     if (animations.length > 0) {
+  //       Animated.parallel(animations).start();
+  //     }
+  //   },
+  //   [disabled, loading, isLoading, interactions, scale, glow],
+  // );
 
   // Tilt Animation with PanResponder
   const panResponder = useRef(
@@ -384,7 +381,7 @@ function AdvancedButtonComponent({
           backgroundColor: defaultGlowColor,
         };
     }
-  }, [variant, defaultGlowColor, glowColor, theme]);
+  }, [variant, defaultGlowColor, theme]);
 
   // Get Size Styles
   const getSizeStyles = useCallback(() => {
@@ -624,10 +621,9 @@ export function AdvancedCard({
   blurIntensity = 20,
   padding = 'md',
 }: AdvancedCardProps): React.JSX.Element {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- useTheme is properly typed to return AppTheme, throws if Provider missing
-  const theme: AppTheme = useTheme();
+  const theme = useTheme();
   const defaultGlowColor = glowColor ?? theme.colors.primary;
-  const defaultGradientColors = gradientColors ?? [...theme.palette.gradients.primary];
+  const defaultGradientColors = gradientColors ?? theme.palette.gradients.primary;
   // Reuse AdvancedButton logic for card
   return (
     <AdvancedButton
@@ -674,7 +670,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   icon: {
-    marginEnd: 8,
+    marginRight: 8,
   },
   title: {
     fontWeight: '600',

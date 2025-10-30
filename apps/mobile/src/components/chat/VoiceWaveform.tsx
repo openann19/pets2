@@ -3,12 +3,8 @@
  * Visualizes voice message waveforms with animations and seek support
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Animated,
-} from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, Animated } from 'react-native';
 import { useTheme } from '@/theme';
 
 export interface VoiceWaveformProps {
@@ -30,7 +26,7 @@ export function VoiceWaveform({
   waveform,
   isPlaying,
   progress,
-  duration,
+  duration: _duration,
   color,
   height = 40,
   onSeek,
@@ -39,9 +35,7 @@ export function VoiceWaveform({
   const defaultColor = color ?? theme.colors.primary;
   const [containerWidth, setContainerWidth] = useState(0);
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
-  const animatedValues = useRef(
-    waveform.map(() => new Animated.Value(0))
-  );
+  const animatedValues = useRef(waveform.map(() => new Animated.Value(0)));
 
   useEffect(() => {
     if (isPlaying) {
@@ -69,9 +63,7 @@ export function VoiceWaveform({
       });
     });
 
-    const animation = Animated.loop(
-      Animated.stagger(50, animations)
-    );
+    const animation = Animated.loop(Animated.stagger(50, animations));
 
     animationRef.current = animation;
     animation.start();
@@ -85,13 +77,13 @@ export function VoiceWaveform({
   };
 
   const calculateBarHeight = (value: number): number => {
-    return MIN_HEIGHT + (value * (MAX_HEIGHT - MIN_HEIGHT));
+    return MIN_HEIGHT + value * (MAX_HEIGHT - MIN_HEIGHT);
   };
 
   const renderBar = (index: number, value: number) => {
     const animatedValue = animatedValues.current[index];
     if (!animatedValue) return null;
-    
+
     const barHeight = calculateBarHeight(value);
 
     const animatedStyle = {
@@ -193,20 +185,17 @@ export function CompactVoiceWaveform({
 /**
  * Generate waveform data from audio buffer
  */
-export function generateWaveformFromAudio(
-  audioBuffer: ArrayBuffer,
-  samples = 50
-): number[] {
+export function generateWaveformFromAudio(_audioBuffer: ArrayBuffer, samples = 50): number[] {
   // This would normally analyze audio samples
   // For now, generate mock data
   const waveform: number[] = [];
-  
+
   for (let i = 0; i < samples; i++) {
     // Generate realistic-looking waveform data
     const value = Math.random() * 0.5 + 0.3 + Math.sin(i * 0.5) * 0.2;
     waveform.push(Math.max(0, Math.min(1, value)));
   }
-  
+
   return waveform;
 }
 

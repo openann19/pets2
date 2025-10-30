@@ -115,7 +115,7 @@ class SecureAPIService {
           sslPinning: requestConfig.sslPinning,
           ...(requestConfig.body !== undefined ? { body: requestConfig.body } : {}),
         } as unknown as Parameters<typeof sslFetch>[1];
-        
+
         const response = (await sslFetch(url, sslFetchConfig)) as SSLResponse;
         const status = response.status;
         const ok = status >= 200 && status < 300;

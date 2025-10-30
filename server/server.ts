@@ -123,8 +123,8 @@ const communityRoutes = await import('./src/routes/community'); // Import commun
 const aiModerationRoutes = await import('./src/routes/aiModeration');
 const aiModerationAdminRoutes = await import('./src/routes/aiModerationAdmin');
 const adminModerationRoutes = await import('./src/routes/adminModeration');
-// const favoritesRoutes = await import('./src/routes/favorites'); // Import favorites routes - TODO: create this file
-// const storiesRoutes = await import('./src/routes/stories'); // TODO: create this file
+const favoritesRoutes = await import('./routes/favorites'); // Import favorites routes
+const storiesRoutes = await import('./routes/stories'); // Import stories routes
 const conversationsRoutes = await import('./src/routes/conversations');
 const profileRoutes = await import('./src/routes/profile');
 const adoptionRoutes = await import('./src/routes/adoption');
@@ -136,6 +136,7 @@ const revenuecatRoutes = await import('./src/routes/revenuecat');
 const liveRoutes = await import('./src/routes/live');
 const livekitWebhookRoutes = await import('./src/routes/livekitWebhooks');
 const mapActivityRoutes = await import('./src/routes/mapActivity');
+const locationRoutes = await import('./src/routes/location');
 const voiceNotesRoutes = await import('./src/routes/voiceNotes');
 const reelsRoutes = await import('./src/routes/reels');
 const templatesRoutes = await import('./src/routes/templates');
@@ -550,6 +551,8 @@ app.use('/api/ai', authenticateToken, aiRoutes.default);
 app.use('/api/ai', authenticateToken, aiPhotoRoutes.default);
 app.use('/api/ai', authenticateToken, aiCompatRoutes.default);
 app.use('/api/premium', authenticateToken, premiumRoutes.default);
+const iapRoutes = await import('./src/routes/iap');
+app.use('/api/iap', authenticateToken, iapRoutes.default);
 app.use('/api/analytics', authenticateToken, analyticsRoutes.default);
 app.use('/api/account', authenticateToken, accountRoutes.default);
 app.use('/api', (await import('./src/routes/swipe')).default);
@@ -586,8 +589,8 @@ app.use('/api/verification', verificationRoutes.default);
 app.use('/api/admin', authenticateToken, requireAdmin, moderateRoutes.default);
 
 app.use('/api/community', authenticateToken, communityRoutes.default); // Register community routes
-// app.use('/api/favorites', favoritesRoutes.default); // Favorites routes handle auth per-route - TODO: create favorites routes
-// app.use('/api/stories', authenticateToken, storiesRoutes.default); // TODO: create stories routes
+app.use('/api/favorites', favoritesRoutes.default); // Favorites routes handle auth per-route
+app.use('/api/stories', authenticateToken, storiesRoutes.default); // Stories routes
 app.use('/api/conversations', conversationsRoutes.default);
 
 // PawReels Routes
@@ -599,6 +602,7 @@ app.use('/api/profile', profileRoutes.default); // Profile routes (handles auth 
 app.use('/api/adoption', adoptionRoutes.default); // Adoption routes (handles auth internally)
 app.use('/api', petActivityRoutes.default); // Pet activity routes
 app.use('/api/map', authenticateToken, mapActivityRoutes.default); // Map activity routes
+app.use('/api/location', authenticateToken, locationRoutes.default); // Location history routes
 
 // Enhanced 2025 Features Routes
 app.use('/api/auth/biometric', biometricRoutes.default);

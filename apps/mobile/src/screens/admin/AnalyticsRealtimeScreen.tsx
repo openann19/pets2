@@ -37,13 +37,13 @@ export default function AnalyticsRealtimeScreen() {
   }, []);
 
   return (
-      <View
-        style={styles.root}
-        testID="admin-analytics"
-      >
-        <Text style={styles.h1}>Realtime Analytics (last hour)</Text>
+    <View
+      style={styles.root}
+      testID="admin-analytics"
+    >
+      <Text style={styles.h1}>Realtime Analytics (last hour)</Text>
 
-        <Text style={styles.h2}>Top Events</Text>
+      <Text style={styles.h2}>Top Events</Text>
       <FlatList
         data={events}
         keyExtractor={(i) => String(i._id)}

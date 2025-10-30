@@ -51,25 +51,35 @@ export interface PaymentMethod {
 class PremiumService {
   private static readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-  // Available subscription plans
+  // Available subscription plans - Business Model from business.md
   private static readonly PLANS: SubscriptionPlan[] = [
     {
-      id: 'basic',
-      name: 'Basic',
-      price: 4.99,
+      id: 'free',
+      name: 'Free',
+      price: 0,
       interval: 'month',
-      features: ['5 Super Likes/day', 'See who liked you', 'Advanced filters'],
-      stripePriceId:
-        process.env['EXPO_PUBLIC_STRIPE_BASIC_PRICE_ID'] ?? 'price_1P1234567890abcdefghijklmn',
+      features: ['5 daily swipes', 'Basic matching', 'Standard chat', 'Weather updates', 'Community support'],
+      stripePriceId: '',
     },
     {
       id: 'premium',
       name: 'Premium',
       price: 9.99,
       interval: 'month',
-      features: ['Unlimited Super Likes', 'Priority matching', 'Profile boost', 'Undo swipes'],
+      features: [
+        'Unlimited swipes',
+        'See who liked you',
+        'Advanced filters',
+        'Ad-free experience',
+        'Advanced matching algorithm',
+        'Priority in search results',
+        'Read receipts',
+        'Video calls',
+      ],
       stripePriceId:
-        process.env['EXPO_PUBLIC_STRIPE_PREMIUM_PRICE_ID'] ?? 'price_1P2345678901bcdefghijklmnop',
+        process.env['EXPO_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID'] ??
+        process.env['EXPO_PUBLIC_STRIPE_PREMIUM_PRICE_ID'] ??
+        'price_premium_monthly',
       popular: true,
     },
     {
@@ -77,9 +87,20 @@ class PremiumService {
       name: 'Ultimate',
       price: 19.99,
       interval: 'month',
-      features: ['Everything in Premium', 'Video calls', 'Advanced analytics', 'VIP support'],
+      features: [
+        'All Premium features',
+        'AI-powered recommendations',
+        'Exclusive events access',
+        'Priority support',
+        'Profile boost',
+        'Unlimited Super Likes',
+        'Advanced analytics',
+        'VIP status',
+      ],
       stripePriceId:
-        process.env['EXPO_PUBLIC_STRIPE_ULTIMATE_PRICE_ID'] ?? 'price_1P3456789012cdefghijklmnopqr',
+        process.env['EXPO_PUBLIC_STRIPE_ULTIMATE_MONTHLY_PRICE_ID'] ??
+        process.env['EXPO_PUBLIC_STRIPE_ULTIMATE_PRICE_ID'] ??
+        'price_ultimate_monthly',
     },
   ];
 
@@ -229,11 +250,11 @@ class PremiumService {
     try {
       const status = await this.getSubscriptionStatus();
 
-      // Default free tier limits
+      // Default free tier limits - Business Model: 5 daily swipes for free users
       const limits: PremiumLimits = {
-        swipesPerDay: 50,
-        likesPerDay: 100,
-        superLikesPerDay: 3, // Free users get 3 per day
+        swipesPerDay: 5, // Free users get 5 daily swipes (per business.md)
+        likesPerDay: 5, // Free users limited to 5 likes per day
+        superLikesPerDay: 0, // Free users get 0 Super Likes (must purchase)
         canUndoSwipes: false,
         canSeeWhoLiked: false,
         canBoostProfile: false,
@@ -242,17 +263,18 @@ class PremiumService {
         unlimitedRewind: false,
       };
 
-      // Upgrade limits based on plan
+      // Upgrade limits based on plan - Business Model from business.md
       if (status.isActive) {
         switch (status.plan.toLowerCase()) {
-          case 'basic':
-            limits.superLikesPerDay = 5;
-            limits.canSeeWhoLiked = true;
-            limits.advancedFilters = true;
+          case 'free':
+            // Free tier - keep defaults (5 swipes/day)
             break;
 
           case 'premium':
-            limits.superLikesPerDay = -1; // Unlimited
+            // Premium: $9.99/month - Unlimited swipes, all premium features
+            limits.swipesPerDay = -1; // Unlimited
+            limits.likesPerDay = -1; // Unlimited
+            limits.superLikesPerDay = -1; // Unlimited (but can purchase more via IAP)
             limits.canUndoSwipes = true;
             limits.canSeeWhoLiked = true;
             limits.canBoostProfile = true;
@@ -261,10 +283,13 @@ class PremiumService {
             break;
 
           case 'ultimate':
+            // Ultimate: $19.99/month - All Premium features + AI, VIP, analytics
+            limits.swipesPerDay = -1; // Unlimited
+            limits.likesPerDay = -1; // Unlimited
             limits.superLikesPerDay = -1; // Unlimited
             limits.canUndoSwipes = true;
             limits.canSeeWhoLiked = true;
-            limits.canBoostProfile = true;
+            limits.canBoostProfile = true; // Plus daily boosts
             limits.advancedFilters = true;
             limits.priorityMatching = true;
             limits.unlimitedRewind = true;
@@ -275,11 +300,11 @@ class PremiumService {
       return limits;
     } catch (error) {
       logger.error('Failed to get premium limits', { error });
-      // Return free tier limits on error
+      // Return free tier limits on error - Business Model: 5 daily swipes
       return {
-        swipesPerDay: 50,
-        likesPerDay: 100,
-        superLikesPerDay: 3,
+        swipesPerDay: 5,
+        likesPerDay: 5,
+        superLikesPerDay: 0,
         canUndoSwipes: false,
         canSeeWhoLiked: false,
         canBoostProfile: false,

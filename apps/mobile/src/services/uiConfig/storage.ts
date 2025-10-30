@@ -104,4 +104,3 @@ export async function clearConfigStorage(): Promise<void> {
     logger.error('Failed to clear config storage', { error });
   }
 }
-

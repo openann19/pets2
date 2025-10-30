@@ -1,8 +1,8 @@
 import type { Response } from 'express';
-import User from '../models/User';
+import User, { type IUserDocument } from '../models/User';
 import logger from '../utils/logger';
 import type { AuthRequest } from '../types/express';
-import { getErrorMessage } from '../../utils/errorHandler';
+import { getErrorMessage } from '../utils/errorHandler';
 
 /**
  * Request interfaces
@@ -39,7 +39,8 @@ export const changePassword = async (req: ChangePasswordRequest, res: Response):
       return;
     }
 
-    const ok = await (user as any).comparePassword(currentPassword);
+    // Type assertion needed because comparePassword is a method defined in schema
+    const ok = await (user as IUserDocument).comparePassword(currentPassword);
     if (!ok) {
       res.status(401).json({ success: false, message: 'Invalid current password' });
       return;
@@ -47,7 +48,7 @@ export const changePassword = async (req: ChangePasswordRequest, res: Response):
 
     user.password = newPassword;
     user.refreshTokens = []; // revoke all refresh tokens
-    (user as any).tokensInvalidatedAt = new Date(); // any existing access tokens become invalid
+    user.tokensInvalidatedAt = new Date(); // any existing access tokens become invalid
     await user.save();
 
     res.json({ success: true, message: 'Password changed successfully' });

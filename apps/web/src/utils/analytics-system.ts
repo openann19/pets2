@@ -328,13 +328,13 @@ class AdvancedAnalytics {
       if (event) {
         this.sendEvent(event);
       }
-    }
   }
 
   getConnectionType(): string {
     // Check if navigator.connection is available (experimental API)
-    if ('connection' in navigator && navigator.connection) {
-      return (navigator.connection as any).effectiveType || 'unknown';
+    if (typeof navigator !== 'undefined' && 'connection' in navigator && navigator.connection) {
+      const connection = navigator.connection as NetworkInformation;
+      return connection.effectiveType || 'unknown';
     }
     return 'unknown';
   }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { View, Image, Pressable, Text, StyleSheet } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from "@mobile/theme";
+import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 import { useReduceMotion } from '../../hooks/useReducedMotion';
 import { haptic } from '../../ui/haptics';
@@ -89,20 +89,37 @@ export default function ReplyPreviewBar({
       >
         <View style={styles.leading} />
         <View style={styles.iconWrap}>
-          <Ionicons name="arrow-undo" size={16} color={theme.colors.onSurface} />
+          <Ionicons
+            name="arrow-undo"
+            size={16}
+            color={theme.colors.onSurface}
+          />
         </View>
 
-        <Pressable style={styles.content} onPress={onPress} testID="reply-preview-content">
-          <Text style={styles.author} numberOfLines={1}>
+        <Pressable
+          style={styles.content}
+          onPress={onPress}
+          testID="reply-preview-content"
+        >
+          <Text
+            style={styles.author}
+            numberOfLines={1}
+          >
             {target.author ?? t('replyingTo')}
           </Text>
-          <Text style={styles.snippet} numberOfLines={1}>
+          <Text
+            style={styles.snippet}
+            numberOfLines={1}
+          >
             {target.text ?? t('media')}
           </Text>
         </Pressable>
 
         {target.thumbnail ? (
-          <Image source={{ uri: target.thumbnail }} style={styles.thumb} />
+          <Image
+            source={{ uri: target.thumbnail }}
+            style={styles.thumb}
+          />
         ) : null}
 
         <Pressable
@@ -116,7 +133,11 @@ export default function ReplyPreviewBar({
           accessibilityLabel={t('dismiss')}
           accessibilityRole="button"
         >
-          <Ionicons name="close" size={16} color={theme.colors.onMuted} />
+          <Ionicons
+            name="close"
+            size={16}
+            color={theme.colors.onMuted}
+          />
         </Pressable>
       </Animated.View>
     </GestureDetector>

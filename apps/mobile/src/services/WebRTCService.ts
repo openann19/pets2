@@ -36,11 +36,13 @@ interface MediaStreamConstraints {
         height?: { min?: number; ideal?: number; max?: number };
         frameRate?: { min?: number; ideal?: number; max?: number };
       };
-  audio?: boolean | {
-    echoCancellation?: boolean;
-    noiseSuppression?: boolean;
-    autoGainControl?: boolean;
-  };
+  audio?:
+    | boolean
+    | {
+        echoCancellation?: boolean;
+        noiseSuppression?: boolean;
+        autoGainControl?: boolean;
+      };
 }
 
 // Type-safe video track with extended methods for React Native WebRTC
@@ -233,7 +235,7 @@ class WebRTCService extends EventEmitter {
       // If device checks failed, emit error and return
       if (!deviceCheckResult.allChecksPassed) {
         const error = new Error(
-          `Device check failed: ${deviceCheckResult.blockingIssues.join(', ')}\nWarnings: ${deviceCheckResult.warnings.join(', ')}`
+          `Device check failed: ${deviceCheckResult.blockingIssues.join(', ')}\nWarnings: ${deviceCheckResult.warnings.join(', ')}`,
         );
         this.emit('callError', error);
         this.emit('deviceCheckFailed', deviceCheckResult);
@@ -249,10 +251,10 @@ class WebRTCService extends EventEmitter {
         const deniedTypes: Array<'audio' | 'video'> = [];
         if (!permissions.audio.granted) deniedTypes.push('audio');
         if (!permissions.video.granted && callType === 'video') deniedTypes.push('video');
-        
-        const type = deniedTypes.length === 2 ? 'both' : deniedTypes[0] ?? 'audio';
+
+        const type = deniedTypes.length === 2 ? 'both' : (deniedTypes[0] ?? 'audio');
         showPermissionDeniedDialog(type);
-        
+
         const error = new PermissionDeniedError(
           type,
           `Permission denied: ${deniedTypes.join(', ')}`,
@@ -348,17 +350,17 @@ class WebRTCService extends EventEmitter {
       if (this.callState.callData === undefined) return false;
 
       const callType = this.callState.callData.callType;
-      
+
       // Check permissions before requesting media
       const permissions = await checkMediaPermissions(callType === 'video');
       if (!permissions.allGranted) {
         const deniedTypes: Array<'audio' | 'video'> = [];
         if (!permissions.audio.granted) deniedTypes.push('audio');
         if (!permissions.video.granted && callType === 'video') deniedTypes.push('video');
-        
-        const type = deniedTypes.length === 2 ? 'both' : deniedTypes[0] ?? 'audio';
+
+        const type = deniedTypes.length === 2 ? 'both' : (deniedTypes[0] ?? 'audio');
         showPermissionDeniedDialog(type);
-        
+
         const error = new PermissionDeniedError(
           type,
           `Permission denied: ${deniedTypes.join(', ')}`,
@@ -609,23 +611,23 @@ class WebRTCService extends EventEmitter {
       }
     };
 
-      // Connection state change handler - typed properly
-      peerConnection.onconnectionstatechange = () => {
-        const state = this.peerConnection?.connectionState;
-        if (state === 'connected') {
-          this.callState.isConnected = true;
-          this.reconnectionAttempts = 0;
-          this.clearIceTimeout();
-          this.startCallTimer();
-          this.startNetworkQualityMonitoring();
-          this.emit('callStateChanged', this.callState);
-        } else if (state === 'disconnected') {
-          // Attempt reconnection for transient network loss
-          void this.handleDisconnection();
-        } else if (state === 'failed') {
-          this.handleConnectionFailure();
-        }
-      };
+    // Connection state change handler - typed properly
+    peerConnection.onconnectionstatechange = () => {
+      const state = this.peerConnection?.connectionState;
+      if (state === 'connected') {
+        this.callState.isConnected = true;
+        this.reconnectionAttempts = 0;
+        this.clearIceTimeout();
+        this.startCallTimer();
+        this.startNetworkQualityMonitoring();
+        this.emit('callStateChanged', this.callState);
+      } else if (state === 'disconnected') {
+        // Attempt reconnection for transient network loss
+        void this.handleDisconnection();
+      } else if (state === 'failed') {
+        this.handleConnectionFailure();
+      }
+    };
 
     // Additional event listeners for comprehensive state tracking
     // Using type assertion for optional handlers
@@ -757,7 +759,7 @@ class WebRTCService extends EventEmitter {
     try {
       const stats = await this.peerConnection.getStats();
       const networkStats = this.calculateNetworkStats(stats);
-      
+
       this.callState.networkStats = networkStats;
       this.callState.networkQuality = networkStats.quality;
 
@@ -978,7 +980,9 @@ class WebRTCService extends EventEmitter {
     this.reconnectionAttempts++;
     const delay = Math.min(1000 * Math.pow(2, this.reconnectionAttempts - 1), 30000); // Exponential backoff, max 30s
 
-    logger.info(`Attempting reconnection ${this.reconnectionAttempts}/${this.maxReconnectionAttempts} after ${delay}ms`);
+    logger.info(
+      `Attempting reconnection ${this.reconnectionAttempts}/${this.maxReconnectionAttempts} after ${delay}ms`,
+    );
 
     setTimeout(() => {
       if (this.peerConnection === null || !this.callState.isActive) {

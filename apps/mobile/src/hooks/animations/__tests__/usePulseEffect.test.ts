@@ -6,8 +6,6 @@ import { renderHook } from '@testing-library/react-native';
 import { usePulseEffect } from '../usePulseEffect';
 
 jest.mock('react-native-reanimated', () => {
-
-
   const Reanimated = require('react-native-reanimated/mock');
   Reanimated.default.call = () => {};
   return Reanimated;
@@ -53,10 +51,9 @@ describe('usePulseEffect', () => {
     });
 
     it('should maintain style when enabled changes', () => {
-      const { result, rerender } = renderHook(
-        (props) => usePulseEffect(props.enabled),
-        { initialProps: { enabled: true } }
-      );
+      const { result, rerender } = renderHook((props) => usePulseEffect(props.enabled), {
+        initialProps: { enabled: true },
+      });
 
       const firstStyle = result.current.pulseStyle;
 
@@ -68,10 +65,9 @@ describe('usePulseEffect', () => {
 
   describe('state changes', () => {
     it('should handle enabling pulse animation', () => {
-      const { result, rerender } = renderHook(
-        (props) => usePulseEffect(props.enabled),
-        { initialProps: { enabled: false } }
-      );
+      const { result, rerender } = renderHook((props) => usePulseEffect(props.enabled), {
+        initialProps: { enabled: false },
+      });
 
       expect(result.current.pulseStyle).toBeDefined();
 
@@ -81,10 +77,9 @@ describe('usePulseEffect', () => {
     });
 
     it('should handle disabling pulse animation', () => {
-      const { result, rerender } = renderHook(
-        (props) => usePulseEffect(props.enabled),
-        { initialProps: { enabled: true } }
-      );
+      const { result, rerender } = renderHook((props) => usePulseEffect(props.enabled), {
+        initialProps: { enabled: true },
+      });
 
       expect(result.current.pulseStyle).toBeDefined();
 
@@ -94,4 +89,3 @@ describe('usePulseEffect', () => {
     });
   });
 });
-

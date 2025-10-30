@@ -8,7 +8,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { MOBILE_RADIUS } from '../@pawfectmatch/design-tokens';
 import { useTheme } from '@/theme';
 import type { AppTheme } from '@/theme';
 
@@ -295,18 +294,14 @@ export const NeonBorder: React.FC<NeonBorderProps> = ({
   const baseStyle = {
     borderWidth: width,
     borderColor: shadowColor,
-    borderRadius: MOBILE_RADIUS['2xl'],
+    borderRadius: 16, // tokens.radius['2xl'] equivalent (1rem = 16px)
     ...baseShadow,
     shadowColor,
   };
 
   return (
     <Animated.View
-      style={[
-        baseStyle,
-        animated ? animatedStyle : undefined,
-        style,
-      ]}
+      style={[baseStyle, animated ? animatedStyle : undefined, style]}
       {...props}
     >
       {children}
@@ -347,7 +342,7 @@ export const GlowingCard: React.FC<GlowingCardProps> = ({
       animated={animated}
       style={StyleSheet.flatten([
         {
-          borderRadius: MOBILE_RADIUS['2xl'],
+          borderRadius: 16, // tokens.radius['2xl'] equivalent (1rem = 16px)
           backgroundColor: 'rgba(255, 255, 255, 0.1)',
           padding: 16, // Spacing.lg equivalent
         },

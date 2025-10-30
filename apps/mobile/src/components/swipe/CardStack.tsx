@@ -33,7 +33,7 @@ export function CardStack({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- useTheme is properly typed to return AppTheme, throws if Provider missing
   const theme: AppTheme = useTheme();
   const styles = makeStyles(theme);
-  
+
   return (
     <View style={styles.container}>
       {/* Current Card */}

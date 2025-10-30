@@ -1,12 +1,11 @@
-import { DetoxConfig } from "detox";
+// Detox configuration - using plain object as Detox doesn't export DetoxConfig type
+const IOS_SCHEME = process.env['DETOX_IOS_SCHEME'] || "PawfectMatch";
+const IOS_WORKSPACE = process.env['DETOX_IOS_WORKSPACE'] || `ios/${IOS_SCHEME}.xcworkspace`;
+const IOS_BINARY = process.env['DETOX_IOS_BINARY'] || `ios/build/Build/Products/Debug-iphonesimulator/${IOS_SCHEME}.app`;
 
-const IOS_SCHEME = process.env.DETOX_IOS_SCHEME || "PawfectMatch";
-const IOS_WORKSPACE = process.env.DETOX_IOS_WORKSPACE || `ios/${IOS_SCHEME}.xcworkspace`;
-const IOS_BINARY = process.env.DETOX_IOS_BINARY || `ios/build/Build/Products/Debug-iphonesimulator/${IOS_SCHEME}.app`;
+const ANDROID_BINARY = process.env['DETOX_ANDROID_BINARY'] || "android/app/build/outputs/apk/debug/app-debug.apk";
 
-const ANDROID_BINARY = process.env.DETOX_ANDROID_BINARY || "android/app/build/outputs/apk/debug/app-debug.apk";
-
-const config: DetoxConfig = {
+const config = {
   testRunner: "jest",
   runnerConfig: "e2e/jest.config.js",
   artifacts: { rootDir: "e2e/artifacts" },

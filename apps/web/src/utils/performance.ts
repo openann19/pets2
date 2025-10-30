@@ -23,7 +23,7 @@ export const dynamicImport = <T>(
         logger.warn(`Slow dynamic import detected: ${loadTime.toFixed(2)}ms`);
       }
       
-      return { default: module as any };
+      return { default: module as React.ComponentType };
     } catch (error: unknown) {
       logger.error('Dynamic import failed:', { error });
       return { default: fallback || (() => React.createElement('div', null, 'Loading failed')) };
@@ -88,6 +88,18 @@ export const analyzeBundleSize = (): void | { scripts: number; styles: number; t
 };
 
 // ====== PERFORMANCE MONITORING ======
+interface MetricSummary {
+  current: number;
+  average: number;
+  min: number;
+  max: number;
+  count: number;
+}
+
+interface PerformanceMetrics {
+  [key: string]: MetricSummary;
+}
+
 export class PerformanceMonitor {
   private metrics: Map<string, number[]> = new Map();
   private observers: PerformanceObserver[] = [];
@@ -132,8 +144,12 @@ export class PerformanceMonitor {
       const clsObserver = new PerformanceObserver((list) => {
         let clsValue = 0;
         for (const entry of list.getEntries()) {
-          if (!(entry as any).hadRecentInput) {
-            clsValue += (entry as any).value;
+          // Type guard for LayoutShift entry
+          if (entry.entryType === 'layout-shift' && 'hadRecentInput' in entry && 'value' in entry) {
+            const layoutShiftEntry = entry as { hadRecentInput: boolean; value: number };
+            if (!layoutShiftEntry.hadRecentInput) {
+              clsValue += layoutShiftEntry.value;
+            }
           }
         }
         this.trackMetric('cls', clsValue);
@@ -174,13 +190,13 @@ export class PerformanceMonitor {
     }
   }
   
-  getMetrics() {
-    const summary: Record<string, any> = {};
+  getMetrics(): PerformanceMetrics {
+    const summary: PerformanceMetrics = {};
     
     for (const [name, values] of this.metrics.entries()) {
       if (values.length > 0) {
         summary[name] = {
-          current: values[values.length - 1],
+          current: values[values.length - 1] ?? 0,
           average: values.reduce((a, b) => a + b, 0) / values.length,
           min: Math.min(...values),
           max: Math.max(...values),
@@ -205,38 +221,38 @@ export class PerformanceMonitor {
     return report;
   }
   
-  private generateRecommendations(metrics: Record<string, any>): string[] {
+  private generateRecommendations(metrics: PerformanceMetrics): string[] {
     const recommendations: string[] = [];
     
-    if (metrics.page_load?.average > 2000) {
+    if (metrics['page_load']?.average && metrics['page_load'].average > 2000) {
       recommendations.push('Consider code splitting to reduce initial bundle size');
     }
     
-    if (metrics.lcp?.average > 2000) {
+    if (metrics['lcp']?.average && metrics['lcp'].average > 2000) {
       recommendations.push('Optimize images and critical resources loading');
     }
     
-    if (metrics.cls?.average > 0.05) {
+    if (metrics['cls']?.average && metrics['cls'].average > 0.05) {
       recommendations.push('Add proper dimensions to images and dynamic content');
     }
     
     return recommendations;
   }
   
-  private calculatePerformanceScore(metrics: Record<string, any>): number {
+  private calculatePerformanceScore(metrics: PerformanceMetrics): number {
     let score = 100;
     
     // Page load penalty
-    if (metrics.page_load?.average > 3000) score -= 20;
-    else if (metrics.page_load?.average > 2000) score -= 10;
+    if (metrics['page_load']?.average && metrics['page_load'].average > 3000) score -= 20;
+    else if (metrics['page_load']?.average && metrics['page_load'].average > 2000) score -= 10;
     
     // LCP penalty
-    if (metrics.lcp?.average > 2500) score -= 20;
-    else if (metrics.lcp?.average > 1500) score -= 10;
+    if (metrics['lcp']?.average && metrics['lcp'].average > 2500) score -= 20;
+    else if (metrics['lcp']?.average && metrics['lcp'].average > 1500) score -= 10;
     
     // CLS penalty
-    if (metrics.cls?.average > 0.1) score -= 15;
-    else if (metrics.cls?.average > 0.05) score -= 8;
+    if (metrics['cls']?.average && metrics['cls'].average > 0.1) score -= 15;
+    else if (metrics['cls']?.average && metrics['cls'].average > 0.05) score -= 8;
     
     return Math.max(0, score);
   }

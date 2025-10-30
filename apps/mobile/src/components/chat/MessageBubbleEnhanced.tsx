@@ -388,11 +388,12 @@ export function MessageBubbleEnhanced({
     Gesture.Simultaneous(tap, longPressMenu, longPressReadBy),
   );
 
-  const formatTime = (timestamp: string) =>
-    new Date(timestamp).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  // formatTime reserved for future implementation
+  // const formatTime = (timestamp: string) =>
+  //   new Date(timestamp).toLocaleTimeString([], {
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //   });
 
   const getMilestoneBadge = () => {
     if (!messageIndex || !totalMessages) return null;

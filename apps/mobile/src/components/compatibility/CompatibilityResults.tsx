@@ -5,10 +5,10 @@
  * Shows score, breakdown, recommendations, and analysis text.
  */
 
-import React, { useMemo } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import React, { useMemo } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 export interface AnalysisResult {
   compatibility_score: number;
@@ -54,12 +54,12 @@ const createStyles = (theme: AppTheme) => {
       color: colors.onSurface,
     },
     scoreContainer: {
-      alignItems: "center",
+      alignItems: 'center',
       gap: spacing.xs,
     },
     scoreValue: {
       fontSize: typography.h1.size,
-      fontWeight: "700",
+      fontWeight: '700',
     },
     scoreLabel: {
       fontSize: typography.body.size,
@@ -79,20 +79,20 @@ const createStyles = (theme: AppTheme) => {
       color: colors.onSurface,
     },
     breakdownItem: {
-      flexDirection: "row",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       paddingBottom: spacing.xs,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: colors.border,
     },
     breakdownLabel: {
       fontSize: typography.body.size,
-      textTransform: "capitalize",
+      textTransform: 'capitalize',
       color: colors.onMuted,
     },
     breakdownValue: {
       fontSize: typography.body.size,
-      fontWeight: "600",
+      fontWeight: '600',
       color: colors.onSurface,
     },
     recommendationsSection: {
@@ -108,7 +108,7 @@ const createStyles = (theme: AppTheme) => {
     },
     recommendationGroupTitle: {
       fontSize: typography.body.size,
-      fontWeight: "600",
+      fontWeight: '600',
       color: colors.onSurface,
     },
     recommendationItem: {
@@ -117,18 +117,18 @@ const createStyles = (theme: AppTheme) => {
       marginLeft: spacing.xs,
     },
     probabilityGroup: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: spacing.xs,
     },
     probabilityLabel: {
       fontSize: typography.body.size,
-      fontWeight: "600",
+      fontWeight: '600',
       color: colors.onSurface,
     },
     probabilityValue: {
       fontSize: typography.h2.size,
-      fontWeight: "700",
+      fontWeight: '700',
       color: colors.primary,
     },
   });
@@ -145,11 +145,7 @@ export const CompatibilityResults: React.FC<CompatibilityResultsProps> = ({
   const scorePercentage = Math.round(result.compatibility_score * 100);
   const label = getCompatibilityLabel(result.compatibility_score);
   const scoreTone =
-    scorePercentage >= 80
-      ? colors.success
-      : scorePercentage >= 60
-      ? colors.warning
-      : colors.danger;
+    scorePercentage >= 80 ? colors.success : scorePercentage >= 60 ? colors.warning : colors.danger;
 
   return (
     <ScrollView style={styles.container}>
@@ -157,9 +153,7 @@ export const CompatibilityResults: React.FC<CompatibilityResultsProps> = ({
         <Text style={styles.title}>🎯 Compatibility Results</Text>
 
         <View style={styles.scoreContainer}>
-          <Text style={[styles.scoreValue, { color: scoreTone }]}>
-            {scorePercentage}/100
-          </Text>
+          <Text style={[styles.scoreValue, { color: scoreTone }]}>{scorePercentage}/100</Text>
           <Text style={styles.scoreLabel}>{label}</Text>
         </View>
 
@@ -218,7 +212,7 @@ const BreakdownItem: React.FC<BreakdownItemProps> = ({ label, value, styles }) =
 );
 
 type RecommendationsSectionProps = {
-  recommendations: AnalysisResult["recommendations"];
+  recommendations: AnalysisResult['recommendations'];
   styles: ReturnType<typeof createStyles>;
 };
 
@@ -268,15 +262,14 @@ type RecommendationGroupProps = {
   styles: ReturnType<typeof createStyles>;
 };
 
-const RecommendationGroup: React.FC<RecommendationGroupProps> = ({
-  title,
-  items,
-  styles,
-}) => (
+const RecommendationGroup: React.FC<RecommendationGroupProps> = ({ title, items, styles }) => (
   <View style={styles.recommendationGroup}>
     <Text style={styles.recommendationGroupTitle}>{title}</Text>
     {items.map((item, index) => (
-      <Text key={index} style={styles.recommendationItem}>
+      <Text
+        key={index}
+        style={styles.recommendationItem}
+      >
         • {item}
       </Text>
     ))}

@@ -1,6 +1,6 @@
 /**
  * Accessibility Labels and Hints System
- * 
+ *
  * Provides comprehensive accessibility labels, hints, and roles
  * for screen readers across the PawfectMatch mobile app
  */
@@ -11,7 +11,16 @@ import { Platform } from 'react-native';
 export interface AccessibilityProps {
   accessibilityLabel?: string;
   accessibilityHint?: string;
-  accessibilityRole?: 'button' | 'link' | 'search' | 'image' | 'text' | 'adjustable' | 'header' | 'summary' | 'none';
+  accessibilityRole?:
+    | 'button'
+    | 'link'
+    | 'search'
+    | 'image'
+    | 'text'
+    | 'adjustable'
+    | 'header'
+    | 'summary'
+    | 'none';
   accessibilityState?: {
     disabled?: boolean;
     selected?: boolean;
@@ -363,7 +372,12 @@ export class AccessibilityLabelGenerator {
   /**
    * Generate accessibility labels for lists with counts
    */
-  static listItemLabel(itemType: string, itemName: string, position?: number, total?: number): string {
+  static listItemLabel(
+    itemType: string,
+    itemName: string,
+    position?: number,
+    total?: number,
+  ): string {
     if (position !== undefined && total !== undefined) {
       return `${itemType} ${itemName}, position ${position} of ${total}`;
     }
@@ -389,7 +403,11 @@ export class AccessibilityLabelGenerator {
   /**
    * Generate accessibility labels for form inputs with validation
    */
-  static inputLabel(fieldName: string, isValid?: boolean, errorMessage?: string): {
+  static inputLabel(
+    fieldName: string,
+    isValid?: boolean,
+    errorMessage?: string,
+  ): {
     accessibilityLabel: string;
     accessibilityHint?: string;
     accessibilityState?: { disabled?: boolean; invalid?: boolean };
@@ -405,8 +423,8 @@ export class AccessibilityLabelGenerator {
 
     return {
       accessibilityLabel: label,
-      accessibilityHint: hint,
-      accessibilityState: state,
+      ...(hint !== undefined && { accessibilityHint: hint }),
+      ...(state !== undefined && { accessibilityState: state }),
     };
   }
 
@@ -480,9 +498,11 @@ export class AccessibilityValidator {
     const warnings: string[] = [];
 
     // Check for required accessibilityLabel on interactive elements
-    if (props.accessible !== false && 
-        (props.accessibilityRole === 'button' || props.accessibilityRole === 'link') && 
-        !props.accessibilityLabel) {
+    if (
+      props.accessible !== false &&
+      (props.accessibilityRole === 'button' || props.accessibilityRole === 'link') &&
+      !props.accessibilityLabel
+    ) {
       errors.push('Interactive elements must have accessibilityLabel');
     }
 
@@ -492,7 +512,20 @@ export class AccessibilityValidator {
     }
 
     // Check for proper role usage
-    if (props.accessibilityRole && !['button', 'link', 'search', 'image', 'text', 'adjustable', 'header', 'summary', 'none'].includes(props.accessibilityRole)) {
+    if (
+      props.accessibilityRole &&
+      ![
+        'button',
+        'link',
+        'search',
+        'image',
+        'text',
+        'adjustable',
+        'header',
+        'summary',
+        'none',
+      ].includes(props.accessibilityRole)
+    ) {
       warnings.push(`Unknown accessibilityRole: ${props.accessibilityRole}`);
     }
 
@@ -506,10 +539,13 @@ export class AccessibilityValidator {
   /**
    * Generate accessibility audit report for a component
    */
-  static generateAuditReport(componentName: string, elements: Array<{
-    id: string;
-    props: AccessibilityProps;
-  }>): {
+  static generateAuditReport(
+    componentName: string,
+    elements: Array<{
+      id: string;
+      props: AccessibilityProps;
+    }>,
+  ): {
     component: string;
     totalElements: number;
     validElements: number;
@@ -521,16 +557,16 @@ export class AccessibilityValidator {
     const errors: Array<{ elementId: string; error: string }> = [];
     const warnings: Array<{ elementId: string; warning: string }> = [];
 
-    elements.forEach(element => {
+    elements.forEach((element) => {
       const validation = this.validateAccessibilityProps(element.props);
       if (validation.isValid) {
         validElements++;
       } else {
-        validation.errors.forEach(error => {
+        validation.errors.forEach((error) => {
           errors.push({ elementId: element.id, error });
         });
       }
-      validation.warnings.forEach(warning => {
+      validation.warnings.forEach((warning) => {
         warnings.push({ elementId: element.id, warning });
       });
     });

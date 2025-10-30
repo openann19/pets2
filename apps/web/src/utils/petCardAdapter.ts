@@ -5,7 +5,18 @@
 
 export interface PetPhoto {
   url: string;
-  [key: string]: any; // Allow additional photo properties
+  isPrimary?: boolean;
+  caption?: string;
+  uploadedAt?: string;
+  [key: string]: string | boolean | undefined; // Allow additional photo properties with proper typing
+}
+
+export interface PetOwner {
+  location?: string;
+  _id?: string;
+  firstName?: string;
+  lastName?: string;
+  [key: string]: string | undefined; // Allow additional owner properties with proper typing
 }
 
 export interface Pet {
@@ -18,11 +29,8 @@ export interface Pet {
   species: string;
   description?: string;
   photos: PetPhoto[];
-  owner?: {
-    location?: string;
-    [key: string]: any;
-  };
-  [key: string]: any; // Allow additional pet properties
+  owner?: PetOwner;
+  [key: string]: string | number | PetPhoto[] | PetOwner | undefined; // Allow additional pet properties with proper typing
 }
 
 export interface PetCardData {

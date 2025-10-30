@@ -345,6 +345,115 @@ class MatchingService {
   }
 
   /**
+   * Record a swipe action (like, pass, superlike)
+   */
+  async recordSwipe(action: SwipeAction): Promise<any> {
+    try {
+      const response = await api.request('/matching/swipe', {
+        method: 'POST',
+        body: JSON.stringify(action),
+      });
+
+      logger.info('Recorded swipe action', {
+        petId: action.petId,
+        action: action.action,
+      });
+
+      return response;
+    } catch (error) {
+      logger.error('Failed to record swipe', { error, action });
+      throw error;
+    }
+  }
+
+  /**
+   * Get user matches
+   */
+  async getMatches(): Promise<MatchResult[]> {
+    try {
+      const response = await api.request<MatchResult[]>('/matching/matches');
+
+      logger.info('Fetched user matches', { count: response.length });
+
+      return response;
+    } catch (error) {
+      logger.error('Failed to get matches', { error });
+      return [];
+    }
+  }
+
+  /**
+   * Get compatibility score between two pets
+   */
+  async getCompatibilityScore(petId1: string, petId2: string): Promise<number> {
+    try {
+      const response = await api.request<{ score: number }>('/matching/compatibility-score', {
+        method: 'POST',
+        body: JSON.stringify({ petId1, petId2 }),
+      });
+
+      logger.info('Fetched compatibility score', {
+        petId1,
+        petId2,
+        score: response.score,
+      });
+
+      return response.score;
+    } catch (error) {
+      logger.error('Failed to get compatibility score', { error, petId1, petId2 });
+      return 0;
+    }
+  }
+
+  /**
+   * Update user matching filters
+   */
+  async updateFilters(filters: PetFilters): Promise<void> {
+    try {
+      await api.request('/matching/filters', {
+        method: 'PUT',
+        body: JSON.stringify(filters),
+      });
+
+      logger.info('Updated matching filters', { filters });
+    } catch (error) {
+      logger.error('Failed to update filters', { error, filters });
+      throw error;
+    }
+  }
+
+  /**
+   * Get available filter options
+   */
+  async getFilterOptions(): Promise<{
+    species: string[];
+    breeds: string[];
+    sizes: string[];
+    intents: string[];
+  }> {
+    try {
+      const response = await api.request<{
+        species: string[];
+        breeds: string[];
+        sizes: string[];
+        intents: string[];
+      }>('/matching/filter-options');
+
+      logger.info('Fetched filter options');
+
+      return response;
+    } catch (error) {
+      logger.error('Failed to get filter options', { error });
+      return {
+        species: [],
+        breeds: [],
+        sizes: [],
+        intents: [],
+      };
+    }
+  }
+
+  /**
    * Get pet details by ID
    */
   async getPetDetails(petId: string): Promise<Pet | null> {

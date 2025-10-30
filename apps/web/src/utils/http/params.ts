@@ -3,7 +3,7 @@
  * - Skips null/undefined
  * - Repeats keys for array values: key=a&key=b
  */
-export function serializeParams(params) {
+export function serializeParams(params: Record<string, string | number | boolean | null | undefined | Array<string | number | boolean | null | undefined>>): string {
     if (!params)
         return '';
     const search = new URLSearchParams();
@@ -23,7 +23,7 @@ export function serializeParams(params) {
     }
     return search.toString();
 }
-export function toURLSearchParams(params) {
+export function toURLSearchParams(params: Record<string, string | number | boolean | null | undefined | Array<string | number | boolean | null | undefined>>): URLSearchParams {
     const s = serializeParams(params);
     return new URLSearchParams(s);
 }

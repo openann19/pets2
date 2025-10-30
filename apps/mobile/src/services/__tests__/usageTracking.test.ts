@@ -108,7 +108,7 @@ describe('UsageTracking/AnalyticsService', () => {
     it('should initialize with session ID and flush interval', () => {
       expect(mockSetInterval).toHaveBeenCalledWith(
         expect.any(Function),
-        30000 // flushInterval
+        30000, // flushInterval
       );
       expect((service as any).sessionId).toMatch(/^[\d_]+$/);
     });
@@ -248,7 +248,9 @@ describe('UsageTracking/AnalyticsService', () => {
     it('should track swipe action successfully', async () => {
       mockApi.request.mockResolvedValue({ success: true });
 
-      const result = await AnalyticsService.trackSwipe('user123', 'pet456', 'like', { source: 'home' });
+      const result = await AnalyticsService.trackSwipe('user123', 'pet456', 'like', {
+        source: 'home',
+      });
 
       expect(result).toBe(true);
       expect(mockApi.request).toHaveBeenCalledWith('/usage/swipe', {
@@ -402,10 +404,7 @@ describe('UsageTracking/AnalyticsService', () => {
       await service.trackEvent('offline_event');
       await (service as any).flushEvents();
 
-      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        '@analytics_queue',
-        expect.any(String)
-      );
+      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith('@analytics_queue', expect.any(String));
       expect(mockApi.request).not.toHaveBeenCalled();
     });
 
@@ -580,7 +579,7 @@ describe('UsageTracking/AnalyticsService', () => {
         'Analytics event tracked',
         expect.objectContaining({
           eventType: 'debug_event',
-        })
+        }),
       );
     });
 

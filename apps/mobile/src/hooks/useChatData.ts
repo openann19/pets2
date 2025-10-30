@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { useAuthStore } from '@pawfectmatch/core';
-import type { Message as CoreMessage } from '@pawfectmatch/core';
 import { logger } from '../services/logger';
 import { matchesAPI } from '../services/api';
 import { useSocket } from './useSocket';
+import { offlineMessageQueue } from '../services/OfflineMessageQueue';
+import NetInfo from '@react-native-community/netinfo';
 
 export interface Message {
   _id: string;
@@ -14,12 +14,14 @@ export interface Message {
   senderId: string;
   timestamp: string;
   read: boolean;
-  type: 'text' | 'image' | 'emoji' | 'voice';
-  status?: 'sending' | 'sent' | 'failed';
+  type: 'text' | 'image' | 'emoji' | 'voice' | 'file' | 'location';
+  status?: 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
   error?: boolean;
   audioUrl?: string;
   duration?: number;
   replyTo?: { _id: string; author?: string; text?: string };
+  deliveredAt?: string;
+  readAt?: string;
 }
 
 export interface ChatData {
@@ -48,9 +50,6 @@ export interface UseChatDataReturn {
   actions: ChatActions;
 }
 
-const MAX_MESSAGE_LENGTH = 500;
-const TYPING_TIMEOUT = 2000;
-const MESSAGE_BATCH_SIZE = 20;
 
 export function useChatData(matchId: string): UseChatDataReturn {
   const { user } = useAuthStore();
@@ -60,6 +59,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
+  const [networkStatus, setNetworkStatus] = useState(true);
   const [otherUserTyping, setOtherUserTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -67,6 +67,25 @@ export function useChatData(matchId: string): UseChatDataReturn {
   // Refs
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const socket = useSocket();
+
+  // Setup network status listener
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      const connected = state.isConnected ?? false;
+      setNetworkStatus(connected);
+      
+      if (connected) {
+        // Process offline queue when coming back online
+        offlineMessageQueue.processQueue().catch((error) => {
+          logger.error('Failed to process offline queue', { error });
+        });
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   // Setup socket connection and event listeners
   useEffect(() => {
@@ -78,12 +97,69 @@ export function useChatData(matchId: string): UseChatDataReturn {
     logger.info('Socket connected for chat', { matchId, socketId: socket.id });
 
     // Set up event listeners
-    const handleNewMessage = (message: Message) => {
-      logger.debug('New message received via socket', { message });
-      setMessages((prev) => [...prev, message]);
+    const handleNewMessage = (data: { matchId: string; message: any }) => {
+      if (data.matchId === matchId) {
+        const convertedMessage = convertMessage(data.message);
+        logger.debug('New message received via socket', { message: convertedMessage });
+        setMessages((prev) => {
+          // Avoid duplicates
+          const exists = prev.find((msg) => msg._id === convertedMessage._id);
+          if (exists) {
+            return prev.map((msg) =>
+              msg._id === convertedMessage._id ? { ...convertedMessage } : msg
+            );
+          }
+          return [...prev, convertedMessage];
+        });
+      }
     };
 
-    const handleUserTyping = (data: { matchId: string; userId: string; isTyping: boolean }) => {
+    const handleMessageSent = (data: { matchId: string; messageId: string; message: any }) => {
+      if (data.matchId === matchId) {
+        const convertedMessage = convertMessage(data.message);
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg._id === data.messageId || msg._id === convertedMessage._id
+              ? { ...convertedMessage, status: 'sent' }
+              : msg
+          )
+        );
+      }
+    };
+
+    const handleMessageDelivered = (data: { matchId: string; messageId: string; deliveredAt: Date }) => {
+      if (data.matchId === matchId) {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg._id === data.messageId
+              ? { ...msg, status: 'delivered', deliveredAt: new Date(data.deliveredAt).toISOString() }
+              : msg
+          )
+        );
+      }
+    };
+
+    const handleMessagesRead = (data: { matchId: string; messageIds?: string[]; userId: string; readAt: Date }) => {
+      if (data.matchId === matchId && data.userId !== user?._id) {
+        // Update status of our messages that were read
+        setMessages((prev) =>
+          prev.map((msg) => {
+            if (msg.senderId === user?._id) {
+              if (data.messageIds && data.messageIds.includes(msg._id)) {
+                return { ...msg, status: 'read', readAt: new Date(data.readAt).toISOString(), read: true };
+              }
+              // If no specific IDs, mark all our unread messages as read
+              if (!data.messageIds && msg.status !== 'read') {
+                return { ...msg, status: 'read', readAt: new Date(data.readAt).toISOString(), read: true };
+              }
+            }
+            return msg;
+          })
+        );
+      }
+    };
+
+    const handleUserTyping = (data: { matchId: string; userId: string; isTyping: boolean; userName?: string }) => {
       if (data.matchId === matchId) {
         setOtherUserTyping(data.isTyping);
         if (data.isTyping) {
@@ -106,33 +182,68 @@ export function useChatData(matchId: string): UseChatDataReturn {
 
     // Register event listeners
     socket.on('new_message', handleNewMessage);
-    socket.on('typing', handleUserTyping);
+    socket.on('message_sent', handleMessageSent);
+    socket.on('message_delivered', handleMessageDelivered);
+    socket.on('messages_read', handleMessagesRead);
+    socket.on('user_typing', handleUserTyping);
     socket.on('user_online', handleUserOnline);
     socket.on('user_offline', handleUserOffline);
 
     // Join the match room
-    socket.emit('join_match', { matchId });
+    socket.emit('join_match', matchId);
 
     // Cleanup on unmount
     return () => {
       logger.debug('Cleaning up socket listeners', { matchId });
       socket.off('new_message', handleNewMessage);
-      socket.off('typing', handleUserTyping);
+      socket.off('message_sent', handleMessageSent);
+      socket.off('message_delivered', handleMessageDelivered);
+      socket.off('messages_read', handleMessagesRead);
+      socket.off('user_typing', handleUserTyping);
       socket.off('user_online', handleUserOnline);
       socket.off('user_offline', handleUserOffline);
-      socket.emit('leave_match', { matchId });
+      socket.emit('leave_match', matchId);
     };
-  }, [socket, matchId]);
+  }, [socket, matchId, user?._id]);
 
   // Helper to convert core Message to local Message format
-  const convertMessage = useCallback((coreMsg: CoreMessage): Message => {
-    const senderId = typeof coreMsg.sender === 'string' ? coreMsg.sender : coreMsg.sender._id;
-    return {
-      _id: coreMsg._id,
+  const convertMessage = useCallback((coreMsg: any): Message => {
+    const senderId = typeof coreMsg.sender === 'string' ? coreMsg.sender : (coreMsg.sender?._id || coreMsg.sender);
+    const isOwnMessage = senderId === user?._id;
+    const readBy = coreMsg.readBy || [];
+    const isRead = readBy.some((r: any) => {
+      const readerId = typeof r.user === 'string' ? r.user : r.user?._id;
+      return readerId === user?._id;
+    });
+
+    // Determine status
+    let status: 'sending' | 'sent' | 'delivered' | 'read' | 'failed' = 'sent';
+    if (coreMsg.status && ['sending', 'sent', 'delivered', 'read', 'failed'].includes(coreMsg.status)) {
+      status = coreMsg.status;
+    } else if (isOwnMessage && readBy.length > 0) {
+      status = 'read';
+    } else if (isOwnMessage && !isRead) {
+      status = 'delivered';
+    }
+
+    let replyToObj: { _id: string; author?: string; text?: string } | undefined;
+    if (coreMsg.replyTo) {
+      const replyId = typeof coreMsg.replyTo === 'string' ? coreMsg.replyTo : coreMsg.replyTo._id;
+      replyToObj = { _id: replyId };
+      if (typeof coreMsg.replyTo === 'object' && coreMsg.replyTo.sender?.firstName) {
+        replyToObj.author = coreMsg.replyTo.sender.firstName;
+      }
+      if (typeof coreMsg.replyTo === 'object' && coreMsg.replyTo.content) {
+        replyToObj.text = coreMsg.replyTo.content;
+      }
+    }
+
+    const result: Message = {
+      _id: coreMsg._id?.toString() || coreMsg._id,
       content: coreMsg.content,
       senderId,
-      timestamp: coreMsg.sentAt,
-      read: coreMsg.readBy.length > 0,
+      timestamp: coreMsg.sentAt || coreMsg.timestamp || new Date().toISOString(),
+      read: isRead || readBy.length > 0,
       type:
         coreMsg.messageType === 'text'
           ? 'text'
@@ -140,11 +251,27 @@ export function useChatData(matchId: string): UseChatDataReturn {
             ? 'image'
             : coreMsg.messageType === 'voice'
               ? 'voice'
-              : 'text',
-      replyTo: coreMsg.replyTo,
+              : coreMsg.messageType === 'file'
+                ? 'file'
+                : coreMsg.messageType === 'location'
+                  ? 'location'
+                  : 'text',
+      status,
       error: false,
     };
-  }, []);
+
+    if (replyToObj) {
+      result.replyTo = replyToObj;
+    }
+    if (coreMsg.deliveredAt) {
+      result.deliveredAt = new Date(coreMsg.deliveredAt).toISOString();
+    }
+    if (readBy.length > 0 && readBy[0]?.readAt) {
+      result.readAt = new Date(readBy[0].readAt).toISOString();
+    }
+
+    return result;
+  }, [user?._id]);
 
   // Load messages from API
   const loadMessages = useCallback(async (): Promise<void> => {
@@ -174,7 +301,56 @@ export function useChatData(matchId: string): UseChatDataReturn {
     }
   }, [matchId, convertMessage]);
 
-  // Send message with optimistic updates
+  // Setup offline queue handler
+  useEffect(() => {
+    offlineMessageQueue.setSendHandler(async (queuedMessage) => {
+      try {
+        // Try to send via API first
+        const sentMessage = await matchesAPI.sendMessage(
+          queuedMessage.matchId,
+          queuedMessage.content,
+          queuedMessage.replyTo ? { _id: queuedMessage.replyTo } : undefined,
+        );
+
+        // If socket is connected, emit to socket
+        if (socket && socket.connected) {
+          socket.emit('send_message', {
+            matchId: queuedMessage.matchId,
+            content: queuedMessage.content,
+            messageType: queuedMessage.messageType || 'text',
+            attachments: queuedMessage.attachments || [],
+            replyTo: queuedMessage.replyTo || null,
+          });
+        }
+
+        // Update message in UI if this is the current match
+        if (queuedMessage.matchId === matchId) {
+          const convertedMessage = convertMessage(sentMessage);
+          setMessages((prev) => {
+            const exists = prev.find((msg) => msg._id === convertedMessage._id);
+            if (exists) {
+              return prev.map((msg) =>
+                msg._id === convertedMessage._id ? convertedMessage : msg
+              );
+            }
+            return [...prev, convertedMessage];
+          });
+        }
+
+        logger.info('Queued message sent successfully', { messageId: queuedMessage.id });
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        logger.error('Failed to send queued message', { error, messageId: queuedMessage.id });
+        throw error;
+      }
+    });
+
+    return () => {
+      offlineMessageQueue.setSendHandler(() => Promise.resolve());
+    };
+  }, [socket, matchId]);
+
+  // Send message with optimistic updates and offline queue
   const sendMessage = useCallback(
     async (
       content: string,
@@ -183,7 +359,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
       if (!content.trim() || isSending) return;
 
       const messageContent = content.trim();
-      const tempId = `temp_${Date.now()}`;
+      const tempId = `temp_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
       // Optimistic UI update
       const optimisticMessage: Message = {
@@ -194,56 +370,72 @@ export function useChatData(matchId: string): UseChatDataReturn {
         read: false,
         type: 'text',
         status: 'sending',
-        replyTo: replyTo
-          ? { _id: replyTo._id, author: replyTo.author, text: replyTo.text }
-          : undefined,
+        ...(replyTo ? { replyTo: { _id: replyTo._id, ...(replyTo.author ? { author: replyTo.author } : {}), ...(replyTo.text ? { text: replyTo.text } : {}) } } : {}),
       };
 
       setIsSending(true);
       setMessages((prev) => [...prev, optimisticMessage]);
 
+      // Check network status
+      const netInfo = await NetInfo.fetch();
+      const isOnline = netInfo.isConnected ?? false;
+
       try {
-        const sentMessage = await matchesAPI.sendMessage(matchId, messageContent, replyTo);
+        if (isOnline && socket?.connected) {
+          // Send via socket
+          socket.emit('send_message', {
+            matchId,
+            content: messageContent,
+            messageType: 'text',
+            attachments: [],
+            replyTo: replyTo ? replyTo._id : null,
+          });
 
-        // Convert and replace optimistic message with server response
-        const convertedSentMessage = convertMessage(sentMessage);
-        setMessages((prev) =>
-          prev.map(
-            (msg): Message =>
-              msg._id === tempId ? { ...convertedSentMessage, status: 'sent' } : msg,
-          ),
-        );
+          // Also send via API for persistence
+          try {
+            const sentMessage = await matchesAPI.sendMessage(matchId, messageContent, replyTo);
+            const convertedSentMessage = convertMessage(sentMessage);
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg._id === tempId ? { ...convertedSentMessage, status: 'sent' } : msg
+              )
+            );
+          } catch (apiErr) {
+            const apiError = apiErr instanceof Error ? apiErr : new Error(String(apiErr));
+            logger.warn('API send failed but socket succeeded', { error: apiError });
+            // Update status to sent even if API fails (socket succeeded)
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg._id === tempId ? { ...msg, status: 'sent' } : msg
+              )
+            );
+          }
 
-        // Emit to socket for real-time updates
-        if (socket && socket.connected) {
-          socket.emit('send_message', sentMessage);
+          // Clear typing indicator
           socket.emit('typing', {
             matchId,
-            userId: user?._id ?? '',
             isTyping: false,
           });
-        }
+        } else {
+          // Queue message for offline
+          const queueData: Parameters<typeof offlineMessageQueue.enqueue>[0] = {
+            matchId,
+            content: messageContent,
+            messageType: 'text',
+          };
+          if (replyTo?._id) {
+            queueData.replyTo = replyTo._id;
+          }
+          await offlineMessageQueue.enqueue(queueData);
 
-        // Simulate realistic response for demo
-        setTimeout(() => {
-          setOtherUserTyping(true);
-          setTimeout(
-            () => {
-              setOtherUserTyping(false);
-              const response: Message = {
-                _id: `response_${Date.now()}`,
-                content: getIntelligentResponse(messageContent),
-                senderId: 'other',
-                timestamp: new Date().toISOString(),
-                read: false,
-                type: 'text',
-              };
-
-              setMessages((prev) => [...prev, response]);
-            },
-            1500 + Math.random() * 1000,
+          // Update status to pending
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg._id === tempId ? { ...msg, status: 'sent' } : msg
+            )
           );
-        }, 800);
+          logger.info('Message queued for offline send', { tempId });
+        }
       } catch (err) {
         logger.error('Failed to send message', {
           error: err instanceof Error ? err : new Error(String(err)),
@@ -251,17 +443,43 @@ export function useChatData(matchId: string): UseChatDataReturn {
           content,
         });
 
-        // Show error state
-        setMessages((prev) =>
-          prev.map((msg) => (msg._id === tempId ? { ...msg, status: 'failed', error: true } : msg)),
-        );
-
-        setError('Failed to send message. Please try again.');
+        // Try to queue if network error
+        if (!isOnline) {
+          try {
+            const queueData: Parameters<typeof offlineMessageQueue.enqueue>[0] = {
+              matchId,
+              content: messageContent,
+              messageType: 'text',
+            };
+            if (replyTo?._id) {
+              queueData.replyTo = replyTo._id;
+            }
+            await offlineMessageQueue.enqueue(queueData);
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg._id === tempId ? { ...msg, status: 'sent' } : msg
+              )
+            );
+          } catch (queueErr) {
+            const queueError = queueErr instanceof Error ? queueErr : new Error(String(queueErr));
+            logger.error('Failed to queue message', { error: queueError });
+            setMessages((prev) =>
+              prev.map((msg) => (msg._id === tempId ? { ...msg, status: 'failed', error: true } : msg))
+            );
+            setError('Failed to send message. Please try again.');
+          }
+        } else {
+          // Show error state
+          setMessages((prev) =>
+            prev.map((msg) => (msg._id === tempId ? { ...msg, status: 'failed', error: true } : msg))
+          );
+          setError('Failed to send message. Please try again.');
+        }
       } finally {
         setIsSending(false);
       }
     },
-    [isSending, user?._id, matchId],
+    [isSending, user?._id, matchId, socket],
   );
 
   // Retry failed message
@@ -304,16 +522,28 @@ export function useChatData(matchId: string): UseChatDataReturn {
   // Mark messages as read
   const markAsRead = useCallback(async (): Promise<void> => {
     try {
-      // API call would be implemented here if endpoint exists
+      if (socket && socket.connected) {
+        socket.emit('mark_messages_read', { matchId });
+      }
+
+      // Optimistic update
+      setMessages((prev) =>
+        prev.map((msg) => {
+          if (msg.senderId !== user?._id && !msg.read) {
+            return { ...msg, read: true };
+          }
+          return msg;
+        })
+      );
+
       logger.debug('Messages marked as read', { matchId });
-      setMessages((prev) => prev.map((msg) => ({ ...msg, read: true })));
     } catch (err) {
       logger.error('Failed to mark messages as read', {
         error: err instanceof Error ? err : new Error(String(err)),
         matchId,
       });
     }
-  }, [matchId]);
+  }, [matchId, socket, user?._id]);
 
   // Clear error state
   const clearError = useCallback((): void => {
@@ -339,7 +569,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
       messages,
       isLoading,
       isSending,
-      isOnline,
+      isOnline: isOnline && networkStatus,
       otherUserTyping,
       typingUsers,
       error,
@@ -354,42 +584,3 @@ export function useChatData(matchId: string): UseChatDataReturn {
   };
 }
 
-// Intelligent response generation based on message content
-function getIntelligentResponse(messageContent: string): string {
-  const content = messageContent.toLowerCase();
-
-  if (content.includes('weekend') || content.includes('saturday') || content.includes('sunday')) {
-    return 'Weekends work perfectly for me! My schedule is pretty flexible then 📅';
-  }
-  if (content.includes('park') || content.includes('dog park')) {
-    return 'The dog park sounds amazing! My pup absolutely loves meeting new friends there 🌳🐕';
-  }
-  if (content.includes('time') || content.includes('when')) {
-    return "I'm pretty flexible with timing! What works best for your schedule? ⏰";
-  }
-  if (content.includes('weather') || content.includes('sunny') || content.includes('perfect')) {
-    return "Yes! I checked the forecast too - it's going to be beautiful! Perfect day for our pets to play ☀️";
-  }
-  if (
-    content.includes('excited') ||
-    content.includes("can't wait") ||
-    content.includes('looking forward')
-  ) {
-    return 'Me too! This is going to be so much fun. I think our pets are going to be best friends! 🐾💕';
-  }
-  if (content.includes('photo') || content.includes('picture') || content.includes('pic')) {
-    return "I'd love to see more photos! Your pet is absolutely adorable 📸✨";
-  }
-
-  // Default contextual responses
-  const responses: string[] = [
-    "That sounds absolutely perfect! I'm really looking forward to it 🎾",
-    'Amazing! My pet is going to be so excited to meet yours 🐕💕',
-    'Perfect! I think this is going to be the start of a beautiful friendship 😊',
-    'Wonderful! I can already tell our pets are going to get along great 🌟',
-    'Fantastic! This is exactly what I was hoping for 🎉',
-    'Love it! I have a really good feeling about this playdate ✨',
-  ];
-  const randomIndex = Math.floor(Math.random() * responses.length);
-  return responses[randomIndex] ?? 'Sounds great!';
-}

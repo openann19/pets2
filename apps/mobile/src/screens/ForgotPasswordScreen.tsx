@@ -1,5 +1,5 @@
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,28 +9,21 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useForgotPasswordScreen } from "../hooks/screens/useForgotPasswordScreen";
-import type { RootStackScreenProps } from "../navigation/types";
-import { useTheme } from "@mobile/theme";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useForgotPasswordScreen } from '../hooks/screens/useForgotPasswordScreen';
+import type { RootStackScreenProps } from '../navigation/types';
+import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 
-type ForgotPasswordScreenProps = RootStackScreenProps<"ForgotPassword">;
+type ForgotPasswordScreenProps = RootStackScreenProps<'ForgotPassword'>;
 
-function ForgotPasswordScreen({
-  navigation,
-}: ForgotPasswordScreenProps): React.JSX.Element {
+function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps): React.JSX.Element {
   const theme = useTheme();
   const { t } = useTranslation('auth');
-  const {
-    values,
-    errors,
-    loading,
-    setValue,
-    handleSubmit,
-    navigateBack,
-  } = useForgotPasswordScreen({ navigation });
+  const { values, errors, loading, setValue, handleSubmit, navigateBack } = useForgotPasswordScreen(
+    { navigation },
+  );
 
   const styles = StyleSheet.create({
     container: {
@@ -43,7 +36,7 @@ function ForgotPasswordScreen({
     scrollContainer: {
       flexGrow: 1,
       padding: 20,
-      justifyContent: "center",
+      justifyContent: 'center',
     },
     backButton: {
       marginBottom: 20,
@@ -57,7 +50,7 @@ function ForgotPasswordScreen({
     },
     title: {
       fontSize: 28,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       color: theme.colors.onSurface,
       marginBottom: 8,
     },
@@ -81,7 +74,7 @@ function ForgotPasswordScreen({
     },
     label: {
       fontSize: 14,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
       marginBottom: 8,
     },
@@ -106,7 +99,7 @@ function ForgotPasswordScreen({
       backgroundColor: theme.colors.primary as string,
       borderRadius: 8,
       padding: 15,
-      alignItems: "center",
+      alignItems: 'center',
       marginVertical: 16,
     },
     buttonDisabled: {
@@ -115,13 +108,13 @@ function ForgotPasswordScreen({
     buttonText: {
       color: theme.colors.bg,
       fontSize: 16,
-      fontWeight: "bold",
+      fontWeight: 'bold',
     },
     buttonTextDisabled: {
       color: theme.colors.onMuted,
     },
     helpText: {
-      alignItems: "center",
+      alignItems: 'center',
       marginTop: 16,
     },
     helpTextContent: {
@@ -130,26 +123,30 @@ function ForgotPasswordScreen({
     },
     linkText: {
       color: theme.colors.primary as string,
-      fontWeight: "bold",
+      fontWeight: 'bold',
     },
   });
 
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <TouchableOpacity style={styles.backButton}  testID="ForgotPasswordScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={navigateBack}>
+          <TouchableOpacity
+            style={styles.backButton}
+            testID="ForgotPasswordScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={navigateBack}
+          >
             <Text style={styles.backButtonText}>{t('back_button')}</Text>
           </TouchableOpacity>
 
           <View style={styles.header}>
             <Text style={styles.title}>{t('reset_password_title')}</Text>
-            <Text style={styles.subtitle}>
-              {t('reset_password_subtitle')}
-            </Text>
+            <Text style={styles.subtitle}>{t('reset_password_subtitle')}</Text>
           </View>
 
           <View style={styles.form}>
@@ -158,32 +155,27 @@ function ForgotPasswordScreen({
               <TextInput
                 style={errors.email ? [styles.input, styles.inputError] : styles.input}
                 value={values.email}
-                onChangeText={(text) => { setValue("email", text); }}
+                onChangeText={(text) => {
+                  setValue('email', text);
+                }}
                 placeholder={t('email_address_placeholder')}
                 autoCapitalize="none"
                 keyboardType="email-address"
                 autoCorrect={false}
                 editable={!loading}
               />
-              {errors.email ? (
-                <Text style={styles.errorText}>{errors.email}</Text>
-              ) : null}
+              {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
             </View>
 
             <TouchableOpacity
-              style={[
-                styles.button,
-                loading && styles.buttonDisabled,
-              ]}
-               testID="ForgotPasswordScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleSubmit}
+              style={[styles.button, loading && styles.buttonDisabled]}
+              testID="ForgotPasswordScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={handleSubmit}
               disabled={loading}
             >
-              <Text
-                style={[
-                  styles.buttonText,
-                  loading && styles.buttonTextDisabled,
-                ]}
-              >
+              <Text style={[styles.buttonText, loading && styles.buttonTextDisabled]}>
                 {loading ? t('sending') : t('send_reset_link')}
               </Text>
             </TouchableOpacity>
@@ -193,7 +185,7 @@ function ForgotPasswordScreen({
                 {t('remember_password')}
                 <Text
                   style={styles.linkText}
-                  onPress={() => navigation.navigate("Login")}
+                  onPress={() => navigation.navigate('Login')}
                 >
                   {t('sign_in_link')}
                 </Text>

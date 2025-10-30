@@ -27,7 +27,7 @@ describe('BouncePressable', () => {
       const { getByText } = render(
         <BouncePressable>
           <Text>Test Button</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       expect(getByText('Test Button')).toBeTruthy();
@@ -39,7 +39,7 @@ describe('BouncePressable', () => {
           {({ pressed }: { pressed: boolean }) => (
             <Text>{pressed ? 'Pressed' : 'Not Pressed'}</Text>
           )}
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       expect(getByText('Not Pressed')).toBeTruthy();
@@ -49,7 +49,7 @@ describe('BouncePressable', () => {
       const { getByText } = render(
         <BouncePressable>
           <Text>Test</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       // Component should render without errors
@@ -62,7 +62,7 @@ describe('BouncePressable', () => {
       const { getByText } = render(
         <BouncePressable onPress={mockOnPress}>
           <Text>Press Me</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       fireEvent.press(getByText('Press Me'));
@@ -73,7 +73,7 @@ describe('BouncePressable', () => {
       const { getByText } = render(
         <BouncePressable>
           <Text>Press Me</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       fireEvent.press(getByText('Press Me'));
@@ -84,7 +84,7 @@ describe('BouncePressable', () => {
       const { getByText } = render(
         <BouncePressable onPressIn={mockOnPressIn}>
           <Text>Press Me</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       fireEvent(getByText('Press Me'), 'pressIn');
@@ -95,7 +95,7 @@ describe('BouncePressable', () => {
       const { getByText } = render(
         <BouncePressable onPressOut={mockOnPressOut}>
           <Text>Press Me</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       fireEvent(getByText('Press Me'), 'pressOut');
@@ -108,20 +108,18 @@ describe('BouncePressable', () => {
       const { getByText } = render(
         <BouncePressable>
           <Text>Press Me</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       fireEvent(getByText('Press Me'), 'pressIn');
-      expect(Haptics.impactAsync).toHaveBeenCalledWith(
-        Haptics.ImpactFeedbackStyle.Light
-      );
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(Haptics.ImpactFeedbackStyle.Light);
     });
 
     it('skips haptic feedback when haptics is disabled', () => {
       const { getByText } = render(
         <BouncePressable haptics={false}>
           <Text>Press Me</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       fireEvent(getByText('Press Me'), 'pressIn');
@@ -132,11 +130,11 @@ describe('BouncePressable', () => {
   describe('Reduced Motion Support', () => {
     it('skips haptics when reduced motion is enabled', () => {
       (useReducedMotion as jest.Mock).mockReturnValue(true);
-      
+
       const { getByText } = render(
         <BouncePressable>
           <Text>Press Me</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       fireEvent(getByText('Press Me'), 'pressIn');
@@ -149,7 +147,7 @@ describe('BouncePressable', () => {
       const { getByText } = render(
         <BouncePressable scaleFrom={0.9}>
           <Text>Test</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       // Component should render with custom scale
@@ -160,7 +158,7 @@ describe('BouncePressable', () => {
       const { getByText } = render(
         <BouncePressable scaleTo={1.1}>
           <Text>Test</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       // Component should render with custom scale
@@ -171,16 +169,16 @@ describe('BouncePressable', () => {
   describe('Reduced Motion Support', () => {
     it('disables animations when reduced motion is enabled', () => {
       (useReducedMotion as jest.Mock).mockReturnValue(true);
-      
+
       const { getByText } = render(
         <BouncePressable>
           <Text>Test</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       fireEvent(getByText('Test'), 'pressIn');
       fireEvent(getByText('Test'), 'pressOut');
-      
+
       // Should not provide haptics or animations
       expect(Haptics.impactAsync).not.toHaveBeenCalled();
     });
@@ -189,9 +187,12 @@ describe('BouncePressable', () => {
   describe('Props Forwarding', () => {
     it('forwards Pressable props correctly', () => {
       const { getByTestId } = render(
-        <BouncePressable testID="custom-pressable" disabled>
+        <BouncePressable
+          testID="custom-pressable"
+          disabled
+        >
           <Text>Test</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       const pressable = getByTestId('custom-pressable');
@@ -202,9 +203,12 @@ describe('BouncePressable', () => {
     it('handles style prop correctly', () => {
       const customStyle = { backgroundColor: 'red' };
       const { getByTestId } = render(
-        <BouncePressable testID="styled-pressable" style={customStyle}>
+        <BouncePressable
+          testID="styled-pressable"
+          style={customStyle}
+        >
           <Text>Test</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       const pressable = getByTestId('styled-pressable');
@@ -214,16 +218,12 @@ describe('BouncePressable', () => {
 
   describe('Edge Cases', () => {
     it('handles null children gracefully', () => {
-      const { container } = render(
-        <BouncePressable>{null}</BouncePressable>
-      );
+      const { container } = render(<BouncePressable>{null}</BouncePressable>);
       expect(container).toBeTruthy();
     });
 
     it('handles undefined children gracefully', () => {
-      const { container } = render(
-        <BouncePressable>{undefined}</BouncePressable>
-      );
+      const { container } = render(<BouncePressable>{undefined}</BouncePressable>);
       expect(container).toBeTruthy();
     });
 
@@ -231,7 +231,7 @@ describe('BouncePressable', () => {
       const { getByText } = render(
         <BouncePressable onPress={mockOnPress}>
           <Text>Press Me</Text>
-        </BouncePressable>
+        </BouncePressable>,
       );
 
       const button = getByText('Press Me');

@@ -15,9 +15,9 @@
  * - Real-time updates via Socket.io
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { ResizeMode, Video } from "expo-av";
-import { StatusBar } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { ResizeMode, Video } from 'expo-av';
+import { StatusBar } from 'react-native';
 import {
   ActivityIndicator,
   Animated,
@@ -27,14 +27,13 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { useRoute, type RouteProp } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useRef, useEffect, useMemo } from "react";
-import { useStoriesScreen } from "../hooks/screens/social";
+} from 'react-native';
+import { useRoute, type RouteProp } from '@react-navigation/native';
+import { useRef, useEffect, useMemo } from 'react';
+import { useStoriesScreen } from '../hooks/screens/social';
 import { useTheme } from '@mobile/theme';
-import { getAccessibilityProps } from '../utils/accessibilityUtils';
-import { useReduceMotion } from '../hooks/useReducedMotion';
+import { ErrorBoundary } from '../components/common';
+import { telemetry } from '../lib/telemetry';
 
 // Navigation types
 type MainStackParamList = {
@@ -42,28 +41,13 @@ type MainStackParamList = {
   [key: string]: any;
 };
 
-type StoriesScreenRouteProp = RouteProp<MainStackParamList, "Stories">;
-type StoriesScreenNavigationProp = NativeStackNavigationProp<
-  MainStackParamList,
-  "Stories"
->;
+type StoriesScreenRouteProp = RouteProp<MainStackParamList, 'Stories'>;
 
-// API response types
-interface StoriesFeedResponse {
-  stories: StoryGroup[];
-  success: boolean;
-}
-
-interface ViewStoryResponse {
-  success: boolean;
-  viewCount: number;
-}
-
-// Story types
+// Story types (matching hook types)
 interface Story {
   _id: string;
   userId: string;
-  mediaType: "photo" | "video";
+  mediaType: 'photo' | 'video';
   mediaUrl: string;
   caption?: string;
   duration: number;
@@ -71,51 +55,38 @@ interface Story {
   createdAt: string;
 }
 
-interface StoryUser {
-  _id: string;
-  username: string;
-  profilePhoto?: string;
-}
-
-interface StoryGroup {
-  userId: string;
-  user: StoryUser;
-  stories: Story[];
-  storyCount: number;
-}
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function StoriesScreen() {
   const theme = useTheme();
   const route = useRoute<StoriesScreenRouteProp>();
   const initialGroupIndex = route.params?.groupIndex ?? 0;
-  const reducedMotion = useReduceMotion();
 
   const videoRef = useRef<Video>(null);
 
   const {
-    storyGroups,
-    isLoading,
-    currentGroupIndex,
-    currentStoryIndex,
     currentGroup,
     currentStory,
+    currentStoryIndex,
     progress,
     viewCount,
     isPaused,
     isMuted,
     panResponder,
-    setPaused,
     setMuted,
     handleGoBack,
   } = useStoriesScreen(initialGroupIndex);
 
   const styles = useMemo(() => createStyles(theme), [theme]);
 
+  // Track screen open
+  useEffect(() => {
+    telemetry.trackStoriesOpen();
+  }, []);
+
   // Video controls
   useEffect(() => {
-    if (videoRef.current && currentStory?.mediaType === "video") {
+    if (videoRef.current && currentStory?.mediaType === 'video') {
       if (isPaused) {
         videoRef.current.pauseAsync();
       } else {
@@ -128,23 +99,30 @@ export default function StoriesScreen() {
   if (!currentGroup || !currentStory) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <ActivityIndicator
+          size="large"
+          color={theme.colors.primary}
+        />
       </View>
     );
   }
 
   return (
-    <View style={styles.container} testID="stories-screen">
-      <StatusBar barStyle="light-content" />
+    <ErrorBoundary screenName="StoriesScreen">
+      <View
+        style={styles.container}
+        testID="stories-screen"
+      >
+        <StatusBar barStyle="light-content" />
 
       {/* Story Content */}
-      <View 
-        style={styles.storyContainer} 
+      <View
+        style={styles.storyContainer}
         {...panResponder.current.panHandlers}
         testID="story-container"
         accessibilityLabel={`Story by ${currentGroup.user.username}`}
       >
-        {currentStory.mediaType === "photo" ? (
+        {currentStory.mediaType === 'photo' ? (
           <Image
             source={{ uri: currentStory.mediaUrl }}
             style={styles.media}
@@ -159,26 +137,27 @@ export default function StoriesScreen() {
             shouldPlay={!isPaused}
             isMuted={isMuted}
             isLooping={false}
-            onPlaybackStatusUpdate={(status) => {
-              // Navigation is handled by the hook's timer
-            }}
           />
         )}
 
         {/* Progress Bars */}
-        <View style={styles.progressContainer} testID="story-progress-bars" accessibilityLabel={`Story ${currentStoryIndex + 1} of ${currentGroup.stories.length}`}>
+        <View
+          style={styles.progressContainer}
+          testID="story-progress-bars"
+          accessibilityLabel={`Story ${currentStoryIndex + 1} of ${currentGroup.stories.length}`}
+        >
           {currentGroup.stories.map((story: Story, index: number) => (
-            <View key={story._id} style={styles.progressBarBg} testID={`progress-bar-${index}`}>
+            <View
+              key={story._id}
+              style={styles.progressBarBg}
+              testID={`progress-bar-${index}`}
+            >
               <Animated.View
                 style={StyleSheet.flatten([
                   styles.progressBarFill,
                   {
                     width: `${
-                      index < currentStoryIndex
-                        ? 100
-                        : index === currentStoryIndex
-                          ? progress
-                          : 0
+                      index < currentStoryIndex ? 100 : index === currentStoryIndex ? progress : 0
                     }%`,
                   },
                 ])}
@@ -192,9 +171,7 @@ export default function StoriesScreen() {
           <View style={styles.userInfo}>
             <Image
               source={{
-                uri:
-                  currentGroup.user.profilePhoto ||
-                  "https://via.placeholder.com/40",
+                uri: currentGroup.user.profilePhoto || 'https://via.placeholder.com/40',
               }}
               style={styles.avatar}
             />
@@ -202,8 +179,8 @@ export default function StoriesScreen() {
               <Text style={styles.username}>{currentGroup.user.username}</Text>
               <Text style={styles.timestamp}>
                 {new Date(currentStory.createdAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
+                  hour: '2-digit',
+                  minute: '2-digit',
                 })}
               </Text>
             </View>
@@ -212,15 +189,19 @@ export default function StoriesScreen() {
           <View style={styles.headerActions}>
             {/* View Count */}
             <View style={styles.viewCount}>
-              <Ionicons name="eye" size={16} color={theme.colors.onSurface} />
+              <Ionicons
+                name="eye"
+                size={16}
+                color={theme.colors.onSurface}
+              />
               <Text style={styles.viewCountText}>{viewCount}</Text>
             </View>
 
             {/* Mute Toggle */}
-            {currentStory.mediaType === "video" && (
+            {currentStory.mediaType === 'video' && (
               <TouchableOpacity
                 testID="stories-mute-toggle"
-                accessibilityLabel={isMuted ? "Unmute video" : "Mute video"}
+                accessibilityLabel={isMuted ? 'Unmute video' : 'Mute video'}
                 accessibilityRole="button"
                 onPress={() => {
                   setMuted(!isMuted);
@@ -228,25 +209,25 @@ export default function StoriesScreen() {
                 style={styles.iconButton}
               >
                 <Ionicons
-                  name={isMuted ? "volume-mute" : "volume-high"}
+                  name={isMuted ? 'volume-mute' : 'volume-high'}
                   size={24}
                   color={theme.colors.onSurface}
-                  accessibilityLabel={isMuted ? "Muted icon" : "Unmuted icon"}
+                  accessibilityLabel={isMuted ? 'Muted icon' : 'Unmuted icon'}
                 />
               </TouchableOpacity>
             )}
 
             {/* Close Button */}
-            <TouchableOpacity 
+            <TouchableOpacity
               testID="stories-close-button"
               accessibilityLabel="Close stories and go back"
               accessibilityRole="button"
               onPress={handleGoBack}
               style={styles.iconButton}
             >
-              <Ionicons 
-                name="close" 
-                size={24} 
+              <Ionicons
+                name="close"
+                size={24}
                 color={theme.colors.onSurface}
                 accessibilityLabel="Close icon"
               />
@@ -261,122 +242,124 @@ export default function StoriesScreen() {
           </View>
         )}
       </View>
-    </View>
+      </View>
+    </ErrorBoundary>
   );
 }
 
-const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.bg,
-  },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: theme.colors.bg,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  storyContainer: {
-    flex: 1,
-    position: "relative",
-  },
-  media: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT,
-  },
-  progressContainer: {
-    position: "absolute",
-    top: 50,
-    left: 8,
-    right: 8,
-    flexDirection: "row",
-    gap: 4,
-    zIndex: 10,
-  },
-  progressBarBg: {
-    flex: 1,
-    height: 3,
-    backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}4D`,
-    borderRadius: 2,
-    overflow: "hidden",
-  },
-  progressBarFill: {
-    height: "100%",
-    backgroundColor: theme.colors.surface,
-    borderRadius: 2,
-  },
-  header: {
-    position: "absolute",
-    top: 70,
-    left: 16,
-    right: 16,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    zIndex: 10,
-  },
-  userInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: theme.colors.border,
-  },
-  username: {
-    color: theme.colors.onSurface,
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  timestamp: {
-    color: theme.colors.onMuted,
-    fontSize: 12,
-  },
-  headerActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  viewCount: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}4D`,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  viewCountText: {
-    color: theme.colors.onSurface,
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  iconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}4D`,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  captionContainer: {
-    position: "absolute",
-    bottom: 80,
-    left: 16,
-    right: 16,
-    zIndex: 10,
-  },
-  caption: {
-    color: theme.colors.onSurface,
-    fontSize: 14,
-    textAlign: "center",
-    backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}80`,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-});
+const createStyles = (theme: ReturnType<typeof useTheme>) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    loadingContainer: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    storyContainer: {
+      flex: 1,
+      position: 'relative',
+    },
+    media: {
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+    },
+    progressContainer: {
+      position: 'absolute',
+      top: 50,
+      left: 8,
+      right: 8,
+      flexDirection: 'row',
+      gap: 4,
+      zIndex: 10,
+    },
+    progressBarBg: {
+      flex: 1,
+      height: 3,
+      backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}4D`,
+      borderRadius: 2,
+      overflow: 'hidden',
+    },
+    progressBarFill: {
+      height: '100%',
+      backgroundColor: theme.colors.surface,
+      borderRadius: 2,
+    },
+    header: {
+      position: 'absolute',
+      top: 70,
+      left: 16,
+      right: 16,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      zIndex: 10,
+    },
+    userInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    avatar: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      borderWidth: 2,
+      borderColor: theme.colors.border,
+    },
+    username: {
+      color: theme.colors.onSurface,
+      fontSize: 14,
+      fontWeight: '600',
+    },
+    timestamp: {
+      color: theme.colors.onMuted,
+      fontSize: 12,
+    },
+    headerActions: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    viewCount: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}4D`,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+    },
+    viewCountText: {
+      color: theme.colors.onSurface,
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    iconButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}4D`,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    captionContainer: {
+      position: 'absolute',
+      bottom: 80,
+      left: 16,
+      right: 16,
+      zIndex: 10,
+    },
+    caption: {
+      color: theme.colors.onSurface,
+      fontSize: 14,
+      textAlign: 'center',
+      backgroundColor: theme.colors.overlay || `${theme.palette.neutral[950]}80`,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+    },
+  });

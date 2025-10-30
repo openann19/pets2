@@ -76,9 +76,13 @@ export function Tag({
   const variantStyles = getVariantStyles();
   const isPressable = !!onPress;
   const spacingXSRaw = theme.spacing?.xs;
-  const spacingXS = typeof spacingXSRaw === 'number' ? spacingXSRaw : parseFloat(String(spacingXSRaw ?? 8)) || 8;
+  const spacingXS =
+    typeof spacingXSRaw === 'number' ? spacingXSRaw : parseFloat(String(spacingXSRaw ?? 8)) || 8;
   const pillRadiusRaw = theme.radius?.pill;
-  const pillRadius = typeof pillRadiusRaw === 'number' ? pillRadiusRaw : parseFloat(String(pillRadiusRaw ?? 999)) || 999;
+  const pillRadius =
+    typeof pillRadiusRaw === 'number'
+      ? pillRadiusRaw
+      : parseFloat(String(pillRadiusRaw ?? 999)) || 999;
 
   const TagContent = () => (
     <View
@@ -124,7 +128,10 @@ export function Tag({
 
   if (isPressable) {
     return (
-      <Pressable onPress={onPress} disabled={disabled}>
+      <Pressable
+        onPress={onPress}
+        disabled={disabled}
+      >
         <TagContent />
       </Pressable>
     );

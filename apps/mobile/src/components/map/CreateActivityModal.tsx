@@ -33,7 +33,7 @@ export default function CreateActivityModal({ visible, onClose, pets, activityTy
   const styles = makeStyles(theme);
   const [pet, setPet] = useState<string | null>(pets?.[0]?._id ?? null);
   const [act, setAct] = useState<string | null>(
-    typeof activityTypes[0] === 'string' ? (activityTypes[0]) : (activityTypes[0] as ActivityType).id
+    typeof activityTypes[0] === 'string' ? activityTypes[0] : (activityTypes[0] as ActivityType).id,
   );
   const [msg, setMsg] = useState('');
   const [loading, setLoading] = useState(false);
@@ -60,12 +60,19 @@ export default function CreateActivityModal({ visible, onClose, pets, activityTy
       accessibilityViewIsModal
     >
       <View style={styles.container}>
-        <Text style={styles.header} accessibilityRole="header">Start Activity</Text>
+        <Text
+          style={styles.header}
+          accessibilityRole="header"
+        >
+          Start Activity
+        </Text>
         <Text style={styles.subHeader}>Pet</Text>
-        {pets.map(p => (
+        {pets.map((p) => (
           <TouchableOpacity
             key={p._id}
-            onPress={() => { setPet(p._id); }}
+            onPress={() => {
+              setPet(p._id);
+            }}
             style={[styles.option, pet === p._id && styles.selected]}
             accessibilityRole="radio"
             accessibilityState={{ selected: pet === p._id }}
@@ -82,7 +89,9 @@ export default function CreateActivityModal({ visible, onClose, pets, activityTy
           return (
             <TouchableOpacity
               key={id}
-              onPress={() => { setAct(id); }}
+              onPress={() => {
+                setAct(id);
+              }}
               style={[styles.option, act === id && styles.selected]}
               accessibilityRole="radio"
               accessibilityState={{ selected: act === id }}
@@ -115,7 +124,7 @@ export default function CreateActivityModal({ visible, onClose, pets, activityTy
             onPress={submit}
             style={[styles.button, styles.primaryButton]}
             disabled={loading}
-            accessibilityLabel={loading ? "Sharing activity" : "Share activity"}
+            accessibilityLabel={loading ? 'Sharing activity' : 'Share activity'}
             accessibilityRole="button"
             accessibilityState={{ disabled: loading, busy: loading }}
           >

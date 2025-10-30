@@ -194,13 +194,26 @@ export const recordSwipe = async (
       return;
     }
 
-    // Check swipe limits for non-premium users
+    // Check swipe limits for non-premium users - Business Model: 5 daily swipes for free users
     if (!user.premium?.isActive && !user.premium?.features?.unlimitedLikes) {
-      if ((user.premium?.usage?.swipesUsed || 0) >= (user.premium?.usage?.swipesLimit || 50)) {
+      const swipesLimit = user.premium?.usage?.swipesLimit || 5; // Default to 5 for free users
+      const swipesUsed = user.premium?.usage?.swipesUsed || 0;
+      
+      // Get today's swipes count (reset daily)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const swipesToday = user.swipedPets?.filter((swipe: { swipedAt: Date }) => {
+        const swipeDate = new Date(swipe.swipedAt);
+        return swipeDate >= today;
+      }).length || 0;
+
+      if (swipesToday >= swipesLimit) {
         res.status(403).json({
           success: false,
-          message: 'Daily swipe limit reached. Upgrade to premium for unlimited swipes.',
-          code: 'SWIPE_LIMIT_EXCEEDED'
+          message: `Daily swipe limit reached (${swipesLimit}/day). Upgrade to premium for unlimited swipes.`,
+          code: 'SWIPE_LIMIT_EXCEEDED',
+          currentLimit: swipesLimit,
+          usedToday: swipesToday
         });
         return;
       }

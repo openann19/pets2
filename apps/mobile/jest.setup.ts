@@ -1,54 +1,88 @@
 import { jest, beforeAll, afterAll } from '@jest/globals';
 
-// Mock React Native FIRST to avoid ReactCurrentOwner errors
-jest.mock('react-native', () => ({
-  StyleSheet: {
-    create: jest.fn((styles: Record<string, unknown>) => styles),
-    flatten: jest.fn((style: unknown) => style),
-  },
-  Animated: {
-    timing: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-    spring: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-    sequence: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-    parallel: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-    delay: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-    Value: jest.fn(() => ({ setValue: jest.fn(), addListener: jest.fn() })),
-  },
-  Platform: {
-    OS: 'ios',
-    select: (obj: any) => obj?.ios ?? obj?.default,
-  },
-  Dimensions: {
-    get: jest.fn(() => ({ width: 375, height: 812 })),
-  },
-  NativeModules: {
-    RNKeychainManager: {},
-  },
-  Easing: {
-    bezier: (_x1: number, _y1: number, _x2: number, _y2: number) => (t: number) => t,
-  },
-  AccessibilityInfo: {
-    addEventListener: jest.fn((_event: string, _listener: (...args: unknown[]) => void) => ({
-      remove: jest.fn(),
-    })),
-    removeEventListener: jest.fn(),
-    setAccessibilityFocus: jest.fn(),
-    isScreenReaderEnabled: jest.fn(async () => false),
-    isBoldTextEnabled: jest.fn(async () => false),
-    isGrayscaleEnabled: jest.fn(async () => false),
-    isInvertColorsEnabled: jest.fn(async () => false),
-    isReduceMotionEnabled: jest.fn(async () => false),
-    isReduceTransparencyEnabled: jest.fn(async () => false),
-  },
+// Mock theme modules BEFORE any other imports
+jest.mock('@mobile/theme', () => ({
+  __esModule: true,
+  useTheme: jest.fn(() => ({
+    scheme: 'light',
+    colors: {
+      bg: '#FFFFFF',
+      bgElevated: '#F8FAFC',
+      text: '#0F172A',
+      textMuted: '#64748B',
+      primary: '#2563EB',
+      primaryText: '#FFFFFF',
+      border: '#E2E8F0',
+      success: '#10B981',
+      warning: '#F59E0B',
+      danger: '#EF4444',
+    },
+    palette: {
+      neutral: {
+        100: '#F8FAFC',
+        600: '#475569',
+        800: '#1E293B',
+      },
+      brand: {
+        500: '#64748B',
+      },
+    },
+    spacing: {
+      xs: 4,
+      sm: 8,
+      md: 16,
+      lg: 24,
+      xl: 32,
+    },
+    radius: {
+      sm: 4,
+      md: 8,
+      lg: 12,
+      full: 9999,
+    },
+    motion: {},
+  })),
+  getExtendedColors: jest.fn(() => ({
+    bg: '#FFFFFF',
+    surface: '#F8FAFC',
+    onSurface: '#0F172A',
+    primary: '#2563EB',
+    onPrimary: '#FFFFFF',
+    border: '#E2E8F0',
+    success: '#10B981',
+    warning: '#F59E0B',
+    danger: '#EF4444',
+    text: '#0F172A',
+    textMuted: '#64748B',
+    bgElevated: '#F8FAFC',
+    card: '#FFFFFF',
+    glassWhiteLight: 'rgba(255, 255, 255, 0.1)',
+    glassWhiteDark: 'rgba(255, 255, 255, 0.2)',
+  })),
 }));
 
-// Silence noisy RN timers etc. when needed
-jest.mock('react-native/Libraries/Utilities/Platform', () => ({
-  OS: 'ios',
-  select: (objs: any) => objs.ios
+jest.mock('@mobile/theme/adapters', () => ({
+  __esModule: true,
+  getExtendedColors: jest.fn(() => ({
+    bg: '#FFFFFF',
+    surface: '#F8FAFC',
+    onSurface: '#0F172A',
+    primary: '#2563EB',
+    onPrimary: '#FFFFFF',
+    border: '#E2E8F0',
+    success: '#10B981',
+    warning: '#F59E0B',
+    danger: '#EF4444',
+    text: '#0F172A',
+    textMuted: '#64748B',
+    bgElevated: '#F8FAFC',
+    card: '#FFFFFF',
+    glassWhiteLight: 'rgba(255, 255, 255, 0.1)',
+    glassWhiteDark: 'rgba(255, 255, 255, 0.2)',
+  })),
 }));
 
-// If you need a design-token fallback to avoid hex literals in tests:
+// Mock design tokens
 jest.mock('@pawfectmatch/design-tokens', () => ({
   __esModule: true,
   COLORS: {
@@ -120,32 +154,138 @@ jest.mock('@pawfectmatch/design-tokens', () => ({
     lg: '0.5rem',
     xl: '0.75rem',
   },
-  createTheme: jest.fn(() => ({
-    colors: {
-      primary: '#2563EB',
-      bg: '#FFFFFF',
-      surface: '#F8FAFC',
-      onBg: '#1E293B',
-      onSurface: '#64748B',
-      onPrimary: '#FFFFFF',
-      danger: '#DC2626',
-      success: '#16A34A',
-      warning: '#D97706',
-      border: '#E2E8F0',
-      onMuted: '#64748B',
+  createTheme: jest.fn(() => ({})),
+}));
+
+// Import services pre-setup to ensure mocks are loaded before modules
+import './jest.setup.services.pre';
+
+// Mock React Native FIRST to avoid ReactCurrentOwner errors
+// TEMPORARILY DISABLED: Let individual test files mock react-native to avoid conflicts
+// jest.mock('react-native', () => {
+/* TEMP DISABLE
+jest.mock('react-native', () => {
+  const React = require('react');
+  
+  // Create mock components
+  const createMockComponent = (name: string) => {
+    const Component = React.forwardRef((props: any, ref: any) => {
+      return React.createElement(name, { ...props, ref, testID: props.testID || name });
+    });
+    Component.displayName = name;
+    return Component;
+  };
+
+  return {
+    StyleSheet: {
+      create: (styles: Record<string, unknown>) => styles,
+      flatten: (style: unknown) => style,
+      compose: (style1: unknown, style2: unknown) => [style1, style2],
+      hairlineWidth: 1,
+      absoluteFill: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
+      absoluteFillObject: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
     },
-    palette: {
-      neutral: {
-        50: '#F8FAFC',
-        200: '#E2E8F0',
-        900: '#000000',
-        950: '#111111',
-      },
-      brand: {
-        500: '#64748B',
-      },
+    View: createMockComponent('View'),
+    Text: createMockComponent('Text'),
+    TextInput: createMockComponent('TextInput'),
+    ScrollView: createMockComponent('ScrollView'),
+    Image: createMockComponent('Image'),
+    TouchableOpacity: createMockComponent('TouchableOpacity'),
+    TouchableHighlight: createMockComponent('TouchableHighlight'),
+    TouchableWithoutFeedback: createMockComponent('TouchableWithoutFeedback'),
+    Pressable: createMockComponent('Pressable'),
+    FlatList: createMockComponent('FlatList'),
+    SectionList: createMockComponent('SectionList'),
+    ActivityIndicator: createMockComponent('ActivityIndicator'),
+    Switch: createMockComponent('Switch'),
+    Modal: createMockComponent('Modal'),
+    Animated: {
+      timing: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
+      spring: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
+      sequence: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
+      parallel: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
+      delay: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
+      Value: jest.fn(() => ({ setValue: jest.fn(), addListener: jest.fn() })),
+      View: createMockComponent('Animated.View'),
+      Text: createMockComponent('Animated.Text'),
+      Image: createMockComponent('Animated.Image'),
+      ScrollView: createMockComponent('Animated.ScrollView'),
     },
-  })),
+    Platform: {
+      OS: 'ios',
+      Version: 15,
+      select: (obj: any) => obj?.ios ?? obj?.default,
+    },
+    Dimensions: {
+      get: jest.fn(() => ({ width: 375, height: 812 })),
+      addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+      removeEventListener: jest.fn(),
+    },
+    NativeModules: {
+      RNKeychainManager: {},
+    },
+    Easing: {
+      bezier: (_x1: number, _y1: number, _x2: number, _y2: number) => (t: number) => t,
+      linear: jest.fn(),
+      ease: jest.fn(),
+      quad: jest.fn(),
+      cubic: jest.fn(),
+      poly: jest.fn(),
+      sin: jest.fn(),
+      circle: jest.fn(),
+      exp: jest.fn(),
+      elastic: jest.fn(),
+      back: jest.fn(),
+      bounce: jest.fn(),
+      in: jest.fn(),
+      out: jest.fn(),
+      inOut: jest.fn(),
+    },
+    AccessibilityInfo: {
+      isScreenReaderEnabled: jest.fn(async () => false),
+      isBoldTextEnabled: jest.fn(async () => false),
+      isGrayscaleEnabled: jest.fn(async () => false),
+      isInvertColorsEnabled: jest.fn(async () => false),
+      isReduceMotionEnabled: jest.fn(async () => false),
+      isReduceTransparencyEnabled: jest.fn(async () => false),
+      addEventListener: jest.fn((eventName: string, handler: () => void) => ({
+        remove: jest.fn(),
+      })),
+      removeEventListener: jest.fn(),
+      setAccessibilityFocus: jest.fn(),
+      announceForAccessibility: jest.fn(),
+      sendAccessibilityEvent: jest.fn(),
+    },
+    Clipboard: {
+      getString: jest.fn(() => Promise.resolve('')),
+      setString: jest.fn(() => Promise.resolve()),
+    },
+    Linking: {
+      openURL: jest.fn(() => Promise.resolve()),
+      canOpenURL: jest.fn(() => Promise.resolve(true)),
+      addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+      removeEventListener: jest.fn(),
+      getInitialURL: jest.fn(() => Promise.resolve(null)),
+    },
+    AppState: {
+      currentState: 'active',
+      addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+      removeEventListener: jest.fn(),
+    },
+    Keyboard: {
+      addListener: jest.fn(() => ({ remove: jest.fn() })),
+      removeListener: jest.fn(),
+      dismiss: jest.fn(),
+      isVisible: jest.fn(() => false),
+    },
+  };
+});
+TEMP DISABLE END */
+
+// Silence noisy RN timers etc. when needed
+jest.mock('react-native/Libraries/Utilities/Platform', () => ({
+  OS: 'ios',
+  select: (objs: any) => objs.ios
 }));
 
 // Ensure React 18 act semantics
@@ -157,30 +297,6 @@ const { TextEncoder, TextDecoder } = require('util') as any;
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-// Suppress console warnings during tests (act warnings, etc.)
-const originalError = console.error;
-beforeAll(() => {
-  console.error = (...args: any[]) => {
-    // Suppress known warnings
-    if (
-      typeof args[0] === 'string' &&
-      (args[0].includes('Warning: An update to') ||
-       args[0].includes('Warning: ReactDOM.render is no longer supported'))
-    ) {
-      return;
-    }
-    originalError.call(console, ...args);
-  };
-});
-
-afterAll(() => {
-  console.error = originalError;
-});
-
-// Ensure React 18 act semantics
-// @ts-ignore
-global.IS_REACT_ACT_ENVIRONMENT = true;
-
 // Deterministic time + timers
 jest.useFakeTimers({ legacyFakeTimers: false });
 jest.setSystemTime(new Date('2024-01-01T00:00:00Z') as unknown as number);
@@ -188,10 +304,61 @@ jest.setSystemTime(new Date('2024-01-01T00:00:00Z') as unknown as number);
 const fixedRandom = () => 0.421337;
 Math.random = fixedRandom;
 
-// RN Reanimated official mock - SINGLE SOURCE OF TRUTH
+// RN Reanimated comprehensive mock - SINGLE SOURCE OF TRUTH
 // All test files should use this mock from jest.setup.ts
 // Do not add Reanimated mocks in individual test files
-jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+jest.mock('react-native-reanimated', () => {
+  const React = require('react');
+  
+  // Create a complete mock without using the broken official mock
+  const mockReanimated = {
+    Value: jest.fn(() => ({ setValue: jest.fn(), _value: 0 })),
+    event: jest.fn(() => jest.fn()),
+    add: jest.fn(() => ({ _value: 0 })),
+    sub: jest.fn(() => ({ _value: 0 })),
+    multiply: jest.fn(() => ({ _value: 0 })),
+    divide: jest.fn(() => ({ _value: 0 })),
+    eq: jest.fn(() => ({ _value: 0 })),
+    neq: jest.fn(() => ({ _value: 0 })),
+    greaterThan: jest.fn(() => ({ _value: 0 })),
+    greaterOrEq: jest.fn(() => ({ _value: 0 })),
+    lessThan: jest.fn(() => ({ _value: 0 })),
+    lessOrEq: jest.fn(() => ({ _value: 0 })),
+    and: jest.fn(() => ({ _value: 0 })),
+    or: jest.fn(() => ({ _value: 0 })),
+    cond: jest.fn(() => ({ _value: 0 })),
+    set: jest.fn(() => ({ _value: 0 })),
+    call: jest.fn(() => ({ _value: 0 })),
+    debug: jest.fn(() => ({ _value: 0 })),
+    interpolate: jest.fn(() => ({ _value: 0 })),
+    concat: jest.fn(() => ({ _value: 0 })),
+    useSharedValue: jest.fn(() => ({ value: 0, setValue: jest.fn() })),
+    useAnimatedStyle: jest.fn(() => ({})),
+    useAnimatedProps: jest.fn(() => ({})),
+    useAnimatedScrollHandler: jest.fn(() => ({})),
+    createAnimatedComponent: jest.fn((component) => component),
+    withSpring: jest.fn(() => ({ _value: 0 })),
+    withTiming: jest.fn(() => ({ _value: 0 })),
+    withDecay: jest.fn(() => ({ _value: 0 })),
+    withRepeat: jest.fn(() => ({ _value: 0 })),
+    withSequence: jest.fn(() => ({ _value: 0 })),
+    withDelay: jest.fn(() => ({ _value: 0 })),
+    runOnUI: jest.fn((fn) => fn),
+    runOnJS: jest.fn((fn) => fn),
+  };
+  
+  // Add all React Native components that reanimated exports
+  return {
+    ...mockReanimated,
+    View: 'View',
+    Text: 'Text',
+    ScrollView: 'ScrollView',
+    FlatList: 'FlatList',
+    Image: 'Image',
+    default: mockReanimated,
+  };
+});
+
 // Silence useNativeDriver warnings
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
@@ -283,6 +450,11 @@ jest.mock('expo-constants', () => ({
 }));
 
 jest.mock('expo-linear-gradient', () => 'LinearGradient');
+
+// Mock expo-blur to avoid Native module errors in tests
+jest.mock('expo-blur', () => ({
+  BlurView: ({ children }: any) => children ?? null,
+}));
 
 jest.mock('expo-av', () => ({
   Audio: {},
@@ -455,34 +627,86 @@ jest.mock('expo-secure-store', () => ({
   },
 }));
 
-// Mock expo-local-authentication
-jest.mock('expo-local-authentication', () => ({
-  hasHardwareAsync: jest.fn(() => Promise.resolve(true)),
-  isEnrolledAsync: jest.fn(() => Promise.resolve(true)),
-  supportedAuthenticationTypesAsync: jest.fn(() => Promise.resolve([1, 2])),
-  authenticateAsync: jest.fn(() => Promise.resolve({ success: true })),
-  LocalAuthenticationResult: {
-    Success: 'success',
-    Cancel: 'cancel',
-    NotEnrolled: 'notEnrolled',
-    NotAvailable: 'notAvailable',
-  },
-  SecurityLevel: {
-    NONE: 0,
-    SECRET: 1,
-    BIOMETRIC: 2,
+// Mock expo-file-system
+jest.mock('expo-file-system', () => ({
+  getInfoAsync: jest.fn(() => Promise.resolve({
+    exists: true,
+    isDirectory: false,
+    size: 1024,
+    uri: 'file://mocked-uri',
+  })),
+  makeDirectoryAsync: jest.fn(() => Promise.resolve()),
+  deleteAsync: jest.fn(() => Promise.resolve()),
+  readDirectoryAsync: jest.fn(() => Promise.resolve(['file1.jpg', 'file2.png'])),
+  documentDirectory: 'file://mocked/documents/',
+  cacheDirectory: 'file://mocked/cache/',
+}));
+
+// Mock expo-image-manipulator
+jest.mock('expo-image-manipulator', () => ({
+  manipulateAsync: jest.fn(() => Promise.resolve({
+    uri: 'mocked-image-uri',
+    width: 100,
+    height: 100,
+  })),
+  SaveFormat: {
+    JPEG: 'jpeg',
+    PNG: 'png',
   },
 }));
 
+// ✅ Biometric mock (covers all calls your tests use)
+jest.mock('expo-local-authentication', () => {
+  const AuthenticationType = {
+    FINGERPRINT: 1,
+    FACIAL_RECOGNITION: 2,
+    IRIS: 3,
+  } as const;
+
+  const SecurityLevel = {
+    NONE: 0,
+    SECRET: 1,
+    BIOMETRIC: 2,
+  } as const;
+
+  // Mutable state so each test can tweak behavior
+  const __state = {
+    hasHardware: true,
+    enrolled: true,
+    types: [AuthenticationType.FACIAL_RECOGNITION],
+    level: SecurityLevel.BIOMETRIC,
+    authResult: { success: true },
+  };
+
+  return {
+    AuthenticationType,
+    SecurityLevel,
+    hasHardwareAsync: jest.fn(() => Promise.resolve(__state.hasHardware)),
+    isEnrolledAsync: jest.fn(() => Promise.resolve(__state.enrolled)),
+    supportedAuthenticationTypesAsync: jest.fn(() => Promise.resolve(__state.types)),
+    getEnrolledLevelAsync: jest.fn(() => Promise.resolve(__state.level)),
+    authenticateAsync: jest.fn(() => Promise.resolve(__state.authResult)),
+    cancelAuthenticate: jest.fn(() => Promise.resolve()),
+
+    // test-only helpers (cast to any in tests if TS complains)
+    __setState: (patch: Partial<typeof __state>) => Object.assign(__state, patch),
+    __getState: () => ({ ...__state }),
+  };
+});
+
 // Mock react-native-keychain
 jest.mock('react-native-keychain', () => ({
-  setInternetCredentials: jest.fn(),
-  getInternetCredentials: jest.fn(),
-  resetInternetCredentials: jest.fn(),
+  setGenericPassword: jest.fn(() => Promise.resolve(true)),
+  getGenericPassword: jest.fn(() => Promise.resolve(false)),
+  resetGenericPassword: jest.fn(() => Promise.resolve(true)),
+  setInternetCredentials: jest.fn(() => Promise.resolve(true)),
+  getInternetCredentials: jest.fn(() => Promise.resolve(false)),
+  resetInternetCredentials: jest.fn(() => Promise.resolve(true)),
   canImplyAuthentication: jest.fn(),
   getSupportedBiometryType: jest.fn(),
   ACCESS_CONTROL: {},
   ACCESSIBLE: {},
+  SECURITY_LEVEL: {},
   AUTHENTICATION_TYPE: {},
   BIOMETRY_TYPE: {},
 }));

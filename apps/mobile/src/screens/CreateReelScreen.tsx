@@ -4,7 +4,17 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import { View, Text, Pressable, ActivityIndicator, StyleSheet, ScrollView, Image, Alert, Share } from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  ActivityIndicator,
+  StyleSheet,
+  ScrollView,
+  Image,
+  Alert,
+  Share,
+} from 'react-native';
 import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 import { useReduceMotion } from '../hooks/useReducedMotion';
@@ -16,7 +26,12 @@ const API_URL = API_BASE_URL;
 
 type Template = { id: string; name: string; minClips: number; maxClips: number; jsonSpec: any };
 type Track = { id: string; title: string; artist: string; bpm: number; url: string };
-type Reel = { id: string; status: 'draft' | 'rendering' | 'public' | 'flagged' | 'removed'; mp4_url?: string; poster_url?: string };
+type Reel = {
+  id: string;
+  status: 'draft' | 'rendering' | 'public' | 'flagged' | 'removed';
+  mp4_url?: string;
+  poster_url?: string;
+};
 type Clip = { uri: string; startMs: number; endMs: number; thumb?: string };
 
 async function api<T>(path: string, init?: RequestInit) {
@@ -30,8 +45,10 @@ async function api<T>(path: string, init?: RequestInit) {
 
 const listTemplates = () => api<Template[]>('/templates');
 const listTracks = () => api<Track[]>('/tracks');
-const createReel = (body: any) => api<Reel>('/reels', { method: 'POST', body: JSON.stringify(body) });
-const setClips = (id: string, clips: any[]) => api<Reel>(`/reels/${id}/clips`, { method: 'PUT', body: JSON.stringify({ clips }) });
+const createReel = (body: any) =>
+  api<Reel>('/reels', { method: 'POST', body: JSON.stringify(body) });
+const setClips = (id: string, clips: any[]) =>
+  api<Reel>(`/reels/${id}/clips`, { method: 'PUT', body: JSON.stringify({ clips }) });
 const renderReel = (id: string) => api<Reel>(`/reels/${id}/render`, { method: 'POST' });
 const getReel = (id: string) => api<Reel>(`/reels/${id}`);
 
@@ -64,7 +81,7 @@ async function pickClips(): Promise<Clip[]> {
     const clips: Clip[] = result.assets.map((asset) => {
       // For videos, extract duration; for images, use a default duration
       const duration = asset.duration ? asset.duration * 1000 : 3000; // Default 3 seconds for images
-      
+
       return {
         uri: asset.uri,
         startMs: 0,
@@ -151,7 +168,7 @@ export default function CreateReelScreen() {
           srcUrl: c.uri,
           startMs: c.startMs,
           endMs: c.endMs,
-        }))
+        })),
       );
 
       // Step 3: Queue render
@@ -215,54 +232,66 @@ export default function CreateReelScreen() {
 
   const handleRemix = () => {
     // Remix functionality - create a new reel using the same template and clips
-    Alert.alert(
-      'Remix Reel',
-      'This will create a new reel using the same template. Continue?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remix',
-          onPress: async () => {
-            try {
-              // Reset to step 0 but keep the selected template and clips
-              setStep(0);
-              setReel(null);
-              logger.info('Remix reel initiated', { originalReelId: reel?.id });
-            } catch (error) {
-              const errorObj = error instanceof Error ? error : new Error(String(error));
-              logger.error('Failed to remix reel', { error: errorObj });
-              Alert.alert('Error', 'Failed to create remix. Please try again.');
-            }
-          },
+    Alert.alert('Remix Reel', 'This will create a new reel using the same template. Continue?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Remix',
+        onPress: async () => {
+          try {
+            // Reset to step 0 but keep the selected template and clips
+            setStep(0);
+            setReel(null);
+            logger.info('Remix reel initiated', { originalReelId: reel?.id });
+          } catch (error) {
+            const errorObj = error instanceof Error ? error : new Error(String(error));
+            logger.error('Failed to remix reel', { error: errorObj });
+            Alert.alert('Error', 'Failed to create remix. Please try again.');
+          }
         },
-      ],
-    );
+      },
+    ]);
   };
 
   return (
-    <View style={styles.root} testID="create-reel-screen" accessibilityLabel="Create reel screen">
+    <View
+      style={styles.root}
+      testID="create-reel-screen"
+      accessibilityLabel="Create reel screen"
+    >
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText} testID="create-reel-step-title" accessibilityRole="header" accessibilityLabel={
-          step === 0 ? t('step_media') :
-          step === 1 ? t('step_template') :
-          step === 2 ? t('step_music') :
-          t('step_share')
-        }>
+        <Text
+          style={styles.headerText}
+          testID="create-reel-step-title"
+          accessibilityRole="header"
+          accessibilityLabel={
+            step === 0
+              ? t('step_media')
+              : step === 1
+                ? t('step_template')
+                : step === 2
+                  ? t('step_music')
+                  : t('step_share')
+          }
+        >
           {step === 0 && t('step_media')}
           {step === 1 && t('step_template')}
           {step === 2 && t('step_music')}
           {step === 3 && t('step_share')}
         </Text>
-        {step < 3 && (
-          reducedMotion ? (
-            <Text style={styles.progressLabel} accessibilityRole="text" testID="create-reel-progress-label">
+        {step < 3 &&
+          (reducedMotion ? (
+            <Text
+              style={styles.progressLabel}
+              accessibilityRole="text"
+              testID="create-reel-progress-label"
+            >
               {t('progress_label', { current: step + 1, total: 4 })}
             </Text>
           ) : (
-            <View 
-              style={styles.progressBar} 
-              accessibilityRole="progressbar" 
+            <View
+              style={styles.progressBar}
+              accessibilityRole="progressbar"
               accessibilityValue={{
                 min: 0,
                 max: 3,
@@ -273,17 +302,22 @@ export default function CreateReelScreen() {
             >
               <View style={[styles.progressFill, { width: `${((step + 1) / 3) * 100}%` }]} />
             </View>
-          )
-        )}
+          ))}
         {loading && (
           <View style={styles.renderProgress}>
-            <Text style={styles.renderProgressText}>Rendering... {Math.floor(renderProgress)}%</Text>
-            <ActivityIndicator size="small" color={theme.colors.primary} accessibilityLabel="Rendering reel" />
+            <Text style={styles.renderProgressText}>
+              Rendering... {Math.floor(renderProgress)}%
+            </Text>
+            <ActivityIndicator
+              size="small"
+              color={theme.colors.primary}
+              accessibilityLabel="Rendering reel"
+            />
           </View>
         )}
       </View>
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.content}
         testID="create-reel-scroll-view"
         accessibilityRole="scrollbar"
@@ -311,7 +345,10 @@ export default function CreateReelScreen() {
                     accessibilityLabel={t('clip_label', { index: index + 1 })}
                   >
                     {clip.thumb ? (
-                      <Image source={{ uri: clip.thumb }} style={styles.clipThumb} />
+                      <Image
+                        source={{ uri: clip.thumb }}
+                        style={styles.clipThumb}
+                      />
                     ) : (
                       <View style={styles.clipPlaceholder} />
                     )}
@@ -337,7 +374,9 @@ export default function CreateReelScreen() {
                 accessibilityLabel={template.name}
               >
                 <Text style={styles.cardTitle}>{template.name}</Text>
-                <Text style={styles.cardSub}>{t('clips_range', { min: template.minClips, max: template.maxClips })}</Text>
+                <Text style={styles.cardSub}>
+                  {t('clips_range', { min: template.minClips, max: template.maxClips })}
+                </Text>
               </Pressable>
             ))}
           </View>
@@ -357,7 +396,9 @@ export default function CreateReelScreen() {
                 accessibilityLabel={`${track.title} by ${track.artist}`}
               >
                 <Text style={styles.cardTitle}>{track.title}</Text>
-                <Text style={styles.cardSub}>{track.artist} • {t('bpm', { bpm: track.bpm })}</Text>
+                <Text style={styles.cardSub}>
+                  {track.artist} • {t('bpm', { bpm: track.bpm })}
+                </Text>
               </Pressable>
             ))}
           </View>
@@ -398,7 +439,11 @@ export default function CreateReelScreen() {
       </ScrollView>
 
       {/* Footer Actions */}
-      <View style={styles.footer} accessibilityRole="menubar" testID="create-reel-footer">
+      <View
+        style={styles.footer}
+        accessibilityRole="menubar"
+        testID="create-reel-footer"
+      >
         {step > 0 && (
           <Pressable
             style={styles.ghostBtn}
@@ -421,7 +466,10 @@ export default function CreateReelScreen() {
             accessibilityState={{ disabled: !canNext || loading }}
           >
             {loading ? (
-              <ActivityIndicator color={theme.colors.onPrimary} accessibilityLabel="Loading" />
+              <ActivityIndicator
+                color={theme.colors.onPrimary}
+                accessibilityLabel="Loading"
+              />
             ) : (
               <Text style={styles.primaryBtnText}>{step < 2 ? t('next') : t('make_magic')}</Text>
             )}
@@ -435,34 +483,129 @@ export default function CreateReelScreen() {
 const makeStyles = (theme: any) =>
   StyleSheet.create({
     root: { flex: 1, backgroundColor: theme.colors.bg },
-    header: { padding: theme.spacing.lg, paddingTop: theme.spacing['4xl'], borderBottomWidth: 1, borderBottomColor: theme.colors.border },
-    headerText: { fontSize: theme.typography.h1.size, fontWeight: theme.typography.h1.weight, color: theme.colors.onSurface, marginBottom: theme.spacing.md },
-    progressLabel: { color: theme.colors.onMuted, fontSize: theme.typography.body.size * 0.875, marginBottom: theme.spacing.sm },
-    progressBar: { height: 4, backgroundColor: theme.colors.border, borderRadius: theme.radii.xs, overflow: 'hidden' },
+    header: {
+      padding: theme.spacing.lg,
+      paddingTop: theme.spacing['4xl'],
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    headerText: {
+      fontSize: theme.typography.h1.size,
+      fontWeight: theme.typography.h1.weight,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.md,
+    },
+    progressLabel: {
+      color: theme.colors.onMuted,
+      fontSize: theme.typography.body.size * 0.875,
+      marginBottom: theme.spacing.sm,
+    },
+    progressBar: {
+      height: 4,
+      backgroundColor: theme.colors.border,
+      borderRadius: theme.radii.xs,
+      overflow: 'hidden',
+    },
     progressFill: { height: '100%', backgroundColor: theme.colors.primary },
-    renderProgress: { flexDirection: 'row', alignItems: 'center', marginTop: theme.spacing.sm, gap: theme.spacing.sm },
-    renderProgressText: { color: theme.colors.onSurface, fontSize: theme.typography.body.size * 0.875 },
+    renderProgress: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: theme.spacing.sm,
+      gap: theme.spacing.sm,
+    },
+    renderProgressText: {
+      color: theme.colors.onSurface,
+      fontSize: theme.typography.body.size * 0.875,
+    },
     content: { flex: 1, padding: theme.spacing.lg },
     section: { gap: theme.spacing.lg },
-    videoContainer: { width: '100%', height: 420, backgroundColor: theme.colors.bg, borderRadius: theme.radii.lg, overflow: 'hidden' },
+    videoContainer: {
+      width: '100%',
+      height: 420,
+      backgroundColor: theme.colors.bg,
+      borderRadius: theme.radii.lg,
+      overflow: 'hidden',
+    },
     videoPlaceholder: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    videoText: { color: theme.colors.onSurface, fontSize: theme.typography.h1.size, fontWeight: theme.typography.h1.weight },
-    videoUrl: { color: theme.colors.onMuted, fontSize: theme.typography.body.size * 0.75, marginTop: theme.spacing.sm },
+    videoText: {
+      color: theme.colors.onSurface,
+      fontSize: theme.typography.h1.size,
+      fontWeight: theme.typography.h1.weight,
+    },
+    videoUrl: {
+      color: theme.colors.onMuted,
+      fontSize: theme.typography.body.size * 0.75,
+      marginTop: theme.spacing.sm,
+    },
     actionRow: { flexDirection: 'row', gap: theme.spacing.md, marginTop: theme.spacing.lg },
-    primaryBtn: { flex: 1, backgroundColor: theme.colors.primary, borderRadius: theme.radii.lg, paddingVertical: theme.spacing.md, alignItems: 'center' },
+    primaryBtn: {
+      flex: 1,
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radii.lg,
+      paddingVertical: theme.spacing.md,
+      alignItems: 'center',
+    },
     primaryBtnDisabled: { opacity: 0.5 },
-    primaryBtnText: { color: theme.colors.onPrimary, fontWeight: theme.typography.h1.weight, fontSize: theme.typography.body.size },
-    ghostBtn: { flex: 1, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radii.lg, paddingVertical: theme.spacing.md, alignItems: 'center' },
-    ghostBtnText: { color: theme.colors.onSurface, fontWeight: theme.typography.h1.weight, fontSize: theme.typography.body.size },
-    card: { padding: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radii.lg, marginBottom: theme.spacing.md },
+    primaryBtnText: {
+      color: theme.colors.onPrimary,
+      fontWeight: theme.typography.h1.weight,
+      fontSize: theme.typography.body.size,
+    },
+    ghostBtn: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radii.lg,
+      paddingVertical: theme.spacing.md,
+      alignItems: 'center',
+    },
+    ghostBtnText: {
+      color: theme.colors.onSurface,
+      fontWeight: theme.typography.h1.weight,
+      fontSize: theme.typography.body.size,
+    },
+    card: {
+      padding: theme.spacing.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radii.lg,
+      marginBottom: theme.spacing.md,
+    },
     cardActive: { borderColor: theme.colors.primary, borderWidth: 2 },
-    cardTitle: { fontSize: theme.typography.h2.size, fontWeight: theme.typography.h1.weight, color: theme.colors.onSurface },
-    cardSub: { fontSize: theme.typography.body.size * 0.875, color: theme.colors.onMuted, marginTop: theme.spacing.xs },
+    cardTitle: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
+      color: theme.colors.onSurface,
+    },
+    cardSub: {
+      fontSize: theme.typography.body.size * 0.875,
+      color: theme.colors.onMuted,
+      marginTop: theme.spacing.xs,
+    },
     clipsList: { flexDirection: 'row', gap: theme.spacing.md },
     clipItem: { gap: theme.spacing.sm },
-    clipThumb: { width: 80, height: 120, borderRadius: theme.radii.md, backgroundColor: theme.colors.bg },
-    clipPlaceholder: { width: 80, height: 120, borderRadius: theme.radii.md, backgroundColor: theme.colors.border },
-    clipText: { fontSize: theme.typography.body.size * 0.75, color: theme.colors.onSurface, textAlign: 'center' },
-    footer: { padding: theme.spacing.lg, flexDirection: 'row', gap: theme.spacing.md, borderTopWidth: 1, borderTopColor: theme.colors.border },
+    clipThumb: {
+      width: 80,
+      height: 120,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.bg,
+    },
+    clipPlaceholder: {
+      width: 80,
+      height: 120,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.border,
+    },
+    clipText: {
+      fontSize: theme.typography.body.size * 0.75,
+      color: theme.colors.onSurface,
+      textAlign: 'center',
+    },
+    footer: {
+      padding: theme.spacing.lg,
+      flexDirection: 'row',
+      gap: theme.spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+    },
   });
-

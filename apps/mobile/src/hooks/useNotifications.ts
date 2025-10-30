@@ -11,9 +11,15 @@ export const useNotifications = () => {
 
   React.useEffect(() => {
     const initializeNotifications = async () => {
-      const token = await initializeNotificationsService();
-      setPushToken(token);
-      setIsInitialized(true);
+      try {
+        const token = await initializeNotificationsService();
+        setPushToken(token);
+        setIsInitialized(true);
+      } catch (error) {
+        // On error, mark as initialized but with null token
+        setPushToken(null);
+        setIsInitialized(true);
+      }
     };
 
     initializeNotifications();

@@ -188,7 +188,8 @@ class AdminAPIService {
     if (params.verified !== null && params.verified !== undefined && params.verified !== '')
       queryParams.append('verified', params.verified);
 
-    return await this.request(`/admin/users?${queryParams.toString()}`);
+    const queryString = queryParams.toString();
+    return await this.request(`/admin/users${queryString ? `?${queryString}` : ''}`);
   }
 
   async getUserDetails(userId: string): Promise<
@@ -249,7 +250,8 @@ class AdminAPIService {
     if (params.status !== null && params.status !== undefined && params.status !== '')
       queryParams.append('status', params.status);
 
-    return await this.request(`/admin/chats?${queryParams.toString()}`);
+    const queryString = queryParams.toString();
+    return await this.request(`/admin/chats${queryString ? `?${queryString}` : ''}`);
   }
 
   async getChatDetails(chatId: string): Promise<
@@ -329,7 +331,8 @@ class AdminAPIService {
     if (params.search !== undefined && params.search !== '')
       queryParams.append('search', params.search);
 
-    return await this.request(`/admin/uploads?${queryParams.toString()}`);
+    const queryString = queryParams.toString();
+    return await this.request(`/admin/uploads${queryString ? `?${queryString}` : ''}`);
   }
 
   async getUploadDetails(uploadId: string): Promise<
@@ -385,7 +388,8 @@ class AdminAPIService {
     if (params.status !== null && params.status !== undefined && params.status !== '')
       queryParams.append('status', params.status);
 
-    return await this.request(`/admin/verifications/pending?${queryParams.toString()}`);
+    const queryString = queryParams.toString();
+    return await this.request(`/admin/verifications/pending${queryString ? `?${queryString}` : ''}`);
   }
 
   async getVerificationDetails(verificationId: string): Promise<
@@ -400,10 +404,13 @@ class AdminAPIService {
     verificationId: string,
     message: string,
   ): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
-    return await this.request(`/admin/kyc-management/verifications/${verificationId}/request-documents`, {
-      method: 'POST',
-      body: JSON.stringify({ message }),
-    });
+    return await this.request(
+      `/admin/kyc-management/verifications/${verificationId}/request-documents`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ message }),
+      },
+    );
   }
 
   async approveVerification(
@@ -461,6 +468,66 @@ class AdminAPIService {
     return await this.request(`/admin/analytics${queryParams}`);
   }
 
+  // Export Analytics
+  async exportAnalytics(params?: { format?: 'json' | 'csv' | 'pdf'; timeRange?: string }): Promise<{
+    success: boolean;
+    data?: unknown;
+    downloadUrl?: string;
+    message?: string;
+    error?: string;
+  }> {
+    const queryParams = new URLSearchParams();
+    if (params?.format) queryParams.append('format', params.format);
+    if (params?.timeRange) queryParams.append('timeRange', params.timeRange);
+
+    const queryString = queryParams.toString();
+    const url = `/admin/analytics/export${queryString ? `?${queryString}` : ''}`;
+
+    try {
+      const response = await fetch(`${BASE_URL}${url}`, {
+        method: 'GET',
+        headers: {
+          ...(await this.getAuthHeaders()),
+          'Accept': params?.format === 'csv' ? 'text/csv' : 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const contentType = response.headers.get('content-type');
+
+      if (contentType?.includes('text/csv') || contentType?.includes('application/octet-stream')) {
+        // Handle file download
+        const blob = await response.blob();
+        const downloadUrl = URL.createObjectURL(blob);
+
+        return {
+          success: true,
+          downloadUrl,
+          message: 'File ready for download',
+        };
+      } else {
+        // Handle JSON response
+        const data = await response.json();
+        return {
+          success: true,
+          data,
+          message: data.message || 'Export completed successfully',
+        };
+      }
+    } catch (error) {
+      logger.error('Export analytics failed', { error, params });
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        message: 'Failed to export analytics data',
+      };
+    }
+  }
+
   async getSystemHealth(): Promise<
     AdminAPIResponse<{
       status: string;
@@ -497,7 +564,8 @@ class AdminAPIService {
     if (params.limit !== null && params.limit !== undefined)
       queryParams.append('limit', String(params.limit));
 
-    return await this.request(`/admin/security/audit-logs?${queryParams.toString()}`);
+    const queryString = queryParams.toString();
+    return await this.request(`/admin/security/audit-logs${queryString ? `?${queryString}` : ''}`);
   }
 
   // Security & Monitoring
@@ -556,7 +624,8 @@ class AdminAPIService {
     if (params.search !== undefined && params.search !== '')
       queryParams.append('search', params.search);
 
-    return await this.request(`/admin/chats/messages?${queryParams.toString()}`);
+    const queryString = queryParams.toString();
+    return await this.request(`/admin/chats/messages${queryString ? `?${queryString}` : ''}`);
   }
 
   // Billing & Subscriptions
@@ -616,13 +685,12 @@ class AdminAPIService {
   }
 
   // Billing - Subscription Management
-  async cancelSubscription(params: {
+  async reactivateSubscription(params: {
     userId: string;
-    reason?: string;
   }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
-    return await this.request(`/admin/users/${params.userId}/cancel-subscription`, {
+    return await this.request(`/admin/users/${params.userId}/reactivate-subscription`, {
       method: 'PUT',
-      body: JSON.stringify({ reason: params.reason }),
+      body: JSON.stringify({}),
     });
   }
 
@@ -702,7 +770,8 @@ class AdminAPIService {
     if (params.page) queryParams.append('page', String(params.page));
     if (params.limit) queryParams.append('limit', String(params.limit));
 
-    return await this.request(`/admin/safety-moderation/queue?${queryParams.toString()}`);
+    const queryString = queryParams.toString();
+    return await this.request(`/admin/safety-moderation/queue${queryString ? `?${queryString}` : ''}`);
   }
 
   async getSafetyModerationDetails(uploadId: string): Promise<
@@ -921,4 +990,5 @@ class AdminAPIService {
   }
 }
 
+export { AdminAPIService };
 export const _adminAPI = new AdminAPIService();

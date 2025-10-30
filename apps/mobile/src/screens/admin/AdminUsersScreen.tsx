@@ -239,120 +239,121 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<'AdminUsers'>) => {
   );
 };
 
-const makeStyles = (theme: AppTheme) => StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.sm,
-    paddingBottom: theme.spacing.xs,
-  },
-  title: {
-    fontSize: theme.typography.h2.size,
-    fontWeight: theme.typography.h1.weight,
-    marginBottom: theme.spacing.xs,
-  },
-  description: {
-    fontSize: theme.typography.body.size * 0.875,
-  },
-  backButton: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.radii.full,
-    borderWidth: 1,
-  },
-  backButtonText: {
-    fontWeight: theme.typography.h2.weight,
-  },
-  controls: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingBottom: theme.spacing.sm,
-    gap: theme.spacing.sm,
-  },
-  searchContainer: {
-    borderWidth: 1,
-    borderRadius: theme.radii.lg,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-  },
-  searchInput: {
-    fontSize: theme.typography.body.size * 0.9375,
-  },
-  filterRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.xs,
-  },
-  filterButton: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.radii.full,
-    borderWidth: 1,
-  },
-  filterText: {
-    fontSize: theme.typography.body.size * 0.8125,
-    fontWeight: theme.typography.h2.weight,
-  },
-  bulkStatus: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.sm,
-  },
-  bulkStatusText: {
-    fontSize: theme.typography.body.size * 0.875,
-    fontWeight: theme.typography.body.weight,
-  },
-  bulkActions: {
-    marginHorizontal: theme.spacing.lg,
-    marginBottom: theme.spacing.sm,
-    borderRadius: theme.radii.lg,
-    padding: theme.spacing.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: theme.colors.border,
-    elevation: 1,
-  },
-  bulkSummary: {
-    fontSize: theme.typography.body.size * 0.875,
-    fontWeight: theme.typography.h2.weight,
-    marginBottom: theme.spacing.sm,
-  },
-  bulkButtons: {
-    flexDirection: 'row',
-    gap: theme.spacing.sm,
-  },
-  bulkButton: {
-    flex: 1,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radii.lg,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bulkButtonText: {
-    fontSize: theme.typography.body.size * 0.875,
-    fontWeight: theme.typography.h2.weight,
-  },
-  listContent: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingBottom: theme.spacing.xl,
-    paddingTop: theme.spacing.xs,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: theme.spacing['2xl'],
-    gap: theme.spacing.sm,
-  },
-  emptyText: {
-    fontSize: theme.typography.body.size * 0.875,
-    textAlign: 'center',
-    maxWidth: 260,
-  },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.sm,
+      paddingBottom: theme.spacing.xs,
+    },
+    title: {
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
+      marginBottom: theme.spacing.xs,
+    },
+    description: {
+      fontSize: theme.typography.body.size * 0.875,
+    },
+    backButton: {
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.full,
+      borderWidth: 1,
+    },
+    backButtonText: {
+      fontWeight: theme.typography.h2.weight,
+    },
+    controls: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingBottom: theme.spacing.sm,
+      gap: theme.spacing.sm,
+    },
+    searchContainer: {
+      borderWidth: 1,
+      borderRadius: theme.radii.lg,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+    },
+    searchInput: {
+      fontSize: theme.typography.body.size * 0.9375,
+    },
+    filterRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.xs,
+    },
+    filterButton: {
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.full,
+      borderWidth: 1,
+    },
+    filterText: {
+      fontSize: theme.typography.body.size * 0.8125,
+      fontWeight: theme.typography.h2.weight,
+    },
+    bulkStatus: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+    },
+    bulkStatusText: {
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.body.weight,
+    },
+    bulkActions: {
+      marginHorizontal: theme.spacing.lg,
+      marginBottom: theme.spacing.sm,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.colors.border,
+      elevation: 1,
+    },
+    bulkSummary: {
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.sm,
+    },
+    bulkButtons: {
+      flexDirection: 'row',
+      gap: theme.spacing.sm,
+    },
+    bulkButton: {
+      flex: 1,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.radii.lg,
+      borderWidth: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    bulkButtonText: {
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
+    },
+    listContent: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingBottom: theme.spacing.xl,
+      paddingTop: theme.spacing.xs,
+    },
+    emptyState: {
+      alignItems: 'center',
+      paddingVertical: theme.spacing['2xl'],
+      gap: theme.spacing.sm,
+    },
+    emptyText: {
+      fontSize: theme.typography.body.size * 0.875,
+      textAlign: 'center',
+      maxWidth: 260,
+    },
+  });
 
 export default AdminUsersScreen;

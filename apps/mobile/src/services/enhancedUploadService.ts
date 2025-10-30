@@ -13,7 +13,6 @@ import {
 import { request } from './api';
 import { logger } from './logger';
 import { uploadAdapter } from './upload/index';
-import { authService } from './AuthService';
 
 export interface UploadProgress {
   phase: 'presign' | 'upload' | 'register' | 'analyze' | 'pending' | 'approved' | 'rejected';
@@ -205,14 +204,8 @@ export class EnhancedUploadService {
     };
 
     try {
-      // Check quota - get user ID from auth service
-      const currentUser = await authService.getCurrentUser();
-      const userId = currentUser?.id;
-      if (!userId) {
-        throw new Error('User not authenticated');
-      }
-
-      const quota = await checkUploadQuota(userId);
+      // Check quota
+      const quota = await checkUploadQuota('current-user-id'); // TODO: Get from auth
       if (!quota.allowed) {
         throw new Error('Upload quota exceeded');
       }

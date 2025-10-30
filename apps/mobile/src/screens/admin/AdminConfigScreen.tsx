@@ -3,8 +3,8 @@
  * Comprehensive UI for managing all API configurations and service settings
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React, { useCallback, useEffect, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -16,12 +16,12 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@mobile/theme";
-import { _adminAPI } from "../../services/api";
-import { errorHandler } from "../../services/errorHandler";
-import { logger } from "../../services/logger";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '@mobile/theme';
+import { _adminAPI } from '../../services/api';
+import { errorHandler } from '../../services/errorHandler';
+import { logger } from '../../services/logger';
 
 interface ServiceConfig {
   id: string;
@@ -37,7 +37,7 @@ interface ServiceConfig {
 interface ConfigField {
   key: string;
   label: string;
-  type: "text" | "password" | "number" | "boolean" | "url";
+  type: 'text' | 'password' | 'number' | 'boolean' | 'url';
   value: string | number | boolean;
   placeholder?: string;
   required?: boolean;
@@ -91,55 +91,55 @@ export default function AdminConfigScreen({
           isActive?: boolean;
         };
         serviceConfigs.push({
-          id: "ai",
-          name: "AI Service (DeepSeek)",
-          icon: "sparkles",
+          id: 'ai',
+          name: 'AI Service (DeepSeek)',
+          icon: 'sparkles',
           color: theme.colors.primary,
           isConfigured: ai.isConfigured ?? false,
           isActive: ai.isActive ?? false,
-          description: "AI text generation and compatibility analysis",
+          description: 'AI text generation and compatibility analysis',
           fields: [
             {
-              key: "apiKey",
-              label: "API Key",
-              type: "password",
-              value: ai.apiKey || "",
-              placeholder: "sk-...",
+              key: 'apiKey',
+              label: 'API Key',
+              type: 'password',
+              value: ai.apiKey || '',
+              placeholder: 'sk-...',
               required: true,
               masked: true,
             },
             {
-              key: "baseUrl",
-              label: "Base URL",
-              type: "url",
-              value: ai.baseUrl || "https://api.deepseek.com",
-              placeholder: "https://api.deepseek.com",
+              key: 'baseUrl',
+              label: 'Base URL',
+              type: 'url',
+              value: ai.baseUrl || 'https://api.deepseek.com',
+              placeholder: 'https://api.deepseek.com',
             },
             {
-              key: "model",
-              label: "Model",
-              type: "text",
-              value: ai.model || "deepseek-chat",
-              placeholder: "deepseek-chat",
+              key: 'model',
+              label: 'Model',
+              type: 'text',
+              value: ai.model || 'deepseek-chat',
+              placeholder: 'deepseek-chat',
             },
             {
-              key: "maxTokens",
-              label: "Max Tokens",
-              type: "number",
+              key: 'maxTokens',
+              label: 'Max Tokens',
+              type: 'number',
               value: ai.maxTokens || 4000,
-              placeholder: "4000",
+              placeholder: '4000',
             },
             {
-              key: "temperature",
-              label: "Temperature",
-              type: "number",
+              key: 'temperature',
+              label: 'Temperature',
+              type: 'number',
               value: ai.temperature || 0.7,
-              placeholder: "0.7",
+              placeholder: '0.7',
             },
             {
-              key: "isActive",
-              label: "Service Active",
-              type: "boolean",
+              key: 'isActive',
+              label: 'Service Active',
+              type: 'boolean',
               value: ai.isActive ?? false,
             },
           ],
@@ -156,43 +156,43 @@ export default function AdminConfigScreen({
           isConfigured?: boolean;
         };
         serviceConfigs.push({
-          id: "stripe",
-          name: "Stripe Payments",
-          icon: "card",
+          id: 'stripe',
+          name: 'Stripe Payments',
+          icon: 'card',
           color: theme.colors.success,
           isConfigured: stripe.isConfigured ?? false,
           isActive: stripe.isConfigured ?? false,
-          description: "Payment processing and subscription management",
+          description: 'Payment processing and subscription management',
           fields: [
             {
-              key: "secretKey",
-              label: "Secret Key",
-              type: "password",
-              value: stripe.secretKey || "",
-              placeholder: "sk_...",
+              key: 'secretKey',
+              label: 'Secret Key',
+              type: 'password',
+              value: stripe.secretKey || '',
+              placeholder: 'sk_...',
               required: true,
               masked: true,
             },
             {
-              key: "publishableKey",
-              label: "Publishable Key",
-              type: "text",
-              value: stripe.publishableKey || "",
-              placeholder: "pk_...",
+              key: 'publishableKey',
+              label: 'Publishable Key',
+              type: 'text',
+              value: stripe.publishableKey || '',
+              placeholder: 'pk_...',
               required: true,
             },
             {
-              key: "webhookSecret",
-              label: "Webhook Secret",
-              type: "password",
-              value: stripe.webhookSecret || "",
-              placeholder: "whsec_...",
+              key: 'webhookSecret',
+              label: 'Webhook Secret',
+              type: 'password',
+              value: stripe.webhookSecret || '',
+              placeholder: 'whsec_...',
               masked: true,
             },
             {
-              key: "isLiveMode",
-              label: "Live Mode",
-              type: "boolean",
+              key: 'isLiveMode',
+              label: 'Live Mode',
+              type: 'boolean',
               value: stripe.isLiveMode ?? false,
             },
           ],
@@ -215,29 +215,29 @@ export default function AdminConfigScreen({
           string,
           { name: string; icon: string; color: string; description: string }
         > = {
-          "aws-rekognition": {
-            name: "AWS Rekognition",
-            icon: "eye",
-            color: "#FF9900",
-            description: "Content moderation and safety checks",
+          'aws-rekognition': {
+            name: 'AWS Rekognition',
+            icon: 'eye',
+            color: theme.colors.warning,
+            description: 'Content moderation and safety checks',
           },
-          cloudinary: {
-            name: "Cloudinary",
-            icon: "cloud",
-            color: "#3448C5",
-            description: "Image storage and processing",
+          'cloudinary': {
+            name: 'Cloudinary',
+            icon: 'cloud',
+            color: theme.colors.info,
+            description: 'Image storage and processing',
           },
-          fcm: {
-            name: "Firebase Cloud Messaging",
-            icon: "notifications",
-            color: "#FF9800",
-            description: "Push notifications",
+          'fcm': {
+            name: 'Firebase Cloud Messaging',
+            icon: 'notifications',
+            color: theme.colors.warning,
+            description: 'Push notifications',
           },
-          livekit: {
-            name: "LiveKit",
-            icon: "videocam",
-            color: "#6366F1",
-            description: "Live streaming",
+          'livekit': {
+            name: 'LiveKit',
+            icon: 'videocam',
+            color: theme.colors.info,
+            description: 'Live streaming',
           },
         };
 
@@ -254,16 +254,16 @@ export default function AdminConfigScreen({
               description: metadata.description,
               fields: [
                 {
-                  key: "endpoint",
-                  label: "Endpoint",
-                  type: "url",
-                  value: service.endpoint || "",
-                  placeholder: "https://...",
+                  key: 'endpoint',
+                  label: 'Endpoint',
+                  type: 'url',
+                  value: service.endpoint || '',
+                  placeholder: 'https://...',
                 },
                 {
-                  key: "isActive",
-                  label: "Service Active",
-                  type: "boolean",
+                  key: 'isActive',
+                  label: 'Service Active',
+                  type: 'boolean',
                   value: service.isActive ?? false,
                 },
               ],
@@ -275,10 +275,10 @@ export default function AdminConfigScreen({
       setServices(serviceConfigs);
     } catch (error) {
       errorHandler.handleError(
-        error instanceof Error ? error : new Error("Failed to load configurations"),
+        error instanceof Error ? error : new Error('Failed to load configurations'),
         {
-          component: "AdminConfigScreen",
-          action: "loadConfigurations",
+          component: 'AdminConfigScreen',
+          action: 'loadConfigurations',
         },
       );
     } finally {
@@ -300,12 +300,9 @@ export default function AdminConfigScreen({
     setConfigValues({});
   }, []);
 
-  const updateConfigValue = useCallback(
-    (key: string, value: string | number | boolean) => {
-      setConfigValues((prev) => ({ ...prev, [key]: value }));
-    },
-    [],
-  );
+  const updateConfigValue = useCallback((key: string, value: string | number | boolean) => {
+    setConfigValues((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
   const saveConfiguration = useCallback(async () => {
     if (!selectedService) return;
@@ -317,56 +314,56 @@ export default function AdminConfigScreen({
       const requiredFields = selectedService.fields.filter((f) => f.required);
       for (const field of requiredFields) {
         const value = configValues[field.key];
-        if (value === undefined || value === null || value === "") {
-          Alert.alert("Validation Error", `${field.label} is required`);
+        if (value === undefined || value === null || value === '') {
+          Alert.alert('Validation Error', `${field.label} is required`);
           return;
         }
       }
 
       // Save configuration based on service type
       let response;
-      if (selectedService.id === "ai") {
+      if (selectedService.id === 'ai') {
         response = await _adminAPI.saveAIConfig({
-          apiKey: configValues.apiKey as string,
-          baseUrl: configValues.baseUrl as string,
-          model: configValues.model as string,
-          maxTokens: configValues.maxTokens as number,
-          temperature: configValues.temperature as number,
+          apiKey: configValues['apiKey'] as string,
+          baseUrl: configValues['baseUrl'] as string,
+          model: configValues['model'] as string,
+          maxTokens: configValues['maxTokens'] as number,
+          temperature: configValues['temperature'] as number,
         });
-      } else if (selectedService.id === "stripe") {
+      } else if (selectedService.id === 'stripe') {
         response = await _adminAPI.saveStripeConfig({
-          secretKey: configValues.secretKey as string,
-          publishableKey: configValues.publishableKey as string,
-          webhookSecret: configValues.webhookSecret as string,
-          isLiveMode: configValues.isLiveMode as boolean,
+          secretKey: configValues['secretKey'] as string,
+          publishableKey: configValues['publishableKey'] as string,
+          webhookSecret: configValues['webhookSecret'] as string,
+          isLiveMode: configValues['isLiveMode'] as boolean,
         });
       } else {
         // External service
         response = await _adminAPI.saveExternalServiceConfig({
           serviceId: selectedService.id,
-          endpoint: configValues.endpoint as string,
-          isActive: configValues.isActive as boolean,
+          endpoint: configValues['endpoint'] as string,
+          isActive: configValues['isActive'] as boolean,
         });
       }
 
       if (response?.success) {
-        Alert.alert("Success", "Configuration saved successfully");
+        Alert.alert('Success', 'Configuration saved successfully');
         closeServiceConfig();
         void loadConfigurations();
-        logger.info("Configuration saved", { serviceId: selectedService.id });
+        logger.info('Configuration saved', { serviceId: selectedService.id });
       } else {
-        throw new Error(response?.message || "Failed to save configuration");
+        throw new Error(response?.message || 'Failed to save configuration');
       }
     } catch (error) {
       errorHandler.handleError(
-        error instanceof Error ? error : new Error("Failed to save configuration"),
+        error instanceof Error ? error : new Error('Failed to save configuration'),
         {
-          component: "AdminConfigScreen",
-          action: "saveConfiguration",
+          component: 'AdminConfigScreen',
+          action: 'saveConfiguration',
           metadata: { serviceId: selectedService?.id },
         },
       );
-      Alert.alert("Error", "Failed to save configuration");
+      Alert.alert('Error', 'Failed to save configuration');
     } finally {
       setSaving(false);
     }
@@ -377,9 +374,12 @@ export default function AdminConfigScreen({
       const value = configValues[field.key];
 
       switch (field.type) {
-        case "boolean":
+        case 'boolean':
           return (
-            <View key={field.key} style={styles.fieldContainer}>
+            <View
+              key={field.key}
+              style={styles.fieldContainer}
+            >
               <View style={styles.switchContainer}>
                 <Text style={[styles.fieldLabel, { color: theme.colors.onSurface }]}>
                   {field.label}
@@ -402,9 +402,12 @@ export default function AdminConfigScreen({
             </View>
           );
 
-        case "password":
+        case 'password':
           return (
-            <View key={field.key} style={styles.fieldContainer}>
+            <View
+              key={field.key}
+              style={styles.fieldContainer}
+            >
               <Text style={[styles.fieldLabel, { color: theme.colors.onSurface }]}>
                 {field.label}
                 {field.required ? <Text style={{ color: theme.colors.danger }}> *</Text> : null}
@@ -418,7 +421,7 @@ export default function AdminConfigScreen({
                     borderColor: theme.colors.border,
                   },
                 ]}
-                value={field.masked && value ? "••••••••" : (value as string)}
+                value={field.masked && value ? '••••••••' : (value as string)}
                 onChangeText={(text) => updateConfigValue(field.key, text)}
                 placeholder={field.placeholder}
                 placeholderTextColor={theme.colors.onMuted}
@@ -434,9 +437,12 @@ export default function AdminConfigScreen({
             </View>
           );
 
-        case "number":
+        case 'number':
           return (
-            <View key={field.key} style={styles.fieldContainer}>
+            <View
+              key={field.key}
+              style={styles.fieldContainer}
+            >
               <Text style={[styles.fieldLabel, { color: theme.colors.onSurface }]}>
                 {field.label}
                 {field.required ? <Text style={{ color: theme.colors.danger }}> *</Text> : null}
@@ -450,13 +456,13 @@ export default function AdminConfigScreen({
                     borderColor: theme.colors.border,
                   },
                 ]}
-                value={String(value ?? "")}
+                value={String(value ?? '')}
                 onChangeText={(text) => {
                   const numValue = parseFloat(text);
                   if (!isNaN(numValue)) {
                     updateConfigValue(field.key, numValue);
-                  } else if (text === "") {
-                    updateConfigValue(field.key, "");
+                  } else if (text === '') {
+                    updateConfigValue(field.key, '');
                   }
                 }}
                 placeholder={field.placeholder}
@@ -473,7 +479,10 @@ export default function AdminConfigScreen({
 
         default:
           return (
-            <View key={field.key} style={styles.fieldContainer}>
+            <View
+              key={field.key}
+              style={styles.fieldContainer}
+            >
               <Text style={[styles.fieldLabel, { color: theme.colors.onSurface }]}>
                 {field.label}
                 {field.required ? <Text style={{ color: theme.colors.danger }}> *</Text> : null}
@@ -487,13 +496,13 @@ export default function AdminConfigScreen({
                     borderColor: theme.colors.border,
                   },
                 ]}
-                value={String(value ?? "")}
+                value={String(value ?? '')}
                 onChangeText={(text) => updateConfigValue(field.key, text)}
                 placeholder={field.placeholder}
                 placeholderTextColor={theme.colors.onMuted}
                 autoCapitalize="none"
                 autoCorrect={false}
-                keyboardType={field.type === "url" ? "url" : "default"}
+                keyboardType={field.type === 'url' ? 'url' : 'default'}
               />
               {field.description ? (
                 <Text style={[styles.fieldDescription, { color: theme.colors.onMuted }]}>
@@ -511,7 +520,10 @@ export default function AdminConfigScreen({
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator
+            size="large"
+            color={theme.colors.primary}
+          />
           <Text style={[styles.loadingText, { color: theme.colors.onSurface }]}>
             Loading configurations...
           </Text>
@@ -531,7 +543,11 @@ export default function AdminConfigScreen({
           onPress={() => navigation.goBack()}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={theme.colors.onSurface}
+          />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.colors.onSurface }]}>
           API Configuration
@@ -540,7 +556,10 @@ export default function AdminConfigScreen({
       </View>
 
       {/* Services List */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+      >
         {services.map((service) => (
           <TouchableOpacity
             key={service.id}
@@ -558,7 +577,11 @@ export default function AdminConfigScreen({
                   },
                 ]}
               >
-                <Ionicons name={service.icon as any} size={24} color={service.color} />
+                <Ionicons
+                  name={service.icon as any}
+                  size={24}
+                  color={service.color}
+                />
               </View>
               <View style={styles.serviceInfo}>
                 <Text style={[styles.serviceName, { color: theme.colors.onSurface }]}>
@@ -581,10 +604,14 @@ export default function AdminConfigScreen({
                 ]}
               >
                 <Text style={styles.statusBadgeText}>
-                  {service.isConfigured ? "Configured" : "Not Configured"}
+                  {service.isConfigured ? 'Configured' : 'Not Configured'}
                 </Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={theme.colors.onMuted} />
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={theme.colors.onMuted}
+              />
             </View>
           </TouchableOpacity>
         ))}
@@ -604,7 +631,11 @@ export default function AdminConfigScreen({
               accessibilityLabel="Close configuration"
               accessibilityRole="button"
             >
-              <Ionicons name="close" size={24} color={theme.colors.onSurface} />
+              <Ionicons
+                name="close"
+                size={24}
+                color={theme.colors.onSurface}
+              />
             </TouchableOpacity>
             <Text style={[styles.modalTitle, { color: theme.colors.onSurface }]}>
               {selectedService?.name}
@@ -612,7 +643,10 @@ export default function AdminConfigScreen({
             <View style={{ width: 24 }} />
           </View>
 
-          <ScrollView style={styles.modalContent} contentContainerStyle={styles.modalScrollContent}>
+          <ScrollView
+            style={styles.modalContent}
+            contentContainerStyle={styles.modalScrollContent}
+          >
             {selectedService?.fields.map((field) => renderConfigField(field))}
           </ScrollView>
 
@@ -637,7 +671,10 @@ export default function AdminConfigScreen({
               accessibilityRole="button"
             >
               {saving ? (
-                <ActivityIndicator size="small" color="white" />
+                <ActivityIndicator
+                  size="small"
+                  color="white"
+                />
               ) : (
                 <Text style={styles.buttonText}>Save Configuration</Text>
               )}
@@ -656,17 +693,17 @@ const makeStyles = (theme: ReturnType<typeof useTheme>) =>
     },
     loadingContainer: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     loadingText: {
       marginTop: theme.spacing.md,
       fontSize: theme.typography.body.size,
     },
     header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
       borderBottomWidth: 1,
@@ -692,16 +729,16 @@ const makeStyles = (theme: ReturnType<typeof useTheme>) =>
       ...theme.shadows.elevation2,
     },
     serviceHeader: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       marginBottom: theme.spacing.md,
     },
     iconContainer: {
       width: 48,
       height: 48,
       borderRadius: theme.radii.full,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       marginRight: theme.spacing.md,
     },
     serviceInfo: {
@@ -716,9 +753,9 @@ const makeStyles = (theme: ReturnType<typeof useTheme>) =>
       fontSize: theme.typography.body.size * 0.875,
     },
     serviceFooter: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
     },
     statusBadge: {
       paddingHorizontal: theme.spacing.sm,
@@ -726,14 +763,14 @@ const makeStyles = (theme: ReturnType<typeof useTheme>) =>
       borderRadius: theme.radii.sm,
     },
     statusBadgeText: {
-      color: "white",
+      color: 'white',
       fontSize: theme.typography.body.size * 0.75,
       fontWeight: theme.typography.body.weight,
     },
     modalHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
       borderBottomWidth: 1,
@@ -769,12 +806,12 @@ const makeStyles = (theme: ReturnType<typeof useTheme>) =>
       fontSize: theme.typography.body.size,
     },
     switchContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
     },
     modalFooter: {
-      flexDirection: "row",
+      flexDirection: 'row',
       padding: theme.spacing.lg,
       gap: theme.spacing.md,
       borderTopWidth: 1,
@@ -784,20 +821,19 @@ const makeStyles = (theme: ReturnType<typeof useTheme>) =>
       flex: 1,
       paddingVertical: theme.spacing.md,
       borderRadius: theme.radii.md,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     saveButton: {
       flex: 1,
       paddingVertical: theme.spacing.md,
       borderRadius: theme.radii.md,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     buttonText: {
-      color: "white",
+      color: 'white',
       fontSize: theme.typography.body.size,
       fontWeight: theme.typography.body.weight,
     },
   });
-

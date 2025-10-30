@@ -37,6 +37,7 @@ interface SendAttachmentParams {
   uri: string;
   name?: string;
   contentType?: string;
+  file?: Blob | File; // Optional file for web platform compatibility
 }
 
 interface SendVoiceNoteParams {

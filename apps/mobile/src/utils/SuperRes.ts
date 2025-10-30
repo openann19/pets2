@@ -93,12 +93,12 @@ const ServerAdapter: SuperResAdapter = {
     if (upscaleEndpoint === 'true') {
       return true;
     }
-    
+
     // Disable in dev unless explicitly enabled
     if (__DEV__) {
       return false;
     }
-    
+
     // In production, check if endpoint exists by attempting a health check
     // For now, return false until backend is ready
     return false;
@@ -119,7 +119,7 @@ const ServerAdapter: SuperResAdapter = {
       } as unknown as Blob);
       formData.append('targetW', targetW.toString());
       formData.append('targetH', targetH.toString());
-      
+
       if (opts.sharpen !== undefined) {
         formData.append('sharpen', opts.sharpen.toString());
       }
@@ -152,13 +152,13 @@ const ServerAdapter: SuperResAdapter = {
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
       logger.error('SuperRes: Server upscale failed', { error: err });
-      
+
       // If endpoint doesn't exist (404), fall back to bicubic
       if (err.message.includes('404') || err.message.includes('Not Found')) {
         logger.warn('SuperRes: Upscale endpoint not available, falling back to bicubic');
         return BicubicAdapter.upscale(uri, targetW, targetH, opts);
       }
-      
+
       throw err;
     }
   },

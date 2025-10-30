@@ -40,12 +40,15 @@ export function usePhotoNavigation({
     }
   }, [currentIndex]);
 
-  const goToPhoto = useCallback((index: number) => {
-    if (index >= 0 && index < totalPhotos) {
-      setCurrentIndex(index);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-  }, [totalPhotos]);
+  const goToPhoto = useCallback(
+    (index: number) => {
+      if (index >= 0 && index < totalPhotos) {
+        setCurrentIndex(index);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
+    },
+    [totalPhotos],
+  );
 
   const canGoNext = currentIndex < totalPhotos - 1;
   const canGoPrev = currentIndex > 0;
@@ -59,4 +62,3 @@ export function usePhotoNavigation({
     canGoPrev,
   };
 }
-

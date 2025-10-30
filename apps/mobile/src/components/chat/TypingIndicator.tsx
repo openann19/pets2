@@ -11,7 +11,7 @@ export function TypingIndicator({
   typingUsers,
   animationValue,
 }: TypingIndicatorProps): React.JSX.Element | null {
-  const { colors, spacing, radius } = useTheme();
+  const { colors } = useTheme();
 
   if (typingUsers.length === 0) return null;
 

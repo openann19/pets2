@@ -162,4 +162,3 @@ describe('usePhotoNavigation', () => {
     expect(result.current.canGoPrev).toBe(false);
   });
 });
-

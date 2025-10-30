@@ -1,10 +1,10 @@
 /**
  * 🎨 RN-SAFE TOKENS WRAPPER (DEPRECATED)
- * 
+ *
  * @deprecated This file is deprecated. Use `createTheme` from '@/theme' instead.
  * This file now re-exports the unified createTheme for backward compatibility.
- * 
- * Migration: Change `import { createTheme } from '@/theme/rnTokens'` 
+ *
+ * Migration: Change `import { createTheme } from '@/theme/rnTokens'`
  *           to `import { createTheme } from '@/theme'`
  */
 

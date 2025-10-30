@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { logger } from '@pawfectmatch/core';
-import { notificationPreferencesAPI } from '../../services/api';
+import { notificationPreferencesAPI } from '@/services/api';
 
 interface NotificationPreferencesScreenProps {
   navigation: {
@@ -120,7 +120,7 @@ function NotificationPreferencesScreen({
             }
           }),
         );
-        
+
         // Load quiet hours settings
         if (prefs.quietHours) {
           setQuietHoursEnabled(prefs.quietHours.enabled ?? false);
@@ -161,43 +161,45 @@ function NotificationPreferencesScreen({
     );
   }, []);
 
-  const handleQuietHoursToggle = useCallback(async (enabled: boolean) => {
-    setQuietHoursEnabled(enabled);
-    Haptics.selectionAsync().catch(() => {});
-    
-    // Auto-save quiet hours when toggled
-    try {
-      const matchesEnabled = settings.find((s) => s.id === 'new_matches')?.enabled ?? true;
-      const messagesEnabled = settings.find((s) => s.id === 'messages')?.enabled ?? true;
-      const likesEnabled = settings.find((s) => s.id === 'likes')?.enabled ?? false;
-      const remindersEnabled =
-        settings.find((s) => s.id === 'safety_alerts')?.enabled ?? true;
-      const enabled = matchesEnabled || messagesEnabled || likesEnabled || remindersEnabled;
+  const handleQuietHoursToggle = useCallback(
+    async (enabled: boolean) => {
+      setQuietHoursEnabled(enabled);
+      Haptics.selectionAsync().catch(() => {});
 
-      await notificationPreferencesAPI.updatePreferences({
-        enabled,
-        matches: matchesEnabled,
-        messages: messagesEnabled,
-        likes: likesEnabled,
-        reminders: remindersEnabled,
-        frequency: 'instant',
-        sound: true,
-        vibration: true,
-        quietHours: {
+      // Auto-save quiet hours when toggled
+      try {
+        const matchesEnabled = settings.find((s) => s.id === 'new_matches')?.enabled ?? true;
+        const messagesEnabled = settings.find((s) => s.id === 'messages')?.enabled ?? true;
+        const likesEnabled = settings.find((s) => s.id === 'likes')?.enabled ?? false;
+        const remindersEnabled = settings.find((s) => s.id === 'safety_alerts')?.enabled ?? true;
+        const enabled = matchesEnabled || messagesEnabled || likesEnabled || remindersEnabled;
+
+        await notificationPreferencesAPI.updatePreferences({
           enabled,
-          start: quietHoursStart,
-          end: quietHoursEnd,
-        },
-      });
-      
-      logger.info('Quiet hours updated', { enabled, start: quietHoursStart, end: quietHoursEnd });
-    } catch (error) {
-      logger.error('Failed to update quiet hours', { error });
-      // Revert on error
-      setQuietHoursEnabled(!enabled);
-      Alert.alert('Error', 'Failed to update quiet hours. Please try again.');
-    }
-  }, [settings, quietHoursStart, quietHoursEnd]);
+          matches: matchesEnabled,
+          messages: messagesEnabled,
+          likes: likesEnabled,
+          reminders: remindersEnabled,
+          frequency: 'instant',
+          sound: true,
+          vibration: true,
+          quietHours: {
+            enabled,
+            start: quietHoursStart,
+            end: quietHoursEnd,
+          },
+        });
+
+        logger.info('Quiet hours updated', { enabled, start: quietHoursStart, end: quietHoursEnd });
+      } catch (error) {
+        logger.error('Failed to update quiet hours', { error });
+        // Revert on error
+        setQuietHoursEnabled(!enabled);
+        Alert.alert('Error', 'Failed to update quiet hours. Please try again.');
+      }
+    },
+    [settings, quietHoursStart, quietHoursEnd],
+  );
 
   const saveSettings = useCallback(async () => {
     setIsSaving(true);
@@ -206,8 +208,7 @@ function NotificationPreferencesScreen({
       const matchesEnabled = settings.find((s) => s.id === 'new_matches')?.enabled ?? true;
       const messagesEnabled = settings.find((s) => s.id === 'messages')?.enabled ?? true;
       const likesEnabled = settings.find((s) => s.id === 'likes')?.enabled ?? false;
-      const remindersEnabled =
-        settings.find((s) => s.id === 'safety_alerts')?.enabled ?? true;
+      const remindersEnabled = settings.find((s) => s.id === 'safety_alerts')?.enabled ?? true;
       const marketingEnabled = settings.find((s) => s.id === 'marketing')?.enabled ?? false;
       const enabled = matchesEnabled || messagesEnabled || likesEnabled || remindersEnabled;
 

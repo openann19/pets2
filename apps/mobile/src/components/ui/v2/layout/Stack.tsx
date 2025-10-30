@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, type ViewProps } from 'react-native';
-import { useTheme } from '../../../theme';
+import { useTheme } from '@/theme';
 
 export type StackDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
 export type StackAlign = 'start' | 'center' | 'end' | 'stretch';

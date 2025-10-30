@@ -28,35 +28,75 @@ export interface NotificationData {
   scheduledFor?: Date;
 }
 
+export interface NotificationPermissionStatus {
+  status: 'granted' | 'denied' | 'undetermined';
+  canAskAgain: boolean;
+}
+
 class NotificationService {
   private expoPushToken: string | null = null;
   private notificationListener: Notifications.Subscription | null = null;
   private responseListener: Notifications.Subscription | null = null;
+  private shouldRequestPermission: boolean = false; // Flag to delay permission request
 
-  async initialize(): Promise<string | null> {
+  /**
+   * Get current permission status without requesting
+   */
+  async getPermissionStatus(): Promise<NotificationPermissionStatus> {
     try {
-      // Check if device supports notifications
+      if (!Device.isDevice) {
+        return { status: 'undetermined', canAskAgain: false };
+      }
+
+      const { status } = await Notifications.getPermissionsAsync();
+      const statusString = String(status);
+      
+      return {
+        status: statusString === 'granted' ? 'granted' : statusString === 'denied' ? 'denied' : 'undetermined',
+        canAskAgain: statusString !== 'denied',
+      };
+    } catch (error) {
+      logger.error('Failed to get notification permission status', { error });
+      return { status: 'undetermined', canAskAgain: false };
+    }
+  }
+
+  /**
+   * Request notification permission with better UX
+   * Call this after showing an in-app explanation to the user
+   */
+  async requestPermission(): Promise<NotificationPermissionStatus> {
+    try {
       if (!Device.isDevice) {
         logger.warn('Must use physical device for Push Notifications');
-        return null;
+        return { status: 'undetermined', canAskAgain: false };
       }
 
-      // Get existing permission status
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
+      const { status } = await Notifications.requestPermissionsAsync();
+      const statusString = String(status);
+      
+      const result: NotificationPermissionStatus = {
+        status: statusString === 'granted' ? 'granted' : statusString === 'denied' ? 'denied' : 'undetermined',
+        canAskAgain: statusString !== 'denied',
+      };
 
-      // Request permission if not granted
-      if (String(existingStatus) !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
+      if (result.status === 'granted') {
+        // Initialize token after permission granted
+        await this.initializeToken();
       }
 
-      if (String(finalStatus) !== 'granted') {
-        logger.warn('Failed to get push token for push notification!');
-        return null;
-      }
+      return result;
+    } catch (error) {
+      logger.error('Failed to request notification permission', { error });
+      return { status: 'denied', canAskAgain: false };
+    }
+  }
 
-      // Get the token
+  /**
+   * Initialize token (called after permission is granted)
+   */
+  private async initializeToken(): Promise<string | null> {
+    try {
       const tokenData = await Notifications.getExpoPushTokenAsync();
       const token = tokenData.data;
       this.expoPushToken = token;
@@ -73,7 +113,42 @@ class NotificationService {
         // Non-critical - continue without backend registration
       }
 
-      // Configure notification channel for Android
+      logger.info('Push notification token initialized');
+      return token;
+    } catch (error) {
+      logger.error('Failed to initialize push token', { error });
+      return null;
+    }
+  }
+
+  async initialize(autoRequest: boolean = false): Promise<string | null> {
+    try {
+      // Check if device supports notifications
+      if (!Device.isDevice) {
+        logger.warn('Must use physical device for Push Notifications');
+        return null;
+      }
+
+      // Get existing permission status
+      const permissionStatus = await this.getPermissionStatus();
+
+      // If already granted, initialize token
+      if (permissionStatus.status === 'granted') {
+        return await this.initializeToken();
+      }
+
+      // If auto-request is enabled and we can ask, request permission
+      if (autoRequest && permissionStatus.canAskAgain) {
+        const result = await this.requestPermission();
+        if (result.status === 'granted') {
+          return this.expoPushToken;
+        }
+      }
+
+      // Set flag to request permission later (via explicit user action)
+      this.shouldRequestPermission = permissionStatus.canAskAgain;
+
+      // Configure notification channel for Android (even without permission)
       if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('default', {
           name: 'default',
@@ -89,8 +164,8 @@ class NotificationService {
       // Set up listeners
       this.setupListeners();
 
-      logger.info('Push notifications initialized successfully');
-      return token;
+      logger.info('Push notifications ready for permission request');
+      return null;
     } catch (error) {
       logger.error('Error initializing push notifications', { error });
       return null;
@@ -155,11 +230,19 @@ class NotificationService {
     );
   }
 
-  private handleNotificationReceived(notification: Notifications.Notification) {
+  private async handleNotificationReceived(notification: Notifications.Notification) {
     const { data } = notification.request.content;
 
     // Handle different notification types with safe type checking
     const notificationType = data && typeof data['type'] === 'string' ? data['type'] : '';
+
+    // Update badge count when notification is received
+    try {
+      const currentBadgeCount = await this.getBadgeCount();
+      await this.setBadgeCount(currentBadgeCount + 1);
+    } catch (error) {
+      logger.error('Failed to update badge count on notification received', { error });
+    }
 
     switch (notificationType) {
       case 'match':
@@ -174,10 +257,21 @@ class NotificationService {
     }
   }
 
-  private handleNotificationResponse(data: Record<string, unknown>) {
+  private async handleNotificationResponse(data: Record<string, unknown>) {
     // Navigate to appropriate screen based on notification type
     const notificationType = typeof data['type'] === 'string' ? data['type'] : '';
     const matchId = typeof data['matchId'] === 'string' ? data['matchId'] : '';
+
+    // Clear badge count or reduce it when user taps notification
+    // (App will refresh badge count when it comes to foreground)
+    try {
+      const currentBadgeCount = await this.getBadgeCount();
+      if (currentBadgeCount > 0) {
+        await this.setBadgeCount(Math.max(0, currentBadgeCount - 1));
+      }
+    } catch (error) {
+      logger.error('Failed to update badge count on notification response', { error });
+    }
 
     switch (notificationType) {
       case 'match':
@@ -451,5 +545,5 @@ class NotificationService {
 // Export a singleton instance
 export const notificationService = new NotificationService();
 export const initializeNotificationsService = () => notificationService.initialize();
-export { NotificationService };
-export default notificationService;
+// Export permission methods for use in components
+export { notificationService as default };

@@ -17,13 +17,8 @@ import {
   View,
   StyleSheet,
   Animated,
-  PanResponder,
-  Dimensions,
-  type TextStyle,
 } from 'react-native';
 import { useTheme } from '@/theme';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface PremiumButtonProps {
   title: string;
@@ -65,7 +60,7 @@ function PremiumButtonComponent({
   style,
 }: PremiumButtonProps): React.JSX.Element {
   const theme = useTheme();
-  const [isPressed, setIsPressed] = useState(false);
+  const [, setIsPressed] = useState(false);
   const [animatedScale] = useState(() => new Animated.Value(1));
   const [animatedGlow] = useState(() => new Animated.Value(0));
 

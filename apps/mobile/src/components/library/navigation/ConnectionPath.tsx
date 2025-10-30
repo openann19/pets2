@@ -18,27 +18,31 @@ export const ConnectionPath: React.FC<ConnectionPathProps> = ({
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- useTheme is properly typed to return AppTheme, throws if Provider missing
   const theme: AppTheme = useTheme();
-  
-  const styles = React.useMemo(() => StyleSheet.create({
-    connectionPath: {
-      flex: 1,
-      position: 'relative',
-    },
-    pathSegment: {
-      position: 'absolute',
-      height: 2,
-      backgroundColor: 'rgba(255,255,255,0.3)',
-    },
-    pathDot: {
-      position: 'absolute',
-      width: 12,
-      height: 12,
-      borderRadius: 6,
-      borderWidth: 2,
-      borderColor: theme.colors.bg,
-    },
-  }), [theme.colors.bg]);
-  
+
+  const styles = React.useMemo(
+    () =>
+      StyleSheet.create({
+        connectionPath: {
+          flex: 1,
+          position: 'relative',
+        },
+        pathSegment: {
+          position: 'absolute',
+          height: 2,
+          backgroundColor: 'rgba(255,255,255,0.3)',
+        },
+        pathDot: {
+          position: 'absolute',
+          width: 12,
+          height: 12,
+          borderRadius: 6,
+          borderWidth: 2,
+          borderColor: theme.colors.bg,
+        },
+      }),
+    [theme.colors.bg],
+  );
+
   const pathPoints = memories.map((_, index) => {
     const x = (index / (memories.length - 1)) * (screenWidth - 80) + 40;
     const y = screenHeight * 0.85;

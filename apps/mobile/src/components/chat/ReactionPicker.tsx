@@ -3,7 +3,6 @@
  * Displays emoji reactions for messages
  */
 
-import { useTheme } from '@mobile/theme';
 import { useState } from 'react';
 import {
   FlatList,
@@ -44,7 +43,6 @@ export function ReactionPicker({
   onSelect,
   position,
 }: ReactionPickerProps): JSX.Element {
-  const { colors } = useTheme();
   const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
 
   const handleSelect = (reaction: string): void => {

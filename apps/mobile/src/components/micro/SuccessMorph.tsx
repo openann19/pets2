@@ -73,7 +73,7 @@ export function useSuccessMorph(): UseSuccessMorphReturn {
       withTiming(1, {
         duration: motion.duration.base,
         easing: getEasingArray('emphasized'),
-      })
+      }),
     );
 
     // Background pulse: opacity +2%
@@ -84,7 +84,7 @@ export function useSuccessMorph(): UseSuccessMorphReturn {
       withTiming(1, {
         duration: motion.duration.base,
         easing: getEasingArray('emphasized'),
-      })
+      }),
     );
 
     // Text fade out
@@ -140,12 +140,9 @@ export function SuccessMorphButton({
         {isComplete ? (
           <Text style={[{ color: 'white', fontSize: 24 }, textStyle]}>✓</Text>
         ) : (
-          <Animated.View style={textAnimatedStyle as any}>
-            {children}
-          </Animated.View>
+          <Animated.View style={textAnimatedStyle as any}>{children}</Animated.View>
         )}
       </Animated.View>
     </Pressable>
   );
 }
-

@@ -3,9 +3,17 @@ import { logger } from './logger';
 import type { NetworkStats, CallData } from './WebRTCService';
 
 export interface CallTelemetryEvent {
-  eventType: 'call_initiated' | 'call_answered' | 'call_rejected' | 'call_ended' | 
-            'call_failed' | 'network_quality_changed' | 'device_check_completed' |
-            'permission_denied' | 'reconnection_attempt' | 'video_quality_changed';
+  eventType:
+    | 'call_initiated'
+    | 'call_answered'
+    | 'call_rejected'
+    | 'call_ended'
+    | 'call_failed'
+    | 'network_quality_changed'
+    | 'device_check_completed'
+    | 'permission_denied'
+    | 'reconnection_attempt'
+    | 'video_quality_changed';
   timestamp: number;
   sessionId: string;
   callId?: string;
@@ -21,7 +29,7 @@ export interface CallSessionMetrics {
   startTime: number;
   endTime?: number;
   endReason: 'completed' | 'rejected' | 'failed' | 'network_error' | 'permission_error';
-  
+
   // Network metrics
   networkStats: {
     initialQuality: string;
@@ -32,7 +40,7 @@ export interface CallSessionMetrics {
     avgRtt: number;
     reconnectionAttempts: number;
   };
-  
+
   // Device metrics
   deviceInfo: {
     platform: string;
@@ -42,7 +50,7 @@ export interface CallSessionMetrics {
     hasMicrophone: boolean;
     networkType: string;
   };
-  
+
   // Quality metrics
   qualityMetrics: {
     videoQualityChanges: number;
@@ -50,7 +58,7 @@ export interface CallSessionMetrics {
     videoIssues: number;
     userReportedIssues: string[];
   };
-  
+
   // Performance metrics
   performance: {
     setupTime: number; // Time from initiation to connection
@@ -113,7 +121,7 @@ class CallTelemetryService {
       duration: 0,
       startTime,
       endReason: 'completed',
-      
+
       networkStats: {
         initialQuality: 'unknown',
         finalQuality: 'unknown',
@@ -123,7 +131,7 @@ class CallTelemetryService {
         avgRtt: 0,
         reconnectionAttempts: 0,
       },
-      
+
       deviceInfo: {
         platform: Platform.OS,
         osVersion: Platform.Version.toString(),
@@ -131,14 +139,14 @@ class CallTelemetryService {
         hasMicrophone: false,
         networkType: 'unknown',
       },
-      
+
       qualityMetrics: {
         videoQualityChanges: 0,
         audioIssues: 0,
         videoIssues: 0,
         userReportedIssues: [],
       },
-      
+
       performance: {
         setupTime: 0,
         firstMediaTime: 0,
@@ -147,7 +155,7 @@ class CallTelemetryService {
     };
 
     this.activeSessions.set(sessionId, session);
-    
+
     this.trackEvent({
       eventType: 'call_initiated',
       timestamp: startTime,
@@ -158,7 +166,7 @@ class CallTelemetryService {
         callType: callData.callType,
         matchId: callData.matchId,
         platform: Platform.OS,
-      }
+      },
     });
 
     logger.info('Call session started', { sessionId, callId: callData.callId });
@@ -189,7 +197,7 @@ class CallTelemetryService {
         endReason,
         networkStats: session.networkStats,
         qualityMetrics: session.qualityMetrics,
-      }
+      },
     });
 
     // Log session summary
@@ -218,10 +226,11 @@ class CallTelemetryService {
     }
     session.networkStats.finalQuality = networkStats.quality;
     session.networkStats.qualityChanges++;
-    
+
     // Running averages (simplified)
     session.networkStats.avgBitrate = (session.networkStats.avgBitrate + networkStats.bitrate) / 2;
-    session.networkStats.avgPacketLoss = (session.networkStats.avgPacketLoss + networkStats.packetLoss) / 2;
+    session.networkStats.avgPacketLoss =
+      (session.networkStats.avgPacketLoss + networkStats.packetLoss) / 2;
     session.networkStats.avgRtt = (session.networkStats.avgRtt + networkStats.rtt) / 2;
 
     this.trackEvent({
@@ -235,14 +244,18 @@ class CallTelemetryService {
         packetLoss: networkStats.packetLoss,
         rtt: networkStats.rtt,
         jitter: networkStats.jitter,
-      }
+      },
     });
   }
 
   /**
    * Track video quality changes
    */
-  trackVideoQualityChange(sessionId: string, newQuality: '720p' | '480p' | 'audio-only', reason: string): void {
+  trackVideoQualityChange(
+    sessionId: string,
+    newQuality: '720p' | '480p' | 'audio-only',
+    reason: string,
+  ): void {
     const session = this.activeSessions.get(sessionId);
     if (!session) return;
 
@@ -257,7 +270,7 @@ class CallTelemetryService {
         newQuality,
         reason,
         changeCount: session.qualityMetrics.videoQualityChanges,
-      }
+      },
     });
   }
 
@@ -279,7 +292,7 @@ class CallTelemetryService {
         attempt,
         reason,
         totalAttempts: session.networkStats.reconnectionAttempts,
-      }
+      },
     });
   }
 
@@ -295,7 +308,7 @@ class CallTelemetryService {
         duration: telemetry.checkDuration,
         results: telemetry.results,
         networkDetails: telemetry.networkDetails,
-      }
+      },
     });
 
     // Update session device info if session exists
@@ -310,7 +323,11 @@ class CallTelemetryService {
   /**
    * Track permission denial
    */
-  trackPermissionDenied(sessionId: string, permissionType: 'audio' | 'video' | 'both', reason: string): void {
+  trackPermissionDenied(
+    sessionId: string,
+    permissionType: 'audio' | 'video' | 'both',
+    reason: string,
+  ): void {
     this.trackEvent({
       eventType: 'permission_denied',
       timestamp: Date.now(),
@@ -319,16 +336,20 @@ class CallTelemetryService {
         permissionType,
         reason,
         platform: Platform.OS,
-      }
+      },
     });
   }
 
   /**
    * Track call failure
    */
-  trackCallFailure(sessionId: string, error: string, stage: 'setup' | 'connection' | 'media' | 'network'): void {
+  trackCallFailure(
+    sessionId: string,
+    error: string,
+    stage: 'setup' | 'connection' | 'media' | 'network',
+  ): void {
     const session = this.activeSessions.get(sessionId);
-    
+
     this.trackEvent({
       eventType: 'call_failed',
       timestamp: Date.now(),
@@ -339,7 +360,7 @@ class CallTelemetryService {
         stage,
         platform: Platform.OS,
         duration: session ? Date.now() - session.startTime : 0,
-      }
+      },
     });
 
     // End session with failure reason
@@ -351,7 +372,11 @@ class CallTelemetryService {
   /**
    * Track performance metrics
    */
-  trackPerformanceMetric(sessionId: string, metric: 'setup' | 'first_media' | 'ice_connection', duration: number): void {
+  trackPerformanceMetric(
+    sessionId: string,
+    metric: 'setup' | 'first_media' | 'ice_connection',
+    duration: number,
+  ): void {
     const session = this.activeSessions.get(sessionId);
     if (!session) return;
 
@@ -375,7 +400,7 @@ class CallTelemetryService {
    */
   private trackEvent(event: CallTelemetryEvent): void {
     this.events.push(event);
-    
+
     // Keep only last 1000 events to prevent memory issues
     if (this.events.length > 1000) {
       this.events = this.events.slice(-1000);
@@ -402,7 +427,7 @@ class CallTelemetryService {
    * Get all events for a session
    */
   getSessionEvents(sessionId: string): CallTelemetryEvent[] {
-    return this.events.filter(event => event.sessionId === sessionId);
+    return this.events.filter((event) => event.sessionId === sessionId);
   }
 
   /**
@@ -420,20 +445,22 @@ class CallTelemetryService {
     };
   } {
     const activeSessions = Array.from(this.activeSessions.values());
-    const completedCalls = this.events.filter(e => e.eventType === 'call_ended');
-    const failedCalls = this.events.filter(e => e.eventType === 'call_failed');
-    
+    const completedCalls = this.events.filter((e) => e.eventType === 'call_ended');
+    const failedCalls = this.events.filter((e) => e.eventType === 'call_failed');
+
     const totalCalls = completedCalls.length + failedCalls.length;
     const successRate = totalCalls > 0 ? (completedCalls.length / totalCalls) * 100 : 0;
-    
-    const avgDuration = completedCalls.length > 0 
-      ? completedCalls.reduce((sum, event) => sum + ((event.data.duration as number) || 0), 0) / completedCalls.length
-      : 0;
+
+    const avgDuration =
+      completedCalls.length > 0
+        ? completedCalls.reduce((sum, event) => sum + ((event.data.duration as number) || 0), 0) /
+          completedCalls.length
+        : 0;
 
     // Count failure reasons
     const failureReasons: Record<string, number> = {};
-    failedCalls.forEach(event => {
-      const reason = event.data.error as string || 'unknown';
+    failedCalls.forEach((event) => {
+      const reason = (event.data.error as string) || 'unknown';
       failureReasons[reason] = (failureReasons[reason] || 0) + 1;
     });
 
@@ -441,12 +468,12 @@ class CallTelemetryService {
       events: this.events,
       activeSessions,
       summary: {
-        totalSessions: this.events.filter(e => e.eventType === 'call_initiated').length,
+        totalSessions: this.events.filter((e) => e.eventType === 'call_initiated').length,
         totalEvents: this.events.length,
         avgCallDuration: avgDuration,
         successRate,
         commonFailureReasons: failureReasons,
-      }
+      },
     };
   }
 
@@ -454,10 +481,10 @@ class CallTelemetryService {
    * Clear old telemetry data
    */
   clearOldData(olderThanHours: number = 24): void {
-    const cutoffTime = Date.now() - (olderThanHours * 60 * 60 * 1000);
-    
-    this.events = this.events.filter(event => event.timestamp > cutoffTime);
-    
+    const cutoffTime = Date.now() - olderThanHours * 60 * 60 * 1000;
+
+    this.events = this.events.filter((event) => event.timestamp > cutoffTime);
+
     logger.info('Cleared old telemetry data', {
       cutoffTime: new Date(cutoffTime).toISOString(),
       remainingEvents: this.events.length,

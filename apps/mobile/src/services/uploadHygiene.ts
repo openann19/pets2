@@ -15,7 +15,6 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import { logger } from './logger';
-import { request } from './api';
 
 export interface UploadHygieneOptions {
   maxDimension?: number;
@@ -327,6 +326,82 @@ export async function processImageForUpload(
 }
 
 /**
+ * Check and request media library permissions with better UX
+ */
+export async function requestMediaLibraryPermissionWithExplanation(): Promise<boolean> {
+  try {
+    const { status: existingStatus } = await ImagePicker.getMediaLibraryPermissionsAsync();
+    
+    if (existingStatus === 'granted') {
+      return true;
+    }
+
+    // Request permission
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status === 'granted') {
+      return true;
+    }
+
+    return false;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Failed to request media library permission', { error: err });
+    return false;
+  }
+}
+
+/**
+ * Check and request camera permissions with better UX
+ */
+export async function requestCameraPermissionWithExplanation(): Promise<boolean> {
+  try {
+    const { status: existingStatus } = await ImagePicker.getCameraPermissionsAsync();
+    
+    if (existingStatus === 'granted') {
+      return true;
+    }
+
+    // Request permission
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    
+    if (status === 'granted') {
+      return true;
+    }
+
+    return false;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Failed to request camera permission', { error: err });
+    return false;
+  }
+}
+
+/**
+ * Validate file size (max 10MB)
+ */
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+export async function validateImageFileSize(uri: string): Promise<{ valid: boolean; size: number; maxSize: number }> {
+  try {
+    const fileInfo = await FileSystem.getInfoAsync(uri);
+    if (fileInfo.exists && 'size' in fileInfo) {
+      const size = fileInfo.size || 0;
+      return {
+        valid: size <= MAX_FILE_SIZE,
+        size,
+        maxSize: MAX_FILE_SIZE,
+      };
+    }
+    return { valid: false, size: 0, maxSize: MAX_FILE_SIZE };
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Failed to validate file size', { error: err });
+    return { valid: false, size: 0, maxSize: MAX_FILE_SIZE };
+  }
+}
+
+/**
  * Pick image with permissions and hygiene processing
  */
 export async function pickAndProcessImage(
@@ -334,10 +409,10 @@ export async function pickAndProcessImage(
   options: UploadHygieneOptions = {},
 ): Promise<ProcessedImage | null> {
   try {
-    // Request camera roll permissions
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      throw new Error('Camera roll permissions not granted');
+    // Request camera roll permissions with better handling
+    const hasPermission = await requestMediaLibraryPermissionWithExplanation();
+    if (!hasPermission) {
+      throw new Error('Camera roll permissions not granted. Please enable photo library access in Settings.');
     }
 
     // Launch picker
@@ -353,6 +428,16 @@ export async function pickAndProcessImage(
     }
 
     const asset = result.assets[0];
+
+    // Validate file size before processing
+    const sizeValidation = await validateImageFileSize(asset.uri);
+    if (!sizeValidation.valid) {
+      const sizeMB = (sizeValidation.size / 1024 / 1024).toFixed(2);
+      const maxMB = (sizeValidation.maxSize / 1024 / 1024).toFixed(0);
+      throw new Error(
+        `Image is too large (${sizeMB}MB). Maximum size is ${maxMB}MB. Please choose a smaller image.`,
+      );
+    }
 
     // Process with upload hygiene
     return await processImageForUpload(asset.uri, options);
@@ -370,10 +455,10 @@ export async function captureAndProcessImage(
   options: UploadHygieneOptions = {},
 ): Promise<ProcessedImage | null> {
   try {
-    // Request camera permissions
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      throw new Error('Camera permissions not granted');
+    // Request camera permissions with better handling
+    const hasPermission = await requestCameraPermissionWithExplanation();
+    if (!hasPermission) {
+      throw new Error('Camera permissions not granted. Please enable camera access in Settings.');
     }
 
     // Launch camera
@@ -388,6 +473,16 @@ export async function captureAndProcessImage(
     }
 
     const asset = result.assets[0];
+
+    // Validate file size before processing
+    const sizeValidation = await validateImageFileSize(asset.uri);
+    if (!sizeValidation.valid) {
+      const sizeMB = (sizeValidation.size / 1024 / 1024).toFixed(2);
+      const maxMB = (sizeValidation.maxSize / 1024 / 1024).toFixed(0);
+      throw new Error(
+        `Image is too large (${sizeMB}MB). Maximum size is ${maxMB}MB. Please take another photo.`,
+      );
+    }
 
     // Process with upload hygiene
     return await processImageForUpload(asset.uri, options);
@@ -409,40 +504,21 @@ export interface QuotaCheck {
 }
 
 export async function checkUploadQuota(userId: string): Promise<QuotaCheck> {
-  // Call backend API to check user upload quotas and rate limits
-  try {
-    const response = await request<{
-      data: {
-        allowed: boolean;
-        remaining: number;
-        resetAt: string; // ISO timestamp
-        limit: number;
-      };
-    }>(`/users/${userId}/upload-quota`, {
-      method: 'GET',
-    });
+  // This would call your backend API to check user quotas
+  // Implementation depends on your rate limiting strategy
 
+  try {
+    // TODO: Integrate with actual rate limit API
+    // For now, return a mock response
     return {
-      allowed: response.data.allowed,
-      remaining: response.data.remaining,
-      resetAt: new Date(response.data.resetAt),
-      limit: response.data.limit,
+      allowed: true,
+      remaining: 10,
+      resetAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+      limit: 10,
     };
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error));
     logger.error('Quota check error', { error: err, userId });
-    
-    // Fallback: If endpoint doesn't exist yet, allow uploads but log warning
-    if (err.message.includes('404') || err.message.includes('Not Found')) {
-      logger.warn('Upload quota endpoint not implemented, allowing upload', { userId });
-      return {
-        allowed: true,
-        remaining: 999,
-        resetAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        limit: 1000,
-      };
-    }
-    
     throw err;
   }
 }

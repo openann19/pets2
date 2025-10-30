@@ -100,9 +100,7 @@ describe('useSwipeActions', () => {
   });
 
   it('should set isProcessing during action', async () => {
-    const onLike = jest.fn(
-      () => new Promise((resolve) => setTimeout(resolve, 100)),
-    );
+    const onLike = jest.fn(() => new Promise((resolve) => setTimeout(resolve, 100)));
     const { result } = renderHook(() =>
       useSwipeActions({
         onLike,
@@ -129,10 +127,7 @@ describe('useSwipeActions', () => {
     );
 
     await act(async () => {
-      await Promise.all([
-        result.current.handleLike(mockPet),
-        result.current.handleLike(mockPet),
-      ]);
+      await Promise.all([result.current.handleLike(mockPet), result.current.handleLike(mockPet)]);
     });
 
     expect(onLike).toHaveBeenCalledTimes(1);
@@ -168,4 +163,3 @@ describe('useSwipeActions', () => {
     expect(logger.info).toHaveBeenCalled();
   });
 });
-

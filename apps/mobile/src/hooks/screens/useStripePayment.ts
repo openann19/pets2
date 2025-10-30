@@ -6,7 +6,10 @@ import { useCallback, useState } from 'react';
 import { Linking } from 'react-native';
 import { logger } from '@pawfectmatch/core';
 import { premiumService, type SubscriptionPlan } from '../../services/PremiumService';
-import { paymentErrorService, type PaymentError } from '../../services/PaymentErrorLocalizationService';
+import {
+  paymentErrorService,
+  type PaymentError,
+} from '../../services/PaymentErrorLocalizationService';
 
 interface PaymentState {
   isProcessing: boolean;
@@ -91,19 +94,21 @@ export const useStripePayment = (): UseStripePaymentReturn => {
           code: 'CHECKOUT_SESSION_FAILED',
           details: { originalError: error },
         };
-        
+
         setState((prev) => ({
           ...prev,
           isProcessing: false,
           error: paymentError.message,
         }));
-        
+
         logger.error('Failed to create Stripe checkout session', {
           error,
           planId,
         });
 
-        paymentErrorService.showErrorAlert(paymentError, () => createCheckoutSession(planId, successUrl, cancelUrl));
+        paymentErrorService.showErrorAlert(paymentError, () =>
+          createCheckoutSession(planId, successUrl, cancelUrl),
+        );
         return null;
       }
     },
@@ -147,20 +152,22 @@ export const useStripePayment = (): UseStripePaymentReturn => {
           code: 'PAYMENT_FAILED',
           details: { originalError: error },
         };
-        
+
         setState((prev) => ({
           ...prev,
           isProcessing: false,
           error: paymentError.message,
         }));
-        
+
         logger.error('Payment processing failed', {
           error,
           paymentMethodId,
           amount,
         });
 
-        paymentErrorService.showErrorAlert(paymentError, () => processPayment(paymentMethodId, amount));
+        paymentErrorService.showErrorAlert(paymentError, () =>
+          processPayment(paymentMethodId, amount),
+        );
         return false;
       }
     },

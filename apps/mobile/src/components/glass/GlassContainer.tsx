@@ -1,5 +1,5 @@
 import React, { type ReactNode } from 'react';
-import { View, type ViewStyle, type ViewProps, StyleSheet } from 'react-native';
+import { type ViewStyle, type ViewProps, StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';

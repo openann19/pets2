@@ -12,7 +12,7 @@
  */
 
 import type { ReactNode } from 'react';
-import React, { forwardRef, type Ref } from 'react';
+import { forwardRef, type Ref } from 'react';
 import { View, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { type AnimatedStyleProp } from 'react-native-reanimated';
@@ -20,7 +20,6 @@ import Animated, { type AnimatedStyleProp } from 'react-native-reanimated';
 import { useGlowAnimation, usePressAnimation } from '../../hooks/useUnifiedAnimations';
 import { useMagneticEffect, useRippleEffect, useShimmerEffect } from '../../hooks/animations';
 import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
 
 // === TYPES ===
 interface EffectWrapperProps {
@@ -70,10 +69,10 @@ interface WithMagneticFXProps extends EffectWrapperProps {
 
 export const WithMagneticFX = forwardRef<Animated.View, WithMagneticFXProps>(
   (
-    { children, sensitivity = 0.3, maxDistance = 30, style, disabled = false },
+    { children, sensitivity: _sensitivity = 0.3, maxDistance: _maxDistance = 30, style, disabled = false },
     ref: Ref<Animated.View>,
   ) => {
-    const { magneticStyle, handleMagneticMove, resetMagnetic } = useMagneticEffect(!disabled);
+    const { magneticStyle } = useMagneticEffect(!disabled);
 
     return (
       <Animated.View
@@ -97,13 +96,14 @@ export const WithRippleFX = forwardRef<View, WithRippleFXProps>(
   ({ children, color, style, disabled = false }, ref) => {
     const theme = useTheme();
     const rippleColor = color ?? theme.colors.onPrimary + '4D';
-    const { triggerRipple, rippleStyle } = useRippleEffect();
+    const { rippleStyle } = useRippleEffect();
 
-    const handlePressIn = () => {
-      if (!disabled) {
-        triggerRipple();
-      }
-    };
+    // Press handler reserved for future implementation
+    // const handlePressIn = () => {
+    //   if (!disabled) {
+    //     triggerRipple();
+    //   }
+    // };
 
     return (
       <View
@@ -212,7 +212,7 @@ interface WithGradientFXProps extends EffectWrapperProps {
 }
 
 export const WithGradientFX = forwardRef<View, WithGradientFXProps>(
-  ({ children, gradient, colors, angle = 135, style }, ref) => {
+  ({ children, gradient, colors, angle: _angle = 135, style }, ref) => {
     const theme = useTheme();
     const map: Record<string, readonly [string, string]> = {
       primary: theme.palette.gradients.primary,

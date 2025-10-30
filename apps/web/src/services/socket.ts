@@ -21,7 +21,7 @@ export interface SocketServiceConfig {
   autoConnect?: boolean;
 }
 
-type EventHandler = (...args: any[]) => void;
+type EventHandler = (...args: unknown[]) => void;
 type EventHandlerMap = Map<string, EventHandler[]>;
 
 class SocketService {
@@ -176,7 +176,7 @@ class SocketService {
     }
   }
 
-  emit(event: string, data?: any): void {
+  emit(event: string, data?: unknown): void {
     const handlers = this.eventHandlers.get(event);
     if (handlers) {
       handlers.forEach((handler) => { handler(data); });

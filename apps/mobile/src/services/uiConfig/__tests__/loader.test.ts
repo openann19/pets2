@@ -132,10 +132,7 @@ describe('UI Config SDK', () => {
       const config = await loadPreviewConfig('ABC123');
 
       expect(config).toEqual(previewConfig);
-      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        '@ui_config:preview_code',
-        'ABC123',
-      );
+      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith('@ui_config:preview_code', 'ABC123');
     });
 
     it('should return null if preview code is invalid', async () => {
@@ -221,4 +218,3 @@ describe('UI Config SDK', () => {
     });
   });
 });
-

@@ -174,9 +174,10 @@ export const GradientText: React.FC<GradientTextProps> = ({
     transform: [{ translateX: shimmerOffset.value }],
   }));
 
-  const glowStyle = useAnimatedStyle(() => ({
-    textShadowRadius: glowIntensity.value * 10,
-  }));
+  // Glow style reserved for future implementation
+  // const glowStyle = useAnimatedStyle(() => ({
+  //   textShadowRadius: glowIntensity.value * 10,
+  // }));
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -283,7 +284,7 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
   delay = 0,
   duration = 500,
   style,
-  onAnimationComplete,
+  onAnimationComplete: _onAnimationComplete,
 }) => {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(50);
@@ -336,7 +337,7 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
   }));
 
   return (
-    <Animated.Text style={StyleSheet.flatten([style, animatedStyle])}>{children}</Animated.Text>
+    <Animated.Text style={[animatedStyle, style] as any}>{children}</Animated.Text>
   );
 };
 

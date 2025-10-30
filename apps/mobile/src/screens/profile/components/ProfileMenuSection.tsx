@@ -22,7 +22,12 @@ interface ProfileMenuSectionProps {
 }
 
 export const ProfileMenuSection: React.FC<ProfileMenuSectionProps> = React.memo(
-  ({ onNavigateToMyPets, onNavigateToSettings, onNavigateToCreatePet, onNavigateToHelpSupport }) => {
+  ({
+    onNavigateToMyPets,
+    onNavigateToSettings,
+    onNavigateToCreatePet,
+    onNavigateToHelpSupport,
+  }) => {
     const theme = useTheme();
     const menuItems = useMemo<MenuItem[]>(
       () => [

@@ -82,9 +82,13 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
   describe('SwitchFlick', () => {
     it('should render with correct initial value', async () => {
       const { SwitchFlick } = await import('@/components/micro/SwitchFlick');
-      
+
       const { getByTestId } = render(
-        <SwitchFlick value={true} onValueChange={() => {}} testID="test-switch" />
+        <SwitchFlick
+          value={true}
+          onValueChange={() => {}}
+          testID="test-switch"
+        />,
       );
 
       const switchComponent = getByTestId('test-switch');
@@ -96,7 +100,11 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
       const mockOnValueChange = jest.fn();
 
       const { getByTestId } = render(
-        <SwitchFlick value={false} onValueChange={mockOnValueChange} testID="test-switch" />
+        <SwitchFlick
+          value={false}
+          onValueChange={mockOnValueChange}
+          testID="test-switch"
+        />,
       );
 
       const switchComponent = getByTestId('test-switch');
@@ -110,12 +118,12 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
       const mockOnValueChange = jest.fn();
 
       const { getByTestId } = render(
-        <SwitchFlick 
-          value={false} 
-          onValueChange={mockOnValueChange} 
+        <SwitchFlick
+          value={false}
+          onValueChange={mockOnValueChange}
           disabled={true}
-          testID="test-switch" 
-        />
+          testID="test-switch"
+        />,
       );
 
       const switchComponent = getByTestId('test-switch');
@@ -127,13 +135,13 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
   describe('CheckboxCheckDraw', () => {
     it('should render unchecked state', async () => {
       const { CheckboxCheckDraw } = await import('@/components/micro/CheckboxCheckDraw');
-      
+
       const { getByTestId } = render(
-        <CheckboxCheckDraw 
-          checked={false} 
-          onValueChange={() => {}} 
-          testID="test-checkbox" 
-        />
+        <CheckboxCheckDraw
+          checked={false}
+          onValueChange={() => {}}
+          testID="test-checkbox"
+        />,
       );
 
       const checkbox = getByTestId('test-checkbox');
@@ -142,13 +150,13 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
 
     it('should render checked state', async () => {
       const { CheckboxCheckDraw } = await import('@/components/micro/CheckboxCheckDraw');
-      
+
       const { getByTestId } = render(
-        <CheckboxCheckDraw 
-          checked={true} 
-          onValueChange={() => {}} 
-          testID="test-checkbox" 
-        />
+        <CheckboxCheckDraw
+          checked={true}
+          onValueChange={() => {}}
+          testID="test-checkbox"
+        />,
       );
 
       const checkbox = getByTestId('test-checkbox');
@@ -159,11 +167,11 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
   describe('SuccessMorphButton', () => {
     it('should render initial state', async () => {
       const { SuccessMorphButton } = await import('@/components/micro/SuccessMorph');
-      
+
       const { getByText } = render(
         <SuccessMorphButton onPress={() => {}}>
           <Text>Submit</Text>
-        </SuccessMorphButton>
+        </SuccessMorphButton>,
       );
 
       expect(getByText('Submit')).toBeTruthy();
@@ -173,11 +181,14 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
   describe('Interactive v2', () => {
     it('should render with default variant', async () => {
       const { Interactive } = await import('@/components/primitives/Interactive');
-      
+
       const { getByTestId } = render(
-        <Interactive onPress={() => {}} testID="test-interactive">
+        <Interactive
+          onPress={() => {}}
+          testID="test-interactive"
+        >
           <View testID="child" />
-        </Interactive>
+        </Interactive>,
       );
 
       const interactive = getByTestId('test-interactive');
@@ -186,11 +197,15 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
 
     it('should respect variant prop', async () => {
       const { Interactive } = await import('@/components/primitives/Interactive');
-      
+
       const { getByTestId } = render(
-        <Interactive variant="lift" onPress={() => {}} testID="test-interactive">
+        <Interactive
+          variant="lift"
+          onPress={() => {}}
+          testID="test-interactive"
+        >
           <View testID="child" />
-        </Interactive>
+        </Interactive>,
       );
 
       const interactive = getByTestId('test-interactive');
@@ -198,4 +213,3 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
     });
   });
 });
-

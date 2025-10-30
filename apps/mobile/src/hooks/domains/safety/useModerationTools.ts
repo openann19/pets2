@@ -50,7 +50,9 @@ interface UseModerationToolsOptions {
   navigation?: NavigationProp<RootStackParamList>;
 }
 
-export const useModerationTools = (options?: UseModerationToolsOptions): UseModerationToolsReturn => {
+export const useModerationTools = (
+  options?: UseModerationToolsOptions,
+): UseModerationToolsReturn => {
   const { navigation } = options || {};
   const [moderationStats, setModerationStats] = useState<ModerationStats>({
     pendingReports: 12,

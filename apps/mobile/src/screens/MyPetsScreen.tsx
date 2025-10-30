@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { Pet } from '@pawfectmatch/core';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -24,12 +24,20 @@ import { useDoubleTapMetrics, usePinchMetrics } from '../hooks/useInteractionMet
 import type { RootStackScreenProps } from '../navigation/types';
 import { logger } from '../services/logger';
 import { useReduceMotion } from '../hooks/useReducedMotion';
+import { useNetworkStatus } from '../hooks/useNetworkStatus';
+import { useErrorHandling } from '../hooks/useErrorHandling';
+import { useTabStatePreservation } from '../hooks/navigation';
+import { EmptyStates } from '../components/common';
+import { ListSkeleton } from '../components/skeletons';
 
 const { width: _screenWidth } = Dimensions.get('window');
 
 type MyPetsScreenProps = RootStackScreenProps<'MyPets'>;
 
 export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
+  const listRef = useRef<FlatList<Pet>>(null);
+  const theme = useTheme();
+
   const {
     pets,
     isLoading,
@@ -41,11 +49,46 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
     getIntentLabel,
     handleDeletePet,
   } = useMyPetsScreen();
+
+  // Network status monitoring
+  const { isOnline, isOffline } = useNetworkStatus({
+    onConnect: () => {
+      // Refetch pets when connection restored
+      loadPets();
+    },
+  });
+
+  // Error handling with retry
+  const {
+    error: errorHandlingError,
+    retry,
+    clearError,
+  } = useErrorHandling({
+    maxRetries: 3,
+    showAlert: false,
+    logError: true,
+  });
+
+  // Tab state preservation
+  const { updateScrollOffset, restoreState } = useTabStatePreservation({
+    tabName: 'MyPets',
+    scrollRef: listRef as any,
+    preserveScroll: true,
+  });
+
+  // Restore state when screen gains focus
+  useEffect(() => {
+    restoreState();
+  }, [restoreState]);
+
   const { startInteraction: startDoubleTap, endInteraction: endDoubleTap } = useDoubleTapMetrics();
   const { startInteraction: startPinch, endInteraction: endPinch } = usePinchMetrics();
   const reducedMotion = useReduceMotion();
 
-  const theme = useTheme();
+  const handleAddPet = useCallback(() => {
+    haptic.confirm();
+    navigation.navigate('CreatePet');
+  }, [navigation]);
 
   const handlePetLike = (pet: Pet) => {
     haptic.confirm();
@@ -60,8 +103,180 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
   }, [loadPets]);
 
   const renderPetCard = ({ item, index }: { item: Pet; index: number }) => {
-    return (
-      reducedMotion ? (
+    return reducedMotion ? (
+      <TouchableOpacity
+        style={styles.petCard}
+        testID={`pet-card-${item._id}`}
+        accessibilityLabel={`Pet profile for ${item.name}, ${item.breed}`}
+        accessibilityRole="button"
+        onPress={() => {
+          handleNavigateToPetDetails(item);
+        }}
+      >
+        {/* Pet Photo with Gestures */}
+        <View style={styles.petImageContainer}>
+          {item.photos && item.photos.length > 0 ? (
+            <DoubleTapLikePlus
+              onDoubleTap={() => {
+                handlePetLike(item);
+              }}
+              heartColor={theme.colors.danger}
+              particles={4}
+              haptics={{ enabled: true, style: 'light' }}
+            >
+              <PinchZoomPro
+                source={{
+                  uri: item.photos.find((p) => p.isPrimary)?.url ?? item.photos[0]?.url ?? '',
+                }}
+                width={120}
+                height={120}
+                minScale={1}
+                maxScale={2.5}
+                enableMomentum={false}
+                haptics={true}
+                onScaleChange={(scale) => {
+                  if (scale > 1.1) {
+                    startPinch('petPhoto', { petId: item.id });
+                  } else {
+                    endPinch('petPhoto', true);
+                  }
+                }}
+                backgroundColor={theme.colors.surface}
+              />
+            </DoubleTapLikePlus>
+          ) : (
+            <View style={styles.petImagePlaceholder}>
+              <Text style={styles.petImageEmoji}>{getSpeciesEmoji(item.species)}</Text>
+            </View>
+          )}
+
+          {/* Status badge */}
+          <View
+            style={StyleSheet.flatten([
+              styles.statusBadge,
+              { backgroundColor: getIntentColor(item.intent) },
+            ])}
+          >
+            <Text style={styles.statusBadgeText}>{getIntentLabel(item.intent)}</Text>
+          </View>
+
+          {/* Photo count */}
+          {item.photos && item.photos.length > 1 ? (
+            <View style={styles.photoCountBadge}>
+              <Ionicons
+                name="camera"
+                size={12}
+                color={theme.colors.bg}
+              />
+              <Text style={styles.photoCountText}>{item.photos.length}</Text>
+            </View>
+          ) : null}
+        </View>
+
+        {/* Pet Info */}
+        <View style={styles.petInfo}>
+          <View style={styles.petHeader}>
+            <Text style={styles.petName}>{item.name}</Text>
+            <Text style={styles.petSpecies}>{getSpeciesEmoji(item.species)}</Text>
+          </View>
+
+          <Text style={styles.petBreed}>{item.breed}</Text>
+
+          <View style={styles.petDetails}>
+            <Text style={styles.petDetail}>
+              {item.age} years • {item.gender} • {item.size}
+            </Text>
+          </View>
+
+          {/* Stats */}
+          <View style={styles.petStats}>
+            <View style={styles.stat}>
+              <Ionicons
+                name="eye"
+                size={14}
+                color={theme.colors.onMuted}
+              />
+              <Text style={styles.statText}>{item.analytics.views}</Text>
+            </View>
+            <View style={styles.stat}>
+              <Ionicons
+                name="heart"
+                size={14}
+                color={theme.colors.danger}
+              />
+              <Text style={styles.statText}>{item.analytics.likes}</Text>
+            </View>
+            <View style={styles.stat}>
+              <Ionicons
+                name="people"
+                size={14}
+                color={theme.colors.primary}
+              />
+              <Text style={styles.statText}>{item.analytics.matches}</Text>
+            </View>
+          </View>
+
+          {/* Action Buttons */}
+          <View style={styles.petActions}>
+            <TouchableOpacity
+              style={StyleSheet.flatten([styles.actionButton, styles.viewButton])}
+              testID="MyPetsScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => {
+                haptic.tap();
+                navigation.navigate('PetDetails', {
+                  petId: item.id,
+                  pet: item,
+                });
+              }}
+            >
+              <Ionicons
+                name="eye"
+                size={16}
+                color={theme.colors.onMuted}
+              />
+              <Text style={styles.viewButtonText}>View</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={StyleSheet.flatten([styles.actionButton, styles.editButton])}
+              testID="MyPetsScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => {
+                haptic.confirm();
+                navigation.navigate('EditPet', { petId: item.id, pet: item });
+              }}
+            >
+              <Ionicons
+                name="pencil"
+                size={16}
+                color={theme.colors.bg}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={StyleSheet.flatten([styles.actionButton, styles.deleteButton])}
+              testID="MyPetsScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => {
+                haptic.error();
+                handleDeletePet(item._id);
+              }}
+            >
+              <Ionicons
+                name="trash"
+                size={16}
+                color={theme.colors.bg}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </TouchableOpacity>
+    ) : (
+      <Animated.View entering={FadeInDown.duration(220).delay(index * 50)}>
         <TouchableOpacity
           style={styles.petCard}
           testID={`pet-card-${item._id}`}
@@ -178,8 +393,8 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
             <View style={styles.petActions}>
               <TouchableOpacity
                 style={StyleSheet.flatten([styles.actionButton, styles.viewButton])}
-                testID="MyPetsScreen-button-2"
-                accessibilityLabel="Interactive element"
+                testID={`view-button-${item._id}`}
+                accessibilityLabel={`View details for ${item.name}`}
                 accessibilityRole="button"
                 onPress={() => {
                   haptic.tap();
@@ -199,8 +414,8 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
 
               <TouchableOpacity
                 style={StyleSheet.flatten([styles.actionButton, styles.editButton])}
-                testID="MyPetsScreen-button-2"
-                accessibilityLabel="Interactive element"
+                testID={`edit-button-${item._id}`}
+                accessibilityLabel={`Edit ${item.name}`}
                 accessibilityRole="button"
                 onPress={() => {
                   haptic.confirm();
@@ -216,8 +431,8 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
 
               <TouchableOpacity
                 style={StyleSheet.flatten([styles.actionButton, styles.deleteButton])}
-                testID="MyPetsScreen-button-2"
-                accessibilityLabel="Interactive element"
+                testID={`delete-button-${item._id}`}
+                accessibilityLabel={`Delete ${item.name}`}
                 accessibilityRole="button"
                 onPress={() => {
                   haptic.error();
@@ -233,220 +448,113 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
             </View>
           </View>
         </TouchableOpacity>
-      ) : (
-        <Animated.View entering={FadeInDown.duration(220).delay(index * 50)}>
-          <TouchableOpacity
-            style={styles.petCard}
-            testID={`pet-card-${item._id}`}
-            accessibilityLabel={`Pet profile for ${item.name}, ${item.breed}`}
-            accessibilityRole="button"
-            onPress={() => {
-              handleNavigateToPetDetails(item);
-            }}
-          >
-            {/* Pet Photo with Gestures */}
-            <View style={styles.petImageContainer}>
-              {item.photos && item.photos.length > 0 ? (
-                <DoubleTapLikePlus
-                  onDoubleTap={() => {
-                    handlePetLike(item);
-                  }}
-                  heartColor={theme.colors.danger}
-                  particles={4}
-                  haptics={{ enabled: true, style: 'light' }}
-                >
-                  <PinchZoomPro
-                    source={{
-                      uri: item.photos.find((p) => p.isPrimary)?.url ?? item.photos[0]?.url ?? '',
-                    }}
-                    width={120}
-                    height={120}
-                    minScale={1}
-                    maxScale={2.5}
-                    enableMomentum={false}
-                    haptics={true}
-                    onScaleChange={(scale) => {
-                      if (scale > 1.1) {
-                        startPinch('petPhoto', { petId: item.id });
-                      } else {
-                        endPinch('petPhoto', true);
-                      }
-                    }}
-                    backgroundColor={theme.colors.surface}
-                  />
-                </DoubleTapLikePlus>
-              ) : (
-                <View style={styles.petImagePlaceholder}>
-                  <Text style={styles.petImageEmoji}>{getSpeciesEmoji(item.species)}</Text>
-                </View>
-              )}
-
-              {/* Status badge */}
-              <View
-                style={StyleSheet.flatten([
-                  styles.statusBadge,
-                  { backgroundColor: getIntentColor(item.intent) },
-                ])}
-              >
-                <Text style={styles.statusBadgeText}>{getIntentLabel(item.intent)}</Text>
-              </View>
-
-              {/* Photo count */}
-              {item.photos && item.photos.length > 1 ? (
-                <View style={styles.photoCountBadge}>
-                  <Ionicons
-                    name="camera"
-                    size={12}
-                    color={theme.colors.bg}
-                  />
-                  <Text style={styles.photoCountText}>{item.photos.length}</Text>
-                </View>
-              ) : null}
-            </View>
-
-            {/* Pet Info */}
-            <View style={styles.petInfo}>
-              <View style={styles.petHeader}>
-                <Text style={styles.petName}>{item.name}</Text>
-                <Text style={styles.petSpecies}>{getSpeciesEmoji(item.species)}</Text>
-              </View>
-
-              <Text style={styles.petBreed}>{item.breed}</Text>
-
-              <View style={styles.petDetails}>
-                <Text style={styles.petDetail}>
-                  {item.age} years • {item.gender} • {item.size}
-                </Text>
-              </View>
-
-              {/* Stats */}
-              <View style={styles.petStats}>
-                <View style={styles.stat}>
-                  <Ionicons
-                    name="eye"
-                    size={14}
-                    color={theme.colors.onMuted}
-                  />
-                  <Text style={styles.statText}>{item.analytics.views}</Text>
-                </View>
-                <View style={styles.stat}>
-                  <Ionicons
-                    name="heart"
-                    size={14}
-                    color={theme.colors.danger}
-                  />
-                  <Text style={styles.statText}>{item.analytics.likes}</Text>
-                </View>
-                <View style={styles.stat}>
-                  <Ionicons
-                    name="people"
-                    size={14}
-                    color={theme.colors.primary}
-                  />
-                  <Text style={styles.statText}>{item.analytics.matches}</Text>
-                </View>
-              </View>
-
-              {/* Action Buttons */}
-              <View style={styles.petActions}>
-                <TouchableOpacity
-                  style={StyleSheet.flatten([styles.actionButton, styles.viewButton])}
-                  testID={`view-button-${item._id}`}
-                  accessibilityLabel={`View details for ${item.name}`}
-                  accessibilityRole="button"
-                  onPress={() => {
-                    haptic.tap();
-                    navigation.navigate('PetDetails', {
-                      petId: item.id,
-                      pet: item,
-                    });
-                  }}
-                >
-                  <Ionicons
-                    name="eye"
-                    size={16}
-                    color={theme.colors.onMuted}
-                  />
-                  <Text style={styles.viewButtonText}>View</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={StyleSheet.flatten([styles.actionButton, styles.editButton])}
-                  testID={`edit-button-${item._id}`}
-                  accessibilityLabel={`Edit ${item.name}`}
-                  accessibilityRole="button"
-                  onPress={() => {
-                    haptic.confirm();
-                    navigation.navigate('EditPet', { petId: item.id, pet: item });
-                  }}
-                >
-                  <Ionicons
-                    name="pencil"
-                    size={16}
-                    color={theme.colors.bg}
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={StyleSheet.flatten([styles.actionButton, styles.deleteButton])}
-                  testID={`delete-button-${item._id}`}
-                  accessibilityLabel={`Delete ${item.name}`}
-                  accessibilityRole="button"
-                  onPress={() => {
-                    haptic.error();
-                    handleDeletePet(item._id);
-                  }}
-                >
-                  <Ionicons
-                    name="trash"
-                    size={16}
-                    color={theme.colors.bg}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </Animated.View>
-      )
+      </Animated.View>
     );
   };
 
-  const renderEmptyState = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyEmoji}>🐾</Text>
-      <Text style={styles.emptyTitle}>No Pets Yet</Text>
-      <Text style={styles.emptyText}>
-        Start building your pet&apos;s profile to find amazing matches and new friends!
-      </Text>
-      <TouchableOpacity
-        style={styles.emptyButton}
-        testID="MyPetsScreen-button-2"
-        accessibilityLabel="Interactive element"
-        accessibilityRole="button"
-        onPress={() => {
-          haptic.confirm();
-          navigation.navigate('CreatePet');
-        }}
+  // Handle scroll to preserve position
+  const handleScroll = (event: { nativeEvent: { contentOffset: { y: number } } }) => {
+    const offset = event.nativeEvent.contentOffset.y;
+    updateScrollOffset(offset);
+  };
+
+  // Loading state
+  if (isLoading && pets.length === 0) {
+    return (
+      <ScreenShell
+        header={
+          <AdvancedHeader
+            {...HeaderConfigs.glass({
+              title: 'My Pets',
+              rightButtons: [
+                {
+                  type: 'add',
+                  onPress: handleAddPet,
+                  variant: 'primary',
+                  haptic: 'light',
+                },
+              ],
+            })}
+          />
+        }
       >
-        <Ionicons
-          name="add-circle"
-          size={20}
-          color={theme.colors.bg}
+        <ListSkeleton count={3} />
+      </ScreenShell>
+    );
+  }
+
+  // Offline state
+  if (isOffline && pets.length === 0) {
+    return (
+      <ScreenShell
+        header={
+          <AdvancedHeader
+            {...HeaderConfigs.glass({
+              title: 'My Pets',
+              rightButtons: [
+                {
+                  type: 'add',
+                  onPress: handleAddPet,
+                  variant: 'primary',
+                  haptic: 'light',
+                },
+              ],
+            })}
+          />
+        }
+      >
+        <EmptyStates.Offline
+          title="You're offline"
+          message="Connect to the internet to see your pets"
         />
-        <Text style={styles.emptyButtonText}>Create Your First Pet Profile</Text>
-      </TouchableOpacity>
-    </View>
+      </ScreenShell>
+    );
+  }
+
+  // Error state
+  if (errorHandlingError && pets.length === 0) {
+    return (
+      <ScreenShell
+        header={
+          <AdvancedHeader
+            {...HeaderConfigs.glass({
+              title: 'My Pets',
+              rightButtons: [
+                {
+                  type: 'add',
+                  onPress: handleAddPet,
+                  variant: 'primary',
+                  haptic: 'light',
+                },
+              ],
+            })}
+          />
+        }
+      >
+        <EmptyStates.Error
+          title="Unable to load pets"
+          message={errorHandlingError?.userMessage || 'Please check your connection and try again'}
+          actionLabel="Retry"
+          onAction={() => {
+            clearError();
+            retry();
+          }}
+        />
+      </ScreenShell>
+    );
+  }
+
+  const renderEmptyState = () => (
+    <EmptyStates.NoPets
+      title="No Pets Yet"
+      message="Start building your pet's profile to find amazing matches and new friends!"
+      actionLabel="Create Your First Pet Profile"
+      onAction={() => {
+        haptic.confirm();
+        navigation.navigate('CreatePet');
+      }}
+    />
   );
-
-  const handleBackPress = () => {
-    haptic.tap();
-    navigation.goBack();
-  };
-
-  const handleAddPet = () => {
-    haptic.confirm();
-    navigation.navigate('CreatePet');
-  };
 
   const handleNavigateToPetDetails = (item: Pet) => {
     haptic.tap();
@@ -714,15 +822,22 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
     >
       {/* Content */}
       <FlatList
+        ref={listRef}
         data={pets}
         renderItem={renderPetCard}
         keyExtractor={(item) => item._id}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={onRefresh}
+            onRefresh={() => {
+              if (isOnline) {
+                onRefresh();
+              }
+            }}
             colors={[theme.colors.primary]}
             tintColor={theme.colors.primary}
           />
@@ -745,21 +860,6 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           ) : null
         }
       />
-
-      {/* Loading Overlay */}
-      {isLoading && !refreshing && (
-        <View style={styles.loadingOverlay}>
-          <View style={styles.loadingContent}>
-            <Ionicons
-              name="sync"
-              size={32}
-              color={theme.colors.primary}
-              style={{ transform: [{ rotate: '45deg' }] }}
-            />
-            <Text style={styles.loadingText}>Loading pets...</Text>
-          </View>
-        </View>
-      )}
     </ScreenShell>
   );
 }

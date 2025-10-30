@@ -6,8 +6,6 @@ import { renderHook } from '@testing-library/react-native';
 import { usePageTransition } from '../usePageTransition';
 
 jest.mock('react-native-reanimated', () => {
-
-
   const Reanimated = require('react-native-reanimated/mock');
   Reanimated.default.call = () => {};
   return Reanimated;
@@ -51,4 +49,3 @@ describe('usePageTransition', () => {
     expect(true).toBe(true);
   });
 });
-

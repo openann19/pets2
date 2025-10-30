@@ -31,20 +31,13 @@ jest.mock('expo-haptics', () => ({
 }));
 
 // Mock theme context
-jest.mock('../../theme/Provider', () => ({
-  useTheme: () => ({
-    isDark: false,
-    colors: {
-      primary: 'Theme.colors.primary',
-      surface: 'Theme.colors.surface',
-      surfaceElevated: 'Theme.colors.surface',
-      text: 'Theme.colors.onSurface',
-      textSecondary: 'Theme.colors.onMuted',
-      border: 'Theme.colors.border',
-      shadow: 'Theme.colors.onSurface',
-    },
-  }),
-}));
+jest.mock('../../theme/Provider', () => {
+  const { getMockLightTheme } = require('../../test-utils/theme-helpers');
+  const theme = getMockLightTheme();
+  return {
+    useTheme: () => theme,
+  };
+});
 
 // Mock global styles
 jest.mock('../../animation', () => ({
@@ -88,7 +81,7 @@ jest.mock('../../animation', () => ({
   },
 }));
 
-import { PhoenixCard } from '../phoenix/PhoenixCard';
+import { PhoenixCard } from '@/components/phoenix/PhoenixCard';
 
 describe('PhoenixCard Component', () => {
   beforeEach(() => {

@@ -77,13 +77,13 @@ export const requireUnlimitedSwipes = async (req: AuthRequest, res: Response, ne
       swipe.swipedAt >= new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
     ).length || 0;
 
-    if (currentSwipes >= 50) { // Free tier limit
+    if (currentSwipes >= 5) { // Business Model: Free tier limit is 5 daily swipes
       return res.status(403).json({
         success: false,
         message: 'Daily swipe limit exceeded. Upgrade to premium for unlimited swipes.',
         code: 'SWIPE_LIMIT_EXCEEDED',
         upgradeRequired: true,
-        currentLimit: 50,
+        currentLimit: 5,
         usedToday: currentSwipes
       });
     }

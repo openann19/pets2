@@ -1,8 +1,8 @@
 import React, { type ReactNode } from 'react';
-import { View, type ViewProps, type ViewStyle, StyleSheet } from 'react-native';
+import { type ViewProps, type ViewStyle, StyleSheet } from 'react-native';
 import { GlassContainer } from './GlassContainer';
 import { BLUR_CONFIGS, TRANSPARENCY_CONFIGS, BORDER_CONFIGS, SHADOW_CONFIGS } from './configs';
-import { BorderRadius, Spacing } from '../../animation';
+import { Spacing } from '../../animation';
 
 /**
  * GlassCard Component

@@ -134,9 +134,7 @@ export function SubscriptionSuccessScreen(): React.JSX.Element {
 
         <Text style={styles.title}>{t('success_title')}</Text>
 
-        <Text style={styles.message}>
-          {t('success_message')}
-        </Text>
+        <Text style={styles.message}>{t('success_message')}</Text>
 
         <View style={styles.featuresContainer}>
           <View style={styles.featureItem}>
@@ -293,4 +291,3 @@ function makeStyles(theme: AppTheme) {
     },
   });
 }
-

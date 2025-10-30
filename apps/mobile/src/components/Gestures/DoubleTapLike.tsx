@@ -11,6 +11,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { useTheme } from '@mobile/theme';
 
 export interface DoubleTapLikeProps {
   children: React.ReactNode;
@@ -25,19 +26,27 @@ export interface DoubleTapLikeProps {
 }
 
 export const DEFAULT_SCALE = { stiffness: 400, damping: 14, mass: 0.8 };
-export const DEFAULT_HEART = { size: 64, color: '#ff4757', showMs: 600 };
+export const getDefaultHeart = (theme: any) => ({
+  size: 64,
+  color: theme.colors.danger,
+  showMs: 600,
+});
 
 export function DoubleTapLike({
   children,
   onDoubleTap,
   onSingleTap,
   scaleConfig = DEFAULT_SCALE,
-  heartConfig = DEFAULT_HEART,
+  heartConfig,
   haptic = 'medium',
   style,
   disabled,
   maxDelay = 300,
 }: DoubleTapLikeProps) {
+  const theme = useTheme();
+
+  // Use theme-based default if heartConfig not provided
+  const finalHeartConfig = heartConfig || getDefaultHeart(theme);
   // start at 1 to avoid an initial shrink/blink
   const scale = useSharedValue(1);
   const heartScale = useSharedValue(0);
@@ -72,10 +81,10 @@ export function DoubleTapLike({
     heartOpacity.value = withSpring(1, { stiffness: 300, damping: 20, mass: 0.8 });
     heartRotate.value = withSpring(360);
     // fade out using withDelay (worklet-safe)
-    heartOpacity.value = withDelay(heartConfig.showMs, withTiming(0, { duration: 200 }));
-    heartScale.value = withDelay(heartConfig.showMs, withTiming(0, { duration: 200 }));
-    heartRotate.value = withDelay(heartConfig.showMs, withTiming(0, { duration: 200 }));
-  }, [heartConfig.showMs]);
+    heartOpacity.value = withDelay(finalHeartConfig.showMs, withTiming(0, { duration: 200 }));
+    heartScale.value = withDelay(finalHeartConfig.showMs, withTiming(0, { duration: 200 }));
+    heartRotate.value = withDelay(finalHeartConfig.showMs, withTiming(0, { duration: 200 }));
+  }, [finalHeartConfig.showMs]);
 
   const handleDoubleTap = useCallback(() => {
     if (disabled) return;
@@ -122,7 +131,12 @@ export function DoubleTapLike({
       <Animated.View style={[styles.container, style, containerStyle]}>
         {children}
         <Animated.View style={[styles.heartOverlay, heartStyle]}>
-          <Text style={[styles.heart, { fontSize: heartConfig.size, color: heartConfig.color }]}>
+          <Text
+            style={[
+              styles.heart,
+              { fontSize: finalHeartConfig.size, color: finalHeartConfig.color },
+            ]}
+          >
             ❤️
           </Text>
         </Animated.View>

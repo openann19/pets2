@@ -704,38 +704,6 @@ export const adoptionAPI = {
       'Failed to get adoption applications',
     );
   },
-  generateContract: async (data: {
-    applicationId: string;
-    contractTerms: {
-      adoptionFee: string;
-      spayNeuterRequired: boolean;
-      vaccinationRequired: boolean;
-      microchipRequired: boolean;
-      returnPolicy: boolean;
-      homeVisitRequired: boolean;
-      followUpRequired: boolean;
-      specialConditions?: string;
-      emergencyContact: {
-        name: string;
-        phone: string;
-        relationship: string;
-      };
-    };
-  }): Promise<{ contractId: string; contractUrl: string; message: string }> => {
-    return resolveData(
-      apiClient.post('/adoption/contracts/generate', data),
-      'Failed to generate adoption contract',
-    );
-  },
-  sendContractForSignature: async (data: {
-    contractId: string;
-    applicantId: string;
-  }): Promise<{ success: boolean; message: string }> => {
-    return resolveData(
-      apiClient.post('/adoption/contracts/send-signature', data),
-      'Failed to send contract for signature',
-    );
-  },
 };
 
 // Subscription API for Stripe checkout
@@ -749,6 +717,64 @@ export const _subscriptionAPI = {
     return resolveData(
       apiClient.post('/subscription/checkout', data),
       'Failed to create checkout session',
+    );
+  },
+};
+
+// Notification Preferences API
+export const notificationPreferencesAPI = {
+  getPreferences: async (): Promise<{
+    enabled: boolean;
+    matches: boolean;
+    messages: boolean;
+    likes: boolean;
+    reminders: boolean;
+    quietHours?: {
+      enabled: boolean;
+      start: string;
+      end: string;
+    };
+    frequency: 'instant' | 'batched' | 'daily';
+    sound: boolean;
+    vibration: boolean;
+  }> => {
+    return resolveData(
+      apiClient.get('/user/notifications/preferences'),
+      'Failed to get notification preferences',
+    );
+  },
+  updatePreferences: async (preferences: {
+    enabled: boolean;
+    matches: boolean;
+    messages: boolean;
+    likes: boolean;
+    reminders: boolean;
+    quietHours?: {
+      enabled: boolean;
+      start: string;
+      end: string;
+    };
+    frequency: 'instant' | 'batched' | 'daily';
+    sound: boolean;
+    vibration: boolean;
+  }): Promise<{
+    enabled: boolean;
+    matches: boolean;
+    messages: boolean;
+    likes: boolean;
+    reminders: boolean;
+    quietHours?: {
+      enabled: boolean;
+      start: string;
+      end: string;
+    };
+    frequency: 'instant' | 'batched' | 'daily';
+    sound: boolean;
+    vibration: boolean;
+  }> => {
+    return resolveData(
+      apiClient.put('/user/notifications/preferences', preferences),
+      'Failed to update notification preferences',
     );
   },
 };
@@ -851,83 +877,6 @@ export const aiAPI = {
       method: 'POST',
       body: data,
     });
-  },
-};
-
-// Notification Preferences API
-export const notificationPreferencesAPI = {
-  getPreferences: async (): Promise<{
-    enabled: boolean;
-    matches: boolean;
-    messages: boolean;
-    likes: boolean;
-    reminders: boolean;
-    quietHours?: {
-      enabled: boolean;
-      start: string;
-      end: string;
-    };
-    frequency: 'instant' | 'batched' | 'daily';
-    sound: boolean;
-    vibration: boolean;
-  }> => {
-    return resolveData(
-      apiClient.get('/user/notifications/preferences'),
-      'Failed to get notification preferences',
-    );
-  },
-  updatePreferences: async (preferences: {
-    enabled?: boolean;
-    matches?: boolean;
-    messages?: boolean;
-    likes?: boolean;
-    reminders?: boolean;
-    quietHours?: {
-      enabled: boolean;
-      start: string;
-      end: string;
-    };
-    frequency?: 'instant' | 'batched' | 'daily';
-    sound?: boolean;
-    vibration?: boolean;
-  }): Promise<{ success: boolean; message: string }> => {
-    return resolveData(
-      apiClient.put('/user/notifications/preferences', preferences),
-      'Failed to update notification preferences',
-    );
-  },
-};
-
-// Moderation API
-export const moderationAPI = {
-  getStats: async (): Promise<{
-    pendingReports: number;
-    activeModerators: number;
-    resolutionRate: number;
-  }> => {
-    return resolveData(
-      apiClient.get('/admin/moderation/stats'),
-      'Failed to get moderation statistics',
-    );
-  },
-  getReports: async (params?: {
-    status?: string;
-    page?: number;
-    limit?: number;
-  }): Promise<{
-    items: Array<{
-      id: string;
-      status: string;
-      priority: string;
-      category: string;
-      submittedAt: string;
-    }>;
-    total: number;
-  }> => {
-    return resolveData(
-      apiClient.get('/admin/moderation/reports', { params }),
-      'Failed to get moderation reports',
-    );
   },
 };
 

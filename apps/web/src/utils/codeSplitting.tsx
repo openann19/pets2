@@ -25,7 +25,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ componentName }) => (
 // ====== LAZY LOADING UTILITIES ======
 class CodeSplittingManager {
   private static preloadedComponents = new Set<string>();
-  private static loadingPromises = new Map<string, Promise<any>>();
+  private static loadingPromises = new Map<string, Promise<unknown>>();
 
   /**
    * Create lazy component with error boundary and loading fallback
@@ -36,18 +36,21 @@ class CodeSplittingManager {
     fallback?: React.ReactNode
   ): React.ComponentType<P> {
     const LazyComponent = lazy(importFn);
-    const WrappedComponent = (props: P) => (
-      <ErrorBoundary
-        fallback={<ErrorFallback componentName={componentName} />}
-        onError={(error: Error, errorInfo: { componentStack: string }) => {
-          logger.error(`Error loading ${componentName}`, { error, errorInfo });
-        }}
-      >
-        <Suspense fallback={fallback || <ComponentLoadingFallback componentName={componentName} />}>
-          <LazyComponent {...props} />
-        </Suspense>
-      </ErrorBoundary>
-    );
+    const WrappedComponent = (props: P) => {
+      return (
+        <ErrorBoundary
+          fallback={<ErrorFallback componentName={componentName} />}
+          onError={(error: Error, errorInfo: { componentStack: string }) => {
+            logger.error(`Error loading ${componentName}`, { error, errorInfo });
+          }}
+        >
+          <Suspense fallback={fallback || <ComponentLoadingFallback componentName={componentName} />}>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            <LazyComponent {...(props as any)} />
+          </Suspense>
+        </ErrorBoundary>
+      );
+    };
     WrappedComponent.displayName = `Lazy${componentName}`;
     return WrappedComponent;
   }
@@ -55,8 +58,8 @@ class CodeSplittingManager {
   /**
    * Preload component for better performance
    */
-  static async preloadComponent(
-    importFn: () => Promise<any>,
+  static async preloadComponent<P extends object = Record<string, unknown>>(
+    importFn: () => Promise<{ default: React.ComponentType<P> }>,
     componentName: string
   ): Promise<void> {
     if (this.preloadedComponents.has(componentName)) {
@@ -64,14 +67,14 @@ class CodeSplittingManager {
     }
 
     if (this.loadingPromises.has(componentName)) {
-      return await this.loadingPromises.get(componentName)!;
+      await this.loadingPromises.get(componentName)!;
+      return;
     }
 
     const promise = importFn()
-      .then((module: any) => {
+      .then(() => {
         this.preloadedComponents.add(componentName);
         this.loadingPromises.delete(componentName);
-        return module;
       })
       .catch((error: unknown) => {
         logger.error(`Failed to preload ${componentName}`, { error });
@@ -86,7 +89,7 @@ class CodeSplittingManager {
   /**
    * Preload multiple components
    */
-  static async preloadComponents(components: ComponentConfig[]): Promise<PromiseSettledResult<any>[]> {
+  static async preloadComponents(components: ComponentConfig[]): Promise<PromiseSettledResult<unknown>[]> {
     const promises = components.map(({ importFn, name }) => this.preloadComponent(importFn, name));
     return await Promise.allSettled(promises);
   }
@@ -156,8 +159,8 @@ class PreloadingStrategies {
   /**
    * Preload on hover
    */
-  static preloadOnHover(
-    importFn: () => Promise<any>,
+  static preloadOnHover<P extends object = Record<string, unknown>>(
+    importFn: () => Promise<{ default: React.ComponentType<P> }>,
     componentName: string
   ): {
     onMouseEnter: () => void;
@@ -176,8 +179,8 @@ class PreloadingStrategies {
   /**
    * Preload on intersection
    */
-  static preloadOnIntersection(
-    importFn: () => Promise<any>,
+  static preloadOnIntersection<P extends object = Record<string, unknown>>(
+    importFn: () => Promise<{ default: React.ComponentType<P> }>,
     componentName: string
   ): {
     ref: (node: HTMLElement | null) => void;
@@ -205,7 +208,10 @@ class PreloadingStrategies {
   /**
    * Preload on idle
    */
-  static preloadOnIdle(importFn: () => Promise<any>, componentName: string): void {
+  static preloadOnIdle<P extends object = Record<string, unknown>>(
+    importFn: () => Promise<{ default: React.ComponentType<P> }>,
+    componentName: string
+  ): void {
     if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
       window.requestIdleCallback(() => {
         CodeSplittingManager.preloadComponent(importFn, componentName);

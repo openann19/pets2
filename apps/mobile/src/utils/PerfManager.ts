@@ -1,7 +1,7 @@
 /**
  * Performance Manager
  * Detects low-end devices and provides performance optimization utilities
- * 
+ *
  * Features:
  * - Device capability detection
  * - Low-end device flagging
@@ -50,34 +50,38 @@ class PerfManager {
         // Older iPhones (iPhone 8 and below) are considered low-end
         const deviceModel = Device.modelName || '';
         const lowEndModels = ['iPhone 6', 'iPhone 6s', 'iPhone 7', 'iPhone 8', 'iPhone SE'];
-        const isLowEndModel = lowEndModels.some(model => deviceModel.includes(model));
-        
+        const isLowEndModel = lowEndModels.some((model) => deviceModel.includes(model));
+
         // Also check totalMemory if available
         const totalMemory = Device.totalMemory || 0;
         const isLowMemory = totalMemory > 0 && totalMemory < 2 * 1024 * 1024 * 1024; // < 2GB
-        
+
         this.cachedLowEndFlag = isLowEndModel || isLowMemory;
       } else if (Platform.OS === 'android') {
         // Android devices vary widely
         const totalMemory = Device.totalMemory || 0;
         const isLowMemory = totalMemory > 0 && totalMemory < 3 * 1024 * 1024 * 1024; // < 3GB
-        
+
         // Check device manufacturer/model for known low-end devices
         const deviceModel = Device.modelName || '';
         const lowEndBrands = ['Moto', 'Galaxy A', 'Galaxy J', 'Redmi', 'POCO'];
-        const isLowEndModel = lowEndBrands.some(brand => deviceModel.includes(brand));
-        
+        const isLowEndModel = lowEndBrands.some((brand) => deviceModel.includes(brand));
+
         this.cachedLowEndFlag = isLowMemory || isLowEndModel;
-      } else {
+      } else if (Platform.OS === 'web') {
         // Web platform - check navigator.deviceMemory
-        if (typeof navigator !== 'undefined' && 'deviceMemory' in navigator) {
-          const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory || 4;
-          const hardwareConcurrency = navigator.hardwareConcurrency || 4;
+        if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+          const nav = navigator as Navigator & { deviceMemory?: number };
+          const deviceMemory = nav.deviceMemory || 4;
+          const hardwareConcurrency = nav.hardwareConcurrency || 4;
           this.cachedLowEndFlag = deviceMemory < 4 || hardwareConcurrency < 4;
         } else {
           // Default to medium performance for unknown web devices
           this.cachedLowEndFlag = false;
         }
+      } else {
+        // Unknown platform - default to medium performance
+        this.cachedLowEndFlag = false;
       }
     } catch (error) {
       // If detection fails, assume medium performance (not low-end)
@@ -105,8 +109,8 @@ class PerfManager {
       memoryClass = 'high';
     }
 
-    const hardwareConcurrency = 
-      Platform.OS === 'web' 
+    const hardwareConcurrency =
+      Platform.OS === 'web' && typeof navigator !== 'undefined'
         ? navigator.hardwareConcurrency || 4
         : 4; // React Native doesn't expose CPU cores directly
 
@@ -172,8 +176,7 @@ export const perfManager = PerfManager.getInstance();
 // Export convenience functions
 export const isLowEnd = (): boolean => perfManager.isLowEnd();
 export const shouldSkipHeavyEffects = (): boolean => perfManager.shouldSkipHeavyEffects();
-export const getBlurIntensity = (defaultIntensity: number): number => 
+export const getBlurIntensity = (defaultIntensity: number): number =>
   perfManager.getBlurIntensity(defaultIntensity);
-export const getParticleCount = (maxCount: number): number => 
+export const getParticleCount = (maxCount: number): number =>
   perfManager.getParticleCount(maxCount);
-

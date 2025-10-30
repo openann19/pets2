@@ -117,7 +117,11 @@ export function EnhancedMessageBubble({
           ) : null}
 
           <LinearGradient
-            colors={isOwnMessage ? [theme.colors.primary, theme.colors.primary] : [theme.colors.surface, theme.colors.bg]}
+            colors={
+              isOwnMessage
+                ? [theme.colors.primary, theme.colors.primary]
+                : [theme.colors.surface, theme.colors.bg]
+            }
             style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -137,28 +141,22 @@ export function EnhancedMessageBubble({
                   onPress={() => handleReactionPress(emoji)}
                 >
                   <Text style={styles.reactionEmoji}>{emoji}</Text>
-                  {count > 1 && <Text style={[styles.reactionCount, { color: theme.colors.onMuted }]}>{count}</Text>}
+                  {count > 1 && (
+                    <Text style={[styles.reactionCount, { color: theme.colors.onMuted }]}>
+                      {count}
+                    </Text>
+                  )}
                 </TouchableOpacity>
               ))}
             </View>
           )}
 
           <View style={styles.messageMeta}>
-            <Text
-              style={StyleSheet.flatten([
-                styles.timestamp,
-                { color: theme.colors.onMuted },
-              ])}
-            >
+            <Text style={StyleSheet.flatten([styles.timestamp, { color: theme.colors.onMuted }])}>
               {formatTime(message.sentAt)}
             </Text>
             {isOwnMessage && showStatus ? (
-              <Text
-                style={StyleSheet.flatten([
-                  styles.status,
-                  { color: theme.colors.onMuted },
-                ])}
-              >
+              <Text style={StyleSheet.flatten([styles.status, { color: theme.colors.onMuted }])}>
                 {getStatusIcon()}
               </Text>
             ) : null}
@@ -181,7 +179,12 @@ export function EnhancedMessageBubble({
             setShowReactionPicker(false);
           }}
         >
-          <View style={[styles.reactionPicker, { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border }]}>
+          <View
+            style={[
+              styles.reactionPicker,
+              { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
+            ]}
+          >
             {REACTION_EMOJIS.map((emoji) => (
               <TouchableOpacity
                 key={emoji}

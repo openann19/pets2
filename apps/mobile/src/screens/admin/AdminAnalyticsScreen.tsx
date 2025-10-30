@@ -3,10 +3,10 @@
  * Comprehensive analytics dashboard with real-time data visualization
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { logger, useAuthStore } from "@pawfectmatch/core";
-import * as Haptics from "expo-haptics";
-import { useMemo, useEffect, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { logger, useAuthStore } from '@pawfectmatch/core';
+import * as Haptics from 'expo-haptics';
+import { useMemo, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -17,13 +17,13 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@mobile/theme';
 import type { AppTheme } from '@mobile/theme';
-import type { AdminScreenProps } from "../../navigation/types";
-import { _adminAPI as adminAPI } from "../../services/api";
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+import type { AdminScreenProps } from '../../navigation/types';
+import { _adminAPI as adminAPI } from '../../services/api';
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface AnalyticsApiResponse {
   users?: {
@@ -34,14 +34,14 @@ interface AnalyticsApiResponse {
     verified?: number;
     recent24h?: number;
     growth?: number;
-    trend?: "up" | "down" | "stable";
+    trend?: 'up' | 'down' | 'stable';
   };
   pets?: {
     total?: number;
     active?: number;
     recent24h?: number;
     growth?: number;
-    trend?: "up" | "down" | "stable";
+    trend?: 'up' | 'down' | 'stable';
   };
   matches?: {
     total?: number;
@@ -49,14 +49,14 @@ interface AnalyticsApiResponse {
     blocked?: number;
     recent24h?: number;
     growth?: number;
-    trend?: "up" | "down" | "stable";
+    trend?: 'up' | 'down' | 'stable';
   };
   messages?: {
     total?: number;
     deleted?: number;
     recent24h?: number;
     growth?: number;
-    trend?: "up" | "down" | "stable";
+    trend?: 'up' | 'down' | 'stable';
   };
 }
 
@@ -69,14 +69,14 @@ interface AnalyticsData extends AnalyticsApiResponse {
     verified: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   pets: {
     total: number;
     active: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   matches: {
     total: number;
@@ -84,14 +84,14 @@ interface AnalyticsData extends AnalyticsApiResponse {
     blocked: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   messages: {
     total: number;
     deleted: number;
     recent24h: number;
     growth: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   engagement: {
     dailyActiveUsers: number;
@@ -159,8 +159,8 @@ function makeStyles(theme: AppTheme) {
     },
     loadingContainer: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     loadingText: {
       marginTop: theme.spacing.md,
@@ -170,9 +170,9 @@ function makeStyles(theme: AppTheme) {
     header: {
       paddingVertical: theme.spacing.lg,
       paddingHorizontal: theme.spacing.xs,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
     },
     backButton: {
       padding: theme.spacing.xs,
@@ -181,10 +181,10 @@ function makeStyles(theme: AppTheme) {
       fontSize: theme.typography.h2.size,
       fontWeight: theme.typography.h1.weight,
       flex: 1,
-      textAlign: "center",
+      textAlign: 'center',
     },
     periodSelector: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: theme.spacing.xs,
     },
     periodButton: {
@@ -208,8 +208,8 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.md,
     },
     metricsGrid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       gap: theme.spacing.sm,
     },
     metricCard: {
@@ -219,8 +219,8 @@ function makeStyles(theme: AppTheme) {
       ...theme.shadows.elevation2,
     },
     metricHeader: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       marginBottom: theme.spacing.xs,
     },
     metricTitle: {
@@ -234,8 +234,8 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.xs,
     },
     metricTrend: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: theme.spacing.xs,
     },
     metricTrendText: {
@@ -247,15 +247,15 @@ function makeStyles(theme: AppTheme) {
       marginTop: theme.spacing.xs,
     },
     engagementGrid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       gap: theme.spacing.sm,
     },
     engagementCard: {
       width: (SCREEN_WIDTH - theme.spacing['2xl'] - theme.spacing.sm) / 2,
       borderRadius: theme.radii.lg,
       padding: theme.spacing.md,
-      alignItems: "center",
+      alignItems: 'center',
       ...theme.shadows.elevation2,
     },
     engagementLabel: {
@@ -268,14 +268,14 @@ function makeStyles(theme: AppTheme) {
       fontWeight: theme.typography.h1.weight,
     },
     revenueGrid: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: theme.spacing.sm,
     },
     revenueCard: {
       flex: 1,
       borderRadius: theme.radii.lg,
       padding: theme.spacing.md,
-      alignItems: "center",
+      alignItems: 'center',
       ...theme.shadows.elevation2,
     },
     revenueLabel: {
@@ -288,15 +288,15 @@ function makeStyles(theme: AppTheme) {
       fontWeight: theme.typography.h1.weight,
     },
     securityGrid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       gap: theme.spacing.sm,
     },
     securityCard: {
       width: (SCREEN_WIDTH - theme.spacing['2xl'] - theme.spacing.sm) / 2,
       borderRadius: theme.radii.lg,
       padding: theme.spacing.md,
-      alignItems: "center",
+      alignItems: 'center',
       ...theme.shadows.elevation2,
     },
     securityLabel: {
@@ -304,14 +304,14 @@ function makeStyles(theme: AppTheme) {
       fontWeight: theme.typography.body.weight,
       marginTop: theme.spacing.xs,
       marginBottom: theme.spacing.xs,
-      textAlign: "center",
+      textAlign: 'center',
     },
     securityValue: {
       fontSize: theme.typography.h2.size * 0.75,
       fontWeight: theme.typography.h1.weight,
     },
     performersGrid: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: theme.spacing.sm,
     },
     performersCard: {
@@ -326,8 +326,8 @@ function makeStyles(theme: AppTheme) {
       marginBottom: theme.spacing.sm,
     },
     performerItem: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       marginBottom: theme.spacing.xs,
       gap: theme.spacing.xs,
     },
@@ -349,16 +349,14 @@ function makeStyles(theme: AppTheme) {
 
 export default function AdminAnalyticsScreen({
   navigation,
-}: AdminScreenProps<"AdminAnalytics">): React.JSX.Element {
+}: AdminScreenProps<'AdminAnalytics'>): React.JSX.Element {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { user: _user } = useAuthStore();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState<"7d" | "30d" | "90d">(
-    "30d",
-  );
+  const [selectedPeriod, setSelectedPeriod] = useState<'7d' | '30d' | '90d'>('30d');
 
   useEffect(() => {
     void loadAnalyticsData();
@@ -379,14 +377,14 @@ export default function AdminAnalyticsScreen({
           verified: responseData.users?.verified || 0,
           recent24h: responseData.users?.recent24h || 0,
           growth: responseData.users?.growth || 0,
-          trend: responseData.users?.trend || "stable",
+          trend: responseData.users?.trend || 'stable',
         },
         pets: {
           total: responseData.pets?.total || 0,
           active: responseData.pets?.active || 0,
           recent24h: responseData.pets?.recent24h || 0,
           growth: responseData.pets?.growth || 0,
-          trend: responseData.pets?.trend || "stable",
+          trend: responseData.pets?.trend || 'stable',
         },
         matches: {
           total: responseData.matches?.total || 0,
@@ -394,14 +392,14 @@ export default function AdminAnalyticsScreen({
           blocked: responseData.matches?.blocked || 0,
           recent24h: responseData.matches?.recent24h || 0,
           growth: responseData.matches?.growth || 0,
-          trend: responseData.matches?.trend || "stable",
+          trend: responseData.matches?.trend || 'stable',
         },
         messages: {
           total: responseData.messages?.total || 0,
           deleted: responseData.messages?.deleted || 0,
           recent24h: responseData.messages?.recent24h || 0,
           growth: responseData.messages?.growth || 0,
-          trend: responseData.messages?.trend || "stable",
+          trend: responseData.messages?.trend || 'stable',
         },
         engagement: {
           dailyActiveUsers: 0,
@@ -434,8 +432,8 @@ export default function AdminAnalyticsScreen({
       };
       setAnalytics(fullData);
     } catch (error: unknown) {
-      logger.error("Error loading analytics data:", { error });
-      Alert.alert("Error", "Failed to load analytics data");
+      logger.error('Error loading analytics data:', { error });
+      Alert.alert('Error', 'Failed to load analytics data');
     } finally {
       setLoading(false);
     }
@@ -447,29 +445,29 @@ export default function AdminAnalyticsScreen({
     setRefreshing(false);
   };
 
-  const handlePeriodChange = (period: "7d" | "30d" | "90d"): void => {
+  const handlePeriodChange = (period: '7d' | '30d' | '90d'): void => {
     if (Haptics) {
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     setSelectedPeriod(period);
   };
 
-  const getTrendIcon = (trend: "up" | "down" | "stable"): string => {
+  const getTrendIcon = (trend: 'up' | 'down' | 'stable'): string => {
     switch (trend) {
-      case "up":
-        return "trending-up";
-      case "down":
-        return "trending-down";
+      case 'up':
+        return 'trending-up';
+      case 'down':
+        return 'trending-down';
       default:
-        return "remove";
+        return 'remove';
     }
   };
 
-  const getTrendColor = (trend: "up" | "down" | "stable"): string => {
+  const getTrendColor = (trend: 'up' | 'down' | 'stable'): string => {
     switch (trend) {
-      case "up":
+      case 'up':
         return theme.colors.success;
-      case "down":
+      case 'down':
         return theme.colors.danger;
       default:
         return theme.colors.border;
@@ -483,24 +481,20 @@ export default function AdminAnalyticsScreen({
   };
 
   const formatCurrency = (amount: number): string =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
     }).format(amount);
 
   if (loading) {
     return (
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.colors.bg }]}
-      >
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text
-            style={[
-              styles.loadingText,
-              { color: theme.colors.onSurface },
-            ]}
-          >
+          <ActivityIndicator
+            size="large"
+            color={theme.colors.primary}
+          />
+          <Text style={[styles.loadingText, { color: theme.colors.onSurface }]}>
             Loading analytics...
           </Text>
         </View>
@@ -509,9 +503,7 @@ export default function AdminAnalyticsScreen({
   }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.bg }]}
-    >
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]}>
       <ScrollView
         style={styles.scrollView}
         refreshControl={
@@ -525,20 +517,23 @@ export default function AdminAnalyticsScreen({
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
-             testID="AdminAnalyticsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button"            onPress={() => {
+            testID="AdminAnalyticsScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
               navigation.goBack();
             }}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color={theme.colors.onSurface}
+            />
           </TouchableOpacity>
-          <Text
-            style={[styles.title, { color: theme.colors.onSurface }]}
-          >
-            Analytics Dashboard
-          </Text>
+          <Text style={[styles.title, { color: theme.colors.onSurface }]}>Analytics Dashboard</Text>
           <View style={styles.periodSelector}>
-            {(["7d", "30d", "90d"] as const).map((period) => (
+            {(['7d', '30d', '90d'] as const).map((period) => (
               <TouchableOpacity
                 key={period}
                 style={[
@@ -549,18 +544,21 @@ export default function AdminAnalyticsScreen({
                       selectedPeriod === period ? theme.colors.primary : theme.colors.surface,
                   },
                 ]}
-                 testID="AdminAnalyticsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+                testID="AdminAnalyticsScreen-button-2"
+                accessibilityLabel="Interactive element"
+                accessibilityRole="button"
+                onPress={() => {
                   handlePeriodChange(period);
                 }}
               >
                 <Text
-                style={[
-                  styles.periodText,
-                  {
-                    color:
-                      selectedPeriod === period ? theme.colors.onPrimary : theme.colors.onSurface,
-                  },
-                ]}
+                  style={[
+                    styles.periodText,
+                    {
+                      color:
+                        selectedPeriod === period ? theme.colors.onPrimary : theme.colors.onSurface,
+                    },
+                  ]}
                 >
                   {period}
                 </Text>
@@ -573,12 +571,7 @@ export default function AdminAnalyticsScreen({
           <>
             {/* Key Metrics */}
             <View style={styles.section}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
+              <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
                 Key Metrics
               </Text>
               <View style={styles.metricsGrid}>
@@ -589,22 +582,16 @@ export default function AdminAnalyticsScreen({
                   ]}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="people" size={20} color={theme.colors.info} />
-                    <Text
-                      style={[
-                        styles.metricTitle,
-                        { color: theme.colors.onSurface },
-                      ]}
-                    >
+                    <Ionicons
+                      name="people"
+                      size={20}
+                      color={theme.colors.info}
+                    />
+                    <Text style={[styles.metricTitle, { color: theme.colors.onSurface }]}>
                       Users
                     </Text>
                   </View>
-                  <Text
-                    style={[
-                      styles.metricValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.metricValue, { color: theme.colors.onSurface }]}>
                     {formatNumber(analytics.users.total)}
                   </Text>
                   <View style={styles.metricTrend}>
@@ -619,7 +606,7 @@ export default function AdminAnalyticsScreen({
                         { color: getTrendColor(analytics.users.trend) },
                       ]}
                     >
-                      {analytics.users.growth > 0 ? "+" : ""}
+                      {analytics.users.growth > 0 ? '+' : ''}
                       {analytics.users.growth}%
                     </Text>
                   </View>
@@ -632,22 +619,16 @@ export default function AdminAnalyticsScreen({
                   ]}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="heart" size={20} color={theme.colors.primary} />
-                    <Text
-                      style={[
-                        styles.metricTitle,
-                        { color: theme.colors.onSurface },
-                      ]}
-                    >
+                    <Ionicons
+                      name="heart"
+                      size={20}
+                      color={theme.colors.primary}
+                    />
+                    <Text style={[styles.metricTitle, { color: theme.colors.onSurface }]}>
                       Matches
                     </Text>
                   </View>
-                  <Text
-                    style={[
-                      styles.metricValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.metricValue, { color: theme.colors.onSurface }]}>
                     {formatNumber(analytics.matches.total)}
                   </Text>
                   <View style={styles.metricTrend}>
@@ -662,7 +643,7 @@ export default function AdminAnalyticsScreen({
                         { color: getTrendColor(analytics.matches.trend) },
                       ]}
                     >
-                      {analytics.matches.growth > 0 ? "+" : ""}
+                      {analytics.matches.growth > 0 ? '+' : ''}
                       {analytics.matches.growth}%
                     </Text>
                   </View>
@@ -675,22 +656,16 @@ export default function AdminAnalyticsScreen({
                   ]}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="chatbubble" size={20} color={theme.colors.primary} />
-                    <Text
-                      style={[
-                        styles.metricTitle,
-                        { color: theme.colors.onSurface },
-                      ]}
-                    >
+                    <Ionicons
+                      name="chatbubble"
+                      size={20}
+                      color={theme.colors.primary}
+                    />
+                    <Text style={[styles.metricTitle, { color: theme.colors.onSurface }]}>
                       Messages
                     </Text>
                   </View>
-                  <Text
-                    style={[
-                      styles.metricValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.metricValue, { color: theme.colors.onSurface }]}>
                     {formatNumber(analytics.messages.total)}
                   </Text>
                   <View style={styles.metricTrend}>
@@ -705,7 +680,7 @@ export default function AdminAnalyticsScreen({
                         { color: getTrendColor(analytics.messages.trend) },
                       ]}
                     >
-                      {analytics.messages.growth > 0 ? "+" : ""}
+                      {analytics.messages.growth > 0 ? '+' : ''}
                       {analytics.messages.growth}%
                     </Text>
                   </View>
@@ -718,32 +693,20 @@ export default function AdminAnalyticsScreen({
                   ]}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="cash" size={20} color={theme.colors.success} />
-                    <Text
-                      style={[
-                        styles.metricTitle,
-                        { color: theme.colors.onSurface },
-                      ]}
-                    >
+                    <Ionicons
+                      name="cash"
+                      size={20}
+                      color={theme.colors.success}
+                    />
+                    <Text style={[styles.metricTitle, { color: theme.colors.onSurface }]}>
                       Revenue
                     </Text>
                   </View>
-                  <Text
-                    style={[
-                      styles.metricValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.metricValue, { color: theme.colors.onSurface }]}>
                     {formatCurrency(analytics.revenue.totalRevenue)}
                   </Text>
-                  <Text
-                    style={[
-                      styles.metricSubtext,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
-                    MRR:{" "}
-                    {formatCurrency(analytics.revenue.monthlyRecurringRevenue)}
+                  <Text style={[styles.metricSubtext, { color: theme.colors.onMuted }]}>
+                    MRR: {formatCurrency(analytics.revenue.monthlyRecurringRevenue)}
                   </Text>
                 </View>
               </View>
@@ -751,12 +714,7 @@ export default function AdminAnalyticsScreen({
 
             {/* Engagement Metrics */}
             <View style={styles.section}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
+              <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
                 Engagement
               </Text>
               <View style={styles.engagementGrid}>
@@ -766,20 +724,8 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.engagementLabel,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
-                    DAU
-                  </Text>
-                  <Text
-                    style={[
-                      styles.engagementValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.engagementLabel, { color: theme.colors.onMuted }]}>DAU</Text>
+                  <Text style={[styles.engagementValue, { color: theme.colors.onSurface }]}>
                     {formatNumber(analytics.engagement.dailyActiveUsers)}
                   </Text>
                 </View>
@@ -789,20 +735,8 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.engagementLabel,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
-                    WAU
-                  </Text>
-                  <Text
-                    style={[
-                      styles.engagementValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.engagementLabel, { color: theme.colors.onMuted }]}>WAU</Text>
+                  <Text style={[styles.engagementValue, { color: theme.colors.onSurface }]}>
                     {formatNumber(analytics.engagement.weeklyActiveUsers)}
                   </Text>
                 </View>
@@ -812,20 +746,8 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.engagementLabel,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
-                    MAU
-                  </Text>
-                  <Text
-                    style={[
-                      styles.engagementValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.engagementLabel, { color: theme.colors.onMuted }]}>MAU</Text>
+                  <Text style={[styles.engagementValue, { color: theme.colors.onSurface }]}>
                     {formatNumber(analytics.engagement.monthlyActiveUsers)}
                   </Text>
                 </View>
@@ -835,20 +757,10 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.engagementLabel,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
+                  <Text style={[styles.engagementLabel, { color: theme.colors.onMuted }]}>
                     Session
                   </Text>
-                  <Text
-                    style={[
-                      styles.engagementValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.engagementValue, { color: theme.colors.onSurface }]}>
                     {Math.round(analytics.engagement.averageSessionDuration)}m
                   </Text>
                 </View>
@@ -857,12 +769,7 @@ export default function AdminAnalyticsScreen({
 
             {/* Revenue Metrics */}
             <View style={styles.section}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
+              <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
                 Revenue Analytics
               </Text>
               <View style={styles.revenueGrid}>
@@ -872,20 +779,8 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.revenueLabel,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
-                    ARPU
-                  </Text>
-                  <Text
-                    style={[
-                      styles.revenueValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.revenueLabel, { color: theme.colors.onMuted }]}>ARPU</Text>
+                  <Text style={[styles.revenueValue, { color: theme.colors.onSurface }]}>
                     {formatCurrency(analytics.revenue.averageRevenuePerUser)}
                   </Text>
                 </View>
@@ -895,20 +790,10 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.revenueLabel,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
+                  <Text style={[styles.revenueLabel, { color: theme.colors.onMuted }]}>
                     Conversion
                   </Text>
-                  <Text
-                    style={[
-                      styles.revenueValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.revenueValue, { color: theme.colors.onSurface }]}>
                     {analytics.revenue.conversionRate.toFixed(1)}%
                   </Text>
                 </View>
@@ -918,20 +803,8 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.revenueLabel,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
-                    Churn
-                  </Text>
-                  <Text
-                    style={[
-                      styles.revenueValue,
-                      { color: theme.colors.danger },
-                    ]}
-                  >
+                  <Text style={[styles.revenueLabel, { color: theme.colors.onMuted }]}>Churn</Text>
+                  <Text style={[styles.revenueValue, { color: theme.colors.danger }]}>
                     {analytics.revenue.churnRate.toFixed(1)}%
                   </Text>
                 </View>
@@ -940,12 +813,7 @@ export default function AdminAnalyticsScreen({
 
             {/* Security Metrics */}
             <View style={styles.section}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
+              <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
                 Security Overview
               </Text>
               <View style={styles.securityGrid}>
@@ -955,21 +823,15 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Ionicons name="warning" size={20} color={theme.colors.warning} />
-                  <Text
-                    style={[
-                      styles.securityLabel,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
+                  <Ionicons
+                    name="warning"
+                    size={20}
+                    color={theme.colors.warning}
+                  />
+                  <Text style={[styles.securityLabel, { color: theme.colors.onMuted }]}>
                     Suspicious Logins
                   </Text>
-                  <Text
-                    style={[
-                      styles.securityValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.securityValue, { color: theme.colors.onSurface }]}>
                     {analytics.security.suspiciousLogins}
                   </Text>
                 </View>
@@ -979,21 +841,15 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Ionicons name="shield" size={20} color={theme.colors.danger} />
-                  <Text
-                    style={[
-                      styles.securityLabel,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
+                  <Ionicons
+                    name="shield"
+                    size={20}
+                    color={theme.colors.danger}
+                  />
+                  <Text style={[styles.securityLabel, { color: theme.colors.onMuted }]}>
                     Blocked IPs
                   </Text>
-                  <Text
-                    style={[
-                      styles.securityValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.securityValue, { color: theme.colors.onSurface }]}>
                     {analytics.security.blockedIPs}
                   </Text>
                 </View>
@@ -1003,21 +859,15 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Ionicons name="flag" size={20} color={theme.colors.primary} />
-                  <Text
-                    style={[
-                      styles.securityLabel,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
+                  <Ionicons
+                    name="flag"
+                    size={20}
+                    color={theme.colors.primary}
+                  />
+                  <Text style={[styles.securityLabel, { color: theme.colors.onMuted }]}>
                     Reported Content
                   </Text>
-                  <Text
-                    style={[
-                      styles.securityValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.securityValue, { color: theme.colors.onSurface }]}>
                     {analytics.security.reportedContent}
                   </Text>
                 </View>
@@ -1027,21 +877,15 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Ionicons name="ban" size={20} color={theme.colors.danger} />
-                  <Text
-                    style={[
-                      styles.securityLabel,
-                      { color: theme.colors.onMuted },
-                    ]}
-                  >
+                  <Ionicons
+                    name="ban"
+                    size={20}
+                    color={theme.colors.danger}
+                  />
+                  <Text style={[styles.securityLabel, { color: theme.colors.onMuted }]}>
                     Banned Users
                   </Text>
-                  <Text
-                    style={[
-                      styles.securityValue,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.securityValue, { color: theme.colors.onSurface }]}>
                     {analytics.security.bannedUsers}
                   </Text>
                 </View>
@@ -1050,12 +894,7 @@ export default function AdminAnalyticsScreen({
 
             {/* Top Performers */}
             <View style={styles.section}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.colors.onSurface },
-                ]}
-              >
+              <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
                 Top Performers
               </Text>
               <View style={styles.performersGrid}>
@@ -1065,44 +904,25 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.performersTitle,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.performersTitle, { color: theme.colors.onSurface }]}>
                     Top Users
                   </Text>
-                  {analytics.topPerformers.users
-                    .slice(0, 3)
-                    .map((user, index) => (
-                      <View key={user.id} style={styles.performerItem}>
-                        <Text
-                          style={[
-                            styles.performerRank,
-                            { color: theme.colors.onMuted },
-                          ]}
-                        >
-                          #{index + 1}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.performerName,
-                            { color: theme.colors.onSurface },
-                          ]}
-                        >
-                          {user.name}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.performerStats,
-                            { color: theme.colors.onMuted },
-                          ]}
-                        >
-                          {user.matches} matches
-                        </Text>
-                      </View>
-                    ))}
+                  {analytics.topPerformers.users.slice(0, 3).map((user, index) => (
+                    <View
+                      key={user.id}
+                      style={styles.performerItem}
+                    >
+                      <Text style={[styles.performerRank, { color: theme.colors.onMuted }]}>
+                        #{index + 1}
+                      </Text>
+                      <Text style={[styles.performerName, { color: theme.colors.onSurface }]}>
+                        {user.name}
+                      </Text>
+                      <Text style={[styles.performerStats, { color: theme.colors.onMuted }]}>
+                        {user.matches} matches
+                      </Text>
+                    </View>
+                  ))}
                 </View>
                 <View
                   style={[
@@ -1110,44 +930,25 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: theme.colors.surface, shadowColor: theme.colors.border },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.performersTitle,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
+                  <Text style={[styles.performersTitle, { color: theme.colors.onSurface }]}>
                     Top Pets
                   </Text>
-                  {analytics.topPerformers.pets
-                    .slice(0, 3)
-                    .map((pet, index) => (
-                      <View key={pet.id} style={styles.performerItem}>
-                        <Text
-                          style={[
-                            styles.performerRank,
-                            { color: theme.colors.onMuted },
-                          ]}
-                        >
-                          #{index + 1}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.performerName,
-                            { color: theme.colors.onSurface },
-                          ]}
-                        >
-                          {pet.name}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.performerStats,
-                            { color: theme.colors.onMuted },
-                          ]}
-                        >
-                          {pet.matches} matches
-                        </Text>
-                      </View>
-                    ))}
+                  {analytics.topPerformers.pets.slice(0, 3).map((pet, index) => (
+                    <View
+                      key={pet.id}
+                      style={styles.performerItem}
+                    >
+                      <Text style={[styles.performerRank, { color: theme.colors.onMuted }]}>
+                        #{index + 1}
+                      </Text>
+                      <Text style={[styles.performerName, { color: theme.colors.onSurface }]}>
+                        {pet.name}
+                      </Text>
+                      <Text style={[styles.performerStats, { color: theme.colors.onMuted }]}>
+                        {pet.matches} matches
+                      </Text>
+                    </View>
+                  ))}
                 </View>
               </View>
             </View>
@@ -1157,4 +958,3 @@ export default function AdminAnalyticsScreen({
     </SafeAreaView>
   );
 }
-

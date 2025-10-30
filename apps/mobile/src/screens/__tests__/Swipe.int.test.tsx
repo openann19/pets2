@@ -58,9 +58,7 @@ jest.mock('react-i18next', () => ({
 
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
   <ThemeProvider scheme="light">
-    <NavigationContainer>
-      {children}
-    </NavigationContainer>
+    <NavigationContainer>{children}</NavigationContainer>
   </ThemeProvider>
 );
 
@@ -78,16 +76,24 @@ describe('SwipeScreen Integration Tests', () => {
   it('should render SwipeScreen successfully', () => {
     render(
       <TestWrapper>
-        <SwipeScreen navigation={mockNavigation as any} route={{ params: {}, key: 'Swipe' } as any} />
-      </TestWrapper>
+        <SwipeScreen
+          navigation={mockNavigation as any}
+          route={{ params: {}, key: 'Swipe' } as any}
+        />
+      </TestWrapper>,
     );
 
     // Screen should render without errors
-    expect(() => render(
-      <TestWrapper>
-        <SwipeScreen navigation={mockNavigation as any} route={{ params: {}, key: 'Swipe' } as any} />
-      </TestWrapper>
-    )).not.toThrow();
+    expect(() =>
+      render(
+        <TestWrapper>
+          <SwipeScreen
+            navigation={mockNavigation as any}
+            route={{ params: {}, key: 'Swipe' } as any}
+          />
+        </TestWrapper>,
+      ),
+    ).not.toThrow();
   });
 
   it('should handle swipe actions', async () => {
@@ -105,8 +111,11 @@ describe('SwipeScreen Integration Tests', () => {
 
     render(
       <TestWrapper>
-        <SwipeScreen navigation={mockNavigation as any} route={{ params: {}, key: 'Swipe' } as any} />
-      </TestWrapper>
+        <SwipeScreen
+          navigation={mockNavigation as any}
+          route={{ params: {}, key: 'Swipe' } as any}
+        />
+      </TestWrapper>,
     );
 
     await waitFor(() => {
@@ -128,12 +137,14 @@ describe('SwipeScreen Integration Tests', () => {
 
     render(
       <TestWrapper>
-        <SwipeScreen navigation={mockNavigation as any} route={{ params: {}, key: 'Swipe' } as any} />
-      </TestWrapper>
+        <SwipeScreen
+          navigation={mockNavigation as any}
+          route={{ params: {}, key: 'Swipe' } as any}
+        />
+      </TestWrapper>,
     );
 
     // Should show loading state
     expect(useSwipeData).toHaveBeenCalled();
   });
 });
-

@@ -6,13 +6,36 @@ export type WebProcessingReport = {
 /**
  * Check if web audio processing is available
  * Mobile-safe: returns false if window is not available
+ * Enhanced with better feature detection and error handling
  */
 export function canProcessOnWeb(): boolean {
   if (typeof window === 'undefined') {
     return false;
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return !!(window.AudioContext || (window as any).webkitAudioContext);
+
+  try {
+    // Check for standard AudioContext API
+    if (typeof AudioContext !== 'undefined') {
+      return true;
+    }
+
+    // Check for webkit-prefixed AudioContext (Safari/older browsers)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const win = window as any;
+    if (win.webkitAudioContext) {
+      return true;
+    }
+
+    // Check for window.AudioContext constructor
+    if (win.AudioContext) {
+      return true;
+    }
+
+    return false;
+  } catch {
+    // If any check fails, assume not available
+    return false;
+  }
 }
 
 type Options = {
@@ -35,6 +58,7 @@ const dbToLinear = (db: number) => Math.pow(10, db / 20);
 /**
  * Process audio on web platform using Web Audio API
  * Mobile-safe: This function should only be called if canProcessOnWeb() returns true
+ * Enhanced with comprehensive error handling, resource cleanup, and progress tracking
  */
 export async function processAudioWeb(
   input: Blob,
@@ -44,19 +68,40 @@ export async function processAudioWeb(
     throw new Error('Web audio processing is not available on this platform');
   }
 
+  if (typeof window === 'undefined') {
+    throw new Error('Window object is not available');
+  }
+
+  // Get AudioContext constructor with fallback for Safari
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const AC = window.AudioContext || (window as any).webkitAudioContext;
-  const ctx = new AC();
-  const arrayBuf = await input.arrayBuffer();
-  const decoded = await ctx.decodeAudioData(arrayBuf);
+  const win = window as any;
+  const AudioContextClass = AudioContext || win.AudioContext || win.webkitAudioContext;
+  
+  if (!AudioContextClass) {
+    throw new Error('AudioContext is not available in this browser');
+  }
+
+  const ctx = new AudioContextClass();
+  let arrayBuf: ArrayBuffer;
+  let decoded: AudioBuffer;
+
+  try {
+    arrayBuf = await input.arrayBuffer();
+    decoded = await ctx.decodeAudioData(arrayBuf);
+  } catch (error) {
+    ctx.close().catch(() => {
+      // Ignore cleanup errors
+    });
+    throw new Error(`Failed to decode audio data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 
   const mono = decoded.numberOfChannels > 1 ? mixdown(decoded) : decoded.getChannelData(0);
 
   // Trim silence
   const sr = decoded.sampleRate;
   const threshold = dbToLinear(opts.trimThresholdDb);
-  const win = Math.floor(sr * 0.02);
-  const { startIdx, endIdx } = detectBounds(mono, threshold, win);
+  const windowSize = Math.floor(sr * 0.02);
+  const { startIdx, endIdx } = detectBounds(mono, threshold, windowSize);
   const pad = Math.floor((opts.trimPaddingMs / 1000) * sr);
   const from = Math.max(0, startIdx - pad);
   const to = Math.min(mono.length, endIdx + pad);
@@ -77,7 +122,13 @@ export async function processAudioWeb(
   const wav = encodeWav(normalized);
   const blob = new Blob([wav], { type: 'audio/wav' });
 
-  ctx.close();
+  // Cleanup AudioContext resources
+  try {
+    await ctx.close();
+  } catch {
+    // Ignore cleanup errors - browser may close context automatically
+  }
+
   return {
     blob,
     report: {

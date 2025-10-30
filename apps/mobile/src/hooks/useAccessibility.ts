@@ -1,31 +1,41 @@
 /**
  * useAccessibility Hook
- * 
+ *
  * Provides easy access to accessibility labels and utilities
  * for React Native components
  */
 
 import { useMemo } from 'react';
-import { accessibilityService } from '@/services/AccessibilityService';
+import { accessibilityService } from '../services/AccessibilityService';
 
 export interface UseAccessibilityReturn {
   // Screen-specific labels
-  getScreenLabels: (screenName: string) => Record<string, { label: string; hint?: string; role?: string }>;
-  
+  getScreenLabels: (
+    screenName: string,
+  ) => Record<string, { label: string; hint?: string; role?: string }>;
+
   // Action labels
   getActionLabels: () => Record<string, { label: string; hint?: string; role?: string }>;
-  
+
   // Form labels
   getFormLabels: () => Record<string, { label: string; hint?: string }>;
-  
+
   // Feedback messages
   getFeedbackLabels: () => Record<string, string>;
-  
+
   // Dynamic label generation
-  generateListItemLabel: (itemType: string, itemName: string, position?: number, total?: number) => string;
+  generateListItemLabel: (
+    itemType: string,
+    itemName: string,
+    position?: number,
+    total?: number,
+  ) => string;
   generateProgressLabel: (currentStep: number, totalSteps: number, stepName?: string) => string;
-  generateNotificationLabel: (type: 'message' | 'match' | 'like' | 'system', count?: number) => string;
-  
+  generateNotificationLabel: (
+    type: 'message' | 'match' | 'like' | 'system',
+    count?: number,
+  ) => string;
+
   // Validation
   validateProps: (props: {
     accessibilityLabel?: string;
@@ -37,7 +47,7 @@ export interface UseAccessibilityReturn {
     errors: string[];
     warnings: string[];
   };
-  
+
   // Accessibility state
   isScreenReaderEnabled: boolean;
   isReduceMotionEnabled: boolean;

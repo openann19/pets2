@@ -1,8 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "@/theme";
+import { Ionicons } from '@expo/vector-icons';
+import { logger } from '@pawfectmatch/core';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '@/theme';
 
 // Mock Audio for missing expo-av dependency
 type RecordingInstance = {
@@ -24,7 +24,7 @@ const Audio = {
     createAsync: async (_options?: unknown) => ({
       recording: {
         stopAndUnloadAsync: async () => {},
-        getURI: () => "mock-audio-uri",
+        getURI: () => 'mock-audio-uri',
       } as RecordingInstance,
     }),
   },
@@ -54,7 +54,7 @@ export function MobileVoiceRecorder({
     try {
       const { granted } = await Audio.requestPermissionsAsync();
       if (!granted) {
-        alert("Permission to access microphone is required!");
+        alert('Permission to access microphone is required!');
         onCancel();
         return;
       }
@@ -80,8 +80,8 @@ export function MobileVoiceRecorder({
         setDuration((prev) => prev + 1);
       }, 1000) as unknown as number;
     } catch (error) {
-      logger.error("Failed to start recording:", { error });
-      alert("Failed to start recording. Please try again.");
+      logger.error('Failed to start recording:', { error });
+      alert('Failed to start recording. Please try again.');
       onCancel();
     }
   }, [onCancel]);
@@ -118,8 +118,8 @@ export function MobileVoiceRecorder({
         onSend(blob, duration);
       }
     } catch (error) {
-      logger.error("Failed to stop recording:", { error });
-      alert("Failed to save recording. Please try again.");
+      logger.error('Failed to stop recording:', { error });
+      alert('Failed to save recording. Please try again.');
       onCancel();
     }
   };
@@ -127,27 +127,32 @@ export function MobileVoiceRecorder({
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
-    <Modal visible animationType="slide" transparent onRequestClose={onCancel}>
+    <Modal
+      visible
+      animationType="slide"
+      transparent
+      onRequestClose={onCancel}
+    >
       <View style={styles.overlay}>
-        <View
-          style={[
-            styles.container,
-            { backgroundColor: theme.colors.surface },
-          ]}
-        >
+        <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
           {/* Header */}
           <View style={styles.header}>
-            <Text
-              style={[styles.title, { color: theme.colors.onSurface }]}
-            >
-              {isRecording ? "Recording..." : "Voice Message"}
+            <Text style={[styles.title, { color: theme.colors.onSurface }]}>
+              {isRecording ? 'Recording...' : 'Voice Message'}
             </Text>
-            <TouchableOpacity onPress={onCancel} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={theme.colors.onSurface} />
+            <TouchableOpacity
+              onPress={onCancel}
+              style={styles.closeButton}
+            >
+              <Ionicons
+                name="close"
+                size={24}
+                color={theme.colors.onSurface}
+              />
             </TouchableOpacity>
           </View>
 
@@ -168,29 +173,21 @@ export function MobileVoiceRecorder({
                   />
                 ))
               ) : (
-                <Ionicons name="mic" size={48} color={theme.colors.onMuted} />
+                <Ionicons
+                  name="mic"
+                  size={48}
+                  color={theme.colors.onMuted}
+                />
               )}
             </View>
 
             {/* Duration */}
-            <Text
-              style={[
-                styles.duration,
-                { color: theme.colors.onSurface },
-              ]}
-            >
+            <Text style={[styles.duration, { color: theme.colors.onSurface }]}>
               {formatDuration(duration)}
             </Text>
 
-            <Text
-              style={[
-                styles.hint,
-                { color: theme.colors.onMuted },
-              ]}
-            >
-              {isRecording
-                ? "Tap stop when finished (max 60 seconds)"
-                : "Ready to send"}
+            <Text style={[styles.hint, { color: theme.colors.onMuted }]}>
+              {isRecording ? 'Tap stop when finished (max 60 seconds)' : 'Ready to send'}
             </Text>
           </View>
 
@@ -198,43 +195,35 @@ export function MobileVoiceRecorder({
           <View style={styles.controls}>
             {isRecording ? (
               <TouchableOpacity
-                style={[
-                  styles.recordButton,
-                  { backgroundColor: theme.colors.danger },
-                ]}
+                style={[styles.recordButton, { backgroundColor: theme.colors.danger }]}
                 onPress={stopRecording}
               >
-                <Ionicons name="stop" size={24} color={theme.colors.onPrimary} />
+                <Ionicons
+                  name="stop"
+                  size={24}
+                  color={theme.colors.onPrimary}
+                />
               </TouchableOpacity>
             ) : (
               <>
                 <TouchableOpacity
-                  style={[
-                    styles.cancelButton,
-                    { borderColor: theme.colors.border },
-                  ]}
+                  style={[styles.cancelButton, { borderColor: theme.colors.border }]}
                   onPress={onCancel}
                 >
-                  <Text
-                    style={[
-                      styles.cancelText,
-                      { color: theme.colors.onSurface },
-                    ]}
-                  >
-                    Cancel
-                  </Text>
+                  <Text style={[styles.cancelText, { color: theme.colors.onSurface }]}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[
-                    styles.sendButton,
-                    { backgroundColor: theme.colors.primary },
-                  ]}
+                  style={[styles.sendButton, { backgroundColor: theme.colors.primary }]}
                   onPress={() => {
                     // This would normally send the recorded audio
                     onCancel();
                   }}
                 >
-                  <Ionicons name="send" size={20} color={theme.colors.onPrimary} />
+                  <Ionicons
+                    name="send"
+                    size={20}
+                    color={theme.colors.onPrimary}
+                  />
                 </TouchableOpacity>
               </>
             )}
@@ -248,8 +237,8 @@ export function MobileVoiceRecorder({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "flex-end",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
   },
   container: {
     borderTopLeftRadius: 20,
@@ -258,26 +247,26 @@ const styles = StyleSheet.create({
     minHeight: 300,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 30,
   },
   title: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   closeButton: {
     padding: 4,
   },
   recordingContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 40,
   },
   waveformContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     height: 80,
     marginBottom: 20,
   },
@@ -289,25 +278,25 @@ const styles = StyleSheet.create({
   },
   duration: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 8,
   },
   hint: {
     fontSize: 14,
-    textAlign: "center",
+    textAlign: 'center',
   },
   controls: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 20,
   },
   recordButton: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cancelButton: {
     paddingHorizontal: 24,
@@ -317,13 +306,13 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   sendButton: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

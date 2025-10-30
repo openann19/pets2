@@ -89,7 +89,7 @@ export const useSafetyCenter = (options?: UseSafetyCenterOptions): UseSafetyCent
           description: `User reported: ${reason}`,
         },
       });
-      
+
       if (success) {
         Alert.alert('Report Submitted', 'Thank you for your report. We will review it shortly.');
         logger.info('User reported successfully', { userId, reason });
@@ -112,7 +112,7 @@ export const useSafetyCenter = (options?: UseSafetyCenterOptions): UseSafetyCent
       const email = 'support@pawfectmatch.com';
       const subject = 'Safety Support Request';
       const url = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
-      
+
       const canOpen = await Linking.canOpenURL(url);
       if (canOpen) {
         await Linking.openURL(url);
@@ -123,7 +123,10 @@ export const useSafetyCenter = (options?: UseSafetyCenterOptions): UseSafetyCent
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error(String(error));
       logger.error('Failed to open support email', { error: errorObj });
-      Alert.alert('Error', 'Unable to open email app. Please contact support@pawfectmatch.com manually.');
+      Alert.alert(
+        'Error',
+        'Unable to open email app. Please contact support@pawfectmatch.com manually.',
+      );
     }
   }, []);
 
@@ -155,7 +158,10 @@ export const useSafetyCenter = (options?: UseSafetyCenterOptions): UseSafetyCent
         Alert.alert('Navigation Error', 'Unable to navigate to Privacy Settings.');
       }
     } else {
-      Alert.alert('Privacy Settings', 'Navigation not available. Please navigate to Privacy Settings from Settings screen.');
+      Alert.alert(
+        'Privacy Settings',
+        'Navigation not available. Please navigate to Privacy Settings from Settings screen.',
+      );
     }
   }, [navigation]);
 

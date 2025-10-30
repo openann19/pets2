@@ -28,7 +28,7 @@ export function NotificationSettingsSection({
   onToggle,
 }: NotificationSettingsSectionProps) {
   const theme = useTheme();
-  
+
   const renderSettingItem = (item: SettingItem) => (
     <TouchableOpacity
       key={item.id}
@@ -104,7 +104,7 @@ export function NotificationSettingsSection({
   );
 
   const styles = makeStyles(theme);
-  
+
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>NOTIFICATIONS</Text>
@@ -115,76 +115,76 @@ export function NotificationSettingsSection({
 
 function makeStyles(theme: AppTheme) {
   return StyleSheet.create({
-  section: {
-    marginTop: 24,
-    paddingHorizontal: 20,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: theme.colors.onMuted,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 12,
-  },
-  sectionContent: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: 12,
-    shadowColor: theme.colors.bg,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-  },
-  settingItemDestructive: {
-    borderBottomColor: '#FEF2F2',
-  },
-  settingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  settingIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: theme.colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  settingIconDestructive: {
-    backgroundColor: '#FEF2F2',
-  },
-  settingText: {
-    flex: 1,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: theme.colors.onSurface,
-    marginBottom: 2,
-  },
-  settingTitleDestructive: {
-    color: theme.colors.danger,
-  },
-  settingSubtitle: {
-    fontSize: 13,
-    color: theme.colors.onMuted,
-  },
-  settingSubtitleDestructive: {
-    color: '#FCA5A5',
-  },
-  settingRight: {
-    marginLeft: 12,
-  },
+    section: {
+      marginTop: 24,
+      paddingHorizontal: 20,
+    },
+    sectionTitle: {
+      fontSize: 14,
+      fontWeight: 'bold',
+      color: theme.colors.onMuted,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 12,
+    },
+    sectionContent: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: 12,
+      shadowColor: theme.colors.bg,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    settingItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    settingItemDestructive: {
+      borderBottomColor: '#FEF2F2',
+    },
+    settingLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    settingIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 8,
+      backgroundColor: theme.colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12,
+    },
+    settingIconDestructive: {
+      backgroundColor: '#FEF2F2',
+    },
+    settingText: {
+      flex: 1,
+    },
+    settingTitle: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: theme.colors.onSurface,
+      marginBottom: 2,
+    },
+    settingTitleDestructive: {
+      color: theme.colors.danger,
+    },
+    settingSubtitle: {
+      fontSize: 13,
+      color: theme.colors.onMuted,
+    },
+    settingSubtitleDestructive: {
+      color: '#FCA5A5',
+    },
+    settingRight: {
+      marginLeft: 12,
+    },
   });
 }

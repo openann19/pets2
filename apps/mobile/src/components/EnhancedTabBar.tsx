@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View, Platform } from "react-native";
 import Animated, {
@@ -137,8 +138,8 @@ interface TabBarState {
 
 interface EnhancedTabBarProps {
   state: TabBarState;
-  descriptors: any; // React Navigation bottom tab descriptors
-  navigation: any; // React Navigation navigation helper
+  descriptors: BottomTabBarProps['descriptors'];
+  navigation: BottomTabBarProps['navigation'];
 }
 
 export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({

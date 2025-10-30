@@ -168,24 +168,21 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
 
   const addPhoto = async () => {
     if (isUploadingPhoto) return;
-    
+
     try {
       setIsUploadingPhoto(true);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      
+
       // Request permissions
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert(
-          'Permission Required',
-          'Please grant permission to access your photos.',
-        );
+        Alert.alert('Permission Required', 'Please grant permission to access your photos.');
         return;
       }
 
       // Pick and upload photo
       const photoUrl = await pickAndUpload();
-      
+
       if (photoUrl) {
         setFormData((prev) => ({
           ...prev,

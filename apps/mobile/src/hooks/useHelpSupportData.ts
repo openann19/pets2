@@ -60,7 +60,7 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
           const email = 'support@pawfectmatch.com';
           const subject = 'Support Request';
           const url = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
-          
+
           const canOpen = await Linking.canOpenURL(url);
           if (canOpen) {
             await Linking.openURL(url);
@@ -71,7 +71,10 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
         } catch (error) {
           const errorObj = error instanceof Error ? error : new Error(String(error));
           logger.error('Failed to open contact support', { error: errorObj });
-          Alert.alert('Error', 'Unable to open email app. Please contact support@pawfectmatch.com manually.');
+          Alert.alert(
+            'Error',
+            'Unable to open email app. Please contact support@pawfectmatch.com manually.',
+          );
         }
       },
     },
@@ -86,7 +89,7 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
           const subject = 'Bug Report';
           const body = 'Please describe the bug you encountered:';
           const url = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-          
+
           const canOpen = await Linking.canOpenURL(url);
           if (canOpen) {
             await Linking.openURL(url);
@@ -97,7 +100,10 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
         } catch (error) {
           const errorObj = error instanceof Error ? error : new Error(String(error));
           logger.error('Failed to open bug report', { error: errorObj });
-          Alert.alert('Error', 'Unable to open email app. Please email support@pawfectmatch.com with bug details.');
+          Alert.alert(
+            'Error',
+            'Unable to open email app. Please email support@pawfectmatch.com with bug details.',
+          );
         }
       },
     },

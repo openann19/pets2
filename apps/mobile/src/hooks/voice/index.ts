@@ -22,4 +22,3 @@ export type { UseSlideToCancelOptions, UseSlideToCancelReturn } from './useSlide
 
 export { useVoiceSend } from './useVoiceSend';
 export type { VoiceSendOptions, UseVoiceSendReturn } from './useVoiceSend';
-

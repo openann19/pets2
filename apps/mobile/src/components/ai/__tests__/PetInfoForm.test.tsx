@@ -3,13 +3,31 @@
  * Production-grade tests covering all scenarios, edge cases, and accessibility
  */
 
+// Mock react-native using requireActual pattern (exactly like PinchZoom test)
+jest.mock('react-native', () => {
+  const RN = jest.requireActual('react-native');
+  return {
+    ...RN,
+    StyleSheet: {
+      create: jest.fn((styles) => styles),
+      flatten: jest.fn((style) => style),
+      compose: jest.fn((style1, style2) => [style1, style2]),
+      hairlineWidth: 1,
+      absoluteFill: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
+      absoluteFillObject: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
+    },
+  };
+});
+
 import React from 'react';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react-native';
 import { PetInfoForm } from '../PetInfoForm';
 
-// Mock the theme
-jest.mock('../../../theme', () => ({
+// Mock the theme - use the same path alias as the component
+jest.mock('@/theme', () => ({
   useTheme: jest.fn(() => ({
+    scheme: 'light',
+    isDark: false,
     colors: {
       bg: '#FFFFFF',
       surface: '#F8F9FA',
@@ -17,9 +35,54 @@ jest.mock('../../../theme', () => ({
       onMuted: '#666666',
       danger: '#FF0000',
       border: '#CCCCCC',
+      primary: '#2563EB',
+      onPrimary: '#FFFFFF',
+      success: '#10B981',
+      warning: '#F59E0B',
+      info: '#3B82F6',
     },
-    spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
-    radii: { md: 8, full: 9999 },
+    spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, '2xl': 48, '3xl': 64, '4xl': 96 },
+    radii: { none: 0, xs: 2, sm: 4, md: 8, lg: 12, xl: 16, '2xl': 24, pill: 999, full: 9999 },
+    typography: {
+      body: {
+        size: 16,
+        lineHeight: 24,
+        weight: '400' as const,
+      },
+      h1: {
+        size: 32,
+        lineHeight: 40,
+        weight: '700' as const,
+      },
+      h2: {
+        size: 28,
+        lineHeight: 36,
+        weight: '600' as const,
+      },
+    },
+    shadows: {
+      elevation1: {},
+      elevation2: {},
+      glass: {},
+    },
+    blur: {
+      sm: 8,
+      md: 16,
+      lg: 24,
+    },
+    easing: {
+      standard: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      decel: 'cubic-bezier(0, 0, 0.2, 1)',
+      accel: 'cubic-bezier(0.4, 0, 1, 1)',
+    },
+    palette: {
+      neutral: {},
+      brand: {},
+      gradients: {},
+    },
+    utils: {
+      alpha: (color: string, opacity: number) => color,
+    },
   })),
 }));
 

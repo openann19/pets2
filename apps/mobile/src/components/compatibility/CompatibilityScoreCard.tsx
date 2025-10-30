@@ -3,11 +3,11 @@
  * Displays overall compatibility score with breakdown
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 function createStyles(theme: AppTheme) {
   return StyleSheet.create({
@@ -19,38 +19,37 @@ function createStyles(theme: AppTheme) {
       ...theme.shadows.elevation2,
     },
     resultHeader: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       marginBottom: theme.spacing.md,
       gap: theme.spacing.xs,
     },
     resultTitle: {
       fontSize: theme.typography.body.size,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
     },
     overallScore: {
-      alignItems: "center",
+      alignItems: 'center',
       gap: theme.spacing.xs,
     },
     scoreValue: {
       fontSize: theme.typography.h1.size,
-      fontWeight: "bold",
+      fontWeight: 'bold',
     },
     scoreLabel: {
       fontSize: theme.typography.body.size,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onMuted,
     },
     scoreDescription: {
       fontSize: theme.typography.body.size,
-      textAlign: "center",
+      textAlign: 'center',
       lineHeight: theme.typography.body.lineHeight,
       color: theme.colors.onSurface,
     },
   });
 }
-
 
 interface CompatibilityScoreCardProps {
   overallScore: number;
@@ -75,10 +74,10 @@ export const CompatibilityScoreCard: React.FC<CompatibilityScoreCardProps> = ({
   };
 
   const getScoreLabel = (score: number) => {
-    if (score >= 90) return "Excellent";
-    if (score >= 80) return "Good";
-    if (score >= 70) return "Fair";
-    return "Poor";
+    if (score >= 90) return 'Excellent';
+    if (score >= 80) return 'Good';
+    if (score >= 70) return 'Fair';
+    return 'Poor';
   };
 
   return (
@@ -89,25 +88,14 @@ export const CompatibilityScoreCard: React.FC<CompatibilityScoreCardProps> = ({
           size={24}
           color={getScoreColor(overallScore)}
         />
-        <Text style={styles.resultTitle}>
-          Overall Compatibility
-        </Text>
+        <Text style={styles.resultTitle}>Overall Compatibility</Text>
       </View>
       <View style={styles.overallScore}>
-        <Text
-          style={[
-            styles.scoreValue,
-            { color: getScoreColor(overallScore) },
-          ]}
-        >
+        <Text style={[styles.scoreValue, { color: getScoreColor(overallScore) }]}>
           {overallScore}%
         </Text>
-        <Text style={styles.scoreLabel}>
-          {getScoreLabel(overallScore)}
-        </Text>
-        <Text style={styles.scoreDescription}>
-          {summary}
-        </Text>
+        <Text style={styles.scoreLabel}>{getScoreLabel(overallScore)}</Text>
+        <Text style={styles.scoreDescription}>{summary}</Text>
       </View>
     </View>
   );

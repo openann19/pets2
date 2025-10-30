@@ -20,7 +20,7 @@ import * as Location from 'expo-location';
 // Import all services and components
 import { api } from '../services/api';
 import { offlineService } from '../services/offlineService';
-import { authService } from '../services/authService';
+import { AuthService } from '../services/AuthService';
 import { uploadHygieneService } from '../services/uploadHygiene';
 import { communityAPI } from '../services/communityAPI';
 import { notificationService } from '../services/notifications';

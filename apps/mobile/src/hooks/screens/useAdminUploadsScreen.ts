@@ -126,18 +126,27 @@ export function useAdminUploadsScreen({
           const mappedUploads: MediaUpload[] = response.data.uploads.map((upload: any) => ({
             id: upload._id || upload.id,
             userId: upload.userId?._id || upload.userId || '',
-            userName: upload.userId?.firstName && upload.userId?.lastName
-              ? `${upload.userId.firstName} ${upload.userId.lastName}`
-              : upload.userId?.email || 'Unknown User',
+            userName:
+              upload.userId?.firstName && upload.userId?.lastName
+                ? `${upload.userId.firstName} ${upload.userId.lastName}`
+                : upload.userId?.email || 'Unknown User',
             petId: upload.petId?._id || upload.petId || undefined,
             petName: upload.petId?.name || undefined,
-            type: upload.type === 'video' ? 'video' : upload.type === 'document' ? 'document' : 'image',
+            type:
+              upload.type === 'video' ? 'video' : upload.type === 'document' ? 'document' : 'image',
             url: upload.url || '',
             thumbnailUrl: upload.thumbnailUrl || upload.url,
             fileName: upload.originalName || upload.fileName || 'unknown',
             fileSize: upload.size || 0,
             uploadedAt: new Date(upload.uploadedAt || upload.createdAt),
-            status: upload.status === 'approved' ? 'approved' : upload.status === 'rejected' ? 'rejected' : upload.status === 'flagged' ? 'flagged' : 'pending',
+            status:
+              upload.status === 'approved'
+                ? 'approved'
+                : upload.status === 'rejected'
+                  ? 'rejected'
+                  : upload.status === 'flagged'
+                    ? 'flagged'
+                    : 'pending',
             moderationReason: upload.moderationReason || upload.rejectionReason,
             aiModerationScore: upload.aiModerationScore || upload.moderatedScore,
             manualReviewRequired: upload.manualReviewRequired || upload.status === 'flagged',
@@ -150,9 +159,20 @@ export function useAdminUploadsScreen({
             totalUploads: response.data.pagination?.total || mappedUploads.length,
             pendingReview: mappedUploads.filter((u) => u.status === 'pending').length,
             flaggedContent: mappedUploads.filter((u) => u.status === 'flagged').length,
-            approvedToday: mappedUploads.filter((u) => u.status === 'approved' && new Date(u.uploadedAt).toDateString() === new Date().toDateString()).length,
-            rejectedToday: mappedUploads.filter((u) => u.status === 'rejected' && new Date(u.uploadedAt).toDateString() === new Date().toDateString()).length,
-            aiModerationRate: mappedUploads.filter((u) => u.aiModerationScore !== undefined).length / mappedUploads.length * 100,
+            approvedToday: mappedUploads.filter(
+              (u) =>
+                u.status === 'approved' &&
+                new Date(u.uploadedAt).toDateString() === new Date().toDateString(),
+            ).length,
+            rejectedToday: mappedUploads.filter(
+              (u) =>
+                u.status === 'rejected' &&
+                new Date(u.uploadedAt).toDateString() === new Date().toDateString(),
+            ).length,
+            aiModerationRate:
+              (mappedUploads.filter((u) => u.aiModerationScore !== undefined).length /
+                mappedUploads.length) *
+              100,
           };
 
           setUploads(mappedUploads);
@@ -169,7 +189,7 @@ export function useAdminUploadsScreen({
         const err = error instanceof Error ? error : new Error('Failed to load uploads');
         logger.error('Failed to load admin uploads', { error: err });
         handleNetworkError(err, 'admin.uploads.load');
-        
+
         // Fallback to empty state on error
         setUploads([]);
         setStats({

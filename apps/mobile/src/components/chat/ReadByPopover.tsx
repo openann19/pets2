@@ -1,26 +1,19 @@
-import React from "react";
-import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-} from "react-native";
+import React from 'react';
+import { Modal, Pressable, StyleSheet, Text, View, Image } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   withSpring,
-} from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
-import type { ReadReceipt as CoreReadReceipt, User } from "@pawfectmatch/core";
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
+import type { ReadReceipt as CoreReadReceipt, User } from '@pawfectmatch/core';
 
 export interface ReadReceiptDisplay {
   userId: string;
   name: string;
-  avatar?: string;   // uri
-  readAt: string;    // ISO
+  avatar?: string; // uri
+  readAt: string; // ISO
 }
 
 export interface ReadByPopoverProps {
@@ -31,7 +24,10 @@ export interface ReadByPopoverProps {
   // anchor is bubble's screen coords (from measure)
   anchor?: { x: number; y: number };
   theme?: {
-    bg?: string; text?: string; subtext?: string; border?: string;
+    bg?: string;
+    text?: string;
+    subtext?: string;
+    border?: string;
   };
 }
 
@@ -75,9 +71,7 @@ export default function ReadByPopover({
   // Transform core ReadReceipt to display format
   const displayReceipts: ReadReceiptDisplay[] = receipts.map((r) => {
     const user = users?.get(r.user);
-    const name = user 
-      ? `${user.firstName} ${user.lastName}`.trim() 
-      : "Unknown User";
+    const name = user ? `${user.firstName} ${user.lastName}`.trim() : 'Unknown User';
     const avatar = user?.avatar;
 
     return {
@@ -92,9 +86,17 @@ export default function ReadByPopover({
   const left = Math.max(12, (anchor?.x ?? 12) - 160);
 
   return (
-    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="none"
+      onRequestClose={onClose}
+    >
       {/* Backdrop */}
-      <Pressable style={styles.backdrop} onPress={onClose}>
+      <Pressable
+        style={styles.backdrop}
+        onPress={onClose}
+      >
         <Animated.View style={[styles.backdropFill, { opacity: alpha.value }]} />
       </Pressable>
 
@@ -104,36 +106,41 @@ export default function ReadByPopover({
           styles.pop,
           popSty,
           {
-            backgroundColor: theme?.bg ?? "#111",
-            borderColor: theme?.border ?? "rgba(255,255,255,0.08)",
+            backgroundColor: theme?.bg ?? '#111',
+            borderColor: theme?.border ?? 'rgba(255,255,255,0.08)',
             top,
             left,
           },
         ]}
         pointerEvents="box-none"
       >
-        <Text style={[styles.title, { color: theme?.text ?? "#fff" }]}>
-          Read by
-        </Text>
+        <Text style={[styles.title, { color: theme?.text ?? '#fff' }]}>Read by</Text>
 
         {displayReceipts.length === 0 ? (
-          <Text style={[styles.empty, { color: theme?.subtext ?? "#9ca3af" }]}>
-            Nobody yet
-          </Text>
+          <Text style={[styles.empty, { color: theme?.subtext ?? '#9ca3af' }]}>Nobody yet</Text>
         ) : (
           <View style={styles.list}>
             {displayReceipts.map((r) => (
-              <View key={r.userId} style={styles.row}>
+              <View
+                key={r.userId}
+                style={styles.row}
+              >
                 {r.avatar ? (
-                  <Image source={{ uri: r.avatar }} style={styles.avatar} />
+                  <Image
+                    source={{ uri: r.avatar }}
+                    style={styles.avatar}
+                  />
                 ) : (
                   <View style={[styles.avatar, styles.avatarFallback]} />
                 )}
                 <View style={{ flex: 1 }}>
-                  <Text style={[styles.name, { color: theme?.text ?? "#fff" }]} numberOfLines={1}>
+                  <Text
+                    style={[styles.name, { color: theme?.text ?? '#fff' }]}
+                    numberOfLines={1}
+                  >
                     {r.name}
                   </Text>
-                  <Text style={[styles.sub, { color: theme?.subtext ?? "#9ca3af" }]}>
+                  <Text style={[styles.sub, { color: theme?.subtext ?? '#9ca3af' }]}>
                     {formatShort(r.readAt)}
                   </Text>
                 </View>
@@ -147,22 +154,21 @@ export default function ReadByPopover({
 }
 
 const styles = StyleSheet.create({
-  backdrop: { position: "absolute", inset: 0 },
-  backdropFill: { flex: 1, backgroundColor: "rgba(0,0,0,0.25)" },
+  backdrop: { position: 'absolute', inset: 0 },
+  backdropFill: { flex: 1, backgroundColor: 'rgba(0,0,0,0.25)' },
   pop: {
-    position: "absolute",
+    position: 'absolute',
     width: 220,
     borderRadius: 16,
     padding: 12,
     borderWidth: 1,
   },
-  title: { fontSize: 12, fontWeight: "700", marginBottom: 8, opacity: 0.9 },
+  title: { fontSize: 12, fontWeight: '700', marginBottom: 8, opacity: 0.9 },
   empty: { fontSize: 12 },
   list: { gap: 10 },
-  row: { flexDirection: "row", alignItems: "center", gap: 10 },
-  avatar: { width: 28, height: 28, borderRadius: 14, backgroundColor: "#222" },
-  avatarFallback: { backgroundColor: "#333" },
-  name: { fontSize: 13, fontWeight: "600" },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  avatar: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#222' },
+  avatarFallback: { backgroundColor: '#333' },
+  name: { fontSize: 13, fontWeight: '600' },
   sub: { fontSize: 11 },
 });
-

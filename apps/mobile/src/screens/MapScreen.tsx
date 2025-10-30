@@ -108,7 +108,12 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
           region={region}
           userLocation={userLocation}
           filteredPins={filteredPins}
-          filters={filters}
+          filters={{
+            ...filters,
+            showHeatmap: filters.showHeatmap ?? false,
+            showClusters: filters.showClusters ?? true,
+            densityFilter: filters.densityFilter || 'all',
+          }}
           heatmapPoints={heatmapPoints}
           onMarkerPress={setSelectedPin}
           getMarkerColor={getMarkerColor}

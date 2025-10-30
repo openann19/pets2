@@ -1,8 +1,18 @@
 import { logger } from '@pawfectmatch/core';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withDelay,
+  interpolate,
+  Extrapolate,
+} from 'react-native-reanimated';
 import { AdvancedCard, CardConfigs } from '../../../components/Advanced/AdvancedCard';
 import { matchesAPI } from '../../../services/api';
+import { useTheme } from '@mobile/theme';
+import { useCountUpAnimation } from '@/hooks/animations';
 
 interface ProfileStatsSectionProps {
   matchCount?: number;
@@ -10,8 +20,50 @@ interface ProfileStatsSectionProps {
   petCount?: number;
 }
 
+interface AnimatedStatProps {
+  value: number;
+  label: string;
+  delay: number;
+  theme: ReturnType<typeof useTheme>;
+}
+
+const AnimatedStat: React.FC<AnimatedStatProps> = ({ value, label, delay, theme }) => {
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(20);
+  const scale = useSharedValue(0.8);
+  const { count, getDisplayValue } = useCountUpAnimation(value, 800, true);
+
+  useEffect(() => {
+    opacity.value = withDelay(delay, withTiming(1, { duration: 400 }));
+    translateY.value = withDelay(delay, withTiming(0, { duration: 400 }));
+    scale.value = withDelay(delay, withTiming(1, { duration: 400 }));
+  }, [delay]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
+  }));
+
+  const numberStyle = useAnimatedStyle(() => ({
+    opacity: count.value > 0 ? 1 : 0,
+  }));
+
+  return (
+    <Animated.View style={[styles.statItem, animatedStyle]}>
+      <Animated.Text style={[styles.statNumber, { color: theme.colors.primary }, numberStyle]}>
+        {Math.round(count.value)}
+      </Animated.Text>
+      <Text style={[styles.statLabel, { color: theme.colors.onMuted }]}>{label}</Text>
+    </Animated.View>
+  );
+};
+
 export const ProfileStatsSection: React.FC<ProfileStatsSectionProps> = React.memo(
   ({ matchCount = 12, messageCount = 8, petCount = 3 }) => {
+    const theme = useTheme();
     const handleCardPress = useCallback(async () => {
       const [matches] = await Promise.all([
         matchesAPI.getMatches().catch(() => []),
@@ -30,18 +82,24 @@ export const ProfileStatsSection: React.FC<ProfileStatsSectionProps> = React.mem
         style={styles.statsSection}
       >
         <View style={styles.statsContent}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{matchCount}</Text>
-            <Text style={styles.statLabel}>Matches</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{messageCount}</Text>
-            <Text style={styles.statLabel}>Messages</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{petCount}</Text>
-            <Text style={styles.statLabel}>Pets</Text>
-          </View>
+          <AnimatedStat
+            value={matchCount}
+            label="Matches"
+            delay={100}
+            theme={theme}
+          />
+          <AnimatedStat
+            value={messageCount}
+            label="Messages"
+            delay={200}
+            theme={theme}
+          />
+          <AnimatedStat
+            value={petCount}
+            label="Pets"
+            delay={300}
+            theme={theme}
+          />
         </View>
       </AdvancedCard>
     );
@@ -66,12 +124,10 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: theme.colors.primary,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 14,
-    color: theme.palette.neutral[500],
   },
 });
 

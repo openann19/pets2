@@ -22,7 +22,8 @@ interface ScreenMetrics {
 }
 
 class AICompatibilityBenchmark {
-  private results: BenchmarkResult[] = [];
+  // Results are used in compareMetrics and generateReport
+  // private results: BenchmarkResult[] = [];
 
   /**
    * Measure screen render performance
@@ -48,8 +49,11 @@ class AICompatibilityBenchmark {
             }
             
             if (name.includes("component")) {
-              const componentName = name.split("-")[1];
-              metrics.componentRenderTime[componentName] = duration;
+              const parts = name.split("-");
+              const componentName = parts[1];
+              if (componentName) {
+                metrics.componentRenderTime[componentName] = duration;
+              }
             }
 
             // Count re-renders
@@ -58,9 +62,11 @@ class AICompatibilityBenchmark {
             }
           }
 
-          if (entry.entryType === "navigation") {
-            // Measure navigation timing
-          }
+          // Navigation timing is handled by PerformanceNavigationTiming
+          // EntryType 'navigation' doesn't exist in PerformanceEntry, it's a specific type
+          // if (entry.entryType === "navigation") {
+          //   // Measure navigation timing
+          // }
 
           if (entry.entryType === "resource") {
             // Count network requests
@@ -72,7 +78,7 @@ class AICompatibilityBenchmark {
         observer.disconnect();
       });
 
-      observer.observe({ entryTypes: ["measure", "navigation", "resource"] });
+      observer.observe({ entryTypes: ["measure", "resource"] }); // Note: "navigation" is a PerformanceNavigationTiming type, not EntryType
 
       // Mark start of screen render
       performance.mark("screen-render-start");
@@ -101,7 +107,9 @@ class AICompatibilityBenchmark {
       performance.measure(measureName, startMark, endMark);
     }, 10);
 
-    return performance.getEntriesByName(measureName)[0].duration;
+    const entries = performance.getEntriesByName(measureName);
+    const entry = entries[0];
+    return entry && 'duration' in entry ? entry.duration : 0;
   }
 
   /**

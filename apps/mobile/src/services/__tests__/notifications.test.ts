@@ -333,7 +333,9 @@ describe('NotificationService', () => {
       const result = await service.cancelNotification('notification-id');
 
       expect(result).toBe(true);
-      expect(mockNotifications.cancelScheduledNotificationAsync).toHaveBeenCalledWith('notification-id');
+      expect(mockNotifications.cancelScheduledNotificationAsync).toHaveBeenCalledWith(
+        'notification-id',
+      );
     });
 
     it('should cancel all notifications', async () => {
@@ -344,7 +346,9 @@ describe('NotificationService', () => {
     });
 
     it('should handle cancellation errors', async () => {
-      mockNotifications.cancelScheduledNotificationAsync.mockRejectedValue(new Error('Cancel failed'));
+      mockNotifications.cancelScheduledNotificationAsync.mockRejectedValue(
+        new Error('Cancel failed'),
+      );
 
       const result = await service.cancelNotification('notification-id');
 
@@ -445,7 +449,7 @@ describe('NotificationService', () => {
       expect(mockNotifications.scheduleNotificationAsync).toHaveBeenCalledWith({
         content: {
           title: 'Missing Your Furry Friends!',
-          body: 'It\'s been 24 hours since your last visit. Check out new potential matches!',
+          body: "It's been 24 hours since your last visit. Check out new potential matches!",
           data: {
             type: 'reminder',
           },
@@ -501,7 +505,8 @@ describe('NotificationService', () => {
       };
 
       // Simulate notification response
-      const listenerCallback = mockNotifications.addNotificationResponseReceivedListener.mock.calls[0][0];
+      const listenerCallback =
+        mockNotifications.addNotificationResponseReceivedListener.mock.calls[0][0];
       listenerCallback(mockResponse);
 
       // Should handle different response types without errors

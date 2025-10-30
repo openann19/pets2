@@ -65,10 +65,43 @@ export interface SubmitStoryData {
   tags?: string[];
 }
 
+interface CMSStory {
+  id: string;
+  title: string;
+  content: string;
+  author?: {
+    name?: string;
+    location?: string;
+    avatar?: string;
+    petName?: string;
+    petBreed?: string;
+    petPhoto?: string;
+  };
+  match?: {
+    petName?: string;
+    petBreed?: string;
+    petPhoto?: string;
+    matchDate?: string;
+    location?: string;
+  };
+  rating?: number;
+  tags?: string[];
+  featured?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface CMSResponse {
+  stories: CMSStory[];
+  total: number;
+  hasMore: boolean;
+  nextCursor?: string;
+}
+
 class SuccessStoriesService {
-  apiUrl: string = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
-  cmsApiUrl?: string = process.env.NEXT_PUBLIC_CMS_API_URL;
-  cmsApiKey?: string = process.env.CMS_API_KEY;
+  apiUrl: string = process.env['NEXT_PUBLIC_API_URL'] || 'http://localhost:5001';
+  cmsApiUrl?: string = process.env['NEXT_PUBLIC_CMS_API_URL'];
+  cmsApiKey?: string = process.env['CMS_API_KEY'];
 
   /**
    * Get success stories from CMS or database
@@ -78,12 +111,25 @@ class SuccessStoriesService {
       const { limit = 10, featured, tags, cursor } = options;
       // Try CMS first, fallback to database
       if (this.cmsApiUrl && this.cmsApiKey) {
-        return await this.getStoriesFromCMS({ limit, featured, tags, cursor });
+        const cmsOptions: SuccessStoryOptions = {};
+        if (limit !== undefined) cmsOptions.limit = limit;
+        if (featured !== undefined) cmsOptions.featured = featured;
+        if (tags !== undefined) cmsOptions.tags = tags;
+        if (cursor !== undefined) cmsOptions.cursor = cursor;
+        return await this.getStoriesFromCMS(cmsOptions);
       } else {
-        return await this.getStoriesFromDatabase({ limit, featured, tags, cursor });
+        const dbOptions: SuccessStoryOptions = {};
+        if (limit !== undefined) dbOptions.limit = limit;
+        if (featured !== undefined) dbOptions.featured = featured;
+        if (tags !== undefined) dbOptions.tags = tags;
+        if (cursor !== undefined) dbOptions.cursor = cursor;
+        return await this.getStoriesFromDatabase(dbOptions);
       }
     } catch (error) {
-      logger.error('Failed to fetch success stories', { error: error as any });
+      logger.error('Failed to fetch success stories', { 
+        error: error instanceof Error ? error : new Error('Unknown error'),
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
       return this.getFallbackStories(options.limit || 10);
     }
   }
@@ -122,7 +168,10 @@ class SuccessStoriesService {
       const data = await response.json();
       return data.story;
     } catch (error) {
-      logger.error('Failed to submit success story', { error: error as any });
+      logger.error('Failed to submit success story', { 
+        error: error instanceof Error ? error : new Error('Unknown error'),
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
       return null;
     }
   }
@@ -146,13 +195,16 @@ class SuccessStoriesService {
     if (!response.ok) {
       throw new Error(`CMS API error: ${response.status}`);
     }
-    const data = await response.json();
-    return {
-      stories: data.stories.map(this.transformCMSStory),
+    const data: CMSResponse = await response.json();
+    const response_data: SuccessStoriesResponse = {
+      stories: data.stories.map((story) => this.transformCMSStory(story)),
       total: data.total,
       hasMore: data.hasMore,
-      nextCursor: data.nextCursor,
     };
+    if (data.nextCursor !== undefined) {
+      response_data.nextCursor = data.nextCursor;
+    }
+    return response_data;
   }
 
   /**
@@ -176,7 +228,7 @@ class SuccessStoriesService {
   /**
    * Transform CMS story to our format
    */
-  transformCMSStory(cmsStory: any): SuccessStory {
+  transformCMSStory(cmsStory: CMSStory): SuccessStory {
     return {
       id: cmsStory.id,
       title: cmsStory.title,
@@ -184,15 +236,15 @@ class SuccessStoriesService {
       author: {
         name: cmsStory.author?.name || 'Anonymous',
         location: cmsStory.author?.location || 'Unknown',
-        avatar: cmsStory.author?.avatar,
+        ...(cmsStory.author?.avatar && { avatar: cmsStory.author.avatar }),
         petName: cmsStory.author?.petName || 'Unknown Pet',
         petBreed: cmsStory.author?.petBreed || 'Mixed',
-        petPhoto: cmsStory.author?.petPhoto,
+        ...(cmsStory.author?.petPhoto && { petPhoto: cmsStory.author.petPhoto }),
       },
       match: {
         petName: cmsStory.match?.petName || 'Unknown Pet',
         petBreed: cmsStory.match?.petBreed || 'Mixed',
-        petPhoto: cmsStory.match?.petPhoto,
+        ...(cmsStory.match?.petPhoto && { petPhoto: cmsStory.match.petPhoto }),
         matchDate: cmsStory.match?.matchDate || new Date().toISOString(),
         location: cmsStory.match?.location || 'Unknown',
       },
@@ -308,8 +360,9 @@ export function useSuccessStories() {
       setStories(response.stories);
       setHasMore(response.hasMore);
       return response;
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      setError(errorMessage);
       return null;
     } finally {
       setIsLoading(false);
@@ -323,8 +376,9 @@ export function useSuccessStories() {
       const featuredStories = await successStoriesService.getFeaturedStories(limit);
       setStories(featuredStories);
       return featuredStories;
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      setError(errorMessage);
       return [];
     } finally {
       setIsLoading(false);
@@ -340,8 +394,9 @@ export function useSuccessStories() {
         setStories(prev => [newStory, ...prev]);
       }
       return newStory;
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      setError(errorMessage);
       return null;
     } finally {
       setIsLoading(false);

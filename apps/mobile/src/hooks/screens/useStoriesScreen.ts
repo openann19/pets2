@@ -3,13 +3,14 @@
  * Manages Stories screen state and gesture handling
  */
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Dimensions, PanResponder } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useStories } from '../domains/social/useStories';
-import { useReducedMotion } from '../useReducedMotion';
+import { useReduceMotion } from '../../hooks/useReducedMotion';
+import { telemetry } from '../../lib/telemetry';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface UseStoriesScreenReturn {
   // From domain hook
@@ -43,7 +44,7 @@ interface UseStoriesScreenReturn {
 
 export const useStoriesScreen = (initialGroupIndex: number = 0): UseStoriesScreenReturn => {
   const navigation = useNavigation();
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReduceMotion();
 
   const {
     storyGroups,
@@ -79,6 +80,15 @@ export const useStoriesScreen = (initialGroupIndex: number = 0): UseStoriesScree
         // Long press detection
         longPressTimer.current = setTimeout(() => {
           setPaused(true);
+          telemetry.trackStoriesPause(
+            currentStory?._id
+              ? {
+                  storyId: currentStory._id,
+                  storyIndex: currentStoryIndex,
+                  groupIndex: currentGroupIndex,
+                }
+              : undefined,
+          );
           if (!reducedMotion) {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           }
@@ -90,7 +100,19 @@ export const useStoriesScreen = (initialGroupIndex: number = 0): UseStoriesScree
           clearTimeout(longPressTimer.current);
           longPressTimer.current = null;
         }
+        const wasPaused = isPaused;
         setPaused(false);
+        if (wasPaused) {
+          telemetry.trackStoriesResume(
+            currentStory?._id
+              ? {
+                  storyId: currentStory._id,
+                  storyIndex: currentStoryIndex,
+                  groupIndex: currentGroupIndex,
+                }
+              : undefined,
+          );
+        }
 
         const { locationX } = evt.nativeEvent;
         const { dx, dy } = gestureState;
@@ -103,6 +125,15 @@ export const useStoriesScreen = (initialGroupIndex: number = 0): UseStoriesScree
 
         // Swipe up for reply (future feature)
         if (dy < -100) {
+          telemetry.trackStoriesSwipeUp(
+            currentStory?._id
+              ? {
+                  storyId: currentStory._id,
+                  storyIndex: currentStoryIndex,
+                  groupIndex: currentGroupIndex,
+                }
+              : undefined,
+          );
           // setShowReplyInput(true);
           return;
         }
@@ -110,15 +141,51 @@ export const useStoriesScreen = (initialGroupIndex: number = 0): UseStoriesScree
         // Horizontal swipe or tap
         if (Math.abs(dx) > 50) {
           if (dx > 0) {
+            telemetry.trackStoriesPrev(
+              currentStory?._id
+                ? {
+                    storyId: currentStory._id,
+                    storyIndex: currentStoryIndex,
+                    groupIndex: currentGroupIndex,
+                  }
+                : undefined,
+            );
             goToPreviousStory();
           } else {
+            telemetry.trackStoriesNext(
+              currentStory?._id
+                ? {
+                    storyId: currentStory._id,
+                    storyIndex: currentStoryIndex,
+                    groupIndex: currentGroupIndex,
+                  }
+                : undefined,
+            );
             goToNextStory();
           }
         } else {
           // Tap navigation
           if (locationX < SCREEN_WIDTH / 3) {
+            telemetry.trackStoriesPrev(
+              currentStory?._id
+                ? {
+                    storyId: currentStory._id,
+                    storyIndex: currentStoryIndex,
+                    groupIndex: currentGroupIndex,
+                  }
+                : undefined,
+            );
             goToPreviousStory();
           } else {
+            telemetry.trackStoriesNext(
+              currentStory?._id
+                ? {
+                    storyId: currentStory._id,
+                    storyIndex: currentStoryIndex,
+                    groupIndex: currentGroupIndex,
+                  }
+                : undefined,
+            );
             goToNextStory();
           }
         }
@@ -126,8 +193,47 @@ export const useStoriesScreen = (initialGroupIndex: number = 0): UseStoriesScree
     }),
   );
 
-  const handleGoBack = () => {
+  const handleGoBack = useCallback(() => {
+    telemetry.trackStoriesClose();
     navigation.goBack();
+  }, [navigation]);
+
+  const handleSetPaused = (paused: boolean) => {
+    setPaused(paused);
+    if (paused) {
+      telemetry.trackStoriesPause(
+        currentStory?._id
+          ? {
+              storyId: currentStory._id,
+              storyIndex: currentStoryIndex,
+              groupIndex: currentGroupIndex,
+            }
+          : undefined,
+      );
+    } else {
+      telemetry.trackStoriesResume(
+        currentStory?._id
+          ? {
+              storyId: currentStory._id,
+              storyIndex: currentStoryIndex,
+              groupIndex: currentGroupIndex,
+            }
+          : undefined,
+      );
+    }
+  };
+
+  const handleSetMuted = (muted: boolean) => {
+    setMuted(muted);
+    telemetry.trackStoriesMuteToggle(
+      currentStory?._id
+        ? {
+            storyId: currentStory._id,
+            storyIndex: currentStoryIndex,
+            groupIndex: currentGroupIndex,
+          }
+        : undefined,
+    );
   };
 
   // Cleanup timers on unmount
@@ -165,7 +271,7 @@ export const useStoriesScreen = (initialGroupIndex: number = 0): UseStoriesScree
     // Screen-specific
     panResponder,
     handleGoBack,
-    setPaused,
-    setMuted,
+    setPaused: handleSetPaused,
+    setMuted: handleSetMuted,
   };
 };

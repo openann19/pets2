@@ -560,9 +560,9 @@ function createStyles(theme: AppTheme) {
       flex: 1,
     },
     header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       padding: theme.spacing.lg,
       backgroundColor: theme.colors.surface,
       borderBottomWidth: 1,
@@ -571,11 +571,11 @@ function createStyles(theme: AppTheme) {
     backButton: {
       fontSize: 16,
       color: theme.colors.primary,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     headerTitle: {
       fontSize: 18,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       color: theme.colors.onSurface,
     },
     placeholder: {
@@ -590,17 +590,17 @@ function createStyles(theme: AppTheme) {
       height: 4,
       backgroundColor: theme.colors.onMuted,
       borderRadius: theme.radii.sm,
-      overflow: "hidden",
+      overflow: 'hidden',
       marginBottom: theme.spacing.sm,
     },
     progressFill: {
-      height: "100%",
+      height: '100%',
       backgroundColor: theme.colors.primary,
     },
     progressText: {
       fontSize: 14,
       color: theme.colors.onMuted,
-      textAlign: "center",
+      textAlign: 'center',
     },
     content: {
       flex: 1,
@@ -612,13 +612,13 @@ function createStyles(theme: AppTheme) {
     },
     stepTitle: {
       fontSize: 24,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.xl,
     },
     sectionTitle: {
       fontSize: 18,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.md,
       marginTop: theme.spacing.sm,
@@ -628,7 +628,7 @@ function createStyles(theme: AppTheme) {
     },
     label: {
       fontSize: 16,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.sm,
     },
@@ -652,12 +652,12 @@ function createStyles(theme: AppTheme) {
       paddingVertical: theme.spacing.sm,
       fontSize: 16,
       color: theme.colors.onSurface,
-      textAlignVertical: "top",
+      textAlignVertical: 'top',
       minHeight: 100,
     },
     optionsContainer: {
-      flexDirection: "row",
-      flexWrap: "wrap",
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       marginHorizontal: -theme.spacing.sm,
     },
     optionButton: {
@@ -667,8 +667,8 @@ function createStyles(theme: AppTheme) {
       borderRadius: theme.radii.sm,
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
       marginHorizontal: theme.spacing.sm,
       marginBottom: theme.spacing.sm,
     },
@@ -679,14 +679,14 @@ function createStyles(theme: AppTheme) {
     optionText: {
       fontSize: 14,
       color: theme.colors.onMuted,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     selectedOptionText: {
       color: theme.colors.onPrimary,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     toggleGroup: {
-      flexDirection: "row",
+      flexDirection: 'row',
       marginTop: theme.spacing.sm,
       marginHorizontal: -theme.spacing.xs,
     },
@@ -696,8 +696,8 @@ function createStyles(theme: AppTheme) {
       borderColor: theme.colors.border,
       borderRadius: theme.radii.sm,
       paddingVertical: theme.spacing.sm,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
       marginHorizontal: theme.spacing.xs,
       backgroundColor: theme.colors.surface,
     },
@@ -708,11 +708,11 @@ function createStyles(theme: AppTheme) {
     toggleText: {
       fontSize: 14,
       color: theme.colors.onMuted,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     toggleTextSelected: {
       color: theme.colors.onPrimary,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     referenceContainer: {
       backgroundColor: theme.colors.surface,
@@ -724,7 +724,7 @@ function createStyles(theme: AppTheme) {
     },
     referenceTitle: {
       fontSize: 16,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.md,
     },
@@ -738,7 +738,7 @@ function createStyles(theme: AppTheme) {
     },
     agreementTitle: {
       fontSize: 16,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       color: theme.colors.onSurface,
       marginBottom: theme.spacing.md,
     },
@@ -749,8 +749,8 @@ function createStyles(theme: AppTheme) {
       lineHeight: 20,
     },
     footer: {
-      flexDirection: "row",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       padding: theme.spacing.lg,
       backgroundColor: theme.colors.surface,
       borderTopWidth: 1,
@@ -762,13 +762,13 @@ function createStyles(theme: AppTheme) {
       borderRadius: theme.radii.sm,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     backStepButtonText: {
       fontSize: 16,
       color: theme.colors.onMuted,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     nextButton: {
       backgroundColor: theme.colors.primary,
@@ -777,8 +777,8 @@ function createStyles(theme: AppTheme) {
       borderRadius: theme.radii.sm,
       flex: 1,
       marginLeft: theme.spacing.md,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     disabledButton: {
       backgroundColor: theme.colors.onMuted,
@@ -787,7 +787,7 @@ function createStyles(theme: AppTheme) {
     nextButtonText: {
       fontSize: 16,
       color: theme.colors.onPrimary,
-      fontWeight: "600",
+      fontWeight: '600',
     },
   });
 }

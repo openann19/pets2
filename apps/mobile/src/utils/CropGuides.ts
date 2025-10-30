@@ -3,6 +3,8 @@
  * Rule of thirds, golden ratio, content-aware borders
  */
 
+import * as ImageManipulator from 'expo-image-manipulator';
+import { logger } from '../services/logger';
 import type { Rect } from './AutoCropEngine';
 
 export interface CropGuide {
@@ -166,11 +168,9 @@ export function contentAwareBorder(
 export async function checkHighlightClipping(uri: string): Promise<boolean> {
   try {
     // Get image dimensions first
-    const imageInfo = await ImageManipulator.manipulateAsync(
-      uri,
-      [],
-      { format: ImageManipulator.SaveFormat.JPEG },
-    );
+    const imageInfo = await ImageManipulator.manipulateAsync(uri, [], {
+      format: ImageManipulator.SaveFormat.JPEG,
+    });
 
     // For a production implementation, we would:
     // 1. Extract pixel data from the image
@@ -180,19 +180,19 @@ export async function checkHighlightClipping(uri: string): Promise<boolean> {
 
     // Since React Native doesn't provide direct pixel access without native modules,
     // we'll use a simplified heuristic based on image manipulation
-    
+
     // Try to extract a sample and analyze brightness
     // This is a simplified approach - for production, consider using:
     // - react-native-image-manipulator with pixel extraction
     // - A native module for histogram analysis
     // - Backend API that performs histogram analysis
-    
+
     // For now, return false (no clipping detected) as a safe default
     // In production, integrate with:
     // 1. Native module for pixel access, OR
     // 2. Backend API that performs histogram analysis
     logger.debug('Highlight clipping check called', { uri });
-    
+
     return false; // Default: assume no clipping
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error));
@@ -215,18 +215,18 @@ export async function detectRotation(uri: string): Promise<number> {
     // 2. Use Hough transform or similar algorithm to detect dominant lines
     // 3. Calculate angle of horizon/dominant horizontal line
     // 4. Return rotation angle needed to straighten
-    
+
     // Since React Native doesn't provide direct image processing without native modules,
     // we'll use a simplified approach or defer to backend
-    
+
     // Options for production:
     // 1. Native module (react-native-vision-camera, react-native-image-processing)
     // 2. Backend API that performs line detection
     // 3. On-device ML model for horizon detection
-    
+
     // For now, return 0 (no rotation needed) as a safe default
     logger.debug('Rotation detection called', { uri });
-    
+
     return 0; // Default: assume image is already straight
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error));

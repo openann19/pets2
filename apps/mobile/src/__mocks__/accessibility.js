@@ -2,6 +2,7 @@
  * Mock for React Native AccessibilityInfo
  */
 
+/* eslint-env node, jest */
 module.exports = {
   AccessibilityInfo: {
     isReduceMotionEnabled: jest.fn(() => Promise.resolve(false)),

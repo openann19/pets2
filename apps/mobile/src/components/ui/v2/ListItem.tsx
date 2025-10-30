@@ -1,12 +1,22 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import type { Theme } from '@mobile/theme';
 import { useTheme } from '@mobile/theme';
 import { useMemo } from 'react';
 import type { ViewStyle } from 'react-native';
 import { Pressable, Switch as RNSwitch, StyleSheet, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+  interpolate,
+  Extrapolate,
+} from 'react-native-reanimated';
 import { springs } from '../../MotionPrimitives';
 import { Text } from './Text';
+import { useReduceMotion } from '@/hooks/useReducedMotion';
+import { useEnhancedVariants } from '@/hooks/animations';
 
 function createStyles(theme: Theme) {
   return StyleSheet.create({
@@ -42,6 +52,8 @@ export interface ListItemProps {
   destructive?: boolean;
   style?: ViewStyle;
   testID?: string;
+  premium?: boolean;
+  glow?: boolean;
 }
 
 export function ListItem({
@@ -56,26 +68,91 @@ export function ListItem({
   destructive = false,
   style,
   testID,
+  premium = true,
+  glow = false,
 }: ListItemProps) {
   const theme = useTheme();
+  const reducedMotion = useReduceMotion();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const scale = useSharedValue(1);
-  const aStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  const glowOpacity = useSharedValue(0);
+  const iconScale = useSharedValue(1);
+  const iconOpacity = useSharedValue(1);
+
+  // Enhanced variants for icons
+  const iconGlow = useEnhancedVariants({
+    variant: 'glow',
+    enabled: premium && glow && type !== 'toggle',
+    duration: 2000,
+    color: destructive ? theme.colors.danger : theme.colors.primary,
+    intensity: 0.5,
+  });
+
+  const aStyle = useAnimatedStyle(() => {
+    const shadowOpacity = glow
+      ? interpolate(
+          glowOpacity.value,
+          [0, 1],
+          [0.05, 0.2],
+          Extrapolate.CLAMP,
+        )
+      : 0.05;
+
+    return {
+      transform: [{ scale: scale.value }],
+      shadowOpacity,
+      shadowRadius: glowOpacity.value * 8 + 2,
+      shadowColor: destructive ? theme.colors.danger : theme.colors.border,
+      elevation: glowOpacity.value * 4 + 1,
+    };
+  });
+
+  const iconAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: iconScale.value }],
+    opacity: iconOpacity.value,
+  }));
+
   const onPressIn = () => {
-    scale.value = withSpring(0.98, springs.snappy);
+    if (reducedMotion) return;
+    
+    scale.value = withSpring(0.97, springs.snappy);
+    iconScale.value = withSpring(0.9, springs.snappy);
+    
+    if (glow) {
+      glowOpacity.value = withTiming(1, { duration: 150 });
+    }
+    
+    if (premium && !reducedMotion) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
   };
+  
   const onPressOut = () => {
+    if (reducedMotion) return;
+    
     scale.value = withSpring(1, springs.snappy);
+    iconScale.value = withSpring(1, springs.snappy);
+    
+    if (glow) {
+      glowOpacity.value = withTiming(0, { duration: 200 });
+    }
+  };
+
+  const handlePress = () => {
+    if (type === 'toggle') return;
+    onPress?.();
   };
 
   const LeftIcon = icon ? (
-    <View
+    <Animated.View
       style={StyleSheet.flatten([
         styles.leftIcon,
         {
           backgroundColor: destructive ? `${theme.colors.danger}22` : theme.colors.surface,
           borderRadius: theme.radii.md,
         },
+        premium ? iconAnimatedStyle : undefined,
+        glow ? iconGlow.animatedStyle : undefined,
       ])}
     >
       <Ionicons
@@ -83,7 +160,7 @@ export function ListItem({
         size={20}
         color={destructive ? theme.colors.danger : theme.colors.onMuted}
       />
-    </View>
+    </Animated.View>
   ) : null;
 
   const Right =
@@ -117,18 +194,18 @@ export function ListItem({
 
   return (
     <Container
-      {...(type !== 'toggle' ? { onPress } : {})}
-      {...(type !== 'toggle' ? { onPressIn, onPressOut } : {})}
+      {...(type !== 'toggle' ? { onPress: handlePress } : {})}
+      {...(type !== 'toggle' && premium ? { onPressIn, onPressOut } : {})}
       style={StyleSheet.flatten([
         styles.container,
         {
           borderBottomWidth: StyleSheet.hairlineWidth,
           borderBottomColor: theme.colors.border,
         },
-        type !== 'toggle' ? aStyle : undefined,
+        type !== 'toggle' && premium ? aStyle : undefined,
         style,
       ])}
-      accessibilityRole={type === 'toggle' ? 'text' : 'button'}
+      accessibilityRole={type === 'toggle' ? 'switch' : 'button'}
       accessibilityLabel={subtitle ? `${title}: ${subtitle}` : title}
       testID={testID}
     >

@@ -12,7 +12,13 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { motionDurations, motionEasing, motionScale, motionOpacity, motionSpring } from '@/theme/motion';
+import {
+  motionDurations,
+  motionEasing,
+  motionScale,
+  motionOpacity,
+  motionSpring,
+} from '@/theme/motion';
 import { usePrefersReducedMotion } from '@/utils/motionGuards';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -42,28 +48,29 @@ export const BouncePressable: React.FC<BouncePressableProps> = ({
 
   const handlePressIn = () => {
     if (prefersReducedMotion) return;
-    
+
     scale.value = withSpring(scaleFrom, motionSpring.snappy);
-    opacity.value = withTiming(motionOpacity.pressed, { 
+    opacity.value = withTiming(motionOpacity.pressed, {
       duration: motionDurations.fast,
       easing: motionEasing.decel,
     });
-    
+
     if (haptic) {
-      const hapticStyle = haptic === 'light' 
-        ? Haptics.ImpactFeedbackStyle.Light
-        : haptic === 'medium'
-        ? Haptics.ImpactFeedbackStyle.Medium
-        : Haptics.ImpactFeedbackStyle.Heavy;
+      const hapticStyle =
+        haptic === 'light'
+          ? Haptics.ImpactFeedbackStyle.Light
+          : haptic === 'medium'
+            ? Haptics.ImpactFeedbackStyle.Medium
+            : Haptics.ImpactFeedbackStyle.Heavy;
       Haptics.impactAsync(hapticStyle).catch(() => {});
     }
   };
 
   const handlePressOut = () => {
     if (prefersReducedMotion) return;
-    
+
     scale.value = withSpring(1, motionSpring.standard);
-    opacity.value = withTiming(1, { 
+    opacity.value = withTiming(1, {
       duration: motionDurations.fast,
       easing: motionEasing.emphasized,
     });

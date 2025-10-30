@@ -49,11 +49,26 @@ const TestNavigator = () => {
   return (
     <NavigationContainer linking={linking}>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={MockHomeScreen} />
-        <Stack.Screen name="Chat" component={MockChatScreen} />
-        <Stack.Screen name="Match" component={MockMatchScreen} />
-        <Stack.Screen name="Premium" component={MockPremiumScreen} />
-        <Stack.Screen name="Settings" component={MockSettingsScreen} />
+        <Stack.Screen
+          name="Home"
+          component={MockHomeScreen}
+        />
+        <Stack.Screen
+          name="Chat"
+          component={MockChatScreen}
+        />
+        <Stack.Screen
+          name="Match"
+          component={MockMatchScreen}
+        />
+        <Stack.Screen
+          name="Premium"
+          component={MockPremiumScreen}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={MockSettingsScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -68,7 +83,9 @@ jest.mock('react-native', () => {
       removeEventListener: jest.fn(),
       getInitialURL: jest.fn(),
       openURL: jest.fn(),
-      canOpenURL: jest.fn(() => Promise.resolve(true)) as jest.MockedFunction<typeof Linking.canOpenURL>,
+      canOpenURL: jest.fn(() => Promise.resolve(true)) as jest.MockedFunction<
+        typeof Linking.canOpenURL
+      >,
     },
   };
 });

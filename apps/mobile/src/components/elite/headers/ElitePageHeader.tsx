@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, type TextStyle, type ViewStyle } from 'react-native';
+import { Text } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { BlurView } from 'expo-blur';
 

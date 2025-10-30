@@ -1,9 +1,11 @@
 import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Alert,
   Dimensions,
   Image,
+  Linking,
+  Platform,
   Modal,
   StyleSheet,
   Text,
@@ -59,11 +61,31 @@ export function ModernPhotoUploadWithEditor({
   }));
 
   const requestPermissions = async (): Promise<boolean> => {
+    const { status: existingStatus } = await ImagePicker.getMediaLibraryPermissionsAsync();
+    
+    if (existingStatus === ImagePicker.PermissionStatus.GRANTED) {
+      return true;
+    }
+
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== ImagePicker.PermissionStatus.GRANTED) {
-      Alert.alert('Permission Required', 'Please grant camera roll permissions to upload photos.', [
-        { text: 'OK' },
-      ]);
+      Alert.alert(
+        'Photo Library Access Required',
+        'To upload photos of your pet, we need access to your photo library. You can enable this in Settings.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Open Settings',
+            onPress: () => {
+              if (Platform.OS === 'ios') {
+                Linking.openURL('app-settings:');
+              } else {
+                Linking.openSettings();
+              }
+            },
+          },
+        ],
+      );
       return false;
     }
     return true;
@@ -108,11 +130,32 @@ export function ModernPhotoUploadWithEditor({
       return;
     }
 
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== ImagePicker.PermissionStatus.GRANTED) {
-      Alert.alert('Permission Required', 'Please grant camera permissions to take photos.', [
-        { text: 'OK' },
-      ]);
+    const { status: existingStatus } = await ImagePicker.getCameraPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (finalStatus !== ImagePicker.PermissionStatus.GRANTED) {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      finalStatus = status;
+    }
+
+    if (finalStatus !== ImagePicker.PermissionStatus.GRANTED) {
+      Alert.alert(
+        'Camera Access Required',
+        'To take photos of your pet, we need access to your camera. You can enable this in Settings.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Open Settings',
+            onPress: () => {
+              if (Platform.OS === 'ios') {
+                Linking.openURL('app-settings:');
+              } else {
+                Linking.openSettings();
+              }
+            },
+          },
+        ],
+      );
       return;
     }
 

@@ -1,6 +1,6 @@
-import { LinearGradient } from "expo-linear-gradient";
-import React, { type ReactNode, useEffect } from "react";
-import { View, type ViewStyle, type ViewProps } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { type ReactNode, useEffect } from 'react';
+import { View, type ViewStyle, type ViewProps } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,10 +8,11 @@ import Animated, {
   withSequence,
   withTiming,
   withDelay,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
 import type { AppTheme } from '@/theme';
 import { useTheme } from '@/theme';
+import { useCapabilities } from '@/foundation/capabilities';
 
 // === HOLOGRAPHIC CONSTANTS ===
 // Theme-independent constants
@@ -22,67 +23,74 @@ export const HOLOGRAPHIC_SPEEDS = {
   ultra: 500,
 } as const;
 
-export const HOLOGRAPHIC_VARIANTS = ['rainbow', 'cyber', 'sunset', 'ocean', 'neon', 'aurora'] as const;
-export type HolographicVariant = typeof HOLOGRAPHIC_VARIANTS[number];
+export const HOLOGRAPHIC_VARIANTS = [
+  'rainbow',
+  'cyber',
+  'sunset',
+  'ocean',
+  'neon',
+  'aurora',
+] as const;
+export type HolographicVariant = (typeof HOLOGRAPHIC_VARIANTS)[number];
 
 // Theme-dependent config factory
 export const HOLOGRAPHIC_CONFIGS = (theme: AppTheme) => {
   return {
     // Gradient sets for different holographic effects
     gradients: {
-    rainbow: [
-      theme.colors.primary,
-      theme.colors.primary,
-      theme.colors.warning,
-      theme.colors.success,
-      theme.colors.info,
-      theme.colors.primary,
-    ],
-    cyber: [
-      theme.colors.info,
-      theme.colors.primary,
-      theme.colors.primary,
-      theme.colors.success,
-      theme.colors.primary,
-      theme.colors.primary,
-    ],
-    sunset: [
-      theme.colors.danger,
-      theme.colors.warning,
-      theme.colors.success,
-      theme.colors.info,
-      theme.colors.primary,
-      theme.colors.danger,
-      theme.colors.warning,
-    ],
-    ocean: [
-      theme.colors.primary,
-      theme.colors.primary,
-      theme.colors.primary,
-      theme.colors.primary,
-      theme.colors.info,
-      theme.colors.info,
-      theme.colors.success,
-    ],
-    neon: [
-      theme.colors.info,
-      theme.colors.primary,
-      theme.colors.primary,
-      theme.colors.success,
-      theme.colors.primary,
-      theme.colors.primary,
-      theme.colors.info,
-      theme.colors.warning,
-    ],
-    aurora: [
-      theme.colors.primary,
-      theme.colors.primary,
-      theme.colors.info,
-      theme.colors.success,
-      theme.colors.warning,
-      theme.colors.danger,
-      theme.colors.primary,
-    ],
+      rainbow: [
+        theme.colors.primary,
+        theme.colors.primary,
+        theme.colors.warning,
+        theme.colors.success,
+        theme.colors.info,
+        theme.colors.primary,
+      ],
+      cyber: [
+        theme.colors.info,
+        theme.colors.primary,
+        theme.colors.primary,
+        theme.colors.success,
+        theme.colors.primary,
+        theme.colors.primary,
+      ],
+      sunset: [
+        theme.colors.danger,
+        theme.colors.warning,
+        theme.colors.success,
+        theme.colors.info,
+        theme.colors.primary,
+        theme.colors.danger,
+        theme.colors.warning,
+      ],
+      ocean: [
+        theme.colors.primary,
+        theme.colors.primary,
+        theme.colors.primary,
+        theme.colors.primary,
+        theme.colors.info,
+        theme.colors.info,
+        theme.colors.success,
+      ],
+      neon: [
+        theme.colors.info,
+        theme.colors.primary,
+        theme.colors.primary,
+        theme.colors.success,
+        theme.colors.primary,
+        theme.colors.primary,
+        theme.colors.info,
+        theme.colors.warning,
+      ],
+      aurora: [
+        theme.colors.primary,
+        theme.colors.primary,
+        theme.colors.info,
+        theme.colors.success,
+        theme.colors.warning,
+        theme.colors.danger,
+        theme.colors.primary,
+      ],
     },
 
     // Shimmer configurations
@@ -107,8 +115,8 @@ interface HolographicContainerProps extends ViewProps {
 
 export const HolographicContainer: React.FC<HolographicContainerProps> = ({
   children,
-  variant = "rainbow",
-  speed = "normal",
+  variant = 'rainbow',
+  speed = 'normal',
   animated = true,
   shimmer = true,
   glow = true,
@@ -178,29 +186,33 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
 
   return (
     <Animated.View
-      style={[
-        {
-          borderRadius: theme.radii['2xl'],
-          overflow: "hidden",
-          position: "relative",
-        },
-        glow ? glowStyle : {},
-        style,
-      ] as any}
+      style={
+        [
+          {
+            borderRadius: theme.radii['2xl'],
+            overflow: 'hidden',
+            position: 'relative',
+          },
+          glow ? glowStyle : {},
+          style,
+        ] as any
+      }
       {...props}
     >
       {/* Animated Gradient Background */}
       <Animated.View
-        style={[
-          {
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-          },
-          gradientStyle,
-        ] as any}
+        style={
+          [
+            {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+            },
+            gradientStyle,
+          ] as any
+        }
       >
         <LinearGradient
           colors={gradientColors}
@@ -216,24 +228,26 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
       {/* Shimmer Effect */}
       {shimmer && (
         <Animated.View
-          style={[
-            {
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-            },
-            shimmerStyle,
-          ] as any}
+          style={
+            [
+              {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              },
+              shimmerStyle,
+            ] as any
+          }
         />
       )}
 
       {/* Content */}
       <View
         style={{
-          position: "relative",
+          position: 'relative',
           zIndex: 1,
           padding: theme.spacing['2xl'],
         }}
@@ -248,7 +262,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
 interface HolographicCardProps extends ViewProps {
   children: ReactNode;
   variant?: HolographicVariant;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   animated?: boolean;
   shimmer?: boolean;
   glow?: boolean;
@@ -257,8 +271,8 @@ interface HolographicCardProps extends ViewProps {
 
 export const HolographicCard: React.FC<HolographicCardProps> = ({
   children,
-  variant = "rainbow",
-  size = "md",
+  variant = 'rainbow',
+  size = 'md',
   animated = true,
   shimmer = true,
   glow = true,
@@ -268,11 +282,11 @@ export const HolographicCard: React.FC<HolographicCardProps> = ({
   const theme = useTheme();
   const getSizeConfig = () => {
     switch (size) {
-      case "sm":
+      case 'sm':
         return { padding: theme.spacing.lg };
-      case "lg":
+      case 'lg':
         return { padding: theme.spacing['3xl'] };
-      case "xl":
+      case 'xl':
         return { padding: theme.spacing['4xl'] };
       default:
         return { padding: theme.spacing['2xl'] };
@@ -299,7 +313,7 @@ export const HolographicCard: React.FC<HolographicCardProps> = ({
 interface HolographicButtonProps extends ViewProps {
   children: ReactNode;
   variant?: HolographicVariant;
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   onPress?: () => void;
   style?: ViewStyle;
@@ -307,8 +321,8 @@ interface HolographicButtonProps extends ViewProps {
 
 export const HolographicButton: React.FC<HolographicButtonProps> = ({
   children,
-  variant = "cyber",
-  size = "md",
+  variant = 'cyber',
+  size = 'md',
   disabled = false,
   onPress,
   style,
@@ -320,13 +334,13 @@ export const HolographicButton: React.FC<HolographicButtonProps> = ({
   const theme = useTheme();
   const getSizeConfig = () => {
     switch (size) {
-      case "sm":
+      case 'sm':
         return {
           paddingHorizontal: theme.spacing['2xl'],
           paddingVertical: theme.spacing.sm,
           minHeight: theme.spacing['3xl'] + theme.spacing.sm,
         };
-      case "lg":
+      case 'lg':
         return {
           paddingHorizontal: theme.spacing['4xl'],
           paddingVertical: theme.spacing['2xl'],
@@ -371,14 +385,16 @@ export const HolographicButton: React.FC<HolographicButtonProps> = ({
         animated={true}
         shimmer={true}
         glow={true}
-        style={[
-          sizeConfig,
-          {
-            justifyContent: "center",
-            alignItems: "center",
-            opacity: disabled ? 0.5 : 1,
-          },
-        ] as ViewStyle}
+        style={
+          [
+            sizeConfig,
+            {
+              justifyContent: 'center',
+              alignItems: 'center',
+              opacity: disabled ? 0.5 : 1,
+            },
+          ] as ViewStyle
+        }
         {...props}
       >
         {children}
@@ -392,16 +408,16 @@ interface HolographicTextProps {
   children: ReactNode;
   variant?: HolographicVariant;
   size?: number;
-  weight?: "normal" | "bold";
+  weight?: 'normal' | 'bold';
   animated?: boolean;
   style?: ViewStyle;
 }
 
 export const HolographicText: React.FC<HolographicTextProps> = ({
   children,
-  variant = "rainbow",
+  variant = 'rainbow',
   size,
-  weight = "normal",
+  weight = 'normal',
   animated = true,
   style,
 }) => {
@@ -415,11 +431,7 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
 
   useEffect(() => {
     if (animated) {
-      gradientRotation.value = withRepeat(
-        withTiming(360, { duration: 2000 }),
-        -1,
-        false,
-      );
+      gradientRotation.value = withRepeat(withTiming(360, { duration: 2000 }), -1, false);
     }
   }, [animated]);
 
@@ -431,18 +443,20 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
   const gradientColors = [...configs.gradients[variant]];
 
   return (
-    <View style={[{ position: "relative" }, style]}>
+    <View style={[{ position: 'relative' }, style]}>
       <Animated.View
-        style={[
-          {
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-          },
-          gradientStyle,
-        ] as any}
+        style={
+          [
+            {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+            },
+            gradientStyle,
+          ] as any
+        }
       >
         <LinearGradient
           colors={gradientColors}
@@ -455,15 +469,13 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
       </Animated.View>
       <View
         style={{
-          position: "relative",
+          position: 'relative',
           zIndex: 1,
           padding: theme.spacing.xs,
         }}
       >
         {/* Text would go here - this is a placeholder for the actual text implementation */}
-        <View>
-          {children}
-        </View>
+        <View>{children}</View>
       </View>
     </View>
   );
@@ -479,12 +491,18 @@ interface ParticleEffectProps extends ViewProps {
 
 export const ParticleEffect: React.FC<ParticleEffectProps> = ({
   count = 20,
-  variant = "neon",
-  speed = "normal",
+  variant = 'neon',
+  speed = 'normal',
   style,
   ...props
 }) => {
-  const particles = Array.from({ length: count }, (_, i) => ({
+  // Capability-gated particle count
+  // Matches polish mandate: gate heavy effects based on highPerf && thermalsOk
+  const caps = useCapabilities();
+  const enabled = caps.highPerf && caps.thermalsOk && caps.skia;
+  const adaptiveCount = enabled ? count : Math.min(count, 60); // Cap at 60 for low-end
+  
+  const particles = Array.from({ length: adaptiveCount }, (_, i) => ({
     id: i,
     x: useSharedValue(Math.random() * 100),
     y: useSharedValue(Math.random() * 100),
@@ -539,12 +557,12 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
     <View
       style={[
         {
-          position: "absolute",
+          position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          overflow: "hidden",
+          overflow: 'hidden',
         },
         style,
       ]}
@@ -552,7 +570,7 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
     >
       {particles.map((particle) => {
         const particleStyle = useAnimatedStyle(() => ({
-          position: "absolute" as const,
+          position: 'absolute' as const,
           left: `${particle.x.value}%` as unknown as number,
           top: `${particle.y.value}%` as unknown as number,
           width: 4,
@@ -563,7 +581,10 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
         }));
 
         return (
-          <Animated.View key={particle.id} style={particleStyle}>
+          <Animated.View
+            key={particle.id}
+            style={particleStyle}
+          >
             <LinearGradient
               colors={gradientColors}
               start={{ x: 0, y: 0 }}

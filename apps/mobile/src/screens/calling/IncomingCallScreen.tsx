@@ -1,7 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useState } from 'react';
 import {
   Animated,
   Image,
@@ -11,10 +11,10 @@ import {
   TouchableOpacity,
   Vibration,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import type { CallData } from "../../services/WebRTCService";
+import type { CallData } from '../../services/WebRTCService';
 import { useTheme } from '../../theme/Provider';
 
 interface IncomingCallScreenProps {
@@ -81,7 +81,7 @@ export default function IncomingCallScreen({
   };
 
   const formatCallType = (type: string) => {
-    return type === "video" ? "Video Call" : "Voice Call";
+    return type === 'video' ? 'Video Call' : 'Voice Call';
   };
 
   const styles = StyleSheet.create({
@@ -90,14 +90,14 @@ export default function IncomingCallScreen({
       backgroundColor: theme.colors.bg,
     },
     backgroundGradient: {
-      position: "absolute" as const,
+      position: 'absolute' as const,
       left: 0,
       right: 0,
       top: 0,
       bottom: 0,
     },
     blurOverlay: {
-      position: "absolute" as const,
+      position: 'absolute' as const,
       left: 0,
       right: 0,
       top: 0,
@@ -105,28 +105,28 @@ export default function IncomingCallScreen({
     },
     content: {
       flex: 1,
-      justifyContent: "space-between" as const,
+      justifyContent: 'space-between' as const,
       paddingHorizontal: 30,
     },
     header: {
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
       marginTop: 60,
     },
     incomingCallText: {
       fontSize: 18,
-      color: "white",
+      color: 'white',
       opacity: 0.8,
       marginBottom: 5,
     },
     callTypeText: {
       fontSize: 16,
-      color: "white",
+      color: 'white',
       opacity: 0.6,
     },
     callerInfo: {
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
       flex: 1,
-      justifyContent: "center" as const,
+      justifyContent: 'center' as const,
     },
     avatarContainer: {
       marginBottom: 30,
@@ -136,32 +136,32 @@ export default function IncomingCallScreen({
       height: 200,
       borderRadius: 100,
       borderWidth: 4,
-      borderColor: "rgba(255, 255, 255, 0.3)",
+      borderColor: 'rgba(255, 255, 255, 0.3)',
       padding: 8,
-      backgroundColor: "rgba(255, 255, 255, 0.1)",
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
     },
     avatar: {
-      width: "100%" as const,
-      height: "100%" as const,
+      width: '100%' as const,
+      height: '100%' as const,
       borderRadius: 92,
-      backgroundColor: "#ddd",
+      backgroundColor: '#ddd',
     },
     callerName: {
       fontSize: 32,
-      fontWeight: "bold" as const,
-      color: "white",
+      fontWeight: 'bold' as const,
+      color: 'white',
       marginBottom: 8,
-      textAlign: "center" as const,
+      textAlign: 'center' as const,
     },
     callerSubtext: {
       fontSize: 18,
-      color: "white",
+      color: 'white',
       opacity: 0.7,
     },
     actionsContainer: {
-      flexDirection: "row" as const,
-      justifyContent: "space-around" as const,
-      alignItems: "center" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-around' as const,
+      alignItems: 'center' as const,
       marginBottom: 50,
     },
     actionButton: {
@@ -177,23 +177,23 @@ export default function IncomingCallScreen({
     rejectButton: {},
     answerButton: {},
     buttonGradient: {
-      width: "100%" as const,
-      height: "100%" as const,
+      width: '100%' as const,
+      height: '100%' as const,
       borderRadius: 40,
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
     },
     additionalActions: {
-      flexDirection: "row" as const,
-      justifyContent: "space-around" as const,
+      flexDirection: 'row' as const,
+      justifyContent: 'space-around' as const,
       marginBottom: 40,
     },
     additionalButton: {
-      alignItems: "center" as const,
+      alignItems: 'center' as const,
       padding: 15,
     },
     additionalButtonText: {
-      color: "white",
+      color: 'white',
       fontSize: 12,
       marginTop: 5,
       opacity: 0.8,
@@ -201,7 +201,10 @@ export default function IncomingCallScreen({
   });
 
   return (
-    <View style={styles.container} testID="incoming-call-container">
+    <View
+      style={styles.container}
+      testID="incoming-call-container"
+    >
       <StatusBar
         barStyle="light-content"
         backgroundColor="transparent"
@@ -210,12 +213,15 @@ export default function IncomingCallScreen({
 
       {/* Background Gradient */}
       <LinearGradient
-        colors={["#1a1a2e", "#16213e", "#0f3460"]}
+        colors={['#1a1a2e', '#16213e', '#0f3460']}
         style={styles.backgroundGradient}
       />
 
       {/* Blur Overlay */}
-      <BlurView intensity={20} style={styles.blurOverlay} />
+      <BlurView
+        intensity={20}
+        style={styles.blurOverlay}
+      />
 
       <SafeAreaView style={styles.content}>
         {/* Header */}
@@ -235,9 +241,7 @@ export default function IncomingCallScreen({
           ])}
         >
           <Text style={styles.incomingCallText}>Incoming Call</Text>
-          <Text style={styles.callTypeText}>
-            {formatCallType(callData.callType)}
-          </Text>
+          <Text style={styles.callTypeText}>{formatCallType(callData.callType)}</Text>
         </Animated.View>
 
         {/* Caller Info */}
@@ -268,9 +272,9 @@ export default function IncomingCallScreen({
             <View style={styles.avatarRing}>
               <Image
                 source={
-                  callData.callerAvatar != null && callData.callerAvatar !== ""
+                  callData.callerAvatar != null && callData.callerAvatar !== ''
                     ? { uri: callData.callerAvatar }
-                    : require("../../assets/default-avatar.png")
+                    : require('../../assets/default-avatar.png')
                 }
                 style={styles.avatar}
                 testID="caller-avatar"
@@ -300,10 +304,7 @@ export default function IncomingCallScreen({
         >
           {/* Reject Button */}
           <TouchableOpacity
-            style={StyleSheet.flatten([
-              styles.actionButton,
-              styles.rejectButton,
-            ])}
+            style={StyleSheet.flatten([styles.actionButton, styles.rejectButton])}
             testID="reject-button"
             accessibilityLabel="Reject call"
             accessibilityRole="button"
@@ -311,24 +312,21 @@ export default function IncomingCallScreen({
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={["#ff4757", "#ff3838"]}
+              colors={['#ff4757', '#ff3838']}
               style={styles.buttonGradient}
             >
               <Ionicons
                 name="call"
                 size={32}
                 color="white"
-                style={{ transform: [{ rotate: "135deg" }] }}
+                style={{ transform: [{ rotate: '135deg' }] }}
               />
             </LinearGradient>
           </TouchableOpacity>
 
           {/* Answer Button */}
           <TouchableOpacity
-            style={StyleSheet.flatten([
-              styles.actionButton,
-              styles.answerButton,
-            ])}
+            style={StyleSheet.flatten([styles.actionButton, styles.answerButton])}
             testID="answer-button"
             accessibilityLabel="Answer call"
             accessibilityRole="button"
@@ -336,10 +334,14 @@ export default function IncomingCallScreen({
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={["#2ed573", "#1dd1a1"]}
+              colors={['#2ed573', '#1dd1a1']}
               style={styles.buttonGradient}
             >
-              <Ionicons name="call" size={32} color="white" />
+              <Ionicons
+                name="call"
+                size={32}
+                color="white"
+              />
             </LinearGradient>
           </TouchableOpacity>
         </Animated.View>
@@ -353,13 +355,31 @@ export default function IncomingCallScreen({
             },
           ])}
         >
-          <TouchableOpacity style={styles.additionalButton} testID="IncomingCallScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
-            <Ionicons name="chatbubble" size={24} color="white" />
+          <TouchableOpacity
+            style={styles.additionalButton}
+            testID="IncomingCallScreen-button-1"
+            accessibilityLabel="Button"
+            accessibilityRole="button"
+          >
+            <Ionicons
+              name="chatbubble"
+              size={24}
+              color="white"
+            />
             <Text style={[styles.additionalButtonText, { color: 'white' }]}>Message</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.additionalButton} testID="IncomingCallScreen-button-2" accessibilityLabel="Button" accessibilityRole="button">
-            <Ionicons name="person" size={24} color="white" />
+          <TouchableOpacity
+            style={styles.additionalButton}
+            testID="IncomingCallScreen-button-2"
+            accessibilityLabel="Button"
+            accessibilityRole="button"
+          >
+            <Ionicons
+              name="person"
+              size={24}
+              color="white"
+            />
             <Text style={[styles.additionalButtonText, { color: 'white' }]}>Profile</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -367,4 +387,3 @@ export default function IncomingCallScreen({
     </View>
   );
 }
-

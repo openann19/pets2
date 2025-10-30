@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 /**
  * Admin Chat Moderation Screen
  * Production-ready implementation for moderating user chats
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { useCallback, useEffect, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -16,12 +16,11 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@mobile/theme';
-import { _adminAPI } from "../../services/api";
-import { errorHandler } from "../../services/errorHandler";
-
+import { _adminAPI } from '../../services/api';
+import { errorHandler } from '../../services/errorHandler';
 
 interface ChatMessage {
   id: string;
@@ -37,7 +36,7 @@ interface ChatMessage {
   reviewed: boolean;
   reviewedBy?: string;
   reviewedAt?: string;
-  action?: "approved" | "removed" | "warned";
+  action?: 'approved' | 'removed' | 'warned';
 }
 
 interface AdminChatsScreenProps {
@@ -52,10 +51,8 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filter, setFilter] = useState<"all" | "flagged" | "unreviewed">(
-    "flagged",
-  );
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filter, setFilter] = useState<'all' | 'flagged' | 'unreviewed'>('flagged');
 
   const loadMessages = useCallback(
     async (refresh = false) => {
@@ -76,12 +73,10 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
         }
       } catch (error) {
         errorHandler.handleError(
-          error instanceof Error
-            ? error
-            : new Error("Failed to load chat messages"),
+          error instanceof Error ? error : new Error('Failed to load chat messages'),
           {
-            component: "AdminChatsScreen",
-            action: "loadMessages",
+            component: 'AdminChatsScreen',
+            action: 'loadMessages',
           },
         );
       } finally {
@@ -97,7 +92,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
   }, [loadMessages]);
 
   const handleMessageAction = useCallback(
-    async (messageId: string, action: "approve" | "remove" | "warn") => {
+    async (messageId: string, action: 'approve' | 'remove' | 'warn') => {
       try {
         const response = await _adminAPI.moderateMessage({
           messageId,
@@ -113,26 +108,24 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
                     reviewed: true,
                     reviewedAt: new Date().toISOString(),
                     action:
-                      action === "approve"
-                        ? "approved"
-                        : action === "remove"
-                          ? "removed"
-                          : "warned",
+                      action === 'approve'
+                        ? 'approved'
+                        : action === 'remove'
+                          ? 'removed'
+                          : 'warned',
                   }
                 : msg,
             ),
           );
 
-          Alert.alert("Success", `Message ${action}d successfully`);
+          Alert.alert('Success', `Message ${action}d successfully`);
         }
       } catch (error) {
         errorHandler.handleError(
-          error instanceof Error
-            ? error
-            : new Error(`Failed to ${action} message`),
+          error instanceof Error ? error : new Error(`Failed to ${action} message`),
           {
-            component: "AdminChatsScreen",
-            action: "handleMessageAction",
+            component: 'AdminChatsScreen',
+            action: 'handleMessageAction',
             metadata: { messageId, action },
           },
         );
@@ -143,28 +136,13 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
 
   const renderMessage = useCallback(
     ({ item }: { item: ChatMessage }) => (
-      <View
-        style={StyleSheet.flatten([
-          styles.messageCard,
-          { backgroundColor: colors.card },
-        ])}
-      >
+      <View style={StyleSheet.flatten([styles.messageCard, { backgroundColor: colors.card }])}>
         <View style={styles.messageHeader}>
           <View style={styles.userInfo}>
-            <Text
-              style={StyleSheet.flatten([
-                styles.senderName,
-                { color: colors.onSurface},
-              ])}
-            >
+            <Text style={StyleSheet.flatten([styles.senderName, { color: colors.onSurface }])}>
               {item.senderName} → {item.receiverName}
             </Text>
-            <Text
-              style={StyleSheet.flatten([
-                styles.timestamp,
-                { color: colors.onMuted },
-              ])}
-            >
+            <Text style={StyleSheet.flatten([styles.timestamp, { color: colors.onMuted }])}>
               {new Date(item.timestamp).toLocaleString()}
             </Text>
           </View>
@@ -175,38 +153,29 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
                 { backgroundColor: theme.colors.danger },
               ])}
             >
-              <Ionicons name="flag" size={12} color="white" />
+              <Ionicons
+                name="flag"
+                size={12}
+                color="white"
+              />
               <Text style={styles.flagText}>Flagged</Text>
             </View>
           ) : null}
         </View>
 
-        <Text
-          style={StyleSheet.flatten([
-            styles.messageText,
-            { color: colors.onSurface},
-          ])}
-        >
+        <Text style={StyleSheet.flatten([styles.messageText, { color: colors.onSurface }])}>
           {item.message}
         </Text>
 
         {item.flagReason ? (
-          <Text
-            style={StyleSheet.flatten([
-              styles.flagReason,
-              { color: theme.colors.danger },
-            ])}
-          >
+          <Text style={StyleSheet.flatten([styles.flagReason, { color: theme.colors.danger }])}>
             Reason: {item.flagReason}
           </Text>
         ) : null}
 
         {item.reviewed ? (
           <View
-            style={StyleSheet.flatten([
-              styles.reviewedBadge,
-              { backgroundColor: colors.success },
-            ])}
+            style={StyleSheet.flatten([styles.reviewedBadge, { backgroundColor: colors.success }])}
           >
             <Text style={styles.reviewedText}>
               {item.action?.toUpperCase()} by {item.reviewedBy}
@@ -215,35 +184,47 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
         ) : (
           <View style={styles.actionButtons}>
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.actionButton,
-                styles.approveButton,
-              ])}
-               testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleMessageAction(item.id, "approve")}
+              style={StyleSheet.flatten([styles.actionButton, styles.approveButton])}
+              testID="AdminChatsScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => handleMessageAction(item.id, 'approve')}
             >
-              <Ionicons name="checkmark" size={16} color="white" />
+              <Ionicons
+                name="checkmark"
+                size={16}
+                color="white"
+              />
               <Text style={styles.actionButtonText}>Approve</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.actionButton,
-                styles.warnButton,
-              ])}
-               testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleMessageAction(item.id, "warn")}
+              style={StyleSheet.flatten([styles.actionButton, styles.warnButton])}
+              testID="AdminChatsScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => handleMessageAction(item.id, 'warn')}
             >
-              <Ionicons name="warning" size={16} color="white" />
+              <Ionicons
+                name="warning"
+                size={16}
+                color="white"
+              />
               <Text style={styles.actionButtonText}>Warn</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.actionButton,
-                styles.removeButton,
-              ])}
-               testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleMessageAction(item.id, "remove")}
+              style={StyleSheet.flatten([styles.actionButton, styles.removeButton])}
+              testID="AdminChatsScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => handleMessageAction(item.id, 'remove')}
             >
-              <Ionicons name="trash" size={16} color="white" />
+              <Ionicons
+                name="trash"
+                size={16}
+                color="white"
+              />
               <Text style={styles.actionButtonText}>Remove</Text>
             </TouchableOpacity>
           </View>
@@ -261,14 +242,17 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
           backgroundColor: filter === filterType ? colors.primary : colors.card,
         },
       ])}
-       testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+      testID="AdminChatsScreen-button-2"
+      accessibilityLabel="Interactive element"
+      accessibilityRole="button"
+      onPress={() => {
         setFilter(filterType);
       }}
     >
       <Text
         style={StyleSheet.flatten([
           styles.filterButtonText,
-          { color: filter === filterType ? "white" : colors.onSurface},
+          { color: filter === filterType ? 'white' : colors.onSurface },
         ])}
       >
         {label}
@@ -278,55 +262,45 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
 
   return (
     <SafeAreaView
-      style={StyleSheet.flatten([
-        styles.container,
-        { backgroundColor: colors.background },
-      ])}
+      style={StyleSheet.flatten([styles.container, { backgroundColor: colors.background }])}
     >
       {/* Header */}
-      <View
-        style={StyleSheet.flatten([
-          styles.header,
-          { backgroundColor: colors.card },
-        ])}
-      >
+      <View style={StyleSheet.flatten([styles.header, { backgroundColor: colors.card }])}>
         <TouchableOpacity
-           testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+          testID="AdminChatsScreen-button-2"
+          accessibilityLabel="Interactive element"
+          accessibilityRole="button"
+          onPress={() => {
             navigation.goBack();
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface }/>
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={colors.onSurface}
+          />
         </TouchableOpacity>
-        <Text
-          style={StyleSheet.flatten([
-            styles.headerTitle,
-            { color: colors.onSurface},
-          ])}
-        >
+        <Text style={StyleSheet.flatten([styles.headerTitle, { color: colors.onSurface }])}>
           Chat Moderation
         </Text>
       </View>
 
       {/* Search and Filters */}
-      <View
-        style={StyleSheet.flatten([
-          styles.searchContainer,
-          { backgroundColor: colors.card },
-        ])}
-      >
+      <View style={StyleSheet.flatten([styles.searchContainer, { backgroundColor: colors.card }])}>
         <View
           style={StyleSheet.flatten([
             styles.searchInputContainer,
             { backgroundColor: colors.background },
           ])}
         >
-          <Ionicons name="search" size={20} color={colors.onMuted} />
+          <Ionicons
+            name="search"
+            size={20}
+            color={colors.onMuted}
+          />
           <TextInput
-            style={StyleSheet.flatten([
-              styles.searchInput,
-              { color: colors.onSurface},
-            ])}
+            style={StyleSheet.flatten([styles.searchInput, { color: colors.onSurface }])}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search messages..."
@@ -335,22 +309,20 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
         </View>
 
         <View style={styles.filterContainer}>
-          {renderFilterButton("flagged", "Flagged")}
-          {renderFilterButton("unreviewed", "Unreviewed")}
-          {renderFilterButton("all", "All")}
+          {renderFilterButton('flagged', 'Flagged')}
+          {renderFilterButton('unreviewed', 'Unreviewed')}
+          {renderFilterButton('all', 'All')}
         </View>
       </View>
 
       {/* Messages List */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text
-            style={StyleSheet.flatten([
-              styles.loadingText,
-              { color: colors.onMuted },
-            ])}
-          >
+          <ActivityIndicator
+            size="large"
+            color={colors.primary}
+          />
+          <Text style={StyleSheet.flatten([styles.loadingText, { color: colors.onMuted }])}>
             Loading messages...
           </Text>
         </View>
@@ -374,12 +346,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): React.JSX.Elem
                 size={64}
                 color={colors.onMuted}
               />
-              <Text
-                style={StyleSheet.flatten([
-                  styles.emptyText,
-                  { color: colors.onMuted },
-                ])}
-              >
+              <Text style={StyleSheet.flatten([styles.emptyText, { color: colors.onMuted }])}>
                 No messages found
               </Text>
             </View>
@@ -395,8 +362,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
@@ -407,7 +374,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   searchContainer: {
     padding: 16,
@@ -415,8 +382,8 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.border,
   },
   searchInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -428,7 +395,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   filterContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 8,
   },
   filterButton: {
@@ -438,12 +405,12 @@ const styles = StyleSheet.create({
   },
   filterButtonText: {
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingText: {
     marginTop: 12,
@@ -463,9 +430,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   messageHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 8,
   },
   userInfo: {
@@ -473,15 +440,15 @@ const styles = StyleSheet.create({
   },
   senderName: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 4,
   },
   timestamp: {
     fontSize: 12,
   },
   flagBadge: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -489,8 +456,8 @@ const styles = StyleSheet.create({
   },
   flagText: {
     fontSize: 12,
-    color: "white",
-    fontWeight: "500",
+    color: 'white',
+    fontWeight: '500',
   },
   messageText: {
     fontSize: 16,
@@ -499,27 +466,27 @@ const styles = StyleSheet.create({
   },
   flagReason: {
     fontSize: 14,
-    fontStyle: "italic",
+    fontStyle: 'italic',
     marginBottom: 12,
   },
   reviewedBadge: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
   },
   reviewedText: {
     fontSize: 12,
-    color: "white",
-    fontWeight: "600",
+    color: 'white',
+    fontWeight: '600',
   },
   actionButtons: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 8,
   },
   actionButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -536,13 +503,13 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     fontSize: 12,
-    color: "white",
-    fontWeight: "600",
+    color: 'white',
+    fontWeight: '600',
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingVertical: 64,
   },
   emptyText: {

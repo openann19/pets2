@@ -3,15 +3,15 @@
  * Displayed when user cancels Stripe checkout
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
-import type { NavigationProp } from "@react-navigation/native";
-import { useNavigation } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
-import { useTheme } from "@mobile/theme";
-import type { RootStackParamList } from "../navigation/types";
+import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import type { NavigationProp } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
+import { useTheme } from '@mobile/theme';
+import type { RootStackParamList } from '../navigation/types';
 
 const PremiumCancelScreen = (): React.JSX.Element => {
   const theme = useTheme();
@@ -19,7 +19,7 @@ const PremiumCancelScreen = (): React.JSX.Element => {
 
   const handleTryAgain = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    navigation.navigate("Premium");
+    navigation.navigate('Premium');
   };
 
   const handleGoBack = () => {
@@ -37,16 +37,18 @@ const PremiumCancelScreen = (): React.JSX.Element => {
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <View style={styles.iconContainer}>
-            <Ionicons name="close-circle" size={80} color={theme.colors.danger} />
+            <Ionicons
+              name="close-circle"
+              size={80}
+              color={theme.colors.danger}
+            />
           </View>
 
-          <Text style={styles.title}>
-            Payment Cancelled
-          </Text>
+          <Text style={styles.title}>Payment Cancelled</Text>
 
           <Text style={styles.subtitle}>
-            No worries! Your payment was cancelled and you weren't charged. You
-            can try again anytime.
+            No worries! Your payment was cancelled and you weren't charged. You can try again
+            anytime.
           </Text>
 
           <View style={styles.buttonContainer}>
@@ -69,9 +71,7 @@ const PremiumCancelScreen = (): React.JSX.Element => {
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               onPress={handleGoBack}
             >
-              <Text style={styles.secondaryButtonText}>
-                Go Back
-              </Text>
+              <Text style={styles.secondaryButtonText}>Go Back</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -90,8 +90,8 @@ function makeStyles(theme: ReturnType<typeof useTheme>) {
     },
     content: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       paddingHorizontal: theme.spacing.lg + theme.spacing.xs,
     },
     iconContainer: {
@@ -100,25 +100,25 @@ function makeStyles(theme: ReturnType<typeof useTheme>) {
     title: {
       fontSize: theme.typography.h1.size * 1.166,
       fontWeight: theme.typography.h1.weight,
-      textAlign: "center",
+      textAlign: 'center',
       marginBottom: theme.spacing.md,
       color: theme.colors.onSurface,
     },
     subtitle: {
       fontSize: theme.typography.body.size,
-      textAlign: "center",
+      textAlign: 'center',
       lineHeight: theme.typography.body.lineHeight * 1.5,
       marginBottom: theme.spacing['2xl'] + theme.spacing.xs,
       color: theme.colors.onMuted,
     },
     buttonContainer: {
-      width: "100%",
+      width: '100%',
       gap: theme.spacing.lg,
     },
     primaryButton: {
       paddingVertical: theme.spacing.lg,
       borderRadius: theme.radii.lg,
-      alignItems: "center",
+      alignItems: 'center',
       backgroundColor: theme.colors.primary,
     },
     primaryButtonText: {
@@ -130,8 +130,8 @@ function makeStyles(theme: ReturnType<typeof useTheme>) {
       paddingVertical: theme.spacing.lg,
       borderRadius: theme.radii.lg,
       borderWidth: 2,
-      alignItems: "center",
-      backgroundColor: "transparent",
+      alignItems: 'center',
+      backgroundColor: 'transparent',
       borderColor: theme.colors.primary,
     },
     secondaryButtonText: {

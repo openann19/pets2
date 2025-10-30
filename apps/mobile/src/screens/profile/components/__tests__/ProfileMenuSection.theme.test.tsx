@@ -1,7 +1,7 @@
-import { useTheme } from "@/theme";
+import { useTheme } from '@/theme';
 /**
  * ProfileMenuSection Theme Integration Tests
- * 
+ *
  * Verifies that ProfileMenuSection properly uses the unified theming system
  * for menu item colors and styling.
  */
@@ -14,7 +14,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
   describe('Menu Item Colors', () => {
     it('should use semantic colors for menu items', () => {
       const theme = createTheme('light');
-      
+
       const menuItemColors = {
         myPets: theme.colors.primary,
         settings: theme.colors.primary,
@@ -23,7 +23,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
         about: theme.colors.warning,
       };
 
-      Object.values(menuItemColors).forEach(color => {
+      Object.values(menuItemColors).forEach((color) => {
         expect(typeof color).toBe('string');
         expect(color).toMatch(/^#[0-9a-f]{6}$/i);
       });
@@ -31,7 +31,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
 
     it('should not use deprecated status properties', () => {
       const theme = createTheme('light');
-      
+
       // These should not exist
       expect((theme.colors as any).status).toBeUndefined();
       expect((theme.colors as any).status?.info).toBeUndefined();
@@ -43,7 +43,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
   describe('Dynamic Styles Pattern', () => {
     it('should create styles inside component with theme access', () => {
       const theme = createTheme('light');
-      
+
       // Simulate the pattern used in ProfileMenuSection
       const styles = StyleSheet.create({
         menuSection: {
@@ -80,7 +80,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
           flex: 1,
           fontSize: 16,
           fontWeight: '600' as const,
-          color: theme.colors.onSurface
+          color: theme.colors.onSurface,
         },
       });
 
@@ -93,17 +93,17 @@ describe('ProfileMenuSection - Theme Integration', () => {
   describe('Background and Text Colors', () => {
     it('should use bg instead of neutral[0]', () => {
       const theme = createTheme('light');
-      
+
       // Correct: use theme.colors.bg
       expect(theme.colors.bg).toBe('#ffffff');
-      
+
       // Incorrect pattern should not exist
       expect((theme.colors as any).neutral).toBeUndefined();
     });
 
     it('should use text for text color', () => {
       const theme = createTheme('light');
-      
+
       expect(theme.colors.onSurface).toBe('#111827');
       expect(typeof theme.colors.onSurface).toBe('string');
     });
@@ -112,10 +112,10 @@ describe('ProfileMenuSection - Theme Integration', () => {
   describe('Shadow Styling', () => {
     it('should use correct shadow color from theme', () => {
       const theme = createTheme('light');
-      
+
       // Shadow color should be from theme
       expect(theme.colors.onSurface).toBeTruthy();
-      
+
       const styles = StyleSheet.create({
         menuItem: {
           shadowColor: theme.colors.onSurface,
@@ -181,7 +181,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
     it('should have consistent colors across light and dark themes', () => {
       const lightTheme = createTheme('light');
       const darkTheme = createTheme('dark');
-      
+
       // Semantic colors should be identical
       expect(lighttheme.colors.primary).toBe(darktheme.colors.primary);
       expect(lighttheme.colors.success).toBe(darktheme.colors.success);
@@ -191,13 +191,13 @@ describe('ProfileMenuSection - Theme Integration', () => {
     it('should have different background colors for light and dark themes', () => {
       const lightTheme = createTheme('light');
       const darkTheme = createTheme('dark');
-      
+
       // Background should be different
       expect(lighttheme.colors.bg).not.toBe(darktheme.colors.bg);
-      
+
       // Light theme: white
       expect(lighttheme.colors.bg).toBe('#ffffff');
-      
+
       // Dark theme: dark
       expect(darktheme.colors.bg).toBe('#0a0a0a');
     });
@@ -206,13 +206,13 @@ describe('ProfileMenuSection - Theme Integration', () => {
   describe('Accessibility', () => {
     it('should have sufficient contrast between text and background', () => {
       const lightTheme = createTheme('light');
-      
+
       // Light theme: white background, dark text
       expect(lighttheme.colors.bg).toBe('#ffffff');
       expect(lighttheme.colors.onSurface).toBe('#111827');
-      
+
       const darkTheme = createTheme('dark');
-      
+
       // Dark theme: dark background, light text
       expect(darktheme.colors.bg).toBe('#0a0a0a');
       expect(darktheme.colors.onSurface).toBe('#ffffff');
@@ -245,7 +245,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
   describe('Menu Items Configuration', () => {
     it('should have valid menu item structure', () => {
       const theme = createTheme('light');
-      
+
       const menuItems = [
         {
           title: 'My Pets',
@@ -275,8 +275,8 @@ describe('ProfileMenuSection - Theme Integration', () => {
       ];
 
       expect(menuItems.length).toBe(5);
-      
-      menuItems.forEach(item => {
+
+      menuItems.forEach((item) => {
         expect(item).toHaveProperty('title');
         expect(item).toHaveProperty('icon');
         expect(item).toHaveProperty('color');
@@ -290,7 +290,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
   describe('No Deprecated Patterns', () => {
     it('should not use theme.colors.status', () => {
       const theme = createTheme('light');
-      
+
       // These patterns should not be used
       expect((theme.colors as any).status).toBeUndefined();
       expect((theme.colors as any).status?.info).toBeUndefined();
@@ -300,7 +300,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
 
     it('should not use theme.colors.neutral', () => {
       const theme = createTheme('light');
-      
+
       // These patterns should not be used
       expect((theme.colors as any).neutral).toBeUndefined();
       expect((theme.colors as any).neutral?.[0]).toBeUndefined();

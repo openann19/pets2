@@ -1,390 +1,178 @@
-import { useTheme } from '@mobile/theme';
 /**
- * NEW COMPONENTS TEST SCREEN
- *
- * Comprehensive test of all new architecture components.
- * This screen verifies that all components work properly.
+ * Component compatibility showcase used to validate the new theming and button systems
+ * without relying on legacy placeholder components.
  */
-
-import React, { useState } from 'react';
-import { Alert, Dimensions, ScrollView, StyleSheet, View } from 'react-native';
+import React from 'react';
+import { Alert, Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '@mobile/theme';
+import { getExtendedColors } from '../theme/adapters';
+import AnimatedButton from '../components/AnimatedButton';
 import { useReduceMotion } from '../hooks/useReducedMotion';
-
-// Import new architecture components
-import {
-  Body,
-  BodySmall,
-  EliteButton,
-  EliteButtonPresets,
-  EliteContainer,
-  EliteHeader,
-  FXContainer,
-  FXContainerPresets,
-  Heading1,
-  Heading2,
-  Heading3,
-  Label,
-  ModernPhotoUpload,
-  ModernSwipeCard,
-  PerformanceTestSuite,
-  useEntranceAnimation,
-  useStaggeredAnimation,
-} from '../components';
-
-// Import legacy components for comparison
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Mock data for testing
-const mockPet = {
-  _id: '1',
-  id: '1',
-  name: 'Luna',
-  species: 'Dog',
-  breed: 'Golden Retriever',
-  age: 3,
-  description:
-    'A friendly and energetic golden retriever who loves playing fetch and going on long walks.',
-  bio: 'A friendly and energetic golden retriever who loves playing fetch and going on long walks.',
-  photos: [
-    'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400',
-    'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400',
-  ],
-  location: 'San Francisco, CA',
-  distance: 2.5,
-  compatibility: 95,
-  isVerified: true,
-  owner: {
-    name: 'Sarah Johnson',
-    verified: true,
-  },
-  tags: ['Friendly', 'Playful', 'Good with kids', 'House trained'],
-};
+const SAMPLE_TRAITS = ['Playful', 'House trained', 'Great with kids', 'Needs daily walks'];
 
-const mockPhotos = [
-  {
-    id: '1',
-    uri: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400',
-  },
-  {
-    id: '2',
-    uri: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400',
-  },
-];
-
-export default function NewComponentsTestScreen() {
+export default function NewComponentsTestScreen(): JSX.Element {
   const theme = useTheme();
-  const reducedMotion = useReduceMotion();
-  const styles = makeStyles(theme);
+  const colors = getExtendedColors(theme);
+  const reduceMotion = useReduceMotion();
+  const styles = React.useMemo(() => createStyles(theme), [theme]);
 
-  const [photos, setPhotos] = useState(mockPhotos);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } = useStaggeredAnimation(7, reducedMotion ? 100 : 100);
-
-  const { start: startEntranceAnimation, animatedStyle: entranceStyle } = useEntranceAnimation(
-    'fadeIn',
-    reducedMotion ? 0 : 0,
-  );
-
-  // Start animations
-  React.useEffect(() => {
-    if (!reducedMotion) {
-      startStaggeredAnimation();
-      startEntranceAnimation();
-    }
-  }, [startStaggeredAnimation, startEntranceAnimation, reducedMotion]);
-
-  // Event handlers
-  const handleButtonPress = (buttonName: string) => {
-    Alert.alert('Button Pressed', `${buttonName} button was pressed!`);
-  };
-
-  const handleSwipeLeft = () => {
-    Alert.alert('Swipe Left', 'You swiped left on Luna!');
-  };
-
-  const handleSwipeRight = () => {
-    Alert.alert('Swipe Right', 'You swiped right on Luna!');
-  };
-
-  const handleSwipeUp = () => {
-    Alert.alert('Swipe Up', 'You swiped up on Luna!');
-  };
-
-  const handleLoadingTest = async () => {
-    setIsLoading(true);
-    await new Promise<void>((resolve) => setTimeout(resolve, 2000));
-    setIsLoading(false);
-    Alert.alert('Loading Complete', 'The loading animation has finished!');
-  };
+  const handleAction = React.useCallback((message: string) => {
+    Alert.alert('Action triggered', message);
+  }, []);
 
   return (
-    <EliteContainer gradient="primary">
-      <EliteHeader
-        title="New Components Test"
-        subtitle="Testing the new architecture"
-        onBack={() => {}}
-      />
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={[styles.card, { backgroundColor: colors.surface }]}>
+        <Text style={styles.title}>Component Smoke Test</Text>
+        <Text style={styles.subtitle}>
+          This screen validates that core UI dependencies render correctly with the unified theme
+          system in both motion-enabled and reduced-motion contexts.
+        </Text>
 
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Hero Section */}
-        <View style={[getAnimatedStyle, entranceStyle]}>
-          <FXContainerPresets.glass style={styles.heroSection}>
-            <Heading1 style={styles.heroTitle}>New Architecture Test</Heading1>
-            <Body style={styles.heroSubtitle}>All new components are working perfectly!</Body>
-          </FXContainerPresets.glass>
+        <AnimatedButton
+          size="md"
+          variant="primary"
+          accessibilityLabel="Primary action"
+          accessibilityHint="Executes a sample primary action"
+          onPress={() => handleAction('Primary button pressed')}
+        >
+          Run Primary Action
+        </AnimatedButton>
+
+        <View style={styles.buttonRow}>
+          <AnimatedButton
+            size="sm"
+            variant="secondary"
+            accessibilityLabel="Secondary action"
+            accessibilityHint="Executes a sample secondary action"
+            onPress={() => handleAction('Secondary button pressed')}
+          >
+            Secondary
+          </AnimatedButton>
+          <AnimatedButton
+            size="sm"
+            variant="ghost"
+            accessibilityLabel="Ghost action"
+            accessibilityHint="Executes a sample ghost action"
+            onPress={() => handleAction('Ghost button pressed')}
+          >
+            Ghost
+          </AnimatedButton>
         </View>
 
-        {/* Button Tests */}
-        <View style={getAnimatedStyle}>
-          <FXContainerPresets.glass style={styles.section}>
-            <Heading2 style={styles.sectionTitle}>Button System Test</Heading2>
-            <BodySmall style={styles.sectionSubtitle}>Testing EliteButton and presets</BodySmall>
-
-            <View style={styles.buttonGrid}>
-              <EliteButton
-                title="Primary"
-                variant="primary"
-                size="md"
-                onPress={() => {
-                  handleButtonPress('Primary');
-                }}
-              />
-              <EliteButton
-                title="Secondary"
-                variant="secondary"
-                size="md"
-                onPress={() => {
-                  handleButtonPress('Secondary');
-                }}
-              />
-              <EliteButton
-                title="Outline"
-                variant="outline"
-                size="md"
-                onPress={() => {
-                  handleButtonPress('Outline');
-                }}
-              />
-              <EliteButtonPresets.glass
-                title="Glass"
-                size="md"
-                onPress={() => {
-                  handleButtonPress('Glass');
-                }}
-              />
-              <EliteButton
-                title="Loading Test"
-                variant="primary"
-                size="md"
-                loading={isLoading}
-                onPress={handleLoadingTest}
-              />
+        <Text style={styles.sectionHeading}>Sample pet traits</Text>
+        <View style={styles.traitGrid}>
+          {SAMPLE_TRAITS.map((trait) => (
+            <View key={trait} style={[styles.traitPill, { borderColor: colors.border }]}>
+              <Text style={styles.traitText}>{trait}</Text>
             </View>
-          </FXContainerPresets.glass>
+          ))}
         </View>
 
-        {/* Container Tests */}
-        <View style={getAnimatedStyle}>
-          <FXContainerPresets.glass style={styles.section}>
-            <Heading2 style={styles.sectionTitle}>Container System Test</Heading2>
-            <BodySmall style={styles.sectionSubtitle}>Testing FXContainer and presets</BodySmall>
-
-            <View style={styles.containerGrid}>
-              <FXContainer
-                type="glass"
-                variant="medium"
-                style={styles.demoContainer}
-              >
-                <Label>Glass Container</Label>
-                <BodySmall>Backdrop blur effect</BodySmall>
-              </FXContainer>
-
-              <FXContainer
-                type="glow"
-                variant="strong"
-                style={styles.demoContainer}
-              >
-                <Label>Glow Container</Label>
-                <BodySmall>Animated glow effect</BodySmall>
-              </FXContainer>
-
-              <FXContainer
-                type="neon"
-                variant="intense"
-                style={styles.demoContainer}
-              >
-                <Label>Neon Container</Label>
-                <BodySmall>Shimmer animation</BodySmall>
-              </FXContainer>
-            </View>
-          </FXContainerPresets.glass>
+        <Text style={styles.sectionHeading}>Motion settings</Text>
+        <View style={styles.statusRow}>
+          <Text style={styles.statusLabel}>Reduce motion enabled</Text>
+          <Text style={styles.statusValue}>{reduceMotion ? 'Yes' : 'No'}</Text>
         </View>
 
-        {/* Swipe Card Test */}
-        <View style={getAnimatedStyle}>
-          <FXContainerPresets.glass style={styles.section}>
-            <Heading2 style={styles.sectionTitle}>Swipe Card Test</Heading2>
-            <BodySmall style={styles.sectionSubtitle}>Testing ModernSwipeCard component</BodySmall>
-
-            <View style={styles.swipeCardContainer}>
-              <ModernSwipeCard
-                pet={mockPet}
-                onSwipeLeft={handleSwipeLeft}
-                onSwipeRight={handleSwipeRight}
-                onSwipeUp={handleSwipeUp}
-                isTopCard={true}
-              />
-            </View>
-          </FXContainerPresets.glass>
+        <View style={styles.summaryBox}>
+          <Text style={styles.summaryTitle}>Summary</Text>
+          <Text style={styles.summaryLine}>• Theme colors load successfully</Text>
+          <Text style={styles.summaryLine}>• Animated button renders with accessibility metadata</Text>
+          <Text style={styles.summaryLine}>• Layout adapts to screen width ({Math.round(SCREEN_WIDTH)}px)</Text>
         </View>
-
-        {/* Photo Upload Test */}
-        <View style={getAnimatedStyle}>
-          <FXContainerPresets.glass style={styles.section}>
-            <Heading2 style={styles.sectionTitle}>Photo Upload Test</Heading2>
-            <BodySmall style={styles.sectionSubtitle}>
-              Testing ModernPhotoUpload component
-            </BodySmall>
-
-            <ModernPhotoUpload
-              photos={photos}
-              onPhotosChange={setPhotos}
-              maxPhotos={6}
-            />
-          </FXContainerPresets.glass>
-        </View>
-
-        {/* Typography Test */}
-        <View style={getAnimatedStyle}>
-          <FXContainerPresets.glass style={styles.section}>
-            <Heading2 style={styles.sectionTitle}>Typography Test</Heading2>
-            <BodySmall style={styles.sectionSubtitle}>Testing unified typography system</BodySmall>
-
-            <View style={styles.typographyShowcase}>
-              <Heading1>Heading 1 - Main Title</Heading1>
-              <Heading2>Heading 2 - Section Title</Heading2>
-              <Heading3>Heading 3 - Subsection</Heading3>
-              <Body>Body text - Regular content with proper line height and spacing.</Body>
-              <BodySmall>Body Small - Secondary information and captions.</BodySmall>
-              <Label>Label - Form labels and UI elements</Label>
-            </View>
-          </FXContainerPresets.glass>
-        </View>
-
-        {/* Performance Test */}
-        <View style={getAnimatedStyle}>
-          <PerformanceTestSuite
-            onTestComplete={(results) => {
-              Alert.alert(
-                'Performance Test Complete',
-                `Overall Grade: ${results.overallGrade}\nFPS: ${results.animationFPS}\nMemory: ${Math.round(results.memoryUsage / 1024 / 1024)}MB`,
-              );
-            }}
-          />
-        </View>
-
-        {/* Success Message */}
-        <View style={getAnimatedStyle}>
-          <FXContainerPresets.glass style={styles.section}>
-            <Heading2 style={styles.sectionTitle}>✅ All Tests Passed!</Heading2>
-            <BodySmall style={styles.sectionSubtitle}>
-              The new architecture is working perfectly
-            </BodySmall>
-
-            <View style={styles.successList}>
-              <View style={styles.successItem}>
-                <Body>✅ All components import correctly</Body>
-              </View>
-              <View style={styles.successItem}>
-                <Body>✅ Animations run at 60fps</Body>
-              </View>
-              <View style={styles.successItem}>
-                <Body>✅ Typography system works</Body>
-              </View>
-              <View style={styles.successItem}>
-                <Body>✅ Theme system is unified</Body>
-              </View>
-              <View style={styles.successItem}>
-                <Body>✅ Performance monitoring active</Body>
-              </View>
-              <View style={styles.successItem}>
-                <Body>✅ Ready for production use!</Body>
-              </View>
-            </View>
-          </FXContainerPresets.glass>
-        </View>
-      </ScrollView>
-    </EliteContainer>
+      </View>
+    </ScrollView>
   );
 }
 
-const makeStyles = (theme: any) =>
+const createStyles = (theme: ReturnType<typeof useTheme>) =>
   StyleSheet.create({
     container: {
       flex: 1,
     },
-    scrollContent: {
+    content: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.xl,
+      gap: theme.spacing.lg,
+    },
+    card: {
+      borderRadius: theme.radius.lg,
+      padding: theme.spacing.xl,
+      gap: theme.spacing.lg,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: theme.colors.onSurface,
+    },
+    subtitle: {
+      color: theme.colors.onMuted,
+      fontSize: 16,
+      lineHeight: 22,
+    },
+    buttonRow: {
+      flexDirection: 'row',
+      gap: theme.spacing.md,
+    },
+    sectionHeading: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      marginTop: theme.spacing.lg,
+    },
+    traitGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.sm,
+    },
+    traitPill: {
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radius.pill,
+      borderWidth: 1,
+    },
+    traitText: {
+      color: theme.colors.onSurface,
+      fontWeight: '500',
+    },
+    statusRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.sm,
+    },
+    statusLabel: {
+      color: theme.colors.onSurface,
+      fontSize: 16,
+    },
+    statusValue: {
+      color: theme.colors.primary,
+      fontWeight: '600',
+      fontSize: 16,
+    },
+    summaryBox: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
       padding: theme.spacing.lg,
-      paddingBottom: theme.spacing['4xl'],
-    },
-    heroSection: {
-      padding: theme.spacing.xl,
-      marginBottom: theme.spacing.lg,
-      alignItems: 'center',
-    },
-    heroTitle: {
-      textAlign: 'center',
-      marginBottom: theme.spacing.md,
-    },
-    heroSubtitle: {
-      textAlign: 'center',
-      color: theme.colors.onMuted,
-    },
-    section: {
-      padding: theme.spacing.xl,
-      marginBottom: theme.spacing.lg,
-    },
-    sectionTitle: {
-      marginBottom: theme.spacing.sm,
-    },
-    sectionSubtitle: {
-      marginBottom: theme.spacing.lg,
-      color: theme.colors.onMuted,
-    },
-    buttonGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
       gap: theme.spacing.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
     },
-    containerGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: theme.spacing.md,
+    summaryTitle: {
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
     },
-    demoContainer: {
-      flex: 1,
-      minWidth: (SCREEN_WIDTH - theme.spacing['2xl'] - theme.spacing['2xl']) / 3,
-      padding: theme.spacing.md,
-      alignItems: 'center',
-    },
-    swipeCardContainer: {
-      height: 600,
-      marginHorizontal: -theme.spacing.md,
-    },
-    typographyShowcase: {
-      gap: theme.spacing.md,
-    },
-    successList: {
-      gap: theme.spacing.sm,
-    },
-    successItem: {
-      paddingLeft: theme.spacing.md,
+    summaryLine: {
+      color: theme.colors.onMuted,
+      fontSize: 15,
     },
   });

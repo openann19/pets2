@@ -96,7 +96,6 @@ export class CallSystemIntegration {
       this.isInitialized = true;
       logger.info('Call system integration initialized successfully');
       return true;
-
     } catch (error) {
       logger.error('Failed to initialize call system integration', { error });
       return false;
@@ -111,7 +110,7 @@ export class CallSystemIntegration {
       // Configure InCallManager
       InCallManager.setKeepScreenOn(true);
       InCallManager.setForceSpeakerphoneOn(false);
-      
+
       logger.info('InCallManager initialized');
     } catch (error) {
       logger.error('Failed to initialize InCallManager', { error });
@@ -193,7 +192,6 @@ export class CallSystemIntegration {
 
       // Show system notification
       await this.showIncomingCallNotification(callData);
-
     } catch (error) {
       logger.error('Failed to report incoming call to system', { error });
     }
@@ -216,7 +214,6 @@ export class CallSystemIntegration {
 
       this.activeCallId = callId;
       this.emitEvent('callStarted', callId);
-
     } catch (error) {
       logger.error('Failed to report outgoing call to system', { error });
     }
@@ -225,7 +222,10 @@ export class CallSystemIntegration {
   /**
    * Report call ended to system
    */
-  async reportCallEnded(callId: string, reason: 'userEnded' | 'remoteEnded' | 'failed' | 'missed' = 'userEnded'): Promise<void> {
+  async reportCallEnded(
+    callId: string,
+    reason: 'userEnded' | 'remoteEnded' | 'failed' | 'missed' = 'userEnded',
+  ): Promise<void> {
     try {
       logger.info('Reporting call ended to system', { callId, reason });
 
@@ -242,7 +242,6 @@ export class CallSystemIntegration {
       }
 
       this.emitEvent('callEnded', callId, { reason });
-
     } catch (error) {
       logger.error('Failed to report call ended to system', { error });
     }
@@ -254,17 +253,16 @@ export class CallSystemIntegration {
   async handleAudioFocusLost(): Promise<void> {
     try {
       logger.info('Audio focus lost, muting call');
-      
+
       // Auto-mute when audio focus is lost
       InCallManager.setMicrophoneMute(true);
-      
+
       // Notify user
       Alert.alert(
         'Audio Focus Lost',
         'Call was muted due to another app playing audio. Tap to unmute.',
-        [{ text: 'Unmute', onPress: () => this.handleAudioFocusRegained() }]
+        [{ text: 'Unmute', onPress: () => this.handleAudioFocusRegained() }],
       );
-
     } catch (error) {
       logger.error('Failed to handle audio focus lost', { error });
     }
@@ -288,10 +286,9 @@ export class CallSystemIntegration {
   async handleOrientationChange(): Promise<void> {
     try {
       logger.info('Handling orientation change during call');
-      
+
       // InCallManager handles orientation automatically
       // Additional logic can be added here if needed
-      
     } catch (error) {
       logger.error('Failed to handle orientation change', { error });
     }
@@ -303,7 +300,7 @@ export class CallSystemIntegration {
   async handleBluetoothChange(isConnected: boolean): Promise<void> {
     try {
       logger.info('Bluetooth connection changed', { isConnected });
-      
+
       if (isConnected) {
         // Route audio to bluetooth when available
         InCallManager.setForceSpeakerphoneOn(false);
@@ -311,7 +308,6 @@ export class CallSystemIntegration {
         // Fall back to speaker when bluetooth disconnected
         InCallManager.setForceSpeakerphoneOn(true);
       }
-      
     } catch (error) {
       logger.error('Failed to handle bluetooth change', { error });
     }
@@ -347,17 +343,25 @@ export class CallSystemIntegration {
     logger.info('Reporting incoming call to CallKit', { callId: callData.callId });
   }
 
-  private async reportIncomingCallToConnectionService(callData: IncomingCallNotification): Promise<void> {
+  private async reportIncomingCallToConnectionService(
+    callData: IncomingCallNotification,
+  ): Promise<void> {
     // ConnectionService integration would go here
     logger.info('Reporting incoming call to ConnectionService', { callId: callData.callId });
   }
 
-  private async reportOutgoingCallToCallKit(callId: string, callType: 'voice' | 'video'): Promise<void> {
+  private async reportOutgoingCallToCallKit(
+    callId: string,
+    callType: 'voice' | 'video',
+  ): Promise<void> {
     // CallKit integration would go here
     logger.info('Reporting outgoing call to CallKit', { callId, callType });
   }
 
-  private async reportOutgoingCallToConnectionService(callId: string, callType: 'voice' | 'video'): Promise<void> {
+  private async reportOutgoingCallToConnectionService(
+    callId: string,
+    callType: 'voice' | 'video',
+  ): Promise<void> {
     // ConnectionService integration would go here
     logger.info('Reporting outgoing call to ConnectionService', { callId, callType });
   }
@@ -387,7 +391,11 @@ export class CallSystemIntegration {
     logger.info('Handling foreground call');
   }
 
-  private emitEvent(type: CallSystemEvent['type'], callId: string, metadata?: Record<string, unknown>): void {
+  private emitEvent(
+    type: CallSystemEvent['type'],
+    callId: string,
+    metadata?: Record<string, unknown>,
+  ): void {
     const event: CallSystemEvent = {
       type,
       callId,
@@ -395,7 +403,7 @@ export class CallSystemIntegration {
       metadata,
     };
 
-    this.eventListeners.forEach(listener => {
+    this.eventListeners.forEach((listener) => {
       try {
         listener(event);
       } catch (error) {
@@ -456,14 +464,13 @@ export class CallSystemIntegration {
   cleanup(): void {
     try {
       logger.info('Cleaning up call system integration');
-      
+
       this.eventListeners = [];
       this.activeCallId = null;
       this.isInitialized = false;
 
       // Stop InCallManager
       InCallManager.stop();
-      
     } catch (error) {
       logger.error('Error during cleanup', { error });
     }

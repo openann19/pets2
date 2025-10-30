@@ -8,7 +8,13 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTheme } from '../../../theme';
 import { useReduceMotion } from '../../../hooks/useReducedMotion';
-import { motionDurations, motionEasing, motionScale, motionOpacity, motionSpring } from '../../../theme/motion';
+import {
+  motionDurations,
+  motionEasing,
+  motionScale,
+  motionOpacity,
+  motionSpring,
+} from '../../../theme/motion';
 import { Text } from './Text';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -130,7 +136,14 @@ export function Button({
           height: sizeStyles.height,
           paddingHorizontal: sizeStyles.paddingHorizontal,
           backgroundColor: variantStyles.backgroundColor,
-          borderWidth: variantStyles.borderColor !== 'transparent' && variant !== 'ghost' ? (variant === 'secondary' ? 1 : variant === 'outline' ? 2 : 0) : 0,
+          borderWidth:
+            variantStyles.borderColor !== 'transparent' && variant !== 'ghost'
+              ? variant === 'secondary'
+                ? 1
+                : variant === 'outline'
+                  ? 2
+                  : 0
+              : 0,
           borderColor: variantStyles.borderColor,
           borderRadius: theme.radii.md,
           justifyContent: 'center',

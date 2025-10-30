@@ -19,13 +19,10 @@ export const uploadAdapter: UploadAdapter = {
     } as unknown as Blob);
     appendExtraFields(form, input.extraFields);
 
-    const data = await request<{ url: string; width?: number; height?: number }>(
-      '/upload/photo',
-      {
-        method: 'POST',
-        body: form,
-      },
-    );
+    const data = await request<{ url: string; width?: number; height?: number }>('/upload/photo', {
+      method: 'POST',
+      body: form,
+    });
     return data;
   },
 
@@ -38,13 +35,10 @@ export const uploadAdapter: UploadAdapter = {
     } as unknown as Blob);
     appendExtraFields(form, input.extraFields);
 
-    const data = await request<{ url: string; durationMs?: number }>(
-      '/upload/video',
-      {
-        method: 'POST',
-        body: form,
-      },
-    );
+    const data = await request<{ url: string; durationMs?: number }>('/upload/video', {
+      method: 'POST',
+      body: form,
+    });
     return data;
   },
   async uploadGeneric(input: UploadPhotoInput) {
@@ -56,17 +50,12 @@ export const uploadAdapter: UploadAdapter = {
     } as unknown as Blob);
     appendExtraFields(form, input.extraFields);
 
-    const data = await request<{ url: string }>(
-      '/upload',
-      {
-        method: 'POST',
-        body: form,
-      },
-    );
+    const data = await request<{ url: string }>('/upload', {
+      method: 'POST',
+      body: form,
+    });
     return data;
   },
 };
 
 export type { UploadAdapter };
-
-

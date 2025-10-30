@@ -1,8 +1,9 @@
-import React from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
+import { Interactive } from '../primitives/Interactive';
 
 interface SubscriptionTier {
   id: string;
@@ -14,7 +15,7 @@ interface SubscriptionTier {
 
 interface PremiumTierCardProps {
   tier: SubscriptionTier;
-  billingPeriod: "monthly" | "yearly";
+  billingPeriod: 'monthly' | 'yearly';
   isSelected: boolean;
   onPress: () => void;
 }
@@ -29,53 +30,60 @@ export const PremiumTierCard: React.FC<PremiumTierCardProps> = ({
   const styles = React.useMemo(() => makeStyles(theme), [theme]);
 
   return (
-    <TouchableOpacity
-      style={[
-        styles.tierCard,
-        {
-          borderColor: isSelected ? theme.colors.primary : theme.colors.border,
-        },
-      ]}
+    <Interactive
+      variant="lift"
+      haptic="light"
       onPress={onPress}
-      testID={`tier-${tier.id}`}
       accessibilityLabel={`${tier.name} tier`}
       accessibilityRole="button"
     >
-      {tier.popular && (
-        <View style={[styles.popularBadge, { backgroundColor: theme.colors.primary }]}>
-          <Text style={styles.popularText}>Most Popular</Text>
-        </View>
-      )}
+      <TouchableOpacity
+        style={[
+          styles.tierCard,
+          {
+            borderColor: isSelected ? theme.colors.primary : theme.colors.border,
+          },
+        ]}
+        testID={`tier-${tier.id}`}
+        activeOpacity={1}
+      >
+        {tier.popular && (
+          <View style={[styles.popularBadge, { backgroundColor: theme.colors.primary }]}>
+            <Text style={styles.popularText}>Most Popular</Text>
+          </View>
+        )}
 
-      <View style={styles.tierHeader}>
-        <Text style={[styles.tierName, { color: theme.colors.onSurface }]}>
-          {tier.name}
-        </Text>
-        <View style={styles.tierPricing}>
-          <Text style={[styles.tierPrice, { color: theme.colors.onSurface }]}>
-            ${tier.price[billingPeriod]}
-          </Text>
-          <Text style={[styles.tierDuration, { color: theme.colors.onMuted }]}>
-            /{billingPeriod === "monthly" ? "month" : "year"}
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.tierFeatures}>
-        {tier.features.map((feature, index) => (
-          <View key={index} style={styles.tierFeature}>
-            <Ionicons
-              name="checkmark"
-              size={16}
-              color={theme.colors.success}
-            />
-            <Text style={[styles.tierFeatureText, { color: theme.colors.onMuted }]}>
-              {feature}
+        <View style={styles.tierHeader}>
+          <Text style={[styles.tierName, { color: theme.colors.onSurface }]}>{tier.name}</Text>
+          <View style={styles.tierPricing}>
+            <Text style={[styles.tierPrice, { color: theme.colors.onSurface }]}>
+              ${tier.price[billingPeriod]}
+            </Text>
+            <Text style={[styles.tierDuration, { color: theme.colors.onMuted }]}>
+              /{billingPeriod === 'monthly' ? 'month' : 'year'}
             </Text>
           </View>
-        ))}
-      </View>
-    </TouchableOpacity>
+        </View>
+
+        <View style={styles.tierFeatures}>
+          {tier.features.map((feature, index) => (
+            <View
+              key={index}
+              style={styles.tierFeature}
+            >
+              <Ionicons
+                name="checkmark"
+                size={16}
+                color={theme.colors.success}
+              />
+              <Text style={[styles.tierFeatureText, { color: theme.colors.onMuted }]}>
+                {feature}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </TouchableOpacity>
+    </Interactive>
   );
 };
 
@@ -85,11 +93,11 @@ const makeStyles = (theme: AppTheme) =>
       padding: 24,
       borderRadius: 16,
       borderWidth: 2,
-      position: "relative",
+      position: 'relative',
       backgroundColor: theme.colors.surface,
     },
     popularBadge: {
-      position: "absolute",
+      position: 'absolute',
       top: -8,
       right: 20,
       paddingHorizontal: 12,
@@ -99,23 +107,23 @@ const makeStyles = (theme: AppTheme) =>
     popularText: {
       color: theme.colors.onPrimary,
       fontSize: 12,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     tierHeader: {
       marginBottom: 20,
     },
     tierName: {
       fontSize: 24,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       marginBottom: 8,
     },
     tierPricing: {
-      flexDirection: "row",
-      alignItems: "baseline",
+      flexDirection: 'row',
+      alignItems: 'baseline',
     },
     tierPrice: {
       fontSize: 32,
-      fontWeight: "bold",
+      fontWeight: 'bold',
       marginRight: 4,
     },
     tierDuration: {
@@ -125,8 +133,8 @@ const makeStyles = (theme: AppTheme) =>
       gap: 12,
     },
     tierFeature: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 12,
     },
     tierFeatureText: {
@@ -134,4 +142,3 @@ const makeStyles = (theme: AppTheme) =>
       flex: 1,
     },
   });
-

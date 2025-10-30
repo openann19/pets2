@@ -3,23 +3,25 @@
  * Handles admin-specific navigation and role-based access
  */
 
-import { useAuthStore } from "@pawfectmatch/core";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { useAuthStore } from '@pawfectmatch/core';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 // Admin Screens
-import AdminAnalyticsScreen from "../screens/admin/AdminAnalyticsScreen";
-import AdminBillingScreen from "../screens/admin/AdminBillingScreen";
-import AdminChatsScreen from "../screens/admin/AdminChatsScreen";
-import AdminConfigScreen from "../screens/admin/AdminConfigScreen";
-import AdminDashboardScreen from "../screens/admin/AdminDashboardScreen";
-import AdminSecurityScreen from "../screens/admin/AdminSecurityScreen";
-import AdminServicesScreen from "../screens/admin/AdminServicesScreen";
-import AdminUploadsScreen from "../screens/admin/AdminUploadsScreen";
-import AdminUsersScreen from "../screens/admin/AdminUsersScreen";
-import AdminVerificationsScreen from "../screens/admin/AdminVerificationsScreen";
+import AdminAnalyticsScreen from '../screens/admin/AdminAnalyticsScreen';
+import AdminBillingScreen from '../screens/admin/AdminBillingScreen';
+import AdminChatsScreen from '../screens/admin/AdminChatsScreen';
+import AdminConfigScreen from '../screens/admin/AdminConfigScreen';
+import AdminDashboardScreen from '../screens/admin/AdminDashboardScreen';
+import AdminSecurityScreen from '../screens/admin/AdminSecurityScreen';
+import AdminServicesScreen from '../screens/admin/AdminServicesScreen';
+import AdminUploadsScreen from '../screens/admin/AdminUploadsScreen';
+import AdminUsersScreen from '../screens/admin/AdminUsersScreen';
+import AdminVerificationsScreen from '../screens/admin/AdminVerificationsScreen';
 import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
+import { useAdminPermissions } from '../hooks/useAdminPermissions';
 import type { AdminStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<AdminStackParamList>();
@@ -27,21 +29,25 @@ const Stack = createNativeStackNavigator<AdminStackParamList>();
 export default function AdminNavigator(): React.JSX.Element {
   const theme = useTheme();
   const styles = makeStyles(theme);
-  
-  const { user, isLoading } = useAuthStore();
+
+  const { user } = useAuthStore();
+  const { isLoading, isAdmin } = useAdminPermissions();
 
   // Loading state
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <ActivityIndicator
+          size="large"
+          color={theme.colors.primary}
+        />
         <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
   }
 
-  // Check admin access
-  if (!user || user.role !== "admin") {
+  // Check admin access using type-safe permission hook
+  if (!user || !isAdmin) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorTitle}>Access Denied</Text>
@@ -61,7 +67,7 @@ export default function AdminNavigator(): React.JSX.Element {
         },
         headerTintColor: theme.colors.onSurface,
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: 'bold',
         },
       }}
     >
@@ -69,7 +75,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminDashboard"
         component={AdminDashboardScreen}
         options={{
-          title: "Admin Dashboard",
+          title: 'Admin Dashboard',
           headerShown: false, // Custom header in component
         }}
       />
@@ -78,7 +84,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminAnalytics"
         component={AdminAnalyticsScreen}
         options={{
-          title: "Analytics Dashboard",
+          title: 'Analytics Dashboard',
           headerShown: false, // Custom header in component
         }}
       />
@@ -87,7 +93,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminUsers"
         component={AdminUsersScreen}
         options={{
-          title: "User Management",
+          title: 'User Management',
           headerShown: false, // Custom header in component
         }}
       />
@@ -96,7 +102,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminSecurity"
         component={AdminSecurityScreen}
         options={{
-          title: "Security Dashboard",
+          title: 'Security Dashboard',
           headerShown: false, // Custom header in component
         }}
       />
@@ -105,7 +111,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminBilling"
         component={AdminBillingScreen}
         options={{
-          title: "Billing Management",
+          title: 'Billing Management',
           headerShown: false, // Custom header in component
         }}
       />
@@ -115,7 +121,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminChats"
         component={AdminChatsScreen}
         options={{
-          title: "Chat Moderation",
+          title: 'Chat Moderation',
           headerShown: false,
         }}
       />
@@ -125,7 +131,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminUploads"
         component={AdminUploadsScreen}
         options={{
-          title: "Upload Management",
+          title: 'Upload Management',
           headerShown: false,
         }}
       />
@@ -135,7 +141,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminVerifications"
         component={AdminVerificationsScreen}
         options={{
-          title: "Verification Management",
+          title: 'Verification Management',
           headerShown: false,
         }}
       />
@@ -145,7 +151,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminServices"
         component={AdminServicesScreen}
         options={{
-          title: "Services Management",
+          title: 'Services Management',
           headerShown: false,
         }}
       />
@@ -155,7 +161,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminConfig"
         component={AdminConfigScreen}
         options={{
-          title: "API Configuration",
+          title: 'API Configuration',
           headerShown: false,
         }}
       />
@@ -163,36 +169,37 @@ export default function AdminNavigator(): React.JSX.Element {
   );
 }
 
-const makeStyles = (theme: any) => StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: theme.colors.bg,
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: theme.colors.onMuted,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: theme.colors.bg,
-    paddingHorizontal: 32,
-  },
-  errorTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: theme.colors.danger,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  errorMessage: {
-    fontSize: 16,
-    color: theme.colors.onMuted,
-    textAlign: "center",
-    lineHeight: 24,
-  },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.bg,
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: 16,
+      color: theme.colors.onMuted,
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.bg,
+      paddingHorizontal: 32,
+    },
+    errorTitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.colors.danger,
+      marginBottom: 16,
+      textAlign: 'center',
+    },
+    errorMessage: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      textAlign: 'center',
+      lineHeight: 24,
+    },
+  });

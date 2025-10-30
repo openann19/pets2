@@ -36,25 +36,25 @@ export function useCardLift(scrollOffset: number = 0): UseCardLiftReturn {
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       const offset = event.contentOffset.y;
-      
+
       // Calculate lift based on scroll position relative to card
       const relativeOffset = offset - scrollOffset;
-      
+
       // Lift card by up to 4px as it scrolls into view
       if (guards.shouldAnimate && !guards.lowEnd) {
         translateY.value = interpolate(
           relativeOffset,
           [-100, 0, 100],
           [-2, 0, 2],
-          Extrapolate.CLAMP
+          Extrapolate.CLAMP,
         );
-        
+
         // Parallax image in opposite direction (≤ 4px)
         imageTranslateY.value = interpolate(
           relativeOffset,
           [-100, 0, 100],
           [2, 0, -2],
-          Extrapolate.CLAMP
+          Extrapolate.CLAMP,
         );
       }
     },
@@ -97,17 +97,8 @@ interface CardLiftProps {
   style?: ViewStyle;
 }
 
-export function CardLift({
-  children,
-  scrollOffset,
-  style,
-}: CardLiftProps): React.JSX.Element {
+export function CardLift({ children, scrollOffset, style }: CardLiftProps): React.JSX.Element {
   const { cardStyle } = useCardLift(scrollOffset);
 
-  return (
-    <Animated.View style={[cardStyle, style]}>
-      {children}
-    </Animated.View>
-  );
+  return <Animated.View style={[cardStyle, style]}>{children}</Animated.View>;
 }
-

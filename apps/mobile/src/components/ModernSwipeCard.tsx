@@ -24,8 +24,10 @@ import {
 } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated, { type AnimatedStyleProp } from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
 
 import { useTheme } from '@mobile/theme';
+import { SHARED_ELEMENT_IDS, prefetchPetImage } from '@/foundation/shared-element';
 import type { AppTheme } from '@mobile/theme';
 import { useDoubleTapMetrics } from '../hooks/useInteractionMetrics';
 import { useLikeWithUndo } from '../hooks/useLikeWithUndo';
@@ -34,7 +36,6 @@ import { useEntranceAnimation } from '../hooks/useUnifiedAnimations';
 import { usePhotoNavigation, useSwipeActions, type Pet as SwipePet } from '../hooks/swipe';
 import { DoubleTapLikePlus } from './Gestures/DoubleTapLikePlus';
 import LikeArbitrator from './Gestures/LikeArbitrator';
-import SmartImage from './common/SmartImage';
 import UndoPill from './feedback/UndoPill';
 import MicroPressable from './micro/MicroPressable';
 
@@ -57,6 +58,7 @@ interface SwipeCardProps {
   onSwipeLeft?: () => void;
   onSwipeRight?: () => void;
   onSwipeUp?: () => void;
+  onViewProfile?: () => void;
   isTopCard?: boolean;
   disabled?: boolean;
   style?: AnimatedStyleProp<ViewStyle>;
@@ -68,6 +70,7 @@ function ModernSwipeCardComponent({
   onSwipeLeft,
   onSwipeRight,
   onSwipeUp,
+  onViewProfile,
   isTopCard = false,
   disabled = false,
   style,
@@ -75,7 +78,24 @@ function ModernSwipeCardComponent({
   const theme = useTheme();
   const { colors } = theme;
   const styles = makeStyles(theme);
+  const navigation = useNavigation();
   
+  // Handle card tap to view profile with shared-element transition
+  const handleViewProfile = async () => {
+    if (disabled || !isTopCard) return;
+    
+    // Prefetch image before navigation
+    if (pet.photos.length > 0 && pet.photos[0]) {
+      await prefetchPetImage(pet.photos[0]);
+    }
+    
+    if (onViewProfile) {
+      onViewProfile();
+    } else {
+      (navigation as any).navigate('PetProfile', { petId: pet._id });
+    }
+  };
+
   // Photo navigation hook
   const photoNav = usePhotoNavigation({
     totalPhotos: pet.photos.length,
@@ -102,19 +122,19 @@ function ModernSwipeCardComponent({
 
   // Like with undo integration
   const { likeNow, triggerUndoPill, undoNow } = useLikeWithUndo({
-        onLike: () => {
-          const cleanup = () => {
-            // Optimistic like toggle
-            startInteraction('doubleTap', { petId: pet._id });
-            onSwipeRight?.();
-            endInteraction('doubleTap', true, { method: 'doubleTap' });
-          };
-          cleanup();
-          return () => {
-            // Return cleanup function for undo
-            logger.info('Like undone for:', { petName: pet.name });
-          };
-        },
+    onLike: () => {
+      const cleanup = () => {
+        // Optimistic like toggle
+        startInteraction('doubleTap', { petId: pet._id });
+        onSwipeRight?.();
+        endInteraction('doubleTap', true, { method: 'doubleTap' });
+      };
+      cleanup();
+      return () => {
+        // Return cleanup function for undo
+        logger.info('Like undone for:', { petName: pet.name });
+      };
+    },
     onUndo: () => {
       logger.info('Undo like for:', { petName: pet.name });
     },
@@ -233,7 +253,7 @@ function ModernSwipeCardComponent({
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel={`Pet profile for ${pet.name}, ${pet.age} years old ${pet.breed}`}
-        accessibilityHint="Swipe right to like, left to pass, or up for super like"
+        accessibilityHint="Swipe right to like, left to pass, or up for super like. Tap info button to view full profile."
       >
         {/* Photo Section with Like Arbitration */}
         <LikeArbitrator
@@ -245,16 +265,17 @@ function ModernSwipeCardComponent({
         >
           <DoubleTapLikePlus
             onDoubleTap={handleDoubleTapLike}
-            heartColor="#ff3b5c"
+            heartColor={colors.danger}
             particles={6}
             haptics={{ enabled: true, style: 'medium' }}
             disabled={disabled || !isTopCard}
           >
             <View style={styles.photoContainer}>
-              <SmartImage
+              <Animated.Image
                 source={{ uri: pet.photos[photoNav.currentIndex] }}
                 style={styles.photo}
                 resizeMode="cover"
+                sharedTransitionTag={`${SHARED_ELEMENT_IDS.petImage}-${pet._id}`}
               />
 
               {/* Photo Navigation Dots */}
@@ -267,8 +288,8 @@ function ModernSwipeCardComponent({
                       {
                         backgroundColor:
                           index === photoNav.currentIndex
-                            ? colors.onSurfacenverse
-                            : 'rgba(255,255,255,0.4)',
+                            ? colors.onSurface
+                            : theme.utils.alpha(colors.onSurface, 0.4),
                       },
                     ])}
                   />
@@ -298,7 +319,16 @@ function ModernSwipeCardComponent({
                 </View>
               )}
 
-              {/* Distance Badge */}
+              {/* View Profile Button - Long press to navigate */}
+            <MicroPressable
+              style={styles.viewProfileButton}
+              haptics={true}
+              onPress={handleViewProfile}
+            >
+              <Ionicons name="information-circle-outline" size={24} color={colors.onSurface} />
+            </MicroPressable>
+            
+            {/* Distance Badge */}
               <MicroPressable
                 style={styles.distanceBadge}
                 haptics={true}
@@ -341,14 +371,17 @@ function ModernSwipeCardComponent({
 
         {/* Info Section */}
         <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.8)']}
+          colors={['transparent', theme.utils.alpha(theme.palette.neutral[900], 0.8)]}
           style={styles.infoGradient}
         >
           <View style={styles.infoContainer}>
-            <View style={styles.nameRow}>
+            <Animated.View
+              style={styles.nameRow}
+              sharedTransitionTag={`${SHARED_ELEMENT_IDS.petName}-${pet._id}`}
+            >
               <Text style={styles.name}>{pet.name}</Text>
               <Text style={styles.age}>{pet.age}</Text>
-            </View>
+            </Animated.View>
 
             <Text style={styles.breed}>{pet.breed}</Text>
 
@@ -469,9 +502,17 @@ function makeStyles(theme: AppTheme) {
       borderRadius: theme.radii.full,
       padding: 4,
     },
-    distanceBadge: {
+    viewProfileButton: {
       position: 'absolute',
       top: theme.spacing.md,
+      left: theme.spacing.md,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.full,
+      padding: theme.spacing.xs,
+    },
+    distanceBadge: {
+      position: 'absolute',
+      bottom: theme.spacing.md,
       left: theme.spacing.md,
       backgroundColor: theme.colors.surface,
       borderRadius: theme.radii.lg,

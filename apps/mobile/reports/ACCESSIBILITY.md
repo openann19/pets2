@@ -1,32 +1,36 @@
 # PawfectMatch Mobile Accessibility Report
 
 ## Summary
-- **Severity**: LOW
-- **Scanned Files**: 154
-- **Critical Issues**: 4
-- **Animation Issues**: 12
+- **Severity**: MEDIUM
+- **Scanned Files**: 161
+- **Critical Issues**: 7
+- **Animation Issues**: 13
 
 ## Issues Found
 
 ### Missing testID (for testing)
-**Count**: 3
+**Count**: 4
+- `screens/PreviewCodeScreen.tsx`
 - `screens/ai/compatibility/components/PetSelectionSection.tsx`
 - `screens/adoption/manager/components/PetListingCard.tsx`
 - `screens/adoption/manager/components/ApplicationCard.tsx`
 
 
 ### Missing accessibilityLabel
-**Count**: 1
+**Count**: 3
+- `screens/PreviewCodeScreen.tsx`
+- `screens/LoginScreen.tsx`
 - `screens/ai/compatibility/components/PetSelectionSection.tsx`
 
 
 ### Missing accessibilityRole
-**Count**: 0
-None ✅
+**Count**: 1
+- `screens/PreviewCodeScreen.tsx`
 
 
 ### Missing Reduce Motion Support
-**Count**: 12
+**Count**: 13
+- `screens/PolishPlaygroundScreen.tsx`
 - `screens/ModernCreatePetScreen.tsx`
 - `screens/premium/SubscriptionSuccessScreen.tsx`
 - `screens/onboarding/WelcomeScreen.tsx`
@@ -36,8 +40,7 @@ None ✅
 - `screens/calling/IncomingCallScreen.tsx`
 - `screens/calling/ActiveCallScreen.tsx`
 - `screens/calling/__tests__/IncomingCallScreen.test.tsx`
-- `screens/calling/__tests__/ActiveCallScreen.test.tsx`
-- ... and 2 more
+- ... and 3 more
 
 ## Recommendations
 
@@ -55,4 +58,4 @@ None ✅
 - Android Accessibility Guidelines
 
 ## Last Scanned
-2025-10-30T14:26:29.611Z
+2025-10-30T18:05:19.176Z

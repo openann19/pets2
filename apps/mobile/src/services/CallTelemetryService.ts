@@ -21,12 +21,12 @@ export interface CallTelemetryData {
   startTime: number;
   endTime?: number;
   duration?: number;
-  
+
   // Connection metrics
   connectionTime?: number;
   iceConnectionTime?: number;
   reconnectionCount: number;
-  
+
   // Quality metrics
   averageBitrate: number;
   peakBitrate: number;
@@ -35,24 +35,24 @@ export interface CallTelemetryData {
   averageRtt: number;
   peakRtt: number;
   jitter: number;
-  
+
   // Audio metrics
   audioEnabled: boolean;
   audioMuteTime: number;
   audioQuality: 'poor' | 'fair' | 'good' | 'excellent';
-  
+
   // Video metrics
   videoEnabled: boolean;
   videoQuality: '720p' | '480p' | '360p' | 'audio-only';
   videoResolutionTime: number;
   videoFreezeCount: number;
-  
+
   // Device metrics
   deviceType: string;
   networkType: string;
   bluetoothUsed: boolean;
   speakerUsed: boolean;
-  
+
   // Error metrics
   errorCount: number;
   errors: Array<{
@@ -60,13 +60,13 @@ export interface CallTelemetryData {
     message: string;
     timestamp: number;
   }>;
-  
+
   // User interactions
   muteToggleCount: number;
   videoToggleCount: number;
   speakerToggleCount: number;
   cameraSwitchCount: number;
-  
+
   // Outcome
   outcome: 'completed' | 'failed' | 'rejected' | 'missed' | 'interrupted';
   terminationReason?: string;
@@ -117,14 +117,13 @@ export class CallTelemetryService {
       }
 
       logger.info('Initializing call telemetry service', { config: this.config });
-      
+
       // Load any stored telemetry data
       await this.loadStoredTelemetry();
-      
+
       this.isInitialized = true;
       logger.info('Call telemetry service initialized successfully');
       return true;
-
     } catch (error) {
       logger.error('Failed to initialize call telemetry service', { error });
       return false;
@@ -181,7 +180,6 @@ export class CallTelemetryService {
       }
 
       logger.info('Started call tracking', { callId: callData.callId });
-
     } catch (error) {
       logger.error('Failed to start call tracking', { error });
     }
@@ -190,11 +188,14 @@ export class CallTelemetryService {
   /**
    * Update call connection metrics
    */
-  updateConnectionMetrics(callId: string, metrics: {
-    connectionTime?: number;
-    iceConnectionTime?: number;
-    networkType?: string;
-  }): void {
+  updateConnectionMetrics(
+    callId: string,
+    metrics: {
+      connectionTime?: number;
+      iceConnectionTime?: number;
+      networkType?: string;
+    },
+  ): void {
     try {
       const telemetry = this.activeCalls.get(callId);
       if (!telemetry) {
@@ -214,7 +215,6 @@ export class CallTelemetryService {
       }
 
       logger.debug('Updated connection metrics', { callId, metrics });
-
     } catch (error) {
       logger.error('Failed to update connection metrics', { error });
     }
@@ -223,12 +223,15 @@ export class CallTelemetryService {
   /**
    * Update quality metrics from WebRTC stats
    */
-  updateQualityMetrics(callId: string, stats: {
-    bitrate?: number;
-    packetLoss?: number;
-    rtt?: number;
-    jitter?: number;
-  }): void {
+  updateQualityMetrics(
+    callId: string,
+    stats: {
+      bitrate?: number;
+      packetLoss?: number;
+      rtt?: number;
+      jitter?: number;
+    },
+  ): void {
     try {
       const telemetry = this.activeCalls.get(callId);
       if (!telemetry || !this.config.enableQualityMonitoring) {
@@ -238,7 +241,10 @@ export class CallTelemetryService {
       if (stats.bitrate !== undefined) {
         telemetry.averageBitrate = (telemetry.averageBitrate + stats.bitrate) / 2;
         telemetry.peakBitrate = Math.max(telemetry.peakBitrate, stats.bitrate);
-        telemetry.minBitrate = telemetry.minBitrate === 0 ? stats.bitrate : Math.min(telemetry.minBitrate, stats.bitrate);
+        telemetry.minBitrate =
+          telemetry.minBitrate === 0
+            ? stats.bitrate
+            : Math.min(telemetry.minBitrate, stats.bitrate);
       }
 
       if (stats.packetLoss !== undefined) {
@@ -258,7 +264,6 @@ export class CallTelemetryService {
       telemetry.audioQuality = this.calculateAudioQuality(telemetry);
 
       logger.debug('Updated quality metrics', { callId, stats });
-
     } catch (error) {
       logger.error('Failed to update quality metrics', { error });
     }
@@ -267,10 +272,13 @@ export class CallTelemetryService {
   /**
    * Track user interaction
    */
-  trackUserInteraction(callId: string, interaction: {
-    type: 'mute' | 'video' | 'speaker' | 'camera_switch';
-    state?: boolean;
-  }): void {
+  trackUserInteraction(
+    callId: string,
+    interaction: {
+      type: 'mute' | 'video' | 'speaker' | 'camera_switch';
+      state?: boolean;
+    },
+  ): void {
     try {
       const telemetry = this.activeCalls.get(callId);
       if (!telemetry || !this.config.enableUserInteractionTracking) {
@@ -303,7 +311,6 @@ export class CallTelemetryService {
       }
 
       logger.debug('Tracked user interaction', { callId, interaction });
-
     } catch (error) {
       logger.error('Failed to track user interaction', { error });
     }
@@ -312,10 +319,13 @@ export class CallTelemetryService {
   /**
    * Track call error
    */
-  trackCallError(callId: string, error: {
-    type: string;
-    message: string;
-  }): void {
+  trackCallError(
+    callId: string,
+    error: {
+      type: string;
+      message: string;
+    },
+  ): void {
     try {
       const telemetry = this.activeCalls.get(callId);
       if (!telemetry || !this.config.enableErrorTracking) {
@@ -329,7 +339,6 @@ export class CallTelemetryService {
       });
 
       logger.debug('Tracked call error', { callId, error });
-
     } catch (error) {
       logger.error('Failed to track call error', { error });
     }
@@ -347,7 +356,6 @@ export class CallTelemetryService {
 
       telemetry.reconnectionCount++;
       logger.debug('Tracked reconnection', { callId });
-
     } catch (error) {
       logger.error('Failed to track reconnection', { error });
     }
@@ -365,7 +373,6 @@ export class CallTelemetryService {
 
       telemetry.videoFreezeCount++;
       logger.debug('Tracked video freeze', { callId });
-
     } catch (error) {
       logger.error('Failed to track video freeze', { error });
     }
@@ -374,7 +381,11 @@ export class CallTelemetryService {
   /**
    * End call tracking
    */
-  endCallTracking(callId: string, outcome: CallTelemetryData['outcome'], terminationReason?: string): void {
+  endCallTracking(
+    callId: string,
+    outcome: CallTelemetryData['outcome'],
+    terminationReason?: string,
+  ): void {
     try {
       const telemetry = this.activeCalls.get(callId);
       if (!telemetry) {
@@ -396,7 +407,6 @@ export class CallTelemetryService {
       this.activeCalls.delete(callId);
 
       logger.info('Ended call tracking', { callId, outcome, duration: telemetry.duration });
-
     } catch (error) {
       logger.error('Failed to end call tracking', { error });
     }
@@ -468,7 +478,9 @@ export class CallTelemetryService {
     }
   }
 
-  private calculateAudioQuality(telemetry: CallTelemetryData): 'poor' | 'fair' | 'good' | 'excellent' {
+  private calculateAudioQuality(
+    telemetry: CallTelemetryData,
+  ): 'poor' | 'fair' | 'good' | 'excellent' {
     if (telemetry.packetLoss > 10 || telemetry.averageRtt > 500) {
       return 'poor';
     } else if (telemetry.packetLoss > 5 || telemetry.averageRtt > 300) {
@@ -493,10 +505,11 @@ export class CallTelemetryService {
   }
 
   private getUserEngagement(telemetry: CallTelemetryData): string {
-    const totalInteractions = telemetry.muteToggleCount + 
-                            telemetry.videoToggleCount + 
-                            telemetry.speakerToggleCount + 
-                            telemetry.cameraSwitchCount;
+    const totalInteractions =
+      telemetry.muteToggleCount +
+      telemetry.videoToggleCount +
+      telemetry.speakerToggleCount +
+      telemetry.cameraSwitchCount;
 
     if (totalInteractions > 10) {
       return 'High';
@@ -508,9 +521,8 @@ export class CallTelemetryService {
   }
 
   private getTechnicalIssues(telemetry: CallTelemetryData): string {
-    const totalIssues = telemetry.errorCount + 
-                       telemetry.reconnectionCount + 
-                       telemetry.videoFreezeCount;
+    const totalIssues =
+      telemetry.errorCount + telemetry.reconnectionCount + telemetry.videoFreezeCount;
 
     if (totalIssues > 5) {
       return 'Many Issues';
@@ -531,7 +543,10 @@ export class CallTelemetryService {
   private async saveTelemetryData(telemetry: CallTelemetryData): Promise<void> {
     try {
       // This would save to storage/database
-      logger.info('Saving telemetry data', { callId: telemetry.callId, outcome: telemetry.outcome });
+      logger.info('Saving telemetry data', {
+        callId: telemetry.callId,
+        outcome: telemetry.outcome,
+      });
     } catch (error) {
       logger.error('Failed to save telemetry data', { error });
     }
@@ -554,14 +569,13 @@ export class CallTelemetryService {
       logger.info('Cleaning up call telemetry service');
 
       // Stop all stats collection intervals
-      this.statsCollectionIntervals.forEach(interval => clearInterval(interval));
+      this.statsCollectionIntervals.forEach((interval) => clearInterval(interval));
       this.statsCollectionIntervals.clear();
 
       // Clear active calls
       this.activeCalls.clear();
 
       this.isInitialized = false;
-
     } catch (error) {
       logger.error('Error during cleanup', { error });
     }

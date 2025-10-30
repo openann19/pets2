@@ -37,7 +37,7 @@ export function QuickReplies({
     </FadeInUp>
   );
 
-  const keyExtractor = (item: string, index: number) => index.toString();
+  const keyExtractor = (_item: string, index: number) => index.toString();
 
   return (
     <FadeInUp delay={0}>

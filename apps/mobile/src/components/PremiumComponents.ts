@@ -20,7 +20,7 @@ export {
   ScaleIn,
   StaggeredContainer,
   GestureWrapper,
-  PREMIUM_GRADIENTS,
+  getPremiumGradients,
   getPremiumShadows,
 } from './EliteComponents';
 

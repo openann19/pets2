@@ -1,5 +1,5 @@
-import React from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import React from 'react';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -7,9 +7,9 @@ import Animated, {
   withSpring,
   interpolate,
   Extrapolate,
-} from "react-native-reanimated";
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
+} from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 
 export type ContextAction = {
   key: string;
@@ -25,12 +25,12 @@ interface MorphingContextMenuProps {
   onClose: () => void;
   anchor?: { x: number; y: number; width: number; height: number };
   actions: ContextAction[];
-  theme?: { 
-    bg: string; 
-    border: string; 
-    text: string; 
-    sub: string; 
-    item: string; 
+  theme?: {
+    bg: string;
+    border: string;
+    text: string;
+    sub: string;
+    item: string;
     itemPressed: string;
     danger?: string;
   };
@@ -38,29 +38,29 @@ interface MorphingContextMenuProps {
 
 /**
  * MorphingContextMenu - Long-press menu that morphs from bubble rect
- * 
+ *
  * Advanced animated context menu with:
  * - Morph animation from bubble to menu
  * - Spring-based transitions
  * - Haptic feedback on open
  * - Accessible action items
  * - Theme customization
- * 
+ *
  * Pass the bubble's measured rect and a list of actions.
  */
 export default function MorphingContextMenu({
   visible,
   onClose,
-  anchor,  // { x, y, width, height } in screen coords
+  anchor, // { x, y, width, height } in screen coords
   actions,
   theme = {
-    bg: "#111", 
-    border: "rgba(255,255,255,0.08)", 
-    text: "#fff", 
-    sub: "#9ca3af",
-    item: "#181818", 
-    itemPressed: "#222",
-    danger: "#ef4444",
+    bg: '#111',
+    border: 'rgba(255,255,255,0.08)',
+    text: '#fff',
+    sub: '#9ca3af',
+    item: '#181818',
+    itemPressed: '#222',
+    danger: '#ef4444',
   },
 }: MorphingContextMenuProps) {
   const alpha = useSharedValue(0);
@@ -89,37 +89,45 @@ export default function MorphingContextMenu({
     const cyStart = origin.y + origin.height / 2;
     const cxEnd = origin.x + (origin.width > 180 ? origin.width / 2 : W / 2); // keep near bubble
     const left = interpolate(t.value, [0, 1], [origin.x, cxStart - W / 2], Extrapolate.CLAMP);
-    const top = interpolate(t.value, [0, 1], [origin.y, Math.max(24, cyStart - H / 2)], Extrapolate.CLAMP);
+    const top = interpolate(
+      t.value,
+      [0, 1],
+      [origin.y, Math.max(24, cyStart - H / 2)],
+      Extrapolate.CLAMP,
+    );
     const width = interpolate(t.value, [0, 1], [origin.width, W]);
     const height = interpolate(t.value, [0, 1], [origin.height, H]);
     const radius = interpolate(t.value, [0, 1], [16, 18]);
 
     return {
-      left, top, width, height, borderRadius: radius,
+      left,
+      top,
+      width,
+      height,
+      borderRadius: radius,
       opacity: alpha.value,
       transform: [{ scale: 0.98 + 0.02 * t.value }],
     };
   });
 
   return (
-    <Modal 
-      visible={visible} 
-      transparent 
-      animationType="none" 
+    <Modal
+      visible={visible}
+      transparent
+      animationType="none"
       onRequestClose={onClose}
     >
       {/* Backdrop */}
-      <Pressable style={styles.backdrop} onPress={onClose}>
+      <Pressable
+        style={styles.backdrop}
+        onPress={onClose}
+      >
         <Animated.View style={[styles.backdropFill, { opacity: alpha.value }]} />
       </Pressable>
 
       {/* Shell morphing from bubble */}
-      <Animated.View 
-        style={[
-          styles.shell, 
-          style, 
-          { backgroundColor: theme.bg, borderColor: theme.border }
-        ]} 
+      <Animated.View
+        style={[styles.shell, style, { backgroundColor: theme.bg, borderColor: theme.border }]}
       />
 
       {/* Content fades in slightly after morph */}
@@ -136,7 +144,7 @@ export default function MorphingContextMenu({
           style={[
             styles.menu,
             {
-              left: origin.x + (origin.width > W ? 0 : (origin.width / 2 - W / 2)),
+              left: origin.x + (origin.width > W ? 0 : origin.width / 2 - W / 2),
               top: Math.max(24, origin.y + origin.height / 2 - H / 2),
               width: W,
               height: H,
@@ -155,12 +163,12 @@ export default function MorphingContextMenu({
                 onClose();
               }}
               disabled={a.disabled}
-              android_ripple={{ color: "rgba(255,255,255,0.06)" }}
+              android_ripple={{ color: 'rgba(255,255,255,0.06)' }}
               style={({ pressed }) => [
                 styles.item,
-                { 
-                  backgroundColor: pressed ? theme.itemPressed : theme.item, 
-                  opacity: a.disabled ? 0.5 : 1 
+                {
+                  backgroundColor: pressed ? theme.itemPressed : theme.item,
+                  opacity: a.disabled ? 0.5 : 1,
                 },
               ]}
               accessibilityRole="button"
@@ -169,16 +177,16 @@ export default function MorphingContextMenu({
             >
               <View style={styles.itemRow}>
                 {a.icon ? (
-                  <Ionicons 
-                    name={a.icon} 
-                    size={18} 
-                    color={a.danger ? (theme.danger ?? "#ef4444") : theme.text} 
+                  <Ionicons
+                    name={a.icon}
+                    size={18}
+                    color={a.danger ? (theme.danger ?? '#ef4444') : theme.text}
                   />
                 ) : null}
-                <Text 
+                <Text
                   style={[
-                    styles.itemText, 
-                    { color: a.danger ? (theme.danger ?? "#ef4444") : theme.text }
+                    styles.itemText,
+                    { color: a.danger ? (theme.danger ?? '#ef4444') : theme.text },
                   ]}
                 >
                   {a.label}
@@ -193,36 +201,35 @@ export default function MorphingContextMenu({
 }
 
 const styles = StyleSheet.create({
-  backdrop: { position: "absolute", inset: 0 },
-  backdropFill: { flex: 1, backgroundColor: "rgba(0,0,0,0.25)" },
-  shell: { position: "absolute", borderWidth: 1 },
-  content: { position: "absolute", inset: 0 },
+  backdrop: { position: 'absolute', inset: 0 },
+  backdropFill: { flex: 1, backgroundColor: 'rgba(0,0,0,0.25)' },
+  shell: { position: 'absolute', borderWidth: 1 },
+  content: { position: 'absolute', inset: 0 },
   menu: {
-    position: "absolute",
+    position: 'absolute',
     borderRadius: 18,
     borderWidth: 1,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
-  title: { 
-    paddingHorizontal: 12, 
-    paddingTop: 10, 
-    paddingBottom: 6, 
-    fontSize: 12, 
-    fontWeight: "700" 
+  title: {
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 6,
+    fontSize: 12,
+    fontWeight: '700',
   },
-  item: { 
-    height: 44, 
-    justifyContent: "center", 
-    paddingHorizontal: 12 
+  item: {
+    height: 44,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
   },
-  itemRow: { 
-    flexDirection: "row", 
-    alignItems: "center", 
-    gap: 10 
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
-  itemText: { 
-    fontSize: 14, 
-    fontWeight: "600" 
+  itemText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
-

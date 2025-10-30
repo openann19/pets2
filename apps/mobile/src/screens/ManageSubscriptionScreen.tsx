@@ -5,7 +5,7 @@ import { logger } from '@pawfectmatch/core';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Haptics from 'expo-haptics';
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Linking, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { RootStackParamList } from '../navigation/types';
 import { premiumAPI } from '../services/api';
@@ -89,7 +89,7 @@ const ManageSubscriptionScreen = ({
 
             try {
               const success = await premiumAPI.cancelSubscription();
-              
+
               if (success) {
                 Alert.alert(
                   'Success',
@@ -118,11 +118,11 @@ const ManageSubscriptionScreen = ({
     try {
       setLoading(true);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      
+
       // Refresh subscription status from the server
       // This will restore any active subscriptions linked to the user's account
       const currentSubscription = await premiumAPI.getCurrentSubscription();
-      
+
       if (currentSubscription && currentSubscription.status === 'active') {
         setSubscription({
           id: currentSubscription.id,
@@ -393,6 +393,38 @@ const ManageSubscriptionScreen = ({
               Restore Purchases
             </Text>
           </TouchableOpacity>
+
+          {subscription?.status === 'active' && (
+            <TouchableOpacity
+              style={StyleSheet.flatten([styles.actionButton, styles.manageButton])}
+              testID="ManageSubscriptionScreen-button-2"
+              accessibilityLabel="Manage subscription in system settings"
+              accessibilityRole="button"
+              onPress={() => {
+                // Open system subscription management
+                if (Platform.OS === 'ios') {
+                  Linking.openURL('https://apps.apple.com/account/subscriptions');
+                } else {
+                  Linking.openURL('https://play.google.com/store/account/subscriptions');
+                }
+              }}
+            >
+              <Ionicons
+                name={Platform.OS === 'ios' ? 'settings-outline' : 'storefront-outline'}
+                size={18}
+                color={theme.colors.primary}
+                style={{ marginRight: 8 }}
+              />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.actionButtonText,
+                  { color: theme.colors.primary },
+                ])}
+              >
+                Manage in {Platform.OS === 'ios' ? 'App Store' : 'Play Store'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Plan Features */}
@@ -636,6 +668,13 @@ function makeStyles(theme: AppTheme) {
     },
     restoreButton: {
       backgroundColor: alpha(theme.colors.bg, 0.05),
+    },
+    manageButton: {
+      backgroundColor: alpha(theme.colors.primary, 0.1),
+      borderColor: alpha(theme.colors.primary, 0.3),
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     actionButtonText: {
       fontSize: theme.typography.body.size,

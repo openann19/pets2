@@ -8,6 +8,8 @@ import { Alert } from 'react-native';
 import { logger } from '@pawfectmatch/core';
 import { usePremiumStatus } from '../domains/premium/usePremiumStatus';
 import { useSubscriptionState } from '../domains/premium/useSubscriptionState';
+import { paymentErrorService } from '../../services/PaymentErrorLocalizationService';
+import i18n from '../../i18n';
 
 interface Subscription {
   id: string;
@@ -129,18 +131,25 @@ export const useSubscriptionManager = (): UseSubscriptionManagerReturn => {
 
   const handleCancelSubscription = useCallback(async () => {
     Alert.alert(
-      'Cancel Subscription',
-      "Are you sure you want to cancel your subscription? You'll lose access to premium features at the end of your billing period.",
+      i18n.t('premium:subscription.cancel_subscription'),
+      i18n.t('premium:subscription.cancel_warning', {
+        defaultValue:
+          "Are you sure you want to cancel your subscription? You'll lose access to premium features at the end of your billing period.",
+      }),
       [
-        { text: 'Keep Subscription', style: 'cancel' },
+        { text: i18n.t('common:cancel'), style: 'cancel' },
         {
-          text: 'Cancel',
+          text: i18n.t('premium:subscription.cancel_subscription'),
           style: 'destructive',
           onPress: async () => {
             const success = await cancelSubscription();
             if (success) {
               await refreshData();
-              Alert.alert('Success', 'Your subscription has been cancelled.');
+              paymentErrorService.showSuccessAlert('subscription.cancelled_success', {
+                defaultValue: 'Your subscription has been cancelled.',
+              });
+            } else {
+              paymentErrorService.showErrorAlert('subscription_cancelled');
             }
           },
         },
@@ -152,10 +161,11 @@ export const useSubscriptionManager = (): UseSubscriptionManagerReturn => {
     const success = await updatePaymentMethod();
     if (success) {
       // In real implementation, this would redirect to Stripe customer portal
-      Alert.alert(
-        'Success',
-        'Payment method update initiated. Check your email for the secure link.',
-      );
+      paymentErrorService.showSuccessAlert('subscription.payment_method_updated', {
+        defaultValue: 'Payment method update initiated. Check your email for the secure link.',
+      });
+    } else {
+      paymentErrorService.showErrorAlert('processing_error');
     }
   }, [updatePaymentMethod]);
 

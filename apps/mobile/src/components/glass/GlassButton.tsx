@@ -1,5 +1,5 @@
 import React, { type ReactNode } from 'react';
-import { View, type ViewProps, type ViewStyle, StyleSheet } from 'react-native';
+import { type ViewProps, type ViewStyle, StyleSheet } from 'react-native';
 import { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import Animated from 'react-native-reanimated';
 

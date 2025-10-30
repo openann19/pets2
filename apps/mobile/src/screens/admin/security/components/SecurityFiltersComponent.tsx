@@ -3,50 +3,49 @@
  * Displays filters for security alerts
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import type { SecuritySeverityFilter, SecurityTypeFilter } from "../types";
-import { useTheme } from "@mobile/theme";
-import type { AppTheme } from "@mobile/theme";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import type { SecuritySeverityFilter, SecurityTypeFilter } from '../types';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
-  filtersContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 12,
-  },
-  filterRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  filterLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    minWidth: 60,
-  },
-  filterButtons: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  filterButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  filterButtonActive: {
-    // Active state handled by backgroundColor
-  },
-  filterText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-});
+    filtersContainer: {
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      gap: 12,
+    },
+    filterRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    filterLabel: {
+      fontSize: 14,
+      fontWeight: '600',
+      minWidth: 60,
+    },
+    filterButtons: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    filterButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+    },
+    filterButtonActive: {
+      // Active state handled by backgroundColor
+    },
+    filterText: {
+      fontSize: 12,
+      fontWeight: '600',
+    },
+  });
 }
-
 
 interface SecurityFiltersComponentProps {
   selectedSeverity: SecuritySeverityFilter;
@@ -66,12 +65,16 @@ export const SecurityFiltersComponent: React.FC<SecurityFiltersComponentProps> =
   const { colors, palette } = theme;
 
   return (
-    <View style={styles.filtersContainer} testID="security-filters" accessibilityLabel="Security alert filters">
+    <View
+      style={styles.filtersContainer}
+      testID="security-filters"
+      accessibilityLabel="Security alert filters"
+    >
       {/* Severity Filter */}
       <View style={styles.filterRow}>
         <Text style={[styles.filterLabel, { color: colors.onSurface }]}>Severity:</Text>
         <View style={styles.filterButtons}>
-          {(["all", "critical", "high", "medium", "low"] as const).map((severity) => (
+          {(['all', 'critical', 'high', 'medium', 'low'] as const).map((severity) => (
             <TouchableOpacity
               key={severity}
               style={[
@@ -107,13 +110,13 @@ export const SecurityFiltersComponent: React.FC<SecurityFiltersComponentProps> =
         <View style={styles.filterButtons}>
           {(
             [
-              "all",
-              "suspicious_login",
-              "blocked_ip",
-              "reported_content",
-              "spam_detected",
-              "data_breach",
-              "unusual_activity",
+              'all',
+              'suspicious_login',
+              'blocked_ip',
+              'reported_content',
+              'spam_detected',
+              'data_breach',
+              'unusual_activity',
             ] as const
           ).map((type) => (
             <TouchableOpacity
@@ -138,9 +141,7 @@ export const SecurityFiltersComponent: React.FC<SecurityFiltersComponentProps> =
                   },
                 ]}
               >
-                {type
-                  .replace("_", " ")
-                  .replace(/\b\w/g, (l) => l.toUpperCase())}
+                {type.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
               </Text>
             </TouchableOpacity>
           ))}

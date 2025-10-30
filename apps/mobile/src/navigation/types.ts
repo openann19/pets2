@@ -11,10 +11,11 @@ import type { ReactNode } from 'react';
 import VerificationCenterScreen from '../screens/VerificationCenterScreen';
 
 export type RootStackParamList = {
-  Login: undefined;
+  Login: { redirectTo?: string; redirectParams?: unknown } | undefined;
   Register: undefined;
   ForgotPassword: undefined;
   ResetPassword: { token: string };
+  Welcome: undefined;
   Main: undefined;
   Chat: { matchId: string; petName: string };
   Profile: { userId?: string };
@@ -74,6 +75,8 @@ export type RootStackParamList = {
   MigrationExample: undefined;
   PremiumDemo: undefined;
   PreviewCode: undefined;
+  DemoShowcase: undefined;
+  MotionLab: undefined; // Development screen for testing animations
   [key: string]: undefined | object;
 };
 

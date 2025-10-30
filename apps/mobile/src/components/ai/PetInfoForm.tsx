@@ -4,7 +4,6 @@
  * Features: Form validation, accessibility, responsive design
  */
 
-import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { ColorValue } from 'react-native';
 import { TextInput } from 'react-native';
@@ -45,15 +44,15 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Name *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petName ? styles.inputError : undefined]}
+          style={[styles.input, validationErrors['petName'] ? styles.inputError : undefined]}
           value={petName}
           onChangeText={setPetName}
           placeholder="Enter your pet's name"
           placeholderTextColor={theme.colors.onMuted as ColorValue}
           maxLength={50}
         />
-        {validationErrors.petName && (
-          <Text style={styles.errorText}>{validationErrors.petName}</Text>
+        {validationErrors['petName'] && (
+          <Text style={styles.errorText}>{validationErrors['petName']}</Text>
         )}
       </View>
 
@@ -61,15 +60,15 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Breed *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petBreed ? styles.inputError : undefined]}
+          style={[styles.input, validationErrors['petBreed'] ? styles.inputError : undefined]}
           value={petBreed}
           onChangeText={setPetBreed}
           placeholder="e.g., Golden Retriever, Mixed Breed"
           placeholderTextColor={theme.colors.onMuted as ColorValue}
           maxLength={100}
         />
-        {validationErrors.petBreed && (
-          <Text style={styles.errorText}>{validationErrors.petBreed}</Text>
+        {validationErrors['petBreed'] && (
+          <Text style={styles.errorText}>{validationErrors['petBreed']}</Text>
         )}
       </View>
 
@@ -77,21 +76,21 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Age *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petAge ? styles.inputError : undefined]}
+          style={[styles.input, validationErrors['petAge'] ? styles.inputError : undefined]}
           value={petAge}
           onChangeText={setPetAge}
           placeholder="e.g., 2 years old, 6 months"
           placeholderTextColor={theme.colors.onMuted as ColorValue}
           maxLength={50}
         />
-        {validationErrors.petAge && <Text style={styles.errorText}>{validationErrors.petAge}</Text>}
+        {validationErrors['petAge'] && <Text style={styles.errorText}>{validationErrors['petAge']}</Text>}
       </View>
 
       {/* Pet Personality Input */}
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Personality *</Text>
         <TextInput
-          style={[styles.textarea, validationErrors.petPersonality ? styles.inputError : undefined]}
+          style={[styles.textarea, validationErrors['petPersonality'] ? styles.inputError : undefined]}
           value={petPersonality}
           onChangeText={setPetPersonality}
           placeholder="Describe your pet's personality, habits, and quirks (e.g., energetic, loves belly rubs, afraid of thunderstorms)"
@@ -101,8 +100,8 @@ export function PetInfoForm({
           maxLength={500}
           textAlignVertical="top"
         />
-        {validationErrors.petPersonality && (
-          <Text style={styles.errorText}>{validationErrors.petPersonality}</Text>
+        {validationErrors['petPersonality'] && (
+          <Text style={styles.errorText}>{validationErrors['petPersonality']}</Text>
         )}
         <Text style={styles.characterCount}>{petPersonality.length}/500 characters</Text>
       </View>

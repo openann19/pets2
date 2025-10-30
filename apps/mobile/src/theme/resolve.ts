@@ -134,6 +134,29 @@ export function resolveTheme(base: typeof BaseLight | typeof BaseDark): AppTheme
         info: [base.colors.status.info, base.colors.status.info],
       },
     },
+    utils: {
+      alpha: (color: string, opacity: number): string => {
+        if (color.startsWith('#')) {
+          const hex = color.slice(1);
+          if (hex.length === 3) {
+            const r = parseInt(hex[0] + hex[0], 16);
+            const g = parseInt(hex[1] + hex[1], 16);
+            const b = parseInt(hex[2] + hex[2], 16);
+            return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+          } else if (hex.length === 6) {
+            const r = parseInt(hex.slice(0, 2), 16);
+            const g = parseInt(hex.slice(2, 4), 16);
+            const b = parseInt(hex.slice(4, 6), 16);
+            return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+          }
+        }
+        // If color is already rgba or contains alpha, just append opacity
+        if (color.startsWith('rgba')) {
+          return color.replace(/[\d.]+\)$/, `${opacity})`);
+        }
+        return color;
+      },
+    },
   };
 }
 

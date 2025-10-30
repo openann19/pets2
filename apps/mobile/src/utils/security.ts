@@ -371,7 +371,7 @@ interface SecurityResponse {
 }
 
 export const createSecurityHeaders = (
-  req: SecurityRequest,
+  _req: SecurityRequest,
   res: SecurityResponse,
   next: () => void,
 ) => {

@@ -470,14 +470,14 @@ export class AccessibilityService {
         const r = Number.parseInt(hex[0] + hex[0], 16);
         const g = Number.parseInt(hex[1] + hex[1], 16);
         const b = Number.parseInt(hex[2] + hex[2], 16);
-        return Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b) ? null : [r, g, b] as RGB;
+        return Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b) ? null : ([r, g, b] as RGB);
       }
 
       if (hex.length === 6) {
         const r = Number.parseInt(hex.substring(0, 2), 16);
         const g = Number.parseInt(hex.substring(2, 4), 16);
         const b = Number.parseInt(hex.substring(4, 6), 16);
-        return Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b) ? null : [r, g, b] as RGB;
+        return Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b) ? null : ([r, g, b] as RGB);
       }
     }
 
@@ -500,7 +500,8 @@ export class AccessibilityService {
   private static contrastRatio(foreground: RGB, background: RGB): number {
     const fgLuminance = AccessibilityService.relativeLuminance(foreground);
     const bgLuminance = AccessibilityService.relativeLuminance(background);
-    const [lighter, darker] = fgLuminance > bgLuminance ? [fgLuminance, bgLuminance] : [bgLuminance, fgLuminance];
+    const [lighter, darker] =
+      fgLuminance > bgLuminance ? [fgLuminance, bgLuminance] : [bgLuminance, fgLuminance];
     return (lighter + 0.05) / (darker + 0.05);
   }
 
@@ -721,15 +722,15 @@ export class AccessibilityService {
         },
         petName: {
           label: 'Pet name',
-          hint: 'Enter your pet\'s name',
+          hint: "Enter your pet's name",
         },
         petAge: {
           label: 'Pet age',
-          hint: 'Enter your pet\'s age',
+          hint: "Enter your pet's age",
         },
         petBreed: {
           label: 'Pet breed',
-          hint: 'Select or enter your pet\'s breed',
+          hint: "Select or enter your pet's breed",
         },
         bio: {
           label: 'Bio',
@@ -757,17 +758,20 @@ export class AccessibilityService {
   /**
    * Generate accessibility label for dynamic content
    */
-  generateDynamicLabel(type: 'listItem' | 'progress' | 'notification', params: {
-    itemType?: string;
-    itemName?: string;
-    position?: number;
-    total?: number;
-    currentStep?: number;
-    totalSteps?: number;
-    stepName?: string;
-    notificationType?: 'message' | 'match' | 'like' | 'system';
-    count?: number;
-  }): string {
+  generateDynamicLabel(
+    type: 'listItem' | 'progress' | 'notification',
+    params: {
+      itemType?: string;
+      itemName?: string;
+      position?: number;
+      total?: number;
+      currentStep?: number;
+      totalSteps?: number;
+      stepName?: string;
+      notificationType?: 'message' | 'match' | 'like' | 'system';
+      count?: number;
+    },
+  ): string {
     switch (type) {
       case 'listItem':
         if (params.position !== undefined && params.total !== undefined) {
@@ -807,9 +811,11 @@ export class AccessibilityService {
     const warnings: string[] = [];
 
     // Check for required accessibilityLabel on interactive elements
-    if (props.accessible !== false && 
-        (props.accessibilityRole === 'button' || props.accessibilityRole === 'link') && 
-        !props.accessibilityLabel) {
+    if (
+      props.accessible !== false &&
+      (props.accessibilityRole === 'button' || props.accessibilityRole === 'link') &&
+      !props.accessibilityLabel
+    ) {
       errors.push('Interactive elements must have accessibilityLabel');
     }
 
@@ -819,8 +825,20 @@ export class AccessibilityService {
     }
 
     // Check for proper role usage
-    if (props.accessibilityRole && 
-        !['button', 'link', 'search', 'image', 'text', 'adjustable', 'header', 'summary', 'none'].includes(props.accessibilityRole)) {
+    if (
+      props.accessibilityRole &&
+      ![
+        'button',
+        'link',
+        'search',
+        'image',
+        'text',
+        'adjustable',
+        'header',
+        'summary',
+        'none',
+      ].includes(props.accessibilityRole)
+    ) {
       warnings.push(`Unknown accessibilityRole: ${props.accessibilityRole}`);
     }
 

@@ -62,6 +62,9 @@ export const SwipeActions: React.FC<SwipeActionsProps> = ({
         onPress={onPass}
         disabled={disabled}
         testID="swipe-pass-button"
+        accessibilityRole="button"
+        accessibilityLabel="Pass on this pet"
+        accessibilityHint="Double tap to pass on this pet and move to the next one"
       >
         <Text style={styles.actionButtonText}>Pass</Text>
       </TouchableOpacity>
@@ -71,6 +74,9 @@ export const SwipeActions: React.FC<SwipeActionsProps> = ({
         onPress={onSuperlike}
         disabled={disabled}
         testID="swipe-superlike-button"
+        accessibilityRole="button"
+        accessibilityLabel="Super like this pet"
+        accessibilityHint="Double tap to super like this pet and show them you're really interested"
       >
         <Text style={styles.actionButtonText}>★</Text>
       </TouchableOpacity>
@@ -80,6 +86,9 @@ export const SwipeActions: React.FC<SwipeActionsProps> = ({
         onPress={onLike}
         disabled={disabled}
         testID="swipe-like-button"
+        accessibilityRole="button"
+        accessibilityLabel="Like this pet"
+        accessibilityHint="Double tap to like this pet and see if they like you back"
       >
         <Text style={styles.actionButtonText}>Like</Text>
       </TouchableOpacity>

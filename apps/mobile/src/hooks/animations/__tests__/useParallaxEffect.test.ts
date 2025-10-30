@@ -6,8 +6,6 @@ import { renderHook } from '@testing-library/react-native';
 import { useParallaxEffect } from '../useParallaxEffect';
 
 jest.mock('react-native-reanimated', () => {
-
-
   const Reanimated = require('react-native-reanimated/mock');
   Reanimated.default.call = () => {};
   return Reanimated;
@@ -50,10 +48,9 @@ describe('useParallaxEffect', () => {
     });
 
     it('should handle speed changes', () => {
-      const { result, rerender } = renderHook(
-        (props) => useParallaxEffect(props.speed),
-        { initialProps: { speed: 0.3 } }
-      );
+      const { result, rerender } = renderHook((props) => useParallaxEffect(props.speed), {
+        initialProps: { speed: 0.3 },
+      });
 
       expect(result.current.parallaxStyle).toBeDefined();
 
@@ -90,4 +87,3 @@ describe('useParallaxEffect', () => {
     });
   });
 });
-

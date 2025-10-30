@@ -89,7 +89,11 @@ jest.mock('../VoiceWaveform', () => {
   const React = require('react-native');
   return {
     VoiceWaveform: ({ waveform, isPlaying, progress }: any) => (
-      <React.View testID="voice-waveform" data-playing={isPlaying} data-progress={progress}>
+      <React.View
+        testID="voice-waveform"
+        data-playing={isPlaying}
+        data-progress={progress}
+      >
         <React.Text>{waveform.length > 0 ? 'waveform' : 'no-waveform'}</React.Text>
       </React.View>
     ),
@@ -100,7 +104,10 @@ jest.mock('../TranscriptionBadge', () => {
   const React = require('react-native');
   return {
     TranscriptionBadge: ({ label, icon }: any) => (
-      <React.View testID="transcription-badge" data-icon={icon}>
+      <React.View
+        testID="transcription-badge"
+        data-icon={icon}
+      >
         <React.Text>{label}</React.Text>
       </React.View>
     ),
@@ -124,7 +131,7 @@ describe('VoiceRecorderUltra', () => {
     jest.clearAllMocks();
     mockTrackEvent.mockClear();
     Platform.OS = 'ios';
-    
+
     // Default mock implementations
     (useVoiceRecording as jest.MockedFunction<typeof useVoiceRecording>).mockReturnValue({
       isRecording: false,
@@ -174,7 +181,10 @@ describe('VoiceRecorderUltra', () => {
   describe('Rendering States', () => {
     it('should render in idle state', () => {
       const { getByText } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       expect(getByText('Hold to record')).toBeTruthy();
@@ -193,7 +203,10 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { getByText } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       expect(getByText(/0:05/)).toBeTruthy();
@@ -223,7 +236,10 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { getByTestId, getByText } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       expect(getByTestId('voice-waveform')).toBeTruthy();
@@ -246,13 +262,14 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const recordButton = touchables.find((btn: any) => 
-        btn.props.onPressIn !== undefined
-      );
+      const recordButton = touchables.find((btn: any) => btn.props.onPressIn !== undefined);
 
       expect(recordButton).toBeTruthy();
       fireEvent.press(recordButton);
@@ -276,13 +293,14 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const recordButton = touchables.find((btn: any) => 
-        btn.props.onPressOut !== undefined
-      );
+      const recordButton = touchables.find((btn: any) => btn.props.onPressOut !== undefined);
 
       fireEvent(recordButton, 'pressOut');
 
@@ -306,7 +324,10 @@ describe('VoiceRecorderUltra', () => {
 
       // Component should have isLocked=true internally
       const { getByText } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       // When locked, pressOut should not call stopRecording
@@ -330,19 +351,20 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const recordButton = touchables.find((btn: any) => 
-        btn.props.onPressIn !== undefined
-      );
+      const recordButton = touchables.find((btn: any) => btn.props.onPressIn !== undefined);
 
       // Simulate long press (pressIn -> wait -> pressOut)
       fireEvent(recordButton, 'pressIn');
-      
+
       await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       });
 
       expect(startRecording).toHaveBeenCalled();
@@ -363,12 +385,15 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const lockButton = touchables.find((btn: any) => 
-        btn.props.style && btn.props.style.width === 28
+      const lockButton = touchables.find(
+        (btn: any) => btn.props.style && btn.props.style.width === 28,
       );
 
       if (lockButton) {
@@ -382,7 +407,9 @@ describe('VoiceRecorderUltra', () => {
 
   describe('Error Handling', () => {
     it('should handle permission denied error', async () => {
-      const startRecording = jest.fn<() => Promise<void>>().mockRejectedValue(new Error('Permission denied'));
+      const startRecording = jest
+        .fn<() => Promise<void>>()
+        .mockRejectedValue(new Error('Permission denied'));
       (useVoiceRecording as jest.MockedFunction<typeof useVoiceRecording>).mockReturnValue({
         isRecording: false,
         durationMs: 0,
@@ -394,19 +421,22 @@ describe('VoiceRecorderUltra', () => {
         reset: jest.fn(),
       });
 
-      (Audio.requestPermissionsAsync as jest.MockedFunction<typeof Audio.requestPermissionsAsync>).mockResolvedValue({
+      (
+        Audio.requestPermissionsAsync as jest.MockedFunction<typeof Audio.requestPermissionsAsync>
+      ).mockResolvedValue({
         granted: false,
         status: 'denied',
       } as any);
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const recordButton = touchables.find((btn: any) => 
-        btn.props.onPressIn !== undefined
-      );
+      const recordButton = touchables.find((btn: any) => btn.props.onPressIn !== undefined);
 
       await act(async () => {
         try {
@@ -424,9 +454,9 @@ describe('VoiceRecorderUltra', () => {
     });
 
     it('should handle storage full error', async () => {
-      (FileSystem.getInfoAsync as jest.MockedFunction<typeof FileSystem.getInfoAsync>).mockRejectedValue(
-        new Error('Storage full')
-      );
+      (
+        FileSystem.getInfoAsync as jest.MockedFunction<typeof FileSystem.getInfoAsync>
+      ).mockRejectedValue(new Error('Storage full'));
 
       const send = jest.fn<() => Promise<void>>().mockRejectedValue(new Error('Storage full'));
       (useVoiceSend as jest.MockedFunction<typeof useVoiceSend>).mockReturnValue({
@@ -446,12 +476,15 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const sendButton = touchables.find((btn: any) => 
-        btn.props.style && btn.props.style.backgroundColor === '#34C759'
+      const sendButton = touchables.find(
+        (btn: any) => btn.props.style && btn.props.style.backgroundColor === '#34C759',
       );
 
       if (sendButton) {
@@ -490,12 +523,15 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const sendButton = touchables.find((btn: any) => 
-        btn.props.style && btn.props.style.backgroundColor === '#34C759'
+      const sendButton = touchables.find(
+        (btn: any) => btn.props.style && btn.props.style.backgroundColor === '#34C759',
       );
 
       if (sendButton) {
@@ -529,13 +565,14 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const recordButton = touchables.find((btn: any) => 
-        btn.props.onPressIn !== undefined
-      );
+      const recordButton = touchables.find((btn: any) => btn.props.onPressIn !== undefined);
 
       await act(async () => {
         fireEvent(recordButton, 'pressIn');
@@ -566,13 +603,14 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const recordButton = touchables.find((btn: any) => 
-        btn.props.onPressOut !== undefined
-      );
+      const recordButton = touchables.find((btn: any) => btn.props.onPressOut !== undefined);
 
       await act(async () => {
         fireEvent(recordButton, 'pressOut');
@@ -603,12 +641,18 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const cancelButton = touchables.find((btn: any) => 
-        btn.props.style && btn.props.style.width === 40 && btn.props.style.backgroundColor === '#007AFF'
+      const cancelButton = touchables.find(
+        (btn: any) =>
+          btn.props.style &&
+          btn.props.style.width === 40 &&
+          btn.props.style.backgroundColor === '#007AFF',
       );
 
       if (cancelButton) {
@@ -629,7 +673,10 @@ describe('VoiceRecorderUltra', () => {
   describe('Waveform Snapshots', () => {
     it('should snapshot idle state', () => {
       const { toJSON } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       expect(toJSON()).toMatchSnapshot('idle-state');
@@ -658,7 +705,10 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { toJSON } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       expect(toJSON()).toMatchSnapshot('recording-state');
@@ -687,7 +737,10 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { toJSON } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       expect(toJSON()).toMatchSnapshot('preview-state');
@@ -697,7 +750,7 @@ describe('VoiceRecorderUltra', () => {
   describe('Peak Meter Updates', () => {
     it('should update waveform during recording', async () => {
       let waveformData = [0.1, 0.2];
-      
+
       (useVoiceRecording as jest.MockedFunction<typeof useVoiceRecording>).mockReturnValue({
         isRecording: true,
         durationMs: 2000,
@@ -720,7 +773,10 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { getByTestId, rerender } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       // Simulate peak meter updates
@@ -735,7 +791,12 @@ describe('VoiceRecorderUltra', () => {
         reset: jest.fn(),
       });
 
-      rerender(<VoiceRecorderUltra matchId="match123" chatService={mockChatService} />);
+      rerender(
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
+      );
 
       const waveform = getByTestId('voice-waveform');
       expect(waveform).toBeTruthy();
@@ -757,7 +818,10 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { getByTestId } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       expect(getByTestId('voice-waveform')).toBeTruthy();
@@ -785,15 +849,19 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const playButton = touchables.find((btn: any) => 
-        btn.props.onPress !== undefined && 
-        btn.props.style && 
-        btn.props.style.width === 40 &&
-        btn.props.style.backgroundColor === '#007AFF'
+      const playButton = touchables.find(
+        (btn: any) =>
+          btn.props.onPress !== undefined &&
+          btn.props.style &&
+          btn.props.style.width === 40 &&
+          btn.props.style.backgroundColor === '#007AFF',
       );
 
       if (playButton) {
@@ -825,12 +893,15 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const sendButton = touchables.find((btn: any) => 
-        btn.props.style && btn.props.style.backgroundColor === '#34C759'
+      const sendButton = touchables.find(
+        (btn: any) => btn.props.style && btn.props.style.backgroundColor === '#34C759',
       );
 
       if (sendButton) {
@@ -864,12 +935,15 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const sendButton = touchables.find((btn: any) => 
-        btn.props.style && btn.props.style.backgroundColor === '#34C759'
+      const sendButton = touchables.find(
+        (btn: any) => btn.props.style && btn.props.style.backgroundColor === '#34C759',
       );
 
       if (sendButton) {
@@ -900,7 +974,10 @@ describe('VoiceRecorderUltra', () => {
         });
 
         const { getByText } = render(
-          <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+          <VoiceRecorderUltra
+            matchId="match123"
+            chatService={mockChatService}
+          />,
         );
 
         expect(getByText(new RegExp(expected))).toBeTruthy();
@@ -911,13 +988,15 @@ describe('VoiceRecorderUltra', () => {
   describe('Disabled State', () => {
     it('should handle disabled state', () => {
       const { UNSAFE_getAllByType } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} disabled={true} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+          disabled={true}
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const recordButton = touchables.find((btn: any) => 
-        btn.props.onPressIn !== undefined
-      );
+      const recordButton = touchables.find((btn: any) => btn.props.onPressIn !== undefined);
 
       if (recordButton) {
         expect(recordButton.props.disabled).toBe(true);
@@ -946,7 +1025,10 @@ describe('VoiceRecorderUltra', () => {
       });
 
       const { getByText } = render(
-        <VoiceRecorderUltra matchId="match123" chatService={mockChatService} />
+        <VoiceRecorderUltra
+          matchId="match123"
+          chatService={mockChatService}
+        />,
       );
 
       expect(getByText('Release to cancel')).toBeTruthy();
@@ -982,12 +1064,12 @@ describe('VoiceRecorderUltra', () => {
           matchId="match123"
           chatService={mockChatService}
           onVoiceNoteSent={onVoiceNoteSent}
-        />
+        />,
       );
 
       const touchables = UNSAFE_getAllByType('TouchableOpacity' as any);
-      const sendButton = touchables.find((btn: any) => 
-        btn.props.style && btn.props.style.backgroundColor === '#34C759'
+      const sendButton = touchables.find(
+        (btn: any) => btn.props.style && btn.props.style.backgroundColor === '#34C759',
       );
 
       if (sendButton) {

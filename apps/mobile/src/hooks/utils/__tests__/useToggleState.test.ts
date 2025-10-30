@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from '@testing-library/react-native';
+import { renderHook, act } from '@testing-library/react';
 import { useToggleState } from '../useToggleState';
 
 describe('useToggleState', () => {
@@ -45,12 +45,12 @@ describe('useToggleState', () => {
   });
 
   it('should return stable toggle function reference', () => {
-    const { result } = renderHook(() => useToggleState());
+    const { result, rerender } = renderHook(() => useToggleState());
     const firstToggle = result.current.toggle;
 
-    // In React Native testing, rerender needs the same callback
-    const { result: result2 } = renderHook(() => useToggleState());
-    const secondToggle = result2.current.toggle;
+    // Rerender the same hook instance
+    rerender();
+    const secondToggle = result.current.toggle;
 
     expect(firstToggle).toBe(secondToggle);
   });

@@ -1,7 +1,7 @@
 /**
  * ErrorBanner Component
  * Consistent error display with retry handler
- * 
+ *
  * Features:
  * - Network and parsing error support
  * - Retry button
@@ -23,27 +23,27 @@ export interface ErrorBannerProps {
    * Error message to display
    */
   message: string;
-  
+
   /**
    * Optional error title (default: "Error")
    */
   title?: string;
-  
+
   /**
    * Retry handler
    */
   onRetry?: () => void;
-  
+
   /**
    * Custom style
    */
   style?: ViewStyle;
-  
+
   /**
    * Error type: 'network' | 'parsing' | 'generic'
    */
   type?: 'network' | 'parsing' | 'generic';
-  
+
   /**
    * Show retry button (default: true if onRetry provided)
    */
@@ -52,7 +52,7 @@ export interface ErrorBannerProps {
 
 /**
  * ErrorBanner - Consistent error display component
- * 
+ *
  * Usage:
  * ```tsx
  * <ErrorBanner
@@ -71,16 +71,18 @@ export function ErrorBanner({
   showRetry,
 }: ErrorBannerProps): React.JSX.Element {
   const theme = useTheme();
-  
-  const iconName = 
-    type === 'network' ? 'cloud-offline-outline' :
-    type === 'parsing' ? 'alert-circle-outline' :
-    'alert-circle-outline';
-  
-  const shouldShowRetry = showRetry ?? (onRetry !== undefined);
-  
+
+  const iconName =
+    type === 'network'
+      ? 'cloud-offline-outline'
+      : type === 'parsing'
+        ? 'alert-circle-outline'
+        : 'alert-circle-outline';
+
+  const shouldShowRetry = showRetry ?? onRetry !== undefined;
+
   const styles = createStyles(theme);
-  
+
   return (
     <View
       style={[styles.container, style]}
@@ -94,7 +96,7 @@ export function ErrorBanner({
           color={theme.colors.danger}
           style={styles.icon}
         />
-        
+
         <View style={styles.textContainer}>
           <Text
             variant="subtitle"
@@ -110,7 +112,7 @@ export function ErrorBanner({
           </Text>
         </View>
       </View>
-      
+
       {shouldShowRetry && onRetry && (
         <View style={styles.retry}>
           <Button
@@ -160,4 +162,3 @@ function createStyles(theme: ReturnType<typeof useTheme>) {
     },
   });
 }
-

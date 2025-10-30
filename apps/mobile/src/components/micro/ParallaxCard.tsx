@@ -69,7 +69,9 @@ export default function ParallaxCard({ children, style, intensity = 0.6, glow = 
       onResponderRelease={onPressOut}
       onResponderTerminate={onPressOut}
     >
-      <Animated.View style={[a, { borderRadius: theme.radii['2xl'], overflow: 'visible' }]}>{children}</Animated.View>
+      <Animated.View style={[a, { borderRadius: theme.radii['2xl'], overflow: 'visible' }]}>
+        {children}
+      </Animated.View>
     </View>
   );
 }

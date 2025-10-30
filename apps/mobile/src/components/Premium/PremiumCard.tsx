@@ -11,7 +11,6 @@ import React, { useEffect, useState } from 'react';
 import type { ViewStyle } from 'react-native';
 import {
   Animated,
-  Dimensions,
   PanResponder,
   StyleSheet,
   TouchableOpacity,
@@ -20,7 +19,6 @@ import {
 
 import { useTheme } from '@mobile/theme';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface PremiumCardProps {
   children: React.ReactNode;
@@ -38,7 +36,7 @@ interface PremiumCardProps {
 export const PremiumCard: React.FC<PremiumCardProps> = ({
   children,
   variant = 'default',
-  hover = true,
+  hover: _hover = true,
   tilt = false,
   glow = false,
   padding = 'md',
@@ -66,7 +64,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }
       },
-      onPanResponderMove: (evt, gestureState) => {
+      onPanResponderMove: (_evt, gestureState) => {
         if (!tilt) return;
 
         const { dx, dy } = gestureState;

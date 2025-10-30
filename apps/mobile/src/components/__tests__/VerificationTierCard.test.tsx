@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent } from '@testing-library/react';
 import { VerificationTierCard } from '../components/VerificationTierCard';
 
 describe('VerificationTierCard', () => {

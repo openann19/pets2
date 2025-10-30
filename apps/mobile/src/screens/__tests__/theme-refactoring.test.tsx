@@ -1,6 +1,6 @@
 /**
  * Theme Refactoring Tests
- * 
+ *
  * Tests for verifying that screens properly use the unified theming system
  * via useTheme hook instead of static Theme imports.
  */
@@ -8,7 +8,7 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { View, Text } from 'react-native';
-import { ThemeProvider } from "@/theme";
+import { ThemeProvider } from '@/theme';
 import { createTheme } from '@/theme';
 
 describe('Theme Refactoring - Integration Tests', () => {
@@ -26,7 +26,7 @@ describe('Theme Refactoring - Integration Tests', () => {
       const { getByTestId } = render(
         <ThemeProvider scheme="light">
           <TestComponent />
-        </ThemeProvider>
+        </ThemeProvider>,
       );
 
       expect(getByTestId('theme-test')).toBeTruthy();
@@ -34,7 +34,7 @@ describe('Theme Refactoring - Integration Tests', () => {
 
     it('should have correct theme structure', () => {
       const theme = createTheme('light');
-      
+
       // Verify core color properties exist
       expect(theme.colors).toHaveProperty('bg');
       expect(theme.colors).toHaveProperty('bgElevated');
@@ -67,7 +67,7 @@ describe('Theme Refactoring - Integration Tests', () => {
 
     it('should have numeric spacing values', () => {
       const theme = createTheme('light');
-      
+
       expect(typeof theme.spacing.xl).toBe('number');
       expect(typeof theme.spacing.lg).toBe('number');
       expect(typeof theme.spacing.md).toBe('number');
@@ -77,7 +77,7 @@ describe('Theme Refactoring - Integration Tests', () => {
 
     it('should have numeric radius values', () => {
       const theme = createTheme('light');
-      
+
       expect(typeof theme.radius.lg).toBe('number');
       expect(typeof theme.radius.md).toBe('number');
       expect(typeof theme.radius.sm).toBe('number');
@@ -89,11 +89,11 @@ describe('Theme Refactoring - Integration Tests', () => {
   describe('Light Theme Colors', () => {
     it('should have correct light theme colors', () => {
       const theme = createTheme('light');
-      
+
       // Light theme should have light backgrounds
       expect(theme.colors.bg).toBe('#ffffff');
       expect(theme.colors.onSurface).toBe('#111827');
-      
+
       // Primary color should be defined
       expect(theme.colors.primary).toBeTruthy();
       expect(typeof theme.colors.primary).toBe('string');
@@ -103,11 +103,11 @@ describe('Theme Refactoring - Integration Tests', () => {
   describe('Dark Theme Colors', () => {
     it('should have correct dark theme colors', () => {
       const theme = createTheme('dark');
-      
+
       // Dark theme should have dark backgrounds
       expect(theme.colors.bg).toBe('#0a0a0a');
       expect(theme.colors.onSurface).toBe('#ffffff');
-      
+
       // Primary color should be defined
       expect(theme.colors.primary).toBeTruthy();
       expect(typeof theme.colors.primary).toBe('string');
@@ -118,10 +118,10 @@ describe('Theme Refactoring - Integration Tests', () => {
     it('should have consistent color values across themes', () => {
       const lightTheme = createTheme('light');
       const darkTheme = createTheme('dark');
-      
+
       // Primary color should be same in both themes
       expect(lightTheme.colors.primary).toBe(darkTheme.colors.primary);
-      
+
       // Success, warning, danger should be same
       expect(lightTheme.colors.success).toBe(darkTheme.colors.success);
       expect(lightTheme.colors.warning).toBe(darkTheme.colors.warning);
@@ -131,7 +131,7 @@ describe('Theme Refactoring - Integration Tests', () => {
     it('should have consistent spacing across themes', () => {
       const lightTheme = createTheme('light');
       const darkTheme = createTheme('dark');
-      
+
       expect(lightTheme.spacing.xl).toBe(darkTheme.spacing.xl);
       expect(lightTheme.spacing.lg).toBe(darkTheme.spacing.lg);
       expect(lightTheme.spacing.md).toBe(darkTheme.spacing.md);
@@ -140,7 +140,7 @@ describe('Theme Refactoring - Integration Tests', () => {
     it('should have consistent radius across themes', () => {
       const lightTheme = createTheme('light');
       const darkTheme = createTheme('dark');
-      
+
       expect(lightTheme.radius.lg).toBe(darkTheme.radius.lg);
       expect(lightTheme.radius.md).toBe(darkTheme.radius.md);
       expect(lightTheme.radius.sm).toBe(darkTheme.radius.sm);
@@ -150,10 +150,10 @@ describe('Theme Refactoring - Integration Tests', () => {
   describe('Motion System', () => {
     it('should have valid motion durations', () => {
       const theme = createTheme('light');
-      
+
       expect(theme.motion.duration.fast).toBeLessThan(theme.motion.duration.normal);
       expect(theme.motion.duration.normal).toBeLessThan(theme.motion.duration.slow);
-      
+
       expect(theme.motion.duration.fast).toBeGreaterThan(0);
       expect(theme.motion.duration.normal).toBeGreaterThan(0);
       expect(theme.motion.duration.slow).toBeGreaterThan(0);
@@ -161,11 +161,11 @@ describe('Theme Refactoring - Integration Tests', () => {
 
     it('should have valid spring configurations', () => {
       const theme = createTheme('light');
-      
+
       expect(theme.motion.spring.stiff).toHaveProperty('stiffness');
       expect(theme.motion.spring.stiff).toHaveProperty('damping');
       expect(theme.motion.spring.stiff).toHaveProperty('mass');
-      
+
       expect(theme.motion.spring.stiff.stiffness).toBeGreaterThan(0);
       expect(theme.motion.spring.stiff.damping).toBeGreaterThan(0);
       expect(theme.motion.spring.stiff.mass).toBeGreaterThan(0);
@@ -175,12 +175,12 @@ describe('Theme Refactoring - Integration Tests', () => {
   describe('Semantic Color Mapping', () => {
     it('should map semantic colors correctly', () => {
       const theme = createTheme('light');
-      
+
       // Verify semantic colors are accessible
       expect(theme.colors.success).toBeTruthy();
       expect(theme.colors.warning).toBeTruthy();
       expect(theme.colors.danger).toBeTruthy();
-      
+
       // Verify they are different colors
       expect(theme.colors.success).not.toBe(theme.colors.warning);
       expect(theme.colors.warning).not.toBe(theme.colors.danger);
@@ -189,13 +189,13 @@ describe('Theme Refactoring - Integration Tests', () => {
 
     it('should have text and background contrast', () => {
       const lightTheme = createTheme('light');
-      
+
       // Light theme: light background, dark text
       expect(lightTheme.colors.bg).toBe('#ffffff');
       expect(lightTheme.colors.onSurface).toBe('#111827');
-      
+
       const darkTheme = createTheme('dark');
-      
+
       // Dark theme: dark background, light text
       expect(darkTheme.colors.bg).toBe('#0a0a0a');
       expect(darkTheme.colors.onSurface).toBe('#ffffff');
@@ -206,8 +206,8 @@ describe('Theme Refactoring - Integration Tests', () => {
     it('should have complete spacing scale', () => {
       const theme = createTheme('light');
       const spacingKeys = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'];
-      
-      spacingKeys.forEach(key => {
+
+      spacingKeys.forEach((key) => {
         expect(theme.spacing).toHaveProperty(key);
         expect(typeof theme.spacing[key as keyof typeof theme.spacing]).toBe('number');
       });
@@ -215,7 +215,7 @@ describe('Theme Refactoring - Integration Tests', () => {
 
     it('should have ascending spacing values', () => {
       const theme = createTheme('light');
-      
+
       expect(theme.spacing.xs).toBeLessThan(theme.spacing.sm);
       expect(theme.spacing.sm).toBeLessThan(theme.spacing.md);
       expect(theme.spacing.md).toBeLessThan(theme.spacing.lg);
@@ -228,8 +228,8 @@ describe('Theme Refactoring - Integration Tests', () => {
     it('should have complete radius scale', () => {
       const theme = createTheme('light');
       const radiusKeys = ['none', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', 'full'];
-      
-      radiusKeys.forEach(key => {
+
+      radiusKeys.forEach((key) => {
         expect(theme.radius).toHaveProperty(key);
         expect(typeof theme.radius[key as keyof typeof theme.radius]).toBe('number');
       });
@@ -237,7 +237,7 @@ describe('Theme Refactoring - Integration Tests', () => {
 
     it('should have ascending radius values', () => {
       const theme = createTheme('light');
-      
+
       expect(theme.radius.none).toBe(0);
       expect(theme.radius.xs).toBeGreaterThan(theme.radius.none);
       expect(theme.radius.sm).toBeGreaterThan(theme.radius.xs);
@@ -253,16 +253,16 @@ describe('Theme Refactoring - Screen Compliance', () => {
     it('should verify screens use dynamic styles', () => {
       // This test verifies the pattern used in refactored screens
       // Screens should create StyleSheet inside component to access theme
-      
+
       const mockTheme = createTheme('light');
-      
+
       // Mock StyleSheet.create behavior
       const styles = {
         container: { flex: 1 },
-        text: { color: mocktheme.colors.onSurface},
+        text: { color: mocktheme.colors.onSurface },
         button: { backgroundColor: mocktheme.colors.primary },
       };
-      
+
       expect(styles.text.color).toBe(mocktheme.colors.onSurface);
       expect(styles.button.backgroundColor).toBe(mocktheme.colors.primary);
     });
@@ -271,7 +271,7 @@ describe('Theme Refactoring - Screen Compliance', () => {
   describe('Color Reference Patterns', () => {
     it('should use correct color property names', () => {
       const theme = createTheme('light');
-      
+
       // Correct patterns
       expect(theme.colors.bg).toBeTruthy();
       expect(theme.colors.bgElevated).toBeTruthy();
@@ -286,7 +286,7 @@ describe('Theme Refactoring - Screen Compliance', () => {
 
     it('should not use deprecated color patterns', () => {
       const theme = createTheme('light');
-      
+
       // These patterns should NOT exist in the new theme
       expect((theme.colors as any).neutral).toBeUndefined();
       expect((theme.colors as any).status).toBeUndefined();
@@ -298,7 +298,7 @@ describe('Theme Refactoring - Screen Compliance', () => {
   describe('Spacing Reference Patterns', () => {
     it('should use correct spacing property names', () => {
       const theme = createTheme('light');
-      
+
       expect(theme.spacing.xl).toBeGreaterThan(0);
       expect(theme.spacing.lg).toBeGreaterThan(0);
       expect(theme.spacing.md).toBeGreaterThan(0);
@@ -310,7 +310,7 @@ describe('Theme Refactoring - Screen Compliance', () => {
   describe('Radius Reference Patterns', () => {
     it('should use correct radius property names', () => {
       const theme = createTheme('light');
-      
+
       expect(theme.radii.lg).toBeGreaterThan(0);
       expect(theme.radii.md).toBeGreaterThan(0);
       expect(theme.radii.sm).toBeGreaterThan(0);
@@ -319,7 +319,7 @@ describe('Theme Refactoring - Screen Compliance', () => {
 
     it('should not use deprecated radius patterns', () => {
       const theme = createTheme('light');
-      
+
       expect((theme as any).radius).toBeUndefined();
     });
   });

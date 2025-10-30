@@ -267,7 +267,7 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
             user: userId,
             readAt: new Date()
           }],
-          status: 'sent',
+          status: 'sent', // sent → delivered → read
           reactions: []
         };
 
@@ -293,14 +293,42 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
           }
         }
 
-        // Update message status to delivered
-        savedMessage.status = 'delivered';
+        // Check if recipient is online
+        const otherUserId = match.user1._id.toString() === userId
+          ? match.user2._id.toString()
+          : match.user1._id.toString();
 
-        // Emit message to all users in the match room
+        const otherUserSockets = await io.in(`user_${otherUserId}`).fetchSockets();
+        const isRecipientOnline = otherUserSockets.length > 0;
+
+        // Update message status based on recipient online status
+        if (isRecipientOnline) {
+          savedMessage.status = 'delivered';
+        } else {
+          savedMessage.status = 'sent';
+        }
+
+        // Emit message with status to sender first
+        socket.emit('message_sent', {
+          matchId,
+          messageId: savedMessage._id.toString(),
+          message: savedMessage
+        });
+
+        // Emit message to all users in the match room (including sender for delivered status)
         io.to(`match_${matchId}`).emit('new_message', {
           matchId,
           message: savedMessage
         });
+
+        // If recipient is online, emit delivered status to sender
+        if (isRecipientOnline) {
+          socket.emit('message_delivered', {
+            matchId,
+            messageId: savedMessage._id.toString(),
+            deliveredAt: new Date()
+          });
+        }
 
         // Send push notification to other user if they're offline
         const otherUserId = match.user1._id.toString() === userId
@@ -597,11 +625,41 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
         });
 
         if (match) {
+          const unreadMessages = (match as any).messages.filter((msg: any) => {
+            const isOwnMessage = msg.sender.toString() === userId;
+            const isRead = (msg.readBy || []).some((r: any) => r.user.toString() === userId);
+            return !isOwnMessage && !isRead;
+          });
+
           await (match as any).markMessagesAsRead(userId);
 
-          // Notify other user that messages were read
+          // Update message status to 'read' for unread messages
+          const messageIds: string[] = [];
+          for (const msg of unreadMessages) {
+            msg.status = 'read';
+            messageIds.push(msg._id.toString());
+          }
+
+          if (messageIds.length > 0) {
+            await match.save();
+
+            // Notify sender that their messages were read
+            const otherUserId = match.user1._id.toString() === userId
+              ? match.user2._id.toString()
+              : match.user1._id.toString();
+
+            io.to(`user_${otherUserId}`).emit('messages_read', {
+              matchId,
+              messageIds,
+              readBy: userId,
+              readAt: new Date()
+            });
+          }
+
+          // Notify other user in match room that messages were read
           socket.to(`match_${matchId}`).emit('messages_read', {
             userId,
+            messageIds,
             readAt: new Date()
           });
         }

@@ -3,15 +3,15 @@
  * Shows first-time users how to use swipe gestures
  */
 
-import React, { useEffect, useState, useMemo } from "react";
-import { View, Text, StyleSheet, Animated, Pressable } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { logger } from "../../services/logger";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import React, { useEffect, useState, useMemo } from 'react';
+import { View, Text, StyleSheet, Animated, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '../../services/logger';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
-const STORAGE_KEY = "@PawfectMatch:swipe_hints_shown";
+const STORAGE_KEY = '@PawfectMatch:swipe_hints_shown';
 
 interface SwipeGestureHintOverlayProps {
   onDismiss?: () => void;
@@ -56,13 +56,13 @@ export function SwipeGestureHintOverlay({
       }
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error("Error checking hints status", { error: err });
+      logger.error('Error checking hints status', { error: err });
     }
   };
 
   const handleDismiss = async () => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, "true");
+      await AsyncStorage.setItem(STORAGE_KEY, 'true');
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
@@ -80,7 +80,7 @@ export function SwipeGestureHintOverlay({
       });
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
-      logger.error("Error dismissing hints", { error: err });
+      logger.error('Error dismissing hints', { error: err });
     }
   };
 
@@ -95,7 +95,10 @@ export function SwipeGestureHintOverlay({
         },
       ]}
     >
-      <Pressable style={styles.backdrop} onPress={handleDismiss} />
+      <Pressable
+        style={styles.backdrop}
+        onPress={handleDismiss}
+      />
       <Animated.View
         style={[
           styles.hintCard,
@@ -107,7 +110,11 @@ export function SwipeGestureHintOverlay({
         <View style={styles.header}>
           <Text style={styles.title}>Swipe to Connect</Text>
           <Pressable onPress={handleDismiss}>
-            <Ionicons name="close" size={24} color={theme.colors.onMuted} />
+            <Ionicons
+              name="close"
+              size={24}
+              color={theme.colors.onMuted}
+            />
           </Pressable>
         </View>
 
@@ -115,7 +122,11 @@ export function SwipeGestureHintOverlay({
           {/* Like */}
           <View style={styles.hintItem}>
             <View style={[styles.iconContainer, { backgroundColor: theme.colors.success }]}>
-              <Ionicons name="heart" size={24} color={theme.colors.onPrimary} />
+              <Ionicons
+                name="heart"
+                size={24}
+                color={theme.colors.onPrimary}
+              />
             </View>
             <Text style={styles.hintText}>
               Swipe <Text style={styles.bold}>RIGHT</Text> to like
@@ -125,7 +136,11 @@ export function SwipeGestureHintOverlay({
           {/* Pass */}
           <View style={styles.hintItem}>
             <View style={[styles.iconContainer, { backgroundColor: theme.colors.danger }]}>
-              <Ionicons name="close" size={24} color={theme.colors.onPrimary} />
+              <Ionicons
+                name="close"
+                size={24}
+                color={theme.colors.onPrimary}
+              />
             </View>
             <Text style={styles.hintText}>
               Swipe <Text style={styles.bold}>LEFT</Text> to pass
@@ -135,7 +150,11 @@ export function SwipeGestureHintOverlay({
           {/* Super Like */}
           <View style={styles.hintItem}>
             <View style={[styles.iconContainer, { backgroundColor: theme.colors.info }]}>
-              <Ionicons name="star" size={24} color={theme.colors.onPrimary} />
+              <Ionicons
+                name="star"
+                size={24}
+                color={theme.colors.onPrimary}
+              />
             </View>
             <Text style={styles.hintText}>
               Swipe <Text style={styles.bold}>UP</Text> to super like
@@ -145,7 +164,11 @@ export function SwipeGestureHintOverlay({
           {/* Double Tap */}
           <View style={styles.hintItem}>
             <View style={[styles.iconContainer, { backgroundColor: theme.colors.primary }]}>
-              <Ionicons name="heart-circle" size={24} color={theme.colors.onPrimary} />
+              <Ionicons
+                name="heart-circle"
+                size={24}
+                color={theme.colors.onPrimary}
+              />
             </View>
             <Text style={styles.hintText}>
               <Text style={styles.bold}>DOUBLE TAP</Text> to like instantly
@@ -153,7 +176,10 @@ export function SwipeGestureHintOverlay({
           </View>
         </View>
 
-        <Pressable style={styles.gotItButton} onPress={handleDismiss}>
+        <Pressable
+          style={styles.gotItButton}
+          onPress={handleDismiss}
+        >
           <Text style={styles.gotItText}>Got it!</Text>
         </Pressable>
       </Animated.View>
@@ -163,80 +189,79 @@ export function SwipeGestureHintOverlay({
 
 function createStyles(theme: AppTheme) {
   return StyleSheet.create({
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1000,
-  },
-  backdrop: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-  },
-  hintCard: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: theme.colors.surface,
-    borderTopLeftRadius: theme.radii.xl,
-    borderTopRightRadius: theme.radii.xl,
-    padding: theme.spacing.lg,
-    ...theme.shadows.elevation2,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: theme.spacing.lg,
-  },
-  title: {
-    fontSize: theme.typography.h1.size,
-    fontWeight: theme.typography.h1.weight,
-    color: theme.colors.onSurface,
-  },
-  hints: {
-    gap: theme.spacing.md,
-  },
-  hintItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.spacing.md,
-  },
-  iconContainer: {
-    width: theme.spacing["3xl"],
-    height: theme.spacing["3xl"],
-    borderRadius: theme.radii.full,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  hintText: {
-    flex: 1,
-    fontSize: theme.typography.body.size,
-    color: theme.colors.onSurface,
-  },
-  bold: {
-    fontWeight: "bold",
-    color: theme.colors.onSurface,
-  },
-  gotItButton: {
-    marginTop: theme.spacing.lg,
-    backgroundColor: theme.colors.primary,
-    paddingVertical: theme.spacing.md,
-    borderRadius: theme.radii.lg,
-    alignItems: "center",
-  },
-  gotItText: {
-    color: theme.colors.onPrimary,
-    fontSize: theme.typography.body.size,
-    fontWeight: "600",
-  },
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 1000,
+    },
+    backdrop: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    },
+    hintCard: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: theme.colors.surface,
+      borderTopLeftRadius: theme.radii.xl,
+      borderTopRightRadius: theme.radii.xl,
+      padding: theme.spacing.lg,
+      ...theme.shadows.elevation2,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: theme.spacing.lg,
+    },
+    title: {
+      fontSize: theme.typography.h1.size,
+      fontWeight: theme.typography.h1.weight,
+      color: theme.colors.onSurface,
+    },
+    hints: {
+      gap: theme.spacing.md,
+    },
+    hintItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.md,
+    },
+    iconContainer: {
+      width: theme.spacing['3xl'],
+      height: theme.spacing['3xl'],
+      borderRadius: theme.radii.full,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    hintText: {
+      flex: 1,
+      fontSize: theme.typography.body.size,
+      color: theme.colors.onSurface,
+    },
+    bold: {
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+    },
+    gotItButton: {
+      marginTop: theme.spacing.lg,
+      backgroundColor: theme.colors.primary,
+      paddingVertical: theme.spacing.md,
+      borderRadius: theme.radii.lg,
+      alignItems: 'center',
+    },
+    gotItText: {
+      color: theme.colors.onPrimary,
+      fontSize: theme.typography.body.size,
+      fontWeight: '600',
+    },
   });
 }
-

@@ -27,9 +27,7 @@ interface UseDominantColorFadeReturn {
  * Hook for dominant color fade-in animation
  * Shows placeholder color, then fades in image
  */
-export function useDominantColorFade(
-  dominantColor?: string
-): UseDominantColorFadeReturn {
+export function useDominantColorFade(dominantColor?: string): UseDominantColorFadeReturn {
   const guards = useMotionGuards();
   const imageOpacity = useSharedValue(0);
   const placeholderOpacity = useSharedValue(1);
@@ -49,7 +47,7 @@ export function useDominantColorFade(
 
   const onLoad = React.useCallback(() => {
     setImageLoaded(true);
-    
+
     if (!guards.shouldAnimate) {
       // Instant show on reduced motion
       imageOpacity.value = 1;
@@ -69,7 +67,7 @@ export function useDominantColorFade(
       withTiming(0, {
         duration: motion.duration.base,
         easing: getEasingArray('decel'),
-      })
+      }),
     );
   }, [guards.shouldAnimate]);
 
@@ -121,4 +119,3 @@ export function DominantColorFadeImage({
     </>
   );
 }
-

@@ -7,10 +7,21 @@ import { logger } from '../utils/logger';
 import { useAuthStore } from '../stores/useAuthStore';
 
 export interface CallingEvent {
-  eventType: 'call_initiated' | 'call_answered' | 'call_ended' | 'call_failed' |
-             'permission_requested' | 'permission_granted' | 'permission_denied' |
-             'network_quality_changed' | 'device_check_completed' | 'video_toggle' |
-             'mute_toggle' | 'camera_switch' | 'screen_share_started' | 'screen_share_ended';
+  eventType:
+    | 'call_initiated'
+    | 'call_answered'
+    | 'call_ended'
+    | 'call_failed'
+    | 'permission_requested'
+    | 'permission_granted'
+    | 'permission_denied'
+    | 'network_quality_changed'
+    | 'device_check_completed'
+    | 'video_toggle'
+    | 'mute_toggle'
+    | 'camera_switch'
+    | 'screen_share_started'
+    | 'screen_share_ended';
   timestamp: number;
   userId: string;
   callId?: string;
@@ -46,7 +57,7 @@ class CallingTelemetryService {
     const fullEvent: CallingEvent = {
       ...event,
       timestamp: Date.now(),
-      userId
+      userId,
     };
 
     this.events.push(fullEvent);
@@ -61,7 +72,7 @@ class CallingTelemetryService {
       eventType: event.eventType,
       userId,
       callId: event.callId,
-      metadata: event.metadata
+      metadata: event.metadata,
     });
 
     // Send to analytics backend (if available)
@@ -77,7 +88,7 @@ class CallingTelemetryService {
       callId,
       matchId,
       callType,
-      metadata: { initiator: 'caller' }
+      metadata: { initiator: 'caller' },
     });
   }
 
@@ -90,7 +101,7 @@ class CallingTelemetryService {
       callId,
       matchId,
       callType,
-      metadata: { answerer: 'callee' }
+      metadata: { answerer: 'callee' },
     });
   }
 
@@ -103,7 +114,7 @@ class CallingTelemetryService {
       callId,
       duration,
       reason,
-      metadata: { endReason: reason || 'normal' }
+      metadata: { endReason: reason || 'normal' },
     });
   }
 
@@ -115,7 +126,7 @@ class CallingTelemetryService {
       eventType: 'call_failed',
       callId,
       reason,
-      metadata
+      metadata,
     });
   }
 
@@ -127,8 +138,8 @@ class CallingTelemetryService {
       eventType: granted ? 'permission_granted' : 'permission_denied',
       metadata: {
         permissionType: type,
-        granted
-      }
+        granted,
+      },
     });
   }
 
@@ -141,8 +152,8 @@ class CallingTelemetryService {
       callId,
       metadata: {
         quality,
-        bitrate
-      }
+        bitrate,
+      },
     });
   }
 
@@ -154,19 +165,27 @@ class CallingTelemetryService {
       eventType: 'device_check_completed',
       metadata: {
         success,
-        issues: issues || []
-      }
+        issues: issues || [],
+      },
     });
   }
 
   /**
    * Track feature usage
    */
-  trackFeatureUsage(feature: 'video_toggle' | 'mute_toggle' | 'camera_switch' | 'screen_share_started' | 'screen_share_ended', callId?: string): void {
+  trackFeatureUsage(
+    feature:
+      | 'video_toggle'
+      | 'mute_toggle'
+      | 'camera_switch'
+      | 'screen_share_started'
+      | 'screen_share_ended',
+    callId?: string,
+  ): void {
     this.trackEvent({
       eventType: feature,
       callId,
-      metadata: { feature }
+      metadata: { feature },
     });
   }
 
@@ -174,47 +193,69 @@ class CallingTelemetryService {
    * Get calling metrics for analytics
    */
   getMetrics(timeRangeHours: number = 24): CallingMetrics {
-    const cutoff = Date.now() - (timeRangeHours * 60 * 60 * 1000);
-    const recentEvents = this.events.filter(e => e.timestamp > cutoff);
+    const cutoff = Date.now() - timeRangeHours * 60 * 60 * 1000;
+    const recentEvents = this.events.filter((e) => e.timestamp > cutoff);
 
-    const totalCalls = recentEvents.filter(e => e.eventType === 'call_initiated').length;
-    const successfulCalls = recentEvents.filter(e => e.eventType === 'call_ended' && !e.reason?.includes('failed')).length;
-    const failedCalls = recentEvents.filter(e => e.eventType === 'call_failed').length;
+    const totalCalls = recentEvents.filter((e) => e.eventType === 'call_initiated').length;
+    const successfulCalls = recentEvents.filter(
+      (e) => e.eventType === 'call_ended' && !e.reason?.includes('failed'),
+    ).length;
+    const failedCalls = recentEvents.filter((e) => e.eventType === 'call_failed').length;
 
     const callDurations = recentEvents
-      .filter(e => e.eventType === 'call_ended' && e.duration)
-      .map(e => e.duration!);
+      .filter((e) => e.eventType === 'call_ended' && e.duration)
+      .map((e) => e.duration!);
 
-    const averageCallDuration = callDurations.length > 0
-      ? callDurations.reduce((sum, d) => sum + d, 0) / callDurations.length
-      : 0;
+    const averageCallDuration =
+      callDurations.length > 0
+        ? callDurations.reduce((sum, d) => sum + d, 0) / callDurations.length
+        : 0;
 
-    const permissionEvents = recentEvents.filter(e => e.eventType === 'permission_denied');
+    const permissionEvents = recentEvents.filter((e) => e.eventType === 'permission_denied');
     const permissionDenialRate = totalCalls > 0 ? (permissionEvents.length / totalCalls) * 100 : 0;
 
-    const networkQualityEvents = recentEvents.filter(e => e.eventType === 'network_quality_changed');
-    const networkQualityDistribution = networkQualityEvents.reduce((acc, e) => {
-      const quality = (e.metadata?.quality as string) || 'unknown';
-      acc[quality] = (acc[quality] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const networkQualityEvents = recentEvents.filter(
+      (e) => e.eventType === 'network_quality_changed',
+    );
+    const networkQualityDistribution = networkQualityEvents.reduce(
+      (acc, e) => {
+        const quality = (e.metadata?.quality as string) || 'unknown';
+        acc[quality] = (acc[quality] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     const deviceIssues = recentEvents
-      .filter(e => e.eventType === 'device_check_completed' && !e.metadata?.success)
-      .reduce((acc, e) => {
-        const issues = e.metadata?.issues as string[] || [];
-        issues.forEach(issue => {
-          acc[issue] = (acc[issue] || 0) + 1;
-        });
-        return acc;
-      }, {} as Record<string, number>);
+      .filter((e) => e.eventType === 'device_check_completed' && !e.metadata?.success)
+      .reduce(
+        (acc, e) => {
+          const issues = (e.metadata?.issues as string[]) || [];
+          issues.forEach((issue) => {
+            acc[issue] = (acc[issue] || 0) + 1;
+          });
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
     const featureUsage = recentEvents
-      .filter(e => ['video_toggle', 'mute_toggle', 'camera_switch', 'screen_share_started', 'screen_share_ended'].includes(e.eventType))
-      .reduce((acc, e) => {
-        acc[e.eventType] = (acc[e.eventType] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      .filter((e) =>
+        [
+          'video_toggle',
+          'mute_toggle',
+          'camera_switch',
+          'screen_share_started',
+          'screen_share_ended',
+        ].includes(e.eventType),
+      )
+      .reduce(
+        (acc, e) => {
+          acc[e.eventType] = (acc[e.eventType] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
     return {
       totalCalls,
@@ -224,7 +265,7 @@ class CallingTelemetryService {
       permissionDenialRate,
       networkQualityDistribution,
       deviceIssues,
-      featureUsage
+      featureUsage,
     };
   }
 
@@ -232,8 +273,8 @@ class CallingTelemetryService {
    * Export events for debugging/admin purposes
    */
   exportEvents(hoursBack: number = 24): CallingEvent[] {
-    const cutoff = Date.now() - (hoursBack * 60 * 60 * 1000);
-    return this.events.filter(e => e.timestamp > cutoff);
+    const cutoff = Date.now() - hoursBack * 60 * 60 * 1000;
+    return this.events.filter((e) => e.timestamp > cutoff);
   }
 
   /**

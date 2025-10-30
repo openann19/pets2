@@ -1,22 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Image } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
-import { AutoCropEngine, type SuggestionType } from "../../utils/AutoCropEngine";
-import { BouncePressable } from "../micro";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { AutoCropEngine, type SuggestionType } from '../../utils/AutoCropEngine';
+import { BouncePressable } from '../micro';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 type Rect = { x: number; y: number; width: number; height: number };
 
 interface Props {
   uri: string;
-  ratios?: string[];                     // ["1:1","4:5","9:16",...]
-  onFocus?: (focus: Rect) => void;       // use cropper.focusTo(focus)
-  onApply?: (crop: Rect) => void;        // apply immediately
+  ratios?: string[]; // ["1:1","4:5","9:16",...]
+  onFocus?: (focus: Rect) => void; // use cropper.focusTo(focus)
+  onApply?: (crop: Rect) => void; // apply immediately
 }
 
-export const SubjectSuggestionsBar: React.FC<Props> = ({ uri, ratios = ["1:1","4:5","9:16"], onFocus, onApply }) => {
+export const SubjectSuggestionsBar: React.FC<Props> = ({
+  uri,
+  ratios = ['1:1', '4:5', '9:16'],
+  onFocus,
+  onApply,
+}) => {
   const theme = useTheme();
   const styles = createStyles(theme);
   const [loading, setLoading] = useState(true);
@@ -27,7 +32,10 @@ export const SubjectSuggestionsBar: React.FC<Props> = ({ uri, ratios = ["1:1","4
     (async () => {
       setLoading(true);
       try {
-        const base = await AutoCropEngine.suggestCrops(uri, ratios, { eyeWeight: 0.6, padPct: 0.16 });
+        const base = await AutoCropEngine.suggestCrops(uri, ratios, {
+          eyeWeight: 0.6,
+          padPct: 0.16,
+        });
         const thumbs = await AutoCropEngine.makeThumbnails(uri, base, { size: 220, quality: 0.9 });
         if (mounted) setSugs(thumbs);
       } catch {
@@ -36,13 +44,18 @@ export const SubjectSuggestionsBar: React.FC<Props> = ({ uri, ratios = ["1:1","4
         if (mounted) setLoading(false);
       }
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [uri, ratios]);
 
   if (loading) {
     return (
       <View style={styles.wrap}>
-        <ActivityIndicator size="small" color={theme.colors.primary} />
+        <ActivityIndicator
+          size="small"
+          color={theme.colors.primary}
+        />
         <Text style={styles.meta}>Finding the best frames…</Text>
       </View>
     );
@@ -58,19 +71,37 @@ export const SubjectSuggestionsBar: React.FC<Props> = ({ uri, ratios = ["1:1","4
 
   return (
     <View style={styles.wrap}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.row}
+      >
         {sugs.map((s) => (
-          <View key={s.ratio} style={styles.card}>
+          <View
+            key={s.ratio}
+            style={styles.card}
+          >
             <BouncePressable
-              onPress={() => { Haptics.selectionAsync(); onFocus?.(s.focus); }}
+              onPress={() => {
+                Haptics.selectionAsync();
+                onFocus?.(s.focus);
+              }}
               style={styles.thumbBtn}
               accessibilityLabel={`Preview ${s.ratio} crop`}
             >
               {s.thumbUri ? (
-                <Image source={{ uri: s.thumbUri }} style={styles.thumbImg} resizeMode="cover" />
+                <Image
+                  source={{ uri: s.thumbUri }}
+                  style={styles.thumbImg}
+                  resizeMode="cover"
+                />
               ) : (
-                <View style={[styles.thumbImg, { justifyContent: "center", alignItems: "center" }]}>
-                  <Ionicons name="image" size={24} color={theme.colors.onSurface} />
+                <View style={[styles.thumbImg, { justifyContent: 'center', alignItems: 'center' }]}>
+                  <Ionicons
+                    name="image"
+                    size={24}
+                    color={theme.colors.onSurface}
+                  />
                 </View>
               )}
               <View style={styles.badge}>
@@ -79,16 +110,24 @@ export const SubjectSuggestionsBar: React.FC<Props> = ({ uri, ratios = ["1:1","4
             </BouncePressable>
 
             <BouncePressable
-              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); onApply?.(s.crop); }}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                onApply?.(s.crop);
+              }}
               style={styles.useBtn}
               accessibilityLabel={`Apply ${s.ratio} crop`}
             >
-              <Ionicons name="flash" size={14} color={theme.colors.onPrimary} />
+              <Ionicons
+                name="flash"
+                size={14}
+                color={theme.colors.onPrimary}
+              />
               <Text style={styles.useTxt}>Use</Text>
             </BouncePressable>
 
             <Text style={styles.meta}>
-              {s.method === "eyes" ? "Eye-focus" : s.method === "face" ? "Face" : "Smart"} • {s.ratio}
+              {s.method === 'eyes' ? 'Eye-focus' : s.method === 'face' ? 'Face' : 'Smart'} •{' '}
+              {s.ratio}
             </Text>
           </View>
         ))}
@@ -101,13 +140,35 @@ function createStyles(theme: AppTheme) {
   return StyleSheet.create({
     wrap: { paddingVertical: 12, paddingHorizontal: 16 },
     row: { gap: 12 },
-    card: { width: 140, alignItems: "center" },
-    thumbBtn: { borderRadius: theme.radii.lg, overflow: "hidden", borderWidth: 1, borderColor: theme.colors.border },
+    card: { width: 140, alignItems: 'center' },
+    thumbBtn: {
+      borderRadius: theme.radii.lg,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
     thumbImg: { width: 140, height: 140, backgroundColor: theme.colors.surface },
-    badge: { position: "absolute", top: 8, right: 8, backgroundColor: theme.colors.overlay || 'rgba(0,0,0,0.55)', paddingVertical: 4, paddingHorizontal: 8, borderRadius: theme.radii.md },
-    badgeTxt: { color: theme.colors.onSurface, fontSize: 12, fontWeight: "700" as const },
-    useBtn: { marginTop: 8, flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 10, paddingVertical: 6, backgroundColor: theme.colors.primary, borderRadius: theme.radii.md },
-    useTxt: { color: theme.colors.onPrimary, fontSize: 12, fontWeight: "800" as const },
-    meta: { marginTop: 6, color: theme.colors.onMuted, fontSize: 12, textAlign: "center" },
+    badge: {
+      position: 'absolute',
+      top: 8,
+      right: 8,
+      backgroundColor: theme.colors.overlay || 'rgba(0,0,0,0.55)',
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      borderRadius: theme.radii.md,
+    },
+    badgeTxt: { color: theme.colors.onSurface, fontSize: 12, fontWeight: '700' as const },
+    useBtn: {
+      marginTop: 8,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radii.md,
+    },
+    useTxt: { color: theme.colors.onPrimary, fontSize: 12, fontWeight: '800' as const },
+    meta: { marginTop: 6, color: theme.colors.onMuted, fontSize: 12, textAlign: 'center' },
   });
 }

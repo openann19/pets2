@@ -1,71 +1,81 @@
-import React from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
+import { Interactive } from '../primitives/Interactive';
 
 interface BillingToggleProps {
-  billingPeriod: "monthly" | "yearly";
-  onToggle: (period: "monthly" | "yearly") => void;
+  billingPeriod: 'monthly' | 'yearly';
+  onToggle: (period: 'monthly' | 'yearly') => void;
 }
 
-export const BillingToggle: React.FC<BillingToggleProps> = ({
-  billingPeriod,
-  onToggle,
-}) => {
+export const BillingToggle: React.FC<BillingToggleProps> = ({ billingPeriod, onToggle }) => {
   const theme = useTheme();
   const styles = React.useMemo(() => makeStyles(theme), [theme]);
 
   return (
     <View style={[styles.billingToggle, { backgroundColor: theme.colors.surface }]}>
-      <TouchableOpacity
-        style={[
-          styles.billingButton,
-          billingPeriod === "monthly" && [
-            styles.billingButtonActive,
-            { backgroundColor: theme.colors.primary },
-          ],
-        ]}
-        onPress={() => onToggle("monthly")}
-        testID="billing-monthly"
+      <Interactive
+        variant="subtle"
+        haptic="light"
+        onPress={() => onToggle('monthly')}
         accessibilityLabel="Monthly billing"
         accessibilityRole="button"
       >
-        <Text
+        <TouchableOpacity
           style={[
-            styles.billingButtonText,
-            {
-              color: billingPeriod === "monthly" ? theme.colors.onPrimary : theme.colors.onMuted,
-            },
+            styles.billingButton,
+            billingPeriod === 'monthly' && [
+              styles.billingButtonActive,
+              { backgroundColor: theme.colors.primary },
+            ],
           ]}
+          testID="billing-monthly"
+          activeOpacity={1}
         >
-          Monthly
-        </Text>
-      </TouchableOpacity>
+          <Text
+            style={[
+              styles.billingButtonText,
+              {
+                color: billingPeriod === 'monthly' ? theme.colors.onPrimary : theme.colors.onMuted,
+              },
+            ]}
+          >
+            Monthly
+          </Text>
+        </TouchableOpacity>
+      </Interactive>
 
-      <TouchableOpacity
-        style={[
-          styles.billingButton,
-          billingPeriod === "yearly" && [
-            styles.billingButtonActive,
-            { backgroundColor: theme.colors.primary },
-          ],
-        ]}
-        onPress={() => onToggle("yearly")}
-        testID="billing-yearly"
+      <Interactive
+        variant="subtle"
+        haptic="light"
+        onPress={() => onToggle('yearly')}
         accessibilityLabel="Yearly billing"
         accessibilityRole="button"
       >
-        <Text
+        <TouchableOpacity
           style={[
-            styles.billingButtonText,
-            {
-              color: billingPeriod === "yearly" ? theme.colors.onPrimary : theme.colors.onMuted,
-            },
+            styles.billingButton,
+            billingPeriod === 'yearly' && [
+              styles.billingButtonActive,
+              { backgroundColor: theme.colors.primary },
+            ],
           ]}
+          testID="billing-yearly"
+          activeOpacity={1}
         >
-          Yearly
-        </Text>
-      </TouchableOpacity>
+          <Text
+            style={[
+              styles.billingButtonText,
+              {
+                color: billingPeriod === 'yearly' ? theme.colors.onPrimary : theme.colors.onMuted,
+              },
+            ]}
+          >
+            Yearly
+          </Text>
+        </TouchableOpacity>
+      </Interactive>
     </View>
   );
 };
@@ -73,16 +83,16 @@ export const BillingToggle: React.FC<BillingToggleProps> = ({
 const makeStyles = (theme: AppTheme) =>
   StyleSheet.create({
     billingToggle: {
-      flexDirection: "row",
+      flexDirection: 'row',
       borderRadius: theme.radii.lg,
       padding: theme.spacing.xs,
-      marginBottom: theme.spacing["2xl"],
+      marginBottom: theme.spacing['2xl'],
     },
     billingButton: {
       flex: 1,
       paddingVertical: theme.spacing.md,
       borderRadius: theme.radii.md,
-      alignItems: "center",
+      alignItems: 'center',
     },
     billingButtonActive: {
       shadowOpacity: 0.3,

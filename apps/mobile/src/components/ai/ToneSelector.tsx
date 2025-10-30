@@ -4,7 +4,6 @@
  * Features: Visual selection, accessibility, responsive design
  */
 
-import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '@/theme';
 import type { AppTheme } from '@/theme';

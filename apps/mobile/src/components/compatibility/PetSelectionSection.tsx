@@ -1,10 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo } from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import type { Pet } from "../../hooks/screens/useAICompatibility";
-import { useTheme } from "@/theme";
-import type { AppTheme } from "@/theme";
+import type { Pet } from '../../hooks/screens/useAICompatibility';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 function createStyles(theme: AppTheme) {
   const neutralFill = theme.palette.neutral?.[200] ?? theme.colors.surface;
@@ -20,28 +20,28 @@ function createStyles(theme: AppTheme) {
       marginBottom: theme.spacing.md,
     },
     selectionStatus: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
       marginBottom: theme.spacing.md,
       gap: theme.spacing.md,
     },
     selectionItem: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: theme.spacing.xs,
     },
     selectionText: {
       fontSize: theme.typography.body.size,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     petsList: {
       maxHeight: 300,
     },
     petCard: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
       padding: theme.spacing.md,
       borderRadius: theme.radii.lg,
       marginBottom: theme.spacing.md,
@@ -53,22 +53,22 @@ function createStyles(theme: AppTheme) {
       borderColor: theme.colors.primary,
     },
     petInfo: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       flex: 1,
       gap: theme.spacing.sm,
     },
     petAvatar: {
-      width: theme.spacing["3xl"],
-      height: theme.spacing["3xl"],
+      width: theme.spacing['3xl'],
+      height: theme.spacing['3xl'],
       borderRadius: theme.radii.full,
       backgroundColor: neutralFill,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     petAvatarText: {
       fontSize: theme.typography.h2.size,
-      fontWeight: "700",
+      fontWeight: '700',
       color: theme.colors.onSurface,
     },
     petDetails: {
@@ -77,7 +77,7 @@ function createStyles(theme: AppTheme) {
     },
     petName: {
       fontSize: theme.typography.body.size,
-      fontWeight: "600",
+      fontWeight: '600',
       color: theme.colors.onSurface,
     },
     petBreed: {
@@ -85,7 +85,7 @@ function createStyles(theme: AppTheme) {
       color: theme.colors.onMuted,
     },
     petTags: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: theme.spacing.xs,
     },
     petTag: {
@@ -97,14 +97,13 @@ function createStyles(theme: AppTheme) {
     petTagText: {
       color: theme.colors.onPrimary,
       fontSize: theme.typography.body.size,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     selectionIndicator: {
       padding: theme.spacing.xs,
     },
   });
 }
-
 
 interface PetSelectionSectionProps {
   selectedPetA: Pet | null;
@@ -155,7 +154,10 @@ export const PetSelectionSection = ({
           </Text>
           <View style={styles.petTags}>
             {item.temperament.slice(0, 2).map((trait, index) => (
-              <View key={index} style={styles.petTag}>
+              <View
+                key={index}
+                style={styles.petTag}
+              >
                 <Text style={styles.petTagText}>{trait}</Text>
               </View>
             ))}
@@ -165,7 +167,7 @@ export const PetSelectionSection = ({
       {(selectedPetA?.id === item.id || selectedPetB?.id === item.id) && (
         <View style={styles.selectionIndicator}>
           <Ionicons
-            name={selectedPetA?.id === item.id ? "paw" : "heart"}
+            name={selectedPetA?.id === item.id ? 'paw' : 'heart'}
             size={20}
             color={colors.primary}
           />
@@ -191,10 +193,14 @@ export const PetSelectionSection = ({
               { color: selectedPetA ? colors.onSurface : colors.onMuted },
             ]}
           >
-            {selectedPetA ? selectedPetA.name : "Select Pet A"}
+            {selectedPetA ? selectedPetA.name : 'Select Pet A'}
           </Text>
         </View>
-        <Ionicons name="arrow-forward" size={20} color={colors.onMuted} />
+        <Ionicons
+          name="arrow-forward"
+          size={20}
+          color={colors.onMuted}
+        />
         <View style={styles.selectionItem}>
           <Ionicons
             name="heart"
@@ -207,7 +213,7 @@ export const PetSelectionSection = ({
               { color: selectedPetB ? colors.onSurface : colors.onMuted },
             ]}
           >
-            {selectedPetB ? selectedPetB.name : "Select Pet B"}
+            {selectedPetB ? selectedPetB.name : 'Select Pet B'}
           </Text>
         </View>
       </View>

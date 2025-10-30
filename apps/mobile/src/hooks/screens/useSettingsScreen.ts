@@ -155,13 +155,13 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
               });
 
               if (response.success) {
-                const gracePeriodEndsAt = response.gracePeriodEndsAt 
+                const gracePeriodEndsAt = response.gracePeriodEndsAt
                   ? new Date(response.gracePeriodEndsAt)
                   : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
                 const daysRemaining = Math.ceil(
-                  (gracePeriodEndsAt.getTime() - Date.now()) / (24 * 60 * 60 * 1000)
+                  (gracePeriodEndsAt.getTime() - Date.now()) / (24 * 60 * 60 * 1000),
                 );
-                
+
                 setDeletionStatus({
                   isPending: true,
                   daysRemaining,

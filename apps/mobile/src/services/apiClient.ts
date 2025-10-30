@@ -6,7 +6,7 @@
  */
 
 import { logger } from '@pawfectmatch/core';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import axios, { AxiosHeaders } from 'axios';
 import NetInfo from '@react-native-community/netinfo';
@@ -17,6 +17,14 @@ const API_BASE_URL =
   typeof envApiBaseUrl === 'string' && envApiBaseUrl.trim().length > 0
     ? envApiBaseUrl
     : 'http://localhost:3001/api';
+
+// Validate HTTPS in production (App Transport Security requirement)
+if (!__DEV__ && API_BASE_URL.startsWith('http://')) {
+  logger.error('API_BASE_URL must use HTTPS in production', { apiBaseUrl: API_BASE_URL });
+  throw new Error(
+    'Invalid API URL: Production builds must use HTTPS. Current URL: ' + API_BASE_URL,
+  );
+}
 
 interface ApiClientConfig {
   baseURL: string;
@@ -65,11 +73,12 @@ class ApiClient {
   }
 
   /**
-   * Load JWT token from AsyncStorage
+   * Load JWT token from SecureStore
+   * Fixes M-SEC-01: Uses expo-secure-store instead of AsyncStorage
    */
   private async loadToken(): Promise<void> {
     try {
-      const token = await AsyncStorage.getItem('authToken');
+      const token = await SecureStore.getItemAsync('authToken');
       if (token !== null) {
         this.token = token;
       }
@@ -80,11 +89,14 @@ class ApiClient {
 
   /**
    * Set JWT token for authenticated requests
+   * Fixes M-SEC-01: Uses expo-secure-store instead of AsyncStorage
    */
   public async setToken(token: string): Promise<void> {
     this.token = token;
     try {
-      await AsyncStorage.setItem('authToken', token);
+      await SecureStore.setItemAsync('authToken', token, {
+        keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+      });
     } catch (error: unknown) {
       logger.error('api-client.save-token.failed', { error });
     }
@@ -92,11 +104,12 @@ class ApiClient {
 
   /**
    * Clear JWT token (logout)
+   * Fixes M-SEC-01: Uses expo-secure-store instead of AsyncStorage
    */
   public async clearToken(): Promise<void> {
     this.token = null;
     try {
-      await AsyncStorage.removeItem('authToken');
+      await SecureStore.deleteItemAsync('authToken');
     } catch (error: unknown) {
       logger.error('api-client.clear-token.failed', { error });
     }

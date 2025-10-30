@@ -260,7 +260,9 @@ export const downloadExport = async (exportId: string): Promise<Blob> => {
  * Confirm account deletion after grace period
  * Finalizes the deletion process
  */
-export const confirmDeletion = async (token: string): Promise<{
+export const confirmDeletion = async (
+  token: string,
+): Promise<{
   success: boolean;
   deletedAt?: string;
   message?: string;
@@ -273,13 +275,10 @@ export const confirmDeletion = async (token: string): Promise<{
       success: boolean;
       deletedAt?: string;
       message?: string;
-    }>(
-      '/api/users/confirm-deletion',
-      {
-        method: 'POST',
-        body: { token: validatedInput.token },
-      },
-    );
+    }>('/api/users/confirm-deletion', {
+      method: 'POST',
+      body: { token: validatedInput.token },
+    });
 
     // Validate response with Zod
     const parsed = parseResponse(ConfirmDeletionResponseSchema, response);

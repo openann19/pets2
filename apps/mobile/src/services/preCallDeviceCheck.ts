@@ -44,18 +44,18 @@ export class PreCallDeviceCheck {
       this.checkCamera(callType),
       this.checkMicrophone(),
       this.checkNetwork(),
-      this.checkDeviceCompatibility(callType)
+      this.checkDeviceCompatibility(callType),
     ]);
 
-    const overall = camera.available && microphone.available &&
-                   network.connected && device.isSupported;
+    const overall =
+      camera.available && microphone.available && network.connected && device.isSupported;
 
     const result: DeviceCheckResult = {
       camera,
       microphone,
       network,
       device,
-      overall
+      overall,
     };
 
     logger.info('Pre-call device check completed', {
@@ -63,7 +63,7 @@ export class PreCallDeviceCheck {
       overall,
       camera: camera.available,
       microphone: microphone.available,
-      network: network.quality
+      network: network.quality,
     });
 
     return result;
@@ -72,7 +72,9 @@ export class PreCallDeviceCheck {
   /**
    * Check camera permissions and availability
    */
-  private static async checkCamera(callType: 'voice' | 'video'): Promise<DeviceCheckResult['camera']> {
+  private static async checkCamera(
+    callType: 'voice' | 'video',
+  ): Promise<DeviceCheckResult['camera']> {
     if (callType === 'voice') {
       return { granted: true, available: true };
     }
@@ -84,14 +86,14 @@ export class PreCallDeviceCheck {
       return {
         granted,
         available: granted,
-        error: granted ? undefined : 'Camera permission denied'
+        error: granted ? undefined : 'Camera permission denied',
       };
     } catch (error) {
       logger.error('Camera check failed', { error });
       return {
         granted: false,
         available: false,
-        error: 'Camera unavailable'
+        error: 'Camera unavailable',
       };
     }
   }
@@ -107,14 +109,14 @@ export class PreCallDeviceCheck {
       return {
         granted,
         available: granted,
-        error: granted ? undefined : 'Microphone permission denied'
+        error: granted ? undefined : 'Microphone permission denied',
       };
     } catch (error) {
       logger.error('Microphone check failed', { error });
       return {
         granted: false,
         available: false,
-        error: 'Microphone unavailable'
+        error: 'Microphone unavailable',
       };
     }
   }
@@ -144,7 +146,7 @@ export class PreCallDeviceCheck {
         connected,
         quality,
         type,
-        error: connected ? undefined : 'No network connection'
+        error: connected ? undefined : 'No network connection',
       };
     } catch (error) {
       logger.error('Network check failed', { error });
@@ -152,7 +154,7 @@ export class PreCallDeviceCheck {
         connected: false,
         quality: 'poor',
         type: 'unknown',
-        error: 'Network check failed'
+        error: 'Network check failed',
       };
     }
   }
@@ -160,7 +162,9 @@ export class PreCallDeviceCheck {
   /**
    * Check device compatibility for calling
    */
-  private static async checkDeviceCompatibility(callType: 'voice' | 'video'): Promise<DeviceCheckResult['device']> {
+  private static async checkDeviceCompatibility(
+    callType: 'voice' | 'video',
+  ): Promise<DeviceCheckResult['device']> {
     const deviceType = Device.DeviceType[Device.deviceType ?? 0];
     const osVersion = Device.osVersion ?? '0';
 
@@ -184,7 +188,9 @@ export class PreCallDeviceCheck {
     return {
       isSupported,
       minVersionSupported,
-      error: isSupported ? undefined : `Device OS version too old (min: iOS ${minIOS}, Android ${minAndroid})`
+      error: isSupported
+        ? undefined
+        : `Device OS version too old (min: iOS ${minIOS}, Android ${minAndroid})`,
     };
   }
 }
