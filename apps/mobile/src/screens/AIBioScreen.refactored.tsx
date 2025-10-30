@@ -81,7 +81,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
           <Ionicons
             name="arrow-back"
             size={24}
-            color={colors.onSurface
+            color={colors.onSurface}
           />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Pet Bio</Text>
