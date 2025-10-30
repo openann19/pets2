@@ -88,7 +88,7 @@ export default function Footer({
       // Animated style cast to any to satisfy RN/Reanimated type unions
       style={StyleSheet.flatten([
         styles.container,
-        { backgroundColor: colors.onPrimary },
+        { backgroundColor: colors.primary },
         style,
         animatedStyle as any,
       ])}
@@ -208,7 +208,7 @@ export default function Footer({
     <Animated.View
       style={StyleSheet.flatten([
         styles.minimalContainer,
-        { backgroundColor: colors.onPrimary },
+        { backgroundColor: colors.primary },
         style,
         animatedStyle as any,
       ])}

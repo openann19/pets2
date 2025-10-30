@@ -3,7 +3,7 @@
  * Animated error indicator
  */
 
-import React from 'react';
+// React import not required with React 17+ JSX transform
 import { LottieAnimation } from './LottieAnimation';
 
 interface ErrorAnimationProps {
@@ -120,7 +120,7 @@ export function ErrorAnimation({ size = 140, onFinish, style }: ErrorAnimationPr
       autoPlay={true}
       loop={false}
       speed={1.5}
-      onAnimationFinish={onFinish}
+      {...(onFinish ? { onAnimationFinish: onFinish } : {})}
       style={style}
     />
   );

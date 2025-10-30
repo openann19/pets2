@@ -7,8 +7,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
 import * as Haptics from 'expo-haptics';
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, Dimensions } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { matchesAPI } from '../../services/api';
@@ -17,7 +17,7 @@ import { AdvancedCard, CardConfigs } from './AdvancedCard';
 import { AdvancedHeader, HeaderConfigs } from './AdvancedHeader';
 import { AdvancedButton } from './AdvancedInteractionSystem';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface TestResult {
   testName: string;
@@ -372,7 +372,7 @@ export function AdvancedInteractionTest() {
         {/* Test Results */}
         <View style={styles.resultsSection}>
           <Text style={styles.sectionTitle}>Test Results</Text>
-          {testResults.map((test, index) => (
+          {testResults.map((test, _index) => (
             <AdvancedCard
               key={test.testName}
               {...CardConfigs.minimal({

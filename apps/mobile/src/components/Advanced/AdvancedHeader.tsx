@@ -445,17 +445,17 @@ export const HeaderConfigs = {
     variant: 'glass' as HeaderVariant,
     showBackButton: true,
     blurIntensity: 20,
-    textColor: Theme.colors.neutral[0],
     ...props,
+    textColor: (Theme.colors.neutral[0] ?? '#ffffff'),
   }),
 
   // Gradient header
   gradient: (props: Partial<AdvancedHeaderProps>) => ({
     variant: 'gradient' as HeaderVariant,
     showBackButton: true,
-    gradientColors: [Theme.colors.primary[500], Theme.colors.primary[600]],
-    textColor: Theme.colors.neutral[0],
+    gradientColors: [Theme.colors.primary[500] ?? '#8b5cf6', Theme.colors.primary[600] ?? '#7c3aed'],
     ...props,
+    textColor: (Theme.colors.neutral[0] ?? '#ffffff'),
   }),
 
   // Premium header
@@ -470,8 +470,8 @@ export const HeaderConfigs = {
   minimal: (props: Partial<AdvancedHeaderProps>) => ({
     variant: 'minimal' as HeaderVariant,
     showBackButton: true,
-    textColor: Theme.colors.neutral[500],
     ...props,
+    textColor: (Theme.colors.neutral[500] ?? '#64748b'),
   }),
 
   // Floating header
