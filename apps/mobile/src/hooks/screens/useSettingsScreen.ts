@@ -156,9 +156,9 @@ interface UseSettingsScreenReturn {
 const SETTINGS_CACHE_KEY = 'settings_screen_cache';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-// Validation functions
-const validateAgeRange = (ageRange: { min: number; max: number }): boolean => {
-  return ageRange.min >= 0 && ageRange.max >= ageRange.min && ageRange.max <= 100;
+// Error type guard
+const isErrorWithMessage = (error: unknown): error is { message: string } => {
+  return typeof error === 'object' && error !== null && 'message' in error && typeof (error as any).message === 'string';
 };
 
 const validateNotificationSettings = (settings: Partial<SettingsData['notifications']['push']>): boolean => {
@@ -174,7 +174,7 @@ const validateNotificationSettings = (settings: Partial<SettingsData['notificati
   return Object.keys(settings).every(key => validKeys.includes(key));
 };
 
-const validatePrivacySettings = (settings: any): boolean => {
+const validatePrivacySettings = (settings: Partial<SettingsData['privacy']>): boolean => {
   // dataSharing is optional - only validate if provided
   if (settings.dataSharing !== undefined) {
     if (settings.dataSharing === null) return false;
@@ -307,8 +307,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
       return response.data?.success ?? true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message :
-        (typeof err === 'object' && err && 'message' in err) ? (err as { message: string }).message :
-        'Failed to update privacy settings';
+        (isErrorWithMessage(err) ? err.message : 'Failed to update privacy settings');
       setError(errorMessage);
       logger.error('Privacy settings update error:', { error: err });
       return false;
@@ -356,8 +355,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
       return response.data?.success ?? true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message :
-        (typeof err === 'object' && err && 'message' in err) ? (err as { message: string }).message :
-        'Failed to update push notifications';
+        (isErrorWithMessage(err) ? err.message : 'Failed to update push notifications');
       setError(errorMessage);
       logger.error('Push notifications update error:', { error: err });
       return false;
@@ -392,8 +390,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
       return response.data?.success ?? true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message :
-        (typeof err === 'object' && err && 'message' in err) ? (err as { message: string }).message :
-        'Failed to update email notifications';
+        (isErrorWithMessage(err) ? err.message : 'Failed to update email notifications');
       setError(errorMessage);
       logger.error('Email notifications update error:', { error: err });
       return false;
@@ -439,8 +436,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
       return response.data?.success ?? true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message :
-        (typeof err === 'object' && err && 'message' in err) ? (err as { message: string }).message :
-        'Failed to update preferences';
+        (isErrorWithMessage(err) ? err.message : 'Failed to update preferences');
       setError(errorMessage);
       logger.error('Preferences update error:', { error: err });
       return false;
@@ -470,7 +466,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
     }
   }, []);
 
-  const exportUserData = useCallback(async (): Promise<any> => {
+  const exportUserData = useCallback(async (): Promise<unknown> => {
     try {
       setIsSaving(true);
       setError(null);
@@ -583,7 +579,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
     return settings?.preferences.theme ?? 'light';
   }, [settings, colorScheme]);
 
-  const trackSettingsInteraction = useCallback((element: string, metadata: Record<string, any>) => {
+  const trackSettingsInteraction = useCallback((element: string, metadata: Record<string, unknown>) => {
     // Derive action from element name
     let action = 'click';
     if (element.includes('_toggle')) {
@@ -597,7 +593,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
     }, authUser?.id);
   }, [authUser?.id]);
 
-  const trackSettingsChange = useCallback((category: string, changes: Record<string, any>) => {
+  const trackSettingsChange = useCallback((category: string, changes: Record<string, unknown>) => {
     analyticsService.trackEvent('settings_changed', {
       category,
       changes,

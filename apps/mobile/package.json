@@ -37,7 +37,7 @@
     "clean": "rm -rf dist node_modules/.cache .expo",
     "clean:all": "rm -rf dist node_modules/.cache .expo node_modules",
     "reset": "npx expo install --fix && npm run clean",
-    "lint": "eslint src",
+    "lint": "eslint src --max-warnings 200",
     "lint:check": "eslint src --max-warnings 0",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",

@@ -3,17 +3,26 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import type { StateStorage } from 'zustand/middleware';
 
+// Type-safe interface for SecureStore
+interface TypedSecureStore {
+  getItemAsync(key: string): Promise<string | null>;
+  setItemAsync(key: string, value: string): Promise<void>;
+  deleteItemAsync(key: string): Promise<void>;
+}
+
+const typedSecureStore = SecureStore as unknown as TypedSecureStore;
+
 // Simple typed wrapper functions
 export async function getString(key: string): Promise<string | null> {
-  return SecureStore.getItemAsync(key);
+  return typedSecureStore.getItemAsync(key);
 }
 
 export async function setString(key: string, value: string): Promise<void> {
-  await SecureStore.setItemAsync(key, value);
+  await typedSecureStore.setItemAsync(key, value);
 }
 
 export async function remove(key: string): Promise<void> {
-  await SecureStore.deleteItemAsync(key);
+  await typedSecureStore.deleteItemAsync(key);
 }
 
 /**

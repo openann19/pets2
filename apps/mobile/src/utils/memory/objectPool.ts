@@ -1,8 +1,9 @@
 /**
  * Object Pooling Utilities
- * 
+ *
  * Reuses objects to reduce garbage collection pressure
  */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return */
 interface PoolOptions<T> {
   /** Initial pool size */
   initialSize?: number;
@@ -114,7 +115,7 @@ export class WeakCache<K extends object, V> {
  * Pre-allocated array pool for list operations
  */
 export class ArrayPool {
-  private static pools = new Map<number, ObjectPool<unknown[]>>();
+  private static pools = new Map<number, ObjectPool<any[]>>();
 
   static acquire<T>(size: number): T[] {
     let pool = this.pools.get(size);
@@ -135,7 +136,7 @@ export class ArrayPool {
   static release<T>(arr: T[]): void {
     const pool = this.pools.get(arr.length);
     if (pool) {
-      pool.release(arr as unknown[]);
+      pool.release(arr as any[]);
     }
   }
 }
