@@ -56,18 +56,22 @@ export const useErrorHandler = () => {
       } else if (Array.isArray(error)) {
         // Validation errors array
         const firstError = error[0];
-        if (firstError && typeof firstError === 'object' && 'message' in firstError) {
+        if (firstError && typeof firstError === 'object' && 'message' in firstError && typeof firstError.message === 'string') {
           errorMessage = firstError.message;
         }
         errorDetails['validationErrors'] = error;
       } else if (error && typeof error === 'object') {
         // Network error
-        const networkError = error;
-        errorMessage = networkError.message || fallbackMessage;
+        const networkError = error as NetworkError;
+        if ('message' in networkError && typeof networkError.message === 'string') {
+          errorMessage = networkError.message || fallbackMessage;
+        }
 
-        if (networkError.status) {
+        if ('status' in networkError && typeof networkError.status === 'number') {
           errorDetails['status'] = networkError.status;
-          errorDetails['code'] = networkError.code;
+          if ('code' in networkError && typeof networkError.code === 'string') {
+            errorDetails['code'] = networkError.code;
+          }
 
           // Customize message based on status code
           switch (networkError.status) {

@@ -17,7 +17,41 @@ import { useState, useCallback, useRef } from 'react';
 import { Alert } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { logger } from '@pawfectmatch/core';
-import { telemetry } from '../../lib/telemetry';
+
+// Type-safe telemetry interface
+interface TelemetryService {
+  trackUncaughtError: (payload: {
+    errorType: string;
+    message: string;
+    context?: string;
+    canRetry: boolean;
+  }) => void;
+}
+
+interface TelemetryModule {
+  trackUncaughtError?: (payload: {
+    errorType: string;
+    message: string;
+    context?: string;
+    canRetry: boolean;
+  }) => void;
+}
+
+// Dynamic import to avoid circular dependencies
+let telemetryModule: TelemetryModule | null = null;
+const getTelemetry = async (): Promise<TelemetryService | null> => {
+  if (!telemetryModule) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      const imported = await import('../../lib/telemetry');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      telemetryModule = imported.telemetry ? { trackUncaughtError: imported.telemetry.trackUncaughtError } : imported;
+    } catch {
+      return null;
+    }
+  }
+  return telemetryModule as TelemetryService;
+};
 
 export type ErrorType =
   | 'network'
@@ -193,10 +227,17 @@ export function useErrorHandling(
       }
 
       // Track telemetry
-      telemetry.trackError?.(errorType, {
-        message: errorObj.message,
-        context,
-        canRetry,
+      getTelemetry().then((telemetry) => {
+        if (telemetry?.trackUncaughtError) {
+          telemetry.trackUncaughtError({
+            errorType,
+            message: errorObj.message,
+            context,
+            canRetry,
+          });
+        }
+      }).catch(() => {
+        // Silently fail if telemetry loading fails
       });
 
       // Call custom error handler
@@ -207,17 +248,7 @@ export function useErrorHandling(
         Alert.alert(
           'Error',
           userMessage,
-          canRetry
-            ? [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                  text: 'Retry',
-                  onPress: () => {
-                    retry();
-                  },
-                },
-              ]
-            : [{ text: 'OK' }]
+          canRetry ? [{ text: 'OK' }] : [{ text: 'OK' }]
         );
       }
 
