@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1761907941666" clover="3.2.0">
+  <project timestamp="1761907941666" name="All files">
+    <metrics statements="11" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="2" elements="14" coveredelements="9" complexity="0" loc="11" ncloc="11" packages="1" files="1" classes="1"/>
+    <file name="test-utils.ts" path="/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/__tests__/test-utils.ts">
+      <metrics statements="11" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="2"/>
+      <line num="10" count="6" type="stmt"/>
+      <line num="13" count="6" type="stmt"/>
+      <line num="14" count="6" type="stmt"/>
+      <line num="16" count="6" type="stmt"/>
+      <line num="19" count="6" type="stmt"/>
+      <line num="22" count="0" type="stmt"/>
+      <line num="23" count="0" type="stmt"/>
+      <line num="25" count="0" type="stmt"/>
+      <line num="33" count="3" type="stmt"/>
+      <line num="34" count="3" type="stmt"/>
+      <line num="36" count="0" type="stmt"/>
+    </file>
+  </project>
+</coverage>

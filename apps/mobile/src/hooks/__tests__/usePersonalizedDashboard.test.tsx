@@ -4,12 +4,17 @@
  */
 
 import { renderHook, waitFor } from '@testing-library/react-native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { usePersonalizedDashboard } from '../usePersonalizedDashboard';
-import { personalizedDashboardService } from '../../services/personalizedDashboardService';
+import { personalizedDashboardService } from '@/services/personalizedDashboardService';
 import type { PersonalizedDashboardData } from '@pawfectmatch/core/types/phase1-contracts';
+import {
+  createTestQueryClient,
+  cleanupQueryClient,
+  createWrapperWithQueryClient,
+} from '@/test-utils/react-query-helpers';
 
-jest.mock('../../services/personalizedDashboardService');
+jest.mock('@/services/personalizedDashboardService');
 jest.mock('@pawfectmatch/core', () => ({
   ...jest.requireActual('@pawfectmatch/core'),
   featureFlags: {
@@ -17,23 +22,17 @@ jest.mock('@pawfectmatch/core', () => ({
   },
 }));
 
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-};
-
 describe('usePersonalizedDashboard', () => {
+  let queryClient: QueryClient;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    queryClient = createTestQueryClient();
+  });
+
+  afterEach(() => {
+    // Comprehensive cleanup: cancel queries, remove observers, clear cache
+    cleanupQueryClient(queryClient);
   });
 
   it('should fetch dashboard data successfully', async () => {
@@ -59,8 +58,9 @@ describe('usePersonalizedDashboard', () => {
 
     (personalizedDashboardService.getDashboard as jest.Mock).mockResolvedValue(mockDashboardData);
 
+    const wrapper = createWrapperWithQueryClient(queryClient);
     const { result } = renderHook(() => usePersonalizedDashboard(), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     expect(result.current.isLoading).toBe(true);
@@ -78,8 +78,9 @@ describe('usePersonalizedDashboard', () => {
     const error = new Error('Failed to load dashboard');
     (personalizedDashboardService.getDashboard as jest.Mock).mockRejectedValue(error);
 
+    const wrapper = createWrapperWithQueryClient(queryClient);
     const { result } = renderHook(() => usePersonalizedDashboard(), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     await waitFor(() => {
@@ -94,8 +95,9 @@ describe('usePersonalizedDashboard', () => {
     const { featureFlags } = require('@pawfectmatch/core');
     featureFlags.isEnabled.mockReturnValue(false);
 
+    const wrapper = createWrapperWithQueryClient(queryClient);
     const { result } = renderHook(() => usePersonalizedDashboard(), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     expect(result.current.isEnabled).toBe(false);
@@ -117,8 +119,9 @@ describe('usePersonalizedDashboard', () => {
 
     (personalizedDashboardService.getDashboard as jest.Mock).mockResolvedValue(mockDashboardData);
 
+    const wrapper = createWrapperWithQueryClient(queryClient);
     const { result } = renderHook(() => usePersonalizedDashboard(), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     await waitFor(() => {

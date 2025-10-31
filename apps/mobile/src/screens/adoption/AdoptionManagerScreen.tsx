@@ -9,8 +9,8 @@ import { useMemo } from 'react';
 import { RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import type { AppTheme } from '@mobile/theme';
-import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
 import {
   EliteButton,
   EliteCard,

@@ -6,12 +6,12 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { useAuthStore } from '@/src/lib/auth-store';
-import { ScreenShell } from '@/src/components/layout/ScreenShell';
-import { EmptyStates } from '@/src/components/common/EmptyStates';
-import { useHomeScreen } from '@/src/hooks/screens/useHomeScreen';
-import { useNetworkStatus } from '@/src/hooks/useNetworkStatus';
-import { useErrorHandling } from '@/src/hooks/useErrorHandling';
+import { useAuthStore } from '@/lib/auth-store';
+import { ScreenShell } from '@/components/layout/ScreenShell';
+import { EmptyStates } from '@/components/common/EmptyStates';
+import { useHomeScreen } from '@/hooks/screens/useHomeScreen';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useErrorHandling } from '@/hooks/useErrorHandling';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import Link from 'next/link';

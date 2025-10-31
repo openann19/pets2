@@ -367,7 +367,7 @@ describe('usePhotoManager', () => {
     expect(photo).toHaveProperty('isPrimary');
   });
 
-  describe.skip('Multipart Upload Functionality', () => {
+  describe('Multipart Upload Functionality', () => {
     it('should automatically upload photos when picked', async () => {
       (ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock).mockResolvedValue({
         status: 'granted',

@@ -23,7 +23,7 @@ import { springs, durations, motionEasing } from '@/foundation/motion';
 import { GlobalStyles, BorderRadius, Shadows } from "../../../styles/GlobalStyles";
 import { getPremiumGradients } from "../constants/gradients";
 import { getPremiumShadows } from "../constants/shadows";
-import { useTheme } from "@mobile/theme";
+import { useTheme } from '@/theme';
 
 /**
  * EliteCard Component

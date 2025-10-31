@@ -14,7 +14,16 @@ import { BouncePressable } from '../../micro';
 import type { AnimatedStyle } from 'react-native-reanimated';
 import type { GestureType } from 'react-native-gesture-handler';
 
-const { width, height } = Dimensions.get('window');
+// Lazy load dimensions to support test mocking
+const getDimensions = () => {
+  try {
+    const dims = Dimensions.get('window');
+    return { width: dims?.width ?? 375, height: dims?.height ?? 812 };
+  } catch {
+    return { width: 375, height: 812 };
+  }
+};
+const { width, height } = getDimensions();
 const PREVIEW_HEIGHT = height * 0.5;
 
 interface PhotoEditorPreviewProps {

@@ -3,8 +3,8 @@ import { StyleSheet, View } from 'react-native';
 
 import { EliteButtonPresets, Body, Heading2 } from '@mobile/components';
 import { ShimmerPlaceholder } from '@mobile/components/ShimmerPlaceholder';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 type MapEmptyStateProps = {
   onAdjustFilters: () => void;

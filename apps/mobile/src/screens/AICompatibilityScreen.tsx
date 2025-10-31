@@ -18,7 +18,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import type { RootStackParamList } from '../navigation/types';
 import { useAICompatibilityScreen } from '../hooks/screens/useAICompatibilityScreen';
 import { PetSelectionSection } from './ai/compatibility/PetSelectionSection';

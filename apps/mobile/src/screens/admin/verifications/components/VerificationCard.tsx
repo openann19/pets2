@@ -7,8 +7,8 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { Verification } from '../types';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({

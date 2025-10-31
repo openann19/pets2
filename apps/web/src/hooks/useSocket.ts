@@ -6,13 +6,19 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { createSocketService, getSocketService } from '@/services/socket';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { SocketEventHandlers, SocketError, SocketMessageData, SocketMatchData, SocketUserStatusData, SocketNotificationData, SocketCallData, SocketTypingData, MessageAttachment } from '@/types';
-export const useSocket = (options = {}, eventHandlers = {}) => {
+
+interface UseSocketOptions {
+    autoConnect?: boolean;
+    reconnectOnAuth?: boolean;
+}
+
+export const useSocket = (options: UseSocketOptions = {}, eventHandlers: Partial<SocketEventHandlers> = {}) => {
     const { user, isAuthenticated } = useAuth();
     const [isConnected, setIsConnected] = useState(false);
-    const [connectionError, setConnectionError] = useState(null);
-    const socketRef = useRef(null);
+    const [connectionError, setConnectionError] = useState<string | null>(null);
+    const socketRef = useRef<ReturnType<typeof createSocketService> | null>(null);
     const handlersRef = useRef(eventHandlers);
-    const { autoConnect = true, reconnectOnAuth = true, } = options;
+    const { autoConnect = true, reconnectOnAuth = true } = options;
     // Update handlers when they change
     useEffect(() => {
         handlersRef.current = eventHandlers;

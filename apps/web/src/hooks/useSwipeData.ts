@@ -10,6 +10,16 @@ import { logger } from '@pawfectmatch/core';
 import { useAuthStore } from '@/lib/auth-store';
 import apiClient from '@/lib/api-client';
 
+interface Pet {
+  id: string;
+  name: string;
+  breed: string;
+  age: number;
+  photos: string[];
+  description?: string;
+  distance?: number;
+}
+
 export interface SwipeFilters {
   species: string;
   breed: string;
@@ -19,14 +29,14 @@ export interface SwipeFilters {
 }
 
 export interface SwipeData {
-  pets: any[];
+  pets: Pet[];
   isLoading: boolean;
   error: string | null;
   currentIndex: number;
   filters: SwipeFilters;
   showFilters: boolean;
   showMatchModal: boolean;
-  matchedPet: any | null;
+  matchedPet: Pet | null;
 }
 
 export interface SwipeActions {
@@ -36,7 +46,7 @@ export interface SwipeActions {
   setCurrentIndex: (index: number) => void;
   setShowFilters: (show: boolean) => void;
   setShowMatchModal: (show: boolean) => void;
-  setMatchedPet: (pet: any | null) => void;
+  setMatchedPet: (pet: Pet | null) => void;
   setFilters: (filters: SwipeFilters) => void;
   refreshPets: () => void;
 }
@@ -45,13 +55,13 @@ export function useSwipeData(): SwipeData & SwipeActions {
   const { user } = useAuthStore();
 
   // State
-  const [pets, setPets] = useState<any[]>([]);
+  const [pets, setPets] = useState<Pet[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
   const [showMatchModal, setShowMatchModal] = useState(false);
-  const [matchedPet, setMatchedPet] = useState<any | null>(null);
+  const [matchedPet, setMatchedPet] = useState<Pet | null>(null);
 
   // Default filters
   const filters: SwipeFilters = {

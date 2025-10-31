@@ -5,8 +5,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 export function EmptyState(): React.JSX.Element {
   const theme = useTheme();

@@ -5,7 +5,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { _adminAPI } from '../../../../services/api';
 import { errorHandler } from '../../../../services/errorHandler';
 import { logger } from '../../../../services/logger';

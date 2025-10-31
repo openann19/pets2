@@ -14,7 +14,7 @@ import {
   type ListRenderItem,
 } from 'react-native';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import type { MobileMessage, MessageWithReplies } from '../../types/message';
 import { MessageItem } from './MessageItem';
 import { MessageWithEnhancements } from './MessageWithEnhancements';

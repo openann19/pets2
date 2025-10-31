@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { HeaderAction as ActionType } from './actions';
 
 import type { HeaderContext } from './actions';

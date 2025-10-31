@@ -20,7 +20,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { getExtendedColors } from '../../theme/adapters';
 import type { AIScreenProps } from '../../navigation/types';
 import { logger } from '../../services/logger';

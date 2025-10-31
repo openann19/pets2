@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { smartChatSuggestionsService } from '../../services/smartChatSuggestionsService';
 import type { SmartChatSuggestion } from '@pawfectmatch/core/types/pet-chat';

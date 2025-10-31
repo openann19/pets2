@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 

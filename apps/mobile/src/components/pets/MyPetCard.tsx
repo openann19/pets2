@@ -8,8 +8,8 @@ import type { Pet } from '@pawfectmatch/core';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { DoubleTapLikePlus } from '../Gestures/DoubleTapLikePlus';
 import { PinchZoomPro } from '../Gestures/PinchZoomPro';
 

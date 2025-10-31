@@ -1,4 +1,8 @@
-const path = require('path');
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const coverageGlobs = [
   'apps/web/src/**/*.{ts,tsx,js,jsx}',
@@ -9,7 +13,7 @@ const coverageGlobs = [
   'server/src/**/*.{ts,tsx,js,jsx}'
 ];
 
-module.exports = {
+export default {
   projects: [
     '<rootDir>/apps/web',
     '<rootDir>/apps/mobile',
@@ -27,14 +31,14 @@ module.exports = {
     '!**/test-utils/**',
     '!**/jest.setup.*'
   ]),
-  coverageDirectory: path.join(__dirname, 'coverage/global'),
+  coverageDirectory: join(__dirname, 'coverage/global'),
   coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
   coverageThreshold: {
     global: {
-      branches: 85,
-      functions: 85,
-      lines: 85,
-      statements: 85
+      branches: 90,
+      functions: 90,
+      lines: 90,
+      statements: 90
     }
   },
   testPathIgnorePatterns: [

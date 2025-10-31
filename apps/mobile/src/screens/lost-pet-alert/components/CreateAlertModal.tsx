@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { View, StyleSheet, Text, ScrollView, TextInput, TouchableOpacity, Modal } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { PetSelector } from './PetSelector';
 import type { AlertFormData } from '../types';
 

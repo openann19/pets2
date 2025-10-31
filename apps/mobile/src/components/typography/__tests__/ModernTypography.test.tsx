@@ -38,7 +38,7 @@ import ModernText, {
   type TextVariant,
   type TextWeight,
 } from '../ModernTypography';
-import { useTheme } from '@/theme';
+// useTheme will be mocked below
 
 // Mock react-native to use actual Text component but keep other mocks
 jest.mock('react-native', () => {
@@ -65,10 +65,37 @@ jest.mock('react-native', () => {
   };
 });
 
-// Mock theme hook
-jest.mock('@/theme', () => ({
-  useTheme: jest.fn(),
-}));
+// Mock theme hook - ensure it returns the mock theme  
+jest.mock('@/theme', () => {
+  const actual = jest.requireActual('@/theme');
+  return {
+    ...actual,
+    useTheme: jest.fn(() => ({
+      scheme: 'light' as const,
+      isDark: false,
+      colors: {
+        bg: '#FFFFFF',
+        surface: '#F5F5F5',
+        onSurface: '#000000',
+        primary: '#007AFF',
+        success: '#34C759',
+        danger: '#FF3B30',
+        warning: '#FF9500',
+        info: '#5AC8FA',
+      },
+      spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, '2xl': 48 },
+      radii: { none: 0, xs: 2, sm: 4, md: 8, lg: 12, xl: 16 },
+      typography: {
+        body: { size: 16, lineHeight: 24, weight: '400' as const },
+        h1: { size: 32, lineHeight: 40, weight: '700' as const },
+        h2: { size: 24, lineHeight: 32, weight: '600' as const },
+      },
+      palette: { gradients: {} as any, neutral: {} as any, brand: {} as any },
+      shadows: {} as any,
+      motion: {} as any,
+    })),
+  };
+});
 
 // Mock animation hook
 jest.mock('../../../hooks/useUnifiedAnimations', () => ({
@@ -163,6 +190,8 @@ const mockTheme = {
 };
 
 describe('ModernTypography', () => {
+  const { useTheme } = require('@/theme');
+  
   beforeEach(() => {
     (useTheme as jest.Mock).mockReturnValue(mockTheme);
   });

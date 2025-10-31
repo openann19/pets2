@@ -39,46 +39,38 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-    
     // === Smart Relaxations (Practical Strictness) ===
     // Allow property access from index signatures (process.env is common)
     "noPropertyAccessFromIndexSignature": false,
-    
     // Keep indexed access strict but allow bracket notation
     "noUncheckedIndexedAccess": true,
-    
     // Exact optional properties - keep strict but allow undefined explicitly
     "exactOptionalPropertyTypes": true,
-    
     // === Code Quality (Warnings, not errors) ===
     // Unused variables/parameters - useful but not blocking
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    
     // === Type Safety Enhancements ===
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    
     // === Module System ===
     "verbatimModuleSyntax": true,
-    
     // === Additional Safety ===
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    
     // === Skip Library Checks (Performance) ===
     "skipLibCheck": true,
-    
     // === Path Resolution ===
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true
   },
   "include": [
+    "app/**/*.ts",
+    "app/**/*.tsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "app/**/*.ts",
-    "app/**/*.tsx"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

@@ -11,7 +11,16 @@ import Animated, {
 } from 'react-native-reanimated';
 import { springs, fromVelocity } from '@/foundation/motion';
 
-const { width: W, height: H } = Dimensions.get('window');
+// Lazy load dimensions to support test mocking
+const getDimensions = () => {
+  try {
+    const dims = Dimensions.get('window');
+    return { width: dims?.width ?? 375, height: dims?.height ?? 812 };
+  } catch {
+    return { width: 375, height: 812 };
+  }
+};
+const { width: W, height: H } = getDimensions();
 
 type Opts = {
   onSwipeRight?: () => void;

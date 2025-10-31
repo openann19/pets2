@@ -7,7 +7,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ScreenShell } from '@/src/components/layout/ScreenShell';
+import { ScreenShell } from '@/components/layout/ScreenShell';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeftIcon, MapPinIcon, FunnelIcon, PlusIcon } from '@heroicons/react/24/outline';
 

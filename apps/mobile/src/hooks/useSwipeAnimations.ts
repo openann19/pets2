@@ -109,7 +109,7 @@ export const useSwipeAnimations = (params?: UseSwipeAnimationsParams): UseSwipeA
     onAnimationComplete,
   } = params ?? {};
 
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReduceMotion();
 
   // Initialize position animation
   const [position] = useState(() => new Animated.ValueXY());

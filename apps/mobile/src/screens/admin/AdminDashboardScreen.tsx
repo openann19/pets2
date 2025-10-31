@@ -23,8 +23,8 @@ import {
 } from './dashboard/components';
 import { useAdminDashboard } from './dashboard/hooks';
 import type { AdminScreenProps } from '../../navigation/types';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 function makeStyles(theme: AppTheme) {
   return StyleSheet.create({

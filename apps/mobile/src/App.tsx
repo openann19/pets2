@@ -5,7 +5,7 @@ import React from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { ThemeProvider } from '@mobile/theme';
+import { ThemeProvider } from '@/theme';
 import { queryClient } from './config/queryClient';
 import i18n from './i18n';
 import AdminNavigator from './navigation/AdminNavigator';
@@ -100,7 +100,7 @@ import MigrationExampleScreen from './screens/MigrationExampleScreen';
 import NewComponentsTestScreen from './screens/NewComponentsTestScreen';
 import PremiumDemoScreen from './screens/PremiumDemoScreen';
 import UIDemoScreen from './screens/UIDemoScreen';
-// import MotionLabScreen from './labs/motion/MotionLabScreen';
+import MotionLabScreen from './labs/motion/MotionLabScreen';
 
 // Live Streaming Screens
 import GoLiveScreen from './screens/GoLiveScreen';
@@ -239,7 +239,7 @@ const AppNavigator = (): React.ReactElement => (
       component={PremiumCancelScreen}
     />
     <Stack.Screen
-      name="SubscriptionManager"
+      name="ManageSubscription"
       component={ManageSubscriptionScreen}
     />
     <Stack.Screen

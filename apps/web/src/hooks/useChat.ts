@@ -4,6 +4,13 @@ import { matchesAPI } from '../services/api';
 import type { Message, Match, User } from '../types';
 import { logger } from '../services/logger';
 
+interface Pet {
+    id: string;
+    name: string;
+    breed: string;
+    photos: string[];
+}
+
 interface UseChatReturn {
   match: Match | null;
   messages: Message[];
@@ -16,8 +23,8 @@ interface UseChatReturn {
   loadMoreMessages: () => Promise<void>;
   hasMoreMessages: boolean;
   otherUser: User | null;
-  otherPet: unknown;
-  currentUserPet: unknown;
+  otherPet: Pet | null;
+  currentUserPet: Pet | null;
   typingUsers: string[];
 }
 

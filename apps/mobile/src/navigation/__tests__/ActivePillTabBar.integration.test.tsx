@@ -5,7 +5,8 @@
  * @jest-environment jsdom
  */
 import React from 'react';
-import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
+import { fireEvent, waitFor, act } from '@testing-library/react-native';
+import { render } from '@/test-utils';
 import ActivePillTabBar from '../ActivePillTabBar';
 import { useTabDoublePress } from '../../hooks/navigation/useTabDoublePress';
 import * as Haptics from 'expo-haptics';
@@ -13,8 +14,24 @@ import * as Haptics from 'expo-haptics';
 // Mock all dependencies
 jest.mock('expo-haptics');
 jest.mock('expo-blur');
-jest.mock('react-native-safe-area-context');
+jest.mock('react-native-safe-area-context', () => ({
+  useSafeAreaInsets: jest.fn(() => ({
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  })),
+}));
 jest.mock('@expo/vector-icons');
+jest.mock('../../hooks/useReducedMotion', () => ({
+  useReduceMotion: jest.fn(() => false),
+}));
+jest.mock('../../hooks/navigation/useTabDoublePress', () => ({
+  useTabDoublePress: jest.fn(() => ({
+    onTabPress: jest.fn(),
+    onTabLongPress: jest.fn(),
+  })),
+}));
 
 // Mock React Navigation
 const mockNavigation = {

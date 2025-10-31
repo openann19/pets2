@@ -10,7 +10,7 @@ import { AppInfoCard } from '../components/help/AppInfoCard';
 import { HelpContactCard } from '../components/help/HelpContactCard';
 import { HelpOptionCard } from '../components/help/HelpOptionCard';
 import { useHelpSupportData } from '../hooks/useHelpSupportData';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 interface HelpSupportScreenProps {
   navigation: {

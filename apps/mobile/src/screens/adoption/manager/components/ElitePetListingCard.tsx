@@ -6,8 +6,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { EliteButton, EliteCard } from '../../../components';
-import { GlobalStyles } from '../../../animation';
+import { EliteButton, EliteCard } from '@/components';
+import { GlobalStyles } from '@/animation';
 import type { PetListing } from '../../../../hooks/screens/useAdoptionManagerScreen';
 
 interface ElitePetListingCardProps {

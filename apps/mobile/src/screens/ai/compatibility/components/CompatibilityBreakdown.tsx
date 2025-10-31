@@ -6,7 +6,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import type { SemanticColors } from '@mobile/theme/contracts';
 import { useTranslation } from 'react-i18next';
 

@@ -2,378 +2,340 @@
  * Tests for useModerationTools hook
  *
  * Covers:
- * - Content moderation actions
- * - Report management
- * - User blocking/unblocking
- * - Moderation queue handling
- * - Admin privileges validation
+ * - Moderation tools initialization
+ * - Stats management
+ * - Navigation actions
+ * - Tool handling
  */
 
 import { renderHook, act } from '@testing-library/react-native';
+import { Alert } from 'react-native';
 import { useModerationTools } from '../useModerationTools';
 
+// Mock Alert
+jest.mock('react-native', () => ({
+  Alert: {
+    alert: jest.fn(),
+  },
+  Linking: {
+    openURL: jest.fn(),
+  },
+}));
+
+// The moderationAPI is already mocked in __mocks__/api.ts
+import { moderationAPI } from '../../../services/api';
+
+const mockModerationAPI = moderationAPI as jest.Mocked<typeof moderationAPI>;
+
 describe('useModerationTools', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockModerationAPI.getStats.mockResolvedValue({
+      pendingReports: 5,
+      reviewedToday: 3,
+      totalModerated: 100,
+      activeWarnings: 2,
+    } as any);
+  });
+
   describe('Initialization', () => {
     it('should initialize with default state', () => {
       const { result } = renderHook(() => useModerationTools());
 
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.reports).toEqual([]);
-      expect(result.current.blockedUsers).toEqual([]);
-      expect(result.current.moderationStats).toEqual({
-        totalReports: 0,
-        pendingReports: 0,
-        resolvedReports: 0,
-        blockedUsers: 0,
-      });
+      expect(result.current.moderationStats).toBeDefined();
+      expect(result.current.moderationStats.pendingReports).toBeDefined();
+      expect(result.current.moderationStats.reviewedToday).toBeDefined();
+      expect(result.current.moderationStats.totalModerated).toBeDefined();
+      expect(result.current.isRefreshing).toBe(false);
+      expect(Array.isArray(result.current.moderationTools)).toBe(true);
+      expect(result.current.moderationTools.length).toBeGreaterThan(0);
     });
 
-    it('should check admin privileges', () => {
+    it('should have all required moderation tools', () => {
       const { result } = renderHook(() => useModerationTools());
 
-      expect(result.current.hasAdminPrivileges).toBeDefined();
-      expect(typeof result.current.hasAdminPrivileges).toBe('boolean');
+      const toolIds = result.current.moderationTools.map((tool) => tool.id);
+      expect(toolIds).toContain('reports');
+      expect(toolIds).toContain('content');
+      expect(toolIds).toContain('messages');
+      expect(toolIds).toContain('users');
+      expect(toolIds).toContain('analytics');
+      expect(toolIds).toContain('settings');
     });
 
-    it('should load initial moderation data', async () => {
+    it('should provide navigation actions', () => {
       const { result } = renderHook(() => useModerationTools());
 
-      await act(async () => {
-        await result.current.loadModerationData();
-      });
-
-      expect(result.current.isLoading).toBe(false);
-    });
-  });
-
-  describe('Content Moderation', () => {
-    it('should approve content', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const contentId = 'content-123';
-
-      await act(async () => {
-        const success = await result.current.approveContent(contentId);
-        expect(success).toBe(true);
-      });
-
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    it('should reject content', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const contentId = 'content-456';
-      const reason = 'Inappropriate content';
-
-      await act(async () => {
-        const success = await result.current.rejectContent(contentId, reason);
-        expect(success).toBe(true);
-      });
-
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    it('should flag content for review', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const contentId = 'content-789';
-      const flags = ['spam', 'harassment'];
-
-      await act(async () => {
-        const success = await result.current.flagContent(contentId, flags);
-        expect(success).toBe(true);
-      });
-
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    it('should hide content', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const contentId = 'content-999';
-
-      await act(async () => {
-        const success = await result.current.hideContent(contentId);
-        expect(success).toBe(true);
-      });
-
-      expect(result.current.isLoading).toBe(false);
+      expect(typeof result.current.reviewReports).toBe('function');
+      expect(typeof result.current.moderateContent).toBe('function');
+      expect(typeof result.current.monitorMessages).toBe('function');
+      expect(typeof result.current.manageUsers).toBe('function');
+      expect(typeof result.current.viewAnalytics).toBe('function');
+      expect(typeof result.current.configureSettings).toBe('function');
+      expect(typeof result.current.refreshStats).toBe('function');
     });
   });
 
-  describe('Report Management', () => {
-    it('should fetch reports', async () => {
-      const { result } = renderHook(() => useModerationTools());
+  describe('Navigation Actions', () => {
+    it('should handle reviewReports action', () => {
+      const mockNavigate = jest.fn();
+      const { result } = renderHook(() =>
+        useModerationTools({
+          navigation: { navigate: mockNavigate } as any,
+        }),
+      );
 
-      await act(async () => {
-        await result.current.fetchReports();
+      act(() => {
+        result.current.reviewReports();
       });
 
-      expect(Array.isArray(result.current.reports)).toBe(true);
+      // Should either navigate or show alert if navigation not available
+      expect(mockNavigate).toHaveBeenCalled();
     });
 
-    it('should resolve reports', async () => {
-      const { result } = renderHook(() => useModerationTools());
+    it('should handle moderateContent action', () => {
+      const mockNavigate = jest.fn();
+      const { result } = renderHook(() =>
+        useModerationTools({
+          navigation: { navigate: mockNavigate } as any,
+        }),
+      );
 
-      const reportId = 'report-123';
-      const action = 'approved';
-      const notes = 'Content approved after review';
-
-      await act(async () => {
-        const success = await result.current.resolveReport(reportId, action, notes);
-        expect(success).toBe(true);
+      act(() => {
+        result.current.moderateContent();
       });
 
-      expect(result.current.isLoading).toBe(false);
+      expect(mockNavigate).toHaveBeenCalled();
     });
 
-    it('should dismiss reports', async () => {
-      const { result } = renderHook(() => useModerationTools());
+    it('should handle monitorMessages action', () => {
+      const mockNavigate = jest.fn();
+      const { result } = renderHook(() =>
+        useModerationTools({
+          navigation: { navigate: mockNavigate } as any,
+        }),
+      );
 
-      const reportId = 'report-456';
-
-      await act(async () => {
-        const success = await result.current.dismissReport(reportId);
-        expect(success).toBe(true);
+      act(() => {
+        result.current.monitorMessages();
       });
 
-      expect(result.current.isLoading).toBe(false);
+      expect(mockNavigate).toHaveBeenCalled();
     });
 
-    it('should filter reports by status', async () => {
-      const { result } = renderHook(() => useModerationTools());
+    it('should handle manageUsers action', () => {
+      const mockNavigate = jest.fn();
+      const { result } = renderHook(() =>
+        useModerationTools({
+          navigation: { navigate: mockNavigate } as any,
+        }),
+      );
 
-      await act(async () => {
-        await result.current.fetchReports({ status: 'pending' });
+      act(() => {
+        result.current.manageUsers();
       });
 
-      expect(result.current.reports.every((report) => report.status === 'pending')).toBe(true);
+      expect(mockNavigate).toHaveBeenCalled();
     });
 
-    it('should filter reports by type', async () => {
-      const { result } = renderHook(() => useModerationTools());
+    it('should handle viewAnalytics action', () => {
+      const mockNavigate = jest.fn();
+      const { result } = renderHook(() =>
+        useModerationTools({
+          navigation: { navigate: mockNavigate } as any,
+        }),
+      );
 
-      await act(async () => {
-        await result.current.fetchReports({ type: 'harassment' });
+      act(() => {
+        result.current.viewAnalytics();
       });
 
-      expect(result.current.reports.every((report) => report.type === 'harassment')).toBe(true);
+      expect(mockNavigate).toHaveBeenCalled();
+    });
+
+    it('should handle configureSettings action', () => {
+      const mockNavigate = jest.fn();
+      const { result } = renderHook(() =>
+        useModerationTools({
+          navigation: { navigate: mockNavigate } as any,
+        }),
+      );
+
+      act(() => {
+        result.current.configureSettings();
+      });
+
+      expect(mockNavigate).toHaveBeenCalled();
+    });
+
+    it('should show alert when navigation is not available', () => {
+      const { result } = renderHook(() => useModerationTools());
+
+      act(() => {
+        result.current.reviewReports();
+      });
+
+      expect(Alert.alert).toHaveBeenCalled();
     });
   });
 
-  describe('User Management', () => {
-    it('should block user', async () => {
+  describe('Stats Management', () => {
+    it('should refresh stats', async () => {
       const { result } = renderHook(() => useModerationTools());
 
-      const userId = 'user-123';
-      const reason = 'Violation of community guidelines';
-      const duration = 7; // days
+      expect(result.current.isRefreshing).toBe(false);
 
       await act(async () => {
-        const success = await result.current.blockUser(userId, reason, duration);
-        expect(success).toBe(true);
+        const refreshPromise = result.current.refreshStats();
+        expect(result.current.isRefreshing).toBe(true);
+        await refreshPromise;
       });
 
-      expect(result.current.blockedUsers).toContain(userId);
+      expect(result.current.isRefreshing).toBe(false);
+      expect(mockModerationAPI.getStats).toHaveBeenCalled();
     });
 
-    it('should unblock user', async () => {
-      const { result } = renderHook(() => useModerationTools());
+    it('should update stats after refresh', async () => {
+      const newStats = {
+        pendingReports: 10,
+        reviewedToday: 5,
+        totalModerated: 200,
+        activeWarnings: 4,
+      };
+      mockModerationAPI.getStats.mockResolvedValue(newStats as any);
 
-      const userId = 'user-456';
+      const { result } = renderHook(() => useModerationTools());
 
       await act(async () => {
-        const success = await result.current.unblockUser(userId);
-        expect(success).toBe(true);
+        await result.current.refreshStats();
       });
 
-      expect(result.current.blockedUsers).not.toContain(userId);
+      expect(result.current.moderationStats.pendingReports).toBe(newStats.pendingReports);
     });
 
-    it('should check if user is blocked', () => {
+    it('should handle stats refresh errors gracefully', async () => {
+      mockModerationAPI.getStats.mockRejectedValue(new Error('API Error'));
+
       const { result } = renderHook(() => useModerationTools());
-
-      const userId = 'user-789';
-
-      const isBlocked = result.current.isUserBlocked(userId);
-      expect(typeof isBlocked).toBe('boolean');
-    });
-
-    it('should get user block status', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const userId = 'user-999';
 
       await act(async () => {
-        const blockStatus = await result.current.getUserBlockStatus(userId);
-        expect(blockStatus).toHaveProperty('isBlocked');
-        expect(typeof blockStatus.isBlocked).toBe('boolean');
+        await result.current.refreshStats();
       });
+
+      expect(result.current.isRefreshing).toBe(false);
+    });
+  });
+
+  describe('Tool Handling', () => {
+    it('should handle moderation tool selection', () => {
+      const mockAction = jest.fn();
+      const { result } = renderHook(() => useModerationTools());
+
+      const tool = {
+        id: 'test-tool',
+        title: 'Test Tool',
+        description: 'Test description',
+        icon: 'test-icon',
+        color: '#000000',
+        action: mockAction,
+      };
+
+      act(() => {
+        result.current.handleModerationTool(tool);
+      });
+
+      expect(mockAction).toHaveBeenCalled();
+    });
+
+    it('should have moderation tools with correct structure', () => {
+      const { result } = renderHook(() => useModerationTools());
+
+      result.current.moderationTools.forEach((tool) => {
+        expect(tool).toHaveProperty('id');
+        expect(tool).toHaveProperty('title');
+        expect(tool).toHaveProperty('description');
+        expect(tool).toHaveProperty('icon');
+        expect(tool).toHaveProperty('color');
+        expect(tool).toHaveProperty('action');
+        expect(typeof tool.action).toBe('function');
+      });
+    });
+
+    it('should display badge for reports tool when there are pending reports', () => {
+      const { result } = renderHook(() => useModerationTools());
+
+      const reportsTool = result.current.moderationTools.find((tool) => tool.id === 'reports');
+      expect(reportsTool).toBeDefined();
+      expect(reportsTool?.badge).toBeDefined();
+      expect(reportsTool?.badge).toBe(result.current.moderationStats.pendingReports.toString());
     });
   });
 
   describe('Moderation Statistics', () => {
-    it('should fetch moderation statistics', async () => {
+    it('should have initial moderation stats', () => {
       const { result } = renderHook(() => useModerationTools());
 
-      await act(async () => {
-        await result.current.fetchModerationStats();
-      });
-
-      expect(result.current.moderationStats).toHaveProperty('totalReports');
       expect(result.current.moderationStats).toHaveProperty('pendingReports');
-      expect(result.current.moderationStats).toHaveProperty('resolvedReports');
-      expect(result.current.moderationStats).toHaveProperty('blockedUsers');
-    });
-
-    it('should update statistics after actions', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const initialStats = { ...result.current.moderationStats };
-
-      // Perform moderation action
-      await act(async () => {
-        await result.current.blockUser('user-test', 'Test block', 1);
-        await result.current.fetchModerationStats();
-      });
-
-      // Stats should be updated
-      expect(result.current.moderationStats.blockedUsers).toBeGreaterThanOrEqual(
-        initialStats.blockedUsers,
-      );
+      expect(result.current.moderationStats).toHaveProperty('reviewedToday');
+      expect(result.current.moderationStats).toHaveProperty('totalModerated');
+      expect(result.current.moderationStats).toHaveProperty('activeWarnings');
+      expect(typeof result.current.moderationStats.pendingReports).toBe('number');
+      expect(typeof result.current.moderationStats.reviewedToday).toBe('number');
+      expect(typeof result.current.moderationStats.totalModerated).toBe('number');
+      expect(typeof result.current.moderationStats.activeWarnings).toBe('number');
     });
   });
 
-  describe('Bulk Operations', () => {
-    it('should bulk approve content', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const contentIds = ['content-1', 'content-2', 'content-3'];
-
-      await act(async () => {
-        const results = await result.current.bulkApproveContent(contentIds);
-        expect(results).toHaveLength(contentIds.length);
-        expect(results.every((r) => r.success)).toBe(true);
-      });
-    });
-
-    it('should bulk reject content', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const contentIds = ['content-4', 'content-5'];
-      const reason = 'Bulk rejection';
-
-      await act(async () => {
-        const results = await result.current.bulkRejectContent(contentIds, reason);
-        expect(results).toHaveLength(contentIds.length);
-        expect(results.every((r) => r.success)).toBe(true);
-      });
-    });
-
-    it('should bulk resolve reports', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const reportIds = ['report-1', 'report-2'];
-      const action = 'rejected';
-
-      await act(async () => {
-        const results = await result.current.bulkResolveReports(reportIds, action);
-        expect(results).toHaveLength(reportIds.length);
-        expect(results.every((r) => r.success)).toBe(true);
-      });
-    });
-  });
 
   describe('Error Handling', () => {
-    it('should handle permission errors', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      // Simulate insufficient permissions
-      await act(async () => {
-        const success = await result.current.approveContent('content-123');
-        expect(success).toBe(false);
+    it('should handle navigation errors gracefully', () => {
+      const mockNavigate = jest.fn(() => {
+        throw new Error('Navigation error');
       });
 
-      expect(result.current.error).toBeDefined();
+      const { result } = renderHook(() =>
+        useModerationTools({
+          navigation: { navigate: mockNavigate } as any,
+        }),
+      );
+
+      act(() => {
+        expect(() => result.current.reviewReports()).not.toThrow();
+      });
+
+      expect(Alert.alert).toHaveBeenCalled();
     });
 
-    it('should handle network errors', async () => {
-      const { result } = renderHook(() => useModerationTools());
+    it('should handle stats refresh errors', async () => {
+      mockModerationAPI.getStats.mockRejectedValue(new Error('Network error'));
 
-      // Simulate network failure
-      await act(async () => {
-        const success = await result.current.fetchReports();
-        // Should handle network errors gracefully
-      });
-
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    it('should handle invalid content IDs', async () => {
       const { result } = renderHook(() => useModerationTools());
 
       await act(async () => {
-        const success = await result.current.approveContent('invalid-id');
-        expect(success).toBe(false);
+        await result.current.refreshStats();
       });
 
-      expect(result.current.error).toBeDefined();
-    });
-
-    it('should handle invalid user IDs', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      await act(async () => {
-        const success = await result.current.blockUser('invalid-user', 'Test', 1);
-        expect(success).toBe(false);
-      });
-
-      expect(result.current.error).toBeDefined();
+      expect(result.current.isRefreshing).toBe(false);
     });
   });
 
   describe('Loading States', () => {
-    it('should show loading during content approval', async () => {
+    it('should show refreshing during stats refresh', async () => {
       const { result } = renderHook(() => useModerationTools());
 
-      let wasLoading = false;
+      expect(result.current.isRefreshing).toBe(false);
 
       act(() => {
-        result.current.approveContent('content-123').then(() => {
-          wasLoading = result.current.isLoading;
-        });
+        result.current.refreshStats();
       });
 
-      expect(result.current.isLoading).toBe(true);
-      // Loading becomes false after completion
-    });
-
-    it('should show loading during report fetching', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      let wasLoading = false;
-
-      act(() => {
-        result.current.fetchReports().then(() => {
-          wasLoading = result.current.isLoading;
-        });
-      });
-
-      expect(result.current.isLoading).toBe(true);
-    });
-
-    it('should handle concurrent operations', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const operation1 = result.current.approveContent('content-1');
-      const operation2 = result.current.rejectContent('content-2', 'Test');
+      expect(result.current.isRefreshing).toBe(true);
 
       await act(async () => {
-        await Promise.all([operation1, operation2]);
+        await result.current.refreshStats();
       });
 
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isRefreshing).toBe(false);
     });
   });
 
@@ -381,94 +343,40 @@ describe('useModerationTools', () => {
     it('should not cause unnecessary re-renders', () => {
       const { result, rerender } = renderHook(() => useModerationTools());
       const initialState = {
-        isLoading: result.current.isLoading,
-        reports: result.current.reports,
-        blockedUsers: result.current.blockedUsers,
+        moderationStats: result.current.moderationStats,
+        moderationTools: result.current.moderationTools,
+        isRefreshing: result.current.isRefreshing,
       };
 
       rerender();
 
-      expect(result.current.isLoading).toBe(initialState.isLoading);
-      expect(result.current.reports).toBe(initialState.reports);
-      expect(result.current.blockedUsers).toBe(initialState.blockedUsers);
-    });
-
-    it('should cache moderation data', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      // First fetch
-      await act(async () => {
-        await result.current.fetchReports();
-      });
-
-      const firstFetch = result.current.reports;
-
-      // Second fetch (should use cache if enabled)
-      await act(async () => {
-        await result.current.fetchReports();
-      });
-
-      // Should be same reference if cached
-      expect(result.current.reports).toBe(firstFetch);
-    });
-
-    it('should debounce rapid actions', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const action1 = result.current.approveContent('content-1');
-      const action2 = result.current.approveContent('content-2');
-      const action3 = result.current.approveContent('content-3');
-
-      await act(async () => {
-        await Promise.all([action1, action2, action3]);
-      });
-
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isRefreshing).toBe(initialState.isRefreshing);
+      // Stats and tools might be new objects, but structure should be consistent
+      expect(result.current.moderationStats).toHaveProperty('pendingReports');
+      expect(result.current.moderationTools.length).toBe(initialState.moderationTools.length);
     });
   });
 
   describe('Edge Cases', () => {
-    it('should handle empty content IDs', async () => {
+    it('should work without navigation provided', () => {
       const { result } = renderHook(() => useModerationTools());
 
-      await act(async () => {
-        const success = await result.current.approveContent('');
-        expect(success).toBe(false);
+      act(() => {
+        result.current.reviewReports();
       });
 
-      expect(result.current.error).toBeDefined();
+      // Should show alert instead of navigating
+      expect(Alert.alert).toHaveBeenCalled();
     });
 
-    it('should handle empty report IDs', async () => {
+    it('should handle tools with missing optional properties', () => {
       const { result } = renderHook(() => useModerationTools());
 
-      await act(async () => {
-        const success = await result.current.resolveReport('', 'approved');
-        expect(success).toBe(false);
-      });
-
-      expect(result.current.error).toBeDefined();
-    });
-
-    it('should handle empty user IDs', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      await act(async () => {
-        const success = await result.current.blockUser('', 'Test', 1);
-        expect(success).toBe(false);
-      });
-
-      expect(result.current.error).toBeDefined();
-    });
-
-    it('should handle very long reasons', async () => {
-      const { result } = renderHook(() => useModerationTools());
-
-      const longReason = 'A'.repeat(10000);
-
-      await act(async () => {
-        const success = await result.current.rejectContent('content-123', longReason);
-        expect(success).toBe(true);
+      const toolsWithoutBadge = result.current.moderationTools.filter((tool) => !tool.badge);
+      // Some tools might not have badges, which is fine
+      toolsWithoutBadge.forEach((tool) => {
+        expect(tool).toHaveProperty('id');
+        expect(tool).toHaveProperty('title');
       });
     });
   });
@@ -479,15 +387,28 @@ describe('useModerationTools', () => {
       expect(() => unmount()).not.toThrow();
     });
 
-    it('should cancel ongoing operations on unmount', () => {
+    it('should cancel ongoing stats refresh on unmount', async () => {
+      // Make the API call slow
+      let resolvePromise: () => void;
+      const slowPromise = new Promise((resolve) => {
+        resolvePromise = resolve as () => void;
+      });
+      mockModerationAPI.getStats.mockReturnValue(slowPromise as any);
+
       const { unmount, result } = renderHook(() => useModerationTools());
 
       act(() => {
-        result.current.fetchReports();
+        result.current.refreshStats();
       });
 
       unmount();
-      // Should cleanup properly
+
+      // Resolve the promise after unmount
+      if (resolvePromise!) {
+        resolvePromise();
+      }
+
+      // Should cleanup properly without errors
     });
   });
 });

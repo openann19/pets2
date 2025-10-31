@@ -3,9 +3,10 @@
  * Fixes T-01: Jest snapshot tests for key screens
  */
 
+import './SwipeActions.test-setup'; // Must be first
 import React from 'react';
-import { SwipeActions } from '../../components/swipe/SwipeActions';
-import { renderWithProviders } from './snapshot-helpers';
+import { SwipeActions } from '../SwipeActions';
+import { renderWithProviders } from '../../../test-utils/component-helpers';
 
 describe('SwipeActions Snapshot', () => {
   const mockOnPass = jest.fn();

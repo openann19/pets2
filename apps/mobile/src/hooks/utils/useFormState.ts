@@ -51,16 +51,27 @@ export function useFormState<T extends Record<keyof T, unknown>>({
   const [touched, setTouched] = useState<Partial<Record<keyof T, boolean>>>({});
 
   const setValue = useCallback((name: keyof T, value: T[keyof T]) => {
-    setValuesState((prev) => ({ ...prev, [name]: value }));
-    // Clear error when field changes
-    setErrors((prev) => {
-      const newErrors = { ...prev };
-      if (newErrors[name]) {
-        delete newErrors[name];
+    setValuesState((prev) => {
+      const updated = { ...prev, [name]: value };
+      
+      // Re-validate with updated values
+      if (validateFn) {
+        const validationErrors = validateFn(updated);
+        setErrors(validationErrors);
+      } else {
+        // Clear error for this field if no validation function
+        setErrors((prevErrors) => {
+          const newErrors = { ...prevErrors };
+          if (newErrors[name]) {
+            delete newErrors[name];
+          }
+          return newErrors;
+        });
       }
-      return newErrors;
+      
+      return updated;
     });
-  }, []);
+  }, [validateFn]);
 
   const setValues = useCallback((newValues: Partial<T>) => {
     setValuesState((prev) => ({ ...prev, ...newValues }));
@@ -82,7 +93,11 @@ export function useFormState<T extends Record<keyof T, unknown>>({
   }, []);
 
   const validate = useCallback((): boolean => {
-    if (!validateFn) return true;
+    if (!validateFn) {
+      // Clear errors if no validation function
+      setErrors({});
+      return true;
+    }
 
     const validationErrors = validateFn(values);
     setErrors(validationErrors);

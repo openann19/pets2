@@ -3,7 +3,7 @@
  * Main component that orchestrates message display with all enhancements
  */
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';

@@ -2,7 +2,7 @@
  * Health Information Step Component
  */
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { PetFormData } from '../types';

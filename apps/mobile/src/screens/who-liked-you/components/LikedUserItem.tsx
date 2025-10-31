@@ -8,7 +8,7 @@ import * as Haptics from 'expo-haptics';
 import { useCallback, useMemo } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import type { ReceivedLike } from '../../services/api';
 
 interface LikedUserItemProps {

@@ -3,7 +3,7 @@
  * Single export point for all theme-related functionality
  */
 
-export { ThemeProvider, useTheme, ThemeContext } from './Provider';
+export { ThemeProvider, useTheme, ThemeContext } from './Provider.tsx';
 export { getLightTheme as defaultTheme, getDarkTheme, getLightTheme } from './resolve';
 import { getLightTheme, getDarkTheme } from './resolve';
 import type { AppTheme, ColorScheme } from './contracts';

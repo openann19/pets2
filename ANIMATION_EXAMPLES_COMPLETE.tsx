@@ -14,9 +14,7 @@ import {
   useTransform,
   useSpring,
   useMotionValue,
-  useMotionValueEvent,
   useReducedMotion,
-  AnimatePresence,
 } from 'framer-motion';
 
 // ------------------------------------------------------------------------------------
@@ -25,7 +23,6 @@ import {
 
 type Range2 = [number, number];
 
-const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 const toPx = (value: number | string, dimension: number) =>
   typeof value === 'number'
     ? value
@@ -160,11 +157,11 @@ export function ParallaxHeroV2({
 
         const smoothing = L.spring
           ? {
-              y: useSpring(yMv, L.spring),
-              x: xMv ? useSpring(xMv, L.spring) : undefined,
-              s: sMv ? useSpring(sMv, L.spring) : undefined,
-              r: rMv ? useSpring(rMv, L.spring) : undefined,
-              o: oMv ? useSpring(oMv, L.spring) : undefined,
+              y: useSpring(yMv, L.spring === true ? undefined : L.spring),
+              x: xMv ? useSpring(xMv, L.spring === true ? undefined : L.spring) : undefined,
+              s: sMv ? useSpring(sMv, L.spring === true ? undefined : L.spring) : undefined,
+              r: rMv ? useSpring(rMv, L.spring === true ? undefined : L.spring) : undefined,
+              o: oMv ? useSpring(oMv, L.spring === true ? undefined : L.spring) : undefined,
             }
           : { y: yMv, x: xMv, s: sMv, r: rMv, o: oMv };
 

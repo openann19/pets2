@@ -5,18 +5,18 @@
 
 import { renderHook, act } from '@testing-library/react-native';
 import { Alert } from 'react-native';
-import { usePremiumStatus } from '../../hooks/domains/premium/usePremiumStatus';
-import { useIAPBalance } from '../../hooks/domains/premium/useIAPBalance';
-import { useFeatureGating } from '../../hooks/domains/premium/useFeatureGating';
-import { superLikePet } from '../../services/swipeService';
-import { premiumService } from '../../services/PremiumService';
-import { __resetPremiumServiceMocks } from '../../services/__mocks__/PremiumService';
+import { usePremiumStatus } from '@/hooks/domains/premium/usePremiumStatus';
+import { useIAPBalance } from '@/hooks/domains/premium/useIAPBalance';
+import { useFeatureGating } from '@/hooks/domains/premium/useFeatureGating';
+import { superLikePet } from '@/services/swipeService';
+import { premiumService } from '@/services/PremiumService';
+import { __resetPremiumServiceMocks } from '@/services/__mocks__/PremiumService';
 
-jest.mock('../../hooks/domains/premium/usePremiumStatus');
-jest.mock('../../hooks/domains/premium/useIAPBalance');
-// jest.mock('../../hooks/domains/premium/useFeatureGating'); // Remove this to test real hook
-jest.mock('../../services/swipeService');
-jest.mock('../../services/PremiumService');
+jest.mock('@/hooks/domains/premium/usePremiumStatus');
+jest.mock('@/hooks/domains/premium/useIAPBalance');
+// jest.mock('@/hooks/domains/premium/useFeatureGating'); // Remove this to test real hook
+jest.mock('@/services/swipeService');
+jest.mock('@/services/PremiumService');
 jest.mock('react-native', () => {
   const RN = jest.requireActual('react-native');
   RN.Alert.alert = jest.fn();
@@ -65,6 +65,9 @@ describe('Premium Feature Flow Integration', () => {
 
       // Execute: User attempts super like
       const superLikeResult = await superLikePet('pet123');
+
+      // Refresh balance after successful super like (typical integration pattern)
+      await mockIAPBalance.refreshBalance();
 
       // Verify: Super like succeeds and balance deducted
       expect(accessResult.canUse).toBe(true);

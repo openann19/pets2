@@ -2,11 +2,16 @@
  * @jest-environment jsdom
  */
 import { renderHook, act } from '@testing-library/react-native';
-import { Alert } from 'react-native';
 import { useMatchesActions } from '../useMatchesActions';
 
 // Mock Alert
-jest.spyOn(Alert, 'alert');
+const mockAlert = jest.fn();
+jest.mock('react-native', () => ({
+  ...jest.requireActual('react-native'),
+  Alert: {
+    alert: mockAlert,
+  },
+}));
 
 // Mock logger
 const mockLogger = {
@@ -14,7 +19,8 @@ const mockLogger = {
   error: jest.fn(),
 };
 
-jest.mock('../../services/logger', () => ({
+jest.mock('@pawfectmatch/core', () => ({
+  ...jest.requireActual('@pawfectmatch/core'),
   logger: mockLogger,
 }));
 
@@ -23,13 +29,18 @@ const mockUnmatch = jest.fn();
 const mockBlock = jest.fn();
 const mockReport = jest.fn();
 
-jest.mock('../../services/api', () => ({
-  matchesAPI: {
-    unmatch: mockUnmatch,
-    block: mockBlock,
-    report: mockReport,
-  },
-}));
+jest.mock('../../../services/api', () => {
+  const actual = jest.requireActual('../../../services/api');
+  return {
+    ...actual,
+    matchesAPI: {
+      ...actual.matchesAPI,
+      unmatch: mockUnmatch,
+      block: mockBlock,
+      report: mockReport,
+    },
+  };
+});
 
 describe('useMatchesActions', () => {
   beforeEach(() => {
@@ -51,7 +62,7 @@ describe('useMatchesActions', () => {
       await result.current.handleUnmatch('match123', 'Buddy');
     });
 
-    expect(Alert.alert).toHaveBeenCalledWith(
+    expect(mockAlert).toHaveBeenCalledWith(
       'Unmatch',
       'Are you sure you want to unmatch with Buddy?',
       expect.arrayContaining([
@@ -66,7 +77,7 @@ describe('useMatchesActions', () => {
     const onMatchRemoved = jest.fn();
 
     // Mock Alert to auto-confirm
-    (Alert.alert as jest.Mock).mockImplementation((title, message, buttons) => {
+    mockAlert.mockImplementation((title, message, buttons) => {
       const unmatchButton = buttons?.find((b: any) => b.text === 'Unmatch');
       if (unmatchButton?.onPress) {
         unmatchButton.onPress();
@@ -90,7 +101,7 @@ describe('useMatchesActions', () => {
   it('should handle unmatch error', async () => {
     mockUnmatch.mockRejectedValue(new Error('API error'));
 
-    (Alert.alert as jest.Mock).mockImplementation((title, message, buttons) => {
+    mockAlert.mockImplementation((title, message, buttons) => {
       const unmatchButton = buttons?.find((b: any) => b.text === 'Unmatch');
       if (unmatchButton?.onPress) {
         unmatchButton.onPress();
@@ -104,7 +115,7 @@ describe('useMatchesActions', () => {
     });
 
     expect(mockLogger.error).toHaveBeenCalledWith('Failed to unmatch', expect.any(Object));
-    expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to unmatch. Please try again.');
+    expect(mockAlert).toHaveBeenCalledWith('Error', 'Failed to unmatch. Please try again.');
   });
 
   it('should show confirmation dialog for block', async () => {
@@ -114,7 +125,7 @@ describe('useMatchesActions', () => {
       await result.current.handleBlock('match123', 'Max');
     });
 
-    expect(Alert.alert).toHaveBeenCalledWith(
+    expect(mockAlert).toHaveBeenCalledWith(
       'Block',
       'Are you sure you want to block Max? This action cannot be undone.',
       expect.arrayContaining([
@@ -128,7 +139,7 @@ describe('useMatchesActions', () => {
     mockBlock.mockResolvedValue(undefined);
     const onMatchBlocked = jest.fn();
 
-    (Alert.alert as jest.Mock).mockImplementation((title, message, buttons) => {
+    mockAlert.mockImplementation((title, message, buttons) => {
       const blockButton = buttons?.find((b: any) => b.text === 'Block');
       if (blockButton?.onPress) {
         blockButton.onPress();
@@ -152,7 +163,7 @@ describe('useMatchesActions', () => {
   it('should handle block error', async () => {
     mockBlock.mockRejectedValue(new Error('API error'));
 
-    (Alert.alert as jest.Mock).mockImplementation((title, message, buttons) => {
+    mockAlert.mockImplementation((title, message, buttons) => {
       const blockButton = buttons?.find((b: any) => b.text === 'Block');
       if (blockButton?.onPress) {
         blockButton.onPress();
@@ -166,7 +177,7 @@ describe('useMatchesActions', () => {
     });
 
     expect(mockLogger.error).toHaveBeenCalledWith('Failed to block user', expect.any(Object));
-    expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to block user. Please try again.');
+    expect(mockAlert).toHaveBeenCalledWith('Error', 'Failed to block user. Please try again.');
   });
 
   it('should show report options dialog', async () => {
@@ -176,7 +187,7 @@ describe('useMatchesActions', () => {
       await result.current.handleReport('match123', 'Charlie');
     });
 
-    expect(Alert.alert).toHaveBeenCalledWith(
+    expect(mockAlert).toHaveBeenCalledWith(
       'Report',
       'Why are you reporting Charlie?',
       expect.arrayContaining([
@@ -192,7 +203,7 @@ describe('useMatchesActions', () => {
     mockReport.mockResolvedValue(undefined);
     const onMatchReported = jest.fn();
 
-    (Alert.alert as jest.Mock).mockImplementation((title, message, buttons) => {
+    mockAlert.mockImplementation((title, message, buttons) => {
       const spamButton = buttons?.find((b: any) => b.text === 'Spam');
       if (spamButton?.onPress) {
         spamButton.onPress();
@@ -212,7 +223,7 @@ describe('useMatchesActions', () => {
       reason: 'spam',
     });
     expect(onMatchReported).toHaveBeenCalledWith('match123');
-    expect(Alert.alert).toHaveBeenCalledWith(
+    expect(mockAlert).toHaveBeenCalledWith(
       'Reported',
       "Thank you for reporting. We'll review this.",
     );
@@ -222,7 +233,7 @@ describe('useMatchesActions', () => {
     mockReport.mockResolvedValue(undefined);
     const onMatchReported = jest.fn();
 
-    (Alert.alert as jest.Mock).mockImplementation((title, message, buttons) => {
+    mockAlert.mockImplementation((title, message, buttons) => {
       const inappropriateButton = buttons?.find((b: any) => b.text === 'Inappropriate Content');
       if (inappropriateButton?.onPress) {
         inappropriateButton.onPress();
@@ -248,7 +259,7 @@ describe('useMatchesActions', () => {
     mockReport.mockResolvedValue(undefined);
     const onMatchReported = jest.fn();
 
-    (Alert.alert as jest.Mock).mockImplementation((title, message, buttons) => {
+    mockAlert.mockImplementation((title, message, buttons) => {
       const otherButton = buttons?.find((b: any) => b.text === 'Other');
       if (otherButton?.onPress) {
         otherButton.onPress();
@@ -273,7 +284,7 @@ describe('useMatchesActions', () => {
   it('should handle report error', async () => {
     mockReport.mockRejectedValue(new Error('API error'));
 
-    (Alert.alert as jest.Mock).mockImplementation((title, message, buttons) => {
+    mockAlert.mockImplementation((title, message, buttons) => {
       const spamButton = buttons?.find((b: any) => b.text === 'Spam');
       if (spamButton?.onPress) {
         spamButton.onPress();
@@ -287,13 +298,13 @@ describe('useMatchesActions', () => {
     });
 
     expect(mockLogger.error).toHaveBeenCalledWith('Failed to report', expect.any(Object));
-    expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to report. Please try again.');
+    expect(mockAlert).toHaveBeenCalledWith('Error', 'Failed to report. Please try again.');
   });
 
   it('should work without callbacks', async () => {
     mockUnmatch.mockResolvedValue(undefined);
 
-    (Alert.alert as jest.Mock).mockImplementation((title, message, buttons) => {
+    mockAlert.mockImplementation((title, message, buttons) => {
       const unmatchButton = buttons?.find((b: any) => b.text === 'Unmatch');
       if (unmatchButton?.onPress) {
         unmatchButton.onPress();
@@ -331,7 +342,7 @@ describe('useMatchesActions', () => {
       await result.current.handleUnmatch('match123', 'Buddy');
     });
 
-    const alertCall = (Alert.alert as jest.Mock).mock.calls[0];
+    const alertCall = mockAlert.mock.calls[0];
     const buttons = alertCall[2];
     const unmatchButton = buttons?.find((b: any) => b.text === 'Unmatch');
 
@@ -345,7 +356,7 @@ describe('useMatchesActions', () => {
       await result.current.handleBlock('match123', 'Max');
     });
 
-    const alertCall = (Alert.alert as jest.Mock).mock.calls[0];
+    const alertCall = mockAlert.mock.calls[0];
     const buttons = alertCall[2];
     const blockButton = buttons?.find((b: any) => b.text === 'Block');
 

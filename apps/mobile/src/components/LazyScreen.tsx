@@ -1,4 +1,4 @@
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { logger } from '@pawfectmatch/core';
 import React, { Suspense, lazy, type ComponentType, type ReactNode } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';

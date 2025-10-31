@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import type { PlaydateMatch } from '../types';
 
 interface CompatibilityBreakdownProps {

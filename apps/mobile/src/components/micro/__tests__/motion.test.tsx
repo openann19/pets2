@@ -6,13 +6,12 @@
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 import { Text, View } from 'react-native';
+import { SwitchFlick } from '@/components/micro/SwitchFlick';
+import { CheckboxCheckDraw } from '@/components/micro/CheckboxCheckDraw';
+import { SuccessMorphButton } from '@/components/micro/SuccessMorph';
+import { Interactive } from '@/components/primitives/Interactive';
 
-// Mock react-native-reanimated
-jest.mock('react-native-reanimated', () => {
-  const Reanimated = require('react-native-reanimated/mock');
-  Reanimated.default.call = () => {};
-  return Reanimated;
-});
+// Use global mock from jest.setup.ts - no local override needed
 
 // Mock expo-haptics
 jest.mock('expo-haptics', () => ({
@@ -32,27 +31,109 @@ jest.mock('expo-haptics', () => ({
 
 // Mock motion guards
 jest.mock('@/utils/motionGuards', () => ({
-  useMotionGuards: () => ({
+  useMotionGuards: jest.fn(() => ({
+    shouldAnimate: true,
+    prefersReducedMotion: false,
     reducedMotion: false,
     lowEnd: false,
-    shouldAnimate: true,
     shouldSkipHeavy: false,
     getAdaptiveDuration: (duration: number) => duration,
     getAdaptiveParticleCount: (count: number) => count,
-  }),
+  })),
+  usePrefersReducedMotion: jest.fn(() => false),
 }));
+
+// Mock useReduceMotion hook
+jest.mock('@/hooks/useReducedMotion', () => ({
+  useReduceMotion: jest.fn(() => false),
+}));
+
+// Mock react-native-svg
+jest.mock('react-native-svg', () => ({
+  Svg: ({ children }: any) => children,
+  Path: () => null,
+  Circle: () => null,
+  Rect: () => null,
+  G: ({ children }: any) => children,
+}));
+
+// Mock motion module
+jest.mock('@/theme/motion', () => {
+  const mockMotionScale = {
+    pressed: 0.95,
+    hover: 1.02,
+    lift: 1.05,
+    disabled: 1,
+  };
+
+  const mockMotion = {
+    durations: {
+      xs: 120,
+      sm: 180,
+      md: 240,
+      lg: 320,
+    },
+    easing: {
+      standard: jest.fn((t: number) => t),
+      emphasized: jest.fn((t: number) => t),
+      decel: jest.fn((t: number) => t),
+      accel: jest.fn((t: number) => t),
+    },
+    scale: mockMotionScale,
+    opacity: {
+      pressed: 0.92,
+      disabled: 0.5,
+      shimmer: 0.18,
+    },
+    spring: {
+      snappy: { stiffness: 400, damping: 25, mass: 0.8 },
+      standard: { stiffness: 300, damping: 30, mass: 1 },
+      gentle: { stiffness: 200, damping: 25, mass: 1 },
+      bouncy: { stiffness: 400, damping: 15, mass: 1 },
+    },
+  };
+
+  return {
+    motionDurations: mockMotion.durations,
+    motionEasing: {
+      standard: jest.fn((t: number) => t),
+      emphasized: jest.fn((t: number) => t),
+      decel: jest.fn((t: number) => t),
+      accel: jest.fn((t: number) => t),
+      standardArray: [0.2, 0, 0, 1],
+      emphasizedArray: [0.2, 0, 0, 1],
+      decelArray: [0, 0, 0.2, 1],
+      accelArray: [0.3, 0, 1, 1],
+    },
+    motionScale: mockMotionScale,
+    motionOpacity: mockMotion.opacity,
+    motionSpring: mockMotion.spring,
+    getEasingArray: jest.fn(() => [0.2, 0, 0, 1]),
+    getSpringConfig: jest.fn(() => ({ stiffness: 300, damping: 30, mass: 1 })),
+    motion: mockMotion,
+    motionTokens: mockMotion,
+  };
+});
 
 // Mock theme
 jest.mock('@/theme', () => ({
   useTheme: () => ({
     colors: {
+      // eslint-disable-next-line local/no-hardcoded-colors
       primary: '#EC4899',
+      // eslint-disable-next-line local/no-hardcoded-colors
       border: '#E5E7EB',
+      // eslint-disable-next-line local/no-hardcoded-colors
       bg: '#FFFFFF',
+      // eslint-disable-next-line local/no-hardcoded-colors
       onPrimary: '#FFFFFF',
+      // eslint-disable-next-line local/no-hardcoded-colors
       onSurface: '#000000',
+      // eslint-disable-next-line local/no-hardcoded-colors
       onMuted: '#6B7280',
+      // eslint-disable-next-line local/no-hardcoded-colors
       success: '#10B981',
+      // eslint-disable-next-line local/no-hardcoded-colors
       danger: '#EF4444',
     },
     spacing: {
@@ -68,6 +149,7 @@ jest.mock('@/theme', () => ({
     },
     palette: {
       gradients: {
+        // eslint-disable-next-line local/no-hardcoded-colors
         primary: ['#EC4899', '#8B5CF6'],
       },
     },
@@ -80,9 +162,7 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
   });
 
   describe('SwitchFlick', () => {
-    it('should render with correct initial value', async () => {
-      const { SwitchFlick } = await import('@/components/micro/SwitchFlick');
-
+    it('should render with correct initial value', () => {
       const { getByTestId } = render(
         <SwitchFlick
           value={true}
@@ -95,8 +175,7 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
       expect(switchComponent).toBeTruthy();
     });
 
-    it('should call onValueChange when toggled', async () => {
-      const { SwitchFlick } = await import('@/components/micro/SwitchFlick');
+    it('should call onValueChange when toggled', () => {
       const mockOnValueChange = jest.fn();
 
       const { getByTestId } = render(
@@ -113,8 +192,7 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
       expect(switchComponent).toBeTruthy();
     });
 
-    it('should respect disabled prop', async () => {
-      const { SwitchFlick } = await import('@/components/micro/SwitchFlick');
+    it('should respect disabled prop', () => {
       const mockOnValueChange = jest.fn();
 
       const { getByTestId } = render(
@@ -133,9 +211,7 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
   });
 
   describe('CheckboxCheckDraw', () => {
-    it('should render unchecked state', async () => {
-      const { CheckboxCheckDraw } = await import('@/components/micro/CheckboxCheckDraw');
-
+    it('should render unchecked state', () => {
       const { getByTestId } = render(
         <CheckboxCheckDraw
           checked={false}
@@ -148,9 +224,7 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
       expect(checkbox).toBeTruthy();
     });
 
-    it('should render checked state', async () => {
-      const { CheckboxCheckDraw } = await import('@/components/micro/CheckboxCheckDraw');
-
+    it('should render checked state', () => {
       const { getByTestId } = render(
         <CheckboxCheckDraw
           checked={true}
@@ -165,9 +239,7 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
   });
 
   describe('SuccessMorphButton', () => {
-    it('should render initial state', async () => {
-      const { SuccessMorphButton } = await import('@/components/micro/SuccessMorph');
-
+    it('should render initial state', () => {
       const { getByText } = render(
         <SuccessMorphButton onPress={() => {}}>
           <Text>Submit</Text>
@@ -179,9 +251,7 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
   });
 
   describe('Interactive v2', () => {
-    it('should render with default variant', async () => {
-      const { Interactive } = await import('@/components/primitives/Interactive');
-
+    it('should render with default variant', () => {
       const { getByTestId } = render(
         <Interactive
           onPress={() => {}}
@@ -195,9 +265,7 @@ describe('Motion Pack Pro - Micro-Interactions', () => {
       expect(interactive).toBeTruthy();
     });
 
-    it('should respect variant prop', async () => {
-      const { Interactive } = await import('@/components/primitives/Interactive');
-
+    it('should respect variant prop', () => {
       const { getByTestId } = render(
         <Interactive
           variant="lift"

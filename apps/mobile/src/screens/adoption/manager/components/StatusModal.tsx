@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
-import { EliteButton } from '../../../components';
-import { GlobalStyles } from '../../../animation';
+import { EliteButton } from '@/components';
+import { GlobalStyles } from '@/animation';
 import type { PetListing } from '../../../../hooks/screens/useAdoptionManagerScreen';
 
 interface StatusModalProps {

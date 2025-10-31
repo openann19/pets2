@@ -4,7 +4,7 @@
  * Extracts all local state, refs, animations, and handlers from ChatScreen component
  */
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {

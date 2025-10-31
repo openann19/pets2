@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { CommunityComment } from '../../services/communityAPI';
 
 function __makeStyles_styles(theme: AppTheme) {

@@ -30,7 +30,7 @@ import {
 } from '../components/Community';
 import { useCommunityFeed } from '../hooks/useCommunityFeed';
 import { usePostInteractions } from '../hooks/usePostInteractions';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import {
   PostCreationService,
   type PostCreationData,

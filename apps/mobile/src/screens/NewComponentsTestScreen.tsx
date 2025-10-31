@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { Alert, Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { getExtendedColors } from '../theme/adapters';
 import AnimatedButton from '../components/AnimatedButton';
 import { useReduceMotion } from '../hooks/useReducedMotion';

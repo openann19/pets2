@@ -1,4 +1,4 @@
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { View } from 'react-native';
 
 export interface SpacerProps {

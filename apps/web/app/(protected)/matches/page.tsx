@@ -7,11 +7,11 @@
 
 import React, { useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ScreenShell } from '@/src/components/layout/ScreenShell';
-import { EmptyStates } from '@/src/components/common/EmptyStates';
-import { useMatchesData } from '@/src/hooks/useMatchesData';
-import { useNetworkStatus } from '@/src/hooks/useNetworkStatus';
-import { useErrorHandling } from '@/src/hooks/useErrorHandling';
+import { ScreenShell } from '@/components/layout/ScreenShell';
+import { EmptyStates } from '@/components/common/EmptyStates';
+import { useMatchesData } from '@/hooks/useMatchesData';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useErrorHandling } from '@/hooks/useErrorHandling';
 import { useTranslation } from 'react-i18next';
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';

@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 import { AuthProvider } from '../src/components/providers/AuthProvider';
 import { EnhancedErrorBoundary } from '../src/utils/error-boundary';
 import { DevTools } from '../src/components/DevTools';
-import { ThemeProvider } from '../src/providers/ThemeProvider';
+import { UnifiedThemeProvider as ThemeProvider } from '../src/providers/UnifiedThemeProvider';
 import { CommandPalette } from '../src/providers/CommandPalette';
 import { PWAManager } from '../src/components/PWA/PWAManager';
 import { FeatureFlagsProvider } from '../src/foundation/flags/FeatureFlagsProvider';

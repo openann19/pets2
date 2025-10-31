@@ -17,7 +17,7 @@
 import React from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 export interface Pet {
   _id: string;

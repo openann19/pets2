@@ -1,4 +1,4 @@
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useRef, useState } from 'react';
 import { Alert, Animated, StyleSheet, TextInput, View } from 'react-native';

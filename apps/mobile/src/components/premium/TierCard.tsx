@@ -5,7 +5,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 import { SuccessMorphButton } from '../micro/SuccessMorph';
 

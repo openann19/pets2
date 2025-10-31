@@ -19,7 +19,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { videoCallService } from '../../services/videoCallService';
 import { logger } from '@pawfectmatch/core';

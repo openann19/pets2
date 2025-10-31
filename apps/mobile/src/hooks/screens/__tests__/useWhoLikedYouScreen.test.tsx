@@ -2,40 +2,40 @@
  * Tests for useWhoLikedYouScreen Hook
  */
 
-import { renderHook, waitFor } from '@testing-library/react-hooks';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react-native';
+import { QueryClient } from '@tanstack/react-query';
 import React from 'react';
-import { useWhoLikedYouScreen } from '../../../hooks/screens/useWhoLikedYouScreen';
-import { likesAPI } from '../../../services/api';
-import { useSeeWhoLikedGate } from '../../../utils/featureGates';
+import { useWhoLikedYouScreen } from '../useWhoLikedYouScreen';
+import { likesAPI } from '@/services/api';
+import { useSeeWhoLikedGate } from '@/utils/featureGates';
+import {
+  createTestQueryClient,
+  cleanupQueryClient,
+  createWrapperWithQueryClient,
+} from '@/test-utils/react-query-helpers';
 
 // Mock dependencies
-jest.mock('../../../services/api');
-jest.mock('../../../utils/featureGates');
+jest.mock('@/services/api');
+jest.mock('@/utils/featureGates');
 
 const mockNavigation = {
   navigate: jest.fn(),
   goBack: jest.fn(),
 } as any;
 
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-      mutations: { retry: false },
-    },
-  });
-
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
-  );
-};
-
 describe('useWhoLikedYouScreen', () => {
+  let queryClient: QueryClient;
+  let wrapper: React.ComponentType<{ children: React.ReactNode }>;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    queryClient = createTestQueryClient();
+    wrapper = createWrapperWithQueryClient(queryClient);
+  });
+
+  afterEach(() => {
+    // Comprehensive cleanup: cancel queries, remove observers, clear cache
+    cleanupQueryClient(queryClient);
   });
 
   it('should initialize with premium gate check', () => {
@@ -46,7 +46,7 @@ describe('useWhoLikedYouScreen', () => {
     });
 
     const { result } = renderHook(() => useWhoLikedYouScreen(mockNavigation), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     expect(result.current.canUse).toBe(false);
@@ -74,7 +74,7 @@ describe('useWhoLikedYouScreen', () => {
     (likesAPI.getReceivedLikes as jest.Mock).mockResolvedValue(mockLikes);
 
     const { result } = renderHook(() => useWhoLikedYouScreen(mockNavigation), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     await waitFor(() => {
@@ -96,7 +96,7 @@ describe('useWhoLikedYouScreen', () => {
     (likesAPI.getReceivedLikes as jest.Mock).mockRejectedValue(mockError);
 
     const { result } = renderHook(() => useWhoLikedYouScreen(mockNavigation), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     await waitFor(() => {
@@ -128,7 +128,7 @@ describe('useWhoLikedYouScreen', () => {
     });
 
     const { result } = renderHook(() => useWhoLikedYouScreen(mockNavigation), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     result.current.handleUpgrade();
@@ -153,7 +153,7 @@ describe('useWhoLikedYouScreen', () => {
     };
 
     const { result } = renderHook(() => useWhoLikedYouScreen(mockNavigation), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     result.current.handleUserPress(mockLike);

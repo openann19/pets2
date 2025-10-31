@@ -3,6 +3,52 @@
  * Loaded conditionally for tests that need Expo functionality
  */
 
+// Mock expo-linking FIRST (before any other mocks that might import it)
+// Must be virtual since package may not be installed
+jest.mock('expo-linking', () => {
+  return {
+    __esModule: true,
+    default: {
+      createURL: (p: string) => `app:///${p}`,
+      parse: jest.fn((url: string) => ({
+        scheme: 'app',
+        hostname: '',
+        path: url.replace(/^app:\/\//, ''),
+        queryParams: {},
+      })),
+      makeURL: jest.fn((path: string) => `app://${path}`),
+      resolve: jest.fn((url: string, path: string) => `app://${path}`),
+      addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+      removeEventListener: jest.fn(),
+      getInitialURL: jest.fn(() => Promise.resolve(null)),
+      canOpenURL: jest.fn(() => Promise.resolve(true)),
+      openURL: jest.fn(() => Promise.resolve(true)),
+      sendIntent: jest.fn(() => Promise.resolve()),
+    },
+    createURL: (p: string) => `app:///${p}`,
+    parse: jest.fn((url: string) => ({
+      scheme: 'app',
+      hostname: '',
+      path: url.replace(/^app:\/\//, ''),
+      queryParams: {},
+    })),
+    makeURL: jest.fn((path: string) => `app://${path}`),
+    resolve: jest.fn((url: string, path: string) => `app://${path}`),
+    addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+    removeEventListener: jest.fn(),
+    getInitialURL: jest.fn(() => Promise.resolve(null)),
+    canOpenURL: jest.fn(() => Promise.resolve(true)),
+    openURL: jest.fn(() => Promise.resolve(true)),
+    sendIntent: jest.fn(() => Promise.resolve()),
+  };
+}, { virtual: true });
+
+// Mock expo-constants
+jest.mock('expo-constants', () => ({
+  __esModule: true,
+  default: { manifest: {}, expoConfig: {}, deviceName: 'jest' },
+}), { virtual: true });
+
 // Mock expo-linear-gradient
 jest.mock('expo-linear-gradient', () => ({
   LinearGradient: ({ children }: any) => children,
@@ -81,11 +127,17 @@ jest.mock('expo-haptics', () => ({
   },
 }));
 
-// Mock expo-blur
+// Mock expo-blur with proper component for test detection
 jest.mock('expo-blur', () => {
+  const React = require('react');
   const RN = require('react-native');
+  const BlurViewComponent = React.forwardRef((props: any, ref: any) => {
+    const { children, ...restProps } = props;
+    return React.createElement(RN.View, { ...restProps, ref }, children);
+  });
+  BlurViewComponent.displayName = 'BlurView';
   return {
-    BlurView: RN.View,
+    BlurView: BlurViewComponent,
   };
 });
 

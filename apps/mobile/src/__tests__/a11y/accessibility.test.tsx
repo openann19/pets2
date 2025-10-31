@@ -7,7 +7,8 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { AccessibilityInfo } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from '../../providers/AuthProvider';
+// AuthProvider doesn't exist - app uses Zustand useAuthStore instead
+// Mock the auth store instead
 
 // Mock AccessibilityInfo
 jest.mock('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo', () => ({
@@ -26,12 +27,30 @@ jest.mock('expo-secure-store', () => ({
 }));
 
 // Mock socket service
-jest.mock('../../services/socketService', () => ({
+jest.mock('../../services/socket', () => ({
   socketService: {
     connect: jest.fn(),
     disconnect: jest.fn(),
+    getSocket: jest.fn(() => ({
+      emit: jest.fn(),
+      on: jest.fn(),
+      disconnect: jest.fn(),
+    })),
+    socketClient: {
+      emit: jest.fn(),
+      on: jest.fn(),
+      disconnect: jest.fn(),
+    },
+  },
+  getSocket: jest.fn(() => ({
     emit: jest.fn(),
     on: jest.fn(),
+    disconnect: jest.fn(),
+  })),
+  socketClient: {
+    emit: jest.fn(),
+    on: jest.fn(),
+    disconnect: jest.fn(),
   },
 }));
 
@@ -47,12 +66,21 @@ const createTestQueryClient = () =>
     },
   });
 
+// Mock auth store since AuthProvider doesn't exist
+jest.mock('@/stores/useAuthStore', () => ({
+  useAuthStore: () => ({
+    user: { _id: 'test-user', firstName: 'Test', lastName: 'User' },
+    isAuthenticated: true,
+    accessToken: 'mock-token',
+  }),
+}));
+
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = createTestQueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>{children}</AuthProvider>
+      {children}
     </QueryClientProvider>
   );
 };

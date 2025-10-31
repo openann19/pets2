@@ -7,8 +7,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import type { AppTheme } from '@mobile/theme';
-import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 import type { RootStackParamList } from '../../navigation/types';
 

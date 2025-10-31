@@ -5,8 +5,18 @@
 import { logger } from '@pawfectmatch/core';
 import { useCallback, useEffect, useState } from 'react';
 import OfflineService from '../services/OfflineService';
+
+interface OfflineState {
+    isOnline: boolean;
+    isSyncing: boolean;
+    lastSync: number;
+    pendingActions: number;
+    failedActions: number;
+    syncProgress: number;
+}
+
 export const useOffline = () => {
-    const [state, setState] = useState({
+    const [state, setState] = useState<OfflineState>({
         isOnline: navigator.onLine,
         isSyncing: false,
         lastSync: 0,

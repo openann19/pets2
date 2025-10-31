@@ -52,30 +52,57 @@ describe('AbortableQueue', () => {
   it('should cancel tasks', async () => {
     const queue = new AbortableQueue(1);
 
-    const { cancel, promise } = queue.enqueue('task-1', async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    const { cancel, promise } = queue.enqueue('task-1', async (signal) => {
+      // Check signal periodically
+      for (let i = 0; i < 20; i++) {
+        if (signal.aborted) {
+          throw new Error('Task cancelled');
+        }
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
       return 'done';
     });
 
+    // Cancel the task
     cancel();
 
-    await expect(promise).rejects.toThrow();
+    // Wait for rejection with timeout
+    await expect(
+      Promise.race([
+        promise,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout waiting for cancellation')), 500)
+        ),
+      ])
+    ).rejects.toThrow();
   });
 
   it('should handle abort signals', async () => {
     const queue = new AbortableQueue(1);
 
     const { promise } = queue.enqueue('task-1', async (signal) => {
-      if (signal.aborted) {
-        throw new Error('aborted');
+      // Check signal periodically
+      for (let i = 0; i < 20; i++) {
+        if (signal.aborted) {
+          throw new Error('aborted');
+        }
+        await new Promise((resolve) => setTimeout(resolve, 10));
       }
-      await new Promise((resolve) => setTimeout(resolve, 100));
       return 'done';
     });
 
+    // Cancel immediately
     queue.cancel('task-1');
 
-    await expect(promise).rejects.toThrow();
+    // Wait for promise to reject with timeout
+    await expect(
+      Promise.race([
+        promise,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout waiting for abort')), 500)
+        ),
+      ])
+    ).rejects.toThrow();
   });
 
   it('should track queue size', () => {

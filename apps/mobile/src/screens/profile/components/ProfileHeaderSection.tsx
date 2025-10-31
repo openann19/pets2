@@ -1,4 +1,4 @@
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { logger } from '@pawfectmatch/core';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback } from 'react';

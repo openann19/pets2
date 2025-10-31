@@ -4,7 +4,7 @@
  */
 
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -75,7 +75,7 @@ export function MessageSearchHeader({
           onChangeText={onQueryChange}
           autoFocus
           returnKeyType="search"
-          accessibilityRole="searchbox"
+          accessibilityRole="search"
           accessibilityLabel="Search messages"
           accessibilityHint="Type to search for messages in this conversation"
           allowFontScaling

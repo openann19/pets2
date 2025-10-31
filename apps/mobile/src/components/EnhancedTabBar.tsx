@@ -377,7 +377,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
                 },
               ])}
             >
-              {label}
+              {typeof label === 'function' ? String(label({ focused: isFocused, color: isFocused ? colors.primary : colors.text, position: 'below' as any, children: route.name })) : label}
             </Text>
           </TouchableOpacity>
         );

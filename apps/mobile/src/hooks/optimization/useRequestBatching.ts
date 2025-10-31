@@ -3,8 +3,9 @@
  * 
  * Batches multiple API requests into single calls with deduplication
  */
-import { useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useResourceCleanup } from '../utils/useResourceCleanup';
 
 interface BatchedRequest<T> {
   id: string;
@@ -30,6 +31,7 @@ export function useRequestBatching(options: BatchOptions = {}) {
   const queryClient = useQueryClient();
   const batchQueueRef = useRef<Map<string, BatchedRequest<any>>>(new Map());
   const batchTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const cleanup = useResourceCleanup({ queryClient });
 
   const {
     maxWaitTime = 50,
@@ -86,9 +88,11 @@ export function useRequestBatching(options: BatchOptions = {}) {
       processBatch();
     } else {
       // Schedule processing after maxWaitTime
-      batchTimerRef.current = setTimeout(() => {
+      const timerId = setTimeout(() => {
         processBatch();
       }, maxWaitTime);
+      batchTimerRef.current = timerId;
+      cleanup.registerTimer(timerId);
     }
   }, [maxWaitTime, maxBatchSize, processBatch]);
 
@@ -139,19 +143,18 @@ export function useRequestBatching(options: BatchOptions = {}) {
     [dedupeWindow, scheduleBatch],
   );
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (batchTimerRef.current) {
-        clearTimeout(batchTimerRef.current);
-      }
-      // Reject all pending requests
-      batchQueueRef.current.forEach((req) => {
-        req.reject(new Error('Request batching hook unmounted'));
-      });
-      batchQueueRef.current.clear();
-    };
-  }, []);
+  // Register cleanup for pending requests
+  cleanup.registerCleanup(() => {
+    if (batchTimerRef.current) {
+      clearTimeout(batchTimerRef.current);
+      batchTimerRef.current = null;
+    }
+    // Reject all pending requests
+    batchQueueRef.current.forEach((req) => {
+      req.reject(new Error('Request batching hook unmounted'));
+    });
+    batchQueueRef.current.clear();
+  });
 
   return { batchRequest };
 }

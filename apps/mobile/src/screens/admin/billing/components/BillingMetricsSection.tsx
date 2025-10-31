@@ -6,8 +6,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { BillingMetrics } from '../hooks/useAdminBilling';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');

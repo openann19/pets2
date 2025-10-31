@@ -4,6 +4,8 @@
  * Features: Multi-step form, photo upload, tone selection, results display
  */
 
+'use client';
+
 import React, { useState } from 'react';
 import { useWebAIBio } from '../../hooks/useWebAIBio';
 import { PetInfoForm } from '../../components/ai/PetInfoForm';

@@ -13,7 +13,7 @@ import React, { Component, type ErrorInfo, type ReactNode } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { telemetry } from '../../lib/telemetry';
 
 interface ErrorBoundaryProps {

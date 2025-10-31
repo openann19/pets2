@@ -3,7 +3,7 @@
  * Language switcher component for settings
  */
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { StyleSheet, Text, View } from 'react-native';
 import { LanguageSwitcher } from '../../components/i18n/LanguageSwitcher';
 

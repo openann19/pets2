@@ -12,12 +12,7 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { readJSON, writeJSON } from '../storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Mock AsyncStorage
-jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-}));
-
+// AsyncStorage is already mocked globally in jest.setup.ts
 const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
 
 describe('Storage Service', () => {

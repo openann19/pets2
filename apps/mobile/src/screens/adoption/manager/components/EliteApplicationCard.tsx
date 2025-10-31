@@ -5,11 +5,11 @@
 
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { EliteButton, EliteCard } from '../../../components';
-import { GlobalStyles, Colors } from '../../../animation';
+import { StyleSheet, Text, View, type ViewStyle, type TextStyle } from 'react-native';
+import { EliteButton, EliteCard } from '@/components';
+import { GlobalStyles, Colors } from '@/animation';
 import type { AdoptionApplication } from '../../../../hooks/screens/useAdoptionManagerScreen';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 interface EliteApplicationCardProps {
   application: AdoptionApplication;
@@ -90,7 +90,6 @@ export const EliteApplicationCard: React.FC<EliteApplicationCardProps> = ({
             onPress={() => onApprove(application.id)}
             style={{ flex: 1 }}
             gradientEffect
-            gradientColors={[Colors.success, theme.colors.success]}
           />
         </View>
       )}

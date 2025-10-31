@@ -37,7 +37,7 @@ export interface NotificationPermissionStatus {
 
 type NotificationActionHandler = (actionId: string, data: Record<string, unknown>) => Promise<void> | void;
 
-class NotificationService {
+export class NotificationService {
   private expoPushToken: string | null = null;
   private notificationListener: Notifications.Subscription | null = null;
   private responseListener: Notifications.Subscription | null = null;
@@ -498,7 +498,7 @@ class NotificationService {
       }
 
       // Build notification content
-      const content: Notifications.NotificationContentInput = {
+      const content: Notifications.NotificationContent = {
         title: notificationData.title,
         body: notificationData.body,
         sound,
@@ -549,7 +549,11 @@ class NotificationService {
       }
 
       // Build notification request
-      const notificationRequest: Notifications.NotificationRequestInput = {
+      const notificationRequest: {
+        content: Notifications.NotificationContent;
+        trigger?: Notifications.NotificationTriggerInput;
+        identifier?: string;
+      } = {
         content,
         ...(trigger ? { trigger } : {}),
       };

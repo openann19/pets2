@@ -6,7 +6,7 @@
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
-import { ThemeProvider } from '@mobile/theme';
+import { ThemeProvider } from '@/theme';
 import { HealthInfoSection } from '../HealthInfoSection';
 
 // Mock dependencies

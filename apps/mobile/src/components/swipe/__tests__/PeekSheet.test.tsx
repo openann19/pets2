@@ -3,8 +3,7 @@
  * Tests next card preview, animations, and user experience
  */
 
-import React from 'react';
-import { render, waitFor } from '@testing-library/react-native';
+import { render, waitFor } from '@/test-utils/unified-render';
 import { PeekSheet } from '../PeekSheet';
 import type { Pet } from '@pawfectmatch/core';
 
@@ -14,14 +13,14 @@ const mockPet: Pet = {
   age: 3,
   breed: 'Golden Retriever',
   photos: [
-    { url: 'photo1.jpg', order: 1 },
-    { url: 'photo2.jpg', order: 2 },
+    { url: 'photo1.jpg', isPrimary: true },
+    { url: 'photo2.jpg', isPrimary: false },
   ],
   description: 'Friendly and playful',
   owner: 'user1' as any,
   species: 'dog',
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
 };
 
 describe('PeekSheet', () => {

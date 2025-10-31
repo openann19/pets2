@@ -19,7 +19,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { haptic } from '../ui/haptics';
 import { ScreenShell } from '../ui/layout/ScreenShell';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useMyPetsScreen } from '../hooks/screens/useMyPetsScreen';
 import { useDoubleTapMetrics, usePinchMetrics } from '../hooks/useInteractionMetrics';
 import type { RootStackScreenProps } from '../navigation/types';

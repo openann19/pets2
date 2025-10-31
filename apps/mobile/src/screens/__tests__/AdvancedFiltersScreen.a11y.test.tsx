@@ -3,7 +3,7 @@ import React from 'react';
 import { describe, it, expect } from '@jest/globals';
 import { render, fireEvent } from '@testing-library/react-native';
 import AdvancedFiltersScreen from '../AdvancedFiltersScreen';
-import { ThemeProvider } from '@mobile/theme';
+import { ThemeProvider } from '@/theme';
 
 // Mocks for native/expo components used by the screen
 jest.mock('expo-linear-gradient', () => ({

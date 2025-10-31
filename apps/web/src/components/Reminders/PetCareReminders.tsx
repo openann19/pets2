@@ -1,5 +1,5 @@
 'use client';
-import { CustomTextarea } from '@/components/ui/CustomTextarea';
+import { CustomTextarea } from '@/components/UI/CustomTextarea';
 import { BellIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { addDays, format, isToday, isTomorrow } from 'date-fns';
 import React, { useState } from 'react';

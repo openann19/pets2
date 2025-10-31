@@ -7,7 +7,7 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import React from 'react';
 import { render, waitFor, screen } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { ThemeProvider } from '@mobile/theme';
+import { ThemeProvider } from '@/theme';
 import ApplicationReviewScreen from '../ApplicationReviewScreen';
 import { useApplicationReview } from '../review/hooks/useApplicationReview';
 

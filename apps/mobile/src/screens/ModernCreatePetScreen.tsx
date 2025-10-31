@@ -9,7 +9,7 @@
  * - Staggered animations for form sections
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
@@ -29,7 +29,7 @@ import {
 } from '../components';
 import { EliteContainer, EliteHeader } from '../components/elite';
 import { useCreatePetScreen } from '../hooks/screens/useCreatePetScreen';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import AnimatedButton from '../components/AnimatedButton';
 import type { RootStackScreenProps } from '../navigation/types';
 
@@ -57,7 +57,9 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
   }, [startStaggeredAnimation]);
 
   // Dynamic styles that depend on theme
-  const styles = StyleSheet.create({
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
     container: {
       flex: 1,
     },
@@ -107,7 +109,9 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
     submitButton: {
       width: '100%',
     },
-  });
+  }),
+    [theme],
+  );
 
   // Submit handler
   const onSubmit = async () => {

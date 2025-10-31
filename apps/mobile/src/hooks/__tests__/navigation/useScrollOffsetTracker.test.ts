@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  * Comprehensive tests for useScrollOffsetTracker hook
  */
+/// <reference types="jest" />
 import { renderHook, act } from '@testing-library/react-native';
 import { NativeScrollEvent } from 'react-native';
 import { useScrollOffsetTracker } from '../../navigation/useScrollOffsetTracker';

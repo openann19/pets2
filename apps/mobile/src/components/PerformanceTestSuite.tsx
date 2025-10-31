@@ -16,7 +16,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import performanceMonitorInstance, { type PerformanceMetrics } from '../utils/PerformanceMonitor';
 import { springs } from '@/foundation/motion';
 

@@ -11,7 +11,7 @@ import Animated, {
   withSpring,
   interpolate,
 } from 'react-native-reanimated';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 type Props = {
   children: React.ReactNode;

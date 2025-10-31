@@ -8,7 +8,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 're
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import {
   BasicInfoStep,
   HealthInfoStep,

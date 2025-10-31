@@ -10,13 +10,13 @@
 
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ScreenShell } from '@/src/components/layout/ScreenShell';
-import { CommunityDiscovery, CommunityCreator } from '@/src/components/Community/PetCommunityGroups';
-import { useAuthStore } from '@/src/lib/auth-store';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useClickOutside } from '@/src/hooks/useClickOutside';
+import { ScreenShell } from '@/components/layout/ScreenShell';
+import { CommunityDiscovery, CommunityCreator } from '@/components/Community/PetCommunityGroups';
+import { useAuthStore } from '@/lib/auth-store';
+import { Button } from '@/components/UI/Button';
+import { Card } from '@/components/UI/Card';
+import { Dialog } from '@/components/UI/dialog';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import {
   ArrowLeft,
   Plus,

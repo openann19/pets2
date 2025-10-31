@@ -40,12 +40,12 @@ import VerificationCenterScreen from '../screens/VerificationCenterScreen';
 // Renamed component for backwards compatibility
 const VerificationScreen = VerificationCenterScreen;
 
-import { api } from '../services/api';
-import { authService } from '../services/AuthService';
-import { offlineService } from '../services/offlineService';
-import { uploadHygieneService } from '../services/uploadHygiene';
-import { communityAPI } from '../services/communityAPI';
-import { notificationService } from '../services/notifications';
+import { api } from '@/services/api';
+import { authService } from '@/services/AuthService';
+import { offlineService } from '@/services/offlineService';
+import { uploadHygieneService } from '@/services/uploadHygiene';
+import { communityAPI } from '@/services/communityAPI';
+import { notificationService } from '@/services/notifications';
 
 // Mock all dependencies
 jest.mock('@react-native-async-storage/async-storage');

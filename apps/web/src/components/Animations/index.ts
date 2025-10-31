@@ -200,7 +200,6 @@ export {
   MicroInteractionButton,
   MicroInteractionCard,
   RippleEffect,
-  useHapticFeedback,
   useSoundEffect,
   type MicroInteractionButtonProps,
   type MicroInteractionCardProps,

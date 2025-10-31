@@ -14,7 +14,7 @@ import { useScrollOffsetTracker, useTabReselectRefresh } from '../hooks/navigati
 import { useProfileScreen } from '../hooks/screens/useProfileScreen';
 import { matchesAPI } from '../services/api';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 import MicroPressable from '../components/micro/MicroPressable';
 import type { RootStackScreenProps } from '../navigation/types';

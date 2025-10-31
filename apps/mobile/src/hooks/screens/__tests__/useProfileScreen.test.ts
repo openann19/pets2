@@ -41,14 +41,9 @@ jest.mock('../../../hooks/useColorScheme', () => ({
   useColorScheme: jest.fn(),
 }));
 
-// Mock logger
-jest.mock('@pawfectmatch/core', () => ({
-  logger: {
-    info: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-  },
-}));
+// Mock logger - use the global mock from __mocks__/@pawfectmatch/core.ts
+// Don't override the entire module, just ensure logger is mocked if needed
+// The global mock already provides useAuthStore
 
 import { api } from '../../../services/api';
 import { analyticsService } from '../../../services/analyticsService';

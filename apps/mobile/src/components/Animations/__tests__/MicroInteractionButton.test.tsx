@@ -13,27 +13,51 @@ import { useSoundEffect } from '@/hooks/animations/useSoundEffect';
 import { useHapticFeedback } from '@/hooks/animations/useHapticFeedback';
 
 // Import Jest globals
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach } from '@jest/globals';
 
-// Mock dependencies
+// Mock dependencies - ensure they're jest.fn() mocks
 jest.mock('expo-haptics');
-jest.mock('@/hooks/useReducedMotion');
-jest.mock('@/hooks/animations/useSoundEffect');
-jest.mock('@/hooks/animations/useHapticFeedback');
-jest.mock('@/hooks/animations/useRippleEffect', () => ({
-  useRippleEffect: () => ({
-    rippleStyle: {},
-    triggerRipple: jest.fn(),
-  }),
+jest.mock('@/hooks/useReducedMotion', () => ({
+  useReduceMotion: jest.fn(() => false),
 }));
-jest.mock('@/hooks/animations/useMagneticEffect', () => ({
-  useMagneticEffect: () => ({
-    magneticStyle: {},
-    handleMagneticMove: jest.fn(),
-    resetMagnetic: jest.fn(),
-  }),
+jest.mock('@/hooks/animations/useSoundEffect', () => ({
+  useSoundEffect: jest.fn(() => ({
+    play: jest.fn(() => Promise.resolve()),
+    enabled: true,
+    setEnabled: jest.fn(),
+  })),
 }));
+jest.mock('@/hooks/animations/useHapticFeedback', () => ({
+  useHapticFeedback: jest.fn(() => ({
+    trigger: jest.fn(),
+    enabled: true,
+    setEnabled: jest.fn(),
+  })),
+}));
+jest.mock('@/hooks/animations/useRippleEffect', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const jest = require('@jest/globals').jest;
+  return {
+    useRippleEffect: () => ({
+      rippleStyle: {},
+      triggerRipple: jest.fn(),
+    }),
+  };
+});
+jest.mock('@/hooks/animations/useMagneticEffect', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const jest = require('@jest/globals').jest;
+  return {
+    useMagneticEffect: () => ({
+      magneticStyle: {},
+      handleMagneticMove: jest.fn(),
+      resetMagnetic: jest.fn(),
+    }),
+  };
+});
 jest.mock('react-native-reanimated', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const jest = require('@jest/globals').jest;
   const React = require('react');
   const { View, Text: RNText } = require('react-native');
   

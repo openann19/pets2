@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 import type { HelpOption } from '../../hooks/useHelpSupportData';
 

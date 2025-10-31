@@ -7,8 +7,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { ColorValue } from 'react-native';
 import { TextInput } from 'react-native';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 // Workaround for Jest tests where StyleSheet might be undefined
 // This ensures StyleSheet.create is always available

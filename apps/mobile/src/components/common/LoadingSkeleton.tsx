@@ -20,7 +20,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useReduceMotion } from '@/hooks/useReducedMotion';
 
 export interface SkeletonProps {

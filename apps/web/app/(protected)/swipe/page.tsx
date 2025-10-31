@@ -7,16 +7,16 @@
 
 import React, { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ScreenShell } from '@/src/components/layout/ScreenShell';
-import { EmptyStates } from '@/src/components/common/EmptyStates';
-import { useSwipeData } from '@/src/hooks/useSwipeData';
-import { useNetworkStatus } from '@/src/hooks/useNetworkStatus';
-import { useErrorHandling } from '@/src/hooks/useErrorHandling';
+import { ScreenShell } from '@/components/layout/ScreenShell';
+import { EmptyStates } from '@/components/common/EmptyStates';
+import { useSwipeData } from '@/hooks/useSwipeData';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useErrorHandling } from '@/hooks/useErrorHandling';
 import { useTranslation } from 'react-i18next';
-import { SwipeCardV2 } from '@/src/components/Pet/SwipeCardV2';
-import { MatchModal } from '@/src/components/Pet/MatchModal';
+import { SwipeCardV2 } from '@/components/Pet/SwipeCardV2';
+import { MatchModal } from '@/components/Pet/MatchModal';
 import { ArrowLeftIcon, UsersIcon } from '@heroicons/react/24/outline';
-import type { PetCardData } from '@/src/components/Pet/SwipeCardV2';
+import type { PetCardData } from '@/components/Pet/SwipeCardV2';
 
 function normalizeSize(s: any): PetCardData['size'] {
   const v = String(s || 'medium').toLowerCase();

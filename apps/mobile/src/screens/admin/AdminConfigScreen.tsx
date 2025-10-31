@@ -17,8 +17,8 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { ConfigModal, ServiceConfigCard } from './config/components';
 import { useAdminConfig } from './config/hooks';
 
@@ -336,7 +336,7 @@ const makeStyles = (theme: AppTheme) =>
     },
     section: {
       marginBottom: theme.spacing.xl,
-      borderRadius: theme.radius.lg,
+      borderRadius: theme.radii.lg,
       padding: theme.spacing.lg,
     },
     sectionTitle: {
@@ -345,7 +345,7 @@ const makeStyles = (theme: AppTheme) =>
       marginBottom: theme.spacing.lg,
     },
     configItem: {
-      borderRadius: theme.radius.md,
+      borderRadius: theme.radii.md,
       padding: theme.spacing.md,
       marginBottom: theme.spacing.md,
     },
@@ -387,7 +387,7 @@ const makeStyles = (theme: AppTheme) =>
       flex: 1,
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.sm,
-      borderRadius: theme.radius.md,
+      borderRadius: theme.radii.md,
       borderWidth: 1,
       alignItems: 'center',
       gap: theme.spacing.xs,
@@ -406,7 +406,7 @@ const makeStyles = (theme: AppTheme) =>
       justifyContent: 'center',
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
-      borderRadius: theme.radius.md,
+      borderRadius: theme.radii.md,
       gap: theme.spacing.sm,
     },
     exportButtonText: {

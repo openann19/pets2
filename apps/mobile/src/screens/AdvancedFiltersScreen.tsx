@@ -6,7 +6,7 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useAdvancedFiltersScreen } from '../hooks/screens/useAdvancedFiltersScreen';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { getExtendedColors } from '@mobile/theme/adapters';
 import { useAdvancedFiltersGate } from '../utils/featureGates';
 import { PremiumGate } from '../components/Premium/PremiumGate';

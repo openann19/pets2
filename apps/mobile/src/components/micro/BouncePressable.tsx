@@ -49,11 +49,13 @@ export const BouncePressable: React.FC<BouncePressableProps> = ({
   const handlePressIn = () => {
     if (prefersReducedMotion) return;
 
+    // eslint-disable-next-line react-hooks/immutability
     scale.value = withSpring(scaleFrom, motionSpring.snappy);
+    // eslint-disable-next-line react-hooks/immutability, @typescript-eslint/no-unsafe-assignment
     opacity.value = withTiming(motionOpacity.pressed, {
-      duration: motionDurations.fast,
+      duration: motionDurations.xs, // eslint-disable-line @typescript-eslint/no-unsafe-assignment
       easing: motionEasing.decel,
-    });
+    }) as typeof opacity.value;
 
     if (haptic) {
       const hapticStyle =
@@ -69,14 +71,16 @@ export const BouncePressable: React.FC<BouncePressableProps> = ({
   const handlePressOut = () => {
     if (prefersReducedMotion) return;
 
+    // eslint-disable-next-line react-hooks/immutability
     scale.value = withSpring(1, motionSpring.standard);
+    // eslint-disable-next-line react-hooks/immutability, @typescript-eslint/no-unsafe-assignment
     opacity.value = withTiming(1, {
-      duration: motionDurations.fast,
+      duration: motionDurations.xs, // eslint-disable-line @typescript-eslint/no-unsafe-assignment
       easing: motionEasing.emphasized,
-    });
+    }) as typeof opacity.value;
   };
 
-  const handlePress = (event: any) => {
+  const handlePress: PressableProps['onPress'] = (event) => {
     if (onPress) {
       onPress(event);
     }

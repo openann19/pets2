@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { petsAPI } from '../services/api';
-import type { Pet, SwipeResult } from '../types';
+import type { Pet, SwipeResult } from '../lib/types/swipe';
 import { logger } from '../services/logger';
 
 interface UseSwipeReturn {

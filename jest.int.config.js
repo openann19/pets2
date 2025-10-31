@@ -21,8 +21,8 @@ module.exports = {
     '/e2e/',
     '/\\.e2e\\.',
   ],
-  testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testEnvironment: 'react-native',
+  setupFilesAfterEnv: ['<rootDir>/apps/mobile/jest.setup.ts'],
   // Deterministic test settings
   maxWorkers: 1, // Run serially for integration tests
   testTimeout: 30000,

@@ -3,8 +3,8 @@ import { StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { Body, EliteButtonPresets, Heading2 } from '@mobile/components';
 import { ShimmerPlaceholder } from '@mobile/components/ShimmerPlaceholder';
-import type { AppTheme } from '@mobile/theme';
-import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
@@ -19,7 +19,7 @@ const createStyles = (theme: AppTheme) =>
     skeletonImage: {
       width: '100%',
       height: 320,
-      borderRadius: theme.radii['3xl'] ?? theme.radii['2xl'] ?? theme.radii.xl,
+      borderRadius: theme.radii['2xl'] ?? theme.radii.xl ?? theme.radii.lg,
     },
     skeletonRow: {
       flexDirection: 'row',

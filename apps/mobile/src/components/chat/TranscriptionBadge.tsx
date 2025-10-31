@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 export const TranscriptionBadge = ({ icon, label }: { icon: string; label: string }) => {
   const theme = useTheme();

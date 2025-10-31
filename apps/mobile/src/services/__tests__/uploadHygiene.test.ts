@@ -155,7 +155,7 @@ describe('UploadHygiene Service', () => {
         modificationTime: Date.now(),
       });
 
-      const result = await (global as any).validateMimeType('test.png');
+      const result = await validateMimeType('test.png');
 
       expect(result.valid).toBe(true);
       expect(result.mimeType).toBe('image/png');
@@ -170,7 +170,7 @@ describe('UploadHygiene Service', () => {
         modificationTime: Date.now(),
       });
 
-      const result = await (global as any).validateMimeType('test.webp');
+      const result = await validateMimeType('test.webp');
 
       expect(result.valid).toBe(true);
       expect(result.mimeType).toBe('image/webp');
@@ -185,7 +185,7 @@ describe('UploadHygiene Service', () => {
         modificationTime: Date.now(),
       });
 
-      const result = await (global as any).validateMimeType('test.txt');
+      const result = await validateMimeType('test.txt');
 
       expect(result.valid).toBe(false);
       expect(result.mimeType).toBe('unknown');
@@ -194,7 +194,7 @@ describe('UploadHygiene Service', () => {
     it('should handle file system errors', async () => {
       mockFileSystem.getInfoAsync.mockRejectedValue(new Error('File not found'));
 
-      const result = await (global as any).validateMimeType('nonexistent.jpg');
+      const result = await validateMimeType('nonexistent.jpg');
 
       expect(result.valid).toBe(false);
       expect(result.mimeType).toBe('unknown');
@@ -210,7 +210,7 @@ describe('UploadHygiene Service', () => {
         modificationTime: Date.now(),
       });
 
-      const result = await (global as any).validateMimeType('image_without_extension');
+      const result = await validateMimeType('image_without_extension');
 
       expect(result.valid).toBe(false);
       expect(result.mimeType).toBe('unknown');
@@ -342,7 +342,7 @@ describe('UploadHygiene Service', () => {
     it('should handle resize errors', async () => {
       mockImageManipulator.manipulateAsync.mockRejectedValue(new Error('Resize failed'));
 
-      await expect((global as any).resizeImage('test.jpg', 1024)).rejects.toThrow('Resize failed');
+      await expect(resizeImage('test.jpg', 1024)).rejects.toThrow('Resize failed');
       expect(console.error).toHaveBeenCalled();
     });
   });
@@ -440,9 +440,9 @@ describe('UploadHygiene Service', () => {
     it('should handle crop errors', async () => {
       mockImageManipulator.manipulateAsync.mockRejectedValue(new Error('Crop failed'));
 
-      await expect(
-        (global as any).cropToAspectRatio('test.jpg', [4, 3], 1000, 800),
-      ).rejects.toThrow('Crop failed');
+      await expect(cropToAspectRatio('test.jpg', [4, 3], 1000, 800)).rejects.toThrow(
+        'Crop failed',
+      );
       expect(console.error).toHaveBeenCalled();
     });
   });
@@ -493,9 +493,7 @@ describe('UploadHygiene Service', () => {
     it('should handle compression errors', async () => {
       mockImageManipulator.manipulateAsync.mockRejectedValue(new Error('Compression failed'));
 
-      await expect((global as any).compressImage('test.jpg', 0.8)).rejects.toThrow(
-        'Compression failed',
-      );
+      await expect(compressImage('test.jpg', 0.8)).rejects.toThrow('Compression failed');
       expect(console.error).toHaveBeenCalled();
     });
   });
@@ -1088,9 +1086,9 @@ describe('UploadHygiene Service', () => {
 
     it('should handle extreme aspect ratios', async () => {
       // Very wide image
-      const result1 = await (global as any).cropToAspectRatio('wide.jpg', [1, 1], 2000, 1000);
+      const result1 = await cropToAspectRatio('wide.jpg', [1, 1], 2000, 1000);
       // Very tall image
-      const result2 = await (global as any).cropToAspectRatio('tall.jpg', [1, 1], 1000, 2000);
+      const result2 = await cropToAspectRatio('tall.jpg', [1, 1], 1000, 2000);
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledTimes(2);
     });

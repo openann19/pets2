@@ -1,27 +1,43 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { logger } from '@pawfectmatch/core';
-;
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { communityApi } from '@/services/apiClient';
+
 const POSTS_PER_PAGE = 20;
+
+interface Post {
+    id: string;
+    content: string;
+    author: {
+        id: string;
+        name: string;
+        avatar?: string;
+    };
+    createdAt: string;
+    likes: number;
+    comments: number;
+    images?: string[];
+}
+
 export const useCommunityFeed = () => {
     const [newPostContent, setNewPostContent] = useState('');
-    const [selectedPost, setSelectedPost] = useState(null);
-    const [commentInputs, setCommentInputs] = useState({});
+    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+    const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
     const [isSubmittingPost, setIsSubmittingPost] = useState(false);
-    const [likeSubmitting, setLikeSubmitting] = useState({});
-    const [commentSubmitting, setCommentSubmitting] = useState({});
+    const [likeSubmitting, setLikeSubmitting] = useState<Record<string, boolean>>({});
+    const [commentSubmitting, setCommentSubmitting] = useState<Record<string, boolean>>({});
     const [showReportDialog, setShowReportDialog] = useState(false);
-    const [reportingTarget, setReportingTarget] = useState(null);
+    const [reportingTarget, setReportingTarget] = useState<Post | null>(null);
     const [moderation, setModeration] = useState({
-        blockedUsers: new Set(),
-        reportedContent: new Set(),
+        blockedUsers: new Set<string>(),
+        reportedContent: new Set<string>(),
         isReporting: false,
         reportReason: '',
         reportDetails: '',
     });
     const [currentPage, setCurrentPage] = useState(1);
-    const loadMoreRef = useRef(null);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const loadMoreRef = useRef<HTMLDivElement>(null);
     const queryClient = useQueryClient();
     // Query for posts data
     const { data: postsData, isLoading, error, refetch, } = useQuery({

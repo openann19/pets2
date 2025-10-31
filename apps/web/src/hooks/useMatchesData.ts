@@ -106,8 +106,10 @@ export function useMatchesData(): UseMatchesDataReturn {
     queryKey: ['matches', filter],
     queryFn: async () => {
       try {
-        const matches = await apiClient.getMatches();
-        return Array.isArray(matches) ? matches.map(normalizeMatch) : [];
+        // Use matches API - assuming it exists or we need to add it
+        const response = await apiClient.get('/matches');
+        const matches = Array.isArray(response) ? response : [];
+        return matches.map(normalizeMatch);
       } catch (error) {
         logger.error('Failed to load matches:', { error });
         throw error;
@@ -122,8 +124,9 @@ export function useMatchesData(): UseMatchesDataReturn {
   // Mutation for refreshing matches
   const refreshMutation = useMutation({
     mutationFn: async () => {
-      const realMatches = await apiClient.getMatches();
-      return Array.isArray(realMatches) ? realMatches.map(normalizeMatch) : [];
+      const response = await apiClient.get('/matches');
+      const realMatches = Array.isArray(response) ? response : [];
+      return realMatches.map(normalizeMatch);
     },
     onSuccess: (data) => {
       queryClient.setQueryData(['matches'], data);
@@ -166,8 +169,9 @@ export function useMatchesData(): UseMatchesDataReturn {
     queryKey: ['liked-you'],
     queryFn: async () => {
       try {
-        const likedYouMatches = await apiClient.getLikedYou();
-        return Array.isArray(likedYouMatches) ? likedYouMatches.map(normalizeMatch) : [];
+        const response = await apiClient.get('/matches/liked-you');
+        const likedYouMatches = Array.isArray(response) ? response : [];
+        return likedYouMatches.map(normalizeMatch);
       } catch (error) {
         logger.error('Failed to load liked you:', { error });
         return [];

@@ -77,3 +77,15 @@ export function trackScreenView(screenName: string, props?: Record<string, unkno
 export function trackUserAction(action: string, props?: Record<string, unknown>): void {
   track('user_action', { action, ...props });
 }
+export function trackEvent(event: string, props?: Record<string, unknown>, userId?: string): void {
+  track(event, props);
+}
+
+/**
+ * Analytics service object for backward compatibility
+ */
+export const analyticsService = {
+  trackEvent,
+  trackScreenView,
+  trackUserAction,
+} as const;

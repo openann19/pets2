@@ -9,6 +9,7 @@
  * - Performance hooks
  * - Utility hooks
  */
+/// <reference types="jest" />
 
 describe('Comprehensive Hooks Test Suite', () => {
   describe('Animation Hooks', () => {

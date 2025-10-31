@@ -11,11 +11,143 @@ import {
   applyMicroInteractionGuards,
 } from '../apply';
 import { getDefaultUIConfig, type UIConfig } from '@pawfectmatch/core';
-import { useReduceMotion } from '../../hooks/useReducedMotion';
-import { isLowEndDevice } from '../../utils/motionGuards';
+import { useReduceMotion } from '../../../hooks/useReducedMotion';
+import { isLowEndDevice } from '../utils/motionGuards';
 
-jest.mock('../../hooks/useReducedMotion');
-jest.mock('../../utils/motionGuards');
+jest.mock('@pawfectmatch/core', () => ({
+  getDefaultUIConfig: jest.fn(() => ({
+    version: '2025.01.27',
+    status: 'prod',
+    audience: { env: 'prod', pct: 100 },
+    tokens: {
+      colors: {
+        bg: '#FFFFFF',
+        surface: '#F2F2F7',
+        overlay: '#00000080',
+        border: '#C6C6C8',
+        onBg: '#000000',
+        onSurface: '#000000',
+        onMuted: '#8E8E93',
+        primary: '#007AFF',
+        onPrimary: '#FFFFFF',
+        success: '#34C759',
+        danger: '#FF3B30',
+        warning: '#FF9500',
+        info: '#007AFF',
+      },
+      palette: {
+        gradients: {
+          primary: ['#007AFF', '#5856D6'],
+          success: ['#34C759', '#30D158'],
+          danger: ['#FF3B30', '#FF453A'],
+          warning: ['#FF9500', '#FF9F0A'],
+          info: ['#007AFF', '#64D2FF'],
+        },
+      },
+      spacing: {
+        xs: 4,
+        sm: 8,
+        md: 16,
+        lg: 24,
+        xl: 32,
+        '2xl': 48,
+        '3xl': 64,
+        '4xl': 80,
+      },
+      radii: {
+        none: 0,
+        xs: 2,
+        sm: 4,
+        md: 8,
+        lg: 12,
+        xl: 16,
+        '2xl': 20,
+        pill: 9999,
+        full: 9999,
+      },
+      typography: {
+        scale: {
+          caption: { size: 12, lineHeight: 16, weight: '400' },
+          body: { size: 16, lineHeight: 24, weight: '400' },
+          h4: { size: 18, lineHeight: 28, weight: '600' },
+          h3: { size: 20, lineHeight: 32, weight: '600' },
+          h2: { size: 24, lineHeight: 36, weight: '700' },
+          h1: { size: 32, lineHeight: 48, weight: '700' },
+        },
+      },
+      motion: {
+        duration: {
+          xfast: 100,
+          fast: 200,
+          base: 300,
+          slow: 500,
+          xslow: 700,
+        },
+        easing: {
+          standard: [0.25, 0.46, 0.45, 0.94],
+          emphasized: [0.05, 0.7, 0.1, 1.0],
+          decel: [0.0, 0.0, 0.2, 1.0],
+          accel: [0.3, 0.0, 1.0, 1.0],
+        },
+        scale: {
+          pressed: 0.95,
+          lift: 1.05,
+        },
+        opacity: {
+          pressed: 0.7,
+          disabled: 0.5,
+          shimmer: 0.8,
+        },
+      },
+      shadow: {
+        '1': { radius: 2, offset: [0, 1], opacity: 0.1 },
+        '2': { radius: 4, offset: [0, 2], opacity: 0.15 },
+        '3': { radius: 8, offset: [0, 4], opacity: 0.2 },
+        '4': { radius: 16, offset: [0, 8], opacity: 0.25 },
+      },
+    },
+    microInteractions: {
+      pressFeedback: { enabled: true, scale: 0.95, durationMs: 100 },
+      successMorph: { enabled: true, durationMs: 300 },
+      elasticPullToRefresh: { enabled: true, maxStretch: 1.2 },
+      sharedElement: { enabled: true, durationMs: 300 },
+      confettiLite: { enabled: true, maxParticles: 50 },
+      shimmer: { enabled: true, sweepMs: 1500 },
+      guards: {
+        respectReducedMotion: true,
+        lowEndDevicePolicy: 'simplify',
+      },
+    },
+    components: {
+      button: { variant: 'primary', radius: 'md', elevation: '1' },
+      card: { radius: 'lg', elevation: '2', imageFade: 'none' },
+      chip: { filled: true },
+      toast: { position: 'bottom', durationMs: 3000 },
+    },
+    screens: {},
+    featureFlags: {},
+    meta: {
+      changelog: 'Initial config',
+      createdBy: 'test',
+      createdAt: '2025-01-27T00:00:00Z',
+    },
+  })),
+  logger: {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  },
+  useAuthStore: jest.fn(() => ({
+    user: null,
+    isAuthenticated: false,
+    login: jest.fn(),
+    logout: jest.fn(),
+  })),
+}));
+
+jest.mock('../../../hooks/useReducedMotion');
+jest.mock('../utils/motionGuards');
 
 const mockUseReduceMotion = useReduceMotion as jest.MockedFunction<typeof useReduceMotion>;
 const mockIsLowEndDevice = isLowEndDevice as jest.MockedFunction<typeof isLowEndDevice>;
@@ -35,7 +167,7 @@ describe('UI Config Apply', () => {
 
       expect(theme.scheme).toBe('light');
       expect(theme.isDark).toBe(false);
-      expect(theme.colors.primary).toBe(config.tokens.colors.primary);
+      expect(theme.colors.primary).toBe(config.tokens.colors['primary']);
       expect(theme.spacing.md).toBe(config.tokens.spacing.md);
     });
 
@@ -98,7 +230,8 @@ describe('UI Config Apply', () => {
           ...config.microInteractions,
           guards: {
             ...config.microInteractions.guards,
-            respectReducedMotion: false,
+            // Force legacy configs that explicitly disable motion guard
+            respectReducedMotion: false as unknown as true,
           },
         },
       };

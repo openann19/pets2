@@ -10,16 +10,22 @@
 
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { uploadPhoto } from '../photoUpload';
-import { api } from '../api';
+import { request } from '../api';
 import * as FileSystem from 'expo-file-system';
 
 // Mock dependencies
-jest.mock('../api');
+jest.mock('../api', () => ({
+  request: jest.fn(),
+}));
 jest.mock('expo-file-system', () => ({
-  uploadAsync: jest.fn(),
+  FileSystemUploadType: {
+    BINARY_CONTENT: 'BINARY_CONTENT',
+    MULTIPART: 'MULTIPART',
+  },
+  uploadAsync: jest.fn(() => Promise.resolve({ status: 200, body: '{"key": "test-key"}' })),
 }));
 
-const mockApi = api as jest.Mocked<typeof api>;
+const mockRequest = request as jest.MockedFunction<typeof request>;
 const mockFileSystem = FileSystem as jest.Mocked<typeof FileSystem>;
 
 describe('Photo Upload Service', () => {
@@ -34,7 +40,7 @@ describe('Photo Upload Service', () => {
         key: 'photos/user123/photo456.jpg',
       };
 
-      mockApi.post.mockResolvedValueOnce({ data: presignData });
+      mockRequest.mockResolvedValueOnce(presignData);
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 200,
         headers: {},
@@ -44,8 +50,9 @@ describe('Photo Upload Service', () => {
       const result = await uploadPhoto('file://photo.jpg', 'image/jpeg');
 
       expect(result).toBe(presignData.key);
-      expect(mockApi.post).toHaveBeenCalledWith('/uploads/photos/presign', {
-        contentType: 'image/jpeg',
+      expect(mockRequest).toHaveBeenCalledWith('/uploads/photos/presign', {
+        method: 'POST',
+        body: { contentType: 'image/jpeg' },
       });
       expect(mockFileSystem.uploadAsync).toHaveBeenCalledWith(presignData.url, 'file://photo.jpg', {
         httpMethod: 'PUT',
@@ -60,7 +67,7 @@ describe('Photo Upload Service', () => {
         key: 'photos/user123/video.mp4',
       };
 
-      mockApi.post.mockResolvedValueOnce({ data: presignData });
+      mockRequest.mockResolvedValueOnce(presignData);
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 200,
         headers: {},
@@ -70,8 +77,9 @@ describe('Photo Upload Service', () => {
       const result = await uploadPhoto('file://video.mp4', 'video/mp4');
 
       expect(result).toBe(presignData.key);
-      expect(mockApi.post).toHaveBeenCalledWith('/uploads/photos/presign', {
-        contentType: 'video/mp4',
+      expect(mockRequest).toHaveBeenCalledWith('/uploads/photos/presign', {
+        method: 'POST',
+        body: { contentType: 'video/mp4' },
       });
       expect(mockFileSystem.uploadAsync.mock.calls[0]?.[2]?.headers?.['Content-Type']).toBe(
         'video/mp4',
@@ -79,11 +87,9 @@ describe('Photo Upload Service', () => {
     });
 
     it('should handle PNG images', async () => {
-      mockApi.post.mockResolvedValueOnce({
-        data: {
-          url: 'https://s3.amazonaws.com/bucket/key',
-          key: 'photos/user123/photo.png',
-        },
+      mockRequest.mockResolvedValueOnce({
+        url: 'https://s3.amazonaws.com/bucket/key',
+        key: 'photos/user123/photo.png',
       });
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 200,
@@ -97,11 +103,9 @@ describe('Photo Upload Service', () => {
     });
 
     it('should handle JPEG images', async () => {
-      mockApi.post.mockResolvedValueOnce({
-        data: {
-          url: 'https://s3.amazonaws.com/bucket/key',
-          key: 'photos/user123/photo.jpg',
-        },
+      mockRequest.mockResolvedValue({
+        url: 'https://s3.amazonaws.com/bucket/key',
+        key: 'photos/user123/photo.jpg',
       });
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 200,
@@ -117,18 +121,16 @@ describe('Photo Upload Service', () => {
 
   describe('Error Handling', () => {
     it('should handle presign API errors', async () => {
-      mockApi.post.mockRejectedValueOnce(new Error('Presign failed'));
+      mockRequest.mockRejectedValueOnce(new Error('Presign failed'));
 
       await expect(uploadPhoto('file://photo.jpg', 'image/jpeg')).rejects.toThrow('Presign failed');
       expect(mockFileSystem.uploadAsync).not.toHaveBeenCalled();
     });
 
     it('should handle upload errors', async () => {
-      mockApi.post.mockResolvedValueOnce({
-        data: {
-          url: 'https://s3.amazonaws.com/bucket/key',
-          key: 'photos/user123/photo.jpg',
-        },
+      mockRequest.mockResolvedValueOnce({
+        url: 'https://s3.amazonaws.com/bucket/key',
+        key: 'photos/user123/photo.jpg',
       });
       mockFileSystem.uploadAsync.mockRejectedValueOnce(new Error('Upload failed'));
 
@@ -136,11 +138,9 @@ describe('Photo Upload Service', () => {
     });
 
     it('should handle S3 upload failures', async () => {
-      mockApi.post.mockResolvedValueOnce({
-        data: {
-          url: 'https://s3.amazonaws.com/bucket/key',
-          key: 'photos/user123/photo.jpg',
-        },
+      mockRequest.mockResolvedValueOnce({
+        url: 'https://s3.amazonaws.com/bucket/key',
+        key: 'photos/user123/photo.jpg',
       });
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 403,
@@ -152,7 +152,7 @@ describe('Photo Upload Service', () => {
     });
 
     it('should handle network timeouts', async () => {
-      mockApi.post.mockImplementation(
+      mockRequest.mockImplementationOnce(
         () => new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 1)),
       );
 
@@ -162,11 +162,9 @@ describe('Photo Upload Service', () => {
 
   describe('Edge Cases', () => {
     it('should handle empty file URI', async () => {
-      mockApi.post.mockResolvedValueOnce({
-        data: {
-          url: 'https://s3.amazonaws.com/bucket/key',
-          key: 'photos/user123/photo.jpg',
-        },
+      mockRequest.mockResolvedValueOnce({
+        url: 'https://s3.amazonaws.com/bucket/key',
+        key: 'photos/user123/photo.jpg',
       });
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 200,
@@ -182,11 +180,9 @@ describe('Photo Upload Service', () => {
     it('should handle very long file URIs', async () => {
       const longUri = `file://${'x'.repeat(10000)}.jpg`;
 
-      mockApi.post.mockResolvedValueOnce({
-        data: {
-          url: 'https://s3.amazonaws.com/bucket/key',
-          key: 'photos/user123/long.jpg',
-        },
+      mockRequest.mockResolvedValueOnce({
+        url: 'https://s3.amazonaws.com/bucket/key',
+        key: 'photos/user123/long.jpg',
       });
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 200,
@@ -200,11 +196,9 @@ describe('Photo Upload Service', () => {
     });
 
     it('should handle special characters in content type', async () => {
-      mockApi.post.mockResolvedValueOnce({
-        data: {
-          url: 'https://s3.amazonaws.com/bucket/key',
-          key: 'photos/user123/photo.jpg',
-        },
+      mockRequest.mockResolvedValueOnce({
+        url: 'https://s3.amazonaws.com/bucket/key',
+        key: 'photos/user123/photo.jpg',
       });
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 200,
@@ -214,17 +208,16 @@ describe('Photo Upload Service', () => {
 
       await uploadPhoto('file://photo.jpg', 'image/svg+xml');
 
-      expect(mockApi.post).toHaveBeenCalledWith('/uploads/photos/presign', {
-        contentType: 'image/svg+xml',
+      expect(mockRequest).toHaveBeenCalledWith('/uploads/photos/presign', {
+        method: 'POST',
+        body: { contentType: 'image/svg+xml' },
       });
     });
 
     it('should handle different file URIs', async () => {
-      mockApi.post.mockResolvedValueOnce({
-        data: {
-          url: 'https://s3.amazonaws.com/bucket/key',
-          key: 'photos/user123/photo.jpg',
-        },
+      mockRequest.mockResolvedValueOnce({
+        url: 'https://s3.amazonaws.com/bucket/key',
+        key: 'photos/user123/photo.jpg',
       });
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 200,
@@ -248,11 +241,9 @@ describe('Photo Upload Service', () => {
 
   describe('Integration', () => {
     it('should integrate with API service', async () => {
-      mockApi.post.mockResolvedValueOnce({
-        data: {
-          url: 'https://s3.amazonaws.com/bucket/key',
-          key: 'photos/user123/photo.jpg',
-        },
+      mockRequest.mockResolvedValueOnce({
+        url: 'https://s3.amazonaws.com/bucket/key',
+        key: 'photos/user123/photo.jpg',
       });
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 200,
@@ -262,15 +253,13 @@ describe('Photo Upload Service', () => {
 
       await uploadPhoto('file://photo.jpg', 'image/jpeg');
 
-      expect(mockApi.post).toHaveBeenCalledWith('/uploads/photos/presign', expect.any(Object));
+      expect(mockRequest).toHaveBeenCalledWith('/uploads/photos/presign', expect.any(Object));
     });
 
     it('should integrate with FileSystem', async () => {
-      mockApi.post.mockResolvedValueOnce({
-        data: {
-          url: 'https://s3.amazonaws.com/bucket/key',
-          key: 'photos/user123/photo.jpg',
-        },
+      mockRequest.mockResolvedValueOnce({
+        url: 'https://s3.amazonaws.com/bucket/key',
+        key: 'photos/user123/photo.jpg',
       });
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 200,
@@ -293,11 +282,9 @@ describe('Photo Upload Service', () => {
 
   describe('Type Safety', () => {
     it('should maintain type safety for return value', async () => {
-      mockApi.post.mockResolvedValueOnce({
-        data: {
-          url: 'https://s3.amazonaws.com/bucket/key',
-          key: 'photos/user123/photo.jpg',
-        },
+      mockRequest.mockResolvedValueOnce({
+        url: 'https://s3.amazonaws.com/bucket/key',
+        key: 'photos/user123/photo.jpg',
       });
       mockFileSystem.uploadAsync.mockResolvedValueOnce({
         status: 200,
@@ -312,7 +299,7 @@ describe('Photo Upload Service', () => {
     });
 
     it('should handle all required parameters', async () => {
-      mockApi.post.mockResolvedValueOnce({
+      mockRequest.mockResolvedValueOnce({
         data: {
           url: 'https://s3.amazonaws.com/bucket/key',
           key: 'photos/user123/photo.jpg',
@@ -326,8 +313,9 @@ describe('Photo Upload Service', () => {
 
       await uploadPhoto('file://photo.jpg', 'image/jpeg');
 
-      expect(mockApi.post).toHaveBeenCalledWith('/uploads/photos/presign', {
-        contentType: expect.any(String),
+      expect(mockRequest).toHaveBeenCalledWith('/uploads/photos/presign', {
+        method: 'POST',
+        body: { contentType: expect.any(String) },
       });
     });
   });

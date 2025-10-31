@@ -23,7 +23,7 @@ import {
 
 // Existing architecture components
 import { EliteContainer, EliteHeader } from '../components/elite';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { logger } from '@pawfectmatch/core';
 
 // Pet-first hooks

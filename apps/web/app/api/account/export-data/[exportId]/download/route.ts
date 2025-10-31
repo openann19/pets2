@@ -4,7 +4,7 @@
  */
 
 import type { NextRequest } from 'next/server'
-import { logger } from '@pawfectmatch/core';
+
 ;
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '../../../../../lib/auth';
@@ -82,7 +82,7 @@ export async function GET(
 
         return new NextResponse(userData, { headers });
     } catch (error) {
-        logger.error('Error downloading export:', { error });
+        console.error('Error downloading export:', { error });
         return NextResponse.json(
             { error: 'Failed to download export' },
             { status: 500 }

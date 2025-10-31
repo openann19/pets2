@@ -4,6 +4,7 @@
  * Tests retry with backoff, cancel, concurrency cap, and error handling
  * as defined in Test Plan v1.0
  */
+/// <reference types="jest" />
 
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import { renderHook, act, waitFor } from '@testing-library/react-native';

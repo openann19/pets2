@@ -1,30 +1,13 @@
 /**
- * useHomeScreen Hook - Web Version
- * Manages HomeScreen state and business logic matching mobile exactly
+ * useHomeScreen Hook - WEB VERSION
+ * Manages HomeScreen state and business logic
+ * Adapted from mobile version for web navigation
  */
 
-'use client';
-
 import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { logger } from '@pawfectmatch/core';
-import { useAuthStore } from '@/lib/auth-store';
-import type { HomeQuickActionEventPayload } from '@/constants/events';
-
-export interface Stats {
-  matches: number;
-  messages: number;
-  pets: number;
-}
-
-export interface RecentActivityItem {
-  id: string;
-  type: 'match' | 'message';
-  title: string;
-  description: string;
-  timestamp: string;
-  timeAgo: string;
-}
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@pawfectmatch/core';
+import type { Stats, RecentActivityItem } from './types';
 
 interface UseHomeScreenReturn {
   stats: Stats;
@@ -46,26 +29,21 @@ interface UseHomeScreenReturn {
   handlePremiumPress: () => void;
 }
 
-/**
- * Format timestamp to relative time (e.g., "2m ago", "5m ago")
- */
 function formatTimeAgo(timestamp: string): string {
-  const now = Date.now();
-  const time = new Date(timestamp).getTime();
-  const diffMs = now - time;
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
+  const now = new Date();
+  const time = new Date(timestamp);
+  const diffInSeconds = Math.floor((now.getTime() - time.getTime()) / 1000);
 
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffInSeconds < 60) return 'Just now';
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+
   return new Date(timestamp).toLocaleDateString();
 }
 
 export const useHomeScreen = (): UseHomeScreenReturn => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { user } = useAuthStore();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -87,66 +65,90 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
     setIsLoading(true);
     setError(null);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-      const token = localStorage.getItem('accessToken');
+      // Get access token from auth store (if available)
+      const accessToken = (user as any)?.accessToken || (user as any)?.token;
+
+      // TODO: Replace with actual API endpoint
+      const apiUrl = process.env.REACT_APP_API_URL || '';
 
       // Fetch stats
-      const statsResponse = await fetch(`${apiUrl}/home/stats`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      if (apiUrl) {
+        const statsResponse = await fetch(`${apiUrl}/home/stats`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-      if (!statsResponse.ok) {
-        throw new Error(`Failed to fetch stats: ${statsResponse.statusText}`);
+        if (!statsResponse.ok) {
+          throw new Error(`Failed to fetch stats: ${statsResponse.statusText}`);
+        }
+
+        const statsData = await statsResponse.json();
+        setStats({
+          matches: statsData.matches || 0,
+          messages: statsData.messages || 0,
+          pets: statsData.pets || 0,
+        });
+
+        // Fetch recent activity
+        const activityResponse = await fetch(`${apiUrl}/home/recent-activity`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (activityResponse.ok) {
+          const activityData = await activityResponse.json();
+          setRecentActivity(
+            (activityData.items || []).map((item: any) => ({
+              ...item,
+              timeAgo: formatTimeAgo(item.timestamp || new Date().toISOString()),
+            }))
+          );
+        }
+      } else {
+        // Mock data for development
+        setStats({
+          matches: 5,
+          messages: 12,
+          pets: 2,
+        });
+        setRecentActivity([
+          {
+            id: '1',
+            type: 'match',
+            title: 'New match!',
+            message: 'You matched with Luna',
+            timestamp: new Date(Date.now() - 3600000).toISOString(),
+            timeAgo: '1h ago',
+          },
+          {
+            id: '2',
+            type: 'message',
+            title: 'New message',
+            message: 'Charlie sent you a message',
+            timestamp: new Date(Date.now() - 7200000).toISOString(),
+            timeAgo: '2h ago',
+          },
+        ]);
       }
-
-      const statsData = await statsResponse.json();
-
-      setStats({
-        matches: statsData.matches || 0,
-        messages: statsData.messages || 0,
-        pets: 0,
-      });
-
-      // Fetch recent activity
-      const activityResponse = await fetch(`${apiUrl}/home/recent-activity`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!activityResponse.ok) {
-        throw new Error(`Failed to fetch activity: ${activityResponse.statusText}`);
-      }
-
-      const activityData = await activityResponse.json();
-
-      // Transform to RecentActivityItem format
-      const activities: RecentActivityItem[] = (activityData.activities || []).map((item: any) => ({
-        ...item,
-        timeAgo: formatTimeAgo(item.timestamp),
-      }));
-
-      setRecentActivity(activities);
-      setError(null);
-    } catch (error) {
-      const err = error instanceof Error ? error : new Error(String(error));
-      logger.error('Failed to load home data:', { error: err });
-      setError(err);
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Failed to load home data');
+      setError(error);
+      console.error('Failed to load home data:', error);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [user?.accessToken]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
       await loadHomeData();
     } catch (error) {
-      logger.error('Failed to refresh data:', { error });
+      console.error('Failed to refresh data:', error);
     } finally {
       setRefreshing(false);
     }
@@ -157,40 +159,40 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
       try {
         switch (action) {
           case 'swipe':
-            router.push('/swipe');
+            navigate('/swipe');
             break;
           case 'matches':
-            router.push('/matches');
+            navigate('/matches');
             break;
           case 'messages':
-            router.push('/matches');
+            navigate('/matches');
             break;
           case 'profile':
-            router.push('/profile');
+            navigate('/profile');
             break;
           case 'settings':
-            router.push('/settings');
+            navigate('/settings');
             break;
           case 'my-pets':
-            router.push('/my-pets');
+            navigate('/my-pets');
             break;
           case 'create-pet':
-            router.push('/pets/new');
+            navigate('/create-pet');
             break;
           case 'community':
-            router.push('/community');
+            navigate('/community');
             break;
           case 'premium':
-            router.push('/premium');
+            navigate('/premium');
             break;
           default:
-            logger.warn(`Unknown action: ${action}`);
+            console.warn(`Unknown action: ${action}`);
         }
       } catch (error) {
-        logger.error('Navigation error:', { error });
+        console.error('Navigation error:', error);
       }
     },
-    [router],
+    [navigate],
   );
 
   const handleProfilePress = useCallback(() => {
@@ -249,4 +251,3 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
     handlePremiumPress,
   };
 };
-

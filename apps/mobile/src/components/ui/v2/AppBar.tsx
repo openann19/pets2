@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { Theme } from '@mobile/theme';
-import { useTheme } from '@mobile/theme';
+import type { Theme } from '@/theme';
+import { useTheme } from '@/theme';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo } from 'react';

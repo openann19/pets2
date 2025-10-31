@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { AppTheme } from '@mobile/theme';
-import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
 import { logger } from '@pawfectmatch/core';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Haptics from 'expo-haptics';

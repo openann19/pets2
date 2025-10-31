@@ -6,8 +6,8 @@
 import { useMemo } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { LinkPreviewData } from '../../services/linkPreviewService';
 
 export interface LinkPreviewCardProps {

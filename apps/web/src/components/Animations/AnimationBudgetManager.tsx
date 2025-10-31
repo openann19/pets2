@@ -3,6 +3,8 @@
  * Advanced performance monitoring and adaptive throttling
  */
 
+'use client';
+
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAnimationBudgetV2 } from './AnimationBudget';
 import { logger } from '@pawfectmatch/core';

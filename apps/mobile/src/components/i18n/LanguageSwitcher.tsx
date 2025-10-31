@@ -1,4 +1,4 @@
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

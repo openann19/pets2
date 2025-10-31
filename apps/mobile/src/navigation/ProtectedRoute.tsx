@@ -8,7 +8,10 @@ type ProtectedRouteProps = NativeStackScreenProps<RootStackParamList>;
 export function ProtectedRoute({
   component: Component,
   ...props
-}: ProtectedRouteProps & { component: ComponentType<ProtectedRouteProps> }): React.ReactElement {
+}: ProtectedRouteProps & { 
+  component: ComponentType<any>;
+}): React.ReactElement {
   // Stub implementation - add authentication logic here if needed
+  // Using ComponentType<any> to accept screens with specific route prop types
   return <Component {...props} />;
 }

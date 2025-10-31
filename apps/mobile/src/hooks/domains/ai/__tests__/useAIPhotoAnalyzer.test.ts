@@ -9,6 +9,34 @@
  * - Result caching
  */
 
+// Mock the API import BEFORE any other imports
+jest.mock('../../../../services/api', () => ({
+  api: {
+    ai: {
+      analyzePhotos: jest.fn().mockResolvedValue({
+        breed_analysis: {
+          primary_breed: 'Golden Retriever',
+          confidence: 0.85,
+          secondary_breeds: []
+        },
+        health_assessment: {
+          age_estimate: 2,
+          health_score: 0.9,
+          recommendations: ['Regular exercise', 'Balanced diet']
+        },
+        photo_quality: {
+          overall_score: 0.8,
+          lighting_score: 0.7,
+          composition_score: 0.9,
+          clarity_score: 0.8
+        },
+        matchability_score: 0.85,
+        ai_insights: ['Friendly temperament', 'Good with children']
+      })
+    }
+  }
+}));
+
 import { renderHook, act } from '@testing-library/react-native';
 import { useAIPhotoAnalyzer } from '../useAIPhotoAnalyzer';
 
@@ -17,7 +45,7 @@ describe('useAIPhotoAnalyzer', () => {
     it('should initialize with default state', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
       expect(result.current.isAnalyzing).toBe(false);
-      expect(result.current.analysis).toBeNull();
+      expect(result.current.analysisResult).toBeNull();
       expect(result.current.error).toBeNull();
     });
 
@@ -34,16 +62,12 @@ describe('useAIPhotoAnalyzer', () => {
 
   describe('Photo Analysis', () => {
     it('should analyze photo quality', async () => {
-      const mockPhoto = {
-        uri: 'file://test/photo.jpg',
-        width: 800,
-        height: 600,
-      };
+      const mockPhotoUri = 'file://test/photo.jpg';
 
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        await result.current.analyzePhoto(mockPhoto);
+        await result.current.analyzePhotos([mockPhotoUri]);
       });
 
       // Should complete analysis
@@ -60,9 +84,10 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        const analysis = await result.current.analyzePhoto(petPhoto);
-        expect(analysis).toBeDefined();
+        await result.current.analyzePhotos([petPhoto.uri]);
       });
+
+      expect(result.current.analysisResult).toBeDefined();
     });
 
     it('should handle photo without pets', async () => {
@@ -75,9 +100,10 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        const analysis = await result.current.analyzePhoto(noPetPhoto);
-        expect(analysis).toBeDefined();
+        await result.current.analyzePhotos([noPetPhoto.uri]);
       });
+
+      expect(result.current.analysisResult).toBeDefined();
     });
 
     it('should provide quality suggestions', async () => {
@@ -90,10 +116,11 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        const analysis = await result.current.analyzePhoto(lowQualityPhoto);
-        expect(analysis).toHaveProperty('quality');
-        expect(analysis).toHaveProperty('suggestions');
+        await result.current.analyzePhotos([lowQualityPhoto.uri]);
       });
+
+      expect(result.current.analysisResult).toHaveProperty('photo_quality');
+      expect(result.current.analysisResult).toHaveProperty('ai_insights');
     });
   });
 
@@ -110,7 +137,7 @@ describe('useAIPhotoAnalyzer', () => {
       let loadingState: boolean = false;
 
       act(() => {
-        result.current.analyzePhoto(mockPhoto).then(() => {
+        result.current.analyzePhotos([mockPhoto.uri]).then(() => {
           loadingState = result.current.isAnalyzing;
         });
       });
@@ -129,7 +156,7 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        await result.current.analyzePhoto(mockPhoto);
+        await result.current.analyzePhotos([mockPhoto.uri]);
       });
 
       expect(result.current.isAnalyzing).toBe(false);
@@ -147,7 +174,7 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        await result.current.analyzePhoto(invalidPhoto);
+        await result.current.analyzePhotos([invalidPhoto.uri]);
       });
 
       expect(result.current.error).toBeDefined();
@@ -165,7 +192,7 @@ describe('useAIPhotoAnalyzer', () => {
 
       // Simulate network failure
       await act(async () => {
-        await result.current.analyzePhoto(mockPhoto);
+        await result.current.analyzePhotos([mockPhoto.uri]);
       });
 
       // Should handle network errors
@@ -186,7 +213,7 @@ describe('useAIPhotoAnalyzer', () => {
       );
 
       await act(async () => {
-        await result.current.analyzePhoto(mockPhoto);
+        await result.current.analyzePhotos([mockPhoto.uri]);
       });
 
       expect(result.current.isAnalyzing).toBe(false);
@@ -209,18 +236,18 @@ describe('useAIPhotoAnalyzer', () => {
 
       // First analysis
       await act(async () => {
-        await result.current.analyzePhoto(mockPhoto);
+        await result.current.analyzePhotos([mockPhoto.uri]);
       });
 
-      const firstAnalysis = result.current.analysis;
+      const firstAnalysis = result.current.analysisResult;
 
       // Second analysis of same photo
       await act(async () => {
-        await result.current.analyzePhoto(mockPhoto);
+        await result.current.analyzePhotos([mockPhoto.uri]);
       });
 
       // Should use cached result
-      expect(result.current.analysis).toBe(firstAnalysis);
+      expect(result.current.analysisResult).toBe(firstAnalysis);
     });
 
     it('should respect cache settings', async () => {
@@ -237,15 +264,12 @@ describe('useAIPhotoAnalyzer', () => {
       );
 
       await act(async () => {
-        await result.current.analyzePhoto(mockPhoto);
+        await result.current.analyzePhotos([mockPhoto.uri]);
       });
 
       // Should work without caching
-      expect(result.current.analysis).toBeDefined();
+      expect(result.current.analysisResult).toBeDefined();
     });
-  });
-
-  describe('Analysis Results', () => {
     it('should provide quality score', async () => {
       const mockPhoto = {
         uri: 'file://test/photo.jpg',
@@ -256,13 +280,13 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        await result.current.analyzePhoto(mockPhoto);
+        await result.current.analyzePhotos([mockPhoto.uri]);
       });
 
-      expect(result.current.analysis).toHaveProperty('quality');
-      expect(typeof result.current.analysis?.quality).toBe('number');
-      expect(result.current.analysis?.quality).toBeGreaterThanOrEqual(0);
-      expect(result.current.analysis?.quality).toBeLessThanOrEqual(1);
+      expect(result.current.analysisResult).toHaveProperty('quality');
+      expect(typeof result.current.analysisResult?.quality).toBe('number');
+      expect(result.current.analysisResult?.quality).toBeGreaterThanOrEqual(0);
+      expect(result.current.analysisResult?.quality).toBeLessThanOrEqual(1);
     });
 
     it('should detect pet presence', async () => {
@@ -275,11 +299,11 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        await result.current.analyzePhoto(petPhoto);
+        await result.current.analyzePhotos([petPhoto.uri]);
       });
 
-      expect(result.current.analysis).toHaveProperty('hasPet');
-      expect(typeof result.current.analysis?.hasPet).toBe('boolean');
+      expect(result.current.analysisResult).toHaveProperty('hasPet');
+      expect(typeof result.current.analysisResult?.hasPet).toBe('boolean');
     });
 
     it('should provide improvement suggestions', async () => {
@@ -292,11 +316,11 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        await result.current.analyzePhoto(mockPhoto);
+        await result.current.analyzePhotos([mockPhoto.uri]);
       });
 
-      expect(result.current.analysis).toHaveProperty('suggestions');
-      expect(Array.isArray(result.current.analysis?.suggestions)).toBe(true);
+      expect(result.current.analysisResult).toHaveProperty('suggestions');
+      expect(Array.isArray(result.current.analysisResult?.suggestions)).toBe(true);
     });
 
     it('should include confidence scores', async () => {
@@ -309,11 +333,11 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        await result.current.analyzePhoto(mockPhoto);
+        await result.current.analyzePhotos([mockPhoto.uri]);
       });
 
-      expect(result.current.analysis).toHaveProperty('confidence');
-      expect(typeof result.current.analysis?.confidence).toBe('number');
+      expect(result.current.analysisResult).toHaveProperty('confidence');
+      expect(typeof result.current.analysisResult?.confidence).toBe('number');
     });
   });
 
@@ -328,7 +352,7 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        const promises = photos.map((photo) => result.current.analyzePhoto(photo));
+        const promises = photos.map((photo) => result.current.analyzePhotos([photo.uri]));
         await Promise.all(promises);
       });
 
@@ -343,14 +367,14 @@ describe('useAIPhotoAnalyzer', () => {
 
       // Start first analysis
       act(() => {
-        result.current.analyzePhoto(photo1);
+        result.current.analyzePhotos([photo1.uri]);
       });
 
       expect(result.current.isAnalyzing).toBe(true);
 
       // Start second analysis (should cancel first)
       await act(async () => {
-        await result.current.analyzePhoto(photo2);
+        await result.current.analyzePhotos([photo2.uri]);
       });
 
       expect(result.current.isAnalyzing).toBe(false);
@@ -362,7 +386,7 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        await result.current.analyzePhoto(null as any);
+        await result.current.analyzePhotos(['']);
       });
 
       expect(result.current.error).toBeDefined();
@@ -378,7 +402,7 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        await result.current.analyzePhoto(invalidPhoto);
+        await result.current.analyzePhotos([invalidPhoto.uri]);
       });
 
       expect(result.current.error).toBeDefined();
@@ -394,7 +418,7 @@ describe('useAIPhotoAnalyzer', () => {
       const { result } = renderHook(() => useAIPhotoAnalyzer());
 
       await act(async () => {
-        await result.current.analyzePhoto(largePhoto);
+        await result.current.analyzePhotos([largePhoto.uri]);
       });
 
       // Should handle gracefully
@@ -412,11 +436,7 @@ describe('useAIPhotoAnalyzer', () => {
       const { unmount, result } = renderHook(() => useAIPhotoAnalyzer());
 
       act(() => {
-        result.current.analyzePhoto({
-          uri: 'file://test/photo.jpg',
-          width: 800,
-          height: 600,
-        });
+        result.current.analyzePhotos(['file://test/photo.jpg']);
       });
 
       unmount();

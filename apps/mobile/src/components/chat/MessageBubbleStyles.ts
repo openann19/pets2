@@ -4,7 +4,7 @@
  */
 
 import { StyleSheet } from 'react-native';
-import type { AppTheme } from '@mobile/theme';
+import type { AppTheme } from '@/theme';
 
 export const createMessageBubbleStyles = (theme: AppTheme) =>
   StyleSheet.create({

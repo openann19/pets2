@@ -1,15 +1,59 @@
+/**
+ * @jest-environment jsdom
+ */
+/// <reference types="@types/jest" />
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import { Text } from 'react-native';
-import BouncePressable from '../BouncePressable';
+import { BouncePressable } from '../BouncePressable';
 import * as Haptics from 'expo-haptics';
-import { useReducedMotion } from '../../../utils/A11yHelpers';
+import { usePrefersReducedMotion } from '@/utils/motionGuards';
 
 // Mock dependencies
 jest.mock('expo-haptics');
-jest.mock('../../../utils/A11yHelpers', () => ({
-  useReducedMotion: jest.fn(() => false),
+jest.mock('@/utils/motionGuards', () => ({
+  usePrefersReducedMotion: jest.fn(() => false),
 }));
+// Mock motion module
+jest.mock('@/theme/motion', () => ({
+  motionDurations: {
+    xs: 120,
+    sm: 180,
+    md: 240,
+    lg: 320,
+  },
+  motionEasing: {
+    standard: jest.fn((t: number) => t),
+    emphasized: jest.fn((t: number) => t),
+    decel: jest.fn((t: number) => t),
+    accel: jest.fn((t: number) => t),
+    standardArray: [0.2, 0, 0, 1],
+    emphasizedArray: [0.2, 0, 0, 1],
+    decelArray: [0, 0, 0.2, 1],
+    accelArray: [0.3, 0, 1, 1],
+  },
+  motionScale: {
+    pressed: 0.95,
+    hover: 1.02,
+    lift: 1.05,
+    disabled: 1,
+  },
+  motionOpacity: {
+    pressed: 0.92,
+    disabled: 0.5,
+    shimmer: 0.18,
+  },
+  motionSpring: {
+    snappy: { stiffness: 400, damping: 25, mass: 0.8 },
+    standard: { stiffness: 300, damping: 30, mass: 1 },
+    gentle: { stiffness: 200, damping: 25, mass: 1 },
+    bouncy: { stiffness: 400, damping: 15, mass: 1 },
+  },
+  getEasingArray: jest.fn(() => [0.2, 0, 0, 1]),
+  getSpringConfig: jest.fn(() => ({ stiffness: 300, damping: 30, mass: 1 })),
+  motion: {},
+}));
+// Use global reanimated mock from jest.setup.ts - no local override needed
 
 describe('BouncePressable', () => {
   const mockOnPress = jest.fn();
@@ -19,7 +63,7 @@ describe('BouncePressable', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (Haptics.impactAsync as jest.Mock).mockResolvedValue(undefined);
-    (useReducedMotion as jest.Mock).mockReturnValue(false);
+    (usePrefersReducedMotion as jest.Mock).mockReturnValue(false);
   });
 
   describe('Rendering', () => {
@@ -117,7 +161,7 @@ describe('BouncePressable', () => {
 
     it('skips haptic feedback when haptics is disabled', () => {
       const { getByText } = render(
-        <BouncePressable haptics={false}>
+        <BouncePressable haptic={false}>
           <Text>Press Me</Text>
         </BouncePressable>,
       );
@@ -129,7 +173,7 @@ describe('BouncePressable', () => {
 
   describe('Reduced Motion Support', () => {
     it('skips haptics when reduced motion is enabled', () => {
-      (useReducedMotion as jest.Mock).mockReturnValue(true);
+      (usePrefersReducedMotion as jest.Mock).mockReturnValue(true);
 
       const { getByText } = render(
         <BouncePressable>
@@ -154,9 +198,10 @@ describe('BouncePressable', () => {
       expect(getByText('Test')).toBeTruthy();
     });
 
-    it('uses custom scaleTo value', () => {
+    // Note: BouncePressable doesn't have scaleTo prop, only scaleFrom
+    it('applies custom scale correctly', () => {
       const { getByText } = render(
-        <BouncePressable scaleTo={1.1}>
+        <BouncePressable scaleFrom={0.95}>
           <Text>Test</Text>
         </BouncePressable>,
       );
@@ -168,7 +213,7 @@ describe('BouncePressable', () => {
 
   describe('Reduced Motion Support', () => {
     it('disables animations when reduced motion is enabled', () => {
-      (useReducedMotion as jest.Mock).mockReturnValue(true);
+      (usePrefersReducedMotion as jest.Mock).mockReturnValue(true);
 
       const { getByText } = render(
         <BouncePressable>
@@ -218,13 +263,13 @@ describe('BouncePressable', () => {
 
   describe('Edge Cases', () => {
     it('handles null children gracefully', () => {
-      const { container } = render(<BouncePressable>{null}</BouncePressable>);
-      expect(container).toBeTruthy();
+      const result = render(<BouncePressable>{null}</BouncePressable>);
+      expect(result).toBeTruthy();
     });
 
     it('handles undefined children gracefully', () => {
-      const { container } = render(<BouncePressable>{undefined}</BouncePressable>);
-      expect(container).toBeTruthy();
+      const result = render(<BouncePressable>{undefined}</BouncePressable>);
+      expect(result).toBeTruthy();
     });
 
     it('handles rapid press/unpress cycles', () => {

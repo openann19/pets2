@@ -8,8 +8,8 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { AdvancedCard, CardConfigs } from '../../components/Advanced/AdvancedCard';
 
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 interface ProfileSummarySectionProps {
   onEditProfile: () => void;

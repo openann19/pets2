@@ -11,7 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { AdvancedCard, CardConfigs } from '../../../components/Advanced/AdvancedCard';
 import { matchesAPI } from '../../../services/api';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useCountUpAnimation } from '@/hooks/animations';
 
 interface ProfileStatsSectionProps {

@@ -225,3 +225,4 @@ ai-service/__pycache__/
 # Temporary files
 *.tmp
 *.tempserver/.env.test
+apps/mobile/.reports/

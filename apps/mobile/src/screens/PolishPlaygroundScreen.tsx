@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { AnimatedPressable } from '../components/motion/MicroInteractions';
 
 export default function PolishPlaygroundScreen(): React.ReactElement {

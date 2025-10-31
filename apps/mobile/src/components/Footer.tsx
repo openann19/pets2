@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { logger } from '@pawfectmatch/core';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';

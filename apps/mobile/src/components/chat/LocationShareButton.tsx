@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, PermissionsAndroid, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native';
 import { Text } from '../ui/v2/Text';

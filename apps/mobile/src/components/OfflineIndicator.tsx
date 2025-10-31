@@ -6,7 +6,7 @@
 import React from 'react';
 import { Text, StyleSheet, Animated } from 'react-native';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
 
 export function OfflineIndicator(): React.JSX.Element | null {

@@ -5,7 +5,7 @@
  * without complex component dependencies.
  */
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useState, useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

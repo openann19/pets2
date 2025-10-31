@@ -2,7 +2,7 @@
  * useMemoryWeaveScreen Hook
  * Manages Memory Weave screen state and interactions
  */
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { useEffect } from 'react';

@@ -5,8 +5,8 @@ import * as Location from 'expo-location';
 import * as DeviceMotion from 'expo-sensors';
 import { useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { useReduceMotion } from '../hooks/useReducedMotion';
 
 const { width, height } = Dimensions.get('window');

@@ -3,7 +3,7 @@
  * Displays milestone badges for significant message counts
  */
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 

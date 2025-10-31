@@ -15,8 +15,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RTCView } from 'react-native-webrtc';
 
 import type { CallState } from '../../services/WebRTCService';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { haptic } from '@/ui/haptics';
 import { trackUserAction } from '@/services/analyticsService';
 

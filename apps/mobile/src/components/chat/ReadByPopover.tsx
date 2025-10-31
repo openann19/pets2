@@ -140,7 +140,7 @@ export default function ReadByPopover({
               <View
                 key={r.userId}
                 style={styles.row}
-                accessibilityRole="listitem"
+                accessibilityRole="text"
                 accessibilityLabel={`${r.name} read at ${formatShort(r.readAt)}`}
               >
                 {r.avatar ? (

@@ -4,17 +4,76 @@
  * Provides custom render functions and utilities for testing.
  */
 
-import { ThemeProvider } from '@mobile/theme';
+import { ThemeProvider } from '@/theme';
 import { NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { RenderOptions } from '@testing-library/react-native';
+import type { RenderOptions, RenderResult } from '@testing-library/react-native';
 import { render } from '@testing-library/react-native';
 import React from 'react';
 
-// Test theme is now provided by the canonical theme system
+// Re-export type-safe versions from our helpers
+export {
+  createTestQueryClient,
+  cleanupQueryClient,
+  createWrapperWithQueryClient,
+  type QueryClientConfig,
+} from './react-query-helpers';
 
-// Query client for React Query testing
-const createTestQueryClient = () =>
+export {
+  setupFakeTimers,
+  cleanupTimers,
+  withFakeTimers,
+  advanceTimersAndWait,
+} from './timer-helpers';
+
+export {
+  renderHookWithProviders,
+  mockMultiDependencyHook,
+  renderHookWithTimersAndQuery,
+  type HookTestOptions,
+  type HookTestResult,
+} from './hook-helpers';
+
+export {
+  createMockQueryClient,
+  createMockSocket,
+  createMockNavigation,
+  createMockServices,
+  resetMockServices,
+  type ServiceMocks,
+} from './mock-factories';
+
+export {
+  assertDefined,
+  assertHookResult,
+  isHookResult,
+  getHookValue,
+  assertResolves,
+  assertRejects,
+  createTypedMock,
+  assertMockCalledWith,
+  getLastMockCall,
+} from './type-assertions';
+
+export {
+  TestEnvironment,
+  setupTestEnvironment,
+  getTestEnvironment,
+  type TestEnvConfig,
+  TEST_ENV_CONFIGS,
+} from './test-environment';
+
+export {
+  validateMockCall,
+  getTestFileSuggestions,
+  createSafeMock,
+  safeMockResolvedValue,
+  safeMockReturnValue,
+  commonMockIssues,
+} from './fix-common-test-issues';
+
+// Query client for React Query testing (backward compatibility)
+const createLegacyTestQueryClient = (): QueryClient =>
   new QueryClient({
     defaultOptions: {
       queries: {
@@ -28,14 +87,17 @@ const createTestQueryClient = () =>
   });
 
 // Custom render function with providers
-interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+export interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   queryClient?: QueryClient;
   includeNavigation?: boolean;
 }
 
-export function customRender(component: React.ReactElement, options: CustomRenderOptions = {}) {
+export function customRender(
+  component: React.ReactElement,
+  options: CustomRenderOptions = {}
+): RenderResult {
   const {
-    queryClient = createTestQueryClient(),
+    queryClient = createLegacyTestQueryClient(),
     includeNavigation = true,
     ...renderOptions
   } = options;

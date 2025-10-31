@@ -9,7 +9,7 @@ import { render, fireEvent, screen, waitFor } from '@testing-library/react-nativ
 import { Alert, Linking } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { logger } from '@pawfectmatch/core';
-import { ThemeProvider } from '@mobile/theme';
+import { ThemeProvider } from '@/theme';
 import { ContactActions } from '../ContactActions';
 
 // Mock dependencies

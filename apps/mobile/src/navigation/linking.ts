@@ -41,7 +41,28 @@ export const linking: LinkingOptions<RootStackParamList> = {
    * Subscribe to URL updates
    */
   subscribe(listener) {
-    // Handle deep link subscriptions
+    // Handle deep link subscriptions via Linking API
+    const onUrl = ({ url }: { url: string }) => {
+      listener(url);
+    };
+
+    // Import Linking at runtime to avoid issues in tests
+    const Linking = require('react-native').Linking;
+    
+    if (Linking && Linking.addEventListener) {
+      const subscription = Linking.addEventListener('url', onUrl);
+      return {
+        remove: () => {
+          if (subscription && typeof subscription.remove === 'function') {
+            subscription.remove();
+          } else if (Linking && Linking.removeEventListener) {
+            Linking.removeEventListener('url', onUrl);
+          }
+        },
+      };
+    }
+
+    // Fallback for test environments
     const subscription = { remove: () => {} };
     return subscription;
   },

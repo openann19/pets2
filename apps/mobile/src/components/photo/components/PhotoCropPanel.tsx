@@ -12,7 +12,16 @@ import { Cropper, type CropperHandle } from '../Cropper';
 import { SubjectSuggestionsBar } from '../SubjectSuggestionsBar';
 import type { RefObject } from 'react';
 
-const { width, height } = Dimensions.get('window');
+// Lazy load dimensions to support test mocking
+const getDimensions = () => {
+  try {
+    const dims = Dimensions.get('window');
+    return { width: dims?.width ?? 375, height: dims?.height ?? 812 };
+  } catch {
+    return { width: 375, height: 812 };
+  }
+};
+const { width, height } = getDimensions();
 const PREVIEW_HEIGHT = height * 0.5;
 
 interface PhotoCropPanelProps {

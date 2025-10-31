@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { renderHook, act, waitFor } from '@testing-library/react-native';
-import { Alert, Linking } from 'react-native';
 import { usePremiumScreen } from '../usePremiumScreen';
 
 // Mock navigation
@@ -34,11 +33,19 @@ jest.mock('@pawfectmatch/core', () => ({
   },
 }));
 
-// Mock Alert
-jest.spyOn(Alert, 'alert');
+// Mock Alert and Linking
+const mockAlert = jest.fn();
+const mockOpenURL = jest.fn().mockResolvedValue(true);
 
-// Mock Linking
-jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
+jest.mock('react-native', () => ({
+  ...jest.requireActual('react-native'),
+  Alert: {
+    alert: mockAlert,
+  },
+  Linking: {
+    openURL: mockOpenURL,
+  },
+}));
 
 describe('usePremiumScreen', () => {
   beforeEach(() => {
@@ -111,7 +118,7 @@ describe('usePremiumScreen', () => {
       'pawfectmatch://subscription/cancel',
     );
 
-    expect(Linking.openURL).toHaveBeenCalledWith('https://checkout.stripe.com/session123');
+    expect(mockOpenURL).toHaveBeenCalledWith('https://checkout.stripe.com/session123');
   });
 
   it('should use correct price ID for yearly billing', async () => {
@@ -144,7 +151,7 @@ describe('usePremiumScreen', () => {
     });
 
     expect(mockCreateCheckoutSession).not.toHaveBeenCalled();
-    expect(Linking.openURL).not.toHaveBeenCalled();
+    expect(mockOpenURL).not.toHaveBeenCalled();
   });
 
   it('should set loading state during subscription', async () => {
@@ -179,7 +186,7 @@ describe('usePremiumScreen', () => {
       await result.current.handleSubscribe('premium');
     });
 
-    expect(Alert.alert).toHaveBeenCalledWith(
+    expect(mockAlert).toHaveBeenCalledWith(
       'Subscription Error',
       'Failed to start checkout process. Please try again.',
       [{ text: 'OK' }],
@@ -195,7 +202,7 @@ describe('usePremiumScreen', () => {
       await result.current.handleSubscribe('invalid-tier');
     });
 
-    expect(Alert.alert).toHaveBeenCalledWith(
+    expect(mockAlert).toHaveBeenCalledWith(
       'Subscription Error',
       'Failed to start checkout process. Please try again.',
       [{ text: 'OK' }],
@@ -211,7 +218,7 @@ describe('usePremiumScreen', () => {
       await result.current.handleSubscribe('premium');
     });
 
-    expect(Linking.openURL).not.toHaveBeenCalled();
+    expect(mockOpenURL).not.toHaveBeenCalled();
     expect(result.current.isLoading).toBe(false);
   });
 

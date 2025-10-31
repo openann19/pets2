@@ -42,7 +42,7 @@ jest.mock('../../lib/telemetry', () => ({
   },
 }));
 
-jest.mock('../../../demo/DemoModeProvider', () => ({
+jest.mock('@/demo/DemoModeProvider', () => ({
   useDemoMode: () => ({ enabled: true }),
   DemoModeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));

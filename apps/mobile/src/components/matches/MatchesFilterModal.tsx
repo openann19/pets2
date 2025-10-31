@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 export type MatchesFilter = {
   q?: string;

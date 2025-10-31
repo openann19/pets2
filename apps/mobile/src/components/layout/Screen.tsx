@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, type ViewProps } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 export interface ScreenProps extends ViewProps {
   scrollable?: boolean;

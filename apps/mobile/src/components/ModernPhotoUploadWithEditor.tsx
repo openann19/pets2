@@ -18,7 +18,16 @@ import type { AppTheme } from '@/theme';
 
 import { AdvancedPhotoEditor } from './photo/AdvancedPhotoEditor';
 
-const { width } = Dimensions.get('window');
+// Lazy load dimensions to support test mocking
+const getScreenWidth = () => {
+  try {
+    const dims = Dimensions.get('window');
+    return dims?.width ?? 375;
+  } catch {
+    return 375;
+  }
+};
+const width = getScreenWidth();
 const PHOTO_SIZE = (width - 60) / 3;
 
 interface Photo {

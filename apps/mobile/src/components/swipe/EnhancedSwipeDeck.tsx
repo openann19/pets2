@@ -22,8 +22,8 @@ import {
 } from '@/constants/performance';
 import { preloadRemoteImages } from '@/services/AssetPreloader';
 import { extractPetImageUrls } from '@/utils/pet-media';
-import type { AppTheme } from '@mobile/theme';
-import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
 import { logger } from '@pawfectmatch/core';
 import ModernSwipeCard from '../ModernSwipeCard';
 import { useSmartFeedPreloading } from '../../hooks/feed/useSmartFeedPreloading';

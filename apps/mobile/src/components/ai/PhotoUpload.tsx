@@ -6,7 +6,7 @@
 
 import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme, type AppTheme } from '@mobile/theme';
+import { useTheme, type AppTheme } from '@/theme';
 
 interface PhotoUploadProps {
   selectedPhoto: string | null;

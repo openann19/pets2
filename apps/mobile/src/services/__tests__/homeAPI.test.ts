@@ -19,8 +19,8 @@ const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
 describe('Home API Service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    process.env.EXPO_PUBLIC_API_URL = 'https://api.test.com';
-    process.env.API_URL = 'https://api.test.com';
+    process.env['EXPO_PUBLIC_API_URL'] = 'https://api.test.com';
+    process.env['API_URL'] = 'https://api.test.com';
   });
 
   describe('Happy Path - Get Home Stats', () => {
@@ -182,8 +182,8 @@ describe('Home API Service', () => {
 
   describe('Edge Cases', () => {
     it('should handle missing environment URL', async () => {
-      process.env.EXPO_PUBLIC_API_URL = '';
-      process.env.API_URL = '';
+      process.env['EXPO_PUBLIC_API_URL'] = '';
+      process.env['API_URL'] = '';
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -259,8 +259,8 @@ describe('Home API Service', () => {
     });
 
     it('should handle empty string environment URL', async () => {
-      process.env.EXPO_PUBLIC_API_URL = '';
-      process.env.API_URL = '';
+      process.env['EXPO_PUBLIC_API_URL'] = '';
+      process.env['API_URL'] = '';
 
       mockFetch.mockResolvedValueOnce({
         ok: true,

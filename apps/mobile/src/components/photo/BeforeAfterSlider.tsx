@@ -7,7 +7,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { SmartImage } from '../common/SmartImage';
 
-const { width: SCREEN_W } = Dimensions.get('window');
+// Lazy load dimensions to support test mocking
+const getScreenWidth = () => {
+  try {
+    const dims = Dimensions.get('window');
+    return dims?.width ?? 375;
+  } catch {
+    return 375;
+  }
+};
+const SCREEN_W = getScreenWidth();
 
 interface BeforeAfterSliderProps {
   originalUri: string;

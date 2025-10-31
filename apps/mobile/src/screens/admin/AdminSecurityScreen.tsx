@@ -18,7 +18,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { logger, useAuthStore } from '@pawfectmatch/core';
 import * as Haptics from 'expo-haptics';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import type { AdminScreenProps } from '../../navigation/types';
 import { _adminAPI as adminAPI } from '../../services/api';
 import { SecurityAlertCard, type SecurityAlert } from '../../components/admin/SecurityAlertCard';

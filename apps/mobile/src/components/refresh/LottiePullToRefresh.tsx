@@ -23,7 +23,7 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import * as Haptics from 'expo-haptics';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 interface LottiePullToRefreshProps extends Omit<RefreshControlProps, 'refreshing' | 'onRefresh'> {

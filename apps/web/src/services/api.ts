@@ -1118,7 +1118,7 @@ class ApiService {
 }
 
 // Create singleton instance
-const apiInstance = new ApiService();
+export const apiInstance = new ApiService();
 
 // Pets API endpoints
 export const petsAPI = {
@@ -1382,5 +1382,32 @@ export const api = {
   ai: aiAPI,
   subscription: subscriptionAPI,
 };
+
+// Export GDPR service separately and also add to main api object
+import { gdprService } from './gdprService';
+import { likesAPI } from './likesAPI';
+import { adoptionAPI } from './adoptionAPI';
+import { moderationAPI } from './moderationAPI';
+import { notificationPreferencesAPI } from './notificationPreferencesAPI';
+import { premiumAPI } from './premiumAPI';
+
+export { 
+  gdprService, 
+  likesAPI, 
+  adoptionAPI, 
+  moderationAPI, 
+  notificationPreferencesAPI,
+  premiumAPI,
+};
+
+// Add all services to main api export for convenience
+Object.assign(api, {
+  gdpr: gdprService,
+  likes: likesAPI,
+  adoption: adoptionAPI,
+  moderation: moderationAPI,
+  notificationPreferences: notificationPreferencesAPI,
+  premium: premiumAPI,
+});
 
 export default api;

@@ -5,8 +5,8 @@ import { EliteContainer } from '../elite/containers';
 import FXContainer from '../containers/FXContainer';
 import { EliteButtonPresets } from '../buttons/EliteButton';
 import { Heading2, Body } from '../typography/ModernTypography';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { getExtendedColors } from '../../theme/adapters';
 import type { ExtendedColors } from '../../theme/adapters';
 

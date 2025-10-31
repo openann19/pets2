@@ -4,10 +4,25 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '../lib/auth-store';
 import { api } from '../services/api';
 import { logger } from '../services/logger';
+
 /**
  * Production-ready authentication hook with Zustand store integration
  * Handles login, register, logout, token refresh, and session management
  */
+
+interface LoginCredentials {
+    email: string;
+    password: string;
+}
+
+interface RegisterData {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth?: string;
+}
+
 export function useAuth() {
     const router = useRouter();
     const { user, accessToken, refreshToken, isAuthenticated, isLoading, error, setUser, setTokens, logout: storeLogout, setIsLoading, setError } = useAuthStore();
@@ -45,7 +60,7 @@ export function useAuth() {
     /**
      * Login with email and password
      */
-    const login = useCallback(async (credentials) => {
+    const login = useCallback(async (credentials: LoginCredentials) => {
         setIsLoading(true);
         setError(null);
         try {
@@ -83,7 +98,7 @@ export function useAuth() {
     /**
      * Register new user account
      */
-    const register = useCallback(async (data) => {
+    const register = useCallback(async (data: RegisterData) => {
         setIsLoading(true);
         setError(null);
         try {

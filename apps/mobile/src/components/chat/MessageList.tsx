@@ -28,7 +28,7 @@ interface MessageListProps {
   onMessagePress?: (message: Message) => void;
   onMessageLongPress?: (message: Message) => void;
   onRetryMessage?: (messageId: string) => void;
-  flatListRef?: React.RefObject<FlashList<Message>>;
+  flatListRef?: React.RefObject<any>;
   onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 }
 
@@ -125,7 +125,7 @@ export function MessageList({
   return (
     <View style={styles.container}>
       <FlashList<Message>
-        ref={flatListRef}
+        ref={flatListRef as any}
         data={messages}
         renderItem={renderMessage}
         keyExtractor={keyExtractor}

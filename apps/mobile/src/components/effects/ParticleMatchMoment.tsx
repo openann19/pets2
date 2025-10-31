@@ -24,7 +24,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useCapabilities } from '@/foundation/capabilities';
 import { useReduceMotion } from '@/hooks/useReducedMotion';
 import { haptic } from '@/foundation/haptics';
-import type { AppTheme } from '@mobile/theme';
+import type { AppTheme } from '@/theme';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 

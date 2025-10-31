@@ -23,7 +23,7 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useCapabilities } from '@/foundation/capabilities';
 import { useReduceMotion } from '@/hooks/useReducedMotion';
-import type { AppTheme } from '@mobile/theme';
+import type { AppTheme } from '@/theme';
 
 interface AuroraSheenProps {
   /** Scroll offset for reactivity */

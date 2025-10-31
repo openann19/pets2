@@ -5,7 +5,7 @@
  */
 
 import { logger } from '@pawfectmatch/core';
-import { UnifiedAPIClient, type APIClientConfig } from '@pawfectmatch/core/api/UnifiedAPIClient';
+import { UnifiedAPIClient, type APIClientConfig } from '@pawfectmatch/core/api';
 
 export interface ApiResponse<T> {
   success: boolean;

@@ -7,7 +7,7 @@
 
 import { generateCsrfToken } from '@/middleware/csrf';
 import { NextRequest, NextResponse } from 'next/server';
-import { logger } from '@pawfectmatch/core';
+
 
 export async function GET(request: NextRequest) {
     try {
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
         return response;
     } catch (error) {
-        logger.error('[CSRF] Error generating token:', error);
+        console.error('[CSRF] Error generating token:', error);
 
         return NextResponse.json(
             {

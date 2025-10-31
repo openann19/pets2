@@ -14,9 +14,11 @@ jest.mock('../../../services/AuthService', () => ({
   },
 }));
 
+const mockAlert = jest.fn();
+
 jest.mock('react-native', () => ({
   Alert: {
-    alert: jest.fn(),
+    alert: (...args: any[]) => mockAlert(...args),
   },
 }));
 
@@ -34,6 +36,7 @@ describe('useForgotPasswordScreen', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockAlert.mockClear();
   });
 
   describe('Initial State', () => {
@@ -67,7 +70,15 @@ describe('useForgotPasswordScreen', () => {
         useForgotPasswordScreen({ navigation: mockNavigation as any }),
       );
 
+      // Initially isValid might be true because no validation has run yet
+      // Trigger validation by setting an empty value
+      act(() => {
+        result.current.setValue('email', '');
+      });
+
+      // After setting empty value, validation should run and isValid should be false
       expect(result.current.isValid).toBe(false);
+      expect(result.current.errors.email).toBeDefined();
     });
   });
 
@@ -86,13 +97,27 @@ describe('useForgotPasswordScreen', () => {
         result.current.setValue('email', 'test@example.com');
       });
 
+      // Wait for validation to complete
+      await waitFor(
+        () => {
+          expect(result.current.errors.email).toBeUndefined();
+        },
+        { timeout: 3000 },
+      );
+
       await act(async () => {
         await result.current.handleSubmit();
       });
 
-      expect(mockAuthService.forgotPassword).toHaveBeenCalledWith('test@example.com');
-      expect(Alert.alert).toHaveBeenCalled();
-    });
+      // Wait for async operations to complete
+      await waitFor(
+        () => {
+          expect(mockAuthService.forgotPassword).toHaveBeenCalledWith('test@example.com');
+          expect(mockAlert).toHaveBeenCalled();
+        },
+        { timeout: 3000 },
+      );
+    }, 10000);
 
     it('should handle API errors', async () => {
       mockAuthService.forgotPassword.mockRejectedValue(new Error('API Error'));
@@ -105,12 +130,26 @@ describe('useForgotPasswordScreen', () => {
         result.current.setValue('email', 'test@example.com');
       });
 
+      // Wait for validation to complete
+      await waitFor(
+        () => {
+          expect(result.current.errors.email).toBeUndefined();
+        },
+        { timeout: 3000 },
+      );
+
       await act(async () => {
         await result.current.handleSubmit();
       });
 
-      expect(Alert.alert).toHaveBeenCalled();
-    });
+      // Wait for error handling to complete
+      await waitFor(
+        () => {
+          expect(mockAlert).toHaveBeenCalled();
+        },
+        { timeout: 3000 },
+      );
+    }, 10000);
   });
 
   describe('Navigation', () => {

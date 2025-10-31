@@ -9,7 +9,7 @@ import { logger } from '@pawfectmatch/core';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import type { RootStackParamList } from '../navigation/types';
 import { request } from '../services/api';
 import {

@@ -1032,16 +1032,7 @@ function generateId(): string {
   return Math.random().toString(36).substr(2, 9);
 }
 
-// Mock API functions (replace with real API calls)
-const CommunityGroupsEngine = {
-  discoverCommunities: async () => [],
-  getCommunity: async () => null,
-  getCommunityMembers: async () => [],
-  getCommunityPosts: async () => [],
-  createCommunity: async () => ({} as PetCommunity),
-  joinCommunity: async () => {},
-  createCommunityPost: async () => ({} as CommunityPost),
-};
+// Mock API functions removed - using CommunityGroupsEngine class instead
 
 async function getUserMatchingPets(userId: string, criteria: CommunityCriteria): Promise<Pet[]> {
   // Get user's pets that match community criteria

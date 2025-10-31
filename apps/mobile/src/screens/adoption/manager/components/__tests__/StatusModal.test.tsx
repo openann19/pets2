@@ -4,9 +4,7 @@
  */
 
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react-native';
-import { ThemeProvider } from '@mobile/theme';
+import { render, fireEvent, screen } from '@/test-utils/unified-render';
 import { StatusModal } from '../StatusModal';
 import type { PetListing } from '@/hooks/screens/useAdoptionManagerScreen';
 
@@ -30,10 +28,6 @@ jest.mock('../../../animation', () => ({
     mt4: { marginTop: 16 },
   },
 }));
-
-const TestWrapper = ({ children }: { children: React.ReactNode }) => (
-  <ThemeProvider scheme="light">{children}</ThemeProvider>
-);
 
 describe('StatusModal Component Tests', () => {
   const mockPet: PetListing = {
@@ -72,20 +66,14 @@ describe('StatusModal Component Tests', () => {
 
   describe('Modal Visibility', () => {
     it('should render modal when visible is true and selectedPet is provided', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       expect(screen.getByText('Change Status for Fluffy')).toBeTruthy();
     });
 
     it('should not render modal when visible is false', () => {
       render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} visible={false} />
-        </TestWrapper>,
+        <StatusModal {...defaultProps} visible={false} />,
       );
 
       expect(screen.queryByText('Change Status for Fluffy')).toBeNull();
@@ -93,9 +81,7 @@ describe('StatusModal Component Tests', () => {
 
     it('should not render modal when selectedPet is null', () => {
       render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} selectedPet={null} />
-        </TestWrapper>,
+        <StatusModal {...defaultProps} selectedPet={null} />,
       );
 
       expect(screen.queryByText('Change Status for')).toBeNull();
@@ -103,9 +89,7 @@ describe('StatusModal Component Tests', () => {
 
     it('should not render modal when selectedPet is null even if visible is true', () => {
       render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} visible={true} selectedPet={null} />
-        </TestWrapper>,
+        <StatusModal {...defaultProps} visible={true} selectedPet={null} />,
       );
 
       expect(screen.queryByText('Change Status for')).toBeNull();
@@ -114,11 +98,7 @@ describe('StatusModal Component Tests', () => {
 
   describe('Status Options', () => {
     it('should render all status options', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       expect(screen.getByText(/✅ Active/)).toBeTruthy();
       expect(screen.getByText(/⏳ Pending/)).toBeTruthy();
@@ -127,11 +107,7 @@ describe('StatusModal Component Tests', () => {
     });
 
     it('should call getStatusIcon for each status option', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       expect(defaultProps.getStatusIcon).toHaveBeenCalledWith('active');
       expect(defaultProps.getStatusIcon).toHaveBeenCalledWith('pending');
@@ -140,11 +116,7 @@ describe('StatusModal Component Tests', () => {
     });
 
     it('should call onStatusChange with correct pet and status when active is selected', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       const activeButton = screen.getByText(/✅ Active/);
       fireEvent.press(activeButton);
@@ -154,11 +126,7 @@ describe('StatusModal Component Tests', () => {
     });
 
     it('should call onStatusChange with correct pet and status when pending is selected', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       const pendingButton = screen.getByText(/⏳ Pending/);
       fireEvent.press(pendingButton);
@@ -168,11 +136,7 @@ describe('StatusModal Component Tests', () => {
     });
 
     it('should call onStatusChange with correct pet and status when adopted is selected', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       const adoptedButton = screen.getByText(/🏠 Adopted/);
       fireEvent.press(adoptedButton);
@@ -182,11 +146,7 @@ describe('StatusModal Component Tests', () => {
     });
 
     it('should call onStatusChange with correct pet and status when paused is selected', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       const pausedButton = screen.getByText(/⏸️ Paused/);
       fireEvent.press(pausedButton);
@@ -198,21 +158,13 @@ describe('StatusModal Component Tests', () => {
 
   describe('Cancel Button', () => {
     it('should render cancel button', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       expect(screen.getByText('Cancel')).toBeTruthy();
     });
 
     it('should call onClose when cancel button is pressed', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       const cancelButton = screen.getByText('Cancel');
       fireEvent.press(cancelButton);
@@ -223,11 +175,7 @@ describe('StatusModal Component Tests', () => {
 
   describe('Modal Title', () => {
     it('should display correct pet name in title', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       expect(screen.getByText('Change Status for Fluffy')).toBeTruthy();
     });
@@ -247,19 +195,11 @@ describe('StatusModal Component Tests', () => {
         listedAt: '2024-01-15T00:00:00Z',
       };
 
-      const { rerender } = render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      const { rerender } = render(<StatusModal {...defaultProps} />);
 
       expect(screen.getByText('Change Status for Fluffy')).toBeTruthy();
 
-      rerender(
-        <TestWrapper>
-          <StatusModal {...defaultProps} selectedPet={pet2} />
-        </TestWrapper>,
-      );
+      rerender(<StatusModal {...defaultProps} selectedPet={pet2} />);
 
       expect(screen.getByText('Change Status for Buddy')).toBeTruthy();
     });
@@ -278,11 +218,7 @@ describe('StatusModal Component Tests', () => {
 
   describe('Edge Cases', () => {
     it('should handle rapid status changes', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       const activeButton = screen.getByText(/✅ Active/);
       const pendingButton = screen.getByText(/⏳ Pending/);
@@ -295,27 +231,15 @@ describe('StatusModal Component Tests', () => {
     });
 
     it('should handle multiple open/close cycles', () => {
-      const { rerender } = render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} visible={true} />
-        </TestWrapper>,
-      );
+      const { rerender } = render(<StatusModal {...defaultProps} visible={true} />);
 
       expect(screen.getByText('Change Status for Fluffy')).toBeTruthy();
 
-      rerender(
-        <TestWrapper>
-          <StatusModal {...defaultProps} visible={false} />
-        </TestWrapper>,
-      );
+      rerender(<StatusModal {...defaultProps} visible={false} />);
 
       expect(screen.queryByText('Change Status for Fluffy')).toBeNull();
 
-      rerender(
-        <TestWrapper>
-          <StatusModal {...defaultProps} visible={true} />
-        </TestWrapper>,
-      );
+      rerender(<StatusModal {...defaultProps} visible={true} />);
 
       expect(screen.getByText('Change Status for Fluffy')).toBeTruthy();
     });
@@ -335,21 +259,13 @@ describe('StatusModal Component Tests', () => {
         listedAt: '2024-01-15T00:00:00Z',
       };
 
-      const { rerender } = render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      const { rerender } = render(<StatusModal {...defaultProps} />);
 
       const activeButton = screen.getByText(/✅ Active/);
       fireEvent.press(activeButton);
       expect(defaultProps.onStatusChange).toHaveBeenCalledWith(mockPet, 'active');
 
-      rerender(
-        <TestWrapper>
-          <StatusModal {...defaultProps} selectedPet={pet2} />
-        </TestWrapper>,
-      );
+      rerender(<StatusModal {...defaultProps} selectedPet={pet2} />);
 
       const pendingButton = screen.getByText(/⏳ Pending/);
       fireEvent.press(pendingButton);
@@ -361,11 +277,7 @@ describe('StatusModal Component Tests', () => {
     it('should support onRequestClose for Android back button', () => {
       // Modal component handles onRequestClose internally
       // This is verified through modal rendering
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       expect(screen.getByText('Change Status for Fluffy')).toBeTruthy();
     });
@@ -378,11 +290,7 @@ describe('StatusModal Component Tests', () => {
         return '✅';
       });
 
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} getStatusIcon={mockGetStatusIcon} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} getStatusIcon={mockGetStatusIcon} />);
 
       // All known statuses should still work
       expect(screen.getByText(/Active/)).toBeTruthy();
@@ -393,11 +301,7 @@ describe('StatusModal Component Tests', () => {
     it('should use slide animation', () => {
       // Modal uses animationType="slide"
       // This is a visual feature, verified through modal rendering
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       expect(screen.getByText('Change Status for Fluffy')).toBeTruthy();
     });
@@ -405,11 +309,7 @@ describe('StatusModal Component Tests', () => {
 
   describe('Multiple Status Changes', () => {
     it('should handle sequential status changes correctly', () => {
-      render(
-        <TestWrapper>
-          <StatusModal {...defaultProps} />
-        </TestWrapper>,
-      );
+      render(<StatusModal {...defaultProps} />);
 
       // Change to pending
       const pendingButton = screen.getByText(/⏳ Pending/);

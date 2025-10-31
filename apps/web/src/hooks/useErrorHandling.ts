@@ -8,7 +8,6 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { logger } from '@pawfectmatch/core';
-import { getSafeWindow } from '@pawfectmatch/core/utils/env';
 
 export type ErrorType =
   | 'network'

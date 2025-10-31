@@ -4,10 +4,18 @@
  */
 // Base API URL from environment variable
 const API_BASE_URL = process.env['NEXT_PUBLIC_API_URL'] ?? '/api';
+
+interface FetchOptions {
+    method?: string;
+    headers?: Record<string, string>;
+    body?: string;
+    [key: string]: unknown;
+}
+
 /**
  * Generic fetch wrapper with error handling and authorization
  */
-async function fetchApi(endpoint, options = {}) {
+async function fetchApi(endpoint: string, options: FetchOptions = {}): Promise<unknown> {
     const token = typeof window !== 'undefined' ? window.localStorage.getItem('auth_token') : null;
     const { headers: optionHeaders, ...restOptions } = options;
     const headers = new Headers(optionHeaders);
@@ -30,8 +38,21 @@ async function fetchApi(endpoint, options = {}) {
     }
     return response.json();
 }
+
+interface FeedParams {
+    page?: number;
+    limit?: number;
+    [key: string]: unknown;
+}
+
+interface CreatePostPayload {
+    content: string;
+    images?: string[];
+    [key: string]: unknown;
+}
+
 export const communityApi = {
-    getFeed: (params = {}) => {
+    getFeed: (params: FeedParams = {}): Promise<unknown> => {
         const searchParams = new URLSearchParams();
         Object.entries(params).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
@@ -41,18 +62,18 @@ export const communityApi = {
         const query = searchParams.toString();
         return fetchApi(`/community/posts${query !== '' ? `?${query}` : ''}`);
     },
-    createPost: (payload) => fetchApi('/community/posts', {
+    createPost: (payload: CreatePostPayload): Promise<unknown> => fetchApi('/community/posts', {
         method: 'POST',
         body: JSON.stringify(payload),
     }),
-    likePost: (postId) => fetchApi(`/community/posts/${postId}/like`, {
+    likePost: (postId: string): Promise<unknown> => fetchApi(`/community/posts/${postId}/like`, {
         method: 'POST',
     }),
-    addComment: (postId, content) => fetchApi(`/community/posts/${postId}/comments`, {
+    addComment: (postId: string, content: string): Promise<unknown> => fetchApi(`/community/posts/${postId}/comments`, {
         method: 'POST',
         body: JSON.stringify({ content }),
     }),
-    getComments: (postId, params = {}) => {
+    getComments: (postId: string, params: FeedParams = {}): Promise<unknown> => {
         const searchParams = new URLSearchParams();
         Object.entries(params).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
@@ -62,47 +83,48 @@ export const communityApi = {
         const query = searchParams.toString();
         return fetchApi(`/community/posts/${postId}/comments${query !== '' ? `?${query}` : ''}`);
     },
-    reportContent: (payload) => fetchApi('/community/report', {
+    reportContent: (payload: Record<string, unknown>): Promise<unknown> => fetchApi('/community/report', {
         method: 'POST',
         body: JSON.stringify(payload),
     }),
-    blockUser: (userId) => fetchApi(`/community/block/${userId}`, {
+    blockUser: (userId: string): Promise<unknown> => fetchApi(`/community/block/${userId}`, {
         method: 'POST',
     }),
-    followUser: (userId) => fetchApi(`/community/follow/${userId}`, {
+    followUser: (userId: string): Promise<unknown> => fetchApi(`/community/follow/${userId}`, {
         method: 'POST',
     }),
-    unfollowUser: (userId) => fetchApi(`/community/unfollow/${userId}`, {
+    unfollowUser: (userId: string): Promise<unknown> => fetchApi(`/community/unfollow/${userId}`, {
         method: 'POST',
     }),
     // Notification subscription management
-    subscribeToNotifications: (subscription) => fetchApi('/notifications/subscribe', {
+    subscribeToNotifications: (subscription: Record<string, unknown>): Promise<unknown> => fetchApi('/notifications/subscribe', {
         method: 'POST',
         body: JSON.stringify({ subscription }),
     }),
-    unsubscribeFromNotifications: (endpoint) => fetchApi('/notifications/unsubscribe', {
+    unsubscribeFromNotifications: (endpoint: string): Promise<unknown> => fetchApi('/notifications/unsubscribe', {
         method: 'POST',
         body: JSON.stringify({ endpoint }),
     }),
 };
+
 /**
  * Pets API
  */
 export const petsApi = {
-    getAll: () => fetchApi('/pets'),
-    getById: (id) => fetchApi(`/pets/${id}`),
-    create: (pet) => fetchApi('/pets', {
+    getAll: (): Promise<unknown> => fetchApi('/pets'),
+    getById: (id: string): Promise<unknown> => fetchApi(`/pets/${id}`),
+    create: (pet: Record<string, unknown>): Promise<unknown> => fetchApi('/pets', {
         method: 'POST',
         body: JSON.stringify(pet),
     }),
-    update: (id, pet) => fetchApi(`/pets/${id}`, {
+    update: (id: string, pet: Record<string, unknown>): Promise<unknown> => fetchApi(`/pets/${id}`, {
         method: 'PUT',
         body: JSON.stringify(pet),
     }),
-    delete: (id) => fetchApi(`/pets/${id}`, {
+    delete: (id: string): Promise<unknown> => fetchApi(`/pets/${id}`, {
         method: 'DELETE',
     }),
-    uploadPhoto: async (id, photoBlob) => {
+    uploadPhoto: async (id: string, photoBlob: Blob): Promise<unknown> => {
         const formData = new FormData();
         formData.append('photo', photoBlob);
         const response = await fetch(`${API_BASE_URL}/pets/${id}/photo`, {
@@ -115,71 +137,75 @@ export const petsApi = {
         return response.json();
     },
 };
+
 /**
  * Reminders API
  */
 export const remindersApi = {
-    getAll: () => fetchApi('/reminders'),
-    getById: (id) => fetchApi(`/reminders/${id}`),
-    create: (reminder) => fetchApi('/reminders', {
+    getAll: (): Promise<unknown> => fetchApi('/reminders'),
+    getById: (id: string): Promise<unknown> => fetchApi(`/reminders/${id}`),
+    create: (reminder: Record<string, unknown>): Promise<unknown> => fetchApi('/reminders', {
         method: 'POST',
         body: JSON.stringify(reminder),
     }),
-    update: (id, reminder) => fetchApi(`/reminders/${id}`, {
+    update: (id: string, reminder: Record<string, unknown>): Promise<unknown> => fetchApi(`/reminders/${id}`, {
         method: 'PUT',
         body: JSON.stringify(reminder),
     }),
-    delete: (id) => fetchApi(`/reminders/${id}`, {
+    delete: (id: string): Promise<unknown> => fetchApi(`/reminders/${id}`, {
         method: 'DELETE',
     }),
-    toggleComplete: (id, completed) => fetchApi(`/reminders/${id}/complete`, {
+    toggleComplete: (id: string, completed: boolean): Promise<unknown> => fetchApi(`/reminders/${id}/complete`, {
         method: 'PUT',
         body: JSON.stringify({ completed }),
     }),
 };
+
 /**
  * Calendar API
  */
 export const calendarApi = {
-    getEvents: () => fetchApi('/events'),
-    getEventById: (id) => fetchApi(`/events/${id}`),
-    createEvent: (event) => fetchApi('/events', {
+    getEvents: (): Promise<unknown> => fetchApi('/events'),
+    getEventById: (id: string): Promise<unknown> => fetchApi(`/events/${id}`),
+    createEvent: (event: Record<string, unknown>): Promise<unknown> => fetchApi('/events', {
         method: 'POST',
         body: JSON.stringify(event),
     }),
-    updateEvent: (id, event) => fetchApi(`/events/${id}`, {
+    updateEvent: (id: string, event: Record<string, unknown>): Promise<unknown> => fetchApi(`/events/${id}`, {
         method: 'PUT',
         body: JSON.stringify(event),
     }),
-    deleteEvent: (id) => fetchApi(`/events/${id}`, {
+    deleteEvent: (id: string): Promise<unknown> => fetchApi(`/events/${id}`, {
         method: 'DELETE',
     }),
 };
+
 /**
  * Playgrounds API
  */
 export const playgroundsApi = {
-    getAll: (filters) => fetchApi('/playgrounds', {
+    getAll: (filters?: Record<string, unknown>): Promise<unknown> => fetchApi('/playgrounds', {
         method: 'POST',
         body: JSON.stringify(filters ?? {}),
     }),
-    getById: (id) => fetchApi(`/playgrounds/${id}`),
-    toggleFavorite: (id, isFavorite) => fetchApi(`/playgrounds/${id}/favorite`, {
+    getById: (id: string): Promise<unknown> => fetchApi(`/playgrounds/${id}`),
+    toggleFavorite: (id: string, isFavorite: boolean): Promise<unknown> => fetchApi(`/playgrounds/${id}/favorite`, {
         method: 'PUT',
         body: JSON.stringify({ isFavorite }),
     }),
 };
+
 /**
  * User API
  */
 export const userApi = {
-    getProfile: () => fetchApi('/user/profile'),
-    updateProfile: (profile) => fetchApi('/user/profile', {
+    getProfile: (): Promise<unknown> => fetchApi('/user/profile'),
+    updateProfile: (profile: Record<string, unknown>): Promise<unknown> => fetchApi('/user/profile', {
         method: 'PUT',
         body: JSON.stringify(profile),
     }),
-    getPreferences: () => fetchApi('/user/preferences'),
-    updatePreferences: (preferences) => fetchApi('/user/preferences', {
+    getPreferences: (): Promise<unknown> => fetchApi('/user/preferences'),
+    updatePreferences: (preferences: Record<string, unknown>): Promise<unknown> => fetchApi('/user/preferences', {
         method: 'PUT',
         body: JSON.stringify(preferences),
     }),

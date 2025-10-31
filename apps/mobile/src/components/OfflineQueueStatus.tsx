@@ -6,7 +6,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
 
 export interface OfflineQueueStatusProps {

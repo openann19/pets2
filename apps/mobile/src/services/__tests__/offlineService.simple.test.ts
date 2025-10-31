@@ -3,10 +3,19 @@
  */
 
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
-import { offlineService, OfflineService } from '../offlineService';
+import { offlineService } from '../offlineService';
 
 // Mock dependencies
-jest.mock('@react-native-async-storage/async-storage');
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  getAllKeys: jest.fn(),
+  multiGet: jest.fn(),
+  multiSet: jest.fn(),
+  multiRemove: jest.fn(),
+  clear: jest.fn(),
+}));
 jest.mock('@react-native-community/netinfo');
 jest.mock('../api', () => ({
   api: {
@@ -30,6 +39,19 @@ describe('OfflineService - Core Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    // Reset singleton state
+    (offlineService as any).offlineData = {
+      pets: [],
+      user: null,
+      matches: [],
+      messages: [],
+      lastSync: new Date().toISOString(),
+      pendingActions: [],
+    };
+    (offlineService as any).isOnline = true;
+    (offlineService as any).isSyncing = false;
+    (offlineService as any).syncListeners = [];
+
     // Setup default mocks
     mockAsyncStorage.getItem.mockResolvedValue(null);
     mockAsyncStorage.setItem.mockResolvedValue(undefined);
@@ -43,11 +65,11 @@ describe('OfflineService - Core Tests', () => {
     } as any);
 
     // Mock successful API calls
-    mockApi.getPets.mockResolvedValue([]);
-    mockApi.getMatches.mockResolvedValue([]);
-    mockApi.getMessages.mockResolvedValue([]);
-    mockApi.sendMessage.mockResolvedValue(undefined);
-    mockApi.updateUserProfile.mockResolvedValue(undefined);
+    mockApi.getPets.mockResolvedValue([] as any);
+    mockApi.getMatches.mockResolvedValue([] as any);
+    mockApi.getMessages.mockResolvedValue([] as any);
+    mockApi.sendMessage.mockResolvedValue({} as any);
+    mockApi.updateUserProfile.mockResolvedValue({} as any);
   });
 
   afterEach(() => {
@@ -87,12 +109,10 @@ describe('OfflineService - Core Tests', () => {
 
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(storedData));
 
-      // Create new instance to test loading
-      const newService = new OfflineService();
-      // Wait for initialization
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      // Reset and reload data
+      await (offlineService as any).loadOfflineData();
 
-      const offlineData = (newService as any).offlineData;
+      const offlineData = (offlineService as any).offlineData;
       expect(offlineData.pets).toEqual(storedData.pets);
       expect(offlineData.user).toEqual(storedData.user);
       expect(offlineData.pendingActions).toEqual(storedData.pendingActions);
@@ -103,6 +123,7 @@ describe('OfflineService - Core Tests', () => {
     it('should retrieve pets from offline storage', async () => {
       const pets = [{ id: 'pet1', name: 'Buddy' }];
       (offlineService as any).offlineData.pets = pets;
+      (offlineService as any).isOnline = false; // Make offline to use cached data
 
       const result = await offlineService.getPets();
       expect(result).toEqual(pets);
@@ -118,7 +139,7 @@ describe('OfflineService - Core Tests', () => {
 
     it('should fetch pets online when available', async () => {
       const onlinePets = [{ id: 'pet2', name: 'Luna' }];
-      mockApi.getPets.mockResolvedValue(onlinePets);
+      mockApi.getPets.mockResolvedValue(onlinePets as any);
 
       const result = await offlineService.getPets();
 

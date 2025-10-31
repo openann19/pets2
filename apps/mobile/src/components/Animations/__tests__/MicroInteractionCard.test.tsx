@@ -12,10 +12,24 @@ import { useReduceMotion } from '@/hooks/useReducedMotion';
 import { useSoundEffect } from '@/hooks/animations/useSoundEffect';
 import { useHapticFeedback } from '@/hooks/animations/useHapticFeedback';
 
-// Mock dependencies
-jest.mock('@/hooks/useReducedMotion');
-jest.mock('@/hooks/animations/useSoundEffect');
-jest.mock('@/hooks/animations/useHapticFeedback');
+// Mock dependencies - ensure they're jest.fn() mocks
+jest.mock('@/hooks/useReducedMotion', () => ({
+  useReduceMotion: jest.fn(() => false),
+}));
+jest.mock('@/hooks/animations/useSoundEffect', () => ({
+  useSoundEffect: jest.fn(() => ({
+    play: jest.fn(() => Promise.resolve()),
+    enabled: true,
+    setEnabled: jest.fn(),
+  })),
+}));
+jest.mock('@/hooks/animations/useHapticFeedback', () => ({
+  useHapticFeedback: jest.fn(() => ({
+    trigger: jest.fn(),
+    enabled: true,
+    setEnabled: jest.fn(),
+  })),
+}));
 jest.mock('@/hooks/animations/useMagneticEffect', () => ({
   useMagneticEffect: () => ({
     magneticStyle: {},
@@ -35,11 +49,7 @@ jest.mock('react-native-gesture-handler', () => ({
     })),
   },
 }));
-jest.mock('react-native-reanimated', () => {
-  const Reanimated = require('react-native-reanimated/mock');
-  Reanimated.default.call = () => {};
-  return Reanimated;
-});
+// Use global mock from jest.setup.ts - no local override needed
 jest.mock('expo-linear-gradient', () => ({
   LinearGradient: ({ children }: any) => children,
 }));

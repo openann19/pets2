@@ -16,8 +16,8 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { useReduceMotion } from '../hooks/useReducedMotion';
 import { useCapabilities } from '@/foundation/capabilities';
 import { useNavigation } from '@react-navigation/native';

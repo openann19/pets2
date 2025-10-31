@@ -4,7 +4,7 @@
  */
 
 import type { NextRequest } from 'next/server'
-import { logger } from '@pawfectmatch/core';
+
 ;
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
             message: 'Data export has been scheduled'
         });
     } catch (error) {
-        logger.error('Error in data export:', { error });
+        console.error('Error in data export:', { error });
         return NextResponse.json(
             { error: 'Failed to process data export request' },
             { status: 500 }
@@ -160,7 +160,7 @@ export async function GET(
             fileSize: exportJob.fileSize
         });
     } catch (error) {
-        logger.error('Error getting export status:', { error });
+        console.error('Error getting export status:', { error });
         return NextResponse.json(
             { error: 'Failed to get export status' },
             { status: 500 }
@@ -173,7 +173,7 @@ export async function GET(
  */
 async function triggerDataExportJob(exportId: string, userId: string): Promise<void> {
     // In a real implementation, this would add the job to a queue
-    logger.info(`Triggering data export job for user ${userId}, export ID: ${exportId}`);
+    console.info(`Triggering data export job for user ${userId}, export ID: ${exportId}`);
 
     // Simulate the job running
     setTimeout(async () => {
@@ -213,7 +213,7 @@ async function triggerDataExportJob(exportId: string, userId: string): Promise<v
                         await sendExportCompletionEmail(user.email, exportId);
                     }
                 } catch (error) {
-                    logger.error('Error completing export job:', { error });
+                    console.error('Error completing export job:', { error });
 
                     const db = await connectToDB();
                     await db.dataExports.updateOne(
@@ -223,7 +223,7 @@ async function triggerDataExportJob(exportId: string, userId: string): Promise<v
                 }
             }, 5000); // Simulating 5 seconds of processing
         } catch (error) {
-            logger.error('Error starting export job:', { error });
+            console.error('Error starting export job:', { error });
         }
     }, 1000); // Simulate a slight delay before starting
 }
@@ -237,7 +237,7 @@ async function sendExportRequestEmail(
     estimatedCompletionTime: Date
 ): Promise<void> {
     // In a real implementation, this would send an actual email
-    logger.info(`Sending export request email to ${email}. Export ID: ${exportId}. Estimated completion: ${estimatedCompletionTime.toLocaleString()}`);
+    console.info(`Sending export request email to ${email}. Export ID: ${exportId}. Estimated completion: ${estimatedCompletionTime.toLocaleString()}`);
 }
 
 /**
@@ -248,5 +248,5 @@ async function sendExportCompletionEmail(
     exportId: string,
 ): Promise<void> {
     // In a real implementation, this would send an actual email
-    logger.info(`Sending export completion email to ${email}. Export ID: ${exportId}. Download link: /api/account/export-data/${exportId}/download`);
+    console.info(`Sending export completion email to ${email}. Export ID: ${exportId}. Download link: /api/account/export-data/${exportId}/download`);
 }

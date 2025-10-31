@@ -5,7 +5,6 @@
 
 import { NextResponse } from 'next/server';
 import QRCode from 'qrcode';
-import { logger } from '@pawfectmatch/core';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -32,7 +31,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    logger.error('QR generation failed:', error);
+    console.error('QR generation failed:', error);
     return NextResponse.json({ error: 'Failed to generate QR code' }, { status: 500 });
   }
 }

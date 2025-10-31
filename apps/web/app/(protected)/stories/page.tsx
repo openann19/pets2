@@ -9,9 +9,9 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ScreenShell } from '@/src/components/layout/ScreenShell';
-import { PetStoriesFeed } from '@/src/components/Stories/PetStoriesSystem';
-import { useAuthStore } from '@/src/lib/auth-store';
+import { ScreenShell } from '@/components/layout/ScreenShell';
+import { PetStoriesFeed } from '@/components/Stories/PetStoriesSystem';
+import { useAuthStore } from '@/lib/auth-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

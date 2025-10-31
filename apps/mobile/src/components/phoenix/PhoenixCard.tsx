@@ -23,7 +23,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { SPRING } from '../../animation';
 import { BorderRadius, Spacing } from '../../styles/GlobalStyles';
 import { getPremiumShadows } from '../elite/constants';

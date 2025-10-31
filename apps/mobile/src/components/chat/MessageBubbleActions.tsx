@@ -3,7 +3,7 @@
  * Handles gestures (swipe, long-press) and context menu
  */
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';

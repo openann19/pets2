@@ -191,7 +191,7 @@ const nextConfig = {
 
   // Experimental features
   experimental: {
-    // Server component external packages
+    // Server component external packages (Next.js 14 compatible)
     serverComponentsExternalPackages: ['sharp', 'onnxruntime-node']
   },
 

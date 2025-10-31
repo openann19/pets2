@@ -5,8 +5,8 @@
 
 import React, { useMemo } from 'react';
 import { StyleSheet, Switch, Text, TextInput, View } from 'react-native';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { ConfigField } from '../types';
 
 interface ConfigFieldComponentProps {

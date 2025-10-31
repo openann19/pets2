@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 interface StepProgressProps {
   currentStep: number;

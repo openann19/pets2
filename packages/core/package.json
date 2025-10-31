@@ -93,6 +93,11 @@
       "import": "./dist/utils/index.js",
       "require": "./dist/utils/index.js"
     },
+    "./utils/env": {
+      "types": "./dist/utils/env.d.ts",
+      "import": "./dist/utils/env.js",
+      "require": "./dist/utils/env.js"
+    },
     "./stores": {
       "types": "./dist/stores/index.d.ts",
       "import": "./dist/stores/index.js",

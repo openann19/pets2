@@ -4,8 +4,8 @@
  */
 
 import { Pressable, Text, StyleSheet } from 'react-native';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 type Props = {
   onPress: () => void;

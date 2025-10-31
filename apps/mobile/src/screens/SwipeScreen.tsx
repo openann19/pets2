@@ -32,7 +32,7 @@ import { SwipeCard, SwipeActions } from '../components/swipe';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { haptic } from '../ui/haptics';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 import { useReduceMotion } from '../hooks/useReducedMotion';
 import { useHeaderWithCounts } from '../hooks/useHeaderWithCounts';

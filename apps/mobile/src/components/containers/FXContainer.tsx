@@ -22,7 +22,7 @@ import Animated, { type AnimatedStyleProp } from 'react-native-reanimated';
 
 import { useGlowAnimation, useEntranceAnimation } from '../../hooks/useUnifiedAnimations';
 import { useShimmerEffect } from '../../hooks/usePremiumAnimations';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 // === TYPES ===
 export type FXContainerType = 'glass' | 'glow' | 'holographic' | 'neon' | 'gradient' | 'default';

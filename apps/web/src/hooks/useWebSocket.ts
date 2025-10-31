@@ -1,19 +1,35 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { logger } from '@pawfectmatch/core';
-;
 import { useAuthStore } from '@/lib/auth-store';
 import { WebSocketManager, getWebSocketManager } from '@/lib/websocket-manager';
-export function useWebSocket(options = {}) {
+
+interface UseWebSocketOptions {
+    autoConnect?: boolean;
+    enableLogging?: boolean;
+    onConnect?: () => void;
+    onDisconnect?: (reason: string) => void;
+    onReconnect?: () => void;
+    onError?: (error: Error) => void;
+}
+
+interface WebSocketState {
+    connected: boolean;
+    connecting: boolean;
+    error: Error | null;
+    socket: any; // Socket type from socket.io
+}
+
+export function useWebSocket(options: UseWebSocketOptions = {}) {
     const { autoConnect = true, enableLogging = true, onConnect, onDisconnect, onReconnect, onError } = options;
     const { user, accessToken, isAuthenticated } = useAuthStore();
-    const [state, setState] = useState({
+    const [state, setState] = useState<WebSocketState>({
         connected: false,
         connecting: false,
         error: null,
         socket: null
     });
-    const managerRef = useRef(null);
-    const listenersRef = useRef(new Map());
+    const managerRef = useRef<WebSocketManager | null>(null);
+    const listenersRef = useRef(new Map<string, (...args: any[]) => void>());
     const reconnectAttemptsRef = useRef(0);
     const maxReconnectAttempts = 5;
     const baseReconnectDelay = 1000; // 1 second

@@ -19,7 +19,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import type { RootStackScreenProps } from '../navigation/types';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 
 // Phase 1: Performance & Scalability

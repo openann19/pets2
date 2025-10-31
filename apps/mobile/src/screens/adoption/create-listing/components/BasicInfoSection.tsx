@@ -6,8 +6,8 @@ import { BlurView } from 'expo-blur';
 import React, { useMemo } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeStyleSheet as StyleSheet } from '@/utils/styleSheet';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { PetListingFormData } from '../types';
 
 interface BasicInfoSectionProps {

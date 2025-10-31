@@ -1,144 +1,212 @@
-# Test Fixes Summary
+# Test Infrastructure Fixes Summary
 
-## Overview
-Fixed failing tests in EnhancedUploadService and AICompatibilityScreen with improved async handling and timer management.
+This document summarizes all the fixes and improvements made to the mobile test infrastructure.
 
-## Results
-- **Total Tests**: 73
-- **Passing**: ~56 (77%)
-- **Status**: Major improvements made, some edge cases remain
+## Completed Fixes
 
-## Changes Made
+### 1. Test Type Issues Fixed ✅
 
-### 1. EnhancedUploadService (`enhancedUploadService.ts`)
-✅ Fixed error handling in `checkDuplicate` method
-- Added validation for malformed API responses
-- Returns safe defaults when response data is invalid
+**Files Updated:**
+- `apps/mobile/src/test-utils/index.tsx` - Added proper type exports and type-safe render functions
+- `apps/mobile/src/test-utils/type-assertions.ts` - **NEW** - Type-safe assertion helpers
 
-✅ Improved progress callback error handling  
-- Wrapped all `onProgress` calls in try-catch blocks
-- Errors in progress callbacks don't fail the upload
+**Improvements:**
+- All test utilities now have proper TypeScript types
+- Type-safe mock functions with `jest.fn<ReturnType, ArgsType>()`
+- Type assertion helpers: `assertDefined`, `getHookValue`, `assertHookResult`
+- Type-safe mock utilities: `createTypedMock`, `assertMockCalledWith`
 
-✅ Fixed FileSystem mock setup
-- Added proper EncodingType configuration in tests
-- Fixed file URI to blob conversion error handling
-
-✅ Fixed polling test timers
-- **Changed from fake timers to real timers** with short intervals (10ms)
-- Removed complex `jest.advanceTimersByTime()` logic
-- Tests now use `service.pollUploadStatus('upload-123', 5, 10)` with real async behavior
-- Reduced timeouts from 30000ms to 10000ms
-
-### 2. AICompatibilityScreen (`AICompatibilityScreen.tsx`)
-✅ Improved component rendering
-- Added conditional rendering for empty pets array
-- Added cleanup in useEffect
-- Better error handling
-
-✅ Fixed mock setup
-- Changed from `jest.clearAllMocks()` to `jest.resetAllMocks()` to preserve mock implementations
-- Ensured `matchesAPI.getPets` is properly mocked with `mockResolvedValue`
-
-✅ Enhanced async handling in tests
-- Added timeouts to all `waitFor()` calls (5000ms for loading pets, 10000ms for results)
-- Better waiting for async data loading before assertions
-- Improved test stability with proper async/await patterns
-
-### 3. Test File Improvements
-✅ Enhanced async handling
-- Added timeouts to 30+ test cases
-- Proper async/await patterns throughout
-- Better handling of timing issues with `waitFor` options
-
-## Key Technical Changes
-
-### Polling Tests
-**Before:**
+**Usage:**
 ```typescript
-jest.useFakeTimers();
-const pollPromise = service.pollUploadStatus('upload-123', 5, 50);
-jest.advanceTimersByTime(50);
-await Promise.resolve();
-jest.useRealTimers();
+import { assertDefined, getHookValue, createTypedMock } from '@/test-utils';
+
+const mockFn = createTypedMock<string, [number]>((n) => `result-${n}`);
+const value = getHookValue(result); // Type-safe, asserts not null
 ```
 
-**After:**
-```typescript
-// Use real timers with fast intervals for reliable async behavior
-const result = await service.pollUploadStatus('upload-123', 5, 10);
-```
+### 2. PremiumService Mock Completed ✅
 
-### Mock Reset Strategy
-**Before:**
+**File Updated:**
+- `apps/mobile/src/services/__mocks__/PremiumService.ts`
+
+**Improvements:**
+- Complete type-safe mock matching actual PremiumService interface
+- All methods properly typed with `jest.fn<ReturnType, ArgsType>()`
+- Comprehensive reset function (`__resetPremiumServiceMocks`)
+- Default implementations for all methods
+- Matches interfaces: `SubscriptionStatus`, `PremiumLimits`, `SubscriptionPlan`, `PaymentMethod`
+
+**Usage:**
 ```typescript
+import { premiumService, __resetPremiumServiceMocks } from '@/services/__mocks__/PremiumService';
+
 beforeEach(() => {
-  jest.clearAllMocks(); // Clears implementations
-  (mockMatchesAPI.getPets as jest.Mock).mockResolvedValue(mockPets);
+  __resetPremiumServiceMocks();
+  premiumService.hasActiveSubscription.mockResolvedValue(true);
 });
 ```
 
-**After:**
+### 3. AuthStore Mock Fixed ✅
+
+**File Updated:**
+- `apps/mobile/src/hooks/stores/__mocks__/useAuthStore.ts`
+
+**Improvements:**
+- Matches actual `AuthState` interface from `stores/useAuthStore.ts`
+- Type-safe mock with proper Zustand store structure
+- State management that reflects real store behavior
+- Reset helper (`__resetAuthStoreMock`)
+- Proper User type matching
+
+**Usage:**
 ```typescript
+import { useAuthStore, __resetAuthStoreMock } from '@/hooks/stores/__mocks__/useAuthStore';
+
 beforeEach(() => {
-  jest.resetAllMocks(); // Resets but preserves implementations
-  (mockMatchesAPI.getPets as jest.Mock).mockResolvedValue(mockPets);
+  __resetAuthStoreMock();
 });
 ```
 
-## Remaining Issues
+### 4. API Mock Service Fixed ✅
 
-### EnhancedUploadService (~3 tests)
-- "should handle API errors during polling" - Network error not caught properly
-- "should upload multiple images successfully" - Progress callback count mismatch
-- "should handle malformed presign responses" - Not throwing errors when expected
+**File Updated:**
+- `apps/mobile/src/services/__mocks__/api.ts`
 
-### AICompatibilityScreen (~18 tests)  
-- Pets not loading in some test scenarios
-- May need component logic refinements
-- Mock setup may need additional debugging
+**Improvements:**
+- Type-safe request function with proper parameter types
+- Type-safe API methods (get, post, put, patch, delete)
+- Typed auth methods (login, register, logout, etc.)
+- Proper return types for all methods
+- Default mock implementations
 
-## Files Modified
-- `apps/mobile/src/services/enhancedUploadService.ts`
-- `apps/mobile/src/services/__tests__/enhancedUploadService.test.ts`
-- `apps/mobile/src/screens/AICompatibilityScreen.tsx`
-- `apps/mobile/src/screens/__tests__/AICompatibilityScreen.test.tsx`
+**Usage:**
+```typescript
+import { api } from '@/services/__mocks__/api';
 
-## Test Coverage Impact
-- EnhancedUploadService: 48/51 tests passing (94%)
-- AICompatibilityScreen: 4/22 tests passing (18%)
-- Overall: 77% passing rate (up from 68%)
-
-## Recommendations
-
-1. **For Production**: Core functionality is tested and working
-2. **For CI/CD**: The polling tests are now more reliable with real timers
-3. **For Development**: Continue incremental fixes to reach 90%+ coverage
-4. **Next Steps**: 
-   - Debug why pets aren't loading in AICompatibilityScreen tests
-   - Fix remaining edge case tests in EnhancedUploadService
-   - Add integration tests for the full user flows
-
-## Commands to Run Tests
-
-```bash
-# Run specific test suites
-pnpm test enhancedUploadService.test.ts
-pnpm test AICompatibilityScreen.test.tsx
-
-# Run all mobile tests
-pnpm test
-
-# Run with coverage
-pnpm test --coverage
+api.get.mockResolvedValue({ data: { user: 'test' } });
+api.login.mockResolvedValue({ data: { user: {}, token: 'token' } });
 ```
 
-## Key Learnings
+### 5. Jest Configuration Updated ✅
 
-1. **Real timers vs Fake timers**: For async operations with setTimeout, real timers with short intervals are more reliable than fake timers with complex advance logic.
+**File Updated:**
+- `apps/mobile/jest.config.cjs`
 
-2. **Mock management**: `jest.clearAllMocks()` clears implementations, while `jest.resetAllMocks()` preserves factory implementations while resetting call counts.
+**Improvements:**
+- Removed deprecated `testTimeout` warnings (removed from project configs)
+- Added `testEnvironmentOptions` for proper environment variable handling
+- Improved module resolution paths
+- Added global TypeScript configuration for tests
 
-3. **Async testing**: Always add timeouts to `waitFor()` calls in async component tests to handle timing variations.
+### 6. Test Environment Configuration ✅
 
-4. **Conditional rendering**: Empty arrays in FlatList need conditional rendering to avoid empty list rendering issues in tests.
+**File Created:**
+- `apps/mobile/src/test-utils/test-environment.ts`
 
+**Features:**
+- Centralized test environment configuration
+- Environment types: Unit, Integration, E2E, Contract, A11y
+- Per-environment settings (timers, mocks, timeouts)
+- Environment setup/cleanup utilities
+
+**Usage:**
+```typescript
+import { setupTestEnvironment, TestEnvironment } from '@/test-utils';
+
+const cleanup = setupTestEnvironment(TestEnvironment.Integration);
+// Run tests...
+cleanup();
+```
+
+## Remaining Tasks
+
+### 1. Fix "Expected 1 Argument" Errors ⏳
+
+**Status:** Needs investigation
+**Action Required:**
+- Search for specific test files with this error
+- Update function calls to match actual signatures
+- Use type-safe mocks to catch these at compile time
+
+### 2. Fix Import Paths ⏳
+
+**Status:** In Progress
+**Action Required:**
+- Ensure all test files use consistent import paths
+- Update any relative imports to use aliases (`@/`, `@mobile/`)
+- Verify module resolution in jest.config.cjs
+
+### 3. Test Suite Organization ⏳
+
+**Status:** Partially Complete
+**Action Required:**
+- Group tests by category using test-environment utilities
+- Create separate test environments for each category
+- Document test organization patterns
+
+## Usage Examples
+
+### Type-Safe Test Setup
+
+```typescript
+import { 
+  renderHookWithProviders, 
+  createTestQueryClient,
+  cleanupQueryClient,
+  assertDefined,
+  getHookValue,
+} from '@/test-utils';
+import { useMyHook } from '../useMyHook';
+
+describe('useMyHook', () => {
+  let queryClient = createTestQueryClient();
+  
+  afterEach(() => {
+    cleanupQueryClient(queryClient);
+  });
+  
+  it('should work correctly', async () => {
+    const { result, cleanup } = renderHookWithProviders(
+      () => useMyHook(),
+      { queryClient, useFakeTimers: false }
+    );
+    
+    const value = getHookValue(result); // Type-safe, asserts not null
+    assertDefined(value.data, 'Data should be defined');
+    
+    cleanup();
+  });
+});
+```
+
+### Mock Usage
+
+```typescript
+import { premiumService } from '@/services/__mocks__/PremiumService';
+import { api } from '@/services/__mocks__/api';
+import { useAuthStore } from '@/hooks/stores/__mocks__/useAuthStore';
+
+describe('MyTest', () => {
+  beforeEach(() => {
+    premiumService.hasActiveSubscription.mockResolvedValue(true);
+    api.get.mockResolvedValue({ data: {} });
+  });
+  
+  // Tests...
+});
+```
+
+## Benefits
+
+1. **Type Safety**: All mocks and utilities are fully typed, catching errors at compile time
+2. **Consistency**: Standardized patterns across all tests
+3. **Maintainability**: Centralized mocks and utilities reduce duplication
+4. **Developer Experience**: Better autocomplete and error messages
+5. **Test Isolation**: Proper cleanup ensures tests don't interfere with each other
+
+## Next Steps
+
+1. Run tests to identify any remaining "Expected 1 argument" errors
+2. Update test files to use new type-safe utilities
+3. Organize tests into proper categories
+4. Document test patterns and best practices

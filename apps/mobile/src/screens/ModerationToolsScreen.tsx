@@ -15,7 +15,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { logger } from '@pawfectmatch/core';
 import { moderationAPI } from '../services/api';
 import type { RootStackScreenProps } from '../navigation/types';

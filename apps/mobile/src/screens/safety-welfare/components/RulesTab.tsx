@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { COMMUNITY_RULES } from '../types';
 
 interface RulesTabProps {

@@ -26,7 +26,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import type { UploadProgress } from '../../services/postCreationService';
 import type { CreatePostRequest, ActivityDetails } from '../../services/communityAPI';
 import { logger } from '@pawfectmatch/core';
@@ -556,7 +556,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
               />
               <Text style={styles.loadingText}>
                 {uploadProgress
-                  ? `Uploading... ${Math.round((uploadProgress.progress ?? uploadProgress.percent ?? 0) * 100)}%`
+                  ? `Uploading... ${Math.round((uploadProgress.progress ?? 0) * 100)}%`
                   : 'Creating...'}
               </Text>
               {uploadProgress && uploadProgress.currentFile && (

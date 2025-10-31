@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
 import type { FlashList as FlashListType } from '@shopify/flash-list';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { haptic } from '../ui/haptics';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 

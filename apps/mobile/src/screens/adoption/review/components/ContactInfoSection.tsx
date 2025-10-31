@@ -8,8 +8,8 @@ import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { logger } from '@pawfectmatch/core';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { Application } from '../types';
 
 function __makeStyles_styles(theme: AppTheme) {

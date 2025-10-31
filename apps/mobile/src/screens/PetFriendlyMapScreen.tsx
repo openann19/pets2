@@ -23,7 +23,7 @@ import {
 
 // Existing architecture components
 import { EliteContainer, EliteHeader } from '../components/elite';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 // Mock data for venues and meetups (would come from API)
 import type { Venue } from '@pawfectmatch/core';

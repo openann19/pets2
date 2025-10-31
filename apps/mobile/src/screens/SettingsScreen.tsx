@@ -17,7 +17,7 @@ import { useSettingsData } from './settings/useSettingsData';
 import { SettingSection } from '../components/settings/SettingSection';
 import { SettingsList } from '../components/settings/SettingsList';
 import { VersionFooter } from '../components/settings/VersionFooter';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 

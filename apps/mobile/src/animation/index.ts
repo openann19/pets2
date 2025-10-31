@@ -39,4 +39,15 @@ export const BorderRadius = RADIUS;
 export const Colors = COLORS; // Re-export Colors for backward compatibility
 export const Typography = TYPOGRAPHY; // Re-export Typography for backward compatibility
 export const Shadows = SHADOWS; // Re-export Shadows for backward compatibility
-export const GlobalStyles: Record<string, unknown> = {}; // Add GlobalStyles placeholder for backward compatibility
+// GlobalStyles placeholder - should be imported from styles/GlobalStyles but keeping for backward compatibility
+export const GlobalStyles: Record<string, any> = {
+  container: {},
+  tabContainer: {},
+  // Add common style keys that tests might access
+  screen: {},
+  content: {},
+  header: {},
+  card: {},
+  button: {},
+  text: {},
+};

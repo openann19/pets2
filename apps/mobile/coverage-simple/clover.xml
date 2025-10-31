@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1761909582462" clover="3.2.0">
+  <project timestamp="1761909582462" name="All files">
+    <metrics statements="23" coveredstatements="5" conditionals="7" coveredconditionals="0" methods="11" coveredmethods="2" elements="41" coveredelements="7" complexity="0" loc="23" ncloc="23" packages="1" files="1" classes="1"/>
+    <file name="test-utils.ts" path="/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/__tests__/test-utils.ts">
+      <metrics statements="23" coveredstatements="5" conditionals="7" coveredconditionals="0" methods="11" coveredmethods="2"/>
+      <line num="12" count="11" type="stmt"/>
+      <line num="15" count="11" type="stmt"/>
+      <line num="17" count="0" type="stmt"/>
+      <line num="20" count="11" type="stmt"/>
+      <line num="26" count="0" type="stmt"/>
+      <line num="27" count="0" type="stmt"/>
+      <line num="29" count="0" type="stmt"/>
+      <line num="31" count="0" type="stmt"/>
+      <line num="45" count="7" type="stmt"/>
+      <line num="46" count="7" type="stmt"/>
+      <line num="48" count="0" type="stmt"/>
+      <line num="54" count="0" type="stmt"/>
+      <line num="59" count="0" type="stmt"/>
+      <line num="60" count="0" type="stmt"/>
+      <line num="61" count="0" type="stmt"/>
+      <line num="63" count="0" type="stmt"/>
+      <line num="64" count="0" type="stmt"/>
+      <line num="65" count="0" type="cond" truecount="0" falsecount="2"/>
+      <line num="66" count="0" type="stmt"/>
+      <line num="70" count="0" type="stmt"/>
+      <line num="71" count="0" type="stmt"/>
+      <line num="77" count="0" type="cond" truecount="0" falsecount="5"/>
+      <line num="78" count="0" type="stmt"/>
+    </file>
+  </project>
+</coverage>

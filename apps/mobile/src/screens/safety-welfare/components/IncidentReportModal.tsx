@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Modal, ScrollView } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import type { IncidentReport } from '../types';
 import { INCIDENT_TYPES, SEVERITY_OPTIONS } from '../types';
 

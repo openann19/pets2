@@ -7,7 +7,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 type Props = {
   value: boolean;

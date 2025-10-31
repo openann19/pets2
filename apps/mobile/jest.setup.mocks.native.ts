@@ -25,6 +25,39 @@ jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
   removeEventListener: jest.fn(),
 }));
 
+// Mock react-native-fast-image
+jest.mock('react-native-fast-image', () => {
+  const React = require('react');
+  const { Image } = require('react-native');
+  const FastImageComponent = React.forwardRef((props: any, ref: any) => {
+    return React.createElement(Image, { ...props, ref });
+  });
+  FastImageComponent.displayName = 'FastImage';
+  return {
+    default: FastImageComponent,
+    FastImage: FastImageComponent,
+    preload: jest.fn(() => Promise.resolve()),
+    clearMemoryCache: jest.fn(() => Promise.resolve()),
+    clearDiskCache: jest.fn(() => Promise.resolve()),
+    ResizeMode: {
+      contain: 'contain',
+      cover: 'cover',
+      stretch: 'stretch',
+      center: 'center',
+    },
+    Priority: {
+      low: 'low',
+      normal: 'normal',
+      high: 'high',
+    },
+    CacheControl: {
+      immutable: 'immutable',
+      web: 'web',
+      cacheOnly: 'cacheOnly',
+    },
+  };
+});
+
 // Mock React Native list components to render items synchronously
 jest.mock('react-native/Libraries/Lists/FlatList', () => {
   const React = require('react');

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { ThemeColors } from '@mobile/theme';
+import type { ThemeColors } from '@/theme';
 import { memo } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { AdminUserStatus } from '../../services/adminUsersService';

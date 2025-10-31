@@ -25,7 +25,16 @@ import { Modal } from 'react-native';
 import { useTheme } from '@/theme';
 import type { AppTheme } from '@/theme';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// Lazy load dimensions to support test mocking
+const getScreenWidth = () => {
+  try {
+    const dims = Dimensions.get('window');
+    return dims?.width ?? 375;
+  } catch {
+    return 375;
+  }
+};
+const SCREEN_WIDTH = getScreenWidth();
 
 // === TYPES ===
 interface PhotoItem {

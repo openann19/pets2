@@ -4,7 +4,7 @@
  */
 
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import type { SettingItem } from './useSettingsData';

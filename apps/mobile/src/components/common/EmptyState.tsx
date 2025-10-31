@@ -23,7 +23,7 @@ import Animated, {
   withRepeat,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useReduceMotion } from '@/hooks/useReducedMotion';
 import { useEnhancedVariants } from '@/hooks/animations';
 import { springs } from '@/foundation/motion';

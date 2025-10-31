@@ -31,7 +31,7 @@ import {
 import { useRoute, type RouteProp } from '@react-navigation/native';
 import { useRef, useEffect, useMemo } from 'react';
 import { useStoriesScreen } from '../hooks/screens/social';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { ErrorBoundary } from '../components/common';
 import { telemetry } from '../lib/telemetry';
 

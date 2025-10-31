@@ -9,6 +9,7 @@
  * - Listener lifecycle: setupListeners() called during init, cleanup() removes listeners on unmount
  */
 
+import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { useNotifications } from '../useNotifications';
 import { notificationService, initializeNotificationsService } from '../../services/notifications';
@@ -81,7 +82,7 @@ describe('useNotifications', () => {
         expect(initMock).toHaveBeenCalledTimes(1);
       });
 
-      rerender(); // Force re-render
+      rerender(undefined); // Force re-render
 
       await waitFor(() => {
         expect(initMock).toHaveBeenCalledTimes(1); // Still only once
@@ -397,7 +398,7 @@ describe('useNotifications', () => {
       expect(typeof firstSendMessage).toBe('function');
       expect(typeof firstSetBadge).toBe('function');
 
-      rerender();
+      rerender(undefined);
 
       // Bound methods create new function instances each render
       // This is expected behavior - verify they still work correctly

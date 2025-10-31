@@ -97,7 +97,8 @@ Object.defineProperty(MockNotification, 'requestPermission', {
   value: jest.fn().mockResolvedValue('granted'),
 });
 
-global.Notification = MockNotification as unknown as typeof Notification;
+// @ts-expect-error - Mock type assignment
+global.Notification = MockNotification;
 
 // === Storage Mocks ===
 const createStorageMock = () => {

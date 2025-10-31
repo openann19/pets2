@@ -1,0 +1,15 @@
+/**
+ * Simple Counter Hook
+ * This is a basic hook that can be easily tested without external dependencies
+ */
+import { useState } from 'react';
+
+export function useCounter(initialValue = 0) {
+  const [count, setCount] = useState(initialValue);
+  
+  const increment = () => setCount(prev => prev + 1);
+  const decrement = () => setCount(prev => prev - 1);
+  const reset = () => setCount(initialValue);
+  
+  return { count, increment, decrement, reset };
+}

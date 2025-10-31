@@ -5,8 +5,8 @@
 
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { PetFormData } from '../types';
 import { INTENT_OPTIONS, PERSONALITY_TAGS } from '../types';
 

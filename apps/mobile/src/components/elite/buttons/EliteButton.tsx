@@ -21,7 +21,7 @@ import Animated, {
   type AnimatedStyleProp,
 } from 'react-native-reanimated';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { springs, durations, motionEasing } from '@/foundation/motion';
 import { BorderRadius, Colors, GlobalStyles, Spacing } from '../../../styles/GlobalStyles';
 import { getPremiumGradients } from '../constants/gradients';

@@ -4,7 +4,7 @@
  */
 
 import type { NextRequest } from 'next/server'
-import { logger } from '@pawfectmatch/core';
+
 ;
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '../../../lib/auth';
@@ -59,7 +59,7 @@ export async function GET(
 
         return NextResponse.json(response);
     } catch (error) {
-        logger.error('Error checking account status:', { error });
+        console.error('Error checking account status:', { error });
         return NextResponse.json(
             { error: 'Failed to check account status' },
             { status: 500 }

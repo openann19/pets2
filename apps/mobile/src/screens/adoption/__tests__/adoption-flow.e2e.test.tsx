@@ -7,7 +7,7 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { ThemeProvider } from '@mobile/theme';
+import { ThemeProvider } from '@/theme';
 import AdoptionManagerScreen from '../AdoptionManagerScreen';
 import CreateListingScreen from '../CreateListingScreen';
 import ApplicationReviewScreen from '../ApplicationReviewScreen';

@@ -4,12 +4,17 @@
  */
 
 import { renderHook, waitFor, act } from '@testing-library/react-native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { useAdvancedMatchFilter, useMatchInsights } from '../useAdvancedMatchFilter';
-import { advancedMatchFilterService } from '../../services/advancedMatchFilterService';
+import { advancedMatchFilterService } from '@/services/advancedMatchFilterService';
 import type { MatchFilterResponse } from '@pawfectmatch/core/types/phase1-contracts';
+import {
+  createTestQueryClient,
+  cleanupQueryClient,
+  createWrapperWithQueryClient,
+} from '@/test-utils/react-query-helpers';
 
-jest.mock('../../services/advancedMatchFilterService');
+jest.mock('@/services/advancedMatchFilterService');
 jest.mock('@pawfectmatch/core', () => ({
   ...jest.requireActual('@pawfectmatch/core'),
   featureFlags: {
@@ -17,23 +22,19 @@ jest.mock('@pawfectmatch/core', () => ({
   },
 }));
 
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-};
-
 describe('useAdvancedMatchFilter', () => {
+  let queryClient: QueryClient;
+  let wrapper: React.ComponentType<{ children: React.ReactNode }>;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    queryClient = createTestQueryClient();
+    wrapper = createWrapperWithQueryClient(queryClient);
+  });
+
+  afterEach(() => {
+    // Comprehensive cleanup: cancel queries, remove observers, clear cache
+    cleanupQueryClient(queryClient);
   });
 
   it('should filter matches with default parameters', async () => {
@@ -48,7 +49,7 @@ describe('useAdvancedMatchFilter', () => {
     (advancedMatchFilterService.filterMatches as jest.Mock).mockResolvedValue(mockFilterResponse);
 
     const { result } = renderHook(() => useAdvancedMatchFilter(), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     expect(result.current.isLoading).toBe(true);
@@ -76,7 +77,7 @@ describe('useAdvancedMatchFilter', () => {
     (advancedMatchFilterService.filterMatches as jest.Mock).mockResolvedValue(mockFilterResponse);
 
     const { result } = renderHook(() => useAdvancedMatchFilter(), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     await waitFor(() => {
@@ -106,7 +107,7 @@ describe('useAdvancedMatchFilter', () => {
     (advancedMatchFilterService.filterMatches as jest.Mock).mockResolvedValue(mockFilterResponse);
 
     const { result } = renderHook(() => useAdvancedMatchFilter(), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     await waitFor(() => {
@@ -149,7 +150,7 @@ describe('useAdvancedMatchFilter', () => {
       .mockResolvedValueOnce(mockFilterResponsePage2);
 
     const { result } = renderHook(() => useAdvancedMatchFilter(), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     await waitFor(() => {
@@ -170,7 +171,7 @@ describe('useAdvancedMatchFilter', () => {
     (advancedMatchFilterService.filterMatches as jest.Mock).mockRejectedValue(error);
 
     const { result } = renderHook(() => useAdvancedMatchFilter(), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     await waitFor(() => {
@@ -182,8 +183,18 @@ describe('useAdvancedMatchFilter', () => {
 });
 
 describe('useMatchInsights', () => {
+  let queryClient: QueryClient;
+  let wrapper: React.ComponentType<{ children: React.ReactNode }>;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    queryClient = createTestQueryClient();
+    wrapper = createWrapperWithQueryClient(queryClient);
+  });
+
+  afterEach(() => {
+    // Comprehensive cleanup: cancel queries, remove observers, clear cache
+    cleanupQueryClient(queryClient);
   });
 
   it('should fetch match insights', async () => {
@@ -199,7 +210,7 @@ describe('useMatchInsights', () => {
     (advancedMatchFilterService.getMatchInsights as jest.Mock).mockResolvedValue(mockInsights);
 
     const { result } = renderHook(() => useMatchInsights(matchId), {
-      wrapper: createWrapper(),
+      wrapper,
     });
 
     await waitFor(() => {

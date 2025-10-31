@@ -22,6 +22,53 @@ import type { AnimatedStyle } from 'react-native-reanimated';
 // or removed if not needed.
 // import { useSharedValue, useAnimatedReaction, useAnimatedStyle, withDelay, withSpring } from 'react-native-reanimated';
 
+/**
+ * Bezier easing function implementation
+ * Compatible with react-native-reanimated's Easing.bezier
+ * Used when react-native-reanimated is not available or in tests
+ */
+const bezierEasing = (x1: number, y1: number, x2: number, y2: number) => {
+  return (t: number) => {
+    // Cubic bezier curve calculation
+    const cx = 3 * x1;
+    const bx = 3 * (x2 - x1) - cx;
+    const ax = 1 - cx - bx;
+    const cy = 3 * y1;
+    const by = 3 * (y2 - y1) - cy;
+    const ay = 1 - cy - by;
+    
+    // Find x for given t using Newton-Raphson method
+    let x = t;
+    for (let i = 0; i < 8; i++) {
+      const fx = ax * x * x * x + bx * x * x + cx * x - t;
+      const fpx = 3 * ax * x * x + 2 * bx * x + cx;
+      if (Math.abs(fpx) < 1e-6) break;
+      x = x - fx / fpx;
+    }
+    
+    // Calculate y for the found x
+    return ay * x * x * x + by * x * x + cy * x;
+  };
+};
+
+// Try to use react-native-reanimated's Easing if available, otherwise use our implementation
+let ReanimatedEasing: typeof Easing | undefined;
+try {
+  const reanimated = require('react-native-reanimated');
+  if (reanimated && reanimated.Easing && reanimated.Easing.bezier) {
+    ReanimatedEasing = reanimated.Easing;
+  }
+} catch {
+  // react-native-reanimated not available, use fallback
+}
+
+const getEasingBezier = (x1: number, y1: number, x2: number, y2: number) => {
+  if (ReanimatedEasing && ReanimatedEasing.bezier) {
+    return ReanimatedEasing.bezier(x1, y1, x2, y2);
+  }
+  return bezierEasing(x1, y1, x2, y2);
+};
+
 // ===== DURATION TOKENS =====
 /**
  * Motion duration tokens (ms)
@@ -107,15 +154,15 @@ export const easings = {
 
 // Reanimated-compatible Easing functions
 export const motionEasing = {
-  enter: Easing.bezier(0.2, 0, 0, 1),
-  exit: Easing.bezier(0.3, 0, 1, 1),
-  emphasized: Easing.bezier(0.2, 0, 0, 1),
+  enter: getEasingBezier(0.2, 0, 0, 1),
+  exit: getEasingBezier(0.3, 0, 1, 1),
+  emphasized: getEasingBezier(0.2, 0, 0, 1),
   // Legacy support
   enterArray: easings.enter,
   exitArray: easings.exit,
   emphasizedArray: easings.emphasized,
-  decel: Easing.bezier(0, 0, 0.2, 1),
-  accel: Easing.bezier(0.3, 0, 1, 1),
+  decel: getEasingBezier(0, 0, 0.2, 1),
+  accel: getEasingBezier(0.3, 0, 1, 1),
   decelArray: [0, 0, 0.2, 1] as const,
   accelArray: [0.3, 0, 1, 1] as const,
 } as const;

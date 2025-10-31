@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1761908683924" clover="3.2.0">
+  <project timestamp="1761908683924" name="All files">
+    <metrics statements="13" coveredstatements="13" conditionals="2" coveredconditionals="2" methods="11" coveredmethods="11" elements="26" coveredelements="26" complexity="0" loc="13" ncloc="13" packages="2" files="2" classes="2"/>
+    <package name="hooks">
+      <metrics statements="5" coveredstatements="5" conditionals="1" coveredconditionals="1" methods="6" coveredmethods="6"/>
+      <file name="useCounter.ts" path="/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/useCounter.ts">
+        <metrics statements="5" coveredstatements="5" conditionals="1" coveredconditionals="1" methods="6" coveredmethods="6"/>
+        <line num="8" count="9" type="stmt"/>
+        <line num="10" count="9" type="stmt"/>
+        <line num="11" count="9" type="stmt"/>
+        <line num="12" count="9" type="stmt"/>
+        <line num="14" count="9" type="stmt"/>
+      </file>
+    </package>
+    <package name="hooks.utils">
+      <metrics statements="8" coveredstatements="8" conditionals="1" coveredconditionals="1" methods="5" coveredmethods="5"/>
+      <file name="useToggleState.ts" path="/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/utils/useToggleState.ts">
+        <metrics statements="8" coveredstatements="8" conditionals="1" coveredconditionals="1" methods="5" coveredmethods="5"/>
+        <line num="17" count="11" type="stmt"/>
+        <line num="19" count="11" type="stmt"/>
+        <line num="20" count="3" type="stmt"/>
+        <line num="23" count="11" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="27" count="11" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="31" count="11" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

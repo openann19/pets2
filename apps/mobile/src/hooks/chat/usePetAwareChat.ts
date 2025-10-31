@@ -6,7 +6,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { PetAwareMessage, ChatContext } from '../../../core/src/types/chat-enhancements';
 import { useChatData } from '../useChatData'; // Existing hook
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { logger } from '../services/logger';
 
 interface PetAwareChatOptions {

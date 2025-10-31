@@ -7,20 +7,33 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { io, Socket } from 'socket.io-client';
 import { useAuthStore } from '../lib/auth-store';
 import { logger } from '../services/logger';
+
+interface TypingUser {
+    userId: string;
+    timestamp: number;
+}
+
+interface SocketState {
+    isConnected: boolean;
+    connectionQuality: 'offline' | 'excellent' | 'good' | 'poor';
+    latency: number;
+    reconnectAttempts: number;
+}
+
 export const useEnhancedSocket = () => {
     const { user, accessToken } = useAuthStore();
-    const socketRef = useRef(null);
-    const reconnectTimeoutRef = useRef(null);
-    const pingIntervalRef = useRef(null);
-    const typingTimeoutRef = useRef(null);
-    const latencyHistoryRef = useRef([]);
-    const [state, setState] = useState({
+    const socketRef = useRef<Socket | null>(null);
+    const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const latencyHistoryRef = useRef<number[]>([]);
+    const [state, setState] = useState<SocketState>({
         isConnected: false,
         connectionQuality: 'offline',
         latency: 0,
         reconnectAttempts: 0,
     });
-    const [typingUsers, setTypingUsers] = useState([]);
+    const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
     // Enhanced connection quality calculation
     const updateConnectionQuality = useCallback(() => {
         const avgLatency = latencyHistoryRef.current.reduce((a, b) => a + b, 0) / latencyHistoryRef.current.length;

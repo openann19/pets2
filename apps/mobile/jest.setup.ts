@@ -1,5 +1,46 @@
 import { jest, beforeEach, afterEach } from '@jest/globals';
 
+// Mock expo-file-system
+jest.mock('expo-file-system', () => ({
+  FileSystemUploadType: {
+    BINARY_CONTENT: 'BINARY_CONTENT',
+    MULTIPART: 'MULTIPART',
+  },
+  createUploadTask: jest.fn(() => ({
+    uploadAsync: jest.fn(() => Promise.resolve({ status: 200, body: '{"key": "test-key"}' })),
+    cancelAsync: jest.fn(),
+    pauseAsync: jest.fn(),
+    resumeAsync: jest.fn(),
+  })),
+  uploadAsync: jest.fn(() => Promise.resolve({ status: 200, body: '{"key": "test-key"}' })),
+  downloadAsync: jest.fn(() => Promise.resolve({ status: 200, uri: 'file://test' })),
+  getInfoAsync: jest.fn(() => Promise.resolve({ exists: true, size: 1000, uri: 'file://test' })),
+  readAsStringAsync: jest.fn(() => Promise.resolve('test content')),
+  writeAsStringAsync: jest.fn(() => Promise.resolve()),
+  deleteAsync: jest.fn(() => Promise.resolve()),
+  moveAsync: jest.fn(() => Promise.resolve()),
+  copyAsync: jest.fn(() => Promise.resolve()),
+  makeDirectoryAsync: jest.fn(() => Promise.resolve()),
+  readDirectoryAsync: jest.fn(() => Promise.resolve(['file1.jpg', 'file2.png'])),
+  getContentUriAsync: jest.fn(() => Promise.resolve('content://test')),
+  getFreeDiskStorageAsync: jest.fn(() => Promise.resolve(1000000)),
+  getTotalDiskCapacityAsync: jest.fn(() => Promise.resolve(10000000)),
+}));
+
+// Mock the animation module directly
+jest.mock('./src/animation', () => ({
+  DUR: { fast: 150, normal: 250, slow: 400 },
+  EASE: {
+    standard: jest.fn(() => (t: number) => t),
+    out: jest.fn(() => (t: number) => t),
+    in: jest.fn(() => (t: number) => t),
+  },
+  SPRING: {
+    stiff: { stiffness: 300, damping: 30, mass: 0.9 },
+    soft: { stiffness: 180, damping: 22, mass: 1.0 },
+  },
+}), { virtual: false });
+
 // React Native is already mocked in jest.setup.preact-native.ts
 // No need to mock it again here
 
@@ -7,7 +48,9 @@ import { jest, beforeEach, afterEach } from '@jest/globals';
 import './jest.setup.mocks.native';
 
 // Mock theme modules BEFORE any other imports
-jest.mock('@mobile/theme', () => {
+// Use relative path since jest.mock runs before path mapping resolution
+jest.mock('./src/theme', () => {
+  const React = require('react');
   // Helper function to convert hex to rgba with opacity
   const alpha = (color: string, opacity: number): string => {
     if (color.startsWith('#')) {
@@ -30,146 +73,345 @@ jest.mock('@mobile/theme', () => {
     return color;
   };
 
+  // Create light theme object
+  const createLightTheme = () => ({
+    scheme: 'light' as const,
+    isDark: false,
+    colors: {
+      bg: '#ffffff',
+      bgElevated: '#F8FAFC',
+      surface: '#F8FAFC',
+      surfaceAlt: '#F1F5F9',
+      text: '#111827',
+      textMuted: '#64748B',
+      textSecondary: '#64748B',
+      onSurface: '#111827',
+      onMuted: '#64748B',
+      onPrimary: '#FFFFFF',
+      primary: '#2563EB',
+      primaryText: '#FFFFFF',
+      border: '#E2E8F0',
+      success: '#10B981',
+      warning: '#F59E0B',
+      danger: '#EF4444',
+      info: '#3B82F6',
+      error: '#EF4444',
+      white: '#FFFFFF',
+      black: '#000000',
+      gray: {
+        50: '#F9FAFB',
+        100: '#F3F4F6',
+        200: '#E5E7EB',
+        300: '#D1D5DB',
+        400: '#9CA3AF',
+        500: '#6B7280',
+        600: '#4B5563',
+        700: '#374151',
+        800: '#1F2937',
+        900: '#111827',
+      },
+    },
+    palette: {
+      neutral: {
+        100: '#F8FAFC',
+        600: '#475569',
+        800: '#1E293B',
+      },
+      brand: {
+        500: '#64748B',
+      },
+      gradients: {
+        primary: ['#2563EB', '#1D4ED8'],
+        success: ['#10B981', '#059669'],
+        danger: ['#EF4444', '#DC2626'],
+      },
+    },
+    spacing: {
+      xs: 4,
+      sm: 8,
+      md: 16,
+      lg: 24,
+      xl: 32,
+      '2xl': 48,
+      '3xl': 64,
+      '4xl': 96,
+    },
+    radii: {
+      none: 0,
+      xs: 2,
+      sm: 4,
+      md: 8,
+      lg: 12,
+      xl: 16,
+      '2xl': 24,
+      '3xl': 32,
+      full: 9999,
+    },
+    radius: {
+      none: 0,
+      xs: 2,
+      sm: 4,
+      md: 8,
+      lg: 12,
+      xl: 16,
+      '2xl': 24,
+      '3xl': 32,
+      full: 9999,
+    },
+    typography: {
+      body: {
+        fontSize: 16,
+        size: 16,
+        lineHeight: 24,
+        fontWeight: '400',
+        weight: '400',
+      },
+      h1: {
+        fontSize: 32,
+        size: 32,
+        lineHeight: 40,
+        fontWeight: '700',
+        weight: '700',
+      },
+      h2: {
+        fontSize: 24,
+        size: 24,
+        lineHeight: 32,
+        fontWeight: '600',
+        weight: '600',
+      },
+      h3: {
+        fontSize: 20,
+        size: 20,
+        lineHeight: 28,
+        fontWeight: '600',
+        weight: '600',
+      },
+      caption: {
+        fontSize: 12,
+        size: 12,
+        lineHeight: 16,
+        fontWeight: '400',
+        weight: '400',
+      },
+      bodyLarge: {
+        fontSize: 18,
+        size: 18,
+        lineHeight: 28,
+        fontWeight: '400',
+        weight: '400',
+      },
+      bodySmall: {
+        fontSize: 14,
+        size: 14,
+        lineHeight: 20,
+        fontWeight: '400',
+        weight: '400',
+      },
+    },
+    shadows: {
+      sm: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2 },
+      md: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
+      lg: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 8 },
+    },
+    blur: {
+      sm: 4,
+      md: 8,
+      lg: 16,
+    },
+    easing: {
+      standard: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+      decelerated: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
+      accelerated: 'cubic-bezier(0.4, 0.0, 1, 1)',
+    },
+    motion: {
+      duration: {
+        fast: 150,
+        normal: 300,
+        slow: 500,
+      },
+    },
+    utils: {
+      alpha,
+    },
+  });
+
+  // Create dark theme object
+  const createDarkTheme = () => ({
+    scheme: 'dark' as const,
+    isDark: true,
+    colors: {
+      bg: '#0a0a0a',
+      bgElevated: '#1E293B',
+      surface: '#1E293B',
+      surfaceAlt: '#334155',
+      text: '#ffffff',
+      textMuted: '#94A3B8',
+      textSecondary: '#94A3B8',
+      onSurface: '#ffffff',
+      onMuted: '#94A3B8',
+      onPrimary: '#FFFFFF',
+      primary: '#2563EB',
+      primaryText: '#FFFFFF',
+      border: '#475569',
+      success: '#10B981',
+      warning: '#F59E0B',
+      danger: '#EF4444',
+      info: '#3B82F6',
+      error: '#EF4444',
+      white: '#FFFFFF',
+      black: '#000000',
+      gray: {
+        50: '#F9FAFB',
+        100: '#F3F4F6',
+        200: '#E5E7EB',
+        300: '#D1D5DB',
+        400: '#9CA3AF',
+        500: '#6B7280',
+        600: '#4B5563',
+        700: '#374151',
+        800: '#1F2937',
+        900: '#111827',
+      },
+    },
+    palette: {
+      neutral: {
+        100: '#F8FAFC',
+        600: '#475569',
+        800: '#1E293B',
+      },
+      brand: {
+        500: '#64748B',
+      },
+      gradients: {
+        primary: ['#2563EB', '#1D4ED8'],
+        success: ['#10B981', '#059669'],
+        danger: ['#EF4444', '#DC2626'],
+      },
+    },
+    spacing: {
+      xs: 4,
+      sm: 8,
+      md: 16,
+      lg: 24,
+      xl: 32,
+      '2xl': 48,
+      '3xl': 64,
+      '4xl': 96,
+    },
+    radii: {
+      none: 0,
+      xs: 2,
+      sm: 4,
+      md: 8,
+      lg: 12,
+      xl: 16,
+      '2xl': 24,
+      '3xl': 32,
+      full: 9999,
+    },
+    radius: {
+      none: 0,
+      xs: 2,
+      sm: 4,
+      md: 8,
+      lg: 12,
+      xl: 16,
+      '2xl': 24,
+      '3xl': 32,
+      full: 9999,
+    },
+    typography: {
+      body: {
+        fontSize: 16,
+        size: 16,
+        lineHeight: 24,
+        fontWeight: '400',
+        weight: '400',
+      },
+      h1: {
+        fontSize: 32,
+        size: 32,
+        lineHeight: 40,
+        fontWeight: '700',
+        weight: '700',
+      },
+      h2: {
+        fontSize: 24,
+        size: 24,
+        lineHeight: 32,
+        fontWeight: '600',
+        weight: '600',
+      },
+      h3: {
+        fontSize: 20,
+        size: 20,
+        lineHeight: 28,
+        fontWeight: '600',
+        weight: '600',
+      },
+      caption: {
+        fontSize: 12,
+        size: 12,
+        lineHeight: 16,
+        fontWeight: '400',
+        weight: '400',
+      },
+      bodyLarge: {
+        fontSize: 18,
+        size: 18,
+        lineHeight: 28,
+        fontWeight: '400',
+        weight: '400',
+      },
+      bodySmall: {
+        fontSize: 14,
+        size: 14,
+        lineHeight: 20,
+        fontWeight: '400',
+        weight: '400',
+      },
+    },
+    shadows: {
+      sm: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2 },
+      md: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
+      lg: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 8 },
+    },
+    blur: {
+      sm: 4,
+      md: 8,
+      lg: 16,
+    },
+    easing: {
+      standard: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+      decelerated: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
+      accelerated: 'cubic-bezier(0.4, 0.0, 1, 1)',
+    },
+    motion: {
+      duration: {
+        fast: 150,
+        normal: 300,
+        slow: 500,
+      },
+    },
+    utils: {
+      alpha,
+    },
+  });
+
+  const lightTheme = createLightTheme();
+
   return {
     __esModule: true,
-    useTheme: jest.fn(() => ({
-      scheme: 'light',
-      isDark: false,
-      colors: {
-        bg: '#FFFFFF',
-        bgElevated: '#F8FAFC',
-        surface: '#F8FAFC',
-        surfaceAlt: '#F1F5F9',
-        text: '#0F172A',
-        textMuted: '#64748B',
-        textSecondary: '#64748B',
-        onSurface: '#0F172A',
-        onMuted: '#64748B',
-        onPrimary: '#FFFFFF',
-        primary: '#2563EB',
-        primaryText: '#FFFFFF',
-        border: '#E2E8F0',
-        success: '#10B981',
-        warning: '#F59E0B',
-        danger: '#EF4444',
-        info: '#3B82F6',
-        error: '#EF4444',
-        // Extended colors for backward compatibility
-        white: '#FFFFFF',
-        black: '#000000',
-        gray: {
-          50: '#F9FAFB',
-          100: '#F3F4F6',
-          200: '#E5E7EB',
-          300: '#D1D5DB',
-          400: '#9CA3AF',
-          500: '#6B7280',
-          600: '#4B5563',
-          700: '#374151',
-          800: '#1F2937',
-          900: '#111827',
-        },
-      },
-      palette: {
-        neutral: {
-          100: '#F8FAFC',
-          600: '#475569',
-          800: '#1E293B',
-        },
-        brand: {
-          500: '#64748B',
-        },
-        gradients: {
-          primary: ['#2563EB', '#1D4ED8'],
-          success: ['#10B981', '#059669'],
-          danger: ['#EF4444', '#DC2626'],
-        },
-      },
-      spacing: {
-        xs: 4,
-        sm: 8,
-        md: 16,
-        lg: 24,
-        xl: 32,
-        '2xl': 48,
-        '3xl': 64,
-        '4xl': 96,
-      },
-      radii: {
-        none: 0,
-        xs: 2,
-        sm: 4,
-        md: 8,
-        lg: 12,
-        xl: 16,
-        '2xl': 24,
-        '3xl': 32,
-        full: 9999,
-      },
-      radius: {
-        none: 0,
-        xs: 2,
-        sm: 4,
-        md: 8,
-        lg: 12,
-        xl: 16,
-        '2xl': 24,
-        '3xl': 32,
-        full: 9999,
-      },
-      typography: {
-        body: {
-          fontSize: 16,
-          lineHeight: 24,
-          fontWeight: '400',
-        },
-        h1: {
-          fontSize: 32,
-          lineHeight: 40,
-          fontWeight: '700',
-        },
-        h2: {
-          fontSize: 24,
-          lineHeight: 32,
-          fontWeight: '600',
-        },
-        h3: {
-          fontSize: 20,
-          lineHeight: 28,
-          fontWeight: '600',
-        },
-        caption: {
-          fontSize: 12,
-          lineHeight: 16,
-          fontWeight: '400',
-        },
-      },
-      shadows: {
-        sm: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2 },
-        md: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
-        lg: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 8 },
-      },
-      blur: {
-        sm: 4,
-        md: 8,
-        lg: 16,
-      },
-      easing: {
-        standard: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
-        decelerated: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
-        accelerated: 'cubic-bezier(0.4, 0.0, 1, 1)',
-      },
-      motion: {
-        duration: {
-          fast: 150,
-          normal: 300,
-          slow: 500,
-        },
-      },
-      utils: {
-        alpha,
-      },
-    })),
+    // Minimal no-op ThemeProvider to satisfy component rendering in tests
+    ThemeProvider: ({ children }: { children?: React.ReactNode; scheme?: 'light' | 'dark' }) =>
+      React.createElement(React.Fragment, null, children ?? null),
+    useTheme: jest.fn(() => lightTheme),
+    createTheme: (scheme: 'light' | 'dark') => {
+      return scheme === 'dark' ? createDarkTheme() : createLightTheme();
+    },
+    getLightTheme: () => createLightTheme(),
+    getDarkTheme: () => createDarkTheme(),
     getExtendedColors: jest.fn(() => ({
       bg: '#FFFFFF',
       surface: '#F8FAFC',
@@ -190,7 +432,7 @@ jest.mock('@mobile/theme', () => {
   };
 });
 
-jest.mock('@mobile/theme/adapters', () => ({
+jest.mock('./src/theme/adapters', () => ({
   __esModule: true,
   getExtendedColors: jest.fn((theme: any) => {
     const themeColors = (theme && typeof theme === 'object' && theme.colors) ? theme.colors : {};
@@ -213,7 +455,7 @@ jest.mock('@mobile/theme/adapters', () => ({
     };
   }),
   getThemeColors: jest.fn((theme: any) => {
-    const { getExtendedColors } = require('@mobile/theme/adapters');
+    const { getExtendedColors } = require('./src/theme/adapters');
     return getExtendedColors(theme);
   }),
   getIsDark: jest.fn((theme: any) => {
@@ -424,20 +666,6 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => ({
 // This flag tells React 18 test renderer to wrap updates in act.
 (global as any).IS_REACT_ACT_ENVIRONMENT = true;
 
-// Configure waitFor defaults for @testing-library/react-native
-// Increase timeout to handle async operations in tests
-try {
-  const rtl = require('@testing-library/react-native');
-  if (rtl && rtl.configure) {
-    rtl.configure({
-      asyncUtilTimeout: 10000, // 10 seconds default for waitFor (increased for async hooks)
-    });
-  }
-} catch (e) {
-  // @testing-library/react-native might not be available in all contexts
-  // This is safe to ignore
-}
-
 // Fetch for tests that call network
 import 'whatwg-fetch';
 
@@ -493,40 +721,180 @@ jest.mock('react-native-reanimated', () => {
     set: jest.fn(() => ({ _value: 0 })),
     call: jest.fn(() => ({ _value: 0 })),
     debug: jest.fn(() => ({ _value: 0 })),
-    interpolate: jest.fn(() => ({ _value: 0 })),
+    interpolate: jest.fn((value: any, inputRange?: any[], outputRange?: any[]) => {
+      if (typeof value !== 'number' || !Array.isArray(inputRange) || !Array.isArray(outputRange)) {
+        return value ?? 0;
+      }
+      if (inputRange.length < 2 || outputRange.length < 2 || inputRange[0] === inputRange[1]) {
+        return outputRange[0] ?? value ?? 0;
+      }
+      const ratio = (value - inputRange[0]) / (inputRange[1] - inputRange[0]);
+      return outputRange[0] + ratio * (outputRange[1] - outputRange[0]);
+    }),
     concat: jest.fn(() => ({ _value: 0 })),
-    useSharedValue: jest.fn(() => ({ value: 0, setValue: jest.fn() })),
-    useAnimatedStyle: jest.fn(() => ({})),
+    useSharedValue: jest.fn((init: any) => ({ value: typeof init === 'number' ? init : (init?.value ?? 0), setValue: jest.fn() })),
+    useAnimatedStyle: jest.fn((callback?: () => any) => {
+      if (typeof callback === 'function') {
+        try {
+          return callback() || {};
+        } catch {
+          return {};
+        }
+      }
+      return {};
+    }),
     useAnimatedProps: jest.fn(() => ({})),
     useAnimatedScrollHandler: jest.fn(() => ({})),
-    createAnimatedComponent: jest.fn((component) => component),
-    withSpring: jest.fn(() => ({ _value: 0 })),
-    withTiming: jest.fn(() => ({ _value: 0 })),
+    createAnimatedComponent: jest.fn((component: any) => {
+      const React = require('react');
+      return React.forwardRef((props: any, ref: any) => {
+        const { children, ...restProps } = props;
+        return React.createElement(component, { ...restProps, ref }, children);
+      });
+    }),
+    withSpring: jest.fn((value: any) => value),
+    withTiming: jest.fn((value: any) => value),
     withDecay: jest.fn(() => ({ _value: 0 })),
     withRepeat: jest.fn(() => ({ _value: 0 })),
     withSequence: jest.fn(() => ({ _value: 0 })),
     withDelay: jest.fn(() => ({ _value: 0 })),
     runOnUI: jest.fn((fn) => fn),
     runOnJS: jest.fn((fn) => fn),
+    Easing: {
+      linear: jest.fn((t: number) => t),
+      ease: jest.fn((t: number) => t),
+      quad: jest.fn((t: number) => t * t),
+      cubic: jest.fn((t: number) => t * t * t),
+      poly: jest.fn((n: number) => (t: number) => Math.pow(t, n)),
+      sin: jest.fn((t: number) => 1 - Math.cos((t * Math.PI) / 2)),
+      circle: jest.fn((t: number) => 1 - Math.sqrt(1 - t * t)),
+      exp: jest.fn((t: number) => Math.pow(2, 10 * (t - 1))),
+      elastic: jest.fn((bounciness: number) => {
+        const p = bounciness * Math.PI;
+        return (t: number) => 1 - Math.pow(Math.cos((t * Math.PI * 2) / p), 3);
+      }),
+      back: jest.fn((overshoot: number) => {
+        return (t: number) => {
+          const s = overshoot || 1.70158;
+          return t * t * ((s + 1) * t - s);
+        };
+      }),
+      bounce: jest.fn((t: number) => {
+        if (t < 1 / 2.75) {
+          return 7.5625 * t * t;
+        } else if (t < 2 / 2.75) {
+          return 7.5625 * (t -= 1.5 / 2.75) * t + 0.75;
+        } else if (t < 2.5 / 2.75) {
+          return 7.5625 * (t -= 2.25 / 2.75) * t + 0.9375;
+        } else {
+          return 7.5625 * (t -= 2.625 / 2.75) * t + 0.984375;
+        }
+      }),
+      bezier: jest.fn((x1: number, y1: number, x2: number, y2: number) => {
+        // Simple bezier mock - returns a function that approximates bezier curve
+        return (t: number) => {
+          // Cubic bezier approximation
+          const cx = 3 * x1;
+          const bx = 3 * (x2 - x1) - cx;
+          const ax = 1 - cx - bx;
+          const cy = 3 * y1;
+          const by = 3 * (y2 - y1) - cy;
+          const ay = 1 - cy - by;
+          
+          const x = ax * t * t * t + bx * t * t + cx * t;
+          return ay * x * x * x + by * x * x + cy * x;
+        };
+      }),
+      in: jest.fn((easing: (t: number) => number) => easing),
+      out: jest.fn((easing: (t: number) => number) => {
+        return (t: number) => 1 - easing(1 - t);
+      }),
+      inOut: jest.fn((easing: (t: number) => number) => {
+        return (t: number) => {
+          if (t < 0.5) {
+            return easing(2 * t) / 2;
+          } else {
+            return 1 - easing(2 * (1 - t)) / 2;
+          }
+        };
+      }),
+    },
+  };
+  
+  // Create Animated object with View component
+  const React = require('react');
+  // Use actual react-native View from the mock
+  let RNView: any;
+  let RNScrollView: any;
+  try {
+    const RN = require('react-native');
+    RNView = RN.View || 'View';
+    RNScrollView = RN.ScrollView || 'ScrollView';
+  } catch {
+    // Fallback if react-native isn't available
+    RNView = 'View';
+    RNScrollView = 'ScrollView';
+  }
+  
+  // Create Animated.View as a proper component with displayName for test detection
+  const AnimatedView = typeof RNView === 'string' 
+    ? RNView // If View is a string, use it directly
+    : React.forwardRef((props: any, ref: any) => {
+        const { children, ...restProps } = props;
+        return React.createElement(RNView, { ...restProps, ref }, children);
+      });
+  if (typeof AnimatedView !== 'string') {
+    AnimatedView.displayName = 'Animated.View';
+    // Also set a test-friendly name for UNSAFE_getByType
+    if (AnimatedView.type) {
+      AnimatedView.type.displayName = 'Animated.View';
+    }
+  }
+  
+  // Build Animated object - View must come AFTER spread to not be overwritten
+  const Animated = {
+    ...mockReanimated,
+    // View, Text, etc. must come AFTER spread to ensure they're not overwritten
+    View: AnimatedView,
+    Text: RNView,
+    ScrollView: RNScrollView,
+    FlatList: RNView,
+    Image: RNView,
+    // Ensure createAnimatedComponent is available
+    createAnimatedComponent: mockReanimated.createAnimatedComponent,
   };
   
   // Add all React Native components that reanimated exports
+  // Export interpolate, withTiming, etc. both as named exports and on Animated
   return {
     ...mockReanimated,
-    View: 'View',
+    View: AnimatedView,
     Text: 'Text',
-    ScrollView: 'ScrollView',
+    ScrollView: Animated.ScrollView,
     FlatList: 'FlatList',
     Image: 'Image',
-    default: mockReanimated,
+    // Named exports for direct imports
+    interpolate: mockReanimated.interpolate,
+    withTiming: mockReanimated.withTiming,
+    withSpring: mockReanimated.withSpring,
+    useSharedValue: mockReanimated.useSharedValue,
+    useAnimatedStyle: mockReanimated.useAnimatedStyle,
+    // Default export with all properties (Animated.View should be available here)
+    default: Animated,
   };
 });
 
 // Silence useNativeDriver warnings
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
-// Gesture Handler official mock (per user instructions)
-jest.mock('react-native-gesture-handler', () => require('react-native-gesture-handler/jestSetup'));
+// Gesture Handler mock with GestureHandlerRootView (per specification)
+jest.mock('react-native-gesture-handler', () => {
+  const RN = require('react-native');
+  return {
+    ...RN,
+    GestureHandlerRootView: ({ children }: any) => children,
+  };
+});
 
 // Expo Haptics: no-op (assert calls via mocks)
 jest.mock('expo-haptics', () => ({
@@ -540,12 +908,36 @@ jest.mock('expo-haptics', () => ({
   },
 }));
 
-// Common native/Expo modules
-jest.mock('react-native-safe-area-context', () => {
-  const React = require('react');
+// Mock UI Config service - match the relative import path used in Provider.tsx
+jest.mock('./src/services/uiConfig', () => {
+  const { getLightTheme } = require('./src/theme/resolve');
   return {
-    SafeAreaProvider: ({ children }: { children?: React.ReactNode }) => React.createElement(React.Fragment, null, children || null),
+    useUIConfig: jest.fn(() => ({
+      config: null,
+      isLoading: false,
+      error: null,
+      refresh: jest.fn(async () => {}),
+      version: '1.0.0',
+      status: 'ready',
+    })),
+    configToTheme: jest.fn((_config, _scheme) => {
+      // Return theme from resolve module
+      return getLightTheme();
+    }),
+  };
+});
+
+// Common native/Expo modules
+// react-native-safe-area-context mock (per specification)
+jest.mock('react-native-safe-area-context', () => {
+  return {
+    SafeAreaProvider: ({ children }: any) => children,
+    SafeAreaView: ({ children }: any) => children,
     useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+    initialWindowMetrics: { 
+      frame: { x: 0, y: 0, width: 0, height: 0 }, 
+      insets: { top: 0, bottom: 0, left: 0, right: 0 } 
+    }
   };
 });
 
@@ -654,12 +1046,52 @@ jest.mock('@react-native-community/netinfo', () => {
   };
 });
 
-// Mock Expo modules
-jest.mock('expo-constants', () => ({
-  default: {},
-}));
+// Expo modules are mocked in jest.setup.mocks.expo.ts (loaded earlier)
 
 jest.mock('expo-linear-gradient', () => 'LinearGradient');
+
+// Mock @expo/vector-icons BEFORE any component imports it
+jest.mock('@expo/vector-icons', () => {
+  const React = require('react');
+  const RN = require('react-native');
+  
+  // Prevent native module access by mocking the ensure-native-module-available
+  // This prevents RNVectorIconsManager errors
+  const createIconComponent = (name: string) => {
+    return React.forwardRef((props: any, ref: any) => {
+      const { name: iconName, size, color, testID, ...restProps } = props;
+      return React.createElement(
+        RN.View,
+        {
+          testID: testID || `icon-${name}-${iconName}`,
+          accessibilityLabel: iconName,
+          'data-name': iconName,
+          'data-size': size,
+          'data-color': color,
+          ref: ref,
+          ...restProps,
+        }
+      );
+    });
+  };
+  
+  return {
+    Ionicons: createIconComponent('Ionicons'),
+    MaterialIcons: createIconComponent('MaterialIcons'),
+    MaterialCommunityIcons: createIconComponent('MaterialCommunityIcons'),
+    FontAwesome: createIconComponent('FontAwesome'),
+    FontAwesome5: createIconComponent('FontAwesome5'),
+    Feather: createIconComponent('Feather'),
+    AntDesign: createIconComponent('AntDesign'),
+    Entypo: createIconComponent('Entypo'),
+    EvilIcons: createIconComponent('EvilIcons'),
+    Fontisto: createIconComponent('Fontisto'),
+    Foundation: createIconComponent('Foundation'),
+    Octicons: createIconComponent('Octicons'),
+    SimpleLineIcons: createIconComponent('SimpleLineIcons'),
+    Zocial: createIconComponent('Zocial'),
+  };
+});
 
 // Mock expo-blur to avoid Native module errors in tests
 jest.mock('expo-blur', () => ({
@@ -838,6 +1270,31 @@ jest.mock('expo-secure-store', () => ({
 }));
 
 // Mock expo-file-system
+jest.mock('expo-file-system', () => ({
+  FileSystemUploadType: {
+    BINARY_CONTENT: 'BINARY_CONTENT',
+    MULTIPART: 'MULTIPART',
+  },
+  createUploadTask: jest.fn(() => ({
+    uploadAsync: jest.fn(() => Promise.resolve({ status: 200, body: '{"key": "test-key"}' })),
+    cancelAsync: jest.fn(),
+    pauseAsync: jest.fn(),
+    resumeAsync: jest.fn(),
+  })),
+  uploadAsync: jest.fn(() => Promise.resolve({ status: 200, body: '{"key": "test-key"}' })),
+  downloadAsync: jest.fn(() => Promise.resolve({ status: 200, uri: 'file://test' })),
+  getInfoAsync: jest.fn(() => Promise.resolve({ exists: true, size: 1000, uri: 'file://test' })),
+  readAsStringAsync: jest.fn(() => Promise.resolve('test content')),
+  writeAsStringAsync: jest.fn(() => Promise.resolve()),
+  deleteAsync: jest.fn(() => Promise.resolve()),
+  moveAsync: jest.fn(() => Promise.resolve()),
+  copyAsync: jest.fn(() => Promise.resolve()),
+  makeDirectoryAsync: jest.fn(() => Promise.resolve()),
+  readDirectoryAsync: jest.fn(() => Promise.resolve(['file1.jpg', 'file2.png'])),
+  getContentUriAsync: jest.fn(() => Promise.resolve('content://test')),
+  getFreeDiskStorageAsync: jest.fn(() => Promise.resolve(1000000)),
+  getTotalDiskCapacityAsync: jest.fn(() => Promise.resolve(10000000)),
+}));
 jest.mock('expo-file-system', () => ({
   getInfoAsync: jest.fn(() => Promise.resolve({
     exists: true,
@@ -1067,6 +1524,127 @@ jest.mock('@react-navigation/native-stack', () => {
     })),
   };
 });
+
+// Mock StatusBar
+jest.mock('react-native/Libraries/Components/StatusBar/StatusBar', () => ({
+  setBarStyle: jest.fn(),
+  setHidden: jest.fn(),
+  setBackgroundColor: jest.fn(),
+  setTranslucent: jest.fn(),
+  setNetworkActivityIndicatorVisible: jest.fn(),
+}));
+
+// Mock Alert
+jest.mock('react-native/Libraries/Alert/Alert', () => ({
+  alert: jest.fn(),
+}));
+
+// Mock Dimensions
+jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
+  get: jest.fn((dimension: string) => {
+    if (dimension === 'window') {
+      return { width: 375, height: 812, scale: 2, fontScale: 1 };
+    }
+    if (dimension === 'screen') {
+      return { width: 375, height: 812, scale: 2, fontScale: 1 };
+    }
+    return {};
+  }),
+  addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+  removeEventListener: jest.fn(),
+}));
+
+// Mock InteractionManager
+jest.mock('react-native/Libraries/Interaction/InteractionManager', () => ({
+  runAfterInteractions: jest.fn((callback) => {
+    if (typeof callback === 'function') {
+      callback();
+    }
+    return { then: jest.fn() };
+  }),
+  createInteractionHandle: jest.fn(() => 1),
+  clearInteractionHandle: jest.fn(),
+  setDeadline: jest.fn(),
+}));
+
+// Mock useReducedMotion hook - exports useReduceMotion (without 'd')
+jest.mock('./src/hooks/useReducedMotion', () => ({
+  useReduceMotion: jest.fn(() => false),
+  useReducedMotion: jest.fn(() => false), // Also export for backward compatibility
+}));
+
+// Mock @pawfectmatch/core
+jest.mock('@pawfectmatch/core', () => {
+  const buildSuccess = <T = unknown>(data: T): Promise<{ success: true; data: T }> =>
+    Promise.resolve({ success: true, data });
+
+  const apiClient = {
+    get: jest.fn((..._args: unknown[]) => buildSuccess({})),
+    post: jest.fn((..._args: unknown[]) => buildSuccess({})),
+    put: jest.fn((..._args: unknown[]) => buildSuccess({})),
+    patch: jest.fn((..._args: unknown[]) => buildSuccess({})),
+    delete: jest.fn((..._args: unknown[]) => buildSuccess({})),
+  };
+
+  return {
+    logger: {
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn(),
+    },
+    useAuthStore: jest.fn(() => ({
+      user: null,
+      isAuthenticated: false,
+      login: jest.fn(),
+      logout: jest.fn(),
+    })),
+    apiClient,
+  };
+});
+
+// Do not globally mock services/api so unit tests exercise real implementations.
+
+// Mock stores/useAuthStore
+jest.mock('./src/stores/useAuthStore', () => ({
+  useAuthStore: jest.fn(() => ({
+    user: {
+      _id: 'test-user-id',
+      email: 'test@example.com',
+      name: 'Test User',
+    },
+    isLoading: false,
+    error: null,
+    login: jest.fn(),
+    logout: jest.fn(),
+    register: jest.fn(),
+  })),
+}));
+
+// Mock Animated.js
+jest.mock('./__mocks__/Animated.js', () => ({
+  Animated: {
+    View: 'Animated.View',
+    Text: 'Animated.Text',
+    timing: jest.fn(() => ({ start: jest.fn() })),
+    spring: jest.fn(() => ({ start: jest.fn() })),
+    decay: jest.fn(() => ({ start: jest.fn() })),
+  },
+}), { virtual: true });
+
+// Mock performance-validation
+jest.mock('./src/foundation/performance-validation.ts', () => ({
+  PerformanceMetricsCollector: jest.fn(),
+  validateBundleSize: jest.fn(),
+  validateMemoryUsage: jest.fn(),
+  validateAnimationDuration: jest.fn(),
+  usePerformanceMonitor: jest.fn(() => ({
+    metrics: {},
+    isMonitoring: false,
+    startMonitoring: jest.fn(),
+    stopMonitoring: jest.fn(),
+  })),
+}));
 
 // Global test utilities
 (global as any).__DEV__ = true;

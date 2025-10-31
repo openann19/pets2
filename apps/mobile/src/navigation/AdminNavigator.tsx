@@ -22,8 +22,8 @@ import AdminSupportScreen from '../screens/admin/AdminSupportScreen';
 import AdminUploadsScreen from '../screens/admin/AdminUploadsScreen';
 import AdminUsersScreen from '../screens/admin/AdminUsersScreen';
 import AdminVerificationsScreen from '../screens/admin/AdminVerificationsScreen';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { AdminStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<AdminStackParamList>();

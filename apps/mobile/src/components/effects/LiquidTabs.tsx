@@ -21,8 +21,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { useCapabilities } from '@/foundation/capabilities';
 import { useReduceMotion } from '@/hooks/useReducedMotion';
 import { useAnimationTelemetry } from '@/foundation/telemetry';

@@ -8,7 +8,7 @@ import { logger } from '@pawfectmatch/core';
  */
 
 export interface DeepLinkData {
-  type: 'pet' | 'match' | 'chat' | 'profile' | 'premium';
+  type: 'pet' | 'match' | 'chat' | 'profile' | 'premium' | 'settings' | 'subscription_success' | null;
   id: string;
   action?: string | undefined;
   params: Record<string, string>;
@@ -20,39 +20,117 @@ export interface DeepLinkData {
  */
 export function parseDeepLink(url: string): DeepLinkData {
   try {
-    // Create URL object for easy parsing
-    const urlObj = new URL(url);
+    // Handle unsupported schemes
+    if (!url.startsWith('pawfectmatch://')) {
+      return {
+        type: null,
+        id: '',
+        params: {},
+      };
+    }
 
+    // Remove the scheme prefix
+    const path = url.replace('pawfectmatch://', '');
+    
+    // Split by ? to separate path and query
+    const [pathPart = '', queryPart] = path.split('?');
+    
     // Extract path segments and remove empty ones
-    const pathSegments = urlObj.pathname.split('/').filter(Boolean);
+    const pathSegments = pathPart.split('/').filter(Boolean);
 
-    // Extract type and ID from path segments
-    const type =
-      pathSegments[0] !== undefined && pathSegments[0] !== ''
-        ? (pathSegments[0] as DeepLinkData['type'])
-        : 'profile';
-    const id = pathSegments[1] !== undefined && pathSegments[1] !== '' ? pathSegments[1] : '';
-    const action =
-      pathSegments[2] !== undefined && pathSegments[2] !== '' ? pathSegments[2] : undefined;
+    if (pathSegments.length === 0) {
+      return {
+        type: null,
+        id: '',
+        params: {},
+      };
+    }
+
+    const firstSegment = pathSegments[0] ?? '';
+    const secondSegment = pathSegments[1];
 
     // Extract query parameters
     const params: Record<string, string> = {};
-    urlObj.searchParams.forEach((value, key) => {
-      params[key] = value;
-    });
+    if (queryPart !== undefined && queryPart !== '') {
+      queryPart.split('&').forEach((pair) => {
+        const [key, value] = pair.split('=');
+        if (key !== undefined && key !== '' && value !== undefined && value !== '') {
+          params[decodeURIComponent(key)] = decodeURIComponent(value);
+        }
+      });
+    }
 
+    // Special handling for premium-success
+    if (firstSegment === 'premium-success') {
+      return {
+        type: 'subscription_success',
+        id: '',
+        params,
+      };
+    }
+
+    // Handle chat and match routes - extract ID into params
+    if (firstSegment === 'chat' && secondSegment !== undefined && secondSegment !== '') {
+      return {
+        type: 'chat',
+        id: secondSegment,
+        params: {
+          ...params,
+          matchId: secondSegment,
+        },
+      };
+    }
+
+    if (firstSegment === 'match' && secondSegment !== undefined && secondSegment !== '') {
+      return {
+        type: 'match',
+        id: secondSegment,
+        params: {
+          ...params,
+          matchId: secondSegment,
+        },
+      };
+    }
+
+    // Handle simple routes (premium, settings)
+    if (firstSegment === 'premium') {
+      return {
+        type: 'premium',
+        id: '',
+        params,
+      };
+    }
+
+    if (firstSegment === 'settings') {
+      return {
+        type: 'settings',
+        id: '',
+        params,
+      };
+    }
+
+    // Handle other valid routes
+    const validTypes: Array<DeepLinkData['type']> = ['pet', 'profile'];
+    if (validTypes.includes(firstSegment as DeepLinkData['type'])) {
+      return {
+        type: firstSegment as DeepLinkData['type'],
+        id: secondSegment ?? '',
+        params,
+      };
+    }
+
+    // Invalid route
     return {
-      type,
-      id,
-      action,
-      params,
+      type: null,
+      id: '',
+      params: {},
     };
   } catch (error) {
     logger.error('Error parsing deep link', { url, error });
 
-    // Return default values if parsing fails
+    // Return null type if parsing fails
     return {
-      type: 'profile',
+      type: null,
       id: '',
       params: {},
     };
@@ -241,22 +319,35 @@ export class DeepLinkingService {
     // For now, we'll log the navigation intent
     logger.info('Deep link navigation:', { data });
 
+    // Handle null type
+    if (data.type === null) {
+      logger.warn('Cannot navigate: invalid deep link type');
+      return;
+    }
+
     // Handle notification-based deep linking
-    if (data.type === 'chat' && data.id !== '') {
-      // Navigate to specific chat
-      this.navigateToChat(data.id);
+    if (data.type === 'chat') {
+      const matchId = data.params['matchId'] ?? data.id;
+      if (matchId !== '') {
+        this.navigateToChat(matchId);
+      }
     } else if (data.type === 'pet' && data.id !== '') {
       // Navigate to pet profile
       this.navigateToPetProfile(data.id);
-    } else if (data.type === 'match' && data.id !== '') {
-      // Navigate to match details
-      this.navigateToMatch(data.id);
+    } else if (data.type === 'match') {
+      const matchId = data.params['matchId'] ?? data.id;
+      if (matchId !== '') {
+        this.navigateToMatch(matchId);
+      }
     } else if (data.type === 'profile' && data.id !== '') {
       // Navigate to user profile
       this.navigateToUserProfile(data.id);
-    } else if (data.type === 'premium') {
+    } else if (data.type === 'premium' || data.type === 'subscription_success') {
       // Navigate to premium screen
       this.navigateToPremium();
+    } else if (data.type === 'settings') {
+      // Navigate to settings screen
+      this.navigateToSettings();
     }
   }
 
@@ -313,6 +404,14 @@ export class DeepLinkingService {
       return;
     }
     logger.warn('Navigator not available, cannot navigate to premium screen');
+  }
+
+  private navigateToSettings(): void {
+    if (this.navigator !== null) {
+      this.navigator.navigate('Settings');
+      return;
+    }
+    logger.warn('Navigator not available, cannot navigate to settings screen');
   }
 
   addListener(callback: (data: DeepLinkData) => void): () => void {

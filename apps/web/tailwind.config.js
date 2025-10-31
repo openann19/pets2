@@ -57,9 +57,25 @@ module.exports = {
   },
   theme: {
     extend: {
-      // Enhanced color system from unified design system
+      // Theme-aware colors using CSS variables (injected by ThemeProvider)
       colors: {
+        // Semantic colors from theme (CSS variables take precedence)
+        bg: 'var(--color-bg)',
+        surface: 'var(--color-surface)',
+        overlay: 'var(--color-overlay)',
+        border: 'var(--color-border)',
+        'on-bg': 'var(--color-on-bg)',
+        'on-surface': 'var(--color-on-surface)',
+        'on-muted': 'var(--color-on-muted)',
+        'on-primary': 'var(--color-on-primary)',
+        success: 'var(--color-success)',
+        danger: 'var(--color-danger)',
+        warning: 'var(--color-warning)',
+        info: 'var(--color-info)',
+        // Enhanced color system from unified design system
+        // Note: primary uses var(--color-primary) but scale available for gradients
         primary: {
+          DEFAULT: 'var(--color-primary)', // Use theme primary as default
           50: '#fdf2f8',
           100: '#fce7f3',
           200: '#fbcfe8',
@@ -196,33 +212,57 @@ module.exports = {
         },
       },
 
-      // Enhanced shadows
+      // Enhanced shadows (theme-aware via CSS variables)
       boxShadow: {
+        'elevation1': 'var(--shadow-elevation1)',
+        'elevation2': 'var(--shadow-elevation2)',
+        'glass': 'var(--shadow-glass)',
         'premium': '0 20px 40px -12px rgba(0, 0, 0, 0.25)',
         'premium-lg': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
         'glow-primary': '0 20px 40px -12px rgba(236, 72, 153, 0.4)',
         'glow-secondary': '0 20px 40px -12px rgba(14, 165, 233, 0.4)',
         'glow-purple': '0 20px 40px -12px rgba(168, 85, 247, 0.4)',
         'neon': '0 0 20px currentColor',
       },
 
-      // Backdrop filters
+      // Backdrop filters (theme-aware via CSS variables)
       backdropBlur: {
+        'sm': 'var(--blur-sm)',
+        'md': 'var(--blur-md)',
+        'lg': 'var(--blur-lg)',
         'premium': '16px',
         'premium-lg': '24px',
         'premium-xl': '40px',
       },
 
-      // Enhanced spacing
+      // Enhanced spacing (theme-aware via CSS variables)
       spacing: {
+        'xs': 'var(--spacing-xs)',
+        'sm': 'var(--spacing-sm)',
+        'md': 'var(--spacing-md)',
+        'lg': 'var(--spacing-lg)',
+        'xl': 'var(--spacing-xl)',
+        '2xl': 'var(--spacing-2xl)',
+        '3xl': 'var(--spacing-3xl)',
+        '4xl': 'var(--spacing-4xl)',
+        // Additional utility spacing
         '18': '4.5rem',
         '88': '22rem',
         '128': '32rem',
       },
 
-      // Premium border radius
+      // Premium border radius (theme-aware via CSS variables)
       borderRadius: {
+        'none': 'var(--radius-none)',
+        'xs': 'var(--radius-xs)',
+        'sm': 'var(--radius-sm)',
+        'md': 'var(--radius-md)',
+        'lg': 'var(--radius-lg)',
+        'xl': 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+        'pill': 'var(--radius-pill)',
+        'full': 'var(--radius-full)',
+        // Additional utility radius
         '4xl': '2rem',
         '5xl': '2.5rem',
       },

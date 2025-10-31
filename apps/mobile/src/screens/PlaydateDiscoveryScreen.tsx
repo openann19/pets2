@@ -16,7 +16,7 @@ import { View, StyleSheet, ScrollView, Text, Alert } from 'react-native';
 
 // Existing architecture components
 import { EliteContainer, EliteHeader } from '../components/elite';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { Skeleton, TextSkeleton } from '../components/common/LoadingSkeleton';
 
 // Pet-first hooks

@@ -7,7 +7,7 @@ import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 import { AdvancedHeader, HeaderConfigs } from '../../components/Advanced/AdvancedHeader';
 import { ScreenShell } from '../../ui/layout/ScreenShell';

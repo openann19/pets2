@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import { useAuthStore } from '@pawfectmatch/core';
 import { act, renderHook } from '@testing-library/react-hooks';
 import { io } from 'socket.io-client';
@@ -56,35 +58,41 @@ describe('useSocket', () => {
     );
   });
 
-  it.skip('should use environment variable for socket URL if available', () => {
+  it('should use environment variable for socket URL if available', () => {
     // Clear previous calls
     mockIo.mockClear();
 
     // Mock the environment variable at the module level
-    const originalEnv = process.env.EXPO_PUBLIC_SOCKET_URL;
-    process.env.EXPO_PUBLIC_SOCKET_URL = 'ws://custom-url:3001';
+    const originalEnv = process.env['EXPO_PUBLIC_SOCKET_URL'];
+    process.env['EXPO_PUBLIC_SOCKET_URL'] = 'ws://custom-url:3001';
 
-    // Re-import the hook to pick up the new environment variable
-    jest.resetModules();
-    const { useSocket: useSocketWithEnv } = require('../useSocket');
+    try {
+      // Re-import the hook to pick up the new environment variable
+      jest.resetModules();
+      const { useSocket: useSocketWithEnv } = require('../useSocket');
 
-    renderHook(() => useSocketWithEnv());
+      renderHook(() => useSocketWithEnv());
 
-    expect(mockIo).toHaveBeenCalledWith(
-      'ws://custom-url:3001',
-      expect.objectContaining({
-        auth: expect.any(Object),
-        transports: ['websocket'],
-        timeout: 10000,
-        reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-      }),
-    );
-
-    // Restore original environment
-    process.env.EXPO_PUBLIC_SOCKET_URL = originalEnv;
-    jest.resetModules();
+      expect(mockIo).toHaveBeenCalledWith(
+        'ws://custom-url:3001',
+        expect.objectContaining({
+          auth: expect.any(Object),
+          transports: ['websocket'],
+          timeout: 10000,
+          reconnection: true,
+          reconnectionAttempts: 5,
+          reconnectionDelay: 1000,
+        }),
+      );
+    } finally {
+      // Restore original environment variable
+      if (originalEnv !== undefined) {
+        process.env['EXPO_PUBLIC_SOCKET_URL'] = originalEnv;
+      } else {
+        delete process.env['EXPO_PUBLIC_SOCKET_URL'];
+      }
+      jest.resetModules();
+    }
   });
 
   it('should not create socket if user is not authenticated', () => {

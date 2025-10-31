@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="13" failures="7" errors="0" time="0.642">
+  <testsuite name="useCounter" errors="0" failures="3" skipped="0" timestamp="2025-10-31T11:19:36" time="0.32" tests="5">
+    <testcase classname="useCounter should initialize with default value" name="useCounter should initialize with default value" time="0.001">
+    </testcase>
+    <testcase classname="useCounter should initialize with provided value" name="useCounter should initialize with provided value" time="0.001">
+    </testcase>
+    <testcase classname="useCounter should increment counter" name="useCounter should increment counter" time="0.001">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 1
+Received: 0
+    at Object.toBe (/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/__tests__/useCounter.test.ts:39:35)
+    at Promise.then.completed (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:121:9)
+    at run (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="useCounter should decrement counter" name="useCounter should decrement counter" time="0">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 4
+Received: 5
+    at Object.toBe (/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/__tests__/useCounter.test.ts:49:35)
+    at Promise.then.completed (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:121:9)
+    at run (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="useCounter should reset counter" name="useCounter should reset counter" time="0">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 7
+Received: 5
+    at Object.toBe (/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/__tests__/useCounter.test.ts:60:35)
+    at Promise.then.completed (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:121:9)
+    at run (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="useToggleState" errors="0" failures="4" skipped="0" timestamp="2025-10-31T11:19:37" time="0.045" tests="6">
+    <testcase classname="useToggleState should initialize with default value" name="useToggleState should initialize with default value" time="0.001">
+    </testcase>
+    <testcase classname="useToggleState should initialize with custom initial value" name="useToggleState should initialize with custom initial value" time="0">
+    </testcase>
+    <testcase classname="useToggleState should toggle value" name="useToggleState should toggle value" time="0.001">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: true
+Received: false
+    at Object.toBe (/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/__tests__/useToggleState.simple.test.ts:41:34)
+    at Promise.then.completed (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:121:9)
+    at run (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="useToggleState should toggle multiple times" name="useToggleState should toggle multiple times" time="0.001">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: true
+Received: false
+    at Object.toBe (/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/__tests__/useToggleState.simple.test.ts:50:34)
+    at Promise.then.completed (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:121:9)
+    at run (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="useToggleState should provide setOn function" name="useToggleState should provide setOn function" time="0">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: true
+Received: false
+    at Object.toBe (/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/__tests__/useToggleState.simple.test.ts:65:34)
+    at Promise.then.completed (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:121:9)
+    at run (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="useToggleState should provide setOff function" name="useToggleState should provide setOff function" time="0">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: false
+Received: true
+    at Object.toBe (/home/ben/Downloads/pets-fresh/apps/mobile/src/hooks/__tests__/useToggleState.simple.test.ts:75:34)
+    at Promise.then.completed (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:121:9)
+    at run (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/home/ben/Downloads/pets-fresh/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/home/ben/Downloads/pets-fresh/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="Minimal Test Suite" errors="0" failures="0" skipped="0" timestamp="2025-10-31T11:19:37" time="0.024" tests="1">
+    <testcase classname="Minimal Test Suite should pass a simple test" name="Minimal Test Suite should pass a simple test" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Standalone Hook Test" errors="0" failures="0" skipped="0" timestamp="2025-10-31T11:19:37" time="0.017" tests="1">
+    <testcase classname="Standalone Hook Test should handle basic counting operations" name="Standalone Hook Test should handle basic counting operations" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

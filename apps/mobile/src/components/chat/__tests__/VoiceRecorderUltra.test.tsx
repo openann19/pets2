@@ -15,14 +15,14 @@ import { Audio } from 'expo-av';
 // Mock analytics service
 const mockTrackEvent = jest.fn();
 jest.mock('../../services/analyticsService', () => ({
-  track: (event: string, props?: Record<string, unknown>) => {
+  track: jest.fn((event: string, props?: Record<string, unknown>) => {
     mockTrackEvent(event, props);
     return Promise.resolve();
-  },
+  }),
   AnalyticsEvents: {
-    VOICE_RECORD_START: 'VOICE_RECORD_START',
-    VOICE_RECORD_STOP: 'VOICE_RECORD_STOP',
-    VOICE_RECORD_CANCEL: 'VOICE_RECORD_CANCEL',
+    VOICE_RECORD_START: 'voice.record.start',
+    VOICE_RECORD_STOP: 'voice.record.stop',
+    VOICE_RECORD_CANCEL: 'voice.record.cancel',
   },
 }));
 

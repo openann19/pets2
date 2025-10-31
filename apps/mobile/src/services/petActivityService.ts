@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import { logger } from '@pawfectmatch/core';
 import { socketClient } from './socket';
 
-const API_URL = process.env['EXPO_PUBLIC_API_URL'] || process.env['API_URL'] || '';
+const getApiUrl = () => process.env['EXPO_PUBLIC_API_URL'] || process.env['API_URL'] || '';
 
 export type ActivityKind = 'walk' | 'play' | 'feeding' | 'rest' | 'training' | 'lost_pet';
 
@@ -28,7 +28,7 @@ export interface ActivityRecord {
   active: boolean;
 }
 
-async function getCurrentLocation() {
+export async function getCurrentLocation() {
   const { status } = await Location.requestForegroundPermissionsAsync();
   if (status !== 'granted') {
     throw new Error('Location permission not granted');
@@ -50,7 +50,7 @@ export async function startPetActivity(data: StartActivityPayload): Promise<Acti
   };
 
   // REST (authoritative) + socket (realtime)
-  const res = await fetch(`${API_URL}/api/pets/activity/start`, {
+  const res = await fetch(`${getApiUrl()}/api/pets/activity/start`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -62,6 +62,10 @@ export async function startPetActivity(data: StartActivityPayload): Promise<Acti
   const result = await res.json();
   const record: ActivityRecord = result.data;
 
+  if (!record || !record._id) {
+    throw new Error('Invalid response: missing activity record data');
+  }
+
   // Realtime broadcast
   if (socketClient) {
     socketClient.emit('activity:start', { ...body, _id: record._id });
@@ -72,7 +76,7 @@ export async function startPetActivity(data: StartActivityPayload): Promise<Acti
 }
 
 export async function endPetActivity(activityId: string): Promise<ActivityRecord> {
-  const res = await fetch(`${API_URL}/api/pets/activity/end`, {
+  const res = await fetch(`${getApiUrl()}/api/pets/activity/end`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ activityId }),
@@ -94,7 +98,7 @@ export async function endPetActivity(activityId: string): Promise<ActivityRecord
 
 export async function getActivityHistory(petId: string): Promise<ActivityRecord[]> {
   const res = await fetch(
-    `${API_URL}/api/pets/activity/history?petId=${encodeURIComponent(petId)}`,
+    `${getApiUrl()}/api/pets/activity/history?petId=${encodeURIComponent(petId)}`,
   );
   if (!res.ok) {
     const t = await res.text();

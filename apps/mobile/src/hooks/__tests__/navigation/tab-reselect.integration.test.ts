@@ -2,6 +2,7 @@
  * @jest-environment node
  * Integration tests for tab reselect/refresh flow
  */
+/// <reference types="jest" />
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { render } from '@testing-library/react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';

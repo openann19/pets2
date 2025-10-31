@@ -1,0 +1,46 @@
+{
+  "Home": {
+    "mobile": "apps/mobile/src/screens/HomeScreen.tsx",
+    "webRoute": "apps/web/app/home"
+  },
+  "Map": {
+    "mobile": "apps/mobile/src/screens/MapScreen.tsx",
+    "webRoute": "apps/web/app/map"
+  },
+  "Chat": {
+    "mobile": "apps/mobile/src/screens/ChatScreen.tsx",
+    "webRoute": "apps/web/app/chat"
+  },
+  "Profile": {
+    "mobile": "apps/mobile/src/screens/ProfileScreen.tsx",
+    "webRoute": "apps/web/app/profile"
+  },
+  "Matches": {
+    "mobile": "apps/mobile/src/screens/MatchesScreen.tsx",
+    "webRoute": "apps/web/app/matches"
+  },
+  "Swipe": {
+    "mobile": "apps/mobile/src/screens/ModernSwipeScreen.tsx",
+    "webRoute": "apps/web/app/swipe"
+  },
+  "Settings": {
+    "mobile": "apps/mobile/src/screens/SettingsScreen.tsx",
+    "webRoute": "apps/web/app/settings"
+  },
+  "Premium": {
+    "mobile": "apps/mobile/src/screens/PremiumScreen.tsx",
+    "webRoute": "apps/web/app/premium"
+  },
+  "Login": {
+    "mobile": "apps/mobile/src/screens/LoginScreen.tsx",
+    "webRoute": "apps/web/app/login"
+  },
+  "Adopt": {
+    "mobile": "apps/mobile/src/screens/AdoptScreen.tsx",
+    "webRoute": "apps/web/app/adopt"
+  },
+  "Register": {
+    "mobile": "apps/mobile/src/screens/RegisterScreen.tsx",
+    "webRoute": "apps/web/app/register"
+  }
+}

@@ -17,7 +17,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import type { Message } from '@pawfectmatch/core';
 import { springs } from '@/foundation/motion';
 import { chatService } from '../../services/chatService';

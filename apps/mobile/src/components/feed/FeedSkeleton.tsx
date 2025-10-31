@@ -18,7 +18,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useReduceMotion } from '@/hooks/useReducedMotion';
 import { Skeleton } from '../common/LoadingSkeleton';
 import { SWIPE_DECK_LAYOUT } from '@/constants/performance';

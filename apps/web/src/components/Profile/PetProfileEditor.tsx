@@ -1,6 +1,6 @@
 'use client';
 import { PhotoCropper } from '@/components/Photo/PhotoCropper';
-import { CustomTextarea } from '@/components/ui/CustomTextarea';
+import { CustomTextarea } from '@/components/UI/CustomTextarea';
 import { CameraIcon, PencilIcon } from '@heroicons/react/24/outline';
 import React, { useState } from 'react';
 export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {

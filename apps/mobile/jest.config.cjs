@@ -24,7 +24,7 @@ const baseConfig = {
     '^@mobile/(.*)$': '<rootDir>/src/$1',
     // Fix relative path resolution for services/uiConfig imports
     '^../theme/(.*)$': '<rootDir>/src/theme/$1',
-    '^@pawfectmatch/design-tokens$': '<rootDir>/../../packages/design-tokens/src/index.ts',
+    '^@pawfectmatch/design-tokens$': '<rootDir>/src/__mocks__/@pawfectmatch/design-tokens.ts',
     '^@pawfectmatch/design-tokens/(.*)$': '<rootDir>/../../packages/design-tokens/src/$1',
     '^@pawfectmatch/ui$': '<rootDir>/../../packages/ui/src/index.ts',
     '^@pawfectmatch/ui/(.*)$': '<rootDir>/../../packages/ui/src/$1',
@@ -40,7 +40,23 @@ const baseConfig = {
   clearMocks: true,
   resetMocks: false,
   restoreMocks: true,
-  // Note: testTimeout should be set per-project, not in baseConfig
+  // Environment variables for tests
+  testEnvironmentOptions: {
+    // Set default NODE_ENV
+    NODE_ENV: 'test',
+    // Disable console warnings unless debugging
+    DEBUG_TESTS: process.env.DEBUG_TESTS || 'false',
+  },
+  // Global setup for module resolution
+  globals: {
+    'ts-jest': {
+      tsconfig: {
+        jsx: 'react-native',
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true,
+      },
+    },
+  },
 };
 
 module.exports = {
@@ -49,7 +65,7 @@ module.exports = {
     {
       displayName: 'services',
       ...baseConfig,
-      testEnvironment: 'node',
+      testEnvironment: 'jsdom', // Changed from node to jsdom for React hooks
       testMatch: [
         '<rootDir>/src/**/__tests__/**/*.test.ts',
         '<rootDir>/src/**/*.test.ts',
@@ -81,12 +97,11 @@ module.exports = {
           statements: 90
         }
       },
-      testTimeout: 30000, // 30 seconds for service tests
     },
     {
       displayName: 'ui',
       ...baseConfig,
-      testEnvironment: 'node', // RN UI tests use node env
+      testEnvironment: 'jsdom', // Changed from node to jsdom for React components
       testMatch: [
         '<rootDir>/src/**/__tests__/**/*.test.tsx',
         '<rootDir>/src/**/*.test.tsx',
@@ -118,12 +133,11 @@ module.exports = {
           statements: 80
         }
       },
-      testTimeout: 30000, // 30 seconds for UI tests
     },
     {
       displayName: 'integration',
       ...baseConfig,
-      testEnvironment: 'node', // RN integration tests use node env
+      testEnvironment: 'jsdom', // Changed from node to jsdom for React components
       testMatch: [
         '<rootDir>/src/**/__tests__/**/*.integration.test.tsx',
         '<rootDir>/src/**/__tests__/**/*.integration.test.ts',
@@ -136,13 +150,12 @@ module.exports = {
         '/node_modules/',
         '/e2e/',
         '/\\.e2e\\.'
-      ],
-      testTimeout: 60000, // 60 seconds for integration tests (longer due to complex flows)
+      ]
     },
     {
       displayName: 'contract',
       ...baseConfig,
-      testEnvironment: 'node',
+      testEnvironment: 'jsdom', // Changed from node to jsdom
       testMatch: [
         '<rootDir>/src/**/__tests__/**/*.contract.test.ts',
         '<rootDir>/src/**/__tests__/**/*.contract.test.tsx',
@@ -158,7 +171,7 @@ module.exports = {
     {
       displayName: 'a11y',
       ...baseConfig,
-      testEnvironment: 'node', // RN a11y tests use node env
+      testEnvironment: 'jsdom', // Changed from node to jsdom for React components
       testMatch: [
         '<rootDir>/src/**/__tests__/**/a11y/**/*.test.tsx',
         '<rootDir>/src/**/__tests__/**/a11y/**/*.test.ts',

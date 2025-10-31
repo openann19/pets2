@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 import { useReduceMotion } from '../../hooks/useReducedMotion';
 import {

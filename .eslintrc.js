@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
@@ -19,6 +17,17 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'plugin:jsx-a11y/recommended',
     'prettier',
+  ],
+  ignorePatterns: [
+    'apps/web/**/*',
+    'packages/ui/src/**/*',
+    'packages/core/**/*',
+    'packages/testing/**/*',
+    'node_modules/**/*',
+    'dist/**/*',
+    '.next/**/*',
+    'coverage/**/*',
+    '**/*.d.ts'
   ],
   overrides: [
     // Type-aware rules for TypeScript files (excluding .d.ts and specific paths)

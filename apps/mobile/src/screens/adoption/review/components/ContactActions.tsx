@@ -9,8 +9,8 @@ import React, { useMemo } from 'react';
 import { Alert, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { logger } from '@pawfectmatch/core';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { Application } from '../types';
 
 function __makeStyles_styles(theme: AppTheme) {

@@ -23,6 +23,8 @@ export default defineConfig({
     video: 'retain-on-failure',
     actionTimeout: 10000,
     navigationTimeout: 30000,
+    // Emulate reduced motion to avoid animation flakiness
+    reducedMotion: 'reduce',
   },
   projects: [
     {

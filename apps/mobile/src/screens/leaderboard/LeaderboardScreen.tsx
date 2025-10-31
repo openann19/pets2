@@ -26,7 +26,7 @@ import type {
   LeaderboardFilter,
 } from '../../services/LeaderboardService';
 import LeaderboardService from '../../services/LeaderboardService';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useScrollOffsetTracker } from '../../hooks/navigation/useScrollOffsetTracker';
 import { useTabReselectRefresh } from '../../hooks/navigation/useTabReselectRefresh';
 

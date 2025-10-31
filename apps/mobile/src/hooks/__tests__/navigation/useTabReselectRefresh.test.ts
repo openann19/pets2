@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  * Comprehensive tests for useTabReselectRefresh hook
  */
+/// <reference types="jest" />
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';

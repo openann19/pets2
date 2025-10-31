@@ -24,9 +24,14 @@ describe('useChatScroll', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.clearAllTimers();
     mockAsyncStorage.getItem.mockResolvedValue(null);
     mockAsyncStorage.setItem.mockResolvedValue(undefined);
-    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers();
+    jest.useRealTimers();
   });
 
   describe('Initialization', () => {
@@ -76,22 +81,23 @@ describe('useChatScroll', () => {
         result.current.handleScroll(100);
       });
 
-      act(() => {
-        jest.advanceTimersByTime(100);
-      });
+      // Wait less than debounce time (250ms)
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(mockAsyncStorage.setItem).not.toHaveBeenCalled();
 
-      act(() => {
-        jest.advanceTimersByTime(150);
-      });
+      // Wait for debounce time to complete
+      await new Promise(resolve => setTimeout(resolve, 200));
 
-      await waitFor(() => {
-        expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-          `mobile_chat_scroll_${matchId}`,
-          '100',
-        );
-      });
+      await waitFor(
+        () => {
+          expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
+            `mobile_chat_scroll_${matchId}`,
+            '100',
+          );
+        },
+        { timeout: 1000 },
+      );
     });
 
     it('should debounce multiple scroll events', async () => {
@@ -101,33 +107,30 @@ describe('useChatScroll', () => {
         result.current.handleScroll(100);
       });
 
-      act(() => {
-        jest.advanceTimersByTime(100);
-      });
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       act(() => {
         result.current.handleScroll(200);
       });
 
-      act(() => {
-        jest.advanceTimersByTime(100);
-      });
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       act(() => {
         result.current.handleScroll(300);
       });
 
-      act(() => {
-        jest.advanceTimersByTime(250);
-      });
+      await new Promise(resolve => setTimeout(resolve, 250));
 
-      await waitFor(() => {
-        expect(mockAsyncStorage.setItem).toHaveBeenCalledTimes(1);
-        expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-          `mobile_chat_scroll_${matchId}`,
-          '300',
-        );
-      });
+      await waitFor(
+        () => {
+          expect(mockAsyncStorage.setItem).toHaveBeenCalledTimes(1);
+          expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
+            `mobile_chat_scroll_${matchId}`,
+            '300',
+          );
+        },
+        { timeout: 1000 },
+      );
     });
 
     it('should not persist scroll when disabled', async () => {
@@ -137,13 +140,14 @@ describe('useChatScroll', () => {
         result.current.handleScroll(100);
       });
 
-      act(() => {
-        jest.advanceTimersByTime(250);
-      });
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      await waitFor(() => {
-        expect(mockAsyncStorage.setItem).not.toHaveBeenCalled();
-      });
+      await waitFor(
+        () => {
+          expect(mockAsyncStorage.setItem).not.toHaveBeenCalled();
+        },
+        { timeout: 1000 },
+      );
     });
   });
 
@@ -190,13 +194,14 @@ describe('useChatScroll', () => {
         result2.current.handleScroll(200);
       });
 
-      act(() => {
-        jest.advanceTimersByTime(250);
-      });
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      await waitFor(() => {
-        expect(mockAsyncStorage.setItem).toHaveBeenCalledTimes(2);
-      });
+      await waitFor(
+        () => {
+          expect(mockAsyncStorage.setItem).toHaveBeenCalledTimes(2);
+        },
+        { timeout: 1000 },
+      );
     });
   });
 
@@ -205,25 +210,29 @@ describe('useChatScroll', () => {
       // Initial load
       const { result } = renderHook(() => useChatScroll({ matchId }));
 
-      await waitFor(() => {
-        expect(result.current.initialOffset).toBe(0);
-      });
+      await waitFor(
+        () => {
+          expect(result.current.initialOffset).toBe(0);
+        },
+        { timeout: 1000 },
+      );
 
       // User scrolls down
       act(() => {
         result.current.handleScroll(250);
       });
 
-      act(() => {
-        jest.advanceTimersByTime(250);
-      });
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      await waitFor(() => {
-        expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-          `mobile_chat_scroll_${matchId}`,
-          '250',
-        );
-      });
+      await waitFor(
+        () => {
+          expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
+            `mobile_chat_scroll_${matchId}`,
+            '250',
+          );
+        },
+        { timeout: 1000 },
+      );
 
       // Re-mount should restore
       mockAsyncStorage.setItem.mockClear();
@@ -231,9 +240,12 @@ describe('useChatScroll', () => {
 
       const { result: result2 } = renderHook(() => useChatScroll({ matchId }));
 
-      await waitFor(() => {
-        expect(result2.current.initialOffset).toBe(250);
-      });
+      await waitFor(
+        () => {
+          expect(result2.current.initialOffset).toBe(250);
+        },
+        { timeout: 1000 },
+      );
     });
   });
 });

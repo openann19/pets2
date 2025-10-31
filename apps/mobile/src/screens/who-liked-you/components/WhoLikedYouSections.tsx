@@ -6,7 +6,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { AdvancedHeader, HeaderConfigs } from '../../../components/Advanced/AdvancedHeader';
 import { PremiumGate } from '../../../components/Premium/PremiumGate';
 import { EmptyStates } from '../../../components/common';

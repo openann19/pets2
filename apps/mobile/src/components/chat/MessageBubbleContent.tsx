@@ -3,7 +3,7 @@
  * Handles rendering of different message types (text, image, voice, video, gif)
  */
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';

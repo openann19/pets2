@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 // Mock InCallManager specifically for this test - MUST be first
 jest.mock('react-native-incall-manager', () => ({
   __esModule: true,

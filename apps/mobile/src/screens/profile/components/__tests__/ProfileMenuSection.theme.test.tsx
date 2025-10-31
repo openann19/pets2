@@ -1,4 +1,3 @@
-import { useTheme } from '@/theme';
 /**
  * ProfileMenuSection Theme Integration Tests
  *
@@ -9,6 +8,12 @@ import { useTheme } from '@/theme';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { createTheme } from '@/theme';
+
+// Ensure StyleSheet.create returns styles properly
+// This is a fallback in case the global mock isn't working
+if (!StyleSheet.create || typeof StyleSheet.create !== 'function') {
+  (StyleSheet as any).create = (styles: any) => styles || {};
+}
 
 describe('ProfileMenuSection - Theme Integration', () => {
   describe('Menu Item Colors', () => {
@@ -146,7 +151,7 @@ describe('ProfileMenuSection - Theme Integration', () => {
 
       expect(styles.menuIcon.width).toBe(48);
       expect(styles.menuIcon.height).toBe(48);
-      expect(styles.menuIcon.radius).toBe(24);
+      expect(styles.menuIcon.borderRadius).toBe(24);
     });
   });
 
@@ -183,9 +188,9 @@ describe('ProfileMenuSection - Theme Integration', () => {
       const darkTheme = createTheme('dark');
 
       // Semantic colors should be identical
-      expect(lighttheme.colors.primary).toBe(darktheme.colors.primary);
-      expect(lighttheme.colors.success).toBe(darktheme.colors.success);
-      expect(lighttheme.colors.warning).toBe(darktheme.colors.warning);
+      expect(lightTheme.colors.primary).toBe(darkTheme.colors.primary);
+      expect(lightTheme.colors.success).toBe(darkTheme.colors.success);
+      expect(lightTheme.colors.warning).toBe(darkTheme.colors.warning);
     });
 
     it('should have different background colors for light and dark themes', () => {
@@ -193,13 +198,13 @@ describe('ProfileMenuSection - Theme Integration', () => {
       const darkTheme = createTheme('dark');
 
       // Background should be different
-      expect(lighttheme.colors.bg).not.toBe(darktheme.colors.bg);
+      expect(lightTheme.colors.bg).not.toBe(darkTheme.colors.bg);
 
       // Light theme: white
-      expect(lighttheme.colors.bg).toBe('#ffffff');
+      expect(lightTheme.colors.bg).toBe('#ffffff');
 
       // Dark theme: dark
-      expect(darktheme.colors.bg).toBe('#0a0a0a');
+      expect(darkTheme.colors.bg).toBe('#0a0a0a');
     });
   });
 
@@ -208,14 +213,14 @@ describe('ProfileMenuSection - Theme Integration', () => {
       const lightTheme = createTheme('light');
 
       // Light theme: white background, dark text
-      expect(lighttheme.colors.bg).toBe('#ffffff');
-      expect(lighttheme.colors.onSurface).toBe('#111827');
+      expect(lightTheme.colors.bg).toBe('#ffffff');
+      expect(lightTheme.colors.onSurface).toBe('#111827');
 
       const darkTheme = createTheme('dark');
 
       // Dark theme: dark background, light text
-      expect(darktheme.colors.bg).toBe('#0a0a0a');
-      expect(darktheme.colors.onSurface).toBe('#ffffff');
+      expect(darkTheme.colors.bg).toBe('#0a0a0a');
+      expect(darkTheme.colors.onSurface).toBe('#ffffff');
     });
   });
 

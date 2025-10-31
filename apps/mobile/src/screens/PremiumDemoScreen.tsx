@@ -7,7 +7,7 @@ import InteractiveButton from '../components/InteractiveButton';
 import { PageTransition, StaggeredFadeInUpList } from '../components/MotionPrimitives';
 
 // Project Hyperion Design System
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { usePremiumDemoScreen } from '../hooks/screens/usePremiumDemoScreen';
 
 // Import extracted demo components

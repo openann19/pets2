@@ -10,7 +10,7 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react-nativ
 import { NavigationContainer } from '@react-navigation/native';
 import { Alert } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { ThemeProvider } from '@mobile/theme';
+import { ThemeProvider } from '@/theme';
 import AdoptionManagerScreen from '../AdoptionManagerScreen';
 import type { RootStackScreenProps } from '../../../navigation/types';
 
@@ -19,7 +19,7 @@ jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
 }));
 
-jest.mock('../hooks/screens/useAdoptionManagerScreen', () => ({
+jest.mock('../../../hooks/screens/useAdoptionManagerScreen', () => ({
   useAdoptionManagerScreen: jest.fn(),
 }));
 
@@ -176,7 +176,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+    const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
     useAdoptionManagerScreen.mockReturnValue(defaultHookReturn);
   });
 
@@ -213,7 +213,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
     });
 
     it('should render loading state when isLoading is true', () => {
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         isLoading: true,
@@ -241,7 +241,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
     });
 
     it('should render tabs with zero counts correctly', () => {
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         petListings: [],
@@ -262,7 +262,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
   describe('Tab Switching', () => {
     it('should call handleTabPress when listings tab is pressed', () => {
       const mockHandleTabPress = jest.fn();
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         handleTabPress: mockHandleTabPress,
@@ -282,7 +282,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
 
     it('should call handleTabPress when applications tab is pressed', () => {
       const mockHandleTabPress = jest.fn();
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         handleTabPress: mockHandleTabPress,
@@ -312,7 +312,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
     });
 
     it('should display applications content when applications tab is active', () => {
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         activeTab: 'applications',
@@ -330,7 +330,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
 
   describe('Empty States', () => {
     it('should render empty state for listings when no pets listed', () => {
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         petListings: [],
@@ -350,7 +350,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
     });
 
     it('should render empty state for applications when no applications', () => {
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         applications: [],
@@ -412,7 +412,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
 
   describe('Status Modal', () => {
     it('should show status modal when showStatusModal is true', () => {
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         showStatusModal: true,
@@ -443,7 +443,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
     it('should call handleStatusChange when status is changed in modal', () => {
       const mockHandleStatusChange = jest.fn();
       const mockSetShowStatusModal = jest.fn();
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         showStatusModal: true,
@@ -469,7 +469,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
 
     it('should close modal when Cancel is pressed', () => {
       const mockSetShowStatusModal = jest.fn();
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         showStatusModal: true,
@@ -493,7 +493,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
   describe('Pull to Refresh', () => {
     it('should call onRefresh when refresh is triggered', async () => {
       const mockOnRefresh = jest.fn().mockResolvedValue(undefined);
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         onRefresh: mockOnRefresh,
@@ -512,7 +512,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
     });
 
     it('should show refreshing state when refreshing is true', () => {
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         refreshing: true,
@@ -575,7 +575,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
 
   describe('Error Handling', () => {
     it('should handle error state gracefully', () => {
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         error: 'Failed to load data',
@@ -594,7 +594,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
     });
 
     it('should handle null selectedPet in status modal', () => {
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         showStatusModal: true,
@@ -620,7 +620,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
         name: `Pet ${i}`,
       }));
 
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         petListings: largeListings,
@@ -641,7 +641,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
         id: `app-${i}`,
       }));
 
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         applications: largeApplications,
@@ -672,7 +672,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
         listedAt: new Date().toISOString(),
       };
 
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         petListings: [incompletePet],
@@ -704,7 +704,7 @@ describe('AdoptionManagerScreen Integration Tests', () => {
 
   describe('Animation Integration', () => {
     it('should use animated styles for tab transitions', () => {
-      const { useAdoptionManagerScreen } = require('../hooks/screens/useAdoptionManagerScreen');
+      const { useAdoptionManagerScreen } = require('../../../hooks/screens/useAdoptionManagerScreen');
       useAdoptionManagerScreen.mockReturnValue({
         ...defaultHookReturn,
         tabAnimatedStyle1: { transform: [{ scale: 0.95 }] },

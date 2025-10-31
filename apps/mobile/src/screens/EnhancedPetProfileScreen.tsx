@@ -28,7 +28,7 @@ import {
   useStaggeredAnimation,
 } from '../components';
 import { EliteContainer, EliteHeader } from '../components/elite';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 // Pet-first hooks
 import {

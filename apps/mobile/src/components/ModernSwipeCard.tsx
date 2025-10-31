@@ -26,9 +26,9 @@ import { GestureDetector } from 'react-native-gesture-handler';
 import Animated, { type AnimatedStyleProp } from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { SHARED_ELEMENT_IDS, prefetchPetImage } from '@/foundation/shared-element';
-import type { AppTheme } from '@mobile/theme';
+import type { AppTheme } from '@/theme';
 import { useDoubleTapMetrics } from '../hooks/useInteractionMetrics';
 import { useLikeWithUndo } from '../hooks/useLikeWithUndo';
 import { useSwipeGesturesRNGH } from '../hooks/useSwipeGesturesRNGH';
@@ -39,7 +39,16 @@ import LikeArbitrator from './Gestures/LikeArbitrator';
 import UndoPill from './feedback/UndoPill';
 import MicroPressable from './micro/MicroPressable';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+// Lazy load dimensions to support test mocking
+const getDimensions = () => {
+  try {
+    const dims = Dimensions.get('window');
+    return { width: dims?.width ?? 375, height: dims?.height ?? 812 };
+  } catch {
+    return { width: 375, height: 812 };
+  }
+};
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = getDimensions();
 interface Pet {
   _id: string;
   name: string;
@@ -275,7 +284,7 @@ function ModernSwipeCardComponent({
                 source={{ uri: pet.photos[photoNav.currentIndex] }}
                 style={styles.photo}
                 resizeMode="cover"
-                sharedTransitionTag={`${SHARED_ELEMENT_IDS.petImage}-${pet._id}`}
+                sharedTransitionTag={`${SHARED_ELEMENT_IDS.PET_IMAGE}-${pet._id}`}
               />
 
               {/* Photo Navigation Dots */}
@@ -377,7 +386,7 @@ function ModernSwipeCardComponent({
           <View style={styles.infoContainer}>
             <Animated.View
               style={styles.nameRow}
-              sharedTransitionTag={`${SHARED_ELEMENT_IDS.petName}-${pet._id}`}
+              sharedTransitionTag={`${SHARED_ELEMENT_IDS.PET_NAME}-${pet._id}`}
             >
               <Text style={styles.name}>{pet.name}</Text>
               <Text style={styles.age}>{pet.age}</Text>

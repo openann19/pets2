@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useBlockedUsersScreen } from '../hooks/screens/useBlockedUsersScreen';
 
 interface BlockedUser {

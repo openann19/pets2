@@ -7,8 +7,8 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { ScreenShell } from '@/src/components/layout/ScreenShell';
-import { useSettingsScreen } from '@/src/hooks/screens/useSettingsScreen';
+import { ScreenShell } from '@/components/layout/ScreenShell';
+import { useSettingsScreen } from '@/hooks/screens/useSettingsScreen';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 

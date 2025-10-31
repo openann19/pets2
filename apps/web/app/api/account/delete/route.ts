@@ -4,7 +4,7 @@
  */
 
 import type { NextRequest } from 'next/server'
-import { logger } from '@pawfectmatch/core';
+
 ;
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
             message: 'Account deletion has been scheduled'
         });
     } catch (error) {
-        logger.error('Error in account deletion:', { error });
+        console.error('Error in account deletion:', { error });
         return NextResponse.json(
             { error: 'Failed to process account deletion request' },
             { status: 500 }
@@ -145,7 +145,7 @@ async function verifyTwoFactorCode(_userId: string, _code: string): Promise<bool
         // For demonstration, we'll just return true
         return true;
     } catch (error) {
-        logger.error('Error verifying 2FA code:', { error });
+        console.error('Error verifying 2FA code:', { error });
         return false;
     }
 }
@@ -166,5 +166,5 @@ async function sendDeletionEmail(
     deletionDate: Date
 ): Promise<void> {
     // In a real implementation, this would send an actual email
-    logger.info(`Sending account deletion email to ${email}. Confirmation ID: ${confirmationId}. Scheduled deletion: ${deletionDate.toLocaleString()}`);
+    console.info(`Sending account deletion email to ${email}. Confirmation ID: ${confirmationId}. Scheduled deletion: ${deletionDate.toLocaleString()}`);
 }

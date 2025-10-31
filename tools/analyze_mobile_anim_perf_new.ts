@@ -1,22 +1,33 @@
 import fs from 'fs';
-import path from 'path';
 
 // Define the structure for our findings
-const findings = [];
+interface Finding {
+  file: string;
+  category: string;
+  evidence: string;
+  notes: string;
+}
+
+const findings: Finding[] = [];
 
 // Function to parse grep output and extract relevant information
-function parseGrepOutput(filePath, category) {
+function parseGrepOutput(filePath: string, category: string): void {
   const content = fs.readFileSync(filePath, 'utf-8');
   const lines = content.split('\n');
   lines.forEach(line => {
     if (line.trim()) {
-      const [file, lineNum, match] = line.split(':');
-      findings.push({
-        file: file.replace('../../', ''),
-        category: category,
-        evidence: `line:${lineNum}`,
-        notes: match || 'N/A'
-      });
+      const parts = line.split(':');
+      const file = parts[0];
+      const lineNum = parts[1];
+      const match = parts.slice(2).join(':');
+      if (file && lineNum) {
+        findings.push({
+          file: file.replace('../../', ''),
+          category: category,
+          evidence: `line:${lineNum}`,
+          notes: match || 'N/A'
+        });
+      }
     }
   });
 }

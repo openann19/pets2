@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Modal } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { CompatibilityBreakdown } from './CompatibilityBreakdown';
 import type { PlaydateMatch } from '../types';
 

@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 const SAFETY_TIPS = [
   'Never chase a lost pet - they may run further away',

@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, Animated, Dimensions } from 'react-native';
 import type { Pet } from '@pawfectmatch/core';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import ModernSwipeCard from '../ModernSwipeCard';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');

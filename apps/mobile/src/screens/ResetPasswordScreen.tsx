@@ -12,8 +12,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useResetPasswordScreen } from '../hooks/screens/useResetPasswordScreen';
 import type { RootStackScreenProps } from '../navigation/types';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 
 type ResetPasswordScreenProps = RootStackScreenProps<'ResetPassword'>;

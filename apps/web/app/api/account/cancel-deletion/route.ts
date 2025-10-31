@@ -7,8 +7,6 @@
  */
 
 import type { NextRequest } from 'next/server'
-import { logger } from '@pawfectmatch/core';
-;
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '../../../lib/auth';
 import { connectToDB } from '../../../lib/db';
@@ -78,7 +76,7 @@ export async function POST(
         );
 
         // Log the action
-        logger.info(`Account deletion canceled for userId ${userId}`);
+        console.log(`Account deletion canceled for userId ${userId}`);
 
         // Send email notification
         // In a real implementation, this would send an email confirmation
@@ -90,7 +88,7 @@ export async function POST(
             status: 'canceled'
         });
     } catch (error) {
-        logger.error('Error canceling account deletion:', { error });
+        console.error('Error canceling account deletion:', error);
         return NextResponse.json(
             { error: 'Failed to cancel account deletion' },
             { status: 500 }

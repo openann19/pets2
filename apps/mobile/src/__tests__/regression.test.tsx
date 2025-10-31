@@ -15,6 +15,8 @@
  * - Third-party integration failures
  */
 
+/// <reference types="jest" />
+
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import { render, fireEvent, waitFor, screen, act } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,16 +27,16 @@ import { SwipeScreen } from '../screens/SwipeScreen';
 import { ChatScreen } from '../screens/ChatScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
-import { api } from '../services/api';
-import { offlineService } from '../services/offlineService';
-import { authService } from '../services/authService';
-import { notificationService } from '../services/notifications';
+import { api } from '@/services/api';
+import { offlineService } from '@/services/offlineService';
+import { authService } from '@/services/AuthService';
+import { notificationService } from '@/services/notifications';
 
 // Mock all dependencies
 jest.mock('@react-native-async-storage/async-storage');
 jest.mock('../services/api');
 jest.mock('../services/offlineService');
-jest.mock('../services/authService');
+jest.mock('../services/AuthService');
 jest.mock('../services/notifications');
 jest.mock('react-native', () => ({
   OS: 'ios',

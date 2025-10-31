@@ -3,8 +3,8 @@
  * REFACTORED: Extracted components for better maintainability
  */
 
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { useCallback, useMemo } from 'react';
 import {
   ActivityIndicator,

@@ -1,5 +1,5 @@
-import type { AppTheme } from '@mobile/theme';
-import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@/theme';
+import { useTheme } from '@/theme';
 /**
  * 📸 PHOTO UPLOAD SECTION
  * Extracted from AIPhotoAnalyzerScreen

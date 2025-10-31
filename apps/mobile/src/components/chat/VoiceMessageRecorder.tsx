@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native';
 import { durations } from '@/foundation/motion';
@@ -19,7 +19,7 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
   visible,
   onClose,
   onSend,
-  matchId,
+  matchId: _matchId,
 }) => {
   const theme = useTheme();
   const { t } = useTranslation('chat');
@@ -110,15 +110,14 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
               ]}
             >
               <TouchableOpacity
-                style={[
-                  styles.recordButton,
-                  {
-                    backgroundColor: isRecording ? theme.colors.danger : theme.colors.primary,
-                    width: theme.spacing['4xl'],
-                    height: theme.spacing['4xl'],
-                    borderRadius: theme.radii.full,
-                  },
-                ]}
+                style={{
+                  backgroundColor: isRecording ? theme.colors.danger : theme.colors.primary,
+                  width: theme.spacing['4xl'],
+                  height: theme.spacing['4xl'],
+                  borderRadius: theme.radii.full,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
                 onPressIn={startRecording}
                 onPressOut={stopRecording}
                 activeOpacity={0.8}

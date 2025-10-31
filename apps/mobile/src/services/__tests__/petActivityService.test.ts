@@ -20,6 +20,7 @@ import {
   startPetActivity,
   endPetActivity,
   getActivityHistory,
+  getCurrentLocation,
   type StartActivityPayload,
   type ActivityRecord,
 } from '../petActivityService';
@@ -55,8 +56,16 @@ const mockLogger = logger as jest.Mocked<typeof logger>;
 const mockSocketClient = socketClient as jest.Mocked<typeof socketClient>;
 
 describe('PetActivityService', () => {
+  const originalEnv = process.env;
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Mock API URL environment variable
+    process.env = {
+      ...originalEnv,
+      EXPO_PUBLIC_API_URL: 'http://localhost:3001',
+    };
 
     // Setup default mocks
     mockLocation.requestForegroundPermissionsAsync.mockResolvedValue({
@@ -81,9 +90,14 @@ describe('PetActivityService', () => {
     mockSocketClient.emit.mockImplementation(() => {}); // No-op
   });
 
+  afterEach(() => {
+    // Restore original environment
+    process.env = originalEnv;
+  });
+
   describe('getCurrentLocation', () => {
     it('should get current location with permissions', async () => {
-      const location = await (global as any).getCurrentLocation();
+      const location = await getCurrentLocation();
 
       expect(mockLocation.requestForegroundPermissionsAsync).toHaveBeenCalled();
       expect(mockLocation.getCurrentPositionAsync).toHaveBeenCalledWith({
@@ -103,7 +117,7 @@ describe('PetActivityService', () => {
         canAskAgain: false,
       });
 
-      await expect((global as any).getCurrentLocation()).rejects.toThrow(
+      await expect(getCurrentLocation()).rejects.toThrow(
         'Location permission not granted',
       );
     });
@@ -113,7 +127,7 @@ describe('PetActivityService', () => {
         new Error('Location services are disabled'),
       );
 
-      await expect((global as any).getCurrentLocation()).rejects.toThrow(
+      await expect(getCurrentLocation()).rejects.toThrow(
         'Location services are disabled',
       );
     });
@@ -125,7 +139,7 @@ describe('PetActivityService', () => {
         canAskAgain: true,
       });
 
-      await expect((global as any).getCurrentLocation()).rejects.toThrow(
+      await expect(getCurrentLocation()).rejects.toThrow(
         'Location permission not granted',
       );
     });
@@ -329,8 +343,9 @@ describe('PetActivityService', () => {
         json: jest.fn().mockResolvedValue({}), // Missing data field
       });
 
-      const result = await startPetActivity(payload);
-      expect(result).toBeUndefined(); // Will throw when accessing undefined
+      await expect(startPetActivity(payload)).rejects.toThrow(
+        'Invalid response: missing activity record data',
+      );
     });
 
     it('should handle extreme location coordinates', async () => {
@@ -891,22 +906,50 @@ describe('PetActivityService', () => {
     it('should handle very long messages', async () => {
       const longMessage = 'A'.repeat(2000); // Very long message
 
+      // Ensure location mock is set up (reset from beforeEach)
+      mockLocation.requestForegroundPermissionsAsync.mockResolvedValue({
+        status: 'granted',
+        granted: true,
+        canAskAgain: true,
+      });
+      mockLocation.getCurrentPositionAsync.mockResolvedValue({
+        coords: {
+          latitude: 40.7128,
+          longitude: -74.006,
+          altitude: 10,
+          accuracy: 5,
+          altitudeAccuracy: 1,
+          heading: 90,
+          speed: 1.5,
+        },
+        timestamp: Date.now(),
+      });
+
       const payload: StartActivityPayload = {
         petId: 'pet123',
         activity: 'walk',
         message: longMessage,
       };
 
-      const mockResponse = {
-        data: {
-          _id: 'long-message-activity',
-          petId: 'pet123',
-          activity: 'walk',
-          message: longMessage,
-        },
+      const mockResponseData = {
+        _id: 'long-message-activity',
+        petId: 'pet123',
+        activity: 'walk',
+        message: longMessage,
+        lat: 40.7128,
+        lng: -74.006,
+        createdAt: '2024-01-01T16:00:00Z',
+        updatedAt: '2024-01-01T16:00:00Z',
+        active: true,
       };
 
-      mockFetch.mockResolvedValue({
+      const mockResponse = {
+        data: mockResponseData,
+      };
+
+      // Reset and set up fetch mock for this test
+      mockFetch.mockReset();
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: jest.fn().mockResolvedValue(mockResponse),
       });
@@ -918,6 +961,11 @@ describe('PetActivityService', () => {
     });
 
     it('should handle zero coordinates', async () => {
+      mockLocation.requestForegroundPermissionsAsync.mockResolvedValue({
+        status: 'granted',
+        granted: true,
+        canAskAgain: true,
+      });
       mockLocation.getCurrentPositionAsync.mockResolvedValue({
         coords: {
           latitude: 0,
@@ -943,6 +991,9 @@ describe('PetActivityService', () => {
           activity: 'rest',
           lat: 0,
           lng: 0,
+          createdAt: '2024-01-01T17:00:00Z',
+          updatedAt: '2024-01-01T17:00:00Z',
+          active: true,
         },
       };
 

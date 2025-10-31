@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { logger } from '@pawfectmatch/core';
@@ -22,8 +22,8 @@ interface PlaydateSchedulerProps {
 
 export const PlaydateScheduler: React.FC<PlaydateSchedulerProps> = ({
   matchId,
-  pet1Id,
-  pet2Id,
+  pet1Id: _pet1Id,
+  pet2Id: _pet2Id,
   onProposalCreated,
   onCancel,
 }) => {
@@ -47,7 +47,23 @@ export const PlaydateScheduler: React.FC<PlaydateSchedulerProps> = ({
     const loadVenues = async () => {
       try {
         // Get user location (placeholder - implement actual location service)
-        const venues = await petChatService.getNearbyVenues(0, 0, 10);
+        const services = await petChatService.getNearbyVenues(0, 0, 10);
+        // Map LocalPetService to VenueInfo
+        const venues: VenueInfo[] = services.map((service) => ({
+          venueId: service.serviceId,
+          name: service.name,
+          type: 'park' as const, // Default type, could be derived from service.type
+          address: service.address,
+          coordinates: service.coordinates,
+          distance: service.distance,
+          amenities: service.specialties || [],
+          petPolicies: {
+            allowed: true,
+            leashedRequired: true,
+          },
+          rating: service.rating,
+          reviews: service.reviews,
+        }));
         setNearbyVenues(venues);
       } catch (error) {
         logger.error('Failed to load venues', error);
@@ -80,14 +96,14 @@ export const PlaydateScheduler: React.FC<PlaydateSchedulerProps> = ({
     loadWeather();
   }, [selectedDate, selectedVenue, customLocation]);
 
-  const handleDateChange = (event: any, date?: Date) => {
+  const handleDateChange = (_event: any, date?: Date) => {
     setShowDatePicker(false);
     if (date) {
       setSelectedDate(date);
     }
   };
 
-  const handleTimeChange = (event: any, time?: Date) => {
+  const handleTimeChange = (_event: any, time?: Date) => {
     setShowTimePicker(false);
     if (time) {
       setSelectedTime(time);
@@ -106,25 +122,31 @@ export const PlaydateScheduler: React.FC<PlaydateSchedulerProps> = ({
       proposedTime.setHours(selectedTime.getHours());
       proposedTime.setMinutes(selectedTime.getMinutes());
 
-      const proposal = await petChatService.proposePlaydate(matchId, {
+      const proposalData: Omit<PlaydateProposal, 'proposalId' | 'matchId' | 'proposedBy' | 'status'> = {
+        proposedAt: new Date().toISOString(),
         proposedTime: proposedTime.toISOString(),
-        duration,
-        venueId: selectedVenue?.venueId,
-        location: selectedVenue
+        ...(duration && { duration }),
+        ...(selectedVenue && { venue: selectedVenue }),
+        ...(selectedVenue
           ? {
-              name: selectedVenue.name,
-              address: selectedVenue.address,
-              coordinates: selectedVenue.coordinates,
+              location: {
+                name: selectedVenue.name,
+                address: selectedVenue.address,
+                coordinates: selectedVenue.coordinates,
+              },
             }
           : customLocation
           ? {
-              name: customLocation,
-              address: customLocation,
-              coordinates: { lat: 0, lng: 0 },
+              location: {
+                name: customLocation,
+                address: customLocation,
+                coordinates: { lat: 0, lng: 0 },
+              },
             }
-          : undefined,
-        notes: notes.trim() || undefined,
-      });
+          : {}),
+        ...(notes.trim() && { notes: notes.trim() }),
+      };
+      const proposal = await petChatService.proposePlaydate(matchId, proposalData);
 
       onProposalCreated?.(proposal.proposal);
       Alert.alert('Success', 'Playdate proposal sent!');
@@ -295,7 +317,7 @@ export const PlaydateScheduler: React.FC<PlaydateSchedulerProps> = ({
           >
             {nearbyVenues.map((venue) => (
               <TouchableOpacity
-                key={venue.serviceId}
+                key={venue.venueId}
                 style={styles.venueItem}
                 onPress={() => {
                   setSelectedVenue(venue);
@@ -306,7 +328,7 @@ export const PlaydateScheduler: React.FC<PlaydateSchedulerProps> = ({
                   {venue.name}
                 </Text>
                 <Text style={[styles.venueAddress, { color: theme.colors.onMuted }]}>
-                  {venue.address} • {venue.distance.toFixed(1)}km
+                  {venue.address} • {venue.distance ? `${venue.distance.toFixed(1)}km` : ''}
                 </Text>
               </TouchableOpacity>
             ))}

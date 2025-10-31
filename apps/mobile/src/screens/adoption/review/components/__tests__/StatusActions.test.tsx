@@ -8,7 +8,7 @@ import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { ThemeProvider } from '@mobile/theme';
+import { ThemeProvider } from '@/theme';
 import { StatusActions } from '../StatusActions';
 
 // Mock dependencies

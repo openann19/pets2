@@ -1,39 +1,97 @@
-import type { AuthState } from '@pawfectmatch/core';
+/**
+ * @pawfectmatch/core Mock
+ */
 
-const actualCore = jest.requireActual<typeof import('@pawfectmatch/core')>(
-  '@pawfectmatch/core',
-);
+export const logger = {
+  debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+};
 
-const createDefaultAuthState = (): AuthState => ({
+export const useAuthStore = jest.fn(() => ({
   user: null,
-  accessToken: null,
-  refreshToken: null,
-  isLoading: false,
-  error: null,
   isAuthenticated: false,
-  isOnboarded: false,
-  setUser: jest.fn(),
-  setTokens: jest.fn(),
-  clearTokens: jest.fn(),
+  login: jest.fn(),
   logout: jest.fn(),
-  setIsLoading: jest.fn(),
-  setError: jest.fn(),
-  setIsOnboarded: jest.fn(),
-});
+}));
 
-const mockUseAuthStore = jest.fn(() => createDefaultAuthState());
+export interface UIConfig {
+  tokens: {
+    colors: {
+      primary: string;
+      secondary: string;
+      background: string;
+      surface: string;
+      text: string;
+      textSecondary: string;
+      border: string;
+      error: string;
+      success: string;
+      warning: string;
+    };
+    typography: {
+      fontFamily: string;
+      fontSize: {
+        xs: number;
+        sm: number;
+        md: number;
+        lg: number;
+        xl: number;
+      };
+    };
+    spacing: {
+      xs: number;
+      sm: number;
+      md: number;
+      lg: number;
+      xl: number;
+    };
+  };
+  motion: {
+    reducedMotion: boolean;
+    lowEndDevicePolicy: 'allow' | 'simplify' | 'skip';
+    microInteractions: boolean;
+  };
+}
 
-const resetMockAuthStore = () => {
-  mockUseAuthStore.mockReset();
-  mockUseAuthStore.mockImplementation(() => createDefaultAuthState());
-};
-
-resetMockAuthStore();
-
-module.exports = {
-  __esModule: true,
-  ...actualCore,
-  useAuthStore: mockUseAuthStore,
-  __mockUseAuthStore: mockUseAuthStore,
-  __resetMockAuthStore: resetMockAuthStore,
-};
+export function getDefaultUIConfig(): UIConfig {
+  return {
+    tokens: {
+      colors: {
+        primary: '#007AFF',
+        secondary: '#5856D6',
+        background: '#FFFFFF',
+        surface: '#F2F2F7',
+        text: '#000000',
+        textSecondary: '#8E8E93',
+        border: '#C6C6C8',
+        error: '#FF3B30',
+        success: '#34C759',
+        warning: '#FF9500',
+      },
+      typography: {
+        fontFamily: 'System',
+        fontSize: {
+          xs: 12,
+          sm: 14,
+          md: 16,
+          lg: 18,
+          xl: 20,
+        },
+      },
+      spacing: {
+        xs: 4,
+        sm: 8,
+        md: 16,
+        lg: 24,
+        xl: 32,
+      },
+    },
+    motion: {
+      reducedMotion: false,
+      lowEndDevicePolicy: 'allow',
+      microInteractions: true,
+    },
+  };
+}

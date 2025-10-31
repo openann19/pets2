@@ -67,7 +67,7 @@ export function ExampleScreenWithFullIntegration({}: ExampleScreenProps) {
     updateFilters: _updateFilters,
   } = useTabStatePreservation({
     tabName: 'ExampleScreen',
-    scrollRef,
+    scrollRef: scrollRef as any,
     preserveScroll: true,
     preserveFilters: true,
   });
@@ -134,7 +134,7 @@ export function ExampleScreenWithFullIntegration({}: ExampleScreenProps) {
   }
 
   // Empty state - no data
-  if (!data || data.length === 0) {
+  if (!data || (Array.isArray(data) && data.length === 0)) {
     return (
       <View style={styles.container}>
         <EmptyStates.NoData
@@ -217,7 +217,7 @@ export function SimplifiedScreenExample() {
     );
   }
 
-  if (!data || data.length === 0) {
+  if (!data || (Array.isArray(data) && data.length === 0)) {
     return <EmptyStates.NoData />;
   }
 

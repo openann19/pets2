@@ -181,7 +181,7 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
   const insets = useSafeAreaInsets();
   const reducedMotion = useReduceMotion();
 
-  const styles = StyleSheet.create({
+  const baseStyles = {
     root: {
       paddingTop: 8,
     },
@@ -237,7 +237,12 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
       fontSize: 11,
       marginTop: 2,
     },
-  });
+  } as const;
+
+  const stylesLocal = (StyleSheet && typeof StyleSheet.create === 'function')
+    ? StyleSheet.create(baseStyles as any)
+    : (baseStyles as unknown as ReturnType<typeof StyleSheet.create>);
+  const s = (stylesLocal || (baseStyles as any)) as typeof stylesLocal;
 
   // measure each tab
   const layoutsRef = useRef<Record<string, { x: number; w: number }>>({});
@@ -347,10 +352,12 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
       }
     };
 
+  console.log('ActivePillTabBar: About to return JSX, state.routes length:', state.routes.length);
+
   return (
     <View
       style={[
-        styles.root,
+        s.root,
         {
           paddingBottom: Math.max(insets.bottom, 8),
           backgroundColor: Platform.OS === 'android' ? colors.background : 'transparent',
@@ -361,7 +368,7 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
         intensity={Platform.OS === 'ios' ? 80 : 100}
         tint={dark ? 'dark' : 'light'}
         style={[
-          styles.bar,
+          s.bar,
           {
             borderColor: colors.border,
           },
@@ -370,7 +377,7 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
         {/* active pill */}
         <Animated.View
           style={[
-            styles.pill,
+            s.pill,
             {
               backgroundColor: dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
             },
@@ -445,7 +452,7 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
               testID={options.tabBarTestID}
               onPress={onPress}
               onLongPress={onLongPress}
-              style={styles['tab']}
+              style={s['tab']}
               activeOpacity={0.9}
             >
               <TabItem
@@ -454,7 +461,7 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
                 scale={scale}
                 onPress={onPress}
                 colors={colors}
-                styles={styles}
+                styles={s}
                 badgeCount={badgeCount}
               />
             </TouchableOpacity>

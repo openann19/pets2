@@ -12,8 +12,8 @@ import { ReactionBarMagnetic } from '../chat';
 import { ActivityBanner } from './ActivityBanner';
 import { CommentsSection } from './CommentsSection';
 import { PostActions } from './PostActions';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { CommunityPost } from '../../services/communityAPI';
 import { formatTimeAgo } from '../../utils/timeAgo';
 

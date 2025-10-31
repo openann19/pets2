@@ -41,10 +41,15 @@ const TYPOGRAPHY_DATA = {
 // Lazy load dimensions to avoid issues in test environment
 const getScreenDimensions = () => {
   try {
-    return Dimensions.get('window');
+    const dims = Dimensions.get('window');
+    if (dims && typeof dims.width === 'number' && typeof dims.height === 'number') {
+      return dims;
+    }
+    // Fallback if Dimensions.get returns invalid data
+    return { width: 375, height: 812, scale: 2, fontScale: 1 };
   } catch (_error) {
     // Fallback for test environment
-    return { width: 375, height: 812 };
+    return { width: 375, height: 812, scale: 2, fontScale: 1 };
   }
 };
 

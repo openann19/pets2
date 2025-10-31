@@ -1,4 +1,11 @@
-export const request = jest.fn();
+// Type-safe request function mock
+export const request = jest.fn<
+  Promise<{ data?: unknown; error?: unknown }>,
+  [string, { method?: string; body?: unknown; headers?: Record<string, string> }?]
+>();
+
+// Default implementation
+request.mockResolvedValue({ data: {} });
 
 // Subscription API mocks
 const subscriptionAPIMock = {
@@ -95,22 +102,42 @@ const videoCallAPIMock = {
   stopRecording: jest.fn(),
 };
 
+// Moderation API mocks
+export const moderationAPI = {
+  getStats: jest.fn<Promise<{ pendingReports: number; activeModerators: number; resolutionRate: number }>, []>()
+    .mockResolvedValue({ pendingReports: 0, activeModerators: 0, resolutionRate: 0 }),
+  getQueue: jest.fn(),
+  approve: jest.fn(),
+  reject: jest.fn(),
+};
+
+// Type-safe API method mocks
+const createApiMethodMock = <TResponse = unknown>() =>
+  jest.fn<Promise<{ data: TResponse }>, [string, Record<string, unknown>?]>().mockResolvedValue({ data: {} as TResponse });
+
 export const api = {
   request,
-  get: jest.fn(),
-  post: jest.fn(),
-  put: jest.fn(),
-  patch: jest.fn(),
-  delete: jest.fn(),
-  presignPhoto: jest.fn(),
-  presignVoice: jest.fn(),
+  get: createApiMethodMock(),
+  post: createApiMethodMock(),
+  put: createApiMethodMock(),
+  patch: createApiMethodMock(),
+  delete: createApiMethodMock(),
+  presignPhoto: jest.fn<Promise<{ url: string; fields: Record<string, string> }>, [string]>()
+    .mockResolvedValue({ url: 'https://example.com/photo.jpg', fields: {} }),
+  presignVoice: jest.fn<Promise<{ url: string; fields: Record<string, string> }>, [string]>()
+    .mockResolvedValue({ url: 'https://example.com/voice.mp3', fields: {} }),
   // Auth methods
-  login: jest.fn(),
-  register: jest.fn(),
-  logout: jest.fn(),
-  forgotPassword: jest.fn(),
-  resetPassword: jest.fn(),
-  getCurrentUser: jest.fn(),
+  login: jest.fn<Promise<{ data: { user: unknown; token: string } }>, [string, string]>()
+    .mockResolvedValue({ data: { user: {}, token: 'mock-token' } }),
+  register: jest.fn<Promise<{ data: { user: unknown; token: string } }>, [Record<string, unknown>]>()
+    .mockResolvedValue({ data: { user: {}, token: 'mock-token' } }),
+  logout: jest.fn<Promise<void>, []>().mockResolvedValue(undefined),
+  forgotPassword: jest.fn<Promise<{ success: boolean }>, [string]>()
+    .mockResolvedValue({ success: true }),
+  resetPassword: jest.fn<Promise<{ success: boolean }>, [string, string]>()
+    .mockResolvedValue({ success: true }),
+  getCurrentUser: jest.fn<Promise<{ data: unknown }>, []>()
+    .mockResolvedValue({ data: {} }),
   // Service APIs
   subscription: subscriptionAPIMock,
   matching: matchingAPIMock,

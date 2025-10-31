@@ -24,7 +24,7 @@ import { useErrorHandling } from '../hooks/useErrorHandling';
 import { usePrefetching } from '../hooks/optimization/usePrefetching';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 import { useHeaderWithCounts } from '../hooks/useHeaderWithCounts';
 import { useScrollYForHeader } from '../hooks/useScrollYForHeader';

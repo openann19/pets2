@@ -43,15 +43,21 @@ describe('AI API Service', () => {
         breed: 'Golden Retriever',
       });
 
-      expect(apiClient.post).toHaveBeenCalledWith('/ai/generate-bio', {
-        petName: 'Buddy',
-        keywords: ['friendly', 'energetic', 'playful'],
-        tone: 'playful',
-        length: 'medium',
-        petType: 'dog',
-        age: 3,
-        breed: 'Golden Retriever',
-      });
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/ai/generate-bio',
+        {
+          petName: 'Buddy',
+          keywords: ['friendly', 'energetic', 'playful'],
+          tone: 'playful',
+          length: 'medium',
+          petType: 'dog',
+          age: 3,
+          breed: 'Golden Retriever',
+        },
+        expect.objectContaining({
+          headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
+        }),
+      );
 
       expect(result).toEqual(mockResponse.data);
     });
@@ -128,9 +134,15 @@ describe('AI API Service', () => {
 
       const result = await aiAPI.analyzePhotos(['photo1-uri', 'photo2-uri']);
 
-      expect(apiClient.post).toHaveBeenCalledWith('/ai/analyze-photos', {
-        photos: ['photo1-uri', 'photo2-uri'],
-      });
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/ai/analyze-photos',
+        {
+          photos: ['photo1-uri', 'photo2-uri'],
+        },
+        expect.objectContaining({
+          headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
+        }),
+      );
 
       expect(result).toEqual(mockResponse.data);
     });
@@ -175,10 +187,16 @@ describe('AI API Service', () => {
         pet2Id: 'pet2-id',
       });
 
-      expect(apiClient.post).toHaveBeenCalledWith('/ai/enhanced-compatibility', {
-        pet1Id: 'pet1-id',
-        pet2Id: 'pet2-id',
-      });
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/ai/enhanced-compatibility',
+        {
+          pet1Id: 'pet1-id',
+          pet2Id: 'pet2-id',
+        },
+        expect.objectContaining({
+          headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
+        }),
+      );
 
       expect(result).toEqual(mockResponse.data);
     });
@@ -221,10 +239,16 @@ describe('AI API Service', () => {
         pet2Id: 'pet2-id',
       });
 
-      expect(apiClient.post).toHaveBeenCalledWith('/ai/compatibility', {
-        pet1Id: 'pet1-id',
-        pet2Id: 'pet2-id',
-      });
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/ai/compatibility',
+        {
+          pet1Id: 'pet1-id',
+          pet2Id: 'pet2-id',
+        },
+        expect.objectContaining({
+          headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
+        }),
+      );
 
       expect(result).toEqual(mockResponse.data);
     });
@@ -293,7 +317,7 @@ describe('AI API Service', () => {
           age: 3,
           breed: 'Golden Retriever',
         }),
-      ).rejects.toThrow('Failed to generate bio');
+      ).rejects.toThrow('Request to /ai/generate-bio failed: No data returned');
     });
   });
 
@@ -345,10 +369,16 @@ describe('AI API Service', () => {
         // Missing optional parameters
       });
 
-      expect(apiClient.post).toHaveBeenCalledWith('/ai/generate-bio', {
-        petName: 'Buddy',
-        keywords: ['friendly'],
-      });
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/ai/generate-bio',
+        {
+          petName: 'Buddy',
+          keywords: ['friendly'],
+        },
+        expect.objectContaining({
+          headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
+        }),
+      );
 
       expect(result).toEqual(mockResponse.data);
     });

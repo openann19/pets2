@@ -4,10 +4,20 @@
  */
 
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { render, waitFor } from '@testing-library/react-native';
+import { waitFor } from '@testing-library/react-native';
+import { render } from '@/test-utils';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Linking, View, Text } from 'react-native';
+import { View, Text } from 'react-native';
+// Import Linking from the mock directly
+const RN = require('react-native');
+const Linking = RN.Linking || {
+  openURL: jest.fn(() => Promise.resolve()),
+  getInitialURL: jest.fn(() => Promise.resolve(null)),
+  canOpenURL: jest.fn(() => Promise.resolve(true)),
+  addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+  removeEventListener: jest.fn(),
+};
 import { linking } from '../linking';
 import { parseDeepLink } from '../../utils/deepLinking';
 
@@ -74,26 +84,40 @@ const TestNavigator = () => {
   );
 };
 
-jest.mock('react-native', () => {
-  const actual = jest.requireActual('react-native') as Record<string, unknown>;
-  return {
-    ...actual,
-    Linking: {
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      getInitialURL: jest.fn(),
-      openURL: jest.fn(),
-      canOpenURL: jest.fn(() => Promise.resolve(true)) as jest.MockedFunction<
-        typeof Linking.canOpenURL
-      >,
-    },
-  };
-});
-
 describe('Deep Link Integration Tests', () => {
+  let urlListeners: Array<(event: { url: string }) => void> = [];
+
   beforeEach(() => {
     jest.clearAllMocks();
+    urlListeners = [];
+    // Ensure Linking methods are properly mocked with listener storage
+    if (Linking) {
+      Linking.openURL = jest.fn(() => Promise.resolve()) as jest.MockedFunction<typeof Linking.openURL>;
+      Linking.getInitialURL = jest.fn(() => Promise.resolve(null)) as jest.MockedFunction<typeof Linking.getInitialURL>;
+      Linking.canOpenURL = jest.fn(() => Promise.resolve(true)) as jest.MockedFunction<typeof Linking.canOpenURL>;
+      Linking.addEventListener = jest.fn((event: string, listener: (event: { url: string }) => void) => {
+        if (event === 'url') {
+          urlListeners.push(listener);
+        }
+        return { remove: jest.fn(() => {
+          const index = urlListeners.indexOf(listener);
+          if (index > -1) urlListeners.splice(index, 1);
+        }) };
+      }) as jest.MockedFunction<typeof Linking.addEventListener>;
+      Linking.removeEventListener = jest.fn() as jest.MockedFunction<typeof Linking.removeEventListener>;
+    }
   });
+
+  // Helper to trigger deep link events
+  const triggerDeepLink = (url: string) => {
+    urlListeners.forEach(listener => {
+      try {
+        listener({ url });
+      } catch (e) {
+        // Ignore errors in test
+      }
+    });
+  };
 
   describe('Chat Deep Links', () => {
     it('should navigate to chat screen with correct matchId', async () => {
@@ -106,12 +130,12 @@ describe('Deep Link Integration Tests', () => {
       expect(parsed.type).toBe('chat');
       expect(parsed.params).toEqual({ matchId: 'match123' });
 
-      // Trigger navigation via Linking
-      await Linking.openURL(url);
+      // Trigger navigation via deep link event
+      triggerDeepLink(url);
 
       await waitFor(() => {
         expect(getByTestId('chat-screen')).toBeTruthy();
-      });
+      }, { timeout: 3000 });
     });
 
     it('should handle chat deep link with query params', async () => {
@@ -123,11 +147,11 @@ describe('Deep Link Integration Tests', () => {
       expect(parsed.type).toBe('chat');
       expect(parsed.params['matchId']).toBe('match456');
 
-      await Linking.openURL(url);
+      triggerDeepLink(url);
 
       await waitFor(() => {
         expect(getByTestId('chat-screen')).toBeTruthy();
-      });
+      }, { timeout: 3000 });
     });
   });
 
@@ -141,11 +165,11 @@ describe('Deep Link Integration Tests', () => {
       expect(parsed.type).toBe('match');
       expect(parsed.params).toEqual({ matchId: 'match789' });
 
-      await Linking.openURL(url);
+      triggerDeepLink(url);
 
       await waitFor(() => {
         expect(getByTestId('match-screen')).toBeTruthy();
-      });
+      }, { timeout: 3000 });
     });
   });
 
@@ -158,11 +182,11 @@ describe('Deep Link Integration Tests', () => {
 
       expect(parsed.type).toBe('premium');
 
-      await Linking.openURL(url);
+      triggerDeepLink(url);
 
       await waitFor(() => {
         expect(getByTestId('premium-screen')).toBeTruthy();
-      });
+      }, { timeout: 3000 });
     });
 
     it('should handle premium success deep link with sessionId', async () => {
@@ -174,11 +198,11 @@ describe('Deep Link Integration Tests', () => {
       expect(parsed.type).toBe('subscription_success');
       expect(parsed.params).toEqual({ session_id: 'cs_123456' });
 
-      await Linking.openURL(url);
+      triggerDeepLink(url);
 
       await waitFor(() => {
         expect(getByTestId('premium-screen')).toBeTruthy();
-      });
+      }, { timeout: 3000 });
     });
   });
 
@@ -191,11 +215,11 @@ describe('Deep Link Integration Tests', () => {
 
       expect(parsed.type).toBe('settings');
 
-      await Linking.openURL(url);
+      triggerDeepLink(url);
 
       await waitFor(() => {
         expect(getByTestId('settings-screen')).toBeTruthy();
-      });
+      }, { timeout: 3000 });
     });
   });
 
@@ -208,12 +232,12 @@ describe('Deep Link Integration Tests', () => {
 
       expect(parsed.type).toBe(null);
 
-      await Linking.openURL(url);
+      triggerDeepLink(url);
 
-      // Should remain on home screen
+      // Should remain on home screen (invalid links shouldn't navigate)
       await waitFor(() => {
         expect(getByTestId('home-screen')).toBeTruthy();
-      });
+      }, { timeout: 3000 });
     });
 
     it('should handle unsupported URL scheme', async () => {
@@ -250,12 +274,12 @@ describe('Deep Link Integration Tests', () => {
       const { getByTestId } = render(<TestNavigator />);
 
       const url = 'pawfectmatch://premium';
-      await Linking.openURL(url);
+      triggerDeepLink(url);
 
       // Should show premium screen (guard happens in screen component)
       await waitFor(() => {
         expect(getByTestId('premium-screen')).toBeTruthy();
-      });
+      }, { timeout: 3000 });
     });
   });
 
@@ -270,11 +294,11 @@ describe('Deep Link Integration Tests', () => {
       expect(parsed.type).toBe('chat');
 
       // Routing state
-      await Linking.openURL(url);
+      triggerDeepLink(url);
 
       await waitFor(() => {
         expect(getByTestId('chat-screen')).toBeTruthy();
-      });
+      }, { timeout: 3000 });
     });
 
     it('should handle error state on invalid link', async () => {
@@ -298,23 +322,23 @@ describe('Deep Link Integration Tests', () => {
       const { getByTestId } = render(<TestNavigator />);
 
       const url = 'pawfectmatch://chat/match456';
-      await Linking.openURL(url);
+      triggerDeepLink(url);
 
       await waitFor(() => {
         const chatScreen = getByTestId('chat-screen');
         expect(chatScreen.props.children).toContain('match456');
-      });
+      }, { timeout: 3000 });
     });
 
     it('should handle multiple query params', async () => {
       const { getByTestId } = render(<TestNavigator />);
 
       const url = 'pawfectmatch://chat/match789?messageId=msg123&showKeyboard=true';
-      await Linking.openURL(url);
+      triggerDeepLink(url);
 
       await waitFor(() => {
         expect(getByTestId('chat-screen')).toBeTruthy();
-      });
+      }, { timeout: 3000 });
     });
   });
 });

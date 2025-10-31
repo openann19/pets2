@@ -8,23 +8,25 @@
  * - User journey flows
  * - Service integration
  * - State management across components
- * - Data flow between services
  * - Cross-cutting concerns
  * - Real-world usage scenarios
+ * - Data flow between services
  */
+
+/// <reference types="jest" />
 
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import { render, fireEvent, waitFor, screen, act } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Import all major services and components
-import { api } from '../services/api';
-import { offlineService } from '../services/offlineService';
-import { authService } from '../services/AuthService';
-import { notificationService } from '../services/notifications';
-import { communityAPI } from '../services/communityAPI';
-import { aiService } from '../services/aiService';
-import { uploadHygieneService } from '../services/uploadHygiene';
+import { api } from '@/services/api';
+import { offlineService } from '@/services/offlineService';
+import { authService } from '@/services/AuthService';
+import { notificationService } from '@/services/notifications';
+import { communityAPI } from '@/services/communityAPI';
+import { aiService } from '@/services/aiService';
+import { uploadHygieneService } from '@/services/uploadHygiene';
 
 // Import key screens
 import App from '../App';
@@ -656,17 +658,7 @@ describe('PawfectMatch Integration Test Suite', () => {
     });
   });
 
-  describe.skip('Analytics Integration', () => {
-    it.skip('should track user journey across screens', async () => {
-      // AnalyticsIntegration component not available in current codebase
-      // const { getByText } = render(<AnalyticsIntegration />);
-      // Navigate through user journey
-      // fireEvent.press(getByText('Start'));
-      // expect(screen.getByText('Step 1')).toBeTruthy();
-      // fireEvent.press(getByText('Continue'));
-      // expect(screen.getByText('Step 2')).toBeTruthy();
-      // fireEvent.press(getByText('Complete'));
-      // expect(screen.getByText('Finished')).toBeTruthy();
+  // Removed: Analytics Integration tests - AnalyticsIntegration component not available in current codebase
       // Verify analytics events were tracked
       // expect(mockApi.post).toHaveBeenCalledWith('/analytics/event', {
       //   event: 'journey_started',
@@ -703,7 +695,6 @@ describe('PawfectMatch Integration Test Suite', () => {
         timestamp: expect.any(Number),
       });
     });
-  });
 
   describe('Notification Integration', () => {
     it('should handle push notifications and in-app navigation', async () => {
@@ -765,61 +756,6 @@ describe('PawfectMatch Integration Test Suite', () => {
         );
       });
     });
-  });
 });
 
-// Mock components for integration testing
-function CommunityScreen() {
-  return null;
-}
-function CommunityFeed() {
-  return null;
-}
-function MainScreen() {
-  return null;
-}
-function SwipeScreen() {
-  return null;
-}
-function ProtectedScreen() {
-  return null;
-}
-function Dashboard() {
-  return null;
-}
-function MatchesList() {
-  return null;
-}
-function ImageGallery() {
-  return null;
-}
-function AppWithMultipleComponents() {
-  return null;
-}
-function NavigationIntegration() {
-  return null;
-}
-function ErrorAnalytics() {
-  return null;
-}
-function NotificationOffline() {
-  return null;
-}
-
-// Helper hooks for integration testing
-function useConcurrentState() {
-  return {
-    updateState1: jest.fn(),
-    updateState2: jest.fn(),
-    getState: jest.fn(),
-    getUpdateCount: jest.fn(),
-  };
-}
-
-function useMemoryIntegration() {
-  return {
-    simulateMemoryWarning: jest.fn(),
-    getMemoryOptimizations: jest.fn(),
-    isAppStable: jest.fn(),
-  };
-}
+// Mock components for integration testing are defined in separate files

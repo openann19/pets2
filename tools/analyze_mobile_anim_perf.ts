@@ -73,7 +73,7 @@ function usesReanimated2(content: string): boolean {
 }
 
 // Check if animation runs on UI thread
-function isUIThread(content: string, file: string): boolean {
+function isUIThread(content: string, file: string): 'UI' | 'JS' {
   if (usesReanimated2(content)) return 'UI';
   // Animated API with useNativeDriver runs on native thread
   if (/Animated\.(timing|spring|decay)\([^)]*useNativeDriver:\s*true/.test(content)) return 'UI';
@@ -191,7 +191,7 @@ function analyze(): Finding[] {
       evidence: `${lines[0]?.split(':')[1] || 'unknown'}:${lines[lines.length - 1]?.split(':')[1] || 'unknown'}`,
       perf_hints: perfSmells,
       animation_thread: animationThread,
-      notes: animationThread === 'JS' ? 'Consider migrating to Reanimated 2 for 60fps' : undefined
+      ...(animationThread === 'JS' ? { notes: 'Consider migrating to Reanimated 2 for 60fps' } : {})
     });
   });
   

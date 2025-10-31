@@ -2,7 +2,7 @@
  * useWelcomeScreen Hook
  * Manages Welcome screen with navigation and theme integration
  */
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useNavigation } from '@react-navigation/native';
 import { getIsDark } from '../../theme/adapters';
 import type { Theme } from '../../theme/types';

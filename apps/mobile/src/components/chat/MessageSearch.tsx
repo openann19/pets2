@@ -6,7 +6,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { matchesAPI } from '../../services/api';
 import type { MobileMessage } from '../../types/message';
 import { toMobileMessage } from '../../types/message';

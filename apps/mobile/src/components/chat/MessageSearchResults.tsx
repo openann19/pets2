@@ -3,7 +3,7 @@
  * Displays search results with highlighting
  */
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import React, { useCallback, useMemo } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

@@ -5,8 +5,7 @@
 
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react-native';
-import { ThemeProvider } from '@mobile/theme';
+import { render, fireEvent, screen } from '@/test-utils/unified-render';
 import { ElitePetListingCard } from '../ElitePetListingCard';
 import type { PetListing } from '@/hooks/screens/useAdoptionManagerScreen';
 
@@ -32,10 +31,6 @@ jest.mock('../../../animation', () => ({
     mx2: { marginHorizontal: 8 },
   },
 }));
-
-const TestWrapper = ({ children }: { children: React.ReactNode }) => (
-  <ThemeProvider scheme="light">{children}</ThemeProvider>
-);
 
 describe('ElitePetListingCard Component Tests', () => {
   const mockPet: PetListing = {
@@ -84,9 +79,8 @@ describe('ElitePetListingCard Component Tests', () => {
   describe('Rendering', () => {
     it('should render pet listing card successfully', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       expect(screen.getByText('Fluffy')).toBeTruthy();
@@ -95,9 +89,8 @@ describe('ElitePetListingCard Component Tests', () => {
 
     it('should render pet name correctly', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       expect(screen.getByText('Fluffy')).toBeTruthy();
@@ -105,9 +98,8 @@ describe('ElitePetListingCard Component Tests', () => {
 
     it('should render breed and age correctly', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       expect(screen.getByText('Persian • 3 years old')).toBeTruthy();
@@ -115,9 +107,8 @@ describe('ElitePetListingCard Component Tests', () => {
 
     it('should render status badge with correct color and icon', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       expect(defaultProps.getStatusColor).toHaveBeenCalledWith('active');
@@ -127,9 +118,8 @@ describe('ElitePetListingCard Component Tests', () => {
 
     it('should render application count', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       expect(screen.getByText('5')).toBeTruthy();
@@ -138,9 +128,8 @@ describe('ElitePetListingCard Component Tests', () => {
 
     it('should render views count', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       expect(screen.getByText('120')).toBeTruthy();
@@ -149,9 +138,8 @@ describe('ElitePetListingCard Component Tests', () => {
 
     it('should render featured indicator', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       expect(screen.getByText('⭐')).toBeTruthy();
@@ -161,9 +149,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should render not featured indicator', () => {
       const notFeaturedPet = { ...mockPet, featured: false };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={notFeaturedPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={notFeaturedPet} />
+        />,
       );
 
       expect(screen.getByText('—')).toBeTruthy();
@@ -174,9 +161,8 @@ describe('ElitePetListingCard Component Tests', () => {
   describe('Status Display', () => {
     it('should display active status correctly', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       expect(defaultProps.getStatusColor).toHaveBeenCalledWith('active');
@@ -186,9 +172,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should display pending status correctly', () => {
       const pendingPet = { ...mockPet, status: 'pending' as const };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={pendingPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={pendingPet} />
+        />,
       );
 
       expect(defaultProps.getStatusColor).toHaveBeenCalledWith('pending');
@@ -198,9 +183,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should display adopted status correctly', () => {
       const adoptedPet = { ...mockPet, status: 'adopted' as const };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={adoptedPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={adoptedPet} />
+        />,
       );
 
       expect(defaultProps.getStatusColor).toHaveBeenCalledWith('adopted');
@@ -210,9 +194,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should display paused status correctly', () => {
       const pausedPet = { ...mockPet, status: 'paused' as const };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={pausedPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={pausedPet} />
+        />,
       );
 
       expect(defaultProps.getStatusColor).toHaveBeenCalledWith('paused');
@@ -223,9 +206,8 @@ describe('ElitePetListingCard Component Tests', () => {
   describe('Action Buttons', () => {
     it('should render View Details button', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       expect(screen.getByText('View Details')).toBeTruthy();
@@ -233,9 +215,8 @@ describe('ElitePetListingCard Component Tests', () => {
 
     it('should render Review button with application count', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       expect(screen.getByText('Review (5)')).toBeTruthy();
@@ -243,9 +224,8 @@ describe('ElitePetListingCard Component Tests', () => {
 
     it('should call onViewDetails when View Details is pressed', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       const viewDetailsButton = screen.getByText('View Details');
@@ -257,9 +237,8 @@ describe('ElitePetListingCard Component Tests', () => {
 
     it('should call onReviewApps when Review button is pressed', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       const reviewButton = screen.getByText('Review (5)');
@@ -271,9 +250,8 @@ describe('ElitePetListingCard Component Tests', () => {
 
     it('should call onChangeStatus when status badge is pressed', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       const statusBadge = screen.getByTestID('elite-status-badge-pet-1');
@@ -288,9 +266,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should handle zero applications', () => {
       const zeroAppsPet = { ...mockPet, applications: 0 };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={zeroAppsPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={zeroAppsPet} />
+        />,
       );
 
       expect(screen.getByText('0')).toBeTruthy();
@@ -300,9 +277,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should handle zero views', () => {
       const zeroViewsPet = { ...mockPet, views: 0 };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={zeroViewsPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={zeroViewsPet} />
+        />,
       );
 
       expect(screen.getByText('0')).toBeTruthy();
@@ -311,9 +287,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should handle very large application counts', () => {
       const manyAppsPet = { ...mockPet, applications: 999 };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={manyAppsPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={manyAppsPet} />
+        />,
       );
 
       expect(screen.getByText('999')).toBeTruthy();
@@ -323,9 +298,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should handle very large view counts', () => {
       const manyViewsPet = { ...mockPet, views: 99999 };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={manyViewsPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={manyViewsPet} />
+        />,
       );
 
       expect(screen.getByText('99999')).toBeTruthy();
@@ -334,9 +308,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should handle long pet names', () => {
       const longNamePet = { ...mockPet, name: 'A'.repeat(100) };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={longNamePet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={longNamePet} />
+        />,
       );
 
       expect(screen.getByText('A'.repeat(100))).toBeTruthy();
@@ -345,9 +318,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should handle long breed names', () => {
       const longBreedPet = { ...mockPet, breed: 'A'.repeat(50) };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={longBreedPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={longBreedPet} />
+        />,
       );
 
       expect(screen.getByText(new RegExp('A'.repeat(50)))).toBeTruthy();
@@ -356,9 +328,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should handle age zero', () => {
       const zeroAgePet = { ...mockPet, age: 0 };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={zeroAgePet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={zeroAgePet} />
+        />,
       );
 
       expect(screen.getByText(/0 years old/)).toBeTruthy();
@@ -367,9 +338,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should handle very old pets', () => {
       const oldPet = { ...mockPet, age: 20 };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={oldPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={oldPet} />
+        />,
       );
 
       expect(screen.getByText(/20 years old/)).toBeTruthy();
@@ -378,9 +348,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should handle empty photos array', () => {
       const noPhotosPet = { ...mockPet, photos: [] };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={noPhotosPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={noPhotosPet} />
+        />,
       );
 
       // Should render without errors
@@ -390,9 +359,8 @@ describe('ElitePetListingCard Component Tests', () => {
     it('should handle many photos', () => {
       const manyPhotosPet = { ...mockPet, photos: Array.from({ length: 50 }, (_, i) => `photo${i}.jpg`) };
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} pet={manyPhotosPet} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} pet={manyPhotosPet} />
+        />,
       );
 
       // Should render without errors
@@ -403,9 +371,8 @@ describe('ElitePetListingCard Component Tests', () => {
   describe('Accessibility', () => {
     it('should have proper accessibility label on status badge', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       const statusBadge = screen.getByTestID('elite-status-badge-pet-1');
@@ -414,9 +381,8 @@ describe('ElitePetListingCard Component Tests', () => {
 
     it('should have proper accessibility role on status badge', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       const statusBadge = screen.getByTestID('elite-status-badge-pet-1');
@@ -441,10 +407,9 @@ describe('ElitePetListingCard Component Tests', () => {
       };
 
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
+        <ElitePetListingCard {...defaultProps} />
           <ElitePetListingCard {...defaultProps} pet={pet2} />
-        </TestWrapper>,
+        />,
       );
 
       expect(screen.getByText('Fluffy')).toBeTruthy();
@@ -455,9 +420,8 @@ describe('ElitePetListingCard Component Tests', () => {
   describe('Theme Integration', () => {
     it('should use theme colors correctly', () => {
       render(
-        <TestWrapper>
-          <ElitePetListingCard {...defaultProps} />
-        </TestWrapper>,
+        <ElitePetListingCard {...defaultProps} />
+        />,
       );
 
       // Theme is used via useTheme hook in component

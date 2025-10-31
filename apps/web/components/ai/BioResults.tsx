@@ -6,7 +6,7 @@
 
 import React, { useState } from 'react';
 import { GeneratedBio } from '../../hooks/useWebAIBio';
-import { Button } from '../../components/UI/Button';
+import { Button } from '@/components/UI/Button';
 import { copyToClipboard } from '../../lib/utils';
 
 interface BioResultsProps {

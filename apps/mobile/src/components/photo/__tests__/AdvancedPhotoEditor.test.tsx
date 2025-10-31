@@ -16,6 +16,90 @@ jest.mock('@expo/vector-icons', () => ({
   Ionicons: ({ name }: any) => <test-element name={name} />,
 }));
 
+// Mock theme hook
+jest.mock('@/theme', () => {
+  const actual = jest.requireActual('@/theme');
+  return {
+    ...actual,
+    useTheme: jest.fn(() => ({
+      scheme: 'light' as const,
+      isDark: false,
+      colors: {
+        bg: '#FFFFFF',
+        surface: '#F5F5F5',
+        onSurface: '#000000',
+        onMuted: '#666666',
+        primary: '#007AFF',
+        border: '#E0E0E0',
+      },
+      spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, '2xl': 48 },
+      radii: { none: 0, xs: 2, sm: 4, md: 8, lg: 12, xl: 16 },
+      palette: { gradients: {} as any, neutral: {} as any, brand: {} as any },
+      shadows: {} as any,
+      motion: {} as any,
+    })),
+  };
+});
+
+// Mock photo hooks
+jest.mock('../../../hooks/photo', () => ({
+  usePhotoPinchZoom: jest.fn(() => ({
+    animatedStyle: {},
+    gesture: {},
+  })),
+  usePhotoCompare: jest.fn(() => ({
+    comparing: false,
+    originalOpacity: 1,
+    editedOpacity: 1,
+    onCompareIn: jest.fn(),
+    onCompareOut: jest.fn(),
+  })),
+  usePhotoFilters: jest.fn(() => ({
+    applyPreset: jest.fn(),
+  })),
+  useUltraExport: jest.fn(() => ({
+    isExporting: false,
+    progress: 0,
+    variants: [],
+    exportVariants: jest.fn(),
+    saveAll: jest.fn(),
+  })),
+}));
+
+// Mock photo editor state hook
+jest.mock('../hooks/usePhotoEditorState', () => ({
+  usePhotoEditorState: jest.fn(() => ({
+    activeTab: 'adjust',
+    setActiveTab: jest.fn(),
+    showSplit: false,
+    setShowSplit: jest.fn(),
+    showGrid: false,
+    setShowGrid: jest.fn(),
+    showGuides: false,
+    setShowGuides: jest.fn(),
+    showUltraModal: false,
+    setShowUltraModal: jest.fn(),
+    cropperRef: { current: null },
+    handleAutoCrop: jest.fn(),
+    handleSuggestionApply: jest.fn(),
+  })),
+}));
+
+// Mock photo editor components
+jest.mock('../components', () => ({
+  PhotoEditorPreview: ({ children }: any) => children,
+  PhotoEditorTabs: ({ activeTab, onTabChange }: any) => null,
+  PhotoAdjustmentPanel: () => null,
+  PhotoFiltersPanel: () => null,
+  PhotoCropPanel: () => null,
+  UltraExportModal: () => null,
+}));
+
+// Mock BeforeAfterSlider
+jest.mock('../BeforeAfterSlider', () => ({
+  BeforeAfterSlider: () => null,
+}));
+
 const mockUsePhotoEditor = usePhotoEditor as jest.MockedFunction<typeof usePhotoEditor>;
 
 describe('AdvancedPhotoEditor', () => {

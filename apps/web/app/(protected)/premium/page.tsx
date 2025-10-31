@@ -6,8 +6,8 @@
 'use client';
 
 import React from 'react';
-import { ScreenShell } from '@/src/components/layout/ScreenShell';
-import { usePremiumScreen } from '@/src/hooks/screens/usePremiumScreen';
+import { ScreenShell } from '@/components/layout/ScreenShell';
+import { usePremiumScreen } from '@/hooks/screens/usePremiumScreen';
 import { useTranslation } from 'react-i18next';
 import { XMarkIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';

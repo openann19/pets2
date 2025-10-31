@@ -5,14 +5,21 @@
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { verificationService } from '../verificationService';
 
-// Mock the API service
+// Mock dependencies
 jest.mock('../api', () => ({
   request: jest.fn(),
 }));
+jest.mock('../upload/index', () => ({
+  uploadAdapter: {
+    uploadGeneric: jest.fn(),
+  },
+}));
 
 import { request } from '../api';
+import { uploadAdapter } from '../upload/index';
 
 const mockRequest = request as jest.MockedFunction<typeof request>;
+const mockUploadGeneric = uploadAdapter.uploadGeneric as jest.MockedFunction<any>;
 
 describe('VerificationService - Core Tests', () => {
   beforeEach(() => {
@@ -129,14 +136,28 @@ describe('VerificationService - Core Tests', () => {
 
   describe('uploadDocument', () => {
     it('should upload document successfully', async () => {
-      const mockResponse = { url: 'uploaded-doc-url' };
+      const mockUploadResult = { url: 'uploaded-doc-url' };
+      const mockResponse = { url: 'registered-doc-url' };
 
+      mockUploadGeneric.mockResolvedValueOnce(mockUploadResult);
       mockRequest.mockResolvedValueOnce(mockResponse);
 
       const result = await verificationService.uploadDocument('file://document.jpg', 'document');
 
-      expect(result).toBe('uploaded-doc-url');
-      expect(mockRequest).toHaveBeenCalledWith('/verification/upload', expect.any(Object));
+      expect(result).toBe('registered-doc-url');
+      expect(mockUploadGeneric).toHaveBeenCalledWith({
+        uri: 'file://document.jpg',
+        name: 'document_document.jpg',
+        contentType: 'image/jpeg',
+        extraFields: { documentType: 'document' },
+      });
+      expect(mockRequest).toHaveBeenCalledWith('/verification/register-upload', {
+        method: 'POST',
+        body: {
+          url: 'uploaded-doc-url',
+          documentType: 'document',
+        },
+      });
     });
 
     it('should handle empty file uploads', async () => {

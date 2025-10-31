@@ -24,19 +24,22 @@ const jestFn = (typeof jest !== 'undefined' && jest.fn) ? jest.fn : function moc
 // Return proper React components that React Testing Library can render
 const mockComponent = (name) => {
   const Component = (props, ref) => {
-    // Return a simple div-like element for testing
-    // React Testing Library will handle rendering
-    return React.createElement('div', {
-      ...props,
-      ref,
-      testID: props.testID || name,
-      'data-testid': props.testID || name,
-      'data-component': name,
-      // Include accessibility props for React Testing Library
-      'aria-label': props.accessibilityLabel,
-      'aria-role': props.accessibilityRole,
-      role: props.accessibilityRole,
-    }, props.children);
+    // Return a React Native-like host element for react-test-renderer
+    return React.createElement(
+      name,
+      {
+        ...props,
+        ref,
+        testID: props.testID || name,
+        'data-testid': props.testID || name,
+        'data-component': name,
+        // Accessibility props (no-op for tests)
+        accessibilityLabel: props.accessibilityLabel,
+        accessibilityRole: props.accessibilityRole,
+        role: props.accessibilityRole,
+      },
+      props.children
+    );
   };
   Component.displayName = name;
   Component.propTypes = undefined;
@@ -196,14 +199,14 @@ const RN = {
     isTesting: true,
   },
   Dimensions: {
-    get: jestFn((dimension) => {
+    get: function get(dimension) {
       // Support both 'window' and 'screen' dimensions
       const defaultDimensions = { width: 375, height: 812, scale: 2, fontScale: 1 };
       if (dimension === 'window' || dimension === 'screen') {
         return defaultDimensions;
       }
       return defaultDimensions;
-    }),
+    },
     addEventListener: jestFn(() => ({ remove: jestFn() })),
     removeEventListener: jestFn(),
   },
@@ -231,15 +234,35 @@ const RN = {
     Text: mockTextComponent('Animated.Text'),
     Image: mockComponent('Animated.Image'),
     ScrollView: mockComponent('Animated.ScrollView'),
-    Value: jestFn(() => ({
-      setValue: jestFn(),
-      interpolate: jestFn(() => ({
-        __getValue: jestFn(() => 0),
-      })),
-      addListener: jestFn(() => ({ remove: jestFn() })),
-      removeListener: jestFn(),
-      removeAllListeners: jestFn(),
-    })),
+    Value: class AnimatedValue {
+      constructor(value) {
+        this._value = value;
+        this.setValue = jestFn((newValue) => {
+          this._value = newValue;
+        });
+        this.interpolate = jestFn(() => this);
+        this.addListener = jestFn(() => ({ remove: jestFn() }));
+        this.removeListener = jestFn();
+        this.removeAllListeners = jestFn();
+        this.__getValue = jestFn(() => this._value);
+      }
+    },
+    ValueXY: class AnimatedValueXY {
+      constructor(value) {
+        const defaultValue = value || { x: 0, y: 0 };
+        this.x = new module.exports.Animated.Value(typeof defaultValue.x === 'number' ? defaultValue.x : 0);
+        this.y = new module.exports.Animated.Value(typeof defaultValue.y === 'number' ? defaultValue.y : 0);
+        this.setValue = jestFn();
+        this.setOffset = jestFn();
+        this.flattenOffset = jestFn();
+        this.extractOffset = jestFn();
+        this.getLayout = jestFn(() => ({ left: this.x, top: this.y }));
+        this.getTranslateTransform = jestFn(() => [
+          { translateX: this.x },
+          { translateY: this.y },
+        ]);
+      }
+    },
     timing: jestFn(() => ({
       start: jestFn((callback) => callback && callback()),
     })),
@@ -255,6 +278,11 @@ const RN = {
     delay: jestFn(() => ({
       start: jestFn((callback) => callback && callback()),
     })),
+    loop: jestFn(() => ({
+      start: jestFn((callback) => callback && callback()),
+    })),
+    event: jestFn(() => jestFn()),
+    createAnimatedComponent: (Component) => Component,
   },
   PanResponder: {
     create: jestFn(() => ({
@@ -328,6 +356,49 @@ const RN = {
     multiSet: jestFn(() => Promise.resolve(null)),
     multiRemove: jestFn(() => Promise.resolve(null)),
     clear: jestFn(() => Promise.resolve(null)),
+  },
+  StatusBar: {
+    setBarStyle: jestFn(),
+    setHidden: jestFn(),
+    setBackgroundColor: jestFn(),
+    setTranslucent: jestFn(),
+    setNetworkActivityIndicatorVisible: jestFn(),
+  },
+  InteractionManager: {
+    runAfterInteractions: jestFn((callback) => {
+      if (typeof callback === 'function') {
+        callback();
+      }
+      return { then: jestFn() };
+    }),
+    createInteractionHandle: jestFn(() => 1),
+    clearInteractionHandle: jestFn(),
+    setDeadline: jestFn(),
+  },
+  FileSystem: {
+    FileSystemUploadType: {
+      BINARY_CONTENT: 'BINARY_CONTENT',
+      MULTIPART: 'MULTIPART',
+    },
+    createUploadTask: jestFn(() => ({
+      uploadAsync: jestFn(() => Promise.resolve({ status: 200, body: '{"key": "test-key"}' })),
+      cancelAsync: jestFn(),
+      pauseAsync: jestFn(),
+      resumeAsync: jestFn(),
+    })),
+    uploadAsync: jestFn(() => Promise.resolve({ status: 200, body: '{"key": "test-key"}' })),
+    downloadAsync: jestFn(() => Promise.resolve({ status: 200, uri: 'file://test' })),
+    getInfoAsync: jestFn(() => Promise.resolve({ exists: true, size: 1000, uri: 'file://test' })),
+    readAsStringAsync: jestFn(() => Promise.resolve('test content')),
+    writeAsStringAsync: jestFn(() => Promise.resolve()),
+    deleteAsync: jestFn(() => Promise.resolve()),
+    moveAsync: jestFn(() => Promise.resolve()),
+    copyAsync: jestFn(() => Promise.resolve()),
+    makeDirectoryAsync: jestFn(() => Promise.resolve()),
+    readDirectoryAsync: jestFn(() => Promise.resolve(['file1.jpg', 'file2.png'])),
+    getContentUriAsync: jestFn(() => Promise.resolve('content://test')),
+    getFreeDiskStorageAsync: jestFn(() => Promise.resolve(1000000)),
+    getTotalDiskCapacityAsync: jestFn(() => Promise.resolve(10000000)),
   },
 };
 

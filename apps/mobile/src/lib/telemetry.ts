@@ -189,7 +189,7 @@ class TelemetryService {
   /**
    * Flush events queue (for future backend integration)
    */
-  private flushEvents(): void {
+  private async flushEvents(): Promise<void> {
     if (this.eventQueue.length === 0) return;
 
     const events = [...this.eventQueue];

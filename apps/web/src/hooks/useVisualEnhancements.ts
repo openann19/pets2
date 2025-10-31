@@ -172,7 +172,7 @@ export function useVisualEnhancements() {
 
     // Colors
     canUseDynamicColors: enhancements.colors?.dynamicColors?.enabled ?? false,
-    canUseHDR: enhancements.colors?.hdr?.enabled ?? false && capabilities.hdr,
+    canUseHDR: (enhancements.colors?.hdr?.enabled ?? false) && capabilities.hdr,
     colorsConfig: enhancements.colors,
 
     // Scroll

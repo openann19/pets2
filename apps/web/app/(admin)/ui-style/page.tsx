@@ -7,9 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { EnhancedCard } from '@/components/UI/EnhancedCard';
-import { EnhancedButton } from '@/components/UI/EnhancedButton';
-import { LoadingSkeleton } from '@/components/UI/LoadingSkeleton';
+import { EnhancedCard, EnhancedButton, LoadingSkeleton } from '@/components/admin/UIEnhancements';
 import {
   ArrowPathIcon,
   CheckCircleIcon,

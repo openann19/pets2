@@ -4,16 +4,14 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor, act } from '@/test-utils/unified-render';
 import { VideoCall } from '../VideoCall';
 import { videoCallService } from '../../services/videoCallService';
 import { useWebSocket } from '../../hooks/useWebSocket';
-import { useTheme } from '@mobile/theme';
 
 // Mock dependencies
 jest.mock('../../services/videoCallService');
 jest.mock('../../hooks/useWebSocket');
-jest.mock('@mobile/theme');
 jest.mock('expo-linear-gradient', () => ({
   LinearGradient: 'LinearGradient',
 }));
@@ -23,7 +21,6 @@ jest.mock('expo-blur', () => ({
 
 const mockVideoCallService = videoCallService as jest.Mocked<typeof videoCallService>;
 const mockUseWebSocket = useWebSocket as jest.MockedFunction<typeof useWebSocket>;
-const mockUseTheme = useTheme as jest.MockedFunction<typeof useTheme>;
 
 const mockTheme = {
   colors: {

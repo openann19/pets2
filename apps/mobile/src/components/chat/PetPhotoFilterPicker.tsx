@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
 import type { PetPhotoFilter } from '@pawfectmatch/core/types/pet-chat';
 
@@ -78,7 +78,10 @@ export const PetPhotoFilterPicker: React.FC<PetPhotoFilterPickerProps> = ({
       if (!acc[filter.category]) {
         acc[filter.category] = [];
       }
-      acc[filter.category].push(filter);
+      const categoryFilters = acc[filter.category];
+      if (categoryFilters) {
+        categoryFilters.push(filter);
+      }
       return acc;
     },
     {} as Record<string, PetPhotoFilter[]>,

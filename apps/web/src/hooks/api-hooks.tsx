@@ -8,43 +8,144 @@ import { useMutation, useQuery, useQueryClient, UseMutationResult, UseQueryResul
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import apiClient from '../lib/api-client';
-import type { User, Pet, Match, Message, ApiResponse, SwipeAction, Notification, Subscription, Attachment, SwipeResponse } from '@pawfectmatch/core';
-import type { UserTypingEvent, NewMessageEvent, UserStatusEvent } from '@pawfectmatch/core';
-// ============= AUTHENTICATION HOOKS =============
+import api from '../services/api';
+
+// ============= TYPE DEFINITIONS =============
+
+interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth?: string;
+  profilePicture?: string;
+  premium?: {
+    isActive: boolean;
+  };
+}
+
+interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  success: boolean;
+  error?: {
+    message: string;
+  };
+}
+
 interface LoginCredentials {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 interface RegisterData {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    dateOfBirth?: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth?: string;
 }
 
 interface AuthResponse {
-    user?: User;
-    accessToken?: string;
-    refreshToken?: string;
+  user?: User;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 interface UseAuthReturn {
-    login: (credentials: LoginCredentials) => void;
-    register: (data: RegisterData) => void;
-    logout: () => void;
-    isLoading: boolean;
-    error: Error | null;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
+  logout: () => void;
+  isLoading: boolean;
+  error: Error | null;
+}
+
+// Pet related types
+interface Pet {
+  id: string;
+  name: string;
+  species: string;
+  breed: string;
+  age: number;
+  gender: string;
+  photos: string[];
+  description?: string;
+  personalityTags?: string[];
+}
+
+// Match related types
+interface Match {
+  id: string;
+  pet1: Pet;
+  pet2: Pet;
+  createdAt: string;
+  status: string;
+}
+
+// Message related types
+interface Message {
+  id: string;
+  matchId: string;
+  senderId: string;
+  content: string;
+  timestamp: string;
+  read: boolean;
+}
+
+// Subscription types
+interface Subscription {
+  id: string;
+  plan: string;
+  status: string;
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+}
+
+// Notification types
+interface Notification {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+}
+
+// WebSocket event types
+interface UserTypingEvent {
+  userId: string;
+  isTyping: boolean;
+}
+
+interface NewMessageEvent {
+  message: Message;
+}
+
+interface UserStatusEvent {
+  userId: string;
+  status: 'online' | 'offline';
+}
+
+// Attachment types
+interface Attachment {
+  type: string;
+  url: string;
+  filename?: string;
+}
+
+// Swipe response types
+interface SwipeResponse {
+  isMatch: boolean;
+  match?: Match;
 }
 
 export function useAuth(): UseAuthReturn {
     const router = useRouter();
     const queryClient = useQueryClient();
     const { setUser, setTokens, logout: storeLogout } = useAuthStore();
-    
+
     const loginMutation = useMutation({
-        mutationFn: ({ email, password }: LoginCredentials) => apiClient.login(email, password),
+        mutationFn: ({ email, password }: LoginCredentials) => api.login(email, password),
         onSuccess: (data: AuthResponse | ApiResponse<AuthResponse>) => {
             const responseData = 'data' in data ? data.data : data;
             const user = responseData?.user || (data as AuthResponse)?.user;
@@ -58,9 +159,9 @@ export function useAuth(): UseAuthReturn {
             }
         }
     });
-    
+
     const registerMutation = useMutation({
-        mutationFn: (data: RegisterData) => apiClient.register(data),
+        mutationFn: (data: RegisterData) => api.register(data),
         onSuccess: (data: AuthResponse | ApiResponse<AuthResponse>) => {
             const responseData = 'data' in data ? data.data : data;
             const user = responseData?.user || (data as AuthResponse)?.user;
@@ -74,16 +175,16 @@ export function useAuth(): UseAuthReturn {
             }
         }
     });
-    
+
     const logoutMutation = useMutation({
-        mutationFn: () => apiClient.logout(),
+        mutationFn: () => api.logout(),
         onSuccess: () => {
             storeLogout();
             queryClient.clear();
             router.push('/');
         }
     });
-    
+
     return {
         login: loginMutation.mutate,
         register: registerMutation.mutate,
@@ -92,13 +193,12 @@ export function useAuth(): UseAuthReturn {
         error: loginMutation.error || registerMutation.error
     };
 }
-// ============= USER PROFILE HOOKS =============
 export function useCurrentUser(): UseQueryResult<User> {
     const { setUser, isAuthenticated } = useAuthStore();
     return useQuery<User>({
         queryKey: ['user', 'current'],
         queryFn: async () => {
-            const response = await apiClient.getCurrentUser();
+            const response = await api.getCurrentUser();
             if (response.success && response.data) {
                 setUser(response.data);
                 return response.data;
@@ -122,7 +222,7 @@ export function useUpdateProfile(): UseMutationResult<User, Error, UpdateProfile
     const queryClient = useQueryClient();
     const { setUser } = useAuthStore();
     return useMutation<User, Error, UpdateProfileData>({
-        mutationFn: (data: UpdateProfileData) => apiClient.updateProfile(data),
+        mutationFn: (data: UpdateProfileData) => api.updateProfile(data),
         onSuccess: (response: User | ApiResponse<User>) => {
             const userData = 'data' in response ? response.data : response;
             if (userData) {
@@ -137,7 +237,7 @@ export function usePets(): UseQueryResult<Pet[]> {
     return useQuery<Pet[]>({
         queryKey: ['pets'],
         queryFn: async () => {
-            const response = await apiClient.getPets();
+            const response = await api.getPets();
             if (response.success)
                 return response.data || [];
             throw new Error(response.error?.message || 'Failed to fetch pets');
@@ -151,7 +251,7 @@ export function useMyPets(): UseQueryResult<Pet[]> {
     return useQuery<Pet[]>({
         queryKey: ['pets', 'my'],
         queryFn: async () => {
-            const response = await apiClient.getMyPets();
+            const response = await api.getMyPets();
             if (response.success)
                 return response.data || [];
             throw new Error(response.error?.message || 'Failed to fetch my pets');
@@ -178,7 +278,7 @@ interface CreatePetData {
 export function useCreatePet(): UseMutationResult<Pet, Error, CreatePetData> {
     const queryClient = useQueryClient();
     return useMutation<Pet, Error, CreatePetData>({
-        mutationFn: (data: CreatePetData) => apiClient.createPet(data),
+        mutationFn: (data: CreatePetData) => api.createPet(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['pets'] });
         }
@@ -195,7 +295,7 @@ interface UpdatePetData {
 export function useUpdatePet(): UseMutationResult<Pet, Error, { id: string; data: UpdatePetData }> {
     const queryClient = useQueryClient();
     return useMutation<Pet, Error, { id: string; data: UpdatePetData }>({
-        mutationFn: ({ id, data }: { id: string; data: UpdatePetData }) => apiClient.updatePet(id, data),
+        mutationFn: ({ id, data }: { id: string; data: UpdatePetData }) => api.updatePet(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['pets'] });
         }
@@ -205,7 +305,7 @@ export function useUpdatePet(): UseMutationResult<Pet, Error, { id: string; data
 export function useDeletePet(): UseMutationResult<void, Error, string> {
     const queryClient = useQueryClient();
     return useMutation<void, Error, string>({
-        mutationFn: (id: string) => apiClient.deletePet(id),
+        mutationFn: (id: string) => api.deletePet(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['pets'] });
             queryClient.invalidateQueries({ queryKey: ['pets', 'my'] });
@@ -265,7 +365,7 @@ export function useSwipeQueue(filters?: SwipeFilters): UseQueryResult<Pet[]> {
     return useQuery<Pet[]>({
         queryKey: ['swipe', 'queue', filters],
         queryFn: async () => {
-            const response = await apiClient.getSwipeQueue(filters || {});
+            const response = await api.getSwipeQueue(filters || {});
             if (response.success)
                 return response.data || [];
             throw new Error(response.error?.message || 'Failed to fetch swipe queue');
@@ -280,7 +380,7 @@ export function useSwipe(): UseSwipeReturn {
     const [lastMatch, setLastMatch] = useState<Match | null>(null);
     const swipeMutation = useMutation<SwipeResponse, Error, SwipeActionRequest>({
         mutationFn: async (action: SwipeActionRequest) => {
-            const response = await apiClient.swipe({
+            const response = await api.swipe({
                 petId: action.petId,
                 action: action.action
             });
@@ -311,7 +411,7 @@ export function useMatches(): UseQueryResult<Match[]> {
     return useQuery<Match[]>({
         queryKey: ['matches'],
         queryFn: async () => {
-            const response = await apiClient.getMatches();
+            const response = await api.getMatches();
             if (response.success)
                 return response.data || [];
             throw new Error(response.error?.message || 'Failed to fetch matches');
@@ -327,7 +427,7 @@ export function useMatch(matchId: string | undefined): UseQueryResult<Match> {
         queryKey: ['matches', matchId],
         queryFn: async () => {
             if (!matchId) throw new Error('Match ID is required');
-            const response = await apiClient.getMatch(matchId);
+            const response = await api.getMatch(matchId);
             if (response.success)
                 return response.data;
             throw new Error(response.error?.message || 'Failed to fetch match');
@@ -351,7 +451,7 @@ export function useMessages(matchId: string | undefined): UseQueryResult<Message
         queryKey: ['messages', matchId],
         queryFn: async () => {
             if (!matchId) throw new Error('Match ID is required');
-            const response = await apiClient.getMessages(matchId);
+            const response = await api.getMessages(matchId);
             if (response.success)
                 return response.data || [];
             throw new Error(response.error?.message || 'Failed to fetch messages');
@@ -369,7 +469,7 @@ export function useMessages(matchId: string | undefined): UseQueryResult<Message
                 queryClient.setQueryData(['messages', matchId], (old: Message[] = []) => [...old, message]);
             }
         };
-        apiClient.onSocketEvent('new-message', handleNewMessage);
+        api.onSocketEvent('new-message', handleNewMessage);
         return () => {
             // Cleanup would go here if we had removeListener
         };
@@ -383,7 +483,7 @@ export function useSendMessage(matchId: string | undefined): UseMutationResult<M
     return useMutation<Message, Error, string>({
         mutationFn: (content: string) => {
             if (!matchId) throw new Error('Match ID is required');
-            return apiClient.sendMessage(matchId, content);
+            return api.sendMessage(matchId, content);
         },
         onMutate: async (content: string) => {
             if (!matchId) return { tempMessage: null };
@@ -417,7 +517,7 @@ export function useMarkMessagesAsRead(matchId: string | undefined): UseMutationR
     return useMutation<void>({
         mutationFn: () => {
             if (!matchId) throw new Error('Match ID is required');
-            apiClient.markMessagesAsRead(matchId);
+            api.markMessagesAsRead(matchId);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['matches'] });
@@ -435,7 +535,7 @@ interface BioGenerationResponse {
 
 export function useGenerateBio(): UseMutationResult<BioGenerationResponse, Error, BioGenerationRequest> {
     return useMutation<BioGenerationResponse, Error, BioGenerationRequest>({
-        mutationFn: (request: BioGenerationRequest) => apiClient.generateBio(request),
+        mutationFn: (request: BioGenerationRequest) => api.generateBio(request),
     });
 }
 
@@ -449,7 +549,7 @@ interface PhotoAnalysisResponse {
 
 export function useAnalyzePhoto(): UseMutationResult<PhotoAnalysisResponse, Error, string> {
     return useMutation<PhotoAnalysisResponse, Error, string>({
-        mutationFn: (photoUrl: string) => apiClient.analyzePhoto(photoUrl),
+        mutationFn: (photoUrl: string) => api.analyzePhoto(photoUrl),
     });
 }
 
@@ -465,7 +565,7 @@ interface CompatibilityResponse {
 
 export function useCalculateCompatibility(): UseMutationResult<CompatibilityResponse, Error, CompatibilityRequest> {
     return useMutation<CompatibilityResponse, Error, CompatibilityRequest>({
-        mutationFn: ({ pet1, pet2 }: CompatibilityRequest) => apiClient.calculateCompatibility(pet1, pet2),
+        mutationFn: ({ pet1, pet2 }: CompatibilityRequest) => api.calculateCompatibility(pet1, pet2),
     });
 }
 
@@ -475,7 +575,7 @@ interface ImprovementsResponse {
 
 export function useSuggestImprovements(): UseMutationResult<ImprovementsResponse, Error, Pet> {
     return useMutation<ImprovementsResponse, Error, Pet>({
-        mutationFn: (pet: Pet) => apiClient.suggestProfileImprovements(pet),
+        mutationFn: (pet: Pet) => api.suggestProfileImprovements(pet),
     });
 }
 // ============= SUBSCRIPTION HOOKS =============
@@ -484,7 +584,7 @@ export function useSubscription(): UseQueryResult<Subscription | null> {
     return useQuery<Subscription | null>({
         queryKey: ['subscription'],
         queryFn: async () => {
-            const response = await apiClient.getSubscription();
+            const response = await api.getSubscription();
             if (response.success)
                 return response.data || null;
             return null; // No subscription
@@ -501,7 +601,7 @@ interface SubscriptionCheckoutResponse {
 export function useCreateSubscription(): UseMutationResult<SubscriptionCheckoutResponse, Error, string> {
     const queryClient = useQueryClient();
     return useMutation<SubscriptionCheckoutResponse, Error, string>({
-        mutationFn: (plan: string) => apiClient.createSubscription(plan),
+        mutationFn: (plan: string) => api.createSubscription(plan),
         onSuccess: (response: SubscriptionCheckoutResponse | ApiResponse<SubscriptionCheckoutResponse>) => {
             const data = 'data' in response ? response.data : response;
             if (data?.checkoutUrl && typeof window !== 'undefined') {
@@ -515,7 +615,7 @@ export function useCreateSubscription(): UseMutationResult<SubscriptionCheckoutR
 export function useCancelSubscription(): UseMutationResult<void, Error, void> {
     const queryClient = useQueryClient();
     return useMutation<void>({
-        mutationFn: () => apiClient.cancelSubscription(),
+        mutationFn: () => api.cancelSubscription(),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['subscription'] });
             queryClient.invalidateQueries({ queryKey: ['user'] });
@@ -532,7 +632,7 @@ interface LocationData {
 export function useUpdateLocation(): UseMutationResult<User, Error, LocationData> {
     const queryClient = useQueryClient();
     return useMutation<User, Error, LocationData>({
-        mutationFn: (location: LocationData) => apiClient.updateLocation(location),
+        mutationFn: (location: LocationData) => api.updateLocation(location),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['user'] });
         }
@@ -543,7 +643,7 @@ export function useNearbyPets(radius = 10): UseQueryResult<Pet[]> {
     return useQuery<Pet[]>({
         queryKey: ['pets', 'nearby', radius],
         queryFn: async () => {
-            const response = await apiClient.getNearbyPets(radius);
+            const response = await api.getNearbyPets(radius);
             if (response.success)
                 return response.data || [];
             throw new Error(response.error?.message || 'Failed to fetch nearby pets');
@@ -558,7 +658,7 @@ export function useNotifications(): UseQueryResult<Notification[]> {
     return useQuery<Notification[]>({
         queryKey: ['notifications'],
         queryFn: async () => {
-            const response = await apiClient.getNotifications();
+            const response = await api.getNotifications();
             if (response.success)
                 return response.data || [];
             throw new Error(response.error?.message || 'Failed to fetch notifications');
@@ -571,7 +671,7 @@ export function useNotifications(): UseQueryResult<Notification[]> {
 export function useMarkNotificationRead(): UseMutationResult<void, Error, string> {
     const queryClient = useQueryClient();
     return useMutation<void, Error, string>({
-        mutationFn: (id: string) => apiClient.markNotificationRead(id),
+        mutationFn: (id: string) => api.markNotificationRead(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['notifications'] });
         }
@@ -603,7 +703,7 @@ export function useWebSocket(userId: string | undefined): UseWebSocketReturn {
         // Connect to WebSocket
         const connectSocket = async () => {
             try {
-                const socket = await apiClient.connectWebSocket(userId);
+                const socket = await api.connectWebSocket(userId);
                 if (socket) {
                     setIsConnected(true);
                     setConnectionError(null);
@@ -622,7 +722,7 @@ export function useWebSocket(userId: string | undefined): UseWebSocketReturn {
         // Cleanup on unmount or userId change
         return () => {
             logger.info('[WebSocket] Cleaning up connection');
-            apiClient.disconnectWebSocket();
+            api.disconnectWebSocket();
             setIsConnected(false);
             setConnectionError(null);
         };
@@ -631,14 +731,14 @@ export function useWebSocket(userId: string | undefined): UseWebSocketReturn {
     return {
         isConnected,
         connectionError,
-        isWebSocketConnected: apiClient.isWebSocketConnected,
-        joinMatchRoom: apiClient.joinMatchRoom,
-        leaveMatchRoom: apiClient.leaveMatchRoom,
-        sendChatMessage: apiClient.sendChatMessage,
-        sendTypingIndicator: apiClient.sendTypingIndicator,
-        markMessagesAsRead: apiClient.markMessagesAsRead,
-        performMatchAction: apiClient.performMatchAction,
-        onWebSocketEvent: apiClient.onWebSocketEvent,
+        isWebSocketConnected: api.isWebSocketConnected,
+        joinMatchRoom: api.joinMatchRoom,
+        leaveMatchRoom: api.leaveMatchRoom,
+        sendChatMessage: api.sendChatMessage,
+        sendTypingIndicator: api.sendTypingIndicator,
+        markMessagesAsRead: api.markMessagesAsRead,
+        performMatchAction: api.performMatchAction,
+        onWebSocketEvent: api.onWebSocketEvent,
     };
 }
 

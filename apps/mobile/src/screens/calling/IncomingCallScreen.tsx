@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Animated,
   Image,
@@ -15,7 +15,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { CallData } from '../../services/WebRTCService';
-import { useTheme } from '../../theme/Provider';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 interface IncomingCallScreenProps {
   callData: CallData;
@@ -84,7 +85,9 @@ export default function IncomingCallScreen({
     return type === 'video' ? 'Video Call' : 'Voice Call';
   };
 
-  const styles = StyleSheet.create({
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.bg,
@@ -198,7 +201,9 @@ export default function IncomingCallScreen({
       marginTop: 5,
       opacity: 0.8,
     },
-  });
+  }),
+    [theme],
+  );
 
   return (
     <View

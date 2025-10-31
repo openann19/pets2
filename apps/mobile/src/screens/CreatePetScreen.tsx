@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { PetBasicInfoSection } from '../components/create-pet/PetBasicInfoSection';
 import { PetFormSubmit } from '../components/create-pet/PetFormSubmit';

@@ -8,7 +8,16 @@ import {
   runOnJS,
 } from 'react-native-reanimated';
 
-const { width: screenWidth } = Dimensions.get('window');
+// Lazy load dimensions to support test mocking
+const getScreenWidth = () => {
+  try {
+    const dims = Dimensions.get('window');
+    return dims?.width ?? 375;
+  } catch {
+    return 375;
+  }
+};
+const screenWidth = getScreenWidth();
 
 export interface UseSwipeGesturesOptions {
   onSwipeRight: () => void;

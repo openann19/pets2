@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
 import { Modal } from 'react-native';
 import { Text } from '../ui/v2/Text';
@@ -17,7 +17,7 @@ interface PetProfileModalProps {
 export const PetProfileModal: React.FC<PetProfileModalProps> = ({
   visible,
   onClose,
-  matchId,
+  matchId: _matchId,
   petName,
 }) => {
   const theme = useTheme();

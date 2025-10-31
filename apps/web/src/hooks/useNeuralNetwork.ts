@@ -1,7 +1,30 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAnimation, useMotionValue, useTransform } from 'framer-motion';
-export const useNeuralNetwork = (config) => {
-    const [network, setNetwork] = useState(null);
+
+interface NeuralNetworkConfig {
+    layers: number[];
+    attentionHeads?: number;
+    activation?: 'relu' | 'sigmoid' | 'tanh' | 'gelu';
+    dropout?: number;
+    learningRate?: number;
+    epochs?: number;
+}
+
+interface NeuralNetwork {
+    layers: number[];
+    weights: number[][][];
+    biases: number[][];
+    attentionHeads?: number;
+    activation?: string;
+    dropout?: number;
+}
+
+interface ActivationFunction {
+    (x: number): number;
+}
+
+export const useNeuralNetwork = (config: NeuralNetworkConfig) => {
+    const [network, setNetwork] = useState<NeuralNetwork | null>(null);
     const [isTraining, setIsTraining] = useState(false);
     const [trainingProgress, setTrainingProgress] = useState(0);
     // Initialize neural network
@@ -35,11 +58,11 @@ export const useNeuralNetwork = (config) => {
         initializeNetwork();
     }, [config]);
     // Activation functions
-    const activationFunctions = {
-        relu: (x) => Math.max(0, x),
-        sigmoid: (x) => 1 / (1 + Math.exp(-x)),
-        tanh: (x) => Math.tanh(x),
-        gelu: (x) => {
+    const activationFunctions: Record<string, ActivationFunction> = {
+        relu: (x: number) => Math.max(0, x),
+        sigmoid: (x: number) => 1 / (1 + Math.exp(-x)),
+        tanh: (x: number) => Math.tanh(x),
+        gelu: (x: number) => {
             // Approximation of erf function since Math.erf doesn't exist
             const a1 = 0.254829592;
             const a2 = -0.284496736;

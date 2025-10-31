@@ -52,18 +52,18 @@ export function useNetworkStatus(
       const wasConnected = networkStatus.isConnected;
       const isNowConnected = isOnline;
 
-      const connection = navigator.connection || 
-                         navigator.mozConnection || 
-                         navigator.webkitConnection;
+      const connection = (navigator as any).connection ||
+                         (navigator as any).mozConnection ||
+                         (navigator as any).webkitConnection;
 
       const newStatus: NetworkStatus = {
         isConnected: isNowConnected,
         isInternetReachable: isNowConnected,
-        type: connection?.effectiveType || 'unknown',
+        type: (connection as any)?.effectiveType || 'unknown',
         details: connection ? {
-          effectiveType: connection.effectiveType,
-          downlink: connection.downlink,
-          rtt: connection.rtt,
+          effectiveType: (connection as any).effectiveType,
+          downlink: (connection as any).downlink,
+          rtt: (connection as any).rtt,
         } : null,
       };
 

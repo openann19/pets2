@@ -74,7 +74,7 @@ export function PinchZoom({
     container: {
       overflow: 'hidden',
       backgroundColor: theme?.colors?.bg || '#ffffff',
-      borderRadius: theme?.radius?.md || 8,
+      borderRadius: theme?.radii?.md || 8,
     },
     imageContainer: {
       justifyContent: 'center' as const,
@@ -82,13 +82,13 @@ export function PinchZoom({
     },
     image: {
       backgroundColor: theme?.colors?.surface || '#f5f5f5',
-      borderRadius: theme?.radius?.md || 8,
+      borderRadius: theme?.radii?.md || 8,
     },
   }))() || {
     container: {
       overflow: 'hidden',
       backgroundColor: theme?.colors?.bg || '#ffffff',
-      borderRadius: theme?.radius?.md || 8,
+      borderRadius: theme?.radii?.md || 8,
     },
     imageContainer: {
       justifyContent: 'center' as const,
@@ -96,7 +96,7 @@ export function PinchZoom({
     },
     image: {
       backgroundColor: theme?.colors?.surface || '#f5f5f5',
-      borderRadius: theme?.radius?.md || 8,
+      borderRadius: theme?.radii?.md || 8,
     },
   };
   const scale = useSharedValue(initialScale);

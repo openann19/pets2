@@ -11,6 +11,14 @@ export interface UploadProgress {
   totalFiles?: number;
 }
 
+export interface PostCreationData {
+  title: string;
+  content: string;
+  images?: string[];
+  tags?: string[];
+  [key: string]: unknown;
+}
+
 export class PostCreationService {
   /**
    * Create a post with progress tracking

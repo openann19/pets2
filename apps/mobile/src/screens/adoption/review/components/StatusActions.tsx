@@ -8,8 +8,8 @@ import * as Haptics from 'expo-haptics';
 import React, { useMemo } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '@mobile/theme';
-import type { AppTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import type { ApplicationStatus } from '../types';
 
 function __makeStyles_styles(theme: AppTheme) {

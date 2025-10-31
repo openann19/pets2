@@ -17,7 +17,7 @@ import {
   View,
 } from 'react-native';
 
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 
 interface PremiumCardProps {

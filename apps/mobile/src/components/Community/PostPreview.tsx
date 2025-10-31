@@ -14,7 +14,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import type { PostCreationData } from '../../services/postCreationService';
 
 interface PostPreviewProps {
@@ -225,17 +225,17 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
         )}
 
         {/* Images Section */}
-        {postData.images && postData.images.length > 0 && (
+        {postData.images && Array.isArray(postData.images) && postData.images.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Images ({postData.images.length})</Text>
             <View style={styles.imageGrid}>
-              {postData.images.map((image, index) => (
+              {postData.images.map((image: string, index: number) => (
                 <View
                   key={index}
                   style={styles.imageContainer}
                 >
                   <Image
-                    source={{ uri: image.uri }}
+                    source={{ uri: typeof image === 'string' ? image : (image as { uri: string }).uri }}
                     style={styles.image}
                     resizeMode="cover"
                   />
@@ -246,12 +246,12 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
         )}
 
         {/* Activity Section */}
-        {postData.activityDetails && (
+        {postData['activityDetails'] && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Activity Details</Text>
             <View style={styles.activityCard}>
-              <Text style={styles.activityTitle}>{postData.activityDetails.title}</Text>
-              <Text style={styles.activityDescription}>{postData.activityDetails.description}</Text>
+              <Text style={styles.activityTitle}>{(postData['activityDetails'] as { title?: string }).title || ''}</Text>
+              <Text style={styles.activityDescription}>{(postData['activityDetails'] as { description?: string }).description || ''}</Text>
               <View style={styles.activityDetails}>
                 <View style={styles.activityDetail}>
                   <Ionicons
@@ -260,10 +260,10 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                     color={theme.colors.onMuted}
                   />
                   <Text style={styles.activityDetailText}>
-                    {formatDate(postData.activityDetails.date)}
+                    {formatDate((postData['activityDetails'] as { date?: string }).date || '')}
                   </Text>
                 </View>
-                {postData.activityDetails.location && (
+                {(postData['activityDetails'] as { location?: string }).location && (
                   <View style={styles.activityDetail}>
                     <Ionicons
                       name="location"
@@ -271,11 +271,11 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                       color={theme.colors.onMuted}
                     />
                     <Text style={styles.activityDetailText}>
-                      {postData.activityDetails.location}
+                      {(postData['activityDetails'] as { location?: string }).location}
                     </Text>
                   </View>
                 )}
-                {postData.activityDetails.maxParticipants && (
+                {(postData['activityDetails'] as { maxParticipants?: number }).maxParticipants && (
                   <View style={styles.activityDetail}>
                     <Ionicons
                       name="people"
@@ -283,7 +283,7 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
                       color={theme.colors.onMuted}
                     />
                     <Text style={styles.activityDetailText}>
-                      Max {postData.activityDetails.maxParticipants}
+                      Max {(postData['activityDetails'] as { maxParticipants?: number }).maxParticipants}
                     </Text>
                   </View>
                 )}
@@ -293,11 +293,11 @@ export const PostPreview: React.FC<PostPreviewProps> = ({
         )}
 
         {/* Tags Section */}
-        {postData.tags && postData.tags.length > 0 && (
+        {postData.tags && Array.isArray(postData.tags) && postData.tags.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tags</Text>
             <View style={styles.tagsContainer}>
-              {postData.tags.map((tag, index) => (
+              {postData.tags.map((tag: string, index: number) => (
                 <View
                   key={index}
                   style={styles.tag}

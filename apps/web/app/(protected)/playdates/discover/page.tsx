@@ -71,7 +71,7 @@ export default function PlaydateDiscoveryPage() {
   ) => {
     try {
       // Allow user to select venue or use default
-      const selectedVenue = venueId || 'venue-default';
+      let selectedVenue = venueId || 'venue-default';
       
       // If no venue provided, try to get nearby venues
       if (!venueId) {

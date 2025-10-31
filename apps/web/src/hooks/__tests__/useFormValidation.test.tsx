@@ -133,7 +133,7 @@ describe('useFormValidation Hook', () => {
       });
     });
 
-    it.skip('tracks touched fields', async () => {
+    it('tracks touched fields', async () => {
       const { result } = renderHook(() => useFormValidation(testSchema, defaultValues));
 
       act(() => {

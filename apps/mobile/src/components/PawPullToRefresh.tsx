@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
 import {

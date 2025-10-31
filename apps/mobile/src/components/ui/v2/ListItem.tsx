@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import type { Theme } from '@mobile/theme';
-import { useTheme } from '@mobile/theme';
+import type { Theme } from '@/theme';
+import { useTheme } from '@/theme';
 import { useMemo } from 'react';
 import type { ViewStyle } from 'react-native';
 import { Pressable, Switch as RNSwitch, StyleSheet, View } from 'react-native';

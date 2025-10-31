@@ -8,7 +8,7 @@ import * as Haptics from 'expo-haptics';
 import { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { useTheme } from '@mobile/theme';
+import { useTheme } from '@/theme';
 
 export interface FilterOption {
   id: string;

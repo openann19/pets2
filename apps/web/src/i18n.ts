@@ -1,30 +1,30 @@
-import { getRequestConfig } from 'next-intl/server';
-import { notFound } from 'next/navigation';
-// Can be imported from a shared config
-export const locales = ['en', 'bg'];
-export default getRequestConfig(async ({ locale }) => {
-    // Validate that the incoming `locale` parameter is valid
-    if (!locales.includes(locale))
-        notFound();
-    return {
-        locale: locale,
-        messages: (await import(`../messages/${locale}.json`)).default,
-        timeZone: 'UTC',
-        now: new Date(),
-        formats: {
-            dateTime: {
-                short: {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric'
-                }
-            },
-            number: {
-                precise: {
-                    maximumFractionDigits: 5
-                }
-            }
-        }
-    };
-});
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+
+// Import basic locale files (we'll expand this later)
+import enCommon from './locales/en/common.json';
+import enAuth from './locales/en/auth.json';
+
+const resources = {
+  en: {
+    common: enCommon,
+    auth: enAuth,
+  },
+};
+
+i18n
+  .use(initReactI18next)
+  .init({
+    resources,
+    lng: 'en',
+    fallbackLng: 'en',
+    ns: ['common', 'auth'],
+    defaultNS: 'common',
+    interpolation: {
+      escapeValue: false,
+    },
+    returnEmptyString: false,
+  });
+
+export default i18n;
 //# sourceMappingURL=i18n.js.map

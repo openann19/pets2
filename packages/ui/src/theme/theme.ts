@@ -1,109 +1,85 @@
-export type ColorVariant =
-  | 'primary'
-  | 'secondary'
-  | 'accent'
-  | 'background'
-  | 'surface'
-  | 'muted'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'text'
-  | 'textMuted';
+import { TOKENS, type Tokens } from './tokens';
 
-export interface ThemePalette {
-  readonly primary: string;
-  readonly secondary: string;
-  readonly accent: string;
-  readonly background: string;
-  readonly surface: string;
-  readonly muted: string;
-  readonly success: string;
-  readonly warning: string;
-  readonly danger: string;
-  readonly text: string;
-  readonly textMuted: string;
-}
-
-export interface ThemeSpacingScale {
-  readonly 'none': number;
-  readonly 'xs': number;
-  readonly 'sm': number;
-  readonly 'md': number;
-  readonly 'lg': number;
-  readonly 'xl': number;
-  readonly '2xl': number;
-}
-
-export interface ThemeTypographyScale {
-  readonly fontFamily: string;
-  readonly heading: {
-    readonly h1: string;
-    readonly h2: string;
-    readonly h3: string;
-    readonly h4: string;
+// Extend TOKENS with additional theme properties for backward compatibility
+export interface Theme extends Tokens {
+  readonly colors: Tokens['COLORS'] & {
+    readonly primary: string;
+    readonly secondary: string;
+    readonly accent: string;
+    readonly background: string;
+    readonly surface: string;
+    readonly muted: string;
+    readonly success: string;
+    readonly warning: string;
+    readonly danger: string;
+    readonly text: string;
+    readonly textMuted: string;
   };
-  readonly body: {
-    readonly lg: string;
-    readonly md: string;
-    readonly sm: string;
+  readonly spacing: {
+    readonly none: number;
+    readonly xs: number;
+    readonly sm: number;
+    readonly md: number;
+    readonly lg: number;
+    readonly xl: number;
+    readonly '2xl': number;
   };
-  readonly mono: string;
-}
-
-export interface ThemeRadii {
-  readonly none: number;
-  readonly sm: number;
-  readonly md: number;
-  readonly lg: number;
-  readonly pill: number;
-}
-
-export interface Theme {
-  readonly colors: ThemePalette;
-  readonly spacing: ThemeSpacingScale;
-  readonly radii: ThemeRadii;
-  readonly typography: ThemeTypographyScale;
-}
-
-export interface ThemeOverrides {
-  readonly colors?: Partial<ThemePalette>;
-  readonly spacing?: Partial<ThemeSpacingScale>;
-  readonly radii?: Partial<ThemeRadii>;
-  readonly typography?: Partial<ThemeTypographyScale> & {
-    readonly heading?: Partial<ThemeTypographyScale['heading']>;
-    readonly body?: Partial<ThemeTypographyScale['body']>;
+  readonly radii: {
+    readonly none: number;
+    readonly sm: number;
+    readonly md: number;
+    readonly lg: number;
+    readonly pill: number;
+  };
+  readonly typography: {
+    readonly fontFamily: string;
+    readonly heading: {
+      readonly h1: string;
+      readonly h2: string;
+      readonly h3: string;
+      readonly h4: string;
+    };
+    readonly body: {
+      readonly lg: string;
+      readonly md: string;
+      readonly sm: string;
+    };
+    readonly mono: string;
   };
 }
 
+// Create the default theme that extends TOKENS
 export const defaultTheme: Theme = {
+  ...TOKENS,
   colors: {
-    primary: '#6C63FF',
-    secondary: '#FF6584',
-    accent: '#2CB1BC',
-    background: '#FFFFFF',
-    surface: '#F8F9FC',
-    muted: '#E2E8F0',
+    ...TOKENS.COLORS,
+    // Map TOKENS colors to theme colors for backward compatibility
+    primary: TOKENS.COLORS.brand,
+    secondary: TOKENS.COLORS.accent,
+    accent: TOKENS.COLORS.accent,
+    background: TOKENS.COLORS.bg,
+    surface: TOKENS.COLORS.card,
+    muted: TOKENS.COLORS.card,
     success: '#38A169',
     warning: '#DD6B20',
     danger: '#E53E3E',
-    text: '#1A202C',
+    text: TOKENS.COLORS.text,
     textMuted: '#4A5568',
   },
   spacing: {
-    'none': 0,
-    'xs': 4,
-    'sm': 8,
-    'md': 16,
-    'lg': 24,
-    'xl': 32,
+    none: 0,
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
     '2xl': 48,
   },
   radii: {
     none: 0,
-    sm: 4,
-    md: 8,
-    lg: 16,
+    sm: TOKENS.RADIUS.sm,
+    md: TOKENS.RADIUS.md,
+    lg: TOKENS.RADIUS.lg,
     pill: 999,
   },
   typography: {
@@ -121,7 +97,17 @@ export const defaultTheme: Theme = {
     },
     mono: '500 0.875rem/1.25rem "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
   },
-};
+}
+
+export interface ThemeOverrides {
+  readonly colors?: Partial<Theme['colors']>;
+  readonly spacing?: Partial<Theme['spacing']>;
+  readonly radii?: Partial<Theme['radii']>;
+  readonly typography?: Partial<Theme['typography']> & {
+    readonly heading?: Partial<Theme['typography']['heading']>;
+    readonly body?: Partial<Theme['typography']['body']>;
+  };
+}
 
 export const createTheme = (overrides?: ThemeOverrides): Theme => {
   if (overrides == null) {
@@ -129,11 +115,14 @@ export const createTheme = (overrides?: ThemeOverrides): Theme => {
   }
 
   return {
+    ...defaultTheme,
+    ...overrides,
     colors: { ...defaultTheme.colors, ...overrides.colors },
     spacing: { ...defaultTheme.spacing, ...overrides.spacing },
     radii: { ...defaultTheme.radii, ...overrides.radii },
     typography: {
-      fontFamily: overrides.typography?.fontFamily ?? defaultTheme.typography.fontFamily,
+      ...defaultTheme.typography,
+      ...overrides.typography,
       heading: {
         ...defaultTheme.typography.heading,
         ...overrides.typography?.heading,
@@ -142,7 +131,6 @@ export const createTheme = (overrides?: ThemeOverrides): Theme => {
         ...defaultTheme.typography.body,
         ...overrides.typography?.body,
       },
-      mono: overrides.typography?.mono ?? defaultTheme.typography.mono,
     },
   };
 };

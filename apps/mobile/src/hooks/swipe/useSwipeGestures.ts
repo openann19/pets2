@@ -2,7 +2,16 @@ import { useRef, useCallback } from 'react';
 import { Animated, Dimensions, PanResponder } from 'react-native';
 import type { PanResponderInstance } from 'react-native';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+// Lazy load dimensions to support test mocking
+const getDimensions = () => {
+  try {
+    const dims = Dimensions.get('window');
+    return { width: dims?.width ?? 375, height: dims?.height ?? 812 };
+  } catch {
+    return { width: 375, height: 812 };
+  }
+};
+const { width: screenWidth, height: screenHeight } = getDimensions();
 
 export interface SwipeGestureState {
   position: Animated.ValueXY;

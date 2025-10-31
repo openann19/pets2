@@ -405,6 +405,6 @@ export const EnhancedCard = ({ variant = 'default', padding = 'md', className = 
     </EnhancedInteractive>);
 };
 // ====== EXPORT ALL COMPONENTS ======
-// EnhancedInteractive is already exported above, don't duplicate
-export { InteractionProvider as default, EnhancedButton, EnhancedCard };
+// EnhancedInteractive, EnhancedButton, and EnhancedCard are already exported above
+export { InteractionProvider as default };
 //# sourceMappingURL=AdvancedInteractionSystem.jsx.map

@@ -41,6 +41,11 @@
     "coverage",
     "_archive",
     "types",
-    ".storybook"
+    ".storybook",
+    "apps/web/src/components/UI",
+    "**/*.backup.*",
+    "**/ANIMATION_EXAMPLES_COMPLETE.tsx",
+    "tools",
+    "test-theme-rule.ts"
   ]
 }
