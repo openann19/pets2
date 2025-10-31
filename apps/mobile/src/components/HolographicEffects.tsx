@@ -195,7 +195,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
           },
           glow ? glowStyle : {},
           style,
-        ] as any
+        ] as ViewStyle[]
       }
       {...props}
     >
@@ -211,7 +211,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
               bottom: 0,
             },
             gradientStyle,
-          ] as any
+          ] as ViewStyle[]
         }
       >
         <LinearGradient
@@ -239,7 +239,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
                 backgroundColor: 'rgba(255, 255, 255, 0.1)',
               },
               shimmerStyle,
-            ] as any
+            ] as ViewStyle[]
           }
         />
       )}
@@ -374,7 +374,7 @@ export const HolographicButton: React.FC<HolographicButtonProps> = ({
 
   return (
     <Animated.View
-      style={[animatedStyle, style] as any}
+      style={[animatedStyle, style] as ViewStyle[]}
       onTouchStart={handlePressIn}
       onTouchEnd={handlePressOut}
       onTouchCancel={handlePressOut}
@@ -416,18 +416,15 @@ interface HolographicTextProps {
 export const HolographicText: React.FC<HolographicTextProps> = ({
   children,
   variant = 'rainbow',
-  size,
-  weight = 'normal',
+  size: _size,
+  weight: _weight = 'normal',
   animated = true,
   style,
 }) => {
   const theme = useTheme();
-  // Note: fontSize and weight are available for future text implementation
-  // Intentionally computed but not used yet - will be used in future text rendering
-  // @ts-expect-error - Reserved for future text implementation
-  const _fontSize = size ?? theme.typography.body.size;
-  // @ts-expect-error - Reserved for future text implementation
-  const _weight = weight;
+  // Note: fontSize and weight parameters reserved for future text implementation
+  // const _fontSize = size ?? theme.typography.body.size;
+  // const _weight = weight;
   const gradientRotation = useSharedValue(0);
 
   useEffect(() => {
@@ -456,7 +453,7 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
               bottom: 0,
             },
             gradientStyle,
-          ] as any
+          ] as ViewStyle[]
         }
       >
         <LinearGradient

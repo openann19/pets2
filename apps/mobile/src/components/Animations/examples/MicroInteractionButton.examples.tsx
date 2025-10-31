@@ -4,7 +4,7 @@
  * Comprehensive examples demonstrating all features of MicroInteractionButton
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { MicroInteractionButton } from '@/components/Animations';
 

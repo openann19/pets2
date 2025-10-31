@@ -35,9 +35,9 @@ export const StatusModal: React.FC<StatusModalProps> = ({
       animationType="slide"
       onRequestClose={onClose}
     >
-      <View style={GlobalStyles['modalOverlay'] as any}>
-        <View style={GlobalStyles['modalContent'] as any}>
-          <Text style={GlobalStyles['heading2'] as any}>
+      <View style={GlobalStyles['modalOverlay'] as ViewStyle}>
+        <View style={GlobalStyles['modalContent'] as ViewStyle}>
+          <Text style={GlobalStyles['heading2'] as TextStyle}>
             Change Status for {selectedPet.name}
           </Text>
 
@@ -59,7 +59,7 @@ export const StatusModal: React.FC<StatusModalProps> = ({
             title="Cancel"
             variant="secondary"
             onPress={onClose}
-            style={GlobalStyles['mt4'] as any}
+            style={GlobalStyles['mt4'] as ViewStyle}
           />
         </View>
       </View>

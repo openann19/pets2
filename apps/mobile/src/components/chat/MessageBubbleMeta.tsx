@@ -23,7 +23,7 @@ export function MessageBubbleMeta({
   message,
   isOwnMessage,
   showStatus = true,
-  currentUserId,
+  currentUserId: _currentUserId,
   onRetry,
 }: MessageBubbleMetaProps): React.JSX.Element | null {
   const theme = useTheme();

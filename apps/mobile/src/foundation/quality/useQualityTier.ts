@@ -30,16 +30,16 @@ export type QualityProfile = {
  */
 export function useQualityTier(): QualityProfile {
   // Guard native environments - these APIs may not be available
-  const hasNavigator = typeof global !== 'undefined' && (global as any).navigator !== undefined;
-  
+  const hasNavigator = typeof global !== 'undefined' && (global as typeof globalThis & { navigator?: unknown }).navigator !== undefined;
+
   // Try to get device memory (available on some Android devices)
   const deviceMemory = hasNavigator
-    ? ((global as any).navigator as any)?.deviceMemory ?? 2
+    ? ((global as typeof globalThis & { navigator?: { deviceMemory?: number } }).navigator?.deviceMemory ?? 2)
     : 2;
-  
+
   // Try to get CPU cores
   const cores = hasNavigator
-    ? ((global as any).navigator as any)?.hardwareConcurrency ?? 4
+    ? ((global as typeof globalThis & { navigator?: { hardwareConcurrency?: number } }).navigator?.hardwareConcurrency ?? 4)
     : 4;
 
   return useMemo<QualityProfile>(() => {

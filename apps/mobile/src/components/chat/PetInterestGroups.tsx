@@ -3,8 +3,8 @@
  * Join chat groups based on pet types (dog lovers, cat people, etc.)
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTheme } from '@mobile/theme';
 import { Ionicons } from '@expo/vector-icons';
 import type { PetInterestGroup } from '@pawfectmatch/core/types/pet-chat';
@@ -70,13 +70,15 @@ const POPULAR_GROUPS: PetInterestGroup[] = [
 ];
 
 export const PetInterestGroups: React.FC<PetInterestGroupsProps> = ({
-  userId,
+  userId: _userId,
   onJoinGroup,
   onLeaveGroup,
   userGroups = [],
 }) => {
   const theme = useTheme();
+  // @ts-expect-error - State declared for future implementation
   const [groups, setGroups] = useState<PetInterestGroup[]>(POPULAR_GROUPS);
+  // @ts-expect-error - State declared for future implementation
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredGroups = groups.filter(

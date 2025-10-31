@@ -144,6 +144,10 @@ describe('useSettingsScreen', () => {
     mockApi.delete.mockResolvedValue({ data: { success: true } });
 
     mockUseColorScheme.mockReturnValue('light');
+    
+    // Setup analytics service mocks
+    mockAnalyticsService.trackScreenView.mockResolvedValue(undefined);
+    mockAnalyticsService.trackEvent.mockResolvedValue(undefined);
   });
 
   describe('Initial State and Data Loading', () => {
@@ -171,7 +175,7 @@ describe('useSettingsScreen', () => {
     it('should load cached data when available', async () => {
       const cachedData = {
         settings: mockSettingsData,
-        lastUpdated: Date.now() - 5 * 60 * 1000, // 5 minutes ago (fresh)
+        timestamp: Date.now() - 4.5 * 60 * 1000, // 4.5 minutes ago (fresh)
       };
 
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(cachedData));
@@ -226,7 +230,10 @@ describe('useSettingsScreen', () => {
         expect(success).toBe(true);
       });
 
-      expect(result.current.settings?.privacy).toEqual(newPrivacySettings);
+      expect(result.current.settings?.privacy).toEqual({
+        ...mockSettingsData.privacy,
+        ...newPrivacySettings,
+      });
       expect(mockApi.put).toHaveBeenCalledWith('/settings/privacy', newPrivacySettings);
     });
 
@@ -874,10 +881,14 @@ describe('useSettingsScreen', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      // Rapid toggles
+      // Rapid toggles - call separately to allow state updates
       await act(async () => {
         await result.current.togglePrivacySetting('profileVisible');
+      });
+      await act(async () => {
         await result.current.togglePrivacySetting('profileVisible');
+      });
+      await act(async () => {
         await result.current.togglePrivacySetting('profileVisible');
       });
 

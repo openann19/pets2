@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { api } from '../services/api';
 import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
 import type { RootStackParamList } from '@/types/navigation';
 
 interface PremiumStatusResponse {
@@ -14,7 +13,7 @@ interface PremiumStatusResponse {
 export function withPremiumGuard<P extends Record<string, unknown>>(Comp: React.ComponentType<P>) {
   return function PremiumGuard(props: P) {
     const [allowed, setAllowed] = React.useState<boolean | null>(null);
-    const theme = useTheme() as AppTheme;
+    const theme = useTheme();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     React.useEffect(() => {

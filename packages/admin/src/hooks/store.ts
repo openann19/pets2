@@ -97,7 +97,7 @@ const initialState = {
   },
 };
 
-export const useAdminStore = create<AdminState>((set, get) => ({
+export const useAdminStore = create<AdminState>((set) => ({
   ...initialState,
 
   setCurrentAdmin: (admin) => set({ currentAdmin: admin }),

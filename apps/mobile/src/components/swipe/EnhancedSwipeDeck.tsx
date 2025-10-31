@@ -92,25 +92,28 @@ const createStyles = (theme: AppTheme, cardWidth: number, cardHeight: number) =>
 
 const buildCardModel = (pet: Pet): CardPet => {
   const photos = extractPetImageUrls(pet);
-  const description = (pet as any).description ?? (pet as any).bio ?? (pet as any).summary ?? '';
+  // Use type guards for optional properties
+  const description = (pet as Pet & { description?: string }).description ??
+                     (pet as Pet & { bio?: string }).bio ??
+                     (pet as Pet & { summary?: string }).summary ?? '';
 
   return {
-    _id: pet._id ?? (pet as any).id ?? Math.random().toString(36).slice(2),
-    name: pet.name ?? (pet as any).displayName ?? 'Mystery Pet',
-    age: typeof pet.age === 'number' ? pet.age : ((pet as any).ageYears ?? 0),
-    breed: pet.breed ?? (pet as any).breedName ?? 'Unknown',
+    _id: pet._id ?? (pet as Pet & { id?: string }).id ?? Math.random().toString(36).slice(2),
+    name: pet.name ?? (pet as Pet & { displayName?: string }).displayName ?? 'Mystery Pet',
+    age: typeof pet.age === 'number' ? pet.age : ((pet as Pet & { ageYears?: number }).ageYears ?? 0),
+    breed: pet.breed ?? (pet as Pet & { breedName?: string }).breedName ?? 'Unknown',
     photos,
     bio: description,
-    tags: (pet as any).tags ?? [],
+    tags: (pet as Pet & { tags?: string[] }).tags ?? [],
     distance:
-      typeof (pet as any).distance === 'number'
-        ? (pet as any).distance
-        : ((pet as any).location?.distance ?? 0),
+      typeof (pet as Pet & { distance?: number }).distance === 'number'
+        ? (pet as Pet & { distance?: number }).distance!
+        : ((pet as Pet & { location?: { distance?: number } }).location?.distance ?? 0),
     compatibility:
-      typeof (pet as any).compatibility === 'number'
-        ? (pet as any).compatibility
-        : Math.round((pet as any).compatibilityScore ?? 85),
-    isVerified: Boolean((pet as any).isVerified ?? (pet as any).verified),
+      typeof (pet as Pet & { compatibility?: number }).compatibility === 'number'
+        ? (pet as Pet & { compatibility?: number }).compatibility!
+        : Math.round((pet as Pet & { compatibilityScore?: number }).compatibilityScore ?? 85),
+    isVerified: Boolean((pet as Pet & { isVerified?: boolean }).isVerified ?? (pet as Pet & { verified?: boolean }).verified),
   };
 };
 
@@ -213,7 +216,7 @@ export const EnhancedSwipeDeck = React.memo(function EnhancedSwipeDeck({
   }, [currentIndex, pets, schedulePrefetch, triggerPreload]);
 
   const keyExtractor = useCallback(
-    (item: Pet, index: number) => item._id ?? (item as any).id ?? `pet-${index}`,
+    (item: Pet, index: number) => item._id ?? (item as Pet & { id?: string }).id ?? `pet-${index}`,
     [],
   );
 
@@ -253,7 +256,7 @@ export const EnhancedSwipeDeck = React.memo(function EnhancedSwipeDeck({
             pointerEvents={isActive ? 'auto' : 'none'}
           >
             <ModernSwipeCard
-              pet={cardModel as any}
+              pet={cardModel}
               isTopCard={isActive}
               disabled={!isActive}
               onSwipeLeft={() => {

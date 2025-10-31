@@ -48,7 +48,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
     <View style={styles.fabs}>
       <FABBloom
         onPress={onLocatePress}
-        style={StyleSheet.flatten([styles.fab, styles.fabLocate]) as any}
+        style={StyleSheet.flatten([styles.fab, styles.fabLocate])}
         testID="fab-locate"
         accessibilityLabel="Locate"
       >
@@ -57,7 +57,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
 
       <FABBloom
         onPress={onARPress}
-        style={StyleSheet.flatten([styles.fab, styles.fabAR]) as any}
+        style={StyleSheet.flatten([styles.fab, styles.fabAR])}
         testID="fab-ar"
         accessibilityLabel="AR View"
       >
@@ -66,7 +66,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
 
       <FABBloom
         onPress={onCreatePress}
-        style={StyleSheet.flatten([styles.fab, styles.fabCreate]) as any}
+        style={StyleSheet.flatten([styles.fab, styles.fabCreate])}
         testID="fab-create-activity"
         accessibilityLabel="Create Activity"
       >
@@ -79,7 +79,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
 
       <FABBloom
         onPress={onFilterPress}
-        style={StyleSheet.flatten([styles.fab, styles.fabFilters]) as any}
+        style={StyleSheet.flatten([styles.fab, styles.fabFilters])}
         testID="btn-filters"
         accessibilityLabel="Filters"
       >

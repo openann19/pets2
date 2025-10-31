@@ -46,8 +46,6 @@ const unionRects = (rects: Rect[]): Rect => {
   const maxY = Math.max(...rects.map((r) => r.y + r.height));
   return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
 };
-const biggestRect = (rects: Rect[]) =>
-  rects.slice().sort((a, b) => b.width * b.height - a.width * a.height)[0];
 
 const ratioToNumber = (r: string): number => {
   if (r === 'FREE') return NaN;

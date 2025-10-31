@@ -8,7 +8,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import type { MessageStatus } from './MessageStatusTicks';
 import type { MessageWithStatus } from './MessageBubbleTypes';
 
 interface MessageBubbleContentProps {

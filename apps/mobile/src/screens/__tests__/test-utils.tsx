@@ -1,5 +1,6 @@
 import React, { type PropsWithChildren } from 'react';
-import { render, type RenderOptions } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
+import type { RenderOptions } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
 export const mockNavigate = jest.fn();

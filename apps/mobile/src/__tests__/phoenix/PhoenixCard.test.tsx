@@ -4,11 +4,12 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
 import { render, fireEvent, screen } from '@testing-library/react-native';
 import { AccessibilityInfo } from 'react-native';
+import { toHaveNoViolations, axe } from 'jest-axe';
 
-// Note: Accessibility testing utilities available if needed
+// Extend Jest matchers for accessibility
+expect.extend(toHaveNoViolations);
 
 // Mock AccessibilityInfo
 jest.mock('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo', () => ({
@@ -104,7 +105,7 @@ describe('PhoenixCard Component', () => {
           accessibilityLabel="Test card for accessibility"
           accessibilityHint="Double tap to interact"
         >
-          <View testID="child-content">Child content</View>
+          <div>Child content</div>
         </PhoenixCard>,
       );
 
@@ -171,7 +172,7 @@ describe('PhoenixCard Component', () => {
           onPress={onPressMock}
           accessibilityLabel="Accessible card"
         >
-          <View testID="accessible-content">Accessible content</View>
+          <div>Accessible content</div>
         </PhoenixCard>,
       );
 
@@ -324,7 +325,7 @@ describe('PhoenixCard Component', () => {
     it('should render children content', () => {
       render(
         <PhoenixCard title="Card with Children">
-          <View testID="child-content">Child content</View>
+          <div>Child content</div>
         </PhoenixCard>,
       );
 
@@ -354,7 +355,10 @@ describe('PhoenixCard Component', () => {
     it('should handle missing props gracefully', () => {
       render(
         <PhoenixCard
-          title=""
+          pet={undefined as any}
+          onSwipeLeft={() => {}}
+          onSwipeRight={() => {}}
+          onSwipeUp={() => {}}
         />,
       );
 

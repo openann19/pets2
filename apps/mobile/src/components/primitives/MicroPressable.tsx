@@ -1,4 +1,3 @@
-import React from 'react';
 import { Pressable, type PressableProps } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 // (Optional) import * as Haptics from 'expo-haptics';

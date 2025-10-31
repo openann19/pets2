@@ -18,7 +18,7 @@ import { useTheme } from '@mobile/theme';
 import { getExtendedColors } from '../theme/adapters';
 
 interface AIBioScreenProps {
-  navigation: NavigationProp<any>;
+  navigation: NavigationProp<Record<string, any>>;
 }
 
 export default function AIBioScreen({ navigation }: AIBioScreenProps) {
@@ -203,8 +203,8 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
 
 const createStyles = (
   colors: ReturnType<typeof getExtendedColors>,
-  spacing: any,
-  borderRadius: any,
+  spacing: Record<string, number>,
+  borderRadius: Record<string, number>,
 ) =>
   StyleSheet.create({
     container: {
@@ -329,15 +329,7 @@ const createStyles = (
 
 // Call the function to create styles
 const styles = createStyles(
-  {
-    background: '#fff',
-    border: '#ccc',
-    text: '#000',
-    textMuted: '#666',
-    primary: '#007AFF',
-    white: '#fff',
-    danger: '#FF3B30',
-  } as any,
-  { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as any,
-  { 'none': 0, 'xs': 2, 'sm': 4, 'md': 8, 'lg': 12, 'xl': 16, '2xl': 20, 'full': 9999 } as any,
+  colors,
+  theme.spacing,
+  theme.radius,
 );

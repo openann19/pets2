@@ -5,9 +5,13 @@ type ConsoleMethod = (message?: string, ...optionalParams: unknown[]) => void;
 type LogFn = (message: string, meta?: unknown) => void;
 
 const consoleMethods: Record<LogLevel, ConsoleMethod> = {
+  // eslint-disable-next-line no-console
   debug: console.debug.bind(console),
+  // eslint-disable-next-line no-console
   info: console.info.bind(console),
+  // eslint-disable-next-line no-console
   warn: console.warn.bind(console),
+  // eslint-disable-next-line no-console
   error: console.error.bind(console),
 };
 

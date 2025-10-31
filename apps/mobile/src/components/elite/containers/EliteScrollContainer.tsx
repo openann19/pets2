@@ -1,4 +1,5 @@
-import { forwardRef, type ReactNode } from 'react';
+import { forwardRef } from 'react';
+import type { ReactNode } from 'react';
 import { ScrollView, type ScrollViewProps } from 'react-native';
 import type { ScrollView as ScrollViewType } from 'react-native';
 

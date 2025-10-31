@@ -12,7 +12,8 @@
  */
 
 import type { ReactNode } from 'react';
-import { forwardRef, type Ref } from 'react';
+import { forwardRef } from 'react';
+import type { Ref } from 'react';
 import { View, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { type AnimatedStyleProp } from 'react-native-reanimated';
@@ -24,7 +25,7 @@ import { useTheme } from '@/theme';
 // === TYPES ===
 interface EffectWrapperProps {
   children: ReactNode;
-  style?: ViewStyle | undefined;
+  style?: ViewStyle;
   disabled?: boolean;
 }
 
@@ -51,7 +52,7 @@ export const WithGlowFX = forwardRef<Animated.View, WithGlowFXProps>(
     return (
       <Animated.View
         ref={ref}
-        style={[glowStyle as AnimatedStyleProp<ViewStyle>, style] as any}
+        style={[glowStyle as AnimatedStyleProp<ViewStyle>, style]}
       >
         {children}
       </Animated.View>
@@ -77,7 +78,7 @@ export const WithMagneticFX = forwardRef<Animated.View, WithMagneticFXProps>(
     return (
       <Animated.View
         ref={ref}
-        style={[magneticStyle as AnimatedStyleProp<ViewStyle>, ...(style ? [style] : [])] as any}
+        style={[magneticStyle as AnimatedStyleProp<ViewStyle>, style]}
       >
         {children}
       </Animated.View>
@@ -126,7 +127,7 @@ export const WithRippleFX = forwardRef<View, WithRippleFXProps>(
                 marginLeft: -50,
               } as ViewStyle,
               rippleStyle as AnimatedStyleProp<ViewStyle>,
-            ] as any}
+            ]}
             pointerEvents="none"
           />
         )}
@@ -170,7 +171,7 @@ export const WithShimmerFX = forwardRef<View, WithShimmerFXProps>(
                 backgroundColor: shimmerColor,
               } as ViewStyle,
               shimmerStyle as AnimatedStyleProp<ViewStyle>,
-            ] as any}
+            ]}
             pointerEvents="none"
           />
         )}
@@ -193,7 +194,7 @@ export const WithPressFX = forwardRef<Animated.View, WithPressFXProps>(
     return (
       <Animated.View
         ref={ref}
-        style={[pressStyle as AnimatedStyleProp<ViewStyle>, ...(style ? [style] : [])] as any}
+        style={[pressStyle as AnimatedStyleProp<ViewStyle>, style]}
         onTouchStart={disabled ? undefined : handlePressIn}
         onTouchEnd={disabled ? undefined : handlePressOut}
       >

@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@mobile/theme';
 import type { CompatibilityIndicator as CompatibilityIndicatorType } from '@pawfectmatch/core/types/pet-chat';
 import { Ionicons } from '@expo/vector-icons';

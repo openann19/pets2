@@ -7,6 +7,44 @@ import type {
   CohortRetentionData,
 } from '../components';
 
+// API Response Types
+interface AnalyticsAPIResponse {
+  users?: {
+    total?: number;
+    active?: number;
+    suspended?: number;
+    banned?: number;
+    verified?: number;
+    recent24h?: number;
+    growth?: number;
+    trend?: 'up' | 'down' | 'stable';
+  };
+  pets?: {
+    total?: number;
+    active?: number;
+    recent24h?: number;
+    growth?: number;
+    trend?: 'up' | 'down' | 'stable';
+  };
+  matches?: {
+    total?: number;
+    active?: number;
+    blocked?: number;
+    recent24h?: number;
+    growth?: number;
+    trend?: 'up' | 'down' | 'stable';
+  };
+  messages?: {
+    total?: number;
+    deleted?: number;
+    recent24h?: number;
+    growth?: number;
+    trend?: 'up' | 'down' | 'stable';
+  };
+  conversionFunnel?: ConversionFunnelData;
+  retention?: CohortRetentionData;
+}
+
 export interface AnalyticsData {
   users: {
     total: number;
@@ -103,7 +141,7 @@ export const useAdminAnalytics = () => {
         adminAPI.getCohortRetention({ cohorts: '6' }).catch(() => ({ success: false, data: null }))
       ]);
 
-      const responseData = analyticsResponse.data || {};
+      const responseData = analyticsResponse.data as AnalyticsAPIResponse || {};
       const fullData: AnalyticsData = {
         users: {
           total: responseData.users?.total || 0,
@@ -112,30 +150,30 @@ export const useAdminAnalytics = () => {
           banned: responseData.users?.banned || 0,
           verified: responseData.users?.verified || 0,
           recent24h: responseData.users?.recent24h || 0,
-          growth: (responseData.users as any)?.growth || 0,
-          trend: ((responseData.users as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
+          growth: responseData.users?.growth || 0,
+          trend: responseData.users?.trend || 'stable',
         },
         pets: {
           total: responseData.pets?.total || 0,
           active: responseData.pets?.active || 0,
           recent24h: responseData.pets?.recent24h || 0,
-          growth: (responseData.pets as any)?.growth || 0,
-          trend: ((responseData.pets as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
+          growth: responseData.pets?.growth || 0,
+          trend: responseData.pets?.trend || 'stable',
         },
         matches: {
           total: responseData.matches?.total || 0,
           active: responseData.matches?.active || 0,
           blocked: responseData.matches?.blocked || 0,
           recent24h: responseData.matches?.recent24h || 0,
-          growth: (responseData.matches as any)?.growth || 0,
-          trend: ((responseData.matches as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
+          growth: responseData.matches?.growth || 0,
+          trend: responseData.matches?.trend || 'stable',
         },
         messages: {
           total: responseData.messages?.total || 0,
           deleted: responseData.messages?.deleted || 0,
           recent24h: responseData.messages?.recent24h || 0,
-          growth: (responseData.messages as any)?.growth || 0,
-          trend: ((responseData.messages as any)?.trend as 'up' | 'down' | 'stable') || 'stable',
+          growth: responseData.messages?.growth || 0,
+          trend: responseData.messages?.trend || 'stable',
         },
         engagement: {
           dailyActiveUsers: 0,
@@ -178,20 +216,20 @@ export const useAdminAnalytics = () => {
                 overallConversionRate: funnelResponse.data.overallConversionRate || 0,
               },
             }
-          : (responseData as any).conversionFunnel
+          : responseData.conversionFunnel
             ? {
                 conversionFunnel: {
-                  totalFreeUsers: (responseData as any).conversionFunnel.totalFreeUsers || 0,
-                  paywallViews: (responseData as any).conversionFunnel.paywallViews || 0,
-                  premiumSubscribers: (responseData as any).conversionFunnel.premiumSubscribers || 0,
-                  ultimateSubscribers: (responseData as any).conversionFunnel.ultimateSubscribers || 0,
+                  totalFreeUsers: responseData.conversionFunnel.totalFreeUsers || 0,
+                  paywallViews: responseData.conversionFunnel.paywallViews || 0,
+                  premiumSubscribers: responseData.conversionFunnel.premiumSubscribers || 0,
+                  ultimateSubscribers: responseData.conversionFunnel.ultimateSubscribers || 0,
                   freeToPaywallConversion:
-                    (responseData as any).conversionFunnel.freeToPaywallConversion || 0,
+                    responseData.conversionFunnel.freeToPaywallConversion || 0,
                   paywallToPremiumConversion:
-                    (responseData as any).conversionFunnel.paywallToPremiumConversion || 0,
+                    responseData.conversionFunnel.paywallToPremiumConversion || 0,
                   premiumToUltimateConversion:
-                    (responseData as any).conversionFunnel.premiumToUltimateConversion || 0,
-                  overallConversionRate: (responseData as any).conversionFunnel.overallConversionRate || 0,
+                    responseData.conversionFunnel.premiumToUltimateConversion || 0,
+                  overallConversionRate: responseData.conversionFunnel.overallConversionRate || 0,
                 },
               }
             : {}),
@@ -211,11 +249,11 @@ export const useAdminAnalytics = () => {
                 latestCohortSize: retentionResponse.data.latestCohortSize || 0,
               },
             }
-          : (responseData as any).retention
+          : responseData.retention
             ? {
                 retention: {
-                  cohorts: (responseData as any).retention.cohorts || [],
-                  averageRetention: (responseData as any).retention.averageRetention || {
+                  cohorts: responseData.retention.cohorts || [],
+                  averageRetention: responseData.retention.averageRetention || {
                     week1: 0,
                     week2: 0,
                     week4: 0,
@@ -224,7 +262,7 @@ export const useAdminAnalytics = () => {
                     month6: 0,
                     month12: 0,
                   },
-                  latestCohortSize: (responseData as any).retention.latestCohortSize || 0,
+                  latestCohortSize: responseData.retention.latestCohortSize || 0,
                 },
               }
             : {}),

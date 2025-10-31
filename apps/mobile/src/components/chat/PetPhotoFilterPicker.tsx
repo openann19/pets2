@@ -3,7 +3,7 @@
  * Fun filters for pet photos (hearts, paw prints, breed-themed)
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useTheme } from '@mobile/theme';
 import { Ionicons } from '@expo/vector-icons';

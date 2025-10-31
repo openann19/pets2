@@ -35,7 +35,7 @@ export function SwipeGestureHints({
   onDismiss,
   initialDismissed,
 }: SwipeGestureHintsProps): React.JSX.Element {
-  const theme = useTheme() as AppTheme;
+  const theme = useTheme();
   const [visible, setVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(initialDismissed ?? false);
   const opacity = useRef(new Animated.Value(0)).current;
@@ -115,7 +115,7 @@ export function SwipeGestureHints({
     return Number.isFinite(parsed) ? parsed : fallback;
   };
 
-  const shadow = (theme.shadows?.md ?? (theme.shadows as any)?.depth?.md) as
+  const shadow = (theme.shadows?.md ?? (theme as AppTheme & { shadows?: { depth?: { md?: Record<string, unknown> } } }).shadows?.depth?.md) as
     | Record<string, unknown>
     | undefined;
 
@@ -185,7 +185,7 @@ export function SwipeGestureHints({
         <View style={styles.hintContainerLeft}>
           <View style={[styles.hint, { backgroundColor: theme.utils.alpha(leftHint.getColor(theme), 0.2) }]}>
             <Ionicons
-              name={leftHint.icon as any}
+              name={leftHint.icon as keyof typeof Ionicons.glyphMap}
               size={24}
               color={leftHint.getColor(theme)}
             />
@@ -199,7 +199,7 @@ export function SwipeGestureHints({
         <View style={styles.hintContainerRight}>
           <View style={[styles.hint, { backgroundColor: theme.utils.alpha(rightHint.getColor(theme), 0.2) }]}>
             <Ionicons
-              name={rightHint.icon as any}
+              name={rightHint.icon as keyof typeof Ionicons.glyphMap}
               size={24}
               color={rightHint.getColor(theme)}
             />
@@ -213,7 +213,7 @@ export function SwipeGestureHints({
         <View style={styles.hintContainerTop}>
           <View style={[styles.hint, { backgroundColor: theme.utils.alpha(topHint.getColor(theme), 0.2) }]}>
             <Ionicons
-              name={topHint.icon as any}
+              name={topHint.icon as keyof typeof Ionicons.glyphMap}
               size={24}
               color={topHint.getColor(theme)}
             />

@@ -206,7 +206,7 @@ interface VelocityBasedScaleProps {
 export const VelocityBasedScale: React.FC<VelocityBasedScaleProps> = ({
   children,
   velocity,
-  minScale = 0.95,
+  minScale: _minScale = 0.95,
   maxScale = 1.05,
   enabled = true,
   style,
@@ -249,7 +249,7 @@ interface OvershootSpringProps {
 
 export const OvershootSpring: React.FC<OvershootSpringProps> = ({
   children,
-  overshoot = 0.2,
+  overshoot: _overshoot = 0.2,
   trigger = true,
   style,
 }) => {
@@ -290,7 +290,7 @@ interface StaggeredEntranceProps {
 
 export const StaggeredEntrance: React.FC<StaggeredEntranceProps> = ({
   children,
-  delay = 100,
+  delay: _delay = 100,
   animation = 'fade',
   springConfig = springs.standard,
   style,

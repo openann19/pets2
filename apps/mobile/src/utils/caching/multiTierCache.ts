@@ -4,7 +4,8 @@
  * Implements L1 (memory), L2 (persistent), L3 (network) caching strategy
  * with intelligent invalidation and stale-while-revalidate pattern
  */
-import { MMKV } from 'react-native-mmkv';
+// @ts-ignore - MMKV import issue with verbatimModuleSyntax
+const { MMKV } = require('react-native-mmkv');
 import { QueryClient } from '@tanstack/react-query';
 import { log } from '../logger';
 
@@ -12,7 +13,7 @@ import { log } from '../logger';
 const memoryCache = new Map<string, { value: unknown; timestamp: number; ttl: number }>();
 
 // L2: Persistent cache (MMKV - ultra fast)
-const persistentCache = new MMKV({
+const persistentCache = new (MMKV as any)({
   id: 'app-cache',
   encryptionKey: undefined, // Optional: add encryption for sensitive data
 });
@@ -144,7 +145,7 @@ export const CacheInvalidation = {
   /**
    * Event-based invalidation
    */
-  eventBased: (key: string, event: string, cache: MultiTierCache) => {
+  eventBased: (key: string, _event: string, cache: MultiTierCache) => {
     // Example: invalidate user cache on user update
     // This would be called when user data changes
     cache.invalidate(key);

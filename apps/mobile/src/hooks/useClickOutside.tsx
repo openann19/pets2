@@ -43,18 +43,22 @@ export function useClickOutside(
     });
 
     // Store the responder on the ref for cleanup
-    (ref as any).current._panResponder = panResponder;
+    (ref as RefObject<View & { _panResponder?: ReturnType<typeof PanResponder.create> }>).current!._panResponder = panResponder;
 
     return () => {
-      if ((ref as any).current?._panResponder) {
-        (ref as any).current._panResponder = null;
+      if ((ref as RefObject<View & { _panResponder?: ReturnType<typeof PanResponder.create> }>).current?._panResponder) {
+        (ref as RefObject<View & { _panResponder?: ReturnType<typeof PanResponder.create> }>).current!._panResponder = null;
       }
     };
   }, [ref, handler, enabled]);
 
   // Return a wrapper component for easier usage
   return {
-    TouchableWrapper: ({ children, style, ...props }: any) => (
+    TouchableWrapper: ({ children, style, ...props }: {
+      children: React.ReactNode;
+      style?: any;
+      [key: string]: any;
+    }) => (
       <TouchableWithoutFeedback
         onPress={handler}
         disabled={!enabled}
@@ -77,7 +81,7 @@ export function useClickOutsideSimple(
   useEffect(() => {
     if (!enabled) return;
 
-    const handleTouch = (event: any) => {
+    const handleTouch = (event: { nativeEvent?: { pageX: number; pageY: number }; pageX?: number; pageY?: number }) => {
       if (ref.current) {
         ref.current.measure((x, y, width, height, pageX, pageY) => {
           const touchX = event.nativeEvent?.pageX ?? event.pageX;

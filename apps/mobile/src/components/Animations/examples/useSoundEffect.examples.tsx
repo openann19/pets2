@@ -60,7 +60,7 @@ export function VolumeControlExamples() {
 // ============================================================================
 
 export function EnableDisableExamples() {
-  const [enabled, setEnabled] = useState(true);
+  const [enabled, _setEnabled] = useState(true);
 
   const { play, enabled: soundEnabled, setEnabled: setSoundEnabled } = useSoundEffect({
     uri: require('@/assets/sounds/click.mp3'),

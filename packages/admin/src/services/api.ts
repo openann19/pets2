@@ -13,11 +13,16 @@ export class AdminAPIService {
    * Convert ApiClientResponse to AdminApiResponse
    */
   private convertResponse<T>(response: ApiClientResponse<T>): AdminApiResponse<T> {
-    return {
+    const result: AdminApiResponse<T> = {
       success: response.success ?? true,
       data: response.data as T,
-      message: response.message,
     };
+    
+    if (response.message !== undefined) {
+      result.message = response.message;
+    }
+    
+    return result;
   }
 
   /**

@@ -37,6 +37,7 @@ describe('Basic Accessibility', () => {
       const image = getByLabelText('Pet photo');
 
       expect(image).toBeTruthy();
+    });
   });
 
   describe('Touch target sizes', () => {

@@ -70,7 +70,6 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
 
   return (
     <View
-      // Cast style to any to align with RN style unions
       style={
         [
           styles.container,
@@ -80,8 +79,8 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
             borderRadius,
             backgroundColor: '#E5E5E5',
           },
-          style as any,
-        ] as any
+          style,
+        ] as ViewStyle[]
       }
     >
       <Animated.View
@@ -89,9 +88,9 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
           [
             styles.shimmer,
             {
-              transform: [{ translateX: translateX as any }],
+              transform: [{ translateX }],
             },
-          ] as any
+          ] as ViewStyle[]
         }
       >
         <LinearGradient

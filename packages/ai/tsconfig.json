@@ -4,7 +4,8 @@
     "outDir": "./dist",
     "types": ["node", "jest"],
     "lib": ["ES2023", "DOM"],
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

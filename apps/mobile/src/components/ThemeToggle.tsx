@@ -26,7 +26,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   showLabel = false,
   style,
 }) => {
-  const { isDark, colors, toggleTheme, showThemeSelector, themeMode } = useThemeToggle();
+  const { isDark, colors, toggleTheme, themeMode, showThemeSelector: showSelector } = useThemeToggle();
   const theme = useTheme();
 
   const animatedValue = React.useRef(new Animated.Value(isDark ? 1 : 0)).current;
@@ -131,15 +131,17 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   }
 
   if (variant === 'selector') {
-    const themeLabels = {
+    const themeLabels: Record<string, string> = {
       light: 'Light',
       dark: 'Dark',
       system: 'Auto',
     };
 
+    const currentMode = themeMode ?? 'system';
+
     return (
       <TouchableOpacity
-        onPress={showThemeSelector}
+        onPress={showSelector}
         style={StyleSheet.flatten([
           themeStyles.selectorContainer,
           buttonSizes[size],
@@ -154,7 +156,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
         <View style={themeStyles.selectorContent}>
           <View style={themeStyles.selectorLeft}>
             <Ionicons
-              name={themeMode === 'system' ? 'phone-portrait' : isDark ? 'moon' : 'sunny'}
+              name={currentMode === 'system' ? 'phone-portrait' : isDark ? 'moon' : 'sunny'}
               size={iconSizes[size]}
               color={colors.primary}
             />
@@ -164,7 +166,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
                 { color: theme.palette.neutral[700] },
               ])}
             >
-              Theme: {themeLabels[themeMode]}
+              Theme: {themeLabels[currentMode] ?? 'Auto'}
             </Text>
           </View>
           <Ionicons

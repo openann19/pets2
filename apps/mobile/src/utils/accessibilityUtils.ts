@@ -4,7 +4,6 @@
  */
 
 import { AccessibilityInfo } from 'react-native';
-import { useState, useEffect } from 'react';
 
 /**
  * Check if reduced motion is enabled

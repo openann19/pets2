@@ -114,11 +114,11 @@ export class WeakCache<K extends object, V> {
  * Pre-allocated array pool for list operations
  */
 export class ArrayPool {
-  private static pools = new Map<number, ObjectPool<any[]>>();
+  private static pools = new Map<number, ObjectPool<unknown[]>>();
 
   static acquire<T>(size: number): T[] {
     let pool = this.pools.get(size);
-    
+
     if (!pool) {
       pool = new ObjectPool({
         factory: () => new Array(size),
@@ -129,13 +129,13 @@ export class ArrayPool {
       this.pools.set(size, pool);
     }
 
-    return pool.acquire();
+    return pool.acquire() as T[];
   }
 
   static release<T>(arr: T[]): void {
     const pool = this.pools.get(arr.length);
     if (pool) {
-      pool.release(arr);
+      pool.release(arr as unknown[]);
     }
   }
 }

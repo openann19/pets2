@@ -11,6 +11,18 @@ import type { AdminScreenProps } from '../../navigation/types';
 import { useErrorHandler } from '../useErrorHandler';
 import { _adminAPI as adminAPI } from '../../services/adminAPI';
 
+// API Response Types
+interface BillingMetricsResponse {
+  totalRevenue?: number;
+  monthlyRecurringRevenue?: number;
+  annualRecurringRevenue?: number;
+  averageRevenuePerUser?: number;
+  conversionRate?: number;
+  churnRate?: number;
+  activeSubscriptions?: number;
+  revenueGrowth?: number;
+}
+
 interface DashboardMetrics {
   users: {
     total: number;
@@ -127,14 +139,14 @@ export function useAdminDashboardScreen({
           // Extract revenue metrics from billing response
           const revenueMetrics = billingMetricsResponse.success && billingMetricsResponse.data
             ? {
-                totalRevenue: (billingMetricsResponse.data as any).totalRevenue || 0,
-                monthlyRecurringRevenue: (billingMetricsResponse.data as any).monthlyRecurringRevenue || 0,
-                annualRecurringRevenue: (billingMetricsResponse.data as any).annualRecurringRevenue || 0,
-                averageRevenuePerUser: (billingMetricsResponse.data as any).averageRevenuePerUser || 0,
-                conversionRate: (billingMetricsResponse.data as any).conversionRate || 0,
-                churnRate: (billingMetricsResponse.data as any).churnRate || 0,
-                activeSubscriptions: (billingMetricsResponse.data as any).activeSubscriptions || 0,
-                revenueGrowth: (billingMetricsResponse.data as any).revenueGrowth || 0,
+                totalRevenue: (billingMetricsResponse.data as BillingMetricsResponse).totalRevenue || 0,
+                monthlyRecurringRevenue: (billingMetricsResponse.data as BillingMetricsResponse).monthlyRecurringRevenue || 0,
+                annualRecurringRevenue: (billingMetricsResponse.data as BillingMetricsResponse).annualRecurringRevenue || 0,
+                averageRevenuePerUser: (billingMetricsResponse.data as BillingMetricsResponse).averageRevenuePerUser || 0,
+                conversionRate: (billingMetricsResponse.data as BillingMetricsResponse).conversionRate || 0,
+                churnRate: (billingMetricsResponse.data as BillingMetricsResponse).churnRate || 0,
+                activeSubscriptions: (billingMetricsResponse.data as BillingMetricsResponse).activeSubscriptions || 0,
+                revenueGrowth: (billingMetricsResponse.data as BillingMetricsResponse).revenueGrowth || 0,
               }
             : undefined;
 

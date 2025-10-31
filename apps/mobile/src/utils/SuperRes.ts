@@ -4,7 +4,6 @@
  */
 
 import * as ImageManipulator from 'expo-image-manipulator';
-import { Platform } from 'react-native';
 import { tileUpscaleAuto } from './TiledUpscaler';
 import { unsharpMask } from './Unsharp';
 import { logger } from '../services/logger';
@@ -35,7 +34,7 @@ const BicubicAdapter: SuperResAdapter = {
     return true;
   },
   async upscale(uri, targetW, targetH, opts = {}) {
-    const { sharpen = true, useTiles, pickBest = false } = opts;
+    const { sharpen = true, useTiles } = opts;
 
     // Use tile-based upscaling for large images (4K+)
     const shouldUseTiles = useTiles ?? (targetW >= 1920 || targetH >= 1920);
@@ -105,8 +104,8 @@ const ServerAdapter: SuperResAdapter = {
   },
   async upscale(uri, targetW, targetH, opts = {}) {
     try {
-      // Read image file as base64 for upload
-      const base64 = await FileSystem.readAsStringAsync(uri, {
+      // Read image file as base64 for upload (not used in current implementation)
+      await FileSystem.readAsStringAsync(uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
 
@@ -182,7 +181,7 @@ const LocalTFLiteAdapter: SuperResAdapter = {
       return false;
     }
   },
-  async upscale(uri, targetW, targetH, opts = {}) {
+  async upscale(_uri: string, _targetW: number, _targetH: number, _opts = {}) {
     // Example implementation:
     // const TFModule = require('react-native-tflite');
     // const input = await ImageManipulator.manipulateAsync(uri, [], { format: ImageManipulator.SaveFormat.PNG });
@@ -190,7 +189,7 @@ const LocalTFLiteAdapter: SuperResAdapter = {
     // return output.uri;
 
     // Fallback
-    return uri;
+    return _uri;
   },
 };
 

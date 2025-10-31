@@ -95,7 +95,7 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
   // Tab state preservation
   const { updateScrollOffset, restoreState } = useTabStatePreservation({
     tabName: 'Matches',
-    scrollRef: listRef as any,
+    scrollRef: listRef,
     preserveScroll: true,
   });
 

@@ -2,8 +2,6 @@ const baseConfig = require('../../jest.config.base.cjs');
 
 module.exports = {
   ...baseConfig,
-  preset: 'ts-jest/presets/default-esm',
-  extensionsToTreatAsEsm: ['.ts'],
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
   testMatch: [
@@ -11,32 +9,18 @@ module.exports = {
     '**/*.(test|spec).(ts|tsx|js)'
   ],
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: true,
-      tsconfig: {
-        module: 'ES2022',
-        moduleResolution: 'bundler',
-        jsx: 'react-jsx'
-      }
-    }]
+    '^.+\\.(ts|tsx)$': 'ts-jest'
   },
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '^(\\.{1,2}/.*)\\.js$': '$1'
+    '^@/(.*)$': '<rootDir>/src/$1'
   },
   globals: {
     'ts-jest': {
-      useESM: true,
       tsconfig: {
-        module: 'ES2022',
-        moduleResolution: 'bundler',
         jsx: 'react-jsx'
       }
     }
   },
-  transformIgnorePatterns: [
-    'node_modules/(?!(@pawfectmatch)/)',
-  ],
   coverageThreshold: {
     global: {
       branches: 85,

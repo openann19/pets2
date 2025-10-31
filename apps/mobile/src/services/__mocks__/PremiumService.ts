@@ -17,7 +17,7 @@ const premiumServiceMock = {
   trackUsage: jest.fn(),
   getUsageStats: jest.fn(),
   refreshSubscriptionStatus: jest.fn(),
-} satisfies Record<string, ReturnType<typeof jest.fn>>;
+} as const;
 
 export type PremiumServiceMock = typeof premiumServiceMock;
 

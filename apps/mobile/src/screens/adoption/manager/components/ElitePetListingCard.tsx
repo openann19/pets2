@@ -28,11 +28,11 @@ export const ElitePetListingCard: React.FC<ElitePetListingCardProps> = ({
   onChangeStatus,
 }) => {
   return (
-    <EliteCard gradient blur style={GlobalStyles['mb4'] as any}>
+    <EliteCard gradient blur style={GlobalStyles['mb4'] as ViewStyle}>
       <View style={styles.eliteListingHeader}>
         <View style={{ flex: 1 }}>
-          <Text style={GlobalStyles['heading3'] as any}>{pet.name}</Text>
-          <Text style={GlobalStyles['body'] as any}>
+          <Text style={GlobalStyles['heading3'] as TextStyle}>{pet.name}</Text>
+          <Text style={GlobalStyles['body'] as TextStyle}>
             {pet.breed} • {pet.age} years old
           </Text>
         </View>
@@ -74,7 +74,7 @@ export const ElitePetListingCard: React.FC<ElitePetListingCardProps> = ({
           onPress={() => onViewDetails(pet.id)}
           style={{ flex: 1 }}
         />
-        <View style={GlobalStyles['mx2'] as any} />
+        <View style={GlobalStyles['mx2'] as ViewStyle} />
         <EliteButton
           title={`Review (${pet.applications})`}
           variant="primary"

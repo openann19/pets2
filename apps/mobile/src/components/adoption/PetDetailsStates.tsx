@@ -19,7 +19,7 @@ const createStyles = (theme: AppTheme) =>
     skeletonImage: {
       width: '100%',
       height: 320,
-      borderRadius: theme.radii['2xl'],
+      borderRadius: theme.radii['3xl'] ?? theme.radii['2xl'] ?? theme.radii.xl,
     },
     skeletonRow: {
       flexDirection: 'row',

@@ -30,11 +30,11 @@ export const EliteApplicationCard: React.FC<EliteApplicationCardProps> = ({
   const { colors } = theme;
 
   return (
-    <EliteCard gradient blur style={GlobalStyles['mb4'] as any}>
+    <EliteCard gradient blur style={GlobalStyles['mb4'] as ViewStyle}>
       <View style={styles.eliteApplicationHeader}>
         <View style={{ flex: 1 }}>
-          <Text style={GlobalStyles['heading3'] as any}>{application.applicantName}</Text>
-          <Text style={GlobalStyles['body'] as any}>Applying for: {application.petName}</Text>
+          <Text style={GlobalStyles['heading3'] as TextStyle}>{application.applicantName}</Text>
+          <Text style={GlobalStyles['body'] as TextStyle}>Applying for: {application.petName}</Text>
         </View>
         <View style={[styles.eliteStatusBadge, { backgroundColor: `${getStatusColor(application.status)}20` }]}>
           <Text style={[styles.eliteStatusText, { color: getStatusColor(application.status) }]}>
@@ -81,7 +81,7 @@ export const EliteApplicationCard: React.FC<EliteApplicationCardProps> = ({
             onPress={() => onReject(application.id)}
             style={StyleSheet.flatten([{ flex: 1 }, { borderColor: Colors.error[500] }])}
           />
-          <View style={GlobalStyles['mx2'] as any} />
+          <View style={GlobalStyles['mx2'] as ViewStyle} />
           <EliteButton
             title="Approve"
             variant="primary"

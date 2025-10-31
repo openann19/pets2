@@ -25,12 +25,17 @@ export function useSuperLikeGate(): FeatureGateResult {
   const hasUnlimitedSuperLikes = isPremium && (plan === 'premium' || plan === 'ultimate');
   const hasSuperLikes = hasUnlimitedSuperLikes || (balance?.superLikes || 0) > 0;
   
-  return {
+  const result: FeatureGateResult = {
     canUse: hasSuperLikes,
-    reason: hasSuperLikes ? undefined : 'No Super Likes remaining. Purchase from Premium screen.',
     upgradeRequired: !isPremium && (balance?.superLikes || 0) === 0,
     balance: balance?.superLikes || 0,
   };
+  
+  if (!hasSuperLikes) {
+    result.reason = 'No Super Likes remaining. Purchase from Premium screen.';
+  }
+  
+  return result;
 }
 
 /**
@@ -45,12 +50,17 @@ export function useProfileBoostGate(): FeatureGateResult {
   const hasBoostFeature = isPremium && (plan === 'premium' || plan === 'ultimate');
   const hasBoosts = hasBoostFeature || hasUnlimitedBoosts || (balance?.boosts || 0) > 0;
   
-  return {
+  const result: FeatureGateResult = {
     canUse: hasBoosts,
-    reason: hasBoosts ? undefined : 'No Profile Boosts remaining. Purchase from Premium screen.',
     upgradeRequired: !hasBoostFeature && (balance?.boosts || 0) === 0,
     balance: balance?.boosts || 0,
   };
+  
+  if (!hasBoosts) {
+    result.reason = 'No Profile Boosts remaining. Purchase from Premium screen.';
+  }
+  
+  return result;
 }
 
 /**
@@ -62,11 +72,16 @@ export function useAdvancedFiltersGate(): FeatureGateResult {
   
   const canUse = isPremium && (plan === 'premium' || plan === 'ultimate');
   
-  return {
+  const result: FeatureGateResult = {
     canUse,
-    reason: canUse ? undefined : 'Advanced Filters are a Premium feature ($9.99/month).',
     upgradeRequired: !canUse,
   };
+  
+  if (!canUse) {
+    result.reason = 'Advanced Filters are a Premium feature ($9.99/month).';
+  }
+  
+  return result;
 }
 
 /**
@@ -78,11 +93,16 @@ export function useReadReceiptsGate(): FeatureGateResult {
   
   const canUse = isPremium && (plan === 'premium' || plan === 'ultimate');
   
-  return {
+  const result: FeatureGateResult = {
     canUse,
-    reason: canUse ? undefined : 'Read Receipts are a Premium feature ($9.99/month).',
     upgradeRequired: !canUse,
   };
+  
+  if (!canUse) {
+    result.reason = 'Read Receipts are a Premium feature ($9.99/month).';
+  }
+  
+  return result;
 }
 
 /**
@@ -94,11 +114,16 @@ export function useVideoCallsGate(): FeatureGateResult {
   
   const canUse = isPremium && (plan === 'premium' || plan === 'ultimate');
   
-  return {
+  const result: FeatureGateResult = {
     canUse,
-    reason: canUse ? undefined : 'Video Calls are a Premium feature ($9.99/month).',
     upgradeRequired: !canUse,
   };
+  
+  if (!canUse) {
+    result.reason = 'Video Calls are a Premium feature ($9.99/month).';
+  }
+  
+  return result;
 }
 
 /**
@@ -110,11 +135,16 @@ export function useSeeWhoLikedGate(): FeatureGateResult {
   
   const canUse = isPremium && (plan === 'premium' || plan === 'ultimate');
   
-  return {
+  const result: FeatureGateResult = {
     canUse,
-    reason: canUse ? undefined : 'See Who Liked You is a Premium feature ($9.99/month).',
     upgradeRequired: !canUse,
   };
+  
+  if (!canUse) {
+    result.reason = 'See Who Liked You is a Premium feature ($9.99/month).';
+  }
+  
+  return result;
 }
 
 /**

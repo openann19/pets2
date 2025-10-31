@@ -18,7 +18,7 @@ interface FeatureGatingResult {
 interface UseFeatureGatingReturn {
   checkFeatureAccess: (feature: keyof PremiumLimits) => Promise<FeatureGatingResult>;
   getFeatureLimit: (feature: keyof PremiumLimits) => number;
-  isFeatureUnlimited: (feature: keyof PremiumLimits) => boolean;
+  isFeatureUnlimited: (feature: keyof PremiumLimits) => Promise<boolean>;
   trackFeatureUsage: (feature: string) => Promise<void>;
   getUpgradeMessage: (feature: keyof PremiumLimits) => string;
 }
@@ -101,9 +101,17 @@ export const useFeatureGating = (): UseFeatureGatingReturn => {
   }, []);
 
   const isFeatureUnlimited = useCallback(
-    (feature: keyof PremiumLimits): boolean => {
-      const limit = getFeatureLimit(feature);
-      return limit === -1;
+    async (feature: keyof PremiumLimits): Promise<boolean> => {
+      try {
+        const limits = await premiumService.getPremiumLimits();
+        const limit = limits[feature];
+        return limit === -1;
+      } catch (error) {
+        logger.error('Failed to check if feature is unlimited', { error, feature });
+        // Fall back to default limits
+        const defaultLimit = getFeatureLimit(feature);
+        return defaultLimit === -1;
+      }
     },
     [getFeatureLimit],
   );

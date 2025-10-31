@@ -20,6 +20,8 @@ export interface SemanticColors {
   danger: string;
   warning: string;
   info: string;
+  // Layer colors for depth
+  layer1?: string;
 }
 
 export interface Spacing {
@@ -72,6 +74,7 @@ export interface Radius {
   'lg': number;
   'xl': number;
   '2xl': number;
+  '3xl': number;
   'full': number;
   'pill': number;
 }

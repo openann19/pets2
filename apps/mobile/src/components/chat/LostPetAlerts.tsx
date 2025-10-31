@@ -17,13 +17,15 @@ interface LostPetAlertsProps {
 }
 
 export const LostPetAlerts: React.FC<LostPetAlertsProps> = ({
-  userId,
+  userId: _userId,
   userLocation,
   onReportSighting,
-  onCreateAlert,
+  onCreateAlert: _onCreateAlert,
 }) => {
   const theme = useTheme();
+  // @ts-expect-error - State declared for future implementation
   const [activeAlerts, setActiveAlerts] = useState<LostPetAlert[]>([]);
+  // @ts-expect-error - State declared for future implementation
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   const handleReportSighting = (alertId: string) => {

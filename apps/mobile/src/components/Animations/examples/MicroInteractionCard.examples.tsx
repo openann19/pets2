@@ -4,7 +4,6 @@
  * Comprehensive examples demonstrating all features of MicroInteractionCard
  */
 
-import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { MicroInteractionCard } from '@/components/Animations';
 

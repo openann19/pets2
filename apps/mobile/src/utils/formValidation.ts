@@ -139,38 +139,38 @@ export function validateAdoptionApplication(
   // Step 0: Experience and Living Space
   const experienceValidation = validateRequired(formData.experience, 'Pet experience');
   if (!experienceValidation.valid) {
-    errors.experience = experienceValidation.error || 'Pet experience is required';
+    errors['experience'] = experienceValidation.error || 'Pet experience is required';
   }
 
   const livingSpaceValidation = validateRequired(formData.livingSpace, 'Living space');
   if (!livingSpaceValidation.valid) {
-    errors.livingSpace = livingSpaceValidation.error || 'Living space is required';
+    errors['livingSpace'] = livingSpaceValidation.error || 'Living space is required';
   }
 
   // Step 1: Work Schedule and Reason
   const workScheduleValidation = validateRequired(formData.workSchedule, 'Work schedule');
   if (!workScheduleValidation.valid) {
-    errors.workSchedule = workScheduleValidation.error || 'Work schedule is required';
+    errors['workSchedule'] = workScheduleValidation.error || 'Work schedule is required';
   } else {
     const minLengthValidation = validateMinLength(formData.workSchedule, 10, 'Work schedule');
     if (!minLengthValidation.valid) {
-      errors.workSchedule = minLengthValidation.error || 'Work schedule is too short';
+      errors['workSchedule'] = minLengthValidation.error || 'Work schedule is too short';
     }
   }
 
   const reasonValidation = validateRequired(formData.reason, 'Adoption reason');
   if (!reasonValidation.valid) {
-    errors.reason = reasonValidation.error || 'Adoption reason is required';
+    errors['reason'] = reasonValidation.error || 'Adoption reason is required';
   } else {
     const minLengthValidation = validateMinLength(formData.reason, 20, 'Adoption reason');
     if (!minLengthValidation.valid) {
-      errors.reason = minLengthValidation.error || 'Please provide more details about why you want to adopt';
+      errors['reason'] = minLengthValidation.error || 'Please provide more details about why you want to adopt';
     }
   }
 
   // Step 2: References
   if (!formData.references || formData.references.length === 0) {
-    errors.references = 'At least one reference is required';
+    errors['references'] = 'At least one reference is required';
   } else {
     const primaryReference = formData.references[0];
     if (primaryReference) {

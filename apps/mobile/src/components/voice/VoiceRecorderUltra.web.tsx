@@ -84,7 +84,10 @@ export default function VoiceRecorderUltraWeb({
     }
     try {
       // Try standard API first
-      const win = window as any;
+      const win = window as Window & {
+        SpeechRecognition?: any;
+        webkitSpeechRecognition?: any;
+      };
       if (win.SpeechRecognition) {
         return win.SpeechRecognition;
       }
@@ -98,7 +101,7 @@ export default function VoiceRecorderUltraWeb({
     }
   }, []);
   
-  const recogRef = useRef<any>(null);
+  const recogRef = useRef<SpeechRecognition | null>(null);
   const recogEnabled = (transcription?.enabled ?? true) && !!SpeechRecognition;
 
   // slide-to-cancel
@@ -295,7 +298,7 @@ export default function VoiceRecorderUltraWeb({
           recog.continuous = true;
 
           let finalText = '';
-          recog.onresult = (e: any) => {
+          recog.onresult = (e: SpeechRecognitionEvent) => {
             let interim = '';
             for (let i = e.resultIndex; i < e.results.length; i++) {
               const res = e.results[i];
@@ -387,13 +390,13 @@ export default function VoiceRecorderUltraWeb({
       // Two common variants supported:
       if (sendVoiceNote.length === 3) {
         // (matchId, blob, { transcript })
-        await (sendVoiceNote as any)(matchId, blob, { transcript: transcript || undefined });
+        await (sendVoiceNote as (matchId: string, file: Blob, extras?: { transcript?: string }) => Promise<void>)(matchId, blob, { transcript: transcript || undefined });
       } else {
         // (matchId, formData)
         const form = new FormData();
         form.append('file', blob, 'voice-note.wav'); // processed is WAV
         if (transcript) form.append('transcript', transcript);
-        await (sendVoiceNote as any)(matchId, form);
+        await (sendVoiceNote as (matchId: string, data: FormData) => Promise<void>)(matchId, form);
       }
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);

@@ -3,9 +3,8 @@
  * Tests complete user journeys for premium features
  */
 
-import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { renderHook, act } from '@testing-library/react-native';
 import { Alert } from 'react-native';
-import { useAuthStore } from '@pawfectmatch/core';
 import { usePremiumStatus } from '../../hooks/domains/premium/usePremiumStatus';
 import { useIAPBalance } from '../../hooks/domains/premium/useIAPBalance';
 import { useFeatureGating } from '../../hooks/domains/premium/useFeatureGating';
@@ -15,7 +14,7 @@ import { __resetPremiumServiceMocks } from '../../services/__mocks__/PremiumServ
 
 jest.mock('../../hooks/domains/premium/usePremiumStatus');
 jest.mock('../../hooks/domains/premium/useIAPBalance');
-jest.mock('../../hooks/domains/premium/useFeatureGating');
+// jest.mock('../../hooks/domains/premium/useFeatureGating'); // Remove this to test real hook
 jest.mock('../../services/swipeService');
 jest.mock('../../services/PremiumService');
 jest.mock('react-native', () => {
@@ -42,24 +41,34 @@ describe('Premium Feature Flow Integration', () => {
         refreshBalance: jest.fn().mockResolvedValue({ superLikes: 4 }),
       };
 
-      const mockFeatureGating = {
-        canUseFeature: jest.fn().mockReturnValue(true),
-        checkFeatureAccess: jest.fn().mockResolvedValue({
-          canUse: true,
-          balance: 5,
-        }),
+      // Mock premium service to return free tier limits
+      const mockFreeLimits = {
+        swipesPerDay: 5,
+        likesPerDay: 5,
+        superLikesPerDay: 5, // Has super likes from IAP
+        canUndoSwipes: false,
+        canSeeWhoLiked: false,
+        canBoostProfile: false,
+        advancedFilters: false,
+        priorityMatching: false,
+        unlimitedRewind: false,
       };
 
       (usePremiumStatus as jest.Mock).mockReturnValue(mockPremiumStatus);
       (useIAPBalance as jest.Mock).mockReturnValue(mockIAPBalance);
-      (useFeatureGating as jest.Mock).mockReturnValue(mockFeatureGating);
+      (premiumService.getPremiumLimits as jest.Mock).mockResolvedValue(mockFreeLimits);
       (superLikePet as jest.Mock).mockResolvedValue({ success: true });
 
+      // Test feature gating
+      const { result } = renderHook(() => useFeatureGating());
+      const accessResult = await result.current.checkFeatureAccess('superLikesPerDay');
+
       // Execute: User attempts super like
-      const result = await superLikePet('pet123');
+      const superLikeResult = await superLikePet('pet123');
 
       // Verify: Super like succeeds and balance deducted
-      expect(result.success).toBe(true);
+      expect(accessResult.canUse).toBe(true);
+      expect(superLikeResult.success).toBe(true);
       expect(mockIAPBalance.refreshBalance).toHaveBeenCalled();
     });
 
@@ -74,25 +83,30 @@ describe('Premium Feature Flow Integration', () => {
         refreshBalance: jest.fn(),
       };
 
-      const mockFeatureGating = {
-        canUseFeature: jest.fn().mockReturnValue(false),
-        checkFeatureAccess: jest.fn().mockResolvedValue({
-          canUse: false,
-          balance: 0,
-          upgradeRequired: true,
-          reason: 'No Super Likes remaining',
-        }),
+      // Mock premium service to return free tier limits with no super likes
+      const mockFreeLimits = {
+        swipesPerDay: 5,
+        likesPerDay: 5,
+        superLikesPerDay: 0, // No super likes available
+        canUndoSwipes: false,
+        canSeeWhoLiked: false,
+        canBoostProfile: false,
+        advancedFilters: false,
+        priorityMatching: false,
+        unlimitedRewind: false,
       };
 
       (usePremiumStatus as jest.Mock).mockReturnValue(mockPremiumStatus);
       (useIAPBalance as jest.Mock).mockReturnValue(mockIAPBalance);
-      (useFeatureGating as jest.Mock).mockReturnValue(mockFeatureGating);
+      (premiumService.getPremiumLimits as jest.Mock).mockResolvedValue(mockFreeLimits);
 
-      // User attempts super like without balance
-      const hasAccess = mockFeatureGating.canUseFeature('super_likes');
+      // Test feature gating
+      const { result } = renderHook(() => useFeatureGating());
+      const accessResult = await result.current.checkFeatureAccess('superLikesPerDay');
 
-      expect(hasAccess).toBe(false);
-      expect(mockFeatureGating.checkFeatureAccess).toHaveBeenCalled();
+      expect(accessResult.canUse).toBe(false);
+      expect(accessResult.upgradeRequired).toBe(true);
+      expect(accessResult.reason).toBe('No Super Likes remaining');
     });
   });
 
@@ -132,56 +146,69 @@ describe('Premium Feature Flow Integration', () => {
 
   describe('Feature Limit Enforcement', () => {
     it('should enforce swipe limit for free users', async () => {
-      const mockUsageStats = {
-        swipesUsed: 5,
-        swipesLimit: 5,
-        superLikesUsed: 0,
-        superLikesLimit: 0,
+      const mockPremiumStatus = {
+        isPremium: false,
+        plan: 'free',
       };
 
-      (premiumService.getUsageStats as jest.Mock).mockResolvedValue(mockUsageStats);
+      // Mock premium service to return free tier limits with 0 swipes (at limit)
+      const mockFreeLimits = {
+        swipesPerDay: 0, // Free users get 5 daily swipes but are at limit
+        likesPerDay: 5,
+        superLikesPerDay: 0,
+        canUndoSwipes: false,
+        canSeeWhoLiked: false,
+        canBoostProfile: false,
+        advancedFilters: false,
+        priorityMatching: false,
+        unlimitedRewind: false,
+      };
+
+      (usePremiumStatus as jest.Mock).mockReturnValue(mockPremiumStatus);
+      (premiumService.getPremiumLimits as jest.Mock).mockResolvedValue(mockFreeLimits);
 
       const { result } = renderHook(() => useFeatureGating());
 
-      await waitFor(() => {
-        expect(result.current.usageStats).toEqual(mockUsageStats);
-      });
+      // User at limit - checkFeatureAccess should return canUse: false for swipes
+      const accessResult = await result.current.checkFeatureAccess('swipesPerDay');
+      expect(accessResult.canUse).toBe(false);
+      expect(accessResult.upgradeRequired).toBe(true);
 
-      // User at limit
-      const canSwipe = result.current.canUseFeature('swipes');
-      expect(canSwipe).toBe(false);
-
-      const hasUsageLeft = result.current.hasUsageLeft('swipes');
-      expect(hasUsageLeft).toBe(false);
+      const isUnlimited = await result.current.isFeatureUnlimited('swipesPerDay');
+      expect(isUnlimited).toBe(false);
     });
 
     it('should allow unlimited swipes for premium users', async () => {
-      const mockUsageStats = {
-        swipesUsed: 100,
-        swipesLimit: -1, // Unlimited
-        superLikesUsed: 50,
-        superLikesLimit: -1, // Unlimited
-      };
-
       const mockPremiumStatus = {
         isPremium: true,
         plan: 'premium',
       };
 
+      // Mock premium service to return premium limits
+      const mockPremiumLimits = {
+        swipesPerDay: -1, // Unlimited
+        likesPerDay: -1,
+        superLikesPerDay: -1,
+        canUndoSwipes: true,
+        canSeeWhoLiked: true,
+        canBoostProfile: true,
+        advancedFilters: true,
+        priorityMatching: true,
+        unlimitedRewind: false,
+      };
+
       (usePremiumStatus as jest.Mock).mockReturnValue(mockPremiumStatus);
-      (premiumService.getUsageStats as jest.Mock).mockResolvedValue(mockUsageStats);
+      (premiumService.getPremiumLimits as jest.Mock).mockResolvedValue(mockPremiumLimits);
 
       const { result } = renderHook(() => useFeatureGating());
 
-      await waitFor(() => {
-        expect(result.current.usageStats).toEqual(mockUsageStats);
-      });
+      // Premium user should have unlimited swipes
+      const accessResult = await result.current.checkFeatureAccess('swipesPerDay');
+      expect(accessResult.canUse).toBe(true);
+      expect(accessResult.upgradeRequired).toBe(false);
 
-      const canSwipe = result.current.canUseFeature('swipes');
-      expect(canSwipe).toBe(true);
-
-      const hasUsageLeft = result.current.hasUsageLeft('swipes');
-      expect(hasUsageLeft).toBe(true); // Unlimited
+      const isUnlimited = await result.current.isFeatureUnlimited('swipesPerDay');
+      expect(isUnlimited).toBe(true);
     });
   });
 

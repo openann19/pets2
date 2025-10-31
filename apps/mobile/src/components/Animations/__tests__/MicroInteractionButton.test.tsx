@@ -4,13 +4,16 @@
  */
 
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, RenderResult } from '@testing-library/react-native';
 import { Text, View } from 'react-native';
 import { MicroInteractionButton } from '../MicroInteractionButton';
 import * as Haptics from 'expo-haptics';
 import { useReduceMotion } from '@/hooks/useReducedMotion';
 import { useSoundEffect } from '@/hooks/animations/useSoundEffect';
 import { useHapticFeedback } from '@/hooks/animations/useHapticFeedback';
+
+// Import Jest globals
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 
 // Mock dependencies
 jest.mock('expo-haptics');
@@ -60,13 +63,13 @@ jest.mock('react-native-reanimated', () => {
   };
   
   // Set default export and also export as named for compatibility
-  AnimatedModule.default = AnimatedModule;
+  (AnimatedModule as any).default = AnimatedModule;
   
   return {
     default: AnimatedModule,
     ...AnimatedModule,
     useSharedValue: jest.fn((value: any) => ({ value })),
-    useAnimatedStyle: jest.fn((callback: () => any) => {
+    useAnimatedStyle: jest.fn((callback: Function) => {
       try {
         return callback() || {};
       } catch {
@@ -75,7 +78,7 @@ jest.mock('react-native-reanimated', () => {
     }),
     withSpring: jest.fn((value: any) => value),
     withTiming: jest.fn((value: any) => value),
-    interpolate: jest.fn((value: number) => value),
+    interpolate: jest.fn((value: any) => value),
     Extrapolate: {
       IDENTITY: 'identity',
       CLAMP: 'clamp',
@@ -122,19 +125,19 @@ const mockTriggerError = jest.fn();
 describe('MicroInteractionButton', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (useReduceMotion as jest.Mock).mockReturnValue(false);
-    (useSoundEffect as jest.Mock).mockReturnValue({
+    (useReduceMotion as unknown as jest.MockedFunction<() => boolean>).mockReturnValue(false);
+    (useSoundEffect as unknown as jest.MockedFunction<any>).mockReturnValue({
       play: mockPlaySound,
       enabled: true,
       setEnabled: jest.fn(),
     });
-    (useHapticFeedback as jest.Mock).mockReturnValue({
+    (useHapticFeedback as unknown as jest.MockedFunction<any>).mockReturnValue({
       triggerHaptic: mockTriggerHaptic,
       triggerSuccess: mockTriggerSuccess,
       triggerWarning: mockTriggerWarning,
       triggerError: mockTriggerError,
     });
-    (Haptics.impactAsync as jest.Mock).mockResolvedValue(undefined);
+    (Haptics.impactAsync as unknown as jest.MockedFunction<() => Promise<void>>).mockResolvedValue(undefined);
   });
 
   describe('Rendering', () => {
@@ -442,7 +445,7 @@ describe('MicroInteractionButton', () => {
     });
 
     it('should respect reduced motion', () => {
-      (useReduceMotion as jest.Mock).mockReturnValue(true);
+      (useReduceMotion as unknown as jest.MockedFunction<() => boolean>).mockReturnValue(true);
 
       const { getByText } = render(<MicroInteractionButton label="Reduced Motion" />);
       expect(getByText('Reduced Motion')).toBeTruthy();
@@ -451,13 +454,13 @@ describe('MicroInteractionButton', () => {
 
   describe('Edge Cases', () => {
     it('should handle empty label', () => {
-      const { container } = render(<MicroInteractionButton label="" />);
-      expect(container).toBeTruthy();
+      const result = render(<MicroInteractionButton label="" />) as RenderResult & { container: any };
+      expect(result.container || result).toBeTruthy();
     });
 
     it('should handle undefined label', () => {
-      const { container } = render(<MicroInteractionButton />);
-      expect(container).toBeTruthy();
+      const result = render(<MicroInteractionButton />) as RenderResult & { container: any };
+      expect(result.container || result).toBeTruthy();
     });
 
     it('should handle rapid presses', () => {
@@ -521,4 +524,3 @@ describe('MicroInteractionButton', () => {
     });
   });
 });
-

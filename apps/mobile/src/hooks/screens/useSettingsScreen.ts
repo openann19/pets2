@@ -119,7 +119,7 @@ interface UseSettingsScreenReturn {
 
   // Account operations
   requestAccountDeletion: (reason: string) => Promise<boolean>;
-  exportUserData: () => Promise<any>;
+  exportUserData: () => Promise<unknown>;
   logoutFromDevice: () => Promise<boolean>;
   logoutFromAllDevices: () => Promise<boolean>;
 
@@ -133,8 +133,8 @@ interface UseSettingsScreenReturn {
   handleSettingsUpdate: (newSettings: SettingsData) => void;
 
   // Analytics
-  trackSettingsInteraction: (element: string, metadata: Record<string, any>) => void;
-  trackSettingsChange: (category: string, changes: Record<string, any>) => void;
+  trackSettingsInteraction: (element: string, metadata: Record<string, unknown>) => void;
+  trackSettingsChange: (category: string, changes: Record<string, unknown>) => void;
 
   // Real-time updates
   handleSettingsUpdate: (newSettings: SettingsData) => void;
@@ -155,6 +155,42 @@ interface UseSettingsScreenReturn {
 
 const SETTINGS_CACHE_KEY = 'settings_screen_cache';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Validation functions
+const validateAgeRange = (ageRange: { min: number; max: number }): boolean => {
+  return ageRange.min >= 0 && ageRange.max >= ageRange.min && ageRange.max <= 100;
+};
+
+const validateNotificationSettings = (settings: Partial<SettingsData['notifications']['push']>): boolean => {
+  // Check push notification settings
+  if (settings.matches !== undefined && typeof settings.matches !== 'boolean') return false;
+  if (settings.messages !== undefined && typeof settings.messages !== 'boolean') return false;
+  if (settings.likes !== undefined && typeof settings.likes !== 'boolean') return false;
+  if (settings.superLikes !== undefined && typeof settings.superLikes !== 'boolean') return false;
+  if (settings.reminders !== undefined && typeof settings.reminders !== 'boolean') return false;
+
+  // Check for invalid properties
+  const validKeys = ['matches', 'messages', 'likes', 'superLikes', 'reminders'];
+  return Object.keys(settings).every(key => validKeys.includes(key));
+};
+
+const validatePrivacySettings = (settings: any): boolean => {
+  // dataSharing is optional - only validate if provided
+  if (settings.dataSharing !== undefined) {
+    if (settings.dataSharing === null) return false;
+
+    // If dataSharing exists, it must be an object
+    if (typeof settings.dataSharing !== 'object') return false;
+
+    // Validate dataSharing properties if present
+    const { analytics, marketing, thirdParty } = settings.dataSharing;
+    if (analytics !== undefined && typeof analytics !== 'boolean') return false;
+    if (marketing !== undefined && typeof marketing !== 'boolean') return false;
+    if (thirdParty !== undefined && typeof thirdParty !== 'boolean') return false;
+  }
+
+  return true;
+};
 
 export const useSettingsScreen = (): UseSettingsScreenReturn => {
   const { logout, user: authUser } = useAuthStore();
@@ -239,6 +275,12 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
   const updatePrivacySettings = useCallback(async (newSettings: Partial<SettingsData['privacy']>): Promise<boolean> => {
     if (!settings) return false;
 
+    // Validate privacy settings
+    if (!validatePrivacySettings(newSettings)) {
+      setError('Invalid privacy settings');
+      return false;
+    }
+
     try {
       setIsSaving(true);
       setError(null);
@@ -265,7 +307,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
       return response.data?.success ?? true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message :
-        (typeof err === 'object' && err && 'message' in err) ? (err as any).message :
+        (typeof err === 'object' && err && 'message' in err) ? (err as { message: string }).message :
         'Failed to update privacy settings';
       setError(errorMessage);
       logger.error('Privacy settings update error:', { error: err });
@@ -284,6 +326,12 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
 
   const updatePushNotifications = useCallback(async (newSettings: Partial<SettingsData['notifications']['push']>): Promise<boolean> => {
     if (!settings) return false;
+
+    // Validate notification settings
+    if (!validateNotificationSettings(newSettings)) {
+      setError('Invalid notification settings');
+      return false;
+    }
 
     try {
       setIsSaving(true);
@@ -308,7 +356,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
       return response.data?.success ?? true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message :
-        (typeof err === 'object' && err && 'message' in err) ? (err as any).message :
+        (typeof err === 'object' && err && 'message' in err) ? (err as { message: string }).message :
         'Failed to update push notifications';
       setError(errorMessage);
       logger.error('Push notifications update error:', { error: err });
@@ -344,7 +392,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
       return response.data?.success ?? true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message :
-        (typeof err === 'object' && err && 'message' in err) ? (err as any).message :
+        (typeof err === 'object' && err && 'message' in err) ? (err as { message: string }).message :
         'Failed to update email notifications';
       setError(errorMessage);
       logger.error('Email notifications update error:', { error: err });
@@ -364,6 +412,12 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
 
   const updatePreferences = useCallback(async (newPreferences: Partial<SettingsData['preferences']>): Promise<boolean> => {
     if (!settings) return false;
+
+    // Validate age range if provided
+    if (newPreferences.ageRange && !validateAgeRange(newPreferences.ageRange)) {
+      setError('Invalid age range');
+      return false;
+    }
 
     try {
       setIsSaving(true);
@@ -385,7 +439,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
       return response.data?.success ?? true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message :
-        (typeof err === 'object' && err && 'message' in err) ? (err as any).message :
+        (typeof err === 'object' && err && 'message' in err) ? (err as { message: string }).message :
         'Failed to update preferences';
       setError(errorMessage);
       logger.error('Preferences update error:', { error: err });
@@ -395,7 +449,7 @@ export const useSettingsScreen = (): UseSettingsScreenReturn => {
     }
   }, [settings]);
 
-  const updatePreference = useCallback(async (key: keyof SettingsData['preferences'], value: any) => {
+  const updatePreference = useCallback(async (key: keyof SettingsData['preferences'], value: SettingsData['preferences'][keyof SettingsData['preferences']]) => {
     await updatePreferences({ [key]: value });
   }, [updatePreferences]);
 

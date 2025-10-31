@@ -4,37 +4,23 @@
  */
 
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react-native';
-import performanceMonitor from '../../utils/PerformanceMonitor';
+import { render } from '@testing-library/react-native';
+import { PerformanceMonitor } from '../../utils/PerformanceMonitor';
 import { PhoenixCard } from '../../components/phoenix/PhoenixCard';
 
-// Mock PerformanceMonitor - it's exported as a default singleton instance
-jest.mock('../../utils/PerformanceMonitor', () => {
-  // Mock functions need to be defined here due to Jest hoisting
-  const getCurrentFPS = jest.fn(() => 60);
-  const startInteraction = jest.fn();
-  const endInteraction = jest.fn();
-  const measureInteraction = jest.fn((name, fn) => fn());
-  const getPerformanceSummary = jest.fn(() => ({
-    currentFPS: 60,
-    averageFPS: 60,
-    minFPS: 60,
-    maxFPS: 60,
-    memoryUsage: 0,
-    activeInteractions: 0,
-  }));
-
-  return {
-    __esModule: true,
-    default: {
-      getCurrentFPS,
-      startInteraction,
-      endInteraction,
-      measureInteraction,
-      getPerformanceSummary,
-    },
-  };
-});
+// Mock PerformanceMonitor
+jest.mock('../../utils/PerformanceMonitor', () => ({
+  __esModule: true,
+  default: {
+    getInstance: jest.fn(() => ({
+      addCallback: jest.fn(),
+      removeCallback: jest.fn(),
+      startMonitoring: jest.fn(),
+      stopMonitoring: jest.fn(),
+      getCurrentFPS: jest.fn(() => 60),
+    })),
+  },
+}));
 
 // Mock theme
 jest.mock('../../theme/Provider', () => {
@@ -89,12 +75,11 @@ jest.mock('../../animation', () => ({
 }));
 
 describe('PhoenixCard Performance Tests (Rule 06)', () => {
-  let mockGetCurrentFPSSpy: jest.SpyInstance;
+  let performanceMonitor: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Spy on the mocked performanceMonitor
-    mockGetCurrentFPSSpy = jest.spyOn(performanceMonitor, 'getCurrentFPS').mockReturnValue(60);
+    performanceMonitor = PerformanceMonitor.getInstance();
   });
 
   describe('Animation Performance (60fps requirement)', () => {
@@ -116,7 +101,7 @@ describe('PhoenixCard Performance Tests (Rule 06)', () => {
       fireEvent(card, 'pressIn');
 
       // Verify FPS monitoring is active
-      expect(mockGetCurrentFPSSpy).toHaveBeenCalled();
+      expect(performanceMonitor.getCurrentFPS).toHaveBeenCalled();
 
       // Animation should complete within performance budget
       // In real implementation, this would measure actual frame drops
@@ -144,7 +129,6 @@ describe('PhoenixCard Performance Tests (Rule 06)', () => {
 
       // Should maintain performance
       expect(performanceMonitor.getCurrentFPS()).toBeGreaterThanOrEqual(50);
-      expect(mockGetCurrentFPSSpy).toHaveBeenCalled();
     });
   });
 

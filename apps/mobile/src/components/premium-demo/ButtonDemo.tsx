@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text } from 'react-native';
 
 // Project Hyperion Components
@@ -31,14 +30,14 @@ interface ButtonDemoProps {
   onButtonPress: (variant: string) => void;
 }
 
-const buttonVariants = [
+const buttonVariants: Array<'primary' | 'secondary' | 'ghost' | 'holographic' | 'glass' | 'outline'> = [
   'glass',
   'holographic',
-  'elevated',
-  'minimal',
-  'outlined',
-  'filled',
-] as const;
+  'primary',
+  'secondary',
+  'outline',
+  'ghost',
+];
 
 const gradientNames = ['primary', 'secondary', 'premium', 'sunset', 'ocean'] as const;
 
@@ -73,7 +72,7 @@ export default function ButtonDemo({ onButtonPress }: ButtonDemoProps) {
             >
               <InteractiveButton
                 title={`${variant.charAt(0).toUpperCase() + variant.slice(1)} Button`}
-                variant={variant as any}
+                variant={variant}
                 size="lg"
                 magneticEffect={true}
                 glowEffect={variant === 'holographic'}
@@ -98,7 +97,7 @@ export default function ButtonDemo({ onButtonPress }: ButtonDemoProps) {
 
               <InteractiveButton
                 title="Loading State"
-                variant={variant as any}
+                variant={variant}
                 size="md"
                 loading={true}
                 disabled={false}
@@ -113,7 +112,7 @@ export default function ButtonDemo({ onButtonPress }: ButtonDemoProps) {
               >
                 <InteractiveButton
                   title="SM"
-                  variant={variant as any}
+                  variant={variant}
                   size="sm"
                   onPress={() => {
                     handleButtonPress(`${variant}-sm`);
@@ -121,7 +120,7 @@ export default function ButtonDemo({ onButtonPress }: ButtonDemoProps) {
                 />
                 <InteractiveButton
                   title="MD"
-                  variant={variant as any}
+                  variant={variant}
                   size="md"
                   onPress={() => {
                     handleButtonPress(`${variant}-md`);
@@ -129,7 +128,7 @@ export default function ButtonDemo({ onButtonPress }: ButtonDemoProps) {
                 />
                 <InteractiveButton
                   title="LG"
-                  variant={variant as any}
+                  variant={variant}
                   size="lg"
                   onPress={() => {
                     handleButtonPress(`${variant}-lg`);
@@ -137,7 +136,7 @@ export default function ButtonDemo({ onButtonPress }: ButtonDemoProps) {
                 />
                 <InteractiveButton
                   title="XL"
-                  variant={variant as any}
+                  variant={variant}
                   size="xl"
                   onPress={() => {
                     handleButtonPress(`${variant}-xl`);

@@ -51,7 +51,7 @@ export function goldenRatio(containerW: number, containerH: number): CropGuide {
 /**
  * Generate diagonal guide (symmetry line)
  */
-export function diagonalGuide(containerW: number, containerH: number): CropGuide {
+export function diagonalGuide(_containerW: number, _containerH: number): CropGuide {
   return {
     type: 'diagonal',
     lines: [
@@ -81,7 +81,7 @@ export function centerGuide(containerW: number, containerH: number): CropGuide {
  * Generate eye-line guide (assumes subject is in top 2/3)
  * Helps ensure eyes are at the correct level for portraits
  */
-export function eyeLineGuide(containerW: number, containerH: number): CropGuide {
+export function eyeLineGuide(_containerW: number, containerH: number): CropGuide {
   const eyeLevel = containerH * 0.4; // Eyes typically at upper 40% for portraits
   const topBound = containerH * 0.1;
   const bottomBound = containerH * 0.7;
@@ -167,8 +167,8 @@ export function contentAwareBorder(
  */
 export async function checkHighlightClipping(uri: string): Promise<boolean> {
   try {
-    // Get image dimensions first
-    const imageInfo = await ImageManipulator.manipulateAsync(uri, [], {
+    // Get image dimensions first (not used in simplified implementation)
+    await ImageManipulator.manipulateAsync(uri, [], {
       format: ImageManipulator.SaveFormat.JPEG,
     });
 

@@ -88,7 +88,7 @@ export const usePetForm = (): UsePetFormReturn => {
         [parentKey]: {
           ...(prev[parentKey] as Record<string, unknown>),
           [childKey]: value,
-        } as any,
+        },
       }));
     } else {
       const fieldKey = field as keyof typeof formData;
@@ -151,7 +151,7 @@ export const usePetForm = (): UsePetFormReturn => {
         description: formData.description,
         intent: formData.intent as 'adoption' | 'mating' | 'playdate' | 'all',
         personalityTags: formData.personalityTags,
-        healthInfo: formData.healthInfo as any,
+        healthInfo: formData.healthInfo,
       };
 
       logger.info('Creating pet:', { petData });
@@ -191,7 +191,7 @@ export const usePetForm = (): UsePetFormReturn => {
         // Update pet with photo URLs
         await matchesAPI.updatePet(createdPet._id, {
           photos: photoUrls,
-        } as any);
+        });
       }
 
       Alert.alert('Success!', 'Pet profile created successfully!', [

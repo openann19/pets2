@@ -65,7 +65,7 @@ export const useModerationTools = (
   const reviewReports = useCallback(() => {
     if (navigation) {
       try {
-        (navigation as any).navigate('AdminUploads');
+        navigation.navigate('AdminUploads' as any);
         logger.info('Navigated to reports moderation');
       } catch (error) {
         const errorObj = error instanceof Error ? error : new Error(String(error));
@@ -80,7 +80,7 @@ export const useModerationTools = (
   const moderateContent = useCallback(() => {
     if (navigation) {
       try {
-        (navigation as any).navigate('AdminUploads');
+        navigation.navigate('AdminUploads' as any);
         logger.info('Navigated to content moderation');
       } catch (error) {
         const errorObj = error instanceof Error ? error : new Error(String(error));
@@ -95,7 +95,7 @@ export const useModerationTools = (
   const monitorMessages = useCallback(() => {
     if (navigation) {
       try {
-        (navigation as any).navigate('AdminChats');
+        navigation.navigate('AdminChats' as any);
         logger.info('Navigated to message monitoring');
       } catch (error) {
         const errorObj = error instanceof Error ? error : new Error(String(error));
@@ -109,7 +109,7 @@ export const useModerationTools = (
   const manageUsers = useCallback(() => {
     if (navigation) {
       try {
-        (navigation as any).navigate('AdminUsers');
+        navigation.navigate('AdminUsers' as any);
         logger.info('Navigated to user management');
       } catch (error) {
         const errorObj = error instanceof Error ? error : new Error(String(error));
@@ -124,7 +124,7 @@ export const useModerationTools = (
   const viewAnalytics = useCallback(() => {
     if (navigation) {
       try {
-        (navigation as any).navigate('AdminAnalytics');
+        navigation.navigate('AdminAnalytics' as any);
         logger.info('Navigated to moderation analytics');
       } catch (error) {
         const errorObj = error instanceof Error ? error : new Error(String(error));
@@ -139,7 +139,7 @@ export const useModerationTools = (
   const configureSettings = useCallback(() => {
     if (navigation) {
       try {
-        (navigation as any).navigate('AdminConfig');
+        navigation.navigate('AdminConfig' as any);
         logger.info('Navigated to moderation settings');
       } catch (error) {
         const errorObj = error instanceof Error ? error : new Error(String(error));
