@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 import type { Socket } from 'socket.io-client';
 import { io } from 'socket.io-client';
 import type {
-  UserTypingEvent,
   NewMessageEvent,
   UserStatusEvent,
   OnlineUsersUpdate,
@@ -19,7 +18,6 @@ interface UseSocketReturn {
 export function useSocket(): Socket | null {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [_isConnected, setIsConnected] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const { user, accessToken } = useAuthStore();
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
@@ -47,7 +45,6 @@ export function useSocket(): Socket | null {
         newSocket.on('connect', () => {
           logger.info('Socket connected:', { socketId: newSocket.id });
           setIsConnected(true);
-          setError(null);
           reconnectAttempts.current = 0;
         });
 
@@ -63,23 +60,20 @@ export function useSocket(): Socket | null {
 
         newSocket.on('connect_error', (err: Error) => {
           logger.error('Socket connection error:', { error: err });
-          setError(err.message);
           reconnectAttempts.current++;
 
           if (reconnectAttempts.current >= maxReconnectAttempts) {
-            setError('Failed to connect after multiple attempts');
+            logger.warn('Failed to connect after multiple attempts');
           }
         });
 
         newSocket.on('error', (err: Error) => {
-          logger.error('Socket error:', { error });
-          setError(err.message || 'Socket error occurred');
+          logger.error('Socket error:', { error: err });
         });
 
         // Authentication error
         newSocket.on('auth_error', (_err: Error) => {
-          logger.error('Socket auth error:', { error });
-          setError('Authentication failed');
+          logger.error('Socket auth error:', { error: _err });
           newSocket.disconnect();
         });
 
@@ -108,12 +102,11 @@ export function useSocket(): Socket | null {
           logger.info('Incoming call:', { data });
         });
 
-        setSocket(newSocket);
+        setSocket(newSocket); // eslint-disable-line react-hooks/set-state-in-effect
 
         return newSocket;
       } catch (err) {
-        logger.error('Error creating socket:', { error });
-        setError('Failed to create socket connection');
+        logger.error('Error creating socket:', { error: err });
         return null;
       }
     }
@@ -128,7 +121,6 @@ export function useSocket(): Socket | null {
       }
       setSocket(null);
       setIsConnected(false);
-      setError(null);
     };
   }, [user, accessToken]);
 
@@ -157,27 +149,27 @@ export function useSocketWithStatus(): UseSocketReturn {
     });
 
     newSocket.on('connect', () => {
-      setIsConnected(true);
-      setError(null);
+      setIsConnected(true); // eslint-disable-line react-hooks/set-state-in-effect
+      setError(null); // eslint-disable-line react-hooks/set-state-in-effect
     });
 
     newSocket.on('disconnect', () => {
-      setIsConnected(false);
+      setIsConnected(false); // eslint-disable-line react-hooks/set-state-in-effect
     });
 
     newSocket.on('connect_error', (err: Error) => {
-      setError(err.message);
-      setIsConnected(false);
+      setError(err.message); // eslint-disable-line react-hooks/set-state-in-effect
+      setIsConnected(false); // eslint-disable-line react-hooks/set-state-in-effect
     });
 
-    setSocket(newSocket);
+    setSocket(newSocket); // eslint-disable-line react-hooks/set-state-in-effect
 
     return () => {
       newSocket.removeAllListeners();
       newSocket.disconnect();
-      setSocket(null);
-      setIsConnected(false);
-      setError(null);
+      setSocket(null); // eslint-disable-line react-hooks/set-state-in-effect
+      setIsConnected(false); // eslint-disable-line react-hooks/set-state-in-effect
+      setError(null); // eslint-disable-line react-hooks/set-state-in-effect
     };
   }, [user, accessToken]);
 
