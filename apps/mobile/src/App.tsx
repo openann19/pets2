@@ -15,7 +15,7 @@ import type { RootStackParamList } from './navigation/types';
 import AppChrome from './chrome/AppChrome';
 import { NavigationGuard } from './navigation/NavigationGuard';
 import { ProtectedRoute } from './navigation/ProtectedRoute';
-import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { useBadgeCount } from './hooks/useBadgeCount';
 import { notificationService } from './services/notifications';
 

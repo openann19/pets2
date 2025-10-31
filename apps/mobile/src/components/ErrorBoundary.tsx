@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  screenName?: string; // Optional screen name for debugging
 }
 
 interface State {

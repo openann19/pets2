@@ -26,7 +26,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   showLabel = false,
   style,
 }) => {
-  const { isDark, colors, toggleTheme } = useThemeToggle();
+  const { isDark, colors, toggleTheme, themeMode, showThemeSelector } = useThemeToggle();
   const theme = useTheme();
 
   const animatedValue = React.useRef(new Animated.Value(isDark ? 1 : 0)).current;
@@ -131,7 +131,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   }
 
   if (variant === 'selector') {
-    const themeLabels = {
+    const themeLabels: Record<string, string> = {
       light: 'Light',
       dark: 'Dark',
       system: 'Auto',
@@ -164,7 +164,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
                 { color: theme.palette.neutral[700] },
               ])}
             >
-              Theme: {themeLabels[themeMode]}
+              Theme: {themeLabels[themeMode] || 'Auto'}
             </Text>
           </View>
           <Ionicons

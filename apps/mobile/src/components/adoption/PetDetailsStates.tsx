@@ -11,7 +11,7 @@ const createStyles = (theme: AppTheme) =>
     container: {
       flex: 1,
       padding: theme.spacing['4xl'],
-      backgroundColor: theme.colors.layer1,
+      backgroundColor: theme.colors.bg || theme.colors.surface,
       justifyContent: 'center',
       alignItems: 'center',
       gap: theme.spacing.lg,
@@ -19,7 +19,7 @@ const createStyles = (theme: AppTheme) =>
     skeletonImage: {
       width: '100%',
       height: 320,
-      borderRadius: theme.radii['3xl'],
+      borderRadius: theme.radii.xl,
     },
     skeletonRow: {
       flexDirection: 'row',
@@ -46,12 +46,12 @@ const createStyles = (theme: AppTheme) =>
 export const PetDetailsSkeleton: React.FC = () => {
   const theme = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const imageRadius = theme.radii['3xl'];
+  const imageRadius = theme.radii.xl; // Using xl instead of 3xl which doesn't exist
 
   return (
     <View style={styles.container}>
       <ShimmerPlaceholder
-        style={[styles.skeletonImage, { borderRadius: imageRadius }]}
+        style={StyleSheet.flatten([styles.skeletonImage, { borderRadius: imageRadius }])}
         borderRadius={imageRadius}
         height={320}
       />
@@ -59,12 +59,12 @@ export const PetDetailsSkeleton: React.FC = () => {
         style={styles.textBlock}
         height={28}
       />
-      <ShimmerPlaceholder style={[styles.textBlock, { width: '60%' }]} />
+      <ShimmerPlaceholder style={StyleSheet.flatten([styles.textBlock, { width: '60%' }])} />
       <View style={styles.skeletonRow}>
         <ShimmerPlaceholder style={styles.skeletonBlock} />
         <ShimmerPlaceholder style={styles.skeletonBlock} />
       </View>
-      <ShimmerPlaceholder style={[styles.textBlock, { height: 120 }]} />
+      <ShimmerPlaceholder style={StyleSheet.flatten([styles.textBlock, { height: 120 }])} />
     </View>
   );
 };

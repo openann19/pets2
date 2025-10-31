@@ -388,12 +388,13 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
           clearInterval(interval);
         };
       }
+      return undefined;
     }, delay);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [text, duration, delay, currentIndex]);
+  }, [text, duration, delay, currentIndex, onComplete]);
 
   useEffect(() => {
     setDisplayText(text.substring(0, currentIndex + 1));
