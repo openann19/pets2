@@ -5,19 +5,19 @@
 
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../../../theme';
-import type { AppTheme } from '../../../../theme';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
     revenueGrid: {
       flexDirection: 'row',
-      gap: 12,
+      gap: theme.spacing.md,
     },
     revenueCard: {
       flex: 1,
-      borderRadius: 12,
-      padding: 16,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
       alignItems: 'center',
       shadowColor: theme.colors.onSurface,
       shadowOffset: { width: 0, height: 2 },
@@ -26,13 +26,13 @@ function __makeStyles_styles(theme: AppTheme) {
       elevation: 5,
     },
     revenueLabel: {
-      fontSize: 12,
-      fontWeight: '500',
-      marginBottom: 4,
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.body.weight,
+      marginBottom: theme.spacing.xs,
     },
     revenueValue: {
-      fontSize: 18,
-      fontWeight: 'bold',
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
     },
   });
 }
@@ -54,7 +54,7 @@ const formatCurrency = (amount: number): string =>
   }).format(amount);
 
 export const RevenueMetricsSection: React.FC<RevenueMetricsSectionProps> = ({ revenue }) => {
-  const theme = useTheme();
+  const theme: AppTheme = useTheme();
   const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
   const { colors } = theme;
 

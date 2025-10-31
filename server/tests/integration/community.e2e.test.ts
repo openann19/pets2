@@ -3,13 +3,11 @@
  * Tests real database operations for community routes
  */
 
-import request from 'supertest';
-import mongoose from 'mongoose';
-import { app } from '../../server';
-import CommunityPost from '../../src/models/CommunityPost';
-import Report from '../../src/models/Report';
-import Block from '../../src/models/Block';
-import User from '../../src/models/User';
+const mongoose = require('mongoose');
+const CommunityPost = require('../../src/models/CommunityPost');
+const Report = require('../../src/models/Report');
+const Block = require('../../src/models/Block');
+const User = require('../../src/models/User');
 
 describe('Community Routes Integration Tests', () => {
   let testUser: any;

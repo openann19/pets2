@@ -50,8 +50,9 @@ export const DEFAULT_OPTIONS: UploadHygieneOptions = {
 
 /**
  * Validate MIME type via file signature sniffing
+ * @internal - exported for testing
  */
-async function validateMimeType(uri: string): Promise<{ valid: boolean; mimeType: string }> {
+export async function validateMimeType(uri: string): Promise<{ valid: boolean; mimeType: string }> {
   try {
     // Read first bytes for signature detection
     const fileInfo = await FileSystem.getInfoAsync(uri);
@@ -90,8 +91,9 @@ async function validateMimeType(uri: string): Promise<{ valid: boolean; mimeType
 
 /**
  * Fix EXIF orientation issues
+ * @internal - exported for testing
  */
-async function fixOrientation(imageUri: string): Promise<string> {
+export async function fixOrientation(imageUri: string): Promise<string> {
   try {
     // Get image metadata to check orientation
     const result = await ImageManipulator.manipulateAsync(imageUri, [], {
@@ -109,8 +111,9 @@ async function fixOrientation(imageUri: string): Promise<string> {
 
 /**
  * Resize image to max dimensions while preserving aspect ratio
+ * @internal - exported for testing
  */
-async function resizeImage(
+export async function resizeImage(
   imageUri: string,
   maxDimension: number,
 ): Promise<ImageManipulator.ImageResult> {
@@ -156,8 +159,9 @@ async function resizeImage(
 
 /**
  * Crop to aspect ratio
+ * @internal - exported for testing
  */
-async function cropToAspectRatio(
+export async function cropToAspectRatio(
   imageUri: string,
   aspectRatio: [number, number],
   width: number,
@@ -204,8 +208,9 @@ async function cropToAspectRatio(
 
 /**
  * Compress and optimize image
+ * @internal - exported for testing
  */
-async function compressImage(
+export async function compressImage(
   imageUri: string,
   quality: number,
 ): Promise<ImageManipulator.ImageResult> {
@@ -225,8 +230,9 @@ async function compressImage(
 
 /**
  * Get file info including size
+ * @internal - exported for testing
  */
-async function getFileInfo(uri: string): Promise<{ size: number; exists: boolean }> {
+export async function getFileInfo(uri: string): Promise<{ size: number; exists: boolean }> {
   try {
     const info = await FileSystem.getInfoAsync(uri);
     if (info.exists && 'size' in info) {
@@ -504,22 +510,25 @@ export interface QuotaCheck {
 }
 
 export async function checkUploadQuota(userId: string): Promise<QuotaCheck> {
-  // This would call your backend API to check user quotas
-  // Implementation depends on your rate limiting strategy
-
   try {
-    // TODO: Integrate with actual rate limit API
-    // For now, return a mock response
+    // Call backend API to check user upload quotas
+    const { request } = await import('./api');
+    const response = await request<QuotaCheck>('/upload/quota', {
+      method: 'GET',
+    });
+    
+    return response;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Quota check error', { error: err, userId });
+    
+    // Fallback to default quota if API unavailable
     return {
       allowed: true,
       remaining: 10,
       resetAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
       limit: 10,
     };
-  } catch (error: unknown) {
-    const err = error instanceof Error ? error : new Error(String(error));
-    logger.error('Quota check error', { error: err, userId });
-    throw err;
   }
 }
 

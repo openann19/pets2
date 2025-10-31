@@ -10,6 +10,7 @@ import { useTheme } from '../../../theme';
 import { useReduceMotion } from '../../../hooks/useReducedMotion';
 import { Card } from './Card';
 import { Text } from './Text';
+import { durations, motionEasing } from '@/foundation/motion';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -56,10 +57,16 @@ export function Sheet({
   useEffect(() => {
     if (visible) {
       translateY.value = 0;
-      overlayOpacity.value = withTiming(1, { duration: reduceMotion ? 0 : 200 });
+      overlayOpacity.value = withTiming(1, { 
+        duration: reduceMotion ? 0 : durations.sm,
+        easing: motionEasing.enter,
+      });
     } else {
       translateY.value = screenHeight;
-      overlayOpacity.value = withTiming(0, { duration: reduceMotion ? 0 : 200 });
+      overlayOpacity.value = withTiming(0, { 
+        duration: reduceMotion ? 0 : durations.sm,
+        easing: motionEasing.exit,
+      });
     }
   }, [visible, screenHeight, reduceMotion, translateY, overlayOpacity]);
 

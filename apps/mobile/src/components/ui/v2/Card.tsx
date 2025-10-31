@@ -35,20 +35,20 @@ export function Card({
 }: CardProps): React.ReactElement {
   const theme = useTheme();
   const paddingValue = paddingMap[padding];
-  const radiusValue = theme.radius[radius];
+  const radiusValue = theme.radii[radius];
 
   const getBackgroundColor = () => {
     const { colors } = theme;
     switch (variant) {
       case 'elevated':
-        return colors.bgElevated || colors.background || colors.bg;
+        return colors.surface || colors.bg;
       case 'glass':
         return 'rgba(255, 255, 255, 0.1)';
       case 'outlined':
         return colors.bg;
       case 'surface':
       default:
-        return colors.bg;
+        return colors.surface || colors.bg;
     }
   };
 

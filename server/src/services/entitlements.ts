@@ -1,4 +1,5 @@
-import { getCache, setCache } from "../config/redis";
+import { getCache, setCache } from '../config/redis';
+import logger from '../utils/logger';
 
 const KEY = (userId: string) => `entitle:${userId}`;
 
@@ -11,7 +12,7 @@ export type Entitlement = {
 export async function setEntitlement(userId: string, e: Entitlement, ttlSec = 3600): Promise<void> {
   const success = await setCache(KEY(userId), JSON.stringify(e), ttlSec);
   if (!success) {
-    console.warn(`Failed to cache entitlement for user ${userId}`);
+    logger.warn(`Failed to cache entitlement for user ${userId}`);
   }
 }
 

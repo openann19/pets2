@@ -74,7 +74,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
           <View
             style={StyleSheet.flatten([
               styles.modal,
-              { backgroundColor: (colors as any).surface ?? colors.background },
+              { backgroundColor: (colors as any).surface ?? colors.bg },
             ])}
           >
             {/* Header */}
@@ -182,7 +182,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                 <TouchableOpacity
                   style={StyleSheet.flatten([
                     styles.laterButton,
-                    { backgroundColor: colors.background },
+                    { backgroundColor: colors.bg },
                   ])}
                   onPress={handleClose}
                   activeOpacity={0.8}

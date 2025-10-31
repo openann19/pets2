@@ -1,131 +1,177 @@
+/**
+ * AICompatibilityScreen - Web Version
+ * Identical to mobile AICompatibilityScreen structure
+ */
+
 'use client';
 
-import { ArrowLeftIcon, HeartIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ScreenShell } from '@/components/layout/ScreenShell';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeftIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { logger } from '@pawfectmatch/core';
 
-import { CompatibilityAnalyzer } from '../../../../src/components/AI/CompatibilityAnalyzer';
+export default function AICompatibilityPage() {
+  const router = useRouter();
+  const { t } = useTranslation('ai');
 
-export default function AiCompatibilityPage() {
-  const searchParams = useSearchParams();
-  const targetPetId = searchParams.get('petId');
-  const [recentAnalyses, setRecentAnalyses] = useState<any[]>([]);
+  const [selectedPet1, setSelectedPet1] = useState<any | null>(null);
+  const [selectedPet2, setSelectedPet2] = useState<any | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [compatibilityResult, setCompatibilityResult] = useState<any | null>(null);
+  const [availablePets, setAvailablePets] = useState<any[]>([]);
 
-  useEffect(() => {
-    // Load recent analyses from localStorage
-    const saved = localStorage.getItem('compatibility_analyses');
-    if (saved) {
-      setRecentAnalyses(JSON.parse(saved));
-    }
+  React.useEffect(() => {
+    // Load available pets
+    const loadPets = async () => {
+      try {
+        const response = await fetch('/api/pets');
+        const data = await response.json();
+        setAvailablePets(data);
+      } catch (error) {
+        logger.error('Failed to load pets:', error);
+      }
+    };
+    void loadPets();
   }, []);
 
+  const analyzeCompatibility = async () => {
+    if (!selectedPet1 || !selectedPet2) {
+      alert('Please select two pets to analyze compatibility');
+      return;
+    }
+    setIsAnalyzing(true);
+    try {
+      const response = await fetch('/api/ai/compatibility', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pet1Id: selectedPet1.id,
+          pet2Id: selectedPet2.id,
+        }),
+      });
+      const data = await response.json();
+      setCompatibilityResult(data);
+    } catch (error) {
+      logger.error('Analysis failed:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-blue-100">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-40"
-      >
-        <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/matches"
-              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
-              Back to Matches
-            </Link>
-            
-            <div className="flex items-center gap-3">
-              <div className="flex items-center bg-gradient-to-r from-pink-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                <HeartIcon className="h-4 w-4 mr-2" />
-                AI Love Analyst
+    <ScreenShell
+      header={
+        <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => router.back()}
+                  className="p-2 text-gray-600 hover:text-gray-800"
+                  aria-label="Back"
+                >
+                  <ArrowLeftIcon className="w-5 h-5" />
+                </button>
+                <h1 className="text-xl font-bold text-gray-900">
+                  {t('ai_compatibility.title', 'AI Compatibility Analyzer')}
+                </h1>
               </div>
             </div>
           </div>
         </div>
-      </motion.div>
-
-      <div className="py-8">
-        <CompatibilityAnalyzer targetPetId={targetPetId ?? ''} />
-      </div>
-
-      {/* Stats Section */}
-      <div className="max-w-6xl mx-auto px-6 pb-12">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="bg-white/90 backdrop-blur rounded-3xl p-8 shadow-xl"
-        >
-          <h2 className="text-2xl font-bold mb-6 flex items-center">
-            <SparklesIcon className="h-7 w-7 mr-3 text-purple-600" />
-            Compatibility Science
-          </h2>
-          
-          <div className="grid md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600">94%</div>
-              <p className="text-gray-600 mt-1">Accuracy Rate</p>
-              <p className="text-xs text-gray-500 mt-2">Based on 50K+ successful matches</p>
+      }
+    >
+      <div className="max-w-2xl mx-auto space-y-6">
+        {/* Pet Selection */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900">Select Pets</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Pet 1</label>
+              <select
+                value={selectedPet1?.id || ''}
+                onChange={(e) => {
+                  const pet = availablePets.find((p) => p.id === e.target.value);
+                  setSelectedPet1(pet || null);
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="">Select a pet</option>
+                {availablePets.map((pet) => (
+                  <option key={pet.id} value={pet.id}>
+                    {pet.name}
+                  </option>
+                ))}
+              </select>
             </div>
-            
-            <div className="text-center">
-              <div className="text-3xl font-bold text-pink-600">2.5M</div>
-              <p className="text-gray-600 mt-1">Analyses Run</p>
-              <p className="text-xs text-gray-500 mt-2">Helping pets find love daily</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">73%</div>
-              <p className="text-gray-600 mt-1">Success Rate</p>
-              <p className="text-xs text-gray-500 mt-2">Matches that lead to meetups</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600">4.8/5</div>
-              <p className="text-gray-600 mt-1">User Rating</p>
-              <p className="text-xs text-gray-500 mt-2">From verified pet parents</p>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Pet 2</label>
+              <select
+                value={selectedPet2?.id || ''}
+                onChange={(e) => {
+                  const pet = availablePets.find((p) => p.id === e.target.value);
+                  setSelectedPet2(pet || null);
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="">Select a pet</option>
+                {availablePets.map((pet) => (
+                  <option key={pet.id} value={pet.id}>
+                    {pet.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Recent Analyses */}
-        {recentAnalyses.length > 0 && (
+        {/* Analyze Button */}
+        <button
+          onClick={analyzeCompatibility}
+          disabled={!selectedPet1 || !selectedPet2 || isAnalyzing}
+          className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold text-lg hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+        >
+          {isAnalyzing ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              Analyzing...
+            </>
+          ) : (
+            <>
+              <SparklesIcon className="w-5 h-5" />
+              Analyze Compatibility
+            </>
+          )}
+        </button>
+
+        {/* Results */}
+        {compatibilityResult && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-            className="mt-8"
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4"
           >
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Recent Analyses</h3>
-            <div className="grid md:grid-cols-3 gap-4">
-              {recentAnalyses.slice(-3).reverse().map((analysis, index) => (
-                <div key={index} className="bg-white/80 backdrop-blur rounded-xl p-4 shadow-md">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="text-2xl font-bold text-purple-600">
-                      {analysis.score}%
-                    </div>
-                    <span className="text-xs text-gray-500">
-                      {new Date(analysis.date).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-700">{analysis.petNames}</p>
-                  <div className="mt-2 flex gap-2">
-                    {analysis.tags?.map((tag: string) => (
-                      <span key={tag} className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+            <h2 className="text-lg font-semibold text-gray-900">Compatibility Results</h2>
+            {compatibilityResult.score && (
+              <div className="text-center">
+                <div className="text-4xl font-bold text-purple-600 mb-2">
+                  {compatibilityResult.score}%
                 </div>
-              ))}
-            </div>
+                <p className="text-gray-600">Compatibility Score</p>
+              </div>
+            )}
+            {compatibilityResult.insights && (
+              <div>
+                <h3 className="font-medium text-gray-700 mb-2">Insights</h3>
+                <p className="text-gray-900">{compatibilityResult.insights}</p>
+              </div>
+            )}
           </motion.div>
         )}
       </div>
-    </div>
+    </ScreenShell>
   );
 }

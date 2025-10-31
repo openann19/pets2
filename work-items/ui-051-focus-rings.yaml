@@ -1,0 +1,47 @@
+id: ui-051-focus-rings
+owner: ux
+severity: high
+area: mobile+a11y
+context: |
+  Keyboard navigation users cannot see which element has focus.
+  Focus indicators are missing or have insufficient contrast.
+  WCAG 2.2 requires visible focus indicators with 3:1 contrast ratio.
+acceptance:
+  - All interactive elements show focus ring on keyboard focus
+  - Focus ring has minimum 3:1 contrast ratio against background
+  - Focus ring uses theme.colors.primary with 2px border
+  - Focus ring visible in both light and dark modes
+  - Tab navigation order is logical
+  - useFocusRing hook available for custom components
+states:
+  - focused
+  - unfocused
+telemetry:
+  - event: FOCUS_RING_AUDIT
+    props: [component, hasFocusRing, contrastRatio]
+contracts:
+  request: { componentTree: object }
+  response: { violations: array, contrastIssues: array }
+  errors: []
+assets:
+  hooks: [apps/mobile/src/hooks/utils/useFocusRing.ts]
+  components: [apps/mobile/src/components/**/*.tsx]
+  tests: [apps/mobile/src/__tests__/a11y/focus-rings.test.tsx]
+  theme: [apps/mobile/src/theme/types.ts]
+risks:
+  - Focus rings may clash with existing design
+  - Performance impact from additional border rendering
+rollback:
+  - Remove focus ring styles
+  - Restore original focus behavior
+links:
+  - https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html
+status: open
+priority: high
+impact: 4
+effort: S
+category: accessibility
+tokens:
+  - colors.primary
+  - colors.border
+estimated_hours: 5

@@ -23,6 +23,35 @@ module.exports = {
     'plugin:jsx-a11y/recommended',
     'prettier',
   ],
+  env: {
+    node: true,
+    jest: true,
+    es6: true,
+  },
+  overrides: [
+    {
+      files: ['**/__mocks__/**/*.js', '**/__mocks__/**/*.mjs', '**/*.mock.js', '**/*.mock.mjs', '**/__tests__/**/*.ts', '**/__tests__/**/*.tsx', '**/*.test.ts', '**/*.test.tsx'],
+      env: {
+        node: true,
+        jest: true,
+      },
+      globals: {
+        module: 'readonly',
+        jest: 'readonly',
+        expect: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+      },
+      rules: {
+        'no-undef': 'off',
+        '@typescript-eslint/no-require-imports': 'off',
+      },
+    },
+  ],
   rules: {
     'local/no-hardcoded-colors': 'error',
     'local/no-theme-imports': 'error',

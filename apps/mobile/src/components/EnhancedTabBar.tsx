@@ -14,6 +14,7 @@ import Animated, {
 import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
+import { springs, durations, motionEasing } from '@/foundation/motion';
 
 
 interface TabBarIconProps {
@@ -42,32 +43,44 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
 
   useEffect(() => {
     if (focused) {
-      scale.value = withSpring(1.1, { damping: 15, stiffness: 200 });
+      scale.value = withSpring(1.1, springs.standard);
     } else {
-      scale.value = withSpring(1, { damping: 15, stiffness: 200 });
+      scale.value = withSpring(1, springs.standard);
     }
   }, [focused, scale]);
 
   // react to 'impulse' ticks (double tap or reselect)
   useEffect(() => {
     // quick pulse
-    scale.value = withSpring(1.18, { damping: 18, stiffness: 420 });
+    scale.value = withSpring(1.18, springs.snappy);
     // ripple out
     ripple.value = 0;
-    ripple.value = withTiming(1, { duration: 450 });
+    ripple.value = withTiming(1, { 
+      duration: durations.lg,
+      easing: motionEasing.enter,
+    });
     const t = setTimeout(() => {
-      scale.value = withSpring(focused ? 1.1 : 1, { damping: 15, stiffness: 200 });
-    }, 180);
+      scale.value = withSpring(focused ? 1.1 : 1, springs.standard);
+    }, durations.sm);
     return () => { clearTimeout(t); };
   }, [impulse, scale, ripple, focused]);
 
   useEffect(() => {
     if (showBadge && badgeCount > 0) {
-      badgeOpacity.value = withTiming(1, { duration: 300 });
-      badgeScale.value = withSpring(1, { damping: 10, stiffness: 200 });
+      badgeOpacity.value = withTiming(1, { 
+        duration: durations.md,
+        easing: motionEasing.enter,
+      });
+      badgeScale.value = withSpring(1, springs.bouncy);
     } else {
-      badgeOpacity.value = withTiming(0, { duration: 200 });
-      badgeScale.value = withTiming(0, { duration: 200 });
+      badgeOpacity.value = withTiming(0, { 
+        duration: durations.sm,
+        easing: motionEasing.exit,
+      });
+      badgeScale.value = withTiming(0, { 
+        duration: durations.sm,
+        easing: motionEasing.exit,
+      });
     }
   }, [showBadge, badgeCount, badgeOpacity, badgeScale]);
 
@@ -157,10 +170,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
 
   // Animate tab bar based on interactions
   useEffect(() => {
-    tabBarPosition.value = withSpring(1, {
-      damping: 20,
-      stiffness: 90,
-    });
+    tabBarPosition.value = withSpring(1, springs.gentle);
   }, [tabBarPosition]);
 
   // Mock notification counts - in real app, these would come from state/context
@@ -207,10 +217,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
   const indicatorOffset = useSharedValue(state.index);
   
   useEffect(() => {
-    indicatorOffset.value = withSpring(state.index, {
-      damping: 20,
-      stiffness: 300,
-    });
+    indicatorOffset.value = withSpring(state.index, springs.standard);
   }, [state.index, indicatorOffset]);
 
   const animatedIndicatorStyle = useAnimatedStyle(() => {
@@ -227,7 +234,10 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
   // Animated pill opacity
   const pillOpacity = useSharedValue(0);
   useEffect(() => {
-    pillOpacity.value = withTiming(1, { duration: 200 });
+    pillOpacity.value = withTiming(1, { 
+      duration: durations.sm,
+      easing: motionEasing.enter,
+    });
   }, [state.index, pillOpacity]);
 
   const animatedPillStyle = useAnimatedStyle(() => {
@@ -284,12 +294,20 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
         {state.routes.map((route: TabRoute, index: number) => {
         const descriptor = descriptors[route.key];
         const options = descriptor?.options ?? {};
-        const label =
+        const rawLabel =
           options.tabBarLabel !== undefined
             ? options.tabBarLabel
             : options.title !== undefined
               ? options.title
               : route.name;
+        
+        // Normalize label - handle both string and function types
+        const label = typeof rawLabel === 'string' 
+          ? rawLabel 
+          : typeof rawLabel === 'function'
+            ? rawLabel({ focused: state.index === index, color: '', position: 'below' as any, children: '' })
+            : route.name;
+        const labelString = typeof label === 'string' ? label : String(label);
 
         const isFocused = state.index === index;
 
@@ -313,14 +331,16 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
 
           // if active and single reselect
           if (isFocused && !isDouble) {
-            navigation.emit({ type: "tabReselect", target: route.key });
+            // Custom event not in types - cast to any for custom event types
+            (navigation as any).emit({ type: "tabReselect", target: route.key });
             bump(route.key); // visual impulse (near-top refresh will also listen)
           }
 
           if (isFocused && isDouble) {
             // visual impulse + emit the custom event
             bump(route.key);
-            navigation.emit({ type: "tabDoublePress", target: route.key });
+            // Custom event not in types - cast to any for custom event types
+            (navigation as any).emit({ type: "tabDoublePress", target: route.key });
             return;
           }
 
@@ -345,12 +365,12 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
             accessibilityRole="tab"
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={
-              options.tabBarAccessibilityLabel || `${label} tab`
+              options.tabBarAccessibilityLabel || `${labelString} tab`
             }
             accessibilityHint={
               isFocused
-                ? `Currently selected ${label} tab`
-                : `Navigate to ${label} tab`
+                ? `Currently selected ${labelString} tab`
+                : `Navigate to ${labelString} tab`
             }
             testID={options.tabBarTestID}
             onPress={onPress}
@@ -375,7 +395,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
                 },
               ])}
             >
-              {label}
+              {labelString}
             </Text>
           </TouchableOpacity>
         );

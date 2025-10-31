@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { logger } from '@pawfectmatch/core';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
@@ -16,8 +17,14 @@ import AppChrome from './chrome/AppChrome';
 import { NavigationGuard } from './navigation/NavigationGuard';
 import { ProtectedRoute } from './navigation/ProtectedRoute';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { OfflineIndicator } from './components/OfflineIndicator';
+import { OfflineQueueStatus } from './components/OfflineQueueStatus';
+import { useSyncStatus } from './hooks/useSyncStatus';
 import { useBadgeCount } from './hooks/useBadgeCount';
 import { notificationService } from './services/notifications';
+import { BackdropBlur } from './ui/BackdropBlur';
+import { useNotificationOpen } from './hooks/useNotificationOpen';
+import { OfflineSyncService } from './services/OfflineSyncService';
 
 // Authentication Screens
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
@@ -55,6 +62,7 @@ import {
 // Settings & Privacy Screens
 import AboutTermsPrivacyScreen from './screens/AboutTermsPrivacyScreen';
 import AdvancedFiltersScreen from './screens/AdvancedFiltersScreen';
+import WhoLikedYouScreen from './screens/WhoLikedYouScreen';
 import BlockedUsersScreen from './screens/BlockedUsersScreen';
 import DeactivateAccountScreen from './screens/DeactivateAccountScreen';
 import EditProfileScreen from './screens/EditProfileScreen';
@@ -66,10 +74,27 @@ import SafetyCenterScreen from './screens/SafetyCenterScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import VerificationCenterScreen from './screens/VerificationCenterScreen';
 
+// Business Model Screens
+import ReferralScreen from './screens/ReferralScreen';
+import IAPShopScreen from './screens/IAPShopScreen';
+
 // Pet Management Screens
 import CreatePetScreen from './screens/CreatePetScreen';
 import MapScreen from './screens/MapScreen';
 import MyPetsScreen from './screens/MyPetsScreen';
+
+// Pet-First Enhanced Screens
+import EnhancedPetProfileScreen from './screens/EnhancedPetProfileScreen';
+import PlaydateDiscoveryScreen from './screens/PlaydateDiscoveryScreen';
+import PackBuilderScreen from './screens/PackBuilderScreen';
+import PetFriendlyMapScreen from './screens/PetFriendlyMapScreen';
+import LostPetAlertScreen from './screens/LostPetAlertScreen';
+import SafetyWelfareScreen from './screens/SafetyWelfareScreen';
+import HealthPassportScreen from './screens/HealthPassportScreen';
+
+// Wireframe Development Screens
+import WireframePlaydateDiscoveryScreen from './screens/WireframePlaydateDiscoveryScreen';
+import WireframeDemoScreen from './screens/WireframeDemoScreen';
 
 // Adoption Screens
 import AdoptionApplicationScreen from './screens/adoption/AdoptionApplicationScreen';
@@ -88,19 +113,21 @@ import LeaderboardScreen from './screens/leaderboard/LeaderboardScreen';
 // import ModernSwipeScreen from "./screens/ModernSwipeScreen";
 // import ModernCreatePetScreen from "./screens/ModernCreatePetScreen";
 
-// Test/Demo Screens
-// ComponentShowcaseScreen removed
-import ComponentTestScreen from './screens/ComponentTestScreen';
-import MigrationExampleScreen from './screens/MigrationExampleScreen';
-import NewComponentsTestScreen from './screens/NewComponentsTestScreen';
-import PremiumDemoScreen from './screens/PremiumDemoScreen';
-import UIDemoScreen from './screens/UIDemoScreen';
-import MotionLabScreen from './labs/motion/MotionLabScreen';
+// Wireframe System Integration
+import { WireframeProvider } from './components/wireframe/WireframeSystem';
 
 // Live Streaming Screens
 import GoLiveScreen from './screens/GoLiveScreen';
 import LiveBrowseScreen from './screens/LiveBrowseScreen';
 import LiveViewerScreen from './screens/LiveViewerScreen';
+
+// Test/Demo Screens
+import ComponentTestScreen from './screens/ComponentTestScreen';
+import NewComponentsTestScreen from './screens/NewComponentsTestScreen';
+import MigrationExampleScreen from './screens/MigrationExampleScreen';
+import PremiumDemoScreen from './screens/PremiumDemoScreen';
+import UIDemoScreen from './screens/UIDemoScreen';
+import MotionLabScreen from './labs/motion/MotionLabScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -216,6 +243,55 @@ const AppNavigator = (): React.ReactElement => (
       options={screenTransitions.fluid}
     />
 
+    {/* Pet-First Enhanced Screens */}
+    <Stack.Screen
+      name="EnhancedPetProfile"
+      component={EnhancedPetProfileScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="PlaydateDiscovery"
+      component={PlaydateDiscoveryScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="PackBuilder"
+      component={PackBuilderScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="PetFriendlyMap"
+      component={PetFriendlyMapScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="HealthPassport"
+      component={HealthPassportScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="LostPetAlert"
+      component={LostPetAlertScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="SafetyWelfare"
+      component={SafetyWelfareScreen}
+      options={screenTransitions.fluid}
+    />
+
+    {/* Wireframe Development Screens (Development Only) */}
+    <Stack.Screen
+      name="WireframePlaydateDiscovery"
+      component={WireframePlaydateDiscoveryScreen}
+      options={screenTransitions.fluid}
+    />
+    <Stack.Screen
+      name="WireframeDemo"
+      component={WireframeDemoScreen}
+      options={screenTransitions.fluid}
+    />
+
     {/* Premium & Subscription Screens - Lazy loaded for performance (P-03) */}
     <Stack.Screen
       name="Premium"
@@ -303,8 +379,22 @@ const AppNavigator = (): React.ReactElement => (
       component={AdvancedFiltersScreen}
     />
     <Stack.Screen
+      name="WhoLikedYou"
+      component={WhoLikedYouScreen}
+    />
+    <Stack.Screen
       name="ModerationTools"
       component={ModerationToolsScreen}
+    />
+
+    {/* Business Model Screens */}
+    <Stack.Screen
+      name="Referral"
+      component={ReferralScreen}
+    />
+    <Stack.Screen
+      name="IAPShop"
+      component={IAPShopScreen}
     />
 
     {/* Adoption Screens */}
@@ -427,23 +517,57 @@ function AppContent(): React.ReactElement {
   // Initialize badge count management
   useBadgeCount();
 
+  // Initialize offline sync service
+  React.useEffect(() => {
+    const initOfflineSync = async () => {
+      try {
+        const service = OfflineSyncService.getInstance();
+        await service.initialize();
+        logger.info('Offline sync service initialized');
+      } catch (error) {
+        logger.warn('Failed to initialize offline sync service:', { error });
+      }
+    };
+    void initOfflineSync();
+  }, []);
+
+  // Initialize notification open handler (shows backdrop on notification open)
+  useNotificationOpen();
+
   // Initialize notification service on app start (without auto-requesting permission)
   // Permission will be requested via NotificationPermissionPrompt component
   React.useEffect(() => {
     // Initialize without auto-request - we'll show our custom prompt first
     notificationService.initialize(false).catch((error) => {
       // Non-critical error - notifications may not be available
-      console.warn('Failed to initialize notification service:', error);
+      logger.warn('Failed to initialize notification service:', { error });
     });
   }, []);
 
+  // Get sync status for offline queue indicator
+  const { pendingCount, isSyncing, retry } = useSyncStatus();
+
   return (
-    <NavigationGuard>
-      <StatusBar style="dark" />
-      <AppChrome>
-        <AppNavigator />
-      </AppChrome>
-    </NavigationGuard>
+    <WireframeProvider
+      config={{
+        enabled: __DEV__, // Enable in development by default
+        theme: __DEV__ ? 'wireframe' : 'production',
+        showGrid: false,
+        showMeasurements: false,
+        interactiveMode: true,
+        dataSource: 'mock',
+      }}
+    >
+      <NavigationGuard>
+        <OfflineIndicator />
+        <StatusBar style="dark" />
+        <AppChrome>
+          <AppNavigator />
+        </AppChrome>
+        <BackdropBlur />
+        <OfflineQueueStatus pendingActions={pendingCount} isSyncing={isSyncing} onRetry={retry} />
+      </NavigationGuard>
+    </WireframeProvider>
   );
 }
 

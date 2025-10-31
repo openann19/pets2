@@ -56,7 +56,7 @@ interface AdvancedCardProps {
   titleStyle?: TextStyle;
   subtitleStyle?: TextStyle;
   descriptionStyle?: TextStyle;
-  glowColor?: string;
+  glowColor?: string | undefined;
   gradientColors?: string[];
   blurIntensity?: number;
   padding?: CardSize;

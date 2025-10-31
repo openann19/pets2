@@ -1,4 +1,5 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,10 @@ import { EmptyStates } from '../components/common';
 import { ErrorBoundary } from '../components/common/ErrorBoundary';
 import type { RootStackScreenProps } from '../navigation/types';
 import { ScreenShell } from '../ui/layout/ScreenShell';
+import { PetCompatibilityIndicator } from '../components/chat/PetCompatibilityIndicator';
+import { PetProfileModal } from '../components/chat/PetProfileModal';
+import { VoiceMessageRecorder } from '../components/chat/VoiceMessageRecorder';
+import { LocationShareButton } from '../components/chat/LocationShareButton';
 
 type ChatScreenProps = RootStackScreenProps<'Chat'>;
 
@@ -36,6 +41,12 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
     showAlert: false,
     logError: true,
   });
+
+  // Enhanced chat features state
+  const [showPetProfile, setShowPetProfile] = React.useState(false);
+  const [showVoiceRecorder, setShowVoiceRecorder] = React.useState(false);
+  const [showLocationShare, setShowLocationShare] = React.useState(false);
+  const [petCompatibilityScore, setPetCompatibilityScore] = React.useState<number | null>(null);
 
   const {
     inputText,
@@ -59,11 +70,70 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
     quickReplies,
   } = useChatScreen({ matchId, petName, navigation });
 
-  // Update SmartHeader (chat uses custom header, but we still update counts)
-  useHeaderWithCounts({
-    title: petName,
-    subtitle: data.isOnline ? t('online_now') : t('last_seen_recently'),
-    fetchCounts: false, // Chat screen manages its own UI
+  // Enhanced feature handlers
+  const handleShowPetProfile = React.useCallback(() => {
+    setShowPetProfile(true);
+  }, []);
+
+  const handleVoiceMessage = React.useCallback(() => {
+    setShowVoiceRecorder(true);
+  }, []);
+
+  const handleLocationShare = React.useCallback(() => {
+    setShowLocationShare(true);
+  }, []);
+
+  const handlePetCompatibilityCheck = React.useCallback(async () => {
+    // Calculate pet compatibility score
+    // This would integrate with the feed algorithms
+    const score = Math.floor(Math.random() * 40) + 60; // Mock score 60-100
+    setPetCompatibilityScore(score);
+  }, []);
+
+  const styles = StyleSheet.create({
+    chatContainer: {
+      flex: 1,
+    },
+    compatibilityContainer: {
+      position: 'absolute',
+      top: 80,
+      left: theme.spacing.md,
+      right: theme.spacing.md,
+      zIndex: 1000,
+    },
+    petActionsContainer: {
+      paddingHorizontal: theme.spacing.xl,
+      paddingVertical: theme.spacing.sm,
+      backgroundColor: 'rgba(0,0,0,0.05)',
+    },
+    petActionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: 'rgba(255,255,255,0.9)',
+      borderRadius: theme.radius.xl,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    petActionText: {
+      marginLeft: theme.spacing.sm,
+      fontSize: 14,
+      fontWeight: '600',
+      color: '#333',
+    },
+    reactionOverlay: {
+      position: 'absolute',
+      bottom: 120,
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+      zIndex: 1000,
+    },
   });
 
   // Show offline state if network is offline and no messages
@@ -132,6 +202,33 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
             rightButtons: [
               {
                 type: 'custom',
+                icon: 'paw-outline',
+                onPress: handleShowPetProfile,
+                variant: 'glass',
+                haptic: 'light',
+                customComponent: undefined,
+                tooltip: t('pet_profile') || 'Pet Profile',
+              },
+              {
+                type: 'custom',
+                icon: 'mic-outline',
+                onPress: handleVoiceMessage,
+                variant: 'glass',
+                haptic: 'medium',
+                customComponent: undefined,
+                tooltip: t('voice_message') || 'Voice Message',
+              },
+              {
+                type: 'custom',
+                icon: 'location-outline',
+                onPress: handleLocationShare,
+                variant: 'glass',
+                haptic: 'light',
+                customComponent: undefined,
+                tooltip: t('share_location') || 'Share Location',
+              },
+              {
+                type: 'custom',
                 icon: 'call-outline',
                 onPress: handleVoiceCall,
                 variant: 'glass',
@@ -159,6 +256,16 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
         />
       }
     >
+      {/* Pet Compatibility Indicator */}
+      {petCompatibilityScore && (
+        <View style={styles.compatibilityContainer}>
+          <PetCompatibilityIndicator
+            score={petCompatibilityScore}
+            onClose={() => setPetCompatibilityScore(null)}
+          />
+        </View>
+      )}
+
       {/* Messages */}
       <KeyboardAvoidingView
         style={styles.chatContainer}
@@ -175,16 +282,30 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
           onScroll={handleScroll}
         />
 
-        {/* Quick Replies */}
+        {/* Enhanced Quick Replies with Pet Context */}
         {data.messages.length > 0 && (
-          <QuickReplies
-            replies={quickReplies}
-            onReplySelect={handleQuickReplySelect}
-            visible={true}
-          />
+          <View>
+            <QuickReplies
+              replies={quickReplies}
+              onReplySelect={handleQuickReplySelect}
+              visible={true}
+            />
+            {/* Pet Compatibility Check Button */}
+            <View style={styles.petActionsContainer}>
+              <TouchableOpacity
+                style={styles.petActionButton}
+                onPress={handlePetCompatibilityCheck}
+              >
+                <Ionicons name="heart-circle-outline" size={20} color={theme.colors.primary} />
+                <Text style={styles.petActionText}>
+                  {t('check_compatibility') || 'Check Pet Compatibility'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         )}
 
-        {/* Input */}
+        {/* Input with Enhanced Features */}
         <MessageInput
           value={inputText}
           onChangeText={setInputText}
@@ -196,7 +317,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
         />
       </KeyboardAvoidingView>
 
-      {/* Reaction Bar Overlay */}
+      {/* Enhanced Reaction Bar with Pet Emojis */}
       {showReactions && (
         <View style={styles.reactionOverlay}>
           <ReactionBarMagnetic
@@ -206,24 +327,55 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
             baseSize={32}
             backgroundColor={isDark ? '#2a2a2a' : '#ffffff'}
             borderColor={isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}
+            // Enhanced with pet-themed reactions
+            reactions={[
+              '❤️', '🐕', '🐱', '🐾', '👍', '👎', '😊', '😢',
+              '🐕‍🦺', '🦮', '🐈', '🐾', '🎾', '🦴', '🍖', '🏃‍♂️'
+            ]}
           />
         </View>
+      )}
+
+      {/* Pet Profile Modal */}
+      {showPetProfile && (
+        <PetProfileModal
+          visible={showPetProfile}
+          onClose={() => setShowPetProfile(false)}
+          matchId={matchId}
+          petName={petName}
+        />
+      )}
+
+      {/* Voice Message Recorder */}
+      {showVoiceRecorder && (
+        <VoiceMessageRecorder
+          visible={showVoiceRecorder}
+          onClose={() => setShowVoiceRecorder(false)}
+          onSend={(audioUri) => {
+            // Handle voice message sending
+            console.log('Voice message:', audioUri);
+            setShowVoiceRecorder(false);
+          }}
+          matchId={matchId}
+        />
+      )}
+
+      {/* Location Sharing */}
+      {showLocationShare && (
+        <LocationShareButton
+          visible={showLocationShare}
+          onClose={() => setShowLocationShare(false)}
+          onShare={(location) => {
+            // Handle location sharing
+            console.log('Shared location:', location);
+            setShowLocationShare(false);
+          }}
+          matchId={matchId}
+        />
       )}
     </ScreenShell>
     </ErrorBoundary>
   );
 }
 
-const styles = StyleSheet.create({
-  chatContainer: {
-    flex: 1,
-  },
-  reactionOverlay: {
-    position: 'absolute',
-    bottom: 120,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-});
+export default ChatScreen;

@@ -4,6 +4,7 @@
  */
 
 import type { Request, Response } from 'express';
+import type { AuthRequest } from '../types/express';
 import type { IUserDocument } from '../types/mongoose';
 import Story from '../models/Story';
 import AnalyticsEvent from '../models/AnalyticsEvent';
@@ -12,11 +13,6 @@ import { createDMFromStoryReply } from '../services/chatService';
 import { uploadToCloudinary } from '../services/cloudinaryService';
 import UserAuditLog from '../models/UserAuditLog';
 const logger = require('../utils/logger');
-
-// Type definitions
-interface AuthRequest extends Request {
-  user?: IUserDocument;
-}
 
 interface CreateStoryBody {
   caption?: string;

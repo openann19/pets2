@@ -122,7 +122,8 @@ export default function CreateReelScreen() {
         setTemplates(tpls);
         setTracks(trks);
       } catch (error) {
-        console.error('Failed to load data:', error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logger.error('Failed to load data', { error: errorMessage });
         Alert.alert('Error', 'Failed to load templates and tracks');
       }
     })();
@@ -140,7 +141,8 @@ export default function CreateReelScreen() {
       const picked = await pickClips();
       setClipsState(picked);
     } catch (error) {
-      console.error('Failed to pick media:', error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error('Failed to pick media', { error: errorMessage });
       Alert.alert('Error', 'Failed to pick media');
     }
   }

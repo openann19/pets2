@@ -10,7 +10,7 @@
  * - Minimal visual clutter
  */
 
-import React, { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { PanResponder, StyleSheet, View, Text } from 'react-native';
 
 export type Ratio = '1:1' | '4:5' | '9:16' | '3:2';

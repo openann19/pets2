@@ -25,6 +25,16 @@ interface DashboardMetrics {
     recent24h: number;
   };
   systemHealth: number;
+  revenue?: {
+    totalRevenue: number;
+    monthlyRecurringRevenue: number;
+    annualRecurringRevenue: number;
+    averageRevenuePerUser: number;
+    conversionRate: number;
+    churnRate: number;
+    activeSubscriptions: number;
+    revenueGrowth: number;
+  };
 }
 
 interface RecentActivity {
@@ -69,6 +79,8 @@ export interface AdminDashboardScreenState {
   onNavigateToAnalytics: () => void;
   onNavigateToSecurity: () => void;
   onNavigateToBilling: () => void;
+  onNavigateToServices: () => void;
+  onNavigateToConfig: () => void;
   onQuickAction: (actionId: string) => void;
   exportData: (format: 'json' | 'csv' | 'pdf', timeRange?: string) => Promise<void>;
 }
@@ -80,7 +92,7 @@ export interface AdminDashboardScreenState {
 export function useAdminDashboardScreen({
   navigation,
 }: UseAdminDashboardScreenParams): AdminDashboardScreenState {
-  const { handleNetworkError, handleOfflineError } = useErrorHandler();
+  const { handleNetworkError } = useErrorHandler();
   const [metrics, setMetrics] = useState<DashboardMetrics>({
     users: { total: 0, recent24h: 0 },
     pets: { total: 0, recent24h: 0 },
@@ -101,11 +113,31 @@ export function useAdminDashboardScreen({
         setIsRefreshing(true);
       }
 
-      // Call real API endpoints using analytics endpoint
+      // Call real API endpoints using analytics endpoint and billing metrics
       try {
-        const analyticsResponse = await adminAPI.getAnalytics({ period: '24h' });
+        const [analyticsResponse, billingMetricsResponse] = await Promise.all([
+          adminAPI.getAnalytics({ period: '24h' }),
+          adminAPI.getBillingMetrics().catch((err) => {
+            logger.warn('Billing metrics unavailable', { error: err });
+            return { success: false, data: null };
+          }),
+        ]);
         
         if (analyticsResponse.success && analyticsResponse.data) {
+          // Extract revenue metrics from billing response
+          const revenueMetrics = billingMetricsResponse.success && billingMetricsResponse.data
+            ? {
+                totalRevenue: (billingMetricsResponse.data as any).totalRevenue || 0,
+                monthlyRecurringRevenue: (billingMetricsResponse.data as any).monthlyRecurringRevenue || 0,
+                annualRecurringRevenue: (billingMetricsResponse.data as any).annualRecurringRevenue || 0,
+                averageRevenuePerUser: (billingMetricsResponse.data as any).averageRevenuePerUser || 0,
+                conversionRate: (billingMetricsResponse.data as any).conversionRate || 0,
+                churnRate: (billingMetricsResponse.data as any).churnRate || 0,
+                activeSubscriptions: (billingMetricsResponse.data as any).activeSubscriptions || 0,
+                revenueGrowth: (billingMetricsResponse.data as any).revenueGrowth || 0,
+              }
+            : undefined;
+
           const mappedMetrics: DashboardMetrics = {
             users: {
               total: analyticsResponse.data.users?.total || 0,
@@ -120,6 +152,7 @@ export function useAdminDashboardScreen({
               recent24h: analyticsResponse.data.matches?.recent24h || 0,
             },
             systemHealth: 100, // Would need dedicated health check endpoint
+            ...(revenueMetrics ? { revenue: revenueMetrics } : {}),
           };
 
           // Map recent activity - in production, use GET /admin/dashboard/activity
@@ -132,6 +165,7 @@ export function useAdminDashboardScreen({
           logger.info('Admin dashboard data loaded from API', {
             metrics: mappedMetrics,
             activityCount: mappedActivity.length,
+            hasRevenueData: !!revenueMetrics,
           });
         } else {
           throw new Error('Invalid API response');
@@ -240,6 +274,26 @@ export function useAdminDashboardScreen({
       // No-op if haptics not available
     }
     navigation.navigate('AdminBilling');
+  }, [navigation]);
+
+  const onNavigateToServices = useCallback(() => {
+    try {
+      const Haptics = require('expo-haptics');
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    } catch {
+      // No-op if haptics not available
+    }
+    navigation.navigate('AdminServices');
+  }, [navigation]);
+
+  const onNavigateToConfig = useCallback(() => {
+    try {
+      const Haptics = require('expo-haptics');
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    } catch {
+      // No-op if haptics not available
+    }
+    navigation.navigate('AdminConfig');
   }, [navigation]);
 
   const [exportModalVisible, setExportModalVisible] = useState(false);
@@ -357,11 +411,61 @@ export function useAdminDashboardScreen({
       },
     },
     {
+      id: 'verifications',
+      title: 'Verifications',
+      subtitle: 'Review pet verifications',
+      icon: 'checkmark-circle-outline',
+      color: '#06b6d4',
+      action: () => {
+        onNavigateToVerifications();
+      },
+    },
+    {
+      id: 'security',
+      title: 'Security',
+      subtitle: 'Monitor threats',
+      icon: 'shield-outline',
+      color: '#ef4444',
+      action: () => {
+        onNavigateToSecurity();
+      },
+    },
+    {
+      id: 'billing',
+      title: 'Billing',
+      subtitle: 'Manage subscriptions',
+      icon: 'cash-outline',
+      color: '#22c55e',
+      action: () => {
+        onNavigateToBilling();
+      },
+    },
+    {
+      id: 'services',
+      title: 'Services',
+      subtitle: 'Manage integrations',
+      icon: 'server-outline',
+      color: '#6366f1',
+      action: () => {
+        onNavigateToServices();
+      },
+    },
+    {
+      id: 'config',
+      title: 'API Config',
+      subtitle: 'Configure services',
+      icon: 'settings-outline',
+      color: '#64748b',
+      action: () => {
+        onNavigateToConfig();
+      },
+    },
+    {
       id: 'export_data',
       title: 'Export Data',
       subtitle: 'Download system reports',
       icon: 'download-outline',
-      color: '#ef4444',
+      color: '#f97316',
       action: () => {
         setExportModalVisible(true);
       },
@@ -401,6 +505,8 @@ export function useAdminDashboardScreen({
     onNavigateToAnalytics,
     onNavigateToSecurity,
     onNavigateToBilling,
+    onNavigateToServices,
+    onNavigateToConfig,
     onQuickAction,
     exportData,
   };

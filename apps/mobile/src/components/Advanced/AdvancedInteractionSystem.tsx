@@ -130,7 +130,7 @@ function AdvancedButtonComponent({
 }: AdvancedButtonProps): React.JSX.Element {
   const theme = useTheme();
   const defaultGlowColor = glowColor ?? theme.colors.primary;
-  const defaultGradientColors = gradientColors ?? theme.palette.gradients.primary;
+  const defaultGradientColors = gradientColors ?? [...theme.palette.gradients.primary];
   // Animation Values
   const scale = useRef(new Animated.Value(1)).current;
   const opacity = useRef(new Animated.Value(1)).current;
@@ -623,7 +623,7 @@ export function AdvancedCard({
 }: AdvancedCardProps): React.JSX.Element {
   const theme = useTheme();
   const defaultGlowColor = glowColor ?? theme.colors.primary;
-  const defaultGradientColors = gradientColors ?? theme.palette.gradients.primary;
+  const defaultGradientColors = gradientColors ?? [...theme.palette.gradients.primary];
   // Reuse AdvancedButton logic for card
   return (
     <AdvancedButton

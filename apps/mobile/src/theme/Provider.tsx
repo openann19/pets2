@@ -5,7 +5,9 @@
  * Now integrates with Remote UI Control Plane
  */
 
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo } from 'react'
+import { logger } from '@pawfectmatch/core';
+;
 import { useColorScheme } from 'react-native';
 import type { ColorScheme } from './types';
 import { getLightTheme, getDarkTheme, type AppTheme } from './resolve';
@@ -29,7 +31,7 @@ export const ThemeProvider: React.FC<{
       try {
         return configToTheme(uiConfig, effective);
       } catch (error) {
-        console.warn('Failed to apply UI config, using embedded theme', error);
+        logger.warn('Failed to apply UI config, using embedded theme', { error });
         return effective === 'dark' ? getDarkTheme() : getLightTheme();
       }
     }

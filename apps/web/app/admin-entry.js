@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { logger } from '@pawfectmatch/core';
 
 /**
  * Simple Admin Entry Component
@@ -71,7 +72,7 @@ export default function AdminEntry() {
       }
     } catch (err) {
       setError('Failed to login. Please try again.');
-      console.error(err);
+      logger.error('Admin entry login error:', err);
     } finally {
       setIsLoading(false);
     }

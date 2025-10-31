@@ -20,6 +20,11 @@ import {
 } from '../controllers/matchController';
 import { createTypeSafeWrapper } from '../types/routes';
 import type { MatchRequest } from '../types/routes';
+import { requireAIMatching, requireUnlimitedSwipes } from '../middleware/premiumGating';
+import {
+  filterMatchesController,
+  getMatchInsights,
+} from '../controllers/advancedMatchFilterController';
 
 interface AuthenticatedRequest extends Request {
   userId: string; // Required - set by authenticateToken middleware
@@ -47,8 +52,10 @@ const messageValidation = [
 const wrapHandler = createTypeSafeWrapper;
 
 // Routes
-router.get('/recommendations', requirePremiumFeature('aiMatching'), wrapHandler(getRecommendations));
-router.post('/swipe', wrapHandler(recordSwipe));
+// Business Model: AI recommendations are Ultimate tier only (business.md)
+router.get('/recommendations', requireAIMatching, wrapHandler(getRecommendations));
+// Swipe endpoint - checks daily limits (5 for free users, unlimited for premium)
+router.post('/swipe', requireUnlimitedSwipes, wrapHandler(recordSwipe));
 router.get('/', wrapHandler(getMatches));
 router.get('/stats', wrapHandler(getMatchStats));
 router.get('/:matchId', wrapHandler(getMatch));
@@ -59,7 +66,8 @@ router.patch('/:matchId/block', wrapHandler(blockMatch));
 router.patch('/:matchId/favorite', wrapHandler(favoriteMatch));
 
 // Premium features
-router.get('/recommendations/ai', requirePremiumFeature('aiMatching'), wrapHandler(getRecommendations));
+// Business Model: AI recommendations require Ultimate tier
+router.get('/recommendations/ai', requireAIMatching, wrapHandler(getRecommendations));
 router.get('/who-liked-me', requirePremiumFeature('seeWhoLiked'), wrapHandler(getMatches)); // Show who liked the user
 
 // Like user endpoint
@@ -192,5 +200,11 @@ router.post('/like-user', wrapHandler(async (req: AuthenticatedRequest, res: Res
     });
   }
 }));
+
+// Phase 1: Advanced Match Filtering
+router.get('/filter', wrapHandler(filterMatchesController));
+
+// Phase 1: Match Insights
+router.get('/:matchId/insights', wrapHandler(getMatchInsights));
 
 export default router;

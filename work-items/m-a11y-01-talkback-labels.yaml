@@ -1,0 +1,85 @@
+id: m-a11y-01-talkback-labels
+owner: a11y
+severity: critical
+area: mobile
+status: open
+context: |
+  No TalkBack labels on action buttons, causing accessibility failures.
+  Current behavior: Screen readers cannot identify button purposes.
+  Why it matters: Accessibility violation, excludes visually impaired users, potential legal issues.
+  
+  Use Case:
+  1. Visually impaired user enables TalkBack
+  2. Navigates to swipe screen
+  3. TalkBack announces "Button" without context
+  4. User doesn't know what button does
+  5. With labels: "Like button", "Pass button", "Super like button"
+
+acceptance:
+  - [ ] Audit all buttons for missing accessibilityLabel
+  - [ ] Add accessibilityLabel to all action buttons
+  - [ ] Add accessibilityLabel to SwipeCardMobile buttons
+  - [ ] Add accessibilityLabel to ChatScreen buttons
+  - [ ] Add accessibilityLabel to ProfileScreen buttons
+  - [ ] Add accessibilityHint where needed for complex actions
+  - [ ] Add accessibilityRole to all interactive elements
+  - [ ] Test with TalkBack enabled on Android
+  - [ ] Test with VoiceOver enabled on iOS
+  - [ ] Verify labels are descriptive and helpful
+  - [ ] Jest A11y test with @testing-library/react-native axe
+  - [ ] E2E test: Navigate app with TalkBack
+
+states:
+  - unlabeled
+  - labeled
+  - verified
+
+telemetry:
+  - event: A11Y_LABEL_ADDED
+    props: [component, elementType, timestamp]
+  - event: A11Y_TALKBACK_TESTED
+    props: [screen, success, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  components:
+    - apps/mobile/src/components/widgets/SwipeWidget.tsx
+    - apps/mobile/src/components/widgets/MatchWidget.tsx
+    - apps/mobile/src/components/cards/SwipeCardMobile.tsx
+    - apps/mobile/src/screens/ChatScreen.tsx
+    - apps/mobile/src/screens/ProfileScreen.tsx
+  tests:
+    - apps/mobile/src/components/__tests__/SwipeCardMobile.a11y.test.tsx
+    - apps/mobile/src/__tests__/a11y/talkback-labels.test.tsx
+  tools:
+    - @testing-library/react-native
+    - jest-axe
+
+risks:
+  - Labels may be too verbose or too terse
+  - Language-specific labels needed for i18n
+  - Maintaining labels as UI changes
+  - Performance impact of accessibility props
+
+rollback:
+  - Remove accessibilityLabel props
+  - Revert accessibility changes
+
+links:
+  - docs: https://reactnative.dev/docs/accessibility
+  - docs: https://www.w3.org/WAI/WCAG21/Understanding/
+
+dependencies:
+  - i18n keys for accessibility labels
+  - Testing library updates
+  - Accessibility audit tools
+
+timeline:
+  start: 2025-01-30
+  audit: 2025-01-30
+  implementation: 2025-02-01
+  testing: 2025-02-02
+  deploy: 2025-02-03
+

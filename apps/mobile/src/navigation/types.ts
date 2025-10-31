@@ -5,10 +5,18 @@
 
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { ReactNode } from 'react';
-
-// Root Stack Navigator Types
-import VerificationCenterScreen from '../screens/VerificationCenterScreen';
+import type {
+  NavigationAction,
+  NavigationState,
+  RouteProp as RNRouteProp,
+  EventArg,
+  NavigationContainerRef,
+  ParamListBase,
+  LinkingOptions,
+  Theme,
+} from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { ViewStyle, TextStyle } from 'react-native';
 
 export type RootStackParamList = {
   Login: { redirectTo?: string; redirectParams?: unknown } | undefined;
@@ -26,6 +34,8 @@ export type RootStackParamList = {
   Home: undefined;
   Settings: undefined;
   Community: undefined;
+  Stories: undefined;
+  Leaderboard: undefined;
   MyPets: undefined;
   CreatePet: undefined;
   AdoptionManager: undefined;
@@ -33,6 +43,7 @@ export type RootStackParamList = {
   PremiumSuccess: { sessionId?: string };
   PremiumCancel: undefined;
   Subscription: undefined;
+  SubscriptionManager: undefined;
   AIBio: undefined;
   AIPhotoAnalyzer: undefined;
   AICompatibility: { petAId?: string; petBId?: string };
@@ -41,13 +52,24 @@ export type RootStackParamList = {
   AdoptionApplication: { petId: string; petName: string };
   PetProfileSetup: undefined;
   ManageSubscription: undefined;
+  WhoLikedYou: undefined;
   AdminDashboard: undefined;
   AdminUsers: undefined;
   AdminAnalytics: undefined;
   AdminBilling: undefined;
-  AdminSecurity: undefined;
-  MainTabs: undefined;
-  SubscriptionManager: undefined;
+  // Pet-First Enhanced Screens
+  EnhancedPetProfile: { petId?: string; isNew?: boolean };
+  PlaydateDiscovery: { petId: string };
+  PackBuilder: { hostPetId: string; initialMatch?: unknown };
+  PetFriendlyMap: { filter?: 'parks' | 'vets' | 'groomers' | 'all' };
+  MeetupDetails: { meetupId: string };
+  VenueDetails: { venueId: string };
+  HealthPassport: { petId: string };
+  LostPetAlert: { petId?: string };
+  SafetyWelfare: { reportType?: 'incident' | 'rule_violation' | 'health_disclosure' };
+  // Wireframe Screens (Development Only)
+  WireframePlaydateDiscovery: { petId?: string };
+  WireframeDemo: undefined;
   SubscriptionSuccess: { sessionId?: string };
   PrivacySettings: undefined;
   BlockedUsers: undefined;
@@ -60,6 +82,8 @@ export type RootStackParamList = {
   AdvancedFilters: undefined;
   ModerationTools: undefined;
   EditProfile: undefined;
+  Referral: { code?: string } | undefined;
+  IAPShop: undefined;
   CreateListing: { petId?: string };
   AdminChats: undefined;
   AdminUploads: undefined;
@@ -84,7 +108,7 @@ export type RootStackParamList = {
 export type TabParamList = {
   Home: undefined;
   Swipe: undefined;
-  Matches: undefined;
+  Pawfiles: undefined; // Pet-first replacement for generic "Pets"
   Map: undefined;
   Profile: undefined;
   AdoptionManager: undefined;
@@ -106,6 +130,7 @@ export type AdminStackParamList = {
   AdminDashboard: undefined;
   AdminUsers: undefined;
   AdminAnalytics: undefined;
+  AnalyticsConfig: undefined;
   AdminBilling: undefined;
   AdminSecurity: undefined;
   AdminChats: undefined;
@@ -113,6 +138,8 @@ export type AdminStackParamList = {
   AdminVerifications: undefined;
   AdminServices: undefined;
   AdminConfig: undefined;
+  AdminReports: undefined;
+  AdminSupport: undefined;
 };
 
 // Premium Stack Types
@@ -144,52 +171,44 @@ export type PremiumScreenProps<T extends keyof PremiumStackParamList> = NativeSt
 >;
 
 // Navigation Hook Types
-export interface NavigationProp {
-  navigate: (screen: keyof RootStackParamList, params?: unknown) => void;
-  goBack: () => void;
-  reset: (state: unknown) => void;
-  canGoBack: () => boolean;
-  dispatch: (action: unknown) => void;
-  setParams: (params: unknown) => void;
-  addListener: (event: string, callback: (data: unknown) => void) => () => void;
-  isFocused: () => boolean;
-}
+// Use React Navigation's NativeStackNavigationProp for proper typing
+export type NavigationProp<RouteName extends keyof RootStackParamList = keyof RootStackParamList> =
+  NativeStackNavigationProp<RootStackParamList, RouteName>;
 
-// Route Types
-export interface RouteProp {
-  key: string;
-  name: keyof RootStackParamList;
-  params?: unknown;
-}
+// Route Types - Use React Navigation's RouteProp
+export type RouteProp<RouteName extends keyof RootStackParamList> = RNRouteProp<
+  RootStackParamList,
+  RouteName
+>;
 
 // Generic Navigation Props for Components
-export interface NavigationProps {
-  navigation: NavigationProp;
-  route?: RouteProp;
+export interface NavigationProps<RouteName extends keyof RootStackParamList = keyof RootStackParamList> {
+  navigation: NavigationProp<RouteName>;
+  route?: RouteProp<RouteName>;
 }
 
 // Screen Component Props
-export interface ScreenProps {
-  navigation: NavigationProp;
-  route?: RouteProp;
+export interface ScreenProps<RouteName extends keyof RootStackParamList = keyof RootStackParamList> {
+  navigation: NavigationProp<RouteName>;
+  route?: RouteProp<RouteName>;
 }
 
 // Admin Screen Props Interface
-export interface IAdminScreenProps {
-  navigation: NavigationProp;
-  route?: RouteProp;
+export interface IAdminScreenProps<RouteName extends keyof AdminStackParamList = keyof AdminStackParamList> {
+  navigation: NativeStackNavigationProp<AdminStackParamList, RouteName>;
+  route?: RNRouteProp<AdminStackParamList, RouteName>;
 }
 
 // AI Screen Props
-export interface AIScreenProps {
-  navigation: NavigationProp;
-  route?: RouteProp;
+export interface AIScreenProps<RouteName extends keyof RootStackParamList = keyof RootStackParamList> {
+  navigation: NavigationProp<RouteName>;
+  route?: RouteProp<RouteName>;
 }
 
 // Default Navigation Props for Unknown Navigation
 export interface UnknownNavigationProps {
-  navigation: unknown;
-  route?: unknown;
+  navigation: NativeStackNavigationProp<ParamListBase>;
+  route?: RNRouteProp<ParamListBase>;
 }
 
 // Utility Types
@@ -198,28 +217,18 @@ export type TabName = keyof TabParamList;
 export type AdminScreenName = keyof AdminStackParamList;
 export type PremiumScreenName = keyof PremiumStackParamList;
 
-// Navigation State Types
-export interface NavigationState {
-  index: number;
-  routes: Array<{
-    key: string;
-    name: string;
-    params?: unknown;
-  }>;
-}
+// Navigation State Types - Use React Navigation's NavigationState
+export type NavigationStateType = NavigationState<RootStackParamList>;
 
-// Navigation Action Types
-export interface NavigationAction {
-  type: string;
-  payload?: unknown;
-}
+// Navigation Action Types - Use React Navigation's NavigationAction
+export type NavigationActionType = NavigationAction;
 
-// Navigation Listener Types
+// Navigation Listener Types - Use EventArg for proper event typing
 export interface NavigationListener {
-  beforeRemove?: (e: unknown) => void;
+  beforeRemove?: (e: EventArg<'beforeRemove', true, { action: NavigationAction }>) => void;
   focus?: () => void;
   blur?: () => void;
-  state?: (e: unknown) => void;
+  state?: (e: EventArg<'state', false, NavigationState>) => void;
 }
 
 // Screen Options Types
@@ -229,11 +238,11 @@ export interface ScreenOptions {
   headerTitle?: string;
   headerLeft?: () => React.ReactNode;
   headerRight?: () => React.ReactNode;
-  headerStyle?: unknown;
-  headerTitleStyle?: unknown;
+  headerStyle?: ViewStyle;
+  headerTitleStyle?: TextStyle;
   tabBarIcon?: (props: { focused: boolean; color: string; size: number }) => React.ReactNode;
   tabBarLabel?: string;
-  tabBarStyle?: unknown;
+  tabBarStyle?: ViewStyle;
   tabBarActiveTintColor?: string;
   tabBarInactiveTintColor?: string;
 }
@@ -261,17 +270,17 @@ export type NavigationEvent =
   | 'transitionStart'
   | 'transitionEnd';
 
-// Navigation Event Data
-export interface NavigationEventData {
-  type: NavigationEvent;
-  data?: unknown;
-  target?: string;
-  canPreventDefault?: boolean;
-  defaultPrevented?: boolean;
-}
+// Navigation Event Data - Use EventArg for proper typing
+export type NavigationEventData<T extends NavigationEvent = NavigationEvent> = EventArg<
+  T,
+  boolean,
+  Record<string, unknown>
+>;
 
 // Navigation Event Listener
-export type NavigationEventListener = (data: NavigationEventData) => void;
+export type NavigationEventListener<T extends NavigationEvent = NavigationEvent> = (
+  data: NavigationEventData<T>,
+) => void;
 
 // Navigation Event Subscription
 export interface NavigationEventSubscription {
@@ -280,56 +289,60 @@ export interface NavigationEventSubscription {
 
 // Navigation Event Emitter
 export interface NavigationEventEmitter {
-  addListener: (
-    event: NavigationEvent,
-    listener: NavigationEventListener,
+  addListener: <T extends NavigationEvent>(
+    event: T,
+    listener: NavigationEventListener<T>,
   ) => NavigationEventSubscription;
-  removeListener: (event: NavigationEvent, listener: NavigationEventListener) => void;
-  emit: (event: NavigationEvent, data?: unknown) => void;
+  removeListener: <T extends NavigationEvent>(
+    event: T,
+    listener: NavigationEventListener<T>,
+  ) => void;
+  emit: <T extends NavigationEvent>(event: T, data?: EventArg<T, boolean, unknown>) => void;
 }
 
-// Navigation Ref Types
-export interface NavigationRef {
-  current: NavigationProp | null;
-}
+// Navigation Ref Types - Use NavigationContainerRef
+export type NavigationRef = NavigationContainerRef<RootStackParamList> | null;
 
 // Navigation Container Props
 export interface NavigationContainerProps {
   children: React.ReactNode;
-  onStateChange?: (state: NavigationState) => void;
+  onStateChange?: (state: NavigationState<RootStackParamList>) => void;
   onReady?: () => void;
   fallback?: React.ReactNode;
-  theme?: unknown;
-  linking?: unknown;
+  theme?: Theme;
+  linking?: LinkingOptions<RootStackParamList>;
   independent?: boolean;
 }
 
 // Navigation Provider Props
-export interface NavigationProviderProps {
+export interface NavigationProviderProps<RouteName extends keyof RootStackParamList = keyof RootStackParamList> {
   children: React.ReactNode;
-  navigation?: NavigationProp;
+  navigation?: NavigationProp<RouteName>;
 }
 
 // Navigation Context Types
-export interface NavigationContextType {
-  navigation: NavigationProp;
-  route: RouteProp;
-  setNavigation: (navigation: NavigationProp) => void;
-  setRoute: (route: RouteProp) => void;
+export interface NavigationContextType<RouteName extends keyof RootStackParamList = keyof RootStackParamList> {
+  navigation: NavigationProp<RouteName>;
+  route: RouteProp<RouteName>;
+  setNavigation: (navigation: NavigationProp<RouteName>) => void;
+  setRoute: (route: RouteProp<RouteName>) => void;
 }
 
 // Navigation Hook Return Types
-export interface UseNavigationReturn {
-  navigation: NavigationProp;
-  route: RouteProp;
-  navigate: (screen: keyof RootStackParamList, params?: unknown) => void;
+export interface UseNavigationReturn<RouteName extends keyof RootStackParamList = keyof RootStackParamList> {
+  navigation: NavigationProp<RouteName>;
+  route: RouteProp<RouteName>;
+  navigate: <T extends keyof RootStackParamList>(
+    screen: T,
+    params?: RootStackParamList[T] extends object ? RootStackParamList[T] : undefined,
+  ) => void;
   goBack: () => void;
   canGoBack: () => boolean;
 }
 
 // Navigation State Hook Return Types
 export interface UseNavigationStateReturn {
-  state: NavigationState;
+  state: NavigationState<RootStackParamList>;
   isFocused: boolean;
   isReady: boolean;
 }
@@ -341,10 +354,14 @@ export interface UseFocusEffectReturn {
 }
 
 // Navigation Route Hook Return Types
-export interface UseRouteReturn {
-  route: RouteProp;
-  params: unknown;
-  setParams: (params: unknown) => void;
+export interface UseRouteReturn<RouteName extends keyof RootStackParamList> {
+  route: RouteProp<RouteName>;
+  params: RootStackParamList[RouteName] extends object ? RootStackParamList[RouteName] : undefined;
+  setParams: (
+    params: RootStackParamList[RouteName] extends object
+      ? Partial<RootStackParamList[RouteName]>
+      : undefined,
+  ) => void;
 }
 
 // Navigation Theme Types
@@ -360,30 +377,11 @@ export interface NavigationTheme {
   };
 }
 
-// Navigation Linking Types
-export interface NavigationLinking {
-  prefixes: string[];
-  config: {
-    screens: {
-      [key: string]: {
-        path: string;
-        parse?: (url: string) => unknown;
-        stringify?: (params: unknown) => string;
-      };
-    };
-  };
-}
+// Navigation Linking Types - Use LinkingOptions from React Navigation
+export type NavigationLinking = LinkingOptions<RootStackParamList>;
 
-// Navigation Deep Linking Types
-export interface DeepLinkConfig {
-  screens: {
-    [key: string]: {
-      path: string;
-      parse?: (url: string) => Record<string, unknown>;
-      stringify?: (params: unknown) => string;
-    };
-  };
-}
+// Navigation Deep Linking Types - Use LinkingOptions config
+export type DeepLinkConfig = LinkingOptions<RootStackParamList>['config'];
 
 // Navigation Gesture Types
 export interface NavigationGesture {
@@ -408,21 +406,21 @@ export interface NavigationHeader {
   left?: React.ReactNode;
   right?: React.ReactNode;
   center?: React.ReactNode;
-  style?: unknown;
-  titleStyle?: unknown;
-  subtitleStyle?: unknown;
+  style?: ViewStyle;
+  titleStyle?: TextStyle;
+  subtitleStyle?: TextStyle;
 }
 
 // Navigation Tab Bar Types
 export interface NavigationTabBar {
   visible: boolean;
-  style?: unknown;
+  style?: ViewStyle;
   activeTintColor?: string;
   inactiveTintColor?: string;
   showLabel?: boolean;
-  labelStyle?: unknown;
-  iconStyle?: unknown;
-  tabStyle?: unknown;
+  labelStyle?: TextStyle;
+  iconStyle?: ViewStyle;
+  tabStyle?: ViewStyle;
 }
 
 // Navigation Drawer Types
@@ -430,9 +428,9 @@ export interface NavigationDrawer {
   open: boolean;
   width: number;
   position: 'left' | 'right';
-  style?: unknown;
-  overlayStyle?: unknown;
-  contentStyle?: unknown;
+  style?: ViewStyle;
+  overlayStyle?: ViewStyle;
+  contentStyle?: ViewStyle;
 }
 
 // Navigation Modal Types
@@ -441,8 +439,8 @@ export interface NavigationModal {
   transparent: boolean;
   animationType: 'slide' | 'fade' | 'none';
   presentationStyle: 'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen';
-  style?: unknown;
-  contentStyle?: unknown;
+  style?: ViewStyle;
+  contentStyle?: ViewStyle;
 }
 
 // Navigation Stack Types
@@ -481,11 +479,11 @@ export type NavigationComponent =
   | NavigationModalNavigator;
 
 // Navigation Screen Types
-export interface NavigationScreen {
-  name: string;
-  component: React.ComponentType<unknown>;
+export interface NavigationScreen<RouteName extends keyof RootStackParamList = keyof RootStackParamList> {
+  name: RouteName;
+  component: React.ComponentType<RootStackScreenProps<RouteName>>;
   options?: ScreenOptions;
-  initialParams?: unknown;
+  initialParams?: RootStackParamList[RouteName] extends object ? RootStackParamList[RouteName] : undefined;
 }
 
 // Navigation Group Types
@@ -544,16 +542,31 @@ export interface NavigationRegistry {
 
 // Navigation Manager Types
 export interface NavigationManager {
-  navigate: (screen: string, params?: unknown) => void;
+  navigate: <T extends keyof RootStackParamList>(
+    screen: T,
+    params?: RootStackParamList[T] extends object ? RootStackParamList[T] : undefined,
+  ) => void;
   goBack: () => void;
-  reset: (state: unknown) => void;
+  reset: (state: NavigationState<RootStackParamList>) => void;
   canGoBack: () => boolean;
-  getCurrentRoute: () => string;
-  getCurrentParams: () => unknown;
-  setParams: (params: unknown) => void;
-  addListener: (event: string, callback: (data: unknown) => void) => () => void;
-  removeListener: (event: string, callback: (data: unknown) => void) => void;
-  emit: (event: string, data?: unknown) => void;
+  getCurrentRoute: () => keyof RootStackParamList | undefined;
+  getCurrentParams: () => RootStackParamList[keyof RootStackParamList] | undefined;
+  setParams: <T extends keyof RootStackParamList>(
+    params: T extends keyof RootStackParamList
+      ? RootStackParamList[T] extends object
+        ? Partial<RootStackParamList[T]>
+        : undefined
+      : undefined,
+  ) => void;
+  addListener: <T extends NavigationEvent>(
+    event: T,
+    callback: NavigationEventListener<T>,
+  ) => () => void;
+  removeListener: <T extends NavigationEvent>(
+    event: T,
+    callback: NavigationEventListener<T>,
+  ) => void;
+  emit: <T extends NavigationEvent>(event: T, data?: EventArg<T, boolean, unknown>) => void;
 }
 
 // Navigation Service Types
@@ -574,10 +587,10 @@ export interface NavigationService {
 }
 
 // Navigation Provider Context Types
-export interface NavigationProviderContext {
+export interface NavigationProviderContext<RouteName extends keyof RootStackParamList = keyof RootStackParamList> {
   service: NavigationService;
-  navigation: NavigationProp;
-  route: RouteProp;
+  navigation: NavigationProp<RouteName>;
+  route: RouteProp<RouteName>;
   theme: NavigationTheme;
   config: NavigationConfigSchema;
   linking: NavigationLinking;
@@ -587,9 +600,9 @@ export interface NavigationProviderContext {
 
 // Navigation Hook Context Types
 export interface NavigationHookContext {
-  useNavigation: () => NavigationProp;
-  useRoute: () => RouteProp;
-  useNavigationState: () => NavigationState;
+  useNavigation: <RouteName extends keyof RootStackParamList = keyof RootStackParamList>() => NavigationProp<RouteName>;
+  useRoute: <RouteName extends keyof RootStackParamList>() => RouteProp<RouteName>;
+  useNavigationState: () => NavigationState<RootStackParamList>;
   useFocusEffect: () => UseFocusEffectReturn;
   useIsFocused: () => boolean;
   useIsReady: () => boolean;
@@ -597,11 +610,16 @@ export interface NavigationHookContext {
 
 // Navigation Utility Types
 export interface NavigationUtils {
-  createNavigationRef: () => NavigationRef;
-  createNavigationState: () => NavigationState;
-  createNavigationAction: (type: string, payload?: unknown) => NavigationAction;
-  createNavigationEvent: (type: NavigationEvent, data?: unknown) => NavigationEventData;
-  createNavigationListener: (callback: NavigationEventListener) => NavigationEventListener;
+  createNavigationRef: () => NavigationContainerRef<RootStackParamList>;
+  createNavigationState: () => NavigationState<RootStackParamList>;
+  createNavigationAction: (type: string, payload?: Record<string, unknown>) => NavigationAction;
+  createNavigationEvent: <T extends NavigationEvent>(
+    type: T,
+    data?: Record<string, unknown>,
+  ) => NavigationEventData<T>;
+  createNavigationListener: <T extends NavigationEvent>(
+    callback: NavigationEventListener<T>,
+  ) => NavigationEventListener<T>;
   createNavigationSubscription: (remove: () => void) => NavigationEventSubscription;
 }
 
@@ -625,16 +643,16 @@ export interface NavigationPerformance {
   measure: (name: string, fn: () => void) => void;
   mark: (name: string) => void;
   measureMark: (startMark: string, endMark: string) => void;
-  getMetrics: () => unknown;
+  getMetrics: () => Record<string, number>;
   clearMetrics: () => void;
 }
 
 // Navigation Analytics Types
 export interface NavigationAnalytics {
-  track: (event: string, properties?: unknown) => void;
-  identify: (userId: string, traits?: unknown) => void;
-  page: (name: string, properties?: unknown) => void;
-  group: (groupId: string, traits?: unknown) => void;
+  track: (event: string, properties?: Record<string, unknown>) => void;
+  identify: (userId: string, traits?: Record<string, unknown>) => void;
+  page: (name: string, properties?: Record<string, unknown>) => void;
+  group: (groupId: string, traits?: Record<string, unknown>) => void;
   alias: (userId: string) => void;
   reset: () => void;
 }
@@ -651,14 +669,14 @@ export interface NavigationSecurity {
 
 // Navigation Cache Types
 export interface NavigationCache {
-  get: (key: string) => unknown;
-  set: (key: string, value: unknown) => void;
+  get: <T = unknown>(key: string) => T | undefined;
+  set: <T = unknown>(key: string, value: T) => void;
   delete: (key: string) => void;
   clear: () => void;
   has: (key: string) => boolean;
   keys: () => string[];
   values: () => unknown[];
-  entries: () => [string, unknown][];
+  entries: () => Array<[string, unknown]>;
 }
 
 // Navigation Storage Types
@@ -674,12 +692,18 @@ export interface NavigationStorage {
 }
 
 // Navigation Network Types
+export interface NetworkState {
+  isConnected: boolean;
+  type: 'wifi' | 'cellular' | 'ethernet' | 'unknown';
+  isInternetReachable: boolean;
+}
+
 export interface NavigationNetwork {
   isConnected: boolean;
   type: 'wifi' | 'cellular' | 'ethernet' | 'unknown';
   isInternetReachable: boolean;
-  addListener: (callback: (state: unknown) => void) => () => void;
-  removeListener: (callback: (state: unknown) => void) => void;
+  addListener: (callback: (state: NetworkState) => void) => () => void;
+  removeListener: (callback: (state: NetworkState) => void) => void;
 }
 
 // Navigation Device Types

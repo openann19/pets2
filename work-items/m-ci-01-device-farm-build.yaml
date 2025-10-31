@@ -1,0 +1,81 @@
+id: m-ci-01-device-farm-build
+owner: ci
+severity: critical
+area: mobile
+status: open
+context: |
+  No device farm build in CI, risking shipping breaking builds.
+  Current behavior: Builds only tested locally, may break on devices.
+  Why it matters: App store rejections, broken releases, user frustration.
+  
+  Use Case:
+  1. Developer pushes code
+  2. CI passes (only runs lint/typecheck)
+  3. Build breaks on actual device
+  4. App submitted to store
+  5. Store rejects or users report crashes
+  6. With device farm: Build tested before merge
+
+acceptance:
+  - [ ] EAS Build configured for "preview" channel
+  - [ ] GitHub Actions workflow triggers EAS build on PR
+  - [ ] Build runs on iOS device
+  - [ ] Build runs on Android device
+  - [ ] Build artifacts uploaded as PR comment
+  - [ ] Build fails if compilation errors
+  - [ ] Build fails if tests fail
+  - [ ] Build status reported in GitHub PR
+  - [ ] Build time < 15 minutes
+  - [ ] Build logs accessible
+
+states:
+  - not-configured
+  - configured
+  - testing
+  - passing
+
+telemetry:
+  - event: CI_BUILD_TRIGGERED
+    props: [platform, branch, prNumber, timestamp]
+  - event: CI_BUILD_COMPLETED
+    props: [platform, branch, success, duration, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  configs:
+    - apps/mobile/eas.json
+    - .github/workflows/mobile-build.yml
+  scripts:
+    - scripts/eas-build.sh
+
+risks:
+  - EAS build quotas may be limited
+  - Build costs (if not free tier)
+  - Build time may slow PR reviews
+  - Configuration complexity
+  - Secrets management for EAS
+
+rollback:
+  - Disable build workflow
+  - Revert eas.json changes
+  - Remove GitHub Actions workflow
+
+links:
+  - docs: https://docs.expo.dev/build/introduction/
+  - docs: https://docs.expo.dev/build/automating-builds/
+
+dependencies:
+  - EAS account setup
+  - Expo CLI
+  - GitHub Actions
+  - EAS build credits
+
+timeline:
+  start: 2025-01-30
+  eas-config: 2025-01-31
+  github-action: 2025-02-01
+  testing: 2025-02-02
+  deploy: 2025-02-03
+

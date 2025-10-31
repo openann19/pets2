@@ -1,0 +1,47 @@
+id: ui-029-press-feedback
+owner: ux
+severity: medium
+area: mobile+ux
+context: |
+  Interactive elements lack immediate tactile and visual feedback.
+  Users need confirmation that their tap registered before action completes.
+  Combine scale animation, shadow softening, and haptic feedback for premium feel.
+acceptance:
+  - All Pressable components scale to 0.98 on press
+  - Shadow opacity reduces by 50% during press
+  - Haptic feedback (impact light) triggers on press start
+  - Animation duration matches motion.duration.standard (200ms)
+  - usePressAnimation hook available for custom components
+  - Reduced motion users get haptic only (no scale)
+states:
+  - idle
+  - pressing
+  - released
+telemetry:
+  - event: PRESS_FEEDBACK
+    props: [component, hasScale, hasHaptic, hasShadow, duration]
+contracts:
+  request: { component: string, pressType: string }
+  response: { animated: boolean, hapticFired: boolean }
+  errors: []
+assets:
+  hooks: [apps/mobile/src/hooks/animations/usePressAnimation.ts]
+  components: [apps/mobile/src/components/**/*.tsx]
+  tests: [apps/mobile/src/hooks/animations/__tests__/usePressAnimation.test.ts]
+risks:
+  - Performance impact on low-end devices
+  - Haptic may drain battery if overused
+rollback:
+  - Remove press animation hooks
+  - Restore original Pressable behavior
+links: []
+status: open
+priority: medium
+impact: 4
+effort: S
+category: micro-interactions
+tokens:
+  - motion.scale
+  - motion.opacity
+  - motion.duration.standard
+estimated_hours: 4

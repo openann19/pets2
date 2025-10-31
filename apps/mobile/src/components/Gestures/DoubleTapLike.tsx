@@ -12,12 +12,13 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@mobile/theme';
+import { springs, durations, motionEasing, type SpringConfig } from '@/foundation/motion';
 
 export interface DoubleTapLikeProps {
   children: React.ReactNode;
   onDoubleTap?: () => void;
   onSingleTap?: () => void;
-  scaleConfig?: { stiffness: number; damping: number; mass: number };
+  scaleConfig?: SpringConfig;
   heartConfig?: { size: number; color: string; showMs: number };
   haptic?: 'off' | 'light' | 'medium' | 'heavy';
   style?: any;
@@ -25,7 +26,7 @@ export interface DoubleTapLikeProps {
   maxDelay?: number;
 }
 
-export const DEFAULT_SCALE = { stiffness: 400, damping: 14, mass: 0.8 };
+export const DEFAULT_SCALE = springs.light;
 export const getDefaultHeart = (theme: any) => ({
   size: 64,
   color: theme.colors.danger,
@@ -77,13 +78,22 @@ export function DoubleTapLike({
     cancelAnimation(heartScale);
     cancelAnimation(heartOpacity);
     cancelAnimation(heartRotate);
-    heartScale.value = withSpring(1, { stiffness: 500, damping: 15, mass: 0.5 });
-    heartOpacity.value = withSpring(1, { stiffness: 300, damping: 20, mass: 0.8 });
-    heartRotate.value = withSpring(360);
+    heartScale.value = withSpring(1, springs.light);
+    heartOpacity.value = withSpring(1, springs.standard);
+    heartRotate.value = withSpring(360, springs.bouncy);
     // fade out using withDelay (worklet-safe)
-    heartOpacity.value = withDelay(finalHeartConfig.showMs, withTiming(0, { duration: 200 }));
-    heartScale.value = withDelay(finalHeartConfig.showMs, withTiming(0, { duration: 200 }));
-    heartRotate.value = withDelay(finalHeartConfig.showMs, withTiming(0, { duration: 200 }));
+    heartOpacity.value = withDelay(finalHeartConfig.showMs, withTiming(0, { 
+      duration: durations.sm,
+      easing: motionEasing.exit,
+    }));
+    heartScale.value = withDelay(finalHeartConfig.showMs, withTiming(0, { 
+      duration: durations.sm,
+      easing: motionEasing.exit,
+    }));
+    heartRotate.value = withDelay(finalHeartConfig.showMs, withTiming(0, { 
+      duration: durations.sm,
+      easing: motionEasing.exit,
+    }));
   }, [finalHeartConfig.showMs]);
 
   const handleDoubleTap = useCallback(() => {

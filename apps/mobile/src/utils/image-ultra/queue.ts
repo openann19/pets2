@@ -31,9 +31,9 @@ export class AbortableQueue {
   private running = 0;
   private q: Array<{
     id: string;
-    run: Task<any>;
-    resolve: (v: any) => void;
-    reject: (e: any) => void;
+    run: Task<unknown>;
+    resolve: (v: unknown) => void;
+    reject: (e: unknown) => void;
     ctrl: AbortController;
   }> = [];
 

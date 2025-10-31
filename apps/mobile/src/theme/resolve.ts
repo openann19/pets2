@@ -102,7 +102,7 @@ export function resolveTheme(base: typeof BaseLight | typeof BaseDark): AppTheme
       lg: 24,
     },
     easing: {
-      standard: base.motion.easing.standard.toString(),
+      standard: base.motion?.easing?.standard?.toString() ?? 'cubic-bezier(0.4, 0, 0.2, 1)',
       decel: 'cubic-bezier(0, 0, 0.2, 1)',
       accel: 'cubic-bezier(0.4, 0, 1, 1)',
     },
@@ -139,9 +139,9 @@ export function resolveTheme(base: typeof BaseLight | typeof BaseDark): AppTheme
         if (color.startsWith('#')) {
           const hex = color.slice(1);
           if (hex.length === 3) {
-            const r = parseInt(hex[0] + hex[0], 16);
-            const g = parseInt(hex[1] + hex[1], 16);
-            const b = parseInt(hex[2] + hex[2], 16);
+          const r = parseInt((hex[0] ?? '0') + (hex[0] ?? '0'), 16);
+          const g = parseInt((hex[1] ?? '0') + (hex[1] ?? '0'), 16);
+          const b = parseInt((hex[2] ?? '0') + (hex[2] ?? '0'), 16);
             return `rgba(${r}, ${g}, ${b}, ${opacity})`;
           } else if (hex.length === 6) {
             const r = parseInt(hex.slice(0, 2), 16);
@@ -162,4 +162,4 @@ export function resolveTheme(base: typeof BaseLight | typeof BaseDark): AppTheme
 
 export const getLightTheme = (): AppTheme => resolveTheme(BaseLight);
 export const getDarkTheme = (): AppTheme => resolveTheme(BaseDark);
-export type { AppTheme as ThemeLike };
+export type { AppTheme, AppTheme as ThemeLike };

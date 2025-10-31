@@ -1,6 +1,7 @@
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import axios, { AxiosHeaders } from 'axios';
 import { getLocalStorage, redirectTo } from '../utils/environment';
+import { logger } from '../utils/logger';
 
 // Generic API response wrapper
 export interface ApiClientResponse<T = unknown> {
@@ -76,7 +77,7 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response: AxiosResponse) => response,
       (error: unknown) => {
-        console.error('Response interceptor error:', extractErrorMessage(error, 'Unknown error'));
+        logger.error('Response interceptor error:', extractErrorMessage(error, 'Unknown error'));
         if (isAxiosErrorLike(error)) {
           if (error.response?.status === 401) {
             const storage = getLocalStorage();

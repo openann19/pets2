@@ -13,6 +13,7 @@ import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 import { useReduceMotion } from '../../hooks/useReducedMotion';
 import { haptic } from '../../ui/haptics';
+import { springs } from '@/foundation/motion';
 
 export type ReplyTarget = {
   author?: string;
@@ -44,7 +45,7 @@ export default function ReplyPreviewBar({
       alpha.value = withTiming(1, { duration: 140 });
       y.value = reduced
         ? withTiming(0, { duration: 140 })
-        : withSpring(0, { damping: 16, stiffness: 320 });
+        : withSpring(0, springs.standard);
     } else {
       alpha.value = withTiming(0, { duration: 120 });
       y.value = withTiming(20, { duration: 120 });
@@ -67,7 +68,7 @@ export default function ReplyPreviewBar({
       } else {
         x.value = reduced
           ? withTiming(0, { duration: 160 })
-          : withSpring(0, { damping: 16, stiffness: 300 });
+          : withSpring(0, springs.standard);
       }
     });
 
@@ -86,6 +87,8 @@ export default function ReplyPreviewBar({
         style={[styles.wrap, sty]}
         testID="reply-preview"
         accessibilityRole="summary"
+        accessibilityLabel={`Reply preview: ${target.author ?? t('replyingTo')}: ${target.text ?? t('media')}`}
+        accessibilityHint="Swipe right to dismiss"
       >
         <View style={styles.leading} />
         <View style={styles.iconWrap}>
@@ -100,16 +103,22 @@ export default function ReplyPreviewBar({
           style={styles.content}
           onPress={onPress}
           testID="reply-preview-content"
+          accessibilityRole="button"
+          accessibilityLabel={`Replying to ${target.author ?? t('replyingTo')}: ${target.text ?? t('media')}`}
+          accessibilityHint="Tap to jump to the original message"
+          hitSlop={{ top: 11, bottom: 11, left: 11, right: 11 }}
         >
           <Text
             style={styles.author}
             numberOfLines={1}
+            allowFontScaling
           >
             {target.author ?? t('replyingTo')}
           </Text>
           <Text
             style={styles.snippet}
             numberOfLines={1}
+            allowFontScaling
           >
             {target.text ?? t('media')}
           </Text>
@@ -119,6 +128,8 @@ export default function ReplyPreviewBar({
           <Image
             source={{ uri: target.thumbnail }}
             style={styles.thumb}
+            accessibilityRole="image"
+            accessibilityLabel="Reply preview thumbnail"
           />
         ) : null}
 
@@ -130,8 +141,9 @@ export default function ReplyPreviewBar({
           style={styles.close}
           hitSlop={12}
           testID="reply-preview-close"
-          accessibilityLabel={t('dismiss')}
           accessibilityRole="button"
+          accessibilityLabel={t('dismiss')}
+          accessibilityHint="Tap to cancel reply"
         >
           <Ionicons
             name="close"

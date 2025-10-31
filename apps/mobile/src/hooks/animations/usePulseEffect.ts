@@ -11,6 +11,7 @@ import {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
+import { durations, motionEasing } from '@/foundation/motion';
 
 export const usePulseEffect = (enabled = true) => {
   const pulseScale = useSharedValue(1);
@@ -18,7 +19,16 @@ export const usePulseEffect = (enabled = true) => {
   useEffect(() => {
     if (enabled) {
       pulseScale.value = withRepeat(
-        withSequence(withTiming(1.05, { duration: 1000 }), withTiming(1, { duration: 1000 })),
+        withSequence(
+          withTiming(1.05, { 
+            duration: durations.lg * 3, // 960ms for pulse up
+            easing: motionEasing.enter,
+          }), 
+          withTiming(1, { 
+            duration: durations.lg * 3, // 960ms for pulse down
+            easing: motionEasing.exit,
+          })
+        ),
         -1,
         false,
       );

@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import type { AuthRequest } from '../types/express';
 import User from "../models/User";
 import logger from "../utils/logger";
 import { createClient } from 'redis';
@@ -30,24 +31,29 @@ async function getRedisClient() {
   return redisClient;
 }
 
-interface AuthRequest extends Request {
-  user?: any;
-}
 
 export async function requirePremium(req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> {
   try {
-    const user = await User.findById(req.user?._id).select("premium");
+    const userId = req.userId || req.user?._id?.toString();
+    if (!userId) {
+      return res.status(401).json({ error: "unauthorized" });
+    }
+    const user = await User.findById(userId).select("premium");
     if (!user) {
       return res.status(401).json({ error: "unauthorized" });
     }
     if (user.premium?.isActive && 
         (!user.premium.expiresAt || new Date(user.premium.expiresAt) > new Date())) {
-      req.user.subscriptionActive = true;
+      // Set subscriptionActive on request for subsequent middleware
+      if (req.user) {
+        (req.user as { subscriptionActive?: boolean }).subscriptionActive = true;
+      }
       return next();
     }
     return res.status(402).json({ error: "premium_required" });
-  } catch (error: any) {
-    logger.error("Premium check error", { error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error("Premium check error", { error: errorMessage });
     return res.status(500).json({ error: "internal_server_error" });
   }
 }
@@ -59,7 +65,11 @@ const PREMIUM_LIMITS: Record<LimitKey, number> = { likes: 500, superlikes: 5, re
 export async function enforceQuota(key: LimitKey) {
   return async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
-      const user = await User.findById(req.user?._id).select("premium");
+      const userId = req.userId || req.user?._id?.toString();
+      if (!userId) {
+        return res.status(401).json({ error: "unauthorized" });
+      }
+      const user = await User.findById(userId).select("premium");
       if (!user) {
         return res.status(401).json({ error: "unauthorized" });
       }
@@ -72,7 +82,7 @@ export async function enforceQuota(key: LimitKey) {
         // Use Redis for quota tracking with distributed rate limiting
         const redis = await getRedisClient();
         const today = new Date().toISOString().slice(0, 10);
-        const redisKey = `quota:${req.user._id}:${key}:${today}`;
+        const redisKey = `quota:${userId}:${key}:${today}`;
         
         // Get current usage
         const usedStr = await redis.get(redisKey);
@@ -97,10 +107,11 @@ export async function enforceQuota(key: LimitKey) {
         // Increment usage with expiration at midnight
         await redis.incr(redisKey);
         await redis.expire(redisKey, 86400); // Expire at midnight
-      } catch (redisError: any) {
+      } catch (redisError: unknown) {
+        const errorMessage = redisError instanceof Error ? redisError.message : String(redisError);
         logger.warn('Redis quota tracking failed, falling back to database', { 
-          error: redisError.message,
-          userId: req.user._id 
+          error: errorMessage,
+          userId 
         });
         
         // Fallback to database tracking
@@ -119,17 +130,20 @@ export async function enforceQuota(key: LimitKey) {
         }
 
         const incrementKey = `premium.usage.${currentKey}`;
-        await User.findByIdAndUpdate(req.user._id, {
+        await User.findByIdAndUpdate(userId, {
           $inc: { [incrementKey]: 1 }
         });
       }
 
       // Set subscriptionActive on req.user for subsequent middleware
-      req.user.subscriptionActive = isPremium;
+      if (req.user) {
+        (req.user as { subscriptionActive?: boolean }).subscriptionActive = isPremium;
+      }
       
       next();
-    } catch (error: any) {
-      logger.error("Quota enforcement error", { error: error.message, key });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error("Quota enforcement error", { error: errorMessage, key });
       return res.status(500).json({ error: "internal_server_error" });
     }
   };

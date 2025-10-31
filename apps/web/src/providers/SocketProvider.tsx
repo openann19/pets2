@@ -199,6 +199,35 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
                 }));
             }
         });
+        // Reconnect handler - re-register user after reconnection
+        socket.on('reconnect', (attemptNumber: number) => {
+            logger.info('Socket reconnected', { attemptNumber, socketId: socket.id });
+            setIsConnected(true);
+            setConnectionQuality('good');
+            reconnectAttemptsRef.current = 0;
+            
+            // Re-register user after reconnection
+            if (user?._id) {
+                socket.emit('register_user', { userId: user._id }, (response: SocketRegisterResponse) => {
+                    if (response?.error) {
+                        logger.error('[Socket] Failed to re-register user after reconnect', { error: response.error });
+                    } else {
+                        logger.info('[Socket] User re-registered successfully after reconnect', { userId: user._id });
+                    }
+                });
+            }
+            
+            // Re-join user room if needed
+            if (user?._id) {
+                socket.emit('join_user_room', { userId: user._id });
+            }
+            
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('socket:reconnected', {
+                    detail: { socketId: socket.id, attemptNumber }
+                }));
+            }
+        });
         socket.on('disconnect', (reason: string) => {
             logger.warn('Socket disconnected', { reason });
             setIsConnected(false);

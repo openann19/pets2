@@ -7,16 +7,8 @@
 
 /* eslint-disable no-undef */
 
-// Make Jest globals available
-global.jest = jest;
-global.describe = describe;
-global.it = it;
-global.test = test;
-global.expect = expect;
-global.beforeAll = beforeAll;
-global.afterAll = afterAll;
-global.beforeEach = beforeEach;
-global.afterEach = afterEach;
+// Jest globals are already available in ESM mode
+// No need to assign them to global
 
 // Mock fetch for all tests
 global.fetch = jest.fn();

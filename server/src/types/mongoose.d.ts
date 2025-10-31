@@ -45,6 +45,8 @@ export interface IUserPremiumFeatures {
   aiMatching: boolean;
   prioritySupport: boolean;
   globalPassport: boolean;
+  readReceipts: boolean;
+  videoCalls: boolean;
 }
 
 /**
@@ -60,6 +62,8 @@ export interface IUserPremiumUsage {
   messagesSent: number;
   profileViews: number;
   rewindsUsed: number;
+  iapSuperLikes?: number; // In-app purchase super likes
+  iapBoosts?: number; // In-app purchase boosts
 }
 
 /**
@@ -67,13 +71,14 @@ export interface IUserPremiumUsage {
  */
 export interface IUserPremium {
   isActive: boolean;
-  plan: 'basic' | 'premium' | 'ultimate';
-  expiresAt?: Date;
+  plan: 'basic' | 'premium' | 'ultimate' | 'free';
+  expiresAt: Date | null;
   stripeSubscriptionId?: string;
   cancelAtPeriodEnd: boolean;
   paymentStatus: 'active' | 'past_due' | 'failed';
   features: IUserPremiumFeatures;
   usage: IUserPremiumUsage;
+  retryCount?: number; // For payment retry tracking
 }
 
 /**
@@ -120,14 +125,15 @@ export interface IPushToken {
 /**
  * User document interface (base fields only)
  * Extended with full fields in the model definition
+ * Note: Does not extend Document - HydratedDocument<IUser, IUserMethods> already includes Document properties
  */
-export interface IUser extends Document {
+export interface IUser {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
   dateOfBirth: Date;
-  avatar?: string;
+  avatar: string | null;
   bio?: string;
   phone?: string;
   location: IUserLocation;
@@ -143,6 +149,12 @@ export interface IUser extends Document {
   isBlocked: boolean;
   status: 'active' | 'suspended' | 'banned' | 'pending';
   role: 'user' | 'premium' | 'administrator' | 'moderator' | 'support' | 'analyst' | 'billing_admin';
+  privacySettings: {
+    profileVisibility: 'public' | 'matches' | 'premium';
+    showLocation: boolean;
+    showActivityStatus: boolean;
+    allowMessages: 'everyone' | 'matches' | 'none';
+  };
   refreshTokens: string[];
   tokensInvalidatedAt?: Date;
   revokedJtis: string[];
@@ -171,6 +183,9 @@ export interface IUser extends Document {
   stripeCustomerId?: string;
   createdAt: Date;
   updatedAt: Date;
+  // Virtual properties (computed at runtime)
+  age: number;
+  fullName: string;
 }
 
 /**
@@ -316,8 +331,9 @@ export interface IPetAnalytics {
 
 /**
  * Pet document interface
+ * Note: Does not extend Document - HydratedDocument<IPet, IPetMethods> already includes Document properties
  */
-export interface IPet extends Document {
+export interface IPet {
   owner: string;
   name: string;
   species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
@@ -473,8 +489,9 @@ export interface IMatchOutcome {
 
 /**
  * Match document interface
+ * Note: Does not extend Document - HydratedDocument<IMatch, IMatchMethods> already includes Document properties
  */
-export interface IMatch extends Document {
+export interface IMatch {
   pet1: string;
   pet2: string;
   user1: string;
@@ -567,8 +584,9 @@ export interface IConversationUserActions {
 
 /**
  * Conversation document interface
+ * Note: Does not extend Document - HydratedDocument<IConversation, IConversationMethods> already includes Document properties
  */
-export interface IConversation extends Document {
+export interface IConversation {
   participants: string[];
   lastMessageAt: Date;
   messages: IConversationMessage[];
@@ -622,8 +640,9 @@ export interface IStoryReply {
 
 /**
  * Story document interface
+ * Note: Does not extend Document - HydratedDocument<IStory, IStoryMethods> already includes Document properties
  */
-export interface IStory extends Document {
+export interface IStory {
   userId: string;
   mediaType: 'photo' | 'video';
   mediaUrl: string;
@@ -666,8 +685,9 @@ export type IStoryDocument = HydratedDocument<IStory, IStoryMethods>;
 
 /**
  * Notification document interface
+ * Note: Does not extend Document - HydratedDocument<INotification, INotificationMethods> already includes Document properties
  */
-export interface INotification extends Document {
+export interface INotification {
   userId: string;
   type: 'match' | 'message' | 'like' | 'super_like' | 'reminder' | 'system' | 'test';
   title: string;
@@ -704,8 +724,9 @@ export type INotificationDocument = HydratedDocument<INotification, INotificatio
 
 /**
  * Favorite document interface
+ * Note: Does not extend Document - HydratedDocument<IFavorite, IFavoriteMethods> already includes Document properties
  */
-export interface IFavorite extends Document {
+export interface IFavorite {
   userId: string;
   petId: string;
   createdAt: Date;

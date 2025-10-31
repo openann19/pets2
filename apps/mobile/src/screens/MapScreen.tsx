@@ -131,7 +131,14 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
           onLocatePress={getCurrentLocation}
           onARPress={() => {
             haptic.confirm();
-            navigation.navigate('ARScentTrails', { initialLocation: userLocation });
+            navigation.navigate('ARScentTrails', { 
+              initialLocation: userLocation,
+              pins: filteredPins.map(pin => ({
+                latitude: pin.latitude,
+                longitude: pin.longitude,
+                activity: pin.activity || 'activity',
+              })),
+            });
           }}
           onCreatePress={() => setShowCreate(true)}
           onFilterPress={toggleFilterPanel}

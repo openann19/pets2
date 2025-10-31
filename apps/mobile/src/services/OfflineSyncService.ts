@@ -392,6 +392,9 @@ class OfflineSyncService {
 // Export singleton instance
 export const offlineSync = OfflineSyncService.getInstance();
 
+// Export class for direct instantiation if needed
+export { OfflineSyncService };
+
 // Export types
 export type { OfflineQueueItem, SyncStatus };
 export default offlineSync;

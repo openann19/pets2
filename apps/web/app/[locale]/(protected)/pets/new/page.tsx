@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { logger } from '@pawfectmatch/core';
 import {
   ArrowLeftIcon,
   PhotoIcon,
@@ -201,7 +202,7 @@ export default function CreatePetPage() {
       }, 2000);
 
     } catch (error: any) {
-      console.error('Error creating pet:', error);
+      logger.error('Error creating pet:', error);
       setErrors({
         submit: error.response?.data?.message || 'Failed to create pet profile. Please try again.'
       });

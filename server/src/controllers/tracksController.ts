@@ -53,7 +53,7 @@ export const listTracks = async (req: Request, res: Response): Promise<void> => 
       tracks: result,
       count: result.length,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error listing tracks:', error);
     fail(res, 500, 'Failed to list tracks');
   }
@@ -93,7 +93,7 @@ export const getTrack = async (req: Request, res: Response): Promise<void> => {
         mood: track.mood,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error getting track:', error);
     fail(res, 500, 'Failed to get track');
   }

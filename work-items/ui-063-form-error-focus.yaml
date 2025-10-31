@@ -1,0 +1,44 @@
+id: ui-063-form-error-focus
+owner: ux
+severity: medium
+area: mobile+forms
+context: |
+  Form submission errors require manual scrolling to find invalid fields.
+  Users frustrated by having to hunt for validation errors.
+  Need automatic focus jump to first invalid field on submit.
+acceptance:
+  - Submit focuses first invalid field automatically
+  - Smooth scroll animation to field (300ms)
+  - Error message clearly indicated with icon and color
+  - Keyboard opens automatically for text inputs
+  - Works with all form types (login, register, profile, etc.)
+  - Accessibility announcement for screen readers
+states:
+  - valid
+  - invalid
+  - focused
+telemetry:
+  - event: FORM_ERROR_FOCUS
+    props: [formType, fieldName, errorType, scrollDistance]
+contracts:
+  request: { formData: object, validationSchema: object }
+  response: { isValid: boolean, firstError: string, focusedField: string }
+  errors: []
+assets:
+  hooks: [apps/mobile/src/hooks/forms/useFormErrorFocus.ts]
+  components: [apps/mobile/src/components/forms/Form*.tsx]
+  tests: [apps/mobile/src/hooks/forms/__tests__/useFormErrorFocus.test.ts]
+risks:
+  - Scroll may feel jarring on small screens
+  - Keyboard opening may obscure error message
+rollback:
+  - Remove auto-focus logic
+  - Restore manual error discovery
+links: []
+status: open
+priority: medium
+impact: 3
+effort: S
+category: forms
+tokens: []
+estimated_hours: 4

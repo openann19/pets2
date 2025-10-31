@@ -1,11 +1,9 @@
 import express, { type Request, type Response, type NextFunction } from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
-import morgan from 'morgan';
-const rateLimit = require('express-rate-limit');
-const { ipKeyGenerator } = require('express-rate-limit');
+import path from 'path';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 import swaggerJsdoc from 'swagger-jsdoc';
@@ -52,7 +50,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 // Database connection with optimized indexes
 const connectDB = async (): Promise<void> => {
   try {
-    const mongoURI = process.env.MONGODB_URI || process.env.DATABASE_URL ||
+    const mongoURI = process.env.MONGODB_URI || process.env['DATABASE_URL'] ||
       'mongodb://localhost:27017/pawfectmatch';
 
     const conn = await mongoose.connect(mongoURI, {
@@ -120,11 +118,12 @@ const moderationUserRoutes = await import('./src/routes/moderation');
 const adminEnhancedFeaturesRoutes = await import('./src/routes/adminEnhancedFeatures');
 const moderationAdminRoutes = await import('./src/routes/moderationAdmin');
 const communityRoutes = await import('./src/routes/community'); // Import community routes
+const communityEnhancedRoutes = await import('./routes/communityRoutes'); // Enhanced social features
 const aiModerationRoutes = await import('./src/routes/aiModeration');
 const aiModerationAdminRoutes = await import('./src/routes/aiModerationAdmin');
 const adminModerationRoutes = await import('./src/routes/adminModeration');
-const favoritesRoutes = await import('./routes/favorites'); // Import favorites routes
-const storiesRoutes = await import('./routes/stories'); // Import stories routes
+const favoritesRoutes = await import('./src/routes/favorites'); // Import favorites routes
+const storiesRoutes = await import('./src/routes/stories'); // Import stories routes
 const conversationsRoutes = await import('./src/routes/conversations');
 const profileRoutes = await import('./src/routes/profile');
 const adoptionRoutes = await import('./src/routes/adoption');
@@ -143,6 +142,9 @@ const templatesRoutes = await import('./src/routes/templates');
 const tracksRoutes = await import('./src/routes/tracks');
 const uploadsRoutes = await import('./src/routes/uploads');
 const uiConfigRoutes = await import('./src/routes/uiConfig');
+const likesRoutes = await import('./src/routes/likes');
+const referralsRoutes = await import('./src/routes/referrals');
+const giftsRoutes = await import('./src/routes/gifts');
 
 // Import middleware
 const errorHandler = await import('./src/middleware/errorHandler');
@@ -291,8 +293,8 @@ const isTestEnv = process.env.NODE_ENV === 'test';
 
 // Rate limit configuration with reasonable defaults
 const rateLimitConfig = {
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // Default: 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'), // Default: 100 requests per window
+  windowMs: parseInt(process.env['RATE_LIMIT_WINDOW_MS'] || '900000'), // Default: 15 minutes
+  max: parseInt(process.env['RATE_LIMIT_MAX_REQUESTS'] || '100'), // Default: 100 requests per window
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 };
@@ -318,7 +320,7 @@ const authLimiter = rateLimit({
     // Skip rate limiting for password reset verification
     return req.path === '/api/auth/reset-password/verify';
   },
-  handler: (req: Request, res: Response, next: NextFunction, options: { statusCode: number; message: Record<string, unknown> | string }) => {
+  handler: (req: Request, res: Response, _next: NextFunction, options: { statusCode: number; message: Record<string, unknown> | string }) => {
     // Log security event
     typedLogger.security('Rate limit exceeded for auth', {
       ip: req.ip,
@@ -347,7 +349,7 @@ const apiLimiter = rateLimit({
     const userId = req.userId || req.user?.id;
     return userId ? `user_${userId}` : ipKeyGenerator(req.ip);
   },
-  handler: (req: Request, res: Response, next: NextFunction, options: { statusCode: number; message: Record<string, unknown> | string }) => {
+  handler: (req: Request, res: Response, _next: NextFunction, options: { statusCode: number; message: Record<string, unknown> | string }) => {
     // Log rate limit exceeded
     logger.warn('API rate limit exceeded', {
       ip: req.ip,
@@ -360,9 +362,9 @@ const apiLimiter = rateLimit({
 });
 
 // Premium features rate limiter - more generous limits for paying customers
-const _premiumLimiter = rateLimit({
+rateLimit({
   ...rateLimitConfig,
-  max: parseInt(process.env.RATE_LIMIT_PREMIUM_MAX || '300'), // Higher limit for premium users
+  max: parseInt(process.env['RATE_LIMIT_PREMIUM_MAX'] || '300'), // Higher limit for premium users
   keyGenerator: (req: Request) => {
     const userId = (req as any).userId || (req as any).user?.id;
     return userId ? `premium_${userId}` : ipKeyGenerator(req.ip);
@@ -374,7 +376,7 @@ const _premiumLimiter = rateLimit({
 });
 
 // Webhook rate limiter - different rules for external services
-const _webhookLimiter = rateLimit({
+rateLimit({
   ...rateLimitConfig,
   max: 60, // Allow more frequent webhook calls
   message: {
@@ -396,15 +398,15 @@ if (!isTestEnv) {
 // 2025 Enhanced CORS configuration with environment-specific rules
 const corsOrigins = (() => {
   // Parse allowed origins from environment variable
-  const configuredOrigins = process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
+  const configuredOrigins = process.env['CORS_ORIGINS']
+    ? process.env['CORS_ORIGINS'].split(',').map(origin => origin.trim())
     : [];
 
   // Production or staging - use configured origins only
   if (['production', 'staging'].includes(process.env.NODE_ENV || '')) {
     return [
       process.env.CLIENT_URL,
-      process.env.ADMIN_URL,
+      process.env['ADMIN_URL'],
       ...configuredOrigins
     ].filter(Boolean); // Remove falsy values
   }
@@ -412,7 +414,7 @@ const corsOrigins = (() => {
   // Development - allow localhost with different ports
   return [
     process.env.CLIENT_URL || 'http://localhost:3000',
-    process.env.ADMIN_URL,
+    process.env['ADMIN_URL'],
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:3002',
@@ -493,7 +495,6 @@ app.use(morganMiddleware.default('combined'));
 // Database connection function is already defined above
 
 // GDPR Background Job: Automated account deletion processing
-let deletionJobInterval: NodeJS.Timeout | null = null;
 const setupDeletionJob = async () => {
   try {
     const cron = await import('node-cron');
@@ -529,14 +530,31 @@ const healthRoutes = await import('./src/routes/health');
 app.use('/health', healthRoutes.default);
 app.use('/api/health', healthRoutes.default); // Also available under /api prefix
 // Explicit liveness and readiness endpoints for healthchecks
-app.get('/health/live', (req: Request, res: Response) => {
+app.get('/health/live', (_req: Request, res: Response) => {
   res.status(200).json({ status: 'live' });
 });
-app.get('/health/ready', async (req: Request, res: Response) => {
+app.get('/health/ready', async (_req: Request, res: Response) => {
   const mongoReady = mongoose.connection.readyState === 1;
   const uptime = process.uptime();
   res.status(mongoReady ? 200 : 503).json({ status: mongoReady ? 'ready' : 'degraded', mongoReady, uptime });
 });
+
+// Serve static files for deep linking (.well-known directory)
+// Critical for iOS Universal Links and Android App Links
+app.use('/.well-known', express.static(path.join(process.cwd(), 'server', 'public', '.well-known'), {
+  setHeaders: (res: Response, filePath: string) => {
+    // Apple App Site Association must be served without .json extension
+    if (filePath.endsWith('apple-app-site-association')) {
+      res.setHeader('Content-Type', 'application/json');
+    }
+    // Android Asset Links
+    if (filePath.endsWith('assetlinks.json')) {
+      res.setHeader('Content-Type', 'application/json');
+    }
+    // Cache for 1 hour (deep link files change infrequently)
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+  }
+}));
 
 // API Routes
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -564,6 +582,7 @@ app.use('/api/dashboard', authenticateToken, (await import('./src/routes/dashboa
 app.use('/api/admin', authenticateToken, requireAdmin, adminRoutes.default);
 app.use('/api/admin/analytics', authenticateToken, requireAdmin, adminAnalyticsRoutes.default);
 app.use('/api/admin/services', authenticateToken, requireAdmin, adminServicesRoutes.default);
+app.use('/api/admin/infrastructure', authenticateToken, requireAdmin, (await import('./src/routes/infrastructure')).default);
 app.use('/api/admin/system', authenticateToken, requireAdmin, (await import('./src/routes/adminSystem')).default);
 app.use('/api/admin/security', authenticateToken, requireAdmin, (await import('./src/routes/adminSecurity')).default);
 app.use('/api/admin/subscriptions', authenticateToken, requireAdmin, (await import('./src/routes/adminSubscriptions')).default);
@@ -588,7 +607,8 @@ app.use('/api/uploads', authenticateToken, uploadRoutes.default);
 app.use('/api/verification', verificationRoutes.default);
 app.use('/api/admin', authenticateToken, requireAdmin, moderateRoutes.default);
 
-app.use('/api/community', authenticateToken, communityRoutes.default); // Register community routes
+app.use('/api/community', authenticateToken, communityRoutes.default as any); // Register community routes
+app.use('/api/community', authenticateToken, communityEnhancedRoutes.default); // Enhanced social features
 app.use('/api/favorites', favoritesRoutes.default); // Favorites routes handle auth per-route
 app.use('/api/stories', authenticateToken, storiesRoutes.default); // Stories routes
 app.use('/api/conversations', conversationsRoutes.default);
@@ -619,6 +639,15 @@ app.use('/api', revenuecatRoutes.default);
 app.use('/api/admin/enhanced-features', adminEnhancedFeaturesRoutes.default);
 app.use('/api/ui-config', uiConfigRoutes.default);
 
+// Likes Routes - See Who Liked You (Premium Feature)
+app.use('/api/likes', likesRoutes.default);
+
+// Referrals Routes - Referral Program
+app.use('/api/referrals', referralsRoutes.default);
+
+// Gifts Routes - Gift Shop
+app.use('/api/gifts', giftsRoutes.default);
+
 // Admin Moderation Routes
 app.use('/api/admin/moderation', authenticateToken, requireAdmin, adminModerationRoutes.default);
 
@@ -635,7 +664,7 @@ if (FLAGS.GO_LIVE) {
 app.use('/api/webhooks', webhookRoutes.default);
 
 // Legacy health check (deprecated - use /health instead)
-app.get('/api/health/legacy', (req: Request, res: Response) => {
+app.get('/api/health/legacy', (_req: Request, res: Response) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
@@ -649,8 +678,11 @@ let socketInstance: { io?: SocketServer; cleanup?: () => void } | undefined;
 let io: SocketServer | undefined;
 if (process.env.NODE_ENV !== 'test') {
   const { initializeSocket } = await import('./socket');
-  socketInstance = initializeSocket(httpServer) as { io?: SocketServer; cleanup?: () => void };
+  socketInstance = initializeSocket(httpServer) as { io?: any; cleanup?: () => void };
   io = socketInstance.io;
+  
+  // Make socket.io instance globally available for infrastructure routes
+  (global as any).socketIO = io;
 }
 
 // Socket.io services (only when not in test mode)
@@ -708,6 +740,15 @@ if (process.env.NODE_ENV !== 'test' && io) {
   } catch (error) {
     logger.warn('⚠️ Map socket module not found or failed to load:', { error: (error as Error).message });
   }
+
+  // Socket.io for Community features
+  try {
+    const { default: initializeCommunitySocket } = await import('./src/sockets/communitySocket');
+    initializeCommunitySocket(io);
+    logger.info('🌟 Community socket service initialized');
+  } catch (error) {
+    logger.warn('⚠️ Community socket module not found or failed to load:', { error: (error as Error).message });
+  }
 }
 
 // Sentry error handler (must be before other error handlers)
@@ -720,7 +761,7 @@ if (process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN) {
 app.use(errorHandler.default);
 
 // 404 handler (generic middleware, no path-to-regexp)
-app.use((req: Request, res: Response) => {
+app.use((_req: Request, res: Response) => {
   res.status(404).json({
     success: false,
     message: 'API endpoint not found'
@@ -734,6 +775,14 @@ const startServer = async (): Promise<void> => {
   // Setup GDPR deletion background job
   if (process.env.NODE_ENV !== 'test') {
     await setupDeletionJob();
+
+    // Initialize reporting scheduler (daily/weekly reports)
+    try {
+      const { initializeReportingScheduler } = await import('./src/jobs/reportingScheduler');
+      await initializeReportingScheduler();
+    } catch (error) {
+      logger.warn('⚠️ Reporting scheduler initialization failed', { error });
+    }
   }
 
   const PORT = parseInt(process.env.PORT || '5000', 10);

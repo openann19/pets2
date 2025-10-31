@@ -9,6 +9,9 @@ import Animated, {
   cancelAnimation,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
+import { springs } from '@/foundation/motion';
 
 export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
 
@@ -25,11 +28,18 @@ export interface MessageStatusTicksProps {
 export default function MessageStatusTicks({
   status,
   size = 14,
-  sentColor = '#9ca3af',
-  deliveredColor = '#9ca3af',
-  readColor = '#3b82f6',
-  failedColor = '#ef4444',
+  sentColor,
+  deliveredColor,
+  readColor,
+  failedColor,
 }: MessageStatusTicksProps) {
+  const theme = useTheme() as AppTheme;
+  
+  // Use provided colors or fall back to semantic theme colors
+  const defaultSentColor = sentColor ?? theme.colors.onMuted;
+  const defaultDeliveredColor = deliveredColor ?? theme.colors.onMuted;
+  const defaultReadColor = readColor ?? theme.colors.primary;
+  const defaultFailedColor = failedColor ?? theme.colors.danger;
   // crossfade / scale pop between states
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.9);
@@ -38,7 +48,7 @@ export default function MessageStatusTicks({
   useEffect(() => {
     // enter
     opacity.value = withTiming(1, { duration: 120 });
-    scale.value = withSpring(1, { damping: 14, stiffness: 420 });
+    scale.value = withSpring(1, springs.snappy);
 
     // pulsing only while "sending"
     cancelAnimation(pulse);
@@ -56,27 +66,27 @@ export default function MessageStatusTicks({
 
   // choose icon + color
   let name: any = 'time-outline';
-  let color = sentColor;
+  let color = defaultSentColor;
 
   if (status === 'sending') {
     name = 'time-outline';
-    color = sentColor;
+    color = defaultSentColor;
   } else if (status === 'sent') {
     name = 'checkmark';
-    color = sentColor;
+    color = defaultSentColor;
   } else if (status === 'delivered') {
     name = 'checkmark-done';
-    color = deliveredColor;
+    color = defaultDeliveredColor;
   } else if (status === 'read') {
     name = 'checkmark-done';
-    color = readColor;
+    color = defaultReadColor;
   } else if (status === 'failed') {
     name = 'alert-circle';
-    color = failedColor;
+    color = defaultFailedColor;
   }
 
   return (
-    <Animated.View style={[styles.wrap, iconStyle]}>
+    <Animated.View style={[styles.wrap, ...(iconStyle ? [iconStyle] : [])] as any}>
       <Ionicons
         name={name}
         size={size}

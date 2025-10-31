@@ -3,8 +3,7 @@ const nextConfig = {
   // Enable React strict mode
   reactStrictMode: true,
   
-  // Enable SWC minification
-  swcMinify: true,
+  // SWC minification is enabled by default in Next.js 13+
   
   // Transpile workspace packages
   transpilePackages: ['@pawfectmatch/core'],
@@ -192,7 +191,7 @@ const nextConfig = {
 
   // Experimental features
   experimental: {
-    // Enable server components
+    // Server component external packages
     serverComponentsExternalPackages: ['sharp', 'onnxruntime-node']
   },
 

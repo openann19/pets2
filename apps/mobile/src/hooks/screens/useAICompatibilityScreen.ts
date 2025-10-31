@@ -6,21 +6,35 @@ import { useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
 import { logger } from '@pawfectmatch/core';
-import { useAICompatibility } from '../domains/ai/useAICompatibility';
+import { useAICompatibility, type CompatibilityResult } from '../domains/ai/useAICompatibility';
+
+// Pet type matching the domain hook's Pet interface
+type Pet = {
+  _id: string;
+  name: string;
+  photos: string[];
+  breed: string;
+  age: number;
+  species: string;
+  owner: {
+    _id: string;
+    name: string;
+  };
+};
 
 interface UseAICompatibilityScreenReturn {
   // State from domain hook
   isAnalyzing: boolean;
-  compatibilityResult: any | null;
+  compatibilityResult: CompatibilityResult | null;
   error: string | null;
-  availablePets: any[];
+  availablePets: Pet[];
   isLoadingPets: boolean;
-  selectedPet1: any | null;
-  selectedPet2: any | null;
+  selectedPet1: Pet | null;
+  selectedPet2: Pet | null;
 
   // Actions
-  setSelectedPet1: (pet: any | null) => void;
-  setSelectedPet2: (pet: any | null) => void;
+  setSelectedPet1: (pet: Pet | null) => void;
+  setSelectedPet2: (pet: Pet | null) => void;
   analyzeCompatibility: () => Promise<void>;
   resetAnalysis: () => void;
   handleGoBack: () => void;

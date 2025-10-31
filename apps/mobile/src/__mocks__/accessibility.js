@@ -3,6 +3,7 @@
  */
 
 /* eslint-env node, jest */
+/* eslint-disable no-undef */
 module.exports = {
   AccessibilityInfo: {
     isReduceMotionEnabled: jest.fn(() => Promise.resolve(false)),

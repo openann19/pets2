@@ -3,25 +3,27 @@
  * Handles admin-specific navigation and role-based access
  */
 
-import { useAuthStore } from '@pawfectmatch/core';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { useAdminAuth } from '@pawfectmatch/admin-core';
 
 // Admin Screens
 import AdminAnalyticsScreen from '../screens/admin/AdminAnalyticsScreen';
+import { AnalyticsConfigScreen } from '../screens/admin/analytics/AnalyticsConfigScreen';
 import AdminBillingScreen from '../screens/admin/AdminBillingScreen';
 import AdminChatsScreen from '../screens/admin/AdminChatsScreen';
 import AdminConfigScreen from '../screens/admin/AdminConfigScreen';
 import AdminDashboardScreen from '../screens/admin/AdminDashboardScreen';
+import AdminReportsScreen from '../screens/admin/AdminReportsScreen';
 import AdminSecurityScreen from '../screens/admin/AdminSecurityScreen';
 import AdminServicesScreen from '../screens/admin/AdminServicesScreen';
+import AdminSupportScreen from '../screens/admin/AdminSupportScreen';
 import AdminUploadsScreen from '../screens/admin/AdminUploadsScreen';
 import AdminUsersScreen from '../screens/admin/AdminUsersScreen';
 import AdminVerificationsScreen from '../screens/admin/AdminVerificationsScreen';
 import { useTheme } from '@mobile/theme';
 import type { AppTheme } from '@mobile/theme';
-import { useAdminPermissions } from '../hooks/useAdminPermissions';
 import type { AdminStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<AdminStackParamList>();
@@ -30,8 +32,8 @@ export default function AdminNavigator(): React.JSX.Element {
   const theme = useTheme();
   const styles = makeStyles(theme);
 
-  const { user } = useAuthStore();
-  const { isLoading, isAdmin } = useAdminPermissions();
+  // Use shared admin auth hook
+  const { isAuthenticated, isLoading } = useAdminAuth();
 
   // Loading state
   if (isLoading) {
@@ -46,8 +48,8 @@ export default function AdminNavigator(): React.JSX.Element {
     );
   }
 
-  // Check admin access using type-safe permission hook
-  if (!user || !isAdmin) {
+  // Check admin access using shared hook
+  if (!isAuthenticated) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorTitle}>Access Denied</Text>
@@ -86,6 +88,15 @@ export default function AdminNavigator(): React.JSX.Element {
         options={{
           title: 'Analytics Dashboard',
           headerShown: false, // Custom header in component
+        }}
+      />
+
+      <Stack.Screen
+        name="AnalyticsConfig"
+        component={AnalyticsConfigScreen}
+        options={{
+          title: 'Analytics Configuration',
+          headerShown: true,
         }}
       />
 
@@ -162,6 +173,26 @@ export default function AdminNavigator(): React.JSX.Element {
         component={AdminConfigScreen}
         options={{
           title: 'API Configuration',
+          headerShown: false,
+        }}
+      />
+
+      {/* Reports Management */}
+      <Stack.Screen
+        name="AdminReports"
+        component={AdminReportsScreen}
+        options={{
+          title: 'User Reports',
+          headerShown: false,
+        }}
+      />
+
+      {/* Support Chat Management */}
+      <Stack.Screen
+        name="AdminSupport"
+        component={AdminSupportScreen}
+        options={{
+          title: 'Support Chats',
           headerShown: false,
         }}
       />

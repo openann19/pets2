@@ -1,4 +1,3 @@
-import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { createDeepSeekService } from '../deepSeekService';
 
 describe('DeepSeekService', () => {

@@ -17,11 +17,8 @@
 
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import * as FileSystem from 'expo-file-system';
-import {
-  EnhancedUploadService,
-  type ProcessedImage,
-  type UploadProgress,
-} from '../enhancedUploadService';
+import { EnhancedUploadService, type UploadProgress } from '../enhancedUploadService';
+import type { ProcessedImage } from '../uploadHygiene';
 
 // Mock dependencies
 jest.mock('../uploadHygiene', () => ({
@@ -37,6 +34,12 @@ jest.mock('../api', () => ({
     presignPhoto: jest.fn(),
   },
   request: jest.fn(),
+}));
+
+jest.mock('../upload/index', () => ({
+  uploadAdapter: {
+    uploadPhoto: jest.fn(),
+  },
 }));
 
 jest.mock('expo-file-system', () => ({
@@ -55,9 +58,11 @@ import {
   captureAndProcessImage,
 } from '../uploadHygiene';
 import { api, request } from '../api';
+import { uploadAdapter } from '../upload/index';
 
 const mockApi = api as jest.Mocked<typeof api>;
 const mockRequest = request as jest.MockedFunction<typeof request>;
+const mockUploadAdapter = uploadAdapter as jest.Mocked<typeof uploadAdapter>;
 const mockProcessImageForUpload = processImageForUpload as jest.MockedFunction<
   typeof processImageForUpload
 >;
@@ -105,6 +110,10 @@ describe('EnhancedUploadService', () => {
     mockProgressCallback = jest.fn();
 
     // Setup default mocks
+    mockUploadAdapter.uploadPhoto.mockResolvedValue({
+      url: 'https://cdn.example.com/test-key-123',
+    });
+
     mockApi.presignPhoto.mockResolvedValue({
       key: 'test-key-123',
       url: 'https://s3.amazonaws.com/test-bucket/test-key-123',
@@ -230,7 +239,7 @@ describe('EnhancedUploadService', () => {
     });
 
     it('should handle presign failure', async () => {
-      mockApi.presignPhoto.mockRejectedValue(new Error('Presign failed'));
+      mockUploadAdapter.uploadPhoto.mockRejectedValue(new Error('Presign failed'));
 
       await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow(
         'Presign failed',
@@ -238,11 +247,7 @@ describe('EnhancedUploadService', () => {
     });
 
     it('should handle S3 upload failure', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 403,
-        statusText: 'Forbidden',
-      } as any);
+      mockUploadAdapter.uploadPhoto.mockRejectedValue(new Error('S3 upload failed: 403 Forbidden'));
 
       await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow(
         'S3 upload failed',
@@ -259,18 +264,14 @@ describe('EnhancedUploadService', () => {
 
     it('should handle file URI to blob conversion', async () => {
       // This is tested implicitly through the upload process
-      // The fileUriToBlob method should be called during upload
+      // The uploadAdapter handles URI conversion internally (web) or passes URI directly (native)
+      // For web platform, it uses fetch; for native, FormData handles the URI
       await service.uploadProcessedImage(mockProcessedImage);
 
-      expect(mockFileSystem.readAsStringAsync).toHaveBeenCalledWith(mockProcessedImage.uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.any(String),
+      // Verify the upload was called - the actual conversion method varies by platform
+      expect(mockUploadAdapter.uploadPhoto).toHaveBeenCalledWith(
         expect.objectContaining({
-          method: 'PUT',
-          body: expect.any(Blob),
+          uri: mockProcessedImage.uri,
         }),
       );
     });
@@ -411,6 +412,16 @@ describe('EnhancedUploadService', () => {
   });
 
   describe('pollUploadStatus', () => {
+    beforeEach(() => {
+      // Use real timers for polling tests - fake timers don't work well with async polling loops
+      jest.useRealTimers();
+    });
+
+    afterEach(() => {
+      // Cleanup - restore fake timers if needed for other tests
+      jest.clearAllTimers();
+    });
+
     it('should poll until approved status', async () => {
       const approvedResponse = {
         data: {
@@ -425,7 +436,10 @@ describe('EnhancedUploadService', () => {
 
       mockRequest.mockResolvedValue(approvedResponse);
 
-      const result = await service.pollUploadStatus('upload-123', 5, 100);
+      const resultPromise = service.pollUploadStatus('upload-123', 5, 100);
+
+      // pollUploadStatus returns immediately on first approved status, no setTimeout needed
+      const result = await resultPromise;
 
       expect(result).toEqual({
         uploadId: 'upload-123',
@@ -448,6 +462,7 @@ describe('EnhancedUploadService', () => {
         },
       });
 
+      // pollUploadStatus throws immediately on rejected status, no setTimeout needed
       await expect(service.pollUploadStatus('upload-123')).rejects.toThrow(
         'Upload rejected: Inappropriate content',
       );
@@ -472,25 +487,25 @@ describe('EnhancedUploadService', () => {
         },
       });
 
-      // Use real timers with fast intervals for reliable async behavior
+      // Use real timers with fast interval (10ms) for reliable async behavior
       const result = await service.pollUploadStatus('upload-123', 5, 10);
 
       expect(result.status).toBe('approved');
       expect(mockRequest).toHaveBeenCalledTimes(3);
-    }, 10000);
+    });
 
     it('should timeout after max attempts', async () => {
       mockRequest.mockResolvedValue({
         data: { upload: { status: 'pending' } },
       });
 
-      // Use real timers with fast intervals
+      // Use real timers with fast interval (10ms)
       await expect(service.pollUploadStatus('upload-123', 3, 10)).rejects.toThrow(
         'Upload status polling timeout',
       );
 
       expect(mockRequest).toHaveBeenCalledTimes(3);
-    }, 10000);
+    });
 
     it('should handle API errors during polling', async () => {
       mockRequest.mockRejectedValueOnce(new Error('Network error'));
@@ -498,6 +513,7 @@ describe('EnhancedUploadService', () => {
         data: { upload: { status: 'approved' } },
       });
 
+      // Use real timers with fast interval (10ms)
       const result = await service.pollUploadStatus('upload-123', 3, 10);
 
       expect(result.status).toBe('approved');
@@ -509,6 +525,7 @@ describe('EnhancedUploadService', () => {
         data: { upload: { status: 'approved' } },
       });
 
+      // pollUploadStatus returns immediately on approved status
       await service.pollUploadStatus('upload-123');
 
       expect(mockRequest).toHaveBeenCalledWith('/uploads/upload-123', {
@@ -642,34 +659,39 @@ describe('EnhancedUploadService', () => {
   });
 
   describe('File URI to Blob Conversion', () => {
-    it('should convert file URI to blob', async () => {
-      const uri = 'file://test-image.jpg';
-      const base64Data =
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
+    // Note: fileUriToBlob is not a public method on EnhancedUploadService
+    // File URI conversion happens inside uploadAdapter (web: fetch to blob, native: FormData handles URI)
+    // These tests verify the conversion happens correctly during upload
 
-      mockFileSystem.readAsStringAsync.mockResolvedValue(base64Data);
+    it('should handle file URI conversion during upload (web platform)', async () => {
+      // For web platform, uploadAdapter uses fetch to convert URI to blob
+      // This test verifies the upload flow works correctly with file URIs
+      const result = await service.uploadProcessedImage(mockProcessedImage);
 
-      const blob = await (service as any).fileUriToBlob(uri);
-
-      expect(blob).toBeInstanceOf(Blob);
-      expect(blob.type).toBe('image/jpeg');
-      expect(blob.size).toBeGreaterThan(0);
-    });
-
-    it('should handle file read errors', async () => {
-      mockFileSystem.readAsStringAsync.mockRejectedValue(new Error('File read failed'));
-
-      await expect((service as any).fileUriToBlob('invalid-uri')).rejects.toThrow(
-        'File read failed',
+      expect(result).toBeDefined();
+      expect(mockUploadAdapter.uploadPhoto).toHaveBeenCalledWith(
+        expect.objectContaining({
+          uri: mockProcessedImage.uri,
+        }),
       );
     });
 
-    it('should handle empty base64 data', async () => {
-      mockFileSystem.readAsStringAsync.mockResolvedValue('');
+    it('should handle file URI during upload (native platform)', async () => {
+      // For native platform, uploadAdapter passes URI directly to FormData
+      // FormData handles the file system access
+      const result = await service.uploadProcessedImage(mockProcessedImage);
 
-      const blob = await (service as any).fileUriToBlob('empty-file');
+      expect(result).toBeDefined();
+      expect(mockUploadAdapter.uploadPhoto).toHaveBeenCalled();
+    });
 
-      expect(blob.size).toBe(0);
+    it('should handle upload with file system errors', async () => {
+      // If uploadAdapter fails, the error should propagate
+      mockUploadAdapter.uploadPhoto.mockRejectedValueOnce(new Error('File system error'));
+
+      await expect(service.uploadProcessedImage(mockProcessedImage)).rejects.toThrow(
+        'File system error',
+      );
     });
   });
 

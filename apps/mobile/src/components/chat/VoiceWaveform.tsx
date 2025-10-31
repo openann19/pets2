@@ -177,7 +177,7 @@ export function CompactVoiceWaveform({
       duration={duration}
       color={defaultColor}
       height={24}
-      onSeek={onSeek}
+      {...(onSeek !== undefined && { onSeek })}
     />
   );
 }

@@ -3,11 +3,13 @@
  * Manages premium subscription screen state and interactions
  */
 import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Alert, Linking } from 'react-native';
 import { logger } from '@pawfectmatch/core';
 import { usePremium } from '../../providers/PremiumProvider';
 import { premiumService, type SubscriptionPlan } from '../../services/PremiumService';
+import { useAuthStore } from '../../stores/useAuthStore';
+import { _adminAPI } from '../../services/adminAPI';
 
 type BillingPeriod = 'monthly' | 'yearly';
 
@@ -101,10 +103,27 @@ const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
 export const usePremiumScreen = (): UsePremiumScreenReturn => {
   const navigation = useNavigation();
   const { restore } = usePremium();
+  const { user } = useAuthStore();
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
   const [selectedTier, setSelectedTier] = useState<string>('premium');
   const [isLoading, setIsLoading] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
+
+  // Track paywall view when screen is mounted
+  useEffect(() => {
+    const trackPaywallView = async () => {
+      if (user?.id) {
+        try {
+          await _adminAPI.trackPaywallView('premium_screen');
+        } catch (error) {
+          // Non-critical - don't block UI if tracking fails
+          logger.warn('Failed to track paywall view', { error });
+        }
+      }
+    };
+
+    void trackPaywallView();
+  }, [user?.id]);
 
   const handleSubscribe = async (tierId: string) => {
     setIsLoading(true);

@@ -1,142 +1,9 @@
 import mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
+import type { IUserDocument, IUserModel } from '../types/mongoose.d';
 
-// Define the IUserDocument interface
-export interface IUserDocument extends mongoose.Document {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: Date;
-  avatar: string | null;
-  bio?: string;
-  phone?: string;
-  location: {
-    type: string;
-    coordinates: number[];
-    address?: {
-      street?: string;
-      city?: string;
-      state?: string;
-      zipCode?: string;
-      country?: string;
-    };
-  };
-  preferences: {
-    maxDistance: number;
-    ageRange: { min: number; max: number };
-    species: string[];
-    intents: string[];
-    notifications: {
-      email: boolean;
-      push: boolean;
-      matches: boolean;
-      messages: boolean;
-    };
-  };
-  premium: {
-    isActive: boolean;
-    plan: string;
-    expiresAt: Date | null;
-    stripeSubscriptionId?: string;
-    cancelAtPeriodEnd: boolean;
-    paymentStatus: string;
-    features: {
-      unlimitedLikes: boolean;
-      boostProfile: boolean;
-      seeWhoLiked: boolean;
-      advancedFilters: boolean;
-      aiMatching: boolean;
-      prioritySupport: boolean;
-      globalPassport: boolean;
-    };
-    usage: {
-      swipesUsed: number;
-      swipesLimit: number;
-      superLikesUsed: number;
-      superLikesLimit: number;
-      boostsUsed: number;
-      boostsLimit: number;
-      messagesSent: number;
-      profileViews: number;
-      rewindsUsed?: number;
-    };
-  };
-  pets: mongoose.Types.ObjectId[];
-  swipedPets: Array<{
-    petId: mongoose.Types.ObjectId;
-    action: string;
-    swipedAt: Date;
-  }>;
-  matches: mongoose.Types.ObjectId[];
-  analytics: {
-    totalSwipes: number;
-    totalLikes: number;
-    totalMatches: number;
-    profileViews: number;
-    lastActive: Date;
-    totalPetsCreated: number;
-    totalMessagesSent: number;
-    totalSubscriptionsStarted: number;
-    totalSubscriptionsCancelled: number;
-    totalPremiumFeaturesUsed: number;
-    events: Array<{ type: string; timestamp: Date; metadata?: Record<string, unknown> }>;
-  };
-  isEmailVerified: boolean;
-  isPhoneVerified: boolean;
-  isActive: boolean;
-  isBlocked: boolean;
-  status: string;
-  privacySettings: {
-    profileVisibility: string;
-    showLocation: boolean;
-    showActivityStatus: boolean;
-    allowMessages: string;
-  };
-  role: string;
-  refreshTokens: string[];
-  tokensInvalidatedAt: Date | null;
-  revokedJtis: string[];
-  passwordResetToken?: string;
-  passwordResetExpires?: Date;
-  emailVerificationToken?: string;
-  emailVerificationExpires?: Date;
-  pushTokens: Array<{
-    token: string;
-    platform: string;
-    deviceId: string;
-    registeredAt: Date;
-    lastUsedAt: Date;
-  }>;
-  lastLoginAt?: Date;
-  lastLoginIP?: string;
-  twoFactorEnabled: boolean;
-  twoFactorSecret?: string;
-  twoFactorMethod?: string | null;
-  twoFactorCode?: string;
-  twoFactorCodeExpiry?: Date;
-  biometricEnabled: boolean;
-  biometricToken?: string;
-  biometricTokenExpiry?: Date;
-  webauthnChallenge: string | null;
-  deletionRequestedAt: Date | null;
-  deletionRequestId: string | null;
-  deletionReason: string | null;
-  deletionFeedback: string | null;
-  deletionGracePeriodEndsAt: Date | null;
-  deletionCompletedAt: Date | null;
-  stripeCustomerId?: string;
-  resetPasswordToken?: string;
-  resetPasswordExpires?: Date;
-  biometricRefreshTokens?: string[];
-  
-  // Instance methods
-  comparePassword(candidatePassword: string): Promise<boolean>;
-  
-  // Virtual properties
-  age: number;
-  fullName: string;
-}
+// Re-export types for convenience
+export type { IUserDocument } from '../types/mongoose.d';
 
 const userSchema = new mongoose.Schema({
   // Basic Info
@@ -250,7 +117,8 @@ const userSchema = new mongoose.Schema({
       profileViews: { type: Number, default: 0 },
       rewindsUsed: { type: Number, default: 0 },
       iapSuperLikes: { type: Number, default: 0 }, // IAP purchased Super Likes balance
-      iapBoosts: { type: Number, default: 0 } // IAP purchased Boosts balance
+      iapBoosts: { type: Number, default: 0 }, // IAP purchased Boosts balance
+      iapGifts: { type: Number, default: 0 } // IAP purchased Gifts balance
     }
   },
 
@@ -368,7 +236,17 @@ const userSchema = new mongoose.Schema({
   deletionReason: { type: String, default: null },
   deletionFeedback: { type: String, default: null },
   deletionGracePeriodEndsAt: { type: Date, default: null },
-  deletionCompletedAt: { type: Date, default: null }
+  deletionCompletedAt: { type: Date, default: null },
+
+  // Referral Program - Business Model
+  referralCode: { type: String, unique: true, sparse: true },
+  referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  referredAt: { type: Date, default: null },
+  referralStats: {
+    totalReferrals: { type: Number, default: 0 },
+    activeReferrals: { type: Number, default: 0 },
+    totalRewardsEarned: { type: Number, default: 0 }
+  }
 
 }, {
   timestamps: true,
@@ -440,4 +318,5 @@ userSchema.statics.findPremiumUsers = function () {
   });
 };
 
-export default mongoose.model('User', userSchema);
+const User = mongoose.model<IUserDocument, IUserModel>('User', userSchema);
+export default User;

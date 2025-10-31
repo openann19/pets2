@@ -9,13 +9,11 @@ import type { ViewStyle } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  useAnimatedReaction,
   Extrapolate,
   interpolate,
 } from 'react-native-reanimated';
 import { useAnimatedScrollHandler } from 'react-native-reanimated';
 
-import { motion } from '@/theme/motion';
 import { useMotionGuards } from '@/utils/motionGuards';
 
 interface UseCardLiftReturn {

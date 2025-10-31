@@ -6,6 +6,7 @@ import LoadingSpinner from '@/components/UI/LoadingSpinner';
 import PremiumButton from '@/components/UI/PremiumButton';
 import PremiumCard from '@/components/UI/PremiumCard';
 import { petsAPI } from '@/services/api';
+import { logger } from '@pawfectmatch/core';
 import {
     AdjustmentsHorizontalIcon,
     ArrowPathIcon,
@@ -123,7 +124,7 @@ export default function BrowsePage() {
         setError('Unable to load pets. Please try again.');
       }
     } catch (err: any) {
-      console.error('Failed to load pets:', err);
+      logger.error('Failed to load pets:', err);
       setError(err.message || 'Network error. Please check your connection.');
     } finally {
       setIsLoading(false);
@@ -161,7 +162,7 @@ export default function BrowsePage() {
       }, 800);
       
     } catch (err: any) {
-      console.error('Failed to like pet:', err);
+      logger.error('Failed to like pet:', err);
       setError(err.message || 'Failed to like. Please try again.');
     } finally {
       setIsLiking(false);
@@ -178,7 +179,7 @@ export default function BrowsePage() {
       await petsAPI.passPet(currentPet._id);
       moveToNextPet();
     } catch (err: any) {
-      console.error('Failed to pass pet:', err);
+      logger.error('Failed to pass pet:', err);
       setError(err.message || 'Failed to pass. Please try again.');
     } finally {
       setIsPassing(false);

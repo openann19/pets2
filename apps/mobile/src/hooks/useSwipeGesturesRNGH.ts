@@ -9,6 +9,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import { springs, fromVelocity } from '@/foundation/motion';
 
 const { width: W, height: H } = Dimensions.get('window');
 
@@ -40,36 +41,63 @@ export function useSwipeGesturesRNGH({
       tx.value += e.changeX;
       ty.value += e.changeY;
     })
-    .onEnd(() => {
-      const xT = W * swipeThreshold,
-        yT = H * verticalThreshold;
+    .onEnd((e) => {
+      const xT = W * swipeThreshold;
+      const yT = H * verticalThreshold;
+      const velocityX = e.velocityX;
+      const velocityY = e.velocityY;
 
-      if (tx.value > xT) {
-        tx.value = withTiming(W + overshoot, { duration: 180 }, () => {
+      if (tx.value > xT || (tx.value > 0 && Math.abs(velocityX) > 500 && velocityX > 0)) {
+        // Swipe right - use momentum-based spring
+        const springConfig = Math.abs(velocityX) > 500 
+          ? fromVelocity(velocityX)
+          : springs.bouncy;
+        tx.value = withSpring(W + overshoot, {
+          ...springConfig,
+          velocity: velocityX,
+        }, () => {
           onSwipeRight && runOnJS(onSwipeRight)();
           tx.value = 0;
           ty.value = 0;
         });
         return;
       }
-      if (tx.value < -xT) {
-        tx.value = withTiming(-W - overshoot, { duration: 180 }, () => {
+      if (tx.value < -xT || (tx.value < 0 && Math.abs(velocityX) > 500 && velocityX < 0)) {
+        // Swipe left - use momentum-based spring
+        const springConfig = Math.abs(velocityX) > 500 
+          ? fromVelocity(velocityX)
+          : springs.bouncy;
+        tx.value = withSpring(-W - overshoot, {
+          ...springConfig,
+          velocity: velocityX,
+        }, () => {
           onSwipeLeft && runOnJS(onSwipeLeft)();
           tx.value = 0;
           ty.value = 0;
         });
         return;
       }
-      if (ty.value < -yT) {
-        ty.value = withTiming(-H - overshoot, { duration: 200 }, () => {
+      if (ty.value < -yT || (ty.value < 0 && Math.abs(velocityY) > 500 && velocityY < 0)) {
+        // Swipe up - use momentum-based spring
+        const springConfig = Math.abs(velocityY) > 500 
+          ? fromVelocity(velocityY)
+          : springs.bouncy;
+        ty.value = withSpring(-H - overshoot, {
+          ...springConfig,
+          velocity: velocityY,
+        }, () => {
           onSwipeUp && runOnJS(onSwipeUp)();
           tx.value = 0;
           ty.value = 0;
         });
         return;
       }
-      tx.value = withSpring(0, { damping: 18, stiffness: 220, mass: 0.8 });
-      ty.value = withSpring(0, { damping: 18, stiffness: 220, mass: 0.8 });
+      // Snap back with momentum-aware spring
+      const snapBackConfig = (Math.abs(velocityX) > 300 || Math.abs(velocityY) > 300)
+        ? springs.snappy
+        : springs.gentle;
+      tx.value = withSpring(0, snapBackConfig);
+      ty.value = withSpring(0, snapBackConfig);
     });
 
   const cardStyle = useAnimatedStyle(() => {

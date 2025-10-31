@@ -4,6 +4,8 @@ import type { ReactNode } from 'react';
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemeContext } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 interface Props {
   children: ReactNode;
@@ -36,124 +38,129 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   override render() {
-    // Create a factory function for styles that can be called with theme values
-    // For now, we'll use default values that match the new theme system
-    const styles = makeStyles();
+    return (
+      <ThemeContext.Consumer>
+        {(theme: AppTheme) => {
+          const styles = makeStyles(theme);
 
-    if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
+          if (this.state.hasError) {
+            if (this.props.fallback) {
+              return this.props.fallback;
+            }
 
-      return (
-        <SafeAreaView style={styles.container}>
-          <View style={styles.content}>
-            <Ionicons
-              name="warning"
-              size={64}
-              color="#DC2626" // danger color
-              style={styles.icon}
-            />
-            <Text style={styles.title}>Oops! Something went wrong</Text>
-            <Text style={styles.message}>
-              We encountered an unexpected error. Please try again or contact support if the problem
-              persists.
-            </Text>
+            return (
+              <SafeAreaView style={styles.container}>
+                <View style={styles.content}>
+                  <Ionicons
+                    name="warning"
+                    size={64}
+                    color={theme.colors.danger}
+                    style={styles.icon}
+                  />
+                  <Text style={styles.title}>Oops! Something went wrong</Text>
+                  <Text style={styles.message}>
+                    We encountered an unexpected error. Please try again or contact support if the problem
+                    persists.
+                  </Text>
 
-            {process.env['NODE_ENV'] === 'development' && this.state.error && (
-              <View style={styles.errorDetails}>
-                <Text style={styles.errorTitle}>Error Details (Development):</Text>
-                <Text style={styles.errorText}>{this.state.error.message}</Text>
-                {this.state.errorInfo && (
-                  <Text style={styles.errorStack}>{this.state.errorInfo.componentStack}</Text>
-                )}
-              </View>
-            )}
+                  {process.env['NODE_ENV'] === 'development' && this.state.error && (
+                    <View style={styles.errorDetails}>
+                      <Text style={styles.errorTitle}>Error Details (Development):</Text>
+                      <Text style={styles.errorText}>{this.state.error.message}</Text>
+                      {this.state.errorInfo && (
+                        <Text style={styles.errorStack}>{this.state.errorInfo.componentStack}</Text>
+                      )}
+                    </View>
+                  )}
 
-            <TouchableOpacity
-              style={styles.retryButton}
-              onPress={this.handleRetry}
-            >
-              <Ionicons
-                name="refresh"
-                size={20}
-                color="#FFFFFF"
-              />
-              <Text style={styles.retryText}>Try Again</Text>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-      );
-    }
+                  <TouchableOpacity
+                    style={styles.retryButton}
+                    onPress={this.handleRetry}
+                  >
+                    <Ionicons
+                      name="refresh"
+                      size={20}
+                      color={theme.colors.onPrimary}
+                    />
+                    <Text style={styles.retryText}>Try Again</Text>
+                  </TouchableOpacity>
+                </View>
+              </SafeAreaView>
+            );
+          }
 
-    return this.props.children;
+          return this.props.children;
+        }}
+      </ThemeContext.Consumer>
+    );
   }
 }
 
-const makeStyles = () =>
+const makeStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#FFFFFF', // bg color
+      backgroundColor: theme.colors.bg,
     },
     content: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 24,
+      padding: theme.spacing.lg,
     },
     icon: {
-      marginBottom: 24,
+      marginBottom: theme.spacing.lg,
     },
     title: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: '#000000', // text color
+      color: theme.colors.onSurface,
       textAlign: 'center',
-      marginBottom: 12,
+      marginBottom: theme.spacing.md,
     },
     message: {
       fontSize: 16,
-      color: '#666666', // textMuted color
+      color: theme.colors.onMuted,
       textAlign: 'center',
-      marginBottom: 24,
+      marginBottom: theme.spacing.lg,
       lineHeight: 24,
     },
     errorDetails: {
-      backgroundColor: '#FEF2F2',
-      borderRadius: 8,
-      padding: 16,
-      marginBottom: 24,
+      backgroundColor: theme.utils.alpha(theme.colors.danger, 0.15),
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.lg,
       width: '100%',
       borderWidth: 1,
-      borderColor: '#FECACA',
+      borderColor: theme.utils.alpha(theme.colors.danger, 0.4),
     },
     errorTitle: {
       fontSize: 14,
       fontWeight: 'bold',
-      color: '#DC2626',
-      marginBottom: 8,
+      color: theme.colors.danger,
+      marginBottom: theme.spacing.sm,
     },
     errorText: {
       fontSize: 14,
-      color: '#DC2626',
+      color: theme.colors.danger,
       fontFamily: 'monospace',
-      marginBottom: 8,
+      marginBottom: theme.spacing.sm,
     },
     errorStack: {
       fontSize: 12,
-      color: '#B91C1C',
+      color: theme.colors.danger,
       fontFamily: 'monospace',
       lineHeight: 16,
+      opacity: 0.8,
     },
     retryButton: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: '#3B82F6', // primary color
-      paddingHorizontal: 24,
-      paddingVertical: 12,
-      borderRadius: 8,
-      shadowColor: '#3B82F6',
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+      borderRadius: theme.radii.md,
+      shadowColor: theme.colors.primary,
       shadowOffset: {
         width: 0,
         height: 2,
@@ -163,9 +170,9 @@ const makeStyles = () =>
       elevation: 4,
     },
     retryText: {
-      color: '#FFFFFF',
+      color: theme.colors.onPrimary,
       fontSize: 16,
       fontWeight: '600',
-      marginLeft: 8,
+      marginLeft: theme.spacing.sm,
     },
   });

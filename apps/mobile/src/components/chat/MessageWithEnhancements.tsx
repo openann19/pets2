@@ -19,6 +19,7 @@ import Animated, {
 
 import { useTheme } from '@mobile/theme';
 import type { Message } from '@pawfectmatch/core';
+import { springs } from '@/foundation/motion';
 import { chatService } from '../../services/chatService';
 import { getExtendedColors } from '../../theme/adapters';
 import { DoubleTapLikePlus } from '../Gestures/DoubleTapLikePlus';
@@ -87,7 +88,7 @@ export function MessageWithEnhancements({
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setShowReactionBar(true);
-    reactionBarOpacity.value = withSpring(1, { damping: 15, stiffness: 300 });
+    reactionBarOpacity.value = withSpring(1, springs.standard);
   }, [isReacting, reactionBarOpacity]);
 
   // Handle reaction selection
@@ -141,11 +142,11 @@ export function MessageWithEnhancements({
     .minDuration(500)
     .onStart(() => {
       'worklet';
-      messageScale.value = withSpring(0.95, { damping: 15, stiffness: 300 });
+      messageScale.value = withSpring(0.95, springs.standard);
     })
     .onEnd(() => {
       'worklet';
-      messageScale.value = withSpring(1, { damping: 15, stiffness: 300 });
+      messageScale.value = withSpring(1, springs.standard);
       runOnJS(handleLongPress)();
     });
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { logger } from '@pawfectmatch/core';
 
 export default function AdminLogin() {
   const [credentials, setCredentials] = useState({
@@ -57,7 +58,7 @@ export default function AdminLogin() {
       }
     } catch (err) {
       setError('Login failed. Please try again.');
-      console.error(err);
+      logger.error('Admin login error:', err);
     } finally {
       setIsLoading(false);
     }

@@ -6,6 +6,14 @@
 import React from 'react';
 import { logger } from '../services/logger';
 
+// NetworkInformation interface for navigator.connection
+interface NetworkInformation {
+  effectiveType?: string;
+  type?: string;
+  downlink?: number;
+  rtt?: number;
+}
+
 interface SwipeBehavior {
   direction: 'like' | 'pass' | 'superlike';
   petId: string;
@@ -328,6 +336,7 @@ class AdvancedAnalytics {
       if (event) {
         this.sendEvent(event);
       }
+    }
   }
 
   getConnectionType(): string {

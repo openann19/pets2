@@ -5,7 +5,7 @@
  * as defined in the Test Plan v1.0
  */
 
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 // Base test data
 const mockUsers = {
@@ -141,60 +141,61 @@ const mockVerifications = {
 
 // Authentication handlers
 export const authHandlers = [
-  rest.post('*/auth/login', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/auth/login', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         user: mockUsers.testUser,
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock-jwt-token',
         refreshToken: 'refresh-token-123',
       },
-    }));
+    });
   }),
 
-  rest.post('*/auth/register', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/auth/register', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         user: { ...mockUsers.testUser, email: 'newuser@example.com' },
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.new-user-jwt-token',
         refreshToken: 'new-refresh-token-123',
       },
-    }));
+    });
   }),
 
-  rest.post('*/auth/logout', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/auth/logout', async () => {
+    return HttpResponse.json({
       success: true,
       message: 'Logged out successfully',
-    }));
+    });
   }),
 
-  rest.post('*/auth/refresh', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/auth/refresh', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refreshed-jwt-token',
         refreshToken: 'new-refresh-token-456',
       },
-    }));
+    });
   }),
 
-  rest.post('*/auth/forgot-password', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/auth/forgot-password', async () => {
+    return HttpResponse.json({
       success: true,
       message: 'Password reset email sent',
-    }));
+    });
   }),
 ];
 
 // Pet handlers
 export const petHandlers = [
-  rest.get('*/pets', (req, res, ctx) => {
-    const page = req.url.searchParams.get('page') || '1';
-    const limit = req.url.searchParams.get('limit') || '20';
+  http.get('*/pets', async ({ request }) => {
+    const url = new URL(request.url);
+    const page = url.searchParams.get('page') || '1';
+    const limit = url.searchParams.get('limit') || '20';
 
-    return res(ctx.json({
+    return HttpResponse.json({
       success: true,
       data: [mockPets.buddy, mockPets.luna],
       pagination: {
@@ -203,62 +204,65 @@ export const petHandlers = [
         total: 2,
         pages: 1,
       },
-    }));
+    });
   }),
 
-  rest.post('*/pets', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/pets', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         ...mockPets.buddy,
         id: 'new-pet-id',
         name: 'New Pet',
       },
-    }));
+    });
   }),
 
-  rest.get('*/pets/:petId', (req, res, ctx) => {
-    const { petId } = req.params;
-    const pet = Object.values(mockPets).find(p => p.id === petId);
+  http.get('*/pets/:petId', async ({ params }) => {
+    const { petId } = params as { petId: string };
+    const pet = Object.values(mockPets).find((p: any) => p.id === petId);
 
     if (!pet) {
-      return res(ctx.status(404), ctx.json({
-        success: false,
-        message: 'Pet not found',
-      }));
+      return HttpResponse.json(
+        {
+          success: false,
+          message: 'Pet not found',
+        },
+        { status: 404 }
+      );
     }
 
-    return res(ctx.json({
+    return HttpResponse.json({
       success: true,
       data: pet,
-    }));
+    });
   }),
 
-  rest.put('*/pets/:petId', (req, res, ctx) => {
-    const { petId } = req.params;
+  http.put('*/pets/:petId', async ({ params }) => {
+    const { petId } = params as { petId: string };
 
-    return res(ctx.json({
+    return HttpResponse.json({
       success: true,
       data: {
         ...mockPets.buddy,
         id: petId,
         updatedAt: new Date().toISOString(),
       },
-    }));
+    });
   }),
 
-  rest.delete('*/pets/:petId', (req, res, ctx) => {
-    return res(ctx.json({
+  http.delete('*/pets/:petId', async () => {
+    return HttpResponse.json({
       success: true,
       message: 'Pet deleted successfully',
-    }));
+    });
   }),
 ];
 
 // Upload handlers
 export const uploadHandlers = [
-  rest.post('*/uploads/presign', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/uploads/presign', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         uploadUrl: 'https://pawfectmatch-uploads.s3.amazonaws.com/test-upload',
@@ -268,36 +272,39 @@ export const uploadHandlers = [
           'x-amz-algorithm': 'AWS4-HMAC-SHA256',
         },
       },
-    }));
+    });
   }),
 
-  rest.post('*/uploads', (req, res, ctx) => {
+  http.post('*/uploads', async () => {
     // Default to approved status
-    return res(ctx.json({
+    return HttpResponse.json({
       success: true,
       data: mockUploads.approved,
-    }));
+    });
   }),
 
-  rest.get('*/uploads/:uploadId', (req, res, ctx) => {
-    const { uploadId } = req.params;
-    const upload = Object.values(mockUploads).find(u => u.id === uploadId);
+  http.get('*/uploads/:uploadId', async ({ params }) => {
+    const { uploadId } = params as { uploadId: string };
+    const upload = Object.values(mockUploads).find((u: any) => u.id === uploadId);
 
     if (!upload) {
-      return res(ctx.status(404), ctx.json({
-        success: false,
-        message: 'Upload not found',
-      }));
+      return HttpResponse.json(
+        {
+          success: false,
+          message: 'Upload not found',
+        },
+        { status: 404 }
+      );
     }
 
-    return res(ctx.json({
+    return HttpResponse.json({
       success: true,
       data: upload,
-    }));
+    });
   }),
 
-  rest.get('*/uploads', (req, res, ctx) => {
-    return res(ctx.json({
+  http.get('*/uploads', async () => {
+    return HttpResponse.json({
       success: true,
       data: [mockUploads.approved, mockUploads.pending],
       pagination: {
@@ -306,31 +313,31 @@ export const uploadHandlers = [
         total: 2,
         pages: 1,
       },
-    }));
+    });
   }),
 ];
 
 // Verification handlers
 export const verificationHandlers = [
-  rest.post('*/verification/tier1', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/verification/tier1', async () => {
+    return HttpResponse.json({
       success: true,
       data: mockVerifications.tier1_pending,
-    }));
+    });
   }),
 
-  rest.post('*/verification/tier2', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/verification/tier2', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         ...mockVerifications.tier2_requires_info,
         id: 'tier2-verification-123',
       },
-    }));
+    });
   }),
 
-  rest.get('*/verification/status', (req, res, ctx) => {
-    return res(ctx.json({
+  http.get('*/verification/status', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         currentTier: 1,
@@ -338,22 +345,22 @@ export const verificationHandlers = [
         badges: ['id_verified'],
         verifications: [mockVerifications.tier1_approved],
       },
-    }));
+    });
   }),
 
-  rest.post('*/verification/webhook', (req, res, ctx) => {
+  http.post('*/verification/webhook', async () => {
     // Mock webhook for verification completion
-    return res(ctx.json({
+    return HttpResponse.json({
       success: true,
       message: 'Verification completed',
-    }));
+    });
   }),
 ];
 
 // Match handlers
 export const matchHandlers = [
-  rest.get('*/matches', (req, res, ctx) => {
-    return res(ctx.json({
+  http.get('*/matches', async () => {
+    return HttpResponse.json({
       success: true,
       data: [
         {
@@ -375,29 +382,30 @@ export const matchHandlers = [
         total: 1,
         pages: 1,
       },
-    }));
+    });
   }),
 
-  rest.post('*/matches/:matchId/like', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/matches/:matchId/like', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         liked: true,
         likes: 1,
       },
-    }));
+    });
   }),
 ];
 
 // Chat handlers
 export const chatHandlers = [
-  rest.get('*/chats/:chatId/messages', (req, res, ctx) => {
-    return res(ctx.json({
+  http.get('*/chats/:chatId/messages', async ({ params }) => {
+    const { chatId } = params as { chatId: string };
+    return HttpResponse.json({
       success: true,
       data: [
         {
           id: 'msg-1',
-          chatId: req.params.chatId,
+          chatId: chatId,
           senderId: 'user-456',
           text: 'Hi! I loved your pet\'s profile!',
           timestamp: '2024-01-01T16:00:00Z',
@@ -405,7 +413,7 @@ export const chatHandlers = [
         },
         {
           id: 'msg-2',
-          chatId: req.params.chatId,
+          chatId: chatId,
           senderId: 'user-123',
           text: 'Thanks! Buddy would love to meet your cat!',
           timestamp: '2024-01-01T16:05:00Z',
@@ -418,28 +426,29 @@ export const chatHandlers = [
         total: 2,
         pages: 1,
       },
-    }));
+    });
   }),
 
-  rest.post('*/chats/:chatId/messages', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/chats/:chatId/messages', async ({ params }) => {
+    const { chatId } = params as { chatId: string };
+    return HttpResponse.json({
       success: true,
       data: {
         id: 'new-msg-id',
-        chatId: req.params.chatId,
+        chatId: chatId,
         senderId: 'user-123',
         text: 'Test message',
         timestamp: new Date().toISOString(),
         read: false,
       },
-    }));
+    });
   }),
 ];
 
 // Map handlers
 export const mapHandlers = [
-  rest.get('*/map/pins', (req, res, ctx) => {
-    return res(ctx.json({
+  http.get('*/map/pins', async () => {
+    return HttpResponse.json({
       success: true,
       data: [
         {
@@ -456,11 +465,11 @@ export const mapHandlers = [
           createdAt: '2024-01-01T17:00:00Z',
         },
       ],
-    }));
+    });
   }),
 
-  rest.post('*/map/activity/start', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/map/activity/start', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         _id: 'activity-123',
@@ -473,14 +482,14 @@ export const mapHandlers = [
         active: true,
         createdAt: new Date().toISOString(),
       },
-    }));
+    });
   }),
 ];
 
 // Settings handlers
 export const settingsHandlers = [
-  rest.get('*/settings', (req, res, ctx) => {
-    return res(ctx.json({
+  http.get('*/settings', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         notifications: {
@@ -497,49 +506,49 @@ export const settingsHandlers = [
           theme: 'light',
         },
       },
-    }));
+    });
   }),
 
-  rest.put('*/settings', (req, res, ctx) => {
-    return res(ctx.json({
+  http.put('*/settings', async () => {
+    return HttpResponse.json({
       success: true,
       message: 'Settings updated successfully',
-    }));
+    });
   }),
 
-  rest.post('*/gdpr/export', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/gdpr/export', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         exportId: 'export-123',
         status: 'processing',
         estimatedCompletion: '2024-01-01T18:00:00Z',
       },
-    }));
+    });
   }),
 
-  rest.delete('*/gdpr/delete-account', (req, res, ctx) => {
-    return res(ctx.json({
+  http.delete('*/gdpr/delete-account', async () => {
+    return HttpResponse.json({
       success: true,
       data: {
         deletionId: 'deletion-123',
         scheduledFor: '2024-01-08T00:00:00Z', // 7 days from now
       },
-    }));
+    });
   }),
 ];
 
 // Notification handlers
 export const notificationHandlers = [
-  rest.post('*/notifications/register', (req, res, ctx) => {
-    return res(ctx.json({
+  http.post('*/notifications/register', async () => {
+    return HttpResponse.json({
       success: true,
       message: 'Device registered for notifications',
-    }));
+    });
   }),
 
-  rest.get('*/notifications', (req, res, ctx) => {
-    return res(ctx.json({
+  http.get('*/notifications', async () => {
+    return HttpResponse.json({
       success: true,
       data: [
         {
@@ -552,7 +561,7 @@ export const notificationHandlers = [
           createdAt: '2024-01-01T17:00:00Z',
         },
       ],
-    }));
+    });
   }),
 ];
 
@@ -573,49 +582,55 @@ export const handlers = [
 export const createScenarioHandlers = (scenario: string) => {
   const scenarios: Record<string, any[]> = {
     upload_duplicate: [
-      rest.post('*/uploads', (req, res, ctx) => {
-        return res(ctx.status(409), ctx.json({
-          success: false,
-          error: 'Duplicate image detected',
-          data: {
-            reason: 'exact_duplicate',
-            confidence: 0.99,
-            duplicateOf: 'upload-456',
+      http.post('*/uploads', async () => {
+        return HttpResponse.json(
+          {
+            success: false,
+            error: 'Duplicate image detected',
+            data: {
+              reason: 'exact_duplicate',
+              confidence: 0.99,
+              duplicateOf: 'upload-456',
+            },
           },
-        }));
+          { status: 409 }
+        );
       }),
     ],
 
     upload_unsafe: [
-      rest.post('*/uploads', (req, res, ctx) => {
-        return res(ctx.json({
+      http.post('*/uploads', async () => {
+        return HttpResponse.json({
           success: true,
           data: mockUploads.rejected,
-        }));
+        });
       }),
     ],
 
     verification_requires_info: [
-      rest.post('*/verification/tier2', (req, res, ctx) => {
-        return res(ctx.json({
+      http.post('*/verification/tier2', async () => {
+        return HttpResponse.json({
           success: true,
           data: mockVerifications.tier2_requires_info,
-        }));
+        });
       }),
     ],
 
     network_error: [
-      rest.get('*', (req, res, ctx) => {
-        return res(ctx.status(500), ctx.json({
-          success: false,
-          error: 'Internal server error',
-        }));
+      http.get('*', async () => {
+        return HttpResponse.json(
+          {
+            success: false,
+            error: 'Internal server error',
+          },
+          { status: 500 }
+        );
       }),
     ],
 
     offline_mode: [
-      rest.get('*', (req, res, ctx) => {
-        return res.networkError('Failed to fetch');
+      http.get('*', async () => {
+        return HttpResponse.error();
       }),
     ],
   };

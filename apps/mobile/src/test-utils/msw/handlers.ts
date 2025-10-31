@@ -3,7 +3,9 @@
  * Used for intercepting HTTP requests in unit/integration tests
  */
 
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw'
+import { logger } from '@pawfectmatch/core';
+;
 import { API_BASE_URL } from '../../config/environment';
 
 // Define handlers for API endpoints
@@ -192,7 +194,7 @@ export const handlers = [
 
   // Default catch-all handler
   http.all('*', async ({ request }) => {
-    console.warn(`Unhandled MSW request: ${request.method} ${request.url}`);
+    logger.warn(`Unhandled MSW request: ${request.method} ${request.url}`);
     return HttpResponse.json({ error: 'No handler defined for this request' }, { status: 500 });
   }),
 ];

@@ -7,19 +7,18 @@ import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '@mobile/theme';
 import type { AppTheme } from '@mobile/theme';
-import { Session } from 'inspector';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
     engagementGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: 12,
+      gap: theme.spacing.md,
     },
     engagementCard: {
       width: '48%',
-      borderRadius: 12,
-      padding: 16,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
       alignItems: 'center',
       shadowColor: theme.colors.onSurface,
       shadowOffset: { width: 0, height: 2 },
@@ -28,13 +27,13 @@ function __makeStyles_styles(theme: AppTheme) {
       elevation: 5,
     },
     engagementLabel: {
-      fontSize: 12,
-      fontWeight: '500',
-      marginBottom: 4,
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.body.weight,
+      marginBottom: theme.spacing.xs,
     },
     engagementValue: {
-      fontSize: 20,
-      fontWeight: 'bold',
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
     },
   });
 }
@@ -61,9 +60,9 @@ const formatNumber = (num: number): string => {
 export const EngagementMetricsSection: React.FC<EngagementMetricsSectionProps> = ({
   engagement,
 }) => {
-  const theme = useTheme();
+  const theme: AppTheme = useTheme();
   const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
-  const { colors, palette } = theme;
+  const { colors } = theme;
 
   return (
     <View style={styles.engagementGrid}>

@@ -1,0 +1,120 @@
+{
+  "performance": {
+    "dashboard.load": {
+      "metric": "p95",
+      "threshold": 5000,
+      "unit": "ms",
+      "environment": "production"
+    },
+    "filter.apply": {
+      "metric": "p95",
+      "threshold": 200,
+      "unit": "ms",
+      "environment": "production"
+    },
+    "push.delivery": {
+      "metric": "p95",
+      "threshold": 300,
+      "unit": "ms",
+      "environment": "production"
+    },
+    "translation.latency": {
+      "metric": "p95",
+      "threshold": 500,
+      "unit": "ms",
+      "environment": "production",
+      "condition": "cached"
+    },
+    "translation.latency.uncached": {
+      "metric": "p95",
+      "threshold": 2000,
+      "unit": "ms",
+      "environment": "production"
+    },
+    "offline.sync": {
+      "metric": "p95",
+      "threshold": 200,
+      "unit": "ms",
+      "environment": "production"
+    },
+    "schedule.create": {
+      "metric": "p95",
+      "threshold": 200,
+      "unit": "ms",
+      "environment": "production"
+    },
+    "suggestions.generate": {
+      "metric": "p95",
+      "threshold": 800,
+      "unit": "ms",
+      "environment": "production"
+    },
+    "swipe.gesture": {
+      "metric": "p95",
+      "threshold": 16,
+      "unit": "ms",
+      "environment": "production"
+    },
+    "rewind.load": {
+      "metric": "p95",
+      "threshold": 500,
+      "unit": "ms",
+      "environment": "production"
+    },
+    "boost.activate": {
+      "metric": "p95",
+      "threshold": 200,
+      "unit": "ms",
+      "environment": "production"
+    },
+    "template.load": {
+      "metric": "p95",
+      "threshold": 100,
+      "unit": "ms",
+      "environment": "production"
+    }
+  },
+  "coverage": {
+    "line": {
+      "threshold": 90,
+      "unit": "percent"
+    },
+    "branch": {
+      "threshold": 90,
+      "unit": "percent"
+    }
+  },
+  "bundle": {
+    "mobile": {
+      "threshold": 2000000,
+      "unit": "bytes"
+    },
+    "web": {
+      "threshold": 500000,
+      "unit": "bytes"
+    }
+  },
+  "error": {
+    "push.error.rate": {
+      "threshold": 0.005,
+      "unit": "ratio",
+      "environment": "production"
+    },
+    "translation.quality": {
+      "threshold": 0.85,
+      "unit": "ratio",
+      "environment": "production"
+    },
+    "offline.sync.success": {
+      "threshold": 0.95,
+      "unit": "ratio",
+      "environment": "production"
+    },
+    "schedule.accuracy": {
+      "threshold": 30,
+      "unit": "seconds",
+      "environment": "production"
+    }
+  }
+}
+

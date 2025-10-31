@@ -5,6 +5,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { presignUpload, validatePresignedUpload } from '../services/s3';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const router = Router();
 
@@ -33,8 +34,9 @@ router.post('/sign', async (req, res) => {
     );
     
     res.json(urls);
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    res.status(400).json({ error: errorMessage });
   }
 });
 

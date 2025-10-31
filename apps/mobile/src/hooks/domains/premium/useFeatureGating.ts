@@ -2,7 +2,7 @@
  * useFeatureGating Hook
  * Provides feature gating functionality based on subscription status
  */
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { logger } from '@pawfectmatch/core';
 import { premiumService, type PremiumLimits } from '../../../services/PremiumService';
 import { usePremiumStatus } from './usePremiumStatus';
@@ -36,7 +36,7 @@ const FEATURE_DISPLAY_NAMES: Record<keyof PremiumLimits, string> = {
 };
 
 export const useFeatureGating = (): UseFeatureGatingReturn => {
-  const { subscriptionStatus, isPremium, hasFeature } = usePremiumStatus();
+  const { isPremium } = usePremiumStatus();
 
   const checkFeatureAccess = useCallback(
     async (feature: keyof PremiumLimits): Promise<FeatureGatingResult> => {
@@ -84,11 +84,11 @@ export const useFeatureGating = (): UseFeatureGatingReturn => {
 
   const getFeatureLimit = useCallback((feature: keyof PremiumLimits): number => {
     // This would typically come from the premium service
-    // For now, return default values
+    // For now, return default values - Business Model: 5 daily swipes for free users
     const defaultLimits: Record<keyof PremiumLimits, number> = {
-      swipesPerDay: 50,
-      likesPerDay: 100,
-      superLikesPerDay: 3,
+      swipesPerDay: 5, // Business Model: 5 daily swipes for free users
+      likesPerDay: 5, // Business Model: 5 daily likes for free users
+      superLikesPerDay: 0, // Business Model: Free users get 0 Super Likes (must purchase via IAP)
       canUndoSwipes: 0,
       canSeeWhoLiked: 0,
       canBoostProfile: 0,

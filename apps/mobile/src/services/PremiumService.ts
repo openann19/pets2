@@ -223,6 +223,103 @@ class PremiumService {
   }
 
   /**
+   * Create Stripe PaymentSheet for mobile native payment
+   * Returns PaymentSheet configuration for Stripe React Native SDK
+   */
+  async createPaymentSheet(
+    planId: string,
+  ): Promise<{
+    paymentIntentClientSecret: string;
+    ephemeralKeySecret: string;
+    customerId: string;
+    setupIntentId: string;
+  }> {
+    try {
+      const plan = PremiumService.PLANS.find((p) => p.id === planId);
+      if (plan === undefined) {
+        throw new Error(`Invalid plan ID: ${planId}`);
+      }
+
+      const response = await api.request<{
+        success: boolean;
+        data: {
+          paymentIntentClientSecret: string;
+          ephemeralKeySecret: string;
+          customerId: string;
+          setupIntentId: string;
+        };
+      }>('/premium/create-payment-sheet', {
+        method: 'POST',
+        body: JSON.stringify({
+          plan: planId,
+          interval: plan.interval,
+        }),
+      });
+
+      if (!response.success || !response.data) {
+        throw new Error('Failed to create payment sheet');
+      }
+
+      logger.info('Created payment sheet', {
+        planId,
+        customerId: response.data.customerId,
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('Failed to create payment sheet', { error, planId });
+      throw error;
+    }
+  }
+
+  /**
+   * Confirm PaymentSheet payment and create subscription
+   */
+  async confirmPaymentSheet(
+    setupIntentId: string,
+    planId: string,
+  ): Promise<{ subscriptionId: string; clientSecret?: string }> {
+    try {
+      const plan = PremiumService.PLANS.find((p) => p.id === planId);
+      if (plan === undefined) {
+        throw new Error(`Invalid plan ID: ${planId}`);
+      }
+
+      const response = await api.request<{
+        success: boolean;
+        data: {
+          subscriptionId: string;
+          clientSecret?: string;
+        };
+      }>('/premium/confirm-payment-sheet', {
+        method: 'POST',
+        body: JSON.stringify({
+          setupIntentId,
+          plan: planId,
+          interval: plan.interval,
+        }),
+      });
+
+      if (!response.success || !response.data) {
+        throw new Error('Failed to confirm payment sheet');
+      }
+
+      // Clear cache to force refresh of subscription status
+      await this.clearCache();
+
+      logger.info('Payment sheet confirmed and subscription created', {
+        planId,
+        subscriptionId: response.data.subscriptionId,
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('Failed to confirm payment sheet', { error, planId });
+      throw error;
+    }
+  }
+
+  /**
    * Cancel subscription
    */
   async cancelSubscription(): Promise<{ success: boolean; message: string }> {

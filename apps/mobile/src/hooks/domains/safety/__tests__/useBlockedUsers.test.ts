@@ -55,27 +55,27 @@ describe('useBlockedUsers', () => {
     const { result } = renderHook(() => useBlockedUsers());
 
     // Wait for the useEffect to trigger loadBlockedUsers
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(1000);
     });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
+      expect(result.current.blockedUsers).toHaveLength(2);
     });
-
-    expect(result.current.blockedUsers).toHaveLength(2);
   });
 
   it('should refresh blocked users', async () => {
     const { result } = renderHook(() => useBlockedUsers());
 
     // Initial load
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(1000);
     });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
+      expect(result.current.blockedUsers).toHaveLength(2);
     });
 
     // Refresh
@@ -83,19 +83,22 @@ describe('useBlockedUsers', () => {
       await result.current.refreshData();
     });
 
-    expect(result.current.isRefreshing).toBe(false);
+    await waitFor(() => {
+      expect(result.current.isRefreshing).toBe(false);
+    });
   });
 
   it('should unblock a user', async () => {
     const { result } = renderHook(() => useBlockedUsers());
 
     // Load users first
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(1000);
     });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
+      expect(result.current.blockedUsers).toHaveLength(2);
     });
 
     const initialCount = result.current.blockedUsers.length;

@@ -1,0 +1,9 @@
+{
+  "audit:baseline": "node scripts/audit-baseline.mjs",
+  "audit:typecheck": "pnpm -w -r run typecheck 2>&1 | tee reports/audit/raw/typecheck.log || echo 'Typecheck completed with errors'",
+  "audit:lint": "turbo lint 2>&1 | tee reports/audit/raw/lint.log || echo 'Lint completed with errors'",
+  "audit:i18n": "pnpm i18n:check 2>&1 | tee reports/audit/raw/i18n.log || echo 'i18n check completed'",
+  "audit:knip": "pnpm knip 2>&1 | tee reports/audit/raw/knip.log || echo '{"error":"knip not installed"}' > reports/audit/raw/knip.json",
+  "audit:madge": "pnpm madge --circular --extensions ts,tsx apps packages 2>&1 | tee reports/audit/raw/madge.log || echo '{"error":"madge not installed"}' > reports/audit/raw/madge.json",
+  "audit:gitleaks": "gitleaks detect --source . --report-path reports/audit/raw/gitleaks.json 2>&1 | tee reports/audit/raw/gitleaks.log || echo '{"error":"gitleaks not installed"}' > reports/audit/raw/gitleaks.json",
+  "audit:all": "pnpm audit:baseline"

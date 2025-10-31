@@ -1,5 +1,6 @@
 import { Server as SocketIOServer, Socket } from "socket.io";
 import jwt from "jsonwebtoken";
+import type { JwtPayload } from "jsonwebtoken";
 import logger from "../utils/logger";
 import { LiveStream } from "../models/LiveStream";
 
@@ -7,6 +8,15 @@ interface SocketUser {
   id: string;
   socketId: string;
   isOwner?: boolean;
+}
+
+interface AuthenticatedLiveSocket extends Socket {
+  user: SocketUser;
+}
+
+interface JwtDecoded extends JwtPayload {
+  userId?: string;
+  id?: string;
 }
 
 interface LiveMessage {
@@ -49,20 +59,21 @@ export default function liveSocket(io: SocketIOServer): SocketIOServer {
         return next(new Error("Authentication required"));
       }
 
-      const decoded = jwt.verify(token as string, process.env.JWT_SECRET!) as any;
-      (socket as any).user = {
-        id: decoded.userId || decoded.id,
+      const decoded = jwt.verify(token as string, process.env.JWT_SECRET!) as JwtDecoded;
+      (socket as AuthenticatedLiveSocket).user = {
+        id: decoded.userId || decoded.id || '',
         socketId: socket.id,
       } as SocketUser;
       next();
-    } catch (error) {
-      logger.error("Live socket auth error", { error });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error("Live socket auth error", { error: errorMessage });
       next(new Error("Authentication failed"));
     }
   });
 
-  liveNamespace.on("connection", (socket: Socket) => {
-    const user = (socket as any).user as SocketUser;
+  liveNamespace.on("connection", (socket: AuthenticatedLiveSocket) => {
+    const user = socket.user;
     const roomName = socket.nsp.name.replace("/live:", "");
 
     logger.info("Live stream client connected", { userId: user.id, roomName });
@@ -215,7 +226,7 @@ export default function liveSocket(io: SocketIOServer): SocketIOServer {
         // Add pinned message
         stream.pinnedMessages.push({
           messageId: data.messageId,
-          authorId: user.id as any,
+          authorId: user.id,
           content: data.content,
           timestamp: new Date(),
         });

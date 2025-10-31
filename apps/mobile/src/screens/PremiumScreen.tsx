@@ -156,7 +156,7 @@ function makeStyles(theme: AppTheme) {
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
       paddingTop: Platform.OS === 'ios' ? 50 : theme.spacing.lg,
-      backgroundColor: theme.colors.bgElevated,
+      backgroundColor: theme.colors.surface,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },

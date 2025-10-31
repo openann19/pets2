@@ -29,16 +29,70 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    // === Core Strict Type Safety (Essential) ===
+    "strict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    
+    // === Smart Relaxations (Practical Strictness) ===
+    // Allow property access from index signatures (process.env is common)
+    "noPropertyAccessFromIndexSignature": false,
+    
+    // Keep indexed access strict but allow bracket notation
+    "noUncheckedIndexedAccess": true,
+    
+    // Exact optional properties - keep strict but allow undefined explicitly
+    "exactOptionalPropertyTypes": true,
+    
+    // === Code Quality (Warnings, not errors) ===
+    // Unused variables/parameters - useful but not blocking
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    
+    // === Type Safety Enhancements ===
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    
+    // === Module System ===
+    "verbatimModuleSyntax": true,
+    
+    // === Additional Safety ===
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    
+    // === Skip Library Checks (Performance) ===
+    "skipLibCheck": true,
+    
+    // === Path Resolution ===
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
     "app/**/*.ts",
-    "app/**/*.tsx",
-    ".next/types/**/*.ts"
+    "app/**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
-  ]
+    "node_modules",
+    ".next",
+    ".next/types",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "cypress",
+    "**/__tests__/**",
+    "**/__mocks__/**"
+  ],
+  "ts-node": {
+    "esm": true
+  }
 }

@@ -4,7 +4,7 @@
 
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
-const logger = require('../utils/logger');
+import logger from '../utils/logger';
 
 /**
  * Initialize Sentry error tracking

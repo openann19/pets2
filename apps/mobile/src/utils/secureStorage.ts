@@ -3,6 +3,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import type { StateStorage } from 'zustand/middleware';
 
+// Simple typed wrapper functions
+export async function getString(key: string): Promise<string | null> {
+  return SecureStore.getItemAsync(key);
+}
+
+export async function setString(key: string, value: string): Promise<void> {
+  await SecureStore.setItemAsync(key, value);
+}
+
+export async function remove(key: string): Promise<void> {
+  await SecureStore.deleteItemAsync(key);
+}
+
 /**
  * Secure storage adapter for Zustand persist middleware
  * Uses expo-secure-store instead of AsyncStorage for sensitive data like JWT tokens
@@ -12,7 +25,7 @@ export const createSecureStorage = (): StateStorage => {
   return {
     getItem: async (name: string): Promise<string | null> => {
       try {
-        const value: string | null = await SecureStore.getItemAsync(name);
+        const value: string | null = await getString(name);
         return value;
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Unknown error';
@@ -22,7 +35,7 @@ export const createSecureStorage = (): StateStorage => {
     },
     setItem: async (name: string, value: string): Promise<void> => {
       try {
-        await SecureStore.setItemAsync(name, value);
+        await setString(name, value);
       } catch (error: unknown) {
         const err = error instanceof Error ? error : new Error('Failed to set secure item');
         logger.error('secure-storage.setItem.failed', {
@@ -34,7 +47,7 @@ export const createSecureStorage = (): StateStorage => {
     },
     removeItem: async (name: string): Promise<void> => {
       try {
-        await SecureStore.deleteItemAsync(name);
+        await remove(name);
       } catch (error: unknown) {
         const err = error instanceof Error ? error : new Error('Failed to remove secure item');
         logger.error('secure-storage.removeItem.failed', {

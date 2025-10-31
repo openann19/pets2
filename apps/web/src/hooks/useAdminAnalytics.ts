@@ -4,29 +4,151 @@
  */
 import { useState, useEffect } from 'react';
 import { logger } from '@/services/logger';
+
+interface AnalyticsData {
+  users: {
+    total: number;
+    active: number;
+    growth: number;
+    trend: 'up' | 'down' | 'stable';
+  };
+  matches: {
+    total: number;
+    active: number;
+    growth: number;
+    trend: 'up' | 'down' | 'stable';
+  };
+  messages: {
+    total: number;
+    growth: number;
+    trend: 'up' | 'down' | 'stable';
+  };
+  revenue: {
+    totalRevenue: number;
+    monthlyRecurringRevenue: number;
+    averageRevenuePerUser: number;
+    conversionRate: number;
+    churnRate: number;
+  };
+  engagement: {
+    dailyActiveUsers: number;
+    weeklyActiveUsers: number;
+    monthlyActiveUsers: number;
+    averageSessionDuration: number;
+    bounceRate: number;
+    retentionRate: number;
+  };
+  security: {
+    suspiciousLogins: number;
+    blockedIPs: number;
+    reportedContent: number;
+    bannedUsers: number;
+  };
+  topPerformers?: {
+    users: Array<{
+      id: string;
+      name: string;
+      matches: number;
+      messages: number;
+    }>;
+    pets: Array<{
+      id: string;
+      name: string;
+      breed: string;
+      likes: number;
+      matches: number;
+    }>;
+  };
+}
+
 export function useAdminAnalytics() {
-    const [analytics, setAnalytics] = useState(null);
+    const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const [dateRange, setDateRange] = useState('30d');
+    
+    const getTrendFromGrowth = (growth: number): 'up' | 'down' | 'stable' => {
+        if (growth > 0.1) return 'up';
+        if (growth < -0.1) return 'down';
+        return 'stable';
+    };
+    
     const fetchAnalytics = async () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await fetch(`/api/admin/analytics?range=${dateRange}`, {
+            // Use backend API endpoint for real MongoDB data
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+            const token = localStorage.getItem('accessToken') || localStorage.getItem('admin-token');
+            
+            const response = await fetch(`${apiUrl}/api/admin/analytics`, {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
-                }
+                    'Content-Type': 'application/json',
+                    ...(token && { 'Authorization': `Bearer ${token}` }),
+                },
+                credentials: 'include',
             });
+            
             if (!response.ok) {
                 throw new Error(`Failed to fetch analytics: ${response.status}`);
             }
             const data = await response.json();
-            setAnalytics(data.analytics);
+            
+            // Transform backend data to match frontend format
+            if (data.success && data.analytics) {
+                const analyticsData = data.analytics;
+                const userGrowth = analyticsData.users?.growth || 0;
+                const matchGrowth = analyticsData.matches?.growth || 0;
+                const messageGrowth = analyticsData.messages?.growth || 0;
+                
+                setAnalytics({
+                    users: {
+                        total: analyticsData.users?.total || 0,
+                        active: analyticsData.users?.active || 0,
+                        growth: userGrowth,
+                        trend: getTrendFromGrowth(userGrowth),
+                    },
+                    matches: {
+                        total: analyticsData.matches?.total || 0,
+                        active: analyticsData.matches?.active || 0,
+                        growth: matchGrowth,
+                        trend: getTrendFromGrowth(matchGrowth),
+                    },
+                    messages: {
+                        total: analyticsData.messages?.total || 0,
+                        growth: messageGrowth,
+                        trend: getTrendFromGrowth(messageGrowth),
+                    },
+                    revenue: {
+                        totalRevenue: analyticsData.revenue?.totalRevenue || 0,
+                        monthlyRecurringRevenue: analyticsData.revenue?.monthlyRecurringRevenue || 0,
+                        averageRevenuePerUser: analyticsData.revenue?.averageRevenuePerUser || 0,
+                        conversionRate: analyticsData.revenue?.conversionRate || 0,
+                        churnRate: analyticsData.revenue?.churnRate || 0,
+                    },
+                    engagement: {
+                    dailyActiveUsers: analyticsData.engagement?.dailyActiveUsers || 0,
+                        weeklyActiveUsers: analyticsData.engagement?.weeklyActiveUsers || 0,
+                    monthlyActiveUsers: analyticsData.engagement?.monthlyActiveUsers || 0,
+                        averageSessionDuration: analyticsData.engagement?.averageSessionDuration || analyticsData.engagement?.averageSession || 0,
+                        bounceRate: analyticsData.engagement?.bounceRate || 0,
+                        retentionRate: analyticsData.engagement?.retentionRate || 0,
+                    },
+                    security: {
+                        suspiciousLogins: analyticsData.security?.suspiciousLogins || 0,
+                        blockedIPs: analyticsData.security?.blockedIPs || 0,
+                        reportedContent: analyticsData.security?.reportedContent || 0,
+                        bannedUsers: analyticsData.security?.bannedUsers || 0,
+                    },
+                    topPerformers: analyticsData.topPerformers,
+                });
+            } else {
+                throw new Error('Invalid analytics response');
+            }
         }
         catch (error) {
             logger.error('Failed to fetch analytics', error);
-            setError(error.message);
+            setError(error instanceof Error ? error.message : 'Unknown error');
             // Set fallback data for development
             setAnalytics(getFallbackAnalytics());
         }
@@ -34,67 +156,50 @@ export function useAdminAnalytics() {
             setIsLoading(false);
         }
     };
-    const getFallbackAnalytics = () => {
+    
+    const getFallbackAnalytics = (): AnalyticsData => {
         const now = new Date();
         const days = dateRange === '7d' ? 7 : dateRange === '30d' ? 30 : dateRange === '90d' ? 90 : 365;
+        
         return {
-            totalUsers: 12543,
-            activeUsers: 8932,
-            totalMatches: 4567,
-            matchRate: 23.5,
-            userGrowth: 12.3,
-            activeUserGrowth: 8.7,
-            matchGrowth: 15.2,
-            matchRateChange: 2.1,
+            users: {
+                total: 12543,
+                active: 8932,
+                growth: 12.3,
+                trend: 'up',
+            },
+            matches: {
+                total: 4567,
+                active: 3500,
+                growth: 15.2,
+                trend: 'up',
+            },
+            messages: {
+                total: 89234,
+                growth: 8.5,
+                trend: 'up',
+            },
+            revenue: {
+                totalRevenue: 125000,
+                monthlyRecurringRevenue: 45000,
+                averageRevenuePerUser: 9.95,
+                conversionRate: 23.5,
+                churnRate: 2.1,
+            },
+            engagement: {
             dailyActiveUsers: 2341,
+                weeklyActiveUsers: 6543,
             monthlyActiveUsers: 8932,
-            avgSessionDuration: 8.5,
-            previousDailyActiveUsers: 2156,
-            previousMonthlyActiveUsers: 8234,
-            previousAvgSessionDuration: 7.8,
-            dailyActiveUsersChange: 8.6,
-            monthlyActiveUsersChange: 8.5,
-            sessionDurationChange: 9.0,
-            userGrowthData: Array.from({ length: days }, (_, i) => {
-                const date = new Date(now);
-                date.setDate(date.getDate() - (days - i - 1));
-                return {
-                    date: date.toISOString().split('T')[0],
-                    newUsers: Math.floor(Math.random() * 50) + 20,
-                    totalUsers: 10000 + (i * 15) + Math.floor(Math.random() * 100)
-                };
-            }),
-            matchActivityData: Array.from({ length: days }, (_, i) => {
-                const date = new Date(now);
-                date.setDate(date.getDate() - (days - i - 1));
-                return {
-                    date: date.toISOString().split('T')[0],
-                    matches: Math.floor(Math.random() * 200) + 50,
-                    likes: Math.floor(Math.random() * 1000) + 300,
-                    passes: Math.floor(Math.random() * 800) + 200
-                };
-            }),
-            userDemographics: [
-                { name: '18-25', value: 25 },
-                { name: '26-35', value: 35 },
-                { name: '36-45', value: 20 },
-                { name: '46+', value: 20 }
-            ],
-            petSpeciesData: [
-                { species: 'Dogs', count: 65 },
-                { species: 'Cats', count: 25 },
-                { species: 'Birds', count: 5 },
-                { species: 'Other', count: 5 }
-            ],
-            churnData: Array.from({ length: days }, (_, i) => {
-                const date = new Date(now);
-                date.setDate(date.getDate() - (days - i - 1));
-                return {
-                    date: date.toISOString().split('T')[0],
-                    churnRate: Math.random() * 5 + 2,
-                    retentionRate: Math.random() * 10 + 85
-                };
-            })
+                averageSessionDuration: 510, // seconds
+                bounceRate: 15.2,
+                retentionRate: 85.5,
+            },
+            security: {
+                suspiciousLogins: 12,
+                blockedIPs: 5,
+                reportedContent: 23,
+                bannedUsers: 8,
+            },
         };
     };
     useEffect(() => {

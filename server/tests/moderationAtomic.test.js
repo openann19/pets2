@@ -4,7 +4,7 @@
  */
 
 const mongoose = require('mongoose');
-const PhotoModeration = require('../models/PhotoModeration');
+const PhotoModeration = require('../src/models/PhotoModeration');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 describe('Atomic Moderation Operations', () => {

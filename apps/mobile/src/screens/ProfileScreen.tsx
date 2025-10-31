@@ -28,6 +28,7 @@ import {
   ProfileSettingsSection,
   ProfileStatsSection,
 } from './profile/components';
+import { ProfileBoostButton } from '../components/premium/ProfileBoostButton';
 
 type ProfileScreenProps = RootStackScreenProps<'Profile'>;
 
@@ -190,6 +191,14 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         {/* Quick Stats Section */}
         <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(240).delay(50)}>
           <ProfileStatsSection />
+        </Animated.View>
+
+        {/* Profile Boost Section */}
+        <Animated.View
+          entering={reducedMotion ? undefined : FadeInDown.duration(250).delay(75)}
+          style={{ paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.md }}
+        >
+          <ProfileBoostButton showLabel={true} />
         </Animated.View>
 
         {/* Menu Items Section */}

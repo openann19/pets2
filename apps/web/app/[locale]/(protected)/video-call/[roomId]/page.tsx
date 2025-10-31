@@ -34,7 +34,7 @@ export default function VideoCallPage() {
             Premium Feature
           </h2>
           <p className="text-gray-600 mb-6">
-            Video calls are available for Premium Plus subscribers and above
+            Video calls are available for Premium subscribers and above
           </p>
           <PremiumButton
             size="lg"
@@ -44,7 +44,7 @@ export default function VideoCallPage() {
             className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 font-bold shadow-xl w-full justify-center"
             onClick={() => router.push('/premium')}
           >
-            Upgrade to Premium Plus
+            Upgrade to Premium
           </PremiumButton>
         </PremiumCard>
       </div>

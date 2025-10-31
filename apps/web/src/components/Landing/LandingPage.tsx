@@ -9,7 +9,9 @@
  * - SharedElement transitions
  */
 
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy } from 'react'
+import { logger } from '@pawfectmatch/core';
+;
 import { motion } from 'framer-motion';
 import {
   LiquidBackground,
@@ -185,7 +187,7 @@ function PetGallerySection() {
                 id={`pet-${pet.id}`}
                 src={pet.image}
                 alt={pet.name}
-                onClick={() => { console.log(`View ${pet.name}`); }}
+                onClick={() => { logger.info(`View ${pet.name}`); }}
               />
             </motion.div>
           ))}

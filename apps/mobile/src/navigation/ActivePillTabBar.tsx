@@ -10,7 +10,6 @@ import Animated, {
   withSpring,
   withTiming,
   withSequence,
-  withDelay,
   interpolate,
   Extrapolate,
 } from 'react-native-reanimated';
@@ -20,8 +19,9 @@ import { useTheme } from '../theme';
 import type { AppTheme } from '../theme';
 import { getExtendedColors } from '../theme/adapters';
 import { useReduceMotion } from '../hooks/useReducedMotion';
+import { springs } from '@/foundation/motion';
 
-type IoniconsName = keyof typeof Ionicons.glyphMap;
+type IoniconsName = string;
 
 type RouteName = 'Home' | 'Swipe' | 'Map' | 'Matches' | 'Profile' | 'AdoptionManager' | 'Premium';
 
@@ -39,7 +39,7 @@ const getSpringConfig = (reducedMotion: boolean) => {
   if (reducedMotion) {
     return { damping: 1000, stiffness: 1000, mass: 0.9 };
   }
-  return { damping: 22, stiffness: 260, mass: 0.9 };
+  return springs.gentle;
 };
 
 const getIcon = (routeName: RouteName, focused: boolean): IoniconsName =>
@@ -53,6 +53,7 @@ function BadgeAnimation({
   count: number;
   colors: ReturnType<typeof getExtendedColors>;
 }) {
+  const theme = useTheme() as AppTheme;
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
   const pulse = useSharedValue(0);
@@ -69,8 +70,8 @@ function BadgeAnimation({
     scale.value = 0;
     opacity.value = 0;
     scale.value = withSequence(
-      withSpring(1.3, { damping: 8, stiffness: 300 }),
-      withSpring(1, { damping: 12, stiffness: 350 }),
+      withSpring(1.3, springs.bouncy),
+      withSpring(1, springs.standard),
     );
     opacity.value = withTiming(1, { duration: 200 });
 
@@ -79,7 +80,7 @@ function BadgeAnimation({
       withTiming(1, { duration: 400 }),
       withTiming(0, { duration: 600 }),
     );
-  }, [count, reducedMotion]);
+  }, [count, reducedMotion, opacity, pulse, scale]);
 
   const animatedStyle = useAnimatedStyle(() => {
     const pulseScale = 1 + pulse.value * 0.15;
@@ -108,7 +109,7 @@ function BadgeAnimation({
           paddingHorizontal: 4,
           borderRadius: 9,
           borderWidth: 2,
-          borderColor: '#FFFFFF',
+          borderColor: colors.danger,
           backgroundColor: colors.danger,
           alignItems: 'center',
           justifyContent: 'center',
@@ -116,7 +117,7 @@ function BadgeAnimation({
         animatedStyle,
       ]}
     >
-      <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '700' }}>
+      <Text style={{ color: theme.colors.surface, fontSize: 10, fontWeight: '700' }}>
         {count > 99 ? '99+' : count}
       </Text>
     </Animated.View>
@@ -135,7 +136,7 @@ function TabItem({
 }: {
   route: { key: string; name: string };
   isFocused: boolean;
-  scale: { value: number };
+  scale: { value: number } | undefined;
   onPress: () => void;
   colors: ReturnType<typeof getExtendedColors>;
   styles: ReturnType<typeof StyleSheet.create>;
@@ -151,12 +152,12 @@ function TabItem({
   return (
     <TouchableOpacity
       key={route.key}
-      style={styles.tab}
+      style={styles['tab']}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <View style={styles.iconContainer}>
-        <View style={styles.iconWrap}>
+      <View style={styles['iconContainer']}>
+        <View style={styles['iconWrap']}>
           <Animated.View style={iconStyle}>
             <Ionicons
               name={icon}
@@ -228,7 +229,7 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
       justifyContent: 'center',
     },
     badgeText: {
-      color: theme.colors.onError,
+      color: theme.colors.surface,
       fontSize: 10,
       fontWeight: '700',
     },
@@ -295,20 +296,24 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
       : withSpring(layout.w, springConfig);
 
     // bounce the focused icon a touch
-    const s = iconScales[state.index];
-    if (s) {
-      if (reducedMotion) {
-        s.value = 1;
-      } else {
-        s.value = 1.15;
-        s.value = withSpring(1, { damping: 12, stiffness: 300 });
+    // Access shared values directly by index to avoid modifying dependency array values
+    const scaleIndex = state.index;
+    if (scaleIndex >= 0 && scaleIndex < iconScales.length) {
+      const scaleValue = iconScales[scaleIndex];
+      if (scaleValue) {
+        if (reducedMotion) {
+          scaleValue.value = 1;
+        } else {
+          scaleValue.value = 1.15;
+          scaleValue.value = withSpring(1, springs.snappy);
+        }
       }
     }
     // subtle haptic
     if (!reducedMotion) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     }
-  }, [state.index, iconScales, indicatorX, indicatorW, state.routes, reducedMotion]);
+  }, [state.index, state.routes, reducedMotion, indicatorX, indicatorW]);
 
   const pillStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: indicatorX.value }],
@@ -396,7 +401,7 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
             // Bounce animation on icon press
             if (scale && !reducedMotion) {
               scale.value = 0.9;
-              scale.value = withSpring(1, { damping: 10, stiffness: 420 });
+              scale.value = withSpring(1, springs.snappy);
             }
 
             const event = navigation.emit({
@@ -408,7 +413,17 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
             // Double-tap detection: if focused and tapped within 300ms, fire custom event
             if (isFocused && delta < 300) {
               // Fire custom event with proper typing
-              (navigation as any).emit({ type: 'tabDoublePress', target: route.key });
+              // tabDoublePress is a custom event type, not in React Navigation's standard types
+              // Use type assertion through unknown to properly cast custom event
+              (navigation.emit as unknown as (event: {
+                type: 'tabDoublePress';
+                target: string;
+                canPreventDefault: false;
+              }) => void)({
+                type: 'tabDoublePress',
+                target: route.key,
+                canPreventDefault: false,
+              });
             }
 
             if (!isFocused && !event.defaultPrevented) {
@@ -430,7 +445,7 @@ export default function ActivePillTabBar({ state, descriptors, navigation }: Bot
               testID={options.tabBarTestID}
               onPress={onPress}
               onLongPress={onLongPress}
-              style={styles.tab}
+              style={styles['tab']}
               activeOpacity={0.9}
             >
               <TabItem

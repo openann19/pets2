@@ -7,6 +7,7 @@ import Pet from "../models/Pet";
 import Message from "../models/Message";
 import Activity from "../models/Activity";
 import logger from "../utils/logger";
+import { getDashboard } from "../controllers/personalizedDashboardController";
 
 const r: Router = Router();
 
@@ -76,5 +77,8 @@ r.get("/home/feed", authenticateToken, async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch feed" });
   }
 });
+
+// Phase 1: Personalized Dashboard
+r.get("/home/dashboard", authenticateToken, getDashboard);
 
 export default r;

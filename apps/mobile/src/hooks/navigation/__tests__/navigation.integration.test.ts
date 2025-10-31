@@ -3,7 +3,8 @@
  * Tests complete flow: tab press → scroll tracking → reselect behavior
  */
 
-import { renderHook, act } from '@testing-library/react-native';
+import { renderHookSafe as renderHook } from '@/tests/utils/render';
+import { act } from 'react-test-renderer';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { useTabReselectRefresh } from '../useTabReselectRefresh';
@@ -11,7 +12,10 @@ import { useScrollOffsetTracker } from '../useScrollOffsetTracker';
 import { useTabDoublePress } from '../useTabDoublePress';
 
 // Mock dependencies
-jest.mock('@react-navigation/native');
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: jest.fn(),
+  useIsFocused: jest.fn(),
+}));
 jest.mock('expo-haptics');
 
 describe('Navigation System Integration', () => {
@@ -202,20 +206,33 @@ describe('Navigation System Integration', () => {
         }),
       );
 
-      // Rapid sequence of scrolls and taps
+      // First, scroll to a position far from top (above threshold of 120)
       act(() => {
         scrollResult.current.onScroll({
-          nativeEvent: { contentOffset: { x: 0, y: 100 } },
+          nativeEvent: { contentOffset: { x: 0, y: 300 } },
         } as any);
-        tabPressHandler({ target: 'Home' });
-        scrollResult.current.onScroll({
-          nativeEvent: { contentOffset: { x: 0, y: 200 } },
-        } as any);
+      });
+
+      // First tap should trigger scroll to top
+      act(() => {
         tabPressHandler({ target: 'Home' });
       });
 
-      // Should respect cooldown
-      expect(listRef.current.scrollToOffset).toHaveBeenCalled();
+      expect(listRef.current.scrollToOffset).toHaveBeenCalledWith({
+        offset: 0,
+        animated: true,
+      });
+
+      // Reset mock
+      listRef.current.scrollToOffset.mockClear();
+
+      // Second tap within cooldown (300ms) should be ignored
+      act(() => {
+        tabPressHandler({ target: 'Home' });
+      });
+
+      // Should NOT be called again due to cooldown
+      expect(listRef.current.scrollToOffset).not.toHaveBeenCalled();
     });
 
     it('should handle background state correctly', () => {
@@ -305,46 +322,60 @@ describe('Navigation System Integration', () => {
   });
 
   describe('Cross-Component Communication', () => {
-    it('should emit events that can be consumed by other components', () => {
+    it('should handle single and double tap events correctly', () => {
       const listRef = { current: { scrollTo: jest.fn() } };
       const onRefresh = jest.fn();
       let tabPressHandler: any;
       let doubleTapHandler: any;
 
+      // Setup mock to capture handlers
       mockNavigation.addListener.mockImplementation((event, handler) => {
         if (event === 'tabPress') tabPressHandler = handler;
         if (event === 'tabDoublePress') doubleTapHandler = handler;
         return jest.fn();
       });
 
+      // Render hook with short cooldown to avoid timing issues
       renderHook(() =>
         useTabReselectRefresh({
           listRef: listRef as any,
           onRefresh,
+          cooldownMs: 100, // Short cooldown for testing
         }),
       );
 
-      // Single tap emits tabReselect
+      // Verify handlers were attached
+      expect(mockNavigation.addListener).toHaveBeenCalledWith('tabPress', expect.any(Function));
+      expect(mockNavigation.addListener).toHaveBeenCalledWith('tabDoublePress', expect.any(Function));
+      expect(tabPressHandler).toBeDefined();
+      expect(doubleTapHandler).toBeDefined();
+
+      // Double tap should scroll to top AND refresh (test this first before cooldown applies)
       act(() => {
-        tabPressHandler({ target: 'Home' });
+        doubleTapHandler();
       });
 
-      expect(mockNavigation.emit).toHaveBeenCalledWith({
-        type: 'tabReselect',
-        target: 'Home',
+      expect(listRef.current.scrollTo).toHaveBeenCalledWith({
+        y: 0,
+        animated: true,
       });
+      expect(onRefresh).toHaveBeenCalledTimes(1);
 
-      mockNavigation.emit.mockClear();
+      // Clear mocks for next assertion
+      onRefresh.mockClear();
+      listRef.current.scrollTo.mockClear();
 
-      // Double tap emits tabDoublePulse
+      // Wait for cooldown to expire (100ms + buffer)
       act(() => {
-        doubleTapHandler({ target: 'Home' });
+        jest.advanceTimersByTime(150);
       });
 
-      expect(mockNavigation.emit).toHaveBeenCalledWith({
-        type: 'tabDoublePulse',
-        target: 'Home',
+      // Single tap when at top (offset = 0) should trigger refresh
+      act(() => {
+        tabPressHandler();
       });
+
+      expect(onRefresh).toHaveBeenCalledTimes(1);
     });
   });
 });

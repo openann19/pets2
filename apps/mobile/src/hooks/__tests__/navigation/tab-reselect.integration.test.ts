@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment node
  * Integration tests for tab reselect/refresh flow
  */
 import { renderHook, act, waitFor } from '@testing-library/react-native';

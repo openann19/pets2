@@ -4,7 +4,6 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  Easing,
 } from 'react-native-reanimated';
 import { useTheme } from '../../theme/useTheme';
 import type { PetProfile } from '../../data/pets';
@@ -12,6 +11,7 @@ import { Card } from './Card';
 import { Spacer } from './Spacer';
 import { Text } from './Text';
 import { prefetchImage, getDominantColor } from '../../utils/imageLoader';
+import { durations, motionEasing } from '@/foundation/motion';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
@@ -36,8 +36,8 @@ export function PetCard({ pet }: PetCardProps): React.ReactElement {
   useEffect(() => {
     if (imageLoaded) {
       opacity.value = withTiming(1, {
-        duration: 300,
-        easing: Easing.out(Easing.ease),
+        duration: durations.md,
+        easing: motionEasing.enter,
       });
     }
   }, [imageLoaded, opacity]);

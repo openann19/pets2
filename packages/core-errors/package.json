@@ -8,6 +8,9 @@
       "types": "./src/index.ts",
       "default": "./src/index.ts"
     }
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
   }
 }
-

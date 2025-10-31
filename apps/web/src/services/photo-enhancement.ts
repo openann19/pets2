@@ -2,7 +2,9 @@
  * Photo Auto-Enhancement Service
  * Uses Cloudinary transformations for automatic photo improvement
  */
+import { useState } from 'react';
 import { logger } from './logger';
+import { isBrowser, getSafeWindow } from '@pawfectmatch/core/utils/env';
 class PhotoEnhancementService {
     cloudinaryUrl = process.env.NEXT_PUBLIC_CLOUDINARY_URL;
     cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
@@ -93,28 +95,188 @@ class PhotoEnhancementService {
     /**
      * Analyze photo quality and suggest improvements
      */
-    async analyzePhoto(imageUrl) {
+    async analyzePhoto(imageUrl: string) {
         try {
-            // This would typically use Cloudinary's AI analysis
-            // For now, we'll provide a basic analysis
-            const analysis = {
-                quality: 75, // Placeholder
-                suggestions: [
-                    'Enable auto color correction',
-                    'Apply auto contrast enhancement',
-                    'Optimize for web delivery'
-                ],
-                issues: [
-                    'Slightly underexposed',
-                    'Colors could be more vibrant'
-                ]
-            };
-            return analysis;
+            const formData = new FormData();
+            
+            try {
+                const imageResponse = await fetch(imageUrl);
+                if (!imageResponse.ok) {
+                    throw new Error('Failed to fetch image');
+                }
+                const blob = await imageResponse.blob();
+                formData.append('photo', blob, 'photo.jpg');
+            } catch {
+                formData.append('imageUrl', imageUrl);
+            }
+
+            const win = getSafeWindow();
+            const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 
+                (win 
+                    ? `${win.location.protocol}//${win.location.hostname}:5001/api`
+                    : 'http://localhost:5001/api');
+
+            const response = await fetch(`${apiBaseUrl}/ai/analyze-photo`, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const apiAnalysis = await response.json();
+                const data = apiAnalysis.data || apiAnalysis;
+                
+                if (data.quality || data.suggestions || data.issues) {
+                    logger.info('Photo analysis from API', { imageUrl });
+                    return {
+                        quality: data.quality || 75,
+                        suggestions: data.suggestions || [],
+                        issues: data.issues || [],
+                        confidence: data.confidence,
+                        metadata: data.metadata,
+                    };
+                }
+            }
+
+            return this.performClientSideAnalysis(imageUrl);
         }
         catch (error) {
-            logger.error('Photo analysis failed', error);
-            throw new Error(`Photo analysis failed: ${error.message}`);
+            logger.warn('API photo analysis failed, using client-side fallback', {
+                error: error instanceof Error ? error.message : 'Unknown error',
+                imageUrl,
+            });
+            return this.performClientSideAnalysis(imageUrl);
         }
+    }
+
+    /**
+     * Perform client-side image analysis using Canvas API
+     */
+    private async performClientSideAnalysis(imageUrl: string): Promise<{
+        quality: number;
+        suggestions: string[];
+        issues: string[];
+    }> {
+        return new Promise((resolve, reject) => {
+            if (!isBrowser()) {
+                reject(new Error('Client-side analysis requires browser environment'));
+                return;
+            }
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            
+            img.onload = () => {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) {
+                        reject(new Error('Canvas context not available'));
+                        return;
+                    }
+
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const pixels = imageData.data;
+
+                    let totalBrightness = 0;
+                    let totalSaturation = 0;
+                    let darkPixels = 0;
+                    let brightPixels = 0;
+                    const sampleSize = Math.min(pixels.length / 4, 10000);
+
+                    for (let i = 0; i < pixels.length; i += 4 * Math.floor(pixels.length / sampleSize)) {
+                        const r = pixels[i];
+                        const g = pixels[i + 1];
+                        const b = pixels[i + 2];
+                        const a = pixels[i + 3];
+
+                        if (a < 255) continue;
+
+                        const brightness = (r + g + b) / 3;
+                        totalBrightness += brightness;
+
+                        const max = Math.max(r, g, b);
+                        const min = Math.min(r, g, b);
+                        const saturation = max === 0 ? 0 : (max - min) / max;
+                        totalSaturation += saturation;
+
+                        if (brightness < 50) darkPixels++;
+                        if (brightness > 200) brightPixels++;
+                    }
+
+                    const avgBrightness = totalBrightness / (sampleSize / 4);
+                    const avgSaturation = totalSaturation / (sampleSize / 4);
+                    const darkRatio = darkPixels / (sampleSize / 4);
+                    const brightRatio = brightPixels / (sampleSize / 4);
+
+                    let quality = 100;
+                    const suggestions: string[] = [];
+                    const issues: string[] = [];
+
+                    if (avgBrightness < 80) {
+                        quality -= 15;
+                        issues.push('Image is underexposed');
+                        suggestions.push('Enable auto brightness enhancement');
+                    } else if (avgBrightness > 180) {
+                        quality -= 10;
+                        issues.push('Image is overexposed');
+                        suggestions.push('Reduce brightness or enable HDR');
+                    }
+
+                    if (avgSaturation < 0.3) {
+                        quality -= 10;
+                        issues.push('Colors are desaturated');
+                        suggestions.push('Enable auto saturation enhancement');
+                    }
+
+                    if (darkRatio > 0.3) {
+                        quality -= 10;
+                        issues.push('Large dark areas detected');
+                        suggestions.push('Apply shadow enhancement');
+                    }
+
+                    if (avgSaturation < 0.5 && avgBrightness < 100) {
+                        suggestions.push('Apply auto color correction');
+                    }
+
+                    if (img.width < 800 || img.height < 600) {
+                        quality -= 5;
+                        suggestions.push('Consider using a higher resolution image');
+                    }
+
+                    if (suggestions.length === 0) {
+                        suggestions.push('Optimize for web delivery');
+                    }
+
+                    quality = Math.max(0, Math.min(100, quality));
+
+                    logger.info('Client-side photo analysis completed', {
+                        imageUrl,
+                        quality,
+                        avgBrightness: Math.round(avgBrightness),
+                        avgSaturation: Math.round(avgSaturation * 100) / 100,
+                    });
+
+                    resolve({
+                        quality,
+                        suggestions,
+                        issues,
+                    });
+                } catch (error) {
+                    reject(error);
+                }
+            };
+
+            img.onerror = () => {
+                reject(new Error('Failed to load image for analysis'));
+            };
+
+            img.src = imageUrl;
+        });
     }
     /**
      * Build Cloudinary URL with transformations

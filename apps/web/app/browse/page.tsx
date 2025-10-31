@@ -11,6 +11,7 @@ import { GlassCard } from '@/components/UI/glass-card';
 import PremiumButton from '@/components/UI/PremiumButton';
 import { SkeletonLoader } from '@/components/UI/SkeletonLoader';
 import { api } from '@/services/api';
+import { logger } from '@pawfectmatch/core';
 import {
   ChartBarIcon,
   ChatBubbleLeftRightIcon,
@@ -330,7 +331,7 @@ export default function BrowsePage() {
     } catch (error) {
       // Revert optimistic update on error
       setLikedPets((prev: string[]) => prev.filter((id: string) => id !== currentPetId));
-      console.error('Failed to like pet:', error);
+      logger.error('Failed to like pet:', error);
       // TODO: Show error toast
     } finally {
       setIsLiking(false);
@@ -356,7 +357,7 @@ export default function BrowsePage() {
       setCurrentPetIndex((prev: number) => (prev + 1) % pets.length);
       setCurrentPhotoIndex(0);
     } catch (error) {
-      console.error('Failed to pass pet:', error);
+      logger.error('Failed to pass pet:', error);
       // TODO: Show error toast
     } finally {
       setIsPassing(false);
@@ -387,7 +388,7 @@ export default function BrowsePage() {
         setShowLoginModal(true);
       }
     } catch (error) {
-      console.error('Failed to initiate chat:', error);
+      logger.error('Failed to initiate chat:', error);
       // Show login modal on error (likely auth issue)
       setActionType('chat');
       setShowLoginModal(true);

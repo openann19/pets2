@@ -4,15 +4,11 @@
  */
 
 import type { Request, Response } from 'express';
+import type { AuthRequest } from '../types/express';
 import axios from 'axios';
 import { z } from 'zod';
 import adminNotifications from '../services/adminNotifications';
 const logger = require('../utils/logger');
-
-// Type definitions
-interface AuthRequest extends Request {
-  userId?: string;
-}
 
 interface ModerationResult {
   flagged: boolean;

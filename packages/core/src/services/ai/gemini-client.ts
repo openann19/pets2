@@ -4,6 +4,7 @@
  */
 
 import axios, { type AxiosInstance } from 'axios';
+import { logger } from '../../utils/logger';
 
 export interface GeminiConfig {
   apiKey: string;
@@ -75,7 +76,7 @@ export class GeminiClient {
 
       return text;
     } catch (error) {
-      console.error('Gemini API error:', error);
+      logger.error('Gemini API error:', error);
       throw new Error('Failed to generate content with Gemini');
     }
   }
@@ -118,7 +119,7 @@ export class GeminiClient {
 
       return text;
     } catch (error) {
-      console.error('Gemini Vision API error:', error);
+      logger.error('Gemini Vision API error:', error);
       throw new Error('Failed to analyze image with Gemini');
     }
   }

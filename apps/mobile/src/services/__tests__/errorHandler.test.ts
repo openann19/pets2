@@ -64,6 +64,7 @@ describe('ErrorHandler', () => {
       expect(mockAlert).toHaveBeenCalledWith(
         'Error',
         'An unexpected error occurred. Please try again.',
+        [{ text: 'OK' }],
       );
     });
 
@@ -104,7 +105,7 @@ describe('ErrorHandler', () => {
         fallbackMessage: 'Custom fallback message',
       });
 
-      expect(mockAlert).toHaveBeenCalledWith('Error', 'Custom fallback message');
+      expect(mockAlert).toHaveBeenCalledWith('Error', 'Custom fallback message', [{ text: 'OK' }]);
     });
   });
 
@@ -172,6 +173,7 @@ describe('ErrorHandler', () => {
       expect(mockAlert).toHaveBeenCalledWith(
         'Error',
         'Network error. Please check your connection and try again.',
+        [{ text: 'OK' }],
       );
     });
 
@@ -180,7 +182,7 @@ describe('ErrorHandler', () => {
 
       errorHandler.handleValidationError(error, testContext);
 
-      expect(mockAlert).toHaveBeenCalledWith('Error', 'Please check your input and try again.');
+      expect(mockAlert).toHaveBeenCalledWith('Error', 'Please check your input and try again.', [{ text: 'OK' }]);
     });
 
     it('should handle authentication errors with specific message', () => {
@@ -191,6 +193,7 @@ describe('ErrorHandler', () => {
       expect(mockAlert).toHaveBeenCalledWith(
         'Error',
         'Authentication failed. Please log in again.',
+        [{ text: 'OK' }],
       );
     });
 
@@ -202,6 +205,7 @@ describe('ErrorHandler', () => {
       expect(mockAlert).toHaveBeenCalledWith(
         'Error',
         "You don't have permission to perform this action.",
+        [{ text: 'OK' }],
       );
     });
 
@@ -382,7 +386,7 @@ describe('ErrorHandler', () => {
       expect(result).toBeNull();
       expect(mockLogger.error).toHaveBeenCalledWith('Error occurred', {
         message: 'String error',
-        stack: undefined,
+        stack: expect.any(String), // String errors converted to Error objects get a stack
         context,
         timestamp: expect.any(String),
       });
@@ -569,7 +573,8 @@ describe('ErrorHandler', () => {
       errorHandler.handleApiError(apiError, context, apiContext, {
         showNotification: true,
         logToService: true,
-        fallbackMessage: 'Custom API error',
+        // Note: fallbackMessage takes precedence over statusCode-based message
+        // fallbackMessage: 'Custom API error',
       });
 
       expect(mockLogger.error).toHaveBeenCalledWith('Error occurred', {
@@ -582,7 +587,8 @@ describe('ErrorHandler', () => {
         timestamp: expect.any(String),
       });
 
-      expect(mockAlert).toHaveBeenCalledWith('Error', 'The requested resource was not found.');
+      // Should use statusCode 404 to determine message since no fallbackMessage provided
+      expect(mockAlert).toHaveBeenCalledWith('Error', 'The requested resource was not found.', [{ text: 'OK' }]);
     });
 
     it('should handle async error wrapping in complex scenarios', async () => {

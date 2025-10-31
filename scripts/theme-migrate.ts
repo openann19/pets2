@@ -9,7 +9,8 @@
  * - Writes a JSON report of remaining refs and edge cases.
  *
  * Usage:
- *   pnpm tsx scripts/theme-migrate.ts "apps/mobile/src/screens/**/*.tsx"
+ *   pnpm tsx scripts/theme-migrate.ts "apps/mobile/src/screens/*.tsx"
+ *   or use glob patterns like: "apps/mobile/src/screens/**"
  * Options:
  *   --dry                  do not write files
  *   --provider=...         module specifier for useTheme (default: "../theme/Provider")
@@ -31,7 +32,7 @@ const providerSpecifier = providerArg ? providerArg.split("=")[1] : providerDefa
 
 const patterns = argv.filter(a => !a.startsWith("--"));
 if (patterns.length === 0) {
-  console.error("Pass patterns, e.g.: pnpm tsx scripts/theme-migrate.ts \"apps/mobile/src/screens/**/*.tsx\"");
+  console.error("Pass patterns, e.g.: pnpm tsx scripts/theme-migrate.ts \"apps/mobile/src/screens/*.tsx\"");
   process.exit(1);
 }
 

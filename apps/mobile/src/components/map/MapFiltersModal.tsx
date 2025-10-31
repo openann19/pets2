@@ -47,7 +47,7 @@ export function MapFiltersModal({
   const handleTimeRangeChange = (timeRange: MapFilters['timeRange']) => {
     onSetFilters({
       ...filters,
-      timeRange,
+      ...(timeRange !== undefined ? { timeRange } : {}),
     });
   };
 

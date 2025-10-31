@@ -77,6 +77,14 @@ class ObservabilityService {
   }
 
   /**
+   * Reset instance for testing purposes only
+   * @internal
+   */
+  static resetInstance(): void {
+    (ObservabilityService as any).instance = undefined;
+  }
+
+  /**
    * Initialize observability services
    */
   initialize(): void {

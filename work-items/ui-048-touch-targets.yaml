@@ -1,0 +1,44 @@
+id: ui-048-touch-targets
+owner: ux
+severity: high
+area: mobile+a11y
+context: |
+  Touch targets smaller than 44×44dp cause usability issues for users with motor impairments.
+  Dense lists (matches, messages) have insufficient hitSlop causing missed taps.
+  WCAG 2.2 Level AA requires minimum 44×44dp touch targets.
+acceptance:
+  - All interactive elements have minimum 44×44dp touch target
+  - hitSlop added to dense list items with 8dp padding on all sides
+  - Visual size can remain smaller if hitSlop compensates
+  - Automated test verifies all Pressable/TouchableOpacity components
+  - No overlapping touch targets
+states:
+  - compliant
+  - non-compliant
+telemetry:
+  - event: TOUCH_TARGET_AUDIT
+    props: [component, width, height, hitSlop, compliant]
+contracts:
+  request: { componentTree: object }
+  response: { violations: array, compliantCount: number }
+  errors: []
+assets:
+  components: [apps/mobile/src/components/**/*.tsx]
+  tests: [apps/mobile/src/__tests__/a11y/touch-targets.test.tsx]
+  scripts: [scripts/audit-touch-targets.ts]
+risks:
+  - Overlapping touch targets in dense layouts
+  - Visual design may need adjustment
+rollback:
+  - Remove hitSlop additions
+  - Restore original component sizes
+links:
+  - https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html
+status: open
+priority: high
+impact: 4
+effort: S
+category: accessibility
+tokens:
+  - spacing.md
+estimated_hours: 6

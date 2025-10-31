@@ -1,14 +1,15 @@
 import { useTheme } from '@mobile/theme';
 import * as Haptics from 'expo-haptics';
-import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useRef, useState } from 'react';
 import { Alert, Animated, StyleSheet, TextInput, View } from 'react-native';
-import { chatService } from '../../services/chatService';
+import { chatMediaService } from '../../services/ChatMediaService';
 import { getExtendedColors } from '../../theme/adapters';
 import { EliteButton } from '../EliteComponents';
 import { GlassContainer } from '../GlassMorphism';
 import { PremiumBody } from '../PremiumTypography';
-import { VoiceRecorder } from './VoiceRecorder';
+import { MediaPicker } from './MediaPicker';
+import { VoiceNoteRecorder } from './VoiceNoteRecorder';
+import type { MediaFile, GifResult, StickerResult } from '../../services/ChatMediaService';
 
 interface MessageInputProps {
   value: string;
@@ -47,6 +48,7 @@ export function MessageInput({
   const [isTyping, setIsTyping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
 
   const messageEntryAnimation = useRef(new Animated.Value(0)).current;
   const sendButtonScale = useRef(new Animated.Value(1)).current;
@@ -111,120 +113,48 @@ export function MessageInput({
     onSend();
   }, [value, isSending, onSend, sendButtonScale]);
 
-  const handleAttachPress = useCallback(async () => {
+  const handleAttachPress = useCallback(() => {
     if (isUploading) return;
-
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setShowMediaPicker(true);
+  }, [isUploading]);
 
-    try {
-      // Request permissions
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission Needed', 'Please grant photo library access to send attachments.');
-        return;
+  const handleMediaSelected = useCallback(
+    async (media: MediaFile | GifResult | StickerResult) => {
+      setIsUploading(true);
+      try {
+        await chatMediaService.sendMedia({
+          matchId,
+          media,
+        });
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        onAttachmentSent?.();
+        setShowMediaPicker(false);
+      } catch (error) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        Alert.alert('Error', 'Failed to send media. Please try again.');
+      } finally {
+        setIsUploading(false);
       }
+    },
+    [matchId, onAttachmentSent],
+  );
 
-      // Show attachment options
-      Alert.alert(
-        'Add Attachment',
-        'Choose an option',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Photo Library',
-            onPress: async () => {
-              setIsUploading(true);
-              try {
-                const result = await ImagePicker.launchImageLibraryAsync({
-                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                  allowsEditing: true,
-                  quality: 0.8,
-                  allowsMultipleSelection: false,
-                });
-
-                if (!result.canceled && result.assets && result.assets[0]) {
-                  const asset = result.assets[0];
-                  // Send attachment using chatService
-                  await chatService.sendAttachment({
-                    matchId,
-                    attachmentType: 'image',
-                    uri: asset.uri,
-                    name: asset.fileName,
-                    contentType: asset.type || 'image/jpeg',
-                  });
-
-                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                  onAttachmentSent?.();
-                }
-              } catch (error) {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-                Alert.alert('Error', 'Failed to send attachment. Please try again.');
-              } finally {
-                setIsUploading(false);
-              }
-            },
-          },
-          {
-            text: 'Take Photo',
-            onPress: async () => {
-              setIsUploading(true);
-              try {
-                const { status } = await ImagePicker.requestCameraPermissionsAsync();
-                if (status !== 'granted') {
-                  Alert.alert('Permission Needed', 'Camera access required to take photos.');
-                  setIsUploading(false);
-                  return;
-                }
-
-                const result = await ImagePicker.launchCameraAsync({
-                  allowsEditing: true,
-                  quality: 0.8,
-                });
-
-                if (!result.canceled && result.assets && result.assets[0]) {
-                  const asset = result.assets[0];
-                  // Send attachment using chatService
-                  await chatService.sendAttachment({
-                    matchId,
-                    attachmentType: 'image',
-                    uri: asset.uri,
-                    name: asset.fileName,
-                    contentType: asset.type || 'image/jpeg',
-                  });
-
-                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                  onAttachmentSent?.();
-                }
-              } catch (error) {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-                Alert.alert('Error', 'Failed to take photo. Please try again.');
-              } finally {
-                setIsUploading(false);
-              }
-            },
-          },
-        ],
-        { cancelable: true },
-      );
-    } catch (error) {
-      Alert.alert('Error', 'Failed to open photo picker.');
-    }
-  }, [isUploading, matchId, onAttachmentSent]);
+  const handleVoicePress = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setShowVoiceRecorder(true);
+  }, []);
 
   const handleEmojiPress = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert('Emoji Picker', 'Emoji picker coming soon! 😊');
+    // Open media picker in sticker mode
+    setShowMediaPicker(true);
   }, []);
-
-  // handleVoicePress reserved for future implementation
-  // const handleVoicePress = useCallback(() => {
-  //   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-  //   setShowVoiceRecorder(true);
-  // }, []);
 
   const handleVoiceNoteSent = useCallback(() => {
     setShowVoiceRecorder(false);
     onVoiceNoteSent?.();
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   }, [onVoiceNoteSent]);
 
   const isNearLimit = characterCount > maxLength * 0.9;
@@ -248,6 +178,9 @@ export function MessageInput({
           ripple={true}
           onPress={handleAttachPress}
           disabled={isUploading}
+          accessibilityLabel={isUploading ? 'Uploading attachment' : 'Add attachment'}
+          accessibilityHint="Tap to attach a photo, video, or file"
+          accessibilityRole="button"
         />
 
         <View style={styles.inputWrapper}>
@@ -259,7 +192,7 @@ export function MessageInput({
               {
                 backgroundColor: 'rgba(255,255,255,0.1)',
                 borderColor: 'rgba(255,255,255,0.2)',
-                color: colors.text,
+                color: colors.onSurface || theme.colors.onSurface,
               },
               isTyping && [
                 styles.textInputFocused,
@@ -287,6 +220,9 @@ export function MessageInput({
             returnKeyType="send"
             onSubmitEditing={handleSend}
             blurOnSubmit={false}
+            accessibilityLabel="Message input"
+            accessibilityHint={`Type your message here. Maximum ${maxLength} characters.`}
+            accessibilityRole="none"
           />
 
           {/* Character Counter */}
@@ -300,13 +236,27 @@ export function MessageInput({
               <PremiumBody
                 size="sm"
                 weight="regular"
-                style={{ color: isOverLimit ? colors.danger : colors.textMuted }}
+                style={{ color: isOverLimit ? colors.danger : colors.onMuted || theme.colors.onMuted }}
               >
                 {characterCount}/{maxLength}
               </PremiumBody>
             </Animated.View>
           )}
         </View>
+
+        <EliteButton
+          testID="voice-button"
+          title=""
+          variant="glass"
+          size="sm"
+          icon="mic-outline"
+          ripple={true}
+          onPress={handleVoicePress}
+          disabled={isSending || isUploading}
+          accessibilityLabel="Record voice note"
+          accessibilityHint="Hold to record a voice message"
+          accessibilityRole="button"
+        />
 
         <EliteButton
           testID="emoji-button"
@@ -316,6 +266,9 @@ export function MessageInput({
           icon="happy-outline"
           ripple={true}
           onPress={handleEmojiPress}
+          accessibilityLabel="Add emoji or sticker"
+          accessibilityHint="Tap to open emoji and sticker picker"
+          accessibilityRole="button"
         />
 
         <Animated.View style={{ transform: [{ scale: sendButtonScale }] }}>
@@ -330,17 +283,30 @@ export function MessageInput({
             shimmer={!!(isSending || isUploading)}
             onPress={handleSend}
             disabled={(!value.trim() && !isUploading) || isSending || isUploading}
+            accessibilityLabel={isSending || isUploading ? 'Sending message' : 'Send message'}
+            accessibilityHint="Tap to send your message"
+            accessibilityRole="button"
+            accessibilityState={{ disabled: (!value.trim() && !isUploading) || isSending || isUploading }}
           />
         </Animated.View>
       </View>
 
-      {/* Voice Recorder */}
-      {showVoiceRecorder && (
-        <VoiceRecorder
-          matchId={matchId}
-          onVoiceNoteSent={handleVoiceNoteSent}
-        />
-      )}
+      {/* Media Picker */}
+      <MediaPicker
+        visible={showMediaPicker}
+        onClose={() => setShowMediaPicker(false)}
+        onMediaSelected={handleMediaSelected}
+        mode="all"
+        matchId={matchId}
+      />
+
+      {/* Voice Note Recorder */}
+      <VoiceNoteRecorder
+        visible={showVoiceRecorder}
+        matchId={matchId}
+        onClose={() => setShowVoiceRecorder(false)}
+        onSent={handleVoiceNoteSent}
+      />
     </GlassContainer>
   );
 }

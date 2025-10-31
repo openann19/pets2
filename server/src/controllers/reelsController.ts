@@ -4,6 +4,7 @@
  */
 
 import type { Request, Response } from 'express';
+import type { AuthRequest } from '../types/express';
 import type { IUserDocument } from '../types/mongoose';
 import Reel from '../models/Reel';
 import Template from '../models/Template';
@@ -14,11 +15,6 @@ import ModerationFlag from '../models/ModerationFlag';
 import RemixEdge from '../models/RemixEdge';
 import { z } from 'zod';
 const logger = require('../utils/logger');
-
-// Type definitions
-interface AuthRequest extends Request {
-  user?: IUserDocument;
-}
 
 interface CreateReelBody {
   templateId: string;
@@ -145,7 +141,7 @@ export const createReel = async (req: AuthRequest, res: Response): Promise<void>
         createdAt: reel.createdAt,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error creating reel:', error);
     fail(res, 500, 'Failed to create reel');
   }
@@ -219,7 +215,7 @@ export const addClips = async (req: AuthRequest, res: Response): Promise<void> =
       reelId: reel._id,
       clipCount: clips.length,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error adding clips:', error);
     fail(res, 500, 'Failed to add clips');
   }
@@ -269,7 +265,7 @@ export const renderReel = async (req: AuthRequest, res: Response): Promise<void>
       status: reel.status,
       message: 'Reel queued for rendering',
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error rendering reel:', error);
     fail(res, 500, 'Failed to render reel');
   }
@@ -310,7 +306,7 @@ export const getReel = async (req: AuthRequest, res: Response): Promise<void> =>
         track: track ? { id: track._id, title: track.title, artist: track.artist } : null,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error getting reel:', error);
     fail(res, 500, 'Failed to get reel');
   }
@@ -359,7 +355,7 @@ export const shareReel = async (req: AuthRequest, res: Response): Promise<void> 
       reelId: reel._id,
       shares: reel.kpiShares,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error sharing reel:', error);
     fail(res, 500, 'Failed to share reel');
   }
@@ -416,7 +412,7 @@ export const remixReel = async (req: AuthRequest, res: Response): Promise<void> 
         remixOfId: remixReel.remixOfId,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error creating remix:', error);
     fail(res, 500, 'Failed to create remix');
   }
@@ -459,7 +455,7 @@ export const listReels = async (req: AuthRequest, res: Response): Promise<void> 
       limit,
       skip,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error listing reels:', error);
     fail(res, 500, 'Failed to list reels');
   }

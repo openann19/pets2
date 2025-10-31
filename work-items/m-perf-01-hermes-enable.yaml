@@ -1,0 +1,80 @@
+id: m-perf-01-hermes-enable
+owner: performance
+severity: critical
+area: mobile
+status: open
+context: |
+  Hermes JavaScript engine is disabled, causing 20-30% slower startup times.
+  Current behavior: Using JSC (JavaScriptCore) which is slower than Hermes.
+  Why it matters: Poor user experience, especially on low-end Android devices. Hermes provides faster startup, lower memory usage, and better performance.
+  
+  Use Case:
+  1. User opens app
+  2. App takes 3-5 seconds to initialize (with JSC)
+  3. With Hermes: 1.5-3 seconds initialization
+  4. Faster subsequent navigations
+  5. Lower memory footprint
+
+acceptance:
+  - [ ] Enable Hermes in app.json/app.config.ts
+  - [ ] Enable Hermes in android/app/build.gradle
+  - [ ] Enable Hermes in iOS Podfile (if applicable)
+  - [ ] Verify Hermes is active in dev builds
+  - [ ] Verify Hermes is active in release builds
+  - [ ] Test app functionality with Hermes enabled
+  - [ ] Performance benchmark: cold start time < 3s
+  - [ ] Performance benchmark: memory usage reduced
+  - [ ] No regressions in existing features
+  - [ ] Update CI/CD to build with Hermes
+
+states:
+  - disabled
+  - enabled-dev
+  - enabled-prod
+  - error
+
+telemetry:
+  - event: PERF_HERMES_ENABLED
+    props: [platform, buildType, timestamp]
+  - event: PERF_COLD_START_MEASURED
+    props: [engine, duration, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  configs:
+    - apps/mobile/app.json
+    - apps/mobile/app.config.cjs
+    - apps/mobile/android/app/build.gradle
+    - apps/mobile/ios/Podfile
+  tests:
+    - apps/mobile/__tests__/performance/hermes.test.ts
+    - apps/mobile/__tests__/performance/cold-start.test.ts
+
+risks:
+  - Some native modules may not be compatible with Hermes
+  - Debugging may be more difficult with Hermes
+  - Potential runtime errors if code uses Hermes-incompatible features
+  - Build failures if configuration is incorrect
+
+rollback:
+  - Revert app.json changes
+  - Revert build.gradle changes
+  - Clear build cache and rebuild
+
+links:
+  - docs: https://reactnative.dev/docs/hermes
+  - expo: https://docs.expo.dev/guides/using-hermes/
+
+dependencies:
+  - Expo SDK version supporting Hermes
+  - React Native version compatibility
+  - Native module compatibility checks
+
+timeline:
+  start: 2025-01-30
+  config: 2025-01-30
+  testing: 2025-01-31
+  deploy: 2025-02-01
+

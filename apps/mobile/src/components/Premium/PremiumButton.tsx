@@ -19,6 +19,7 @@ import {
   Animated,
 } from 'react-native';
 import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 interface PremiumButtonProps {
   title: string;
@@ -59,7 +60,7 @@ function PremiumButtonComponent({
   glow = false,
   style,
 }: PremiumButtonProps): React.JSX.Element {
-  const theme = useTheme();
+  const theme = useTheme() as AppTheme;
   const [, setIsPressed] = useState(false);
   const [animatedScale] = useState(() => new Animated.Value(1));
   const [animatedGlow] = useState(() => new Animated.Value(0));
@@ -168,12 +169,12 @@ function PremiumButtonComponent({
         blur: true,
       },
       gradient: {
-        colors: ['#667eea', '#764ba2', '#f093fb', '#f5576c'],
-        textColor: theme.colors.onSurface,
-        shadowColor: '#667eea',
+        colors: [...theme.palette.gradients.primary, ...theme.palette.gradients.info],
+        textColor: theme.colors.onPrimary,
+        shadowColor: theme.palette.gradients.primary[0],
       },
       neon: {
-        colors: ['#1a1a1a', '#1a1a1a'],
+        colors: [theme.colors.bg, theme.colors.surface],
         textColor: theme.colors.primary,
         shadowColor: theme.colors.primary,
         border: true,
@@ -204,6 +205,7 @@ function PremiumButtonComponent({
 
   const variantStyle = getVariantStyles();
   const sizeStyle = getSizeStyles();
+  const styles = makeStyles(theme);
 
   // Icon rendering helper
   const renderIcon = () => {
@@ -215,8 +217,8 @@ function PremiumButtonComponent({
         size={sizeStyle.fontSize + 2}
         color={loading ? 'transparent' : variantStyle.textColor}
         style={{
-          marginRight: iconPosition === 'left' ? 8 : 0,
-          marginLeft: iconPosition === 'right' ? 8 : 0,
+          marginRight: iconPosition === 'left' ? theme.spacing.sm : 0,
+          marginLeft: iconPosition === 'right' ? theme.spacing.sm : 0,
         }}
       />
     );
@@ -254,7 +256,7 @@ function PremiumButtonComponent({
         <View
           style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
-            { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
+            { backgroundColor: theme.utils.alpha(theme.colors.onSurface, 0.1) },
           ])}
         />
 
@@ -398,31 +400,32 @@ function PremiumButtonComponent({
 
 export const PremiumButton = PremiumButtonComponent;
 
-const styles = StyleSheet.create({
-  buttonContent: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-  },
-  buttonText: {
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  loadingContainer: {
-    position: 'absolute',
-    right: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    buttonContent: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: theme.spacing.md,
+    },
+    buttonText: {
+      fontWeight: '600',
+      textAlign: 'center',
+    },
+    loadingContainer: {
+      position: 'absolute',
+      right: theme.spacing.md,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingDot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });
 
 export default PremiumButton;

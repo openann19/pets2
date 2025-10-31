@@ -314,12 +314,12 @@ export const getCompleteProfile = async (
 
     // Get privacy-safe stats (only show user's own data)
     const stats = {
-      totalPets: (user as any).pets?.length || 0,
-      totalMatches: (user as any).matches?.length || 0,
-      profileViews: (user as any).analytics?.profileViews || 0,
-      joinDate: (user as any).createdAt,
-      lastActive: (user as any).analytics?.lastActive,
-      accountAge: Math.floor((Date.now() - new Date((user as any).createdAt).getTime()) / (1000 * 60 * 60 * 24))
+      totalPets: user.pets?.length || 0,
+      totalMatches: user.matches?.length || 0,
+      profileViews: user.analytics?.profileViews || 0,
+      joinDate: user.createdAt,
+      lastActive: user.analytics?.lastActive,
+      accountAge: Math.floor((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24))
     };
 
     res.json({
@@ -329,8 +329,8 @@ export const getCompleteProfile = async (
         stats,
         completenessScore,
         recentActivity,
-        privacySettings: (user as any).privacySettings || {},
-        preferences: (user as any).preferences || {}
+        privacySettings: user.privacySettings || {},
+        preferences: user.preferences || {}
       }
     });
 
@@ -450,16 +450,13 @@ export const updatePrivacySettings = async (
       return;
     }
 
-    (user as any).privacySettings = {
-      ...(user as any).privacySettings,
+    user.privacySettings = {
+      ...user.privacySettings,
       profileVisibility: profileVisibility || 'public',
       showOnlineStatus: showOnlineStatus !== false,
       showLastActive: showLastActive !== false,
-      allowMessaging: allowMessaging !== false,
-      showPets: showPets !== false,
-      showLocation: showLocation !== false,
-      allowPetDiscovery: allowPetDiscovery !== false,
-      dataSharing: dataSharing || {}
+      allowMessages: allowMessaging !== false ? 'all' : 'none',
+      showLocation: showLocation !== false
     };
 
     await user.save();
@@ -467,7 +464,7 @@ export const updatePrivacySettings = async (
     res.json({
       success: true,
       message: 'Privacy settings updated successfully',
-      data: { privacySettings: (user as any).privacySettings }
+      data: { privacySettings: user.privacySettings }
     });
 
   } catch (error: unknown) {
@@ -565,8 +562,15 @@ export const uploadProfilePhotos = async (
       return;
     }
 
+    // Note: photos field needs to be added to User schema
+    // For now, using type assertion as photos is not in IUserDocument interface
+    interface UserWithPhotos extends IUserDocument {
+      photos?: UserPhoto[];
+    }
+    const userWithPhotos = user as unknown as UserWithPhotos;
+    
     // Limit to 6 photos maximum
-    const currentPhotoCount = (user as any).photos?.length || 0;
+    const currentPhotoCount = userWithPhotos.photos?.length || 0;
     if (currentPhotoCount + req.files.length > 6) {
       res.status(400).json({
         success: false,
@@ -601,16 +605,16 @@ export const uploadProfilePhotos = async (
   }
 
     // Add photos to user profile
-    (user as any).photos = (user as any).photos || [];
-    (user as any).photos.push(...uploadedPhotos);
+    userWithPhotos.photos = userWithPhotos.photos || [];
+    userWithPhotos.photos.push(...uploadedPhotos);
 
     await user.save();
 
     res.json({
       success: true,
       message: `${uploadedPhotos.length} photos uploaded successfully`,
-      data: {
-        photos: (user as any).photos,
+        data: {
+        photos: userWithPhotos.photos,
         uploadedCount: uploadedPhotos.length
       }
     });
@@ -642,7 +646,12 @@ export const deleteProfilePhoto = async (
       return;
     }
 
-    const photoIndex = (user as any).photos?.findIndex((photo: UserPhoto) => photo._id?.toString() === photoId);
+    interface UserWithPhotos extends IUserDocument {
+      photos?: UserPhoto[];
+    }
+    const userWithPhotos = user as unknown as UserWithPhotos;
+    
+    const photoIndex = userWithPhotos.photos?.findIndex((photo: UserPhoto) => photo._id?.toString() === photoId);
     if (photoIndex === undefined || photoIndex === -1) {
       res.status(404).json({
         success: false,
@@ -651,7 +660,7 @@ export const deleteProfilePhoto = async (
       return;
     }
 
-    const photo = (user as any).photos[photoIndex];
+    const photo = userWithPhotos.photos![photoIndex];
 
     // Delete from Cloudinary
     if (photo.publicId) {
@@ -663,11 +672,11 @@ export const deleteProfilePhoto = async (
     }
 
     // Remove from user photos
-    (user as any).photos.splice(photoIndex, 1);
+    userWithPhotos.photos!.splice(photoIndex, 1);
 
     // If this was the primary photo, set the first remaining photo as primary
-    if (photo.isPrimary && (user as any).photos.length > 0) {
-      (user as any).photos[0].isPrimary = true;
+    if (photo.isPrimary && userWithPhotos.photos!.length > 0) {
+      userWithPhotos.photos![0].isPrimary = true;
     }
 
     await user.save();
@@ -675,7 +684,7 @@ export const deleteProfilePhoto = async (
     res.json({
       success: true,
       message: 'Photo deleted successfully',
-      data: { photos: (user as any).photos }
+      data: { photos: userWithPhotos.photos }
     });
 
   } catch (error: unknown) {
@@ -705,13 +714,18 @@ export const setPrimaryPhoto = async (
       return;
     }
 
+    interface UserWithPhotos extends IUserDocument {
+      photos?: UserPhoto[];
+    }
+    const userWithPhotos = user as unknown as UserWithPhotos;
+    
     // Reset all photos to non-primary
-    (user as any).photos?.forEach((photo: UserPhoto) => {
+    userWithPhotos.photos?.forEach((photo: UserPhoto) => {
       photo.isPrimary = false;
     });
 
     // Set the specified photo as primary
-    const photo = (user as any).photos?.find((photo: UserPhoto) => photo._id?.toString() === photoId);
+    const photo = userWithPhotos.photos?.find((photo: UserPhoto) => photo._id?.toString() === photoId);
     if (photo) {
       photo.isPrimary = true;
     } else {
@@ -727,7 +741,7 @@ export const setPrimaryPhoto = async (
     res.json({
       success: true,
       message: 'Primary photo updated successfully',
-      data: { photos: (user as any).photos }
+      data: { photos: userWithPhotos.photos }
     });
 
   } catch (error: unknown) {
@@ -826,18 +840,39 @@ export const exportUserData = async (
     }
 
     // Prepare export data (exclude sensitive information)
+    // Note: user is typed from .lean() so it's a plain object
+    interface LeanUser {
+      firstName?: string;
+      lastName?: string;
+      bio?: string;
+      dateOfBirth?: Date;
+      location?: LocationData;
+      preferences?: UserPreferences;
+      createdAt?: Date;
+      _id?: string;
+      analytics?: {
+        lastActive?: Date;
+        totalSwipes?: number;
+        totalLikes?: number;
+        totalMessagesSent?: number;
+      };
+      pets?: IPetDocument[];
+      matches?: Array<{ compatibilityScore?: number; createdAt?: Date }>;
+    }
+    const leanUser = user as unknown as LeanUser;
+    
     const exportData = {
       profile: {
-        firstName: (user as any).firstName,
-        lastName: (user as any).lastName,
-        bio: (user as any).bio,
-        dateOfBirth: (user as any).dateOfBirth,
-        location: (user as any).location,
-        preferences: (user as any).preferences,
-        createdAt: (user as any).createdAt,
-        lastActive: (user as any).analytics?.lastActive
+        firstName: leanUser.firstName,
+        lastName: leanUser.lastName,
+        bio: leanUser.bio,
+        dateOfBirth: leanUser.dateOfBirth,
+        location: leanUser.location,
+        preferences: leanUser.preferences,
+        createdAt: leanUser.createdAt,
+        lastActive: leanUser.analytics?.lastActive
       },
-      pets: (user as any).pets?.map((pet: IPetDocument) => ({
+      pets: leanUser.pets?.map((pet: IPetDocument) => ({
         name: pet.name,
         species: pet.species,
         breed: pet.breed,
@@ -846,16 +881,16 @@ export const exportUserData = async (
         personalityTags: pet.personalityTags,
         createdAt: pet.createdAt
       })) || [],
-      matches: (user as any).matches?.map((match: { compatibilityScore?: number; createdAt?: Date }) => ({
+      matches: leanUser.matches?.map((match: { compatibilityScore?: number; createdAt?: Date }) => ({
         compatibilityScore: match.compatibilityScore,
         createdAt: match.createdAt
       })) || [],
       statistics: {
-        totalPets: (user as any).pets?.length || 0,
-        totalMatches: (user as any).matches?.length || 0,
-        totalSwipes: (user as any).analytics?.totalSwipes || 0,
-        totalLikes: (user as any).analytics?.totalLikes || 0,
-        totalMessages: (user as any).analytics?.totalMessagesSent || 0
+        totalPets: leanUser.pets?.length || 0,
+        totalMatches: leanUser.matches?.length || 0,
+        totalSwipes: leanUser.analytics?.totalSwipes || 0,
+        totalLikes: leanUser.analytics?.totalLikes || 0,
+        totalMessages: leanUser.analytics?.totalMessagesSent || 0
       },
       exportDate: new Date(),
       version: '1.0'
@@ -863,7 +898,7 @@ export const exportUserData = async (
 
     // Set headers for file download
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', `attachment; filename=pawfectmatch-data-${(user as any)._id}-${new Date().toISOString().split('T')[0]}.json`);
+    res.setHeader('Content-Disposition', `attachment; filename=pawfectmatch-data-${leanUser._id}-${new Date().toISOString().split('T')[0]}.json`);
 
     res.json(exportData);
 
@@ -897,9 +932,13 @@ export const deactivateAccount = async (
     // Mark as inactive
     user.isActive = false;
     user.status = 'suspended';
-    (user as any).deactivatedAt = new Date();
-    (user as any).deactivationReason = reason;
-    (user as any).deactivationFeedback = feedback;
+    // Note: deactivatedAt, deactivationReason, deactivationFeedback are not in User schema
+    // These would need to be added to the schema for proper typing
+    // For now, using a type-safe approach with Record
+    const userRecord = user as unknown as Record<string, unknown>;
+    userRecord.deactivatedAt = new Date();
+    userRecord.deactivationReason = reason;
+    userRecord.deactivationFeedback = feedback;
 
     // Deactivate all pets
     await Pet.updateMany({ owner: req.userId }, { isActive: false });
@@ -912,7 +951,7 @@ export const deactivateAccount = async (
       success: true,
       message: 'Account deactivated successfully. You can reactivate at any time.',
       data: {
-        deactivatedAt: (user as any).deactivatedAt,
+        deactivatedAt: userRecord.deactivatedAt,
         canReactivate: true
       }
     });

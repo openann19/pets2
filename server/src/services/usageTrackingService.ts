@@ -1,4 +1,6 @@
 import User from '../models/User';
+import type { IUserDocument } from '../models/User';
+import type { HydratedDocument } from 'mongoose';
 const logger = require('../utils/logger');
 
 // Interface for swipe action
@@ -39,11 +41,27 @@ class UsageTrackingService {
         throw new Error('User not found');
       }
       
+      const userDoc = user as unknown as HydratedDocument<IUserDocument>;
+      
       // Initialize premium if it doesn't exist
-      if (!user.premium) {
-        user.premium = {
+      if (!userDoc.premium) {
+        userDoc.premium = {
           isActive: false,
-          plan: 'basic' as const,
+          plan: 'basic',
+          expiresAt: null,
+          cancelAtPeriodEnd: false,
+          paymentStatus: 'active',
+          features: {
+            unlimitedLikes: false,
+            boostProfile: false,
+            seeWhoLiked: false,
+            advancedFilters: false,
+            aiMatching: false,
+            prioritySupport: false,
+            globalPassport: false,
+            readReceipts: false,
+            videoCalls: false
+          },
           usage: {
             swipesUsed: 0,
             swipesLimit: 5, // Business Model: 5 daily swipes for free users
@@ -53,16 +71,14 @@ class UsageTrackingService {
             boostsLimit: 0,
             messagesSent: 0,
             profileViews: 0,
-            rewindsUsed: 0,
-            iapSuperLikes: 0,
-            iapBoosts: 0
+            rewindsUsed: 0
           }
         };
       }
 
       // Initialize usage if it doesn't exist
-      if (!user.premium.usage) {
-        user.premium.usage = {
+      if (!userDoc.premium.usage) {
+        userDoc.premium.usage = {
           swipesUsed: 0,
           swipesLimit: 5, // Business Model: 5 daily swipes for free users
           superLikesUsed: 0,
@@ -71,15 +87,13 @@ class UsageTrackingService {
           boostsLimit: 0,
           messagesSent: 0,
           profileViews: 0,
-          rewindsUsed: 0,
-          iapSuperLikes: 0,
-          iapBoosts: 0
+          rewindsUsed: 0
         };
       }
 
       // Initialize analytics if it doesn't exist
-      if (!user.analytics) {
-        user.analytics = {
+      if (!userDoc.analytics) {
+        userDoc.analytics = {
           totalSwipes: 0,
           totalLikes: 0,
           totalMatches: 0,
@@ -95,35 +109,35 @@ class UsageTrackingService {
       }
 
       // Increment swipe count
-      if (user.premium?.usage) {
-        user.premium.usage.swipesUsed = (user.premium.usage.swipesUsed || 0) + 1;
+      if (userDoc.premium?.usage) {
+        userDoc.premium.usage.swipesUsed = (userDoc.premium.usage.swipesUsed || 0) + 1;
       }
       
       // Track in analytics
-      user.analytics.totalSwipes = (user.analytics.totalSwipes || 0) + 1;
+      userDoc.analytics.totalSwipes = (userDoc.analytics.totalSwipes || 0) + 1;
       
       if (action === 'like') {
-        (user.analytics as any).totalLikes = (user.analytics.totalLikes || 0) + 1;
+        userDoc.analytics.totalLikes = (userDoc.analytics.totalLikes || 0) + 1;
       }
       
       // Add swipe event to user history
-      if (!user.analytics.events) {
-        user.analytics.events = [];
+      if (!userDoc.analytics.events) {
+        userDoc.analytics.events = [];
       }
-      (user.analytics as any).events.push({
+      userDoc.analytics.events.push({
         type: 'swipe',
         timestamp: new Date(),
         metadata: { petId, action }
       });
       
-      await user.save();
+      await userDoc.save();
       
       logger.info('Swipe tracked', { 
         userId, 
         petId,
         action,
-        swipesUsed: user.premium?.usage?.swipesUsed || 0,
-        plan: user.premium?.plan || 'basic'
+        swipesUsed: userDoc.premium?.usage?.swipesUsed || 0,
+        plan: userDoc.premium?.plan || 'basic'
       });
       
       return { success: true };
@@ -143,42 +157,58 @@ class UsageTrackingService {
         throw new Error('User not found');
       }
 
+      const userDoc = user as unknown as HydratedDocument<IUserDocument>;
+
       // Initialize premium and usage
-      if (!user.premium) {
-        user.premium = {
+      if (!userDoc.premium) {
+        userDoc.premium = {
           isActive: false,
-          plan: 'basic' as const,
-          usage: { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 }
+          plan: 'basic',
+          expiresAt: null,
+          cancelAtPeriodEnd: false,
+          paymentStatus: 'active',
+          features: {
+            unlimitedLikes: false,
+            boostProfile: false,
+            seeWhoLiked: false,
+            advancedFilters: false,
+            aiMatching: false,
+            prioritySupport: false,
+            globalPassport: false,
+            readReceipts: false,
+            videoCalls: false
+          },
+          usage: { swipesUsed: 0, swipesLimit: 5, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 } // Business Model: 5 daily swipes for free users
         };
       }
-      if (!user.premium.usage) {
-        user.premium.usage = { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 };
+      if (!userDoc.premium.usage) {
+        userDoc.premium.usage = { swipesUsed: 0, swipesLimit: 5, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 }; // Business Model: 5 daily swipes for free users
       }
-      if (!user.analytics) {
-        user.analytics = { totalSwipes: 0, totalLikes: 0, totalMatches: 0, profileViews: 0, lastActive: new Date(), totalPetsCreated: 0, totalMessagesSent: 0, totalSubscriptionsStarted: 0, totalSubscriptionsCancelled: 0, totalPremiumFeaturesUsed: 0, events: [] };
+      if (!userDoc.analytics) {
+        userDoc.analytics = { totalSwipes: 0, totalLikes: 0, totalMatches: 0, profileViews: 0, lastActive: new Date(), totalPetsCreated: 0, totalMessagesSent: 0, totalSubscriptionsStarted: 0, totalSubscriptionsCancelled: 0, totalPremiumFeaturesUsed: 0, events: [] };
       }
       
       // Increment super like count
-      if (user.premium?.usage) {
-        user.premium.usage.superLikesUsed = (user.premium.usage.superLikesUsed || 0) + 1;
+      if (userDoc.premium?.usage) {
+        userDoc.premium.usage.superLikesUsed = (userDoc.premium.usage.superLikesUsed || 0) + 1;
       }
       
       // Add super like event to user history
-      if (!user.analytics.events) {
-        user.analytics.events = [];
+      if (!userDoc.analytics.events) {
+        userDoc.analytics.events = [];
       }
-      (user.analytics as any).events.push({
+      userDoc.analytics.events.push({
         type: 'superlike',
         timestamp: new Date(),
-        metadata: { count: user.premium.usage.superLikesUsed }
+        metadata: { count: userDoc.premium.usage.superLikesUsed }
       });
       
-      await user.save();
+      await userDoc.save();
       
       logger.info('Super like tracked', { 
         userId,
-        superLikesUsed: user.premium?.usage?.superLikesUsed || 0,
-        plan: user.premium?.plan || 'basic'
+        superLikesUsed: userDoc.premium?.usage?.superLikesUsed || 0,
+        plan: userDoc.premium?.plan || 'basic'
       });
       
       return { success: true };
@@ -198,42 +228,58 @@ class UsageTrackingService {
         throw new Error('User not found');
       }
 
+      const userDoc = user as unknown as HydratedDocument<IUserDocument>;
+
       // Initialize premium and usage
-      if (!user.premium) {
-        user.premium = {
+      if (!userDoc.premium) {
+        userDoc.premium = {
           isActive: false,
-          plan: 'basic' as const,
-          usage: { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 }
+          plan: 'basic',
+          expiresAt: null,
+          cancelAtPeriodEnd: false,
+          paymentStatus: 'active',
+          features: {
+            unlimitedLikes: false,
+            boostProfile: false,
+            seeWhoLiked: false,
+            advancedFilters: false,
+            aiMatching: false,
+            prioritySupport: false,
+            globalPassport: false,
+            readReceipts: false,
+            videoCalls: false
+          },
+          usage: { swipesUsed: 0, swipesLimit: 5, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 } // Business Model: 5 daily swipes for free users
         };
       }
-      if (!user.premium.usage) {
-        user.premium.usage = { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 };
+      if (!userDoc.premium.usage) {
+        userDoc.premium.usage = { swipesUsed: 0, swipesLimit: 5, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 }; // Business Model: 5 daily swipes for free users
       }
-      if (!user.analytics) {
-        user.analytics = { totalSwipes: 0, totalLikes: 0, totalMatches: 0, profileViews: 0, lastActive: new Date(), totalPetsCreated: 0, totalMessagesSent: 0, totalSubscriptionsStarted: 0, totalSubscriptionsCancelled: 0, totalPremiumFeaturesUsed: 0, events: [] };
+      if (!userDoc.analytics) {
+        userDoc.analytics = { totalSwipes: 0, totalLikes: 0, totalMatches: 0, profileViews: 0, lastActive: new Date(), totalPetsCreated: 0, totalMessagesSent: 0, totalSubscriptionsStarted: 0, totalSubscriptionsCancelled: 0, totalPremiumFeaturesUsed: 0, events: [] };
       }
       
       // Increment boost count
-      if (user.premium?.usage) {
-        user.premium.usage.boostsUsed = (user.premium.usage.boostsUsed || 0) + 1;
+      if (userDoc.premium?.usage) {
+        userDoc.premium.usage.boostsUsed = (userDoc.premium.usage.boostsUsed || 0) + 1;
         
         // Add boost event to user history
-        if (!user.analytics.events) {
-          user.analytics.events = [];
+        if (!userDoc.analytics.events) {
+          userDoc.analytics.events = [];
         }
-        (user.analytics as any).events.push({
+        userDoc.analytics.events.push({
           type: 'boost',
           timestamp: new Date(),
-          metadata: { count: user.premium.usage.boostsUsed }
+          metadata: { count: userDoc.premium.usage.boostsUsed }
         });
       }
       
-      await user.save();
+      await userDoc.save();
       
       logger.info('Boost tracked', { 
         userId,
-        boostsUsed: user.premium?.usage?.boostsUsed || 0,
-        plan: user.premium?.plan || 'basic'
+        boostsUsed: userDoc.premium?.usage?.boostsUsed || 0,
+        plan: userDoc.premium?.plan || 'basic'
       });
       
       return { success: true };
@@ -244,7 +290,8 @@ class UsageTrackingService {
   }
   
   /**
-   * Get usage stats for a user
+   * Get usage stats for a user with daily reset logic
+   * Calculates remaining swipes for today based on daily limit
    */
   async getUsageStats(userId: string): Promise<UsageStatsResult> {
     try {
@@ -253,22 +300,109 @@ class UsageTrackingService {
         throw new Error('User not found');
       }
       
+      const userDoc = user as IUserDocument;
+      
+      // Calculate today's swipes (reset daily)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const swipesToday = userDoc.swipedPets?.filter((swipe: { swipedAt: Date }) => {
+        const swipeDate = new Date(swipe.swipedAt);
+        return swipeDate >= today;
+      }).length || 0;
+      
+      // Determine limit based on plan - Business Model: 5 daily swipes for free users
+      let swipesLimit = 5; // Default free tier limit
+      let superLikesLimit = 0;
+      let boostsLimit = 0;
+      
+      if (userDoc.premium?.isActive && 
+          (!userDoc.premium.expiresAt || userDoc.premium.expiresAt > new Date())) {
+        const plan = userDoc.premium.plan?.toLowerCase() || 'free';
+        
+        if (plan === 'premium' || plan === 'ultimate') {
+          swipesLimit = -1; // Unlimited
+          superLikesLimit = plan === 'ultimate' ? -1 : 5; // Unlimited for Ultimate, 5/week for Premium
+          boostsLimit = plan === 'ultimate' ? -1 : 1; // Unlimited for Ultimate, 1/month for Premium
+        }
+      }
+      
+      // Calculate remaining swipes
+      const swipesRemaining = swipesLimit === -1 
+        ? -1 // Unlimited
+        : Math.max(0, swipesLimit - swipesToday);
+      
+      // Get IAP balances for free users (using optional chaining for type safety)
+      const iapSuperLikes = (userDoc.premium?.usage as any)?.iapSuperLikes || 0;
+      const iapBoosts = (userDoc.premium?.usage as any)?.iapBoosts || 0;
+      
       const usageStats: UsageStats = {
-        swipesUsed: (user.premium as any)?.usage?.swipesUsed || 0,
-        swipesLimit: (user.premium as any)?.usage?.swipesLimit || 50,
-        superLikesUsed: (user.premium as any)?.usage?.superLikesUsed || 0,
-        superLikesLimit: (user.premium as any)?.usage?.superLikesLimit || 0,
-        boostsUsed: (user.premium as any)?.usage?.boostsUsed || 0,
-        boostsLimit: (user.premium as any)?.usage?.boostsLimit || 0,
-        profileViews: (user.analytics as any)?.profileViews || 0,
-        messagesSent: (user.analytics as any)?.totalMessagesSent || 0,
-        matchRate: (user.analytics as any)?.totalMatches && (user.analytics as any)?.totalSwipes
-          ? Math.round(((user.analytics as any).totalMatches / (user.analytics as any).totalSwipes) * 100) || 0 : 0
+        swipesUsed: swipesToday,
+        swipesLimit,
+        superLikesUsed: userDoc.premium?.usage?.superLikesUsed || 0,
+        superLikesLimit: superLikesLimit === -1 ? -1 : superLikesLimit + iapSuperLikes,
+        boostsUsed: userDoc.premium?.usage?.boostsUsed || 0,
+        boostsLimit: boostsLimit === -1 ? -1 : boostsLimit + iapBoosts,
+        profileViews: userDoc.analytics?.profileViews || 0,
+        messagesSent: userDoc.analytics?.totalMessagesSent || 0,
+        matchRate: userDoc.analytics?.totalMatches && userDoc.analytics?.totalSwipes
+          ? Math.round(((userDoc.analytics.totalMatches / userDoc.analytics.totalSwipes) * 100) || 0) : 0
       };
+      
+      logger.info('Usage stats retrieved', {
+        userId,
+        swipesToday,
+        swipesLimit,
+        swipesRemaining,
+        plan: userDoc.premium?.plan || 'free'
+      });
       
       return { success: true, data: usageStats };
     } catch (error) {
       logger.error('Error getting usage stats', { error: (error as Error).message, userId });
+      throw error;
+    }
+  }
+  
+  /**
+   * Get remaining swipes for today
+   * Returns object with used, limit, remaining, and warning threshold
+   */
+  async getDailySwipeStatus(userId: string): Promise<{
+    used: number;
+    limit: number;
+    remaining: number;
+    isUnlimited: boolean;
+    warningThreshold: number; // Show warning when remaining <= this
+  }> {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const swipesToday = user.swipedPets?.filter((swipe: { swipedAt: Date }) => {
+        const swipeDate = new Date(swipe.swipedAt);
+        return swipeDate >= today;
+      }).length || 0;
+      
+      const isPremium = user.premium?.isActive &&
+        (!user.premium.expiresAt || user.premium.expiresAt > new Date());
+      
+      const swipesLimit = isPremium ? -1 : 5; // Business Model: 5 daily swipes for free users
+      
+      return {
+        used: swipesToday,
+        limit: swipesLimit,
+        remaining: swipesLimit === -1 ? -1 : Math.max(0, swipesLimit - swipesToday),
+        isUnlimited: swipesLimit === -1,
+        warningThreshold: swipesLimit === -1 ? -1 : Math.max(1, Math.floor(swipesLimit * 0.2)), // Warn at 20% remaining
+      };
+    } catch (error) {
+      logger.error('Error getting daily swipe status', { error: (error as Error).message, userId });
       throw error;
     }
   }
@@ -287,6 +421,18 @@ class UsageTrackingService {
         user.premium = {
           isActive: false,
           plan: 'free',
+          expiresAt: new Date(),
+          cancelAtPeriodEnd: false,
+          paymentStatus: 'active',
+          features: {
+            unlimitedLikes: false,
+            boostProfile: false,
+            seeWhoLiked: false,
+            advancedFilters: false,
+            aiMatching: false,
+            prioritySupport: false,
+            globalPassport: false
+          },
           usage: { swipesUsed: 0, swipesLimit: 5, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0, iapSuperLikes: 0, iapBoosts: 0 }
         };
       } else if (!user.premium.usage) {

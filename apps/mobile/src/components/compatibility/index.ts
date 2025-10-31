@@ -3,6 +3,8 @@
  */
 
 export { PetSelectionCard } from './PetSelectionCard';
+export { PetSelectionSection } from './PetSelectionSection';
+export { PetItem } from './PetItem';
 export { CompatibilityScoreCard } from './CompatibilityScoreCard';
 export { CompatibilityBreakdownCard } from './CompatibilityBreakdownCard';
 export { InteractionCompatibilityCard } from './InteractionCompatibilityCard';

@@ -7,8 +7,16 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { ColorValue } from 'react-native';
 import { TextInput } from 'react-native';
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
+
+// Workaround for Jest tests where StyleSheet might be undefined
+// This ensures StyleSheet.create is always available
+const SafeStyleSheet = StyleSheet || {
+  create: (styles: Record<string, any>) => styles,
+  flatten: (style: any) => style,
+  compose: (...styles: any[]) => styles,
+};
 
 interface PetInfoFormProps {
   petName: string;
@@ -33,7 +41,7 @@ export function PetInfoForm({
   setPetPersonality,
   validationErrors,
 }: PetInfoFormProps) {
-  const theme = useTheme();
+  const theme: AppTheme = useTheme();
   const styles = makeStyles(theme);
   return (
     <View style={styles.container}>
@@ -110,7 +118,7 @@ export function PetInfoForm({
 }
 
 function makeStyles(theme: AppTheme) {
-  return StyleSheet.create({
+  return SafeStyleSheet.create({
     container: {
       padding: theme.spacing.lg,
     },

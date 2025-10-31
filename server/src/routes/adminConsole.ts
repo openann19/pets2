@@ -4,6 +4,7 @@
  */
 
 import express, { Request, Response } from 'express';
+import type { AuthRequest } from '../types/express';
 import { authenticateToken } from '../middleware/auth';
 import { adminActionLogger, withAudit } from '../middleware/audit';
 import { checkPermission } from '../middleware/rbac';
@@ -16,15 +17,6 @@ const router = express.Router();
 
 // Apply authentication to all admin routes
 router.use(authenticateToken);
-
-interface AuthRequest extends Request {
-  user?: {
-    _id: string;
-    email: string;
-    role: string;
-    [key: string]: unknown;
-  };
-}
 
 /**
  * ========================================

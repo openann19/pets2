@@ -1,0 +1,49 @@
+id: t-11-detox-premium-checkout
+owner: e2e
+severity: high
+area: mobile
+status: open
+context: |
+  Detox E2E test for premium checkout flow using Stripe test mode.
+  Current behavior: Premium checkout not tested end-to-end.
+  Why it matters: Critical revenue flow, must work correctly.
+
+acceptance:
+  - [ ] E2E test: Navigate to Premium screen
+  - [ ] E2E test: Select subscription plan
+  - [ ] E2E test: Enter test card details
+  - [ ] E2E test: Complete checkout
+  - [ ] E2E test: Verify success screen
+  - [ ] E2E test: Verify premium features unlocked
+  - [ ] E2E test: Handle payment failure
+  - [ ] Test runs on iOS simulator
+  - [ ] Test runs on Android emulator
+  - [ ] Test uses Stripe test mode
+
+states:
+  - not-tested
+  - tested
+
+telemetry:
+  - event: E2E_PREMIUM_CHECKOUT_TESTED
+    props: [platform, success, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  tests:
+    - e2e/premium-checkout.e2e.ts
+  configs:
+    - apps/mobile/e2e/stripe-test-config.ts
+
+dependencies:
+  - Stripe test mode keys
+  - Detox setup
+  - Premium screen implemented
+
+timeline:
+  start: 2025-02-01
+  implementation: 2025-02-02
+  deploy: 2025-02-03
+

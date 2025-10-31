@@ -11,9 +11,8 @@ import { uploadToCloudinary, deleteFromCloudinary } from '../services/cloudinary
 import { getAIRecommendations, analyzePetCompatibility } from '../services/aiService';
 const logger = require('../utils/logger');
 
-// Type definitions
-interface AuthRequest extends Request {
-  userId?: string;
+// Type definitions for file uploads
+interface MulterRequest extends Request {
   files?: Array<{
     fieldname: string;
     originalname: string;
@@ -78,7 +77,7 @@ interface PetPhoto {
 // @desc    Create new pet
 // @route   POST /api/pets
 // @access  Private
-export const createPet = async (req: AuthRequest, res: Response): Promise<void> => {
+export const createPet = async (req: MulterRequest, res: Response): Promise<void> => {
   try {
     const {
       name, species, breed, age, gender, size, weight, color,
@@ -158,7 +157,7 @@ export const createPet = async (req: AuthRequest, res: Response): Promise<void> 
 // @desc    Get all pets for discovery (with filters)
 // @route   GET /api/pets/discover
 // @access  Private
-export const discoverPets = async (req: AuthRequest, res: Response): Promise<void> => {
+export const discoverPets = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       species,
@@ -286,7 +285,7 @@ export const discoverPets = async (req: AuthRequest, res: Response): Promise<voi
 // @desc    Swipe on a pet
 // @route   POST /api/pets/:petId/swipe
 // @access  Private
-export const swipePet = async (req: AuthRequest, res: Response): Promise<void> => {
+export const swipePet = async (req: Request, res: Response): Promise<void> => {
   try {
     const { petId } = req.params;
     const { action }: SwipePetBody = req.body; // 'like', 'pass', 'superlike'
@@ -410,7 +409,7 @@ export const swipePet = async (req: AuthRequest, res: Response): Promise<void> =
 // @desc    Get user's pets
 // @route   GET /api/pets/my-pets
 // @access  Private
-export const getMyPets = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getMyPets = async (req: Request, res: Response): Promise<void> => {
   try {
     const pets = await Pet.find({ owner: req.userId })
       .sort({ createdAt: -1 });
@@ -470,7 +469,7 @@ export const getPet = async (req: Request, res: Response): Promise<void> => {
 // @desc    Update pet
 // @route   PUT /api/pets/:id
 // @access  Private
-export const updatePet = async (req: AuthRequest, res: Response): Promise<void> => {
+export const updatePet = async (req: MulterRequest, res: Response): Promise<void> => {
   try {
     const pet = await Pet.findOne({ _id: req.params.id, owner: req.userId });
 
@@ -560,7 +559,7 @@ export const updatePet = async (req: AuthRequest, res: Response): Promise<void> 
 // @desc    Delete pet
 // @route   DELETE /api/pets/:id
 // @access  Private
-export const deletePet = async (req: AuthRequest, res: Response): Promise<void> => {
+export const deletePet = async (req: Request, res: Response): Promise<void> => {
   try {
     const pet = await Pet.findOne({ _id: req.params.id, owner: req.userId });
 

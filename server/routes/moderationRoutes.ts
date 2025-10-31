@@ -507,13 +507,127 @@ router.post('/batch-approve', async (req: any, res: Response) => {
 // Helper functions
 
 async function notifyUserPhotoApproved(userId: Types.ObjectId, moderation: any) {
-  // TODO: Implement notification service
-  logger.info('User notification: photo approved', { userId, moderationId: moderation._id });
+  try {
+    const Notification = require('../src/models/Notification');
+    const User = require('../src/models/User');
+    
+    const user = await User.findById(userId);
+    if (!user) {
+      logger.warn('Cannot notify user - user not found', { userId });
+      return;
+    }
+
+    // Create notification record
+    const notification = new Notification({
+      userId: userId,
+      type: 'system',
+      title: 'Photo Approved',
+      body: 'Your photo has been approved and is now visible on your profile.',
+      data: {
+        moderationId: moderation._id,
+        photoUrl: moderation.photoUrl,
+        action: 'approved'
+      },
+      priority: 'normal',
+      actionUrl: '/profile'
+    });
+
+    await notification.save();
+
+    // Attempt to send push notification if user has push token
+    try {
+      const { sendPushToUser } = require('../src/services/pushNotificationService');
+      await sendPushToUser(userId.toString(), {
+        title: 'Photo Approved',
+        body: 'Your photo has been approved and is now visible on your profile.',
+        data: {
+          type: 'photo_approved',
+          moderationId: moderation._id.toString()
+        }
+      });
+    } catch (pushError: any) {
+      // Push notification is optional, log but don't fail
+      logger.debug('Push notification failed for photo approval', { 
+        userId, 
+        error: pushError.message 
+      });
+    }
+
+    logger.info('User notification: photo approved', { 
+      userId, 
+      moderationId: moderation._id,
+      notificationId: notification._id 
+    });
+  } catch (error: any) {
+    logger.error('Failed to send photo approval notification', { 
+      userId, 
+      error: error.message 
+    });
+  }
 }
 
 async function notifyUserPhotoRejected(userId: Types.ObjectId, moderation: any, reason: string, category: string) {
-  // TODO: Implement notification service
-  logger.info('User notification: photo rejected', { userId, moderationId: moderation._id, category });
+  try {
+    const Notification = require('../src/models/Notification');
+    const User = require('../src/models/User');
+    
+    const user = await User.findById(userId);
+    if (!user) {
+      logger.warn('Cannot notify user - user not found', { userId });
+      return;
+    }
+
+    // Create notification record
+    const notification = new Notification({
+      userId: userId,
+      type: 'system',
+      title: 'Photo Rejected',
+      body: `Your photo was rejected: ${reason}. Category: ${category}. Please review our community guidelines.`,
+      data: {
+        moderationId: moderation._id,
+        reason,
+        category,
+        action: 'rejected'
+      },
+      priority: 'high',
+      actionUrl: '/profile/settings'
+    });
+
+    await notification.save();
+
+    // Attempt to send push notification if user has push token
+    try {
+      const { sendPushToUser } = require('../src/services/pushNotificationService');
+      await sendPushToUser(userId.toString(), {
+        title: 'Photo Rejected',
+        body: `Your photo was rejected: ${reason}. Please review our community guidelines.`,
+        data: {
+          type: 'photo_rejected',
+          moderationId: moderation._id.toString(),
+          category
+        }
+      });
+    } catch (pushError: any) {
+      // Push notification is optional, log but don't fail
+      logger.debug('Push notification failed for photo rejection', { 
+        userId, 
+        error: pushError.message 
+      });
+    }
+
+    logger.info('User notification: photo rejected', { 
+      userId, 
+      moderationId: moderation._id, 
+      category,
+      reason,
+      notificationId: notification._id 
+    });
+  } catch (error: any) {
+    logger.error('Failed to send photo rejection notification', { 
+      userId, 
+      error: error.message 
+    });
+  }
 }
 
 export default router;

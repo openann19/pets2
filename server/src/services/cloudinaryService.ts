@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import streamifier from 'streamifier';
 import logger from '../utils/logger';
+import { getCDNUrl, getOptimizedImageUrl } from '../config/cdn';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -60,7 +61,13 @@ export async function uploadImage(buffer: Buffer, folder = 'pawfectmatch/photos'
         { fetch_format: 'auto' }
       ],
     });
-    return result.secure_url;
+    
+    // Return CDN URL if configured, otherwise return Cloudinary URL
+    const cdnUrl = getCDNUrl(result.secure_url, {
+      format: 'webp',
+      quality: 80,
+    });
+    return cdnUrl;
   } catch (error) {
     logger.error('Image upload failed', { error: (error as Error).message });
     throw error;
@@ -77,7 +84,10 @@ export async function uploadVideo(buffer: Buffer, folder = 'pawfectmatch/voice')
       resource_type: 'video',
       format: 'webm',
     });
-    return result.secure_url;
+    
+    // Return CDN URL if configured, otherwise return Cloudinary URL
+    const cdnUrl = getCDNUrl(result.secure_url);
+    return cdnUrl;
   } catch (error) {
     logger.error('Video upload failed', { error: (error as Error).message });
     throw error;

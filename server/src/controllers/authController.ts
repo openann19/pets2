@@ -4,20 +4,17 @@
  */
 
 import type { Request, Response } from 'express';
+import type { AuthRequest } from '../types/express';
 import * as crypto from 'crypto';
 import * as speakeasy from 'speakeasy';
 import * as QRCode from 'qrcode';
 import User from '../models/User';
 import { generateTokens } from '../middleware/auth';
 import { sendEmail } from '../services/emailService';
-import { getErrorMessage } from '../../utils/errorHandler';
-const logger = require('../utils/logger');
+import { getErrorMessage } from '../utils/errorHandler';
+import logger from '../utils/logger';
 
 // Type definitions
-interface AuthRequest extends Request {
-  userId?: string;
-  jti?: string;
-}
 
 interface RegisterBody {
   email: string;
@@ -350,13 +347,36 @@ export const biometricLogin = async (req: Request, res: Response) => {
     }
     await user.save();
 
+    // Set httpOnly cookies for secure token storage
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true, // NOT accessible via JavaScript (XSS protection)
+      secure: isProduction, // HTTPS only in production
+      sameSite: 'strict', // CSRF protection
+      maxAge: 15 * 60 * 1000, // 15 minutes
+      path: '/',
+    });
+
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/',
+    });
+
+    // Return response without tokens in body for security
+    // Tokens are now in httpOnly cookies, not accessible via JavaScript
     res.json({
       success: true,
       message: 'Biometric login successful',
       data: {
         user: user.toJSON(),
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken
+        // Tokens are now in httpOnly cookies - only return in dev for backwards compatibility
+        ...(process.env.NODE_ENV !== 'production' && {
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken
+        })
       }
     });
 
@@ -450,13 +470,36 @@ export const register = async (req: Request, res: Response) => {
       // Don't fail registration if email fails
     }
 
+    // Set httpOnly cookies for secure token storage
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true, // NOT accessible via JavaScript (XSS protection)
+      secure: isProduction, // HTTPS only in production
+      sameSite: 'strict', // CSRF protection
+      maxAge: 15 * 60 * 1000, // 15 minutes
+      path: '/',
+    });
+
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/',
+    });
+
+    // Return response without tokens in body for security
+    // Tokens are now in httpOnly cookies, not accessible via JavaScript
     res.status(201).json({
       success: true,
       message: 'User registered successfully. Please check your email for verification.',
       data: {
         user: user.toJSON(),
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken
+        // Tokens are now in httpOnly cookies - only return in dev for backwards compatibility
+        ...(process.env.NODE_ENV !== 'production' && {
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken
+        })
       }
     });
 
@@ -528,13 +571,36 @@ export const login = async (req: Request, res: Response) => {
     }
     await user.save();
 
+    // Set httpOnly cookies for secure token storage
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true, // NOT accessible via JavaScript (XSS protection)
+      secure: isProduction, // HTTPS only in production
+      sameSite: 'strict', // CSRF protection
+      maxAge: 15 * 60 * 1000, // 15 minutes
+      path: '/',
+    });
+
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/',
+    });
+
+    // Return response without tokens in body for security
+    // Tokens are now in httpOnly cookies, not accessible via JavaScript
     res.json({
       success: true,
       message: 'Login successful',
       data: {
         user: user.toJSON(),
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken
+        // Tokens are now in httpOnly cookies - only return in dev for backwards compatibility
+        ...(process.env.NODE_ENV !== 'production' && {
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken
+        })
       }
     });
 
@@ -560,11 +626,11 @@ export const logout = async (req: AuthRequest, res: Response) => {
     // Revoke current access token by adding its jti to revoked list
     const updateData: Record<string, unknown> = {};
     if (req.jti) {
-      updateData.$push = { revokedJtis: req.jti };
+      updateData['$push'] = { revokedJtis: req.jti };
     }
 
     if (refreshToken) {
-      updateData.$pull = { refreshTokens: refreshToken };
+      updateData['$pull'] = { refreshTokens: refreshToken };
     }
 
     logger.debug('Update data', { updateData });
@@ -574,17 +640,34 @@ export const logout = async (req: AuthRequest, res: Response) => {
       logger.debug('Update result', { success: !!result });
     }
 
+    // Clear httpOnly cookies
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      path: '/',
+    });
+
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      path: '/',
+    });
+
     res.json({
       success: true,
       message: 'Logout successful'
     });
 
-  } catch (error) {
-    logger.error('Logout error', { error });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('Logout error', { error: errorMessage });
     res.status(500).json({
       success: false,
       message: 'Logout failed',
-      error: (error as Error).message
+      error: errorMessage
     });
   }
 };
@@ -606,8 +689,9 @@ export const getMe = async (req: AuthRequest, res: Response) => {
       success: true,
       data: user.toJSON()
     });
-  } catch (error) {
-    logger.error('Get me error', { error });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('Get me error', { error: errorMessage });
     res.status(500).json({
       success: false,
       message: 'Failed to get user data'
@@ -688,8 +772,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
           resetUrl: `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`
         }
       });
-    } catch (emailError) {
-      logger.error('Email sending error', { error: emailError });
+    } catch (emailError: unknown) {
+      const errorMessage = emailError instanceof Error ? emailError.message : String(emailError);
+      logger.error('Email sending error', { error: errorMessage });
     }
 
     res.json({
@@ -697,12 +782,13 @@ export const forgotPassword = async (req: Request, res: Response) => {
       message: 'If that email exists, we sent a password reset link'
     });
 
-  } catch (error) {
-    logger.error('Forgot password error', { error });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('Forgot password error', { error: errorMessage });
     res.status(500).json({
       success: false,
       message: 'Password reset request failed',
-      error: (error as Error).message
+      error: errorMessage
     });
   }
 };
@@ -789,8 +875,9 @@ export const setup2FA = async (req: AuthRequest, res: Response) => {
       backupCodes: (secret as { backup_codes?: string[] }).backup_codes || []
     });
 
-  } catch (error) {
-    logger.error('2FA setup error', { error });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('2FA setup error', { error: errorMessage });
     res.status(500).json({
       success: false,
       message: 'Failed to setup 2FA'
@@ -940,8 +1027,9 @@ export const validate2FA = async (req: Request, res: Response) => {
       message: 'No 2FA verification method found'
     });
 
-  } catch (error) {
-    logger.error('2FA validate error', { error });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('2FA validate error', { error: errorMessage });
     res.status(500).json({
       success: false,
       message: 'Failed to validate 2FA code'
@@ -1043,8 +1131,9 @@ export const disableBiometric = async (req: AuthRequest, res: Response) => {
       message: 'Biometric authentication disabled'
     });
 
-  } catch (error) {
-    logger.error('Biometric disable error', { error });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('Biometric disable error', { error: errorMessage });
     res.status(500).json({
       success: false,
       message: 'Failed to disable biometric authentication'

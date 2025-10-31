@@ -18,12 +18,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@mobile/theme';
 import { logger } from '@pawfectmatch/core';
 import { moderationAPI } from '../services/api';
-import type { NavigationProp } from '@react-navigation/native';
-import type { RootStackParamList } from '../navigation/types';
+import type { RootStackScreenProps } from '../navigation/types';
 
-interface ModerationToolsScreenProps {
-  navigation: NavigationProp<RootStackParamList>;
-}
+type ModerationToolsScreenProps = RootStackScreenProps<'ModerationTools'>;
 
 type IoniconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -74,7 +71,7 @@ function ModerationToolsScreen({ navigation }: ModerationToolsScreenProps): Reac
         // Navigate to moderation reports screen (using AdminUploads as reports are handled there)
         // In a real app, you'd have a dedicated AdminReports screen
         try {
-          (navigation as any).navigate('AdminUploads');
+          navigation.navigate('AdminUploads');
         } catch (error) {
           logger.error('Failed to navigate to reports', { error });
           Alert.alert('Navigation Error', 'Unable to navigate to reports screen.');
@@ -90,7 +87,7 @@ function ModerationToolsScreen({ navigation }: ModerationToolsScreenProps): Reac
       action: () => {
         // Navigate to uploads screen for content moderation
         try {
-          (navigation as any).navigate('AdminUploads');
+          navigation.navigate('AdminUploads');
         } catch (error) {
           logger.error('Failed to navigate to content moderation', { error });
           Alert.alert('Navigation Error', 'Unable to navigate to content moderation.');
@@ -106,7 +103,7 @@ function ModerationToolsScreen({ navigation }: ModerationToolsScreenProps): Reac
       action: () => {
         // Navigate to admin chats screen
         try {
-          (navigation as any).navigate('AdminChats');
+          navigation.navigate('AdminChats');
         } catch (error) {
           logger.error('Failed to navigate to message monitoring', { error });
           navigation.goBack();
@@ -122,7 +119,7 @@ function ModerationToolsScreen({ navigation }: ModerationToolsScreenProps): Reac
       action: () => {
         // Navigate to admin users screen
         try {
-          (navigation as any).navigate('AdminUsers');
+          navigation.navigate('AdminUsers');
         } catch (error) {
           logger.error('Failed to navigate to user management', { error });
           Alert.alert('Navigation Error', 'Unable to navigate to user management.');
@@ -138,7 +135,7 @@ function ModerationToolsScreen({ navigation }: ModerationToolsScreenProps): Reac
       action: () => {
         // Navigate to admin analytics screen
         try {
-          (navigation as any).navigate('AdminAnalytics');
+          navigation.navigate('AdminAnalytics');
         } catch (error) {
           logger.error('Failed to navigate to analytics', { error });
           Alert.alert('Navigation Error', 'Unable to navigate to analytics dashboard.');
@@ -154,7 +151,7 @@ function ModerationToolsScreen({ navigation }: ModerationToolsScreenProps): Reac
       action: () => {
         // Navigate to admin config screen for moderation settings
         try {
-          (navigation as any).navigate('AdminConfig');
+          navigation.navigate('AdminConfig');
         } catch (error) {
           logger.error('Failed to navigate to moderation settings', { error });
           Alert.alert('Navigation Error', 'Unable to navigate to moderation settings.');

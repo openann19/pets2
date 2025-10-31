@@ -2,6 +2,10 @@ import { logger, useAuthStore } from '@pawfectmatch/core';
 import { useEffect, useState } from 'react';
 
 import { _adminAPI as adminAPI } from '../../../../services/api';
+import type {
+  ConversionFunnelData,
+  CohortRetentionData,
+} from '../components';
 
 export interface AnalyticsData {
   users: {
@@ -72,6 +76,8 @@ export interface AnalyticsData {
     reportedContent: number;
     bannedUsers: number;
   };
+  conversionFunnel?: ConversionFunnelData;
+  retention?: CohortRetentionData;
 }
 
 export const useAdminAnalytics = () => {
@@ -89,8 +95,15 @@ export const useAdminAnalytics = () => {
   const loadAnalyticsData = async (): Promise<void> => {
     try {
       setLoading(true);
-      const response = await adminAPI.getAnalytics({ period: selectedPeriod });
-      const responseData = response.data || {};
+      
+      // Fetch analytics, conversion funnel, and retention data in parallel
+      const [analyticsResponse, funnelResponse, retentionResponse] = await Promise.all([
+        adminAPI.getAnalytics({ period: selectedPeriod }),
+        adminAPI.getConversionFunnel({ timeRange: selectedPeriod.replace('d', '') }).catch(() => ({ success: false, data: null })),
+        adminAPI.getCohortRetention({ cohorts: '6' }).catch(() => ({ success: false, data: null }))
+      ]);
+
+      const responseData = analyticsResponse.data || {};
       const fullData: AnalyticsData = {
         users: {
           total: responseData.users?.total || 0,
@@ -149,6 +162,72 @@ export const useAdminAnalytics = () => {
           reportedContent: 0,
           bannedUsers: 0,
         },
+        ...(funnelResponse.success && funnelResponse.data
+          ? {
+              conversionFunnel: {
+                totalFreeUsers: funnelResponse.data.totalFreeUsers || 0,
+                paywallViews: funnelResponse.data.paywallViews || 0,
+                premiumSubscribers: funnelResponse.data.premiumSubscribers || 0,
+                ultimateSubscribers: funnelResponse.data.ultimateSubscribers || 0,
+                freeToPaywallConversion:
+                  funnelResponse.data.freeToPaywallConversion || 0,
+                paywallToPremiumConversion:
+                  funnelResponse.data.paywallToPremiumConversion || 0,
+                premiumToUltimateConversion:
+                  funnelResponse.data.premiumToUltimateConversion || 0,
+                overallConversionRate: funnelResponse.data.overallConversionRate || 0,
+              },
+            }
+          : (responseData as any).conversionFunnel
+            ? {
+                conversionFunnel: {
+                  totalFreeUsers: (responseData as any).conversionFunnel.totalFreeUsers || 0,
+                  paywallViews: (responseData as any).conversionFunnel.paywallViews || 0,
+                  premiumSubscribers: (responseData as any).conversionFunnel.premiumSubscribers || 0,
+                  ultimateSubscribers: (responseData as any).conversionFunnel.ultimateSubscribers || 0,
+                  freeToPaywallConversion:
+                    (responseData as any).conversionFunnel.freeToPaywallConversion || 0,
+                  paywallToPremiumConversion:
+                    (responseData as any).conversionFunnel.paywallToPremiumConversion || 0,
+                  premiumToUltimateConversion:
+                    (responseData as any).conversionFunnel.premiumToUltimateConversion || 0,
+                  overallConversionRate: (responseData as any).conversionFunnel.overallConversionRate || 0,
+                },
+              }
+            : {}),
+        ...(retentionResponse.success && retentionResponse.data
+          ? {
+              retention: {
+                cohorts: retentionResponse.data.cohorts || [],
+                averageRetention: retentionResponse.data.averageRetention || {
+                  week1: 0,
+                  week2: 0,
+                  week4: 0,
+                  month2: 0,
+                  month3: 0,
+                  month6: 0,
+                  month12: 0,
+                },
+                latestCohortSize: retentionResponse.data.latestCohortSize || 0,
+              },
+            }
+          : (responseData as any).retention
+            ? {
+                retention: {
+                  cohorts: (responseData as any).retention.cohorts || [],
+                  averageRetention: (responseData as any).retention.averageRetention || {
+                    week1: 0,
+                    week2: 0,
+                    week4: 0,
+                    month2: 0,
+                    month3: 0,
+                    month6: 0,
+                    month12: 0,
+                  },
+                  latestCohortSize: (responseData as any).retention.latestCohortSize || 0,
+                },
+              }
+            : {}),
       };
       setAnalytics(fullData);
     } catch (error: unknown) {

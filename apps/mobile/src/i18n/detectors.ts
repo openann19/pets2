@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNLocalize from 'react-native-localize';
-import i18n from './index';
+import i18n from './instance';
 
 export type Lang = 'en' | 'bg';
 

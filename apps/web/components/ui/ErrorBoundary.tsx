@@ -89,10 +89,9 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   private reportToMonitoring = (error: Error, errorInfo: React.ErrorInfo) => {
-    // This would integrate with Sentry, LogRocket, etc.
-    // For now, just log to console in development
+    // Log to logger in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('Error Boundary Report:', {
+      logger.error('Error Boundary Report:', {
         error: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,
@@ -100,8 +99,38 @@ export class ErrorBoundary extends Component<Props, State> {
       });
     }
 
-    // In production, this would send to monitoring service
-    // Example: Sentry.captureException(error, { contexts: { react: errorInfo } });
+    // Send to monitoring service
+    try {
+      // Send to backend error tracking API
+      fetch('/api/errors/log', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          errorId: this.state.errorId,
+          message: error.message,
+          stack: error.stack,
+          componentStack: errorInfo.componentStack,
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          timestamp: new Date().toISOString(),
+        }),
+      }).catch((reportError) => {
+        // Don't let reporting errors crash the app
+        logger.error('Failed to report error:', reportError);
+      });
+
+      // If Sentry is configured, also send there
+      if (typeof window !== 'undefined' && window.Sentry) {
+        window.Sentry.captureException(error, {
+          contexts: { react: errorInfo },
+          tags: { errorId: this.state.errorId },
+        });
+      }
+    } catch (reportingError) {
+      logger.error('Error reporting failed:', reportingError);
+    }
   };
 
   private resetErrorBoundary = () => {

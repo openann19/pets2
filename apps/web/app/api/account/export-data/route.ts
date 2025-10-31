@@ -111,8 +111,7 @@ export async function POST(request: NextRequest) {
  * Get export status endpoint
  */
 export async function GET(
-    request: NextRequest,
-    { params }: { params: { exportId: string } }
+    request: NextRequest
 ) {
     try {
         // Verify authentication
@@ -121,7 +120,16 @@ export async function GET(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { exportId } = params;
+        // Get exportId from query parameters
+        const { searchParams } = new URL(request.url);
+        const exportId = searchParams.get('exportId');
+
+        if (!exportId) {
+            return NextResponse.json(
+                { error: 'exportId query parameter is required' },
+                { status: 400 }
+            );
+        }
 
         // Connect to the database
         const db = await connectToDB();

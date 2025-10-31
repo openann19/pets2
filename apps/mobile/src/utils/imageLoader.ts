@@ -9,7 +9,9 @@
  * - Fade-in animation support
  */
 
-import { Image } from 'react-native';
+import { Image } from 'react-native'
+import { logger } from '@pawfectmatch/core';
+;
 
 interface PrefetchOptions {
   priority?: 'low' | 'normal' | 'high';
@@ -33,7 +35,7 @@ export async function prefetchImage(uri: string, _options: PrefetchOptions = {})
   } catch (error) {
     // Silently fail - prefetch errors shouldn't block the app
     if (__DEV__) {
-      console.warn('[imageLoader] Failed to prefetch image:', uri, error);
+      logger.warn('[imageLoader] Failed to prefetch image:', { uri, error });
     }
   }
 }
@@ -51,7 +53,7 @@ export async function prefetchImages(
     await Promise.all(uris.map((uri) => Image.prefetch(uri)));
   } catch (error) {
     if (__DEV__) {
-      console.warn('[imageLoader] Failed to prefetch images:', error);
+      logger.warn('[imageLoader] Failed to prefetch images:', { error });
     }
   }
 }

@@ -1,0 +1,45 @@
+id: ui-019-amoled-true-black
+owner: ux
+severity: low
+area: mobile+theme
+context: |
+  AMOLED displays waste battery with dark gray backgrounds.
+  True black (#000000) saves significant battery on AMOLED screens.
+  Need optional true-black mode for dark theme users.
+acceptance:
+  - True black option available in settings
+  - Device detection for AMOLED displays (Samsung, Pixel, etc.)
+  - User preference persists across sessions
+  - Smooth transition between dark gray and true black
+  - All UI elements visible on true black background
+  - Battery savings measurable (if possible)
+states:
+  - dark-gray
+  - true-black
+telemetry:
+  - event: AMOLED_MODE_TOGGLE
+    props: [enabled, deviceType, batteryLevel]
+contracts:
+  request: { enabled: boolean }
+  response: { applied: boolean, theme: string }
+  errors: []
+assets:
+  theme: [apps/mobile/src/theme/dark.ts, apps/mobile/src/theme/amoled.ts]
+  screens: [apps/mobile/src/screens/SettingsScreen.tsx]
+  hooks: [apps/mobile/src/hooks/utils/useAMOLEDDetection.ts]
+  tests: [apps/mobile/src/theme/__tests__/amoled.test.ts]
+risks:
+  - Some UI elements may have insufficient contrast
+  - Not all devices benefit from true black
+rollback:
+  - Remove AMOLED theme variant
+  - Remove settings toggle
+links: []
+status: open
+priority: low
+impact: 3
+effort: S
+category: theme
+tokens:
+  - colors.bg
+estimated_hours: 4

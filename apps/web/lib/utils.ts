@@ -5,6 +5,7 @@
 
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { logger } from '@pawfectmatch/core';
 
 /**
  * Utility function to merge and conditionally apply Tailwind CSS classes
@@ -88,7 +89,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     await navigator.clipboard.writeText(text);
     return true;
   } catch (error) {
-    console.error('Failed to copy to clipboard:', error);
+    logger.error('Failed to copy to clipboard:', error);
     return false;
   }
 }
@@ -133,7 +134,7 @@ export function safeJsonParse<T>(jsonString: string, fallback: T): T {
     const parsed = JSON.parse(jsonString) as T;
     return parsed;
   } catch (error) {
-    console.warn('Failed to parse JSON:', error);
+    logger.warn('Failed to parse JSON:', error);
     return fallback;
   }
 }
@@ -145,7 +146,7 @@ export function safeJsonStringify(value: unknown): string | null {
   try {
     return JSON.stringify(value);
   } catch (error) {
-    console.error('Failed to stringify JSON:', error);
+    logger.error('Failed to stringify JSON:', error);
     return null;
   }
 }

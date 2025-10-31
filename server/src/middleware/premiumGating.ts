@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import type { AuthRequest } from '../types/express';
 import logger from '../utils/logger';
 
 interface PremiumFeatures {
@@ -9,6 +10,8 @@ interface PremiumFeatures {
   aiMatching?: boolean;
   globalPassport?: boolean;
   prioritySupport?: boolean;
+  readReceipts?: boolean;
+  videoCalls?: boolean;
 }
 
 interface PremiumUsage {
@@ -39,24 +42,13 @@ interface SwipedPet {
   swipedAt: Date;
 }
 
-interface AuthRequest extends Request {
-  user?: {
-    _id: string;
-    premium?: UserPremium;
-    swipedPets?: SwipedPet[];
-    analytics?: {
-      totalPremiumFeaturesUsed?: number;
-    };
-  };
-}
-
 /**
  * Premium Feature Gating Middleware
  * Provides comprehensive access control for premium features
  */
 
 // Middleware to check if user can use unlimited swipes
-export const requireUnlimitedSwipes = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+export const requireUnlimitedSwipes = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   const user = req.user;
 
   if (!user) {
@@ -93,7 +85,7 @@ export const requireUnlimitedSwipes = async (req: AuthRequest, res: Response, ne
 };
 
 // Middleware to check if user can see who liked them
-export const requireSeeWhoLiked = (req: AuthRequest, res: Response, next: NextFunction): Response | void => {
+export const requireSeeWhoLiked = (req: Request, res: Response, next: NextFunction): Response | void => {
   const user = req.user;
 
   if (!user) {
@@ -121,7 +113,7 @@ export const requireSeeWhoLiked = (req: AuthRequest, res: Response, next: NextFu
 };
 
 // Middleware to check if user can boost their profile
-export const requireProfileBoost = (req: AuthRequest, res: Response, next: NextFunction): Response | void => {
+export const requireProfileBoost = (req: Request, res: Response, next: NextFunction): Response | void => {
   const user = req.user;
 
   if (!user) {
@@ -165,7 +157,7 @@ export const requireProfileBoost = (req: AuthRequest, res: Response, next: NextF
 };
 
 // Middleware to check if user can use super likes
-export const requireSuperLikes = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+export const requireSuperLikes = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   const user = req.user;
 
   if (!user) {
@@ -210,7 +202,7 @@ export const requireSuperLikes = async (req: AuthRequest, res: Response, next: N
 };
 
 // Middleware to check if user can use advanced filters
-export const requireAdvancedFilters = (req: AuthRequest, res: Response, next: NextFunction): Response | void => {
+export const requireAdvancedFilters = (req: Request, res: Response, next: NextFunction): Response | void => {
   const user = req.user;
 
   if (!user) {
@@ -238,7 +230,8 @@ export const requireAdvancedFilters = (req: AuthRequest, res: Response, next: Ne
 };
 
 // Middleware to check if user can access AI matching
-export const requireAIMatching = (req: AuthRequest, res: Response, next: NextFunction): Response | void => {
+// Business Model: AI recommendations are Ultimate tier only (business.md)
+export const requireAIMatching = (req: Request, res: Response, next: NextFunction): Response | void => {
   const user = req.user;
 
   if (!user) {
@@ -248,16 +241,19 @@ export const requireAIMatching = (req: AuthRequest, res: Response, next: NextFun
     });
   }
 
-  const hasFeature = user.premium?.isActive &&
+  // AI matching requires Ultimate tier per business.md
+  const isUltimate = user.premium?.isActive &&
                     (!user.premium.expiresAt || user.premium.expiresAt > new Date()) &&
+                    user.premium.plan?.toLowerCase() === 'ultimate' &&
                     user.premium.features?.aiMatching;
 
-  if (!hasFeature) {
+  if (!isUltimate) {
     return res.status(403).json({
       success: false,
-      message: 'Premium feature required: AI-powered matching',
-      code: 'PREMIUM_FEATURE_REQUIRED',
+      message: 'Ultimate tier required: AI-powered recommendations are exclusive to Ultimate subscribers ($19.99/month)',
+      code: 'ULTIMATE_TIER_REQUIRED',
       requiredFeature: 'aiMatching',
+      requiredTier: 'ultimate',
       upgradeRequired: true
     });
   }
@@ -266,7 +262,7 @@ export const requireAIMatching = (req: AuthRequest, res: Response, next: NextFun
 };
 
 // Middleware to check if user can access global passport
-export const requireGlobalPassport = (req: AuthRequest, res: Response, next: NextFunction): Response | void => {
+export const requireGlobalPassport = (req: Request, res: Response, next: NextFunction): Response | void => {
   const user = req.user;
 
   if (!user) {
@@ -294,7 +290,7 @@ export const requireGlobalPassport = (req: AuthRequest, res: Response, next: Nex
 };
 
 // Middleware to check if user can access priority support
-export const requirePrioritySupport = (req: AuthRequest, res: Response, next: NextFunction): Response | void => {
+export const requirePrioritySupport = (req: Request, res: Response, next: NextFunction): Response | void => {
   const user = req.user;
 
   if (!user) {
@@ -321,9 +317,40 @@ export const requirePrioritySupport = (req: AuthRequest, res: Response, next: Ne
   next();
 };
 
+// Middleware to check if user can use read receipts
+// Business Model: Read receipts are Premium+ feature (business.md)
+export const requireReadReceipts = (req: Request, res: Response, next: NextFunction): Response | void => {
+  const user = req.user;
+
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: 'Authentication required'
+    });
+  }
+
+  const hasFeature = user.premium?.isActive &&
+                    (!user.premium.expiresAt || user.premium.expiresAt > new Date()) &&
+                    (user.premium.plan?.toLowerCase() === 'premium' || user.premium.plan?.toLowerCase() === 'ultimate') &&
+                    user.premium.features?.readReceipts;
+
+  if (!hasFeature) {
+    return res.status(403).json({
+      success: false,
+      message: 'Premium subscription required: Read receipts are available for Premium subscribers ($9.99/month)',
+      code: 'PREMIUM_FEATURE_REQUIRED',
+      requiredFeature: 'readReceipts',
+      requiredTier: 'premium',
+      upgradeRequired: true
+    });
+  }
+
+  next();
+};
+
 // Generic premium feature checker
 export const requirePremiumFeatureGate = (featureName: string) => {
-  return (req: AuthRequest, res: Response, next: NextFunction): Response | void => {
+  return (req: Request, res: Response, next: NextFunction): Response | void => {
     const user = req.user;
 
     if (!user) {
@@ -353,27 +380,27 @@ export const requirePremiumFeatureGate = (featureName: string) => {
 
 // Middleware to track premium feature usage
 export const trackPremiumUsage = (featureName: string) => {
-  return async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     // Store original response methods
     const originalJson = res.json.bind(res);
     const originalSend = res.send.bind(res);
 
     // Override response methods to track successful usage
-    res.json = function(data: any): Response {
+    res.json = function(data: unknown): Response {
       if (res.statusCode >= 200 && res.statusCode < 300 && req.user) {
         // Track usage asynchronously (don't block response)
-        updatePremiumUsage(req.user._id, featureName).catch(error => {
-          logger.error('Failed to track premium usage', { error, userId: req.user?._id, feature: featureName });
+        updatePremiumUsage(req.user._id.toString(), featureName).catch(error => {
+          logger.error('Failed to track premium usage', { error, userId: req.user?._id?.toString(), feature: featureName });
         });
       }
       return originalJson(data);
     };
 
-    res.send = function(data?: any): Response {
+    res.send = function(data?: unknown): Response {
       if (res.statusCode >= 200 && res.statusCode < 300 && req.user) {
         // Track usage asynchronously
-        updatePremiumUsage(req.user._id, featureName).catch(error => {
-          logger.error('Failed to track premium usage', { error, userId: req.user?._id, feature: featureName });
+        updatePremiumUsage(req.user._id.toString(), featureName).catch(error => {
+          logger.error('Failed to track premium usage', { error, userId: req.user?._id?.toString(), feature: featureName });
         });
       }
       return originalSend(data);
@@ -388,7 +415,15 @@ async function updatePremiumUsage(userId: string, featureName: string): Promise<
   const User = await import('../models/User');
 
   try {
-    const updateQuery: any = {};
+    const updateQuery: {
+      $inc?: {
+        'premium.usage.swipesUsed'?: number;
+        'premium.usage.superLikesUsed'?: number;
+        'premium.usage.boostsUsed'?: number;
+        'premium.usage.messagesSent'?: number;
+        'analytics.totalPremiumFeaturesUsed'?: number;
+      };
+    } = {};
 
     switch (featureName) {
       case 'swipe':
@@ -410,7 +445,8 @@ async function updatePremiumUsage(userId: string, featureName: string): Promise<
     }
 
     await User.default.findByIdAndUpdate(userId, updateQuery);
-  } catch (error: any) {
-    logger.error('Error updating premium usage', { error, userId, featureName });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('Error updating premium usage', { error: errorMessage, userId, featureName });
   }
 }

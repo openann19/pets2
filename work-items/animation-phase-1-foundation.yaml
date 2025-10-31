@@ -1,0 +1,45 @@
+id: animation-phase-1-foundation
+owner: animation-team
+severity: high
+area: mobile
+context: |
+  Current animation system has multiple spring config sources (MotionPrimitives.tsx, constants.ts, configs/springConfigs.ts, GlobalStyles.ts, core types).
+  Need to consolidate into single source of truth and add advanced physics presets (overshoot, velocity, mass-based).
+  This is foundation for all other animation enhancements.
+acceptance:
+  - Single source of truth for spring configs in foundation/motion.ts
+  - Advanced spring presets: overshoot, velocity, heavy, light, bouncy
+  - All existing code migrated to new system
+  - Velocity-based spring helper created
+  - Secondary motion utilities added
+  - TypeScript strict passes
+  - ESLint zero errors
+  - Unit tests ≥75% coverage
+states:
+  - planning
+  - implementation
+  - testing
+  - complete
+telemetry:
+  - event: ANIMATION_SYSTEM_UPGRADED
+    props: [phase, springPresets]
+contracts:
+  request: { springConfig: SpringConfig }
+  response: { animatedStyle: AnimatedStyle }
+assets:
+  tests:
+    - apps/mobile/src/foundation/__tests__/motion.test.ts
+    - apps/mobile/src/components/__tests__/MotionPrimitives.test.tsx
+  documentation:
+    - docs/animations/README.md
+risks:
+  - Breaking existing animations if migration not careful
+  - Performance regression if configs not optimized
+rollback:
+  - Revert foundation/motion.ts changes
+  - Restore original spring configs
+links:
+  - ANIMATION_ENHANCEMENT_PLAN.md
+status: open
+priority: high
+

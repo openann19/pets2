@@ -6,3 +6,5 @@
 export { usePremiumStatus } from './usePremiumStatus';
 export { useSubscriptionState } from './useSubscriptionState';
 export { useFeatureGating } from './useFeatureGating';
+export { useDailySwipeStatus } from './useDailySwipeStatus';
+export { useIAPBalance } from './useIAPBalance';

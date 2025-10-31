@@ -5,6 +5,7 @@
 
 import express from 'express';
 import cors from 'cors';
+import { logger } from './utils/logger';
 import { db } from './db';
 import templatesRouter from './routes/templates';
 import tracksRouter from './routes/tracks';
@@ -31,10 +32,10 @@ app.get('/health', (req, res) => {
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log(`🎬 PawReels API server running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-  console.log(`📁 Templates: http://localhost:${PORT}/templates`);
-  console.log(`🎵 Tracks: http://localhost:${PORT}/tracks`);
+  logger.info(`🎬 PawReels API server running on port ${PORT}`);
+  logger.info(`📊 Health check: http://localhost:${PORT}/health`);
+  logger.info(`📁 Templates: http://localhost:${PORT}/templates`);
+  logger.info(`🎵 Tracks: http://localhost:${PORT}/tracks`);
 });
 
 export default app;

@@ -53,6 +53,7 @@ export interface AdminUserListItemViewModel {
   onSelect: () => void;
   onPrimaryAction: () => void;
   onSecondaryAction: () => void;
+  onMoreActions?: () => void;
 }
 
 export interface AdminUserListItemProps {
@@ -61,6 +62,7 @@ export interface AdminUserListItemProps {
   onSelect: () => void;
   onPrimaryAction: () => void;
   onSecondaryAction: () => void;
+  onMoreActions?: () => void;
 }
 
 const MetricBadge = ({
@@ -83,7 +85,7 @@ const MetricBadge = ({
 );
 
 export const AdminUserListItem = memo<AdminUserListItemProps>(
-  ({ data, colors, onSelect, onPrimaryAction, onSecondaryAction }) => {
+  ({ data, colors, onSelect, onPrimaryAction, onSecondaryAction, onMoreActions }) => {
     return (
       <TouchableOpacity
         style={StyleSheet.flatten([
@@ -184,6 +186,23 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
                 />
               )}
             </TouchableOpacity>
+            {onMoreActions && (
+              <TouchableOpacity
+                style={StyleSheet.flatten([
+                  styles.actionButton,
+                  { backgroundColor: colors.onMuted },
+                ])}
+                onPress={onMoreActions}
+                accessibilityRole="button"
+                accessibilityLabel="More actions"
+              >
+                <Ionicons
+                  name="ellipsis-horizontal"
+                  size={16}
+                  color="#ffffff"
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
@@ -205,7 +224,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
           />
           <MetricBadge
             icon="calendar"
-            color={colors.text}
+            color={colors.onSurface}
             label={data.createdDateLabel}
           />
         </View>
@@ -292,9 +311,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
   },
-  actionColumn: {
-    gap: 8,
-  },
+    actionColumn: {
+      gap: 8,
+      alignItems: 'flex-end',
+    },
   actionButton: {
     width: 36,
     height: 36,

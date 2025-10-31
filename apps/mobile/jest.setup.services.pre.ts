@@ -72,7 +72,23 @@ jest.mock('react-native', () => ({
       nativeCrash: jest.fn(),
     },
   },
-  Alert: { alert: jest.fn() },
+  Alert: {
+    alert: jest.fn((title, message, buttons, options) => {
+      // React Native Alert.alert signature: (title, message?, buttons?, options?)
+      // Auto-click the last button (usually "OK" or confirm action) for test convenience
+      if (buttons && Array.isArray(buttons) && buttons.length > 0) {
+        const lastButton = buttons[buttons.length - 1];
+        if (lastButton && typeof lastButton.onPress === 'function') {
+          try {
+            lastButton.onPress();
+          } catch (e) {
+            // Ignore errors in test mocks
+          }
+        }
+      }
+      return undefined;
+    }),
+  },
 }));
 
 // Mock react-native-webrtc to avoid native module usage
@@ -142,7 +158,7 @@ jest.mock('@pawfectmatch/core', () => {
 
 // Mock NetInfo to avoid real network listeners
 jest.mock('@react-native-community/netinfo', () => ({
-  addEventListener: jest.fn((handler: (state: { isConnected?: boolean }) => void) => {
+  addEventListener: jest.fn((handler: any) => {
     // Optionally notify initial state
     try { handler({ isConnected: true }); } catch {}
     // Return unsubscribe noop

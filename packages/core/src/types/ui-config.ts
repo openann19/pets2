@@ -10,6 +10,12 @@ export type {
   Components,
   Screens,
   Audience,
+  VisualEnhancements2025,
+  AnimationPreset,
+  VisualEffects,
+  TypographyAnimations,
+  ColorEnhancements,
+  ScrollInteractions,
 } from '../schemas/ui-config';
 
 /**

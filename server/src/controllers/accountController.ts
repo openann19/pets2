@@ -6,7 +6,7 @@ import Conversation from '../models/Conversation';
 import logger from '../utils/logger';
 
 /**
- * Request interfaces
+ * Request interfaces - use Request directly with declaration merging
  */
 interface AuthenticatedRequest extends Request {
   userId: string;

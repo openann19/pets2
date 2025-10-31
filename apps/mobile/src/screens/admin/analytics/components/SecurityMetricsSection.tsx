@@ -6,22 +6,22 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../../../theme';
-import type { AppTheme } from '../../../../theme';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
     securityGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: 12,
+      gap: theme.spacing.md,
     },
     securityCard: {
       width: '48%',
-      borderRadius: 12,
-      padding: 16,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
       alignItems: 'center',
-      shadowColor: '#000',
+      shadowColor: theme.colors.onSurface,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 3.84,
@@ -31,18 +31,18 @@ function __makeStyles_styles(theme: AppTheme) {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 8,
+      gap: theme.spacing.xs,
     },
     securityLabel: {
-      fontSize: 12,
-      fontWeight: '500',
-      marginTop: 8,
-      marginBottom: 4,
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.body.weight,
+      marginTop: theme.spacing.xs,
+      marginBottom: theme.spacing.xs,
       textAlign: 'center',
     },
     securityValue: {
-      fontSize: 18,
-      fontWeight: 'bold',
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
     },
   });
 }
@@ -59,7 +59,7 @@ interface SecurityMetricsSectionProps {
 }
 
 export const SecurityMetricsSection: React.FC<SecurityMetricsSectionProps> = ({ security }) => {
-  const theme = useTheme();
+  const theme: AppTheme = useTheme();
   const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
   const { colors } = theme;
 

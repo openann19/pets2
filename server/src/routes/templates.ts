@@ -36,8 +36,9 @@ router.get('/', async (req, res) => {
       maxClips: t.max_clips,
       theme: t.theme,
     })));
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: errorMessage });
   }
 });
 
@@ -62,8 +63,9 @@ router.get('/:id', async (req, res) => {
       maxClips: template.max_clips,
       theme: template.theme,
     });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: errorMessage });
   }
 });
 

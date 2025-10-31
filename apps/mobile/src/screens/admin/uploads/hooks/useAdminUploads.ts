@@ -83,6 +83,11 @@ export const useAdminUploads = () => {
 
           Alert.alert('Success', `Upload ${action}d successfully`);
           setSelectedUpload(null);
+
+          // Reload uploads to get latest data
+          await loadUploads(true);
+        } else {
+          throw new Error(response?.message || `Failed to ${action} upload`);
         }
       } catch (error) {
         errorHandler.handleError(
@@ -93,9 +98,10 @@ export const useAdminUploads = () => {
             metadata: { uploadId, action },
           },
         );
+        Alert.alert('Error', `Failed to ${action} upload. Please try again.`);
       }
     },
-    [],
+    [loadUploads],
   );
 
   const handleRejectWithReason = useCallback(

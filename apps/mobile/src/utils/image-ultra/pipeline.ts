@@ -44,6 +44,16 @@ export async function runPipeline(input: ImageUri, ctx: ProcessorContext): Promi
   return ops.export(current, fmt, options.quality);
 }
 
+// Pipeline processing report
+export interface PipelineReport {
+  upscale?: { scale: number; tileSize?: number };
+  denoise?: { radius?: number };
+  sharpen?: { radiusPx?: number; amount?: number; threshold?: number };
+  export?: 
+    | { mode: 'adaptive-ssim'; targetSSIM: number; quality: number; ssim: number }
+    | { mode: 'fixed'; target?: string; quality: number };
+}
+
 // Legacy types for backward compatibility
 export type LegacyPipelineOptions = {
   upscale?: { scale: number; tileSize?: number };
@@ -158,9 +168,9 @@ export function tileUpscaleCanvas(
 export async function processImagePipeline(
   input: Blob,
   opts: LegacyPipelineOptions,
-): Promise<{ blob: Blob; report: any; canvas: HTMLCanvasElement }> {
+): Promise<{ blob: Blob; report: PipelineReport; canvas: HTMLCanvasElement }> {
   let canvas = await loadImageToCanvas(input);
-  const report: any = {};
+  const report: PipelineReport = {};
 
   // Upscale (tile-based for large images)
   if (opts.upscale) {

@@ -95,7 +95,12 @@ describe('PremiumScreen', () => {
   });
 
   it('renders premium plans correctly', async () => {
-    const { getByText, getAllByTestId } = render(<PremiumScreen navigation={mockNavigation} />);
+    const { getByText, getAllByTestId } = render(
+      <PremiumScreen
+        navigation={mockNavigation as any}
+        route={mockRoute as any}
+      />,
+    );
 
     // Wait for plans to load
     await waitFor(() => {
@@ -111,7 +116,12 @@ describe('PremiumScreen', () => {
   });
 
   it('toggles between monthly and yearly billing', async () => {
-    const { getByText, getByTestId } = render(<PremiumScreen navigation={mockNavigation} />);
+    const { getByText, getByTestId } = render(
+      <PremiumScreen
+        navigation={mockNavigation as any}
+        route={mockRoute as any}
+      />,
+    );
 
     await waitFor(() => {
       expect(getByText('Monthly')).toBeTruthy();
@@ -133,12 +143,17 @@ describe('PremiumScreen', () => {
   });
 
   it('initiates subscription checkout', async () => {
-    (premiumAPI.createCheckoutSession as jest.Mock).mockResolvedValue({
+    mockedPremiumAPI.createCheckoutSession.mockResolvedValue({
       success: true,
       checkoutUrl: 'https://stripe.com/checkout',
     });
 
-    const { getByText } = render(<PremiumScreen navigation={mockNavigation} />);
+    const { getByText } = render(
+      <PremiumScreen
+        navigation={mockNavigation as any}
+        route={mockRoute as any}
+      />,
+    );
 
     await waitFor(() => {
       expect(getByText('Subscribe')).toBeTruthy();
@@ -149,7 +164,7 @@ describe('PremiumScreen', () => {
 
     await waitFor(() => {
       // Should call createCheckoutSession
-      expect(premiumAPI.createCheckoutSession).toHaveBeenCalledWith({
+      expect(mockedPremiumAPI.createCheckoutSession).toHaveBeenCalledWith({
         planId: 'premium',
         interval: 'monthly',
       });
@@ -164,7 +179,7 @@ describe('PremiumScreen', () => {
 
   it('displays user as premium member when subscribed', async () => {
     // Mock user as premium
-    (useAuthStore as jest.Mock).mockReturnValue({
+    coreMock.__mockUseAuthStore.mockReturnValue({
       user: {
         ...mockUser,
         premium: {
@@ -174,19 +189,19 @@ describe('PremiumScreen', () => {
       },
     });
 
-    (premiumAPI.getCurrentSubscription as jest.Mock).mockResolvedValue({
-      success: true,
-      data: {
-        plan: {
-          id: 'premium',
-          name: 'Premium',
-        },
-        currentPeriodEnd: '2025-12-31T00:00:00Z',
-        cancelAtPeriodEnd: false,
-      },
+    mockedPremiumAPI.getCurrentSubscription.mockResolvedValue({
+      id: 'sub-123',
+      status: 'active',
+      plan: 'premium',
+      currentPeriodEnd: '2025-12-31T00:00:00Z',
     });
 
-    const { getByText } = render(<PremiumScreen navigation={mockNavigation} />);
+    const { getByText } = render(
+      <PremiumScreen
+        navigation={mockNavigation as any}
+        route={mockRoute as any}
+      />,
+    );
 
     await waitFor(() => {
       expect(getByText('Premium Member')).toBeTruthy();
@@ -195,7 +210,12 @@ describe('PremiumScreen', () => {
   });
 
   it('applies haptic feedback when interacting with plans', async () => {
-    const { getByText } = render(<PremiumScreen navigation={mockNavigation} />);
+    const { getByText } = render(
+      <PremiumScreen
+        navigation={mockNavigation as any}
+        route={mockRoute as any}
+      />,
+    );
 
     await waitFor(() => {
       expect(getByText('Subscribe')).toBeTruthy();

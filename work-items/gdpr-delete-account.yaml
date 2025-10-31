@@ -2,127 +2,102 @@ id: gdpr-delete-account
 owner: api
 severity: critical
 area: backend+mobile
-status: open
 context: |
-  User wants to delete their account for privacy/GDPR reasons.
-  Current behavior: Delete endpoint exists but lacks 30-day grace period and cancellation option.
-  Why it matters: GDPR violation without proper deletion flow with grace period.
-  
-  Use Case:
-  1. User navigates to Settings → Deactivate Account
-  2. User confirms deletion with password
-  3. System sends confirmation email
-  4. 30-day grace period begins
-  5. User can cancel deletion within grace period
-  6. Data export available before deletion
-  7. Final deletion occurs after grace period
+  User can access delete account UI in Settings screen but the actual deletion
+  service is not implemented. This is a GDPR Article 17 violation (Right to erasure).
+  Current behavior: UI shows but clicking results in error/no-op.
+  Expected: Secure deletion flow with grace period and confirmation.
 
 acceptance:
-  - [ ] Backend: DELETE /users/delete-account returns gracePeriodEndsAt timestamp
-  - [ ] Backend: GET /users/export-data returns downloadable JSON/blob
-  - [ ] Backend: POST /users/confirm-deletion with token finalizes deletion
-  - [ ] Backend: POST /users/cancel-deletion cancels scheduled deletion
-  - [ ] Mobile: GDPR client service methods implemented
-  - [ ] Mobile: DeactivateAccountScreen UI complete with all states
-  - [ ] Mobile: Email confirmation flow works
-  - [ ] Mobile: Grace period countdown displayed
-  - [ ] Mobile: Cancel deletion option available during grace period
-  - [ ] Mobile: Data export functionality works
-  - [ ] E2E: Detox test exercises full flow including grace period
+  - DELETE /users/delete-account endpoint returns success + grace period
+  - Client service validates password and handles states properly  
+  - Detox E2E test exercises full flow and verifies grace period UI
+  - All user data marked for deletion after grace period expires
+  - User receives confirmation email with cancellation option
 
 states:
-  - loading
-  - confirm
-  - grace-period
-  - cancelled
-  - error
+  - idle: default state, delete button enabled
+  - loading: password validation and API call in progress
+  - confirm: showing grace period confirmation with cancellation option
+  - grace-period: account marked for deletion, user can still cancel
+  - deleted: account permanently removed, user logged out
+  - error: validation failed or API error, show actionable message
 
 telemetry:
   - event: GDPR_DELETE_REQUESTED
-    props: [reason, userId, timestamp]
-  - event: GDPR_DELETE_CONFIRMED
-    props: [userId, deletionDate, gracePeriodEndsAt]
+    props: [reason, user_tenure_days]
+  - event: GDPR_DELETE_CONFIRMED  
+    props: [grace_period_hours]
   - event: GDPR_DELETE_CANCELLED
-    props: [userId, cancelledAt]
-  - event: GDPR_DATA_EXPORTED
-    props: [userId, format, timestamp]
+    props: [hours_remaining]
   - event: GDPR_DELETE_COMPLETED
-    props: [userId, completedAt]
+    props: [data_types_deleted]
 
 contracts:
   request:
-    deleteAccount: { password: string, reason?: string, feedback?: string }
-    confirmDeletion: { token: string }
-    exportData: {}
-    cancelDeletion: { userId: string }
+    password: string           # required for security
+    reason: string            # optional, for analytics
+    feedback: string          # optional, for product improvement
   response:
-    deleteAccount: { 
-      success: boolean
-      message: string
-      requestId: string
-      gracePeriodEndsAt: string
-      canCancel: boolean
-      exportUrl?: string
-    }
-    confirmDeletion: { success: boolean, deletedAt: string }
-    exportData: { url: string, expiresAt: string, format: string }
-    cancelDeletion: { success: boolean, cancelledAt: string }
+    success: boolean
+    message: string
+    gracePeriodEndsAt: string # ISO8601 datetime
+    cancellationToken: string # for grace period cancellation
   errors:
-    - code: INVALID_PASSWORD
-      message: "Password is incorrect"
-    - code: GRACE_PERIOD_EXPIRED
-      message: "Grace period has expired, cannot cancel"
-    - code: TOKEN_INVALID
-      message: "Confirmation token is invalid or expired"
-    - code: EXPORT_FAILED
-      message: "Data export failed, please try again"
-    - code: ALREADY_DELETED
-      message: "Account is already deleted"
+    - 400: { code: 'INVALID_PASSWORD', message: 'Password incorrect' }
+    - 429: { code: 'RATE_LIMITED', message: 'Too many deletion attempts' }
+    - 500: { code: 'DELETION_FAILED', message: 'Unable to process deletion' }
 
 assets:
-  mocks:
-    - mocks/fixtures/gdpr/delete.success.json
-    - mocks/fixtures/gdpr/delete.error-invalid-password.json
-    - mocks/fixtures/gdpr/export.success.json
-    - mocks/fixtures/gdpr/confirm.success.json
-    - mocks/fixtures/gdpr/cancel.success.json
+  simulations: 
+    - simulations/fixtures/gdpr/delete-success.json
+    - simulations/fixtures/gdpr/delete-invalid-password.json
+    - simulations/fixtures/gdpr/delete-rate-limited.json
   tests:
-    - apps/mobile/src/screens/__tests__/DeactivateAccount.int.test.tsx
-    - apps/mobile/src/services/__tests__/gdprService.test.ts
-    - e2e/gdpr-delete.e2e.ts
-  screens:
-    - apps/mobile/src/screens/DeactivateAccountScreen.tsx
-  services:
-    - apps/mobile/src/services/gdprService.ts
+    - apps/mobile/src/services/__tests__/gdpr.test.ts
+    - apps/mobile/src/screens/__tests__/Settings.GDPR.int.test.tsx
+    - e2e/gdpr-delete-flow.e2e.ts
+  mocks:
+    - scripts/mock-server.ts (DELETE /users/delete-account)
 
 risks:
-  - Accidental permanent deletion without password verification
-  - Grace period not enforced on backend allowing immediate deletion
-  - Data export may contain incomplete or corrupted data
-  - Email delivery failures preventing cancellation
-  - Race conditions when multiple deletion requests submitted
+  - Accidental deletion without proper password verification
+  - Data not actually deleted from all systems during grace period
+  - Grace period cancellation flow could fail leaving account in limbo
+  - Email delivery failure could prevent user from cancelling
 
 rollback:
-  - Disable DeactivateAccount UI entry point via feature flag
-  - Revert GDPR service method changes
-  - Rollback backend endpoint changes
-  - Notify affected users via email
-
-links:
-  - PR: #TODO
-  - docs: reports/gdpr_checklist.md
-  - legal: GDPR compliance requirements
-  - jira: GDPR-123
+  - Disable delete account button via feature flag
+  - Route delete requests to no-op handler that logs attempts
+  - Show maintenance message if deletion service is down
 
 dependencies:
-  - backend: accountController modifications
-  - mobile: gdprService enhancements
-  - infra: email service for confirmations
-  - testing: E2E test suite for GDPR flows
+  - User authentication service (password verification)
+  - Email service (confirmation and cancellation emails) 
+  - Data retention service (actual data deletion after grace period)
+  - Feature flag service (for rollback capability)
 
-timeline:
-  start: 2025-01-30
-  backend: 2025-02-10
-  mobile: 2025-02-14
-  testing: 2025-02-15
-  deploy: 2025-02-20
+security:
+  - Password must be verified before deletion request accepted
+  - Rate limiting: max 3 deletion attempts per 24 hours
+  - Audit log all deletion requests with IP and user agent
+  - Secure token for grace period cancellation (not guessable)
+
+compliance:
+  - GDPR Article 17 (Right to erasure)
+  - Must complete within 30 days of request (including grace period)
+  - Notify data processors of deletion request
+  - Maintain deletion audit trail for regulatory review
+
+implementation_notes: |
+  1. Client service should validate password locally first (UX)
+  2. Show progress indicator during API call
+  3. Grace period UI should clearly show time remaining
+  4. Cancellation should be one-click with confirmation dialog
+  5. Error messages must be actionable (not generic)
+
+status: open
+priority: P0
+created: 2024-01-15T10:00:00Z
+assignee: api-contract-agent
+labels: [gdpr, critical, backend, mobile, legal]

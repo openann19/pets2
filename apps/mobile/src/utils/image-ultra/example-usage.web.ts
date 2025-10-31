@@ -5,7 +5,9 @@
  * in real scenarios (web and React Native)
  */
 
-import { processImagePipeline, loadImageToCanvas, AbortableQueue, LRU } from './index';
+import { processImagePipeline, loadImageToCanvas, AbortableQueue, LRU } from './index'
+import { logger } from '@pawfectmatch/core';
+;
 import { processImageUltraPro } from './pipeline_pro';
 
 // ===== Example 1: Basic upscale + sharpen =====
@@ -16,8 +18,8 @@ export async function basicUpscaleExample(fileBlob: Blob) {
     export: { target: 'jpeg', quality: 0.9 },
   });
 
-  console.log('Processed:', blob.size, 'bytes');
-  console.log('Report:', report);
+  logger.info('Processed:', { size: blob.size, sizeInBytes: blob.size });
+  logger.info('Report:', report);
   return blob;
 }
 
@@ -38,8 +40,8 @@ export async function adaptiveQualityExample(fileBlob: Blob) {
     },
   });
 
-  console.log('Quality found:', report.export.quality);
-  console.log('SSIM achieved:', report.export.ssim);
+  logger.info('Quality found:', { quality: report.export.quality });
+  logger.info('SSIM achieved:', { ssim: report.export.ssim });
   return blob;
 }
 
@@ -211,7 +213,7 @@ export async function ultraProExample(fileBlob: Blob) {
     },
   );
 
-  console.log('PRO Report:', {
+  logger.info('PRO Report:', {
     hdrWarning: report.hdrWarning, // true if >3% clipped
     autoStraightened: report.autoStraightened,
     angleDeg: report.angleDeg, // e.g., -2.3°
@@ -234,13 +236,13 @@ export async function individualProFeaturesExample(fileBlob: Blob) {
 
   // 1) Check HDR clipping
   const clipFrac = highlightClipFraction(canvas, 250);
-  console.log('Clipped pixels:', (clipFrac * 100).toFixed(1) + '%');
+  logger.info('Clipped pixels:', { percentage: `${(clipFrac * 100).toFixed(1)}%` });
 
   // 2) Auto-straighten
   const angle = estimateHorizonAngle(canvas);
   if (Math.abs(angle) > 0.3) {
     canvas = rotateCanvas(canvas, -angle);
-    console.log('Rotated:', angle.toFixed(1) + '°');
+    logger.info('Rotated:', { angle: `${angle.toFixed(1)}°` });
   }
 
   // 3) Noise reduction
@@ -258,7 +260,7 @@ export async function individualProFeaturesExample(fileBlob: Blob) {
   // 7) Smart crop
   const trio = proposeTrioCrops(canvas, 4 / 5); // 4:5 ratio
   const best = bestOf3(canvas, trio);
-  console.log('Best crop:', best.key, 'score:', best.score.toFixed(3));
+  logger.info('Best crop:', { key: best.key, score: parseFloat(best.score.toFixed(3)) });
 
   // Cut to best crop
   const out = document.createElement('canvas');

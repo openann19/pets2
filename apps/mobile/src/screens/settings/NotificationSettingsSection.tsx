@@ -8,15 +8,7 @@ import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '@mobile/theme';
 import type { AppTheme } from '@mobile/theme';
 
-interface SettingItem {
-  id: string;
-  title: string;
-  subtitle?: string;
-  icon: string;
-  type: 'toggle' | 'navigation' | 'action';
-  value?: boolean;
-  destructive?: boolean;
-}
+import type { SettingItem } from './useSettingsData';
 
 interface NotificationSettingsSectionProps {
   settings: SettingItem[];

@@ -7,6 +7,7 @@ import { Alert } from 'react-native';
 import { logger } from '@pawfectmatch/core';
 import { useAuthStore, type Pet, type PetFilters } from '@pawfectmatch/core';
 import { matchesAPI } from '../../services/api';
+import { superLikePet } from '../../services/swipeService';
 
 interface UseModernSwipeScreenReturn {
   // Data
@@ -104,23 +105,46 @@ export const useModernSwipeScreen = (): UseModernSwipeScreenReturn => {
     }
   }, []);
 
-  // Handle super like
+  // Handle super like with feature gate
+  // Note: Feature gate check is now handled at UI level (SwipeActions component)
+  // This function assumes access has been verified by the feature gate
   const handleSuperLike = useCallback(
     async (pet: Pet) => {
       try {
-        const result = await handleLike(pet);
+        // Call the super like API - backend will check permissions
+        const result = await superLikePet(pet._id);
 
         if (result) {
           Alert.alert('Super Like Sent!', `${pet.name} will see that you super liked them!`);
         }
 
         return result;
-      } catch (error) {
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        
+        // Fallback error handling for edge cases (e.g., if balance changed between UI check and API call)
+        if (errorMessage.includes('SUPERLIKE_INSUFFICIENT_BALANCE') || 
+            errorMessage.includes('No Super Likes remaining') ||
+            (typeof error === 'object' && error !== null && 'code' in error && error.code === 'SUPERLIKE_INSUFFICIENT_BALANCE')) {
+          Alert.alert(
+            'No Super Likes Remaining',
+            'Purchase more Super Likes from the Premium screen.',
+          );
+        } else if (errorMessage.includes('SUPERLIKE_PREMIUM_REQUIRED') ||
+                   (typeof error === 'object' && error !== null && 'code' in error && error.code === 'SUPERLIKE_PREMIUM_REQUIRED')) {
+          Alert.alert(
+            'Premium Required',
+            'Super Like is a premium feature. Upgrade to Premium to unlock unlimited Super Likes.',
+          );
+        } else {
+          Alert.alert('Error', `Failed to send Super Like: ${errorMessage}`);
+        }
+        
         logger.error('Error super liking pet', { error });
         return null;
       }
     },
-    [handleLike],
+    [],
   );
 
   // Swipe pet function

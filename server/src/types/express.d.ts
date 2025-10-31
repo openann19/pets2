@@ -1,24 +1,32 @@
-import { Request } from 'express';
-import { IUserDocument } from './mongoose.d';
+import type { IUserDocument } from './mongoose.d';
 
 /**
- * Extended Express Request with authentication
- */
-export interface AuthRequest extends Request {
-  userId?: string;
-  user?: IUserDocument;
-}
-
-/**
- * Extend Express Request to include userId
+ * Extended Express Request types using declaration merging
+ * This allows Request.user and Request.userId to be available globally
+ * without conflicting with Mongoose Document types
  */
 declare global {
   namespace Express {
     interface Request {
+      /**
+       * Authenticated user ID (set by auth middleware)
+       */
       userId?: string;
+      
+      /**
+       * Authenticated user document (set by auth middleware)
+       * Uses type assertion at assignment point to handle Mongoose Document types
+       */
+      user?: IUserDocument;
     }
   }
 }
+
+/**
+ * Type alias for authenticated requests
+ * Use Request directly - user and userId are available via declaration merging
+ */
+export type AuthRequest = Request;
 
 /**
  * Extended Express Request with file uploads

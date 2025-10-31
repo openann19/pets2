@@ -2,36 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { _adminAPI } from '../../../../services/api';
 import { errorHandler } from '../../../../services/errorHandler';
-
-export interface Verification {
-  id: string;
-  userId: string;
-  userName: string;
-  userEmail: string;
-  type: 'identity' | 'pet_ownership' | 'veterinary' | 'breeder';
-  status: 'pending' | 'approved' | 'rejected' | 'requires_info';
-  submittedAt: string;
-  reviewedAt?: string;
-  reviewedBy?: string;
-  documents: {
-    id: string;
-    type: 'photo_id' | 'pet_registration' | 'vet_certificate' | 'breeder_license' | 'other';
-    url: string;
-    name: string;
-  }[];
-  notes?: string;
-  rejectionReason?: string;
-  additionalInfoRequested?: string;
-  priority: 'low' | 'medium' | 'high';
-  expiresAt?: string;
-}
+import type { Verification, VerificationFilter } from '../types';
 
 export const useAdminVerifications = () => {
   const [verifications, setVerifications] = useState<Verification[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState<'pending' | 'high_priority' | 'all'>('pending');
+  const [filter, setFilter] = useState<VerificationFilter>('pending');
   const [selectedVerification, setSelectedVerification] = useState<Verification | null>(null);
 
   const loadVerifications = useCallback(
@@ -77,7 +55,7 @@ export const useAdminVerifications = () => {
     setSearchQuery(query);
   }, []);
 
-  const handleFilterChange = useCallback((newFilter: 'pending' | 'high_priority' | 'all') => {
+  const handleFilterChange = useCallback((newFilter: VerificationFilter) => {
     setFilter(newFilter);
   }, []);
 
@@ -113,6 +91,8 @@ export const useAdminVerifications = () => {
         if (response?.success) {
           await loadVerifications(true);
           setSelectedVerification(null);
+        } else {
+          throw new Error(response?.message || 'Failed to reject verification');
         }
       } catch (error) {
         errorHandler.handleError(
@@ -120,8 +100,10 @@ export const useAdminVerifications = () => {
           {
             component: 'AdminVerificationsScreen',
             action: 'rejectVerification',
+            metadata: { verificationId },
           },
         );
+        throw error;
       }
     },
     [loadVerifications],
@@ -134,6 +116,8 @@ export const useAdminVerifications = () => {
         if (response?.success) {
           await loadVerifications(true);
           setSelectedVerification(null);
+        } else {
+          throw new Error(response?.message || 'Failed to request info');
         }
       } catch (error) {
         errorHandler.handleError(
@@ -141,8 +125,10 @@ export const useAdminVerifications = () => {
           {
             component: 'AdminVerificationsScreen',
             action: 'requestVerificationInfo',
+            metadata: { verificationId },
           },
         );
+        throw error;
       }
     },
     [loadVerifications],

@@ -1,0 +1,85 @@
+id: m-test-01-hooks-testing
+owner: test
+severity: critical
+area: mobile
+status: open
+context: |
+  Critical hooks (useAuth, useSwipe) are untested, risking silent crashes.
+  Current behavior: Hook bugs only discovered in production.
+  Why it matters: Silent failures, poor user experience, difficult debugging.
+  
+  Use Case:
+  1. User logs in, useAuth hook fails silently
+  2. User sees loading spinner forever
+  3. No error message shown
+  4. User force closes app
+  5. With tests: Hook errors caught before release
+
+acceptance:
+  - [ ] Unit test useAuth: happy path login
+  - [ ] Unit test useAuth: token expiry handling
+  - [ ] Unit test useAuth: error states
+  - [ ] Unit test useAuth: logout flow
+  - [ ] Unit test useAuth: token refresh
+  - [ ] Unit test useSwipe: swipe left action
+  - [ ] Unit test useSwipe: swipe right action
+  - [ ] Unit test useSwipe: super like action
+  - [ ] Unit test useSwipe: undo action
+  - [ ] Unit test useSwipe: error handling
+  - [ ] Unit test usePushNotifications: permission flow
+  - [ ] Unit test usePushNotifications: token registration
+  - [ ] Unit test usePushNotifications: notification handling
+  - [ ] All hook tests use React Testing Library
+  - [ ] Test coverage ≥ 90% for hooks
+
+states:
+  - untested
+  - partially-tested
+  - fully-tested
+
+telemetry:
+  - event: TEST_HOOK_COVERAGE
+    props: [hookName, coverage, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  tests:
+    - apps/mobile/src/hooks/__tests__/useAuth.test.ts
+    - apps/mobile/src/hooks/__tests__/useAuth.expiry.test.ts
+    - apps/mobile/src/hooks/__tests__/useAuth.error.test.ts
+    - apps/mobile/src/hooks/__tests__/useSwipe.test.ts
+    - apps/mobile/src/hooks/__tests__/useSwipe.gestures.test.ts
+    - apps/mobile/src/hooks/__tests__/usePushNotifications.test.ts
+  hooks:
+    - apps/mobile/src/hooks/useAuth.ts
+    - apps/mobile/src/hooks/useSwipe.ts
+    - apps/mobile/src/hooks/usePushNotifications.ts
+
+risks:
+  - Mock complexity for async hooks
+  - Testing side effects properly
+  - Hook dependencies difficult to test
+  - Maintaining tests as hooks evolve
+
+rollback:
+  - Remove failing tests temporarily
+  - Revert to manual testing
+
+links:
+  - docs: https://react-hooks-testing-library.com/
+  - docs: https://testing-library.com/docs/react-testing-library/intro/
+
+dependencies:
+  - @testing-library/react-hooks
+  - @testing-library/react-native
+  - Mock services for hooks
+
+timeline:
+  start: 2025-01-30
+  useAuth: 2025-01-31
+  useSwipe: 2025-02-01
+  usePushNotifications: 2025-02-02
+  deploy: 2025-02-03
+

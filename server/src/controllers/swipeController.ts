@@ -1,15 +1,7 @@
 import type { Request, Response } from 'express';
+import type { AuthRequest } from '../types/express';
 import type { IUserDocument } from '../types/mongoose';
 import User from '../models/User';
-import Pet from '../models/Pet';
-import Match from '../models/Match';
-import logger from '../utils/logger';
-import { getErrorMessage } from '../../utils/errorHandler';
-
-interface AuthRequest extends Request {
-  userId: string;
-  user?: IUserDocument;
-}
 
 /**
  * @desc    Rewind last swipe action
@@ -237,18 +229,24 @@ export const superLikePet = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    // Check premium status for super like
+    // Check premium status for super like - Business Model: Premium users get unlimited super likes OR use IAP
     const isPremium = user.premium?.isActive && 
       (!user.premium.expiresAt || new Date(user.premium.expiresAt) > new Date());
     
-    const superLikesUsed = user.premium?.usage?.superLikesUsed || 0;
-    const superLikeLimit = isPremium ? 5 : 0;
+    // Premium users with unlimited super likes feature can use unlimited
+    // Others (free or premium without unlimited) must use IAP balance
+    const hasUnlimitedSuperLikes = isPremium && user.premium?.features?.unlimitedLikes;
+    const iapSuperLikes = user.premium?.usage?.iapSuperLikes || 0;
     
-    if (!isPremium || superLikesUsed >= superLikeLimit) {
+    // Check if user has access to super likes
+    if (!hasUnlimitedSuperLikes && iapSuperLikes <= 0) {
       res.status(403).json({
         success: false,
-        message: 'Super like is a premium feature',
-        code: 'SUPERLIKE_PREMIUM_REQUIRED'
+        message: 'No Super Likes remaining. Purchase more from the Premium screen.',
+        code: 'SUPERLIKE_INSUFFICIENT_BALANCE',
+        canPurchase: true,
+        balance: iapSuperLikes,
+        upgradeRequired: !isPremium,
       });
       return;
     }
@@ -266,23 +264,93 @@ export const superLikePet = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
+    // Initialize premium.usage if needed
+    if (!user.premium) {
+      user.premium = {
+        isActive: false,
+        plan: 'free',
+        usage: {
+          swipesUsed: 0,
+          swipesLimit: 5,
+          superLikesUsed: 0,
+          superLikesLimit: 0,
+          boostsUsed: 0,
+          boostsLimit: 0,
+          messagesSent: 0,
+          profileViews: 0,
+          rewindsUsed: 0,
+          iapSuperLikes: 0,
+          iapBoosts: 0,
+        },
+      };
+    }
+
+    if (!user.premium.usage) {
+      user.premium.usage = {
+        swipesUsed: 0,
+        swipesLimit: 5,
+        superLikesUsed: 0,
+        superLikesLimit: 0,
+        boostsUsed: 0,
+        boostsLimit: 0,
+        messagesSent: 0,
+        profileViews: 0,
+        rewindsUsed: 0,
+        iapSuperLikes: 0,
+        iapBoosts: 0,
+      };
+    }
+
+    // Deduct IAP super like if not unlimited
+    if (!hasUnlimitedSuperLikes) {
+      user.premium.usage.iapSuperLikes = Math.max(0, iapSuperLikes - 1);
+    }
+
+    // Track usage
+    user.premium.usage.superLikesUsed = (user.premium.usage.superLikesUsed || 0) + 1;
+
     // Add to swiped pets
-    await User.findByIdAndUpdate(req.userId, {
-      $push: {
-        swipedPets: {
+    if (!user.swipedPets) {
+      user.swipedPets = [];
+    }
+    user.swipedPets.push({
           petId,
           action: 'superlike',
           swipedAt: new Date()
-        }
-      },
-      $inc: {
-        'analytics.totalSwipes': 1,
-        'analytics.totalMatches': 1,
-        'premium.usage.superLikesUsed': 1
-      }
     });
 
-    res.json({ success: true });
+    // Update analytics
+    if (!user.analytics) {
+      user.analytics = {
+        totalSwipes: 0,
+        totalLikes: 0,
+        totalMatches: 0,
+        profileViews: 0,
+        lastActive: new Date(),
+        totalPetsCreated: 0,
+        totalMessagesSent: 0,
+        totalSubscriptionsStarted: 0,
+        totalSubscriptionsCancelled: 0,
+        totalPremiumFeaturesUsed: 0,
+        events: [],
+      };
+    }
+    user.analytics.totalSwipes = (user.analytics.totalSwipes || 0) + 1;
+    user.analytics.lastActive = new Date();
+    user.analytics.events = user.analytics.events || [];
+    user.analytics.events.push({
+      type: 'superlike',
+      petId,
+      timestamp: new Date(),
+    });
+
+    await user.save();
+
+    res.json({ 
+      success: true,
+      message: 'Super Like sent successfully',
+      balance: user.premium.usage.iapSuperLikes,
+    });
 
   } catch (error: unknown) {
     logger.error('Super like pet error:', error);

@@ -215,8 +215,8 @@ export function useDeletePet(): UseMutationResult<void, Error, string> {
 // ============= SWIPE & MATCHING HOOKS =============
 interface SwipeActionRequest {
     petId: string;
-    action: 'like' | 'pass';
-    direction: 'left' | 'right';
+    action: 'like' | 'pass' | 'superlike';
+    direction?: 'left' | 'right';
 }
 
 interface UseSwipeReturn {
@@ -226,12 +226,46 @@ interface UseSwipeReturn {
     clearMatch: () => void;
 }
 
-export function useSwipeQueue(): UseQueryResult<Pet[]> {
+export interface SwipeFilters {
+    species?: string[];
+    breeds?: string[];
+    ages?: { min?: number; max?: number };
+    sizes?: string[];
+    genders?: string[];
+    colors?: string[];
+    temperaments?: string[];
+    energyLevels?: string[];
+    trainability?: string[];
+    familyFriendly?: boolean[];
+    petFriendly?: boolean[];
+    strangerFriendly?: boolean[];
+    apartmentFriendly?: boolean | null;
+    houseSafe?: boolean | null;
+    yardRequired?: boolean | null;
+    groomingNeeds?: string[];
+    exerciseNeeds?: string[];
+    barkiness?: string[];
+    healthStatus?: string[];
+    vaccinationStatus?: string[];
+    availability?: string[];
+    locationRadius?: number;
+    sortBy?: string;
+    sortDirection?: 'asc' | 'desc';
+    resultLimit?: number;
+    premiumFeatures?: {
+        trending?: boolean;
+        verified?: boolean;
+        featured?: boolean;
+        aiRecommended?: boolean;
+    };
+}
+
+export function useSwipeQueue(filters?: SwipeFilters): UseQueryResult<Pet[]> {
     const { isAuthenticated } = useAuthStore();
     return useQuery<Pet[]>({
-        queryKey: ['swipe', 'queue'],
+        queryKey: ['swipe', 'queue', filters],
         queryFn: async () => {
-            const response = await apiClient.getSwipeQueue();
+            const response = await apiClient.getSwipeQueue(filters || {});
             if (response.success)
                 return response.data || [];
             throw new Error(response.error?.message || 'Failed to fetch swipe queue');
@@ -245,10 +279,20 @@ export function useSwipe(): UseSwipeReturn {
     const queryClient = useQueryClient();
     const [lastMatch, setLastMatch] = useState<Match | null>(null);
     const swipeMutation = useMutation<SwipeResponse, Error, SwipeActionRequest>({
-        mutationFn: (action: SwipeActionRequest) => apiClient.swipe(action),
+        mutationFn: async (action: SwipeActionRequest) => {
+            const response = await apiClient.swipe({
+                petId: action.petId,
+                action: action.action
+            });
+            return response as SwipeResponse;
+        },
         onSuccess: (response: SwipeResponse) => {
             if (response.isMatch && response.match) {
                 setLastMatch(response.match);
+                // Dispatch match event for celebration modal
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('match:new', { detail: response.match }));
+                }
             }
             queryClient.invalidateQueries({ queryKey: ['swipe', 'queue'] });
             queryClient.invalidateQueries({ queryKey: ['matches'] });
@@ -638,8 +682,12 @@ interface UseSwipeDataReturn {
     refetch: () => void;
 }
 
-export function useSwipeData(): UseSwipeDataReturn {
-    const queue = useSwipeQueue();
+interface UseSwipeDataOptions {
+    filters?: SwipeFilters;
+}
+
+export function useSwipeData(options?: UseSwipeDataOptions): UseSwipeDataReturn {
+    const queue = useSwipeQueue(options?.filters);
     const { swipe, isLoading, lastMatch, clearMatch } = useSwipe();
     const user = useCurrentUser();
     

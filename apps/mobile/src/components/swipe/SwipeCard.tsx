@@ -17,6 +17,7 @@
 import React from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
+import { useTheme } from '@mobile/theme';
 
 export interface Pet {
   _id: string;
@@ -51,6 +52,44 @@ export interface SwipeCardProps {
  * SwipeCard - Displays a pet card with swipeable gestures
  */
 export const SwipeCard: React.FC<SwipeCardProps> = ({ pet, style, panHandlers, testID }) => {
+  const theme = useTheme();
+  
+  const styles = StyleSheet.create({
+    card: {
+      width: '100%',
+      maxWidth: 400,
+      height: 400,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      shadowColor: theme.colors.onSurface,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+      justifyContent: 'flex-end',
+    },
+    petInfo: {
+      alignItems: 'center',
+    },
+    petName: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    petBreed: {
+      fontSize: 18,
+      color: theme.colors.onMuted,
+    },
+    petDescription: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      marginTop: theme.spacing.sm,
+      textAlign: 'center',
+    },
+  });
+
   return (
     <Animated.View
       testID={testID || `swipe-card-${pet._id}`}
@@ -66,38 +105,3 @@ export const SwipeCard: React.FC<SwipeCardProps> = ({ pet, style, panHandlers, t
   );
 };
 
-const styles = StyleSheet.create({
-  card: {
-    width: '100%',
-    maxWidth: 400,
-    height: 400,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    justifyContent: 'flex-end',
-  },
-  petInfo: {
-    alignItems: 'center',
-  },
-  petName: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  petBreed: {
-    fontSize: 18,
-    color: '#666',
-  },
-  petDescription: {
-    fontSize: 14,
-    color: '#999',
-    marginTop: 8,
-    textAlign: 'center',
-  },
-});

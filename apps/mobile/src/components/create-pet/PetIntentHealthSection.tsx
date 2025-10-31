@@ -126,7 +126,7 @@ export const PetIntentHealthSection: React.FC<PetIntentHealthSectionProps> = ({
               key={option.value}
               style={StyleSheet.flatten([
                 styles.intentButton,
-                formData.intent === option.value && styles.intentButtonSelected,
+                formData['intent'] === option.value && styles.intentButtonSelected,
               ])}
               onPress={() => {
                 onUpdateFormData('intent', option.value);
@@ -136,7 +136,7 @@ export const PetIntentHealthSection: React.FC<PetIntentHealthSectionProps> = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.intentText,
-                  formData.intent === option.value && styles.intentTextSelected,
+                  formData['intent'] === option.value && styles.intentTextSelected,
                 ])}
               >
                 {option.label}
@@ -144,7 +144,7 @@ export const PetIntentHealthSection: React.FC<PetIntentHealthSectionProps> = ({
             </TouchableOpacity>
           ))}
         </View>
-        {errors.intent && <Text style={styles.errorText}>{errors.intent}</Text>}
+        {errors['intent'] && <Text style={styles.errorText}>{errors['intent']}</Text>}
       </View>
 
       <View style={styles.inputGroup}>

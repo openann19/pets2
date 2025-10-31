@@ -10,7 +10,7 @@ import {
   withTiming,
   runOnJS,
 } from 'react-native-reanimated';
-import { PREMIUM_ANIMATIONS } from './constants';
+import { springs } from '@/foundation/motion';
 
 export const usePageTransition = () => {
   const screenOpacity = useSharedValue(1);
@@ -19,8 +19,8 @@ export const usePageTransition = () => {
   const enterScreen = () => {
     screenOpacity.value = 0;
     screenTranslateY.value = 50;
-    screenOpacity.value = withSpring(1, PREMIUM_ANIMATIONS.spring.gentle);
-    screenTranslateY.value = withSpring(0, PREMIUM_ANIMATIONS.spring.gentle);
+    screenOpacity.value = withSpring(1, springs.gentle);
+    screenTranslateY.value = withSpring(0, springs.gentle);
   };
 
   const exitScreen = (callback?: () => void) => {

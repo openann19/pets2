@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import type { ViewStyle } from 'react-native';
+import type { ViewStyle, StyleProp } from 'react-native';
 import { StyleSheet, View, AccessibilityInfo } from 'react-native';
 import Animated, {
   FadeInUp,
@@ -7,17 +7,30 @@ import Animated, {
   SlideInRight,
   useSharedValue,
   useAnimatedStyle,
+  useAnimatedReaction,
   withSpring,
+  interpolate,
+  Extrapolate,
+  type AnimateStyle,
+  type SharedValue,
 } from 'react-native-reanimated';
+import { springs, fromVelocity, type SpringConfig } from '@/foundation/motion';
+import { useReduceMotion } from '@/hooks/useReducedMotion';
 
+// Prefer useReduceMotion hook from foundation
 const usePrefersReducedMotion = () => {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    AccessibilityInfo.isReduceMotionEnabled().then((v) => {
-      setReduced(!!v);
-    });
-  }, []);
-  return reduced;
+  try {
+    return useReduceMotion();
+  } catch {
+    // Fallback if hook not available
+    const [reduced, setReduced] = useState(false);
+    useEffect(() => {
+      AccessibilityInfo.isReduceMotionEnabled().then((v) => {
+        setReduced(!!v);
+      });
+    }, []);
+    return reduced;
+  }
 };
 
 interface StaggeredFadeInUpListProps {
@@ -38,18 +51,18 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
   return (
     <View style={StyleSheet.flatten([containerStyle])}>
       {children.map((child, index) => {
+        const enteringAnimation = reduceMotion
+          ? undefined
+          : FadeInUp.delay(index * delay)
+              .springify()
+              .damping(springs.standard.damping)
+              .stiffness(springs.standard.stiffness);
+
         return (
           <Animated.View
             key={index}
-            entering={
-              reduceMotion
-                ? undefined
-                : FadeInUp.delay(index * delay)
-                    .springify()
-                    .damping(25)
-                    .stiffness(300)
-            }
-            style={style}
+            {...(enteringAnimation !== undefined && { entering: enteringAnimation })}
+            style={style ? [style] : undefined}
           >
             {child}
           </Animated.View>
@@ -77,7 +90,7 @@ export const PhysicsBasedScaleIn: React.FC<PhysicsBasedScaleInProps> = ({
 
   useEffect(() => {
     if (trigger) {
-      s.value = withSpring(1, { damping: 10, stiffness: 600, mass: 0.5 });
+      s.value = withSpring(1, springs.snappy);
     }
   }, [trigger]);
 
@@ -85,7 +98,7 @@ export const PhysicsBasedScaleIn: React.FC<PhysicsBasedScaleInProps> = ({
     opacity: reduceMotion ? 1 : s.value,
     transform: [{ scale: reduceMotion ? 1 : s.value }],
   }));
-  return <Animated.View style={[styleA, style]}>{children}</Animated.View>;
+  return <Animated.View style={[styleA, ...(style ? [style] : [])] as any}>{children}</Animated.View>;
 };
 
 interface PageTransitionProps {
@@ -112,7 +125,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
   return (
     <Animated.View
       entering={entering}
-      style={style as any}
+      style={style as StyleProp<AnimateStyle<ViewStyle>> | undefined}
     >
       {children}
     </Animated.View>
@@ -147,12 +160,12 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
 
   useEffect(() => {
     // Simulate scroll trigger
-    opacity.value = withSpring(1, { damping: 10, stiffness: 100 });
+    opacity.value = withSpring(1, springs.gentle);
     if (animation === 'slide' || animation === 'slideIn') {
-      translateY.value = withSpring(0, { damping: 10, stiffness: 100 });
+      translateY.value = withSpring(0, springs.gentle);
     }
     if (animation === 'scale' || animation === 'scaleIn') {
-      scale.value = withSpring(1, { damping: 10, stiffness: 100 });
+      scale.value = withSpring(1, springs.gentle);
     }
   }, [triggerPoint, animation]);
 
@@ -172,7 +185,153 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
     return { opacity: opacity.value };
   });
 
+  return <Animated.View style={[animatedStyle, ...(style ? [style] : [])] as any}>{children}</Animated.View>;
+};
+
+// ===== NEW ENHANCED PRIMITIVES (Phase 1) =====
+
+/**
+ * Velocity-based scale animation
+ * Scales based on gesture velocity for natural feel
+ */
+interface VelocityBasedScaleProps {
+  children: React.ReactNode;
+  velocity: SharedValue<number>;
+  minScale?: number;
+  maxScale?: number;
+  enabled?: boolean;
+  style?: ViewStyle;
+}
+
+export const VelocityBasedScale: React.FC<VelocityBasedScaleProps> = ({
+  children,
+  velocity,
+  minScale = 0.95,
+  maxScale = 1.05,
+  enabled = true,
+  style,
+}) => {
+  const reduceMotion = usePrefersReducedMotion();
+  const scale = useSharedValue(1);
+  
+  useAnimatedReaction(
+    () => velocity.value,
+    (v) => {
+      if (!enabled || reduceMotion) return;
+      const absVelocity = Math.abs(v);
+      const targetScale = interpolate(
+        absVelocity,
+        [0, 1000],
+        [1, maxScale],
+        Extrapolate.CLAMP
+      );
+      scale.value = withSpring(targetScale, fromVelocity(absVelocity));
+    }
+  );
+  
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: reduceMotion ? 1 : scale.value }],
+  }));
+  
   return <Animated.View style={[animatedStyle, style]}>{children}</Animated.View>;
+};
+
+/**
+ * Overshoot spring animation
+ * Creates playful bounce with configurable overshoot
+ */
+interface OvershootSpringProps {
+  children: React.ReactNode;
+  overshoot?: number; // 0-1, how much overshoot
+  trigger?: boolean;
+  style?: ViewStyle;
+}
+
+export const OvershootSpring: React.FC<OvershootSpringProps> = ({
+  children,
+  overshoot = 0.2,
+  trigger = true,
+  style,
+}) => {
+  const scale = useSharedValue(0.8);
+  const reduceMotion = usePrefersReducedMotion();
+  
+  useEffect(() => {
+    if (trigger && !reduceMotion) {
+      scale.value = withSpring(
+        1,
+        {
+          ...springs.overshoot,
+          overshootClamping: false,
+        }
+      );
+    }
+  }, [trigger]);
+  
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: reduceMotion ? 1 : scale.value,
+    transform: [{ scale: reduceMotion ? 1 : scale.value }],
+  }));
+  
+  return <Animated.View style={[animatedStyle, style]}>{children}</Animated.View>;
+};
+
+/**
+ * Enhanced staggered entrance
+ * Better performance and more options than StaggeredFadeInUpList
+ */
+interface StaggeredEntranceProps {
+  children: React.ReactNode[];
+  delay?: number;
+  animation?: 'fade' | 'scale' | 'slide' | 'both';
+  springConfig?: SpringConfig;
+  style?: ViewStyle;
+}
+
+export const StaggeredEntrance: React.FC<StaggeredEntranceProps> = ({
+  children,
+  delay = 100,
+  animation = 'fade',
+  springConfig = springs.standard,
+  style,
+}) => {
+  const reduceMotion = usePrefersReducedMotion();
+  
+  return (
+    <>
+      {children.map((child, index) => {
+        const opacity = useSharedValue(0);
+        const scale = useSharedValue(0.9);
+        const translateY = useSharedValue(20);
+        
+        useEffect(() => {
+          if (!reduceMotion) {
+            opacity.value = withSpring(1, springConfig);
+            if (animation === 'scale' || animation === 'both') {
+              scale.value = withSpring(1, springConfig);
+            }
+            if (animation === 'slide' || animation === 'both') {
+              translateY.value = withSpring(0, springConfig);
+            }
+          }
+        }, []);
+        
+        const animatedStyle = useAnimatedStyle(() => ({
+          opacity: reduceMotion ? 1 : opacity.value,
+          transform: [
+            { scale: reduceMotion ? 1 : scale.value },
+            { translateY: reduceMotion ? 0 : translateY.value },
+          ],
+        }));
+        
+        return (
+          <Animated.View key={index} style={[animatedStyle, style]}>
+            {child}
+          </Animated.View>
+        );
+      })}
+    </>
+  );
 };
 
 export default {
@@ -181,4 +340,10 @@ export default {
   PageTransition,
   GestureWrapper,
   ScrollTrigger,
+  VelocityBasedScale,
+  OvershootSpring,
+  StaggeredEntrance,
 };
+
+// Re-export springs from foundation for convenience
+export { springs, fromVelocity, type SpringConfig } from '@/foundation/motion';

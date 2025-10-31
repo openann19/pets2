@@ -11,117 +11,128 @@
 
 import { renderHook, act } from '@testing-library/react-native';
 import { useSpringAnimation } from '../useSpringAnimation';
+import { springs } from '@/foundation/motion';
 
 describe('useSpringAnimation', () => {
   describe('Initialization', () => {
     it('should initialize with default spring animation', () => {
       const { result } = renderHook(() => useSpringAnimation());
-      expect(result.current.animatedValue).toBeDefined();
-      expect(result.current.springTo).toBeDefined();
-      expect(result.current.springConfig).toBeDefined();
+      expect(result.current.value).toBeDefined();
+      expect(result.current.animate).toBeDefined();
+      expect(result.current.reset).toBeDefined();
     });
 
     it('should accept initial value', () => {
       const { result } = renderHook(() =>
-        useSpringAnimation({
-          initialValue: 100,
-        }),
+        useSpringAnimation(100),
       );
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
+      expect(result.current.value.value).toBe(100);
     });
 
-    it('should accept custom spring config', () => {
-      const customConfig = {
-        damping: 12,
-        stiffness: 150,
-        mass: 1,
-      };
-
+    it('should accept custom spring config preset', () => {
       const { result } = renderHook(() =>
-        useSpringAnimation({
-          config: customConfig,
-        }),
+        useSpringAnimation(0, 'bouncy'),
       );
-      expect(result.current.springConfig).toEqual(customConfig);
+      
+      act(() => {
+        result.current.animate(1);
+      });
+
+      expect(result.current.value).toBeDefined();
     });
   });
 
   describe('Animation Control', () => {
     it('should animate to target value', () => {
-      const { result } = renderHook(() => useSpringAnimation());
+      const { result } = renderHook(() => useSpringAnimation(0));
 
       act(() => {
-        result.current.springTo(1);
+        result.current.animate(1);
       });
 
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
+      expect(result.current.value.value).toBeGreaterThanOrEqual(0);
     });
 
     it('should animate from custom start value', () => {
       const { result } = renderHook(() =>
-        useSpringAnimation({
-          initialValue: 0.5,
-        }),
+        useSpringAnimation(0.5),
       );
 
       act(() => {
-        result.current.springTo(1);
+        result.current.animate(1);
       });
 
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
     });
 
     it('should handle multiple spring calls', () => {
-      const { result } = renderHook(() => useSpringAnimation());
+      const { result } = renderHook(() => useSpringAnimation(0));
 
       act(() => {
-        result.current.springTo(0.5);
+        result.current.animate(0.5);
       });
 
       act(() => {
-        result.current.springTo(1);
+        result.current.animate(1);
       });
 
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
     });
 
-    it('should support immediate animation', () => {
-      const { result } = renderHook(() => useSpringAnimation());
+    it('should accept custom config override', () => {
+      const { result } = renderHook(() => useSpringAnimation(0, 'standard'));
+
+      const customConfig = {
+        damping: 20,
+        stiffness: 300,
+      };
 
       act(() => {
-        result.current.springTo(1, true); // immediate
+        result.current.animate(1, customConfig);
       });
 
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
     });
   });
 
   describe('Spring Configuration', () => {
     it('should use bouncy spring config', () => {
       const { result } = renderHook(() =>
-        useSpringAnimation({
-          config: 'bouncy',
-        }),
+        useSpringAnimation(0, 'bouncy'),
       );
-      expect(result.current.springConfig).toBeDefined();
+      
+      act(() => {
+        result.current.animate(1);
+      });
+
+      expect(result.current.value).toBeDefined();
+      expect(springs.bouncy).toBeDefined();
     });
 
     it('should use gentle spring config', () => {
       const { result } = renderHook(() =>
-        useSpringAnimation({
-          config: 'gentle',
-        }),
+        useSpringAnimation(0, 'gentle'),
       );
-      expect(result.current.springConfig).toBeDefined();
+      
+      act(() => {
+        result.current.animate(1);
+      });
+
+      expect(result.current.value).toBeDefined();
+      expect(springs.gentle).toBeDefined();
     });
 
-    it('should use stiff spring config', () => {
-      const { result } = renderHook(() =>
-        useSpringAnimation({
-          config: 'stiff',
-        }),
-      );
-      expect(result.current.springConfig).toBeDefined();
+    it('should use standard spring config by default', () => {
+      const { result } = renderHook(() => useSpringAnimation(0));
+      
+      act(() => {
+        result.current.animate(1);
+      });
+
+      expect(result.current.value).toBeDefined();
+      expect(springs.standard).toBeDefined();
     });
 
     it('should accept custom numeric config', () => {
@@ -131,165 +142,182 @@ describe('useSpringAnimation', () => {
         mass: 0.8,
       };
 
-      const { result } = renderHook(() =>
-        useSpringAnimation({
-          config: customConfig,
-        }),
-      );
-      expect(result.current.springConfig).toEqual(customConfig);
+      const { result } = renderHook(() => useSpringAnimation(0));
+
+      act(() => {
+        result.current.animate(1, customConfig);
+      });
+
+      expect(result.current.value).toBeDefined();
     });
   });
 
   describe('Value Updates', () => {
-    it('should update base value', () => {
-      const { result } = renderHook(() => useSpringAnimation());
+    it('should update animated value', () => {
+      const { result } = renderHook(() => useSpringAnimation(0));
 
       act(() => {
-        result.current.springTo(0.8);
+        result.current.animate(0.8);
       });
 
-      // Should animate towards 0.8
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
     });
 
     it('should handle value changes during animation', () => {
-      const { result } = renderHook(() => useSpringAnimation());
+      const { result } = renderHook(() => useSpringAnimation(0));
 
       act(() => {
-        result.current.springTo(0.5);
+        result.current.animate(0.5);
       });
 
       act(() => {
-        result.current.springTo(1.0);
+        result.current.animate(1.0);
       });
 
-      // Should animate to new target
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
     });
 
     it('should handle rapid value changes', () => {
-      const { result } = renderHook(() => useSpringAnimation());
+      const { result } = renderHook(() => useSpringAnimation(0));
 
       act(() => {
-        result.current.springTo(0.2);
-        result.current.springTo(0.4);
-        result.current.springTo(0.6);
-        result.current.springTo(0.8);
+        result.current.animate(0.2);
+        result.current.animate(0.4);
+        result.current.animate(0.6);
+        result.current.animate(0.8);
       });
 
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
     });
   });
 
-  describe('Animation States', () => {
-    it('should provide current animation value', () => {
+  describe('Reset Functionality', () => {
+    it('should reset to initial value', () => {
       const { result } = renderHook(() =>
-        useSpringAnimation({
-          initialValue: 0,
-        }),
+        useSpringAnimation(0),
       );
 
-      // Initial value should be accessible
-      expect(result.current.animatedValue).toBeDefined();
-    });
-
-    it('should handle animation completion', () => {
-      const { result } = renderHook(() => useSpringAnimation());
-
       act(() => {
-        result.current.springTo(1, true); // immediate completion
+        result.current.animate(1);
       });
 
-      expect(result.current.animatedValue).toBeDefined();
+      act(() => {
+        result.current.reset();
+      });
+
+      expect(result.current.value).toBeDefined();
+    });
+
+    it('should reset with custom config', () => {
+      const { result } = renderHook(() =>
+        useSpringAnimation(0, 'gentle'),
+      );
+
+      act(() => {
+        result.current.animate(1);
+        result.current.reset();
+      });
+
+      expect(result.current.value).toBeDefined();
     });
   });
 
   describe('Performance', () => {
     it('should not cause unnecessary re-renders', () => {
-      const { result, rerender } = renderHook(() => useSpringAnimation());
-      const initialValue = result.current.animatedValue;
+      const { result, rerender } = renderHook(() => useSpringAnimation(0));
+      const initialValue = result.current.value;
 
       rerender();
-      expect(result.current.animatedValue).toBe(initialValue);
+      expect(result.current.value).toBe(initialValue);
     });
 
     it('should reuse animation instance', () => {
-      const { result } = renderHook(() => useSpringAnimation());
+      const { result } = renderHook(() => useSpringAnimation(0));
 
       act(() => {
-        result.current.springTo(0.5);
+        result.current.animate(0.5);
       });
 
       act(() => {
-        result.current.springTo(1.0);
+        result.current.animate(1.0);
       });
 
-      // Should use same animated value instance
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
     });
 
     it('should handle rapid config changes', () => {
-      const { result, rerender } = renderHook(({ config }) => useSpringAnimation({ config }), {
-        initialProps: { config: 'gentle' },
+      const { result, rerender } = renderHook(
+        ({ config }) => useSpringAnimation(0, config),
+        {
+          initialProps: { config: 'gentle' as const },
+        },
+      );
+
+      rerender({ config: 'standard' as const });
+      
+      act(() => {
+        result.current.animate(1);
       });
 
-      rerender({ config: 'stiff' });
-      expect(result.current.springConfig).toBeDefined();
+      expect(result.current.value).toBeDefined();
     });
   });
 
   describe('Edge Cases', () => {
-    it('should handle invalid config gracefully', () => {
+    it('should handle invalid config preset gracefully', () => {
       const { result } = renderHook(() =>
-        useSpringAnimation({
-          config: 'invalid' as any,
-        }),
+        useSpringAnimation(0, 'invalid' as any),
       );
-      expect(result.current.springConfig).toBeDefined();
+      
+      act(() => {
+        result.current.animate(1);
+      });
+
+      expect(result.current.value).toBeDefined();
     });
 
     it('should handle negative values', () => {
-      const { result } = renderHook(() => useSpringAnimation());
+      const { result } = renderHook(() => useSpringAnimation(0));
 
       act(() => {
-        result.current.springTo(-0.5);
+        result.current.animate(-0.5);
       });
 
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
     });
 
     it('should handle values greater than 1', () => {
-      const { result } = renderHook(() => useSpringAnimation());
+      const { result } = renderHook(() => useSpringAnimation(0));
 
       act(() => {
-        result.current.springTo(1.5);
+        result.current.animate(1.5);
       });
 
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
     });
 
     it('should handle zero values', () => {
-      const { result } = renderHook(() => useSpringAnimation());
+      const { result } = renderHook(() => useSpringAnimation(1));
 
       act(() => {
-        result.current.springTo(0);
+        result.current.animate(0);
       });
 
-      expect(result.current.animatedValue).toBeDefined();
+      expect(result.current.value).toBeDefined();
     });
   });
 
   describe('Cleanup', () => {
     it('should handle unmount gracefully', () => {
-      const { unmount } = renderHook(() => useSpringAnimation());
+      const { unmount } = renderHook(() => useSpringAnimation(0));
       expect(() => unmount()).not.toThrow();
     });
 
     it('should stop animations on unmount', () => {
-      const { unmount, result } = renderHook(() => useSpringAnimation());
+      const { unmount, result } = renderHook(() => useSpringAnimation(0));
 
       act(() => {
-        result.current.springTo(1);
+        result.current.animate(1);
       });
 
       unmount();

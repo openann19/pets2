@@ -1,0 +1,44 @@
+id: u-01-animated-splash-screen
+owner: ux
+severity: high
+area: mobile
+status: open
+context: |
+  Splash screen is static. Animated splash screen with pet paw fade-in improves first impression.
+  Current behavior: Basic splash screen, no animation.
+  Why it matters: Better first impression, more polished feel, brand identity.
+
+acceptance:
+  - [ ] Create animated splash screen component
+  - [ ] Pet paw logo fades in smoothly
+  - [ ] Animation duration: 1-2 seconds
+  - [ ] Works on both iOS and Android
+  - [ ] Performance: 60fps during animation
+  - [ ] Test on various device sizes
+  - [ ] Replace static splash screen
+
+states:
+  - loading
+  - animating
+  - complete
+
+telemetry:
+  - event: UX_SPLASH_SHOWN
+    props: [duration, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  components:
+    - apps/mobile/src/components/splash/AnimatedSplashScreen.tsx
+  assets:
+    - apps/mobile/assets/splash/paw-logo.png
+  tests:
+    - apps/mobile/src/components/__tests__/AnimatedSplashScreen.test.tsx
+
+timeline:
+  start: 2025-02-01
+  implementation: 2025-02-01
+  deploy: 2025-02-02
+

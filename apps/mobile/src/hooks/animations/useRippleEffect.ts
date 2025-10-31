@@ -4,6 +4,7 @@
  */
 
 import { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { durations, motionEasing } from '@/foundation/motion';
 
 export const useRippleEffect = () => {
   const rippleScale = useSharedValue(0);
@@ -12,8 +13,14 @@ export const useRippleEffect = () => {
   const triggerRipple = () => {
     rippleScale.value = 0;
     rippleOpacity.value = 0.6;
-    rippleScale.value = withTiming(2, { duration: 300 });
-    rippleOpacity.value = withTiming(0, { duration: 300 });
+    rippleScale.value = withTiming(2, { 
+      duration: durations.md,
+      easing: motionEasing.enter,
+    });
+    rippleOpacity.value = withTiming(0, { 
+      duration: durations.md,
+      easing: motionEasing.exit,
+    });
   };
 
   const rippleStyle = useAnimatedStyle(() => ({

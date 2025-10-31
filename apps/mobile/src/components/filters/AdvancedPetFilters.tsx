@@ -12,6 +12,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
+import { springs } from '@/foundation/motion';
 
 import type { PetFilters } from '@pawfectmatch/core';
 
@@ -28,12 +30,12 @@ export const AdvancedPetFilters: React.FC<AdvancedPetFiltersProps> = ({
   onReset,
   onApply,
 }) => {
-  const theme = useTheme();
+  const theme = useTheme() as AppTheme;
   const slideIn = useSharedValue(0);
   const fadeIn = useSharedValue(0);
 
   useEffect(() => {
-    slideIn.value = withSpring(1, { stiffness: 300, damping: 30 });
+    slideIn.value = withSpring(1, springs.standard);
     fadeIn.value = withTiming(1, { duration: 500 });
   }, [slideIn, fadeIn]);
 
@@ -68,9 +70,9 @@ export const AdvancedPetFilters: React.FC<AdvancedPetFiltersProps> = ({
     () =>
       StyleSheet.create({
         container: {
-          borderRadius: 24,
-          padding: 20,
-          margin: 16,
+          borderRadius: theme.radii['2xl'],
+          padding: theme.spacing.lg,
+          margin: theme.spacing.md,
           shadowColor: theme.colors.border,
           shadowOpacity: 0.15,
           shadowRadius: 16,
@@ -79,45 +81,45 @@ export const AdvancedPetFilters: React.FC<AdvancedPetFiltersProps> = ({
         title: {
           fontSize: 22,
           fontWeight: 'bold',
-          color: '#a21caf',
-          marginBottom: 12,
+          color: theme.colors.primary,
+          marginBottom: theme.spacing.md,
           textAlign: 'center',
         },
         label: {
           fontSize: 16,
           fontWeight: '600',
-          color: '#6b21a8',
-          marginTop: 12,
+          color: theme.colors.primary,
+          marginTop: theme.spacing.md,
         },
         picker: {
           backgroundColor: theme.colors.surface,
-          borderRadius: 8,
-          marginVertical: 4,
+          borderRadius: theme.radii.md,
+          marginVertical: theme.spacing.xs,
         },
         slider: {
-          marginVertical: 8,
+          marginVertical: theme.spacing.sm,
         },
         buttonRow: {
           flexDirection: 'row',
           justifyContent: 'space-between',
-          marginTop: 20,
+          marginTop: theme.spacing.lg,
         },
         resetButton: {
-          backgroundColor: '#f3e8ff',
-          borderRadius: 12,
-          paddingVertical: 10,
-          paddingHorizontal: 24,
+          backgroundColor: theme.utils.alpha(theme.colors.primary, 0.1),
+          borderRadius: theme.radii.md,
+          paddingVertical: theme.spacing.md,
+          paddingHorizontal: theme.spacing.lg,
         },
         resetText: {
-          color: '#a21caf',
+          color: theme.colors.primary,
           fontWeight: 'bold',
           fontSize: 16,
         },
         applyButton: {
           backgroundColor: theme.colors.primary,
-          borderRadius: 12,
-          paddingVertical: 10,
-          paddingHorizontal: 24,
+          borderRadius: theme.radii.md,
+          paddingVertical: theme.spacing.md,
+          paddingHorizontal: theme.spacing.lg,
         },
         applyText: {
           color: theme.colors.onPrimary,

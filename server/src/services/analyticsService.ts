@@ -26,7 +26,7 @@ export type EventType = typeof EVENT_TYPES[keyof typeof EVENT_TYPES];
 export interface AnalyticsEvent {
   type: EventType;
   timestamp: Date;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 // Interface for user analytics
@@ -74,7 +74,11 @@ export interface MatchAnalyticsResult {
     id: string;
     pet1Name: string;
     pet2Name: string;
-    lastMessage?: any;
+    lastMessage?: {
+      content?: string;
+      sentAt?: Date;
+      sender?: string;
+    };
     createdAt: Date;
   }>;
 }
@@ -85,7 +89,11 @@ export interface MatchEventAnalytics {
   pet1Name: string;
   pet2Name: string;
   createdAt: Date;
-  lastMessage?: any;
+  lastMessage?: {
+    content?: string;
+    sentAt?: Date;
+    sender?: string;
+  };
 }
 
 type PeriodType = 'day' | 'week' | 'month' | 'year';
@@ -100,7 +108,7 @@ type PeriodType = 'day' | 'week' | 'month' | 'year';
 export const trackUserEvent = async (
   userId: string,
   eventType: EventType,
-  metadata: Record<string, any> = {}
+  metadata: Record<string, unknown> = {}
 ): Promise<{ success: boolean; userId: string; eventType: EventType } | null> => {
   try {
     if (!userId || !eventType) {
@@ -134,45 +142,63 @@ export const trackUserEvent = async (
     // Update user analytics based on event type
     switch (eventType) {
       case EVENT_TYPES.USER_LOGIN:
-        (user.analytics as any).lastActive = new Date();
+        if (user.analytics) {
+          user.analytics.lastActive = new Date();
+        }
         break;
       case EVENT_TYPES.PET_CREATE:
-        (user.analytics as any).totalPetsCreated = ((user.analytics as any).totalPetsCreated || 0) + 1;
+        if (user.analytics) {
+          user.analytics.totalPetsCreated = (user.analytics.totalPetsCreated || 0) + 1;
+        }
         break;
       case EVENT_TYPES.PET_LIKE:
       case EVENT_TYPES.PET_SUPERLIKE:
-        (user.analytics as any).totalLikes = ((user.analytics as any).totalLikes || 0) + 1;
+        if (user.analytics) {
+          user.analytics.totalLikes = (user.analytics.totalLikes || 0) + 1;
+        }
         break;
       case EVENT_TYPES.MATCH_CREATE:
-        (user.analytics as any).totalMatches = ((user.analytics as any).totalMatches || 0) + 1;
+        if (user.analytics) {
+          user.analytics.totalMatches = (user.analytics.totalMatches || 0) + 1;
+        }
         break;
       case EVENT_TYPES.MESSAGE_SEND:
-        (user.analytics as any).totalMessagesSent = ((user.analytics as any).totalMessagesSent || 0) + 1;
+        if (user.analytics) {
+          user.analytics.totalMessagesSent = (user.analytics.totalMessagesSent || 0) + 1;
+        }
         break;
       case EVENT_TYPES.SUBSCRIPTION_START:
-        (user.analytics as any).totalSubscriptionsStarted = ((user.analytics as any).totalSubscriptionsStarted || 0) + 1;
+        if (user.analytics) {
+          user.analytics.totalSubscriptionsStarted = (user.analytics.totalSubscriptionsStarted || 0) + 1;
+        }
         break;
       case EVENT_TYPES.SUBSCRIPTION_CANCEL:
-        (user.analytics as any).totalSubscriptionsCancelled = ((user.analytics as any).totalSubscriptionsCancelled || 0) + 1;
+        if (user.analytics) {
+          user.analytics.totalSubscriptionsCancelled = (user.analytics.totalSubscriptionsCancelled || 0) + 1;
+        }
         break;
       case EVENT_TYPES.PREMIUM_FEATURE_USE:
-        (user.analytics as any).totalPremiumFeaturesUsed = ((user.analytics as any).totalPremiumFeaturesUsed || 0) + 1;
+        if (user.analytics) {
+          user.analytics.totalPremiumFeaturesUsed = (user.analytics.totalPremiumFeaturesUsed || 0) + 1;
+        }
         break;
       default:
         logger.warn('Unknown event type for user analytics', { userId, eventType });
     }
 
     // Add event to user's event log
-    (user.analytics as any).events = (user.analytics as any).events || [];
-    (user.analytics as any).events.push({
-      type: eventType,
-      timestamp: new Date(),
-      metadata,
-    });
+    if (user.analytics) {
+      user.analytics.events = user.analytics.events || [];
+      user.analytics.events.push({
+        type: eventType,
+        timestamp: new Date(),
+        metadata,
+      });
 
-    // Keep only last 100 events
-    if ((user.analytics as any).events.length > 100) {
-      (user.analytics as any).events = (user.analytics as any).events.slice(-100);
+      // Keep only last 100 events
+      if (user.analytics.events.length > 100) {
+        user.analytics.events = user.analytics.events.slice(-100);
+      }
     }
 
     await user.save();
@@ -204,7 +230,7 @@ export const trackPetEvent = async (
   petId: string,
   eventType: EventType,
   userId: string,
-  metadata: Record<string, any> = {}
+  metadata: Record<string, unknown> = {}
 ): Promise<void> => {
   try {
     const pet = await Pet.findById(petId);
@@ -225,35 +251,47 @@ export const trackPetEvent = async (
     // Update pet analytics based on event type
     switch (eventType) {
       case EVENT_TYPES.PET_VIEW:
-        (pet.analytics as any).views = ((pet.analytics as any).views || 0) + 1;
-        (pet.analytics as any).lastViewed = new Date();
+        if (pet.analytics) {
+          pet.analytics.views = (pet.analytics.views || 0) + 1;
+          pet.analytics.lastViewed = new Date();
+        }
         break;
       case EVENT_TYPES.PET_LIKE:
-        (pet.analytics as any).likes = ((pet.analytics as any).likes || 0) + 1;
+        if (pet.analytics) {
+          pet.analytics.likes = (pet.analytics.likes || 0) + 1;
+        }
         break;
       case EVENT_TYPES.PET_SUPERLIKE:
-        (pet.analytics as any).superLikes = ((pet.analytics as any).superLikes || 0) + 1;
+        if (pet.analytics) {
+          pet.analytics.superLikes = (pet.analytics.superLikes || 0) + 1;
+        }
         break;
       case EVENT_TYPES.MATCH_CREATE:
-        (pet.analytics as any).matches = ((pet.analytics as any).matches || 0) + 1;
+        if (pet.analytics) {
+          pet.analytics.matches = (pet.analytics.matches || 0) + 1;
+        }
         break;
       case EVENT_TYPES.MESSAGE_SEND:
-        (pet.analytics as any).messages = ((pet.analytics as any).messages || 0) + 1;
+        if (pet.analytics) {
+          pet.analytics.messages = (pet.analytics.messages || 0) + 1;
+        }
         break;
     }
 
     // Add event to pet's event log
-    (pet.analytics as any).events = (pet.analytics as any).events || [];
-    (pet.analytics as any).events.push({
-      type: eventType,
-      userId,
-      timestamp: new Date(),
-      metadata,
-    });
+    if (pet.analytics) {
+      pet.analytics.events = pet.analytics.events || [];
+      pet.analytics.events.push({
+        type: eventType,
+        userId,
+        timestamp: new Date(),
+        metadata,
+      });
 
-    // Keep only last 50 events
-    if ((pet.analytics as any).events.length > 50) {
-      (pet.analytics as any).events = (pet.analytics as any).events.slice(-50);
+      // Keep only last 50 events
+      if (pet.analytics.events.length > 50) {
+        pet.analytics.events = pet.analytics.events.slice(-50);
+      }
     }
 
     await pet.save();
@@ -280,7 +318,7 @@ export const trackMatchEvent = async (
   matchId: string,
   eventType: EventType,
   userId: string,
-  metadata: Record<string, any> = {}
+  metadata: Record<string, unknown> = {}
 ): Promise<void> => {
   try {
     const match = await Match.findById(matchId);
@@ -288,21 +326,25 @@ export const trackMatchEvent = async (
 
     // Initialize analytics if it doesn't exist
     if (!match.analytics) {
-      match.analytics = {};
+      match.analytics = { events: [] };
     }
 
     // Add event to match's event log
-    (match.analytics as any).events = (match.analytics as any).events || [];
-    (match.analytics as any).events.push({
-      type: eventType,
-      userId,
-      timestamp: new Date(),
-      metadata,
-    });
+    if (match.analytics && !match.analytics.events) {
+      match.analytics.events = [];
+    }
+    if (match.analytics?.events) {
+      match.analytics.events.push({
+        type: eventType,
+        userId,
+        timestamp: new Date(),
+        metadata,
+      });
 
-    // Keep only last 20 events
-    if ((match.analytics as any).events.length > 20) {
-      (match.analytics as any).events = (match.analytics as any).events.slice(-20);
+      // Keep only last 20 events
+      if (match.analytics.events.length > 20) {
+        match.analytics.events = match.analytics.events.slice(-20);
+      }
     }
 
     await match.save();
@@ -353,21 +395,21 @@ export const getUserAnalytics = async (
     }
 
     // Filter events by period
-    const recentEvents = ((user.analytics as any)?.events || []).filter((event: AnalyticsEvent) => 
+    const recentEvents = (user.analytics?.events || []).filter((event: AnalyticsEvent) => 
       new Date(event.timestamp) >= startDate
     );
 
     return {
-      totalSwipes: (user.analytics as any)?.totalSwipes || 0,
-      totalLikes: (user.analytics as any)?.totalLikes || 0,
-      totalMatches: (user.analytics as any)?.totalMatches || 0,
-      profileViews: (user.analytics as any)?.profileViews || 0,
-      lastActive: (user.analytics as any)?.lastActive,
-      totalPetsCreated: (user.analytics as any)?.totalPetsCreated || 0,
-      totalMessagesSent: (user.analytics as any)?.totalMessagesSent || 0,
-      totalSubscriptionsStarted: (user.analytics as any)?.totalSubscriptionsStarted || 0,
-      totalSubscriptionsCancelled: (user.analytics as any)?.totalSubscriptionsCancelled || 0,
-      totalPremiumFeaturesUsed: (user.analytics as any)?.totalPremiumFeaturesUsed || 0,
+      totalSwipes: user.analytics?.totalSwipes || 0,
+      totalLikes: user.analytics?.totalLikes || 0,
+      totalMatches: user.analytics?.totalMatches || 0,
+      profileViews: user.analytics?.profileViews || 0,
+      lastActive: user.analytics?.lastActive,
+      totalPetsCreated: user.analytics?.totalPetsCreated || 0,
+      totalMessagesSent: user.analytics?.totalMessagesSent || 0,
+      totalSubscriptionsStarted: user.analytics?.totalSubscriptionsStarted || 0,
+      totalSubscriptionsCancelled: user.analytics?.totalSubscriptionsCancelled || 0,
+      totalPremiumFeaturesUsed: user.analytics?.totalPremiumFeaturesUsed || 0,
       events: recentEvents,
       period,
       periodStart: startDate,
@@ -397,13 +439,13 @@ export const getPetAnalytics = async (
     if (!pet) return null;
 
     return {
-      views: (pet.analytics as any)?.views || 0,
-      likes: (pet.analytics as any)?.likes || 0,
-      superLikes: (pet.analytics as any)?.superLikes || 0,
-      matches: (pet.analytics as any)?.matches || 0,
-      messages: (pet.analytics as any)?.messages || 0,
-      lastViewed: (pet.analytics as any)?.lastViewed,
-      events: (pet.analytics as any)?.events || [],
+      views: pet.analytics?.views || 0,
+      likes: pet.analytics?.likes || 0,
+      superLikes: pet.analytics?.superLikes || 0,
+      matches: pet.analytics?.matches || 0,
+      messages: pet.analytics?.messages || 0,
+      lastViewed: pet.analytics?.lastViewed,
+      events: pet.analytics?.events || [],
     };
   } catch (error) {
     logger.error('Error getting pet analytics', {
@@ -460,16 +502,36 @@ export const getMatchAnalytics = async (
       }
 
       // Aggregate match analytics
+      interface MatchWithPopulatedPets {
+        _id: { toString: () => string };
+        pet1?: { name?: string };
+        pet2?: { name?: string };
+        lastMessage?: {
+          timestamp?: Date | string;
+          content?: string;
+        };
+        createdAt: Date;
+        analytics?: {
+          events?: Array<{
+            type?: string;
+            timestamp?: Date | string;
+          }>;
+        };
+      }
+      
       const totalMatches = matches.length;
-      const activeMatches = matches.filter((match: any) => 
-        match.lastMessage && new Date(match.lastMessage.timestamp) >= startDate
-      ).length;
+      const activeMatches = matches.filter((match) => {
+        const matchWithPets = match as unknown as MatchWithPopulatedPets;
+        return matchWithPets.lastMessage && new Date(matchWithPets.lastMessage.timestamp || 0) >= startDate;
+      }).length;
 
-      const totalMessages = matches.reduce((sum, match: any) => 
-        sum + ((match.analytics?.events?.filter((event: any) => 
-          event.type === 'message_send' && new Date(event.timestamp) >= startDate
-        ).length) || 0), 0
-      );
+      const totalMessages = matches.reduce((sum, match) => {
+        const matchWithPets = match as unknown as MatchWithPopulatedPets;
+        const messageEvents = matchWithPets.analytics?.events?.filter((event) => 
+          event.type === 'message_send' && new Date(event.timestamp || 0) >= startDate
+        ) || [];
+        return sum + messageEvents.length;
+      }, 0);
 
       return {
         totalMatches,
@@ -478,25 +540,43 @@ export const getMatchAnalytics = async (
         period,
         periodStart: startDate,
         periodEnd: now,
-        matches: matches.map((match: any) => ({
-          id: match._id.toString(),
-          pet1Name: match.pet1.name,
-          pet2Name: match.pet2.name,
-          lastMessage: match.lastMessage,
-          createdAt: match.createdAt,
-        }))
+        matches: matches.map((match) => {
+          const matchWithPets = match as unknown as MatchWithPopulatedPets;
+          return {
+            id: matchWithPets._id.toString(),
+            pet1Name: matchWithPets.pet1?.name || 'Unknown',
+            pet2Name: matchWithPets.pet2?.name || 'Unknown',
+            lastMessage: matchWithPets.lastMessage,
+            createdAt: matchWithPets.createdAt,
+          };
+        })
       };
     } else {
       // If it's a match ID, get analytics for that specific match
-      const match = await Match.findById(matchIdOrUserId);
+      const match = await Match.findById(matchIdOrUserId).populate('pet1 pet2');
       if (!match) return null;
+      
+      interface MatchWithPopulatedData {
+        pet1?: { name?: string };
+        pet2?: { name?: string };
+        lastMessage?: {
+          content?: string;
+          sentAt?: Date;
+        };
+        createdAt: Date;
+        analytics?: {
+          events?: AnalyticsEvent[];
+        };
+      }
+      
+      const matchWithData = match as unknown as MatchWithPopulatedData;
 
       return {
-        events: (match.analytics as any)?.events || [],
-        pet1Name: (match as any).pet1.name,
-        pet2Name: (match as any).pet2.name,
-        createdAt: match.createdAt,
-        lastMessage: (match as any).lastMessage,
+        events: matchWithData.analytics?.events || [],
+        pet1Name: matchWithData.pet1?.name || 'Unknown',
+        pet2Name: matchWithData.pet2?.name || 'Unknown',
+        createdAt: matchWithData.createdAt,
+        lastMessage: matchWithData.lastMessage,
       };
     }
   } catch (error) {

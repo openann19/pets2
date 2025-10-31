@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import {
-  FlatList,
   View,
   StyleSheet,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import type { Message } from '../../hooks/useChatData';
 import { MessageItem } from './MessageItem';
 import { TypingIndicator } from './TypingIndicator';
@@ -28,7 +28,7 @@ interface MessageListProps {
   onMessagePress?: (message: Message) => void;
   onMessageLongPress?: (message: Message) => void;
   onRetryMessage?: (messageId: string) => void;
-  flatListRef?: React.RefObject<FlatList<Message>>;
+  flatListRef?: React.RefObject<FlashList<Message>>;
   onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 }
 
@@ -36,8 +36,8 @@ export function MessageList({
   messages,
   typingUsers,
   isOnline,
-  currentUserId: _currentUserId,
-  matchId: _matchId,
+  currentUserId,
+  matchId,
   onMessagePress,
   onMessageLongPress,
   onRetryMessage,
@@ -112,49 +112,34 @@ export function MessageList({
 
   const keyExtractor = useCallback((item: Message) => item._id, []);
 
-  const getItemLayout = useCallback(
-    (data: ArrayLike<Message> | null | undefined, index: number) => {
-      // Dynamic height calculation based on message content
-      const message = data?.[index];
-      let estimatedHeight = 80;
+  // Estimated item size for FlashList (more efficient than getItemLayout)
+  const getItemType = useCallback((item: Message) => {
+    // Different item types for better recycling
+    if (item.audioUrl || item.type === 'image') return 'media';
+    if (item.replyTo) return 'reply';
+    return 'text';
+  }, []);
 
-      if (message) {
-        // Account for message content
-        if (message.content.length > 100) estimatedHeight += 20;
-
-        // Account for reply to message
-        if (message.replyTo) estimatedHeight += 40;
-
-        // Account for attachment
-        if (message.audioUrl || message.type === 'image') estimatedHeight += 120;
-      }
-
-      return {
-        length: estimatedHeight,
-        offset: estimatedHeight * index,
-        index,
-      };
-    },
-    [],
-  );
+  const estimatedItemSize = 80;
 
   return (
     <View style={styles.container}>
-      <FlatList<Message>
+      <FlashList<Message>
         ref={flatListRef}
         data={messages}
         renderItem={renderMessage}
         keyExtractor={keyExtractor}
+        estimatedItemSize={estimatedItemSize}
+        getItemType={getItemType}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
         onScroll={onScroll}
         scrollEventThrottle={100}
-        initialNumToRender={20}
-        windowSize={10}
-        maxToRenderPerBatch={10}
-        updateCellsBatchingPeriod={50}
+        // FlashList optimizations
+        drawDistance={250} // Render items within 250px of viewport
+        estimatedListSize={{ height: 800, width: 400 }} // Help FlashList optimize
+        // Performance props
         removeClippedSubviews={true}
-        getItemLayout={getItemLayout}
         ListEmptyComponent={messages.length === 0 ? renderEmptyState : undefined}
         ListFooterComponent={renderTypingIndicator}
       />

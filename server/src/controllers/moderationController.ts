@@ -4,6 +4,7 @@
  */
 
 import type { Request, Response } from 'express';
+import type { AuthRequest } from '../types/express';
 import { z } from 'zod';
 import Report from '../models/Report';
 import UserBlock from '../models/UserBlock';
@@ -12,12 +13,6 @@ import adminNotifications from '../services/adminNotifications';
 import logger from '../utils/logger';
 import type { IUserDocument } from '../types/mongoose';
 import { getErrorMessage } from '../../utils/errorHandler';
-
-// Type definitions
-interface AuthRequest extends Request {
-  user?: IUserDocument;
-  userId?: string;
-}
 
 // Schemas
 const reportSchema = z.object({

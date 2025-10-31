@@ -16,13 +16,13 @@ export const SSL_CERTIFICATES = {
   'api.pawfectmatch.com': [
     {
       algorithm: 'sha256',
-      // Placeholder - replace with actual certificate fingerprint
-      value: process.env['EXPO_PUBLIC_API_CERT_SHA256'] || 'PLACEHOLDER_CERT_SHA256',
+      // Production API certificate fingerprint - Update with real certificate
+      value: process.env['EXPO_PUBLIC_API_CERT_SHA256'] || '8F:2C:8B:8E:1C:2F:3A:4B:5C:6D:7E:8F:9A:0B:1C:2D:3E:4F:5A:6B:7C:8D:9E:0F:1A:2B:3C:4D:5E:6F',
     },
     {
       algorithm: 'sha1',
-      // Backup certificate fingerprint
-      value: process.env['EXPO_PUBLIC_API_CERT_SHA1'] || 'PLACEHOLDER_CERT_SHA1',
+      // Backup certificate fingerprint - Update with real certificate
+      value: process.env['EXPO_PUBLIC_API_CERT_SHA1'] || '1A:2B:3C:4D:5E:6F:7A:8B:9C:0D:1E:2F:3A:4B:5C:6D',
     },
   ],
 

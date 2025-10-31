@@ -1,0 +1,46 @@
+id: ui-065-avatar-fallback
+owner: ux
+severity: low
+area: mobile+components
+context: |
+  Missing avatar images show broken image icon or empty space.
+  Need consistent fallback with user initials and gradient background.
+  Improves visual consistency when images unavailable.
+acceptance:
+  - Initials generated from user name (first + last initial)
+  - Gradient background uses palette.gradients tokens
+  - Fallback matches avatar size and shape (circle/rounded)
+  - Text color has sufficient contrast (WCAG AA)
+  - Works for users, pets, and generic avatars
+  - Deterministic gradient based on name hash
+states:
+  - image-loaded
+  - fallback
+  - loading
+telemetry:
+  - event: AVATAR_FALLBACK
+    props: [component, hasImage, initials, gradientUsed]
+contracts:
+  request: { name: string, imageUrl: string }
+  response: { type: string, initials: string, gradient: array }
+  errors: []
+assets:
+  components: [apps/mobile/src/components/Avatar*.tsx]
+  utils: [apps/mobile/src/utils/avatarFallback.ts]
+  tests: [apps/mobile/src/components/__tests__/Avatar.test.tsx]
+risks:
+  - Name parsing may fail for non-Western names
+  - Gradient generation may produce low contrast
+rollback:
+  - Remove fallback logic
+  - Show default placeholder image
+links: []
+status: open
+priority: low
+impact: 3
+effort: S
+category: components
+tokens:
+  - palette.gradients.*
+  - radii.full
+estimated_hours: 3

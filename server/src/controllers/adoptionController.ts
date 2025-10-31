@@ -4,18 +4,13 @@
  */
 
 import type { Request, Response } from 'express';
+import type { AuthRequest } from '../types/express';
 import type { IUserDocument } from '../types/mongoose';
 import * as mongoose from 'mongoose';
 import Pet from '../models/Pet';
 import User from '../models/User';
 import { AdoptionApplication } from '../models/AdoptionApplication';
 const logger = require('../utils/logger');
-
-// Type definitions
-interface AuthRequest extends Request {
-  user?: IUserDocument;
-  userId?: string;
-}
 
 interface ApplicationData {
   experience?: string;

@@ -71,7 +71,7 @@ export function Checkbox({
                 width: sizeStyles.iconSize,
                 height: sizeStyles.iconSize,
                 borderRadius: sizeStyles.iconSize / 4,
-                backgroundColor: theme.colors.primaryText,
+                backgroundColor: theme.colors.onPrimary,
               },
             ]}
           />

@@ -1,422 +1,1589 @@
-[
-  {
-    "id": "UI-001",
-    "category": "Tokens",
-    "title": "Replace raw star color with warning token on Home",
-    "rationale": "Hard-coded #fbbf24 bypasses theme; breaks dark/high-contrast.",
-    "impact": 3,
-    "effort": "S",
-    "tokens_touched": ["colors.warning"],
-    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
-    "acceptance": [
-      "Ionicons star uses theme.colors.warning",
-      "Snapshots updated"
-    ],
-    "before_media": "docs/ui_media/UI-001-before.png",
-    "after_mock": "docs/ui_media/UI-001-after.png"
+{
+  "generatedAt": "2025-10-31T06:21:58.811Z",
+  "total": 72,
+  "summary": {
+    "byCategory": {
+      "Navigation & IA": 6,
+      "Typography & Layout": 7,
+      "Color & Tokens": 7,
+      "Components & States": 8,
+      "Motion & Micro-Interactions": 8,
+      "Performance": 8,
+      "Accessibility": 7,
+      "Platform Idioms": 6,
+      "Forms & Validation": 6,
+      "Media & Imagery": 6,
+      "Observability & QA": 3
+    },
+    "byImpact": {
+      "1": 1,
+      "2": 0,
+      "3": 18,
+      "4": 37,
+      "5": 16
+    },
+    "byEffort": {
+      "S": 16,
+      "M": 49,
+      "L": 7
+    }
   },
-  {
-    "id": "UI-002",
-    "category": "Tokens",
-    "title": "Tokenize Home paddings/margins to spacing tokens",
-    "rationale": "Numeric 12/16/20 are inconsistent; use theme.spacing.*",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": ["spacing.sm","spacing.md","spacing.lg"],
-    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
-    "acceptance": [
-      "All numeric spacings replaced with nearest spacing tokens",
-      "Lint rule passes: no-legacy-spacing"
-    ],
-    "before_media": "docs/ui_media/UI-002-before.png",
-    "after_mock": "docs/ui_media/UI-002-after.png"
-  },
-  {
-    "id": "UI-003",
-    "category": "Color",
-    "title": "Normalize AdvancedFilters gradient to theme palette",
-    "rationale": "Hard-coded linear gradient breaks theming and contrast.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": ["palette.gradients.primary"],
-    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx"],
-    "acceptance": [
-      "LinearGradient colors source from theme.palette.gradients.*",
-      "Contrast ≥4.5:1 for body text"
-    ],
-    "before_media": "docs/ui_media/UI-003-before.png",
-    "after_mock": "docs/ui_media/UI-003-after.png"
-  },
-  {
-    "id": "UI-004",
-    "category": "A11y",
-    "title": "Increase back button target to ≥44dp (or add hitSlop)",
-    "rationale": "40×40 misses WCAG 2.5.5 target size.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": ["radii.full","spacing.sm"],
-    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx"],
-    "acceptance": [
-      "Button size ≥44×44 or hitSlop expands to ≥44",
-      "TalkBack/VoiceOver target confirmed"
-    ],
-    "before_media": "docs/ui_media/UI-004-before.png",
-    "after_mock": "docs/ui_media/UI-004-after.png"
-  },
-  {
-    "id": "UI-005",
-    "category": "A11y",
-    "title": "Add accessibility labels to Home icon-only actions",
-    "rationale": "Icon-only buttons lack labels for SR users.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": [],
-    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
-    "acceptance": [
-      "All tappables have accessibilityLabel & Role",
-      "A11y lints pass"
-    ],
-    "before_media": "docs/ui_media/UI-005-before.png",
-    "after_mock": "docs/ui_media/UI-005-after.png"
-  },
-  {
-    "id": "UI-006",
-    "category": "Tokens",
-    "title": "Replace rgba(255,255,255,*) overlays with surface tokens",
-    "rationale": "Manual rgba whites don’t adapt to themes.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": ["colors.surface","colors.onSurface","colors.border"],
-    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx"],
-    "acceptance": [
-      "All overlays use surface/onSurface/border tokens",
-      "Contrast verified"
-    ],
-    "before_media": "docs/ui_media/UI-006-before.png",
-    "after_mock": "docs/ui_media/UI-006-after.png"
-  },
-  {
-    "id": "UI-007",
-    "category": "Motion",
-    "title": "Add press feedback (scale 0.98 + shadow soften) to cards",
-    "rationale": "Improves affordance and delight; consistent motion grammar.",
-    "impact": 3,
-    "effort": "S",
-    "tokens_touched": ["motion.timing","shadow.lg"],
-    "files": ["apps/mobile/src/components/matches/MatchCard.tsx","apps/mobile/src/screens/HomeScreen.tsx"],
-    "acceptance": [
-      "PressIn/Out anim 180–220ms; spring return",
-      "No UI thread jank"
-    ],
-    "before_media": "docs/ui_media/UI-007-before.gif",
-    "after_mock": "docs/ui_media/UI-007-after.gif"
-  },
-  {
-    "id": "UI-008",
-    "category": "Performance",
-    "title": "Memoize heavy rows and virtualize long lists",
-    "rationale": "Reduce re-renders; maintain 60fps on scroll.",
-    "impact": 5,
-    "effort": "S",
-    "tokens_touched": [],
-    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
-    "acceptance": [
-      "JS/UI FPS ≥58 during list scroll per ui-metrics.mjs",
-      "Re-render count reduced ≥50%"
-    ],
-    "before_media": "docs/ui_media/UI-008-before.gif",
-    "after_mock": "docs/ui_media/UI-008-after.gif"
-  },
-  {
-    "id": "UI-009",
-    "category": "A11y",
-    "title": "Ensure Dynamic Type up to 200% without clipping",
-    "rationale": "Prevent truncation and overflow in cards and headers.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": ["typography.scale"],
-    "files": ["apps/mobile/src/screens/HomeScreen.tsx","apps/mobile/src/components/matches/MatchCard.tsx"],
-    "acceptance": [
-      "200% DT verified on iOS/Android with no clipping",
-      "A11y screenshots attached"
-    ],
-    "before_media": "docs/ui_media/UI-009-before.png",
-    "after_mock": "docs/ui_media/UI-009-after.png"
-  },
-  {
-    "id": "UI-010",
-    "category": "Tokens",
-    "title": "Adopt radii tokens on MatchCard and overlays",
-    "rationale": "Numeric radii reduce cohesion; use radii.lg/xl/full.",
-    "impact": 3,
-    "effort": "S",
-    "tokens_touched": ["radii.lg","radii.xl","radii.full"],
-    "files": ["apps/mobile/src/components/matches/MatchCard.tsx","apps/mobile/src/components/swipe/MatchModal.tsx"],
-    "acceptance": [
-      "All corners mapped to radii tokens",
-      "Snapshots updated"
-    ],
-    "before_media": "docs/ui_media/UI-010-before.png",
-    "after_mock": "docs/ui_media/UI-010-after.png"
-  },
-  {
-    "id": "UI-011",
-    "category": "A11y",
-    "title": "Add hitSlop to dense list/action buttons",
-    "rationale": "Improve reachability without visual changes.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": [],
-    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx","apps/mobile/src/screens/HomeScreen.tsx"],
-    "acceptance": [
-      "All tappables effective target ≥44×44",
-      "Detox tap reliability improved"
-    ],
-    "before_media": "docs/ui_media/UI-011-before.png",
-    "after_mock": "docs/ui_media/UI-011-after.png"
-  },
-  {
-    "id": "UI-012",
-    "category": "Performance",
-    "title": "Guard confetti and heavy effects on low-end devices",
-    "rationale": "Heavy particle effects can drop frames.",
-    "impact": 3,
-    "effort": "S",
-    "tokens_touched": ["motion.prefersReducedMotion"],
-    "files": ["apps/mobile/src/components/swipe/MatchModal.tsx"],
-    "acceptance": [
-      "FPS ≥55 on mid-range device during effect",
-      "Respect OS reduced-motion"
-    ],
-    "before_media": "docs/ui_media/UI-012-before.gif",
-    "after_mock": "docs/ui_media/UI-012-after.gif"
-  },
-  {
-    "id": "UI-013",
-    "category": "Color",
-    "title": "Replace white text in Search with onSurface tokens",
-    "rationale": "White-on-gradient may fail contrast in light/dark variants.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": ["colors.onSurface","colors.surface"],
-    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx"],
-    "acceptance": [
-      "Contrast ≥4.5:1 verified",
-      "No raw 'white' in touched file"
-    ],
-    "before_media": "docs/ui_media/UI-013-before.png",
-    "after_mock": "docs/ui_media/UI-013-after.png"
-  },
-  {
-    "id": "UI-014",
-    "category": "Typography",
-    "title": "Align Search titles to type ramp",
-    "rationale": "Manual 18/20 sizes; use Heading tokens.",
-    "impact": 3,
-    "effort": "S",
-    "tokens_touched": ["typography.heading"],
-    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx"],
-    "acceptance": [
-      "Headings use standardized sizes",
-      "Snapshots updated"
-    ],
-    "before_media": "docs/ui_media/UI-014-before.png",
-    "after_mock": "docs/ui_media/UI-014-after.png"
-  },
-  {
-    "id": "UI-015",
-    "category": "A11y",
-    "title": "Add accessibilityLabel to Home quick action cards",
-    "rationale": "Cards rely on inner text; ensure top-level label.",
-    "impact": 3,
-    "effort": "S",
-    "tokens_touched": [],
-    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
-    "acceptance": [
-      "VoiceOver reads actionable label",
-      "No duplicate focus targets"
-    ],
-    "before_media": "docs/ui_media/UI-015-before.png",
-    "after_mock": "docs/ui_media/UI-015-after.png"
-  },
-  {
-    "id": "UI-016",
-    "category": "Tokens",
-    "title": "Unify badge colors to semantic tokens",
-    "rationale": "Ensure badges inherit danger/success tokens consistently.",
-    "impact": 2,
-    "effort": "S",
-    "tokens_touched": ["colors.danger","colors.success"],
-    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
-    "acceptance": [
-      "Badge bg/text use semantic tokens",
-      "Snapshots updated"
-    ],
-    "before_media": "docs/ui_media/UI-016-before.png",
-    "after_mock": "docs/ui_media/UI-016-after.png"
-  },
-  {
-    "id": "UI-017",
-    "category": "Performance",
-    "title": "Image fade-in with dominant-color placeholders",
-    "rationale": "Reduce perceived latency and layout shift.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": ["colors.surface","colors.muted"],
-    "files": ["apps/mobile/src/components/matches/MatchCard.tsx"],
-    "acceptance": [
-      "No blank flashes; smooth fade-in",
-      "FPS unaffected"
-    ],
-    "before_media": "docs/ui_media/UI-017-before.gif",
-    "after_mock": "docs/ui_media/UI-017-after.gif"
-  },
-  {
-    "id": "UI-018",
-    "category": "Feedback",
-    "title": "Add standardized empty/error banners with retry",
-    "rationale": "Consistent feedback improves trust and flow recovery.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": ["colors.danger","colors.surface","colors.onSurface"],
-    "files": ["apps/mobile/src/screens/HomeScreen.tsx"],
-    "acceptance": [
-      "Empty and error states share component",
-      "Retry callback wired and tested"
-    ],
-    "before_media": "docs/ui_media/UI-018-before.png",
-    "after_mock": "docs/ui_media/UI-018-after.png"
-  },
-  {
-    "id": "UI-019",
-    "category": "Platform",
-    "title": "Map tab ripple + haptic on switch",
-    "rationale": "Improve tab switch feedback and platform idioms.",
-    "impact": 3,
-    "effort": "S",
-    "tokens_touched": ["motion.timing"],
-    "files": ["apps/mobile/src/navigation/BottomTabNavigator.tsx"],
-    "acceptance": [
-      "Haptic on tab change",
-      "Ripple/elevation per platform"
-    ],
-    "before_media": "docs/ui_media/UI-019-before.gif",
-    "after_mock": "docs/ui_media/UI-019-after.gif"
-  },
-  {
-    "id": "UI-020",
-    "category": "i18n",
-    "title": "Externalize Search static strings to i18n",
-    "rationale": "Raw strings block localization/RTL readiness.",
-    "impact": 3,
-    "effort": "S",
-    "tokens_touched": [],
-    "files": ["apps/mobile/src/screens/AdvancedFiltersScreen.tsx","apps/mobile/src/components/filters/AdvancedPetFilters.tsx"],
-    "acceptance": [
-      "No hard-coded English strings in touched files",
-      "Keys present for RTL locales"
-    ],
-    "before_media": "docs/ui_media/UI-020-before.png",
-    "after_mock": "docs/ui_media/UI-020-after.png"
-  }
-]
-
-[
-  {
-    "id": "UI-001",
-    "category": "Tokens",
-    "title": "Normalize card radii & elevation on Home/Matches",
-    "rationale": "Mixed radii/shadows reduce cohesion.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": ["radii.lg", "elevation.2", "shadow.lg"],
-    "files": ["apps/mobile/src/components/ui/PetCard.tsx"],
-    "acceptance": ["All cards use radii.lg & elevation.2", "Snapshots updated"],
-    "before_media": "docs/ui_media/UI-001-before.png",
-    "after_mock": "docs/ui_media/UI-001-after.png"
-  },
-  {
-    "id": "UI-002",
-    "category": "Motion",
-    "title": "Unified press feedback with haptics",
-    "rationale": "Inconsistent touch feedback reduces perceived quality.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": ["timing.medium", "easing.standard"],
-    "files": ["apps/mobile/src/components/primitives/Interactive.tsx"],
-    "acceptance": ["Scale 0.98 + soften shadow", "Haptic on primary actions", "No perf regressions"]
-  },
-  {
-    "id": "UI-003",
-    "category": "Loading",
-    "title": "Skeletons for lists and cards",
-    "rationale": "Avoids layout shifts; improves perceived speed.",
-    "impact": 5,
-    "effort": "S",
-    "tokens_touched": ["colors.skeleton.base", "radii.md"],
-    "files": ["apps/mobile/src/components/skeletons/*.tsx", "apps/mobile/src/screens/HomeScreen.tsx"],
-    "acceptance": ["No CLS on show/hide", "Fade-in ≤200ms", "Detox visual check"]
-  },
-  {
-    "id": "UI-004",
-    "category": "Images",
-    "title": "Dominant-color placeholders + prefetch",
-    "rationale": "Prevents flicker; stabilizes layout.",
-    "impact": 4,
-    "effort": "S",
-    "tokens_touched": ["opacity.medium"],
-    "files": ["apps/mobile/src/lib/images/imageLoader.ts", "apps/mobile/src/components/cards/PetCard.tsx"],
-    "acceptance": ["Images fade-in", "No jank on scroll"]
-  },
-  {
-    "id": "UI-005",
-    "category": "A11y",
-    "title": "Touch targets ≥44dp and hitSlop",
-    "rationale": "WCAG target size; reduces mis-taps.",
-    "impact": 5,
-    "effort": "S",
-    "files": ["apps/mobile/src/components/ui/PetCard.tsx", "apps/mobile/src/components/chips/*"],
-    "acceptance": ["Audit passes", "No overlapping targets"]
-  },
-  {
-    "id": "UI-006",
-    "category": "Empty States",
-    "title": "Standardized empty state templates",
-    "rationale": "Consistent UX across screens.",
-    "impact": 4,
-    "effort": "S",
-    "files": ["apps/mobile/src/components/empty/EmptyState.tsx"],
-    "acceptance": ["Used in Matches, Chat, MyPets", "Consistent spacing and copy"]
-  },
-  {
-    "id": "UI-007",
-    "category": "Error Handling",
-    "title": "Error banner with retry handler",
-    "rationale": "Consistent error display and recovery.",
-    "impact": 4,
-    "effort": "S",
-    "files": ["apps/mobile/src/components/feedback/ErrorBanner.tsx"],
-    "acceptance": ["Network and parsing errors supported", "Retry handler wired"]
-  },
-  {
-    "id": "UI-008",
-    "category": "Navigation",
-    "title": "Real linking configuration",
-    "rationale": "Deep links work reliably.",
-    "impact": 5,
-    "effort": "S",
-    "files": ["apps/mobile/src/navigation/linking.ts"],
-    "acceptance": ["All routes mapped", "Params parsed correctly"]
-  },
-  {
-    "id": "UI-009",
-    "category": "Type Safety",
-    "title": "Param union type hygiene",
-    "rationale": "Type-safe deep links.",
-    "impact": 3,
-    "effort": "S",
-    "files": ["apps/mobile/src/navigation/types.ts"],
-    "acceptance": ["MemoryWeave and ARScentTrails unions normalized"]
-  }
-]
-
+  "enhancements": [
+    {
+      "id": "UI-001",
+      "category": "Navigation & IA",
+      "title": "Unify header heights & back button placement",
+      "rationale": "Inconsistent header heights across screens reduce visual cohesion. Standardizing header height (56dp) and back button placement improves navigation predictability.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.lg",
+        "spacing.xl"
+      ],
+      "files": [
+        "apps/mobile/src/screens/**/*.tsx",
+        "apps/mobile/src/navigation/**/*.tsx"
+      ],
+      "acceptance": [
+        "All headers use consistent height (56dp)",
+        "Back button positioned consistently (16dp from left edge)",
+        "Snapshots updated and passing"
+      ],
+      "states": [
+        "default",
+        "focused",
+        "pressed"
+      ],
+      "before_media": "docs/ui_media/UI-001-before.png",
+      "after_mock": "docs/ui_media/UI-001-after.png"
+    },
+    {
+      "id": "UI-002",
+      "category": "Navigation & IA",
+      "title": "Add large, collapsible titles to top-level screens",
+      "rationale": "Large titles improve scanability and provide clear context. Collapsible behavior maintains screen real estate while scrolling.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [
+        "typography.h1",
+        "typography.h2",
+        "spacing.xl"
+      ],
+      "files": [
+        "apps/mobile/src/screens/HomeScreen.tsx",
+        "apps/mobile/src/screens/SwipeScreen.tsx",
+        "apps/mobile/src/screens/MatchesScreen.tsx"
+      ],
+      "acceptance": [
+        "Large titles (32px) visible on initial load",
+        "Smooth collapse animation on scroll",
+        "Title remains accessible via scroll-to-top"
+      ],
+      "before_media": "docs/ui_media/UI-002-before.png",
+      "after_mock": "docs/ui_media/UI-002-after.png"
+    },
+    {
+      "id": "UI-003",
+      "category": "Navigation & IA",
+      "title": "Predictive search with inline suggestions + recent history",
+      "rationale": "Enhances discoverability and reduces typing effort. Recent history provides quick access to previously viewed content.",
+      "impact": 4,
+      "effort": "L",
+      "tokens_touched": [
+        "spacing.md",
+        "spacing.lg",
+        "radii.md"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/Search*.tsx",
+        "apps/mobile/src/screens/**/*.tsx"
+      ],
+      "acceptance": [
+        "Search suggestions appear as user types",
+        "Recent history persists across sessions",
+        "Keyboard navigation supported"
+      ],
+      "before_media": "docs/ui_media/UI-003-before.png",
+      "after_mock": "docs/ui_media/UI-003-after.png"
+    },
+    {
+      "id": "UI-004",
+      "category": "Navigation & IA",
+      "title": "Deep-link support for all detail screens",
+      "rationale": "Enables sharing and deep navigation from notifications, external links, and QR codes.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/navigation/linking.ts"
+      ],
+      "acceptance": [
+        "All detail screens have deeplink paths",
+        "Authentication state checked before navigation",
+        "Invalid deeplinks show friendly error"
+      ],
+      "before_media": "docs/ui_media/UI-004-before.png",
+      "after_mock": "docs/ui_media/UI-004-after.png"
+    },
+    {
+      "id": "UI-005",
+      "category": "Navigation & IA",
+      "title": "Bottom tab ripple + subtle haptic on switch",
+      "rationale": "Provides immediate tactile feedback confirming tab selection. Ripple effect enhances visual feedback.",
+      "impact": 3,
+      "effort": "S",
+      "tokens_touched": [
+        "motion.duration.standard"
+      ],
+      "files": [
+        "apps/mobile/src/navigation/BottomTabNavigator.tsx",
+        "apps/mobile/src/navigation/UltraTabBar.tsx"
+      ],
+      "acceptance": [
+        "Ripple animation on tab press",
+        "Haptic feedback (impact light) on switch",
+        "Animation duration matches motion tokens (200ms)"
+      ],
+      "before_media": "docs/ui_media/UI-005-before.png",
+      "after_mock": "docs/ui_media/UI-005-after.png"
+    },
+    {
+      "id": "UI-006",
+      "category": "Navigation & IA",
+      "title": "Breadcrumb/progress for multi-step flows",
+      "rationale": "Provides clear progress indication and reduces abandonment in complex flows (adoption, onboarding, pet creation).",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.sm",
+        "spacing.md",
+        "radii.full"
+      ],
+      "files": [
+        "apps/mobile/src/screens/adoption/**/*.tsx",
+        "apps/mobile/src/screens/CreatePetScreen.tsx"
+      ],
+      "acceptance": [
+        "Progress indicator shows current step",
+        "Completed steps visually distinct",
+        "Swipe back navigates to previous step"
+      ],
+      "before_media": "docs/ui_media/UI-006-before.png",
+      "after_mock": "docs/ui_media/UI-006-after.png"
+    },
+    {
+      "id": "UI-007",
+      "category": "Typography & Layout",
+      "title": "Adopt 4/8px spacing grid; remove rogue paddings",
+      "rationale": "Consistent spacing grid creates visual rhythm and reduces layout inconsistencies.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.xs",
+        "spacing.sm",
+        "spacing.md",
+        "spacing.lg",
+        "spacing.xl"
+      ],
+      "files": [
+        "apps/mobile/src/**/*.{ts,tsx}"
+      ],
+      "acceptance": [
+        "All spacing values use 4px or 8px multiples",
+        "No hardcoded padding/margin values",
+        "Visual regression tests pass"
+      ],
+      "before_media": "docs/ui_media/UI-007-before.png",
+      "after_mock": "docs/ui_media/UI-007-after.png"
+    },
+    {
+      "id": "UI-008",
+      "category": "Typography & Layout",
+      "title": "Establish consistent type ramp (12/14/16/20/24/32)",
+      "rationale": "Standardized type scale improves readability and visual hierarchy.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [
+        "typography.body",
+        "typography.h1",
+        "typography.h2"
+      ],
+      "files": [
+        "apps/mobile/src/theme/**/*.ts",
+        "apps/mobile/src/**/*.{ts,tsx}"
+      ],
+      "acceptance": [
+        "Typography tokens match type ramp",
+        "No hardcoded font sizes",
+        "Dynamic Type scaling tested up to 200%"
+      ],
+      "before_media": "docs/ui_media/UI-008-before.png",
+      "after_mock": "docs/ui_media/UI-008-after.png"
+    },
+    {
+      "id": "UI-009",
+      "category": "Typography & Layout",
+      "title": "Tighten heading letter-spacing; increase body line-height",
+      "rationale": "Optimized typography improves readability and reduces eye strain.",
+      "impact": 3,
+      "effort": "S",
+      "tokens_touched": [
+        "typography.h1",
+        "typography.h2",
+        "typography.body"
+      ],
+      "files": [
+        "apps/mobile/src/theme/**/*.ts"
+      ],
+      "acceptance": [
+        "Headings use -0.5px to -1px letter-spacing",
+        "Body text uses 1.5-1.75 line-height",
+        "Accessibility contrast maintained"
+      ],
+      "before_media": "docs/ui_media/UI-009-before.png",
+      "after_mock": "docs/ui_media/UI-009-after.png"
+    },
+    {
+      "id": "UI-010",
+      "category": "Typography & Layout",
+      "title": "Replace hardcoded bolds with tokenized weights",
+      "rationale": "Ensures consistent font weight usage across the app.",
+      "impact": 3,
+      "effort": "S",
+      "tokens_touched": [
+        "typography.body",
+        "typography.h1",
+        "typography.h2"
+      ],
+      "files": [
+        "apps/mobile/src/**/*.{ts,tsx}"
+      ],
+      "acceptance": [
+        "No inline fontWeight: \"bold\"",
+        "All weights use theme.typography tokens",
+        "Visual consistency verified"
+      ],
+      "before_media": "docs/ui_media/UI-010-before.png",
+      "after_mock": "docs/ui_media/UI-010-after.png"
+    },
+    {
+      "id": "UI-011",
+      "category": "Typography & Layout",
+      "title": "Responsive container widths on tablets",
+      "rationale": "Optimizes layout for larger screens while maintaining mobile-first design.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.xl",
+        "spacing.2xl"
+      ],
+      "files": [
+        "apps/mobile/src/screens/**/*.tsx",
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "Content width maxes at 768px on tablets",
+        "Centered layout with side margins",
+        "Breakpoint detection working"
+      ],
+      "before_media": "docs/ui_media/UI-011-before.png",
+      "after_mock": "docs/ui_media/UI-011-after.png"
+    },
+    {
+      "id": "UI-012",
+      "category": "Typography & Layout",
+      "title": "Standardize radii (xs…full) and elevation steps",
+      "rationale": "Consistent radii and elevation create cohesive visual language.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "radii.xs",
+        "radii.sm",
+        "radii.md",
+        "radii.lg",
+        "radii.xl",
+        "shadows.elevation1",
+        "shadows.elevation2"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "All components use standardized radii",
+        "Elevation steps follow design system",
+        "Visual consistency verified"
+      ],
+      "before_media": "docs/ui_media/UI-012-before.png",
+      "after_mock": "docs/ui_media/UI-012-after.png"
+    },
+    {
+      "id": "UI-013",
+      "category": "Typography & Layout",
+      "title": "Introduce layout breakpoints for small tablets (grid/list toggles)",
+      "rationale": "Leverages tablet screen space for improved content density.",
+      "impact": 3,
+      "effort": "L",
+      "tokens_touched": [
+        "spacing.md",
+        "spacing.lg"
+      ],
+      "files": [
+        "apps/mobile/src/screens/**/*.tsx",
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "Grid/list toggle visible on tablets",
+        "Layout adapts to screen width",
+        "User preference persists"
+      ],
+      "before_media": "docs/ui_media/UI-013-before.png",
+      "after_mock": "docs/ui_media/UI-013-after.png"
+    },
+    {
+      "id": "UI-014",
+      "category": "Color & Tokens",
+      "title": "Normalize primary/secondary/surface/onSurface usage",
+      "rationale": "Eliminates color inconsistencies and ensures proper contrast ratios.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [
+        "colors.primary",
+        "colors.surface",
+        "colors.onSurface",
+        "colors.bg"
+      ],
+      "files": [
+        "apps/mobile/src/**/*.{ts,tsx}"
+      ],
+      "acceptance": [
+        "All colors use semantic tokens",
+        "No deprecated color patterns",
+        "Contrast ratios meet WCAG AA"
+      ],
+      "before_media": "docs/ui_media/UI-014-before.png",
+      "after_mock": "docs/ui_media/UI-014-after.png"
+    },
+    {
+      "id": "UI-015",
+      "category": "Color & Tokens",
+      "title": "Add high-contrast theme variant toggle",
+      "rationale": "Improves accessibility for users with visual impairments.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "colors.*"
+      ],
+      "files": [
+        "apps/mobile/src/theme/**/*.ts",
+        "apps/mobile/src/screens/SettingsScreen.tsx"
+      ],
+      "acceptance": [
+        "High-contrast theme available",
+        "Toggle persists across sessions",
+        "All screens tested with high-contrast"
+      ],
+      "before_media": "docs/ui_media/UI-015-before.png",
+      "after_mock": "docs/ui_media/UI-015-after.png"
+    },
+    {
+      "id": "UI-016",
+      "category": "Color & Tokens",
+      "title": "Define focus/pressed/disabled tokens across all components",
+      "rationale": "Ensures consistent interactive states across the app.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "colors.*",
+        "motion.opacity"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "All interactive components have focus states",
+        "Pressed states use opacity/motion tokens",
+        "Disabled states clearly distinguished"
+      ],
+      "before_media": "docs/ui_media/UI-016-before.png",
+      "after_mock": "docs/ui_media/UI-016-after.png"
+    },
+    {
+      "id": "UI-017",
+      "category": "Color & Tokens",
+      "title": "Replace magic numbers with tokens (spacing/radius/opacity)",
+      "rationale": "Improves maintainability and ensures design consistency.",
+      "impact": 5,
+      "effort": "L",
+      "tokens_touched": [
+        "spacing.*",
+        "radii.*",
+        "motion.opacity"
+      ],
+      "files": [
+        "apps/mobile/src/**/*.{ts,tsx}"
+      ],
+      "acceptance": [
+        "No hardcoded spacing values",
+        "No hardcoded radius values",
+        "Opacity uses theme.utils.alpha()"
+      ],
+      "before_media": "docs/ui_media/UI-017-before.png",
+      "after_mock": "docs/ui_media/UI-017-after.png"
+    },
+    {
+      "id": "UI-018",
+      "category": "Color & Tokens",
+      "title": "Semantic feedback colors (success/warn/error/info) with accessible contrast",
+      "rationale": "Provides clear visual feedback for user actions.",
+      "impact": 4,
+      "effort": "S",
+      "tokens_touched": [
+        "colors.success",
+        "colors.danger",
+        "colors.warning",
+        "colors.info"
+      ],
+      "files": [
+        "apps/mobile/src/theme/**/*.ts"
+      ],
+      "acceptance": [
+        "All feedback colors meet WCAG AA contrast",
+        "Semantic tokens used consistently",
+        "Color-blind friendly tested"
+      ],
+      "before_media": "docs/ui_media/UI-018-before.png",
+      "after_mock": "docs/ui_media/UI-018-after.png"
+    },
+    {
+      "id": "UI-019",
+      "category": "Color & Tokens",
+      "title": "AMOLED true-black option for dark mode",
+      "rationale": "Reduces battery consumption on AMOLED displays.",
+      "impact": 3,
+      "effort": "S",
+      "tokens_touched": [
+        "colors.bg"
+      ],
+      "files": [
+        "apps/mobile/src/theme/**/*.ts",
+        "apps/mobile/src/screens/SettingsScreen.tsx"
+      ],
+      "acceptance": [
+        "True black (#000000) option available",
+        "Device detection for AMOLED",
+        "User preference persists"
+      ],
+      "before_media": "docs/ui_media/UI-019-before.png",
+      "after_mock": "docs/ui_media/UI-019-after.png"
+    },
+    {
+      "id": "UI-020",
+      "category": "Color & Tokens",
+      "title": "Tokenized gradient palette with named ramps (hero, CTA, backgrounds)",
+      "rationale": "Ensures consistent gradient usage across the app.",
+      "impact": 3,
+      "effort": "S",
+      "tokens_touched": [
+        "palette.gradients.*"
+      ],
+      "files": [
+        "apps/mobile/src/theme/**/*.ts",
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "Named gradients available (hero, CTA, bg)",
+        "No hardcoded gradient arrays",
+        "Visual consistency verified"
+      ],
+      "before_media": "docs/ui_media/UI-020-before.png",
+      "after_mock": "docs/ui_media/UI-020-after.png"
+    },
+    {
+      "id": "UI-021",
+      "category": "Components & States",
+      "title": "Consolidate buttons to canonical set (primary/secondary/ghost)",
+      "rationale": "Reduces component complexity and ensures consistent button behavior.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [
+        "colors.primary",
+        "colors.surface",
+        "spacing.md",
+        "radii.md"
+      ],
+      "files": [
+        "apps/mobile/src/components/buttons/**/*.tsx",
+        "apps/mobile/src/components/**/Button*.tsx"
+      ],
+      "acceptance": [
+        "Three button variants: primary, secondary, ghost",
+        "All buttons use consistent sizing",
+        "Visual regression tests pass"
+      ],
+      "before_media": "docs/ui_media/UI-021-before.png",
+      "after_mock": "docs/ui_media/UI-021-after.png"
+    },
+    {
+      "id": "UI-022",
+      "category": "Components & States",
+      "title": "Empty-state templates with illustration + CTA",
+      "rationale": "Improves UX when no content is available and guides user actions.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.xl",
+        "spacing.2xl",
+        "colors.onMuted"
+      ],
+      "files": [
+        "apps/mobile/src/components/common/EmptyState.tsx"
+      ],
+      "acceptance": [
+        "Illustration component available",
+        "CTA button configurable",
+        "Used across all empty states"
+      ],
+      "before_media": "docs/ui_media/UI-022-before.png",
+      "after_mock": "docs/ui_media/UI-022-after.png"
+    },
+    {
+      "id": "UI-023",
+      "category": "Components & States",
+      "title": "Global skeleton loaders (list, card, avatar, chart)",
+      "rationale": "Improves perceived performance during data loading.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.md",
+        "radii.md",
+        "colors.border"
+      ],
+      "files": [
+        "apps/mobile/src/components/common/LoadingSkeleton.tsx"
+      ],
+      "acceptance": [
+        "Skeleton variants for list, card, avatar, chart",
+        "Shimmer animation smooth",
+        "Matches final content layout"
+      ],
+      "before_media": "docs/ui_media/UI-023-before.png",
+      "after_mock": "docs/ui_media/UI-023-after.png"
+    },
+    {
+      "id": "UI-024",
+      "category": "Components & States",
+      "title": "Consistent error banners with retry + diagnostics",
+      "rationale": "Provides clear error feedback and recovery options.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "colors.danger",
+        "colors.surface",
+        "spacing.md"
+      ],
+      "files": [
+        "apps/mobile/src/components/feedback/**/*.tsx"
+      ],
+      "acceptance": [
+        "Error banner component standardized",
+        "Retry button available",
+        "Diagnostics info expandable"
+      ],
+      "before_media": "docs/ui_media/UI-024-before.png",
+      "after_mock": "docs/ui_media/UI-024-after.png"
+    },
+    {
+      "id": "UI-025",
+      "category": "Components & States",
+      "title": "Reusable form field set (label, helper, error, counter)",
+      "rationale": "Ensures consistent form UX across the app.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.sm",
+        "spacing.md",
+        "colors.danger",
+        "colors.onMuted"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/Form*.tsx",
+        "apps/mobile/src/components/**/Input*.tsx"
+      ],
+      "acceptance": [
+        "FormField component with label, helper, error, counter",
+        "Accessible labels",
+        "Error states clearly indicated"
+      ],
+      "before_media": "docs/ui_media/UI-025-before.png",
+      "after_mock": "docs/ui_media/UI-025-after.png"
+    },
+    {
+      "id": "UI-026",
+      "category": "Components & States",
+      "title": "Unified toast/snackbar system with queueing",
+      "rationale": "Provides consistent notification UX with proper queuing.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.md",
+        "radii.md",
+        "colors.surface",
+        "motion.duration.standard"
+      ],
+      "files": [
+        "apps/mobile/src/components/feedback/**/*.tsx"
+      ],
+      "acceptance": [
+        "Toast component with queueing",
+        "Auto-dismiss configurable",
+        "Stacking/overlapping handled"
+      ],
+      "before_media": "docs/ui_media/UI-026-before.png",
+      "after_mock": "docs/ui_media/UI-026-after.png"
+    },
+    {
+      "id": "UI-027",
+      "category": "Components & States",
+      "title": "Segmented controls with scrollable chips for dense filters",
+      "rationale": "Improves filter UX with compact, scrollable controls.",
+      "impact": 3,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.sm",
+        "radii.pill",
+        "colors.primary"
+      ],
+      "files": [
+        "apps/mobile/src/components/filters/**/*.tsx"
+      ],
+      "acceptance": [
+        "Segmented control component",
+        "Horizontal scrolling for overflow",
+        "Multi-select support"
+      ],
+      "before_media": "docs/ui_media/UI-027-before.png",
+      "after_mock": "docs/ui_media/UI-027-after.png"
+    },
+    {
+      "id": "UI-028",
+      "category": "Components & States",
+      "title": "Universal share/action sheet with safe defaults",
+      "rationale": "Provides consistent sharing UX across platforms.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.lg",
+        "radii.lg",
+        "colors.surface"
+      ],
+      "files": [
+        "apps/mobile/src/components/modals/**/*.tsx"
+      ],
+      "acceptance": [
+        "Action sheet component",
+        "Platform-specific sharing",
+        "Safe area insets handled"
+      ],
+      "before_media": "docs/ui_media/UI-028-before.png",
+      "after_mock": "docs/ui_media/UI-028-after.png"
+    },
+    {
+      "id": "UI-029",
+      "category": "Motion & Micro-Interactions",
+      "title": "Press feedback: scale(0.98) + shadow soften + haptic (impact light)",
+      "rationale": "Provides immediate tactile and visual feedback on interaction.",
+      "impact": 4,
+      "effort": "S",
+      "tokens_touched": [
+        "motion.scale",
+        "motion.opacity",
+        "motion.duration.standard"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "Scale animation on press (0.98)",
+        "Shadow opacity reduced on press",
+        "Haptic feedback (impact light)"
+      ],
+      "before_media": "docs/ui_media/UI-029-before.png",
+      "after_mock": "docs/ui_media/UI-029-after.png"
+    },
+    {
+      "id": "UI-030",
+      "category": "Motion & Micro-Interactions",
+      "title": "List reordering with spring physics + hints",
+      "rationale": "Enables intuitive list reordering with clear visual feedback.",
+      "impact": 3,
+      "effort": "L",
+      "tokens_touched": [
+        "motion.spring",
+        "spacing.md"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/List*.tsx"
+      ],
+      "acceptance": [
+        "Drag-to-reorder functionality",
+        "Spring physics animation",
+        "Visual hints during drag"
+      ],
+      "before_media": "docs/ui_media/UI-030-before.png",
+      "after_mock": "docs/ui_media/UI-030-after.png"
+    },
+    {
+      "id": "UI-031",
+      "category": "Motion & Micro-Interactions",
+      "title": "Success celebration (confetti/checkmark morph) on key actions",
+      "rationale": "Provides delightful feedback for successful actions.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "motion.duration.standard",
+        "colors.success"
+      ],
+      "files": [
+        "apps/mobile/src/components/Animations/**/*.tsx"
+      ],
+      "acceptance": [
+        "Confetti animation on success",
+        "Checkmark morph animation",
+        "Respects reduced-motion preference"
+      ],
+      "before_media": "docs/ui_media/UI-031-before.png",
+      "after_mock": "docs/ui_media/UI-031-after.png"
+    },
+    {
+      "id": "UI-032",
+      "category": "Motion & Micro-Interactions",
+      "title": "Shared-element transitions between list ↔ detail",
+      "rationale": "Creates smooth, cohesive navigation experience.",
+      "impact": 5,
+      "effort": "L",
+      "tokens_touched": [
+        "motion.duration.standard",
+        "motion.easing.decel"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx",
+        "apps/mobile/src/navigation/**/*.tsx"
+      ],
+      "acceptance": [
+        "Shared element transitions working",
+        "Smooth list-to-detail navigation",
+        "No layout shifts during transition"
+      ],
+      "before_media": "docs/ui_media/UI-032-before.png",
+      "after_mock": "docs/ui_media/UI-032-after.png"
+    },
+    {
+      "id": "UI-033",
+      "category": "Motion & Micro-Interactions",
+      "title": "Pull-to-refresh elastic with progress affordance",
+      "rationale": "Provides clear visual feedback during refresh operations.",
+      "impact": 3,
+      "effort": "M",
+      "tokens_touched": [
+        "motion.spring",
+        "colors.primary"
+      ],
+      "files": [
+        "apps/mobile/src/components/refresh/**/*.tsx"
+      ],
+      "acceptance": [
+        "Elastic pull animation",
+        "Progress indicator visible",
+        "Smooth release animation"
+      ],
+      "before_media": "docs/ui_media/UI-033-before.png",
+      "after_mock": "docs/ui_media/UI-033-after.png"
+    },
+    {
+      "id": "UI-034",
+      "category": "Motion & Micro-Interactions",
+      "title": "Page transitions aligned with platform idioms (cupertino/material)",
+      "rationale": "Matches platform conventions for familiar UX.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "motion.duration.standard",
+        "motion.easing.*"
+      ],
+      "files": [
+        "apps/mobile/src/navigation/transitions.ts"
+      ],
+      "acceptance": [
+        "iOS uses slide-from-right",
+        "Android uses fade + slide",
+        "Platform detection working"
+      ],
+      "before_media": "docs/ui_media/UI-034-before.png",
+      "after_mock": "docs/ui_media/UI-034-after.png"
+    },
+    {
+      "id": "UI-035",
+      "category": "Motion & Micro-Interactions",
+      "title": "Micro-delays (30–60ms) to chain animations for natural cadence",
+      "rationale": "Creates natural-feeling animation sequences.",
+      "impact": 3,
+      "effort": "S",
+      "tokens_touched": [
+        "motion.duration.standard"
+      ],
+      "files": [
+        "apps/mobile/src/components/Animations/**/*.tsx"
+      ],
+      "acceptance": [
+        "Animation chaining with delays",
+        "Delays between 30-60ms",
+        "Natural cadence achieved"
+      ],
+      "before_media": "docs/ui_media/UI-035-before.png",
+      "after_mock": "docs/ui_media/UI-035-after.png"
+    },
+    {
+      "id": "UI-036",
+      "category": "Motion & Micro-Interactions",
+      "title": "Cursor/touch trail disabled by default; enable for debug",
+      "rationale": "Provides debug tool for motion analysis without affecting production.",
+      "impact": 1,
+      "effort": "S",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/dev/**/*.tsx"
+      ],
+      "acceptance": [
+        "Touch trail component available",
+        "Disabled in production",
+        "Enabled via debug flag"
+      ],
+      "before_media": "docs/ui_media/UI-036-before.png",
+      "after_mock": "docs/ui_media/UI-036-after.png"
+    },
+    {
+      "id": "UI-037",
+      "category": "Performance",
+      "title": "Virtualize long lists; memoize heavy rows",
+      "rationale": "Improves scroll performance and reduces memory usage.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/**/List*.tsx",
+        "apps/mobile/src/screens/**/*.tsx"
+      ],
+      "acceptance": [
+        "FlashList or FlatList used for long lists",
+        "Row components memoized",
+        "60fps scrolling maintained"
+      ],
+      "before_media": "docs/ui_media/UI-037-before.png",
+      "after_mock": "docs/ui_media/UI-037-after.png"
+    },
+    {
+      "id": "UI-038",
+      "category": "Performance",
+      "title": "Pre-warm images with priority hints + fade-in placeholders",
+      "rationale": "Improves perceived performance and reduces layout shifts.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "motion.opacity"
+      ],
+      "files": [
+        "apps/mobile/src/components/common/SmartImage.tsx",
+        "apps/mobile/src/components/OptimizedImage.tsx"
+      ],
+      "acceptance": [
+        "Priority hints on above-fold images",
+        "Placeholder fade-in animation",
+        "Blur-up or dominant color placeholders"
+      ],
+      "before_media": "docs/ui_media/UI-038-before.png",
+      "after_mock": "docs/ui_media/UI-038-after.png"
+    },
+    {
+      "id": "UI-039",
+      "category": "Performance",
+      "title": "Split bundles; lazy-load rarely used screens",
+      "rationale": "Reduces initial bundle size and improves TTI.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/navigation/lazyScreens.tsx"
+      ],
+      "acceptance": [
+        "Rarely used screens lazy-loaded",
+        "Code splitting implemented",
+        "Bundle size reduced by 20%+"
+      ],
+      "before_media": "docs/ui_media/UI-039-before.png",
+      "after_mock": "docs/ui_media/UI-039-after.png"
+    },
+    {
+      "id": "UI-040",
+      "category": "Performance",
+      "title": "Replace PNGs with WebP/AVIF where supported",
+      "rationale": "Reduces image file sizes and improves load times.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/assets/**/*"
+      ],
+      "acceptance": [
+        "WebP/AVIF images used",
+        "Fallback to PNG for unsupported devices",
+        "Image size reduction verified"
+      ],
+      "before_media": "docs/ui_media/UI-040-before.png",
+      "after_mock": "docs/ui_media/UI-040-after.png"
+    },
+    {
+      "id": "UI-041",
+      "category": "Performance",
+      "title": "Cache static gradients/shadows as bitmaps",
+      "rationale": "Reduces render cost of complex gradients and shadows.",
+      "impact": 3,
+      "effort": "L",
+      "tokens_touched": [
+        "shadows.*",
+        "palette.gradients.*"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "Static gradients cached",
+        "Shadow rendering optimized",
+        "Performance improvement measured"
+      ],
+      "before_media": "docs/ui_media/UI-041-before.png",
+      "after_mock": "docs/ui_media/UI-041-after.png"
+    },
+    {
+      "id": "UI-042",
+      "category": "Performance",
+      "title": "Audit Reanimated worklets for JS thread hits",
+      "rationale": "Ensures animations run on UI thread for smooth performance.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [
+        "motion.*"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "All animations run on UI thread",
+        "No JS thread blocking",
+        "60fps maintained"
+      ],
+      "before_media": "docs/ui_media/UI-042-before.png",
+      "after_mock": "docs/ui_media/UI-042-after.png"
+    },
+    {
+      "id": "UI-043",
+      "category": "Performance",
+      "title": "Remove off-screen DOM bridges; reduce layout thrash",
+      "rationale": "Eliminates unnecessary layout calculations.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/**/*.{ts,tsx}"
+      ],
+      "acceptance": [
+        "No off-screen rendering",
+        "Layout calculations minimized",
+        "Performance profiler shows improvement"
+      ],
+      "before_media": "docs/ui_media/UI-043-before.png",
+      "after_mock": "docs/ui_media/UI-043-after.png"
+    },
+    {
+      "id": "UI-044",
+      "category": "Performance",
+      "title": "Image CDN params (size/quality) matched to device DPR",
+      "rationale": "Serves appropriately sized images for device pixel ratio.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/common/SmartImage.tsx"
+      ],
+      "acceptance": [
+        "Image URLs include DPR params",
+        "Size matches viewport",
+        "Quality optimized per device"
+      ],
+      "before_media": "docs/ui_media/UI-044-before.png",
+      "after_mock": "docs/ui_media/UI-044-after.png"
+    },
+    {
+      "id": "UI-045",
+      "category": "Accessibility",
+      "title": "Accessible names/roles/states on all interactive elements",
+      "rationale": "Enables screen reader users to navigate and interact with the app.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "All interactive elements have accessibilityLabel",
+        "Roles defined where needed",
+        "States communicated to screen readers"
+      ],
+      "before_media": "docs/ui_media/UI-045-before.png",
+      "after_mock": "docs/ui_media/UI-045-after.png"
+    },
+    {
+      "id": "UI-046",
+      "category": "Accessibility",
+      "title": "Focus order & escape routes for modals/sheets",
+      "rationale": "Ensures keyboard and screen reader users can navigate modals.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/modals/**/*.tsx"
+      ],
+      "acceptance": [
+        "Focus trap in modals",
+        "Escape key closes modals",
+        "Focus returns to trigger element"
+      ],
+      "before_media": "docs/ui_media/UI-046-before.png",
+      "after_mock": "docs/ui_media/UI-046-after.png"
+    },
+    {
+      "id": "UI-047",
+      "category": "Accessibility",
+      "title": "Dynamic Type scaling up to 200% without clipping",
+      "rationale": "Supports users who require larger text sizes.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [
+        "typography.*"
+      ],
+      "files": [
+        "apps/mobile/src/**/*.{ts,tsx}"
+      ],
+      "acceptance": [
+        "Text scales to 200%",
+        "No clipping or overlapping",
+        "Layout remains usable"
+      ],
+      "before_media": "docs/ui_media/UI-047-before.png",
+      "after_mock": "docs/ui_media/UI-047-after.png"
+    },
+    {
+      "id": "UI-048",
+      "category": "Accessibility",
+      "title": "Larger touch targets + hitSlop on dense lists",
+      "rationale": "Improves usability for users with motor impairments.",
+      "impact": 4,
+      "effort": "S",
+      "tokens_touched": [
+        "spacing.md"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "All touch targets ≥ 44×44dp",
+        "hitSlop added to dense lists",
+        "Visual target size maintained"
+      ],
+      "before_media": "docs/ui_media/UI-048-before.png",
+      "after_mock": "docs/ui_media/UI-048-after.png"
+    },
+    {
+      "id": "UI-049",
+      "category": "Accessibility",
+      "title": "Gestures alternatives for non-gesture users",
+      "rationale": "Ensures all functionality accessible without gestures.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/Gestures/**/*.tsx"
+      ],
+      "acceptance": [
+        "Swipe actions have button alternatives",
+        "Long-press actions have menu alternatives",
+        "All gestures optional"
+      ],
+      "before_media": "docs/ui_media/UI-049-before.png",
+      "after_mock": "docs/ui_media/UI-049-after.png"
+    },
+    {
+      "id": "UI-050",
+      "category": "Accessibility",
+      "title": "Descriptive alt text; skip decorative images",
+      "rationale": "Improves screen reader experience.",
+      "impact": 4,
+      "effort": "S",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "All images have accessibilityLabel",
+        "Decorative images marked as such",
+        "Alt text descriptive and concise"
+      ],
+      "before_media": "docs/ui_media/UI-050-before.png",
+      "after_mock": "docs/ui_media/UI-050-after.png"
+    },
+    {
+      "id": "UI-051",
+      "category": "Accessibility",
+      "title": "High-contrast focus rings; visible keyboard focus",
+      "rationale": "Ensures keyboard navigation is clearly visible.",
+      "impact": 4,
+      "effort": "S",
+      "tokens_touched": [
+        "colors.primary",
+        "colors.border"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "Focus rings visible on all interactive elements",
+        "High contrast maintained",
+        "Keyboard navigation tested"
+      ],
+      "before_media": "docs/ui_media/UI-051-before.png",
+      "after_mock": "docs/ui_media/UI-051-after.png"
+    },
+    {
+      "id": "UI-052",
+      "category": "Platform Idioms",
+      "title": "Native date/time pickers by platform",
+      "rationale": "Matches platform conventions for familiar UX.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/**/DatePicker*.tsx",
+        "apps/mobile/src/components/**/TimePicker*.tsx"
+      ],
+      "acceptance": [
+        "iOS uses UIDatePicker",
+        "Android uses Material DatePicker",
+        "Platform detection working"
+      ],
+      "before_media": "docs/ui_media/UI-052-before.png",
+      "after_mock": "docs/ui_media/UI-052-after.png"
+    },
+    {
+      "id": "UI-053",
+      "category": "Platform Idioms",
+      "title": "Android back gesture parity with header back",
+      "rationale": "Ensures consistent back navigation on Android.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/navigation/**/*.tsx"
+      ],
+      "acceptance": [
+        "Android back gesture works",
+        "Matches header back behavior",
+        "Edge cases handled"
+      ],
+      "before_media": "docs/ui_media/UI-053-before.png",
+      "after_mock": "docs/ui_media/UI-053-after.png"
+    },
+    {
+      "id": "UI-054",
+      "category": "Platform Idioms",
+      "title": "iOS edge swipe-to-go-back with tuned thresholds",
+      "rationale": "Enables familiar iOS navigation gesture.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/navigation/**/*.tsx"
+      ],
+      "acceptance": [
+        "Edge swipe gesture enabled",
+        "Threshold tuned for comfort",
+        "No interference with horizontal scroll"
+      ],
+      "before_media": "docs/ui_media/UI-054-before.png",
+      "after_mock": "docs/ui_media/UI-054-after.png"
+    },
+    {
+      "id": "UI-055",
+      "category": "Platform Idioms",
+      "title": "Haptics categories mapped to intent (impact/notification)",
+      "rationale": "Provides appropriate tactile feedback for different actions.",
+      "impact": 3,
+      "effort": "S",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "Impact haptics for interactions",
+        "Notification haptics for alerts",
+        "Haptic types mapped correctly"
+      ],
+      "before_media": "docs/ui_media/UI-055-before.png",
+      "after_mock": "docs/ui_media/UI-055-after.png"
+    },
+    {
+      "id": "UI-056",
+      "category": "Platform Idioms",
+      "title": "System share sheet integration",
+      "rationale": "Leverages native sharing capabilities.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/**/Share*.tsx"
+      ],
+      "acceptance": [
+        "iOS uses UIActivityViewController",
+        "Android uses Intent.ACTION_SEND",
+        "Platform detection working"
+      ],
+      "before_media": "docs/ui_media/UI-056-before.png",
+      "after_mock": "docs/ui_media/UI-056-after.png"
+    },
+    {
+      "id": "UI-057",
+      "category": "Platform Idioms",
+      "title": "Respect OS reduced-motion; swap motion for fades",
+      "rationale": "Supports users who prefer reduced motion.",
+      "impact": 5,
+      "effort": "S",
+      "tokens_touched": [
+        "motion.*"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx",
+        "apps/mobile/src/navigation/**/*.tsx"
+      ],
+      "acceptance": [
+        "Reduced motion preference detected",
+        "Animations replaced with fades",
+        "No motion-based interactions broken"
+      ],
+      "before_media": "docs/ui_media/UI-057-before.png",
+      "after_mock": "docs/ui_media/UI-057-after.png"
+    },
+    {
+      "id": "UI-058",
+      "category": "Forms & Validation",
+      "title": "Inline async validation + progress affordance",
+      "rationale": "Provides immediate feedback during form validation.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "colors.danger",
+        "colors.success",
+        "spacing.sm"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/Form*.tsx"
+      ],
+      "acceptance": [
+        "Validation feedback appears inline",
+        "Async validation shows progress",
+        "Errors clear on correction"
+      ],
+      "before_media": "docs/ui_media/UI-058-before.png",
+      "after_mock": "docs/ui_media/UI-058-after.png"
+    },
+    {
+      "id": "UI-059",
+      "category": "Forms & Validation",
+      "title": "Undo/confirm for destructive actions",
+      "rationale": "Prevents accidental data loss.",
+      "impact": 5,
+      "effort": "M",
+      "tokens_touched": [
+        "colors.danger",
+        "motion.duration.standard"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/*.tsx"
+      ],
+      "acceptance": [
+        "Destructive actions show confirmation",
+        "Undo available for recent actions",
+        "Clear visual distinction"
+      ],
+      "before_media": "docs/ui_media/UI-059-before.png",
+      "after_mock": "docs/ui_media/UI-059-after.png"
+    },
+    {
+      "id": "UI-060",
+      "category": "Forms & Validation",
+      "title": "Keyboard management: next/return flows + safe area paddings",
+      "rationale": "Improves form completion UX.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.md"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/Form*.tsx",
+        "apps/mobile/src/screens/**/*.tsx"
+      ],
+      "acceptance": [
+        "Next button moves focus",
+        "Return submits when appropriate",
+        "Keyboard avoids content"
+      ],
+      "before_media": "docs/ui_media/UI-060-before.png",
+      "after_mock": "docs/ui_media/UI-060-after.png"
+    },
+    {
+      "id": "UI-061",
+      "category": "Forms & Validation",
+      "title": "Masked inputs with live formatting (phone/card)",
+      "rationale": "Improves input UX and reduces errors.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/**/Input*.tsx"
+      ],
+      "acceptance": [
+        "Phone number formatting",
+        "Credit card formatting",
+        "Live formatting as user types"
+      ],
+      "before_media": "docs/ui_media/UI-061-before.png",
+      "after_mock": "docs/ui_media/UI-061-after.png"
+    },
+    {
+      "id": "UI-062",
+      "category": "Forms & Validation",
+      "title": "Auto-save drafts + offline queue",
+      "rationale": "Prevents data loss and enables offline form completion.",
+      "impact": 4,
+      "effort": "L",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/**/Form*.tsx"
+      ],
+      "acceptance": [
+        "Drafts auto-saved",
+        "Offline queue functional",
+        "Sync on reconnect"
+      ],
+      "before_media": "docs/ui_media/UI-062-before.png",
+      "after_mock": "docs/ui_media/UI-062-after.png"
+    },
+    {
+      "id": "UI-063",
+      "category": "Forms & Validation",
+      "title": "One-tap error focus jump to first invalid field",
+      "rationale": "Improves form completion UX.",
+      "impact": 3,
+      "effort": "S",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/**/Form*.tsx"
+      ],
+      "acceptance": [
+        "Submit focuses first invalid field",
+        "Smooth scroll to field",
+        "Error clearly indicated"
+      ],
+      "before_media": "docs/ui_media/UI-063-before.png",
+      "after_mock": "docs/ui_media/UI-063-after.png"
+    },
+    {
+      "id": "UI-064",
+      "category": "Media & Imagery",
+      "title": "Progressive image loading with dominant-color placeholders",
+      "rationale": "Improves perceived performance and reduces layout shifts.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [
+        "motion.opacity"
+      ],
+      "files": [
+        "apps/mobile/src/components/common/SmartImage.tsx"
+      ],
+      "acceptance": [
+        "Dominant color extracted",
+        "Placeholder shows during load",
+        "Smooth fade-in transition"
+      ],
+      "before_media": "docs/ui_media/UI-064-before.png",
+      "after_mock": "docs/ui_media/UI-064-after.png"
+    },
+    {
+      "id": "UI-065",
+      "category": "Media & Imagery",
+      "title": "Avatar fallback generator (initials + gradient)",
+      "rationale": "Provides consistent avatar appearance when images unavailable.",
+      "impact": 3,
+      "effort": "S",
+      "tokens_touched": [
+        "palette.gradients.*",
+        "radii.full"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/Avatar*.tsx"
+      ],
+      "acceptance": [
+        "Initials generated from name",
+        "Gradient background applied",
+        "Consistent styling"
+      ],
+      "before_media": "docs/ui_media/UI-065-before.png",
+      "after_mock": "docs/ui_media/UI-065-after.png"
+    },
+    {
+      "id": "UI-066",
+      "category": "Media & Imagery",
+      "title": "Smart cropping & focal point for hero images",
+      "rationale": "Ensures important image content remains visible.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/common/SmartImage.tsx"
+      ],
+      "acceptance": [
+        "Focal point detection",
+        "Smart cropping applied",
+        "Important content preserved"
+      ],
+      "before_media": "docs/ui_media/UI-066-before.png",
+      "after_mock": "docs/ui_media/UI-066-after.png"
+    },
+    {
+      "id": "UI-067",
+      "category": "Media & Imagery",
+      "title": "Lottie micro-animations for onboarding tips",
+      "rationale": "Provides engaging, lightweight animations.",
+      "impact": 3,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/Animations/Lottie/**/*.tsx"
+      ],
+      "acceptance": [
+        "Lottie animations integrated",
+        "Onboarding tips animated",
+        "File sizes optimized"
+      ],
+      "before_media": "docs/ui_media/UI-067-before.png",
+      "after_mock": "docs/ui_media/UI-067-after.png"
+    },
+    {
+      "id": "UI-068",
+      "category": "Media & Imagery",
+      "title": "Blur-up transitions for gallery grids",
+      "rationale": "Improves perceived performance during image load.",
+      "impact": 3,
+      "effort": "M",
+      "tokens_touched": [
+        "motion.opacity"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/Gallery*.tsx"
+      ],
+      "acceptance": [
+        "Low-res image loads first",
+        "Blur-up effect on full-res load",
+        "Smooth transition"
+      ],
+      "before_media": "docs/ui_media/UI-068-before.png",
+      "after_mock": "docs/ui_media/UI-068-after.png"
+    },
+    {
+      "id": "UI-069",
+      "category": "Media & Imagery",
+      "title": "Lightweight parallax on hero headers (auto-disabled on low-end)",
+      "rationale": "Adds visual interest without performance cost.",
+      "impact": 3,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/components/**/Hero*.tsx"
+      ],
+      "acceptance": [
+        "Parallax effect on scroll",
+        "Disabled on low-end devices",
+        "Performance impact minimal"
+      ],
+      "before_media": "docs/ui_media/UI-069-before.png",
+      "after_mock": "docs/ui_media/UI-069-after.png"
+    },
+    {
+      "id": "UI-070",
+      "category": "Observability & QA",
+      "title": "Interaction traces: capture tap → render timings per screen",
+      "rationale": "Enables performance monitoring and optimization.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/hooks/**/*.tsx"
+      ],
+      "acceptance": [
+        "Tap-to-render timing captured",
+        "Metrics sent to analytics",
+        "Performance dashboard available"
+      ],
+      "before_media": "docs/ui_media/UI-070-before.png",
+      "after_mock": "docs/ui_media/UI-070-after.png"
+    },
+    {
+      "id": "UI-071",
+      "category": "Observability & QA",
+      "title": "Visual regression snapshots for critical components",
+      "rationale": "Prevents unintended visual changes.",
+      "impact": 4,
+      "effort": "M",
+      "tokens_touched": [],
+      "files": [
+        "apps/mobile/src/**/*.test.{ts,tsx}"
+      ],
+      "acceptance": [
+        "Snapshot tests for critical components",
+        "CI checks snapshots",
+        "Easy snapshot updates"
+      ],
+      "before_media": "docs/ui_media/UI-071-before.png",
+      "after_mock": "docs/ui_media/UI-071-after.png"
+    },
+    {
+      "id": "UI-072",
+      "category": "Observability & QA",
+      "title": "In-app \"Report UI Issue\" sheet (auto-attaches screenshot + route + device info)",
+      "rationale": "Enables users to report UI issues with context.",
+      "impact": 3,
+      "effort": "M",
+      "tokens_touched": [
+        "spacing.md",
+        "radii.md"
+      ],
+      "files": [
+        "apps/mobile/src/components/**/ReportIssue*.tsx"
+      ],
+      "acceptance": [
+        "Report issue sheet available",
+        "Screenshot auto-attached",
+        "Device info included"
+      ],
+      "before_media": "docs/ui_media/UI-072-before.png",
+      "after_mock": "docs/ui_media/UI-072-after.png"
+    }
+  ]
+}

@@ -1,9 +1,18 @@
+import type { Server } from 'socket.io';
+import type { Socket } from 'socket.io';
 import logger from '../utils/logger';
-import type { SocketIOServer, Socket } from 'socket.io';
-import type { SuggestionEvent } from '../types/socket';
 
-// Socket.io namespace for proactive chat suggestions
-export default function attachSuggestionNamespace(io: SocketIOServer) {
+export interface SuggestionEvent {
+  type: string;
+  text?: string;
+  context?: Record<string, unknown>;
+}
+
+export interface SuggestionNamespace {
+  pushSuggestion: (matchId: string, suggestionEvent: SuggestionEvent) => void;
+}
+
+export default function attachSuggestionNamespace(io: Server): SuggestionNamespace {
   const nsp = io.of('/suggestions');
 
   nsp.on('connection', (socket: Socket) => {
@@ -18,10 +27,9 @@ export default function attachSuggestionNamespace(io: SocketIOServer) {
     });
   });
 
-  function pushSuggestion(matchId: string, suggestionEvent: SuggestionEvent) {
+  function pushSuggestion(matchId: string, suggestionEvent: SuggestionEvent): void {
     nsp.to(matchId).emit('suggestion', suggestionEvent);
   }
 
   return { pushSuggestion };
 }
-

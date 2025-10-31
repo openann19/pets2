@@ -7,15 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@mobile/theme';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface SettingItem {
-  id: string;
-  title: string;
-  subtitle?: string;
-  icon: string;
-  type: 'toggle' | 'navigation' | 'action';
-  value?: boolean;
-  destructive?: boolean;
-}
+import type { SettingItem } from './useSettingsData';
 
 interface AccountSettingsSectionProps {
   settings: SettingItem[];

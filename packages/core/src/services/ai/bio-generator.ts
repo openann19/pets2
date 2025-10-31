@@ -4,6 +4,7 @@
  */
 
 import { _getGeminiClient } from './gemini-client';
+import { logger } from '../../utils/logger';
 
 export interface BioGenerationRequest {
   petName: string;
@@ -41,7 +42,7 @@ export class BioGeneratorService {
         suggestedTags,
       };
     } catch (error) {
-      console.error('Bio generation error:', error);
+      logger.error('Bio generation error:', error);
       // Fallback to template-based bio
       return this.generateFallbackBio(request);
     }

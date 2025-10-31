@@ -16,7 +16,7 @@ interface QuickActionCardProps {
 export const QuickActionCard: React.FC<QuickActionCardProps> = ({
   icon,
   title,
-  gradient,
+  gradient: _gradient,
   backgroundColor,
   badge,
   onPress,

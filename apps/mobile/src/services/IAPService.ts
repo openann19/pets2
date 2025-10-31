@@ -49,22 +49,45 @@ class IAPService {
   private availableProducts: Map<string, Product> = new Map();
 
   // Product IDs for different platforms
+  // Includes subscriptions AND microtransactions (IAP)
   private readonly PRODUCT_IDS = {
     ios: [
+      // Subscriptions
       'com.pawfectmatch.premium.basic.monthly',
       'com.pawfectmatch.premium.premium.monthly',
       'com.pawfectmatch.premium.ultimate.monthly',
       'com.pawfectmatch.premium.basic.yearly',
       'com.pawfectmatch.premium.premium.yearly',
       'com.pawfectmatch.premium.ultimate.yearly',
+      // Microtransactions (IAP)
+      'com.pawfectmatch.iap.superlike.single',
+      'com.pawfectmatch.iap.superlike.pack10',
+      'com.pawfectmatch.iap.boost.30min',
+      'com.pawfectmatch.iap.filters.monthly',
+      'com.pawfectmatch.iap.photo.enhanced',
+      'com.pawfectmatch.iap.video.profile',
+      'com.pawfectmatch.iap.gift.treat',
+      'com.pawfectmatch.iap.gift.toy',
+      'com.pawfectmatch.iap.gift.premium',
     ],
     android: [
+      // Subscriptions
       'premium_basic_monthly',
       'premium_premium_monthly',
       'premium_ultimate_monthly',
       'premium_basic_yearly',
       'premium_premium_yearly',
       'premium_ultimate_yearly',
+      // Microtransactions (IAP)
+      'iap_superlike_single',
+      'iap_superlike_pack10',
+      'iap_boost_30min',
+      'iap_filters_monthly',
+      'iap_photo_enhanced',
+      'iap_video_profile',
+      'iap_gift_treat',
+      'iap_gift_toy',
+      'iap_gift_premium',
     ],
   };
 

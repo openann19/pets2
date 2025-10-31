@@ -33,7 +33,6 @@ export default [
       '**/postcss.config.{js,cjs}',
       '**/tailwind.config.{js,cjs}',
       // Non-mobile scopes temporarily excluded from lint until dedicated configs are added
-      '**/server/**',
       '**/services/**',
       '**/tests/**',
       '**/tools/**',

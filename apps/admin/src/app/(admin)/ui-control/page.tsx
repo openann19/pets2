@@ -8,6 +8,7 @@ import {
   DevicePhoneMobileIcon,
   FlagIcon,
   RocketLaunchIcon,
+  PaintBrushIcon,
 } from '@heroicons/react/24/outline';
 import { axiosInstance } from '@/lib/axios';
 import type { UIConfig } from '@pawfectmatch/core';
@@ -16,6 +17,7 @@ import { MicroInteractionsTab } from '@/components/admin/UIControl/MicroInteract
 import { ComponentsTab } from '@/components/admin/UIControl/ComponentsTab';
 import { ScreensTab } from '@/components/admin/UIControl/ScreensTab';
 import { FeatureFlagsTab } from '@/components/admin/UIControl/FeatureFlagsTab';
+import { VisualEnhancements2025Tab } from '@/components/admin/UIControl/VisualEnhancements2025Tab';
 import { PublishTab } from '@/components/admin/UIControl/PublishTab';
 
 const tabs = [
@@ -23,6 +25,7 @@ const tabs = [
   { id: 'micro-interactions', name: 'Micro-Interactions', icon: SparklesIcon },
   { id: 'components', name: 'Components', icon: CubeIcon },
   { id: 'screens', name: 'Screens', icon: DevicePhoneMobileIcon },
+  { id: 'visual-2025', name: '✨ 2025 Visual', icon: PaintBrushIcon },
   { id: 'flags', name: 'Feature Flags', icon: FlagIcon },
   { id: 'publish', name: 'Publish', icon: RocketLaunchIcon },
 ];
@@ -115,6 +118,9 @@ export default function UIControlPage() {
         )}
         {activeTab === 'screens' && (
           <ScreensTab config={currentConfig} onConfigChange={handleConfigChange} />
+        )}
+        {activeTab === 'visual-2025' && (
+          <VisualEnhancements2025Tab config={currentConfig} onConfigChange={handleConfigChange} />
         )}
         {activeTab === 'flags' && (
           <FeatureFlagsTab config={currentConfig} onConfigChange={handleConfigChange} />

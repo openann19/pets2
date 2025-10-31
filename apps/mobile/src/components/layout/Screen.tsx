@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, type ViewProps } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../../theme/useTheme';
+import { useTheme } from '@mobile/theme';
 
 export interface ScreenProps extends ViewProps {
   scrollable?: boolean;
@@ -14,10 +14,10 @@ export function Screen({
   scrollable = false,
   ...rest
 }: ScreenProps): React.ReactElement {
-  const { colors, spacing } = useTheme();
+  const theme = useTheme();
 
   const containerStyle = StyleSheet.compose(styles.base, [
-    { backgroundColor: colors.background, paddingHorizontal: spacing.lg },
+    { backgroundColor: theme.colors.bg, paddingHorizontal: theme.spacing.lg },
     style,
   ]);
 

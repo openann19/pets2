@@ -24,7 +24,7 @@ import { useTheme } from '@/theme';
 // === TYPES ===
 interface EffectWrapperProps {
   children: ReactNode;
-  style?: ViewStyle;
+  style?: ViewStyle | undefined;
   disabled?: boolean;
 }
 
@@ -51,7 +51,7 @@ export const WithGlowFX = forwardRef<Animated.View, WithGlowFXProps>(
     return (
       <Animated.View
         ref={ref}
-        style={[glowStyle as AnimatedStyleProp<ViewStyle>, style]}
+        style={[glowStyle as AnimatedStyleProp<ViewStyle>, style] as any}
       >
         {children}
       </Animated.View>
@@ -77,7 +77,7 @@ export const WithMagneticFX = forwardRef<Animated.View, WithMagneticFXProps>(
     return (
       <Animated.View
         ref={ref}
-        style={[magneticStyle as AnimatedStyleProp<ViewStyle>, style]}
+        style={[magneticStyle as AnimatedStyleProp<ViewStyle>, ...(style ? [style] : [])] as any}
       >
         {children}
       </Animated.View>
@@ -126,7 +126,7 @@ export const WithRippleFX = forwardRef<View, WithRippleFXProps>(
                 marginLeft: -50,
               } as ViewStyle,
               rippleStyle as AnimatedStyleProp<ViewStyle>,
-            ]}
+            ] as any}
             pointerEvents="none"
           />
         )}
@@ -170,7 +170,7 @@ export const WithShimmerFX = forwardRef<View, WithShimmerFXProps>(
                 backgroundColor: shimmerColor,
               } as ViewStyle,
               shimmerStyle as AnimatedStyleProp<ViewStyle>,
-            ]}
+            ] as any}
             pointerEvents="none"
           />
         )}
@@ -193,7 +193,7 @@ export const WithPressFX = forwardRef<Animated.View, WithPressFXProps>(
     return (
       <Animated.View
         ref={ref}
-        style={[pressStyle as AnimatedStyleProp<ViewStyle>, style]}
+        style={[pressStyle as AnimatedStyleProp<ViewStyle>, ...(style ? [style] : [])] as any}
         onTouchStart={disabled ? undefined : handlePressIn}
         onTouchEnd={disabled ? undefined : handlePressOut}
       >

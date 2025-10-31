@@ -1,0 +1,53 @@
+id: d-04-ota-updates-channel
+owner: devops
+severity: high
+area: mobile
+status: open
+context: |
+  Enable Over-the-Air (OTA) updates channel "prod" for instant updates without app store.
+  Current behavior: All updates require app store approval.
+  Why it matters: Faster bug fixes, instant feature rollouts, better user experience.
+
+acceptance:
+  - [ ] Configure Expo Updates in app.json
+  - [ ] Create "prod" update channel
+  - [ ] Create "preview" update channel
+  - [ ] Create "development" update channel
+  - [ ] Test OTA update flow
+  - [ ] Verify updates apply correctly
+  - [ ] Handle update failures gracefully
+  - [ ] Update CI/CD to publish OTA updates
+  - [ ] Document update process
+
+states:
+  - not-configured
+  - configured
+  - tested
+  - deployed
+
+telemetry:
+  - event: OTA_UPDATE_CHECKED
+    props: [channel, hasUpdate, timestamp]
+  - event: OTA_UPDATE_APPLIED
+    props: [channel, version, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  configs:
+    - apps/mobile/app.json
+    - apps/mobile/app.config.cjs
+  scripts:
+    - scripts/publish-ota-update.sh
+
+dependencies:
+  - Expo Updates SDK
+  - EAS account
+
+timeline:
+  start: 2025-02-01
+  config: 2025-02-01
+  testing: 2025-02-02
+  deploy: 2025-02-03
+

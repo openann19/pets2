@@ -1,4 +1,4 @@
-import { ApiResponse } from './express';
+import type { ApiResponse } from './express';
 
 /**
  * Authentication request bodies

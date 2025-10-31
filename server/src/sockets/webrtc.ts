@@ -57,6 +57,28 @@ export default function attachWebRTCNamespace(io: SocketIOServer) {
         const { callId: extractedCallId, matchId, callerId, callerName, callType } = callData;
         callId = extractedCallId;
         
+        // Check premium status - Video/voice calls are Premium+ feature
+        const User = (await import('../models/User')).default;
+        const user = await User.findById(callerId);
+        
+        if (!user) {
+          socket.emit('call-error', { message: 'User not found' });
+          return;
+        }
+        
+        const isPremium = user.premium?.isActive &&
+          (!user.premium.expiresAt || new Date(user.premium.expiresAt) > new Date());
+        const hasVideoCalls = isPremium && (user.premium?.plan === 'premium' || user.premium?.plan === 'ultimate');
+        
+        if (!hasVideoCalls) {
+          socket.emit('call-error', {
+            message: 'Premium subscription required for video/voice calls',
+            code: 'PREMIUM_FEATURE_REQUIRED',
+            upgradeRequired: true,
+          });
+          return;
+        }
+        
         // Get the match to find the other user from database
         const match = await Match.findById(matchId);
         

@@ -9,7 +9,7 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const PhotoModeration = require('../models/PhotoModeration');
+const PhotoModeration = require('../src/models/PhotoModeration');
 const User = require('../src/models/User');
 
 // Mock app setup

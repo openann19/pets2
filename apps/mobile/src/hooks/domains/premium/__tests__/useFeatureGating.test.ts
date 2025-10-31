@@ -48,12 +48,12 @@ const mockUsePremiumStatus = usePremiumStatus as jest.Mock;
 
 describe('useFeatureGating', () => {
   const mockUsageStats = {
-    swipesUsed: 25,
-    swipesLimit: 50,
-    superLikesUsed: 3,
-    superLikesLimit: 5,
-    boostsUsed: 1,
-    boostsLimit: 3,
+    swipesUsed: 3,
+    swipesLimit: 5, // Business Model: 5 daily swipes for free users
+    superLikesUsed: 0,
+    superLikesLimit: 0, // Business Model: Free users get 0 Super Likes (must purchase via IAP)
+    boostsUsed: 0,
+    boostsLimit: 0,
     profileViews: 150,
     messagesSent: 45,
     matchRate: 0.3,

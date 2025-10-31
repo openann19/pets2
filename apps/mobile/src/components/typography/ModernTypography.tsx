@@ -16,7 +16,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { ReactNode } from "react";
 import React from "react";
 import { Text, StyleSheet, type TextStyle, type TextProps } from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
 import { useEntranceAnimation } from "../../hooks/useUnifiedAnimations";
 import { useTheme } from "@/theme";
@@ -94,14 +94,22 @@ function ModernText({
   const theme = useTheme();
   const variantConfig = getVariantConfig(theme, variant);
 
-  // Get text color
-  const textColor = (color && theme.colors[color as keyof AppTheme['colors']]) || theme.colors.onSurface;
+  // Get text color with validation
+  const textColor = (color && theme.colors[color as keyof AppTheme['colors']]) 
+    ? (theme.colors[color as keyof AppTheme['colors']] as string)
+    : theme.colors.onSurface;
 
-  // Build text style
+  // Build text style with accessibility support
   const textStyle: TextStyle = {
     ...variantConfig,
     color: textColor,
     ...(weight && { fontWeight: weight }),
+    // Ensure minimum contrast for accessibility
+    ...(props.accessible !== false && {
+      accessible: true,
+      accessibilityRole: variant.startsWith('h') ? 'header' : 'text',
+      accessibilityLevel: variant === 'h1' ? 1 : variant === 'h2' ? 2 : variant === 'h3' ? 3 : undefined,
+    }),
   };
 
   // Entrance animation
@@ -121,6 +129,8 @@ function ModernText({
       primary: theme.palette.gradients.primary,
       success: theme.palette.gradients.success,
       danger: theme.palette.gradients.danger,
+      warning: theme.palette.gradients.warning,
+      info: theme.palette.gradients.info,
     } as const;
     const colors = gradientColors || (gradient ? gradientMap[gradient] : undefined) || theme.palette.gradients.primary;
 
@@ -228,15 +238,15 @@ export const Label: React.FC<Omit<ModernTextProps, "variant">> = (props) => (
 // === GRADIENT TEXT COMPONENTS ===
 export const GradientHeading: React.FC<Omit<ModernTextProps, "gradient">> = (
   props,
-) => <ModernText variant="h1" gradient={("primary" as any)} {...props} />;
+) => <ModernText variant="h1" gradient="primary" {...props} />;
 
 export const GradientText: React.FC<Omit<ModernTextProps, "gradient">> = (
   props,
-) => <ModernText gradient={("primary" as any)} {...props} />;
+) => <ModernText gradient="primary" {...props} />;
 
-export const HolographicText: React.FC<Omit<ModernTextProps, "gradient">> = (
+export const HolographicText: React.FC<Omit<ModernTextProps, "gradient" | "gradientColors">> = (
   props,
-) => <ModernText gradient={("holographic" as any)} {...props} />;
+) => <ModernText gradientColors={["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#FF6B6B"]} {...props} />;
 
 // === ANIMATED TEXT COMPONENTS ===
 export const AnimatedHeading: React.FC<Omit<ModernTextProps, "animated">> = (
@@ -250,10 +260,11 @@ export const AnimatedText: React.FC<Omit<ModernTextProps, "animated">> = (
 // === STYLES ===
 const styles = StyleSheet.create({
   gradientContainer: {
-    // Container for gradient text
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
   gradientText: {
-    // Gradient text will be handled by LinearGradient
+    backgroundColor: 'transparent',
   },
 });
 

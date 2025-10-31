@@ -47,6 +47,18 @@ module.exports = {
         type: 'iPhone 15 Pro'
       }
     },
+    'ios.sim.release': {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 15'
+      }
+    },
+    emulator: {
+      type: 'android.emulator',
+      device: {
+        avdName: 'Pixel_7_API_35'
+      }
+    },
     attached: {
       type: 'android.attached',
       device: {
@@ -66,7 +78,7 @@ module.exports = {
       app: 'ios.debug'
     },
     'ios.sim.release': {
-      device: 'simulator',
+      device: 'ios.sim.release',
       app: 'ios.release'
     },
     'android.emu.debug': {

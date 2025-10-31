@@ -28,6 +28,12 @@ import {
   captureAndProcessImage,
   checkUploadQuota,
   uploadWithRetry,
+  validateMimeType,
+  fixOrientation,
+  resizeImage,
+  cropToAspectRatio,
+  compressImage,
+  getFileInfo,
   type UploadHygieneOptions,
   type ProcessedImage,
 } from '../uploadHygiene';
@@ -134,7 +140,7 @@ describe('UploadHygiene Service', () => {
         modificationTime: Date.now(),
       });
 
-      const result = await (global as any).validateMimeType('test.jpg');
+      const result = await validateMimeType('test.jpg');
 
       expect(result.valid).toBe(true);
       expect(result.mimeType).toBe('image/jpeg');
@@ -223,7 +229,7 @@ describe('UploadHygiene Service', () => {
         base64: undefined,
       });
 
-      const result = await (global as any).fixOrientation(inputUri);
+      const result = await fixOrientation(inputUri);
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(inputUri, [], {
         compress: 1,
@@ -237,7 +243,7 @@ describe('UploadHygiene Service', () => {
 
       mockImageManipulator.manipulateAsync.mockRejectedValue(new Error('Orientation fix failed'));
 
-      const result = await (global as any).fixOrientation(inputUri);
+      const result = await fixOrientation(inputUri);
 
       expect(result).toBe(inputUri);
       expect(console.error).toHaveBeenCalled();
@@ -265,7 +271,7 @@ describe('UploadHygiene Service', () => {
         base64: undefined,
       });
 
-      const result = await (global as any).resizeImage(inputUri, maxDimension);
+      const result = await resizeImage(inputUri, maxDimension);
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledTimes(2);
       expect(result.width).toBe(1024);
@@ -285,7 +291,7 @@ describe('UploadHygiene Service', () => {
 
       mockImageManipulator.manipulateAsync.mockResolvedValue(originalResult);
 
-      const result = await (global as any).resizeImage(inputUri, maxDimension);
+      const result = await resizeImage(inputUri, maxDimension);
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledTimes(1);
       expect(result).toBe(originalResult);
@@ -306,7 +312,7 @@ describe('UploadHygiene Service', () => {
         base64: undefined,
       });
 
-      const result = await (global as any).resizeImage('landscape.jpg', 1536);
+      const result = await resizeImage('landscape.jpg', 1536);
 
       expect(result.width).toBe(1536);
       expect(result.height).toBe(1024);
@@ -327,7 +333,7 @@ describe('UploadHygiene Service', () => {
         base64: undefined,
       });
 
-      const result = await (global as any).resizeImage('portrait.jpg', 1536);
+      const result = await resizeImage('portrait.jpg', 1536);
 
       expect(result.width).toBe(1024);
       expect(result.height).toBe(1536);
@@ -355,7 +361,7 @@ describe('UploadHygiene Service', () => {
         base64: undefined,
       });
 
-      const result = await (global as any).cropToAspectRatio(imageUri, aspectRatio, width, height);
+      const result = await cropToAspectRatio(imageUri, aspectRatio, width, height);
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         imageUri,
@@ -387,7 +393,7 @@ describe('UploadHygiene Service', () => {
         base64: undefined,
       });
 
-      const result = await (global as any).cropToAspectRatio(imageUri, aspectRatio, width, height);
+      const result = await cropToAspectRatio(imageUri, aspectRatio, width, height);
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         imageUri,
@@ -418,7 +424,7 @@ describe('UploadHygiene Service', () => {
         base64: undefined,
       });
 
-      const result = await (global as any).cropToAspectRatio(imageUri, aspectRatio, width, height);
+      const result = await cropToAspectRatio(imageUri, aspectRatio, width, height);
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         imageUri,
@@ -453,7 +459,7 @@ describe('UploadHygiene Service', () => {
         base64: undefined,
       });
 
-      const result = await (global as any).compressImage(imageUri, quality);
+      const result = await compressImage(imageUri, quality);
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(imageUri, [], {
         compress: quality,
@@ -473,7 +479,7 @@ describe('UploadHygiene Service', () => {
           base64: undefined,
         });
 
-        const result = await (global as any).compressImage('input.jpg', quality);
+        const result = await compressImage('input.jpg', quality);
 
         expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
           'input.jpg',
@@ -507,7 +513,7 @@ describe('UploadHygiene Service', () => {
         modificationTime: Date.now(),
       });
 
-      const result = await (global as any).getFileInfo(uri);
+      const result = await getFileInfo(uri);
 
       expect(result.size).toBe(expectedSize);
       expect(result.exists).toBe(true);
@@ -521,7 +527,7 @@ describe('UploadHygiene Service', () => {
         modificationTime: undefined,
       });
 
-      const result = await (global as any).getFileInfo('missing.jpg');
+      const result = await getFileInfo('missing.jpg');
 
       expect(result.size).toBe(0);
       expect(result.exists).toBe(false);
@@ -530,7 +536,7 @@ describe('UploadHygiene Service', () => {
     it('should handle file system errors', async () => {
       mockFileSystem.getInfoAsync.mockRejectedValue(new Error('File system error'));
 
-      const result = await (global as any).getFileInfo('error.jpg');
+      const result = await getFileInfo('error.jpg');
 
       expect(result.size).toBe(0);
       expect(result.exists).toBe(false);
@@ -1062,7 +1068,7 @@ describe('UploadHygiene Service', () => {
         base64: undefined,
       });
 
-      const result = await (global as any).cropToAspectRatio('square.jpg', [4, 3], 1000, 1000);
+      const result = await cropToAspectRatio('square.jpg', [4, 3], 1000, 1000);
 
       expect(mockImageManipulator.manipulateAsync).toHaveBeenCalledWith(
         'square.jpg',
@@ -1097,7 +1103,7 @@ describe('UploadHygiene Service', () => {
         base64: undefined,
       });
 
-      const result = await (global as any).resizeImage('zero.jpg', 1024);
+      const result = await resizeImage('zero.jpg', 1024);
 
       expect(result.width).toBe(0);
       expect(result.height).toBe(0);
@@ -1111,7 +1117,7 @@ describe('UploadHygiene Service', () => {
         base64: undefined,
       });
 
-      const result = await (global as any).compressImage('test.jpg', -0.5);
+      const result = await compressImage('test.jpg', -0.5);
 
       // ImageManipulator should handle this gracefully
       expect(result.uri).toBe('compressed.jpg');

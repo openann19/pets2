@@ -4,6 +4,7 @@
  */
 
 import { _getGeminiClient } from './gemini-client';
+import { logger } from '../../utils/logger';
 
 export interface PhotoAnalysisRequest {
   photoUrl: string;
@@ -39,7 +40,7 @@ export class PhotoAnalyzerService {
 
       return this.parseAnalysisResponse(response);
     } catch (error) {
-      console.error('Photo analysis error:', error);
+      logger.error('Photo analysis error:', error);
       return this.generateFallbackAnalysis();
     }
   }
@@ -161,7 +162,7 @@ export class PhotoAnalyzerService {
         };
       }
     } catch (error) {
-      console.error('Failed to parse analysis response:', error);
+      logger.error('Failed to parse analysis response:', error);
     }
 
     // Fallback parsing

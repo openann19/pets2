@@ -3,11 +3,12 @@ import { useTheme } from '@mobile/theme';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { logger } from '@pawfectmatch/core';
 import { notificationPreferencesAPI } from '@/services/api';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationPreferencesScreenProps {
   navigation: {
@@ -27,64 +28,68 @@ function NotificationPreferencesScreen({
   navigation,
 }: NotificationPreferencesScreenProps): JSX.Element {
   const theme = useTheme();
-  const [settings, setSettings] = useState<NotificationSetting[]>([
+  const { t } = useTranslation('common');
+  
+  const getInitialSettings = useCallback((): NotificationSetting[] => [
     {
       id: 'new_matches',
-      title: 'New Matches',
-      description: 'Get notified when you have new matches',
+      title: t('notifications.settings.new_matches'),
+      description: t('notifications.settings.new_matches_desc'),
       enabled: true,
       category: 'matches',
     },
     {
       id: 'messages',
-      title: 'New Messages',
-      description: 'Receive notifications for new messages',
+      title: t('notifications.settings.new_messages'),
+      description: t('notifications.settings.new_messages_desc'),
       enabled: true,
       category: 'messages',
     },
     {
       id: 'likes',
-      title: 'Profile Likes',
-      description: 'Notifications when someone likes your profile',
+      title: t('notifications.settings.profile_likes'),
+      description: t('notifications.settings.profile_likes_desc'),
       enabled: false,
       category: 'matches',
     },
     {
       id: 'super_likes',
-      title: 'Super Likes',
-      description: 'Special notifications for Super Likes',
+      title: t('notifications.settings.super_likes'),
+      description: t('notifications.settings.super_likes_desc'),
       enabled: true,
       category: 'matches',
     },
     {
       id: 'premium_features',
-      title: 'Premium Features',
-      description: 'Updates about premium features and benefits',
+      title: t('notifications.settings.premium_features'),
+      description: t('notifications.settings.premium_features_desc'),
       enabled: false,
       category: 'general',
     },
     {
       id: 'safety_alerts',
-      title: 'Safety Alerts',
-      description: 'Important safety and security notifications',
+      title: t('notifications.settings.safety_alerts'),
+      description: t('notifications.settings.safety_alerts_desc'),
       enabled: true,
       category: 'general',
     },
     {
       id: 'marketing',
-      title: 'Marketing & Updates',
-      description: 'News, promotions, and app updates',
+      title: t('notifications.settings.marketing'),
+      description: t('notifications.settings.marketing_desc'),
       enabled: false,
       category: 'marketing',
     },
     {
       id: 'events',
-      title: 'Events & Activities',
-      description: 'Notifications about events and group activities',
+      title: t('notifications.settings.events'),
+      description: t('notifications.settings.events_desc'),
       enabled: true,
       category: 'general',
     },
-  ]);
+  ], [t]);
+  
+  const [settings, setSettings] = useState<NotificationSetting[]>(getInitialSettings());
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [quietHoursEnabled, setQuietHoursEnabled] = useState(false);
@@ -98,8 +103,9 @@ function NotificationPreferencesScreen({
       try {
         const prefs = await notificationPreferencesAPI.getPreferences();
         // Map backend preferences to local settings
-        setSettings((prev) =>
-          prev.map((setting) => {
+        const initialSettings = getInitialSettings();
+        setSettings(
+          initialSettings.map((setting) => {
             switch (setting.id) {
               case 'new_matches':
                 return { ...setting, enabled: prefs.matches ?? setting.enabled };
@@ -136,7 +142,7 @@ function NotificationPreferencesScreen({
     };
 
     void loadPreferences();
-  }, []);
+  }, [getInitialSettings]);
 
   const toggleSetting = useCallback((settingId: string) => {
     Haptics.selectionAsync().catch(() => {});
@@ -195,10 +201,13 @@ function NotificationPreferencesScreen({
         logger.error('Failed to update quiet hours', { error });
         // Revert on error
         setQuietHoursEnabled(!enabled);
-        Alert.alert('Error', 'Failed to update quiet hours. Please try again.');
+        Alert.alert(
+          t('notifications.alerts.quiet_hours_error'),
+          t('notifications.alerts.quiet_hours_error_message'),
+        );
       }
     },
-    [settings, quietHoursStart, quietHoursEnd],
+    [settings, quietHoursStart, quietHoursEnd, t],
   );
 
   const saveSettings = useCallback(async () => {
@@ -229,14 +238,20 @@ function NotificationPreferencesScreen({
       });
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      Alert.alert('Success', 'Notification preferences saved successfully!');
+      Alert.alert(
+        t('notifications.alerts.save_success'),
+        t('notifications.alerts.save_success_message'),
+      );
     } catch (error) {
       logger.error('Failed to save notification preferences', { error });
-      Alert.alert('Error', 'Failed to save notification preferences. Please try again.');
+      Alert.alert(
+        t('notifications.alerts.save_error'),
+        t('notifications.alerts.save_error_message'),
+      );
     } finally {
       setIsSaving(false);
     }
-  }, [settings]);
+  }, [settings, quietHoursEnabled, quietHoursStart, quietHoursEnd, t]);
 
   const getCategorySettings = useCallback(
     (category: string) => {
@@ -307,7 +322,165 @@ function NotificationPreferencesScreen({
         </View>
       );
     },
-    [getCategorySettings, isCategoryEnabled, toggleCategory, toggleSetting],
+    [getCategorySettings, isCategoryEnabled, toggleCategory, toggleSetting, t],
+  );
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          flex: 1,
+        },
+        safeArea: {
+          flex: 1,
+        },
+        header: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 20,
+          paddingVertical: 16,
+        },
+        backButton: {
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          overflow: 'hidden',
+        },
+        backButtonBlur: {
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        headerTitle: {
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: theme.colors.onPrimary,
+        },
+        saveButton: {
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+          backgroundColor: theme.colors.primary + '33',
+          borderRadius: 20,
+          borderWidth: 1,
+          borderColor: theme.colors.primary + '80',
+        },
+        saveButtonText: {
+          color: theme.colors.onPrimary,
+          fontSize: 14,
+          fontWeight: '600',
+        },
+        content: {
+          flex: 1,
+          paddingHorizontal: 20,
+        },
+        infoCard: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          backgroundColor: theme.colors.surface + '1A',
+          borderRadius: 12,
+          padding: 16,
+          marginBottom: 24,
+          borderWidth: 1,
+          borderColor: theme.colors.border + '33',
+        },
+        infoText: {
+          flex: 1,
+          marginLeft: 12,
+          fontSize: 14,
+          color: theme.colors.onPrimary,
+          lineHeight: 20,
+        },
+        categorySection: {
+          marginBottom: 24,
+        },
+        categoryHeader: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 12,
+        },
+        categoryTitle: {
+          fontSize: 18,
+          fontWeight: 'bold',
+          color: theme.colors.onPrimary,
+        },
+        settingCard: {
+          borderRadius: 12,
+          marginBottom: 8,
+          overflow: 'hidden',
+        },
+        settingContent: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: 16,
+        },
+        settingText: {
+          flex: 1,
+        },
+        settingTitle: {
+          fontSize: 16,
+          fontWeight: '600',
+          color: theme.colors.onPrimary,
+          marginBottom: 4,
+        },
+        settingDescription: {
+          fontSize: 14,
+          color: theme.colors.onMuted,
+          lineHeight: 20,
+        },
+        sectionTitle: {
+          fontSize: 18,
+          fontWeight: 'bold',
+          color: theme.colors.onPrimary,
+          marginBottom: 16,
+          marginTop: 8,
+        },
+        pushSettingsCard: {
+          borderRadius: 16,
+          overflow: 'hidden',
+          marginBottom: 24,
+        },
+        pushSetting: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: 16,
+          borderBottomWidth: 1,
+          borderBottomColor: theme.colors.border + '1A',
+        },
+        pushSettingText: {
+          flex: 1,
+        },
+        pushSettingTitle: {
+          fontSize: 16,
+          fontWeight: '600',
+          color: theme.colors.onPrimary,
+          marginBottom: 4,
+        },
+        pushSettingDescription: {
+          fontSize: 14,
+          color: theme.colors.onMuted,
+          lineHeight: 20,
+        },
+        testButton: {
+          borderRadius: 16,
+          overflow: 'hidden',
+          marginBottom: 32,
+        },
+        testButtonBlur: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 16,
+          gap: 8,
+        },
+        testButtonText: {
+          color: theme.colors.onPrimary,
+          fontSize: 16,
+          fontWeight: '600',
+        },
+      }),
+    [theme],
   );
 
   return (
@@ -341,7 +514,7 @@ function NotificationPreferencesScreen({
               />
             </BlurView>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Notifications</Text>
+          <Text style={styles.headerTitle}>{t('notifications.title')}</Text>
           <TouchableOpacity
             style={styles.saveButton}
             testID="NotificationPreferencesScreen-button-2"
@@ -349,7 +522,7 @@ function NotificationPreferencesScreen({
             accessibilityRole="button"
             onPress={saveSettings}
           >
-            <Text style={styles.saveButtonText}>Save</Text>
+            <Text style={styles.saveButtonText}>{t('notifications.save')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -368,18 +541,17 @@ function NotificationPreferencesScreen({
               color={theme.colors.info}
             />
             <Text style={styles.infoText}>
-              Choose which notifications you'd like to receive. You can always change these settings
-              later.
+              {t('notifications.info')}
             </Text>
           </BlurView>
 
-          {renderCategory('matches', 'Matches & Likes')}
-          {renderCategory('messages', 'Messages')}
-          {renderCategory('general', 'General')}
-          {renderCategory('marketing', 'Marketing')}
+          {renderCategory('matches', t('notifications.categories.matches'))}
+          {renderCategory('messages', t('notifications.categories.messages'))}
+          {renderCategory('general', t('notifications.categories.general'))}
+          {renderCategory('marketing', t('notifications.categories.marketing'))}
 
           {/* Push Notification Settings */}
-          <Text style={styles.sectionTitle}>Push Notification Settings</Text>
+          <Text style={styles.sectionTitle}>{t('notifications.push_settings.title')}</Text>
 
           <BlurView
             intensity={15}
@@ -387,17 +559,17 @@ function NotificationPreferencesScreen({
           >
             <View style={styles.pushSetting}>
               <View style={styles.pushSettingText}>
-                <Text style={styles.pushSettingTitle}>Push Notifications</Text>
+                <Text style={styles.pushSettingTitle}>{t('notifications.push_settings.push_notifications')}</Text>
                 <Text style={styles.pushSettingDescription}>
-                  Allow the app to send push notifications
+                  {t('notifications.push_settings.push_notifications_desc')}
                 </Text>
               </View>
               <Switch
                 value={true}
                 onValueChange={() => {
                   Alert.alert(
-                    'Push Notifications',
-                    'Push notification settings would be managed by device settings.',
+                    t('notifications.push_settings.push_notifications'),
+                    t('notifications.push_settings.push_notifications_device'),
                   );
                 }}
                 trackColor={{ false: theme.colors.inactive, true: theme.colors.success }}
@@ -407,9 +579,9 @@ function NotificationPreferencesScreen({
 
             <View style={styles.pushSetting}>
               <View style={styles.pushSettingText}>
-                <Text style={styles.pushSettingTitle}>Quiet Hours</Text>
+                <Text style={styles.pushSettingTitle}>{t('notifications.push_settings.quiet_hours')}</Text>
                 <Text style={styles.pushSettingDescription}>
-                  Pause notifications between 10 PM - 8 AM
+                  {t('notifications.push_settings.quiet_hours_desc')}
                 </Text>
               </View>
               <Switch
@@ -429,7 +601,10 @@ function NotificationPreferencesScreen({
             accessibilityRole="button"
             onPress={() => {
               Haptics.selectionAsync().catch(() => {});
-              Alert.alert('Test Notification', 'A test notification would be sent to your device.');
+              Alert.alert(
+                t('notifications.push_settings.test_title'),
+                t('notifications.push_settings.test_notification_desc'),
+              );
             }}
           >
             <BlurView
@@ -441,7 +616,7 @@ function NotificationPreferencesScreen({
                 size={20}
                 color={theme.colors.onPrimary}
               />
-              <Text style={styles.testButtonText}>Send Test Notification</Text>
+              <Text style={styles.testButtonText}>{t('notifications.push_settings.test_notification')}</Text>
             </BlurView>
           </TouchableOpacity>
         </ScrollView>
@@ -449,159 +624,5 @@ function NotificationPreferencesScreen({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    overflow: 'hidden',
-  },
-  backButtonBlur: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: theme.colors.onPrimary,
-  },
-  saveButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: theme.colors.primary + '33',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: theme.colors.primary + '80',
-  },
-  saveButtonText: {
-    color: theme.colors.onPrimary,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  infoCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.surface + '1A',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: theme.colors.border + '33',
-  },
-  infoText: {
-    flex: 1,
-    marginLeft: 12,
-    fontSize: 14,
-    color: theme.colors.onPrimary,
-    lineHeight: 20,
-  },
-  categorySection: {
-    marginBottom: 24,
-  },
-  categoryHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  categoryTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: theme.colors.onPrimary,
-  },
-  settingCard: {
-    borderRadius: 12,
-    marginBottom: 8,
-    overflow: 'hidden',
-  },
-  settingContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
-  settingText: {
-    flex: 1,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.onPrimary,
-    marginBottom: 4,
-  },
-  settingDescription: {
-    fontSize: 14,
-    color: theme.colors.onMuted,
-    lineHeight: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: theme.colors.onPrimary,
-    marginBottom: 16,
-    marginTop: 8,
-  },
-  pushSettingsCard: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    marginBottom: 24,
-  },
-  pushSetting: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border + '1A',
-  },
-  pushSettingText: {
-    flex: 1,
-  },
-  pushSettingTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.onPrimary,
-    marginBottom: 4,
-  },
-  pushSettingDescription: {
-    fontSize: 14,
-    color: theme.colors.onMuted,
-    lineHeight: 20,
-  },
-  testButton: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    marginBottom: 32,
-  },
-  testButtonBlur: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    gap: 8,
-  },
-  testButtonText: {
-    color: theme.colors.onPrimary,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
 
 export default NotificationPreferencesScreen;

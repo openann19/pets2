@@ -1,0 +1,45 @@
+id: ui-050-alt-text
+owner: ux
+severity: high
+area: mobile+a11y
+context: |
+  Screen reader users cannot access content without descriptive alt text.
+  Many images lack accessibilityLabel or use generic text ("image", "photo").
+  Decorative images should be marked as such to avoid clutter.
+acceptance:
+  - All <Image> components have accessibilityLabel
+  - Decorative images use accessibilityRole="none" or accessible={false}
+  - Alt text is descriptive and concise (not "image of...")
+  - Pet photos include breed/name when available
+  - User avatars include user name
+  - Icons have accessibilityLabel matching their function
+  - Automated test catches missing alt text
+states:
+  - compliant
+  - missing-alt
+  - decorative
+telemetry:
+  - event: ALT_TEXT_AUDIT
+    props: [component, hasAlt, isDecorative, altLength]
+contracts:
+  request: { componentTree: object }
+  response: { violations: array, decorativeCount: number }
+  errors: []
+assets:
+  components: [apps/mobile/src/components/**/*.tsx]
+  tests: [apps/mobile/src/__tests__/a11y/alt-text.test.tsx]
+  scripts: [scripts/audit-alt-text.ts]
+risks:
+  - Generic alt text may slip through
+  - Dynamic content needs runtime alt text generation
+rollback:
+  - No rollback needed (additive change)
+links:
+  - https://www.w3.org/WAI/WCAG21/Understanding/non-text-content.html
+status: open
+priority: high
+impact: 4
+effort: S
+category: accessibility
+tokens: []
+estimated_hours: 4

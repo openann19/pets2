@@ -12,12 +12,12 @@ function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
     performersGrid: {
       flexDirection: 'row',
-      gap: 12,
+      gap: theme.spacing.md,
     },
     performersCard: {
       flex: 1,
-      borderRadius: 12,
-      padding: 16,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
       shadowColor: theme.colors.onSurface,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
@@ -25,28 +25,28 @@ function __makeStyles_styles(theme: AppTheme) {
       elevation: 5,
     },
     performersTitle: {
-      fontSize: 16,
-      fontWeight: '600',
-      marginBottom: 12,
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.sm,
     },
     performerItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 8,
-      gap: 8,
+      marginBottom: theme.spacing.xs,
+      gap: theme.spacing.xs,
     },
     performerRank: {
-      fontSize: 12,
-      fontWeight: '600',
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.h2.weight,
       width: 20,
     },
     performerName: {
-      fontSize: 14,
-      fontWeight: '500',
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.body.weight,
       flex: 1,
     },
     performerStats: {
-      fontSize: 12,
+      fontSize: theme.typography.body.size * 0.75,
     },
   });
 }
@@ -69,9 +69,9 @@ interface TopPerformersSectionProps {
 }
 
 export const TopPerformersSection: React.FC<TopPerformersSectionProps> = ({ topPerformers }) => {
-  const theme = useTheme();
+  const theme: AppTheme = useTheme();
   const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
-  const { colors, palette } = theme;
+  const { colors } = theme;
 
   return (
     <View style={styles.performersGrid}>

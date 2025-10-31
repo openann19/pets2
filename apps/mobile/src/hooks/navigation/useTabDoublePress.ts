@@ -6,7 +6,14 @@ export function useTabDoublePress(callback: () => void) {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('tabDoublePress' as any, () => {
-      callback();
+      try {
+        callback();
+      } catch (error) {
+        // Silently handle errors in callbacks to prevent crashes
+        if (__DEV__) {
+          console.error('Error in tabDoublePress callback:', error);
+        }
+      }
     });
     return unsubscribe;
   }, [navigation, callback]);

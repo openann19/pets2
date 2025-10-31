@@ -10,11 +10,14 @@ import Match from '../models/Match';
 import AdminActivityLog from '../models/AdminActivityLog';
 import logger from '../utils/logger';
 import { getErrorMessage } from '../../utils/errorHandler';
+import conversionFunnelService from '../services/conversionFunnelService';
+import cohortRetentionService from '../services/cohortRetentionService';
+import abTestingService from '../services/abTestingService';
 
 // Try to import Message model, with fallback handling
 let Message: { 
   countDocuments: (filter?: Record<string, unknown>) => Promise<number>;
-  aggregate?: (pipeline: any[]) => Promise<any[]>;
+  aggregate?: (pipeline: Array<Record<string, unknown>>) => Promise<Array<Record<string, unknown>>>;
 };
 try {
   Message = require('../models/Message');
@@ -157,6 +160,17 @@ export const getAnalytics = async (req: AdminAnalyticsRequest, res: Response): P
       getSecurityMetrics()
     ]);
 
+    // Get conversion funnel and retention data (optional, don't fail if unavailable)
+    let conversionFunnel;
+    let retention;
+    try {
+      conversionFunnel = await conversionFunnelService.calculateFunnel(parseInt(timeRange as string) || 30);
+      retention = await cohortRetentionService.getCohortRetentionData(6);
+    } catch (error) {
+      logger.warn('Failed to fetch funnel/retention data', { error });
+      // Continue without this data
+    }
+
     res.json({
       success: true,
       analytics: {
@@ -170,7 +184,9 @@ export const getAnalytics = async (req: AdminAnalyticsRequest, res: Response): P
         topPerformers,
         geographicData,
         deviceStats,
-        securityMetrics
+        securityMetrics,
+        ...(conversionFunnel ? { conversionFunnel } : {}),
+        ...(retention ? { retention } : {})
       },
       generatedAt: new Date().toISOString()
     });
@@ -664,5 +680,199 @@ const convertToCSV = (data: Record<string, unknown>): string => {
   rows.push(`Churn Rate,${revenue?.churnRate || 0}%`);
 
   return rows.join('\n');
+};
+
+/**
+ * Get conversion funnel data
+ */
+export const getConversionFunnel = async (req: AdminAnalyticsRequest, res: Response): Promise<void> => {
+  try {
+    const { timeRange = '30' } = req.query;
+    const days = parseInt(timeRange as string) || 30;
+
+    const funnelData = await conversionFunnelService.calculateFunnel(days);
+
+    res.json({
+      success: true,
+      data: funnelData,
+      generatedAt: new Date().toISOString()
+    });
+  } catch (error: unknown) {
+    logger.error('Failed to get conversion funnel', { error });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch conversion funnel data',
+      message: getErrorMessage(error)
+    });
+  }
+};
+
+/**
+ * Get cohort retention data
+ */
+export const getCohortRetention = async (req: AdminAnalyticsRequest, res: Response): Promise<void> => {
+  try {
+    const { cohorts = '6' } = req.query;
+    const numberOfCohorts = parseInt(cohorts as string) || 6;
+
+    const retentionData = await cohortRetentionService.getCohortRetentionData(numberOfCohorts);
+
+    res.json({
+      success: true,
+      data: retentionData,
+      generatedAt: new Date().toISOString()
+    });
+  } catch (error: unknown) {
+    logger.error('Failed to get cohort retention', { error });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch cohort retention data',
+      message: getErrorMessage(error)
+    });
+  }
+};
+
+/**
+ * Track paywall view
+ */
+export const trackPaywallView = async (req: AdminAnalyticsRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.userId || req.body?.userId;
+    const { source = 'unknown' } = req.body;
+
+    if (!userId) {
+      res.status(400).json({
+        success: false,
+        error: 'User ID is required'
+      });
+      return;
+    }
+
+    await conversionFunnelService.trackPaywallView(userId, source);
+
+    res.json({
+      success: true,
+      message: 'Paywall view tracked'
+    });
+  } catch (error: unknown) {
+    logger.error('Failed to track paywall view', { error });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to track paywall view',
+      message: getErrorMessage(error)
+    });
+  }
+};
+
+/**
+ * Get A/B test results
+ */
+export const getABTestResults = async (req: AdminAnalyticsRequest, res: Response): Promise<void> => {
+  try {
+    const { testId } = req.params;
+
+    if (testId) {
+      // Get specific test results
+      const results = abTestingService.getTestResults(testId);
+      res.json({
+        success: true,
+        data: results
+      });
+    } else {
+      // Get all active tests
+      const activeTests = abTestingService.getActiveTests();
+      const allResults = activeTests.map(test => ({
+        ...abTestingService.getTestResults(test.id),
+        test
+      }));
+
+      res.json({
+        success: true,
+        data: allResults
+      });
+    }
+  } catch (error: unknown) {
+    logger.error('Failed to get A/B test results', { error });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch A/B test results',
+      message: getErrorMessage(error)
+    });
+  }
+};
+
+/**
+ * Assign user to A/B test variant
+ */
+export const assignABTestVariant = async (req: AdminAnalyticsRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.userId || req.body?.userId;
+    const { testId } = req.body;
+
+    if (!userId || !testId) {
+      res.status(400).json({
+        success: false,
+        error: 'User ID and test ID are required'
+      });
+      return;
+    }
+
+    const variantId = abTestingService.assignVariant(userId, testId);
+
+    if (!variantId) {
+      res.status(404).json({
+        success: false,
+        error: 'Test not found or not active'
+      });
+      return;
+    }
+
+    res.json({
+      success: true,
+      data: {
+        testId,
+        variantId
+      }
+    });
+  } catch (error: unknown) {
+    logger.error('Failed to assign A/B test variant', { error });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to assign A/B test variant',
+      message: getErrorMessage(error)
+    });
+  }
+};
+
+/**
+ * Track A/B test conversion
+ */
+export const trackABTestConversion = async (req: AdminAnalyticsRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.userId || req.body?.userId;
+    const { testId, variantId, conversionType = 'default' } = req.body;
+
+    if (!userId || !testId || !variantId) {
+      res.status(400).json({
+        success: false,
+        error: 'User ID, test ID, and variant ID are required'
+      });
+      return;
+    }
+
+    await abTestingService.trackConversion(testId, variantId, userId, conversionType);
+
+    res.json({
+      success: true,
+      message: 'Conversion tracked'
+    });
+  } catch (error: unknown) {
+    logger.error('Failed to track A/B test conversion', { error });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to track conversion',
+      message: getErrorMessage(error)
+    });
+  }
 };
 

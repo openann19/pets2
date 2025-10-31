@@ -1,0 +1,106 @@
+name: UI Polish Artifacts
+
+on:
+  pull_request:
+    paths:
+      - 'apps/mobile/src/screens/**'
+      - 'apps/mobile/src/components/**'
+      - 'apps/mobile/src/navigation/**'
+      - 'scripts/ui-*.mjs'
+      - '.github/workflows/ui-polish-artifacts.yml'
+  workflow_dispatch:
+
+jobs:
+  android-ui:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Prebuild (if Expo-managed)
+        working-directory: apps/mobile
+        run: |
+          if [ ! -d "android" ]; then
+            npx expo prebuild --platform android --no-install --non-interactive
+          fi
+
+      - name: Build Debug APK
+        working-directory: apps/mobile/android
+        run: ./gradlew assembleDebug
+
+      - name: Boot emulator & run collectors
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          profile: Nexus 6
+          emulator-options: -no-snapshot -no-boot-anim -gpu swiftshader_indirect
+          script: |
+            adb wait-for-device
+            APK_PATH="apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk"
+            adb install -r "$APK_PATH"
+
+            # Warm open
+            adb shell monkey -p com.pawfectmatch.premium -c android.intent.category.LAUNCHER 1 || true
+
+            # Capture (optional if you have ui-capture.mjs)
+            if [ -f "scripts/ui-capture.mjs" ]; then
+              node scripts/ui-capture.mjs --screen Home --out home --duration 6 || true
+              node scripts/ui-capture.mjs --screen Matches --out matches --duration 6 || true
+            fi
+
+            # Metrics
+            node scripts/ui-metrics.mjs --screen Home --out home --duration 6 || true
+            node scripts/ui-metrics.mjs --screen Matches --out matches --duration 6 || true
+
+            # Normalize for PR comment
+            node scripts/metrics-format.mjs docs/ui_media/metrics formatted-metrics.json
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-polish-artifacts-${{ github.run_number }}
+          path: |
+            docs/ui_media/**/*.png
+            docs/ui_media/**/*.mp4
+            docs/ui_media/metrics/*.json
+            formatted-metrics.json
+          retention-days: 7
+
+      - name: Comment PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body = '## UI Polish — Metrics\\n\\n';
+            try {
+              const rows = JSON.parse(fs.readFileSync('formatted-metrics.json','utf8'));
+              for (const r of rows) {
+                body += `**${r.name}**\\n`;
+                body += `- TTI: ${r.ttiMs ?? 'N/A'} ms\\n`;
+                body += `- FPS: ${r.fps ?? 'N/A'}\\n`;
+                body += `- Jank: ${r.jankPercent ?? 'N/A'}% (frames ${r.framesJanky}/${r.framesTotal})\\n`;
+                body += `- p95 frame: ${r.p95FrameMs ?? 'N/A'} ms\\n`;
+                body += `- Mem (PSS): ${r.memory?.totalPssMB ?? 'N/A'} MB\\n\\n`;
+              }
+            } catch { body += '_No metrics found._\\n'; }
+            body += '📦 Artifacts uploaded to this workflow run.';
+            github.rest.issues.createComment({ issue_number: context.issue.number, owner: context.repo.owner, repo: context.repo.repo, body });

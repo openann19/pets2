@@ -1,7 +1,7 @@
 import { Bars3Icon, ChatBubbleLeftRightIcon, HeartIcon, MapPinIcon, PlusIcon, SparklesIcon, UserIcon, XMarkIcon, } from '@heroicons/react/24/outline'
-import { logger } from '@pawfectmatch/core';
-;
 import { ChatBubbleLeftRightIcon as ChatSolid, HeartIcon as HeartSolid, MapPinIcon as MapPinSolid, UserIcon as UserSolid, } from '@heroicons/react/24/solid';
+import { UsersIcon, CameraIcon } from '@heroicons/react/24/outline';
+import { UsersIcon as UsersSolid, CameraIcon as CameraSolid } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
@@ -62,6 +62,18 @@ const Header = () => {
             path: '/swipe',
             icon: HeartIcon,
             iconSolid: HeartSolid,
+        },
+        {
+            name: 'Stories',
+            path: '/stories',
+            icon: CameraIcon,
+            iconSolid: CameraSolid,
+        },
+        {
+            name: 'Communities',
+            path: '/communities',
+            icon: UsersIcon,
+            iconSolid: UsersSolid,
         },
         {
             name: 'Map',

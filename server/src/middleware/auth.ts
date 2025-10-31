@@ -4,18 +4,14 @@ import type { StringValue } from 'ms';
 import * as crypto from 'crypto';
 import type { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
+import type { IUserDocument } from '../types/mongoose';
 import logger from '../utils/logger';
+import { getErrorMessage } from '../utils/errorHandler';
 
 interface TokenData {
   userId: string;
   jti: string;
   typ?: string;
-}
-
-interface AuthRequest extends Request {
-  user?: any;
-  userId?: string;
-  jti?: string;
 }
 
 interface Tokens {
@@ -66,8 +62,25 @@ function getTokenFromCookies(req: Request): string | null {
   }
 }
 
+// Helper: get refresh token from cookies
+function getRefreshTokenFromCookies(req: Request): string | null {
+  try {
+    const cookieHeader = req.headers.cookie;
+    if (!cookieHeader) return null;
+    const map: Record<string, string> = Object.create(null);
+    for (const part of cookieHeader.split(';')) {
+      const [k, ...v] = part.trim().split('=');
+      if (!k) continue;
+      map[decodeURIComponent(k)] = decodeURIComponent(v.join('='));
+    }
+    return map['refreshToken'] || map['refresh_token'] || null;
+  } catch {
+    return null;
+  }
+}
+
 // Middleware to authenticate JWT tokens
-export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+export const authenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     // Get token from header
     const authHeader = req.headers.authorization;
@@ -130,36 +143,41 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
       return res.status(401).json({ success: false, message: 'Token revoked', code: 'TOKEN_REVOKED' });
     }
 
-    // Add user and token info to request object
-    req.user = user;
+    // Add user and token info to request object with type assertion at boundary point
+    req.user = user as IUserDocument;
     req.userId = user._id.toString();
-    req.jti = decoded.jti; // Store jti for logout revocation
+    // Store jti for logout revocation (using index signature for additional properties)
+    (req as Request & { jti?: string }).jti = decoded.jti;
     
     // Attach subscription status for premium middleware
     if (req.user) {
-      req.user.subscriptionActive = user.premium?.isActive === true && 
+      (req.user as IUserDocument & { subscriptionActive?: boolean }).subscriptionActive = user.premium?.isActive === true && 
         (!user.premium.expiresAt || new Date(user.premium.expiresAt) > new Date());
     }
 
     next();
-  } catch (error: any) {
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid token'
-      });
+  } catch (error: unknown) {
+    // Type guard for JWT-specific errors
+    if (error && typeof error === 'object' && 'name' in error) {
+      const jwtError = error as { name: string; message?: string };
+      if (jwtError.name === 'JsonWebTokenError') {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid token'
+        });
+      }
+
+      if (jwtError.name === 'TokenExpiredError') {
+        return res.status(401).json({
+          success: false,
+          error: 'TokenExpiredError',
+          message: 'Token expired',
+          code: 'TOKEN_EXPIRED'
+        });
+      }
     }
 
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({
-        success: false,
-        error: 'TokenExpiredError',
-        message: 'Token expired',
-        code: 'TOKEN_EXPIRED'
-      });
-    }
-
-    logger.error('Auth middleware error:', { error: error.message });
+    logger.error('Auth middleware error:', { error: getErrorMessage(error) });
     return res.status(500).json({
       success: false,
       message: 'Authentication failed'
@@ -168,7 +186,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
 };
 
 // Middleware to check if user is premium
-export const requirePremium = (req: AuthRequest, res: Response, next: NextFunction): Response | void => {
+export const requirePremium = (req: Request, res: Response, next: NextFunction): Response | void => {
   if (!req.user?.premium?.isActive ||
     (req.user?.premium?.expiresAt && new Date(req.user.premium.expiresAt) < new Date())) {
     return res.status(403).json({
@@ -182,7 +200,7 @@ export const requirePremium = (req: AuthRequest, res: Response, next: NextFuncti
 
 // Middleware to check specific premium features
 export const requirePremiumFeature = (feature: string) => {
-  return (req: AuthRequest, res: Response, next: NextFunction): Response | void => {
+  return (req: Request, res: Response, next: NextFunction): Response | void => {
     if (!req.user?.premium?.isActive ||
       !req.user?.premium?.features?.[feature]) {
       return res.status(403).json({
@@ -197,7 +215,7 @@ export const requirePremiumFeature = (feature: string) => {
 };
 
 // Middleware for admin-only routes
-export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction): Response | void => {
+export const requireAdmin = (req: Request, res: Response, next: NextFunction): Response | void => {
   if (req.user?.role !== 'administrator') {
     return res.status(403).json({
       success: false,
@@ -210,7 +228,13 @@ export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction
 // Refresh token middleware
 export const refreshAccessToken = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { refreshToken } = req.body;
+    // Try to get refresh token from httpOnly cookie first (preferred)
+    let refreshToken = getRefreshTokenFromCookies(req);
+    
+    // Fallback to request body for backwards compatibility
+    if (!refreshToken && req.body && typeof req.body === 'object' && 'refreshToken' in req.body) {
+      refreshToken = req.body.refreshToken;
+    }
 
     if (!refreshToken) {
       return res.status(401).json({
@@ -250,24 +274,51 @@ export const refreshAccessToken = async (req: Request, res: Response): Promise<R
     user.refreshTokens.push(tokens.refreshToken);
     await user.save();
 
+    // Set httpOnly cookies for secure token storage
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true, // NOT accessible via JavaScript (XSS protection)
+      secure: isProduction, // HTTPS only in production
+      sameSite: 'strict', // CSRF protection
+      maxAge: 15 * 60 * 1000, // 15 minutes
+      path: '/',
+    });
+
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/',
+    });
+
+    // Return response without tokens in body for security
+    // Tokens are now in httpOnly cookies, not accessible via JavaScript
     return res.json({
       success: true,
       data: {
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        user: user.toJSON()
+        user: user.toJSON(),
+        // Tokens are now in httpOnly cookies - only return in dev for backwards compatibility
+        ...(process.env.NODE_ENV !== 'production' && {
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken
+        })
       }
     });
 
-  } catch (error: any) {
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid refresh token'
-      });
+  } catch (error: unknown) {
+    // Type guard for JWT-specific errors
+    if (error && typeof error === 'object' && 'name' in error) {
+      const jwtError = error as { name: string; message?: string };
+      if (jwtError.name === 'JsonWebTokenError' || jwtError.name === 'TokenExpiredError') {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid refresh token'
+        });
+      }
     }
 
-    logger.error('Refresh token error:', { error: error.message });
+    logger.error('Refresh token error:', { error: getErrorMessage(error) });
     return res.status(500).json({
       success: false,
       message: 'Token refresh failed'
@@ -276,7 +327,7 @@ export const refreshAccessToken = async (req: Request, res: Response): Promise<R
 };
 
 // Optional authentication (doesn't fail if no token)
-export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+export const optionalAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.startsWith('Bearer ')
@@ -299,7 +350,7 @@ export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFu
         if (Array.isArray(user.revokedJtis) && decoded.jti && user.revokedJtis.includes(decoded.jti)) {
           return next();
         }
-        req.user = user;
+        req.user = user as IUserDocument;
         req.userId = user._id.toString();
       }
     }

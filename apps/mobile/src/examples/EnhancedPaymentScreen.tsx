@@ -128,7 +128,7 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
     title: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: theme.colors.text,
+      color: theme.colors.onSurface,
       marginBottom: theme.spacing.lg,
       textAlign: 'center',
     },
@@ -141,7 +141,7 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
     label: {
       fontSize: 16,
       fontWeight: '500',
-      color: theme.colors.text,
+      color: theme.colors.onSurface,
     },
     input: {
       borderWidth: 1,
@@ -149,8 +149,8 @@ export const EnhancedPaymentScreen: React.FC<PaymentFormProps> = ({
       borderRadius: theme.radius.md,
       padding: theme.spacing.md,
       fontSize: 16,
-      color: theme.colors.text,
-      backgroundColor: theme.colors.bgElevated,
+      color: theme.colors.onSurface,
+      backgroundColor: theme.colors.surface,
     },
     inputError: {
       borderColor: theme.colors.danger,

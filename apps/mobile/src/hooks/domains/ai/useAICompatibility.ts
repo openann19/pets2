@@ -3,7 +3,6 @@
  * Manages AI-powered pet compatibility analysis
  */
 import { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
 import { logger } from '@pawfectmatch/core';
 import { api, matchesAPI } from '../../../services/api';
 
@@ -71,7 +70,7 @@ export const useAICompatibility = (): UseAICompatibilityReturn => {
       const pets = await matchesAPI.getPets();
 
       // Filter out current user's pets (simplified - in real app you'd get current user)
-      const filteredPets = pets.filter((pet) => {
+      const filteredPets = pets.filter((_pet) => {
         // This would normally filter out user's own pets
         return true; // For demo purposes, show all
       });
@@ -131,42 +130,7 @@ export const useAICompatibility = (): UseAICompatibilityReturn => {
           pet1Id,
           pet2Id,
         });
-
-        // For demo purposes, return a mock result
-        const mockResult: CompatibilityResult = {
-          compatibility_score: 85,
-          ai_analysis:
-            'These pets show excellent compatibility! Both are energetic and social, making them perfect playmates.',
-          breakdown: {
-            personality_compatibility: 90,
-            lifestyle_compatibility: 85,
-            activity_compatibility: 88,
-            social_compatibility: 82,
-            environment_compatibility: 86,
-          },
-          recommendations: {
-            meeting_suggestions: [
-              'Introduce them in a neutral outdoor space',
-              'Keep initial meetings short (15-20 minutes)',
-              'Have both owners present for supervision',
-            ],
-            activity_recommendations: [
-              'Daily walks together',
-              'Joint play sessions in the park',
-              'Shared grooming sessions',
-            ],
-            supervision_requirements: [
-              'Monitor for signs of stress',
-              'Separate if either shows discomfort',
-              'Gradually increase interaction time',
-            ],
-            success_probability: 85,
-          },
-        };
-
-        setCompatibilityResult(mockResult);
-        logger.info('Using mock compatibility result');
-        return mockResult;
+        throw err;
       } finally {
         setIsAnalyzing(false);
       }

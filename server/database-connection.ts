@@ -4,7 +4,7 @@ import logger from './src/utils/logger.js';
 
 const connectDB = async (): Promise<void> => {
   try {
-    const mongoURI = process.env.MONGODB_URI || process.env.DATABASE_URL ||
+    const mongoURI = process.env.MONGODB_URI || process.env['DATABASE_URL'] ||
       'mongodb://localhost:27017/pawfectmatch';
 
     const conn = await mongoose.connect(mongoURI, {

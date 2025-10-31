@@ -92,6 +92,73 @@ export async function moderateWithRekognition(
 }
 
 /**
+ * Moderate image using Google Cloud Vision API
+ */
+export async function moderateWithGoogleVision(imageBuffer: Buffer): Promise<ModerationResult> {
+  try {
+    if (!process.env.GOOGLE_CLOUD_VISION_API_KEY) {
+      logger.warn('Google Cloud Vision API key not configured, using fallback');
+      return moderateWithFallback(imageBuffer);
+    }
+
+    // Import @google-cloud/vision dynamically
+    const { ImageAnnotatorClient } = await import('@google-cloud/vision');
+    
+    const client = new ImageAnnotatorClient({
+      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+      // Or use API key
+      credentials: process.env.GOOGLE_CLOUD_VISION_API_KEY ? undefined : undefined,
+    });
+
+    // Perform safe search detection
+    const [safeSearchResult] = await client.safeSearchDetection({
+      image: { content: imageBuffer },
+    });
+
+    const safeSearch = safeSearchResult.safeSearchAnnotation;
+    if (!safeSearch) {
+      return moderateWithFallback(imageBuffer);
+    }
+
+    // Extract confidence scores (0-5, lower is better)
+    const adult = safeSearch.adult || 5;
+    const violence = safeSearch.violence || 5;
+    const racy = safeSearch.racy || 5;
+
+    // Convert to 0-1 scale (inverted: 0 = very likely, 5 = very unlikely)
+    const adultScore = adult / 5;
+    const violenceScore = violence / 5;
+    const racyScore = racy / 5;
+
+    // Calculate overall moderation score (higher = safer)
+    const moderationScore = Math.min(adultScore, violenceScore, racyScore);
+
+    // Consider unsafe if any category is LIKELY or VERY_LIKELY (2 or less)
+    const isSafe = adult >= 3 && violence >= 3 && racy >= 3;
+
+    // Get labels from label detection
+    const [labelResult] = await client.labelDetection({
+      image: { content: imageBuffer },
+    });
+
+    const labels = (labelResult.labelAnnotations || []).map(label => ({
+      label: label.description || 'unknown',
+      confidence: label.score || 0,
+    }));
+
+    return {
+      safe: isSafe && moderationScore >= 0.6,
+      moderationScore,
+      labels,
+      provider: 'google-vision',
+    };
+  } catch (error: unknown) {
+    logger.error('Google Cloud Vision moderation failed:', error);
+    return moderateWithFallback(imageBuffer);
+  }
+}
+
+/**
  * Fallback moderation using basic heuristics
  */
 export async function moderateWithFallback(imageBuffer: Buffer): Promise<ModerationResult> {
@@ -124,13 +191,17 @@ export async function moderateImage(
       }
     }
 
-    // TODO: Implement Google Cloud Vision fallback
-    // if (preferredProvider === 'google' || preferredProvider === 'any') {
-    //   const result = await moderateWithGoogleVision(imageBuffer);
-    //   if (result.provider !== 'fallback') {
-    //     return result;
-    //   }
-    // }
+    // Implement Google Cloud Vision fallback
+    if (preferredProvider === 'google' || preferredProvider === 'any') {
+      try {
+        const result = await moderateWithGoogleVision(imageBuffer);
+        if (result.provider !== 'fallback') {
+          return result;
+        }
+      } catch (error) {
+        logger.warn('Google Cloud Vision moderation failed, using fallback', { error });
+      }
+    }
 
     // Final fallback
     return moderateWithFallback(imageBuffer);

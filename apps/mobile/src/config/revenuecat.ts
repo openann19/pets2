@@ -1,4 +1,6 @@
-import { Platform } from 'react-native';
+import { Platform } from 'react-native'
+import { logger } from '@pawfectmatch/core';
+;
 // @ts-ignore - react-native-purchases is optional
 import Purchases from 'react-native-purchases';
 
@@ -12,6 +14,6 @@ export async function initRevenueCat(userId?: string) {
       appUserID: userId,
     });
   } catch (e) {
-    console.warn('RevenueCat not available:', e);
+    logger.warn('RevenueCat not available:', { e });
   }
 }

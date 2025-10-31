@@ -1,6 +1,8 @@
 import type { Response } from 'express';
-import User, { type IUserDocument } from '../models/User';
+import User from '../models/User';
 import Pet from '../models/Pet';
+import Message from '../models/Message';
+import Match from '../models/Match';
 import type { HydratedDocument } from 'mongoose';
 import type { IPet } from '../types/mongoose';
 import logger from '../utils/logger';
@@ -159,19 +161,53 @@ export const getMessageCount = async (req: GetMessageCountRequest, res: Response
       return;
     }
 
-    // TODO: Implement actual message count from Match/Message models
-    const Message = require('../models/Message');
-    const count = await Message.countDocuments({
+    // Count unread messages from Message collection
+    const messageCount = await Message.countDocuments({
       $or: [
-        { sender: userId },
-        { recipient: userId }
+        { senderId: userId },
+        { recipientId: userId }
       ],
-      readAt: null // Unread messages
+      read: false
     });
+
+    // Also count unread messages from Match.messages array
+    const matches = await Match.find({
+      $or: [
+        { user1: userId },
+        { user2: userId }
+      ],
+      status: 'active'
+    });
+
+    let matchMessageCount = 0;
+    for (const match of matches) {
+      const unreadInMatch = match.messages.filter((msg) => {
+        const msgSenderId = typeof msg.sender === 'string' ? msg.sender : msg.sender?.toString();
+        const isNotFromUser = msgSenderId !== userId.toString();
+        const isNotRead = !msg.readBy.some((read) => {
+          const readUserId = typeof read.user === 'string' ? read.user : read.user?.toString();
+          return readUserId === userId.toString();
+        });
+        return isNotFromUser && isNotRead && !msg.isDeleted;
+      });
+      matchMessageCount += unreadInMatch.length;
+    }
+
+    // Combine counts (Message collection + Match messages)
+    // Note: In production, you might want to dedupe if messages are stored in both places
+    const totalCount = messageCount + matchMessageCount;
+
+    logger.info('Message count retrieved', { userId, messageCount, matchMessageCount, totalCount });
 
     res.json({
       success: true,
-      data: { count }
+      data: { 
+        count: totalCount,
+        breakdown: {
+          messageCollection: messageCount,
+          matchMessages: matchMessageCount
+        }
+      }
     });
   } catch (error: unknown) {
     logger.error('Failed to get message count', { error: getErrorMessage(error) });
@@ -307,9 +343,8 @@ export const exportUserData = async (req: ExportUserDataRequest, res: Response):
     // Gather all user data
     const user = await User.findById(userId).lean();
     const pets = await Pet.find({ owner: userId }).lean();
-    const Message = require('../models/Message');
     const messages = await Message.find({
-      $or: [{ sender: userId }, { recipient: userId }]
+      $or: [{ senderId: userId }, { recipientId: userId }]
     }).lean();
 
     const exportData = {
@@ -363,7 +398,8 @@ export const deleteAccount = async (req: DeleteAccountRequest, res: Response): P
       return;
     }
 
-    const isPasswordValid = await user.comparePassword(password);
+    // comparePassword is an instance method on the User model
+    const isPasswordValid = await (user as any).comparePassword(password);
     if (!isPasswordValid) {
       res.status(401).json({
         success: false,

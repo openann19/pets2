@@ -4,14 +4,14 @@
  */
 import { AdminStats, User, Pet, Match, SystemLog, NotificationRequest, SystemHealth, MemoryUsage, ApiResponse } from '@/types'
 import { logger } from '@pawfectmatch/core';
-;
+import { isBrowser, getLocalStorageItem } from '@pawfectmatch/core/utils/env';
 // HTTP Client for Admin API
 class AdminHttpClient {
     baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
     token = null;
     constructor() {
-        if (typeof window !== 'undefined') {
-            this.token = localStorage.getItem('accessToken');
+        if (isBrowser()) {
+            this.token = getLocalStorageItem('accessToken') ?? null;
         }
     }
     async request(endpoint, options = {}) {
@@ -221,19 +221,57 @@ class AdminApiService {
      * Get system health status
      */
     async getSystemHealth() {
-        // This would typically come from your monitoring system
-        // For now, return mock data
-        return {
-            status: 'healthy',
-            services: [
-                { name: 'Server', status: 'healthy', uptime: '15d 8h 32m', lastCheck: new Date().toISOString() },
-                { name: 'Database', status: 'healthy', uptime: '15d 8h 32m', lastCheck: new Date().toISOString() },
-                { name: 'Redis Cache', status: 'healthy', uptime: '15d 8h 32m', lastCheck: new Date().toISOString() },
-                { name: 'WebSocket', status: 'healthy', uptime: '15d 8h 32m', lastCheck: new Date().toISOString() },
-                { name: 'AI Service', status: 'healthy', uptime: '15d 8h 32m', lastCheck: new Date().toISOString() },
-                { name: 'CDN', status: 'healthy', uptime: '15d 8h 32m', lastCheck: new Date().toISOString() },
-            ]
-        };
+        const response = await this.http.get(`${this.baseUrl}/system/health`);
+        return response.data;
+    }
+    /**
+     * Get infrastructure status (Redis, WebSocket, CDN, MongoDB)
+     */
+    async getInfrastructureStatus() {
+        const response = await this.http.get(`${this.baseUrl}/infrastructure/status`);
+        return response.data;
+    }
+    /**
+     * Get Redis cache statistics
+     */
+    async getRedisStats() {
+        const response = await this.http.get(`${this.baseUrl}/infrastructure/redis/stats`);
+        return response.data;
+    }
+    /**
+     * Clear Redis cache
+     */
+    async clearRedisCache(pattern?: string) {
+        const response = await this.http.post(`${this.baseUrl}/infrastructure/redis/clear`, { pattern });
+        return response.data;
+    }
+    /**
+     * Get WebSocket statistics
+     */
+    async getWebSocketStats() {
+        const response = await this.http.get(`${this.baseUrl}/infrastructure/websocket/stats`);
+        return response.data;
+    }
+    /**
+     * Test CDN URL
+     */
+    async testCDNUrl(url: string) {
+        const response = await this.http.post(`${this.baseUrl}/infrastructure/cdn/test`, { url });
+        return response.data;
+    }
+    /**
+     * Invalidate CDN cache
+     */
+    async invalidateCDNCache(path: string) {
+        const response = await this.http.post(`${this.baseUrl}/infrastructure/cdn/invalidate`, { path });
+        return response.data;
+    }
+    /**
+     * Get MongoDB analytics
+     */
+    async getMongoDBAnalytics() {
+        const response = await this.http.get(`${this.baseUrl}/infrastructure/mongodb/analytics`);
+        return response.data;
     }
     /**
      * Export user data

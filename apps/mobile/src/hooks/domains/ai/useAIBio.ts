@@ -3,7 +3,6 @@
  * Manages AI-powered bio generation and analysis
  */
 import { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
 import { logger } from '@pawfectmatch/core';
 import { api } from '../../../services/api';
 

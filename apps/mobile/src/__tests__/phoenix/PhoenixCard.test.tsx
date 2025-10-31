@@ -4,12 +4,11 @@
  */
 
 import React from 'react';
+import { View } from 'react-native';
 import { render, fireEvent, screen } from '@testing-library/react-native';
 import { AccessibilityInfo } from 'react-native';
-import { toHaveNoViolations, axe } from 'jest-axe';
 
-// Extend Jest matchers for accessibility
-expect.extend(toHaveNoViolations);
+// Note: Accessibility testing utilities available if needed
 
 // Mock AccessibilityInfo
 jest.mock('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo', () => ({
@@ -32,6 +31,7 @@ jest.mock('expo-haptics', () => ({
 
 // Mock theme context
 jest.mock('../../theme/Provider', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { getMockLightTheme } = require('../../test-utils/theme-helpers');
   const theme = getMockLightTheme();
   return {
@@ -104,7 +104,7 @@ describe('PhoenixCard Component', () => {
           accessibilityLabel="Test card for accessibility"
           accessibilityHint="Double tap to interact"
         >
-          <div>Child content</div>
+          <View testID="child-content">Child content</View>
         </PhoenixCard>,
       );
 
@@ -171,7 +171,7 @@ describe('PhoenixCard Component', () => {
           onPress={onPressMock}
           accessibilityLabel="Accessible card"
         >
-          <div>Accessible content</div>
+          <View testID="accessible-content">Accessible content</View>
         </PhoenixCard>,
       );
 
@@ -324,7 +324,7 @@ describe('PhoenixCard Component', () => {
     it('should render children content', () => {
       render(
         <PhoenixCard title="Card with Children">
-          <div>Child content</div>
+          <View testID="child-content">Child content</View>
         </PhoenixCard>,
       );
 
@@ -354,10 +354,7 @@ describe('PhoenixCard Component', () => {
     it('should handle missing props gracefully', () => {
       render(
         <PhoenixCard
-          pet={undefined as any}
-          onSwipeLeft={() => {}}
-          onSwipeRight={() => {}}
-          onSwipeUp={() => {}}
+          title=""
         />,
       );
 

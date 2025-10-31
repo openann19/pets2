@@ -1,0 +1,633 @@
+{
+  "generatedAt": "2025-10-31T06:21:58.685Z",
+  "summary": {
+    "totalScreens": 76,
+    "totalDeeplinks": 56,
+    "totalModals": 14,
+    "totalSheets": 5
+  },
+  "screens": {
+    "all": [
+      "Login",
+      "Register",
+      "ForgotPassword",
+      "ResetPassword",
+      "Welcome",
+      "Home",
+      "Main",
+      "Swipe",
+      "Matches",
+      "Profile",
+      "PetProfile",
+      "Settings",
+      "Chat",
+      "MainTabs",
+      "MyPets",
+      "CreatePet",
+      "Map",
+      "EnhancedPetProfile",
+      "PlaydateDiscovery",
+      "PackBuilder",
+      "PetFriendlyMap",
+      "HealthPassport",
+      "LostPetAlert",
+      "SafetyWelfare",
+      "WireframePlaydateDiscovery",
+      "WireframeDemo",
+      "Premium",
+      "Subscription",
+      "PremiumSuccess",
+      "PremiumCancel",
+      "SubscriptionManager",
+      "SubscriptionSuccess",
+      "ManageSubscription",
+      "AIBio",
+      "AIPhotoAnalyzer",
+      "AICompatibility",
+      "PrivacySettings",
+      "BlockedUsers",
+      "SafetyCenter",
+      "VerificationCenter",
+      "NotificationPreferences",
+      "HelpSupport",
+      "AboutTermsPrivacy",
+      "DeactivateAccount",
+      "EditProfile",
+      "AdvancedFilters",
+      "WhoLikedYou",
+      "ModerationTools",
+      "Referral",
+      "IAPShop",
+      "AdoptionManager",
+      "AdoptionApplication",
+      "AdminDashboard",
+      "AdminUsers",
+      "AdminAnalytics",
+      "AdminBilling",
+      "AdminSecurity",
+      "AdminChats",
+      "AdminUploads",
+      "AdminVerifications",
+      "ActiveCall",
+      "IncomingCall",
+      "MemoryWeave",
+      "ARScentTrails",
+      "Stories",
+      "Leaderboard",
+      "Community",
+      "ComponentTest",
+      "NewComponentsTest",
+      "MigrationExample",
+      "PremiumDemo",
+      "UIDemo",
+      "MotionLab",
+      "GoLive",
+      "LiveViewer",
+      "LiveBrowse"
+    ],
+    "categories": {
+      "auth": [
+        "Login",
+        "Register",
+        "ForgotPassword",
+        "ResetPassword"
+      ],
+      "onboarding": [
+        "Welcome"
+      ],
+      "main": [
+        "Home",
+        "Swipe",
+        "Matches",
+        "Profile",
+        "Chat",
+        "Map"
+      ],
+      "premium": [
+        "Premium",
+        "Subscription",
+        "PremiumSuccess",
+        "PremiumCancel",
+        "ManageSubscription"
+      ],
+      "ai": [
+        "AIBio",
+        "AIPhotoAnalyzer",
+        "AICompatibility"
+      ],
+      "settings": [
+        "Settings",
+        "EditProfile",
+        "AdvancedFilters"
+      ],
+      "admin": [
+        "AdminDashboard",
+        "AdminUsers",
+        "AdminAnalytics",
+        "AdminBilling",
+        "AdminSecurity",
+        "AdminChats",
+        "AdminUploads",
+        "AdminVerifications"
+      ],
+      "adoption": [
+        "AdoptionManager",
+        "AdoptionApplication"
+      ],
+      "pet": [
+        "MyPets",
+        "CreatePet",
+        "EnhancedPetProfile",
+        "PlaydateDiscovery",
+        "PackBuilder",
+        "HealthPassport"
+      ],
+      "social": [
+        "MemoryWeave",
+        "Stories",
+        "Leaderboard",
+        "Community"
+      ],
+      "live": [
+        "GoLive",
+        "LiveViewer",
+        "LiveBrowse"
+      ],
+      "demo": [
+        "ComponentTest",
+        "NewComponentsTest",
+        "MigrationExample",
+        "PremiumDemo",
+        "UIDemo",
+        "MotionLab"
+      ],
+      "other": [
+        "Main",
+        "PetProfile",
+        "MainTabs",
+        "PetFriendlyMap",
+        "LostPetAlert",
+        "SafetyWelfare",
+        "WireframePlaydateDiscovery",
+        "WireframeDemo",
+        "SubscriptionManager",
+        "SubscriptionSuccess",
+        "PrivacySettings",
+        "BlockedUsers",
+        "SafetyCenter",
+        "VerificationCenter",
+        "NotificationPreferences",
+        "HelpSupport",
+        "AboutTermsPrivacy",
+        "DeactivateAccount",
+        "WhoLikedYou",
+        "ModerationTools",
+        "Referral",
+        "IAPShop",
+        "ActiveCall",
+        "IncomingCall",
+        "ARScentTrails"
+      ]
+    }
+  },
+  "deeplinks": {
+    "Home": "pawfectmatch://home",
+    "Swipe": "pawfectmatch://swipe",
+    "Matches": "pawfectmatch://matches",
+    "Map": "pawfectmatch://map",
+    "Profile": "pawfectmatch://profile",
+    "Login": "pawfectmatch://login",
+    "Register": "pawfectmatch://register",
+    "ForgotPassword": "pawfectmatch://forgot-password",
+    "path": "pawfectmatch://live-viewer/:streamId",
+    "Main": "pawfectmatch://main",
+    "Settings": "pawfectmatch://settings",
+    "MyPets": "pawfectmatch://my-pets",
+    "CreatePet": "pawfectmatch://create-pet",
+    "Premium": "pawfectmatch://premium",
+    "Subscription": "pawfectmatch://subscription",
+    "PremiumCancel": "pawfectmatch://premium-cancel",
+    "ManageSubscription": "pawfectmatch://manage-subscription",
+    "AIBio": "pawfectmatch://ai-bio",
+    "AIPhotoAnalyzer": "pawfectmatch://ai-photo-analyzer",
+    "AICompatibility": "pawfectmatch://ai-compatibility",
+    "PrivacySettings": "pawfectmatch://privacy-settings",
+    "BlockedUsers": "pawfectmatch://blocked-users",
+    "SafetyCenter": "pawfectmatch://safety-center",
+    "VerificationCenter": "pawfectmatch://verification-center",
+    "NotificationPreferences": "pawfectmatch://notification-preferences",
+    "HelpSupport": "pawfectmatch://help-support",
+    "AboutTermsPrivacy": "pawfectmatch://about-terms-privacy",
+    "DeactivateAccount": "pawfectmatch://deactivate-account",
+    "EditProfile": "pawfectmatch://edit-profile",
+    "AdvancedFilters": "pawfectmatch://advanced-filters",
+    "ModerationTools": "pawfectmatch://moderation-tools",
+    "IAPShop": "pawfectmatch://shop",
+    "AdoptionManager": "pawfectmatch://adoption-manager",
+    "AdminDashboard": "pawfectmatch://admin-dashboard",
+    "AdminUsers": "pawfectmatch://admin-users",
+    "AdminAnalytics": "pawfectmatch://admin-analytics",
+    "AdminBilling": "pawfectmatch://admin-billing",
+    "AdminSecurity": "pawfectmatch://admin-security",
+    "AdminChats": "pawfectmatch://admin-chats",
+    "AdminUploads": "pawfectmatch://admin-uploads",
+    "AdminVerifications": "pawfectmatch://admin-verifications",
+    "MemoryWeave": "pawfectmatch://memory-weave",
+    "ARScentTrails": "pawfectmatch://ar-scent-trails",
+    "Stories": "pawfectmatch://stories",
+    "Leaderboard": "pawfectmatch://leaderboard",
+    "Community": "pawfectmatch://community",
+    "GoLive": "pawfectmatch://go-live",
+    "LiveBrowse": "pawfectmatch://live-browse",
+    "ComponentTest": "pawfectmatch://component-test",
+    "NewComponentsTest": "pawfectmatch://new-components-test",
+    "MigrationExample": "pawfectmatch://migration-example",
+    "PremiumDemo": "pawfectmatch://premium-demo",
+    "UIDemo": "pawfectmatch://ui-demo",
+    "DemoShowcase": "pawfectmatch://demo-showcase",
+    "config": "pawfectmatch://reset-password/:token",
+    "parse": "pawfectmatch://live-viewer/:streamId"
+  },
+  "modals": [
+    {
+      "name": "ExportFormatModal",
+      "path": "apps/mobile/src/components/Admin/ExportFormatModal.tsx"
+    },
+    {
+      "name": "PostCreationModal",
+      "path": "apps/mobile/src/components/Community/PostCreationModal.tsx"
+    },
+    {
+      "name": "PostPreviewModal",
+      "path": "apps/mobile/src/components/Community/PostPreviewModal.tsx"
+    },
+    {
+      "name": "PetProfileModal",
+      "path": "apps/mobile/src/components/chat/PetProfileModal.tsx"
+    },
+    {
+      "name": "GlassModal",
+      "path": "apps/mobile/src/components/glass/GlassModal.tsx"
+    },
+    {
+      "name": "CreateActivityModal",
+      "path": "apps/mobile/src/components/map/CreateActivityModal.tsx"
+    },
+    {
+      "name": "MapFiltersModal",
+      "path": "apps/mobile/src/components/map/MapFiltersModal.tsx"
+    },
+    {
+      "name": "PinDetailsModal",
+      "path": "apps/mobile/src/components/map/PinDetailsModal.tsx"
+    },
+    {
+      "name": "MatchesFilterModal",
+      "path": "apps/mobile/src/components/matches/MatchesFilterModal.tsx"
+    },
+    {
+      "name": "PasswordConfirmationModal",
+      "path": "apps/mobile/src/components/modals/PasswordConfirmationModal.tsx"
+    },
+    {
+      "name": "SwipeLimitModal",
+      "path": "apps/mobile/src/components/modals/SwipeLimitModal.tsx"
+    },
+    {
+      "name": "UltraExportModal",
+      "path": "apps/mobile/src/components/photo/components/UltraExportModal.tsx"
+    },
+    {
+      "name": "MatchModal",
+      "path": "apps/mobile/src/components/swipe/MatchModal.tsx"
+    },
+    {
+      "name": "MatchModal.test",
+      "path": "apps/mobile/src/components/swipe/__tests__/MatchModal.test.tsx"
+    }
+  ],
+  "sheets": [
+    {
+      "name": "NotificationCenterSheet",
+      "path": "apps/mobile/src/components/effects/NotificationCenterSheet.tsx"
+    },
+    {
+      "name": "PeekSheet",
+      "path": "apps/mobile/src/components/swipe/PeekSheet.tsx"
+    },
+    {
+      "name": "PeekSheet.test",
+      "path": "apps/mobile/src/components/swipe/__tests__/PeekSheet.test.tsx"
+    },
+    {
+      "name": "AnimatedBottomSheet",
+      "path": "apps/mobile/src/components/ui/AnimatedBottomSheet.tsx"
+    },
+    {
+      "name": "Sheet",
+      "path": "apps/mobile/src/components/ui/v2/Sheet.tsx"
+    }
+  ],
+  "flows": {
+    "auth": {
+      "entry": [
+        "Login",
+        "Register"
+      ],
+      "flow": [
+        "Login",
+        "Register",
+        "ForgotPassword",
+        "ResetPassword"
+      ],
+      "exit": [
+        "Home"
+      ]
+    },
+    "onboarding": {
+      "entry": [
+        "Welcome"
+      ],
+      "flow": [
+        "Welcome",
+        "UserIntent",
+        "PetProfileSetup",
+        "PreferencesSetup"
+      ],
+      "exit": [
+        "Home"
+      ]
+    },
+    "main": {
+      "entry": [
+        "Home"
+      ],
+      "flow": [
+        "Home",
+        "Swipe",
+        "Matches",
+        "Profile",
+        "Map",
+        "Chat"
+      ],
+      "exit": [
+        "Settings",
+        "Premium"
+      ]
+    },
+    "premium": {
+      "entry": [
+        "Premium",
+        "Settings"
+      ],
+      "flow": [
+        "Premium",
+        "Subscription",
+        "ManageSubscription",
+        "PremiumSuccess"
+      ],
+      "exit": [
+        "Home"
+      ]
+    }
+  },
+  "entryPaths": {
+    "unauthenticated": [
+      "Login",
+      "Register",
+      "Welcome"
+    ],
+    "authenticated": [
+      "Home",
+      "Swipe",
+      "Matches",
+      "Profile"
+    ],
+    "deepLinks": [
+      {
+        "screen": "Home",
+        "url": "pawfectmatch://home"
+      },
+      {
+        "screen": "Swipe",
+        "url": "pawfectmatch://swipe"
+      },
+      {
+        "screen": "Matches",
+        "url": "pawfectmatch://matches"
+      },
+      {
+        "screen": "Map",
+        "url": "pawfectmatch://map"
+      },
+      {
+        "screen": "Profile",
+        "url": "pawfectmatch://profile"
+      },
+      {
+        "screen": "Login",
+        "url": "pawfectmatch://login"
+      },
+      {
+        "screen": "Register",
+        "url": "pawfectmatch://register"
+      },
+      {
+        "screen": "ForgotPassword",
+        "url": "pawfectmatch://forgot-password"
+      },
+      {
+        "screen": "path",
+        "url": "pawfectmatch://live-viewer/:streamId"
+      },
+      {
+        "screen": "Main",
+        "url": "pawfectmatch://main"
+      },
+      {
+        "screen": "Settings",
+        "url": "pawfectmatch://settings"
+      },
+      {
+        "screen": "MyPets",
+        "url": "pawfectmatch://my-pets"
+      },
+      {
+        "screen": "CreatePet",
+        "url": "pawfectmatch://create-pet"
+      },
+      {
+        "screen": "Premium",
+        "url": "pawfectmatch://premium"
+      },
+      {
+        "screen": "Subscription",
+        "url": "pawfectmatch://subscription"
+      },
+      {
+        "screen": "PremiumCancel",
+        "url": "pawfectmatch://premium-cancel"
+      },
+      {
+        "screen": "ManageSubscription",
+        "url": "pawfectmatch://manage-subscription"
+      },
+      {
+        "screen": "AIBio",
+        "url": "pawfectmatch://ai-bio"
+      },
+      {
+        "screen": "AIPhotoAnalyzer",
+        "url": "pawfectmatch://ai-photo-analyzer"
+      },
+      {
+        "screen": "AICompatibility",
+        "url": "pawfectmatch://ai-compatibility"
+      },
+      {
+        "screen": "PrivacySettings",
+        "url": "pawfectmatch://privacy-settings"
+      },
+      {
+        "screen": "BlockedUsers",
+        "url": "pawfectmatch://blocked-users"
+      },
+      {
+        "screen": "SafetyCenter",
+        "url": "pawfectmatch://safety-center"
+      },
+      {
+        "screen": "VerificationCenter",
+        "url": "pawfectmatch://verification-center"
+      },
+      {
+        "screen": "NotificationPreferences",
+        "url": "pawfectmatch://notification-preferences"
+      },
+      {
+        "screen": "HelpSupport",
+        "url": "pawfectmatch://help-support"
+      },
+      {
+        "screen": "AboutTermsPrivacy",
+        "url": "pawfectmatch://about-terms-privacy"
+      },
+      {
+        "screen": "DeactivateAccount",
+        "url": "pawfectmatch://deactivate-account"
+      },
+      {
+        "screen": "EditProfile",
+        "url": "pawfectmatch://edit-profile"
+      },
+      {
+        "screen": "AdvancedFilters",
+        "url": "pawfectmatch://advanced-filters"
+      },
+      {
+        "screen": "ModerationTools",
+        "url": "pawfectmatch://moderation-tools"
+      },
+      {
+        "screen": "IAPShop",
+        "url": "pawfectmatch://shop"
+      },
+      {
+        "screen": "AdoptionManager",
+        "url": "pawfectmatch://adoption-manager"
+      },
+      {
+        "screen": "AdminDashboard",
+        "url": "pawfectmatch://admin-dashboard"
+      },
+      {
+        "screen": "AdminUsers",
+        "url": "pawfectmatch://admin-users"
+      },
+      {
+        "screen": "AdminAnalytics",
+        "url": "pawfectmatch://admin-analytics"
+      },
+      {
+        "screen": "AdminBilling",
+        "url": "pawfectmatch://admin-billing"
+      },
+      {
+        "screen": "AdminSecurity",
+        "url": "pawfectmatch://admin-security"
+      },
+      {
+        "screen": "AdminChats",
+        "url": "pawfectmatch://admin-chats"
+      },
+      {
+        "screen": "AdminUploads",
+        "url": "pawfectmatch://admin-uploads"
+      },
+      {
+        "screen": "AdminVerifications",
+        "url": "pawfectmatch://admin-verifications"
+      },
+      {
+        "screen": "MemoryWeave",
+        "url": "pawfectmatch://memory-weave"
+      },
+      {
+        "screen": "ARScentTrails",
+        "url": "pawfectmatch://ar-scent-trails"
+      },
+      {
+        "screen": "Stories",
+        "url": "pawfectmatch://stories"
+      },
+      {
+        "screen": "Leaderboard",
+        "url": "pawfectmatch://leaderboard"
+      },
+      {
+        "screen": "Community",
+        "url": "pawfectmatch://community"
+      },
+      {
+        "screen": "GoLive",
+        "url": "pawfectmatch://go-live"
+      },
+      {
+        "screen": "LiveBrowse",
+        "url": "pawfectmatch://live-browse"
+      },
+      {
+        "screen": "ComponentTest",
+        "url": "pawfectmatch://component-test"
+      },
+      {
+        "screen": "NewComponentsTest",
+        "url": "pawfectmatch://new-components-test"
+      },
+      {
+        "screen": "MigrationExample",
+        "url": "pawfectmatch://migration-example"
+      },
+      {
+        "screen": "PremiumDemo",
+        "url": "pawfectmatch://premium-demo"
+      },
+      {
+        "screen": "UIDemo",
+        "url": "pawfectmatch://ui-demo"
+      },
+      {
+        "screen": "DemoShowcase",
+        "url": "pawfectmatch://demo-showcase"
+      },
+      {
+        "screen": "config",
+        "url": "pawfectmatch://reset-password/:token"
+      },
+      {
+        "screen": "parse",
+        "url": "pawfectmatch://live-viewer/:streamId"
+      }
+    ]
+  }
+}

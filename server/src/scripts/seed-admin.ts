@@ -5,6 +5,7 @@
 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import logger from '../utils/logger';
 import bcrypt from 'bcryptjs';
 import { ROLE_PERMISSIONS } from '../../packages/api/src/types/admin';
 
@@ -72,14 +73,14 @@ async function seedAdmin() {
   try {
     // Connect to MongoDB
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pawfectmatch');
-    console.log('✅ Connected to MongoDB');
+    logger.info('✅ Connected to MongoDB');
 
     // Create admin accounts
     for (const adminData of admins) {
       const existingAdmin = await Admin.findOne({ email: adminData.email });
       
       if (existingAdmin) {
-        console.log(`⚠️  Admin ${adminData.email} already exists, skipping...`);
+        logger.info(`⚠️  Admin ${adminData.email} already exists, skipping...`);
         continue;
       }
 
@@ -92,20 +93,20 @@ async function seedAdmin() {
       });
 
       await admin.save();
-      console.log(`✅ Created admin: ${adminData.email} (role: ${adminData.role})`);
+      logger.info(`✅ Created admin: ${adminData.email} (role: ${adminData.role})`);
     }
 
-    console.log('\n🎉 Admin seeding completed!');
-    console.log('\n📋 Login Credentials:');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    logger.info('\n🎉 Admin seeding completed!');
+    logger.info('\n📋 Login Credentials:');
+    logger.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     admins.forEach(admin => {
-      console.log(`Email: ${admin.email} / Password: ${admin.password}`);
+      logger.info(`Email: ${admin.email} / Password: ${admin.password}`);
     });
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    logger.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error seeding admins:', error);
+    logger.error('❌ Error seeding admins:', { error });
     process.exit(1);
   }
 }

@@ -286,6 +286,69 @@ export const matchesAPI = {
         'Failed to mark messages as read',
       );
     },
+
+    // Search messages
+    searchMessages: async (
+      matchId: string,
+      query: string,
+      options?: { page?: number; limit?: number },
+    ): Promise<{
+      data: {
+        messages: Message[];
+        pagination: {
+          page: number;
+          limit: number;
+          totalMatches: number;
+          totalPages: number;
+          hasMore: boolean;
+        };
+      };
+    }> => {
+      const params = new URLSearchParams();
+      params.append('q', query);
+      if (options?.page) params.append('page', String(options.page));
+      if (options?.limit) params.append('limit', String(options.limit));
+
+      const response: {
+        messages: Message[];
+        pagination: {
+          page: number;
+          limit: number;
+          totalMatches: number;
+          totalPages: number;
+          hasMore: boolean;
+        };
+      } = await resolveData(
+        apiClient.get<{
+          messages: Message[];
+          pagination: {
+            page: number;
+            limit: number;
+            totalMatches: number;
+            totalPages: number;
+            hasMore: boolean;
+          };
+        }>(`/chat/${matchId}/search?${params.toString()}`),
+        'Failed to search messages',
+      );
+      return {
+        data: {
+          messages: response.messages,
+          pagination: response.pagination,
+        },
+      };
+    },
+
+    // Get reply thread messages
+    getThreadMessages: async (
+      matchId: string,
+      rootMessageId: string,
+    ): Promise<Message[]> => {
+      return resolveData(
+        apiClient.get<Message[]>(`/chat/${matchId}/thread/${rootMessageId}`),
+        'Failed to fetch thread messages',
+      );
+    },
   },
 
   // Unmatch with a user
@@ -668,6 +731,53 @@ export const matchesAPI = {
   },
 };
 
+// Likes API - See Who Liked You Feature
+export interface ReceivedLike {
+  userId: string;
+  name: string;
+  profilePicture?: string;
+  location?: string;
+  likedAt: string;
+  isSuperLike: boolean;
+  petsLiked: Array<{
+    petId: string;
+    action: 'like' | 'superlike';
+    likedAt: string;
+  }>;
+}
+
+export interface ReceivedLikesResponse {
+  success: boolean;
+  data: {
+    likes: ReceivedLike[];
+    total: number;
+  };
+}
+
+export const likesAPI = {
+  /**
+   * Get users who liked your pets (Premium feature)
+   */
+  getReceivedLikes: async (): Promise<ReceivedLike[]> => {
+    const response = await apiClient.get<ReceivedLikesResponse>('/likes/received');
+    if (!response.success || !response.data) {
+      throw new Error('Failed to fetch received likes');
+    }
+    return response.data.likes;
+  },
+
+  /**
+   * Get mutual likes (potential matches)
+   */
+  getMutualLikes: async (): Promise<ReceivedLike[]> => {
+    const response = await apiClient.get<ReceivedLikesResponse>('/likes/mutual');
+    if (!response.success || !response.data) {
+      throw new Error('Failed to fetch mutual likes');
+    }
+    return response.data.likes;
+  },
+};
+
 // Premium/Subscription API
 export const premiumAPI = {
   getCurrentSubscription: async (): Promise<{
@@ -691,6 +801,18 @@ export const premiumAPI = {
       'Failed to cancel subscription',
     );
   },
+  getDailySwipeStatus: async (): Promise<{
+    used: number;
+    limit: number;
+    remaining: number;
+    isUnlimited: boolean;
+    warningThreshold: number;
+  }> => {
+    return resolveData(
+      apiClient.get('/premium/daily-swipe-status'),
+      'Failed to get daily swipe status',
+    );
+  },
 };
 
 // Adoption API
@@ -702,6 +824,62 @@ export const adoptionAPI = {
     return resolveData(
       apiClient.get('/adoption/applications'),
       'Failed to get adoption applications',
+    );
+  },
+};
+
+// Moderation API
+export const moderationAPI = {
+  getStats: async (): Promise<{
+    pendingReports: number;
+    activeModerators: number;
+    resolutionRate: number;
+  }> => {
+    return resolveData(
+      apiClient.get('/moderation/stats'),
+      'Failed to get moderation stats',
+    );
+  },
+  getQueue: async (params?: {
+    status?: 'pending' | 'approved' | 'rejected' | 'all';
+    limit?: number;
+  }): Promise<{
+    items: Array<{
+      _id: string;
+      type: string;
+      status: string;
+      contentId: string;
+      reportedBy: string;
+      reason?: string;
+      createdAt: string;
+    }>;
+    total: number;
+  }> => {
+    const queryParams = new URLSearchParams();
+    if (params?.status) queryParams.append('status', params.status);
+    if (params?.limit) queryParams.append('limit', String(params.limit));
+    const query = queryParams.toString();
+    return resolveData(
+      apiClient.get(`/moderation/queue${query ? `?${query}` : ''}`),
+      'Failed to get moderation queue',
+    );
+  },
+  approve: async (
+    moderationId: string,
+    options?: { notes?: string },
+  ): Promise<{ success: boolean; message?: string }> => {
+    return resolveData(
+      apiClient.post(`/moderation/${moderationId}/approve`, options ?? {}),
+      'Failed to approve moderation item',
+    );
+  },
+  reject: async (
+    moderationId: string,
+    options?: { reason?: string; category?: string; notes?: string },
+  ): Promise<{ success: boolean; message?: string }> => {
+    return resolveData(
+      apiClient.post(`/moderation/${moderationId}/reject`, options ?? {}),
+      'Failed to reject moderation item',
     );
   },
 };

@@ -11,6 +11,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { hardClamp, rubberClamp, rubberScale } from '../../utils/elastic';
+import { springs } from '@/foundation/motion';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -138,9 +139,9 @@ export function PinchZoomPro({
       if (!success) return;
       // quick zoom toggle with center snap
       const target = scale.value > 1.001 ? 1 : Math.min(2, maxScale);
-      scale.value = withSpring(target, { damping: 18, stiffness: 230 });
-      tx.value = withSpring(0);
-      ty.value = withSpring(0);
+      scale.value = withSpring(target, springs.velocity);
+      tx.value = withSpring(0, springs.snappy);
+      ty.value = withSpring(0, springs.snappy);
     });
 
   const composed = Gesture.Simultaneous(pinch, pan, doubleTap);
@@ -157,7 +158,7 @@ export function PinchZoomPro({
         <Animated.View style={[styles.center, imageStyle]}>
           <Image
             source={source}
-            style={{ width, height, backgroundColor: theme.colors.onSurface.primary }}
+            style={{ width, height, backgroundColor: theme.colors.onSurface }}
             resizeMode={resizeMode}
           />
         </Animated.View>

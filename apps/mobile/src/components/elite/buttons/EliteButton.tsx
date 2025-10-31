@@ -22,7 +22,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { useTheme } from '@mobile/theme';
-import { SPRING } from '../../../animation';
+import { springs, durations, motionEasing } from '@/foundation/motion';
 import { BorderRadius, Colors, GlobalStyles, Spacing } from '../../../styles/GlobalStyles';
 import { getPremiumGradients } from '../constants/gradients';
 import { getPremiumShadows } from '../constants/shadows';
@@ -72,8 +72,11 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
   useEffect(() => {
     if (shimmer) {
       shimmerOffset.value = withSequence(
-        withTiming(100, { duration: 2000 }),
-        withDelay(1000, withTiming(-100, { duration: 0 })),
+        withTiming(100, { 
+          duration: durations.lg * 10, // 3200ms for shimmer sweep
+          easing: motionEasing.enter,
+        }),
+        withDelay(durations.lg * 5, withTiming(-100, { duration: 0 })),
       );
     }
   }, [shimmer]);
@@ -97,22 +100,28 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.96, SPRING.soft);
-    glowIntensity.value = withSpring(1.2, SPRING.soft);
+    scale.value = withSpring(0.96, springs.gentle);
+    glowIntensity.value = withSpring(1.2, springs.gentle);
 
     if (ripple) {
       rippleScale.value = 0;
       rippleOpacity.value = 0.6;
-      rippleScale.value = withTiming(2, { duration: 300 });
-      rippleOpacity.value = withTiming(0, { duration: 300 });
+      rippleScale.value = withTiming(2, { 
+        duration: durations.md,
+        easing: motionEasing.enter,
+      });
+      rippleOpacity.value = withTiming(0, { 
+        duration: durations.md,
+        easing: motionEasing.exit,
+      });
     }
 
     runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, SPRING.soft);
-    glowIntensity.value = withSpring(1, SPRING.soft);
+    scale.value = withSpring(1, springs.gentle);
+    glowIntensity.value = withSpring(1, springs.gentle);
   };
 
   const getButtonStyle = (): ViewStyle => {

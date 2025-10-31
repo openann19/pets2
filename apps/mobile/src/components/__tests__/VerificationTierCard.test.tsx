@@ -573,8 +573,6 @@ describe('VerificationTierCard', () => {
 // Mock functions for accessibility
 const mockAccessibilityAnnounce = jest.fn();
 
-jest.mock('@react-native-community/accessibility', () => ({
-  AccessibilityInfo: {
-    announceForAccessibility: mockAccessibilityAnnounce,
-  },
-}));
+// Note: @react-native-community/accessibility doesn't exist
+// Use react-native's AccessibilityInfo instead, which is already mocked in jest.setup.ts
+// Remove this mock - accessibility should come from react-native

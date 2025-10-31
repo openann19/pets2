@@ -1,0 +1,50 @@
+id: p-05-fast-image-caching
+owner: performance
+severity: high
+area: mobile
+status: open
+context: |
+  Use react-native-fast-image for image caching on Android to improve performance.
+  Current behavior: Standard Image component, no advanced caching.
+  Why it matters: Faster image loading, better UX, lower data usage.
+
+acceptance:
+  - [ ] Install react-native-fast-image
+  - [ ] Replace Image with FastImage in SwipeCardMobile
+  - [ ] Replace Image with FastImage in ProfileScreen
+  - [ ] Replace Image with FastImage in ChatScreen
+  - [ ] Configure cache settings
+  - [ ] Test image loading performance
+  - [ ] Test cache behavior
+  - [ ] Verify no regressions
+  - [ ] Measure performance improvement
+
+states:
+  - standard-image
+  - fast-image
+
+telemetry:
+  - event: PERF_IMAGE_LOADED
+    props: [source, cacheHit, loadTime, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  components:
+    - apps/mobile/src/components/cards/SwipeCardMobile.tsx
+    - apps/mobile/src/screens/ProfileScreen.tsx
+    - apps/mobile/src/screens/ChatScreen.tsx
+  tests:
+    - apps/mobile/src/components/__tests__/FastImage.test.tsx
+
+dependencies:
+  - react-native-fast-image
+  - Native module setup
+
+timeline:
+  start: 2025-02-01
+  implementation: 2025-02-02
+  testing: 2025-02-03
+  deploy: 2025-02-04
+

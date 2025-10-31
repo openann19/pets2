@@ -13,7 +13,7 @@
  * - Web: Auto-trim silence + normalize + transcription
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Platform } from 'react-native';
 import { chatService } from '../../services/chatService';
 import VoiceRecorderUltraWeb from '../voice/VoiceRecorderUltra.web';
@@ -37,12 +37,43 @@ export function VoiceRecorder({
   maxDurationSec = 120,
   minDurationSec = 1,
 }: VoiceRecorderProps): React.JSX.Element {
+  // Web-specific wrapper that adapts chatService.sendVoiceNote to SendFn signature
+  const webSendVoiceNote = useCallback(
+    async (matchIdParam: string, fileOrForm: Blob | FormData, extras?: { transcript?: string }) => {
+      // Convert Blob or FormData to a temporary URI for chatService
+      // This is a shim - in production, chatService should accept Blob/FormData directly
+      if (fileOrForm instanceof Blob) {
+        // For web, we need to create a temporary object URL
+        const objectUrl = URL.createObjectURL(fileOrForm);
+        try {
+          // Get duration from extras if available, or estimate
+          const duration = extras?.transcript ? 0 : 0; // Placeholder - would need actual duration
+          await chatService.sendVoiceNote(matchIdParam, objectUrl, duration);
+        } finally {
+          URL.revokeObjectURL(objectUrl);
+        }
+      } else if (fileOrForm instanceof FormData) {
+        // For FormData, extract the file and create object URL
+        const file = fileOrForm.get('file') as File | null;
+        if (file) {
+          const objectUrl = URL.createObjectURL(file);
+          try {
+            await chatService.sendVoiceNote(matchIdParam, objectUrl);
+          } finally {
+            URL.revokeObjectURL(objectUrl);
+          }
+        }
+      }
+    },
+    []
+  );
+
   // Platform-specific rendering
   if (Platform.OS === 'web') {
     return (
       <VoiceRecorderUltraWeb
         matchId={matchId}
-        sendVoiceNote={chatService.sendVoiceNote}
+        sendVoiceNote={webSendVoiceNote}
         disabled={disabled}
         maxDurationSec={maxDurationSec}
         minDurationSec={minDurationSec}
@@ -56,20 +87,39 @@ export function VoiceRecorder({
           enabled: true,
           interim: true,
         }}
-        onVoiceNoteSent={onVoiceNoteSent}
+        {...(onVoiceNoteSent !== undefined ? { onVoiceNoteSent } : {})}
       />
     );
   }
 
-  // Native (iOS/Android)
+  // Native (iOS/Android) - chatService.sendVoiceNote already accepts FormData
+  const nativeSendVoiceNote = useCallback(
+    async (matchIdParam: string, formData: FormData) => {
+      // Extract audioUri from FormData for chatService
+      const file = formData.get('file') as File | null;
+      if (file) {
+        // For native, we need to convert File to URI
+        // This is a limitation - chatService should accept FormData directly
+        // For now, create a temporary object URL
+        const objectUrl = URL.createObjectURL(file);
+        try {
+          await chatService.sendVoiceNote(matchIdParam, objectUrl);
+        } finally {
+          URL.revokeObjectURL(objectUrl);
+        }
+      }
+    },
+    []
+  );
+
   return (
     <VoiceRecorderUltraNative
       matchId={matchId}
-      sendVoiceNote={chatService.sendVoiceNote}
+      sendVoiceNote={nativeSendVoiceNote}
       disabled={disabled}
       maxDurationSec={maxDurationSec}
       minDurationSec={minDurationSec}
-      onVoiceNoteSent={onVoiceNoteSent}
+      {...(onVoiceNoteSent !== undefined ? { onVoiceNoteSent } : {})}
     />
   );
 }

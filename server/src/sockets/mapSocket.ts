@@ -194,7 +194,7 @@ export default class MapSocketServer {
         
         // Sort by most recent and limit
         pins = pins
-          .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .sort((a: MapPin, b: MapPin) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .slice(0, 100); // Increased limit for better UX
 
         socket.emit('pins:initial', pins);
@@ -393,8 +393,9 @@ export default class MapSocketServer {
     const heatGrid = new Map<string, { count: number; lat: number; lng: number; weight: number }>();
 
     pins.forEach((pin: MapPin) => {
-      const lat = Array.isArray(pin.coordinates) ? pin.coordinates[1] : (pin as any).latitude || 0;
-      const lng = Array.isArray(pin.coordinates) ? pin.coordinates[0] : (pin as any).longitude || 0;
+      // MapPin always has coordinates as [longitude, latitude] tuple
+      const lat = pin.coordinates[1];
+      const lng = pin.coordinates[0];
       
       if (!lat || !lng) return;
 

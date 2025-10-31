@@ -1,3 +1,8 @@
+/**
+ * Admin Users Screen
+ * REFACTORED: Extracted components for better maintainability
+ */
+
 import { useTheme } from '@mobile/theme';
 import type { AppTheme } from '@mobile/theme';
 import { useCallback, useMemo } from 'react';
@@ -7,7 +12,6 @@ import {
   RefreshControl,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -17,32 +21,16 @@ import {
   AdminUserListItem,
   type AdminUserListItemViewModel,
 } from '../../components/admin/AdminUserListItem';
-import { useAdminUsersScreen } from '../../hooks/useAdminUsersScreen';
+import { useAdminUsersScreen, type AdminUsersStatusFilter } from '../../hooks/useAdminUsersScreen';
 import type { AdminScreenProps } from '../../navigation/types';
-
-const FILTER_BUTTON_HIT_SLOP = {
-  top: 8,
-  bottom: 8,
-  left: 12,
-  right: 12,
-} as const;
+import { BulkActions, SearchAndFilters, UserActionsModal } from './users/components';
 
 const AdminUsersScreen = ({ navigation }: AdminScreenProps<'AdminUsers'>) => {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const { colors } = theme;
   const state = useAdminUsersScreen({ navigation });
 
   const { filters, onStatusChange, users, keyExtractor, getItemLayout } = state;
-
-  const filterHandlers = useMemo(() => {
-    return filters.reduce<Record<string, () => void>>((acc, filter) => {
-      acc[filter.value] = () => {
-        onStatusChange(filter.value);
-      };
-      return acc;
-    }, {});
-  }, [filters, onStatusChange]);
 
   const renderItem = useCallback(
     ({ item }: { item: AdminUserListItemViewModel }) => (
@@ -52,6 +40,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<'AdminUsers'>) => {
         onSelect={item.onSelect}
         onPrimaryAction={item.onPrimaryAction}
         onSecondaryAction={item.onSecondaryAction}
+        {...(item.onMoreActions && { onMoreActions: item.onMoreActions })}
       />
     ),
     [theme],
@@ -59,144 +48,65 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<'AdminUsers'>) => {
 
   return (
     <ErrorBoundary>
-      <SafeAreaView
-        style={StyleSheet.flatten([styles.container, { backgroundColor: colors.background }])}
-      >
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]}>
         <View style={styles.header}>
           <View>
-            <Text style={StyleSheet.flatten([styles.title, { color: colors.onSurface }])}>
+            <Text style={[styles.title, { color: theme.colors.onSurface }]}>
               {state.title}
             </Text>
-            <Text style={StyleSheet.flatten([styles.description, { color: colors.onMuted }])}>
+            <Text style={[styles.description, { color: theme.colors.onMuted }]}>
               {state.description}
             </Text>
           </View>
           <TouchableOpacity
-            style={StyleSheet.flatten([styles.backButton, { borderColor: colors.border }])}
+            style={[styles.backButton, { borderColor: theme.colors.border }]}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             onPress={state.onBackPress}
           >
-            <Text style={StyleSheet.flatten([styles.backButtonText, { color: colors.onSurface }])}>
+            <Text style={[styles.backButtonText, { color: theme.colors.onSurface }]}>
               Back
             </Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.controls}>
-          <View
-            style={StyleSheet.flatten([styles.searchContainer, { borderColor: colors.border }])}
-          >
-            <TextInput
-              value={state.searchQuery}
-              onChangeText={state.onSearchChange}
-              placeholder="Search users by name or email"
-              placeholderTextColor={colors.onMuted}
-              style={StyleSheet.flatten([styles.searchInput, { color: colors.onSurface }])}
-              autoCorrect={false}
-              accessibilityRole="search"
-            />
-          </View>
-
-          <View style={styles.filterRow}>
-            {filters.map((filter) => {
-              const isActive = state.statusFilter === filter.value;
-              return (
-                <TouchableOpacity
-                  key={filter.value}
-                  testID={`filter-${filter.value}-button`}
-                  onPress={filterHandlers[filter.value]}
-                  style={StyleSheet.flatten([
-                    styles.filterButton,
-                    {
-                      backgroundColor: isActive ? colors.primary : 'transparent',
-                      borderColor: isActive ? colors.primary : colors.border,
-                    },
-                  ])}
-                  hitSlop={FILTER_BUTTON_HIT_SLOP}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Filter by ${filter.label}`}
-                  accessibilityState={{ selected: isActive }}
-                >
-                  <Text
-                    style={StyleSheet.flatten([
-                      styles.filterText,
-                      { color: isActive ? colors.onPrimary : colors.onSurface },
-                    ])}
-                  >
-                    {filter.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
+        <SearchAndFilters
+          searchQuery={state.searchQuery}
+          filters={filters}
+          activeFilter={state.statusFilter}
+          onSearchChange={state.onSearchChange}
+          onFilterChange={(value) => onStatusChange(value as AdminUsersStatusFilter)}
+        />
 
         {state.isBulkProcessing ? (
           <View style={styles.bulkStatus}>
-            <ActivityIndicator color={colors.primary} />
-            <Text style={StyleSheet.flatten([styles.bulkStatusText, { color: colors.onSurface }])}>
+            <ActivityIndicator color={theme.colors.primary} />
+            <Text style={[styles.bulkStatusText, { color: theme.colors.onSurface }]}>
               Performing bulk action...
             </Text>
           </View>
         ) : null}
 
-        {state.selectedCount > 0 ? (
-          <View
-            style={StyleSheet.flatten([styles.bulkActions, { backgroundColor: colors.surface }])}
-          >
-            <Text style={StyleSheet.flatten([styles.bulkSummary, { color: colors.onSurface }])}>
-              {state.selectedCount} selected
-            </Text>
-            <View style={styles.bulkButtons}>
-              <TouchableOpacity
-                style={StyleSheet.flatten([styles.bulkButton, { borderColor: colors.warning }])}
-                testID="bulk-suspend-button"
-                accessibilityLabel="Suspend selected users"
-                accessibilityRole="button"
-                onPress={state.onBulkSuspend}
-              >
-                <Text
-                  style={StyleSheet.flatten([styles.bulkButtonText, { color: colors.warning }])}
-                >
-                  Suspend
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={StyleSheet.flatten([styles.bulkButton, { borderColor: colors.success }])}
-                testID="bulk-activate-button"
-                accessibilityLabel="Activate selected users"
-                accessibilityRole="button"
-                onPress={state.onBulkActivate}
-              >
-                <Text
-                  style={StyleSheet.flatten([styles.bulkButtonText, { color: colors.success }])}
-                >
-                  Activate
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={StyleSheet.flatten([
-                  styles.bulkButton,
-                  { borderColor: theme.colors.danger },
-                ])}
-                testID="bulk-ban-button"
-                accessibilityLabel="Ban selected users"
-                accessibilityRole="button"
-                onPress={state.onBulkBan}
-              >
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.bulkButtonText,
-                    { color: theme.colors.danger },
-                  ])}
-                >
-                  Ban
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : null}
+        <BulkActions
+          selectedCount={state.selectedCount}
+          onSuspend={state.onBulkSuspend}
+          onActivate={state.onBulkActivate}
+          onBan={state.onBulkBan}
+        />
+
+        <UserActionsModal
+          visible={state.selectedUserForActions !== null}
+          userName={
+            state.selectedUserForActions
+              ? `${state.selectedUserForActions.firstName} ${state.selectedUserForActions.lastName}`
+              : ''
+          }
+          userEmail={state.selectedUserForActions?.email ?? ''}
+          isLoading={state.isActionLoading}
+          onClose={state.onCloseActionsModal}
+          onDelete={state.onDeleteUser}
+          onResetPassword={state.onResetPassword}
+        />
 
         <FlatList
           data={users}
@@ -206,7 +116,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<'AdminUsers'>) => {
             <RefreshControl
               refreshing={state.isRefreshing}
               onRefresh={state.onRefresh}
-              tintColor={colors.primary}
+              tintColor={theme.colors.primary}
             />
           }
           contentContainerStyle={styles.listContent}
@@ -215,15 +125,15 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<'AdminUsers'>) => {
               <View style={styles.emptyState}>
                 <ActivityIndicator
                   size="large"
-                  color={colors.primary}
+                  color={theme.colors.primary}
                 />
-                <Text style={StyleSheet.flatten([styles.emptyText, { color: colors.onMuted }])}>
+                <Text style={[styles.emptyText, { color: theme.colors.onMuted }]}>
                   Loading users...
                 </Text>
               </View>
             ) : (
               <View style={styles.emptyState}>
-                <Text style={StyleSheet.flatten([styles.emptyText, { color: colors.onMuted }])}>
+                <Text style={[styles.emptyText, { color: theme.colors.onMuted }]}>
                   No users match the current filters.
                 </Text>
               </View>
@@ -269,35 +179,6 @@ const makeStyles = (theme: AppTheme) =>
     backButtonText: {
       fontWeight: theme.typography.h2.weight,
     },
-    controls: {
-      paddingHorizontal: theme.spacing.lg,
-      paddingBottom: theme.spacing.sm,
-      gap: theme.spacing.sm,
-    },
-    searchContainer: {
-      borderWidth: 1,
-      borderRadius: theme.radii.lg,
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm,
-    },
-    searchInput: {
-      fontSize: theme.typography.body.size * 0.9375,
-    },
-    filterRow: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: theme.spacing.xs,
-    },
-    filterButton: {
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.xs,
-      borderRadius: theme.radii.full,
-      borderWidth: 1,
-    },
-    filterText: {
-      fontSize: theme.typography.body.size * 0.8125,
-      fontWeight: theme.typography.h2.weight,
-    },
     bulkStatus: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -308,36 +189,6 @@ const makeStyles = (theme: AppTheme) =>
     bulkStatusText: {
       fontSize: theme.typography.body.size * 0.875,
       fontWeight: theme.typography.body.weight,
-    },
-    bulkActions: {
-      marginHorizontal: theme.spacing.lg,
-      marginBottom: theme.spacing.sm,
-      borderRadius: theme.radii.lg,
-      padding: theme.spacing.md,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: theme.colors.border,
-      elevation: 1,
-    },
-    bulkSummary: {
-      fontSize: theme.typography.body.size * 0.875,
-      fontWeight: theme.typography.h2.weight,
-      marginBottom: theme.spacing.sm,
-    },
-    bulkButtons: {
-      flexDirection: 'row',
-      gap: theme.spacing.sm,
-    },
-    bulkButton: {
-      flex: 1,
-      paddingVertical: theme.spacing.sm,
-      borderRadius: theme.radii.lg,
-      borderWidth: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    bulkButtonText: {
-      fontSize: theme.typography.body.size * 0.875,
-      fontWeight: theme.typography.h2.weight,
     },
     listContent: {
       paddingHorizontal: theme.spacing.lg,

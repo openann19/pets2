@@ -7,7 +7,7 @@ import type { Request, Response } from 'express';
 import Match from '../../models/Match';
 import Conversation from '../../models/Conversation';
 import { getErrorMessage } from '../../utils/errorHandler';
-const AuditLog = require('../../models/AuditLog');
+import AuditLog from '../../models/AuditLog';
 const logger = require('../../utils/logger');
 
 // Type definitions
@@ -48,7 +48,7 @@ export const getAllChats = async (req: AdminRequest, res: Response): Promise<voi
     const limit = parseInt(req.query.limit as string) || 20;
     const skip = (page - 1) * limit;
 
-    const filter: any = {};
+    const filter: Record<string, unknown> = {};
 
     if (req.query.status) {
       filter.status = req.query.status;
@@ -70,11 +70,21 @@ export const getAllChats = async (req: AdminRequest, res: Response): Promise<voi
     const total = await Match.countDocuments(filter);
 
     // Get message counts for each chat from conversations
+    interface ChatWithUsers {
+      user1?: { _id: { toString: () => string } | string };
+      user2?: { _id: { toString: () => string } | string };
+      [key: string]: unknown;
+    }
     const chatsWithMessageCounts = await Promise.all(
-      chats.map(async (chat: any) => {
+      chats.map(async (chat: ChatWithUsers) => {
         // Find conversations between the two users
+        const userId1 = typeof chat.user1?._id === 'string' ? chat.user1._id : chat.user1?._id?.toString();
+        const userId2 = typeof chat.user2?._id === 'string' ? chat.user2._id : chat.user2?._id?.toString();
+        if (!userId1 || !userId2) {
+          return { ...chat, messageCount: 0 };
+        }
         const conversation = await Conversation.findOne({
-          participants: { $all: [chat.user1._id, chat.user2._id] }
+          participants: { $all: [userId1, userId2] }
         });
         
         const messageCount = conversation ? conversation.messages.length : 0;

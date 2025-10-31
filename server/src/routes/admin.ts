@@ -5,7 +5,7 @@
 
 import express from 'express';
 import type { Request, Response } from 'express';
-import type { AuthRequest } from '../middleware/adminAuth';
+import type { AuthRequest } from '../types/express';
 import stripe from 'stripe';
 
 // Type definitions for Stripe data
@@ -102,7 +102,21 @@ import subscriptionAnalyticsService from '../services/subscriptionAnalyticsServi
 import paymentRetryService from '../services/paymentRetryService';
 import { requireAuth, requireAdmin } from '../middleware/adminAuth';
 import { checkPermission } from '../middleware/rbac';
-import { getAnalytics, exportAnalytics } from '../controllers/adminAnalyticsController';
+import {
+  getAnalytics,
+  exportAnalytics,
+  getConversionFunnel,
+  getCohortRetention,
+  trackPaywallView,
+  getABTestResults,
+  assignABTestVariant,
+  trackABTestConversion
+} from '../controllers/adminAnalyticsController';
+import {
+  getAnalyticsConfig,
+  updateAnalyticsConfig,
+  testEmailConfig
+} from '../controllers/analyticsConfigController';
 import { adminRateLimiter, strictRateLimiter } from '../middleware/rateLimiter';
 import AdminActivityLog from '../models/AdminActivityLog';
 import logger from '../utils/logger';
@@ -110,6 +124,22 @@ import logger from '../utils/logger';
 // Import specialized admin controllers
 import AdminAPIController from '../controllers/admin/AdminAPIController';
 import AdminKYCController from '../controllers/admin/AdminKYCController';
+import {
+  getUIStyleConfig,
+  updateUIStyleConfig,
+  resetUIStyleConfig,
+  getUIStylePreview,
+} from '../controllers/admin/uiStyleConfigController';
+import {
+  getPetChatStats,
+  getModerationQueue,
+  moderatePlaydate,
+  moderateHealthAlert,
+  viewPetProfile,
+  getCompatibilityReports,
+  moderateContent,
+  exportPetChatData,
+} from '../controllers/admin/petChatAdminController';
 
 const router = express.Router();
 
@@ -123,6 +153,18 @@ router.use(adminRateLimiter);
 // Analytics Routes
 router.get('/analytics', /* checkPermission('analytics:read'), */ getAnalytics);
 router.get('/analytics/export', checkPermission('analytics:read'), exportAnalytics);
+router.get('/analytics/conversion-funnel', checkPermission('analytics:read'), getConversionFunnel);
+router.get('/analytics/cohort-retention', checkPermission('analytics:read'), getCohortRetention);
+router.post('/analytics/paywall-view', checkPermission('analytics:write'), trackPaywallView);
+router.get('/analytics/ab-tests', checkPermission('analytics:read'), getABTestResults);
+router.get('/analytics/ab-tests/:testId', checkPermission('analytics:read'), getABTestResults);
+router.post('/analytics/ab-tests/assign', checkPermission('analytics:read'), assignABTestVariant);
+router.post('/analytics/ab-tests/conversion', checkPermission('analytics:write'), trackABTestConversion);
+
+// Analytics Configuration Routes
+router.get('/analytics/config', checkPermission('analytics:read'), getAnalyticsConfig);
+router.post('/analytics/config', checkPermission('analytics:write'), updateAnalyticsConfig);
+router.post('/analytics/config/test-email', checkPermission('analytics:write'), testEmailConfig);
 
 // API Management Routes
 router.get('/api-management/stats', checkPermission('api:read'), AdminAPIController.getAPIStats);
@@ -296,6 +338,95 @@ router.post('/stripe/config', checkPermission('stripe:configure'), validate(sche
   } catch (error) {
     logger.error('Failed to save Stripe config', { error });
     res.status(500).json({ success: false, message: 'Failed to save Stripe config' });
+  }
+});
+
+// RevenueCat Management Routes
+router.get('/revenuecat/config', checkPermission('payment:read'), async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    // Get RevenueCat configuration from database
+    const configDoc = await Configuration.findOne({ type: 'revenuecat' });
+
+    let config = {
+      iosApiKey: '',
+      androidApiKey: '',
+      isConfigured: false
+    };
+
+    // If config exists in database, use it (masking the keys)
+    if (configDoc?.data) {
+      config = {
+        iosApiKey: configDoc.data.iosApiKey ? '***configured***' : '',
+        androidApiKey: configDoc.data.androidApiKey ? '***configured***' : '',
+        isConfigured: !!(configDoc.data.iosApiKey && configDoc.data.androidApiKey)
+      };
+    }
+    // Fall back to environment variables if not in database
+    else if (process.env.EXPO_PUBLIC_RC_IOS && process.env.EXPO_PUBLIC_RC_ANDROID) {
+      config = {
+        iosApiKey: '***configured***',
+        androidApiKey: '***configured***',
+        isConfigured: true
+      };
+    }
+
+    await logAdminActivity(req, 'VIEW_REVENUECAT_CONFIG', {});
+    res.json({ success: true, ...config });
+  } catch (error) {
+    logger.error('Failed to load RevenueCat config', { error });
+    res.status(500).json({ success: false, message: 'Failed to load RevenueCat config' });
+  }
+});
+
+router.post('/revenuecat/config', checkPermission('payment:configure'), adminActionLogger('UPDATE_REVENUECAT_CONFIG'), async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { iosApiKey, androidApiKey } = req.body;
+
+    // Validate required fields
+    if (!iosApiKey || !androidApiKey) {
+      res.status(400).json({ success: false, message: 'Both iOS and Android API keys are required' });
+      return;
+    }
+
+    // Basic validation - RevenueCat API keys start with specific prefixes
+    if (!iosApiKey.startsWith('appl_') && !iosApiKey.startsWith('rc_')) {
+      res.status(400).json({ success: false, message: 'Invalid iOS API key format' });
+      return;
+    }
+
+    if (!androidApiKey.startsWith('goog_') && !androidApiKey.startsWith('rc_')) {
+      res.status(400).json({ success: false, message: 'Invalid Android API key format' });
+      return;
+    }
+
+    // Encrypt sensitive keys before storing
+    const encryptedIOSKey = encrypt(iosApiKey);
+    const encryptedAndroidKey = encrypt(androidApiKey);
+
+    // Save to database (upsert if not exists)
+    await Configuration.findOneAndUpdate(
+      { type: 'revenuecat' },
+      {
+        data: {
+          iosApiKey: encryptedIOSKey,
+          androidApiKey: encryptedAndroidKey,
+        },
+        updatedBy: req.user._id,
+        updatedAt: new Date()
+      },
+      { upsert: true, new: true }
+    );
+
+    // Return success with masked keys
+    res.json({
+      success: true,
+      iosApiKey: '***configured***',
+      androidApiKey: '***configured***',
+      isConfigured: true
+    });
+  } catch (error) {
+    logger.error('Failed to save RevenueCat config', { error });
+    res.status(500).json({ success: false, message: 'Failed to save RevenueCat config' });
   }
 });
 
@@ -2389,5 +2520,20 @@ router.get('/security/alerts/download', checkPermission('security:read'), async 
     });
   }
 });
+
+router.get('/pet-chat/stats', checkPermission('chats:read'), getPetChatStats);
+router.get('/pet-chat/moderation-queue', checkPermission('chats:moderate'), getModerationQueue);
+router.post('/pet-chat/playdate/:matchId/:proposalId/moderate', checkPermission('chats:moderate'), moderatePlaydate);
+router.post('/pet-chat/health-alert/:matchId/:alertId/moderate', checkPermission('chats:moderate'), moderateHealthAlert);
+router.get('/pet-chat/pet/:petId', checkPermission('chats:read'), viewPetProfile);
+router.get('/pet-chat/compatibility-reports', checkPermission('chats:read'), getCompatibilityReports);
+router.post('/pet-chat/moderate/:matchId/:messageId', checkPermission('chats:moderate'), moderateContent);
+router.get('/pet-chat/export', checkPermission('chats:read'), exportPetChatData);
+
+// UI Style Configuration Routes
+router.get('/ui-style/config', checkPermission('config:read'), getUIStyleConfig);
+router.post('/ui-style/config', checkPermission('config:write'), updateUIStyleConfig);
+router.post('/ui-style/config/reset', checkPermission('config:write'), resetUIStyleConfig);
+router.get('/ui-style/preview', checkPermission('config:read'), getUIStylePreview);
 
 export default router;

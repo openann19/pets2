@@ -39,6 +39,8 @@
     "dist",
     ".next",
     "coverage",
-    "_archive"
+    "_archive",
+    "types",
+    ".storybook"
   ]
 }

@@ -1,85 +1,224 @@
-import { jest, beforeAll, afterAll } from '@jest/globals';
+import { jest, beforeEach, afterEach } from '@jest/globals';
+
+// React Native is already mocked in jest.setup.preact-native.ts
+// No need to mock it again here
+
+// Import native mocks AFTER react-native is mocked
+import './jest.setup.mocks.native';
 
 // Mock theme modules BEFORE any other imports
-jest.mock('@mobile/theme', () => ({
-  __esModule: true,
-  useTheme: jest.fn(() => ({
-    scheme: 'light',
-    colors: {
+jest.mock('@mobile/theme', () => {
+  // Helper function to convert hex to rgba with opacity
+  const alpha = (color: string, opacity: number): string => {
+    if (color.startsWith('#')) {
+      const hex = color.slice(1);
+      if (hex.length === 3) {
+        const r = parseInt((hex[0] ?? '0') + (hex[0] ?? '0'), 16);
+        const g = parseInt((hex[1] ?? '0') + (hex[1] ?? '0'), 16);
+        const b = parseInt((hex[2] ?? '0') + (hex[2] ?? '0'), 16);
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      } else if (hex.length === 6) {
+        const r = parseInt(hex.slice(0, 2) || '00', 16);
+        const g = parseInt(hex.slice(2, 4) || '00', 16);
+        const b = parseInt(hex.slice(4, 6) || '00', 16);
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      }
+    }
+    if (color.startsWith('rgba')) {
+      return color.replace(/[\d.]+\)$/, `${opacity})`);
+    }
+    return color;
+  };
+
+  return {
+    __esModule: true,
+    useTheme: jest.fn(() => ({
+      scheme: 'light',
+      isDark: false,
+      colors: {
+        bg: '#FFFFFF',
+        bgElevated: '#F8FAFC',
+        surface: '#F8FAFC',
+        surfaceAlt: '#F1F5F9',
+        text: '#0F172A',
+        textMuted: '#64748B',
+        textSecondary: '#64748B',
+        onSurface: '#0F172A',
+        onMuted: '#64748B',
+        onPrimary: '#FFFFFF',
+        primary: '#2563EB',
+        primaryText: '#FFFFFF',
+        border: '#E2E8F0',
+        success: '#10B981',
+        warning: '#F59E0B',
+        danger: '#EF4444',
+        info: '#3B82F6',
+        error: '#EF4444',
+        // Extended colors for backward compatibility
+        white: '#FFFFFF',
+        black: '#000000',
+        gray: {
+          50: '#F9FAFB',
+          100: '#F3F4F6',
+          200: '#E5E7EB',
+          300: '#D1D5DB',
+          400: '#9CA3AF',
+          500: '#6B7280',
+          600: '#4B5563',
+          700: '#374151',
+          800: '#1F2937',
+          900: '#111827',
+        },
+      },
+      palette: {
+        neutral: {
+          100: '#F8FAFC',
+          600: '#475569',
+          800: '#1E293B',
+        },
+        brand: {
+          500: '#64748B',
+        },
+        gradients: {
+          primary: ['#2563EB', '#1D4ED8'],
+          success: ['#10B981', '#059669'],
+          danger: ['#EF4444', '#DC2626'],
+        },
+      },
+      spacing: {
+        xs: 4,
+        sm: 8,
+        md: 16,
+        lg: 24,
+        xl: 32,
+        '2xl': 48,
+        '3xl': 64,
+        '4xl': 96,
+      },
+      radii: {
+        none: 0,
+        xs: 2,
+        sm: 4,
+        md: 8,
+        lg: 12,
+        xl: 16,
+        '2xl': 24,
+        '3xl': 32,
+        full: 9999,
+      },
+      radius: {
+        none: 0,
+        xs: 2,
+        sm: 4,
+        md: 8,
+        lg: 12,
+        xl: 16,
+        '2xl': 24,
+        '3xl': 32,
+        full: 9999,
+      },
+      typography: {
+        body: {
+          fontSize: 16,
+          lineHeight: 24,
+          fontWeight: '400',
+        },
+        h1: {
+          fontSize: 32,
+          lineHeight: 40,
+          fontWeight: '700',
+        },
+        h2: {
+          fontSize: 24,
+          lineHeight: 32,
+          fontWeight: '600',
+        },
+        h3: {
+          fontSize: 20,
+          lineHeight: 28,
+          fontWeight: '600',
+        },
+        caption: {
+          fontSize: 12,
+          lineHeight: 16,
+          fontWeight: '400',
+        },
+      },
+      shadows: {
+        sm: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2 },
+        md: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
+        lg: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 8 },
+      },
+      blur: {
+        sm: 4,
+        md: 8,
+        lg: 16,
+      },
+      easing: {
+        standard: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+        decelerated: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
+        accelerated: 'cubic-bezier(0.4, 0.0, 1, 1)',
+      },
+      motion: {
+        duration: {
+          fast: 150,
+          normal: 300,
+          slow: 500,
+        },
+      },
+      utils: {
+        alpha,
+      },
+    })),
+    getExtendedColors: jest.fn(() => ({
       bg: '#FFFFFF',
-      bgElevated: '#F8FAFC',
-      text: '#0F172A',
-      textMuted: '#64748B',
+      surface: '#F8FAFC',
+      onSurface: '#0F172A',
       primary: '#2563EB',
-      primaryText: '#FFFFFF',
+      onPrimary: '#FFFFFF',
       border: '#E2E8F0',
       success: '#10B981',
       warning: '#F59E0B',
       danger: '#EF4444',
-    },
-    palette: {
-      neutral: {
-        100: '#F8FAFC',
-        600: '#475569',
-        800: '#1E293B',
-      },
-      brand: {
-        500: '#64748B',
-      },
-    },
-    spacing: {
-      xs: 4,
-      sm: 8,
-      md: 16,
-      lg: 24,
-      xl: 32,
-    },
-    radius: {
-      sm: 4,
-      md: 8,
-      lg: 12,
-      full: 9999,
-    },
-    motion: {},
-  })),
-  getExtendedColors: jest.fn(() => ({
-    bg: '#FFFFFF',
-    surface: '#F8FAFC',
-    onSurface: '#0F172A',
-    primary: '#2563EB',
-    onPrimary: '#FFFFFF',
-    border: '#E2E8F0',
-    success: '#10B981',
-    warning: '#F59E0B',
-    danger: '#EF4444',
-    text: '#0F172A',
-    textMuted: '#64748B',
-    bgElevated: '#F8FAFC',
-    card: '#FFFFFF',
-    glassWhiteLight: 'rgba(255, 255, 255, 0.1)',
-    glassWhiteDark: 'rgba(255, 255, 255, 0.2)',
-  })),
-}));
+      text: '#0F172A',
+      textMuted: '#64748B',
+      bgElevated: '#F8FAFC',
+      card: '#FFFFFF',
+      glassWhiteLight: 'rgba(255, 255, 255, 0.1)',
+      glassWhiteDark: 'rgba(255, 255, 255, 0.2)',
+    })),
+  };
+});
 
 jest.mock('@mobile/theme/adapters', () => ({
   __esModule: true,
-  getExtendedColors: jest.fn(() => ({
-    bg: '#FFFFFF',
-    surface: '#F8FAFC',
-    onSurface: '#0F172A',
-    primary: '#2563EB',
-    onPrimary: '#FFFFFF',
-    border: '#E2E8F0',
-    success: '#10B981',
-    warning: '#F59E0B',
-    danger: '#EF4444',
-    text: '#0F172A',
-    textMuted: '#64748B',
-    bgElevated: '#F8FAFC',
-    card: '#FFFFFF',
-    glassWhiteLight: 'rgba(255, 255, 255, 0.1)',
-    glassWhiteDark: 'rgba(255, 255, 255, 0.2)',
-  })),
+  getExtendedColors: jest.fn((theme: any) => {
+    const themeColors = (theme && typeof theme === 'object' && theme.colors) ? theme.colors : {};
+    return {
+      bg: themeColors.bg ?? '#FFFFFF',
+      surface: themeColors.surface ?? '#F8FAFC',
+      onSurface: themeColors.onSurface ?? '#0F172A',
+      primary: themeColors.primary ?? '#2563EB',
+      onPrimary: themeColors.onPrimary ?? '#FFFFFF',
+      border: themeColors.border ?? '#E2E8F0',
+      success: themeColors.success ?? '#10B981',
+      warning: themeColors.warning ?? '#F59E0B',
+      danger: themeColors.danger ?? '#EF4444',
+      text: themeColors.text ?? '#0F172A',
+      textMuted: themeColors.textMuted ?? '#64748B',
+      bgElevated: themeColors.bgElevated ?? '#F8FAFC',
+      card: themeColors.card ?? '#FFFFFF',
+      glassWhiteLight: 'rgba(255, 255, 255, 0.1)',
+      glassWhiteDark: 'rgba(255, 255, 255, 0.2)',
+    };
+  }),
+  getThemeColors: jest.fn((theme: any) => {
+    const { getExtendedColors } = require('@mobile/theme/adapters');
+    return getExtendedColors(theme);
+  }),
+  getIsDark: jest.fn((theme: any) => {
+    return theme && typeof theme === 'object' && (theme.scheme === 'dark' || theme.isDark === true);
+  }),
 }));
 
 // Mock design tokens
@@ -160,127 +299,120 @@ jest.mock('@pawfectmatch/design-tokens', () => ({
 // Import services pre-setup to ensure mocks are loaded before modules
 import './jest.setup.services.pre';
 
-// Mock React Native FIRST to avoid ReactCurrentOwner errors
-// TEMPORARILY DISABLED: Let individual test files mock react-native to avoid conflicts
-// jest.mock('react-native', () => {
-/* TEMP DISABLE
-jest.mock('react-native', () => {
-  const React = require('react');
-  
-  // Create mock components
-  const createMockComponent = (name: string) => {
-    const Component = React.forwardRef((props: any, ref: any) => {
-      return React.createElement(name, { ...props, ref, testID: props.testID || name });
-    });
-    Component.displayName = name;
-    return Component;
+// Mock axios BEFORE any services import it
+jest.mock('axios', () => {
+  // Create interceptors with proper structure
+  const requestInterceptors: Array<{ fulfilled?: (config: any) => any; rejected?: (error: any) => any }> = [];
+  const responseInterceptors: Array<{ fulfilled?: (response: any) => any; rejected?: (error: any) => any }> = [];
+
+  const mockAxiosInstance = {
+    get: jest.fn(() => Promise.resolve({ data: {}, status: 200, statusText: 'OK', headers: {}, config: {} })),
+    post: jest.fn(() => Promise.resolve({ data: {}, status: 200, statusText: 'OK', headers: {}, config: {} })),
+    put: jest.fn(() => Promise.resolve({ data: {}, status: 200, statusText: 'OK', headers: {}, config: {} })),
+    patch: jest.fn(() => Promise.resolve({ data: {}, status: 200, statusText: 'OK', headers: {}, config: {} })),
+    delete: jest.fn(() => Promise.resolve({ data: {}, status: 200, statusText: 'OK', headers: {}, config: {} })),
+    request: jest.fn(() => Promise.resolve({ data: {}, status: 200, statusText: 'OK', headers: {}, config: {} })),
+    interceptors: {
+      request: {
+        use: jest.fn((fulfilled?: any, rejected?: any) => {
+          const id = requestInterceptors.length;
+          requestInterceptors.push({ fulfilled, rejected });
+          return id;
+        }),
+        eject: jest.fn((id: number) => {
+          if (id < requestInterceptors.length) {
+            requestInterceptors.splice(id, 1);
+          }
+        }),
+        clear: jest.fn(() => {
+          requestInterceptors.length = 0;
+        }),
+      },
+      response: {
+        use: jest.fn((fulfilled?: any, rejected?: any) => {
+          const id = responseInterceptors.length;
+          responseInterceptors.push({ fulfilled, rejected });
+          return id;
+        }),
+        eject: jest.fn((id: number) => {
+          if (id < responseInterceptors.length) {
+            responseInterceptors.splice(id, 1);
+          }
+        }),
+        clear: jest.fn(() => {
+          responseInterceptors.length = 0;
+        }),
+      },
+    },
+    defaults: {
+      headers: {
+        common: {},
+        get: {},
+        post: {},
+        put: {},
+        patch: {},
+        delete: {},
+      },
+    },
+    // Expose interceptors for testing
+    __requestInterceptors: requestInterceptors,
+    __responseInterceptors: responseInterceptors,
   };
 
-  return {
-    StyleSheet: {
-      create: (styles: Record<string, unknown>) => styles,
-      flatten: (style: unknown) => style,
-      compose: (style1: unknown, style2: unknown) => [style1, style2],
-      hairlineWidth: 1,
-      absoluteFill: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
-      absoluteFillObject: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
-    },
-    View: createMockComponent('View'),
-    Text: createMockComponent('Text'),
-    TextInput: createMockComponent('TextInput'),
-    ScrollView: createMockComponent('ScrollView'),
-    Image: createMockComponent('Image'),
-    TouchableOpacity: createMockComponent('TouchableOpacity'),
-    TouchableHighlight: createMockComponent('TouchableHighlight'),
-    TouchableWithoutFeedback: createMockComponent('TouchableWithoutFeedback'),
-    Pressable: createMockComponent('Pressable'),
-    FlatList: createMockComponent('FlatList'),
-    SectionList: createMockComponent('SectionList'),
-    ActivityIndicator: createMockComponent('ActivityIndicator'),
-    Switch: createMockComponent('Switch'),
-    Modal: createMockComponent('Modal'),
-    Animated: {
-      timing: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-      spring: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-      sequence: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-      parallel: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-      delay: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-      Value: jest.fn(() => ({ setValue: jest.fn(), addListener: jest.fn() })),
-      View: createMockComponent('Animated.View'),
-      Text: createMockComponent('Animated.Text'),
-      Image: createMockComponent('Animated.Image'),
-      ScrollView: createMockComponent('Animated.ScrollView'),
-    },
-    Platform: {
-      OS: 'ios',
-      Version: 15,
-      select: (obj: any) => obj?.ios ?? obj?.default,
-    },
-    Dimensions: {
-      get: jest.fn(() => ({ width: 375, height: 812 })),
-      addEventListener: jest.fn(() => ({ remove: jest.fn() })),
-      removeEventListener: jest.fn(),
-    },
-    NativeModules: {
-      RNKeychainManager: {},
-    },
-    Easing: {
-      bezier: (_x1: number, _y1: number, _x2: number, _y2: number) => (t: number) => t,
-      linear: jest.fn(),
-      ease: jest.fn(),
-      quad: jest.fn(),
-      cubic: jest.fn(),
-      poly: jest.fn(),
-      sin: jest.fn(),
-      circle: jest.fn(),
-      exp: jest.fn(),
-      elastic: jest.fn(),
-      back: jest.fn(),
-      bounce: jest.fn(),
-      in: jest.fn(),
-      out: jest.fn(),
-      inOut: jest.fn(),
-    },
-    AccessibilityInfo: {
-      isScreenReaderEnabled: jest.fn(async () => false),
-      isBoldTextEnabled: jest.fn(async () => false),
-      isGrayscaleEnabled: jest.fn(async () => false),
-      isInvertColorsEnabled: jest.fn(async () => false),
-      isReduceMotionEnabled: jest.fn(async () => false),
-      isReduceTransparencyEnabled: jest.fn(async () => false),
-      addEventListener: jest.fn((eventName: string, handler: () => void) => ({
-        remove: jest.fn(),
-      })),
-      removeEventListener: jest.fn(),
-      setAccessibilityFocus: jest.fn(),
-      announceForAccessibility: jest.fn(),
-      sendAccessibilityEvent: jest.fn(),
-    },
-    Clipboard: {
-      getString: jest.fn(() => Promise.resolve('')),
-      setString: jest.fn(() => Promise.resolve()),
-    },
-    Linking: {
-      openURL: jest.fn(() => Promise.resolve()),
-      canOpenURL: jest.fn(() => Promise.resolve(true)),
-      addEventListener: jest.fn(() => ({ remove: jest.fn() })),
-      removeEventListener: jest.fn(),
-      getInitialURL: jest.fn(() => Promise.resolve(null)),
-    },
-    AppState: {
-      currentState: 'active',
-      addEventListener: jest.fn(() => ({ remove: jest.fn() })),
-      removeEventListener: jest.fn(),
-    },
-    Keyboard: {
-      addListener: jest.fn(() => ({ remove: jest.fn() })),
-      removeListener: jest.fn(),
-      dismiss: jest.fn(),
-      isVisible: jest.fn(() => false),
-    },
+  // Mock AxiosHeaders class
+  class MockAxiosHeaders {
+    private headers: Record<string, string> = {};
+    set(key: string, value: string) {
+      this.headers[key] = value;
+      return this;
+    }
+    get(key: string) {
+      return this.headers[key];
+    }
+    has(key: string) {
+      return key in this.headers;
+    }
+    delete(key: string) {
+      delete this.headers[key];
+      return this;
+    }
+  }
+
+  const axios: any = jest.fn(() => mockAxiosInstance);
+  axios.create = jest.fn(() => mockAxiosInstance);
+  axios.default = axios;
+  axios.Cancel = jest.fn();
+  axios.CancelToken = {
+    source: jest.fn(() => ({
+      token: {},
+      cancel: jest.fn(),
+    })),
   };
+  axios.isCancel = jest.fn(() => false);
+  axios.all = jest.fn(Promise.all.bind(Promise));
+  axios.spread = jest.fn((callback: any) => (arr: any[]) => callback(...arr));
+  axios.AxiosHeaders = MockAxiosHeaders as any;
+  axios.AxiosError = class AxiosError extends Error {
+    constructor(message: string, code?: string, config?: any, request?: any, response?: any) {
+      super(message);
+      this.name = 'AxiosError';
+      (this as any).code = code;
+      (this as any).config = config;
+      (this as any).request = request;
+      (this as any).response = response;
+    }
+    isAxiosError = true;
+  };
+  
+  return axios;
 });
-TEMP DISABLE END */
+
+// Note: @react-native-community/accessibility doesn't exist as a package
+// AccessibilityInfo is available from react-native, which is already mocked
+// If tests need accessibility mocking, use react-native's AccessibilityInfo
+
+// Mock React Native - already mocked in jest.setup.preact-native.ts
+// Keep this comment for reference but don't mock again to avoid conflicts
 
 // Silence noisy RN timers etc. when needed
 jest.mock('react-native/Libraries/Utilities/Platform', () => ({
@@ -289,8 +421,25 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => ({
 }));
 
 // Ensure React 18 act semantics
-// @ts-ignore
-global.IS_REACT_ACT_ENVIRONMENT = true;
+// This flag tells React 18 test renderer to wrap updates in act.
+(global as any).IS_REACT_ACT_ENVIRONMENT = true;
+
+// Configure waitFor defaults for @testing-library/react-native
+// Increase timeout to handle async operations in tests
+try {
+  const rtl = require('@testing-library/react-native');
+  if (rtl && rtl.configure) {
+    rtl.configure({
+      asyncUtilTimeout: 10000, // 10 seconds default for waitFor (increased for async hooks)
+    });
+  }
+} catch (e) {
+  // @testing-library/react-native might not be available in all contexts
+  // This is safe to ignore
+}
+
+// Fetch for tests that call network
+import 'whatwg-fetch';
 
 // Polyfill TextEncoder/TextDecoder for Node environment
 const { TextEncoder, TextDecoder } = require('util') as any;
@@ -298,17 +447,31 @@ global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 // Deterministic time + timers
-jest.useFakeTimers({ legacyFakeTimers: false });
-jest.setSystemTime(new Date('2024-01-01T00:00:00Z') as unknown as number);
-// Deterministic RNG (override in tests if needed)
-const fixedRandom = () => 0.421337;
-Math.random = fixedRandom;
+// Set timezone to UTC for deterministic tests
+process.env.TZ = process.env.TZ || 'UTC';
+
+// Use fake timers for deterministic test execution
+// Only use fake timers if explicitly requested by tests
+// This prevents issues with async operations and waitFor
+// Individual tests can call jest.useFakeTimers() if needed
+// jest.useFakeTimers({ legacyFakeTimers: false });
+// jest.setSystemTime(new Date('2024-01-01T00:00:00Z') as unknown as number);
+
+// Deterministic RNG using seeded random number generator
+// This matches the seeded RNG pattern: Linear Congruential Generator
+const seed = Number(process.env['TEST_SEED'] || 1337);
+let s = seed;
+Math.random = () => {
+  // LCG: (a * seed + c) mod m
+  // Using constants from Numerical Recipes
+  s = (s * 16807) % 2147483647;
+  return s / 2147483647;
+};
 
 // RN Reanimated comprehensive mock - SINGLE SOURCE OF TRUTH
 // All test files should use this mock from jest.setup.ts
 // Do not add Reanimated mocks in individual test files
 jest.mock('react-native-reanimated', () => {
-  const React = require('react');
   
   // Create a complete mock without using the broken official mock
   const mockReanimated = {
@@ -408,10 +571,57 @@ jest.mock('expo-font', () => ({
   },
 }));
 
-// Mock @react-native-async-storage/async-storage
-jest.mock('@react-native-async-storage/async-storage', () =>
-  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
-);
+// Mock @react-native-async-storage/async-storage with deterministic behavior
+// Create a shared storage state that persists across mock calls but resets per test
+const createAsyncStorageMock = () => {
+  const storage: Record<string, string> = {};
+  
+  const mock = {
+    getItem: jest.fn((key: string) => {
+      return Promise.resolve(storage[key] || null);
+    }),
+    setItem: jest.fn((key: string, value: string) => {
+      storage[key] = value;
+      return Promise.resolve();
+    }),
+    removeItem: jest.fn((key: string) => {
+      delete storage[key];
+      return Promise.resolve();
+    }),
+    getAllKeys: jest.fn(() => {
+      return Promise.resolve(Object.keys(storage));
+    }),
+    multiGet: jest.fn((keys: string[]) => {
+      return Promise.resolve(keys.map(key => [key, storage[key] || null]));
+    }),
+    multiSet: jest.fn((entries: Array<[string, string]>) => {
+      entries.forEach(([key, value]) => {
+        storage[key] = value;
+      });
+      return Promise.resolve();
+    }),
+    multiRemove: jest.fn((keys: string[]) => {
+      keys.forEach(key => delete storage[key]);
+      return Promise.resolve();
+    }),
+    clear: jest.fn(() => {
+      Object.keys(storage).forEach(key => delete storage[key]);
+      return Promise.resolve();
+    }),
+    // Expose storage and cleanup for test management
+    __storage: storage,
+    __clear: () => {
+      Object.keys(storage).forEach(key => delete storage[key]);
+    },
+  };
+  
+  return mock;
+};
+
+// Rename to mockAsyncStorage (with "mock" prefix) so Jest allows it in jest.mock() factory
+const mockAsyncStorage = createAsyncStorageMock();
+
+jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
 
 // Mock @react-native-community/netinfo
 jest.mock('@react-native-community/netinfo', () => {
@@ -728,25 +938,6 @@ jest.mock('react-native-encrypted-storage', () => ({
   getAllKeys: jest.fn(),
 }));
 
-// Mock logger with all required methods
-jest.mock('@pawfectmatch/core', () => ({
-  ...jest.requireActual('@pawfectmatch/core'),
-  logger: {
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    debug: jest.fn(),
-    security: jest.fn(),
-    trackFeature: jest.fn(),
-    bufferOfflineLog: jest.fn().mockResolvedValue(undefined),
-    flushOfflineLogs: jest.fn().mockResolvedValue(undefined),
-    setUserInfo: jest.fn(),
-    clearUserInfo: jest.fn(),
-    getSessionId: jest.fn().mockReturnValue('test-session'),
-    destroy: jest.fn(),
-  },
-}));
-
 jest.mock('react-native-linear-gradient', () => 'LinearGradient');
 
 // Mock @react-native-masked-view/masked-view (required by react-navigation)
@@ -754,16 +945,15 @@ jest.mock('@react-native-masked-view/masked-view', () => {
   const React = require('react');
   const { View } = require('react-native');
   return {
-    default: React.forwardRef((props: any, ref: any) => React.createElement(View, { ...props, ref })),
+    default: React.forwardRef((props: any, ref: any) => React.createElement(View, { ...props, ref })) as any,
   };
 });
 
 // Mock react-navigation/elements native view manager
 jest.mock('@react-navigation/elements', () => {
-  const React = require('react');
   const { View } = require('react-native');
   return {
-    ...jest.requireActual('@react-navigation/elements'),
+    ...((jest as any).requireActual('@react-navigation/elements') || {}),
     MaskedView: View,
     MaskedViewNative: {
       getViewManagerConfig: jest.fn(() => ({})),
@@ -771,38 +961,178 @@ jest.mock('@react-navigation/elements', () => {
   };
 });
 
-// Navigation helpers (only if you have tests relying on navigation)
+// Navigation helpers - use jest.fn() so tests can call mockReturnValue
 jest.mock('@react-navigation/native', () => {
   const actual = jest.requireActual('@react-navigation/native') as typeof import('@react-navigation/native');
+  const mockNavigate = jest.fn();
+  const mockGoBack = jest.fn();
+  const mockDispatch = jest.fn();
+  const mockReset = jest.fn();
+  const mockSetOptions = jest.fn();
+  const mockAddListener = jest.fn(() => () => {});
+  const mockRemoveListener = jest.fn();
+  const mockUseIsFocused = jest.fn(() => true);
+  const mockUseNavigationState = jest.fn(() => null);
+  
+  // Create a navigation ref for testing
+  const navigationRef = {
+    current: {
+      navigate: mockNavigate,
+      goBack: mockGoBack,
+      dispatch: mockDispatch,
+      reset: mockReset,
+      setOptions: mockSetOptions,
+      addListener: mockAddListener,
+      removeListener: mockRemoveListener,
+      canGoBack: jest.fn(() => true),
+      getParent: jest.fn(),
+      getState: jest.fn(() => ({})),
+      isFocused: jest.fn(() => true),
+      getId: jest.fn(() => 'test-navigation-id'),
+      getRootState: jest.fn(() => ({})),
+    },
+  };
+  
   return {
     ...actual,
-    useNavigation: () => ({ navigate: jest.fn(), goBack: jest.fn(), dispatch: jest.fn() }),
-  } as typeof import('@react-navigation/native');
+    useNavigation: jest.fn(() => navigationRef.current),
+    useNavigationState: mockUseNavigationState,
+    useIsFocused: mockUseIsFocused,
+    useRoute: jest.fn(() => ({
+      name: 'TestScreen',
+      key: 'test-key',
+      params: {},
+      path: '/test',
+    })),
+    useFocusEffect: jest.fn((callback: any) => {
+      // Execute callback immediately and on focus
+      if (typeof callback === 'function') {
+        callback();
+      }
+      return () => {}; // Return cleanup function
+    }),
+    NavigationContainer: ({ children }: any) => children,
+    useNavigationContainerRef: jest.fn(() => navigationRef),
+    createNavigationContainerRef: jest.fn(() => navigationRef),
+    // Expose mocks for test customization
+    __mockNavigate: mockNavigate,
+    __mockGoBack: mockGoBack,
+    __mockDispatch: mockDispatch,
+    __mockReset: mockReset,
+  } as unknown as typeof import('@react-navigation/native');
+});
+
+// Mock @react-navigation/stack
+jest.mock('@react-navigation/stack', () => {
+  const React = require('react');
+  return {
+    createStackNavigator: jest.fn(() => ({
+      Navigator: ({ children }: any) => React.createElement(React.Fragment, null, children),
+      Screen: ({ children }: any) => children || null,
+    })),
+    CardStyleInterpolators: {
+      forHorizontalIOS: jest.fn(),
+      forVerticalIOS: jest.fn(),
+      forModalPresentationIOS: jest.fn(),
+    },
+    TransitionPresets: {
+      SlideFromRightIOS: {},
+      ModalSlideFromBottomIOS: {},
+      ModalPresentationIOS: {},
+    },
+    HeaderStyleInterpolators: {
+      forUIKit: jest.fn(),
+    },
+  };
+});
+
+// Mock @react-navigation/bottom-tabs
+jest.mock('@react-navigation/bottom-tabs', () => {
+  const React = require('react');
+  return {
+    createBottomTabNavigator: jest.fn(() => ({
+      Navigator: ({ children }: any) => React.createElement(React.Fragment, null, children),
+      Screen: ({ children }: any) => children || null,
+    })),
+  };
+});
+
+// Mock @react-navigation/native-stack
+jest.mock('@react-navigation/native-stack', () => {
+  const React = require('react');
+  return {
+    createNativeStackNavigator: jest.fn(() => ({
+      Navigator: ({ children }: any) => React.createElement(React.Fragment, null, children),
+      Screen: ({ children }: any) => children || null,
+    })),
+  };
 });
 
 // Global test utilities
-global.__DEV__ = true;
+(global as any).__DEV__ = true;
 
 // Silence console warnings in tests unless debugging
-if (!process.env.DEBUG_TESTS) {
+if (!process.env['DEBUG_TESTS']) {
   console.warn = jest.fn();
   console.error = jest.fn();
 }
 
 // Mock fetch for API calls
-global.fetch = jest.fn();
+(global as any).fetch = jest.fn(() => 
+  Promise.resolve({
+    ok: true,
+    status: 200,
+    statusText: 'OK',
+    json: () => Promise.resolve({}),
+    text: () => Promise.resolve(''),
+    blob: () => Promise.resolve(new Blob()),
+  } as Response)
+) as any;
+
+// Mock socket.io-client with a basic mock that tests can override
+jest.mock('socket.io-client', () => {
+  const mockSocket = {
+    on: jest.fn(),
+    emit: jest.fn(),
+    off: jest.fn(),
+    removeAllListeners: jest.fn(),
+    connect: jest.fn(),
+    disconnect: jest.fn(),
+    close: jest.fn(),
+    id: 'test-socket-id',
+    connected: true,
+    disconnected: false,
+    auth: {},
+    io: {
+      uri: 'http://localhost:3001',
+    },
+  };
+  
+  const io = jest.fn(() => mockSocket);
+  
+  return {
+    io,
+    Socket: jest.fn(),
+  };
+});
 
 // Setup test environment
 beforeEach(() => {
-  jest.clearAllMocks();
+  (jest as any).clearAllMocks();
+  // Reset AsyncStorage mock state to ensure clean state per test
+  const asyncStorageMock = require('@react-native-async-storage/async-storage');
+  if (asyncStorageMock && asyncStorageMock.__clear) {
+    asyncStorageMock.__clear();
+  }
 });
 
 // Ensure async operations complete before tests finish
 afterEach(() => {
-  // Clear any pending timers (using fake timers)
-  jest.clearAllTimers();
-  // Note: Real async operations should be awaited in tests
-  // Fake timers are used, so setTimeout won't work here
+  // Clear any pending timers if fake timers are in use
+  if (jest.isMockFunction(setTimeout)) {
+    jest.clearAllTimers();
+  }
+  // Note: Async cleanup should be handled in individual tests if needed
 });
 
 // Extend expect with React Native matchers after all mocks are set up

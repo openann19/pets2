@@ -104,7 +104,52 @@ export const deleteUserAccount = async (userId: string): Promise<DeletionJobResu
     logger.info(`Deleted ${notificationsDeleted.deletedCount} notifications for user ${userId}`);
 
     // 6. Delete user preferences and other user-specific data
-    // TODO: Add other models as needed
+    const NotificationPreference = (await import('../models/NotificationPreference')).default;
+    const NotificationPreferenceDeleted = await NotificationPreference.deleteMany(
+      { userId },
+      { session }
+    );
+    logger.info(`Deleted ${NotificationPreferenceDeleted.deletedCount} notification preferences for user ${userId}`);
+
+    // Delete gifts sent/received
+    const Gift = (await import('../models/Gift')).default;
+    const giftsDeleted = await Gift.deleteMany(
+      { $or: [{ senderId: userId }, { recipientId: userId }] },
+      { session }
+    );
+    logger.info(`Deleted ${giftsDeleted.deletedCount} gifts for user ${userId}`);
+
+    // Delete favorites
+    const Favorite = (await import('../models/Favorite')).default;
+    const favoritesDeleted = await Favorite.deleteMany(
+      { userId },
+      { session }
+    );
+    logger.info(`Deleted ${favoritesDeleted.deletedCount} favorites for user ${userId}`);
+
+    // Delete blocks
+    const UserBlock = (await import('../models/UserBlock')).default;
+    const blocksDeleted = await UserBlock.deleteMany(
+      { $or: [{ blockerId: userId }, { blockedId: userId }] },
+      { session }
+    );
+    logger.info(`Deleted ${blocksDeleted.deletedCount} blocks for user ${userId}`);
+
+    // Delete mutes
+    const UserMute = (await import('../models/UserMute')).default;
+    const mutesDeleted = await UserMute.deleteMany(
+      { $or: [{ muterId: userId }, { mutedId: userId }] },
+      { session }
+    );
+    logger.info(`Deleted ${mutesDeleted.deletedCount} mutes for user ${userId}`);
+
+    // Delete verification records
+    const Verification = (await import('../models/Verification')).default;
+    const verificationsDeleted = await Verification.deleteMany(
+      { userId },
+      { session }
+    );
+    logger.info(`Deleted ${verificationsDeleted.deletedCount} verifications for user ${userId}`);
     
     // 7. Update user to mark deletion as completed
     const user = await User.findById(userId);

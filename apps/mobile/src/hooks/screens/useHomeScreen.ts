@@ -13,22 +13,9 @@ import { telemetry } from '../../lib/telemetry';
 import { useDemoMode } from '../../demo/DemoModeProvider';
 import type { HomeQuickActionEventPayload } from '../../constants/events';
 
+import type { Stats, RecentActivityItem } from './types';
+
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
-interface Stats {
-  matches: number;
-  messages: number;
-  pets: number;
-}
-
-export interface RecentActivityItem {
-  id: string;
-  type: 'match' | 'message';
-  title: string;
-  description: string;
-  timestamp: string; // ISO string
-  timeAgo: string; // "2m ago", "5m ago"
-}
 
 interface UseHomeScreenReturn {
   stats: Stats;

@@ -286,6 +286,29 @@ export const useChatScreen = ({
 
   // Call handlers
   const handleVoiceCall = useCallback(async () => {
+    // Video/voice calls are Premium+ feature - Business Model
+    const { usePremiumStatus } = await import('../../hooks/domains/premium/usePremiumStatus');
+    const { isPremium, plan } = usePremiumStatus();
+    
+    const hasVoiceCalls = isPremium && (plan === 'premium' || plan === 'ultimate');
+    
+    if (!hasVoiceCalls) {
+      Alert.alert(
+        'Premium Feature',
+        'Voice Calls are available with PawfectMatch Premium ($9.99/month). Upgrade to unlock calling.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'View Premium',
+            onPress: () => {
+              navigation.navigate('Premium');
+            },
+          },
+        ]
+      );
+      return;
+    }
+    
     Alert.alert('Voice Call', `Start a voice call with ${petName}?`, [
       { text: 'Cancel', style: 'cancel' },
       {
@@ -309,9 +332,32 @@ export const useChatScreen = ({
         },
       },
     ]);
-  }, [matchId, petName]);
+  }, [matchId, petName, navigation]);
 
   const handleVideoCall = useCallback(async () => {
+    // Check premium status - Video calls are Premium+ feature
+    const { usePremiumStatus } = await import('../../hooks/domains/premium/usePremiumStatus');
+    const { isPremium, plan } = usePremiumStatus();
+    
+    const hasVideoCalls = isPremium && (plan === 'premium' || plan === 'ultimate');
+    
+    if (!hasVideoCalls) {
+      Alert.alert(
+        'Premium Feature',
+        'Video Calls are available with PawfectMatch Premium ($9.99/month). Upgrade to unlock video calling.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'View Premium',
+            onPress: () => {
+              navigation.navigate('Premium');
+            },
+          },
+        ]
+      );
+      return;
+    }
+    
     Alert.alert('Video Call', `Start a video call with ${petName}?`, [
       { text: 'Cancel', style: 'cancel' },
       {
@@ -335,7 +381,7 @@ export const useChatScreen = ({
         },
       },
     ]);
-  }, [matchId, petName]);
+  }, [matchId, petName, navigation]);
 
   const handleMoreOptions = useCallback(() => {
     Alert.alert(

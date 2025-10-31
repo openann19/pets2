@@ -3,6 +3,8 @@
  * Minimal setup loaded for all tests
  */
 
+import { beforeEach, afterEach } from '@jest/globals';
+
 // Polyfill for TextEncoder/TextDecoder (Node.js 18+ has it built-in, but Jest may not)
 global.TextEncoder = global.TextEncoder || require('util').TextEncoder;
 global.TextDecoder = global.TextDecoder || require('util').TextDecoder;
@@ -15,7 +17,7 @@ global.TextDecoder = global.TextDecoder || require('util').TextDecoder;
 (global as any).Platform = {
   OS: 'ios',
   Version: '14.0',
-  select: jest.fn((obj) => obj.ios || obj.default),
+  select: jest.fn((obj: any) => obj.ios || obj.default),
   isTV: false,
   isTesting: true,
 };
@@ -59,7 +61,7 @@ if (typeof module !== 'undefined') {
 let testStartMemory: number | null = null;
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  (jest as any).clearAllMocks();
   
   // Track memory usage at test start (if available)
   if ((global as any).gc) {
@@ -73,10 +75,11 @@ afterEach(() => {
   try {
     // Only check timers if fake timers are active
     // This check avoids errors when tests use real timers
-    if (jest.isMockFunction(setTimeout) || jest.isMockFunction(setInterval)) {
-      const timerCount = jest.getTimerCount();
+    const jestGlobals = jest as any;
+    if (jestGlobals.isMockFunction(setTimeout) || jestGlobals.isMockFunction(setInterval)) {
+      const timerCount = jestGlobals.getTimerCount?.();
       if (timerCount > 0) {
-        jest.runOnlyPendingTimers();
+        jestGlobals.runOnlyPendingTimers();
       }
     }
   } catch (e) {
@@ -84,14 +87,14 @@ afterEach(() => {
   }
   
   // Clear all timers
-  jest.clearAllTimers();
+  (jest as any).clearAllTimers();
   
   // Clear all mocks
-  jest.clearAllMocks();
+  (jest as any).clearAllMocks();
   
   // Always restore real timers to prevent leakage
   try {
-    jest.useRealTimers();
+    (jest as any).useRealTimers?.();
   } catch (e) {
     // Timer may not be mocked, ignore
   }

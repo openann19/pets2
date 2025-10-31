@@ -8,7 +8,8 @@ import { useState, useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Alert, ScrollView } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/theme';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import type { GeneratedBio } from '../../hooks/useAIBio';
 
 interface BioResultsProps {
@@ -18,7 +19,7 @@ interface BioResultsProps {
 }
 
 export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsProps) {
-  const theme = useTheme();
+  const theme: AppTheme = useTheme();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -59,8 +60,8 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
           padding: theme.spacing.lg,
         },
         sectionTitle: {
-          fontSize: theme.typography.fontSize['2xl'],
-          fontWeight: theme.typography.fontWeight.bold,
+          fontSize: theme.typography.h2.size,
+          fontWeight: theme.typography.h2.weight,
           color: theme.colors.onSurface,
           marginBottom: theme.spacing.xl,
         },
@@ -79,9 +80,9 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
           maxHeight: 200,
         },
         bioText: {
-          fontSize: theme.typography.fontSize.base,
+          fontSize: theme.typography.body.size,
           color: theme.colors.onSurface,
-          lineHeight: theme.typography.lineHeight.relaxed,
+          lineHeight: theme.typography.body.lineHeight,
         },
         actionButtons: {
           flexDirection: 'row',
@@ -98,10 +99,10 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
           borderRadius: theme.radii.md,
         },
         actionText: {
-          fontSize: theme.typography.fontSize.sm,
+          fontSize: theme.typography.body.size * 0.875,
           color: theme.colors.onSurface,
           marginLeft: theme.spacing.xs,
-          fontWeight: theme.typography.fontWeight.medium,
+          fontWeight: theme.typography.h2.weight,
         },
         analysisContainer: {
           backgroundColor: theme.colors.surface,
@@ -109,8 +110,8 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
           padding: theme.spacing.lg,
         },
         analysisTitle: {
-          fontSize: theme.typography.fontSize.xl,
-          fontWeight: theme.typography.fontWeight.semibold,
+          fontSize: theme.typography.h2.size,
+          fontWeight: theme.typography.h2.weight,
           color: theme.colors.onSurface,
           marginBottom: theme.spacing.lg,
         },
@@ -127,17 +128,17 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
           alignItems: 'center',
         },
         metricLabel: {
-          fontSize: theme.typography.fontSize.sm,
+          fontSize: theme.typography.body.size * 0.75,
           color: theme.colors.onMuted,
           marginBottom: theme.spacing.xs,
         },
         metricValue: {
-          fontSize: theme.typography.fontSize['2xl'],
-          fontWeight: theme.typography.fontWeight.bold,
+          fontSize: theme.typography.h2.size,
+          fontWeight: theme.typography.h1.weight,
           marginBottom: theme.spacing.xs,
         },
         metricSubtext: {
-          fontSize: theme.typography.fontSize.xs,
+          fontSize: theme.typography.body.size * 0.75,
           color: theme.colors.onMuted,
         },
         progressBar: {
@@ -157,8 +158,8 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
           paddingTop: theme.spacing.lg,
         },
         keywordsTitle: {
-          fontSize: theme.typography.fontSize.base,
-          fontWeight: theme.typography.fontWeight.semibold,
+          fontSize: theme.typography.body.size,
+          fontWeight: theme.typography.h2.weight,
           color: theme.colors.onSurface,
           marginBottom: theme.spacing.md,
         },
@@ -174,9 +175,9 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
           paddingVertical: theme.spacing.xs,
         },
         keywordText: {
-          fontSize: theme.typography.fontSize.sm,
-          color: theme.colors.onPrimary,
-          fontWeight: theme.typography.fontWeight.medium,
+          fontSize: theme.typography.body.size * 0.75,
+          color: theme.colors.bg,
+          fontWeight: theme.typography.h2.weight,
         },
       }),
     [theme],

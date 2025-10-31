@@ -1,0 +1,43 @@
+id: animation-phase-3-shared-elements
+owner: animation-team
+severity: critical
+area: mobile
+context: |
+  react-native-shared-element is installed but underutilized. Need hero animations for pet card → detail screen,
+  image → full screen viewer. This is critical UX polish that matches top-tier apps.
+acceptance:
+  - SharedElementTransition component created
+  - Navigation transitions configured
+  - Image prefetching implemented
+  - Interrupted gesture handling
+  - Works on iOS + Android
+  - Reduced motion fallback
+  - E2E tests for golden paths
+  - Performance: 60fps transitions
+states:
+  - planning
+  - implementation
+  - testing
+  - complete
+telemetry:
+  - event: SHARED_ELEMENT_TRANSITION_STARTED
+    props: [fromScreen, toScreen, elementId]
+contracts:
+  request: { elementId: string, fromScreen: string, toScreen: string }
+  response: { transitionComplete: boolean }
+assets:
+  tests:
+    - apps/mobile/src/components/transitions/__tests__/SharedElementTransition.test.tsx
+    - apps/mobile/e2e/shared-element.e2e.ts
+risks:
+  - Navigation cancellation edge cases
+  - Performance on Android
+  - Image loading failures
+rollback:
+  - Disable shared element transitions
+  - Fallback to standard navigation
+links:
+  - ANIMATION_ENHANCEMENT_PLAN.md (Phase 3)
+status: open
+priority: critical
+

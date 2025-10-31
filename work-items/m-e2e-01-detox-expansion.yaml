@@ -1,0 +1,88 @@
+id: m-e2e-01-detox-expansion
+owner: e2e
+severity: critical
+area: mobile
+status: open
+context: |
+  Detox tests only cover 2 basic flows. Onboarding and purchase flows are not tested.
+  Current behavior: Critical user journeys untested, release blockers may go undetected.
+  Why it matters: Risk of shipping broken features, poor user experience, app store rejections.
+  
+  Use Case:
+  1. New user downloads app
+  2. Onboarding flow breaks
+  3. User cannot complete registration
+  4. No E2E test caught it
+  5. App rejected from store or poor reviews
+
+acceptance:
+  - [ ] Detox E2E: Complete onboarding wizard flow
+  - [ ] Detox E2E: Premium checkout flow (Stripe test mode)
+  - [ ] Detox E2E: Create pet profile flow
+  - [ ] Detox E2E: Match → Chat flow
+  - [ ] Detox E2E: Settings → Account deletion flow
+  - [ ] Detox E2E: Push notification → Open chat
+  - [ ] Detox E2E: Offline swipe → Sync when online
+  - [ ] Detox E2E: Deep link → Open pet profile
+  - [ ] All E2E tests pass on iOS simulator
+  - [ ] All E2E tests pass on Android emulator
+  - [ ] E2E tests run in CI/CD pipeline
+
+states:
+  - basic-only
+  - onboarding-added
+  - purchase-added
+  - complete
+
+telemetry:
+  - event: E2E_TEST_EXECUTED
+    props: [testName, platform, duration, passed, timestamp]
+  - event: E2E_TEST_FAILED
+    props: [testName, platform, error, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  tests:
+    - e2e/onboarding.e2e.ts
+    - e2e/premium-checkout.e2e.ts
+    - e2e/create-pet.e2e.ts
+    - e2e/match-chat.e2e.ts
+    - e2e/settings-delete.e2e.ts
+    - e2e/push-notification.e2e.ts
+    - e2e/offline-sync.e2e.ts
+    - e2e/deeplink.e2e.ts
+  configs:
+    - apps/mobile/detox.config.cjs
+    - apps/mobile/.detoxrc.js
+
+risks:
+  - Flaky tests causing CI failures
+  - Tests may be slow
+  - Device/emulator availability in CI
+  - Test data management complexity
+  - Stripe test mode configuration
+
+rollback:
+  - Disable failing tests temporarily
+  - Revert to basic test suite
+
+links:
+  - docs: https://wix.github.io/Detox/
+  - docs: apps/mobile/e2e/README.md
+
+dependencies:
+  - Detox setup complete
+  - iOS and Android simulators/emulators
+  - Stripe test mode keys
+  - Mock server for E2E
+
+timeline:
+  start: 2025-01-30
+  onboarding: 2025-02-01
+  purchase: 2025-02-02
+  additional: 2025-02-03
+  ci-integration: 2025-02-04
+  deploy: 2025-02-05
+

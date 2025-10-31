@@ -26,14 +26,14 @@ import type { AdminScreenProps } from '../../navigation/types';
 import { useTheme } from '@mobile/theme';
 import type { AppTheme } from '@mobile/theme';
 
-function __makeStyles_styles(theme: AppTheme) {
+function makeStyles(theme: AppTheme) {
   return StyleSheet.create({
     container: {
       flex: 1,
     },
     scrollView: {
       flex: 1,
-      paddingHorizontal: 16,
+      paddingHorizontal: theme.spacing.md,
     },
     loadingContainer: {
       flex: 1,
@@ -41,29 +41,29 @@ function __makeStyles_styles(theme: AppTheme) {
       alignItems: 'center',
     },
     loadingText: {
-      marginTop: 16,
-      fontSize: 16,
-      fontWeight: '500',
+      marginTop: theme.spacing.md,
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.body.weight,
     },
     header: {
-      paddingVertical: 24,
-      paddingHorizontal: 4,
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.xs,
     },
     title: {
-      fontSize: 28,
-      fontWeight: 'bold',
-      marginBottom: 4,
+      fontSize: theme.typography.h1.size,
+      fontWeight: theme.typography.h1.weight,
+      marginBottom: theme.spacing.xs,
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: theme.typography.body.size,
     },
     section: {
-      marginBottom: 24,
+      marginBottom: theme.spacing.lg,
     },
     sectionTitle: {
-      fontSize: 20,
-      fontWeight: '600',
-      marginBottom: 16,
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.md,
     },
   });
 }
@@ -72,8 +72,7 @@ export default function AdminDashboardScreen({
   navigation,
 }: AdminScreenProps<'AdminDashboard'>): React.JSX.Element {
   const theme = useTheme();
-  const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
-  const { colors, palette } = theme;
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { user } = useAuthStore();
   const { stats, systemHealth, loading, refreshing, onRefresh } = useAdminDashboard();
 
@@ -114,13 +113,13 @@ export default function AdminDashboardScreen({
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator
             size="large"
-            color={colors.primary}
+            color={theme.colors.primary}
           />
-          <Text style={[styles.loadingText, { color: colors.onSurface }]}>
+          <Text style={[styles.loadingText, { color: theme.colors.onSurface }]}>
             Loading dashboard...
           </Text>
         </View>
@@ -129,21 +128,21 @@ export default function AdminDashboardScreen({
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]}>
       <ScrollView
         style={styles.scrollView}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={colors.primary}
+            tintColor={theme.colors.primary}
           />
         }
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.onSurface }]}>Admin Dashboard</Text>
-          <Text style={[styles.subtitle, { color: colors.onMuted }]}>
+          <Text style={[styles.title, { color: theme.colors.onSurface }]}>Admin Dashboard</Text>
+          <Text style={[styles.subtitle, { color: theme.colors.onMuted }]}>
             Welcome, {user?.firstName} {user?.lastName}
           </Text>
         </View>
@@ -151,7 +150,7 @@ export default function AdminDashboardScreen({
         {/* Dashboard Metrics */}
         {stats && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Overview</Text>
+            <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>Overview</Text>
             <DashboardMetricsSection stats={stats} />
           </View>
         )}
@@ -159,7 +158,7 @@ export default function AdminDashboardScreen({
         {/* System Health */}
         {systemHealth && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>System Status</Text>
+            <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>System Status</Text>
             <SystemHealthSection health={systemHealth} />
           </View>
         )}

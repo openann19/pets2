@@ -1,5 +1,6 @@
 import { logger, useAuthStore } from '@pawfectmatch/core';
 import { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 
 import { _adminAPI as adminAPI } from '../../../../services/api';
 
@@ -80,6 +81,7 @@ export const useAdminBilling = () => {
       setMetrics(metricsResponse.data as BillingMetrics);
     } catch (error: unknown) {
       logger.error('Error loading billing data:', { error });
+      Alert.alert('Error', 'Failed to load billing data');
     } finally {
       setLoading(false);
     }
@@ -106,30 +108,63 @@ export const useAdminBilling = () => {
   };
 
   const handleCancelSubscription = async (subscriptionId: string): Promise<void> => {
-    try {
-      setActionLoading(subscriptionId);
-      await adminAPI.cancelSubscription({ userId: subscriptionId });
-      await loadBillingData();
-    } catch (error: unknown) {
-      logger.error('Error canceling subscription:', { error });
-    } finally {
-      setActionLoading(null);
-    }
+    Alert.alert('Cancel Subscription', 'Are you sure you want to cancel this subscription?', [
+      { text: 'No', style: 'cancel' },
+      {
+        text: 'Yes',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            setActionLoading(subscriptionId);
+            const response = await adminAPI.cancelSubscription({ userId: subscriptionId });
+
+            if (response.success) {
+              setSubscriptions((prevSubs) =>
+                prevSubs.map((sub) =>
+                  sub.id === subscriptionId ? { ...sub, cancelAtPeriodEnd: true } : sub,
+                ),
+              );
+              Alert.alert('Success', 'Subscription canceled successfully');
+              await loadBillingData();
+            } else {
+              throw new Error(response.message || 'Failed to cancel subscription');
+            }
+          } catch (error: unknown) {
+            logger.error('Error canceling subscription:', { error });
+            Alert.alert('Error', 'Failed to cancel subscription');
+          } finally {
+            setActionLoading(null);
+          }
+        },
+      },
+    ]);
   };
 
   const handleReactivateSubscription = async (subscriptionId: string): Promise<void> => {
     try {
       setActionLoading(subscriptionId);
-      await adminAPI.reactivateSubscription({ userId: subscriptionId });
-      await loadBillingData();
+      const response = await adminAPI.reactivateSubscription({ userId: subscriptionId });
+
+      if (response.success) {
+        setSubscriptions((prevSubs) =>
+          prevSubs.map((sub) =>
+            sub.id === subscriptionId ? { ...sub, cancelAtPeriodEnd: false } : sub,
+          ),
+        );
+        Alert.alert('Success', 'Subscription reactivated successfully');
+        await loadBillingData();
+      } else {
+        throw new Error(response.message || 'Failed to reactivate subscription');
+      }
     } catch (error: unknown) {
       logger.error('Error reactivating subscription:', { error });
+      Alert.alert('Error', 'Failed to reactivate subscription');
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleRefundPayment = async (subscriptionId: string, paymentId: string): Promise<void> => {
+  const handleRefundPayment = async (_subscriptionId: string, paymentId: string): Promise<void> => {
     try {
       setActionLoading(paymentId);
       // TODO: Implement refundPayment API

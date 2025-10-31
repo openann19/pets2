@@ -250,14 +250,14 @@ class SubscriptionAnalyticsService {
         }
 
         // Group by plan
-        const planName = this.getPlanName(subscription.items.data[0].price.id);
+        const planName = this.getPlanName(subscription.items.data[0]?.price?.id || '');
         subscriptionsByPlan[planName] = (subscriptionsByPlan[planName] || 0) + 1;
 
         // Group by status
         subscriptionsByStatus[subscription.status] = (subscriptionsByStatus[subscription.status] || 0) + 1;
 
         // Group by interval
-        const interval = subscription.items.data[0].price.recurring?.interval || 'unknown';
+        const interval = subscription.items.data[0]?.price?.recurring?.interval || 'unknown';
         subscriptionsByInterval[interval] = (subscriptionsByInterval[interval] || 0) + 1;
       }
 
@@ -504,12 +504,12 @@ class SubscriptionAnalyticsService {
   private getPlanName(priceId: string): string {
     // Map Stripe price IDs to plan names
     const planMap: Record<string, string> = {
-      [process.env.STRIPE_BASIC_MONTHLY_PRICE_ID!]: 'Basic',
-      [process.env.STRIPE_BASIC_YEARLY_PRICE_ID!]: 'Basic',
-      [process.env.STRIPE_PREMIUM_MONTHLY_PRICE_ID!]: 'Premium',
-      [process.env.STRIPE_PREMIUM_YEARLY_PRICE_ID!]: 'Premium',
-      [process.env.STRIPE_ULTIMATE_MONTHLY_PRICE_ID!]: 'Ultimate',
-      [process.env.STRIPE_ULTIMATE_YEARLY_PRICE_ID!]: 'Ultimate'
+      [process.env.STRIPE_BASIC_MONTHLY_PRICE_ID || '']: 'Basic',
+      [process.env.STRIPE_BASIC_YEARLY_PRICE_ID || '']: 'Basic',
+      [process.env.STRIPE_PREMIUM_MONTHLY_PRICE_ID || '']: 'Premium',
+      [process.env.STRIPE_PREMIUM_YEARLY_PRICE_ID || '']: 'Premium',
+      [process.env.STRIPE_ULTIMATE_MONTHLY_PRICE_ID || '']: 'Ultimate',
+      [process.env.STRIPE_ULTIMATE_YEARLY_PRICE_ID || '']: 'Ultimate'
     };
 
     return planMap[priceId] || 'Unknown';

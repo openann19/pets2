@@ -50,11 +50,11 @@ module.exports = [
     },
     rules: {
       // --- Start with the strictest recommended rule sets ---
-      ...typescriptPlugin.configs['strict-type-checked'].rules,
-      ...reactPlugin.configs.recommended.rules,
-      ...reactPlugin.configs['jsx-runtime'].rules,
-      ...reactHooksPlugin.configs.recommended.rules,
-      ...nextPlugin.configs['core-web-vitals'].rules,
+      ...(typescriptPlugin.configs['strict-type-checked']?.rules || {}),
+      ...(reactPlugin.configs.recommended?.rules || {}),
+      ...(reactPlugin.configs['jsx-runtime']?.rules || {}),
+      ...(reactHooksPlugin.configs.recommended?.rules || {}),
+      ...(nextPlugin.configs['core-web-vitals']?.rules || {}),
 
       // --- Customize and enforce ZERO-TOLERANCE rules ---
       

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../theme/Provider';
 import PreCallDeviceCheckService from '../../services/PreCallDeviceCheck';
@@ -58,7 +58,7 @@ export default function PreCallCheck({
         networkDetails: {
           type: checkResult.network.type,
           quality: checkResult.network.quality,
-          bandwidth: checkResult.network.bandwidth,
+          ...(checkResult.network.bandwidth !== undefined && { bandwidth: checkResult.network.bandwidth }),
           speedTestCompleted: checkResult.network.bandwidth !== undefined,
         },
       });
@@ -132,13 +132,13 @@ export default function PreCallCheck({
     title: {
       fontSize: 24,
       fontWeight: 'bold' as const,
-      color: theme.colors.text,
+      color: theme.colors.onSurface,
       marginBottom: 8,
       textAlign: 'center' as const,
     },
     subtitle: {
       fontSize: 16,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
       textAlign: 'center' as const,
     },
     checkingContainer: {
@@ -147,7 +147,7 @@ export default function PreCallCheck({
     },
     checkingText: {
       fontSize: 16,
-      color: theme.colors.text,
+      color: theme.colors.onSurface,
       marginTop: 16,
     },
     resultsContainer: {
@@ -160,7 +160,7 @@ export default function PreCallCheck({
       paddingHorizontal: 16,
       marginVertical: 4,
       borderRadius: 8,
-      backgroundColor: theme.colors.bgElevated,
+      backgroundColor: theme.colors.surface,
     },
     checkIcon: {
       marginRight: 12,
@@ -168,11 +168,11 @@ export default function PreCallCheck({
     checkText: {
       flex: 1,
       fontSize: 16,
-      color: theme.colors.text,
+      color: theme.colors.onSurface,
     },
     checkSubtext: {
       fontSize: 14,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
       marginTop: 2,
     },
     warningsContainer: {
@@ -225,7 +225,7 @@ export default function PreCallCheck({
       alignItems: 'center' as const,
     },
     primaryButtonText: {
-      color: theme.colors.primaryText,
+      color: theme.colors.onPrimary,
       fontSize: 16,
       fontWeight: 'bold' as const,
     },
@@ -239,7 +239,7 @@ export default function PreCallCheck({
       alignItems: 'center' as const,
     },
     secondaryButtonText: {
-      color: theme.colors.text,
+      color: theme.colors.onSurface,
       fontSize: 16,
     },
     dangerButton: {

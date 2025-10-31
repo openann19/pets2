@@ -282,9 +282,21 @@ class CallingTelemetryService {
    */
   private async sendToAnalytics(event: CallingEvent): Promise<void> {
     try {
-      // TODO: Implement actual analytics API call
-      // const analyticsService = getAnalyticsService();
-      // await analyticsService.trackEvent('calling', event);
+      const API_BASE_URL = process.env['EXPO_PUBLIC_API_URL'] || 'http://localhost:5000';
+      const response = await fetch(`${API_BASE_URL}/api/analytics/calling`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ event }),
+      });
+
+      if (!response.ok) {
+        logger.warn('Failed to send calling event to analytics', {
+          status: response.status,
+          eventType: event.type,
+        });
+      }
     } catch (error) {
       logger.warn('Failed to send calling event to analytics', { error });
     }

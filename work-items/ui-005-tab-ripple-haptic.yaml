@@ -1,0 +1,46 @@
+id: ui-005-tab-ripple-haptic
+owner: ux
+severity: medium
+area: mobile+navigation
+context: |
+  Bottom tab navigation lacks feedback confirming tab selection.
+  Users unsure if tap registered, especially on slow networks.
+  Add ripple animation and haptic feedback for immediate confirmation.
+acceptance:
+  - Ripple animation plays on tab press (circular expand from touch point)
+  - Haptic feedback (impact light) fires on tab switch
+  - Animation duration 200ms (motion.duration.standard)
+  - Ripple color uses theme.colors.primary with 20% opacity
+  - Works with both BottomTabNavigator and UltraTabBar
+  - Reduced motion users get haptic only
+states:
+  - idle
+  - pressing
+  - switching
+telemetry:
+  - event: TAB_SWITCH
+    props: [fromTab, toTab, hasRipple, hasHaptic, duration]
+contracts:
+  request: { tabIndex: number, tabName: string }
+  response: { switched: boolean, animationComplete: boolean }
+  errors: []
+assets:
+  navigation: [apps/mobile/src/navigation/BottomTabNavigator.tsx, apps/mobile/src/navigation/UltraTabBar.tsx]
+  components: [apps/mobile/src/components/navigation/TabRipple.tsx]
+  tests: [apps/mobile/src/navigation/__tests__/tab-feedback.test.tsx]
+risks:
+  - Ripple may conflict with existing tab animations
+  - Haptic overuse may annoy users
+rollback:
+  - Remove ripple component
+  - Remove haptic calls
+links: []
+status: open
+priority: medium
+impact: 3
+effort: S
+category: micro-interactions
+tokens:
+  - motion.duration.standard
+  - colors.primary
+estimated_hours: 3

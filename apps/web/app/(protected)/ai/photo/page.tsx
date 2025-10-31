@@ -1,123 +1,167 @@
+/**
+ * AIPhotoAnalyzerScreen - Web Version
+ * Identical to mobile AIPhotoAnalyzerScreen structure
+ */
+
 'use client';
 
-import React from 'react';
-import { PhotoAnalyzer } from '../../../../src/components/AI/PhotoAnalyzer';
+import React, { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { ScreenShell } from '@/src/components/layout/ScreenShell';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeftIcon, CameraIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
-import { ArrowLeftIcon, CameraIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
+import { logger } from '@pawfectmatch/core';
 
-export default function AiPhotoPage() {
+export default function AIPhotoPage() {
+  const router = useRouter();
+  const { t } = useTranslation('ai');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any | null>(null);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+
+  const handlePhotoSelect = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setPhotoUrl(e.target?.result as string);
+      setResult(null);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const pickPhoto = () => {
+    fileInputRef.current?.click();
+  };
+
+  const onAnalyze = async () => {
+    if (!photoUrl) return;
+    setLoading(true);
+    try {
+      // Convert data URL to blob
+      const response = await fetch('/api/ai/analyze-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photo: photoUrl }),
+      });
+      const data = await response.json();
+      setResult(data);
+    } catch (error: any) {
+      logger.error('Analysis failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-40"
-      >
-        <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/dashboard"
-              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
-              Back to Dashboard
-            </Link>
-            
-            <div className="flex items-center gap-3">
-              <div className="flex items-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                <CameraIcon className="h-4 w-4 mr-2" />
-                AI Photo Lab
+    <ScreenShell
+      header={
+        <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => router.back()}
+                  className="p-2 text-gray-600 hover:text-gray-800"
+                  aria-label="Back"
+                >
+                  <ArrowLeftIcon className="w-5 h-5" />
+                </button>
+                <h1 className="text-xl font-bold text-gray-900">
+                  {t('ai_photo.title', 'AI Photo Analyzer')}
+                </h1>
               </div>
             </div>
           </div>
         </div>
-      </motion.div>
+      }
+    >
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Get insights on your pet's photos</h2>
+          <p className="text-gray-600">Upload a photo to get AI-powered analysis</p>
+        </div>
 
-      <div className="py-8">
-        <PhotoAnalyzer />
-      </div>
+        {/* Photo Upload */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handlePhotoSelect(file);
+            }}
+            className="hidden"
+          />
+          <div className="flex gap-4">
+            <button
+              onClick={pickPhoto}
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 transition-colors"
+            >
+              <PhotoIcon className="w-6 h-6 text-gray-600" />
+              <span className="font-medium text-gray-700">Pick from Library</span>
+            </button>
+          </div>
+          {photoUrl && (
+            <div className="mt-4">
+              <img
+                src={photoUrl}
+                alt="Pet photo"
+                className="w-full h-64 object-cover rounded-lg"
+              />
+            </div>
+          )}
+        </div>
 
-      {/* Technology Section */}
-      <div className="max-w-6xl mx-auto px-6 pb-12">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-8 text-white shadow-xl"
+        {/* Analyze Button */}
+        <button
+          onClick={onAnalyze}
+          disabled={!photoUrl || loading}
+          className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold text-lg hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
         >
-          <h2 className="text-2xl font-bold mb-6">Powered by Advanced AI</h2>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="font-semibold text-lg mb-3">🧬 Deep Learning Models</h3>
-              <ul className="space-y-2 text-sm opacity-90">
-                <li>• ResNet-152 for breed classification</li>
-                <li>• YOLO v5 for pet detection</li>
-                <li>• Vision Transformer for emotion analysis</li>
-                <li>• Custom CNN for health assessment</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold text-lg mb-3">📊 Real-time Analysis</h3>
-              <ul className="space-y-2 text-sm opacity-90">
-                <li>• Process photos in under 2 seconds</li>
-                <li>• 98.5% breed identification accuracy</li>
-                <li>• Analyze up to 10 photos simultaneously</li>
-                <li>• Privacy-first: photos processed locally</li>
-              </ul>
-            </div>
-          </div>
+          {loading ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              Analyzing...
+            </>
+          ) : (
+            <>
+              <CameraIcon className="w-5 h-5" />
+              Analyze Photo
+            </>
+          )}
+        </button>
 
-          <div className="mt-8 grid grid-cols-3 gap-4">
-            <div className="bg-white/20 backdrop-blur rounded-xl p-4 text-center">
-              <div className="text-3xl font-bold">15M+</div>
-              <p className="text-sm mt-1 opacity-90">Photos Analyzed</p>
-            </div>
-            <div className="bg-white/20 backdrop-blur rounded-xl p-4 text-center">
-              <div className="text-3xl font-bold">183</div>
-              <p className="text-sm mt-1 opacity-90">Breeds Recognized</p>
-            </div>
-            <div className="bg-white/20 backdrop-blur rounded-xl p-4 text-center">
-              <div className="text-3xl font-bold">99.2%</div>
-              <p className="text-sm mt-1 opacity-90">Uptime</p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Tips Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="mt-8 grid md:grid-cols-3 gap-6"
-        >
-          <div className="bg-white/90 backdrop-blur rounded-2xl p-6 shadow-lg">
-            <div className="text-3xl mb-3">📸</div>
-            <h3 className="font-bold text-lg mb-2">Perfect Photo Tips</h3>
-            <p className="text-gray-600 text-sm">
-              Use natural lighting, capture your pet at eye level, and ensure their full body is visible for best results.
-            </p>
-          </div>
-
-          <div className="bg-white/90 backdrop-blur rounded-2xl p-6 shadow-lg">
-            <div className="text-3xl mb-3">🎯</div>
-            <h3 className="font-bold text-lg mb-2">Boost Match Rates</h3>
-            <p className="text-gray-600 text-sm">
-              Photos with high quality scores get 3x more likes. Follow our AI recommendations to improve.
-            </p>
-          </div>
-
-          <div className="bg-white/90 backdrop-blur rounded-2xl p-6 shadow-lg">
-            <div className="text-3xl mb-3">🔒</div>
-            <h3 className="font-bold text-lg mb-2">Privacy Protected</h3>
-            <p className="text-gray-600 text-sm">
-              Your photos are encrypted and never shared. AI processing happens securely with bank-level encryption.
-            </p>
-          </div>
-        </motion.div>
+        {/* Results */}
+        {result && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4"
+          >
+            <h2 className="text-lg font-semibold text-gray-900">Analysis Results</h2>
+            {result.breed && (
+              <div>
+                <h3 className="font-medium text-gray-700 mb-1">Breed</h3>
+                <p className="text-gray-900">{result.breed}</p>
+              </div>
+            )}
+            {result.emotions && (
+              <div>
+                <h3 className="font-medium text-gray-700 mb-1">Emotions</h3>
+                <p className="text-gray-900">{result.emotions.join(', ')}</p>
+              </div>
+            )}
+            {result.health && (
+              <div>
+                <h3 className="font-medium text-gray-700 mb-1">Health Observations</h3>
+                <p className="text-gray-900">{result.health}</p>
+              </div>
+            )}
+          </motion.div>
+        )}
       </div>
-    </div>
+    </ScreenShell>
   );
 }

@@ -42,5 +42,5 @@ export { getExtendedColors, getThemeColors, getIsDark } from './adapters';
 export type { ExtendedColors } from './adapters';
 export type { ThemeColors } from './Provider';
 
-// Re-export the extended theme hook for convenience (kept for backward compatibility)
-export { useExtendedTheme, useExtendedColors } from '../hooks/useExtendedTheme';
+// Note: useExtendedTheme and useExtendedColors are available from '../hooks/useExtendedTheme'
+// Not exported here to avoid circular dependency

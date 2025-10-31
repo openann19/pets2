@@ -9,12 +9,12 @@ import Animated, {
 import { useTheme } from '../../../theme';
 import { useReduceMotion } from '../../../hooks/useReducedMotion';
 import {
-  motionDurations,
+  durations,
   motionEasing,
-  motionScale,
+  scales,
   motionOpacity,
-  motionSpring,
-} from '../../../theme/motion';
+  springs,
+} from '@/foundation/motion';
 import { Text } from './Text';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -108,15 +108,15 @@ export function Button({
 
   const handlePressIn = () => {
     if (disabled || loading || reduceMotion) return;
-    scale.value = withTiming(motionScale.pressed, {
-      duration: motionDurations.fast,
-      easing: motionEasing.decel,
+    scale.value = withTiming(scales.pressed, {
+      duration: durations.sm,
+      easing: motionEasing.enter,
     });
   };
 
   const handlePressOut = () => {
     if (disabled || loading || reduceMotion) return;
-    scale.value = withSpring(1, motionSpring.standard);
+    scale.value = withSpring(1, springs.standard);
   };
 
   const handlePress = () => {

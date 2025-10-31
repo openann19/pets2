@@ -219,15 +219,44 @@ export const recordSwipe = async (
       }
     }
 
-    // Check superlike limits for non-premium users
-    if (action === 'superlike' && !user.premium?.features?.unlimitedLikes) {
-      if ((user.premium?.usage?.superLikesUsed || 0) >= (user.premium?.usage?.superLikesLimit || 0)) {
-        res.status(403).json({
-          success: false,
-          message: 'Superlike limit reached. Upgrade to premium for more superlikes.',
-          code: 'SUPERLIKE_LIMIT_EXCEEDED'
-        });
-        return;
+    // Check superlike limits - Business Model: Free users need to purchase via IAP
+    if (action === 'superlike') {
+      const isPremium = user.premium?.isActive &&
+        (!user.premium.expiresAt || new Date(user.premium.expiresAt) > new Date());
+      
+      // Premium users have unlimited super likes (but can still purchase more)
+      // Free users must have IAP balance
+      if (!isPremium || !user.premium?.features?.unlimitedLikes) {
+        // Check IAP balance for super likes
+        const iapSuperLikes = user.premium?.usage?.iapSuperLikes || 0;
+        
+        if (iapSuperLikes <= 0) {
+          res.status(403).json({
+            success: false,
+            message: 'No Super Likes remaining. Purchase more from the Premium screen.',
+            code: 'SUPERLIKE_INSUFFICIENT_BALANCE',
+            canPurchase: true,
+            balance: iapSuperLikes,
+          });
+          return;
+        }
+        
+        // Deduct IAP super like balance
+        user.premium.usage = user.premium.usage || {
+          swipesUsed: 0,
+          swipesLimit: 5,
+          superLikesUsed: 0,
+          superLikesLimit: 0,
+          boostsUsed: 0,
+          boostsLimit: 0,
+          messagesSent: 0,
+          profileViews: 0,
+          rewindsUsed: 0,
+          iapSuperLikes: 0,
+          iapBoosts: 0,
+        };
+        
+        user.premium.usage.iapSuperLikes = Math.max(0, iapSuperLikes - 1);
       }
     }
 

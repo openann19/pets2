@@ -7,6 +7,7 @@ import { useEffect, useState, memo } from 'react';
 import { Image, View, StyleSheet, type ImageProps } from 'react-native';
 import Animated, { useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated';
 import FastImage from 'react-native-fast-image';
+import type { ResizeMode as FastImageResizeMode, Source } from 'react-native-fast-image';
 import Shimmer from '../micro/Shimmer';
 
 type Props = ImageProps & {
@@ -36,35 +37,52 @@ const SmartImage = memo(function SmartImage({
 
   const as = useAnimatedStyle(() => ({ opacity: o.value }));
 
-  // Extract resizeMode and source
-  const { resizeMode, source, ...imageProps } = rest as any;
+  // Extract resizeMode and source with proper typing
+  type ResizeMode = 'contain' | 'cover' | 'stretch' | 'center';
+  const resizeModeTyped: ResizeMode = 
+    (rest.resizeMode as ResizeMode | undefined) || 'cover';
+  const { resizeMode, source, ...imageProps } = rest;
+
+  // Type-safe resizeMode mapping
+  const resizeModeMap: Record<ResizeMode, FastImageResizeMode> = {
+    contain: 'contain',
+    cover: 'cover',
+    stretch: 'stretch',
+    center: 'center',
+  };
 
   // Convert source to FastImage format if needed
-  const fastImageSource =
-    useFastImage && source && typeof source === 'object' && 'uri' in source
+  const fastImageSource: Source | number | ImageProps['source'] | undefined =
+    useFastImage && source && typeof source === 'object' && 'uri' in source && source.uri
       ? {
           uri: source.uri,
-          priority: FastImage.priority.normal,
-          cache: FastImage.cacheControl.immutable,
-        }
+          priority: 'normal' as const,
+          cache: 'immutable' as const,
+        } satisfies Source
       : source;
 
   if (useShimmer) {
     return (
       <View style={[styles.wrap, { borderRadius: rounded }, style]}>
         {!errored && <Shimmer radius={rounded} />}
-        {!errored && useFastImage && fastImageSource ? (
+        {!errored && useFastImage && fastImageSource && typeof fastImageSource === 'object' && 'uri' in fastImageSource ? (
           <Animated.View style={[StyleSheet.absoluteFillObject, as]}>
             <FastImage
-              source={fastImageSource}
-              resizeMode={FastImage.resizeMode[resizeMode || 'cover']}
-              onLoad={(e) => {
+              source={fastImageSource as Source}
+              resizeMode={resizeModeMap[resizeModeTyped]}
+              onLoad={() => {
                 setLoaded(true);
-                onLoad?.(e as any);
+                if (onLoad) {
+                  // FastImage doesn't provide event, but Image does
+                  // Create a minimal event-like object for compatibility
+                  onLoad({} as Parameters<NonNullable<ImageProps['onLoad']>>[0]);
+                }
               }}
-              onError={(e) => {
+              onError={() => {
                 setErrored(true);
-                onError?.(e as any);
+                if (onError) {
+                  onError({} as Parameters<NonNullable<ImageProps['onError']>>[0]);
+                }
               }}
               style={StyleSheet.absoluteFillObject}
             />
@@ -97,25 +115,31 @@ const SmartImage = memo(function SmartImage({
   return (
       <View style={[styles.wrap, style]}>
       {/* Low-fi placeholder */}
-      {useFastImage && fastImageSource ? (
+      {useFastImage && fastImageSource && typeof fastImageSource === 'object' && 'uri' in fastImageSource ? (
         <>
           <FastImage
-            source={fastImageSource}
-            resizeMode={FastImage.resizeMode[resizeMode || 'cover']}
+            source={fastImageSource as Source}
+            resizeMode={resizeModeMap[resizeModeTyped]}
             style={StyleSheet.absoluteFillObject}
           />
           {/* Full res crossfade */}
           <Animated.View style={[StyleSheet.absoluteFillObject, as]}>
             <FastImage
-              source={fastImageSource}
-              resizeMode={FastImage.resizeMode[resizeMode || 'cover']}
-              onLoad={(e) => {
+              source={fastImageSource as Source}
+              resizeMode={resizeModeMap[resizeModeTyped]}
+              onLoad={() => {
                 setLoaded(true);
-                onLoad?.(e as any);
+                if (onLoad) {
+                  // FastImage doesn't provide event, but Image does
+                  // Create a minimal event-like object for compatibility
+                  onLoad({} as Parameters<NonNullable<ImageProps['onLoad']>>[0]);
+                }
               }}
-              onError={(e) => {
+              onError={() => {
                 setErrored(true);
-                onError?.(e as any);
+                if (onError) {
+                  onError({} as Parameters<NonNullable<ImageProps['onError']>>[0]);
+                }
               }}
               style={StyleSheet.absoluteFillObject}
             />

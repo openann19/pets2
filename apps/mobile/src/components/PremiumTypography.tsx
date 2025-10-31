@@ -78,7 +78,7 @@ interface GradientTextProps {
   animated?: boolean;
   shimmer?: boolean;
   glow?: boolean;
-  shadow?: keyof typeof TEXT_SHADOWS;
+  shadow?: keyof ReturnType<typeof TEXT_SHADOWS>;
 }
 
 export const GradientText: React.FC<GradientTextProps> = ({

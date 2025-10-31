@@ -9,7 +9,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HomeIcon, HeartIcon, ChatBubbleLeftRightIcon, MapPinIcon, SparklesIcon, BellIcon, Cog6ToothIcon, UserCircleIcon, ArrowRightOnRectangleIcon, Bars3Icon, XMarkIcon, } from '@heroicons/react/24/outline';
+import { HomeIcon, HeartIcon, ChatBubbleLeftRightIcon, MapPinIcon, SparklesIcon, BellIcon, Cog6ToothIcon, UserCircleIcon, ArrowRightOnRectangleIcon, Bars3Icon, XMarkIcon, UserGroupIcon, } from '@heroicons/react/24/outline';
 import { useAuthStore } from '@/lib/auth-store';
 import HoloLogo from '@/components/Brand/HoloLogo';
 import SafeImage from '@/components/UI/SafeImage';
@@ -17,6 +17,7 @@ import { useClickOutside } from '@/hooks/useClickOutside';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 const navigation = [
     { name: 'Dashboard', href: './dashboard', icon: HomeIcon },
+    { name: 'Pawfiles', href: './pawfiles', icon: UserGroupIcon },
     { name: 'Swipe', href: './swipe', icon: HeartIcon },
     { name: 'Matches', href: './matches', icon: ChatBubbleLeftRightIcon },
     { name: 'Map', href: './map', icon: MapPinIcon },

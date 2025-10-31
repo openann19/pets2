@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@mobile/theme';
 import { Pressable, StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { springs } from '@/foundation/motion';
 
 export default function RetryBadge({
   onPress,
@@ -15,15 +16,15 @@ export default function RetryBadge({
   const { colors } = useTheme();
 
   const backgroundColor = bg || colors.danger;
-  const iconColor = colors.text;
-  const rippleColor = colors.text + '1F'; // Add alpha
+  const iconColor = colors.onSurface;
+  const rippleColor = colors.onSurface + '1F'; // Add alpha
   const s = useSharedValue(1);
   const sty = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
 
   const bounce = () => {
     'worklet';
     s.value = 0.92;
-    s.value = withSpring(1, { damping: 14, stiffness: 380 });
+    s.value = withSpring(1, springs.snappy);
   };
 
   const handlePress = () => {
@@ -43,6 +44,9 @@ export default function RetryBadge({
         style={[styles.btn, { backgroundColor: backgroundColor }]}
         accessibilityRole="button"
         accessibilityLabel="Retry sending message"
+        accessibilityHint="Tap to retry sending this failed message"
+        accessibilityState={{ disabled: !!disabled }}
+        hitSlop={{ top: 11, bottom: 11, left: 11, right: 11 }}
       >
         <Ionicons
           name="refresh"

@@ -25,6 +25,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { logger } from '@pawfectmatch/core';
 import { useCallback, useEffect, useState, type ComponentType } from 'react';
+import type { SVGProps } from 'react';
 
 interface Customer {
   id: string;
@@ -230,11 +231,11 @@ export default function BillingDashboardPage() {
     return matchesSearch && matchesTier && matchesStatus;
   });
 
-  const tabs: ReadonlyArray<{ id: TabId; label: string; icon: ComponentType<{ className?: string }> }> = [
-    { id: 'overview', label: 'Overview', icon: ({ className }) => <Icon icon={ChartBarIcon} className={className} /> },
-    { id: 'customers', label: 'Customers', icon: ({ className }) => <Icon icon={UserGroupIcon} className={className} /> },
-    { id: 'revenue', label: 'Revenue', icon: ({ className }) => <Icon icon={CurrencyDollarIcon} className={className} /> },
-    { id: 'payments', label: 'Payment Methods', icon: ({ className }) => <Icon icon={CreditCardIcon} className={className} /> },
+  const tabs: ReadonlyArray<{ id: TabId; label: string; icon: ComponentType<SVGProps<SVGSVGElement>> }> = [
+    { id: 'overview', label: 'Overview', icon: ChartBarIcon },
+    { id: 'customers', label: 'Customers', icon: UserGroupIcon },
+    { id: 'revenue', label: 'Revenue', icon: CurrencyDollarIcon },
+    { id: 'payments', label: 'Payment Methods', icon: CreditCardIcon },
   ] as const;
 
   if (isLoading) {
@@ -478,7 +479,7 @@ export default function BillingDashboardPage() {
                 <EnhancedInput
                   placeholder="Search customers..."
                   value={searchTerm}
-                  onChange={(v: string | number) => setSearchTerm(v)}
+                  onChange={(v: string | number) => setSearchTerm(String(v))}
                   ariaLabel="Search customers"
                 />
                 <EnhancedDropdown

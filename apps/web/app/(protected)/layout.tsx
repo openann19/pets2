@@ -1,6 +1,6 @@
 'use client';
 
-import LoadingSpinner from '@/src/components/UI/LoadingSpinner';
+import LoadingSpinner from '@/components/UI/LoadingSpinner';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { isAuthDisabled } from '../../src/config/dev';

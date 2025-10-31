@@ -4,6 +4,7 @@
 
 import { Router } from 'express';
 import { db } from '../db';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 const router = Router();
 
@@ -42,8 +43,8 @@ router.get('/', async (req, res) => {
       mood: t.mood,
       url: t.url,
     })));
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 });
 
@@ -75,8 +76,8 @@ router.get('/:id', async (req, res) => {
       genre: track.genre,
       mood: track.mood,
     });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    res.status(500).json({ error: getErrorMessage(error) });
   }
 });
 

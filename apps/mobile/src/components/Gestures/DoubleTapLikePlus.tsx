@@ -12,6 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@mobile/theme';
+import { springs } from '@/foundation/motion';
 
 type HapticStyle = 'light' | 'medium' | 'heavy';
 
@@ -91,10 +92,10 @@ export function DoubleTapLikePlus({
       pY[i]!.value = 0;
       pRotate[i]!.value = 0;
 
-      pScale[i]!.value = withSpring(1, { damping: 12, stiffness: 260 });
+      pScale[i]!.value = withSpring(1, springs.wobbly);
       pOpacity[i]!.value = withTiming(1, { duration: 90 });
-      pX[i]!.value = withSpring(dx, { damping: 16, stiffness: 180 });
-      pY[i]!.value = withSpring(dy, { damping: 16, stiffness: 180 });
+      pX[i]!.value = withSpring(dx, springs.gentle);
+      pY[i]!.value = withSpring(dy, springs.gentle);
       pRotate[i]!.value = withSpring((Math.random() > 0.5 ? 1 : -1) * 40);
 
       // fade away
@@ -106,7 +107,7 @@ export function DoubleTapLikePlus({
   const bounce = useCallback(() => {
     'worklet';
     scale.value = 0.96;
-    scale.value = withSpring(1, { damping: 14, stiffness: 400 });
+    scale.value = withSpring(1, springs.light);
   }, [scale]);
 
   const onDouble = useCallback(() => {

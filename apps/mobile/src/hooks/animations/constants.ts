@@ -1,43 +1,37 @@
 /**
  * Premium Animation Constants
- * Centralized animation configurations
+ * DEPRECATED: Re-exports from foundation/motion.ts
+ * 
+ * @deprecated Use `springs`, `timing`, `stagger` from '@/foundation/motion' directly
+ * This file is kept for backwards compatibility during migration
  */
 
+import {
+  springs,
+  timing,
+  stagger,
+} from '@/foundation/motion';
+
 // === PREMIUM ANIMATION CONSTANTS ===
+// Re-export as PREMIUM_ANIMATIONS for backwards compatibility
 export const PREMIUM_ANIMATIONS = {
-  // Spring configurations
+  // Spring configurations - mapped from foundation springs
   spring: {
-    gentle: {
-      damping: 20,
-      stiffness: 100,
-      mass: 1.2,
-    },
-    bouncy: {
-      damping: 8,
-      stiffness: 200,
-      mass: 0.8,
-    },
-    wobbly: {
-      damping: 12,
-      stiffness: 180,
-      mass: 1,
-    },
-    stiff: {
-      damping: 10,
-      stiffness: 200,
-      mass: 1,
-    },
+    gentle: springs.gentle,
+    bouncy: springs.bouncy,
+    wobbly: springs.wobbly,
+    stiff: springs.stiff,
   },
 
-  // Timing configurations
+  // Timing configurations - mapped from foundation timing
   timing: {
-    fast: 150,
-    normal: 300,
-    slow: 500,
-    slower: 750,
+    fast: timing.fast,
+    normal: timing.normal,
+    slow: timing.slow,
+    slower: timing.slower,
   },
 
-  // Easing curves
+  // Easing curves - mapped from foundation easings
   easing: {
     easeIn: 'ease-in',
     easeOut: 'ease-out',
@@ -46,10 +40,13 @@ export const PREMIUM_ANIMATIONS = {
     elastic: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
   },
 
-  // Stagger delays
+  // Stagger delays - mapped from foundation stagger
   stagger: {
-    fast: 50,
-    normal: 100,
-    slow: 150,
+    fast: stagger.fast,
+    normal: stagger.normal,
+    slow: stagger.slow,
   },
 } as const;
+
+// Re-export foundation exports for convenience
+export { springs, timing, stagger, easings, motionEasing } from '@/foundation/motion';

@@ -1,0 +1,46 @@
+id: ui-055-haptics-categories
+owner: ux
+severity: medium
+area: mobile+platform
+context: |
+  Haptic feedback is inconsistent with wrong haptic types for actions.
+  Need semantic mapping of haptic categories to user intent.
+  Improves tactile feedback clarity and platform idiom compliance.
+acceptance:
+  - Impact haptics for interactions (light, medium, heavy)
+  - Notification haptics for alerts (success, warning, error)
+  - Selection haptics for pickers and toggles
+  - useHaptics hook provides semantic API
+  - Haptic intensity respects system settings
+  - Works on both iOS and Android (graceful degradation)
+states:
+  - enabled
+  - disabled
+  - unsupported
+telemetry:
+  - event: HAPTIC_FEEDBACK
+    props: [component, hapticType, intensity, platform]
+contracts:
+  request: { hapticType: string, intensity: string }
+  response: { fired: boolean, supported: boolean }
+  errors: [{ code: "HAPTIC_UNSUPPORTED", message: string }]
+assets:
+  hooks: [apps/mobile/src/hooks/utils/useHaptics.ts]
+  components: [apps/mobile/src/components/**/*.tsx]
+  tests: [apps/mobile/src/hooks/utils/__tests__/useHaptics.test.ts]
+  docs: [docs/HAPTICS_GUIDE.md]
+risks:
+  - Battery drain from excessive haptics
+  - Platform differences may cause inconsistent feel
+rollback:
+  - Remove semantic haptic mapping
+  - Restore direct Haptics API calls
+links:
+  - https://developer.apple.com/design/human-interface-guidelines/haptics
+status: open
+priority: medium
+impact: 3
+effort: S
+category: micro-interactions
+tokens: []
+estimated_hours: 4

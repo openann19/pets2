@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { logger } from '@pawfectmatch/core';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../../theme';
+import type { AppTheme } from '../../theme';
 
 export const HINTS_STORAGE_KEY = 'swipe_hints_dismissed';
 
@@ -21,24 +22,25 @@ interface Hint {
   icon: string;
   text: string;
   position: 'left' | 'right' | 'top';
-  color: string;
+  getColor: (theme: AppTheme) => string;
 }
 
-const hints: Hint[] = [
-  { icon: 'arrow-back', text: 'Swipe left to pass', position: 'left', color: '#EF4444' },
-  { icon: 'arrow-forward', text: 'Swipe right to like', position: 'right', color: '#10B981' },
-  { icon: 'arrow-up', text: 'Swipe up to super like', position: 'top', color: '#3B82F6' },
+const createHints = (theme: AppTheme): Hint[] => [
+  { icon: 'arrow-back', text: 'Swipe left to pass', position: 'left', getColor: () => theme.colors.danger },
+  { icon: 'arrow-forward', text: 'Swipe right to like', position: 'right', getColor: () => theme.colors.success },
+  { icon: 'arrow-up', text: 'Swipe up to super like', position: 'top', getColor: () => theme.colors.primary },
 ];
 
 export function SwipeGestureHints({
   onDismiss,
   initialDismissed,
 }: SwipeGestureHintsProps): React.JSX.Element {
-  const theme = useTheme();
+  const theme = useTheme() as AppTheme;
   const [visible, setVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(initialDismissed ?? false);
   const opacity = useRef(new Animated.Value(0)).current;
   const autoDismissTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hints = useMemo(() => createHints(theme), [theme]);
 
   useEffect(() => {
     // Skip if already dismissed (for testing)
@@ -165,7 +167,7 @@ export function SwipeGestureHints({
           width: 32,
           height: 32,
           borderRadius: 16,
-          backgroundColor: 'rgba(0,0,0,0.6)',
+          backgroundColor: theme.utils.alpha(theme.colors.onSurface, 0.6),
           justifyContent: 'center',
           alignItems: 'center',
         },
@@ -181,13 +183,13 @@ export function SwipeGestureHints({
       {/* Left hint */}
       {leftHint && (
         <View style={styles.hintContainerLeft}>
-          <View style={[styles.hint, { backgroundColor: leftHint.color + '20' }]}>
+          <View style={[styles.hint, { backgroundColor: theme.utils.alpha(leftHint.getColor(theme), 0.2) }]}>
             <Ionicons
               name={leftHint.icon as any}
               size={24}
-              color={leftHint.color}
+              color={leftHint.getColor(theme)}
             />
-            <Text style={[styles.hintText, { color: leftHint.color }]}>{leftHint.text}</Text>
+            <Text style={[styles.hintText, { color: leftHint.getColor(theme) }]}>{leftHint.text}</Text>
           </View>
         </View>
       )}
@@ -195,13 +197,13 @@ export function SwipeGestureHints({
       {/* Right hint */}
       {rightHint && (
         <View style={styles.hintContainerRight}>
-          <View style={[styles.hint, { backgroundColor: rightHint.color + '20' }]}>
+          <View style={[styles.hint, { backgroundColor: theme.utils.alpha(rightHint.getColor(theme), 0.2) }]}>
             <Ionicons
               name={rightHint.icon as any}
               size={24}
-              color={rightHint.color}
+              color={rightHint.getColor(theme)}
             />
-            <Text style={[styles.hintText, { color: rightHint.color }]}>{rightHint.text}</Text>
+            <Text style={[styles.hintText, { color: rightHint.getColor(theme) }]}>{rightHint.text}</Text>
           </View>
         </View>
       )}
@@ -209,13 +211,13 @@ export function SwipeGestureHints({
       {/* Top hint */}
       {topHint && (
         <View style={styles.hintContainerTop}>
-          <View style={[styles.hint, { backgroundColor: topHint.color + '20' }]}>
+          <View style={[styles.hint, { backgroundColor: theme.utils.alpha(topHint.getColor(theme), 0.2) }]}>
             <Ionicons
               name={topHint.icon as any}
               size={24}
-              color={topHint.color}
+              color={topHint.getColor(theme)}
             />
-            <Text style={[styles.hintText, { color: topHint.color }]}>{topHint.text}</Text>
+            <Text style={[styles.hintText, { color: topHint.getColor(theme) }]}>{topHint.text}</Text>
           </View>
         </View>
       )}

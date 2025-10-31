@@ -40,7 +40,7 @@ export const changePassword = async (req: ChangePasswordRequest, res: Response):
     }
 
     // Type assertion needed because comparePassword is a method defined in schema
-    const ok = await (user as IUserDocument).comparePassword(currentPassword);
+    const ok = await (user as unknown as IUserDocument).comparePassword(currentPassword);
     if (!ok) {
       res.status(401).json({ success: false, message: 'Invalid current password' });
       return;

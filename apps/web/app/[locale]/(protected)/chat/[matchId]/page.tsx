@@ -347,7 +347,7 @@ export default function ChatPage() {
         }
       });
     } catch (error) {
-      console.error('Upload failed:', error);
+      logger.error('Upload failed:', error);
       alert('Failed to upload image. Please try again.');
     } finally {
       setUploadingImage(false);

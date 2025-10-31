@@ -1,0 +1,29 @@
+{
+  "coverage": {
+    "floor": 80,
+    "increment": 2,
+    "target": 90
+  },
+  "performance": {
+    "improvement_target": 10,
+    "unit": "percent"
+  },
+  "accessibility": {
+    "critical_issues": 0,
+    "serious_issues_resolve_in_loop": true
+  },
+  "bundle_size": {
+    "max_increase_per_pr": 200000,
+    "unit": "bytes"
+  },
+  "complexity": {
+    "cyclomatic_max": 10,
+    "cognitive_max": 15,
+    "function_length_max": 50
+  },
+  "documentation": {
+    "coverage_min": 80,
+    "unit": "percent"
+  }
+}
+

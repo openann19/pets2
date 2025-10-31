@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import { VoiceWaveform } from './VoiceWaveform';
 
 type Props = {
@@ -14,7 +15,8 @@ type Props = {
 };
 
 export function VoicePlayer({ uri, durationSec, waveform, onError, testID }: Props) {
-  const theme = useTheme();
+  const theme = useTheme() as AppTheme;
+  const styles = makeStyles(theme);
   const sound = useRef<Audio.Sound | null>(null);
   const [isPlaying, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -78,22 +80,22 @@ export function VoicePlayer({ uri, durationSec, waveform, onError, testID }: Pro
 
   return (
     <View
-      style={S.root}
+      style={styles.root}
       testID={testID ?? 'voice-player'}
     >
       <TouchableOpacity
         onPress={toggle}
-        style={S.playBtn}
+        style={styles.playBtn}
         accessibilityLabel={isPlaying ? 'Pause' : 'Play'}
       >
         <Ionicons
           name={isPlaying ? 'pause' : 'play'}
           size={18}
-          color="#fff"
+          color={theme.colors.onPrimary}
         />
       </TouchableOpacity>
 
-      <View style={S.waveWrap}>
+      <View style={styles.waveWrap}>
         <VoiceWaveform
           waveform={waveform ?? new Array(60).fill(0.6)}
           isPlaying={isPlaying}
@@ -105,31 +107,33 @@ export function VoicePlayer({ uri, durationSec, waveform, onError, testID }: Pro
         />
       </View>
 
-      <Text style={S.time}>{format(progress * (duration || 0))}</Text>
+      <Text style={styles.time}>{format(progress * (duration || 0))}</Text>
     </View>
   );
 }
 
-const S = StyleSheet.create({
-  root: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingVertical: 6,
-  },
-  playBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#111',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  waveWrap: { flex: 1 },
-  time: {
-    width: 48,
-    textAlign: 'right',
-    opacity: 0.7,
-    fontVariant: ['tabular-nums'] as any,
-  },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    root: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+      paddingVertical: 6,
+    },
+    playBtn: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: theme.colors.surface || theme.utils.alpha(theme.colors.onSurface, 0.15),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    waveWrap: { flex: 1 },
+    time: {
+      width: 48,
+      textAlign: 'right',
+      opacity: 0.7,
+      fontVariant: ['tabular-nums'] as any,
+      color: theme.colors.onMuted,
+    },
+  });

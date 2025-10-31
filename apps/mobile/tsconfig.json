@@ -51,6 +51,7 @@
     "coverage",
     "**/__mocks__/**",
     "**/*.stories.tsx",
-    "**/stories/**"
+    "**/stories/**",
+    "e2e/**"
   ]
 }

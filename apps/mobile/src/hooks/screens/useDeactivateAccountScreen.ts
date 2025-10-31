@@ -7,6 +7,7 @@ import { useCallback, useState } from 'react';
 import { Alert } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { logger } from '@pawfectmatch/core';
+import { useTranslation } from 'react-i18next';
 import * as gdprService from '../../services/gdprService';
 
 interface UseDeactivateAccountScreenReturn {
@@ -18,22 +19,27 @@ interface UseDeactivateAccountScreenReturn {
   setConfirmText: (text: string) => void;
   handleDeactivate: () => Promise<void>;
   handleGoBack: () => void;
+  confirmationWord: string;
 }
-
-const DEACTIVATION_REASONS = [
-  'Taking a break from dating',
-  'Found a partner',
-  'Not enjoying the app',
-  'Privacy concerns',
-  'Too many notifications',
-  'Other',
-];
 
 export const useDeactivateAccountScreen = (): UseDeactivateAccountScreenReturn => {
   const navigation = useNavigation();
+  const { t } = useTranslation('common');
   const [reason, setReason] = useState('');
   const [confirmText, setConfirmText] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Get translated reasons and confirmation word
+  const reasons = [
+    t('deactivate.reasons.takingBreak'),
+    t('deactivate.reasons.foundPartner'),
+    t('deactivate.reasons.notEnjoying'),
+    t('deactivate.reasons.privacyConcerns'),
+    t('deactivate.reasons.tooManyNotifications'),
+    t('deactivate.reasons.other'),
+  ];
+
+  const confirmationWord = t('deactivate.confirmPlaceholder').toLowerCase();
 
   const selectReason = useCallback((selectedReason: string) => {
     Haptics.selectionAsync().catch(() => {});
@@ -42,12 +48,18 @@ export const useDeactivateAccountScreen = (): UseDeactivateAccountScreenReturn =
 
   const handleDeactivate = useCallback(async () => {
     if (!reason) {
-      Alert.alert('Required', 'Please select a reason for deactivation.');
+      Alert.alert(
+        t('deactivate.alerts.required'),
+        t('deactivate.alerts.selectReason'),
+      );
       return;
     }
 
-    if (confirmText.toLowerCase() !== 'deactivate') {
-      Alert.alert('Confirmation Required', 'Please type "deactivate" to confirm.');
+    if (confirmText.toLowerCase() !== confirmationWord) {
+      Alert.alert(
+        t('deactivate.alerts.confirmationRequired'),
+        t('deactivate.alerts.typeConfirm'),
+      );
       return;
     }
 
@@ -65,8 +77,8 @@ export const useDeactivateAccountScreen = (): UseDeactivateAccountScreenReturn =
       logger.info('Account deactivated', { reason });
 
       Alert.alert(
-        'Account Deactivated',
-        'Your account has been temporarily deactivated. You can reactivate it anytime by logging back in.',
+        t('deactivate.alerts.successTitle'),
+        t('deactivate.alerts.successMessage'),
         [
           {
             text: 'OK',
@@ -78,11 +90,14 @@ export const useDeactivateAccountScreen = (): UseDeactivateAccountScreenReturn =
       );
     } catch (error) {
       logger.error('Failed to deactivate account', { error });
-      Alert.alert('Error', 'Failed to deactivate account. Please try again.');
+      Alert.alert(
+        t('deactivate.alerts.error'),
+        t('deactivate.alerts.errorMessage'),
+      );
     } finally {
       setLoading(false);
     }
-  }, [reason, confirmText, navigation]);
+  }, [reason, confirmText, navigation, t, confirmationWord]);
 
   const handleGoBack = useCallback(() => {
     navigation.goBack();
@@ -92,10 +107,11 @@ export const useDeactivateAccountScreen = (): UseDeactivateAccountScreenReturn =
     reason,
     confirmText,
     loading,
-    reasons: DEACTIVATION_REASONS,
+    reasons,
     selectReason,
     setConfirmText,
     handleDeactivate,
     handleGoBack,
+    confirmationWord,
   };
 };

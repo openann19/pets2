@@ -13,6 +13,8 @@ import {
   View,
   type ListRenderItem,
 } from 'react-native';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 export interface Reaction {
   emoji: string;
@@ -43,6 +45,8 @@ export function ReactionPicker({
   onSelect,
   position,
 }: ReactionPickerProps): JSX.Element {
+  const theme = useTheme() as AppTheme;
+  const styles = makeStyles(theme);
   const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
 
   const handleSelect = (reaction: string): void => {
@@ -64,10 +68,12 @@ export function ReactionPicker({
       onPress={() => {
         handleSelect(item.emoji);
       }}
-      accessibilityLabel={`React with ${item.label}`}
       accessibilityRole="button"
+      accessibilityLabel={`React with ${item.label}`}
+      accessibilityHint={`Tap to react with ${item.emoji}`}
+      hitSlop={{ top: 11, bottom: 11, left: 11, right: 11 }}
     >
-      <Text style={styles.emoji}>{item.emoji}</Text>
+      <Text style={styles.emoji} allowFontScaling>{item.emoji}</Text>
     </TouchableOpacity>
   );
 
@@ -77,11 +83,16 @@ export function ReactionPicker({
       transparent
       animationType="fade"
       onRequestClose={onClose}
+      accessibilityViewIsModal
+      accessibilityLabel="Reaction picker"
     >
       <TouchableOpacity
         style={styles.overlay}
         activeOpacity={1}
         onPress={onClose}
+        accessibilityRole="button"
+        accessibilityLabel="Close reaction picker"
+        accessibilityHint="Tap outside to close reaction picker"
       >
         <View
           style={StyleSheet.flatten([
@@ -100,6 +111,8 @@ export function ReactionPicker({
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.reactionsList}
+            accessibilityRole="list"
+            accessibilityLabel="Reaction picker"
           />
         </View>
       </TouchableOpacity>
@@ -107,39 +120,40 @@ export function ReactionPicker({
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
-  container: {
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    shadowColor: '#0a0a0a',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 10,
-  },
-  reactionsList: {
-    paddingHorizontal: 5,
-    gap: 5,
-  },
-  reactionButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-  },
-  selectedReaction: {
-    backgroundColor: '#e3f2fd',
-    transform: [{ scale: 1.1 }],
-  },
-  emoji: {
-    fontSize: 24,
-  },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: theme.utils.alpha(theme.colors.onSurface, 0.3),
+    },
+    container: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.xl,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.xs,
+      shadowColor: theme.colors.onSurface,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 10,
+    },
+    reactionsList: {
+      paddingHorizontal: theme.spacing.xs,
+      gap: theme.spacing.xs,
+    },
+    reactionButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.utils.alpha(theme.colors.onSurface, 0.05),
+    },
+    selectedReaction: {
+      backgroundColor: theme.utils.alpha(theme.colors.primary, 0.1),
+      transform: [{ scale: 1.1 }],
+    },
+    emoji: {
+      fontSize: 24,
+    },
+  });

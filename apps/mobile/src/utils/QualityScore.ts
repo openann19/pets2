@@ -33,7 +33,12 @@ export async function jpegByteSize(uri: string, sampleW = 720, quality = 0.72): 
       // Ignore cleanup errors
     }
 
-    return info.exists && typeof (info as any).size === 'number' ? (info as any).size : 0;
+    // FileSystem.getInfoAsync returns FileInfo which may have a size property
+    interface FileInfoWithSize extends FileSystem.FileInfo {
+      size?: number;
+    }
+    const infoWithSize = info as FileInfoWithSize;
+    return info.exists && typeof infoWithSize.size === 'number' ? infoWithSize.size : 0;
   } catch (err) {
     const { logger } = await import('../services/logger');
     logger.warn('QualityScore: Failed to compute size', {

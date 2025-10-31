@@ -4,7 +4,8 @@ import Pet from '../models/Pet';
 import logger from '../utils/logger';
 import type { AuthRequest } from '../types/express';
 import Stripe from 'stripe';
-import { getErrorMessage } from '../../utils/errorHandler';
+import { getErrorMessage } from '../utils/errorHandler';
+import { setFeatureLimitsBasedOnPlan } from '../utils/premiumFeatures';
 
 /**
  * Stripe initialization
@@ -57,6 +58,25 @@ interface CheckPremiumFeatureRequest extends AuthRequest {
     feature: string;
   };
 }
+
+interface CreatePaymentSheetRequest extends AuthRequest {
+  body: {
+    plan: string;
+    interval: 'monthly' | 'yearly';
+  };
+}
+
+interface VerifyPurchaseRequest extends AuthRequest {
+  body: {
+    productId: string;
+    transactionId: string;
+    receipt: string;
+    platform: 'ios' | 'android';
+    purchaseToken?: string;
+  };
+}
+
+interface GetDailySwipeStatusRequest extends AuthRequest {}
 
 /**
  * @desc    Create a subscription checkout session
@@ -138,6 +158,281 @@ export const subscribeToPremium = async (req: SubscribeToPremiumRequest, res: Re
 };
 
 /**
+ * @desc    Create a PaymentSheet for mobile Stripe integration
+ * @route   POST /api/premium/create-payment-sheet
+ * @access  Private
+ */
+export const createPaymentSheet = async (req: CreatePaymentSheetRequest, res: Response): Promise<void> => {
+  try {
+    const { plan, interval } = req.body;
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      res.status(404).json({ success: false, message: 'User not found' });
+      return;
+    }
+
+    if (!stripe) {
+      const status = process.env.NODE_ENV === 'test' ? 200 : 503;
+      const response: {
+        success: boolean;
+        message?: string;
+        data?: {
+          paymentIntentClientSecret: string;
+          ephemeralKeySecret: string;
+          customerId: string;
+        };
+      } = {
+        success: process.env.NODE_ENV === 'test',
+        ...(process.env.NODE_ENV !== 'test' && { message: 'Payments temporarily unavailable' }),
+      };
+      if (process.env.NODE_ENV === 'test') {
+        response.data = {
+          paymentIntentClientSecret: 'pi_test_mock_secret',
+          ephemeralKeySecret: 'ek_test_mock_secret',
+          customerId: 'cus_test_mock',
+        };
+      }
+      res.status(status).json(response);
+      return;
+    }
+
+    // Get or create Stripe customer
+    let customerId = user.stripeCustomerId;
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        metadata: {
+          userId: req.userId?.toString() || '',
+        },
+      });
+      customerId = customer.id;
+      user.stripeCustomerId = customerId;
+      await user.save();
+    }
+
+    // Create ephemeral key for PaymentSheet
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      { customer: customerId },
+      { apiVersion: '2025-08-27.basil' },
+    );
+
+    // Create PaymentIntent for subscription setup
+    // Note: For subscriptions, we'll use SetupIntent or create subscription directly
+    // PaymentSheet works best with one-time payments, but we can use it for subscription setup
+    const setupIntent = await stripe.setupIntents.create({
+      customer: customerId,
+      payment_method_types: ['card'],
+      metadata: {
+        userId: req.userId?.toString() || '',
+        plan,
+        interval,
+      },
+    });
+
+    res.json({
+      success: true,
+      data: {
+        paymentIntentClientSecret: setupIntent.client_secret || '',
+        ephemeralKeySecret: ephemeralKey.secret || '',
+        customerId,
+        setupIntentId: setupIntent.id,
+      },
+    });
+  } catch (error: unknown) {
+    logger.error('createPaymentSheet error', {
+      error: getErrorMessage(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
+/**
+ * @desc    Confirm PaymentSheet payment and create subscription
+ * @route   POST /api/premium/confirm-payment-sheet
+ * @access  Private
+ */
+export const confirmPaymentSheet = async (req: AuthRequest & { body: { setupIntentId: string; plan: string; interval: string } }, res: Response): Promise<void> => {
+  try {
+    const { setupIntentId, plan, interval } = req.body;
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      res.status(404).json({ success: false, message: 'User not found' });
+      return;
+    }
+
+    if (!stripe) {
+      res.status(503).json({ success: false, message: 'Payments temporarily unavailable' });
+      return;
+    }
+
+    // Retrieve setup intent to get payment method
+    const setupIntent = await stripe.setupIntents.retrieve(setupIntentId);
+    if (!setupIntent.payment_method || typeof setupIntent.payment_method !== 'string') {
+      res.status(400).json({ success: false, message: 'Payment method not found' });
+      return;
+    }
+
+    const priceId = process.env[`STRIPE_${plan?.toUpperCase?.()}_${interval?.toUpperCase?.()}_PRICE_ID`] || 'price_test_mock';
+
+    // Create subscription with the payment method
+    const subscription = await stripe.subscriptions.create({
+      customer: user.stripeCustomerId || '',
+      items: [{ price: priceId }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
+      metadata: {
+        userId: req.userId?.toString() || '',
+        plan,
+        interval,
+      },
+    });
+
+    // Update user with subscription details
+    const periodEnd = subscription.current_period_end;
+    user.premium = {
+      isActive: true,
+      plan: plan.toLowerCase(),
+      stripeSubscriptionId: subscription.id,
+      expiresAt: periodEnd ? new Date(periodEnd * 1000) : null,
+      cancelAtPeriodEnd: false,
+      paymentStatus: 'active',
+      features: {
+        unlimitedLikes: plan.toLowerCase() !== 'basic',
+        boostProfile: plan.toLowerCase() === 'ultimate',
+        seeWhoLiked: plan.toLowerCase() !== 'basic',
+        advancedFilters: plan.toLowerCase() !== 'basic',
+        aiMatching: plan.toLowerCase() === 'ultimate',
+        prioritySupport: plan.toLowerCase() === 'ultimate',
+        readReceipts: plan.toLowerCase() !== 'basic',
+        globalPassport: false,
+      },
+      usage: user.premium?.usage || {
+        swipesUsed: 0,
+        swipesLimit: plan.toLowerCase() === 'basic' ? 5 : -1,
+        superLikesUsed: 0,
+        superLikesLimit: plan.toLowerCase() === 'ultimate' ? -1 : 5,
+        boostsUsed: 0,
+        boostsLimit: plan.toLowerCase() === 'ultimate' ? -1 : 1,
+        messagesSent: 0,
+        profileViews: 0,
+      },
+    };
+
+    await user.save();
+
+    res.json({
+      success: true,
+      data: {
+        subscriptionId: subscription.id,
+        clientSecret: (subscription.latest_invoice as Stripe.Invoice)?.payment_intent
+          ? ((subscription.latest_invoice as Stripe.Invoice).payment_intent as Stripe.PaymentIntent).client_secret
+          : undefined,
+      },
+    });
+  } catch (error: unknown) {
+    logger.error('confirmPaymentSheet error', {
+      error: getErrorMessage(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
+/**
+ * @desc    Verify IAP purchase receipt
+ * @route   POST /api/premium/verify-purchase
+ * @access  Private
+ */
+export const verifyPurchase = async (req: VerifyPurchaseRequest, res: Response): Promise<void> => {
+  try {
+    const { receipt, platform, purchaseToken, productId } = req.body;
+    const userId = req.userId;
+
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+
+    // Import receipt validation service
+    const { validateReceipt } = await import('../services/receiptValidationService');
+
+    // Verify receipt with platform
+    const validationResult = await validateReceipt(
+      receipt,
+      platform,
+      purchaseToken,
+      productId,
+    );
+
+    if (!validationResult.valid) {
+      logger.warn('Purchase verification failed', {
+        userId,
+        platform,
+        productId,
+        error: validationResult.error,
+      });
+      res.status(400).json({
+        success: false,
+        message: validationResult.error || 'Invalid receipt',
+      });
+      return;
+    }
+
+    // If verification successful, redirect to IAP controller for processing
+    // Import IAP controller and process purchase
+    const iapController = await import('../controllers/iapController');
+    
+    // Create a request object compatible with IAP controller
+    const iapReq = {
+      ...req,
+      body: {
+        productId: validationResult.productId || req.body.productId,
+        transactionId: validationResult.transactionId || req.body.transactionId,
+        receipt: req.body.receipt,
+        platform: req.body.platform,
+        purchaseToken: req.body.purchaseToken,
+      },
+    };
+    
+    // Process purchase will handle balance update
+    await iapController.processPurchase(iapReq as any, res);
+  } catch (error: unknown) {
+    logger.error('verifyPurchase error', {
+      error: getErrorMessage(error),
+      userId: req.userId,
+    });
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
+/**
+ * @desc    Get daily swipe status for current user
+ * @route   GET /api/premium/daily-swipe-status
+ * @access  Private
+ */
+export const getDailySwipeStatus = async (req: GetDailySwipeStatusRequest, res: Response): Promise<void> => {
+  try {
+    const usageTrackingService = await import('../services/usageTrackingService');
+    const status = await usageTrackingService.default.getDailySwipeStatus(req.userId!);
+    
+    res.json({
+      success: true,
+      data: status,
+    });
+  } catch (error: unknown) {
+    logger.error('getDailySwipeStatus error', {
+      error: getErrorMessage(error),
+      userId: req.userId,
+    });
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
+/**
  * @desc    Cancel a subscription
  * @route   POST /api/premium/cancel
  * @access  Private
@@ -167,6 +462,10 @@ export const cancelSubscription = async (req: CancelSubscriptionRequest, res: Re
     user.premium.plan = 'basic';
     user.premium.stripeSubscriptionId = undefined;
     user.premium.expiresAt = new Date();
+    
+    // Reset feature flags to free tier
+    setFeatureLimitsBasedOnPlan(user);
+    
     await user.save();
 
     res.json({ success: true, message: 'Subscription cancelled successfully' });
@@ -184,7 +483,7 @@ export const cancelSubscription = async (req: CancelSubscriptionRequest, res: Re
  * @route   GET /api/premium/features
  * @access  Public
  */
-export const getPremiumFeatures = (req: GetPremiumFeaturesRequest, res: Response): void => {
+export const getPremiumFeatures = (_req: GetPremiumFeaturesRequest, res: Response): void => {
   // This could be dynamic based on a config file or database
   const features = {
     premium: ['Unlimited Likes', 'See Who Liked You', '5 Free Super Likes per week', '1 Free Boost per month'],
@@ -206,8 +505,21 @@ export const boostProfile = async (req: BoostProfileRequest, res: Response): Pro
       return;
     }
 
-    if (!user.premium?.isActive) {
-      res.status(403).json({ success: false, message: 'This feature is for premium users only' });
+    const isPremium = user.premium?.isActive &&
+      (!user.premium.expiresAt || new Date(user.premium.expiresAt) > new Date());
+
+    // Check if user has boost available - Business Model: Premium/Ultimate users get boosts, others need IAP
+    const hasBoostFeature = isPremium && (user.premium?.features?.boostProfile || user.premium.plan === 'premium' || user.premium.plan === 'ultimate');
+    const iapBoosts = user.premium?.usage?.iapBoosts || 0;
+
+    if (!hasBoostFeature && iapBoosts <= 0) {
+      res.status(403).json({
+        success: false,
+        message: 'No Profile Boosts remaining. Purchase more from the Premium screen.',
+        code: 'BOOST_INSUFFICIENT_BALANCE',
+        canPurchase: true,
+        balance: iapBoosts,
+      });
       return;
     }
 
@@ -217,9 +529,28 @@ export const boostProfile = async (req: BoostProfileRequest, res: Response): Pro
       return;
     }
 
-    // Logic for boost count would be here (e.g., check if user has boosts left)
+    // Deduct IAP boost if not premium
+    if (!hasBoostFeature) {
+      user.premium.usage = user.premium.usage || {
+        swipesUsed: 0,
+        swipesLimit: 5,
+        superLikesUsed: 0,
+        superLikesLimit: 0,
+        boostsUsed: 0,
+        boostsLimit: 0,
+        messagesSent: 0,
+        profileViews: 0,
+        rewindsUsed: 0,
+        iapSuperLikes: 0,
+        iapBoosts: 0,
+      };
+      user.premium.usage.iapBoosts = Math.max(0, iapBoosts - 1);
+      await user.save();
+    }
+
+    // Activate boost - Business Model: 30 minutes (1800 seconds)
     pet.featured.isFeatured = true;
-    pet.featured.featuredUntil = new Date(Date.now() + 60 * 60 * 1000); // 1 hour boost
+    pet.featured.featuredUntil = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes boost
     await pet.save();
 
     res.json({ success: true, message: 'Profile boosted successfully' });
@@ -350,21 +681,22 @@ export const getUsage = async (req: GetUsageRequest, res: Response): Promise<voi
       swipe.swipedAt >= weekStart
     ).length || 0;
 
-    // Determine limits based on plan
-    let swipesLimit = 50; // Basic limit
+    // Determine limits based on plan - Business Model: 5 daily swipes for free users
+    let swipesLimit = 5; // Business Model: 5 daily swipes for free users
     let superLikesLimit = 0;
     let boostsLimit = 0;
 
     if (user.premium?.isActive) {
-      if (user.premium.plan === 'basic') {
-        swipesLimit = 100;
-        superLikesLimit = 2;
-        boostsLimit = 0;
-      } else if (user.premium.plan === 'ultimate') {
-        swipesLimit = 999999; // Unlimited
-        superLikesLimit = 999999; // Unlimited
+      if (user.premium.plan === 'premium') {
+        swipesLimit = -1; // Unlimited for premium users
+        superLikesLimit = -1; // Unlimited
         boostsLimit = 5;
+      } else if (user.premium.plan === 'ultimate') {
+        swipesLimit = -1; // Unlimited
+        superLikesLimit = -1; // Unlimited
+        boostsLimit = 999999; // Unlimited boosts
       }
+      // Note: 'basic' plan is the free tier, so keep default limits (5 swipes)
     }
 
     const usage = {
@@ -414,6 +746,10 @@ export const reactivateSubscription = async (req: ReactivateSubscriptionRequest,
 
     user.premium.cancelAtPeriodEnd = false;
     user.premium.isActive = true;
+    
+    // Ensure feature flags are correctly set based on current plan
+    setFeatureLimitsBasedOnPlan(user);
+    
     await user.save();
 
     res.json({ success: true, message: 'Subscription reactivated successfully' });
@@ -474,13 +810,13 @@ export const getPremiumStatus = async (req: GetPremiumStatusRequest, res: Respon
             status: 'all', 
             limit: 3 
           });
-          const active = subs.data.find(s => s.status === 'active' || s.status === 'trialing');
-          const plan = active ? ((active.items.data[0]?.price.nickname?.toLowerCase() as string) || 'pro') : 'free';
+          const active = subs.data.find((s: Stripe.Subscription) => s.status === 'active' || s.status === 'trialing');
+          const planName = active ? ((active.items.data[0]?.price.nickname?.toLowerCase() as string) || 'pro') : 'free';
           const renewsAt = active ? new Date((active.current_period_end as number) * 1000) : null;
 
           const entitlement: { active: boolean; plan: 'free' | 'pro' | 'elite'; renewsAt: string | null } = { 
             active: !!active, 
-            plan: (active ? (plan === 'elite' ? 'elite' : 'pro') : 'free') as 'free' | 'pro' | 'elite', 
+            plan: (active ? (planName === 'elite' ? 'elite' : 'pro') : 'free') as 'free' | 'pro' | 'elite', 
             renewsAt: renewsAt?.toISOString() || null 
           };
           
@@ -509,11 +845,11 @@ export const getPremiumStatus = async (req: GetPremiumStatusRequest, res: Respon
 
     const defaultEntitlement: {
       active: boolean;
-      plan: string;
+      plan: 'free' | 'pro' | 'elite';
       renewsAt: string | null;
     } = { 
       active: isActive, 
-      plan: (premium?.plan || 'free'), 
+      plan: (premium?.plan === 'ultimate' ? 'elite' : premium?.plan === 'premium' ? 'pro' : 'free') as 'free' | 'pro' | 'elite', 
       renewsAt: premium?.expiresAt ? new Date(premium.expiresAt).toISOString() : null 
     };
     

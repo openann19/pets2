@@ -11,7 +11,7 @@ import { logAdminActivity } from '../../middleware/adminLogger';
 import { getErrorMessage } from '../../utils/errorHandler';
 const logger = require('../../utils/logger');
 
-// Type definitions
+// Type definitions - use Request directly with declaration merging
 interface AdminRequest extends Request {
   userId?: string;
   user?: IUserDocument;
@@ -53,13 +53,22 @@ export const getAPIStats = async (req: AdminRequest, res: Response): Promise<voi
 
     // Calculate metrics
     const totalCalls = apiEvents.length;
-    const successCalls = apiEvents.filter((e: any) => e.success).length;
+    interface APIEvent {
+      success?: boolean;
+      durationMs?: number;
+      errorCode?: string;
+      metadata?: {
+        endpoint?: string;
+        method?: string;
+      };
+    }
+    const successCalls = apiEvents.filter((e: APIEvent) => e.success).length;
     const errorCalls = totalCalls - successCalls;
     const errorRate = totalCalls > 0 ? (errorCalls / totalCalls) * 100 : 0;
 
     // Calculate average response time
     const durations = apiEvents
-      .map((e: any) => e.durationMs)
+      .map((e: APIEvent) => e.durationMs)
       .filter((d: number | undefined) => d !== undefined && !isNaN(d)) as number[];
     
     const avgResponseTime = durations.length > 0
@@ -68,9 +77,9 @@ export const getAPIStats = async (req: AdminRequest, res: Response): Promise<voi
 
     // Get error distribution by status code
     const errorDistribution = apiEvents
-      .filter((e: any) => !e.success && e.errorCode)
-      .reduce((acc: any, e: any) => {
-        const status = parseInt(e.errorCode) || 0;
+      .filter((e: APIEvent) => !e.success && e.errorCode)
+      .reduce((acc: Record<number, number>, e: APIEvent) => {
+        const status = parseInt(e.errorCode || '0', 10) || 0;
         if (!acc[status]) {
           acc[status] = 0;
         }
@@ -88,7 +97,14 @@ export const getAPIStats = async (req: AdminRequest, res: Response): Promise<voi
       .slice(0, 4);
 
     // Get top endpoints by call count
-    const endpointCounts = apiEvents.reduce((acc: any, e: any) => {
+    interface EndpointStats {
+      path: string;
+      method: string;
+      calls: number;
+      totalTime: number;
+      errors: number;
+    }
+    const endpointCounts = apiEvents.reduce((acc: Record<string, EndpointStats>, e: APIEvent) => {
       const endpoint = e.metadata?.endpoint || 'unknown';
       const method = e.metadata?.method || 'GET';
       const key = `${method}-${endpoint}`;
@@ -103,7 +119,7 @@ export const getAPIStats = async (req: AdminRequest, res: Response): Promise<voi
     }, {});
 
     const topEndpoints = Object.values(endpointCounts)
-      .map((e: any) => ({
+      .map((e: EndpointStats) => ({
         path: e.path,
         method: e.method,
         calls: e.calls,
@@ -126,12 +142,16 @@ export const getAPIStats = async (req: AdminRequest, res: Response): Promise<voi
     const analyticsData = analyticsService.getAnalytics(null, '24h');
     const totalEndpoints = Object.keys(analyticsData.metrics.apiCalls).length;
     const activeEndpoints = Object.entries(analyticsData.metrics.apiCalls)
-      .filter(([, data]: [string, any]) => data.count > 0)
+      .filter(([, data]: [string, { count?: number }]) => (data.count || 0) > 0)
       .length;
 
     // Calculate throughput
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-    const recentEvents = apiEvents.filter((e: any) => new Date(e.createdAt) >= oneHourAgo);
+    const recentEvents = apiEvents.filter((e: APIEvent & { createdAt?: Date | string }) => {
+      if (!e.createdAt) return false;
+      const createdAt = e.createdAt instanceof Date ? e.createdAt : new Date(e.createdAt);
+      return createdAt >= oneHourAgo;
+    });
     const requestsPerSecond = recentEvents.length / 3600;
 
     // Estimate data transferred (mock calculation based on average)
@@ -161,7 +181,7 @@ export const getAPIStats = async (req: AdminRequest, res: Response): Promise<voi
       }
     };
 
-    await logAdminActivity(req as any, 'VIEW_API_STATS', { statsRequested: true }, true);
+    await logAdminActivity(req, 'VIEW_API_STATS', { statsRequested: true }, true);
 
     res.json({
       success: true,
@@ -197,9 +217,29 @@ export const getAPIEndpoints = async (req: AdminRequest, res: Response): Promise
     }).lean();
 
     // Process endpoints
-    const endpointMap = new Map<string, any>();
+    interface EndpointInfo {
+      id: string;
+      method: string;
+      path: string;
+      description: string;
+      status: string;
+      calls: number;
+      avgTime: number;
+      totalTime: number;
+      errors: number;
+      firstCall: Date | string;
+      lastCalled: Date | string;
+      metadata: Array<{
+        eventId: string;
+        timestamp: Date | string;
+        duration?: number;
+        success?: boolean;
+        errorCode?: string;
+      }>;
+    }
+    const endpointMap = new Map<string, EndpointInfo>();
 
-    apiEvents.forEach((event: any) => {
+    apiEvents.forEach((event: APIEvent & { createdAt?: Date | string; _id?: string }) => {
       const path = event.metadata?.endpoint || '/api/unknown';
       const method = event.metadata?.method || 'GET';
       const key = `${method}:${path}`;
@@ -253,7 +293,7 @@ export const getAPIEndpoints = async (req: AdminRequest, res: Response): Promise
       },
       authentication: 'bearer',
       version: 'v1',
-      tags: endpoint.path.split('/').filter((p: string) => p && p !== 'api')
+      tags: endpoint.path.split('/').filter((p) => p && p !== 'api')
     }));
 
     // Apply filters
@@ -270,7 +310,7 @@ export const getAPIEndpoints = async (req: AdminRequest, res: Response): Promise
       );
     }
 
-    await logAdminActivity(req as any, 'VIEW_API_ENDPOINTS', { filters: { method, status, search } }, true);
+    await logAdminActivity(req, 'VIEW_API_ENDPOINTS', { filters: { method, status, search } }, true);
 
     res.json({
       success: true,
@@ -348,7 +388,7 @@ export const testAPIEndpoint = async (req: AdminRequest, res: Response): Promise
         }
       });
 
-      await logAdminActivity(req as any, 'TEST_API_ENDPOINT', { endpointId, testCase, duration, success: true }, true);
+      await logAdminActivity(req, 'TEST_API_ENDPOINT', { endpointId, testCase, duration, success: true }, true);
 
       res.json({
         success: true,
@@ -375,7 +415,7 @@ export const testAPIEndpoint = async (req: AdminRequest, res: Response): Promise
         }
       });
 
-      await logAdminActivity(req as any, 'TEST_API_ENDPOINT', { endpointId, testCase, duration, success: false }, false, getErrorMessage(error));
+      await logAdminActivity(req, 'TEST_API_ENDPOINT', { endpointId, testCase, duration, success: false }, false, getErrorMessage(error));
 
       res.json({
         success: false,
@@ -408,7 +448,7 @@ export const updateAPIEndpoint = async (req: AdminRequest, res: Response): Promi
 
     // In a real implementation, this would update endpoint configuration
     // For now, we'll just log the update attempt
-    await logAdminActivity(req as any, 'UPDATE_API_ENDPOINT', { endpointId, updates }, true);
+    await logAdminActivity(req, 'UPDATE_API_ENDPOINT', { endpointId, updates }, true);
 
     logger.info('API endpoint configuration update requested', {
       endpointId,

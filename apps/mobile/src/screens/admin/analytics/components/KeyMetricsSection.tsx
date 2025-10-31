@@ -6,59 +6,55 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../../../theme';
-import { getExtendedColors } from '../../../../theme/adapters';
-import type { ExtendedColors } from '../../../../theme/adapters';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 
-function __makeStyles_styles(colors: ExtendedColors) {
+function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
     metricsGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: 12,
+      gap: theme.spacing.md,
     },
-    secondaryMetricCard: {
+    metricCard: {
       flex: 1,
-      borderRadius: 8,
-      padding: 12,
-      backgroundColor: colors.card ?? colors.surface ?? '#FFFFFF',
-      shadowColor: colors.shadow ?? colors.border ?? 'rgba(15, 23, 42, 0.12)',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
+      minWidth: '48%',
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      backgroundColor: theme.colors.surface,
+      ...theme.shadows.elevation2,
     },
     metricHeader: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 8,
+      marginBottom: theme.spacing.xs,
     },
     metricTitle: {
-      fontSize: 14,
-      fontWeight: '600',
-      marginLeft: 8,
-      color: colors.text ?? '#0F172A',
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
+      marginLeft: theme.spacing.xs,
+      color: theme.colors.onSurface,
     },
     metricValue: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      marginBottom: 4,
-      color: colors.text ?? '#0F172A',
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h1.weight,
+      marginBottom: theme.spacing.xs,
+      color: theme.colors.onSurface,
     },
     metricTrend: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 4,
+      gap: theme.spacing.xs,
     },
     metricTrendText: {
-      fontSize: 12,
-      fontWeight: '600',
-      color: colors.textMuted ?? colors.onMuted ?? '#64748B',
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.h2.weight,
+      color: theme.colors.onMuted,
     },
     metricSubtext: {
-      fontSize: 12,
-      marginTop: 4,
-      color: colors.textSecondary ?? colors.textMuted ?? '#64748B',
+      fontSize: theme.typography.body.size * 0.75,
+      marginTop: theme.spacing.xs,
+      color: theme.colors.onMuted,
     },
   });
 }
@@ -96,14 +92,14 @@ const getTrendIcon = (
   }
 };
 
-const getTrendColor = (trend: 'up' | 'down' | 'stable', colors: ExtendedColors): string => {
+const getTrendColor = (trend: 'up' | 'down' | 'stable', theme: AppTheme): string => {
   switch (trend) {
     case 'up':
-      return colors.success ?? '#10B981';
+      return theme.colors.success;
     case 'down':
-      return colors.danger ?? '#EF4444';
+      return theme.colors.danger;
     default:
-      return colors.textMuted ?? colors.onMuted ?? '#64748B';
+      return theme.colors.onMuted;
   }
 };
 
@@ -120,9 +116,9 @@ const formatCurrency = (amount: number): string =>
   }).format(amount);
 
 export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics }) => {
-  const theme = useTheme();
-  const colors = useMemo(() => getExtendedColors(theme), [theme]);
-  const styles = useMemo(() => __makeStyles_styles(colors), [colors]);
+  const theme: AppTheme = useTheme();
+  const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
+  const { colors } = theme;
 
   return (
     <View style={styles.metricsGrid}>
@@ -132,7 +128,7 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
           <Ionicons
             name="people"
             size={20}
-            color={colors.info ?? colors.primary ?? '#2563EB'}
+            color={colors.info}
           />
           <Text style={styles.metricTitle}>Users</Text>
         </View>
@@ -141,12 +137,12 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
           <Ionicons
             name={getTrendIcon(analytics.users.trend)}
             size={16}
-            color={getTrendColor(analytics.users.trend, colors)}
+            color={getTrendColor(analytics.users.trend, theme)}
           />
           <Text
             style={[
               styles.metricTrendText,
-              { color: getTrendColor(analytics.users.trend, colors) },
+              { color: getTrendColor(analytics.users.trend, theme) },
             ]}
           >
             {analytics.users.growth > 0 ? '+' : ''}
@@ -161,7 +157,7 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
           <Ionicons
             name="heart"
             size={20}
-            color={colors.primary ?? colors.accent ?? '#2563EB'}
+            color={colors.primary}
           />
           <Text style={styles.metricTitle}>Matches</Text>
         </View>
@@ -170,12 +166,12 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
           <Ionicons
             name={getTrendIcon(analytics.matches.trend)}
             size={16}
-            color={getTrendColor(analytics.matches.trend, colors)}
+            color={getTrendColor(analytics.matches.trend, theme)}
           />
           <Text
             style={[
               styles.metricTrendText,
-              { color: getTrendColor(analytics.matches.trend, colors) },
+              { color: getTrendColor(analytics.matches.trend, theme) },
             ]}
           >
             {analytics.matches.growth > 0 ? '+' : ''}
@@ -190,7 +186,7 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
           <Ionicons
             name="chatbubble"
             size={20}
-            color={colors.primary ?? colors.accent ?? '#2563EB'}
+            color={colors.primary}
           />
           <Text style={styles.metricTitle}>Messages</Text>
         </View>
@@ -199,12 +195,12 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
           <Ionicons
             name={getTrendIcon(analytics.messages.trend)}
             size={16}
-            color={getTrendColor(analytics.messages.trend, colors)}
+            color={getTrendColor(analytics.messages.trend, theme)}
           />
           <Text
             style={[
               styles.metricTrendText,
-              { color: getTrendColor(analytics.messages.trend, colors) },
+              { color: getTrendColor(analytics.messages.trend, theme) },
             ]}
           >
             {analytics.messages.growth > 0 ? '+' : ''}
@@ -219,7 +215,7 @@ export const KeyMetricsSection: React.FC<KeyMetricsSectionProps> = ({ analytics 
           <Ionicons
             name="cash"
             size={20}
-            color={colors.success ?? '#10B981'}
+            color={colors.success}
           />
           <Text style={styles.metricTitle}>Revenue</Text>
         </View>

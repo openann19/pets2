@@ -379,7 +379,7 @@ export function AdvancedInteractionTest() {
           disabled={isRunning}
           loading={isRunning}
           style={styles.runButton}
-          gradientColors={[theme.colors.primary, theme.palette?.primary?.[600] || theme.colors.primary]}
+          gradientColors={[theme.colors.primary, theme.palette.brand[600] || theme.colors.primary]}
           // Gradient colors will be ignored by AdvancedButton when using theme variants
         />
 

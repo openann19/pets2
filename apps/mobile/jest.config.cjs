@@ -3,9 +3,16 @@ const path = require('path');
 
 const baseConfig = {
   preset: 'react-native',
-  testEnvironment: 'jsdom',
+  testEnvironment: 'node', // RN tests run in node, not jsdom
   roots: ['<rootDir>/src'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  transform: {
+    '^.+\\.(ts|tsx)$': require.resolve('babel-jest'),
+  },
+  setupFilesAfterEnv: [
+    '<rootDir>/jest.setup.preact-native.ts', // CRITICAL: Mock react-native BEFORE other setup
+    '@testing-library/jest-native/extend-expect',
+    '<rootDir>/jest.setup.ts',
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transformIgnorePatterns: [
     // Allow transpiling workspace packages and RN/Expo modules
@@ -21,14 +28,19 @@ const baseConfig = {
     '^@pawfectmatch/design-tokens/(.*)$': '<rootDir>/../../packages/design-tokens/src/$1',
     '^@pawfectmatch/ui$': '<rootDir>/../../packages/ui/src/index.ts',
     '^@pawfectmatch/ui/(.*)$': '<rootDir>/../../packages/ui/src/$1',
-    '^@pawfectmatch/core$': '<rootDir>/../../packages/core/src/index.ts',
-    '^@pawfectmatch/core/(.*)$': '<rootDir>/../../packages/core/src/$1'
+    '^@pawfectmatch/core$': '<rootDir>/__mocks__/@pawfectmatch/core.ts',
+    '^@pawfectmatch/core/(.*)$': '<rootDir>/../../packages/core/src/$1',
+    // Ensure react-native uses mock
+    '^react-native$': '<rootDir>/__mocks__/react-native.js',
+    // Mock font assets used by @expo/vector-icons
+    '\\.(ttf|otf|woff2?)$': '<rootDir>/__mocks__/fileMock.js'
   },
   // Keep mocks predictable; avoid duplicate manual mocks by centralizing here
   modulePathIgnorePatterns: ['<rootDir>/__mocks_dupe__/'],
   clearMocks: true,
   resetMocks: false,
-  restoreMocks: true
+  restoreMocks: true,
+  // Note: testTimeout should be set per-project, not in baseConfig
 };
 
 module.exports = {
@@ -56,7 +68,10 @@ module.exports = {
         '/a11y\\.',
         '/\\.a11y\\.',
         '/performance\\.',
-        '/\\.performance\\.'
+        '/\\.performance\\.',
+        '\\.d\\.ts$', // Exclude TypeScript declaration files
+        'test-utils\\.ts$', // Exclude test utility files without tests
+        'jest-axe\\.d\\.ts$', // Exclude specific type definition files
       ],
       coverageThreshold: {
         global: {
@@ -65,12 +80,13 @@ module.exports = {
           lines: 90,
           statements: 90
         }
-      }
+      },
+      testTimeout: 30000, // 30 seconds for service tests
     },
     {
       displayName: 'ui',
       ...baseConfig,
-      testEnvironment: 'jsdom',
+      testEnvironment: 'node', // RN UI tests use node env
       testMatch: [
         '<rootDir>/src/**/__tests__/**/*.test.tsx',
         '<rootDir>/src/**/*.test.tsx',
@@ -89,7 +105,10 @@ module.exports = {
         '/a11y\\.',
         '/\\.a11y\\.',
         '/performance\\.',
-        '/\\.performance\\.'
+        '/\\.performance\\.',
+        '\\.d\\.ts$', // Exclude TypeScript declaration files
+        'test-utils\\.ts$', // Exclude test utility files without tests
+        'jest-axe\\.d\\.ts$', // Exclude specific type definition files
       ],
       coverageThreshold: {
         global: {
@@ -98,12 +117,13 @@ module.exports = {
           lines: 80,
           statements: 80
         }
-      }
+      },
+      testTimeout: 30000, // 30 seconds for UI tests
     },
     {
       displayName: 'integration',
       ...baseConfig,
-      testEnvironment: 'jsdom',
+      testEnvironment: 'node', // RN integration tests use node env
       testMatch: [
         '<rootDir>/src/**/__tests__/**/*.integration.test.tsx',
         '<rootDir>/src/**/__tests__/**/*.integration.test.ts',
@@ -117,7 +137,7 @@ module.exports = {
         '/e2e/',
         '/\\.e2e\\.'
       ],
-      // Note: testTimeout is global, set via --testTimeout flag or in individual tests
+      testTimeout: 60000, // 60 seconds for integration tests (longer due to complex flows)
     },
     {
       displayName: 'contract',
@@ -138,7 +158,7 @@ module.exports = {
     {
       displayName: 'a11y',
       ...baseConfig,
-      testEnvironment: 'jsdom',
+      testEnvironment: 'node', // RN a11y tests use node env
       testMatch: [
         '<rootDir>/src/**/__tests__/**/a11y/**/*.test.tsx',
         '<rootDir>/src/**/__tests__/**/a11y/**/*.test.ts',

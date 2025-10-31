@@ -1,12 +1,16 @@
+/**
+ * Adoption Manager Screen
+ * Refactored: Uses extracted components
+ */
+
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useMemo } from 'react';
-import { Modal, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import type { AppTheme } from '@mobile/theme';
 import { useTheme } from '@mobile/theme';
-import { Colors, GlobalStyles, Spacing } from '../../animation';
 import {
   EliteButton,
   EliteCard,
@@ -18,126 +22,25 @@ import {
 } from '../../components';
 import { useAdoptionManagerScreen } from '../../hooks/screens/useAdoptionManagerScreen';
 import type { RootStackScreenProps } from '../../navigation/types';
-
-// Helper to convert rem spacing to pixels
-const sp = (key: keyof typeof Spacing): number => {
-  const value = Spacing[key];
-  if (typeof value === 'string') {
-    return Number.parseFloat(value.replace('rem', '')) * 16;
-  }
-  return value;
-};
+import {
+  EliteApplicationCard,
+  ElitePetListingCard,
+  StatusModal,
+} from './manager/components';
 
 type AdoptionManagerScreenProps = RootStackScreenProps<'AdoptionManager'>;
-
-interface PetListing {
-  id: string;
-  name: string;
-  species: string;
-  breed: string;
-  age: number;
-  status: 'active' | 'pending' | 'adopted' | 'paused';
-  photos: string[];
-  applications: number;
-  views: number;
-  featured: boolean;
-  listedAt: string;
-}
-
-interface AdoptionApplication {
-  id: string;
-  petId: string;
-  petName: string;
-  applicantName: string;
-  applicantEmail: string;
-  status: 'pending' | 'approved' | 'rejected' | 'withdrawn';
-  submittedAt: string;
-  experience: string;
-  livingSpace: string;
-  references: number;
-}
-
-const SPRING_CONFIG = {
-  damping: 15,
-  stiffness: 300,
-  mass: 1,
-};
-
-const VALID_LISTING_STATUSES = new Set<PetListing['status']>([
-  'active',
-  'pending',
-  'adopted',
-  'paused',
-]);
-
-const normalizeListing = (listing: unknown): PetListing => {
-  const item = listing as Record<string, unknown>;
-  const id = (item['id'] ?? item['_id'] ?? '') as string;
-
-  return {
-    id,
-    name: (item['name'] as string) ?? 'Unknown Pet',
-    species: (item['species'] as string) ?? 'Unknown',
-    breed: (item['breed'] as string) ?? 'Unknown',
-    age: typeof item['age'] === 'number' ? item['age'] : 0,
-    status: VALID_LISTING_STATUSES.has(item['status'] as PetListing['status'])
-      ? (item['status'] as PetListing['status'])
-      : 'pending',
-    photos: Array.isArray(item['photos']) ? (item['photos'] as string[]) : [],
-    applications: typeof item['applications'] === 'number' ? item['applications'] : 0,
-    views: typeof item['views'] === 'number' ? item['views'] : 0,
-    featured: typeof item['featured'] === 'boolean' ? item['featured'] : false,
-    listedAt: typeof item['listedAt'] === 'string' ? item['listedAt'] : new Date().toISOString(),
-  };
-};
-
-const normalizeApplication = (application: unknown): AdoptionApplication => {
-  const item = application as Record<string, unknown>;
-  const status = item['status'] as AdoptionApplication['status'];
-
-  return {
-    id: (item['id'] ?? item['_id'] ?? '') as string,
-    petId: (item['petId'] ?? '') as string,
-    petName: (item['petName'] as string) ?? (item['pet'] as { name?: string })?.name ?? 'Unknown',
-    applicantName:
-      (item['applicantName'] as string) ??
-      (item['applicant'] as { name?: string })?.name ??
-      'Pending Applicant',
-    applicantEmail:
-      (item['applicantEmail'] as string) ??
-      (item['applicant'] as { email?: string })?.email ??
-      'unknown@example.com',
-    status:
-      status && ['pending', 'approved', 'rejected', 'withdrawn'].includes(status)
-        ? status
-        : 'pending',
-    submittedAt:
-      typeof item['submittedAt'] === 'string' ? item['submittedAt'] : new Date().toISOString(),
-    experience:
-      (item['experience'] as string) ??
-      (item['applicationData'] as { experience?: string })?.experience ??
-      '',
-    livingSpace:
-      (item['livingSpace'] as string) ??
-      (item['applicationData'] as { livingSpace?: string })?.livingSpace ??
-      '',
-    references: Array.isArray(item['references']) ? item['references'].length : 0,
-  };
-};
 
 const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { colors } = theme;
 
-  // Use the extracted hook for all business logic
   const {
     activeTab,
     refreshing,
     showStatusModal,
     selectedPet,
     isLoading,
-    error,
     petListings,
     applications,
     setActiveTab,
@@ -154,275 +57,6 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
     tabScale1,
     tabScale2,
   } = useAdoptionManagerScreen();
-
-  const renderListings = () => (
-    <View style={styles.tabContent}>
-      {petListings.map((pet) => (
-        <View
-          key={pet.id}
-          style={styles.listingCard}
-        >
-          <View style={styles.listingHeader}>
-            <View style={styles.petInfo}>
-              <Text style={styles.petName}>{pet.name}</Text>
-              <Text style={styles.petBreed}>
-                {pet.breed} • {pet.age} years old
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.statusBadge,
-                { backgroundColor: `${getStatusColor(pet.status)}20` },
-              ])}
-              testID="AdoptionManagerScreen-button-2"
-              accessibilityLabel="Interactive element"
-              accessibilityRole="button"
-              onPress={() => {
-                setSelectedPet(pet);
-                setShowStatusModal(true);
-              }}
-            >
-              <Text
-                style={StyleSheet.flatten([
-                  styles.statusText,
-                  { color: getStatusColor(pet.status) },
-                ])}
-              >
-                {getStatusIcon(pet.status)}{' '}
-                {pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.listingStats}>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{pet.applications}</Text>
-              <Text style={styles.statLabel}>Applications</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{pet.views}</Text>
-              <Text style={styles.statLabel}>Views</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{pet.featured ? '⭐' : '—'}</Text>
-              <Text style={styles.statLabel}>Featured</Text>
-            </View>
-          </View>
-
-          <View style={styles.listingActions}>
-            <TouchableOpacity
-              style={styles.actionButton}
-              testID="AdoptionManagerScreen-button-2"
-              accessibilityLabel="Interactive element"
-              accessibilityRole="button"
-              onPress={() => navigation.navigate('PetDetails', { petId: pet.id })}
-            >
-              <Text style={styles.actionButtonText}>View Details</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={StyleSheet.flatten([styles.actionButton, styles.primaryButton])}
-              testID="AdoptionManagerScreen-button-2"
-              accessibilityLabel="Interactive element"
-              accessibilityRole="button"
-              onPress={() =>
-                navigation.navigate('ApplicationReview', {
-                  applicationId: pet.id,
-                })
-              }
-            >
-              <Text style={StyleSheet.flatten([styles.actionButtonText, styles.primaryButtonText])}>
-                Review Apps ({pet.applications})
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      ))}
-    </View>
-  );
-
-  const renderEliteListings = () => (
-    <View style={GlobalStyles['py4'] as any}>
-      {petListings.map((pet) => (
-        <EliteCard
-          key={pet.id}
-          gradient
-          blur
-          style={GlobalStyles['mb4'] as any}
-        >
-          <View style={styles.eliteListingHeader}>
-            <View style={{ flex: 1 }}>
-              <Text style={GlobalStyles['heading3'] as any}>{pet.name}</Text>
-              <Text style={GlobalStyles['body'] as any}>
-                {pet.breed} • {pet.age} years old
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.eliteStatusBadge,
-                { backgroundColor: `${getStatusColor(pet.status)}20` },
-              ])}
-              testID="AdoptionManagerScreen-button-2"
-              accessibilityLabel="Interactive element"
-              accessibilityRole="button"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setSelectedPet(pet);
-                setShowStatusModal(true);
-              }}
-            >
-              <Text
-                style={StyleSheet.flatten([
-                  styles.eliteStatusText,
-                  { color: getStatusColor(pet.status) },
-                ])}
-              >
-                {getStatusIcon(pet.status)}{' '}
-                {pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.eliteStatsContainer}>
-            <View style={styles.eliteStat}>
-              <Text style={styles.eliteStatNumber}>{pet.applications}</Text>
-              <Text style={styles.eliteStatLabel}>Applications</Text>
-            </View>
-            <View style={styles.eliteStat}>
-              <Text style={styles.eliteStatNumber}>{pet.views}</Text>
-              <Text style={styles.eliteStatLabel}>Views</Text>
-            </View>
-            <View style={styles.eliteStat}>
-              <Text style={styles.eliteStatNumber}>{pet.featured ? '⭐' : '—'}</Text>
-              <Text style={styles.eliteStatLabel}>Featured</Text>
-            </View>
-          </View>
-
-          <View style={styles.eliteActionsContainer}>
-            <EliteButton
-              title="View Details"
-              variant="secondary"
-              size="sm"
-              icon="eye"
-              onPress={() => navigation.navigate('PetDetails', { petId: pet.id })}
-              style={{ flex: 1 }}
-            />
-            <View style={GlobalStyles['mx2'] as any} />
-            <EliteButton
-              title={`Review (${pet.applications})`}
-              variant="primary"
-              size="sm"
-              icon="document-text"
-              onPress={() =>
-                navigation.navigate('ApplicationReview', {
-                  applicationId: pet.id,
-                })
-              }
-              style={{ flex: 1 }}
-            />
-          </View>
-        </EliteCard>
-      ))}
-    </View>
-  );
-
-  const renderEliteApplications = () => (
-    <View style={GlobalStyles['py4'] as any}>
-      {applications.map((app) => (
-        <EliteCard
-          key={app.id}
-          gradient
-          blur
-          style={GlobalStyles['mb4'] as any}
-        >
-          <View style={styles.eliteApplicationHeader}>
-            <View style={{ flex: 1 }}>
-              <Text style={GlobalStyles['heading3'] as any}>{app.applicantName}</Text>
-              <Text style={GlobalStyles['body'] as any}>Applying for: {app.petName}</Text>
-            </View>
-            <View
-              style={StyleSheet.flatten([
-                styles.eliteStatusBadge,
-                { backgroundColor: `${getStatusColor(app.status)}20` },
-              ])}
-            >
-              <Text
-                style={StyleSheet.flatten([
-                  styles.eliteStatusText,
-                  { color: getStatusColor(app.status) },
-                ])}
-              >
-                {getStatusIcon(app.status)}{' '}
-                {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.eliteApplicationDetails}>
-            <View style={styles.eliteDetailRow}>
-              <Ionicons
-                name="mail"
-                size={16}
-                color={colors.onMuted}
-              />
-              <Text style={styles.eliteDetailText}>{app.applicantEmail}</Text>
-            </View>
-            <View style={styles.eliteDetailRow}>
-              <Ionicons
-                name="home"
-                size={16}
-                color={colors.onMuted}
-              />
-              <Text style={styles.eliteDetailText}>{app.livingSpace}</Text>
-            </View>
-            <View style={styles.eliteDetailRow}>
-              <Ionicons
-                name="star"
-                size={16}
-                color={colors.onMuted}
-              />
-              <Text style={styles.eliteDetailText}>{app.experience}</Text>
-            </View>
-            <View style={styles.eliteDetailRow}>
-              <Ionicons
-                name="people"
-                size={16}
-                color={colors.onMuted}
-              />
-              <Text style={styles.eliteDetailText}>{app.references} references</Text>
-            </View>
-          </View>
-
-          {app.status === 'pending' && (
-            <View style={styles.eliteActionsContainer}>
-              <EliteButton
-                title="Reject"
-                variant="ghost"
-                size="sm"
-                icon="close"
-                onPress={() => {
-                  handleApplicationAction(app.id, 'reject');
-                }}
-                style={StyleSheet.flatten([{ flex: 1 }, { borderColor: Colors.error[500] }])}
-              />
-              <View style={GlobalStyles['mx2'] as any} />
-              <EliteButton
-                title="Approve"
-                variant="primary"
-                size="sm"
-                icon="checkmark"
-                onPress={() => {
-                  handleApplicationAction(app.id, 'approve');
-                }}
-                style={{ flex: 1 }}
-                gradientEffect
-                gradientColors={[Colors.success, theme.colors.success]}
-              />
-            </View>
-          )}
-        </EliteCard>
-      ))}
-    </View>
-  );
 
   if (isLoading) {
     return (
@@ -454,16 +88,15 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
       <View style={styles.tabContainer}>
         <Animated.View style={tabAnimatedStyle1}>
           <TouchableOpacity
-            style={StyleSheet.flatten([
+            style={[
               styles.eliteTab,
               activeTab === 'listings' && styles.eliteActiveTab,
-            ])}
-            testID="AdoptionManagerScreen-button-2"
-            accessibilityLabel="Interactive element"
-            accessibilityRole="button"
-            onPress={() => {
-              handleTabPress('listings', tabScale1);
-            }}
+            ]}
+            onPress={() => handleTabPress('listings', tabScale1)}
+            testID="tab-listings"
+            accessibilityLabel="My Listings tab"
+            accessibilityRole="tab"
+            accessibilityState={{ selected: activeTab === 'listings' }}
           >
             <Ionicons
               name="list"
@@ -471,10 +104,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               color={activeTab === 'listings' ? colors.onSurface : colors.onMuted}
             />
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.eliteTabText,
                 activeTab === 'listings' && styles.eliteActiveTabText,
-              ])}
+              ]}
             >
               My Listings ({petListings.length})
             </Text>
@@ -483,16 +116,15 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
 
         <Animated.View style={tabAnimatedStyle2}>
           <TouchableOpacity
-            style={StyleSheet.flatten([
+            style={[
               styles.eliteTab,
               activeTab === 'applications' && styles.eliteActiveTab,
-            ])}
-            testID="AdoptionManagerScreen-button-2"
-            accessibilityLabel="Interactive element"
-            accessibilityRole="button"
-            onPress={() => {
-              handleTabPress('applications', tabScale2);
-            }}
+            ]}
+            onPress={() => handleTabPress('applications', tabScale2)}
+            testID="tab-applications"
+            accessibilityLabel="Applications tab"
+            accessibilityRole="tab"
+            accessibilityState={{ selected: activeTab === 'applications' }}
           >
             <Ionicons
               name="document-text"
@@ -500,10 +132,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               color={activeTab === 'applications' ? colors.onSurface : colors.onMuted}
             />
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.eliteTabText,
                 activeTab === 'applications' && styles.eliteActiveTabText,
-              ])}
+              ]}
             >
               Applications ({applications.length})
             </Text>
@@ -535,276 +167,94 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
             message="Once people start applying for your pets, you'll see all applications here."
           />
         ) : activeTab === 'listings' ? (
-          renderEliteListings()
+          <View style={styles.listingsContainer}>
+            {petListings.map((pet) => (
+              <ElitePetListingCard
+                key={pet.id}
+                pet={pet}
+                getStatusColor={getStatusColor}
+                getStatusIcon={getStatusIcon}
+                onViewDetails={(petId) => navigation.navigate('PetDetails', { petId })}
+                onReviewApps={(petId) =>
+                  navigation.navigate('ApplicationReview', {
+                    applicationId: petId,
+                  })
+                }
+                onChangeStatus={(pet) => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setSelectedPet(pet);
+                  setShowStatusModal(true);
+                }}
+              />
+            ))}
+          </View>
         ) : (
-          renderEliteApplications()
+          <View style={styles.applicationsContainer}>
+            {applications.map((app) => (
+              <EliteApplicationCard
+                key={app.id}
+                application={app}
+                getStatusColor={getStatusColor}
+                getStatusIcon={getStatusIcon}
+                onApprove={(id) => handleApplicationAction(id, 'approve')}
+                onReject={(id) => handleApplicationAction(id, 'reject')}
+              />
+            ))}
+          </View>
         )}
       </EliteScrollContainer>
 
       {/* Elite Status Modal */}
-      <Modal
+      <StatusModal
         visible={showStatusModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => {
+        selectedPet={selectedPet}
+        getStatusIcon={getStatusIcon}
+        onStatusChange={(pet, status) => {
+          handleStatusChange(pet, status);
           setShowStatusModal(false);
         }}
-      >
-        <View style={GlobalStyles['modalOverlay'] as any}>
-          <View style={GlobalStyles['modalContent'] as any}>
-            <Text style={GlobalStyles['heading2'] as any}>
-              Change Status for {selectedPet?.name}
-            </Text>
-
-            <View style={styles.statusOptions}>
-              {['active', 'pending', 'adopted', 'paused'].map((status) => (
-                <EliteButton
-                  key={status}
-                  title={`${getStatusIcon(status)} ${status.charAt(0).toUpperCase() + status.slice(1)}`}
-                  variant="ghost"
-                  onPress={() => selectedPet && handleStatusChange(selectedPet, status)}
-                  style={styles.statusOptionButton}
-                />
-              ))}
-            </View>
-
-            <EliteButton
-              title="Cancel"
-              variant="secondary"
-              onPress={() => {
-                setShowStatusModal(false);
-              }}
-              style={GlobalStyles['mt4'] as any}
-            />
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setShowStatusModal(false)}
+      />
     </EliteContainer>
   );
 };
 
 function makeStyles(theme: AppTheme) {
-  return {
-    // === BASIC STYLES ===
-    tabContent: {
-      flex: 1,
-      padding: theme.spacing.md ?? 16,
-    },
-    listingCard: {
-      backgroundColor: theme.colors.surface,
-      borderRadius: theme.radii?.md ?? 12,
-      padding: theme.spacing.md ?? 16,
-      marginBottom: theme.spacing.sm ?? 12,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      shadowColor: theme.colors.border,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
-    },
-    listingHeader: {
-      flexDirection: 'row' as const,
-      justifyContent: 'space-between' as const,
-      alignItems: 'flex-start' as const,
-      marginBottom: theme.spacing.sm ?? 12,
-    },
-    petInfo: {
-      flex: 1,
-    },
-    petName: {
-      fontSize: theme.typography.body.size * 1.125,
-      fontWeight: theme.typography.h2.weight,
-      color: theme.colors.onSurface,
-      marginBottom: theme.spacing.xs,
-    },
-    petBreed: {
-      fontSize: theme.typography.body.size * 0.875,
-      color: theme.colors.onMuted,
-    },
-    statusBadge: {
-      paddingHorizontal: theme.spacing.sm ?? 12,
-      paddingVertical: theme.spacing.xs ?? 6,
-      borderRadius: theme.radii?.sm ?? 8,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-    },
-    statusText: {
-      fontSize: theme.typography.body.size * 0.75,
-      fontWeight: theme.typography.h2.weight,
-    },
-    listingStats: {
-      flexDirection: 'row' as const,
-      justifyContent: 'space-around' as const,
-      paddingVertical: theme.spacing.sm ?? 12,
-      borderTopWidth: 1,
-      borderBottomWidth: 1,
-      borderColor: theme.colors.border,
-      marginVertical: theme.spacing.sm ?? 12,
-    },
-    stat: {
-      alignItems: 'center' as const,
-    },
-    statNumber: {
-      fontSize: theme.typography.h2.size * 0.875,
-      fontWeight: theme.typography.h1.weight,
-      color: theme.colors.primary,
-      marginBottom: theme.spacing.xs,
-    },
-    statLabel: {
-      fontSize: theme.typography.body.size * 0.75,
-      color: theme.colors.onMuted,
-      textAlign: 'center' as const,
-    },
-    listingActions: {
-      flexDirection: 'row' as const,
-      gap: theme.spacing.sm ?? 12,
-    },
-    actionButton: {
-      flex: 1,
-      paddingVertical: theme.spacing.sm ?? 12,
-      paddingHorizontal: theme.spacing.lg ?? 24,
-      borderRadius: theme.radii?.sm ?? 8,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.surface,
-      alignItems: 'center' as const,
-    },
-    actionButtonText: {
-      fontSize: 14,
-      fontWeight: '600' as const,
-      color: theme.colors.onMuted,
-    },
-    primaryButton: {
-      backgroundColor: theme.colors.primary,
-      borderColor: theme.colors.primary,
-    },
-    primaryButtonText: {
-      color: theme.colors.onSurface,
-    },
-
-    // === ELITE TAB SYSTEM ===
+  return StyleSheet.create({
     tabContainer: {
-      flexDirection: 'row' as const,
-      paddingHorizontal: theme.spacing.xl ?? 24,
-      paddingVertical: theme.spacing.lg ?? 20,
-      gap: theme.spacing.sm ?? 12,
+      flexDirection: 'row',
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      gap: 8,
     },
     eliteTab: {
       flex: 1,
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      justifyContent: 'center' as const,
-      paddingVertical: theme.spacing.lg ?? 20,
-      paddingHorizontal: theme.spacing.md ?? 16,
-      borderRadius: theme.radii?.lg ?? 16,
-      backgroundColor: theme.colors.overlay ?? theme.colors.surface,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      gap: theme.spacing.xs ?? 8,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 12,
     },
     eliteActiveTab: {
-      backgroundColor: theme.colors.primary,
-      borderColor: theme.colors.primary,
-      shadowColor: theme.colors.border,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.15,
-      shadowRadius: 6,
-      elevation: 8,
+      backgroundColor: theme.colors.surface + '40',
     },
     eliteTabText: {
       fontSize: 14,
-      fontWeight: '600' as const,
+      fontWeight: '600',
       color: theme.colors.onMuted,
     },
     eliteActiveTabText: {
       color: theme.colors.onSurface,
     },
-
-    // === ELITE LISTING STYLES ===
-    eliteListingHeader: {
-      flexDirection: 'row' as const,
-      alignItems: 'flex-start' as const,
-      marginBottom: theme.spacing.lg ?? 20,
+    listingsContainer: {
+      padding: 16,
     },
-    eliteStatusBadge: {
-      paddingHorizontal: theme.spacing.sm ?? 12,
-      paddingVertical: theme.spacing.xs ?? 6,
-      borderRadius: theme.radii?.md ?? 12,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
+    applicationsContainer: {
+      padding: 16,
     },
-    eliteStatusText: {
-      fontSize: 12,
-      fontWeight: '600' as const,
-    },
-    eliteStatsContainer: {
-      flexDirection: 'row' as const,
-      justifyContent: 'space-around' as const,
-      paddingVertical: theme.spacing.lg ?? 20,
-      marginVertical: theme.spacing.lg ?? 20,
-      backgroundColor: theme.colors.overlay ?? theme.colors.surface,
-      borderRadius: theme.radii?.md ?? 12,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-    },
-    eliteStat: {
-      alignItems: 'center' as const,
-    },
-    eliteStatNumber: {
-      fontSize: 20,
-      fontWeight: '700' as const,
-      color: theme.colors.primary,
-      marginBottom: theme.spacing.xs ?? 8,
-    },
-    eliteStatLabel: {
-      fontSize: 12,
-      color: theme.colors.onMuted,
-      fontWeight: '500' as const,
-    },
-    eliteActionsContainer: {
-      flexDirection: 'row' as const,
-      marginTop: theme.spacing.lg ?? 20,
-      gap: theme.spacing.sm ?? 12,
-    },
-
-    // === ELITE APPLICATION STYLES ===
-    eliteApplicationHeader: {
-      flexDirection: 'row' as const,
-      alignItems: 'flex-start' as const,
-      marginBottom: theme.spacing.lg ?? 20,
-    },
-    eliteApplicationDetails: {
-      gap: theme.spacing.sm ?? 12,
-      marginBottom: theme.spacing.lg ?? 20,
-    },
-    eliteDetailRow: {
-      flexDirection: 'row' as const,
-      alignItems: 'center' as const,
-      gap: theme.spacing.sm ?? 12,
-      paddingVertical: theme.spacing.xs ?? 6,
-      paddingHorizontal: theme.spacing.sm ?? 12,
-      backgroundColor: theme.colors.overlay ?? theme.colors.surface,
-      borderRadius: theme.radii?.sm ?? 8,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-    },
-    eliteDetailText: {
-      fontSize: 14,
-      color: theme.colors.onMuted,
-      fontWeight: '500' as const,
-      flex: 1,
-    },
-
-    // === MODAL STYLES ===
-    statusOptions: {
-      gap: theme.spacing.sm ?? 12,
-      marginVertical: theme.spacing.lg ?? 20,
-    },
-    statusOptionButton: {
-      marginBottom: theme.spacing.xs ?? 6,
-    },
-  };
+  });
 }
 
 export default AdoptionManagerScreen;

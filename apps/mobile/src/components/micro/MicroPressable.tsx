@@ -17,6 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useReducedMotion } from '../../utils/A11yHelpers';
+import { springs } from '@/foundation/motion';
 
 type Props = {
   children: React.ReactNode;
@@ -57,14 +58,14 @@ export default function MicroPressable({
     y.value = locationY;
     prog.value = 0;
     prog.value = withTiming(1, { duration: animationDuration });
-    scale.value = withSpring(scaleFrom, { damping: 18, stiffness: 420, mass: 0.6 });
+    scale.value = withSpring(scaleFrom, springs.light);
     if (haptics && !reduceMotion) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const onPressOut = () => {
     pressingRef.current = false;
     if (!reduceMotion) {
-      scale.value = withSpring(1, { damping: 18, stiffness: 300 });
+      scale.value = withSpring(1, springs.standard);
     }
   };
 

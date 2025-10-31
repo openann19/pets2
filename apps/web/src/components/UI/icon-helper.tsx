@@ -9,7 +9,7 @@ import type { SVGProps } from 'react';
 
 interface IconProps {
   icon: ComponentType<SVGProps<SVGSVGElement>>;
-  className?: string;
+  className?: string | undefined;
 }
 
 /**

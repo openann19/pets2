@@ -5,15 +5,20 @@ export const E = {
     if (isAppError(err)) return err;
     if (isAxiosError(err)) {
       const status = err.response?.status;
-      return {
+      const result: AppError = {
         kind: mapStatusToKind(status),
         message: err.message ?? "Request failed",
-        status,
-        code: err.code,
         cause: err,
         retriable: isRetriable(status),
         meta: { url: err.config?.url, method: err.config?.method }
       };
+      if (status !== undefined) {
+        result.status = status;
+      }
+      if (err.code !== undefined) {
+        result.code = err.code;
+      }
+      return result;
     }
     if (err instanceof Error) {
       return { kind: "Unknown", message: err.message, cause: err, ...fallback };

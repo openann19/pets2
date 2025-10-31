@@ -1,0 +1,83 @@
+id: m-ux-01-swipe-gesture-performance
+owner: ux
+severity: critical
+area: mobile
+status: open
+context: |
+  Swipe gesture jank on low-end Android devices (50 fps instead of 60 fps).
+  Current behavior: Swipe animations lag and feel unresponsive on lower-end devices.
+  Why it matters: Poor user perception, core feature (swiping) feels broken.
+  
+  Use Case:
+  1. User swipes pet card left/right
+  2. Animation stutters or lags
+  3. User perception: app is slow/broken
+  4. With gesture-handler + reanimated: smooth 60fps animations
+
+acceptance:
+  - [ ] Replace native gesture handling with react-native-gesture-handler
+  - [ ] Replace animation library with react-native-reanimated
+  - [ ] Implement swipe gestures using GestureHandler
+  - [ ] Use Reanimated worklets for smooth animations
+  - [ ] Test on low-end Android device (Moto G or equivalent)
+  - [ ] Verify 60fps during swipe animations
+  - [ ] Test edge cases: rapid swipes, simultaneous gestures
+  - [ ] No regressions on iOS
+  - [ ] Performance test: FPS measurement during swipes
+  - [ ] Unit tests for gesture handlers
+
+states:
+  - idle
+  - panning
+  - swiping-left
+  - swiping-right
+  - animating
+  - error
+
+telemetry:
+  - event: UX_SWIPE_PERFORMANCE_MEASURED
+    props: [fps, deviceModel, gestureType, timestamp]
+  - event: UX_GESTURE_HANDLER_INITIALIZED
+    props: [library, version, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  components:
+    - apps/mobile/src/components/widgets/SwipeWidget.tsx
+    - apps/mobile/src/components/cards/SwipeCardMobile.tsx
+  tests:
+    - apps/mobile/src/components/__tests__/SwipeCardMobile.gesture.test.tsx
+    - apps/mobile/src/components/__tests__/SwipeCardMobile.reanimated.test.tsx
+  packages:
+    - react-native-gesture-handler
+    - react-native-reanimated
+
+risks:
+  - Breaking changes to existing gesture implementations
+  - Compatibility issues with other gesture libraries
+  - Performance may still be poor on very low-end devices
+  - Learning curve for team on new libraries
+
+rollback:
+  - Revert to previous gesture implementation
+  - Remove gesture-handler and reanimated dependencies
+  - Feature flag to toggle gesture libraries
+
+links:
+  - docs: https://docs.swmansion.com/react-native-gesture-handler/
+  - docs: https://docs.swmansion.com/react-native-reanimated/
+
+dependencies:
+  - react-native-gesture-handler
+  - react-native-reanimated
+  - Expo compatibility
+  - Performance testing tools
+
+timeline:
+  start: 2025-01-30
+  implementation: 2025-02-02
+  testing: 2025-02-03
+  deploy: 2025-02-05
+

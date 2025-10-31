@@ -12,7 +12,7 @@ import {
   withSpring,
   withSequence,
 } from 'react-native-reanimated';
-import { PREMIUM_ANIMATIONS } from './constants';
+import { springs } from '@/foundation/motion';
 
 export const useEntranceAnimation = (
   type: 'fadeIn' | 'slideIn' | 'scaleIn' | 'bounceIn' = 'fadeIn',
@@ -30,11 +30,11 @@ export const useEntranceAnimation = (
           opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
           break;
         case 'slideIn':
-          translateY.value = withDelay(delay, withSpring(0, PREMIUM_ANIMATIONS.spring.gentle));
+          translateY.value = withDelay(delay, withSpring(0, springs.gentle));
           opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
           break;
         case 'scaleIn':
-          scale.value = withDelay(delay, withSpring(1, PREMIUM_ANIMATIONS.spring.bouncy));
+          scale.value = withDelay(delay, withSpring(1, springs.bouncy));
           opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
           break;
         case 'bounceIn':
@@ -70,11 +70,11 @@ export const useEntranceAnimation = (
         opacity.value = withTiming(1, { duration: 500 });
         break;
       case 'slideIn':
-        translateY.value = withSpring(0, PREMIUM_ANIMATIONS.spring.gentle);
+        translateY.value = withSpring(0, springs.gentle);
         opacity.value = withTiming(1, { duration: 500 });
         break;
       case 'scaleIn':
-        scale.value = withSpring(1, PREMIUM_ANIMATIONS.spring.bouncy);
+        scale.value = withSpring(1, springs.bouncy);
         opacity.value = withTiming(1, { duration: 500 });
         break;
       case 'bounceIn':

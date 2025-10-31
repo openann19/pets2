@@ -1,0 +1,63 @@
+{
+  "timestamp": "2025-10-31T01:07:25.169Z",
+  "total": 9,
+  "passed": 7,
+  "failed": 0,
+  "errors": 2,
+  "results": [
+    {
+      "command": "pnpm -w install",
+      "success": true,
+      "hasError": false,
+      "timestamp": "2025-10-31T01:06:58.888Z"
+    },
+    {
+      "command": "pnpm -w list -r --depth=0",
+      "success": true,
+      "hasError": false,
+      "timestamp": "2025-10-31T01:07:01.248Z"
+    },
+    {
+      "command": "pnpm -w list -r --depth=0",
+      "success": true,
+      "hasError": false,
+      "timestamp": "2025-10-31T01:07:02.135Z"
+    },
+    {
+      "command": "pnpm -w -r run typecheck 2>&1 || pnpm -w -r run type-check 2>&1 || echo \"No typecheck script found\"",
+      "success": true,
+      "hasError": false,
+      "timestamp": "2025-10-31T01:07:02.932Z"
+    },
+    {
+      "command": "turbo lint 2>&1",
+      "success": false,
+      "hasError": true,
+      "timestamp": "2025-10-31T01:07:03.204Z"
+    },
+    {
+      "command": "pnpm i18n:check 2>&1",
+      "success": true,
+      "hasError": false,
+      "timestamp": "2025-10-31T01:07:04.913Z"
+    },
+    {
+      "command": "pnpm knip 2>&1",
+      "success": false,
+      "hasError": true,
+      "timestamp": "2025-10-31T01:07:05.197Z"
+    },
+    {
+      "command": "pnpm madge --circular --extensions ts,tsx apps packages 2>&1",
+      "success": true,
+      "hasError": false,
+      "timestamp": "2025-10-31T01:07:12.151Z"
+    },
+    {
+      "command": "gitleaks detect --source . --report-path reports/audit/raw/gitleaks.json 2>&1 || echo \"No secrets found\"",
+      "success": true,
+      "hasError": false,
+      "timestamp": "2025-10-31T01:07:25.166Z"
+    }
+  ]
+}

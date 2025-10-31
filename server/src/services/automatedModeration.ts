@@ -16,7 +16,7 @@ export interface ModerationRule {
   severity: SeverityLevel;
   action: ActionType;
   labels?: string[];
-  condition?: (data: any) => boolean;
+  condition?: (data: unknown) => boolean;
 }
 
 // Interface for moderation flag
@@ -33,8 +33,15 @@ export interface ModerationFlag {
 export interface ContentData {
   contentId: string;
   contentType: ContentType;
-  content: any;
-  user: any;
+  content: Record<string, unknown>;
+  user: {
+    _id?: string;
+    postsLast24h?: number;
+    reportsReceived?: number;
+    accountAgeDays?: number;
+    postsCount?: number;
+    [key: string]: unknown;
+  };
 }
 
 // Interface for content snapshot
@@ -43,7 +50,7 @@ export interface ContentSnapshot {
   description: string;
   mediaUrls: string[];
   textContent: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 // Interface for moderation result
@@ -122,19 +129,28 @@ const moderationRules = {
   userRules: [
     {
       name: 'rapid_posting',
-      condition: (user: any) => user.postsLast24h > 20,
+      condition: (user: unknown) => {
+        const userData = user as { postsLast24h?: number };
+        return (userData.postsLast24h || 0) > 20;
+      },
       severity: 'medium' as SeverityLevel,
       action: 'flag' as ActionType
     },
     {
       name: 'high_report_rate',
-      condition: (user: any) => user.reportsReceived > 5,
+      condition: (user: unknown) => {
+        const userData = user as { reportsReceived?: number };
+        return (userData.reportsReceived || 0) > 5;
+      },
       severity: 'high' as SeverityLevel,
       action: 'quarantine' as ActionType
     },
     {
       name: 'suspicious_account',
-      condition: (user: any) => user.accountAgeDays < 7 && user.postsCount > 10,
+      condition: (user: unknown) => {
+        const userData = user as { accountAgeDays?: number; postsCount?: number };
+        return (userData.accountAgeDays || 0) < 7 && (userData.postsCount || 0) > 10;
+      },
       severity: 'medium' as SeverityLevel,
       action: 'flag' as ActionType
     }
@@ -217,7 +233,7 @@ class AutomatedModerationService {
   /**
    * Analyze images for violations (placeholder for AI vision service)
    */
-  async analyzeImages(images: any[]): Promise<ModerationFlag[]> {
+  async analyzeImages(images: Array<{ url?: string }>): Promise<ModerationFlag[]> {
     const flags: ModerationFlag[] = [];
 
     // This would integrate with services like Google Vision AI, AWS Rekognition, etc.
@@ -241,7 +257,7 @@ class AutomatedModerationService {
   /**
    * Analyze user behavior for suspicious patterns
    */
-  async analyzeUserBehavior(user: any): Promise<ModerationFlag[]> {
+  async analyzeUserBehavior(user: { _id: string; createdAt: Date; toObject?: () => Record<string, unknown> }): Promise<ModerationFlag[]> {
     const flags: ModerationFlag[] = [];
 
     // Calculate user metrics (this would be cached in a real implementation)
@@ -250,7 +266,7 @@ class AutomatedModerationService {
     const accountAgeDays = Math.floor((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24));
 
     const userData = {
-      ...user.toObject(),
+      ...(user.toObject ? user.toObject() : { _id: user._id, createdAt: user.createdAt }),
       postsLast24h,
       reportsReceived,
       accountAgeDays
@@ -275,7 +291,13 @@ class AutomatedModerationService {
   /**
    * Apply moderation based on flags
    */
-  async applyModeration(contentId: string, contentType: ContentType, flags: ModerationFlag[], content: any, user: any): Promise<void> {
+  async applyModeration(
+    contentId: string, 
+    contentType: ContentType, 
+    flags: ModerationFlag[], 
+    content: Record<string, unknown>, 
+    user: Record<string, unknown>
+  ): Promise<void> {
     // Determine the highest severity action
     const severityOrder: Record<SeverityLevel, number> = { low: 1, medium: 2, high: 3, critical: 4 };
     const actionOrder: Record<ActionType, number> = { flag: 1, quarantine: 2, escalate: 3 };
@@ -310,19 +332,23 @@ class AutomatedModerationService {
       });
     } else {
       // Update existing record with new flags
-      (moderationRecord.automatedFlags as any[]).push(...flags);
-      moderationRecord.priority = highestSeverity === 'critical' ? 'urgent' as any :
-                                  highestSeverity === 'high' ? 'high' as any : 'medium' as any;
-      (moderationRecord as any).moderationLevel = highestSeverity === 'critical' ? 'senior_review' : 'human_review';
+      if (moderationRecord.automatedFlags) {
+        moderationRecord.automatedFlags.push(...flags);
+      } else {
+        moderationRecord.automatedFlags = flags;
+      }
+      moderationRecord.priority = highestSeverity === 'critical' ? 'urgent' :
+                                  highestSeverity === 'high' ? 'high' : 'medium';
+      moderationRecord.moderationLevel = highestSeverity === 'critical' ? 'senior_review' : 'human_review';
     }
 
     // Auto-apply actions for high-confidence critical flags
     const criticalFlags = flags.filter(f => f.severity === 'critical' && f.confidence > 0.8);
     if (criticalFlags.length > 0) {
       moderationRecord.moderationStatus = 'escalated';
-      (moderationRecord as any).escalatedAt = new Date();
-      (moderationRecord as any).escalationReason = `Automated detection: ${criticalFlags.map(f => f.ruleName).join(', ')}`;
-      (moderationRecord as any).escalationLevel = 'legal';
+      moderationRecord.escalatedAt = new Date();
+      moderationRecord.escalationReason = `Automated detection: ${criticalFlags.map(f => f.ruleName).join(', ')}`;
+      moderationRecord.escalationLevel = 'legal';
     }
 
     await moderationRecord.save();
@@ -345,7 +371,7 @@ class AutomatedModerationService {
   /**
    * Create a snapshot of content for review
    */
-  createContentSnapshot(content: any, contentType: ContentType): ContentSnapshot {
+  createContentSnapshot(content: Record<string, unknown>, contentType: ContentType): ContentSnapshot {
     const snapshot: ContentSnapshot = {
       title: '',
       description: '',
@@ -355,30 +381,57 @@ class AutomatedModerationService {
     };
 
     switch (contentType) {
-      case 'pet':
-        snapshot.title = content.name || '';
-        snapshot.description = content.description || '';
-        snapshot.mediaUrls = content.photos ? content.photos.map((p: any) => p.url) : [];
+      case 'pet': {
+        const petContent = content as {
+          name?: string;
+          description?: string;
+          photos?: Array<{ url?: string }>;
+          species?: unknown;
+          breed?: unknown;
+          age?: unknown;
+          location?: unknown;
+        };
+        snapshot.title = petContent.name || '';
+        snapshot.description = petContent.description || '';
+        snapshot.mediaUrls = petContent.photos ? petContent.photos.map((p) => p.url || '').filter(Boolean) : [];
         snapshot.metadata = {
-          species: content.species,
-          breed: content.breed,
-          age: content.age,
-          location: content.location
+          species: petContent.species,
+          breed: petContent.breed,
+          age: petContent.age,
+          location: petContent.location
         };
         break;
+      }
 
-      case 'story':
-        snapshot.title = content.title || '';
-        snapshot.description = content.excerpt || content.content?.substring(0, 200) || '';
-        snapshot.mediaUrls = content.media ? content.media.map((m: any) => m.url) : [];
-        snapshot.textContent = content.content || '';
+      case 'story': {
+        const storyContent = content as {
+          title?: string;
+          excerpt?: string;
+          content?: string | { substring?: (start: number, end: number) => string };
+          media?: Array<{ url?: string }>;
+        };
+        snapshot.title = storyContent.title || '';
+        const contentText = typeof storyContent.content === 'string' 
+          ? storyContent.content 
+          : storyContent.content?.substring?.(0, 200) || '';
+        snapshot.description = storyContent.excerpt || contentText;
+        snapshot.mediaUrls = storyContent.media ? storyContent.media.map((m) => m.url || '').filter(Boolean) : [];
+        snapshot.textContent = typeof storyContent.content === 'string' ? storyContent.content : '';
         break;
+      }
 
-      case 'user_profile':
-        snapshot.title = `${content.firstName} ${content.lastName}`;
-        snapshot.description = content.bio || '';
-        snapshot.mediaUrls = content.avatar ? [content.avatar] : [];
+      case 'user_profile': {
+        const userContent = content as {
+          firstName?: string;
+          lastName?: string;
+          bio?: string;
+          avatar?: string;
+        };
+        snapshot.title = `${userContent.firstName || ''} ${userContent.lastName || ''}`.trim();
+        snapshot.description = userContent.bio || '';
+        snapshot.mediaUrls = userContent.avatar ? [userContent.avatar] : [];
         break;
+      }
     }
 
     return snapshot;
@@ -388,7 +441,8 @@ class AutomatedModerationService {
    * Update content status based on moderation decision
    */
   async updateContentStatus(contentId: string, contentType: ContentType, status: string): Promise<void> {
-    let Model: any;
+    type ModelType = typeof Pet | typeof Story | typeof User;
+    let Model: ModelType;
     switch (contentType) {
       case 'pet':
         Model = Pet;
@@ -400,10 +454,11 @@ class AutomatedModerationService {
         Model = User;
         break;
       default:
+        logger.warn('Unknown content type for status update', { contentType, contentId });
         return;
     }
 
-    const updateData: any = { moderationStatus: status };
+    const updateData: Record<string, unknown> = { moderationStatus: status };
 
     // Set specific timestamps and flags
     if (status === 'quarantined') {
@@ -453,7 +508,12 @@ class AutomatedModerationService {
   /**
    * Process content for moderation (called from content creation/update hooks)
    */
-  async moderateContent(contentId: string, contentType: ContentType, content: any, user: any): Promise<ModerationResult> {
+  async moderateContent(
+    contentId: string, 
+    contentType: ContentType, 
+    content: Record<string, unknown>, 
+    user: Record<string, unknown>
+  ): Promise<ModerationResult> {
     return this.analyzeContent({ contentId, contentType, content, user });
   }
 
@@ -465,30 +525,53 @@ class AutomatedModerationService {
 
     for (const contentId of contentIds) {
       try {
-        let content: any, user: any;
+        let fetchedContent: Record<string, unknown> | null = null;
+        let fetchedUser: Record<string, unknown> | null = null;
 
         // Fetch content and user based on type
         switch (contentType) {
-          case 'pet':
-            content = await Pet.findById(contentId).populate('owner');
-            user = (content as any)?.owner;
+          case 'pet': {
+            fetchedContent = await Pet.findById(contentId).populate('owner').lean() as Record<string, unknown> | null;
+            if (fetchedContent) {
+              const petContent = fetchedContent as { owner?: { toString: () => string } | string | Record<string, unknown> };
+              const ownerId = typeof petContent.owner === 'string' 
+                ? petContent.owner 
+                : typeof petContent.owner === 'object' && petContent.owner !== null && '_id' in petContent.owner
+                  ? String(petContent.owner._id)
+                  : petContent.owner?.toString();
+              if (ownerId) {
+                fetchedUser = await User.findById(ownerId).lean() as Record<string, unknown> | null;
+              }
+            }
             break;
-          case 'story':
-            content = await Story.findById(contentId).populate('author');
-            user = (content as any)?.author;
+          }
+          case 'story': {
+            fetchedContent = await Story.findById(contentId).populate('author').lean() as Record<string, unknown> | null;
+            if (fetchedContent) {
+              const storyContent = fetchedContent as { author?: { toString: () => string } | string | Record<string, unknown> };
+              const authorId = typeof storyContent.author === 'string'
+                ? storyContent.author
+                : typeof storyContent.author === 'object' && storyContent.author !== null && '_id' in storyContent.author
+                  ? String(storyContent.author._id)
+                  : storyContent.author?.toString();
+              if (authorId) {
+                fetchedUser = await User.findById(authorId).lean() as Record<string, unknown> | null;
+              }
+            }
             break;
+          }
           case 'user_profile':
-            content = await User.findById(contentId);
-            user = content;
+            fetchedUser = await User.findById(contentId).lean() as Record<string, unknown> | null;
+            fetchedContent = fetchedUser;
             break;
         }
 
-        if (content && user) {
+        if (fetchedContent && fetchedUser) {
           const result = await this.analyzeContent({
             contentId,
             contentType,
-            content,
-            user
+            content: fetchedContent,
+            user: fetchedUser
           });
           results.push({ contentId, success: true, result });
         } else {

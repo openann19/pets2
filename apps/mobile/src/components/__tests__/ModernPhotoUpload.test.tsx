@@ -30,7 +30,23 @@ jest.mock('../buttons/EliteButton', () => {
   );
 });
 
-jest.mock('expo-image-picker');
+const mockRequestMediaLibraryPermissions = jest.fn();
+const mockLaunchImageLibraryAsync = jest.fn();
+
+jest.mock('expo-image-picker', () => ({
+  PermissionStatus: {
+    UNDETERMINED: 'undetermined',
+    GRANTED: 'granted',
+    DENIED: 'denied',
+  },
+  requestMediaLibraryPermissionsAsync: mockRequestMediaLibraryPermissions,
+  launchImageLibraryAsync: mockLaunchImageLibraryAsync,
+  MediaTypeOptions: {
+    Images: 'Images',
+    Videos: 'Videos',
+    All: 'All',
+  },
+}));
 jest.mock('expo-haptics');
 jest.mock('../photo/AdvancedPhotoEditor', () => ({
   AdvancedPhotoEditor: ({ onSave, onCancel }: any) => (
@@ -51,12 +67,6 @@ jest.mock('../photo/AdvancedPhotoEditor', () => ({
   ),
 }));
 
-const mockRequestMediaLibraryPermissions = jest.fn();
-const mockLaunchImageLibraryAsync = jest.fn();
-
-(ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock) = mockRequestMediaLibraryPermissions;
-(ImagePicker.launchImageLibraryAsync as jest.Mock) = mockLaunchImageLibraryAsync;
-
 describe('ModernPhotoUpload', () => {
   const mockPhotos = [{ id: '1', uri: 'file://photo1.jpg', isUploading: false }];
   const mockOnPhotosChange = jest.fn();
@@ -64,7 +74,8 @@ describe('ModernPhotoUpload', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockRequestMediaLibraryPermissions.mockResolvedValue({
-      status: ImagePicker.PermissionStatus.GRANTED,
+      status: 'granted' as const,
+      granted: true,
     });
     mockLaunchImageLibraryAsync.mockResolvedValue({
       canceled: false,

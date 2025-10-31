@@ -4,8 +4,10 @@
  */
 
 // Mock @react-navigation/native
-jest.mock('@react-navigation/native', () => ({
-  ...jest.requireActual('@react-navigation/native'),
+jest.mock('@react-navigation/native', () => {
+  const actual = (jest as any).requireActual('@react-navigation/native');
+  return {
+    ...actual,
   useNavigation: () => ({
     navigate: jest.fn(),
     goBack: jest.fn(),
@@ -18,7 +20,7 @@ jest.mock('@react-navigation/native', () => ({
     key: 'test-route',
     name: 'TestScreen',
   }),
-  useFocusEffect: jest.fn((callback) => callback()),
+  useFocusEffect: jest.fn((callback: any) => callback()),
   useIsFocused: jest.fn(() => true),
   useTheme: () => ({
     colors: {
@@ -31,7 +33,8 @@ jest.mock('@react-navigation/native', () => ({
     },
     dark: false,
   }),
-}));
+  };
+});
 
 // Mock @react-native-masked-view/masked-view
 jest.mock('@react-native-masked-view/masked-view', () => ({

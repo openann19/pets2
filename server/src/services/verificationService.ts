@@ -10,9 +10,9 @@
  */
 
 import mongoose from 'mongoose';
-import { IVerification, Verification } from '../models/Verification';
-import { IUser, User } from '../models/User';
-import { IPet, Pet } from '../models/Pet';
+import Verification from '../models/Verification';
+import User from '../models/User';
+import Pet from '../models/Pet';
 import sharp from 'sharp';
 import logger from '../utils/logger';
 
@@ -161,7 +161,7 @@ export async function getUserVerificationStatus(userId: string): Promise<Verific
 export async function submitIdentityVerification(
   userId: string,
   requirements: TierRequirements['tier1']
-): Promise<IVerification> {
+): Promise<any> {
   try {
     // Validate input
     if (!requirements.idDocument) {
@@ -219,7 +219,7 @@ export async function submitIdentityVerification(
 export async function submitPetOwnershipVerification(
   userId: string,
   requirements: TierRequirements['tier2']
-): Promise<IVerification> {
+): Promise<any> {
   try {
     // Validate input
     if (!requirements.primaryProof.documentUrl) {
@@ -286,7 +286,7 @@ export async function submitPetOwnershipVerification(
 export async function submitVeterinaryVerification(
   userId: string,
   requirements: TierRequirements['tier3']
-): Promise<IVerification> {
+): Promise<any> {
   try {
     // Validate input
     if (!requirements.veterinaryDocuments.vaccinationRecord) {
@@ -332,7 +332,7 @@ export async function submitVeterinaryVerification(
 export async function submitOrganizationVerification(
   userId: string,
   requirements: TierRequirements['tier4']
-): Promise<IVerification> {
+): Promise<any> {
   try {
     // Validate input
     if (!requirements.documents.licenseOrRegistration) {
@@ -386,7 +386,7 @@ export async function approveVerification(
   verificationId: string,
   adminId: string,
   notes?: string
-): Promise<IVerification> {
+): Promise<any> {
   try {
     const verification = await Verification.findById(verificationId);
     if (!verification) {
@@ -427,7 +427,7 @@ export async function rejectVerification(
   adminId: string,
   reason: string,
   notes?: string
-): Promise<IVerification> {
+): Promise<any> {
   try {
     const verification = await Verification.findById(verificationId);
     if (!verification) {

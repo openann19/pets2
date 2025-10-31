@@ -116,8 +116,10 @@ jest.mock('react-native-encrypted-storage', () => ({
 }));
 
 // Mock @tanstack/react-query
-jest.mock('@tanstack/react-query', () => ({
-  ...jest.requireActual('@tanstack/react-query'),
+jest.mock('@tanstack/react-query', () => {
+  const actual = (jest as any).requireActual('@tanstack/react-query');
+  return {
+    ...actual,
   useQuery: jest.fn(() => ({
     data: null,
     isLoading: false,
@@ -137,5 +139,64 @@ jest.mock('@tanstack/react-query', () => ({
     setQueryData: jest.fn(),
     getQueryData: jest.fn(),
   })),
-}));
+  };
+});
+
+// Mock @expo/vector-icons (includes Ionicons)
+jest.mock('@expo/vector-icons', () => {
+  const React = require('react');
+  const { View, Text } = require('react-native');
+  
+  // Create a mock icon component
+  const createIcon = (name: string) => {
+    return React.forwardRef((props: any, ref: any) => {
+      return React.createElement(View, {
+        ...props,
+        ref,
+        testID: props.testID || `icon-${name}`,
+        'data-testid': props.testID || `icon-${name}`,
+        'aria-label': props.accessibilityLabel || name,
+      });
+    });
+  };
+  
+  return {
+    Ionicons: createIcon('Ionicons'),
+    MaterialIcons: createIcon('MaterialIcons'),
+    MaterialCommunityIcons: createIcon('MaterialCommunityIcons'),
+    FontAwesome: createIcon('FontAwesome'),
+    FontAwesome5: createIcon('FontAwesome5'),
+    AntDesign: createIcon('AntDesign'),
+    Entypo: createIcon('Entypo'),
+    Feather: createIcon('Feather'),
+    Fontisto: createIcon('Fontisto'),
+    Foundation: createIcon('Foundation'),
+    Octicons: createIcon('Octicons'),
+    SimpleLineIcons: createIcon('SimpleLineIcons'),
+    Zocial: createIcon('Zocial'),
+  };
+});
+
+// Mock react-native-vector-icons (alternative icon library)
+jest.mock('react-native-vector-icons', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  
+  const createIcon = (name: string) => {
+    return React.forwardRef((props: any, ref: any) => {
+      return React.createElement(View, {
+        ...props,
+        ref,
+        testID: props.testID || `icon-${name}`,
+      });
+    });
+  };
+  
+  return {
+    Ionicons: createIcon('Ionicons'),
+    MaterialIcons: createIcon('MaterialIcons'),
+    MaterialCommunityIcons: createIcon('MaterialCommunityIcons'),
+    FontAwesome: createIcon('FontAwesome'),
+  };
+});
 

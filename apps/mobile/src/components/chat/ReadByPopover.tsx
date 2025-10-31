@@ -8,6 +8,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import type { ReadReceipt as CoreReadReceipt, User } from '@pawfectmatch/core';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
+import { springs } from '@/foundation/motion';
 
 export interface ReadReceiptDisplay {
   userId: string;
@@ -47,8 +50,16 @@ export default function ReadByPopover({
   receipts,
   users,
   anchor,
-  theme,
+  theme: themeOverride,
 }: ReadByPopoverProps) {
+  const theme = useTheme() as AppTheme;
+  const styles = makeStyles(theme);
+  
+  // Use theme override if provided, otherwise use semantic theme
+  const bgColor = themeOverride?.bg ?? theme.colors.surface;
+  const textColor = themeOverride?.text ?? theme.colors.onSurface;
+  const subtextColor = themeOverride?.subtext ?? theme.colors.onMuted;
+  const borderColor = themeOverride?.border ?? theme.utils.alpha(theme.colors.onSurface, 0.08);
   const alpha = useSharedValue(0);
   const scale = useSharedValue(0.96);
 
@@ -56,7 +67,7 @@ export default function ReadByPopover({
     if (visible) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
       alpha.value = withTiming(1, { duration: 140 });
-      scale.value = withSpring(1, { damping: 16, stiffness: 320 });
+      scale.value = withSpring(1, springs.standard);
     } else {
       alpha.value = withTiming(0, { duration: 120 });
       scale.value = withTiming(0.96, { duration: 120 });
@@ -77,7 +88,7 @@ export default function ReadByPopover({
     return {
       userId: r.user,
       name,
-      avatar,
+      avatar: avatar ?? '',
       readAt: r.readAt,
     };
   });
@@ -91,11 +102,16 @@ export default function ReadByPopover({
       transparent
       animationType="none"
       onRequestClose={onClose}
+      accessibilityViewIsModal
+      accessibilityLabel="Read receipts"
     >
       {/* Backdrop */}
       <Pressable
         style={styles.backdrop}
         onPress={onClose}
+        accessibilityRole="button"
+        accessibilityLabel="Close read receipts"
+        accessibilityHint="Tap outside to close"
       >
         <Animated.View style={[styles.backdropFill, { opacity: alpha.value }]} />
       </Pressable>
@@ -106,41 +122,46 @@ export default function ReadByPopover({
           styles.pop,
           popSty,
           {
-            backgroundColor: theme?.bg ?? '#111',
-            borderColor: theme?.border ?? 'rgba(255,255,255,0.08)',
+            backgroundColor: bgColor,
+            borderColor: borderColor,
             top,
             left,
           },
         ]}
         pointerEvents="box-none"
       >
-        <Text style={[styles.title, { color: theme?.text ?? '#fff' }]}>Read by</Text>
+        <Text style={[styles.title, { color: textColor }]} allowFontScaling>Read by</Text>
 
         {displayReceipts.length === 0 ? (
-          <Text style={[styles.empty, { color: theme?.subtext ?? '#9ca3af' }]}>Nobody yet</Text>
+          <Text style={[styles.empty, { color: subtextColor }]} allowFontScaling>Nobody yet</Text>
         ) : (
-          <View style={styles.list}>
+          <View style={styles.list} accessibilityRole="list">
             {displayReceipts.map((r) => (
               <View
                 key={r.userId}
                 style={styles.row}
+                accessibilityRole="listitem"
+                accessibilityLabel={`${r.name} read at ${formatShort(r.readAt)}`}
               >
                 {r.avatar ? (
                   <Image
                     source={{ uri: r.avatar }}
                     style={styles.avatar}
+                    accessibilityRole="image"
+                    accessibilityLabel={`${r.name}'s avatar`}
                   />
                 ) : (
                   <View style={[styles.avatar, styles.avatarFallback]} />
                 )}
                 <View style={{ flex: 1 }}>
                   <Text
-                    style={[styles.name, { color: theme?.text ?? '#fff' }]}
+                    style={[styles.name, { color: textColor }]}
                     numberOfLines={1}
+                    allowFontScaling
                   >
                     {r.name}
                   </Text>
-                  <Text style={[styles.sub, { color: theme?.subtext ?? '#9ca3af' }]}>
+                  <Text style={[styles.sub, { color: subtextColor }]} allowFontScaling>
                     {formatShort(r.readAt)}
                   </Text>
                 </View>
@@ -153,22 +174,23 @@ export default function ReadByPopover({
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: { position: 'absolute', inset: 0 },
-  backdropFill: { flex: 1, backgroundColor: 'rgba(0,0,0,0.25)' },
-  pop: {
-    position: 'absolute',
-    width: 220,
-    borderRadius: 16,
-    padding: 12,
-    borderWidth: 1,
-  },
-  title: { fontSize: 12, fontWeight: '700', marginBottom: 8, opacity: 0.9 },
-  empty: { fontSize: 12 },
-  list: { gap: 10 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  avatar: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#222' },
-  avatarFallback: { backgroundColor: '#333' },
-  name: { fontSize: 13, fontWeight: '600' },
-  sub: { fontSize: 11 },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    backdrop: { position: 'absolute', inset: 0 },
+    backdropFill: { flex: 1, backgroundColor: theme.utils.alpha(theme.colors.onSurface, 0.25) },
+    pop: {
+      position: 'absolute',
+      width: 220,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      borderWidth: 1,
+    },
+    title: { fontSize: 12, fontWeight: '700', marginBottom: theme.spacing.sm, opacity: 0.9 },
+    empty: { fontSize: 12 },
+    list: { gap: theme.spacing.md },
+    row: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md },
+    avatar: { width: 28, height: 28, borderRadius: 14, backgroundColor: theme.utils.alpha(theme.colors.onSurface, 0.1) },
+    avatarFallback: { backgroundColor: theme.utils.alpha(theme.colors.onSurface, 0.15) },
+    name: { fontSize: 13, fontWeight: '600' },
+    sub: { fontSize: 11 },
+  });

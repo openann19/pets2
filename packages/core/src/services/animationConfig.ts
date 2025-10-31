@@ -1,6 +1,7 @@
 import type { AnimationConfig } from '../types/animations';
 import { defaultAnimationConfig } from '../types/animations';
 import { getLocalStorageItem, setLocalStorageItem } from '../utils/env';
+import { logger } from '../utils/logger';
 
 class AnimationConfigService {
   private config: AnimationConfig = { ...defaultAnimationConfig };
@@ -86,7 +87,7 @@ class AnimationConfigService {
         this.config = { ...defaultAnimationConfig, ...parsed };
       }
     } catch (error) {
-      console.warn('Failed to load animation config:', error);
+      logger.warn('Failed to load animation config:', error);
       this.config = { ...defaultAnimationConfig };
     }
   }
@@ -96,7 +97,7 @@ class AnimationConfigService {
       await Promise.resolve(); // Satisfy require-await
       setLocalStorageItem('animation-config', JSON.stringify(this.config));
     } catch (error) {
-      console.warn('Failed to save animation config:', error);
+      logger.warn('Failed to save animation config:', error);
     }
   }
 
@@ -105,7 +106,7 @@ class AnimationConfigService {
       try {
         listener(this.getConfig());
       } catch (error) {
-        console.warn('Error notifying animation config listener:', error);
+        logger.warn('Error notifying animation config listener:', error);
       }
     });
   }

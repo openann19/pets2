@@ -207,7 +207,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
         </Text>
       </TouchableOpacity>
 
-      {errors.photos && <Text style={styles.errorText}>{errors.photos}</Text>}
+      {errors['photos'] && <Text style={styles.errorText}>{errors['photos']}</Text>}
 
       {/* Upload status indicators */}
       {hasUploadingPhotos && (

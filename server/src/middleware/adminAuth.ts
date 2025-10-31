@@ -7,17 +7,13 @@ import * as jwt from 'jsonwebtoken';
 import type { JwtPayload } from 'jsonwebtoken';
 import type { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
+import type { IUserDocument } from '../types/mongoose';
 import logger from '../utils/logger';
-
-export interface AuthRequest extends Request {
-  userId?: string;
-  user?: { _id?: string; id?: string; role?: string; status?: string; email?: string; [key: string]: unknown };
-}
 
 /**
  * Verify JWT token and attach user to request
  */
-export const requireAuth = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+export const requireAuth = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     // Get token from Authorization header
     const authHeader = req.headers.authorization;
@@ -63,8 +59,9 @@ export const requireAuth = async (req: AuthRequest, res: Response, next: NextFun
       });
     }
 
-    // Attach user to request
-    req.user = user;
+    // Attach user to request with type assertion at boundary point
+    req.userId = decoded.userId;
+    req.user = user as IUserDocument;
     next();
   } catch (error) {
     if (error instanceof Error && error.name === 'JsonWebTokenError') {
@@ -95,7 +92,7 @@ export const requireAuth = async (req: AuthRequest, res: Response, next: NextFun
 /**
  * Ensure user has an admin role
  */
-export const requireAdmin = async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+export const requireAdmin = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     if (!req.user) {
       return res.status(401).json({
@@ -144,7 +141,7 @@ export const requireAdmin = async (req: AuthRequest, res: Response, next: NextFu
 export const requireRole = (allowedRoles: string | string[]) => {
   const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
 
-  return async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       if (!req.user) {
         return res.status(401).json({
@@ -187,7 +184,7 @@ export const requireRole = (allowedRoles: string | string[]) => {
 /**
  * Optional authentication - attaches user if token is present, but doesn't require it
  */
-export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+export const optionalAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -202,7 +199,8 @@ export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFu
     if (decoded && decoded.userId) {
       const user = await User.findById(decoded.userId).select('+role');
       if (user && user.status === 'active') {
-        req.user = user;
+        req.user = user as IUserDocument;
+        req.userId = decoded.userId;
       }
     }
 

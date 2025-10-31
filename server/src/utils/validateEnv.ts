@@ -1,3 +1,5 @@
+import logger from './logger';
+
 /**
  * Enhanced Environment Variable Validation (2025 Standards)
  * - Comprehensive validation with schema-based approach
@@ -11,9 +13,9 @@
 
 // Simple console logger for validation (before full logger is initialized)
 const validationLogger = {
-  info: (msg: string) => console.log(`[INFO] ${msg}`),
-  warn: (msg: string) => console.warn(`[WARN] ${msg}`),
-  error: (msg: string) => console.error(`[ERROR] ${msg}`)
+  info: (msg: string) => logger.info(`[INFO] ${msg}`),
+  warn: (msg: string) => logger.warn(`[WARN] ${msg}`),
+  error: (msg: string) => logger.error(`[ERROR] ${msg}`)
 };
 
 interface EnvSchema {
@@ -100,7 +102,7 @@ const validators: Record<string, (value: string, schema?: EnvSchema) => boolean>
   },
   email: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
   duration: (value: string) => /^\d+(\.\d+)?(ms|s|m|h|d|w|y)$/.test(value),
-  enum: (value: string, schema: EnvSchema) => schema.values?.includes(value) || false,
+  enum: (value: string, schema?: EnvSchema) => schema?.values?.includes(value) || false,
   secret: (value: string, schema?: EnvSchema) => {
     if (schema?.minLength && value.length < schema.minLength) return false;
     // Check entropy (variety of characters)
@@ -235,8 +237,8 @@ export function validateEnv(): Record<string, string> {
   }
 
   // Special case: JWT secrets should be different
-  if (validatedEnv.JWT_SECRET && validatedEnv.JWT_REFRESH_SECRET &&
-    validatedEnv.JWT_SECRET === validatedEnv.JWT_REFRESH_SECRET) {
+  if (validatedEnv['JWT_SECRET'] && validatedEnv['JWT_REFRESH_SECRET'] &&
+    validatedEnv['JWT_SECRET'] === validatedEnv['JWT_REFRESH_SECRET']) {
     if (isProduction) {
       errors.push({
         variable: 'JWT_REFRESH_SECRET',
@@ -253,9 +255,9 @@ export function validateEnv(): Record<string, string> {
   }
 
   // Special case: Stripe key environment mismatch
-  if (validatedEnv.STRIPE_SECRET_KEY) {
-    const isTestKey = validatedEnv.STRIPE_SECRET_KEY.startsWith('sk_test_');
-    const isLiveKey = validatedEnv.STRIPE_SECRET_KEY.startsWith('sk_live_');
+  if (validatedEnv['STRIPE_SECRET_KEY']) {
+    const isTestKey = validatedEnv['STRIPE_SECRET_KEY'].startsWith('sk_test_');
+    const isLiveKey = validatedEnv['STRIPE_SECRET_KEY'].startsWith('sk_live_');
 
     if (isProduction && isTestKey) {
       warnings.push({
@@ -277,11 +279,11 @@ export function validateEnv(): Record<string, string> {
     validationLogger.error('Environment validation failed');
     errors.forEach(e => validationLogger.error(`  - ${e.variable}: ${e.message}`));
 
-    console.error('\n❌ Environment Validation Failed:\n');
+    logger.error('\n❌ Environment Validation Failed:\n');
     errors.forEach((error, index) => {
-      console.error(`  ${index + 1}. ${error.message}`);
+      logger.error(`  ${index + 1}. ${error.message}`);
     });
-    console.error('\n💡 Tip: Copy .env.example to .env and fill in the values\n');
+    logger.error('\n💡 Tip: Copy .env.example to .env and fill in the values\n');
     // During test runs, do not exit the process. Proceed with defaults to keep tests isolated from env.
     if (!isTest) {
       process.exit(1);
@@ -293,44 +295,44 @@ export function validateEnv(): Record<string, string> {
     validationLogger.warn('Environment validation warnings');
     warnings.forEach(w => validationLogger.warn(`  - ${w.variable}: ${w.message}`));
 
-    console.warn('\n⚠️ Environment Validation Warnings:\n');
+    logger.warn('\n⚠️ Environment Validation Warnings:\n');
     warnings.forEach((warning, index) => {
-      console.warn(`  ${index + 1}. ${warning.message}`);
+      logger.warn(`  ${index + 1}. ${warning.message}`);
     });
-    console.warn('');
+    logger.warn('');
   }
 
   // Log successful validation
-  validationLogger.info(`Environment variables validated successfully (${validatedEnv.NODE_ENV || 'development'})`);
+  validationLogger.info(`Environment variables validated successfully (${validatedEnv['NODE_ENV'] || 'development'})`);
 
   // Log sanitized configuration (without sensitive data)
   const configSummary = {
-    environment: validatedEnv.NODE_ENV || 'development',
-    port: validatedEnv.PORT || 5000,
-    clientUrl: validatedEnv.CLIENT_URL,
-    mongodb: validatedEnv.MONGODB_URI ? 'Configured' : 'Not configured',
-    redis: validatedEnv.REDIS_URL ? 'Configured' : 'Not configured',
-    stripe: validatedEnv.STRIPE_SECRET_KEY ? 'Configured' : 'Not configured',
-    cloudinary: validatedEnv.CLOUDINARY_API_KEY ? 'Configured' : 'Not configured',
-    smtp: validatedEnv.SMTP_HOST ? 'Configured' : 'Not configured',
-    sentry: validatedEnv.SENTRY_DSN ? 'Configured' : 'Not configured'
+    environment: validatedEnv['NODE_ENV'] || 'development',
+    port: validatedEnv['PORT'] || 5000,
+    clientUrl: validatedEnv['CLIENT_URL'],
+    mongodb: validatedEnv['MONGODB_URI'] ? 'Configured' : 'Not configured',
+    redis: validatedEnv['REDIS_URL'] ? 'Configured' : 'Not configured',
+    stripe: validatedEnv['STRIPE_SECRET_KEY'] ? 'Configured' : 'Not configured',
+    cloudinary: validatedEnv['CLOUDINARY_API_KEY'] ? 'Configured' : 'Not configured',
+    smtp: validatedEnv['SMTP_HOST'] ? 'Configured' : 'Not configured',
+    sentry: validatedEnv['SENTRY_DSN'] ? 'Configured' : 'Not configured'
   };
 
   validationLogger.info('Server configuration loaded');
 
   // Console output for human-readable summary
-  console.log('\n📋 Configuration Summary:');
-  console.log(`  • Environment: ${configSummary.environment}`);
-  console.log(`  • Port: ${configSummary.port}`);
-  console.log(`  • Client URL: ${configSummary.clientUrl}`);
-  console.log(`  • MongoDB: ${configSummary.mongodb === 'Configured' ? '✓' : '✗'} ${configSummary.mongodb}`);
-  console.log(`  • Redis: ${configSummary.redis === 'Configured' ? '✓' : '✗'} ${configSummary.redis}`);
-  console.log(`  • JWT Authentication: ✓ Configured`);
-  console.log(`  • Stripe: ${configSummary.stripe === 'Configured' ? '✓' : '✗'} ${configSummary.stripe}`);
-  console.log(`  • Cloudinary: ${configSummary.cloudinary === 'Configured' ? '✓' : '✗'} ${configSummary.cloudinary}`);
-  console.log(`  • Email: ${configSummary.smtp === 'Configured' ? '✓' : '✗'} ${configSummary.smtp}`);
-  console.log(`  • Error Monitoring: ${configSummary.sentry === 'Configured' ? '✓' : '✗'} ${configSummary.sentry}`);
-  console.log('');
+  logger.info('\n📋 Configuration Summary:');
+  logger.info(`  • Environment: ${configSummary.environment}`);
+  logger.info(`  • Port: ${configSummary.port}`);
+  logger.info(`  • Client URL: ${configSummary.clientUrl}`);
+  logger.info(`  • MongoDB: ${configSummary.mongodb === 'Configured' ? '✓' : '✗'} ${configSummary.mongodb}`);
+  logger.info(`  • Redis: ${configSummary.redis === 'Configured' ? '✓' : '✗'} ${configSummary.redis}`);
+  logger.info(`  • JWT Authentication: ✓ Configured`);
+  logger.info(`  • Stripe: ${configSummary.stripe === 'Configured' ? '✓' : '✗'} ${configSummary.stripe}`);
+  logger.info(`  • Cloudinary: ${configSummary.cloudinary === 'Configured' ? '✓' : '✗'} ${configSummary.cloudinary}`);
+  logger.info(`  • Email: ${configSummary.smtp === 'Configured' ? '✓' : '✗'} ${configSummary.smtp}`);
+  logger.info(`  • Error Monitoring: ${configSummary.sentry === 'Configured' ? '✓' : '✗'} ${configSummary.sentry}`);
+  logger.info('');
 
   return validatedEnv;
 }

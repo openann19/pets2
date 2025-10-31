@@ -32,13 +32,13 @@ export class ErrorBoundary extends Component {
         this.setState({
             errorInfo
         });
-        // Log error to console in development
+        // Log error to logger in development
         if (process.env.NODE_ENV === 'development') {
-            console.group('🚨 Error Boundary Caught Error');
+            logger.error('🚨 Error Boundary Caught Error');
             logger.error('Error:', { error });
             logger.error('Error Info:', { errorInfo });
             logger.error('Component Stack:', { componentStack: errorInfo.componentStack });
-            console.groupEnd();
+            // Error logged via logger above
         }
         // Call custom error handler if provided
         if (this.props.onError) {

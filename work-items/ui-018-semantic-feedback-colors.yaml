@@ -1,0 +1,52 @@
+id: ui-018-semantic-feedback-colors
+owner: ux
+severity: high
+area: mobile+tokens
+context: |
+  Feedback colors (success/warning/error/info) are inconsistent across the app.
+  Some components use hardcoded colors, others use theme tokens incorrectly.
+  Need semantic color system with WCAG AA contrast for all feedback states.
+acceptance:
+  - theme.colors.success (green) meets WCAG AA contrast on all backgrounds
+  - theme.colors.warning (amber) meets WCAG AA contrast on all backgrounds
+  - theme.colors.danger (red) meets WCAG AA contrast on all backgrounds
+  - theme.colors.info (blue) meets WCAG AA contrast on all backgrounds
+  - All feedback components use semantic tokens (no hardcoded colors)
+  - Color-blind friendly palette tested with simulators
+  - Both light and dark mode variants defined
+states:
+  - success
+  - warning
+  - error
+  - info
+  - neutral
+telemetry:
+  - event: FEEDBACK_COLOR_USAGE
+    props: [component, colorType, contrastRatio]
+contracts:
+  request: { colorType: string, background: string }
+  response: { color: string, contrastRatio: number, compliant: boolean }
+  errors: []
+assets:
+  theme: [apps/mobile/src/theme/types.ts, apps/mobile/src/theme/light.ts, apps/mobile/src/theme/dark.ts]
+  components: [apps/mobile/src/components/**/*.tsx]
+  tests: [apps/mobile/src/theme/__tests__/semantic-colors.test.ts]
+risks:
+  - Existing color usage may need updates
+  - Contrast requirements may limit color choices
+rollback:
+  - Revert theme color definitions
+  - Restore original component colors
+links:
+  - https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
+status: open
+priority: high
+impact: 4
+effort: S
+category: tokens
+tokens:
+  - colors.success
+  - colors.danger
+  - colors.warning
+  - colors.info
+estimated_hours: 4

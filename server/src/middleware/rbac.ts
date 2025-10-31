@@ -4,11 +4,9 @@
  */
 
 import type { Request, Response, NextFunction } from 'express';
+import type { AuthRequest } from '../types/express';
 import logger from '../utils/logger';
-
-interface AuthRequest extends Request {
-  user?: any;
-}
+import { getErrorMessage } from '../../utils/errorHandler';
 
 export interface Permissions {
   [role: string]: string[];
@@ -116,8 +114,8 @@ export const checkPermission = (requiredPermission: string) => {
 
       // User has permission, proceed
       next();
-    } catch (error: any) {
-      logger.error('Permission check error', { error });
+    } catch (error: unknown) {
+      logger.error('Permission check error', { error: getErrorMessage(error) });
       return res.status(500).json({ 
         success: false,
         error: 'Internal server error',
@@ -167,8 +165,8 @@ export const checkAnyPermission = (requiredPermissions: string[]) => {
       }
 
       next();
-    } catch (error: any) {
-      logger.error('Permission check error', { error });
+    } catch (error: unknown) {
+      logger.error('Permission check error', { error: getErrorMessage(error) });
       return res.status(500).json({ 
         success: false,
         error: 'Internal server error',
@@ -218,8 +216,8 @@ export const checkAllPermissions = (requiredPermissions: string[]) => {
       }
 
       next();
-    } catch (error: any) {
-      logger.error('Permission check error', { error });
+    } catch (error: unknown) {
+      logger.error('Permission check error', { error: getErrorMessage(error) });
       return res.status(500).json({ 
         success: false,
         error: 'Internal server error',

@@ -1,0 +1,547 @@
+{
+  "generatedAt": "2025-10-31T05:00:07.805Z",
+  "screens": [
+    {
+      "name": "Login",
+      "deeplink": "pawfectmatch://login",
+      "outputPath": "docs/ui_media/screenshots/Login.png",
+      "gifPath": "docs/ui_media/gifs/Login.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Register",
+      "deeplink": "pawfectmatch://register",
+      "outputPath": "docs/ui_media/screenshots/Register.png",
+      "gifPath": "docs/ui_media/gifs/Register.gif",
+      "status": "pending"
+    },
+    {
+      "name": "ForgotPassword",
+      "deeplink": "pawfectmatch://forgot-password",
+      "outputPath": "docs/ui_media/screenshots/ForgotPassword.png",
+      "gifPath": "docs/ui_media/gifs/ForgotPassword.gif",
+      "status": "pending"
+    },
+    {
+      "name": "ResetPassword",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/ResetPassword.png",
+      "gifPath": "docs/ui_media/gifs/ResetPassword.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Welcome",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/Welcome.png",
+      "gifPath": "docs/ui_media/gifs/Welcome.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Home",
+      "deeplink": "pawfectmatch://home",
+      "outputPath": "docs/ui_media/screenshots/Home.png",
+      "gifPath": "docs/ui_media/gifs/Home.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Main",
+      "deeplink": "pawfectmatch://main",
+      "outputPath": "docs/ui_media/screenshots/Main.png",
+      "gifPath": "docs/ui_media/gifs/Main.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Swipe",
+      "deeplink": "pawfectmatch://swipe",
+      "outputPath": "docs/ui_media/screenshots/Swipe.png",
+      "gifPath": "docs/ui_media/gifs/Swipe.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Matches",
+      "deeplink": "pawfectmatch://matches",
+      "outputPath": "docs/ui_media/screenshots/Matches.png",
+      "gifPath": "docs/ui_media/gifs/Matches.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Profile",
+      "deeplink": "pawfectmatch://profile",
+      "outputPath": "docs/ui_media/screenshots/Profile.png",
+      "gifPath": "docs/ui_media/gifs/Profile.gif",
+      "status": "pending"
+    },
+    {
+      "name": "PetProfile",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/PetProfile.png",
+      "gifPath": "docs/ui_media/gifs/PetProfile.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Settings",
+      "deeplink": "pawfectmatch://settings",
+      "outputPath": "docs/ui_media/screenshots/Settings.png",
+      "gifPath": "docs/ui_media/gifs/Settings.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Chat",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/Chat.png",
+      "gifPath": "docs/ui_media/gifs/Chat.gif",
+      "status": "pending"
+    },
+    {
+      "name": "MainTabs",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/MainTabs.png",
+      "gifPath": "docs/ui_media/gifs/MainTabs.gif",
+      "status": "pending"
+    },
+    {
+      "name": "MyPets",
+      "deeplink": "pawfectmatch://my-pets",
+      "outputPath": "docs/ui_media/screenshots/MyPets.png",
+      "gifPath": "docs/ui_media/gifs/MyPets.gif",
+      "status": "pending"
+    },
+    {
+      "name": "CreatePet",
+      "deeplink": "pawfectmatch://create-pet",
+      "outputPath": "docs/ui_media/screenshots/CreatePet.png",
+      "gifPath": "docs/ui_media/gifs/CreatePet.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Map",
+      "deeplink": "pawfectmatch://map",
+      "outputPath": "docs/ui_media/screenshots/Map.png",
+      "gifPath": "docs/ui_media/gifs/Map.gif",
+      "status": "pending"
+    },
+    {
+      "name": "EnhancedPetProfile",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/EnhancedPetProfile.png",
+      "gifPath": "docs/ui_media/gifs/EnhancedPetProfile.gif",
+      "status": "pending"
+    },
+    {
+      "name": "PlaydateDiscovery",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/PlaydateDiscovery.png",
+      "gifPath": "docs/ui_media/gifs/PlaydateDiscovery.gif",
+      "status": "pending"
+    },
+    {
+      "name": "PackBuilder",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/PackBuilder.png",
+      "gifPath": "docs/ui_media/gifs/PackBuilder.gif",
+      "status": "pending"
+    },
+    {
+      "name": "PetFriendlyMap",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/PetFriendlyMap.png",
+      "gifPath": "docs/ui_media/gifs/PetFriendlyMap.gif",
+      "status": "pending"
+    },
+    {
+      "name": "HealthPassport",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/HealthPassport.png",
+      "gifPath": "docs/ui_media/gifs/HealthPassport.gif",
+      "status": "pending"
+    },
+    {
+      "name": "LostPetAlert",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/LostPetAlert.png",
+      "gifPath": "docs/ui_media/gifs/LostPetAlert.gif",
+      "status": "pending"
+    },
+    {
+      "name": "SafetyWelfare",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/SafetyWelfare.png",
+      "gifPath": "docs/ui_media/gifs/SafetyWelfare.gif",
+      "status": "pending"
+    },
+    {
+      "name": "WireframePlaydateDiscovery",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/WireframePlaydateDiscovery.png",
+      "gifPath": "docs/ui_media/gifs/WireframePlaydateDiscovery.gif",
+      "status": "pending"
+    },
+    {
+      "name": "WireframeDemo",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/WireframeDemo.png",
+      "gifPath": "docs/ui_media/gifs/WireframeDemo.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Premium",
+      "deeplink": "pawfectmatch://premium",
+      "outputPath": "docs/ui_media/screenshots/Premium.png",
+      "gifPath": "docs/ui_media/gifs/Premium.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Subscription",
+      "deeplink": "pawfectmatch://subscription",
+      "outputPath": "docs/ui_media/screenshots/Subscription.png",
+      "gifPath": "docs/ui_media/gifs/Subscription.gif",
+      "status": "pending"
+    },
+    {
+      "name": "PremiumSuccess",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/PremiumSuccess.png",
+      "gifPath": "docs/ui_media/gifs/PremiumSuccess.gif",
+      "status": "pending"
+    },
+    {
+      "name": "PremiumCancel",
+      "deeplink": "pawfectmatch://premium-cancel",
+      "outputPath": "docs/ui_media/screenshots/PremiumCancel.png",
+      "gifPath": "docs/ui_media/gifs/PremiumCancel.gif",
+      "status": "pending"
+    },
+    {
+      "name": "SubscriptionManager",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/SubscriptionManager.png",
+      "gifPath": "docs/ui_media/gifs/SubscriptionManager.gif",
+      "status": "pending"
+    },
+    {
+      "name": "SubscriptionSuccess",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/SubscriptionSuccess.png",
+      "gifPath": "docs/ui_media/gifs/SubscriptionSuccess.gif",
+      "status": "pending"
+    },
+    {
+      "name": "ManageSubscription",
+      "deeplink": "pawfectmatch://manage-subscription",
+      "outputPath": "docs/ui_media/screenshots/ManageSubscription.png",
+      "gifPath": "docs/ui_media/gifs/ManageSubscription.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AIBio",
+      "deeplink": "pawfectmatch://ai-bio",
+      "outputPath": "docs/ui_media/screenshots/AIBio.png",
+      "gifPath": "docs/ui_media/gifs/AIBio.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AIPhotoAnalyzer",
+      "deeplink": "pawfectmatch://ai-photo-analyzer",
+      "outputPath": "docs/ui_media/screenshots/AIPhotoAnalyzer.png",
+      "gifPath": "docs/ui_media/gifs/AIPhotoAnalyzer.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AICompatibility",
+      "deeplink": "pawfectmatch://ai-compatibility",
+      "outputPath": "docs/ui_media/screenshots/AICompatibility.png",
+      "gifPath": "docs/ui_media/gifs/AICompatibility.gif",
+      "status": "pending"
+    },
+    {
+      "name": "PrivacySettings",
+      "deeplink": "pawfectmatch://privacy-settings",
+      "outputPath": "docs/ui_media/screenshots/PrivacySettings.png",
+      "gifPath": "docs/ui_media/gifs/PrivacySettings.gif",
+      "status": "pending"
+    },
+    {
+      "name": "BlockedUsers",
+      "deeplink": "pawfectmatch://blocked-users",
+      "outputPath": "docs/ui_media/screenshots/BlockedUsers.png",
+      "gifPath": "docs/ui_media/gifs/BlockedUsers.gif",
+      "status": "pending"
+    },
+    {
+      "name": "SafetyCenter",
+      "deeplink": "pawfectmatch://safety-center",
+      "outputPath": "docs/ui_media/screenshots/SafetyCenter.png",
+      "gifPath": "docs/ui_media/gifs/SafetyCenter.gif",
+      "status": "pending"
+    },
+    {
+      "name": "VerificationCenter",
+      "deeplink": "pawfectmatch://verification-center",
+      "outputPath": "docs/ui_media/screenshots/VerificationCenter.png",
+      "gifPath": "docs/ui_media/gifs/VerificationCenter.gif",
+      "status": "pending"
+    },
+    {
+      "name": "NotificationPreferences",
+      "deeplink": "pawfectmatch://notification-preferences",
+      "outputPath": "docs/ui_media/screenshots/NotificationPreferences.png",
+      "gifPath": "docs/ui_media/gifs/NotificationPreferences.gif",
+      "status": "pending"
+    },
+    {
+      "name": "HelpSupport",
+      "deeplink": "pawfectmatch://help-support",
+      "outputPath": "docs/ui_media/screenshots/HelpSupport.png",
+      "gifPath": "docs/ui_media/gifs/HelpSupport.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AboutTermsPrivacy",
+      "deeplink": "pawfectmatch://about-terms-privacy",
+      "outputPath": "docs/ui_media/screenshots/AboutTermsPrivacy.png",
+      "gifPath": "docs/ui_media/gifs/AboutTermsPrivacy.gif",
+      "status": "pending"
+    },
+    {
+      "name": "DeactivateAccount",
+      "deeplink": "pawfectmatch://deactivate-account",
+      "outputPath": "docs/ui_media/screenshots/DeactivateAccount.png",
+      "gifPath": "docs/ui_media/gifs/DeactivateAccount.gif",
+      "status": "pending"
+    },
+    {
+      "name": "EditProfile",
+      "deeplink": "pawfectmatch://edit-profile",
+      "outputPath": "docs/ui_media/screenshots/EditProfile.png",
+      "gifPath": "docs/ui_media/gifs/EditProfile.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AdvancedFilters",
+      "deeplink": "pawfectmatch://advanced-filters",
+      "outputPath": "docs/ui_media/screenshots/AdvancedFilters.png",
+      "gifPath": "docs/ui_media/gifs/AdvancedFilters.gif",
+      "status": "pending"
+    },
+    {
+      "name": "WhoLikedYou",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/WhoLikedYou.png",
+      "gifPath": "docs/ui_media/gifs/WhoLikedYou.gif",
+      "status": "pending"
+    },
+    {
+      "name": "ModerationTools",
+      "deeplink": "pawfectmatch://moderation-tools",
+      "outputPath": "docs/ui_media/screenshots/ModerationTools.png",
+      "gifPath": "docs/ui_media/gifs/ModerationTools.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Referral",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/Referral.png",
+      "gifPath": "docs/ui_media/gifs/Referral.gif",
+      "status": "pending"
+    },
+    {
+      "name": "IAPShop",
+      "deeplink": "pawfectmatch://shop",
+      "outputPath": "docs/ui_media/screenshots/IAPShop.png",
+      "gifPath": "docs/ui_media/gifs/IAPShop.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AdoptionManager",
+      "deeplink": "pawfectmatch://adoption-manager",
+      "outputPath": "docs/ui_media/screenshots/AdoptionManager.png",
+      "gifPath": "docs/ui_media/gifs/AdoptionManager.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AdoptionApplication",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/AdoptionApplication.png",
+      "gifPath": "docs/ui_media/gifs/AdoptionApplication.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AdminDashboard",
+      "deeplink": "pawfectmatch://admin-dashboard",
+      "outputPath": "docs/ui_media/screenshots/AdminDashboard.png",
+      "gifPath": "docs/ui_media/gifs/AdminDashboard.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AdminUsers",
+      "deeplink": "pawfectmatch://admin-users",
+      "outputPath": "docs/ui_media/screenshots/AdminUsers.png",
+      "gifPath": "docs/ui_media/gifs/AdminUsers.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AdminAnalytics",
+      "deeplink": "pawfectmatch://admin-analytics",
+      "outputPath": "docs/ui_media/screenshots/AdminAnalytics.png",
+      "gifPath": "docs/ui_media/gifs/AdminAnalytics.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AdminBilling",
+      "deeplink": "pawfectmatch://admin-billing",
+      "outputPath": "docs/ui_media/screenshots/AdminBilling.png",
+      "gifPath": "docs/ui_media/gifs/AdminBilling.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AdminSecurity",
+      "deeplink": "pawfectmatch://admin-security",
+      "outputPath": "docs/ui_media/screenshots/AdminSecurity.png",
+      "gifPath": "docs/ui_media/gifs/AdminSecurity.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AdminChats",
+      "deeplink": "pawfectmatch://admin-chats",
+      "outputPath": "docs/ui_media/screenshots/AdminChats.png",
+      "gifPath": "docs/ui_media/gifs/AdminChats.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AdminUploads",
+      "deeplink": "pawfectmatch://admin-uploads",
+      "outputPath": "docs/ui_media/screenshots/AdminUploads.png",
+      "gifPath": "docs/ui_media/gifs/AdminUploads.gif",
+      "status": "pending"
+    },
+    {
+      "name": "AdminVerifications",
+      "deeplink": "pawfectmatch://admin-verifications",
+      "outputPath": "docs/ui_media/screenshots/AdminVerifications.png",
+      "gifPath": "docs/ui_media/gifs/AdminVerifications.gif",
+      "status": "pending"
+    },
+    {
+      "name": "ActiveCall",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/ActiveCall.png",
+      "gifPath": "docs/ui_media/gifs/ActiveCall.gif",
+      "status": "pending"
+    },
+    {
+      "name": "IncomingCall",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/IncomingCall.png",
+      "gifPath": "docs/ui_media/gifs/IncomingCall.gif",
+      "status": "pending"
+    },
+    {
+      "name": "MemoryWeave",
+      "deeplink": "pawfectmatch://memory-weave",
+      "outputPath": "docs/ui_media/screenshots/MemoryWeave.png",
+      "gifPath": "docs/ui_media/gifs/MemoryWeave.gif",
+      "status": "pending"
+    },
+    {
+      "name": "ARScentTrails",
+      "deeplink": "pawfectmatch://ar-scent-trails",
+      "outputPath": "docs/ui_media/screenshots/ARScentTrails.png",
+      "gifPath": "docs/ui_media/gifs/ARScentTrails.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Stories",
+      "deeplink": "pawfectmatch://stories",
+      "outputPath": "docs/ui_media/screenshots/Stories.png",
+      "gifPath": "docs/ui_media/gifs/Stories.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Leaderboard",
+      "deeplink": "pawfectmatch://leaderboard",
+      "outputPath": "docs/ui_media/screenshots/Leaderboard.png",
+      "gifPath": "docs/ui_media/gifs/Leaderboard.gif",
+      "status": "pending"
+    },
+    {
+      "name": "Community",
+      "deeplink": "pawfectmatch://community",
+      "outputPath": "docs/ui_media/screenshots/Community.png",
+      "gifPath": "docs/ui_media/gifs/Community.gif",
+      "status": "pending"
+    },
+    {
+      "name": "ComponentTest",
+      "deeplink": "pawfectmatch://component-test",
+      "outputPath": "docs/ui_media/screenshots/ComponentTest.png",
+      "gifPath": "docs/ui_media/gifs/ComponentTest.gif",
+      "status": "pending"
+    },
+    {
+      "name": "NewComponentsTest",
+      "deeplink": "pawfectmatch://new-components-test",
+      "outputPath": "docs/ui_media/screenshots/NewComponentsTest.png",
+      "gifPath": "docs/ui_media/gifs/NewComponentsTest.gif",
+      "status": "pending"
+    },
+    {
+      "name": "MigrationExample",
+      "deeplink": "pawfectmatch://migration-example",
+      "outputPath": "docs/ui_media/screenshots/MigrationExample.png",
+      "gifPath": "docs/ui_media/gifs/MigrationExample.gif",
+      "status": "pending"
+    },
+    {
+      "name": "PremiumDemo",
+      "deeplink": "pawfectmatch://premium-demo",
+      "outputPath": "docs/ui_media/screenshots/PremiumDemo.png",
+      "gifPath": "docs/ui_media/gifs/PremiumDemo.gif",
+      "status": "pending"
+    },
+    {
+      "name": "UIDemo",
+      "deeplink": "pawfectmatch://ui-demo",
+      "outputPath": "docs/ui_media/screenshots/UIDemo.png",
+      "gifPath": "docs/ui_media/gifs/UIDemo.gif",
+      "status": "pending"
+    },
+    {
+      "name": "MotionLab",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/MotionLab.png",
+      "gifPath": "docs/ui_media/gifs/MotionLab.gif",
+      "status": "pending"
+    },
+    {
+      "name": "GoLive",
+      "deeplink": "pawfectmatch://go-live",
+      "outputPath": "docs/ui_media/screenshots/GoLive.png",
+      "gifPath": "docs/ui_media/gifs/GoLive.gif",
+      "status": "pending"
+    },
+    {
+      "name": "LiveViewer",
+      "deeplink": null,
+      "outputPath": "docs/ui_media/screenshots/LiveViewer.png",
+      "gifPath": "docs/ui_media/gifs/LiveViewer.gif",
+      "status": "pending"
+    },
+    {
+      "name": "LiveBrowse",
+      "deeplink": "pawfectmatch://live-browse",
+      "outputPath": "docs/ui_media/screenshots/LiveBrowse.png",
+      "gifPath": "docs/ui_media/gifs/LiveBrowse.gif",
+      "status": "pending"
+    }
+  ],
+  "instructions": [
+    "This script requires Detox/E2E setup for actual execution",
+    "For each screen:",
+    "  1. Navigate via deeplink",
+    "  2. Wait for idle (no pending network requests)",
+    "  3. Capture screenshot",
+    "  4. Perform key interactions",
+    "  5. Record GIF (10-15s)",
+    "  6. Save artifacts to docs/ui_media/"
+  ]
+}

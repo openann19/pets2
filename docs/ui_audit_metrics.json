@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2025-10-31T05:00:07.773Z",
+  "note": "This is a placeholder. Actual metrics require Flipper/Hermes integration.",
+  "budget": {
+    "coldTTI": {
+      "target": 1500,
+      "unit": "ms"
+    },
+    "interactionLatency": {
+      "target": 100,
+      "unit": "ms",
+      "percentile": 95
+    },
+    "scrollJank": {
+      "target": 0.2,
+      "unit": "dropped_frames_per_5s"
+    },
+    "fps": {
+      "target": 60,
+      "unit": "fps"
+    },
+    "memory": {
+      "target": 150,
+      "unit": "MB"
+    }
+  },
+  "instructions": [
+    "To collect actual metrics:",
+    "  1. Connect device to Flipper",
+    "  2. Navigate through key screens",
+    "  3. Capture performance traces",
+    "  4. Extract TTI, FPS, memory metrics",
+    "  5. Update this file with real data"
+  ],
+  "screens": []
+}

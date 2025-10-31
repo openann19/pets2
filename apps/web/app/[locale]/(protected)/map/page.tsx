@@ -4,6 +4,7 @@ import { AdjustmentsHorizontalIcon, ChatBubbleLeftRightIcon } from '@heroicons/r
 import { HeartIcon as HeartSolid, MapPinIcon as MapPinSolid } from '@heroicons/react/24/solid';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
+import { logger } from '@pawfectmatch/core';
 
 import PremiumLayout from '@/components/Layout/PremiumLayout';
 import AIMapFeatures from '@/components/Map/AIMapFeatures';
@@ -55,7 +56,7 @@ const MapPage: React.FC = () => {
       try {
         const initialized = await geofencingService.initialize();
         if (!initialized) return;
-        console.log('🗺️ Geofencing service initialized');
+        logger.info('🗺️ Geofencing service initialized');
 
         geofencingService.subscribe('map-page', (data: any) => {
           setUserLocation({ latitude: data.location.lat, longitude: data.location.lng });
@@ -66,7 +67,7 @@ const MapPage: React.FC = () => {
         };
         window.addEventListener('geofence-notification', handleNotification as EventListener);
       } catch (e) {
-        console.warn('Geofencing init skipped in dev:', e);
+        logger.warn('Geofencing init skipped in dev:', e);
       }
     };
     
@@ -497,7 +498,7 @@ const MapPage: React.FC = () => {
                       onClick={() => {
                         if (selectedInsight.location) {
                           // Navigate map to location
-                          console.log('Navigating to:', selectedInsight.location);
+                          logger.info('Navigating to:', selectedInsight.location);
                         }
                         setShowInsightModal(false);
                       }}

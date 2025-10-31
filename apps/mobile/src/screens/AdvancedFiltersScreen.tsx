@@ -8,6 +8,9 @@ import * as Haptics from 'expo-haptics';
 import { useAdvancedFiltersScreen } from '../hooks/screens/useAdvancedFiltersScreen';
 import { useTheme } from '@mobile/theme';
 import { getExtendedColors } from '@mobile/theme/adapters';
+import { useAdvancedFiltersGate } from '../utils/featureGates';
+import { PremiumGate } from '../components/Premium/PremiumGate';
+import { FilterItem } from './advanced-filters/components/FilterItem';
 
 interface AdvancedFiltersScreenProps {
   navigation: {
@@ -20,6 +23,9 @@ function AdvancedFiltersScreen({ navigation }: AdvancedFiltersScreenProps): Reac
   const colors = getExtendedColors(theme);
   const { toggleFilter, resetFilters, saveFilters, getFiltersByCategory } =
     useAdvancedFiltersScreen();
+  
+  // Check premium access using feature gate hook
+  const { canUse: hasAdvancedFilters, reason, upgradeRequired } = useAdvancedFiltersGate();
 
   const styles = React.useMemo(
     () =>
@@ -27,7 +33,7 @@ function AdvancedFiltersScreen({ navigation }: AdvancedFiltersScreenProps): Reac
         infoCard: {
           flexDirection: 'row',
           alignItems: 'center',
-          backgroundColor: theme.colors.bgElevated + '1A', // 10% opacity
+          backgroundColor: theme.colors.surface + '1A', // 10% opacity
           borderRadius: theme.radii.md,
           padding: theme.spacing.md,
           marginBottom: theme.spacing['2xl'],
@@ -38,19 +44,19 @@ function AdvancedFiltersScreen({ navigation }: AdvancedFiltersScreenProps): Reac
           flex: 1,
           marginStart: theme.spacing.sm,
           fontSize: 14,
-          color: theme.colors.text,
+          color: theme.colors.onSurface,
           lineHeight: 20,
         },
         categoryTitle: {
           fontSize: 18,
           fontWeight: 'bold',
-          color: theme.colors.text,
+          color: theme.colors.onSurface,
           marginBottom: theme.spacing.sm,
         },
         backButtonBlur: {
           borderRadius: theme.radii.lg,
           padding: theme.spacing.sm,
-          backgroundColor: theme.colors.bgElevated + '40', // 25% opacity
+          backgroundColor: theme.colors.surface + '40', // 25% opacity
         },
         saveButtonBlur: {
           borderRadius: theme.radii.lg,
@@ -59,49 +65,6 @@ function AdvancedFiltersScreen({ navigation }: AdvancedFiltersScreenProps): Reac
         },
         categorySection: {
           marginBottom: theme.spacing['2xl'],
-        },
-        filterCard: {
-          backgroundColor: theme.colors.bgElevated,
-          borderRadius: theme.radii.md,
-          padding: theme.spacing.md,
-          marginBottom: theme.spacing.sm,
-          borderWidth: 1,
-          borderColor: theme.colors.border,
-        },
-        filterCardActive: {
-          backgroundColor: theme.colors.primary + '20',
-          borderColor: theme.colors.primary,
-        },
-        filterBlur: {
-          borderRadius: theme.radii.md,
-          padding: theme.spacing.md,
-        },
-        filterContent: {
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        },
-        filterLabel: {
-          fontSize: 16,
-          color: theme.colors.text,
-          flex: 1,
-        },
-        filterLabelActive: {
-          color: theme.colors.primary,
-          fontWeight: '600',
-        },
-        checkbox: {
-          width: 20,
-          height: 20,
-          borderRadius: 10,
-          borderWidth: 2,
-          borderColor: theme.colors.border,
-          alignItems: 'center',
-          justifyContent: 'center',
-        },
-        checkboxActive: {
-          backgroundColor: theme.colors.primary,
-          borderColor: theme.colors.primary,
         },
         container: {
           flex: 1,
@@ -123,7 +86,7 @@ function AdvancedFiltersScreen({ navigation }: AdvancedFiltersScreenProps): Reac
         headerTitle: {
           fontSize: 18,
           fontWeight: '600',
-          color: theme.colors.text,
+          color: theme.colors.onSurface,
         },
         resetButton: {
           padding: theme.spacing.sm,
@@ -134,13 +97,13 @@ function AdvancedFiltersScreen({ navigation }: AdvancedFiltersScreenProps): Reac
           marginBottom: theme.spacing.md,
         },
         saveButtonText: {
-          color: theme.colors.text,
+          color: theme.colors.onSurface,
           fontSize: 16,
           fontWeight: '600',
           marginStart: theme.spacing.sm,
         },
         resetButtonText: {
-          color: theme.colors.text,
+          color: theme.colors.onSurface,
           fontSize: 16,
           fontWeight: '600',
         },
@@ -162,51 +125,11 @@ function AdvancedFiltersScreen({ navigation }: AdvancedFiltersScreenProps): Reac
         >
           <Text style={styles.categoryTitle}>{title}</Text>
           {categoryFilters.map((filter) => (
-            <TouchableOpacity
+            <FilterItem
               key={filter.id}
-              style={StyleSheet.flatten([
-                styles.filterCard,
-                filter.value && styles.filterCardActive,
-              ])}
-              testID={`filter-${filter.id}`}
-              accessibilityLabel={`Filter: ${filter.label}`}
-              accessibilityRole="button"
-              accessibilityState={{ selected: filter.value }}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              onPress={() => {
-                toggleFilter(filter.id);
-              }}
-            >
-              <BlurView
-                intensity={filter.value ? 25 : 15}
-                style={styles.filterBlur}
-              >
-                <View style={styles.filterContent}>
-                  <Text
-                    style={StyleSheet.flatten([
-                      styles.filterLabel,
-                      filter.value && styles.filterLabelActive,
-                    ])}
-                  >
-                    {filter.label}
-                  </Text>
-                  <View
-                    style={StyleSheet.flatten([
-                      styles.checkbox,
-                      filter.value && styles.checkboxActive,
-                    ])}
-                  >
-                    {filter.value && (
-                      <Ionicons
-                        name="checkmark"
-                        size={16}
-                        color={theme.colors.text}
-                      />
-                    )}
-                  </View>
-                </View>
-              </BlurView>
-            </TouchableOpacity>
+              filter={filter}
+              onToggle={toggleFilter}
+            />
           ))}
         </View>
       );
@@ -260,6 +183,21 @@ function AdvancedFiltersScreen({ navigation }: AdvancedFiltersScreenProps): Reac
         </View>
 
         {/* Content */}
+        {!hasAdvancedFilters ? (
+          <View style={[styles.content, { justifyContent: 'center', alignItems: 'center', padding: theme.spacing.xl }]}>
+            <PremiumGate
+              feature="Advanced Filters"
+              description={reason || "Unlock advanced matching filters with Premium"}
+              icon="options-outline"
+              visible={true}
+              onClose={() => navigation.goBack()}
+              onUpgrade={() => {
+                navigation.goBack();
+                (navigation as any)?.navigate?.('Premium');
+              }}
+            />
+          </View>
+        ) : (
         <ScrollView
           style={styles.content}
           showsVerticalScrollIndicator={false}
@@ -306,6 +244,7 @@ function AdvancedFiltersScreen({ navigation }: AdvancedFiltersScreenProps): Reac
             </BlurView>
           </TouchableOpacity>
         </ScrollView>
+        )}
       </SafeAreaView>
     </View>
   );

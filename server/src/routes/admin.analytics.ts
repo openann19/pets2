@@ -2,9 +2,30 @@ import type { Request, Response } from "express";
 import { Router } from "express";
 import { authenticateToken, requireAdmin } from "../middleware/auth";
 import { getEventCounts } from "../services/analytics";
+import { getAdminAnalytics, getRealtimeAnalytics } from "../services/adminAnalyticsService";
 import logger from "../utils/logger";
 
 const router = Router();
+
+/**
+ * GET /api/admin/analytics
+ * Returns comprehensive analytics data from MongoDB
+ */
+router.get("/", authenticateToken, requireAdmin, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const analytics = await getAdminAnalytics();
+    
+    res.json({
+      success: true,
+      analytics,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error("Failed to get admin analytics", { error: errorMessage });
+    res.status(500).json({ success: false, error: "Failed to fetch analytics" });
+  }
+});
 
 /**
  * GET /api/admin/analytics/realtime
@@ -12,21 +33,11 @@ const router = Router();
  */
 router.get("/realtime", authenticateToken, requireAdmin, async (req: Request, res: Response): Promise<void> => {
   try {
-    const since = new Date(Date.now() - 60 * 60 * 1000); // Last hour
-
-    const events = await getEventCounts(since);
-
-    // Get recent errors from Sentry or error logs
-    const errors: string[] = []; // Placeholder - would integrate with error tracking
+    const realtimeData = await getRealtimeAnalytics();
 
     res.json({
       success: true,
-      data: {
-        events,
-        errors,
-        timeframe: "last_hour",
-        timestamp: new Date().toISOString(),
-      },
+      data: realtimeData,
     });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

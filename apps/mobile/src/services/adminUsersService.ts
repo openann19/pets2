@@ -175,9 +175,36 @@ export const performAdminUserAction = async (
   }
 };
 
+export const deleteAdminUser = async (userId: string, reason?: string): Promise<void> => {
+  try {
+    await adminAPI.deleteUser(userId, reason);
+    invalidateAdminUsersCache();
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error('Failed to delete user');
+    logger.error('Admin user delete failed', { userId, error: err });
+    throw err;
+  }
+};
+
+export const resetAdminUserPassword = async (userId: string): Promise<{ temporaryPassword: string }> => {
+  try {
+    const response = await adminAPI.resetUserPassword(userId);
+    if (response.success && response.data) {
+      return response.data;
+    }
+    throw new Error('Failed to reset password');
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error('Failed to reset user password');
+    logger.error('Admin user password reset failed', { userId, error: err });
+    throw err;
+  }
+};
+
 export const adminUsersService = {
   fetchAdminUsers,
   performAdminUserAction,
+  deleteUser: deleteAdminUser,
+  resetPassword: resetAdminUserPassword,
   invalidate: invalidateAdminUsersCache,
 };
 

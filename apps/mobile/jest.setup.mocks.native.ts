@@ -3,6 +3,28 @@
  * Essential React Native component mocks for all tests
  */
 
+// Mock StyleSheet to return styles as-is (no transformation)
+jest.mock('react-native/Libraries/StyleSheet/StyleSheet', () => ({
+  create: jest.fn((styles) => styles),
+  flatten: jest.fn((styles) => styles),
+  compose: jest.fn((style1, style2) => [style1, style2]),
+}));
+
+// Mock Dimensions to return fixed window dimensions
+jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
+  get: jest.fn((dimension) => {
+    if (dimension === 'window') {
+      return { width: 375, height: 812 };
+    }
+    if (dimension === 'screen') {
+      return { width: 375, height: 812 };
+    }
+    return { width: 375, height: 812 };
+  }),
+  addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+  removeEventListener: jest.fn(),
+}));
+
 // Mock React Native list components to render items synchronously
 jest.mock('react-native/Libraries/Lists/FlatList', () => {
   const React = require('react');
@@ -52,7 +74,6 @@ jest.mock('react-native/Libraries/Lists/SectionList', () => {
 
 // Mock react-native-maps
 jest.mock('react-native-maps', () => {
-  const React = require('react');
   const RN = require('react-native');
   return {
     __esModule: true,
@@ -123,16 +144,62 @@ jest.mock('@react-native-picker/picker', () => ({
   PickerItem: require('react-native').View,
 }));
 
+// Mock StyleSheet explicitly to ensure it's available in tests
+jest.mock('react-native/Libraries/StyleSheet/StyleSheet', () => {
+  const create = jest.fn((styles) => {
+    if (typeof styles === 'object' && styles !== null) {
+      return styles;
+    }
+    return {};
+  });
+  const flatten = jest.fn((style) => {
+    if (Array.isArray(style)) {
+      return Object.assign({}, ...style);
+    }
+    return style || {};
+  });
+  return {
+    __esModule: true,
+    default: {
+      create,
+      flatten,
+      compose: jest.fn((style1, style2) => [style1, style2]),
+      hairlineWidth: 1,
+      absoluteFill: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
+      absoluteFillObject: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
+    },
+    create,
+    flatten,
+  };
+});
+
+// Mock Dimensions explicitly
+jest.mock('react-native/Libraries/Utilities/Dimensions', () => {
+  const getDimensions = jest.fn((dimension?: 'window' | 'screen') => {
+    const defaultDimensions = { width: 375, height: 812, scale: 2, fontScale: 1 };
+    return defaultDimensions;
+  });
+  return {
+    __esModule: true,
+    default: {
+      get: getDimensions,
+      addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+      removeEventListener: jest.fn(),
+    },
+    get: getDimensions,
+  };
+});
+
 // Mock Animated API
 jest.mock('react-native/Libraries/Animated/Animated', () => {
   // Use require instead of import to avoid timing issues
   const AnimatedMock = require('../../__mocks__/Animated.js');
   return AnimatedMock;
-}, { virtual: true });
+});
 
 // Mock InteractionManager
 jest.mock('react-native/Libraries/Interaction/InteractionManager', () => {
-  const actualInteractionManager = jest.requireActual('react-native/Libraries/Interaction/InteractionManager');
+  const actualInteractionManager = (jest as any).requireActual('react-native/Libraries/Interaction/InteractionManager');
   
   return {
     ...actualInteractionManager,

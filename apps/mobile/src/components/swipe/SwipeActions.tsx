@@ -17,6 +17,11 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
+import { useFeatureGate } from '../../hooks/domains/premium/useFeatureGate';
+import { useNavigation } from '@react-navigation/native';
+import type { RootStackScreenProps } from '../../navigation/types';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 export interface SwipeActionsProps {
   /**
@@ -45,8 +50,11 @@ export interface SwipeActionsProps {
   disabled?: boolean;
 }
 
+type NavigationProp = RootStackScreenProps<'Swipe'>['navigation'];
+
 /**
  * SwipeActions - Action buttons for swipe card interactions
+ * Includes feature gates for premium features (Super Like)
  */
 export const SwipeActions: React.FC<SwipeActionsProps> = ({
   onPass,
@@ -55,6 +63,30 @@ export const SwipeActions: React.FC<SwipeActionsProps> = ({
   style,
   disabled = false,
 }) => {
+  const navigation = useNavigation<NavigationProp>();
+  const theme = useTheme() as AppTheme;
+  const styles = makeStyles(theme);
+  
+  // Use standardized feature gate for Super Likes
+  const superLikeGate = useFeatureGate({
+    feature: 'superLikesPerDay',
+    showGateOnDeny: true,
+    navigation,
+  });
+  
+  const handleSuperLikePress = async () => {
+    // Check access and show gate if needed
+    const hasAccess = await superLikeGate.checkAccess();
+    
+    if (!hasAccess) {
+      await superLikeGate.requestAccess();
+      return;
+    }
+    
+    // User has access, proceed with Super Like
+    onSuperlike();
+  };
+
   return (
     <View style={[styles.actions, style]}>
       <TouchableOpacity
@@ -70,15 +102,29 @@ export const SwipeActions: React.FC<SwipeActionsProps> = ({
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.actionButton, styles.superLikeButton]}
-        onPress={onSuperlike}
-        disabled={disabled}
+        style={[
+          styles.actionButton,
+          styles.superLikeButton,
+          !superLikeGate.canUse && styles.disabledButton,
+        ]}
+        onPress={handleSuperLikePress}
+        disabled={disabled || superLikeGate.isLoading || !superLikeGate.canUse}
         testID="swipe-superlike-button"
         accessibilityRole="button"
-        accessibilityLabel="Super like this pet"
-        accessibilityHint="Double tap to super like this pet and show them you're really interested"
+        accessibilityLabel={superLikeGate.canUse ? "Super like this pet" : "Super like unavailable - Premium required"}
+        accessibilityHint={superLikeGate.canUse ? "Double tap to super like this pet and show them you're really interested" : "Purchase Super Likes from Premium screen"}
       >
         <Text style={styles.actionButtonText}>★</Text>
+        {superLikeGate.remaining !== undefined && superLikeGate.remaining > 0 && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{superLikeGate.remaining}</Text>
+          </View>
+        )}
+        {!superLikeGate.canUse && (
+          <View style={styles.lockIcon}>
+            <Text style={styles.lockIconText}>🔒</Text>
+          </View>
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -96,33 +142,68 @@ export const SwipeActions: React.FC<SwipeActionsProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingHorizontal: 40,
-    paddingVertical: 30,
-    backgroundColor: 'white',
-  },
-  actionButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  passButton: {
-    backgroundColor: '#ff4458',
-  },
-  likeButton: {
-    backgroundColor: '#42c767',
-  },
-  superLikeButton: {
-    backgroundColor: '#007AFF',
-  },
-  actionButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    actions: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      paddingHorizontal: 40,
+      paddingVertical: 30,
+      backgroundColor: theme.colors.bg,
+    },
+    actionButton: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    passButton: {
+      backgroundColor: theme.colors.danger,
+    },
+    likeButton: {
+      backgroundColor: theme.colors.success,
+    },
+    superLikeButton: {
+      backgroundColor: theme.colors.primary,
+    },
+    actionButtonText: {
+      color: theme.colors.onPrimary,
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    disabledButton: {
+      opacity: 0.5,
+    },
+    lockIcon: {
+      position: 'absolute',
+      top: -2,
+      right: -2,
+      backgroundColor: theme.utils.alpha(theme.colors.onSurface, 0.6),
+      borderRadius: 10,
+      width: 20,
+      height: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    lockIconText: {
+      fontSize: 10,
+    },
+    badge: {
+      position: 'absolute',
+      top: -4,
+      right: -4,
+      backgroundColor: theme.colors.danger,
+      borderRadius: 10,
+      minWidth: 20,
+      height: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 4,
+    },
+    badgeText: {
+      color: theme.colors.onPrimary,
+      fontSize: 10,
+      fontWeight: 'bold',
+    },
+  });

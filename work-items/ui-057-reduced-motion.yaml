@@ -1,0 +1,46 @@
+id: ui-057-reduced-motion
+owner: ux
+severity: critical
+area: mobile+a11y
+context: |
+  Users with vestibular disorders or motion sensitivity need reduced-motion support.
+  Currently, animations play regardless of OS preference (WCAG 2.1 violation).
+  Must detect OS reduced-motion preference and replace animations with fades.
+acceptance:
+  - AccessibilityInfo.isReduceMotionEnabled() checked on mount
+  - All animations replaced with opacity fades when reduced-motion active
+  - No motion-based interactions broken (swipe, gesture handlers still work)
+  - Preference changes detected and applied without restart
+  - useReducedMotion hook available for all components
+states:
+  - reduced-motion-enabled
+  - reduced-motion-disabled
+telemetry:
+  - event: REDUCED_MOTION_DETECTED
+    props: [enabled, source]
+  - event: ANIMATION_ADAPTED
+    props: [component, adaptationType]
+contracts:
+  request: { preferenceCheck: boolean }
+  response: { isReducedMotion: boolean, timestamp: string }
+  errors: []
+assets:
+  hooks: [apps/mobile/src/hooks/utils/useReducedMotion.ts]
+  components: [apps/mobile/src/components/**/*.tsx, apps/mobile/src/navigation/**/*.tsx]
+  tests: [apps/mobile/src/hooks/utils/__tests__/useReducedMotion.test.ts]
+risks:
+  - Animation-dependent UX may feel less polished
+  - Gesture handlers need careful testing with reduced motion
+rollback:
+  - Remove useReducedMotion checks
+  - Restore original animation configs
+links:
+  - https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions.html
+status: open
+priority: critical
+impact: 5
+effort: S
+category: accessibility
+tokens:
+  - motion.*
+estimated_hours: 4

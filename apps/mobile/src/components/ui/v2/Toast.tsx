@@ -189,11 +189,11 @@ export function useToast() {
   };
 
   const success = (message: string, duration?: number) => {
-    showToast({ message, variant: 'success', duration });
+    showToast({ message, variant: 'success', ...(duration !== undefined && { duration }) });
   };
 
   const error = (message: string, duration?: number) => {
-    showToast({ message, variant: 'error', duration });
+    showToast({ message, variant: 'error', ...(duration !== undefined && { duration }) });
   };
 
   const warning = (message: string, duration?: number) => {

@@ -1,6 +1,6 @@
 import { Socket } from 'net';
-import { Request, Response, NextFunction } from 'express';
-import { SecurityMiddleware } from '../middleware/security';
+import type { Request, Response, NextFunction } from 'express';
+import { SecurityMiddleware } from '../security';
 
 // Mock Socket
 class MockSocket extends Socket {
@@ -24,11 +24,15 @@ describe('SecurityMiddleware', () => {
       urlValidationEnabled: true
     });
 
+    const headers: Record<string, string | string[] | undefined> = {};
     mockReq = {
-      headers: {},
-      get: function(name: string) {
-        return this.headers ? this.headers[name] : undefined;
-      },
+      headers,
+      get: ((name: string): string | string[] | undefined => {
+        if (name === 'set-cookie') {
+          return headers[name] as string[] | undefined;
+        }
+        return headers[name] as string | undefined;
+      }) as Request['get'],
       socket: new MockSocket(),
       query: {},
       body: {}
@@ -36,7 +40,8 @@ describe('SecurityMiddleware', () => {
 
     // Set up mock IP
     Object.defineProperty(mockReq, 'ip', {
-      get: function() { return '192.168.1.100'; }
+      get: function() { return '192.168.1.100'; },
+      configurable: true
     });
 
     mockRes = {
@@ -71,8 +76,10 @@ describe('SecurityMiddleware', () => {
     });
 
     it('should reject IPs outside allowed range', () => {
+      delete (mockReq as any).ip;
       Object.defineProperty(mockReq, 'ip', {
-        get: function() { return '10.0.0.1'; }
+        get: function() { return '10.0.0.1'; },
+        configurable: true
       });
       security.validateIp(mockReq as Request, mockRes as Response, nextFn);
       expect(nextFn).not.toHaveBeenCalled();

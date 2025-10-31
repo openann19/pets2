@@ -1,0 +1,102 @@
+id: m-pwa-02-deeplink-handling
+owner: ux
+severity: critical
+area: mobile
+status: open
+context: |
+  No deep-link handling implemented. Share links open browser instead of app.
+  Current behavior: Links shared from app open in browser, not returning to app.
+  Why it matters: Poor user experience, broken sharing flow, lost engagement.
+  
+  Use Case:
+  1. User shares pet profile link
+  2. Recipient clicks link
+  3. Browser opens instead of app
+  4. User must manually open app and search
+  5. With deeplinks: App opens directly to pet profile
+
+acceptance:
+  - [ ] Configure Expo deep linking in app.json
+  - [ ] Add universal links for iOS
+  - [ ] Add app links for Android
+  - [ ] Implement Linking listener in App.tsx
+  - [ ] Handle pawmatch://pet/:id scheme
+  - [ ] Handle pawmatch://match/:id scheme
+  - [ ] Handle pawmatch://chat/:id scheme
+  - [ ] Navigate to correct screen based on deeplink
+  - [ ] Handle invalid/deep links gracefully
+  - [ ] Test deeplink from external app
+  - [ ] Test deeplink from browser
+  - [ ] Test deeplink when app is closed
+  - [ ] Test deeplink when app is in background
+  - [ ] E2E test: Share link → open in app
+
+states:
+  - idle
+  - handling-deeplink
+  - navigating
+  - error-invalid-link
+  - error-screen-not-found
+
+telemetry:
+  - event: UX_DEEPLINK_RECEIVED
+    props: [scheme, path, source, timestamp]
+  - event: UX_DEEPLINK_HANDLED
+    props: [scheme, path, success, timestamp]
+  - event: UX_DEEPLINK_FAILED
+    props: [scheme, path, error, timestamp]
+
+contracts:
+  schemes:
+    - pawmatch://pet/:id
+    - pawmatch://match/:id
+    - pawmatch://chat/:id
+    - pawmatch://profile
+    - pawmatch://settings
+  universalLinks:
+    - https://pawmatch.app/pet/:id
+    - https://pawmatch.app/match/:id
+    - https://pawmatch.app/chat/:id
+
+assets:
+  configs:
+    - apps/mobile/app.json
+    - apps/mobile/app.config.cjs
+    - apps/mobile/android/app/src/main/AndroidManifest.xml
+    - apps/mobile/ios/PawfectMatch/Info.plist
+  handlers:
+    - apps/mobile/src/navigation/deeplinkHandler.ts
+    - apps/mobile/src/services/deeplinkService.ts
+  tests:
+    - apps/mobile/src/navigation/__tests__/deeplinkHandler.test.ts
+    - apps/mobile/src/services/__tests__/deeplinkService.test.ts
+    - e2e/deeplink.e2e.ts
+
+risks:
+  - Universal links require server-side configuration
+  - App links require domain verification
+  - iOS universal links can be finicky
+  - Conflicts with existing URL schemes
+  - Security: validate deeplink parameters
+
+rollback:
+  - Remove deeplink configuration
+  - Disable Linking listener
+  - Remove deeplink handlers
+
+links:
+  - docs: https://docs.expo.dev/guides/linking/
+  - docs: https://reactnative.dev/docs/linking
+
+dependencies:
+  - Expo Linking API
+  - Server-side universal link configuration
+  - Domain verification for app links
+
+timeline:
+  start: 2025-01-30
+  config: 2025-01-31
+  implementation: 2025-02-01
+  testing: 2025-02-02
+  deploy: 2025-02-03
+

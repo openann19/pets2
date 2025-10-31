@@ -17,6 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { getExtendedColors } from '../theme/adapters';
 import AnimatedButton from './AnimatedButton';
+import { springs } from '@/foundation/motion';
 
 interface FooterProps {
   showCopyright?: boolean;
@@ -48,7 +49,7 @@ export default function Footer({
 
   useEffect(() => {
     opacity.value = withDelay(300, withTiming(1, { duration: 600 }));
-    translateY.value = withDelay(300, withSpring(0, { damping: 15, stiffness: 100 }));
+    translateY.value = withDelay(300, withSpring(0, springs.gentle));
   }, [opacity.value, translateY.value]);
 
   const animatedStyle = useAnimatedStyle(() => ({

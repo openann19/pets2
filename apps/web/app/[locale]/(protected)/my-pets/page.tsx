@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { logger } from '@pawfectmatch/core';
 import {
   PlusIcon,
   PencilIcon,
@@ -90,7 +91,7 @@ export default function MyPetsPage() {
       setDeleteConfirm(null);
       refetch();
     } catch (error) {
-      console.error('Error deleting pet:', error);
+      logger.error('Error deleting pet:', error);
     } finally {
       setDeletingId(null);
     }

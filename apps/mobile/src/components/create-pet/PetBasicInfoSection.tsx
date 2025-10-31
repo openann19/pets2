@@ -42,15 +42,15 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Name *</Text>
         <TextInput
-          style={StyleSheet.flatten([styles.input, errors.name ? styles.inputError : undefined])}
-          value={formData.name}
+          style={StyleSheet.flatten([styles.input, errors['name'] ? styles.inputError : undefined])}
+          value={formData['name']}
           onChangeText={(value) => {
             onUpdateFormData('name', value);
           }}
           placeholder="Enter your pet's name"
           placeholderTextColor="#9ca3af"
         />
-        {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+        {errors['name'] && <Text style={styles.errorText}>{errors['name']}</Text>}
       </View>
 
       <View style={styles.inputGroup}>
@@ -79,29 +79,29 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
             </TouchableOpacity>
           ))}
         </View>
-        {errors.species && <Text style={styles.errorText}>{errors.species}</Text>}
+        {errors['species'] && <Text style={styles.errorText}>{errors['species']}</Text>}
       </View>
 
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Breed *</Text>
         <TextInput
-          style={StyleSheet.flatten([styles.input, errors.breed ? styles.inputError : undefined])}
-          value={formData.breed}
+          style={StyleSheet.flatten([styles.input, errors['breed'] ? styles.inputError : undefined])}
+          value={formData['breed']}
           onChangeText={(value) => {
             onUpdateFormData('breed', value);
           }}
           placeholder="e.g., Golden Retriever, Siamese"
           placeholderTextColor="#9ca3af"
         />
-        {errors.breed && <Text style={styles.errorText}>{errors.breed}</Text>}
+        {errors['breed'] && <Text style={styles.errorText}>{errors['breed']}</Text>}
       </View>
 
       <View style={styles.row}>
         <View style={StyleSheet.flatten([styles.inputGroup, styles.flex1])}>
           <Text style={styles.label}>Age (years) *</Text>
           <TextInput
-            style={StyleSheet.flatten([styles.input, errors.age ? styles.inputError : undefined])}
-            value={formData.age}
+            style={StyleSheet.flatten([styles.input, errors['age'] ? styles.inputError : undefined])}
+            value={formData['age']}
             onChangeText={(value) => {
               onUpdateFormData('age', value);
             }}
@@ -109,7 +109,7 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
             keyboardType="numeric"
             placeholderTextColor="#9ca3af"
           />
-          {errors.age && <Text style={styles.errorText}>{errors.age}</Text>}
+          {errors['age'] && <Text style={styles.errorText}>{errors['age']}</Text>}
         </View>
 
         <View style={StyleSheet.flatten([styles.inputGroup, styles.flex1, styles.marginLeft])}>
@@ -141,7 +141,7 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
               </TouchableOpacity>
             ))}
           </View>
-          {errors.gender && <Text style={styles.errorText}>{errors.gender}</Text>}
+          {errors['gender'] && <Text style={styles.errorText}>{errors['gender']}</Text>}
         </View>
       </View>
 
@@ -178,14 +178,14 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
             </TouchableOpacity>
           ))}
         </View>
-        {errors.size && <Text style={styles.errorText}>{errors.size}</Text>}
+        {errors['size'] && <Text style={styles.errorText}>{errors['size']}</Text>}
       </View>
 
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Description</Text>
         <TextInput
           style={StyleSheet.flatten([styles.textArea])}
-          value={formData.description}
+          value={formData['description']}
           onChangeText={(value) => {
             onUpdateFormData('description', value);
           }}
@@ -193,7 +193,7 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
           placeholderTextColor="#9ca3af"
           multiline
         />
-        {errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
+        {errors['description'] && <Text style={styles.errorText}>{errors['description']}</Text>}
       </View>
     </View>
   );

@@ -6,7 +6,7 @@
  */
 
 import { useTheme } from '@mobile/theme';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function MigrationExampleScreen() {
@@ -14,6 +14,132 @@ export default function MigrationExampleScreen() {
   const [useNewArchitecture, setUseNewArchitecture] = useState(true);
   const [selectedExample, setSelectedExample] = useState<'buttons' | 'containers' | 'typography'>(
     'buttons',
+  );
+
+  // Styles must be inside component to access theme
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          flex: 1,
+          backgroundColor: theme.colors.bg,
+        },
+        contentContainer: {
+          padding: theme.spacing.md,
+        },
+        header: {
+          marginBottom: theme.spacing.xl,
+        },
+        title: {
+          fontSize: 28,
+          fontWeight: 'bold',
+          color: theme.colors.onSurface,
+          marginBottom: theme.spacing.sm,
+        },
+        subtitle: {
+          fontSize: 16,
+          color: theme.colors.onMuted,
+        },
+        toggleContainer: {
+          flexDirection: 'row',
+          backgroundColor: theme.colors.surface,
+          borderRadius: theme.radii.md,
+          padding: theme.spacing.xs,
+          marginBottom: theme.spacing.xl,
+        },
+        toggleButton: {
+          flex: 1,
+          paddingVertical: theme.spacing.md,
+          alignItems: 'center',
+          borderRadius: theme.radii.sm,
+        },
+        activeToggle: {
+          backgroundColor: theme.colors.primary,
+        },
+        toggleText: {
+          fontSize: 16,
+          fontWeight: '600',
+          color: theme.colors.onSurface,
+        },
+        tabContainer: {
+          flexDirection: 'row',
+          marginBottom: theme.spacing.xl,
+        },
+        tab: {
+          flex: 1,
+          paddingVertical: theme.spacing.md,
+          alignItems: 'center',
+          borderBottomWidth: 2,
+          borderBottomColor: 'transparent',
+        },
+        activeTab: {
+          borderBottomColor: theme.colors.primary,
+        },
+        tabText: {
+          fontSize: 16,
+          fontWeight: '500',
+          color: theme.colors.onSurface,
+        },
+        exampleSection: {
+          backgroundColor: theme.colors.surface,
+          borderRadius: theme.radii.md,
+          padding: theme.spacing.xl,
+          marginBottom: theme.spacing.md,
+        },
+        exampleTitle: {
+          fontSize: 20,
+          fontWeight: '600',
+          color: theme.colors.onSurface,
+          marginBottom: theme.spacing.md,
+        },
+        button: {
+          backgroundColor: theme.colors.primary,
+          paddingVertical: theme.spacing.md,
+          paddingHorizontal: theme.spacing.xl,
+          borderRadius: theme.radii.sm,
+          marginBottom: theme.spacing.md,
+          alignItems: 'center',
+        },
+        secondaryButton: {
+          backgroundColor: theme.colors.onMuted,
+        },
+        buttonText: {
+          color: theme.colors.onSurface,
+          fontSize: 16,
+          fontWeight: '600',
+        },
+        elevatedContainer: {
+          shadowColor: theme.colors.onSurface,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 3,
+        },
+        heading1: {
+          fontSize: 32,
+          fontWeight: 'bold',
+          color: theme.colors.onSurface,
+          marginBottom: theme.spacing.sm,
+        },
+        heading2: {
+          fontSize: 24,
+          fontWeight: '600',
+          color: theme.colors.onSurface,
+          marginBottom: theme.spacing.sm,
+        },
+        body: {
+          fontSize: 16,
+          color: theme.colors.onSurface,
+          marginBottom: theme.spacing.sm,
+          lineHeight: 24,
+        },
+        caption: {
+          fontSize: 14,
+          color: theme.colors.onMuted,
+          fontStyle: 'italic',
+        },
+      }),
+    [theme],
   );
 
   const renderButtonExamples = () => (
@@ -145,124 +271,3 @@ export default function MigrationExampleScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.bg,
-  },
-  contentContainer: {
-    padding: theme.spacing.md,
-  },
-  header: {
-    marginBottom: theme.spacing.xl,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: theme.colors.onSurface,
-    marginBottom: theme.spacing.sm,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: theme.colors.onMuted,
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radii.md,
-    padding: theme.spacing.xs,
-    marginBottom: theme.spacing.xl,
-  },
-  toggleButton: {
-    flex: 1,
-    paddingVertical: theme.spacing.md,
-    alignItems: 'center',
-    borderRadius: theme.radii.sm,
-  },
-  activeToggle: {
-    backgroundColor: theme.colors.primary,
-  },
-  toggleText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.onSurface,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    marginBottom: theme.spacing.xl,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: theme.spacing.md,
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
-  },
-  activeTab: {
-    borderBottomColor: theme.colors.primary,
-  },
-  tabText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: theme.colors.onSurface,
-  },
-  exampleSection: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radii.md,
-    padding: theme.spacing.xl,
-    marginBottom: theme.spacing.md,
-  },
-  exampleTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: theme.colors.onSurface,
-    marginBottom: theme.spacing.md,
-  },
-  button: {
-    backgroundColor: theme.colors.primary,
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.xl,
-    borderRadius: theme.radii.sm,
-    marginBottom: theme.spacing.md,
-    alignItems: 'center',
-  },
-  secondaryButton: {
-    backgroundColor: theme.colors.onMuted,
-  },
-  buttonText: {
-    color: theme.colors.onSurface,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  elevatedContainer: {
-    shadowColor: theme.colors.onSurface,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  heading1: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: theme.colors.onSurface,
-    marginBottom: theme.spacing.sm,
-  },
-  heading2: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: theme.colors.onSurface,
-    marginBottom: theme.spacing.sm,
-  },
-  body: {
-    fontSize: 16,
-    color: theme.colors.onSurface,
-    marginBottom: theme.spacing.sm,
-    lineHeight: 24,
-  },
-  caption: {
-    fontSize: 14,
-    color: theme.colors.onMuted,
-    fontStyle: 'italic',
-  },
-});

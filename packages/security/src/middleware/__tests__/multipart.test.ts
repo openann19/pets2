@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { MultipartParser } from '../multipart';
 import type { SecureParserOptions } from '../secure-multipart-parser';
 
-jest.mock('../middleware/secure-multipart-parser', () => ({
-  parse: jest.fn().mockImplementation((req: Request, options: SecureParserOptions) => {
+jest.mock('../secure-multipart-parser', () => ({
+  parse: jest.fn().mockImplementation((_req: Request, options: SecureParserOptions) => {
     const mockFile = {
       filename: 'test.jpg',
       encoding: '7bit',
@@ -79,8 +79,8 @@ describe('MultipartParser', () => {
 
     it('should handle parser errors', async () => {
       (mockReq.is as jest.Mock).mockReturnValue(true);
-      const mockParser = jest.requireMock<typeof import('../middleware/secure-multipart-parser')>('../middleware/secure-multipart-parser');
-      mockParser.parse.mockImplementation((_req: Request, options: SecureParserOptions) => {
+      const mockParser = jest.requireMock<typeof import('../secure-multipart-parser')>('../secure-multipart-parser');
+      (mockParser.parse as jest.Mock).mockImplementation((_req: Request, options: SecureParserOptions) => {
         options.onError(new Error('Parser error'));
       });
       

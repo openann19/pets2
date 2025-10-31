@@ -3,7 +3,9 @@
  * Advanced performance monitoring and optimization
  */
 
-import { lazy, ComponentType, Suspense } from 'react';
+import { lazy, ComponentType, Suspense } from 'react'
+import { logger } from '@pawfectmatch/core';
+;
 import { ErrorBoundary } from 'react-error-boundary';
 
 // Error Fallback Component
@@ -53,7 +55,7 @@ export async function preloadComponent(importFn: () => Promise<{ default: Compon
   try {
     await importFn();
   } catch (error) {
-    console.error('Failed to preload component:', error);
+    logger.error('Failed to preload component:', { error });
   }
 }
 
@@ -124,7 +126,7 @@ export function measureRenderPerformance(
   const end = performance.now();
   
   if (end - start > 16) {
-    console.warn(`[Performance] ${componentName} took ${(end - start).toFixed(2)}ms`);
+    logger.warn(`[Performance] ${componentName} took ${(end - start).toFixed(2)}ms`);
   }
   
   return end - start;
@@ -216,7 +218,7 @@ export function logBundleSize() {
     
     scripts.forEach(script => {
       const size = (script).transferSize || 0;
-      console.log(`[Bundle] ${script.name}: ${(size / 1024).toFixed(2)}KB`);
+      logger.info(`[Bundle] ${script.name}: ${(size / 1024).toFixed(2)}KB`);
     });
   }
 }

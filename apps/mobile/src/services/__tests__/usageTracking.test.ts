@@ -67,8 +67,8 @@ const mockDimensions = Dimensions as jest.Mocked<typeof Dimensions>;
 const apiModule = require('../api');
 const mockApi = apiModule.api as jest.Mocked<typeof apiModule.api>;
 
-// Mock setInterval and clearInterval
-jest.useFakeTimers();
+// Note: Fake timers should be set up per-test, not globally
+// Removing global fake timers - will be set per-test if needed
 const mockSetInterval = jest.spyOn(global, 'setInterval');
 const mockClearInterval = jest.spyOn(global, 'clearInterval');
 
@@ -77,6 +77,9 @@ describe('UsageTracking/AnalyticsService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    
+    // Use fake timers for this test suite
+    jest.useFakeTimers();
 
     // Reset singleton instance
     (AnalyticsService as any).instance = undefined;
@@ -92,6 +95,7 @@ describe('UsageTracking/AnalyticsService', () => {
 
   afterEach(() => {
     jest.clearAllTimers();
+    jest.useRealTimers(); // CRITICAL: Restore real timers after each test
     mockSetInterval.mockClear();
     mockClearInterval.mockClear();
   });
@@ -431,7 +435,8 @@ describe('UsageTracking/AnalyticsService', () => {
       const existingEvents = [
         {
           eventType: 'existing_event',
-          timestamp: Date.now() - 1000,
+          // Use fixed timestamp relative to mocked system time (2024-01-01T00:00:00Z)
+          timestamp: new Date('2024-01-01T00:00:00Z').getTime() - 1000,
           sessionId: 'old_session',
           metadata: {},
           platform: 'ios' as const,

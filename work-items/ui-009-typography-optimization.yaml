@@ -1,0 +1,46 @@
+id: ui-009-typography-optimization
+owner: ux
+severity: medium
+area: mobile+typography
+context: |
+  Typography lacks optimal readability with default letter-spacing and line-height.
+  Headings need tighter letter-spacing for visual impact.
+  Body text needs increased line-height for comfortable reading.
+acceptance:
+  - Headings use -0.5px to -1px letter-spacing
+  - Body text uses 1.5-1.75 line-height
+  - Typography tokens updated in theme
+  - All text components use updated tokens
+  - Accessibility contrast maintained (WCAG AA)
+  - Visual regression tests pass
+states:
+  - optimized
+  - default
+telemetry:
+  - event: TYPOGRAPHY_AUDIT
+    props: [component, letterSpacing, lineHeight, tokenUsed]
+contracts:
+  request: { componentTree: object }
+  response: { violations: array, optimizedCount: number }
+  errors: []
+assets:
+  theme: [apps/mobile/src/theme/typography.ts]
+  components: [apps/mobile/src/**/*.tsx]
+  tests: [apps/mobile/src/theme/__tests__/typography.test.ts]
+risks:
+  - Line-height changes may affect layout
+  - Letter-spacing may need per-font tuning
+rollback:
+  - Revert typography token values
+  - Restore original spacing
+links: []
+status: open
+priority: medium
+impact: 3
+effort: S
+category: typography
+tokens:
+  - typography.h1
+  - typography.h2
+  - typography.body
+estimated_hours: 3

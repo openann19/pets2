@@ -1,0 +1,49 @@
+id: p-03-lazy-load-heavy-screens
+owner: performance
+severity: high
+area: mobile
+status: open
+context: |
+  Lazy-load heavy screens with React.lazy() + Suspense boundary (expo-router).
+  Current behavior: All screens loaded upfront, slow initial load.
+  Why it matters: Faster app startup, better performance, lower memory usage.
+
+acceptance:
+  - [ ] Identify heavy screens (AI, Premium, Chat, etc.)
+  - [ ] Implement React.lazy() for heavy screens
+  - [ ] Add Suspense boundaries with loading states
+  - [ ] Test lazy loading works correctly
+  - [ ] Verify no regressions
+  - [ ] Measure startup time improvement
+  - [ ] Test on low-end devices
+
+states:
+  - all-loaded
+  - lazy-loading
+
+telemetry:
+  - event: PERF_SCREEN_LAZY_LOADED
+    props: [screen, loadTime, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  navigation:
+    - apps/mobile/src/navigation/RootNavigator.tsx
+  screens:
+    - apps/mobile/src/screens/AICompatibilityScreen.tsx
+    - apps/mobile/src/screens/PremiumScreen.tsx
+  tests:
+    - apps/mobile/src/navigation/__tests__/lazy-loading.test.tsx
+
+dependencies:
+  - expo-router
+  - React.lazy support
+
+timeline:
+  start: 2025-02-01
+  implementation: 2025-02-02
+  testing: 2025-02-03
+  deploy: 2025-02-04
+

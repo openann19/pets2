@@ -56,8 +56,9 @@ export default function AIPhotoAnalyzerScreen() {
     try {
       const r = await analyzePhotoFromUri(photoUri, 'image/jpeg');
       setResult(r);
-    } catch (error: any) {
-      Alert.alert('Analysis Failed', error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to analyze photo';
+      Alert.alert('Analysis Failed', errorMessage);
     } finally {
       setLoading(false);
     }

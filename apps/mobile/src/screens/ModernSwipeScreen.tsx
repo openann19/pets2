@@ -26,6 +26,7 @@ import { useTheme } from '@mobile/theme';
 import { EliteContainer, EliteHeader } from '../components';
 import { useModernSwipeScreen } from '../hooks/screens/useModernSwipeScreen';
 import type { RootStackScreenProps } from '../navigation/types';
+import { usePremiumGate } from '../components/Premium/PremiumGate';
 // Import state components
 import { ErrorState } from '../components/swipe/ErrorState';
 import { LoadingState } from '../components/swipe/LoadingState';
@@ -38,6 +39,7 @@ type SwipeScreenProps = RootStackScreenProps<'Swipe'>;
 
 export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
   const theme = useTheme();
+  const { PremiumGateComponent } = usePremiumGate();
   const {
     pets,
     currentPet,
@@ -302,6 +304,9 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
           />
         </View>
       )}
+
+      {/* Premium Gate Modal */}
+      <PremiumGateComponent />
     </EliteContainer>
   );
 }

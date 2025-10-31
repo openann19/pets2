@@ -15,7 +15,9 @@
     "paths": {
       "@shared/*": ["../packages/shared/*"],
       "@shared/errors": ["../packages/core-errors/src/index.ts"],
-      "@shared/errors/*": ["../packages/core-errors/src/*"]
+      "@shared/errors/*": ["../packages/core-errors/src/*"],
+      "@pawfectmatch/core": ["../packages/core/src/index.ts"],
+      "@pawfectmatch/core/*": ["../packages/core/src/*"]
     },
     "types": ["node", "jest"]
   },

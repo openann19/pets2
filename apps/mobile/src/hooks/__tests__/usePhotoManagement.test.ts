@@ -9,12 +9,12 @@ import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { usePhotoManagement } from '../hooks/usePhotoManagement';
 import * as ImagePicker from 'expo-image-picker';
-import { uploadHygieneService } from '../services/uploadHygiene';
+import { uploadHygieneService } from '../../services/uploadHygiene';
 
 // Mock dependencies
 jest.mock('expo-image-picker');
-jest.mock('../services/uploadHygiene');
-jest.mock('../services/api', () => ({
+jest.mock('../../services/uploadHygiene');
+jest.mock('../../services/api', () => ({
   api: {
     post: jest.fn(),
     get: jest.fn(),
@@ -65,6 +65,14 @@ describe('usePhotoManagement', () => {
       status: 'approved',
       s3Key: 'uploads/test-key',
     });
+  });
+
+  afterEach(() => {
+    // Ensure any fake timers are cleaned up
+    if (jest.isMockFunction(setTimeout)) {
+      jest.useRealTimers();
+    }
+    jest.clearAllTimers();
   });
 
   it('should enforce 6 photo limit', async () => {
@@ -386,19 +394,24 @@ describe('usePhotoManagement', () => {
   it('should handle concurrent photo additions', async () => {
     const { result } = renderHook(() => usePhotoManagement(mockPetId));
 
-    // Add multiple photos concurrently
-    const addPromises = Array.from({ length: 3 }, () =>
-      act(async () => {
-        await result.current.addPhoto();
-      }),
-    );
-
-    await Promise.all(addPromises);
+    // Add multiple photos concurrently - use sequential await to avoid race conditions
+    await act(async () => {
+      await result.current.addPhoto();
+    });
+    await act(async () => {
+      await result.current.addPhoto();
+    });
+    await act(async () => {
+      await result.current.addPhoto();
+    });
 
     await waitFor(() => {
       expect(result.current.photos).toHaveLength(3);
-      expect(result.current.photos.filter((p) => p.status === 'approved')).toHaveLength(3);
-    });
+    }, { timeout: 3000 });
+
+    // Verify all photos are approved
+    const approvedPhotos = result.current.photos.filter((p) => p.status === 'approved');
+    expect(approvedPhotos).toHaveLength(3);
   });
 
   it('should persist photo state across re-renders', async () => {
@@ -418,6 +431,9 @@ describe('usePhotoManagement', () => {
   });
 
   it('should handle network timeouts during upload', async () => {
+    // Enable fake timers for this test
+    jest.useFakeTimers();
+    
     mockUploadHygieneService.uploadWithRetry.mockImplementation(
       () =>
         new Promise((_, reject) => {
@@ -427,18 +443,24 @@ describe('usePhotoManagement', () => {
 
     const { result } = renderHook(() => usePhotoManagement(mockPetId));
 
-    await act(async () => {
-      await result.current.addPhoto();
+    // Start the upload
+    act(() => {
+      result.current.addPhoto();
     });
 
     // Advance timers to trigger timeout
-    jest.advanceTimersByTime(35000);
+    act(() => {
+      jest.advanceTimersByTime(35000);
+    });
 
     await waitFor(() => {
       expect(result.current.photos[0].status).toBe('error');
     });
 
     expect(result.current.errors).toContain('Upload timed out');
+    
+    // Cleanup
+    jest.useRealTimers();
   });
 
   it('should provide accessibility labels for screen readers', async () => {

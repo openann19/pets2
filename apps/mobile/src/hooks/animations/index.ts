@@ -2,7 +2,8 @@
 export { PREMIUM_ANIMATIONS } from './constants';
 
 // Configs
-export { SPRING_CONFIGS, TIMING_CONFIGS } from './configs';
+export { TIMING_CONFIGS } from './configs';
+// Note: SPRING_CONFIGS deprecated - use springs from @/foundation/motion instead
 
 // Hooks
 export { useSpringAnimation } from './useSpringAnimation';
@@ -16,6 +17,8 @@ export { usePulseEffect } from './usePulseEffect';
 export { useFloatingEffect } from './useFloatingEffect';
 export { useEntranceAnimation } from './useEntranceAnimation';
 export { useHapticFeedback } from './useHapticFeedback';
+export { useSoundEffect } from './useSoundEffect';
+export type { SoundEffectOptions, UseSoundEffectReturn } from './useSoundEffect';
 export { useStaggeredAnimation } from './useStaggeredAnimation';
 export { usePageTransition } from './usePageTransition';
 export { useLoadingAnimation } from './useLoadingAnimation';

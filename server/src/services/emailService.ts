@@ -1,6 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import type { Transporter, SendMailOptions } from 'nodemailer';
-const logger = require('../utils/logger');
+import logger from '../utils/logger';
 
 // Email template data interfaces
 export interface EmailVerificationData {

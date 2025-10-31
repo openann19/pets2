@@ -81,7 +81,7 @@ export function Avatar({
         style={{
           fontSize: sizeStyles.fontSize,
           fontWeight: '600',
-          color: theme.colors.primaryText,
+          color: theme.colors.onPrimary,
         }}
       >
         {initials || '?'}

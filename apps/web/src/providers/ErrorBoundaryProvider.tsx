@@ -38,7 +38,9 @@ export const ErrorBoundaryProvider = ({ children }) => {
                     url: window.location.href,
                     userAgent: navigator.userAgent
                 })
-            }).catch(console.error);
+            }).catch((error) => {
+                logger.error('Failed to report error to API:', error);
+            });
         }
     }, []);
     const clearError = useCallback(() => {

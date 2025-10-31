@@ -4,6 +4,7 @@
  */
 
 import { addEventListenerSafely, getWindowObject } from '../utils/environment';
+import { logger } from '../utils/logger';
 
 const isPromiseRejectionEvent = (event: Event): event is PromiseRejectionEvent => {
   return 'reason' in event;
@@ -375,15 +376,15 @@ class ErrorHandlerService {
       try {
         logger(error);
       } catch (logError) {
-        // Fallback to console if logger fails
+        // Fallback to console.error if logger fails (avoiding infinite recursion)
         console.error('Error logging failed:', logError);
         console.error('Original error:', error);
       }
     });
 
-    // Fallback to console in development
+    // Fallback to logger in development
     if (!this.isProduction) {
-      console.error('Error:', error);
+      logger.error('Error:', error);
     }
   }
 
@@ -395,7 +396,7 @@ class ErrorHandlerService {
       try {
         handler(notification);
       } catch (handlerError) {
-        console.error('Notification handler failed:', handlerError);
+        logger.error('Notification handler failed:', handlerError);
       }
     });
   }

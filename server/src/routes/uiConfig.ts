@@ -5,11 +5,11 @@
 
 import express from 'express';
 import type { Request, Response } from 'express';
-import type { AuthRequest } from '../middleware/adminAuth';
+import type { AuthRequest } from '../types/express';
 import { requireAuth, requireAdmin } from '../middleware/adminAuth';
 import { zodValidate } from '../middleware/zodValidator';
 import { z } from 'zod';
-import { UIConfigModel } from '../models/UIConfig';
+import { UIConfigModel, type IUIConfigDocument } from '../models/UIConfig';
 import { PreviewSessionModel } from '../models/PreviewSession';
 import { uiConfigSchema } from '@pawfectmatch/core';
 import logger from '../utils/logger';
@@ -418,7 +418,7 @@ router.get(
       const session = await PreviewSessionModel.findOne({
         code: code.toUpperCase(),
         expiresAt: { $gt: new Date() },
-      }).populate('configId');
+      }).populate<{ configId: IUIConfigDocument }>('configId');
 
       if (!session) {
         return res.status(404).json({
@@ -432,13 +432,16 @@ router.get(
       session.accessedAt = new Date();
       await session.save();
 
-      const config = await UIConfigModel.findById(session.configId).lean();
-      if (!config) {
+      // Use populated config directly (already populated above)
+      // After populate, configId is the populated document
+      const configDoc = session.configId as unknown as IUIConfigDocument;
+      if (!configDoc || typeof configDoc === 'string') {
         return res.status(404).json({
           success: false,
           message: 'Config not found',
         });
       }
+      const config = configDoc.toObject ? configDoc.toObject() : (configDoc as any);
 
       return res.json({
         success: true,
@@ -545,6 +548,24 @@ router.post(
     }
   },
 );
+
+/**
+ * GET /api/ui-config/premium-style
+ * Get public premium UI style configuration (for users)
+ * This endpoint is public and doesn't require authentication
+ */
+router.get('/premium-style', async (req: Request, res: Response) => {
+  try {
+    const { getPublicUIStyleConfig } = await import('../controllers/admin/uiStyleConfigController');
+    await getPublicUIStyleConfig(req, res);
+  } catch (error) {
+    logger.error('Error fetching premium UI style config:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch premium UI style configuration',
+    });
+  }
+});
 
 export default router;
 

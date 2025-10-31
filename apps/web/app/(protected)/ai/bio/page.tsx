@@ -1,134 +1,195 @@
+/**
+ * AIBioScreen - Web Version
+ * Identical to mobile AIBioScreen structure
+ */
+
 'use client';
 
-import { ArrowLeftIcon, BeakerIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ScreenShell } from '@/components/layout/ScreenShell';
+import { useTranslation } from 'react-i18next';
+import { ArrowLeftIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { logger } from '@pawfectmatch/core';
 
-import { BioGenerator } from '../../../../src/components/AI/BioGenerator';
-import PremiumCard from '../../../../src/components/UI/PremiumCard';
-import { PREMIUM_VARIANTS, SPRING_CONFIG } from '../../../../src/constants/animations';
+export default function AIBioPage() {
+  const router = useRouter();
+  const { t } = useTranslation('ai');
 
-export default function AiBioPage() {
+  const [petName, setPetName] = useState('');
+  const [petBreed, setPetBreed] = useState('');
+  const [petAge, setPetAge] = useState('');
+  const [petPersonality, setPetPersonality] = useState('');
+  const [selectedTone, setSelectedTone] = useState('friendly');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedBio, setGeneratedBio] = useState<string | null>(null);
+
+  const tones = [
+    { id: 'friendly', label: 'Friendly', emoji: '😊' },
+    { id: 'playful', label: 'Playful', emoji: '🎾' },
+    { id: 'calm', label: 'Calm', emoji: '🧘' },
+    { id: 'energetic', label: 'Energetic', emoji: '⚡' },
+  ];
+
+  const handleGenerate = async () => {
+    setIsGenerating(true);
+    try {
+      // Call AI bio generation API
+      const response = await fetch('/api/ai/generate-bio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          petName,
+          petBreed,
+          petAge,
+          petPersonality,
+          tone: selectedTone,
+        }),
+      });
+      const data = await response.json();
+      setGeneratedBio(data.bio);
+    } catch (error) {
+      logger.error('Failed to generate bio:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-mesh-gradient">
-      {/* Enhanced Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={SPRING_CONFIG}
-        className="glass-light shadow-premium sticky top-0 z-40"
-      >
-        <div className="max-w-6xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <motion.div
-              whileHover={{ x: -5 }}
-              transition={SPRING_CONFIG}
-            >
-              <Link
-                href="/dashboard"
-                className="flex items-center text-white hover:text-white/80 transition-colors font-medium"
-              >
-                <ArrowLeftIcon className="h-5 w-5 mr-2" />
-                Back to Dashboard
-              </Link>
-            </motion.div>
-            
-            <div className="flex items-center gap-4">
-              <motion.div
-                className="flex items-center gap-2 bg-white/20 backdrop-blur text-white px-4 py-2 rounded-full text-sm font-semibold"
-                animate={{ 
-                  boxShadow: [
-                    "0 0 20px rgba(255, 255, 255, 0.3)",
-                    "0 0 30px rgba(255, 255, 255, 0.5)",
-                    "0 0 20px rgba(255, 255, 255, 0.3)"
-                  ]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <BeakerIcon className="h-4 w-4" />
-                AI-Powered Feature
-              </motion.div>
-              
-              <motion.div
-                className="flex items-center gap-2 bg-yellow-400/90 text-yellow-900 px-4 py-2 rounded-full text-sm font-bold"
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <SparklesIcon className="h-4 w-4" />
-                Premium
-              </motion.div>
+    <ScreenShell
+      header={
+        <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => router.back()}
+                  className="p-2 text-gray-600 hover:text-gray-800"
+                  aria-label="Back"
+                >
+                  <ArrowLeftIcon className="w-5 h-5" />
+                </button>
+                <h1 className="text-xl font-bold text-gray-900">
+                  {t('ai_bio.title', 'AI Bio Generator')}
+                </h1>
+              </div>
             </div>
           </div>
         </div>
-      </motion.div>
+      }
+    >
+      <div className="max-w-2xl mx-auto space-y-6">
+        {/* Pet Info Form */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900">Pet Information</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Pet Name</label>
+              <input
+                type="text"
+                value={petName}
+                onChange={(e) => setPetName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Enter pet name"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Breed</label>
+              <input
+                type="text"
+                value={petBreed}
+                onChange={(e) => setPetBreed(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Enter breed"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+              <input
+                type="text"
+                value={petAge}
+                onChange={(e) => setPetAge(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Enter age"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Personality</label>
+            <textarea
+              value={petPersonality}
+              onChange={(e) => setPetPersonality(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Describe your pet's personality..."
+            />
+          </div>
+        </div>
 
-      {/* Enhanced Content */}
-      <motion.div 
-        className="py-12"
-        variants={PREMIUM_VARIANTS.fadeInUp}
-        initial="initial"
-        animate="animate"
-      >
-        <BioGenerator />
-      </motion.div>
+        {/* Tone Selector */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Writing Tone</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {tones.map((tone) => (
+              <button
+                key={tone.id}
+                onClick={() => setSelectedTone(tone.id)}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  selectedTone === tone.id
+                    ? 'border-purple-600 bg-purple-50'
+                    : 'border-gray-200 hover:border-purple-300'
+                }`}
+              >
+                <span className="text-2xl mb-2 block">{tone.emoji}</span>
+                <span className="text-sm font-medium text-gray-900">{tone.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
-      {/* Premium Feature Cards */}
-      <div className="max-w-6xl mx-auto px-6 pb-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="grid md:grid-cols-3 gap-6"
+        {/* Generate Button */}
+        <button
+          onClick={handleGenerate}
+          disabled={isGenerating || !petName || !petBreed}
+          className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold text-lg hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
         >
-          <PremiumCard
-            variant="glass"
-            hover
-            glow
-            tilt
-            entrance="fadeInUp"
-            delay={0.1}
-            className="text-center"
-          >
-            <div className="text-4xl mb-3">🎯</div>
-            <h3 className="font-bold text-lg mb-2 text-white">Match Optimization</h3>
-            <p className="text-white/80 text-sm">
-              AI-generated bios increase match rates by up to 73% based on our analysis of successful profiles.
-            </p>
-          </PremiumCard>
+          {isGenerating ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              Generating...
+            </>
+          ) : (
+            <>
+              <SparklesIcon className="w-5 h-5" />
+              Generate Bio
+            </>
+          )}
+        </button>
 
-          <PremiumCard
-            variant="gradient"
-            hover
-            glow
-            tilt
-            entrance="fadeInUp"
-            delay={0.2}
-            className="text-center"
+        {/* Generated Bio */}
+        {generatedBio && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
           >
-            <div className="text-4xl mb-3">🧠</div>
-            <h3 className="font-bold text-lg mb-2 text-white">Smart Suggestions</h3>
-            <p className="text-white/80 text-sm">
-              Our AI learns from millions of pet profiles to suggest the perfect words for your furry friend.
-            </p>
-          </PremiumCard>
-
-          <PremiumCard
-            variant="holographic"
-            hover
-            glow
-            tilt
-            entrance="fadeInUp"
-            delay={0.3}
-            className="text-center"
-          >
-            <div className="text-4xl mb-3">📸</div>
-            <h3 className="font-bold text-lg mb-2 text-white">Photo Intelligence</h3>
-            <p className="text-white/80 text-sm">
-              Upload a photo and let AI analyze breed, age, and personality traits automatically.
-            </p>
-          </PremiumCard>
-        </motion.div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Generated Bio</h2>
+            <p className="text-gray-700 leading-relaxed">{generatedBio}</p>
+            <div className="mt-4 flex gap-2">
+              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                Save Bio
+              </button>
+              <button
+                onClick={() => setGeneratedBio(null)}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Regenerate
+              </button>
+            </div>
+          </motion.div>
+        )}
       </div>
-    </div>
+    </ScreenShell>
   );
 }

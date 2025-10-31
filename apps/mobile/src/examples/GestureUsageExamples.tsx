@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import { logger } from '@pawfectmatch/core';
+;
 import { View, Image, Text, StyleSheet, Alert } from 'react-native';
 import { DoubleTapLikePlus, PinchZoomPro } from '../components/Gestures';
 import { ReactionBarMagnetic } from '../components/chat';
@@ -18,7 +20,7 @@ export function InstagramLikeExample() {
 
   const handleSingleTap = () => {
     // Optional: show UI or navigate
-    console.log('Single tap - could show details');
+    logger.info('Single tap - could show details');
   };
 
   return (
@@ -96,7 +98,7 @@ export function ChatReactionExample() {
         reactions={customReactions}
         onSelect={handleReactionSelect}
         onCancel={() => {
-          console.log('Reaction cancelled');
+          logger.info('Reaction cancelled');
         }}
         influenceRadius={100}
         baseSize={32}

@@ -1,0 +1,97 @@
+id: m-sec-01-jwt-secure-store
+owner: security
+severity: critical
+area: mobile
+status: open
+context: |
+  JWT tokens are currently stored in AsyncStorage, which is vulnerable to token theft via device backups.
+  Current behavior: Tokens stored in AsyncStorage can be extracted from device backups.
+  Why it matters: Security vulnerability - tokens can be stolen even if device is not compromised directly.
+  
+  Use Case:
+  1. User logs in, receives JWT token
+  2. Token stored in AsyncStorage
+  3. Device backup created (iCloud/Google Backup)
+  4. Attacker gains access to backup
+  5. Token extracted from backup
+  6. Attacker can impersonate user
+
+acceptance:
+  - [ ] Migrate all JWT storage from AsyncStorage to expo-secure-store
+  - [ ] Update auth service to use SecureStore for token operations
+  - [ ] Migrate refresh token storage to SecureStore
+  - [ ] Update token refresh logic to use SecureStore
+  - [ ] Remove all AsyncStorage token references
+  - [ ] Add SecureStore mock for tests
+  - [ ] Unit tests for SecureStore token operations
+  - [ ] Integration test: login → token stored in SecureStore
+  - [ ] E2E test: Verify token persists across app restarts
+  - [ ] Verify token not accessible from device backup
+
+states:
+  - unauthenticated
+  - authenticated
+  - token-refreshing
+  - error
+
+telemetry:
+  - event: SECURITY_TOKEN_MIGRATED
+    props: [userId, migrationMethod, timestamp]
+  - event: SECURITY_STORE_ERROR
+    props: [errorType, operation, timestamp]
+
+contracts:
+  request:
+    storeToken: { token: string, refreshToken: string }
+    getToken: {}
+    deleteToken: {}
+  response:
+    storeToken: { success: boolean }
+    getToken: { token: string | null, refreshToken: string | null }
+    deleteToken: { success: boolean }
+  errors:
+    - code: SECURE_STORE_UNAVAILABLE
+      message: "SecureStore is not available on this device"
+    - code: STORAGE_FAILED
+      message: "Failed to store token securely"
+    - code: RETRIEVAL_FAILED
+      message: "Failed to retrieve token"
+
+assets:
+  mocks:
+    - mocks/fixtures/security/secure-store.success.json
+    - mocks/fixtures/security/secure-store.error-unavailable.json
+  tests:
+    - apps/mobile/src/services/__tests__/authService.secure-store.test.ts
+    - apps/mobile/src/services/__tests__/secureStorage.test.ts
+    - apps/mobile/src/hooks/__tests__/useAuth.secure-store.test.ts
+  services:
+    - apps/mobile/src/services/authService.ts
+    - apps/mobile/src/services/secureStorage.ts
+
+risks:
+  - SecureStore may not be available on all devices/emulators
+  - Migration from AsyncStorage may fail for existing users
+  - Token loss if SecureStore fails during write
+  - Breaking changes for existing stored tokens
+
+rollback:
+  - Feature flag to toggle between AsyncStorage and SecureStore
+  - Maintain AsyncStorage fallback temporarily
+  - Migration script to restore from backup if needed
+
+links:
+  - docs: apps/mobile/src/services/secureStorage.ts
+  - expo: https://docs.expo.dev/versions/latest/sdk/securestore/
+
+dependencies:
+  - expo-secure-store package
+  - Auth service refactoring
+  - Test mocks for SecureStore
+
+timeline:
+  start: 2025-01-30
+  implementation: 2025-02-01
+  testing: 2025-02-02
+  deploy: 2025-02-03
+

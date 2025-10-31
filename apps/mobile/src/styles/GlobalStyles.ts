@@ -1,5 +1,6 @@
 import { COLORS, RADIUS, SPACING } from '@pawfectmatch/design-tokens';
 import { Dimensions, Platform, StyleSheet } from 'react-native';
+import { springs, timing } from '@/foundation/motion';
 
 // Typography data (fallback since design-tokens TYPOGRAPHY is not available)
 const TYPOGRAPHY_DATA = {
@@ -449,7 +450,7 @@ export const GlobalStyles = StyleSheet.create({
   },
   inputError: {
     borderColor: Colors.error,
-    backgroundColor: '#fef2f2',
+    backgroundColor: COLORS.error[50],
   },
 
   // === LISTS ===
@@ -658,32 +659,21 @@ export const GlobalStyles = StyleSheet.create({
 });
 
 // === ANIMATION CONFIGS ===
+// Use foundation springs and timing for consistency
 export const AnimationConfigs = {
-  spring: {
-    damping: 20,
-    stiffness: 400,
-    mass: 0.8,
-  },
-  springGentle: {
-    damping: 25,
-    stiffness: 300,
-    mass: 1,
-  },
-  springBouncy: {
-    damping: 15,
-    stiffness: 500,
-    mass: 0.6,
-  },
+  spring: springs.standard,
+  springGentle: springs.gentle,
+  springBouncy: springs.bouncy,
   timing: {
-    duration: 600,
+    duration: timing.slow,
     easing: 'bezier(0.4, 0, 0.2, 1)' as const,
   },
   timingFast: {
-    duration: 300,
+    duration: timing.normal,
     easing: 'bezier(0.4, 0, 0.2, 1)' as const,
   },
   timingSlow: {
-    duration: 800,
+    duration: timing.slower,
     easing: 'bezier(0.4, 0, 0.2, 1)' as const,
   },
 };

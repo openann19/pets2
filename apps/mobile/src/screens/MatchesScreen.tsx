@@ -1,8 +1,9 @@
 import { useRef, useCallback } from 'react';
 import React from 'react';
-import type { FlatList as FlatListType } from 'react-native';
 import { StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
+import { FlashList } from '@shopify/flash-list';
+import type { FlashList as FlashListType } from '@shopify/flash-list';
 import { useTheme } from '@mobile/theme';
 import { haptic } from '../ui/haptics';
 import { ScreenShell } from '../ui/layout/ScreenShell';
@@ -46,7 +47,6 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
   // Error handling with retry
   const {
     error: errorHandlingError,
-    executeWithRetry,
     retry,
     clearError,
   } = useErrorHandling({
@@ -68,7 +68,7 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
     refetch,
   } = useMatchesData();
 
-  const listRef = useRef<FlatListType<Match>>(null);
+  const listRef = useRef<FlashListType<Match>>(null);
   const { onScroll, getOffset } = useScrollOffsetTracker();
 
   // Calculate unread message count from matches
@@ -227,16 +227,14 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
           />
         )
       ) : (
-        <Animated.FlatList
-          ref={listRef as any}
+        <FlashList
+          ref={listRef}
           data={currentData}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
-          removeClippedSubviews
-          initialNumToRender={8}
-          windowSize={7}
-          maxToRenderPerBatch={10}
-          updateCellsBatchingPeriod={50}
+          estimatedItemSize={150} // Estimated match card height
+          drawDistance={300} // Render items within 300px of viewport
+          estimatedListSize={{ height: 800, width: 400 }}
           style={styles.list}
           contentContainerStyle={styles.listContent}
           onScroll={(e) => {
@@ -247,6 +245,7 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
             updateScrollOffset(offset); // new tab state preservation
           }}
           scrollEventThrottle={16}
+          removeClippedSubviews={true}
           refreshControl={
             <ElasticRefreshControl
               refreshing={refreshing}

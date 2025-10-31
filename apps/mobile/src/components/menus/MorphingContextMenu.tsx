@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { springs, durations, motionEasing } from '@/foundation/motion';
 
 export type ContextAction = {
   key: string;
@@ -69,11 +70,20 @@ export default function MorphingContextMenu({
   React.useEffect(() => {
     if (visible) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-      alpha.value = withTiming(1, { duration: 140 });
-      t.value = withSpring(1, { damping: 16, stiffness: 320 });
+      alpha.value = withTiming(1, { 
+        duration: durations.xs,
+        easing: motionEasing.enter,
+      });
+      t.value = withSpring(1, springs.standard);
     } else {
-      alpha.value = withTiming(0, { duration: 120 });
-      t.value = withTiming(0, { duration: 120 });
+      alpha.value = withTiming(0, { 
+        duration: durations.xs,
+        easing: motionEasing.exit,
+      });
+      t.value = withTiming(0, { 
+        duration: durations.xs,
+        easing: motionEasing.exit,
+      });
     }
   }, [visible, alpha, t]);
 
@@ -87,7 +97,7 @@ export default function MorphingContextMenu({
     // interpolate rect → target rect
     const cxStart = origin.x + origin.width / 2;
     const cyStart = origin.y + origin.height / 2;
-    const cxEnd = origin.x + (origin.width > 180 ? origin.width / 2 : W / 2); // keep near bubble
+    // const cxEnd = origin.x + (origin.width > 180 ? origin.width / 2 : W / 2); // keep near bubble
     const left = interpolate(t.value, [0, 1], [origin.x, cxStart - W / 2], Extrapolate.CLAMP);
     const top = interpolate(
       t.value,

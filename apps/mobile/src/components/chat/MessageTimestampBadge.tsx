@@ -7,6 +7,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import { springs } from '@/foundation/motion';
 
 export interface MessageTimestampBadgeProps {
   iso: string; // ISO time
@@ -35,14 +36,14 @@ export default function MessageTimestampBadge({
 }: MessageTimestampBadgeProps) {
   const { colors } = useTheme();
 
-  const finalTextColor = textColor || colors.text;
-  const finalBgColor = bgColor || colors.bgElevated;
+  const finalTextColor = textColor || colors.onSurface;
+  const finalBgColor = bgColor || colors.surface;
   const finalAccentColor = accentColor || colors.primary;
   const shown = useSharedValue(visible ? 1 : 0);
 
   useEffect(() => {
     shown.value = visible
-      ? withSpring(1, { damping: 16, stiffness: 320 })
+      ? withSpring(1, springs.standard)
       : withTiming(0, { duration: 120 });
   }, [visible]);
 

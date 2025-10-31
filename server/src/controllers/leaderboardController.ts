@@ -4,6 +4,7 @@
  */
 
 import type { Request, Response } from 'express';
+import type { AuthRequest } from '../types/express';
 import type { IUserDocument } from '../types/mongoose';
 import User from '../models/User';
 import Match from '../models/Match';
@@ -15,14 +16,10 @@ const logger = require('../utils/logger');
 let Message: typeof import('../models/Message').default | null = null;
 try {
   Message = require('../models/Message').default;
-} catch (error) {
+} catch (error: unknown) {
   Message = null;
-  logger.warn?.('Message model unavailable for engagement leaderboard', { error: (error as Error)?.message });
-}
-
-interface AuthRequest extends Request {
-  userId?: string;
-  user?: IUserDocument;
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  logger.warn?.('Message model unavailable for engagement leaderboard', { error: errorMessage });
 }
 
 // Type definitions

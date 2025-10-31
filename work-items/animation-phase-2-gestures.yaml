@@ -1,0 +1,41 @@
+id: animation-phase-2-gestures
+owner: animation-team
+severity: high
+area: mobile
+context: |
+  Need advanced gesture interactions: magnetic snap, momentum-based animations, velocity-scaled interactions.
+  These enhance user experience for swipe cards, bottom sheets, and drag-and-drop interactions.
+acceptance:
+  - Magnetic gesture hook created with snap points
+  - Momentum animation hook with velocity calculation
+  - Velocity-based spring conversion utility
+  - Haptic feedback on snap events
+  - Works with reduced motion
+  - Performance: 60fps maintained
+  - Unit tests ≥75% coverage
+states:
+  - planning
+  - implementation
+  - testing
+  - complete
+telemetry:
+  - event: MAGNETIC_GESTURE_TRIGGERED
+    props: [snapPoint, velocity]
+contracts:
+  request: { gestureConfig: MagneticGestureConfig }
+  response: { gestureHandlers: GestureHandlers }
+assets:
+  tests:
+    - apps/mobile/src/hooks/gestures/__tests__/useMagneticGesture.test.ts
+    - apps/mobile/src/hooks/animations/__tests__/useMomentumAnimation.test.ts
+risks:
+  - Gesture conflicts with existing swipe handlers
+  - Performance issues on low-end devices
+rollback:
+  - Remove magnetic gesture hooks
+  - Fallback to basic gestures
+links:
+  - ANIMATION_ENHANCEMENT_PLAN.md (Phase 2)
+status: open
+priority: high
+

@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
+import { logger } from '@pawfectmatch/core';
 import { 
   UserIcon, 
   EnvelopeIcon, 
@@ -67,7 +68,7 @@ export default function RegisterPage() {
       await registerUser(data.email, data.password, fullName, data.dateOfBirth);
       router.push('/dashboard');
     } catch (error) {
-      console.error('Registration error:', error);
+      logger.error('Registration error:', error);
     } finally {
       setIsLoading(false);
     }

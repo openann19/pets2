@@ -20,6 +20,7 @@ import SwipeScreen from '../screens/SwipeScreen';
 import MatchesScreen from '../screens/MatchesScreen';
 import MapScreen from '../screens/MapScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import MyPetsScreen from '../screens/MyPetsScreen';
 
 import UltraTabBar from './UltraTabBar';
 import type { TabParamList, RootStackParamList } from './types';
@@ -39,6 +40,12 @@ const SwipeWrapper = (props: BottomTabScreenProps<TabParamList, 'Swipe'>) => (
 const MatchesWrapper = (props: BottomTabScreenProps<TabParamList, 'Matches'>) => (
   <MatchesScreen
     navigation={props.navigation as unknown as StackNavigationProp<RootStackParamList, 'Matches'>}
+  />
+);
+
+const PawfilesWrapper = (props: BottomTabScreenProps<TabParamList, 'Pawfiles'>) => (
+  <MyPetsScreen
+    navigation={props.navigation as unknown as StackNavigationProp<RootStackParamList, 'MyPets'>}
   />
 );
 
@@ -82,8 +89,8 @@ export default function BottomTabNavigator(): React.JSX.Element {
         }}
       />
       <Tab.Screen
-        name="Matches"
-        component={MatchesWrapper}
+        name="Pawfiles"
+        component={PawfilesWrapper}
         options={{
           unmountOnBlur: false,
         }}

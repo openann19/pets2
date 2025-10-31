@@ -55,12 +55,31 @@
     "no_matches": "No matches yet",
     "no_matches_subtitle": "Keep swiping to find your perfect pet match!"
   },
+  "and": "and",
   "swipe": {
     "title": "Swipe",
     "error": "Error",
     "loading_pets": "Loading pets...",
     "no_more_pets": "No more pets!",
-    "check_back_later": "Check back later for more matches"
+    "check_back_later": "Check back later for more matches",
+    "limitReached": "Daily Swipe Limit Reached",
+    "limitMessage": "You've used all {{limit}} of your daily swipes. Upgrade to Premium for unlimited swipes!",
+    "usedToday": "Used Today",
+    "unlimitedSwipes": "Unlimited daily swipes",
+    "seeWhoLiked": "See who liked you",
+    "advancedFilters": "Advanced filters",
+    "upgradeToPremium": "Upgrade to Premium",
+    "maybeLater": "Maybe Later",
+    "offline": {
+      "title": "You're offline",
+      "message": "Connect to the internet to see pets"
+    },
+    "error": {
+      "title": "Unable to load pets",
+      "message": "Please check your connection and try again",
+      "retry": "Retry"
+    },
+    "petsAvailable": "pets nearby"
   },
   "profile": {
     "title": "Profile",
@@ -99,5 +118,153 @@
       "lifestyle": "Lifestyle"
     },
     "percentage": "{{score}}%"
+  },
+  "referral": {
+    "title": "Referral Program",
+    "subtitle": "Share and earn Premium rewards!",
+    "yourCode": "Your Referral Code",
+    "stats": "Your Referral Stats",
+    "totalReferrals": "Total Referrals",
+    "activeReferrals": "Active Referrals",
+    "howItWorks": "Share your code or link with friends. When they sign up and use your code, you both get 1 month free Premium!",
+    "applyCode": "Apply a Referral Code",
+    "enterCode": "Enter referral code",
+    "apply": "Apply Code",
+    "copied": "Copied!",
+    "codeCopied": "Referral code copied to clipboard",
+    "linkCopied": "Referral link copied to clipboard",
+    "errors": {
+      "loadFailed": "Failed to load referral data",
+      "enterCode": "Please enter a referral code",
+      "applyFailed": "Failed to apply referral code",
+      "applySuccess": "Referral code applied successfully!"
+    },
+    "success": {
+      "title": "Success!",
+      "message": "You both got 1 month free Premium!"
+    }
+  },
+  "iap": {
+    "shop": "Shop",
+    "subtitle": "Enhance your experience",
+    "yourBalance": "Your Balance",
+    "superLikes": "Super Likes",
+    "boosts": "Boosts",
+    "gifts": "Gifts",
+    "buy": "Buy",
+    "bestValue": "BEST VALUE",
+    "category": {
+      "superlike": "Super Likes",
+      "boost": "Boosts",
+      "filter": "Premium Filters",
+      "photo": "Enhanced Photos",
+      "video": "Video Profiles",
+      "gift": "Gift Shop"
+    },
+    "alerts": {
+      "loadError": "Failed to load shop",
+      "purchaseSuccess": "Success!",
+      "purchaseSuccessMessage": "Purchased {{product}}!",
+      "purchaseFailed": "Purchase Failed"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "save": "Save",
+    "info": "Choose which notifications you'd like to receive. You can always change these settings later.",
+    "categories": {
+      "matches": "Matches & Likes",
+      "messages": "Messages",
+      "general": "General",
+      "marketing": "Marketing"
+    },
+    "settings": {
+      "new_matches": "New Matches",
+      "new_matches_desc": "Get notified when you have new matches",
+      "new_messages": "New Messages",
+      "new_messages_desc": "Receive notifications for new messages",
+      "profile_likes": "Profile Likes",
+      "profile_likes_desc": "Notifications when someone likes your profile",
+      "super_likes": "Super Likes",
+      "super_likes_desc": "Special notifications for Super Likes",
+      "premium_features": "Premium Features",
+      "premium_features_desc": "Updates about premium features and benefits",
+      "safety_alerts": "Safety Alerts",
+      "safety_alerts_desc": "Important safety and security notifications",
+      "marketing": "Marketing & Updates",
+      "marketing_desc": "News, promotions, and app updates",
+      "events": "Events & Activities",
+      "events_desc": "Notifications about events and group activities"
+    },
+    "push_settings": {
+      "title": "Push Notification Settings",
+      "push_notifications": "Push Notifications",
+      "push_notifications_desc": "Allow the app to send push notifications",
+      "push_notifications_device": "Push notification settings would be managed by device settings.",
+      "quiet_hours": "Quiet Hours",
+      "quiet_hours_desc": "Pause notifications between 10 PM - 8 AM",
+      "test_notification": "Send Test Notification",
+      "test_notification_desc": "A test notification would be sent to your device.",
+      "test_title": "Test Notification"
+    },
+    "alerts": {
+      "save_success": "Success",
+      "save_success_message": "Notification preferences saved successfully!",
+      "save_error": "Error",
+      "save_error_message": "Failed to save notification preferences. Please try again.",
+      "quiet_hours_error": "Error",
+      "quiet_hours_error_message": "Failed to update quiet hours. Please try again."
+    }
+  },
+  "whoLikedYou": {
+    "title": "Who Liked You",
+    "featureName": "See Who Liked You",
+    "description": "See who liked your pet profiles with Premium",
+    "loading": "Loading...",
+    "person": "person",
+    "people": "people",
+    "likedYourPets": "liked your pets",
+    "error": {
+      "title": "Failed to load",
+      "message": "Please try again"
+    },
+    "empty": {
+      "title": "No Likes Yet",
+      "message": "When someone likes your pet, they'll appear here"
+    }
+  },
+  "deactivate": {
+    "title": "Deactivate Account",
+    "warning": "Deactivating your account will temporarily hide your profile and pause all activity. You can reactivate anytime by logging back in.",
+    "whyDeactivating": "Why are you deactivating?",
+    "reasons": {
+      "takingBreak": "Taking a break from dating",
+      "foundPartner": "Found a partner",
+      "notEnjoying": "Not enjoying the app",
+      "privacyConcerns": "Privacy concerns",
+      "tooManyNotifications": "Too many notifications",
+      "other": "Other"
+    },
+    "customReasonPlaceholder": "Please tell us more...",
+    "confirmTitle": "Confirm Deactivation",
+    "confirmInstruction": "Type \"deactivate\" to confirm:",
+    "confirmPlaceholder": "deactivate",
+    "cancel": "Cancel",
+    "deactivate": "Deactivate Account",
+    "deactivating": "Deactivating...",
+    "legalText": "Before proceeding, please review our",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "helpText": "Need help? Contact our support team before deactivating.",
+    "alerts": {
+      "required": "Required",
+      "selectReason": "Please select a reason for deactivation.",
+      "confirmationRequired": "Confirmation Required",
+      "typeConfirm": "Please type \"deactivate\" to confirm.",
+      "successTitle": "Account Deactivated",
+      "successMessage": "Your account has been temporarily deactivated. You can reactivate it anytime by logging back in.",
+      "error": "Error",
+      "errorMessage": "Failed to deactivate account. Please try again."
+    }
   }
 }

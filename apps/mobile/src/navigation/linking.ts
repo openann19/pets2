@@ -23,7 +23,7 @@ const PROTECTED_ROUTES: (keyof RootStackParamList)[] = [
   'Stories',
   'Leaderboard',
   'Community',
-];
+] as const;
 
 /**
  * Enhanced linking configuration with authentication checks
@@ -55,7 +55,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
           Map: 'map',
           Profile: 'profile',
         },
-      } as unknown as any,
+      } as LinkingOptions<RootStackParamList>['config']['screens']['MainTabs'],
 
       // Auth
       Login: 'login',
@@ -76,6 +76,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
         parse: {
           matchId: (matchId: string) => matchId,
           petName: (petName: string) => petName,
+          action: (action: string) => action, // Support action query param for notification actions
         },
       },
       MyPets: 'my-pets',
@@ -91,7 +92,6 @@ export const linking: LinkingOptions<RootStackParamList> = {
         },
       },
       PremiumCancel: 'premium-cancel',
-      SubscriptionManager: 'subscription-manager',
       SubscriptionSuccess: {
         path: 'subscription-success/:sessionId?',
         parse: {
@@ -117,6 +117,15 @@ export const linking: LinkingOptions<RootStackParamList> = {
       EditProfile: 'edit-profile',
       AdvancedFilters: 'advanced-filters',
       ModerationTools: 'moderation-tools',
+      
+      // Business Model Screens
+      Referral: {
+        path: 'refer/:code?',
+        parse: {
+          code: (code: string) => code || undefined,
+        },
+      },
+      IAPShop: 'shop',
 
       // Adoption
       AdoptionManager: 'adoption-manager',

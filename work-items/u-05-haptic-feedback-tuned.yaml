@@ -1,0 +1,45 @@
+id: u-05-haptic-feedback-tuned
+owner: ux
+severity: high
+area: mobile
+status: open
+context: |
+  Haptic feedback needs fine-tuning: heavy for superlike, light for like.
+  Current behavior: Same haptic for all actions or no haptics.
+  Why it matters: Better tactile feedback, clearer user actions.
+
+acceptance:
+  - [ ] Heavy haptic for superlike action
+  - [ ] Light haptic for like action
+  - [ ] Medium haptic for match
+  - [ ] Success haptic for successful actions
+  - [ ] Warning haptic for destructive actions
+  - [ ] Test on iOS devices
+  - [ ] Test on Android devices
+  - [ ] Haptics feel appropriate for each action
+
+states:
+  - idle
+  - feedback-triggered
+
+telemetry:
+  - event: UX_HAPTIC_TRIGGERED
+    props: [type, action, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  utils:
+    - apps/mobile/src/utils/haptics.ts
+  tests:
+    - apps/mobile/src/utils/__tests__/haptics.test.ts
+
+dependencies:
+  - expo-haptics
+
+timeline:
+  start: 2025-02-01
+  implementation: 2025-02-01
+  deploy: 2025-02-02
+

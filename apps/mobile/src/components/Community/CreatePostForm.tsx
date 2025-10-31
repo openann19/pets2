@@ -27,7 +27,6 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTheme } from '@mobile/theme';
-import { getExtendedColors, type ExtendedColors } from '@mobile/theme/adapters';
 import type { UploadProgress } from '../../services/postCreationService';
 import type { CreatePostRequest, ActivityDetails } from '../../services/communityAPI';
 import { logger } from '@pawfectmatch/core';
@@ -49,7 +48,6 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
   uploadProgress,
 }) => {
   const theme = useTheme();
-  const colors: ExtendedColors = getExtendedColors(theme);
 
   // Form state
   const [content, setContent] = useState('');
@@ -69,7 +67,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.background,
+      backgroundColor: theme.colors.bg,
     },
     scrollContent: {
       padding: theme.spacing.lg,
@@ -81,12 +79,12 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
       marginBottom: theme.spacing.lg,
       paddingBottom: theme.spacing.md,
       borderBottomWidth: 1,
-      borderBottomColor: colors.border,
+      borderBottomColor: theme.colors.border,
     },
     title: {
       fontSize: theme.typography.h2.size,
       fontWeight: theme.typography.h2.weight,
-      color: colors.onSurface,
+      color: theme.colors.onSurface,
     },
     cancelButton: {
       padding: theme.spacing.sm,
@@ -97,17 +95,17 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
     sectionTitle: {
       fontSize: theme.typography.body.size,
       fontWeight: theme.typography.h2.weight,
-      color: colors.onSurface,
+      color: theme.colors.onSurface,
       marginBottom: theme.spacing.sm,
     },
     textInput: {
       borderWidth: 1,
-      borderColor: colors.border,
-      borderRadius: theme.radius.md,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radii.md,
       padding: theme.spacing.md,
       fontSize: theme.typography.body.size,
-      color: colors.onSurface,
-      backgroundColor: colors.card,
+      color: theme.colors.onSurface,
+      backgroundColor: theme.colors.surface,
       textAlignVertical: 'top',
     },
     textInputError: {
@@ -117,7 +115,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
       textAlign: 'right',
       marginTop: theme.spacing.xs,
       fontSize: theme.typography.body.size * 0.75,
-      color: colors.onMuted,
+      color: theme.colors.onMuted,
     },
     characterCountError: {
       color: theme.colors.danger,
@@ -135,43 +133,43 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
     },
     switchLabel: {
       fontSize: theme.typography.body.size,
-      color: colors.onSurface,
+      color: theme.colors.onSurface,
       flex: 1,
     },
     switchDescription: {
       fontSize: theme.typography.body.size * 0.875,
-      color: colors.onMuted,
+      color: theme.colors.onMuted,
       marginTop: theme.spacing.xs / 2,
     },
     activitySection: {
-      backgroundColor: colors.card,
-      borderRadius: theme.radius.md,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.md,
       padding: theme.spacing.md,
       marginTop: theme.spacing.md,
     },
     activityInput: {
       borderWidth: 1,
-      borderColor: colors.border,
-      borderRadius: theme.radius.sm,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radii.sm,
       padding: theme.spacing.sm,
       fontSize: theme.typography.body.size,
-      color: colors.onSurface,
-      backgroundColor: colors.background,
+      color: theme.colors.onSurface,
+      backgroundColor: theme.colors.bg,
       marginBottom: theme.spacing.sm,
     },
     dateButton: {
       flexDirection: 'row',
       alignItems: 'center',
       borderWidth: 1,
-      borderColor: colors.border,
-      borderRadius: theme.radius.sm,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radii.sm,
       padding: theme.spacing.sm,
-      backgroundColor: colors.background,
+      backgroundColor: theme.colors.bg,
       marginBottom: theme.spacing.sm,
     },
     dateButtonText: {
       fontSize: theme.typography.body.size,
-      color: colors.onSurface,
+      color: theme.colors.onSurface,
       marginLeft: theme.spacing.sm,
     },
     imagesSection: {
@@ -183,15 +181,15 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
       justifyContent: 'center',
       borderWidth: 2,
       borderStyle: 'dashed',
-      borderColor: colors.border,
-      borderRadius: theme.radius.md,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radii.md,
       padding: theme.spacing.lg,
-      backgroundColor: colors.card,
+      backgroundColor: theme.colors.surface,
     },
     addImageText: {
       marginLeft: theme.spacing.sm,
       fontSize: theme.typography.body.size,
-      color: colors.onMuted,
+      color: theme.colors.onMuted,
     },
     imageGrid: {
       flexDirection: 'row',
@@ -207,14 +205,14 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
     image: {
       width: '100%',
       height: '100%',
-      borderRadius: theme.radius.sm,
+      borderRadius: theme.radii.sm,
     },
     removeImageButton: {
       position: 'absolute',
       top: -theme.spacing.xs,
       right: -theme.spacing.xs,
       backgroundColor: theme.colors.danger,
-      borderRadius: theme.radius.full,
+      borderRadius: theme.radii.full,
       width: 24,
       height: 24,
       alignItems: 'center',
@@ -222,13 +220,13 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
     },
     submitButton: {
       backgroundColor: theme.colors.primary,
-      borderRadius: theme.radius.md,
+      borderRadius: theme.radii.md,
       padding: theme.spacing.md,
       alignItems: 'center',
       marginTop: theme.spacing.lg,
     },
     submitButtonDisabled: {
-      backgroundColor: colors.onMuted,
+      backgroundColor: theme.colors.onMuted,
     },
     submitButtonText: {
       color: theme.colors.onPrimary,
@@ -244,7 +242,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
       color: theme.colors.onPrimary,
     },
     uploadDetailText: {
-      fontSize: theme.typography.sizes.sm,
+      fontSize: theme.typography.body.size,
       color: theme.colors.onPrimary,
       opacity: 0.8,
       marginTop: theme.spacing.xs / 2,
@@ -371,7 +369,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
             <Ionicons
               name="close"
               size={24}
-              color={colors.onMuted}
+              color={theme.colors.onMuted}
             />
           </TouchableOpacity>
         </View>
@@ -388,7 +386,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
             value={content}
             onChangeText={setContent}
             placeholder="Share something with the community..."
-            placeholderTextColor={colors.onMuted}
+            placeholderTextColor={theme.colors.onMuted}
             multiline
             maxLength={MAX_CONTENT_LENGTH + 100} // Allow slight overflow for better UX
             accessibilityLabel="Post content"
@@ -415,7 +413,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
             <Ionicons
               name="camera"
               size={24}
-              color={colors.onMuted}
+              color={theme.colors.onMuted}
             />
             <Text style={styles.addImageText}>
               Add Image ({images.length}/{MAX_IMAGES})
@@ -463,8 +461,8 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
             <Switch
               value={isActivity}
               onValueChange={setIsActivity}
-              trackColor={{ false: colors.border, true: theme.colors.primary }}
-              thumbColor={isActivity ? theme.colors.onPrimary : colors.onMuted}
+              trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+              thumbColor={isActivity ? theme.colors.onPrimary : theme.colors.onMuted}
               accessibilityLabel="Create activity toggle"
             />
           </View>
@@ -484,7 +482,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                 <Ionicons
                   name="calendar"
                   size={20}
-                  color={colors.onMuted}
+                  color={theme.colors.onMuted}
                 />
                 <Text style={styles.dateButtonText}>{activityDate.toLocaleDateString()}</Text>
               </TouchableOpacity>
@@ -513,7 +511,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                 value={location}
                 onChangeText={setLocation}
                 placeholder="Activity location"
-                placeholderTextColor={colors.onMuted}
+                placeholderTextColor={theme.colors.onMuted}
                 accessibilityLabel="Activity location"
               />
               {errors['location'] && <Text style={styles.errorText}>{errors['location']}</Text>}
@@ -527,7 +525,7 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
                 value={maxAttendees}
                 onChangeText={setMaxAttendees}
                 placeholder="Maximum attendees"
-                placeholderTextColor={colors.onMuted}
+                placeholderTextColor={theme.colors.onMuted}
                 keyboardType="numeric"
                 accessibilityLabel="Maximum attendees"
               />

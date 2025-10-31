@@ -13,10 +13,13 @@ import type { Theme, SemanticColors } from './types';
 export interface ExtendedColors extends SemanticColors {
   // Background variants
   background: string;
+  bgElevated: string;
   surfaceElevated: string;
   card: string;
 
   // Text variants
+  text: string;
+  textMuted: string;
   textSecondary: string;
 
   // Monochrome palette

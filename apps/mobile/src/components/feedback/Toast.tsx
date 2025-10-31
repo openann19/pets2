@@ -9,6 +9,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme';
 import type { AppTheme } from '@/theme';
+import { springs } from '@/foundation/motion';
 
 interface ToastProps {
   message: string;
@@ -60,11 +61,11 @@ export function Toast({
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
     if (visible) {
-      translateY.value = withSpring(0, { stiffness: 300, damping: 30 });
+      translateY.value = withSpring(0, springs.standard);
       opacity.value = withTiming(1, { duration: 300 });
 
       timer = setTimeout(() => {
-        translateY.value = withSpring(-100, { stiffness: 300, damping: 30 });
+        translateY.value = withSpring(-100, springs.standard);
         // Some Reanimated typings complain about the 3rd callback arg.
         // Use setTimeout to avoid the overload error, and call JS callback normally.
         opacity.value = withTiming(0, { duration: 300 });
@@ -74,7 +75,7 @@ export function Toast({
       }, duration);
     } else {
       // Ensure values are reset when hidden
-      translateY.value = withSpring(-100, { stiffness: 300, damping: 30 });
+      translateY.value = withSpring(-100, springs.standard);
       opacity.value = withTiming(0, { duration: 300 });
     }
 

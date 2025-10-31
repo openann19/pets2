@@ -1,174 +1,224 @@
+/**
+ * MatchesScreen - Web Version
+ * Identical to mobile MatchesScreen structure
+ */
+
 'use client';
 
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { ScreenShell } from '@/src/components/layout/ScreenShell';
+import { EmptyStates } from '@/src/components/common/EmptyStates';
+import { useMatchesData } from '@/src/hooks/useMatchesData';
+import { useNetworkStatus } from '@/src/hooks/useNetworkStatus';
+import { useErrorHandling } from '@/src/hooks/useErrorHandling';
+import { useTranslation } from 'react-i18next';
+import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
-import { ChatBubbleLeftRightIcon, PhoneIcon, VideoCameraIcon, HeartIcon } from '@heroicons/react/24/outline';
-import LoadingSpinner from '../../../src/components/UI/LoadingSpinner';
-import PremiumButton from '../../../src/components/UI/PremiumButton';
-import PremiumCard from '../../../src/components/UI/PremiumCard';
 
 export default function MatchesPage() {
-  const { data: matches, isLoading, error } = useQuery({
-    queryKey: ['matches'],
-    queryFn: async () => {
-      // Mock data for now - will be replaced with actual API call
-      return [
-        {
-          id: '1',
-          pet: { name: 'Luna', breed: 'Golden Retriever', age: 3, photo: '/images/luna.jpg' },
-          owner: { name: 'Sarah Johnson', location: 'San Francisco, CA' },
-          matchedAt: '2024-01-15',
-          lastMessage: 'Would love to meet at the park!',
-        },
-        {
-          id: '2',
-          pet: { name: 'Max', breed: 'Border Collie', age: 2, photo: '/images/max.jpg' },
-          owner: { name: 'Mike Chen', location: 'Austin, TX' },
-          matchedAt: '2024-01-14',
-          lastMessage: 'Max is excited to play!',
-        },
-        {
-          id: '3',
-          pet: { name: 'Bella', breed: 'Rescue Mix', age: 4, photo: '/images/bella.jpg' },
-          owner: { name: 'Emily Rodriguez', location: 'Miami, FL' },
-          matchedAt: '2024-01-13',
-          lastMessage: 'When are you free this week?',
-        },
-      ];
+  const router = useRouter();
+  const { t } = useTranslation('common');
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // Network status monitoring
+  const { isOnline, isOffline } = useNetworkStatus({
+    onConnect: () => {
+      refetch();
     },
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" variant="gradient" />
-      </div>
-    );
-  }
+  // Error handling with retry
+  const {
+    error: errorHandlingError,
+    retry,
+    clearError,
+  } = useErrorHandling({
+    maxRetries: 3,
+    showAlert: false,
+    logError: true,
+  });
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Error loading matches</p>
-          <PremiumButton
-            onClick={() => window.location.reload()}
-            variant="gradient"
-            size="md"
-            glow
-          >
-            Retry
-          </PremiumButton>
-        </div>
-      </div>
-    );
-  }
+  const {
+    matches,
+    likedYou,
+    selectedTab,
+    refreshing,
+    isLoading,
+    error,
+    onRefresh,
+    refetch,
+    setSelectedTab,
+    handleScroll,
+  } = useMatchesData();
+
+  // Calculate unread message count from matches
+  const unreadMessages = matches.reduce((sum, match) => sum + (match.unreadCount || 0), 0);
+
+  const handleMatchPress = useCallback((matchId: string, petName: string) => {
+    router.push(`/chat/${matchId}`);
+  }, [router]);
+
+  const handleFilterPress = useCallback(() => {
+    // Filter functionality
+  }, []);
+
+  const handleSearchPress = useCallback(() => {
+    // Search functionality
+  }, []);
+
+  const currentData = selectedTab === 'matches' ? matches : likedYou;
+  const isEmpty = !isLoading && currentData.length === 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <h1 className="text-xl font-bold text-gray-900">Your Matches</h1>
-            <span className="text-sm text-gray-600">
-              {matches?.length || 0} active matches
-            </span>
+    <ScreenShell
+      header={
+        <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <h1 className="text-xl font-bold text-gray-900">
+                {t('matches.title', 'Matches')}
+              </h1>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleFilterPress}
+                  className="p-2 text-gray-600 hover:text-gray-800"
+                  aria-label="Filter"
+                >
+                  <FunnelIcon className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={handleSearchPress}
+                  className="p-2 text-gray-600 hover:text-gray-800"
+                  aria-label="Search"
+                >
+                  <MagnifyingGlassIcon className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </header>
-
-      {/* Matches Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {matches && matches.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {matches.map((match, index) => (
-              <PremiumCard
-                key={match.id}
-                variant="glass"
-                hover
-                glow
-                entrance="fadeInUp"
-                delay={index * 0.1}
-                padding="none"
-                className="overflow-hidden"
-              >
-                {/* Pet Photo */}
-                <div className="relative h-48 bg-gradient-to-br from-pink-100 to-purple-100">
-                  <img
-                    src={match.pet.photo}
-                    alt={match.pet.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = '/images/placeholder-pet.jpg';
-                    }}
-                  />
-                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-semibold text-purple-600">
-                    Matched {new Date(match.matchedAt).toLocaleDateString()}
-                  </div>
-                </div>
-
-                {/* Match Info */}
-                <div className="p-4">
-                  <div className="mb-3">
-                    <h3 className="text-lg font-bold text-gray-900">{match.pet.name}</h3>
-                    <p className="text-sm text-gray-600">
-                      {match.pet.breed}, {match.pet.age} years old
-                    </p>
-                  </div>
-
-                  <div className="mb-3">
-                    <p className="text-sm font-medium text-gray-700">{match.owner.name}</p>
-                    <p className="text-xs text-gray-500">{match.owner.location}</p>
-                  </div>
-
-                  {/* Last Message */}
-                  {match.lastMessage && (
-                    <div className="mb-4 p-2 bg-gray-50 rounded-lg">
-                      <p className="text-sm text-gray-600 truncate">{match.lastMessage}</p>
-                    </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex space-x-2">
-                    <Link
-                      href={`/chat/${match.id}`}
-                      className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:from-pink-600 hover:to-purple-700 transition-colors"
-                    >
-                      <ChatBubbleLeftRightIcon className="h-4 w-4" />
-                      <span className="text-sm font-medium">Chat</span>
-                    </Link>
-                    <button className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                      <PhoneIcon className="h-4 w-4 text-gray-600" />
-                    </button>
-                    <button className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                      <VideoCameraIcon className="h-4 w-4 text-gray-600" />
-                    </button>
-                  </div>
-                </div>
-              </PremiumCard>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🐶</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">No matches yet</h2>
-            <Link href="/swipe">
-              <PremiumButton
-                variant="gradient"
-                size="lg"
-                icon={<HeartIcon className="w-5 h-5" />}
-                glow
-                magneticEffect
-                haptic
-              >
-                Start Swiping
-              </PremiumButton>
-            </Link>
-          </div>
-        )}
+      }
+    >
+      {/* Tabs */}
+      <div className="flex border-b border-gray-200 mb-4">
+        <button
+          onClick={() => setSelectedTab('matches')}
+          className={`flex-1 px-4 py-2 text-center font-medium ${
+            selectedTab === 'matches'
+              ? 'border-b-2 border-purple-600 text-purple-600'
+              : 'text-gray-600'
+          }`}
+        >
+          {t('matches.matches', 'Matches')} ({matches.length})
+        </button>
+        <button
+          onClick={() => setSelectedTab('likedYou')}
+          className={`flex-1 px-4 py-2 text-center font-medium ${
+            selectedTab === 'likedYou'
+              ? 'border-b-2 border-purple-600 text-purple-600'
+              : 'text-gray-600'
+          }`}
+        >
+          {t('matches.liked_you', 'Liked You')} ({likedYou.length})
+        </button>
       </div>
-    </div>
+
+      {/* Content */}
+      {isLoading && currentData.length === 0 ? (
+        <div className="flex flex-col items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      ) : isOffline ? (
+        <EmptyStates.Offline
+          title={t('matches.offline.title') || "You're offline"}
+          message={t('matches.offline.message') || 'Connect to the internet to see your matches'}
+          actionLabel={t('matches.offline.retry') || 'Retry'}
+          onAction={() => {
+            clearError();
+            if (isOnline) {
+              refetch();
+            }
+          }}
+        />
+      ) : error || errorHandlingError ? (
+        <EmptyStates.Error
+          title={t('matches.error.title') || 'Unable to load matches'}
+          message={errorHandlingError?.userMessage || error?.message || t('matches.error.message') || 'Please check your connection and try again'}
+          actionLabel={t('matches.error.retry') || 'Retry'}
+          onAction={() => {
+            clearError();
+            retry();
+          }}
+        />
+      ) : isEmpty ? (
+        selectedTab === 'matches' ? (
+          <EmptyStates.NoMatches
+            title={t('matches.empty.title') || 'No matches yet'}
+            message={t('matches.empty.subtitle') || 'Start swiping to find your perfect match!'}
+            actionLabel={t('matches.empty.action') || 'Go to Swipe'}
+            onAction={() => router.push('/swipe')}
+          />
+        ) : (
+          <EmptyStates.NoData
+            title={t('matches.empty.liked_you.title') || 'No one liked you yet'}
+            message={t('matches.empty.liked_you.subtitle') || 'Keep swiping and people will start liking you!'}
+          />
+        )
+      ) : (
+        <div
+          ref={listRef}
+          className="space-y-4 overflow-y-auto"
+          onScroll={(e) => {
+            const target = e.target as HTMLDivElement;
+            handleScroll(target.scrollTop);
+          }}
+        >
+          {currentData.map((match, index) => (
+            <motion.div
+              key={match._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <Link
+                href={`/chat/${match._id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleMatchPress(match._id, match.petName);
+                }}
+                className="block p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-200"
+              >
+                <div className="flex items-center gap-4">
+                  <img
+                    src={match.petPhoto || '/placeholder-pet.jpg'}
+                    alt={match.petName}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900">{match.petName}</h3>
+                    <p className="text-sm text-gray-600">
+                      {match.petBreed} • {match.petAge} years old
+                    </p>
+                    {match.lastMessage?.content && (
+                      <p className="text-sm text-gray-500 mt-1 truncate">
+                        {match.lastMessage.content}
+                      </p>
+                    )}
+                  </div>
+                  {match.unreadCount > 0 && (
+                    <span className="bg-purple-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                      {match.unreadCount}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </ScreenShell>
   );
 }

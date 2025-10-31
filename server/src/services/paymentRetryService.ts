@@ -4,9 +4,11 @@
  */
 
 import Stripe from 'stripe';
-const Queue = require('bull');
-const { MongoClient } = require('mongodb');
+import Queue from 'bull';
+import { MongoClient, type Db, type Collection } from 'mongodb';
 import User from '../models/User';
+import type { IUserDocument } from '../models/User';
+import type { HydratedDocument } from 'mongoose';
 const logger = require('../utils/logger');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -55,7 +57,7 @@ class PaymentRetryService {
   private readonly maxRetries: number;
   private readonly retryIntervals: number[];
   private readonly notificationDelays: number[];
-  private retryQueue: any | null = null;
+  private retryQueue: Queue.Queue | null = null;
 
   constructor() {
     this.maxRetries = 3;
@@ -75,24 +77,36 @@ class PaymentRetryService {
     try {
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
       const customer = await stripe.customers.retrieve(subscription.customer as string);
-      const user = await User.findOne({ email: (customer as any).email });
+      
+      if (customer.deleted || !customer.email) {
+        logger.error('Invalid customer for failed payment', { subscriptionId });
+        return;
+      }
+      
+      const customerEmail = typeof customer.email === 'string' ? customer.email : null;
+      if (!customerEmail) {
+        logger.error('Customer email is not a string', { subscriptionId });
+        return;
+      }
+      const user = await User.findOne({ email: customerEmail });
 
       if (!user) {
         logger.error('User not found for failed payment', { subscriptionId, customerEmail: customer.email });
         return;
       }
 
+      const userDoc = user as unknown as HydratedDocument<IUserDocument>;
       const failureCount = await this.getFailureCount(subscriptionId);
       
       logger.info('Processing failed payment', {
         subscriptionId,
-        userId: user._id,
+        userId: (userDoc._id as unknown as { toString(): string }).toString(),
         failureCount,
         customerEmail: customer.email
       });
 
       if (failureCount >= this.maxRetries) {
-        await this.handleFinalFailure(subscriptionId, user, customer);
+        await this.handleFinalFailure(subscriptionId, userDoc, customer);
         return;
       }
 
@@ -106,11 +120,11 @@ class PaymentRetryService {
       const notificationDate = new Date();
       notificationDate.setDate(notificationDate.getDate() + this.notificationDelays[failureCount]);
       
-      await this.scheduleNotification(user, notificationDate, failureCount + 1, retryDate);
+      await this.scheduleNotification(userDoc, notificationDate, failureCount + 1, retryDate);
 
       logger.info('Payment retry scheduled', {
         subscriptionId,
-        userId: user._id,
+        userId: (userDoc._id as unknown as { toString(): string }).toString(),
         retryDate: retryDate.toISOString(),
         failureCount: failureCount + 1
       });
@@ -175,24 +189,38 @@ class PaymentRetryService {
     try {
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
       const customer = await stripe.customers.retrieve(subscription.customer as string);
-      const user = await User.findOne({ email: (customer as any).email });
+      
+      if (customer.deleted || !customer.email) {
+        logger.error('Invalid customer for successful retry', { subscriptionId });
+        return;
+      }
+      
+      const customerEmail = typeof customer.email === 'string' ? customer.email : null;
+      if (!customerEmail) {
+        logger.error('Customer email is not a string', { subscriptionId });
+        return;
+      }
+      const user = await User.findOne({ email: customerEmail });
 
       if (user) {
+        const userDoc = user as unknown as HydratedDocument<IUserDocument>;
         // Update user subscription status
-        user.premium.isActive = true;
-        user.premium.stripeSubscriptionId = subscriptionId;
-        user.premium.retryCount = 0;
-        await user.save();
+        userDoc.premium.isActive = true;
+        userDoc.premium.stripeSubscriptionId = subscriptionId;
+        if ('retryCount' in userDoc.premium) {
+          (userDoc.premium as { retryCount?: number }).retryCount = 0;
+        }
+        await userDoc.save();
 
         // Clear any scheduled retries
         await this.clearScheduledRetries(subscriptionId);
 
         // Send success notification
-        await this.sendSuccessNotification(user);
+        await this.sendSuccessNotification(userDoc);
 
         logger.info('Subscription reactivated successfully', {
           subscriptionId,
-          userId: user._id
+          userId: (userDoc._id as unknown as { toString(): string }).toString()
         });
       }
     } catch (error) {
@@ -207,35 +235,40 @@ class PaymentRetryService {
   /**
    * Handle final failure after max retries
    */
-  private async handleFinalFailure(subscriptionId: string, user: any, customer: any): Promise<void> {
+  private async handleFinalFailure(subscriptionId: string, user: HydratedDocument<IUserDocument>, customer: Stripe.Customer | Stripe.DeletedCustomer): Promise<void> {
     try {
       // Cancel subscription
       await stripe.subscriptions.cancel(subscriptionId);
 
       // Update user status
-      user.premium.isActive = false;
-      user.premium.stripeSubscriptionId = null;
-      user.premium.cancellationReason = 'payment_failed';
-      user.premium.cancelledAt = new Date();
-      await user.save();
+      const userDoc = user as unknown as HydratedDocument<IUserDocument>;
+      userDoc.premium.isActive = false;
+      userDoc.premium.stripeSubscriptionId = undefined;
+      if ('cancellationReason' in userDoc.premium) {
+        (userDoc.premium as { cancellationReason?: string }).cancellationReason = 'payment_failed';
+      }
+      if ('cancelledAt' in userDoc.premium) {
+        (userDoc.premium as { cancelledAt?: Date }).cancelledAt = new Date();
+      }
+      await userDoc.save();
 
       // Send final failure notification
-      await this.sendFinalFailureNotification(user, customer);
+      await this.sendFinalFailureNotification(userDoc, customer);
 
       // Clear scheduled retries
       await this.clearScheduledRetries(subscriptionId);
 
       logger.info('Subscription cancelled due to payment failures', {
         subscriptionId,
-        userId: user._id,
-        customerEmail: customer.email
+        userId: (userDoc._id as unknown as { toString(): string }).toString(),
+        customerEmail: customer.deleted ? undefined : (typeof customer.email === 'string' ? customer.email : customer.email)
       });
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       logger.error('Error handling final failure', {
         subscriptionId,
-        userId: user._id,
+        userId: (userDoc._id as unknown as { toString(): string }).toString(),
         error: errorMessage
       });
     }
@@ -262,8 +295,8 @@ class PaymentRetryService {
     // Store in database with MongoDB
     const client = await this.getMongoClient();
     try {
-      const db = client.db();
-      const retryJobs = db.collection<RetryJob>('retryJobs');
+      const db: Db = client.db();
+      const retryJobs: Collection<RetryJob> = db.collection<RetryJob>('retryJobs');
       
       await retryJobs.insertOne(retryJob);
       
@@ -284,9 +317,9 @@ class PaymentRetryService {
   /**
    * Schedule user notification
    */
-  private async scheduleNotification(user: any, notificationDate: Date, attemptNumber: number, retryDate: Date): Promise<void> {
+  private async scheduleNotification(user: HydratedDocument<IUserDocument>, notificationDate: Date, attemptNumber: number, retryDate: Date): Promise<void> {
     const notification: Notification = {
-      userId: user._id.toString(),
+      userId: (user._id as unknown as { toString(): string }).toString(),
       type: 'payment_retry_scheduled',
       scheduledDate: notificationDate,
       data: {
@@ -301,8 +334,8 @@ class PaymentRetryService {
     // Store in database with MongoDB
     const client = await this.getMongoClient();
     try {
-      const db = client.db();
-      const notifications = db.collection<Notification>('notifications');
+      const db: Db = client.db();
+      const notifications: Collection<Notification> = db.collection<Notification>('notifications');
       
       await notifications.insertOne(notification);
       logger.info('Notification scheduled', notification);
@@ -319,8 +352,8 @@ class PaymentRetryService {
     try {
       const client = await this.getMongoClient();
       try {
-        const db = client.db();
-        const failureCounts = db.collection<FailureCount>('failureCounts');
+        const db: Db = client.db();
+        const failureCounts: Collection<FailureCount> = db.collection<FailureCount>('failureCounts');
         
         const result = await failureCounts.findOne({ subscriptionId });
         
@@ -343,8 +376,8 @@ class PaymentRetryService {
     try {
       const client = await this.getMongoClient();
       try {
-        const db = client.db();
-        const failureCounts = db.collection<FailureCount>('failureCounts');
+        const db: Db = client.db();
+        const failureCounts: Collection<FailureCount> = db.collection<FailureCount>('failureCounts');
         
         await failureCounts.updateOne(
           { subscriptionId },
@@ -384,8 +417,8 @@ class PaymentRetryService {
       // Also remove from database
       const client = await this.getMongoClient();
       try {
-        const db = client.db();
-        const retryJobs = db.collection<RetryJob>('retryJobs');
+        const db: Db = client.db();
+        const retryJobs: Collection<RetryJob> = db.collection<RetryJob>('retryJobs');
         
         await retryJobs.deleteMany({ subscriptionId });
         
@@ -402,7 +435,7 @@ class PaymentRetryService {
   /**
    * Send success notification
    */
-  private async sendSuccessNotification(user: any): Promise<void> {
+  private async sendSuccessNotification(user: HydratedDocument<IUserDocument>): Promise<void> {
     // Send email/push notification with real implementation
     try {
       // Import email service
@@ -426,30 +459,32 @@ class PaymentRetryService {
             title: 'Payment Successful',
             body: 'Your premium subscription payment has been processed successfully.'
           },
-          tokens: user.pushTokens
+          tokens: user.pushTokens.map(token => token.token)
         };
         
         await admin.messaging().sendMulticast(message);
       }
 
-      logger.info('Success notification sent', { userId: user._id });
+      logger.info('Success notification sent', { userId: (user._id as unknown as { toString(): string }).toString() });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      logger.error('Error sending success notification', { userId: user._id, error: errorMessage });
+      logger.error('Error sending success notification', { userId: (user._id as unknown as { toString(): string }).toString(), error: errorMessage });
     }
   }
 
   /**
    * Send final failure notification
    */
-  private async sendFinalFailureNotification(user: IUser, customer: Stripe.Customer): Promise<void> {
+  private async sendFinalFailureNotification(user: HydratedDocument<IUserDocument>, customer: Stripe.Customer | Stripe.DeletedCustomer): Promise<void> {
     // Send email/push notification with real implementation
     try {
       // Import email service
       const emailService = require('./emailService').default;
       
+      const customerEmail = customer.deleted ? user.email : (typeof customer.email === 'string' ? customer.email : customer.email || user.email);
+      
       await emailService.sendEmail({
-        to: customer.email || user.email,
+        to: customerEmail,
         subject: 'Payment Failed - PawfectMatch Premium',
         html: `
           <h2>Payment Failed</h2>
@@ -467,21 +502,21 @@ class PaymentRetryService {
             title: 'Payment Failed',
             body: 'Please update your payment method to continue your premium membership.'
           },
-          tokens: user.pushTokens
+          tokens: user.pushTokens.map(token => token.token)
         };
         
         await admin.messaging().sendMulticast(message);
       }
 
       logger.info('Final failure notification sent', { 
-        userId: user._id, 
-        customerEmail: customer.email 
+        userId: (user._id as unknown as { toString(): string }).toString(), 
+        customerEmail: customerEmail
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       logger.error('Error sending final failure notification', { 
-        userId: user._id, 
-        customerEmail: customer.email,
+        userId: (user._id as unknown as { toString(): string }).toString(), 
+        customerEmail: customer.deleted ? user.email : (typeof customer.email === 'string' ? customer.email : customer.email),
         error: errorMessage 
       });
     }
@@ -497,8 +532,8 @@ class PaymentRetryService {
       // Query scheduled jobs from database
       const client = await this.getMongoClient();
       try {
-        const db = client.db();
-        const retryJobs = db.collection<RetryJob>('retryJobs');
+        const db: Db = client.db();
+        const retryJobs: Collection<RetryJob> = db.collection<RetryJob>('retryJobs');
         
         const scheduledRetries = await retryJobs.find({
           status: 'scheduled',
@@ -536,8 +571,8 @@ class PaymentRetryService {
       // Query scheduled notifications from database
       const client = await this.getMongoClient();
       try {
-        const db = client.db();
-        const notifications = db.collection<Notification>('notifications');
+        const db: Db = client.db();
+        const notifications: Collection<Notification> = db.collection<Notification>('notifications');
         
         const scheduledNotifications = await notifications.find({
           status: 'scheduled',
@@ -570,7 +605,7 @@ class PaymentRetryService {
    */
   private async sendNotification(notification: Notification): Promise<void> {
     // Implementation for sending notification
-    logger.info('Sending notification', { notificationId: (notification as any)._id });
+    logger.info('Sending notification', { notificationId: (notification as Notification & { _id?: unknown })._id });
   }
 
   /**
@@ -581,8 +616,8 @@ class PaymentRetryService {
       // Query database for statistics
       const client = await this.getMongoClient();
       try {
-        const db = client.db();
-        const retryJobs = db.collection<RetryJob>('retryJobs');
+        const db: Db = client.db();
+        const retryJobs: Collection<RetryJob> = db.collection<RetryJob>('retryJobs');
         
         const totalRetries = await retryJobs.countDocuments();
         const successfulRetries = await retryJobs.countDocuments({ status: 'completed' });
@@ -596,7 +631,7 @@ class PaymentRetryService {
         }).toArray();
         
         const averageRetryTime = completedRetries.length > 0 
-          ? completedRetries.reduce((sum, retry) => {
+          ? completedRetries.reduce((sum: number, retry: RetryJob) => {
               const completedAt = retry.completedAt!;
               const createdAt = retry.createdAt;
               const retryTime = completedAt.getTime() - createdAt.getTime();
@@ -626,7 +661,7 @@ class PaymentRetryService {
   /**
    * Get MongoDB client
    */
-  private async getMongoClient(): Promise<any> {
+  private async getMongoClient(): Promise<MongoClient> {
     const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/pawfectmatch');
     await client.connect();
     return client;

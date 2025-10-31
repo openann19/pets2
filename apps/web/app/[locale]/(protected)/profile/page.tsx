@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { logger } from '@pawfectmatch/core';
 import {
   UserCircleIcon,
   CameraIcon,
@@ -85,7 +86,7 @@ export default function ProfilePage() {
       
       refetch();
     } catch (error: any) {
-      console.error('Failed to update profile:', error);
+      logger.error('Failed to update profile:', error);
       setErrorMessage(error.message || 'Failed to update profile. Please try again.');
     }
   };

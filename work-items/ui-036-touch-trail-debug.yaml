@@ -1,0 +1,44 @@
+id: ui-036-touch-trail-debug
+owner: ux
+severity: low
+area: mobile+dev-tools
+context: |
+  Motion debugging requires manual inspection without visual feedback.
+  Touch trail visualization helps analyze gesture interactions and timing.
+  Useful for debugging swipe gestures, animations, and touch responsiveness.
+acceptance:
+  - Touch trail component renders touch path with fade effect
+  - Disabled by default in production builds
+  - Enabled via __DEV__ flag or debug menu
+  - Trail shows touch velocity with color gradient
+  - Configurable trail length and fade duration
+  - Zero performance impact when disabled
+states:
+  - enabled
+  - disabled
+telemetry:
+  - event: TOUCH_TRAIL_TOGGLE
+    props: [enabled, trailLength, fadeDuration]
+contracts:
+  request: { enabled: boolean, config: object }
+  response: { active: boolean, trailCount: number }
+  errors: []
+assets:
+  components: [apps/mobile/src/components/dev/TouchTrail.tsx]
+  hooks: [apps/mobile/src/hooks/dev/useTouchTrail.ts]
+  screens: [apps/mobile/src/screens/dev/DebugScreen.tsx]
+  tests: [apps/mobile/src/components/dev/__tests__/TouchTrail.test.tsx]
+risks:
+  - Performance impact if accidentally enabled in production
+  - May interfere with actual touch interactions
+rollback:
+  - Remove touch trail component
+  - Remove debug menu toggle
+links: []
+status: open
+priority: low
+impact: 1
+effort: S
+category: dev-tools
+tokens: []
+estimated_hours: 2

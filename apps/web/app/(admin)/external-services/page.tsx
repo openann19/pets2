@@ -248,7 +248,7 @@ export default function ExternalServicesManagementPage() {
         <nav className="-mb-px flex space-x-8">
           {(() => {
             type TabId = 'overview' | 'services' | 'config';
-            const tabs: Array<{ id: TabId; label: string; icon: React.ComponentType<{ className?: string }> }> = [
+            const tabs: Array<{ id: TabId; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }> = [
               { id: 'overview', label: 'Overview', icon: ChartBarIcon },
               { id: 'services', label: 'Services', icon: CloudIcon },
               { id: 'config', label: 'Configuration', icon: Cog6ToothIcon },

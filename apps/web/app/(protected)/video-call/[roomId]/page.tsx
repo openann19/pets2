@@ -36,13 +36,13 @@ export default function VideoCallPage() {
             Premium Feature
           </h2>
           <p className="text-gray-600 mb-6">
-            Video calls are available for Premium Plus subscribers and above
+            Video calls are available for Premium subscribers and above
           </p>
           <PremiumButton
             size="lg"
             onClick={() => router.push('/premium')}
           >
-            Upgrade to Premium Plus
+            Upgrade to Premium
           </PremiumButton>
         </PremiumCard>
       </div>

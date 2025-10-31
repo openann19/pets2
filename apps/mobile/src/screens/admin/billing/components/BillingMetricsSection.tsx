@@ -1,171 +1,185 @@
+/**
+ * Billing Metrics Section Component
+ * Displays revenue and subscription metrics
+ */
+
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import type { BillingMetrics } from '../hooks/useAdminBilling';
-import { useTheme } from '@/theme';
-import type { AppTheme } from '@/theme';
-import { getExtendedColors } from '@/theme/adapters';
-import type { ExtendedColors } from '@/theme/adapters';
 
-function __makeStyles_styles(theme: AppTheme, colors: ExtendedColors) {
-  return StyleSheet.create({
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
     metricsContainer: {
-      marginBottom: 24,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.md,
     },
     sectionTitle: {
-      fontSize: 18,
-      fontWeight: '600',
-      marginBottom: 16,
-      color: colors.text,
+      fontSize: theme.typography.body.size * 1.125,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.md,
     },
     metricsGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: 12,
-      marginBottom: 16,
+      gap: theme.spacing.md,
+      marginBottom: theme.spacing.md,
     },
     metricCard: {
-      flex: 1,
-      minWidth: '47%',
-      borderRadius: 12,
-      padding: 16,
-      backgroundColor: colors.card,
-      shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
+      width: (SCREEN_WIDTH - theme.spacing['2xl'] - theme.spacing.sm) / 2,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      ...theme.shadows.elevation2,
     },
     metricHeader: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 8,
-      marginBottom: 8,
+      marginBottom: theme.spacing.sm,
     },
     metricTitle: {
-      fontSize: 12,
-      fontWeight: '500',
-      color: colors.textMuted,
+      fontSize: theme.typography.body.size * 0.875,
+      fontWeight: theme.typography.h2.weight,
+      marginStart: theme.spacing.sm,
     },
     metricValue: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: colors.text,
+      fontSize: theme.typography.h2.size * 0.875,
+      fontWeight: theme.typography.h1.weight,
     },
     secondaryMetrics: {
       flexDirection: 'row',
-      gap: 8,
+      gap: theme.spacing.md,
     },
     secondaryMetricCard: {
       flex: 1,
-      borderRadius: 8,
-      padding: 12,
-      backgroundColor: colors.card,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      alignItems: 'center',
+      ...theme.shadows.elevation2,
     },
     secondaryMetricLabel: {
-      fontSize: 11,
-      marginBottom: 4,
-      color: colors.textMuted,
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.body.weight,
+      marginBottom: theme.spacing.xs,
     },
     secondaryMetricValue: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: colors.text,
+      fontSize: theme.typography.body.size,
+      fontWeight: theme.typography.h1.weight,
     },
   });
-}
 
 interface BillingMetricsSectionProps {
   metrics: BillingMetrics;
 }
 
-const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
+const formatCurrency = (amount: number): string =>
+  new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-  }).format(amount);
-};
+  }).format(amount / 100);
 
 export const BillingMetricsSection = ({
   metrics,
 }: BillingMetricsSectionProps): React.JSX.Element => {
   const theme = useTheme();
-  const extendedColors = useMemo(() => getExtendedColors(theme), [theme]);
-  const styles = useMemo(() => __makeStyles_styles(theme, extendedColors), [theme, extendedColors]);
-  const { colors } = extendedColors;
+  const styles = useMemo(() => makeStyles(theme), [theme]);
 
   return (
     <View style={styles.metricsContainer}>
-      <Text style={styles.sectionTitle}>Revenue Overview</Text>
+      <Text style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
+        Revenue Overview
+      </Text>
       <View style={styles.metricsGrid}>
-        <View style={styles.metricCard}>
+        <View style={[styles.metricCard, { backgroundColor: theme.colors.surface }]}>
           <View style={styles.metricHeader}>
             <Ionicons
               name="cash"
               size={20}
-              color={colors.success}
+              color={theme.colors.success}
             />
-            <Text style={styles.metricTitle}>Total Revenue</Text>
+            <Text style={[styles.metricTitle, { color: theme.colors.onSurface }]}>
+              Total Revenue
+            </Text>
           </View>
-          <Text style={styles.metricValue}>{formatCurrency(metrics.totalRevenue)}</Text>
+          <Text style={[styles.metricValue, { color: theme.colors.onSurface }]}>
+            {formatCurrency(metrics.totalRevenue)}
+          </Text>
         </View>
 
-        <View style={styles.metricCard}>
+        <View style={[styles.metricCard, { backgroundColor: theme.colors.surface }]}>
           <View style={styles.metricHeader}>
             <Ionicons
               name="trending-up"
               size={20}
-              color={colors.info}
+              color={theme.colors.info}
             />
-            <Text style={styles.metricTitle}>MRR</Text>
+            <Text style={[styles.metricTitle, { color: theme.colors.onSurface }]}>MRR</Text>
           </View>
-          <Text style={styles.metricValue}>{formatCurrency(metrics.monthlyRecurringRevenue)}</Text>
+          <Text style={[styles.metricValue, { color: theme.colors.onSurface }]}>
+            {formatCurrency(metrics.monthlyRecurringRevenue)}
+          </Text>
         </View>
 
-        <View style={styles.metricCard}>
+        <View style={[styles.metricCard, { backgroundColor: theme.colors.surface }]}>
           <View style={styles.metricHeader}>
             <Ionicons
               name="people"
               size={20}
-              color={colors.primary}
+              color={theme.colors.primary}
             />
-            <Text style={styles.metricTitle}>ARPU</Text>
+            <Text style={[styles.metricTitle, { color: theme.colors.onSurface }]}>ARPU</Text>
           </View>
-          <Text style={styles.metricValue}>{formatCurrency(metrics.averageRevenuePerUser)}</Text>
+          <Text style={[styles.metricValue, { color: theme.colors.onSurface }]}>
+            {formatCurrency(metrics.averageRevenuePerUser)}
+          </Text>
         </View>
 
-        <View style={styles.metricCard}>
+        <View style={[styles.metricCard, { backgroundColor: theme.colors.surface }]}>
           <View style={styles.metricHeader}>
             <Ionicons
               name="checkmark-circle"
               size={20}
-              color={colors.success}
+              color={theme.colors.success}
             />
-            <Text style={styles.metricTitle}>Active Subs</Text>
+            <Text style={[styles.metricTitle, { color: theme.colors.onSurface }]}>
+              Active Subs
+            </Text>
           </View>
-          <Text style={styles.metricValue}>{metrics.activeSubscriptions}</Text>
+          <Text style={[styles.metricValue, { color: theme.colors.onSurface }]}>
+            {metrics.activeSubscriptions}
+          </Text>
         </View>
       </View>
 
       <View style={styles.secondaryMetrics}>
-        <View style={styles.secondaryMetricCard}>
-          <Text style={styles.secondaryMetricLabel}>Conversion Rate</Text>
-          <Text style={styles.secondaryMetricValue}>{metrics.conversionRate.toFixed(1)}%</Text>
+        <View style={[styles.secondaryMetricCard, { backgroundColor: theme.colors.surface }]}>
+          <Text style={[styles.secondaryMetricLabel, { color: theme.colors.onMuted }]}>
+            Conversion Rate
+          </Text>
+          <Text style={[styles.secondaryMetricValue, { color: theme.colors.onSurface }]}>
+            {metrics.conversionRate.toFixed(1)}%
+          </Text>
         </View>
-        <View style={styles.secondaryMetricCard}>
-          <Text style={styles.secondaryMetricLabel}>Churn Rate</Text>
-          <Text style={[styles.secondaryMetricValue, { color: colors.danger }]}>
+        <View style={[styles.secondaryMetricCard, { backgroundColor: theme.colors.surface }]}>
+          <Text style={[styles.secondaryMetricLabel, { color: theme.colors.onMuted }]}>
+            Churn Rate
+          </Text>
+          <Text style={[styles.secondaryMetricValue, { color: theme.colors.danger }]}>
             {metrics.churnRate.toFixed(1)}%
           </Text>
         </View>
-        <View style={styles.secondaryMetricCard}>
-          <Text style={styles.secondaryMetricLabel}>Revenue Growth</Text>
+        <View style={[styles.secondaryMetricCard, { backgroundColor: theme.colors.surface }]}>
+          <Text style={[styles.secondaryMetricLabel, { color: theme.colors.onMuted }]}>
+            Revenue Growth
+          </Text>
           <Text
             style={[
               styles.secondaryMetricValue,
               {
-                color: metrics.revenueGrowth > 0 ? colors.success : colors.danger,
+                color: metrics.revenueGrowth > 0 ? theme.colors.success : theme.colors.danger,
               },
             ]}
           >

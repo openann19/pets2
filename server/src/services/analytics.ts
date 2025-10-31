@@ -33,8 +33,9 @@ export async function trackEvent(
       props,
       ts: new Date(),
     });
-  } catch (error: any) {
-    logger.error("Failed to track event", { error: error.message, name });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error("Failed to track event", { error: errorMessage, name });
   }
 }
 
@@ -59,8 +60,9 @@ export async function getEventCounts(
     ]);
 
     return counts.map(({ _id, count }) => ({ name: _id, count }));
-  } catch (error: any) {
-    logger.error("Failed to get event counts", { error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error("Failed to get event counts", { error: errorMessage });
     return [];
   }
 }

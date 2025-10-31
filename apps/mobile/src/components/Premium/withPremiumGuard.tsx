@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { usePremiumStatus } from '../../hooks/usePremium';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 type Props = { feature: keyof ReturnType<typeof usePremiumStatus>['can'] };
 
@@ -12,6 +14,9 @@ export function withPremiumGuard<P extends object>(
   return (props: P) => {
     const nav = useNavigation<any>();
     const { can, loading } = usePremiumStatus();
+    const theme = useTheme() as AppTheme;
+    const styles = makeStyles(theme);
+    
     if (loading) return null;
     if (!can[feature]) {
       return (
@@ -34,35 +39,36 @@ export function withPremiumGuard<P extends object>(
   };
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontWeight: '700',
-    fontSize: 24,
-    marginBottom: 8,
-    color: '#000',
-  },
-  description: {
-    opacity: 0.7,
-    marginBottom: 12,
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#6366f1',
-    paddingHorizontal: 32,
-    paddingVertical: 12,
-    borderRadius: 25,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+      backgroundColor: theme.colors.bg,
+    },
+    title: {
+      fontWeight: '700',
+      fontSize: 24,
+      marginBottom: 8,
+      color: theme.colors.onSurface,
+    },
+    description: {
+      color: theme.colors.onMuted,
+      marginBottom: 12,
+      fontSize: 16,
+      textAlign: 'center',
+    },
+    button: {
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: 32,
+      paddingVertical: 12,
+      borderRadius: 25,
+    },
+    buttonText: {
+      color: theme.colors.onPrimary,
+      fontWeight: '700',
+      fontSize: 16,
+    },
+  });

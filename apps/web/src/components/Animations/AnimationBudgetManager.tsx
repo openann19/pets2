@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useAnimationBudgetV2 } from '../Animations';
+import { useAnimationBudgetV2 } from './AnimationBudget';
 import { logger } from '@pawfectmatch/core';
 
 interface AnimationBudgetManagerProps {

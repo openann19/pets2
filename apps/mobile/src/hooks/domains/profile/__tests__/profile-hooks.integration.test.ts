@@ -1,37 +1,38 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment node
  */
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 
+// Mock all dependencies - must be at top level
+jest.mock('../../../../stores/useAuthStore', () => ({
+  useAuthStore: () => ({
+    user: { _id: 'user123', firstName: 'John', lastName: 'Doe' },
+    updateUser: jest.fn(),
+  }),
+}));
+
+jest.mock('../../../../services/api', () => ({
+  matchesAPI: {
+    getMyPets: jest.fn(),
+    updateProfile: jest.fn(),
+  },
+}));
+
+jest.mock('../../../../services/logger', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+  },
+}));
+
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+}));
+
 // Integration test showing hook composition
 describe('Hooks Integration - Profile Management Flow', () => {
-  // Mock all dependencies
-  jest.mock('../../../stores/useAuthStore', () => ({
-    useAuthStore: () => ({
-      user: { _id: 'user123', firstName: 'John', lastName: 'Doe' },
-      updateUser: jest.fn(),
-    }),
-  }));
-
-  jest.mock('../../../services/api', () => ({
-    matchesAPI: {
-      getMyPets: jest.fn(),
-      updateProfile: jest.fn(),
-    },
-  }));
-
-  jest.mock('../../../services/logger', () => ({
-    logger: {
-      info: jest.fn(),
-      error: jest.fn(),
-    },
-  }));
-
-  jest.mock('@react-native-async-storage/async-storage', () => ({
-    getItem: jest.fn(),
-    setItem: jest.fn(),
-    removeItem: jest.fn(),
-  }));
 
   const { useProfileData } = require('../useProfileData');
   const { useProfileUpdate } = require('../useProfileUpdate');

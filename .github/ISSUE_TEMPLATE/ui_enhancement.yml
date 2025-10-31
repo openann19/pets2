@@ -1,0 +1,120 @@
+name: UI Enhancement
+description: Template for UI enhancement requests
+title: "[UI] "
+labels: ["ui", "polish", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose UI enhancements based on the audit findings.
+        Reference enhancement IDs from `docs/ui_enhancements.json` when applicable.
+  
+  - type: input
+    id: title
+    attributes:
+      label: Enhancement Title
+      description: Clear, concise title for the enhancement
+      placeholder: "Normalize card radii & elevation"
+    validations:
+      required: true
+  
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Why is this enhancement needed? What problem does it solve?
+      placeholder: "Mixed radii (6/10/12px) and shadows reduce cohesion..."
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Which category does this enhancement belong to?
+      options:
+        - Navigation & IA
+        - Typography & Layout
+        - Color & Tokens
+        - Components & States
+        - Motion & Micro-Interactions
+        - Performance
+        - Accessibility
+        - Platform Idioms
+        - Forms & Validation
+        - Media & Imagery
+        - Observability & QA
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact
+      description: User impact score (1-5, where 5 is highest)
+      options:
+        - "1"
+        - "2"
+        - "3"
+        - "4"
+        - "5"
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Effort
+      description: Implementation effort (S=Small, M=Medium, L=Large)
+      options:
+        - "S"
+        - "M"
+        - "L"
+    validations:
+      required: true
+  
+  - type: textarea
+    id: tokens
+    attributes:
+      label: Tokens Touched
+      description: Which theme tokens will be affected?
+      placeholder: "theme.spacing.lg, theme.radii.md, theme.colors.primary"
+  
+  - type: textarea
+    id: files
+    attributes:
+      label: Files/Paths
+      description: Which files or components will be affected?
+      placeholder: "apps/mobile/src/components/Card.tsx, apps/mobile/src/screens/HomeScreen.tsx"
+  
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: What conditions must be met for this enhancement to be considered complete?
+      placeholder: |
+        - All cards use radii.lg & elevation.2
+        - Snapshots updated and passing
+        - A11y checks pass
+  
+  - type: textarea
+    id: before_after
+    attributes:
+      label: Before/After Description
+      description: Describe the current state and desired state
+      placeholder: |
+        **Before:** Inconsistent radii (6/10/12px) and shadows
+        **After:** All cards use radii.lg & elevation.2 with tokenized shadows
+  
+  - type: checkboxes
+    id: dod
+    attributes:
+      label: Definition of Done
+      description: Checklist for completion
+      options:
+        - label: Screenshots/GIF attached
+        - label: Tests updated
+        - label: A11y verified
+        - label: Performance impact assessed
+        - label: Tokens compliant
+        - label: Documentation updated

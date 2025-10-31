@@ -18,6 +18,7 @@ import Animated, {
 
 import { useTheme } from '@mobile/theme';
 import performanceMonitorInstance, { type PerformanceMetrics } from '../utils/PerformanceMonitor';
+import { springs } from '@/foundation/motion';
 
 import { EliteButtonPresets } from './buttons/EliteButton';
 import { FXContainerPresets } from './containers/FXContainer';
@@ -82,12 +83,12 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
 
       // Complex animation sequence
       testAnimationValue.value = withRepeat(
-        withSpring(100, { damping: 15, stiffness: 150 }),
+        withSpring(100, springs.velocity),
         10,
         true,
       );
 
-      testScaleValue.value = withRepeat(withSpring(1.2, { damping: 20, stiffness: 200 }), 8, true);
+      testScaleValue.value = withRepeat(withSpring(1.2, springs.standard), 8, true);
 
       testRotationValue.value = withRepeat(withTiming(360, { duration: 2000 }), 5, false);
 
@@ -312,7 +313,7 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
             <Body
               style={StyleSheet.flatten([
                 styles.resultValue,
-                { color: getGradeColor(testState.results.overallGrade) },
+                { color: getGradeColor(testState.results.overallGrade, theme) },
               ])}
             >
               {testState.results.overallGrade}

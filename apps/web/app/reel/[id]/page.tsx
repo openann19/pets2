@@ -21,10 +21,11 @@ export async function generateMetadata({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams: { ref?: string };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ ref?: string }>;
 }): Promise<Metadata> {
-  const reel = await fetch(`${API_URL}/reels/${params.id}`, {
+  const resolvedParams = await params;
+  const reel = await fetch(`${API_URL}/reels/${resolvedParams.id}`, {
     cache: 'no-store',
   }).then((r) => (r.ok ? r.json() : null));
 
@@ -57,15 +58,17 @@ export default async function ReelPage({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams: { ref?: string };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ ref?: string }>;
 }) {
-  const reel = await fetch(`${API_URL}/reels/${params.id}`, {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  const reel = await fetch(`${API_URL}/reels/${resolvedParams.id}`, {
     cache: 'no-store',
   }).then((r) => r.json());
 
-  const ref = searchParams.ref || '';
-  const deeplink = `paw.app://reel/${params.id}${ref ? `?ref=${ref}` : ''}`;
+  const ref = resolvedSearchParams.ref || '';
+  const deeplink = `paw.app://reel/${resolvedParams.id}${ref ? `?ref=${ref}` : ''}`;
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-black">

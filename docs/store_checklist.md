@@ -6,6 +6,26 @@
 
 ---
 
+## 📚 Comprehensive Store Submission Documentation
+
+**For detailed submission checklists, reviewer notes templates, and common rejection traps, see:**
+
+👉 **[`docs/store-submission/`](./store-submission/)** directory contains:
+
+- **[QUICK_REFERENCE.md](./store-submission/QUICK_REFERENCE.md)** - ⚡ Start here! Quick status checks and priority actions
+- **[IOS_APP_STORE_CHECKLIST.md](./store-submission/IOS_APP_STORE_CHECKLIST.md)** - Complete iOS submission checklist
+- **[ANDROID_PLAY_STORE_CHECKLIST.md](./store-submission/ANDROID_PLAY_STORE_CHECKLIST.md)** - Complete Android submission checklist
+- **[REVIEWER_NOTES_TEMPLATES.md](./store-submission/REVIEWER_NOTES_TEMPLATES.md)** - Copy-paste templates for reviewer notes
+- **[COMMON_REJECTION_TRAPS.md](./store-submission/COMMON_REJECTION_TRAPS.md)** - Top 8 rejection traps and fixes
+- **[STATUS_TRACKER.md](./store-submission/STATUS_TRACKER.md)** - Detailed submission readiness status
+
+**Critical Actions Required:**
+- ⚠️ **iOS**: Review ATT implementation (generic description detected)
+- ❌ **Android**: Update target API to 35 (currently 34)
+- ❌ **Android**: Complete Data Safety form
+
+---
+
 ## 2.1 Policy & Metadata
 
 ### Privacy Policy & Terms Links

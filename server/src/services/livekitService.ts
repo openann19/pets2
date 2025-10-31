@@ -1,6 +1,6 @@
-import { AccessToken, RoomServiceClient, IngressClient, EgressClient } from "livekit-server-sdk";
-import crypto from "crypto";
-import logger from "../utils/logger";
+import { AccessToken, RoomServiceClient, IngressClient, EgressClient } from 'livekit-server-sdk';
+import crypto from 'crypto';
+import logger from '../utils/logger';
 
 const {
   LIVEKIT_URL,
@@ -11,7 +11,7 @@ const {
 } = process.env;
 
 if (!LIVEKIT_API_KEY || !LIVEKIT_API_SECRET) {
-  console.warn("⚠️ LiveKit credentials not configured. Set LIVEKIT_API_KEY and LIVEKIT_API_SECRET in environment.");
+  logger.warn("⚠️ LiveKit credentials not configured. Set LIVEKIT_API_KEY and LIVEKIT_API_SECRET in environment.");
 }
 
 // Initialize LiveKit API clients

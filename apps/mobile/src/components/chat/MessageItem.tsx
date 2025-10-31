@@ -164,7 +164,7 @@ export function MessageItem({
               : [
                   styles.otherMessage,
                   {
-                    backgroundColor: theme.palette.neutral[0],
+                    backgroundColor: theme.palette.neutral[50],
                     borderColor: theme.palette.neutral[200],
                   },
                 ],
@@ -188,7 +188,7 @@ export function MessageItem({
             <Text
               style={[
                 styles.messageText,
-                { color: isMyMessage ? theme.palette.neutral[0] : theme.palette.neutral[800] },
+                { color: isMyMessage ? theme.palette.neutral[50] : theme.palette.neutral[800] },
                 hasError ? { color: theme.colors.danger } : null,
               ]}
             >
@@ -200,7 +200,7 @@ export function MessageItem({
           {isMyMessage && (
             <View style={styles.messageStatus}>
               {message.status === 'sending' && (
-                <Text style={[styles.sendingText, { color: `${theme.palette.neutral[0]}B3` }]}>
+                <Text style={[styles.sendingText, { color: `${theme.palette.neutral[50]}B3` }]}>
                   Sending...
                 </Text>
               )}
@@ -331,7 +331,7 @@ function makeStyles(theme: AppTheme) {
       height: 32,
       borderRadius: 16,
       borderWidth: 1.5,
-      borderColor: theme.palette.neutral[0],
+      borderColor: theme.palette.neutral[50],
     },
     avatarOnline: {
       borderColor: '#4CAF50',
@@ -347,7 +347,7 @@ function makeStyles(theme: AppTheme) {
       height: 12,
       borderRadius: 6,
       borderWidth: 2,
-      borderColor: theme.palette.neutral[0],
+      borderColor: theme.palette.neutral[50],
     },
     messageBubble: {
       maxWidth: '75%',

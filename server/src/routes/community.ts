@@ -133,6 +133,55 @@ router.post('/posts', async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
+    // Import automated moderation service
+    const automatedModerationService = (await import('../services/automatedModeration')).default;
+
+    // Analyze content for moderation before creating post
+    let moderationStatus = 'approved'; // Default to approved
+    try {
+      const moderationResult = await automatedModerationService.analyzeContent({
+        contentId: 'temp', // Will be updated after post creation
+        contentType: 'story', // Using 'story' type as closest match for community posts
+        content: {
+          content: content.trim(),
+          media: images, // Moderation service expects 'media' or 'photos' field
+        },
+        user: req.user || {},
+      });
+
+      // Set moderation status based on result
+      if (moderationResult.actionTaken && moderationResult.flags.length > 0) {
+        // Check highest severity
+        const highestSeverity = Math.max(
+          ...moderationResult.flags.map(f => 
+            automatedModerationService.getSeverityScore(f.severity)
+          )
+        );
+
+        // Critical or high severity → pending review
+        // Medium severity → pending review
+        // Low severity → approved but flagged
+        if (highestSeverity >= 3) {
+          moderationStatus = 'pending'; // Requires human review
+          logger.warn('Post flagged for moderation', {
+            postContent: content.substring(0, 100),
+            flagsCount: moderationResult.flags.length,
+            highestSeverity,
+          });
+        } else if (highestSeverity === 2) {
+          moderationStatus = 'pending'; // Medium severity requires review
+        } else {
+          moderationStatus = 'approved'; // Low severity auto-approved
+        }
+      }
+    } catch (moderationError) {
+      // If moderation fails, log but don't block post creation
+      logger.error('Automated moderation failed, defaulting to approved', {
+        error: moderationError,
+      });
+      moderationStatus = 'approved'; // Fail open to avoid blocking legitimate content
+    }
+
     // Create new community post
     const postData: Record<string, unknown> = {
       author: req.user?._id,
@@ -141,13 +190,34 @@ router.post('/posts', async (req: AuthenticatedRequest, res: Response) => {
       packId,
       type,
       activityDetails: type === 'activity' ? activityDetails : undefined,
-      moderationStatus: 'approved', // Auto-approve initially
+      moderationStatus, // Set based on moderation result
       likes: [],
       comments: [],
       shares: []
     };
 
     const newPost = await CommunityPost.create(postData);
+    
+    // Re-run moderation with actual post ID if status is pending
+    if (moderationStatus === 'pending') {
+      try {
+        await automatedModerationService.analyzeContent({
+          contentId: newPost._id.toString(),
+          contentType: 'story', // Using 'story' type as closest match for community posts
+          content: {
+            content: content.trim(),
+            media: images, // Moderation service expects 'media' or 'photos' field
+          },
+          user: req.user || {},
+        });
+      } catch (moderationError) {
+        logger.error('Failed to create moderation record for post', {
+          error: moderationError,
+          postId: newPost._id,
+        });
+      }
+    }
+
     await newPost.populate('author', 'firstName lastName avatar');
     await newPost.populate('packId', 'name');
 
@@ -169,9 +239,12 @@ router.post('/posts', async (req: AuthenticatedRequest, res: Response) => {
         packId: newPost.packId,
         packName: (newPost.packId as { name?: string })?.name,
         type: newPost.type,
-        activityDetails: newPost.activityDetails
+        activityDetails: newPost.activityDetails,
+        moderationStatus: newPost.moderationStatus, // Include moderation status in response
       },
-      message: 'Post created successfully'
+      message: moderationStatus === 'pending' 
+        ? 'Post created and submitted for review' 
+        : 'Post created successfully'
     });
   } catch (error) {
     logger.error('Failed to create community post', { error });

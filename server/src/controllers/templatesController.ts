@@ -49,7 +49,7 @@ export const listTemplates = async (req: Request, res: Response): Promise<void> 
       templates: result,
       count: result.length,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error listing templates:', error);
     fail(res, 500, 'Failed to list templates');
   }
@@ -81,7 +81,7 @@ export const getTemplate = async (req: Request, res: Response): Promise<void> =>
         duration: template.duration,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error getting template:', error);
     fail(res, 500, 'Failed to get template');
   }

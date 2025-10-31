@@ -1,6 +1,19 @@
 'use client';
 import React, { createContext, useContext, useRef, useState } from 'react';
-import { Dialog } from '@pawfectmatch/ui/dist/components/Dialog';
+// Dialog component - using alternative implementation
+// import { Dialog } from '@pawfectmatch/ui/dist/components/Dialog';
+// Using local dialog component instead
+const Dialog = ({ children, open, onOpenChange }: { children: React.ReactNode; open?: boolean; onOpenChange?: (open: boolean) => void }) => {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="fixed inset-0 bg-black/50" onClick={() => onOpenChange?.(false)} />
+      <div className="relative bg-white dark:bg-gray-800 rounded-lg p-6 z-50">
+        {children}
+      </div>
+    </div>
+  );
+};
 // Announcement Context
 const AnnouncementContext = createContext();
 export function useAnnouncement() {

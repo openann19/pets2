@@ -26,7 +26,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   showLabel = false,
   style,
 }) => {
-  const { isDark, colors, toggleTheme } = useThemeToggle();
+  const { isDark, colors, toggleTheme, showThemeSelector, themeMode } = useThemeToggle();
   const theme = useTheme();
 
   const animatedValue = React.useRef(new Animated.Value(isDark ? 1 : 0)).current;

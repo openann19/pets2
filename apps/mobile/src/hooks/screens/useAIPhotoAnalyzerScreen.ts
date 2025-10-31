@@ -6,11 +6,12 @@
 import { useNavigation } from '@react-navigation/native';
 import { useAIPhotoAnalyzer } from '../domains/ai/useAIPhotoAnalyzer';
 import { useCallback, useState } from 'react';
+import type { PhotoAnalysisResult } from '../../services/aiPhotoService';
 
 interface UseAIPhotoAnalyzerScreenReturn {
   // State
   isAnalyzing: boolean;
-  analysisResult: any | null;
+  analysisResult: PhotoAnalysisResult | null;
   error: string | null;
   selectedImage: string | null;
 

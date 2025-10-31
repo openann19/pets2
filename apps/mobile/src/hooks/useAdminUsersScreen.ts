@@ -3,17 +3,20 @@ import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 import { useErrorHandler } from './useErrorHandler';
+import { useDebounce } from './usePerformance';
 import type { AdminScreenProps } from '../navigation/types';
 import {
+  deleteAdminUser,
   fetchAdminUsers,
   invalidateAdminUsersCache,
   performAdminUserAction,
+  resetAdminUserPassword,
   type AdminUserAction,
   type AdminUserStatus,
   type AdminUserSummary,
+  type AdminUsersQuery,
 } from '../services/adminUsersService';
 import type {
-  AdminUserListItemProps,
   AdminUserListItemViewModel,
 } from '../components/admin/AdminUserListItem';
 
@@ -44,11 +47,24 @@ export interface AdminUsersScreenState extends AdminUsersScreenHandlers {
   isRefreshing: boolean;
   isBulkProcessing: boolean;
   users: AdminUserListItemViewModel[];
+  pagination: {
+    page: number;
+    total: number;
+    pages: number;
+    hasMore: boolean;
+    isLoadingMore: boolean;
+  };
+  loadMore: () => Promise<void>;
   keyExtractor: (item: AdminUserListItemViewModel) => string;
   getItemLayout: (
     data: ArrayLike<AdminUserListItemViewModel> | null | undefined,
     index: number,
   ) => { length: number; offset: number; index: number };
+  selectedUserForActions: AdminUserSummary | null;
+  onDeleteUser: (reason?: string) => Promise<void>;
+  onResetPassword: () => Promise<void>;
+  onCloseActionsModal: () => void;
+  isActionLoading: boolean;
 }
 
 const STATUS_FILTERS: Array<{ label: string; value: AdminUsersStatusFilter }> = [
@@ -109,6 +125,9 @@ interface CachedHandlers {
   onSecondaryAction: () => void;
 }
 
+const DEFAULT_PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 500;
+
 export const useAdminUsersScreen = ({
   navigation,
 }: UseAdminUsersScreenParams): AdminUsersScreenState => {
@@ -116,54 +135,133 @@ export const useAdminUsersScreen = ({
   const [users, setUsers] = useState<AdminUserSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, SEARCH_DEBOUNCE_MS);
   const [statusFilter, setStatusFilter] = useState<AdminUsersStatusFilter>('all');
   const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
+  const [pagination, setPagination] = useState({
+    page: 1,
+    total: 0,
+    pages: 1,
+    limit: DEFAULT_PAGE_SIZE,
+  });
   const [actionState, setActionState] = useState<{
-    type: 'single' | 'bulk';
+    type: 'single' | 'bulk' | 'delete' | 'resetPassword';
     id?: string;
   } | null>(null);
+  const [selectedUserForActions, setSelectedUserForActions] = useState<AdminUserSummary | null>(
+    null,
+  );
   const handlerCache = useRef<Map<string, CachedHandlers>>(new Map());
+  const optimisticUpdates = useRef<Map<string, Partial<AdminUserSummary>>>(new Map());
+  const retryCountRef = useRef<Map<string, number>>(new Map());
+  const previousStatuses = useRef<Map<string, AdminUserStatus>>(new Map());
 
   const clearHandlerCache = useCallback(() => {
     handlerCache.current.clear();
   }, []);
 
   const loadUsers = useCallback(
-    async (options?: { force?: boolean }) => {
+    async (options?: { force?: boolean; append?: boolean; page?: number }) => {
       try {
-        if (!options?.force) {
+        if (!options?.append && !options?.force) {
           setIsLoading(true);
+        }
+        if (options?.append) {
+          setIsLoadingMore(true);
         }
         if (options?.force) {
           invalidateAdminUsersCache();
+          optimisticUpdates.current.clear();
+          retryCountRef.current.clear();
         }
 
-        const response = await fetchAdminUsers();
-        setUsers(response.users);
-        setSelectedUserIds(new Set());
-      } catch (error: unknown) {
-        const err = error instanceof Error ? error : new Error('Failed to load users');
-        if (isOfflineError(err)) {
-          handleOfflineError('admin.users.load', () => {
-            void loadUsers(options);
+        const query: AdminUsersQuery = {
+          page: options?.page ?? (options?.append ? pagination.page + 1 : 1),
+          limit: DEFAULT_PAGE_SIZE,
+        };
+        const trimmedSearch = debouncedSearchQuery.trim();
+        if (trimmedSearch) {
+          query.search = trimmedSearch;
+        }
+        if (statusFilter !== 'all') {
+          query.status = statusFilter;
+        }
+
+        const response = await fetchAdminUsers(query);
+        
+        if (options?.append) {
+          setUsers((prev) => [...prev, ...response.users]);
+          setPagination({
+            page: response.pagination.page,
+            total: response.pagination.total,
+            pages: response.pagination.pages,
+            limit: response.pagination.limit,
           });
         } else {
-          handleNetworkError(err, 'admin.users.load', () => {
-            void loadUsers(options);
+          setUsers(response.users);
+          setPagination({
+            page: response.pagination.page,
+            total: response.pagination.total,
+            pages: response.pagination.pages,
+            limit: response.pagination.limit,
           });
+        }
+        
+        setSelectedUserIds((prev) => {
+          const next = new Set(prev);
+          prev.forEach((id) => {
+            if (!response.users.some((u) => u.id === id)) {
+              next.delete(id);
+            }
+          });
+          return next;
+        });
+        
+        retryCountRef.current.clear();
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error('Failed to load users');
+        const retryKey = `load-${debouncedSearchQuery}-${statusFilter}`;
+        const retryCount = retryCountRef.current.get(retryKey) ?? 0;
+        
+        if (retryCount < 3) {
+          retryCountRef.current.set(retryKey, retryCount + 1);
+          setTimeout(() => {
+            void loadUsers(options);
+          }, Math.min(1000 * Math.pow(2, retryCount), 5000));
+        } else {
+          if (isOfflineError(err)) {
+            handleOfflineError('admin.users.load', () => {
+              retryCountRef.current.delete(retryKey);
+              void loadUsers(options);
+            });
+          } else {
+            handleNetworkError(err, 'admin.users.load', () => {
+              retryCountRef.current.delete(retryKey);
+              void loadUsers(options);
+            });
+          }
         }
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
+        setIsLoadingMore(false);
       }
     },
-    [handleNetworkError, handleOfflineError],
+    [handleNetworkError, handleOfflineError, debouncedSearchQuery, statusFilter, pagination.page],
   );
 
   useEffect(() => {
     void loadUsers();
-  }, [loadUsers]);
+  }, [debouncedSearchQuery, statusFilter]);
+
+  const loadMore = useCallback(async () => {
+    if (isLoadingMore || pagination.page >= pagination.pages) {
+      return;
+    }
+    await loadUsers({ append: true });
+  }, [loadUsers, isLoadingMore, pagination.page, pagination.pages]);
 
   const toggleUserSelection = useCallback(async (userId: string) => {
     try {
@@ -183,27 +281,75 @@ export const useAdminUsersScreen = ({
     });
   }, []);
 
-  const updateUserStatusLocal = useCallback((userId: string, status: AdminUserStatus) => {
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.id === userId
-          ? {
-              ...user,
-              status,
-            }
-          : user,
-      ),
-    );
+  const updateUserStatusLocal = useCallback(
+    (userId: string, status: AdminUserStatus, optimistic = false) => {
+      if (optimistic) {
+        const currentUser = users.find((u) => u.id === userId);
+        if (currentUser) {
+          previousStatuses.current.set(userId, currentUser.status);
+          optimisticUpdates.current.set(userId, { status });
+        }
+      }
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === userId
+            ? {
+                ...user,
+                status,
+              }
+            : user,
+        ),
+      );
+    },
+    [users],
+  );
+  
+  const rollbackOptimisticUpdate = useCallback((userId: string) => {
+    const update = optimisticUpdates.current.get(userId);
+    const previousStatus = previousStatuses.current.get(userId);
+    
+    if (update && previousStatus) {
+      optimisticUpdates.current.delete(userId);
+      previousStatuses.current.delete(userId);
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === userId
+            ? {
+                ...user,
+                status: previousStatus,
+              }
+            : user,
+        ),
+      );
+    }
   }, []);
 
   const handleSingleAction = useCallback(
     async (user: AdminUserSummary, action: AdminUserAction) => {
+      const newStatus = actionToStatus(action, user.status);
+      const previousStatus = user.status;
+      
       try {
         setActionState({ type: 'single', id: user.id });
+        
+        // Optimistic update
+        updateUserStatusLocal(user.id, newStatus, true);
+        
+        try {
+          await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        } catch {
+          // Ignore haptics errors
+        }
+        
         await performAdminUserAction(user.id, action);
-        updateUserStatusLocal(user.id, actionToStatus(action, user.status));
+        
+        // Confirm the update
+        optimisticUpdates.current.delete(user.id);
         clearHandlerCache();
       } catch (error: unknown) {
+        // Rollback optimistic update
+        rollbackOptimisticUpdate(user.id);
+        
         const err = error instanceof Error ? error : new Error(`Failed to ${action} user`);
         if (isOfflineError(err)) {
           handleOfflineError(`admin.users.${action}`, () => {
@@ -211,12 +357,20 @@ export const useAdminUsersScreen = ({
           });
         } else {
           handleNetworkError(err, `admin.users.${action}`);
+          // Restore previous status on error
+          updateUserStatusLocal(user.id, previousStatus);
         }
       } finally {
         setActionState(null);
       }
     },
-    [clearHandlerCache, handleNetworkError, handleOfflineError, updateUserStatusLocal],
+    [
+      clearHandlerCache,
+      handleNetworkError,
+      handleOfflineError,
+      updateUserStatusLocal,
+      rollbackOptimisticUpdate,
+    ],
   );
 
   const primaryActionForStatus = useCallback((status: AdminUserStatus): AdminUserAction => {
@@ -239,6 +393,72 @@ export const useAdminUsersScreen = ({
       return handleSingleAction(user, secondaryActionForStatus(user.status));
     },
     [handleSingleAction, secondaryActionForStatus],
+  );
+
+  const handleMoreActions = useCallback((user: AdminUserSummary) => {
+    setSelectedUserForActions(user);
+  }, []);
+
+  const handleDeleteUser = useCallback(
+    async (reason?: string) => {
+      if (!selectedUserForActions) return;
+      try {
+        setActionState({ type: 'delete', id: selectedUserForActions.id });
+        await deleteAdminUser(selectedUserForActions.id, reason);
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
+          () => undefined,
+        );
+        setUsers((prev) => prev.filter((u) => u.id !== selectedUserForActions.id));
+        setSelectedUserForActions(null);
+        clearHandlerCache();
+        Alert.alert('Success', 'User deleted successfully');
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error('Failed to delete user');
+        if (isOfflineError(err)) {
+          handleOfflineError('admin.users.delete', () => {
+            void handleDeleteUser(reason);
+          });
+        } else {
+          handleNetworkError(err, 'admin.users.delete');
+        }
+      } finally {
+        setActionState(null);
+        invalidateAdminUsersCache();
+        void loadUsers({ force: true });
+      }
+    },
+    [selectedUserForActions, clearHandlerCache, handleNetworkError, handleOfflineError, loadUsers],
+  );
+
+  const handleResetPassword = useCallback(
+    async () => {
+      if (!selectedUserForActions) return;
+      try {
+        setActionState({ type: 'resetPassword', id: selectedUserForActions.id });
+        const result = await resetAdminUserPassword(selectedUserForActions.id);
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
+          () => undefined,
+        );
+        setSelectedUserForActions(null);
+        Alert.alert(
+          'Password Reset',
+          `Temporary password: ${result.temporaryPassword}\n\nPlease copy this password and share it securely with the user.`,
+          [{ text: 'OK' }],
+        );
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error('Failed to reset password');
+        if (isOfflineError(err)) {
+          handleOfflineError('admin.users.resetPassword', () => {
+            void handleResetPassword();
+          });
+        } else {
+          handleNetworkError(err, 'admin.users.resetPassword');
+        }
+      } finally {
+        setActionState(null);
+      }
+    },
+    [selectedUserForActions, handleNetworkError, handleOfflineError],
   );
 
   useEffect(() => {
@@ -267,7 +487,7 @@ export const useAdminUsersScreen = ({
       handlerCache.current.set(user.id, handlers);
       return handlers;
     },
-    [handlePrimaryAction, handleSecondaryAction, toggleUserSelection],
+    [handlePrimaryAction, handleSecondaryAction, toggleUserSelection, handleMoreActions],
   );
 
   const filteredUsers = useMemo(() => {
@@ -355,24 +575,90 @@ export const useAdminUsersScreen = ({
         return;
       }
 
+      const selectedUsers = users.filter((u) => selectedUserIds.has(u.id));
+      const statusMap = new Map(selectedUsers.map((u) => [u.id, u.status]));
+      const newStatuses = new Map(
+        selectedUsers.map((u) => [u.id, actionToStatus(action, u.status)]),
+      );
+
       setActionState({ type: 'bulk' });
 
       try {
-        await Promise.all(
-          Array.from(selectedUserIds).map(async (userId) => {
-            const user = users.find((item) => item.id === userId);
-            if (!user) {
-              return;
-            }
-            await performAdminUserAction(userId, action);
-            updateUserStatusLocal(userId, actionToStatus(action, user.status));
+        // Optimistic updates
+        selectedUsers.forEach((user) => {
+          const newStatus = newStatuses.get(user.id);
+          if (newStatus) {
+            updateUserStatusLocal(user.id, newStatus, true);
+          }
+        });
+
+        try {
+          await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        } catch {
+          // Ignore haptics errors
+        }
+
+        // Perform actions with better error handling
+        const results = await Promise.allSettled(
+          selectedUsers.map(async (user) => {
+            const newStatus = newStatuses.get(user.id);
+            if (!newStatus) return;
+            await performAdminUserAction(user.id, action);
+            return { userId: user.id, status: newStatus };
           }),
         );
+
+        // Check for failures and rollback those specific users
+        const failedUserIds = new Set<string>();
+        results.forEach((result, index) => {
+          if (result.status === 'rejected') {
+            failedUserIds.add(selectedUsers[index]?.id ?? '');
+          }
+        });
+
+        // Rollback failed users
+        failedUserIds.forEach((userId) => {
+          const previousStatus = statusMap.get(userId);
+          if (previousStatus) {
+            rollbackOptimisticUpdate(userId);
+            updateUserStatusLocal(userId, previousStatus);
+          }
+        });
+
+        if (failedUserIds.size > 0 && failedUserIds.size < selectedUsers.length) {
+          Alert.alert(
+            'Partial Success',
+            `${selectedUsers.length - failedUserIds.size} users updated successfully. ${failedUserIds.size} failed.`,
+          );
+        }
+
         clearHandlerCache();
-        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
-          () => undefined,
-        );
+        
+        // Clear selections on success
+        if (failedUserIds.size === 0) {
+          setSelectedUserIds(new Set());
+        } else {
+          // Keep only failed selections
+          setSelectedUserIds((prev) => {
+            const next = new Set<string>();
+            prev.forEach((id) => {
+              if (failedUserIds.has(id)) {
+                next.add(id);
+              }
+            });
+            return next;
+          });
+        }
       } catch (error: unknown) {
+        // Rollback all optimistic updates on complete failure
+        selectedUsers.forEach((user) => {
+          rollbackOptimisticUpdate(user.id);
+          const previousStatus = statusMap.get(user.id);
+          if (previousStatus) {
+            updateUserStatusLocal(user.id, previousStatus);
+          }
+        });
+
         const err =
           error instanceof Error ? error : new Error(`Failed to ${action} selected users`);
         if (isOfflineError(err)) {
@@ -394,6 +680,7 @@ export const useAdminUsersScreen = ({
       handleOfflineError,
       selectedUserIds,
       updateUserStatusLocal,
+      rollbackOptimisticUpdate,
       users,
       loadUsers,
     ],
@@ -425,6 +712,19 @@ export const useAdminUsersScreen = ({
     isRefreshing,
     isBulkProcessing: actionState?.type === 'bulk',
     users: listItems,
+    pagination: {
+      page: pagination.page,
+      total: pagination.total,
+      pages: pagination.pages,
+      hasMore: pagination.page < pagination.pages,
+      isLoadingMore,
+    },
+    loadMore,
+    selectedUserForActions,
+    onDeleteUser: handleDeleteUser,
+    onResetPassword: handleResetPassword,
+    onCloseActionsModal: () => setSelectedUserForActions(null),
+    isActionLoading: actionState !== null,
     onSearchChange: handleSearchChange,
     onStatusChange: handleStatusChange,
     onRefresh,

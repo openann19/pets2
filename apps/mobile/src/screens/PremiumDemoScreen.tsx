@@ -1,6 +1,6 @@
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView, ScrollView, StatusBar, Text } from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, Text, View } from 'react-native';
 
 // Project Hyperion Components
 import InteractiveButton from '../components/InteractiveButton';
@@ -24,7 +24,6 @@ const SemanticColors = (theme: ReturnType<typeof useTheme>) => ({
   },
   interactive: {
     primary: theme.colors.primary,
-    secondary: theme.colors.secondary,
   },
   text: {
     primary: theme.colors.onSurface,
@@ -56,15 +55,27 @@ function PremiumDemoScreen() {
   const renderDemoContent = () => {
     switch (activeDemo) {
       case 'buttons':
-        return <View style={{height: 50, backgroundColor: "lightgreen", borderRadius: 8}} onButtonPress={handleButtonPress} />;
+        return (
+          <View style={{ height: 50, backgroundColor: 'lightgreen', borderRadius: 8 }}>
+            <Text onPress={handleButtonPress}>Button Demo</Text>
+          </View>
+        );
       case 'cards':
-        return <View style={{height: 80, backgroundColor: "lightyellow", borderRadius: 8}} onCardPress={handleCardPress} />;
+        return (
+          <View style={{ height: 80, backgroundColor: 'lightyellow', borderRadius: 8 }}>
+            <Text onPress={handleCardPress}>Card Demo</Text>
+          </View>
+        );
       case 'animations':
-        return <View style={{height: 100, backgroundColor: "lightblue", borderRadius: 8}} />;
+        return <View style={{ height: 100, backgroundColor: 'lightblue', borderRadius: 8 }} />;
       case 'glass':
-        return <View style={{height: 70, backgroundColor: "lightpink", borderRadius: 8}} />;
+        return <View style={{ height: 70, backgroundColor: 'lightpink', borderRadius: 8 }} />;
       default:
-        return <View style={{height: 50, backgroundColor: "lightgreen", borderRadius: 8}} onButtonPress={handleButtonPress} />;
+        return (
+          <View style={{ height: 50, backgroundColor: 'lightgreen', borderRadius: 8 }}>
+            <Text onPress={handleButtonPress}>Button Demo</Text>
+          </View>
+        );
     }
   };
 
@@ -74,8 +85,8 @@ function PremiumDemoScreen() {
 
       {/* Premium Header with Glass Morphism */}
       <LinearGradient
-        colors={DynamicColors(theme).gradients.primary}
-        locations={DynamicColors(theme).glass.locations}
+        colors={theme.palette.gradients.primary || [theme.colors.primary, theme.colors.info]}
+        locations={[0, 1]}
         style={{
           paddingTop: 20,
           paddingBottom: 30,
@@ -88,7 +99,8 @@ function PremiumDemoScreen() {
           tint="dark"
           style={{
             padding: 20,
-            ...DynamicColors(theme).glass.medium,
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            borderRadius: 20,
           }}
         >
           <PageTransition
@@ -102,7 +114,9 @@ function PremiumDemoScreen() {
                 color: SemanticColors(theme).text.inverse,
                 textAlign: 'center',
                 marginBottom: 10,
-                ...EnhancedTypography(theme).effects.shadow.glow,
+                textShadowColor: theme.colors.primary,
+                textShadowOffset: { width: 0, height: 0 },
+                textShadowRadius: 10,
               }}
             >
               Project Hyperion

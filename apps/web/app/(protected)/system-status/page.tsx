@@ -27,6 +27,7 @@ import { PREMIUM_VARIANTS } from '../../../src/constants/animations';
 import { useEnhancedSocket } from '../../../src/hooks/useEnhancedSocket';
 import { useAnalytics } from '../../../src/utils/analytics-system';
 import { createPerformanceMonitor } from '../../../src/utils/performance';
+import { logger } from '@pawfectmatch/core';
 
 interface SystemHealth {
   status: 'healthy' | 'warning' | 'critical';
@@ -139,7 +140,7 @@ export default function SystemStatusPage() {
       setLastUpdate(new Date());
       
     } catch (error) {
-      console.error('Failed to fetch service statuses:', error);
+      logger.error('Failed to fetch service statuses:', error);
     } finally {
       setIsRefreshing(false);
     }
@@ -422,7 +423,7 @@ export default function SystemStatusPage() {
                 size="sm"
                 onClick={() => {
                   const report = analytics.generateReport();
-                  console.log('📊 Analytics Report:', report);
+                  logger.info('📊 Analytics Report:', report);
                   alert('Analytics report generated! Check console for details.');
                 }}
               >

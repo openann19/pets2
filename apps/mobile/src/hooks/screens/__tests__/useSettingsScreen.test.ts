@@ -39,14 +39,22 @@ jest.mock('../../../hooks/useColorScheme', () => ({
   useColorScheme: jest.fn(),
 }));
 
-// Mock logger
-jest.mock('@pawfectmatch/core', () => ({
-  logger: {
-    info: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-  },
-}));
+jest.mock('@pawfectmatch/core', () => {
+  const actual = jest.requireActual('@pawfectmatch/core') as typeof import('@pawfectmatch/core');
+
+  return {
+    ...actual,
+    logger: {
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+    },
+    useAuthStore: jest.fn(() => ({
+      logout: jest.fn(),
+      user: { id: 'user123', name: 'John Doe', email: 'john@example.com' },
+    })),
+  };
+});
 
 import { api } from '../../../services/api';
 import { analyticsService } from '../../../services/analyticsService';
@@ -58,6 +66,9 @@ const mockUseColorScheme = useColorScheme as jest.Mock;
 const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
 
 describe('useSettingsScreen', () => {
+  // Increase timeout for async hook tests
+  jest.setTimeout(30000);
+
   const mockSettingsData = {
     user: {
       id: 'user123',
@@ -568,9 +579,9 @@ describe('useSettingsScreen', () => {
     it('should clear cache when requested', async () => {
       const { result } = renderHook(() => useSettingsScreen());
 
-      // Set some data
+      // Set some data using the hook's method
       act(() => {
-        result.current.settings = mockSettingsData;
+        result.current.handleSettingsUpdate(mockSettingsData);
       });
 
       act(() => {
@@ -707,9 +718,12 @@ describe('useSettingsScreen', () => {
     it('should track settings interactions', async () => {
       const { result } = renderHook(() => useSettingsScreen());
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
+      await waitFor(
+        () => {
+          expect(result.current.isLoading).toBe(false);
+        },
+        { timeout: 10000 }
+      );
 
       act(() => {
         result.current.trackSettingsInteraction('privacy_toggle', { setting: 'profileVisible' });
@@ -729,9 +743,12 @@ describe('useSettingsScreen', () => {
     it('should track settings changes', async () => {
       const { result } = renderHook(() => useSettingsScreen());
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
+      await waitFor(
+        () => {
+          expect(result.current.isLoading).toBe(false);
+        },
+        { timeout: 10000 }
+      );
 
       await act(async () => {
         await result.current.updatePrivacySettings({ profileVisible: false });

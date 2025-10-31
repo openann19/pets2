@@ -8,6 +8,7 @@
 
 import { createHash } from 'crypto';
 import * as sharp from 'sharp';
+import logger from '../utils/logger';
 // @ts-ignore - Sharp module import compatibility
 
 export interface PerceptualHashResult {
@@ -51,7 +52,7 @@ export async function calculateAverageHash(
 
     return hash;
   } catch (error: unknown) {
-    console.error('Error calculating average hash:', error);
+    logger.error('Error calculating average hash:', { error });
     throw error;
   }
 }
@@ -88,7 +89,7 @@ export async function calculateDifferenceHash(
 
     return hash;
   } catch (error: unknown) {
-    console.error('Error calculating difference hash:', error);
+    logger.error('Error calculating difference hash:', { error });
     throw error;
   }
 }
@@ -127,7 +128,7 @@ export async function calculatePerceptualHash(
 
     return hash;
   } catch (error: unknown) {
-    console.error('Error calculating perceptual hash:', error);
+    logger.error('Error calculating perceptual hash:', { error });
     throw error;
   }
 }

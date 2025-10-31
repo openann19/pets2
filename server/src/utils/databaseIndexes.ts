@@ -12,23 +12,26 @@ import Track from '../models/Track';
 import Clip from '../models/Clip';
 import ShareEvent from '../models/ShareEvent';
 import ModerationFlag from '../models/ModerationFlag';
+import AnalyticsEvent from '../models/AnalyticsEvent';
 import logger from './logger';
 
 let Message: any;
 try {
   Message = require('../models/Message');
-} catch (error: any) {
+} catch (error: unknown) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
   logger.warn('Optional Message model not available for index management', {
-    error: error.message
+    error: errorMessage
   });
 }
 
 let AuditLog: any;
 try {
   AuditLog = require('../models/AdminActivityLog');
-} catch (error: any) {
+} catch (error: unknown) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
   logger.warn('Optional AdminActivityLog model not available for index management', {
-    error: error.message
+    error: errorMessage
   });
 }
 
@@ -42,6 +45,8 @@ export const createIndexes = async (): Promise<void> => {
     await User.collection.createIndex({ status: 1 });
     await User.collection.createIndex({ isEmailVerified: 1 });
     await User.collection.createIndex({ createdAt: -1 });
+    await User.collection.createIndex({ lastLoginAt: -1 });
+    await User.collection.createIndex({ 'premium.isActive': 1, 'premium.plan': 1 });
     await User.collection.createIndex({ 'firstName': 'text', 'lastName': 'text', 'email': 'text' });
     await User.collection.createIndex({ 'location.coordinates': '2dsphere' });
 
@@ -110,6 +115,12 @@ export const createIndexes = async (): Promise<void> => {
     await ModerationFlag.collection.createIndex({ kind: 1, status: 1 });
     await ModerationFlag.collection.createIndex({ status: 1, createdAt: -1 });
 
+    // AnalyticsEvent indexes (for conversion funnel and retention analysis)
+    await AnalyticsEvent.collection.createIndex({ eventType: 1, createdAt: -1 });
+    await AnalyticsEvent.collection.createIndex({ userId: 1, createdAt: -1 });
+    await AnalyticsEvent.collection.createIndex({ createdAt: -1 });
+    await AnalyticsEvent.collection.createIndex({ eventType: 1, userId: 1, createdAt: -1 });
+
     // Compound indexes for complex queries
     await User.collection.createIndex({ role: 1, status: 1 });
     await User.collection.createIndex({ isEmailVerified: 1, createdAt: -1 });
@@ -119,8 +130,9 @@ export const createIndexes = async (): Promise<void> => {
     }
 
     logger.info('Database indexes created successfully');
-  } catch (error: any) {
-    logger.error('Error creating database indexes:', error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('Error creating database indexes:', { error: errorMessage });
     throw error;
   }
 };
@@ -141,8 +153,9 @@ export const dropIndexes = async (): Promise<void> => {
     }
 
     logger.info('Database indexes dropped successfully');
-  } catch (error: any) {
-    logger.error('Error dropping database indexes:', error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('Error dropping database indexes:', { error: errorMessage });
     throw error;
   }
 };
@@ -171,8 +184,9 @@ export const getIndexStats = async (): Promise<Record<string, number>> => {
     }
 
     return stats;
-  } catch (error: any) {
-    logger.error('Error getting index stats:', error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error('Error getting index stats:', { error: errorMessage });
     throw error;
   }
 };

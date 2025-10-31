@@ -9,43 +9,39 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '@mobile/theme';
 import type { AppTheme } from '@mobile/theme';
 
-function __makeStyles_styles(theme: AppTheme) {
+function makeStyles(theme: AppTheme) {
   return StyleSheet.create({
     actionsContainer: {
-      marginTop: 16,
+      marginTop: theme.spacing.md,
     },
     sectionTitle: {
-      fontSize: 18,
-      fontWeight: '600',
-      marginBottom: 16,
+      fontSize: theme.typography.h2.size,
+      fontWeight: theme.typography.h2.weight,
+      marginBottom: theme.spacing.md,
     },
     actionsGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: 12,
+      gap: theme.spacing.md,
     },
     actionCard: {
       width: '23%',
       alignItems: 'center',
-      padding: 12,
-      borderRadius: 12,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
+      padding: theme.spacing.md,
+      borderRadius: theme.radii.md,
+      ...theme.shadows.elevation2,
     },
     actionIconContainer: {
       width: 48,
       height: 48,
-      borderRadius: 24,
+      borderRadius: theme.radii.full,
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 8,
+      marginBottom: theme.spacing.sm,
     },
     actionTitle: {
-      fontSize: 12,
-      fontWeight: '500',
+      fontSize: theme.typography.body.size * 0.75,
+      fontWeight: theme.typography.body.weight,
       textAlign: 'center',
     },
   });
@@ -65,8 +61,8 @@ interface QuickActionsSectionProps {
 
 export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({ onNavigate }) => {
   const theme = useTheme();
-  const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
-  const { colors, palette } = theme;
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const { colors } = theme;
 
   const actions: QuickAction[] = [
     {
@@ -119,6 +115,27 @@ export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({ onNavi
       onPress: () => onNavigate('AdminUploads'),
     },
     {
+      id: 'services',
+      title: 'Services',
+      icon: 'server',
+      color: colors.info,
+      onPress: () => onNavigate('AdminServices'),
+    },
+    {
+      id: 'config',
+      title: 'Config',
+      icon: 'settings',
+      color: colors.warning,
+      onPress: () => onNavigate('AdminConfig'),
+    },
+    {
+      id: 'reports',
+      title: 'Reports',
+      icon: 'document-text',
+      color: colors.danger,
+      onPress: () => onNavigate('AdminReports'),
+    },
+    {
       id: 'logs',
       title: 'Logs',
       icon: 'document-text',
@@ -148,7 +165,7 @@ export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({ onNavi
               <Ionicons
                 name={action.icon as any}
                 size={24}
-                color="#FFFFFF"
+                color={theme.colors.onPrimary}
               />
             </View>
             <Text style={[styles.actionTitle, { color: colors.onSurface }]}>{action.title}</Text>

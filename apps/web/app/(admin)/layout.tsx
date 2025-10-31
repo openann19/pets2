@@ -14,6 +14,8 @@ import { useReducedMotion } from '@/hooks/useAccessibilityHooks';
 import {
   Bars3Icon,
   ChartBarIcon,
+  ChatBubbleLeftRightIcon,
+  CheckBadgeIcon,
   CloudIcon,
   Cog6ToothIcon,
   ComputerDesktopIcon,
@@ -24,7 +26,9 @@ import {
   HomeIcon,
   MapIcon,
   MoonIcon,
+  PhotoIcon,
   ShieldCheckIcon,
+  SparklesIcon,
   SunIcon,
   UserIcon,
   XMarkIcon,
@@ -38,6 +42,7 @@ interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
+// Admin navigation matching mobile structure
 const navigation = [
   {
     name: 'Dashboard',
@@ -52,10 +57,10 @@ const navigation = [
     description: 'Platform analytics and insights',
   },
   {
-    name: 'Reports',
-    href: '/admin/reports',
-    icon: DocumentIcon,
-    description: 'Manage and create reports',
+    name: 'Users',
+    href: '/admin/users',
+    icon: UserIcon,
+    description: 'User management',
   },
   {
     name: 'Security',
@@ -64,46 +69,52 @@ const navigation = [
     description: 'Security alerts and monitoring',
   },
   {
-    name: 'Users',
-    href: '/admin/users',
-    icon: UserIcon,
-    description: 'User management',
-  },
-  {
     name: 'Billing',
     href: '/admin/billing',
     icon: CurrencyDollarIcon,
     description: 'Customer billing and subscriptions',
   },
   {
-    name: 'Stripe',
-    href: '/admin/stripe',
-    icon: CreditCardIcon,
-    description: 'Payment processing management',
+    name: 'Chats',
+    href: '/admin/chats',
+    icon: ChatBubbleLeftRightIcon,
+    description: 'Chat moderation',
   },
   {
-    name: 'AI Service',
-    href: '/admin/ai-service',
+    name: 'Uploads',
+    href: '/admin/uploads',
+    icon: PhotoIcon,
+    description: 'Upload management',
+  },
+  {
+    name: 'Verifications',
+    href: '/admin/verifications',
+    icon: CheckBadgeIcon,
+    description: 'Verification management',
+  },
+  {
+    name: 'Services',
+    href: '/admin/services',
     icon: CpuChipIcon,
-    description: 'DeepSeek AI service management',
+    description: 'Services management',
   },
   {
-    name: 'Maps',
-    href: '/admin/maps',
-    icon: MapIcon,
-    description: 'Google Maps service management',
-  },
-  {
-    name: 'External Services',
-    href: '/admin/external-services',
-    icon: CloudIcon,
-    description: 'Third-party service monitoring',
-  },
-  {
-    name: 'Settings',
-    href: '/admin/settings',
+    name: 'Config',
+    href: '/admin/config',
     icon: Cog6ToothIcon,
-    description: 'System settings',
+    description: 'API configuration',
+  },
+  {
+    name: 'Reports',
+    href: '/admin/reports',
+    icon: DocumentIcon,
+    description: 'User reports',
+  },
+  {
+    name: 'Animations',
+    href: '/admin/animations',
+    icon: SparklesIcon,
+    description: 'Animation configuration & testing',
   },
 ];
 

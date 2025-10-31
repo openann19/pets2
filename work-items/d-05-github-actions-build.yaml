@@ -1,0 +1,51 @@
+id: d-05-github-actions-build
+owner: ci
+severity: high
+area: mobile
+status: open
+context: |
+  Add GitHub Actions workflow to run expo doctor and ESLint on every PR.
+  Current behavior: No automated checks in CI.
+  Why it matters: Catch issues early, maintain code quality.
+
+acceptance:
+  - [ ] GitHub Actions workflow for mobile
+  - [ ] Run expo doctor on PR
+  - [ ] Run ESLint on PR
+  - [ ] Run TypeScript typecheck on PR
+  - [ ] Run Jest tests on PR
+  - [ ] Fail PR if checks fail
+  - [ ] Report results in PR comments
+  - [ ] Workflow runs on push to main
+  - [ ] Workflow runs on PR
+
+states:
+  - not-configured
+  - configured
+  - tested
+  - deployed
+
+telemetry:
+  - event: CI_CHECK_EXECUTED
+    props: [check, branch, success, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  workflows:
+    - .github/workflows/mobile-ci.yml
+  scripts:
+    - scripts/ci-check.sh
+
+dependencies:
+  - GitHub Actions
+  - Expo CLI
+  - Node.js setup
+
+timeline:
+  start: 2025-02-01
+  implementation: 2025-02-01
+  testing: 2025-02-02
+  deploy: 2025-02-03
+

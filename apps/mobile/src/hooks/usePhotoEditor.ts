@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Alert } from 'react-native';
 import { logger } from '@pawfectmatch/core';
-import type { PhotoAdjustments } from '../components/photo/AdvancedPhotoEditor';
+import type { PhotoAdjustments } from '../components/photo/types';
 
 export interface UsePhotoEditorOptions {
   maxWidth?: number;

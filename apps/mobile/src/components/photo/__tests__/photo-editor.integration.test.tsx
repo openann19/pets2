@@ -30,10 +30,14 @@ jest.mock('expo-image-manipulator', () => ({
   },
 }));
 
-jest.mock('react-native-safe-area-context', () => ({
-  SafeAreaView: ({ children }: any) => <View>{children}</View>,
-  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
-}));
+jest.mock('react-native-safe-area-context', () => {
+  const mockReactNative = require('react-native');
+  const MockView = mockReactNative.View;
+  return {
+    SafeAreaView: ({ children }: any) => React.createElement(MockView, {}, children),
+    useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+  };
+});
 
 // Mock reanimated
 jest.mock('react-native-reanimated', () => {

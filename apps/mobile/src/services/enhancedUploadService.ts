@@ -102,15 +102,28 @@ export class EnhancedUploadService {
         }
       }
 
-      const photoUploadResult = await uploadAdapter.uploadPhoto({
-        uri: processedImage.uri,
-        name: `photo.${processedImage.mimeType.split('/')[1]}`,
-        contentType: processedImage.mimeType,
-      });
+      let photoUploadResult;
+      try {
+        photoUploadResult = await uploadAdapter.uploadPhoto({
+          uri: processedImage.uri,
+          name: `photo.${processedImage.mimeType.split('/')[1]}`,
+          contentType: processedImage.mimeType,
+        });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        // Preserve specific error messages from uploadAdapter
+        if (errorMessage.includes('presign') || errorMessage.includes('Presign')) {
+          throw new Error('Presign failed');
+        }
+        if (errorMessage.includes('S3') || errorMessage.includes('upload failed') || errorMessage.includes('403') || errorMessage.includes('Forbidden')) {
+          throw new Error('S3 upload failed');
+        }
+        throw new Error(`Upload failed: ${errorMessage}`);
+      }
 
       // Verify upload succeeded
-      if (!photoUploadResult.url) {
-        throw new Error('Upload failed');
+      if (!photoUploadResult?.url) {
+        throw new Error('Upload failed: No URL returned from upload service');
       }
 
       // 2. Register upload with backend
@@ -204,8 +217,15 @@ export class EnhancedUploadService {
     };
 
     try {
-      // Check quota
-      const quota = await checkUploadQuota('current-user-id'); // TODO: Get from auth
+      // Check quota - get user ID from auth store
+      const { useAuthStore } = await import('../stores/useAuthStore');
+      const userId = useAuthStore.getState().user?._id;
+      
+      if (!userId) {
+        throw new Error('User not authenticated');
+      }
+      
+      const quota = await checkUploadQuota(userId);
       if (!quota.allowed) {
         throw new Error('Upload quota exceeded');
       }

@@ -9,6 +9,16 @@ export interface FeatureFlags {
   accessibilityEnhancements: boolean;
   usageTracking: boolean;
   subscriptionAnalytics: boolean;
+  // Phase 1 Product Enhancements
+  homeDashboard: boolean; // home.dashboard.v1
+  matchesAdvancedFilter: boolean; // matches.filter.v1
+  pushRich: boolean; // push.rich.v1
+  chatSchedule: boolean; // chat.schedule.v1 (Phase 2)
+  chatTemplates: boolean; // chat.templates.v1 (Phase 2)
+  chatSmartSuggestions: boolean; // chat.suggestions.v1 (Phase 2)
+  chatTranslation: boolean; // chat.translation.v1 (Phase 2)
+  swipePremium: boolean; // swipe.premium.v1 (Phase 2)
+  offlineOutbox: boolean; // offline.outbox.v1 (Phase 2)
 }
 
 const defaultFlags: FeatureFlags = {
@@ -22,6 +32,17 @@ const defaultFlags: FeatureFlags = {
   accessibilityEnhancements: true,
   usageTracking: true,
   subscriptionAnalytics: true,
+  // Phase 1 - Enabled by default, can be disabled via env
+  homeDashboard: true,
+  matchesAdvancedFilter: true,
+  pushRich: true,
+  // Phase 2 - Disabled by default
+  chatSchedule: false,
+  chatTemplates: false,
+  chatSmartSuggestions: false,
+  chatTranslation: false,
+  swipePremium: false,
+  offlineOutbox: false,
 };
 
 export class FeatureFlagService {
@@ -78,6 +99,35 @@ export class FeatureFlagService {
 
     if (process.env['FEATURE_SUBSCRIPTION_ANALYTICS'] != null) {
       flags.subscriptionAnalytics = process.env['FEATURE_SUBSCRIPTION_ANALYTICS'] === 'true';
+    }
+
+    // Phase 1 Product Enhancements
+    if (process.env['FEATURE_HOME_DASHBOARD'] != null) {
+      flags.homeDashboard = process.env['FEATURE_HOME_DASHBOARD'] === 'true';
+    }
+    if (process.env['FEATURE_MATCHES_ADVANCED_FILTER'] != null) {
+      flags.matchesAdvancedFilter = process.env['FEATURE_MATCHES_ADVANCED_FILTER'] === 'true';
+    }
+    if (process.env['FEATURE_PUSH_RICH'] != null) {
+      flags.pushRich = process.env['FEATURE_PUSH_RICH'] === 'true';
+    }
+    if (process.env['FEATURE_CHAT_SCHEDULE'] != null) {
+      flags.chatSchedule = process.env['FEATURE_CHAT_SCHEDULE'] === 'true';
+    }
+    if (process.env['FEATURE_CHAT_TEMPLATES'] != null) {
+      flags.chatTemplates = process.env['FEATURE_CHAT_TEMPLATES'] === 'true';
+    }
+    if (process.env['FEATURE_CHAT_SMART_SUGGESTIONS'] != null) {
+      flags.chatSmartSuggestions = process.env['FEATURE_CHAT_SMART_SUGGESTIONS'] === 'true';
+    }
+    if (process.env['FEATURE_CHAT_TRANSLATION'] != null) {
+      flags.chatTranslation = process.env['FEATURE_CHAT_TRANSLATION'] === 'true';
+    }
+    if (process.env['FEATURE_SWIPE_PREMIUM'] != null) {
+      flags.swipePremium = process.env['FEATURE_SWIPE_PREMIUM'] === 'true';
+    }
+    if (process.env['FEATURE_OFFLINE_OUTBOX'] != null) {
+      flags.offlineOutbox = process.env['FEATURE_OFFLINE_OUTBOX'] === 'true';
     }
 
     return flags;

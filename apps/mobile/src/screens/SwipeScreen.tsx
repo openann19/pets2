@@ -9,7 +9,7 @@
  * - SwipeActions component for action buttons
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -26,6 +26,7 @@ import { useSwipeGestures } from '../hooks/useSwipeGestures';
 import { useSwipeAnimations } from '../hooks/useSwipeAnimations';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 import { useErrorHandling } from '../hooks/useErrorHandling';
+import { usePrefetching } from '../hooks/optimization/usePrefetching';
 import UndoPill from '../components/feedback/UndoPill';
 import { SwipeCard, SwipeActions } from '../components/swipe';
 import { ScreenShell } from '../ui/layout/ScreenShell';
@@ -35,6 +36,9 @@ import { useTheme } from '@mobile/theme';
 import { useTranslation } from 'react-i18next';
 import { useReduceMotion } from '../hooks/useReducedMotion';
 import { useHeaderWithCounts } from '../hooks/useHeaderWithCounts';
+import { SwipeLimitModal } from '../components/modals/SwipeLimitModal';
+import { usePremiumGate } from '../components/Premium/PremiumGate';
+import { useFeatureGate } from '../hooks/domains/premium/useFeatureGate';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -44,10 +48,86 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
   const theme = useTheme();
   const { t } = useTranslation('common');
   const reducedMotion = useReduceMotion();
+  const { PremiumGateComponent } = usePremiumGate();
+
+  // Feature gate for swipe limits
+  const swipeLimitGate = useFeatureGate({
+    feature: 'swipesPerDay',
+    showGateOnDeny: false, // We'll handle limit modal ourselves
+    navigation,
+  });
+
+  // Swipe limit modal state
+  const [showLimitModal, setShowLimitModal] = useState(false);
+  const [limitData, setLimitData] = useState<{
+    usedToday: number;
+    limit: number;
+  } | null>(null);
 
   // Data management hook
   const { pets, isLoading, error, currentIndex, handleSwipe, handleButtonSwipe, refreshPets } =
     useSwipeData();
+
+  // Prefetching for images and routes
+  const { prefetchSwipeImages, prefetchNextRoutes } = usePrefetching({
+    wifiOnly: false, // Prefetch on any connection
+    enableImagePrefetch: true,
+    enableRoutePrefetch: true,
+  });
+
+  // Prefetch images for next 5 pets
+  React.useEffect(() => {
+    if (pets.length > 0 && currentIndex < pets.length) {
+      prefetchSwipeImages(
+        pets.slice(currentIndex, currentIndex + 5).map((pet) => ({
+          images: (pet.photos || []).map((photo) => 
+            typeof photo === 'string' ? photo : photo.url || ''
+          ).filter(Boolean),
+        })),
+        0,
+      );
+    }
+  }, [pets, currentIndex, prefetchSwipeImages]);
+
+  // Prefetch likely next routes
+  React.useEffect(() => {
+    prefetchNextRoutes('Swipe');
+  }, [prefetchNextRoutes]);
+
+  // Wrapper for handleSwipe that checks limits proactively and catches limit errors
+  const handleSwipeWithLimit = useCallback(
+    async (action: 'like' | 'pass' | 'superlike') => {
+      // Proactive check: Verify user has swipes remaining before attempting swipe
+      const hasAccess = await swipeLimitGate.checkAccess();
+      
+      if (!hasAccess && swipeLimitGate.limit !== undefined && swipeLimitGate.remaining !== undefined) {
+        // Show limit modal if limit reached
+        setLimitData({
+          usedToday: swipeLimitGate.limit - (swipeLimitGate.remaining || 0),
+          limit: swipeLimitGate.limit,
+        });
+        setShowLimitModal(true);
+        return;
+      }
+
+      try {
+        await handleSwipe(action);
+      } catch (err: unknown) {
+        const errorData = err as any;
+        if (errorData?.code === 'SWIPE_LIMIT_EXCEEDED') {
+          setLimitData({
+            usedToday: errorData.usedToday || 5,
+            limit: errorData.currentLimit || 5,
+          });
+          setShowLimitModal(true);
+        } else {
+          // Re-throw other errors
+          throw err;
+        }
+      }
+    },
+    [handleSwipe, swipeLimitGate],
+  );
 
   // Update SmartHeader
   useHeaderWithCounts({
@@ -85,10 +165,10 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
         haptic.tap();
       }
       capture({ petId, direction: gestureDir, index });
-      await handleSwipe(actionDir);
+      await handleSwipeWithLimit(actionDir);
       resetPosition();
     },
-    [capture, handleSwipe, resetPosition],
+    [capture, handleSwipeWithLimit, resetPosition],
   );
 
   // Gesture handlers for swipe actions
@@ -370,15 +450,15 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
       <SwipeActions
         onPass={() => {
           haptic.tap();
-          handleButtonSwipe('pass');
+          void handleSwipeWithLimit('pass');
         }}
         onLike={() => {
           haptic.confirm();
-          handleButtonSwipe('like');
+          void handleSwipeWithLimit('like');
         }}
         onSuperlike={() => {
           haptic.super();
-          handleButtonSwipe('superlike');
+          void handleSwipeWithLimit('superlike');
         }}
       />
 
@@ -394,6 +474,22 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
         }}
         testID="undo-pill"
       />
+
+      {limitData && (
+        <SwipeLimitModal
+          visible={showLimitModal}
+          usedToday={limitData.usedToday}
+          limit={limitData.limit}
+          onClose={() => {
+            setShowLimitModal(false);
+            setLimitData(null);
+          }}
+          navigation={navigation}
+        />
+      )}
+
+      {/* Premium Gate Modal */}
+      <PremiumGateComponent />
     </ScreenShell>
   );
 }

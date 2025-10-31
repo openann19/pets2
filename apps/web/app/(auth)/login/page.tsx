@@ -3,12 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { logger } from '@pawfectmatch/core';
 // import { useRouter } from 'next/navigation'; // TODO: Re-enable when routing is needed
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { EnvelopeIcon, LockClosedIcon, SparklesIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
-import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
+import { SocialLoginButtons } from '@/components/Auth/SocialLoginButtons';
 import { useAuth } from '../../../src/hooks/api-hooks';
 import PremiumButton from '../../../src/components/UI/PremiumButton';
 
@@ -20,7 +21,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  // const router = useRouter(); // TODO: Add navigation after login
+  const router = useRouter();
   const { login, isLoading, error } = useAuth();
 
   const {
@@ -31,8 +32,15 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    login({ email: data.email, password: data.password });
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      await login({ email: data.email, password: data.password });
+      // Navigate to dashboard after successful login
+      router.push('/dashboard');
+    } catch (loginError) {
+      logger.error('Login failed:', loginError);
+      // Error is already handled by useAuth hook
+    }
   };
 
   return (

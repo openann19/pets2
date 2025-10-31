@@ -35,8 +35,8 @@ module.exports = ({ config }) => ({
         'PawfectMatch needs access to save photos to your library',
       NSContactsUsageDescription:
         'PawfectMatch can sync your contacts to help you find friends who use the app',
-      NSUserTrackingUsageDescription:
-        'PawfectMatch uses tracking to provide personalized content and improve your experience',
+      // NSUserTrackingUsageDescription removed: No tracking SDKs present that require ATT
+      // RevenueCat (IAP) and Sentry (error tracking) do not require App Tracking Transparency
       ITSAppUsesNonExemptEncryption: false,
       CFBundleDisplayName: 'PawfectMatch',
       CFBundleName: 'PawfectMatch',
@@ -102,8 +102,8 @@ module.exports = ({ config }) => ({
   android: {
     package: 'com.pawfectmatch.premium',
     versionCode: parseInt(process.env.ANDROID_VERSION_CODE || '1', 10),
-    compileSdkVersion: 34,
-    targetSdkVersion: 34,
+    compileSdkVersion: 35,
+    targetSdkVersion: 35,
     jsEngine: 'hermes',
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
@@ -113,11 +113,11 @@ module.exports = ({ config }) => ({
       'android.permission.CAMERA',
       'android.permission.ACCESS_FINE_LOCATION',
       'android.permission.ACCESS_COARSE_LOCATION',
-      'android.permission.ACCESS_BACKGROUND_LOCATION',
+      // ACCESS_BACKGROUND_LOCATION removed: App uses location only "when in use" (no background location needed)
       'android.permission.RECORD_AUDIO',
       'android.permission.MODIFY_AUDIO_SETTINGS',
-      'android.permission.READ_EXTERNAL_STORAGE',
-      'android.permission.WRITE_EXTERNAL_STORAGE',
+      // READ_EXTERNAL_STORAGE removed: Using scoped storage (Android 10+), replaced by READ_MEDIA_* on Android 13+
+      // WRITE_EXTERNAL_STORAGE removed: Using scoped storage (Android 10+), not needed
       'android.permission.READ_MEDIA_IMAGES',
       'android.permission.READ_MEDIA_VIDEO',
       'android.permission.INTERNET',

@@ -1,0 +1,236 @@
+/**
+ * Web audio recorder implementation using MediaRecorder API
+ * Enhanced with comprehensive error handling, resource cleanup, and better browser compatibility
+ */
+
+import type { Recorder, RecorderOptions, RecordingResult } from './Recorder';
+
+export const createRecorder = (): Recorder => {
+  let mediaRecorder: MediaRecorder | null = null;
+  let audioChunks: Blob[] = [];
+  let isCurrentlyRecording = false;
+  let startTime = 0;
+  let stream: MediaStream | null = null;
+
+  /**
+   * Cleanup function to release media resources
+   */
+  const cleanup = (): void => {
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        track.stop();
+        stream?.removeTrack(track);
+      });
+      stream = null;
+    }
+    mediaRecorder = null;
+    audioChunks = [];
+    isCurrentlyRecording = false;
+  };
+
+  return {
+    async start(options?: RecorderOptions): Promise<void> {
+      if (isCurrentlyRecording) {
+        throw new Error('Recording already in progress');
+      }
+
+      // Check if MediaRecorder API is available
+      if (typeof MediaRecorder === 'undefined') {
+        throw new Error('MediaRecorder API is not supported in this browser');
+      }
+
+      if (!navigator?.mediaDevices?.getUserMedia) {
+        throw new Error('getUserMedia is not supported in this browser');
+      }
+
+      try {
+        // Get user media with error handling
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            sampleRate: options?.sampleRate || 44100,
+            channelCount: options?.channels || 1,
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          },
+        });
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Failed to access microphone';
+        
+        // Provide user-friendly error messages
+        if (message.includes('Permission denied') || message.includes('NotAllowedError')) {
+          throw new Error('Microphone permission denied. Please allow microphone access in your browser settings.');
+        }
+        if (message.includes('NotFoundError') || message.includes('DevicesNotFoundError')) {
+          throw new Error('No microphone found. Please connect a microphone and try again.');
+        }
+        throw new Error(`Failed to start recording: ${message}`);
+      }
+
+      // Determine best MIME type with fallbacks
+      let mimeType = 'audio/webm';
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+        mimeType = 'audio/webm;codecs=opus';
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        mimeType = 'audio/mp4';
+      } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+        mimeType = 'audio/webm';
+      } else {
+        // Use default - browser will choose
+        mimeType = '';
+      }
+
+      try {
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: mimeType || undefined,
+          audioBitsPerSecond: options?.bitRate || 128000,
+        });
+
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data && event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
+        };
+
+        mediaRecorder.onerror = (event) => {
+          console.error('[Recorder] MediaRecorder error:', event);
+          // Don't throw here - let stop() handle cleanup
+        };
+
+        mediaRecorder.start(1000); // Collect data every second
+        isCurrentlyRecording = true;
+        startTime = Date.now();
+      } catch (error) {
+        cleanup();
+        const message =
+          error instanceof Error ? error.message : 'Unknown error';
+        throw new Error(`Failed to create MediaRecorder: ${message}`);
+      }
+    },
+
+    async stop(): Promise<RecordingResult> {
+      if (!mediaRecorder || !isCurrentlyRecording) {
+        throw new Error('No recording in progress');
+      }
+
+      return new Promise((resolve, reject) => {
+        if (!mediaRecorder) {
+          reject(new Error('MediaRecorder not available'));
+          return;
+        }
+
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error('Recording stop timeout - taking too long'));
+        }, 10000); // 10 second timeout
+
+        mediaRecorder.onstop = () => {
+          clearTimeout(timeout);
+          
+          try {
+            if (audioChunks.length === 0) {
+              cleanup();
+              reject(new Error('No audio data recorded'));
+              return;
+            }
+
+            const blob = new Blob(audioChunks, { type: mediaRecorder?.mimeType || 'audio/webm' });
+            const duration = Date.now() - startTime;
+
+            // Clean up
+            cleanup();
+
+            resolve({
+              blob,
+              duration,
+              size: blob.size,
+            });
+          } catch (error) {
+            cleanup();
+            const message =
+              error instanceof Error ? error.message : 'Unknown error';
+            reject(new Error(`Failed to process recording: ${message}`));
+          }
+        };
+
+        mediaRecorder.onerror = (event) => {
+          clearTimeout(timeout);
+          cleanup();
+          reject(new Error(`Recording error: ${event}`));
+        };
+
+        try {
+          if (mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+          } else {
+            // Already stopped or in another state
+            mediaRecorder.onstop();
+          }
+        } catch (error) {
+          clearTimeout(timeout);
+          cleanup();
+          const message =
+            error instanceof Error ? error.message : 'Unknown error';
+          reject(new Error(`Failed to stop recording: ${message}`));
+        }
+      });
+    },
+
+    async pause(): Promise<void> {
+      if (!mediaRecorder || !isCurrentlyRecording) {
+        throw new Error('No recording in progress');
+      }
+
+      try {
+        if (mediaRecorder.state === 'recording') {
+          mediaRecorder.pause();
+        }
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : 'Unknown error';
+        throw new Error(`Failed to pause recording: ${message}`);
+      }
+    },
+
+    async resume(): Promise<void> {
+      if (!mediaRecorder) {
+        throw new Error('No recording available');
+      }
+
+      try {
+        if (mediaRecorder.state === 'paused') {
+          mediaRecorder.resume();
+        }
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : 'Unknown error';
+        throw new Error(`Failed to resume recording: ${message}`);
+      }
+    },
+
+    isRecording(): boolean {
+      return (
+        isCurrentlyRecording &&
+        mediaRecorder !== null &&
+        mediaRecorder.state === 'recording'
+      );
+    },
+
+    isSupported(): boolean {
+      return (
+        typeof window !== 'undefined' &&
+        typeof MediaRecorder !== 'undefined' &&
+        !!navigator?.mediaDevices?.getUserMedia
+      );
+    },
+
+    getDuration(): number {
+      return isCurrentlyRecording ? Date.now() - startTime : 0;
+    },
+  };
+};

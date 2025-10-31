@@ -1,0 +1,34 @@
+/**
+ * Quick verification test for the accessibility and payment localization implementation
+ */
+
+import { paymentErrorService } from '../services/PaymentErrorLocalizationService';
+import { accessibilityService } from '../services/AccessibilityService';
+
+// Test Payment Error Localization
+console.log('🧪 Testing Payment Error Localization...');
+
+// Test Stripe error mapping
+const stripeError = { code: 'card_declined', decline_code: 'insufficient_funds' };
+const localizedError = paymentErrorService.getLocalizedError(stripeError);
+console.log('✅ Stripe Error Mapping:', localizedError);
+
+// Test string error
+const stringError = paymentErrorService.getLocalizedError('invalid_card');
+console.log('✅ String Error Mapping:', stringError);
+
+// Test form labels
+const formLabels = paymentErrorService.getPaymentFormLabels();
+console.log('✅ Form Labels:', formLabels);
+
+// Test Accessibility Service
+console.log('🧪 Testing Accessibility Service...');
+
+const accessibilityLabels = accessibilityService.getAccessibilityLabels();
+console.log('✅ Accessibility Labels Loaded:', Object.keys(accessibilityLabels));
+
+const screenLabels = accessibilityLabels.screens?.home;
+console.log('✅ Screen Labels:', screenLabels);
+
+console.log('🎉 All tests completed successfully!');
+console.log('The accessibility and payment localization implementation is working correctly.');

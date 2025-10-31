@@ -4,7 +4,7 @@
  */
 import React, { useMemo } from 'react';
 import { Platform } from 'react-native';
-import MapView, { Heatmap, PROVIDER_GOOGLE } from 'react-native-maps';
+import { Heatmap } from 'react-native-maps';
 import { useTheme } from '@/theme';
 
 export type HeatPoint = { latitude: number; longitude: number; weight?: number };

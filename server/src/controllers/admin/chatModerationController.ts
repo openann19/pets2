@@ -6,6 +6,7 @@
 import type { Request, Response } from 'express';
 import Match from '../../models/Match';
 import User from '../../models/User';
+import FlaggedMessage from '../../models/FlaggedMessage';
 import logger from '../../utils/logger';
 import { logAdminActivity } from '../../middleware/adminLogger';
 import { getErrorMessage } from '../../utils/errorHandler';
@@ -32,7 +33,7 @@ export const getChatMessages = async (req: AdminRequest, res: Response): Promise
     const skip = (pageNum - 1) * limitNum;
 
     // Build query to find messages
-    const query: any = { status: 'active' };
+    const query: Record<string, unknown> = { status: 'active' };
     
     // Filter based on review status if needed
     if (filter === 'flagged') {
@@ -51,39 +52,102 @@ export const getChatMessages = async (req: AdminRequest, res: Response): Promise
       .skip(skip);
 
     // Extract messages from all matches
-    const messages: any[] = [];
+    interface ChatMessage {
+      _id: { toString: () => string } | string;
+      sender?: { toString: () => string } | string;
+      content?: string;
+      sentAt?: Date;
+      createdAt?: Date;
+      isDeleted?: boolean;
+      reviewed?: boolean;
+      reviewedBy?: string;
+      reviewedAt?: Date;
+      metadata?: {
+        moderationAction?: string;
+        moderationTimestamp?: Date;
+      };
+    }
+    
+    interface MatchWithUsers {
+      _id: { toString: () => string } | string;
+      user1?: { firstName?: string; lastName?: string };
+      user2?: { firstName?: string; lastName?: string };
+      messages?: ChatMessage[];
+    }
+    
+    // Get all flagged messages for the matches we're looking at
+    const matchIds = matches.map(m => m._id.toString());
+    const flaggedMessages = await FlaggedMessage.find({
+      chatId: { $in: matchIds },
+      flagged: true
+    }).lean();
+
+    // Create a map of messageId -> flagged message data for quick lookup
+    const flaggedMap = new Map<string, typeof flaggedMessages[0]>();
+    flaggedMessages.forEach((flagged) => {
+      flaggedMap.set(flagged.messageId, flagged);
+    });
+    
+    const messages: Array<{
+      id: string;
+      chatId: string;
+      senderId: string;
+      senderName: string;
+      receiverName: string;
+      message: string;
+      timestamp?: Date;
+      flagged: boolean;
+      flagReason?: string;
+      reviewed: boolean;
+      reviewedBy?: string;
+      reviewedAt?: Date;
+      action?: string;
+    }> = [];
     
     for (const match of matches) {
-      if (match.messages && match.messages.length > 0) {
-        for (const msg of match.messages as any[]) {
+      const matchWithUsers = match as unknown as MatchWithUsers;
+      if (matchWithUsers.messages && matchWithUsers.messages.length > 0) {
+        for (const msg of matchWithUsers.messages) {
           // Skip deleted messages
           if (msg.isDeleted) continue;
+
+          const messageId = msg._id.toString();
+          const chatId = match._id.toString();
+
+          // Check if message is flagged
+          const flaggedRecord = flaggedMap.get(messageId);
+          const isFlagged = flaggedRecord?.flagged || false;
+          const flagReason = flaggedRecord?.flagReason;
+          const reviewed = flaggedRecord?.reviewed || msg.reviewed || false;
+          const reviewedBy = flaggedRecord?.reviewedBy || msg.reviewedBy;
+          const reviewedAt = flaggedRecord?.reviewedAt || msg.reviewedAt;
+          const action = flaggedRecord?.moderationAction || msg.metadata?.moderationAction;
 
           // Get sender and receiver info
           let senderName = 'Unknown';
           let receiverName = 'Unknown';
           
-          if (match.user1) {
-            senderName = `${(match.user1 as any).firstName} ${(match.user1 as any).lastName}`;
+          if (matchWithUsers.user1) {
+            senderName = `${matchWithUsers.user1.firstName || ''} ${matchWithUsers.user1.lastName || ''}`.trim() || 'Unknown';
           }
-          if (match.user2) {
-            receiverName = `${(match.user2 as any).firstName} ${(match.user2 as any).lastName}`;
+          if (matchWithUsers.user2) {
+            receiverName = `${matchWithUsers.user2.firstName || ''} ${matchWithUsers.user2.lastName || ''}`.trim() || 'Unknown';
           }
 
           const messageData = {
-            id: msg._id.toString(),
-            chatId: match._id.toString(),
+            id: messageId,
+            chatId,
             senderId: msg.sender?.toString() || '',
             senderName,
             receiverName,
-            message: msg.content,
+            message: msg.content || '',
             timestamp: msg.sentAt || msg.createdAt,
-            flagged: false, // TODO: Implement actual flagging system
-            flagReason: undefined,
-            reviewed: false,
-            reviewedBy: undefined,
-            reviewedAt: undefined,
-            action: undefined,
+            flagged: isFlagged,
+            flagReason,
+            reviewed,
+            reviewedBy,
+            reviewedAt,
+            action,
           };
 
           // Apply search filter
@@ -166,7 +230,21 @@ export const moderateMessage = async (req: AdminRequest, res: Response): Promise
       return;
     }
     
-    const message = match.messages?.find((msg: any) => msg._id.toString() === messageId);
+    interface MessageWithModeration extends ChatMessage {
+      reviewed?: boolean;
+      reviewedBy?: string;
+      reviewedAt?: Date;
+      metadata?: {
+        moderationAction?: string;
+        moderationTimestamp?: Date;
+        [key: string]: unknown;
+      };
+    }
+    
+    const message = match.messages?.find((msg) => {
+      const msgId = typeof msg._id === 'string' ? msg._id : msg._id?.toString();
+      return msgId === messageId;
+    }) as MessageWithModeration | undefined;
 
     if (!message) {
       res.status(404).json({
@@ -182,29 +260,25 @@ export const moderateMessage = async (req: AdminRequest, res: Response): Promise
     if (action === 'approve') {
       updatedAction = 'approved';
       // Mark as reviewed, no deletion
-      if ('isDeleted' in message) {
-        message.isDeleted = false;
-      }
+      message.isDeleted = false;
     } else if (action === 'remove') {
       updatedAction = 'removed';
-      if ('isDeleted' in message) {
-        message.isDeleted = true;
-      }
+      message.isDeleted = true;
     } else {
       updatedAction = 'warned';
     }
 
     // Mark as reviewed
-    (message as any).reviewed = true;
-    (message as any).reviewedBy = req.userId;
-    (message as any).reviewedAt = new Date();
+    message.reviewed = true;
+    message.reviewedBy = req.userId;
+    message.reviewedAt = new Date();
     
     // Add moderation metadata
-    if (!(message as any).metadata) {
-      (message as any).metadata = {};
+    if (!message.metadata) {
+      message.metadata = {};
     }
-    (message as any).metadata.moderationAction = updatedAction;
-    (message as any).metadata.moderationTimestamp = new Date();
+    message.metadata.moderationAction = updatedAction;
+    message.metadata.moderationTimestamp = new Date();
 
     await match.save();
 
@@ -267,11 +341,12 @@ export const getChatModerationStats = async (req: AdminRequest, res: Response): 
     let warnedMessages = 0;
 
     for (const match of matches) {
-      if (match.messages && match.messages.length > 0) {
-        for (const msg of match.messages as any[]) {
+      const matchWithMessages = match as unknown as MatchWithUsers;
+      if (matchWithMessages.messages && matchWithMessages.messages.length > 0) {
+        for (const msg of matchWithMessages.messages) {
           totalMessages++;
           
-          if (msg.flagged) flaggedMessages++;
+          if ((msg as ChatMessage & { flagged?: boolean }).flagged) flaggedMessages++;
           if (msg.reviewed) {
             reviewedMessages++;
             if (msg.metadata?.moderationAction === 'approved') approvedMessages++;

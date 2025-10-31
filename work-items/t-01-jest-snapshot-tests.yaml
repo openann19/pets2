@@ -1,0 +1,58 @@
+id: t-01-jest-snapshot-tests
+owner: test
+severity: high
+area: mobile
+status: open
+context: |
+  Add Jest snapshot tests for 15 key screens to catch UI regressions.
+  Current behavior: No snapshot tests, UI changes go undetected.
+  Why it matters: Catch visual regressions early, ensure UI consistency.
+
+acceptance:
+  - [ ] Snapshot test for HomeScreen
+  - [ ] Snapshot test for SwipeScreen
+  - [ ] Snapshot test for ChatScreen
+  - [ ] Snapshot test for ProfileScreen
+  - [ ] Snapshot test for MatchScreen
+  - [ ] Snapshot test for SettingsScreen
+  - [ ] Snapshot test for PremiumScreen
+  - [ ] Snapshot test for OnboardingScreen
+  - [ ] Snapshot test for DeactivateAccountScreen
+  - [ ] Snapshot test for SafetyCenterScreen
+  - [ ] Snapshot test for AICompatibilityScreen
+  - [ ] Snapshot test for PetProfileScreen
+  - [ ] Snapshot test for EditPetScreen
+  - [ ] Snapshot test for NotificationPreferencesScreen
+  - [ ] Snapshot test for HelpSupportScreen
+  - [ ] All snapshots updated and committed
+  - [ ] Snapshot tests run in CI
+
+states:
+  - no-snapshots
+  - partial
+  - complete
+
+telemetry:
+  - event: TEST_SNAPSHOT_UPDATED
+    props: [screen, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  tests:
+    - apps/mobile/src/screens/__tests__/HomeScreen.snapshot.test.tsx
+    - apps/mobile/src/screens/__tests__/SwipeScreen.snapshot.test.tsx
+    - apps/mobile/src/screens/__tests__/ChatScreen.snapshot.test.tsx
+    # ... additional snapshot tests
+
+dependencies:
+  - jest
+  - @testing-library/react-native
+  - jest-snapshot
+
+timeline:
+  start: 2025-02-01
+  implementation: 2025-02-02
+  deploy: 2025-02-03
+

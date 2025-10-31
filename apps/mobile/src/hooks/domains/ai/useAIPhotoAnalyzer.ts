@@ -142,44 +142,7 @@ export const useAIPhotoAnalyzer = (): UseAIPhotoAnalyzerReturn => {
         error: err,
         photoCount: photoUris.length,
       });
-
-      // For demo purposes, return mock analysis
-      const mockResult: PhotoAnalysisResult = {
-        breed_analysis: {
-          primary_breed: 'Golden Retriever',
-          confidence: 0.92,
-          secondary_breeds: [
-            { breed: 'Labrador Retriever', confidence: 0.15 },
-            { breed: 'Bernese Mountain Dog', confidence: 0.08 },
-          ],
-        },
-        health_assessment: {
-          age_estimate: 2.5,
-          health_score: 88,
-          recommendations: [
-            'Regular exercise is important',
-            'Maintain healthy weight',
-            'Annual veterinary checkups',
-          ],
-        },
-        photo_quality: {
-          overall_score: 85,
-          lighting_score: 90,
-          composition_score: 80,
-          clarity_score: 88,
-        },
-        matchability_score: 92,
-        ai_insights: [
-          'Friendly and approachable expression',
-          'Well-groomed coat suggests good care',
-          'Energetic pose indicates playful personality',
-          'Clear, high-quality image enhances visibility',
-        ],
-      };
-
-      setAnalysisResult(mockResult);
-      logger.info('Using mock photo analysis result');
-      return mockResult;
+      throw err;
     } finally {
       setIsAnalyzing(false);
     }

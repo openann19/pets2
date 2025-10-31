@@ -12,7 +12,6 @@ import Animated, {
   withTiming,
   withDelay,
 } from 'react-native-reanimated';
-import { Image } from 'react-native';
 
 import { motion, getEasingArray } from '@/theme/motion';
 import { useMotionGuards } from '@/utils/motionGuards';
@@ -27,11 +26,11 @@ interface UseDominantColorFadeReturn {
  * Hook for dominant color fade-in animation
  * Shows placeholder color, then fades in image
  */
-export function useDominantColorFade(dominantColor?: string): UseDominantColorFadeReturn {
+export function useDominantColorFade(_dominantColor?: string): UseDominantColorFadeReturn {
   const guards = useMotionGuards();
   const imageOpacity = useSharedValue(0);
   const placeholderOpacity = useSharedValue(1);
-  const [imageLoaded, setImageLoaded] = React.useState(false);
+  const [_imageLoaded, setImageLoaded] = React.useState(false);
 
   const imageStyle = useAnimatedStyle(() => {
     return {

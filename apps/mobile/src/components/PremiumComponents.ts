@@ -1,4 +1,3 @@
-
 /**
  * 🎨 PAWFECTMATCH PREMIUM COMPONENTS INDEX (hardened)
  * - Explicit re-exports (better tree-shaking than `export *`)
@@ -154,7 +153,7 @@ export const USAGE_EXAMPLES =
   ripple
   glow
   shimmer
-  onPress={() => console.log('Premium action!')}
+  onPress={() => logger.info('Premium action!')}
 />`,
         glassCard: `
 <EliteCard variant="glass" tilt magnetic shimmer entrance="fadeInUp">

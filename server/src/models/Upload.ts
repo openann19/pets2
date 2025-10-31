@@ -41,7 +41,7 @@ const uploadSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'approved', 'rejected', 'deleted'],
+    enum: ['pending', 'approved', 'rejected', 'deleted', 'failed'],
     default: 'pending'
   },
   uploadedAt: {
@@ -103,6 +103,16 @@ const uploadSchema = new mongoose.Schema({
   associatedVerification: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Verification'
+  },
+  perceptualHash: String,
+  analysisId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'PhotoAnalysis'
+  },
+  thumbnails: {
+    small: String,
+    medium: String,
+    large: String
   }
 }, {
   timestamps: true

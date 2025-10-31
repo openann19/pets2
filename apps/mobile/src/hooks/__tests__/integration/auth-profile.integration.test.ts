@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment node
  * Integration Test: Auth + Profile + Settings Flow
  * Demonstrates how multiple hooks work together in real user scenarios
  */

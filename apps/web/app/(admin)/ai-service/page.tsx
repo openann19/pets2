@@ -304,7 +304,7 @@ export default function AIServiceManagementPage() {
         <nav className="-mb-px flex space-x-8">
           {(() => {
             type TabId = 'overview' | 'endpoints' | 'models' | 'config';
-            const tabs: Array<{ id: TabId; label: string; icon: React.ComponentType<{ className?: string }> }> = [
+            const tabs: Array<{ id: TabId; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }> = [
               { id: 'overview', label: 'Overview', icon: ChartBarIcon },
               { id: 'endpoints', label: 'Endpoints', icon: Cog6ToothIcon },
               { id: 'models', label: 'Models', icon: CpuChipIcon },

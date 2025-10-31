@@ -8,6 +8,7 @@
 
 // Cross-platform storage interface
 import { getLocalStorage, getNavigatorObject, isBrowserEnvironment } from './environment';
+import { logger } from './logger';
 export interface CrossPlatformStorage {
   getItem: (key: string) => Promise<string | null>;
   setItem: (key: string, value: string) => Promise<void>;
@@ -32,7 +33,7 @@ class WebStorageImpl implements CrossPlatformStorage {
       }
       return btoa(encrypted);
     } catch (error) {
-      console.error('Encryption error:', error);
+      logger.error('Encryption error:', error);
       return data;
     }
   }
@@ -47,7 +48,7 @@ class WebStorageImpl implements CrossPlatformStorage {
       }
       return decrypted;
     } catch (error) {
-      console.error('Decryption error:', error);
+      logger.error('Decryption error:', error);
       return '';
     }
   }
@@ -72,7 +73,7 @@ class WebStorageImpl implements CrossPlatformStorage {
       const decrypted = this.decryptData(item, storageKey);
       return Promise.resolve(decrypted);
     } catch (error) {
-      console.error('Web storage get error:', error);
+      logger.error('Web storage get error:', error);
       return Promise.resolve(null);
     }
   }
@@ -87,7 +88,7 @@ class WebStorageImpl implements CrossPlatformStorage {
       storage.setItem(key, encrypted);
       return Promise.resolve();
     } catch (error) {
-      console.error('Web storage set error:', error);
+      logger.error('Web storage set error:', error);
       return Promise.resolve();
     }
   }
@@ -100,7 +101,7 @@ class WebStorageImpl implements CrossPlatformStorage {
       storage.removeItem(key);
       return Promise.resolve();
     } catch (error) {
-      console.error('Web storage remove error:', error);
+      logger.error('Web storage remove error:', error);
       return Promise.resolve();
     }
   }
@@ -132,7 +133,7 @@ class MobileStorageImpl implements CrossPlatformStorage {
         // Dynamic import will be used in async methods
       }
     } catch {
-      console.warn('expo-secure-store not available, falling back to AsyncStorage');
+      logger.warn('expo-secure-store not available, falling back to AsyncStorage');
     }
   }
 
@@ -148,12 +149,12 @@ class MobileStorageImpl implements CrossPlatformStorage {
           const AsyncStorage = AsyncStorageModule.default as AsyncStorageType;
           return await AsyncStorage.getItem(key);
         } catch {
-          console.warn('AsyncStorage not available');
+          logger.warn('AsyncStorage not available');
           return null;
         }
       }
     } catch {
-      console.error('Mobile storage get error');
+      logger.error('Mobile storage get error');
       return null;
     }
   }
@@ -169,11 +170,11 @@ class MobileStorageImpl implements CrossPlatformStorage {
           const AsyncStorage = AsyncStorageModule.default as AsyncStorageType;
           await AsyncStorage.setItem(key, value);
         } catch {
-          console.warn('AsyncStorage not available');
+          logger.warn('AsyncStorage not available');
         }
       }
     } catch {
-      console.error('Mobile storage set error');
+      logger.error('Mobile storage set error');
     }
   }
 
@@ -188,11 +189,11 @@ class MobileStorageImpl implements CrossPlatformStorage {
           const AsyncStorage = AsyncStorageModule.default as AsyncStorageType;
           await AsyncStorage.removeItem(key);
         } catch {
-          console.warn('AsyncStorage not available');
+          logger.warn('AsyncStorage not available');
         }
       }
     } catch {
-      console.error('Mobile storage remove error');
+      logger.error('Mobile storage remove error');
     }
   }
 }

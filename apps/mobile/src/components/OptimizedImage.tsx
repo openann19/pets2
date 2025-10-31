@@ -10,7 +10,7 @@ import {
   type ImageStyle,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import type { FastImageProps, Priority, ResizeMode, Source } from 'react-native-fast-image';
+import type { Priority, ResizeMode, Source } from 'react-native-fast-image';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
 import { DominantColorFadeImage } from './micro/DominantColorFade';

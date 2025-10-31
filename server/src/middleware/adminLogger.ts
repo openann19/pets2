@@ -1,11 +1,6 @@
 import AdminActivityLog from '../models/AdminActivityLog';
 import logger from '../utils/logger';
 import type { Request, Response, NextFunction } from 'express';
-import type { IUserDocument } from '../types/mongoose';
-
-interface AuthRequest extends Request {
-  user?: IUserDocument;
-}
 
 interface AdminActivityDetails {
   [key: string]: unknown;
@@ -28,7 +23,7 @@ interface AdminActivityResponse {
  * @returns The created log entry
  */
 export const logAdminActivity = async (
-  req: AuthRequest,
+  req: Request,
   action: string,
   details: AdminActivityDetails = {},
   success: boolean = true,
@@ -40,11 +35,11 @@ export const logAdminActivity = async (
       return null;
     }
 
-    const logEntry = await (AdminActivityLog as any).create({
+    const logEntry = await AdminActivityLog.create({
       adminId: req.user._id,
       action,
       details,
-      ipAddress: req.ip || (req as any).connection?.remoteAddress,
+      ipAddress: req.ip || req.socket?.remoteAddress || undefined,
       userAgent: req.headers['user-agent'],
       timestamp: new Date(),
       success,
@@ -67,7 +62,7 @@ export const logAdminActivity = async (
  * @returns Express middleware function
  */
 export const adminActionLogger = (action: string) => {
-  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     // Store the original res.json method
     const originalJson = res.json.bind(res);
     

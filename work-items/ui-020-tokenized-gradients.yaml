@@ -1,0 +1,48 @@
+id: ui-020-tokenized-gradients
+owner: ux
+severity: medium
+area: mobile+tokens
+context: |
+  Gradients are hardcoded throughout the app with inconsistent color stops.
+  Need centralized gradient palette with named ramps for consistency.
+  Gradients should use theme colors for light/dark mode compatibility.
+acceptance:
+  - Named gradient tokens defined (hero, cta, background, accent)
+  - All gradients use theme color references (not hardcoded hex)
+  - No inline gradient arrays in components
+  - useGradient hook provides type-safe gradient access
+  - Gradients adapt to light/dark mode automatically
+  - Visual consistency verified across all gradient usage
+states:
+  - light-mode
+  - dark-mode
+telemetry:
+  - event: GRADIENT_USAGE
+    props: [component, gradientName, mode]
+contracts:
+  request: { gradientName: string, mode: string }
+  response: { colors: array, locations: array }
+  errors: [{ code: "GRADIENT_NOT_FOUND", message: string }]
+assets:
+  theme: [apps/mobile/src/theme/gradients.ts, apps/mobile/src/theme/types.ts]
+  hooks: [apps/mobile/src/hooks/utils/useGradient.ts]
+  components: [apps/mobile/src/components/**/*.tsx]
+  tests: [apps/mobile/src/theme/__tests__/gradients.test.ts]
+risks:
+  - Gradient performance on low-end devices
+  - Color stop positions may need tuning
+rollback:
+  - Remove gradient tokens
+  - Restore inline gradient definitions
+links: []
+status: open
+priority: medium
+impact: 3
+effort: S
+category: tokens
+tokens:
+  - palette.gradients.hero
+  - palette.gradients.cta
+  - palette.gradients.background
+  - palette.gradients.accent
+estimated_hours: 5

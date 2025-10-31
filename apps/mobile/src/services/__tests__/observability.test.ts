@@ -63,7 +63,7 @@ describe('ObservabilityService', () => {
     jest.clearAllMocks();
 
     // Reset singleton instance
-    (ObservabilityService as any).instance = undefined;
+    ObservabilityService.resetInstance();
 
     // Setup default mocks
     mockPerformanceMonitor.getCurrentFPS.mockReturnValue(60);

@@ -3,19 +3,36 @@
  * Production-grade tests covering all scenarios, edge cases, and accessibility
  */
 
-// Mock react-native using requireActual pattern (exactly like PinchZoom test)
+// CRITICAL: Explicitly mock react-native to ensure StyleSheet is available
+// Override global mock to ensure StyleSheet is definitely defined
 jest.mock('react-native', () => {
-  const RN = jest.requireActual('react-native');
+  const React = require('react');
+  const mockComponent = (name: string) => {
+    const Component = (props: any) => React.createElement(name, props, props.children);
+    Component.displayName = name;
+    return Component;
+  };
+  
   return {
-    ...RN,
     StyleSheet: {
-      create: jest.fn((styles) => styles),
-      flatten: jest.fn((style) => style),
-      compose: jest.fn((style1, style2) => [style1, style2]),
+      create: (styles: any) => {
+        if (!styles) return {};
+        return styles;
+      },
+      flatten: (style: any) => style,
+      compose: (...styles: any[]) => styles,
       hairlineWidth: 1,
-      absoluteFill: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
-      absoluteFillObject: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
+      absoluteFill: {},
+      absoluteFillObject: {},
     },
+    View: mockComponent('View'),
+    Text: mockComponent('Text'),
+    TextInput: mockComponent('TextInput'),
+    ScrollView: mockComponent('ScrollView'),
+    Image: mockComponent('Image'),
+    Platform: { OS: 'ios', select: (obj: any) => obj?.ios ?? obj?.default },
+    Dimensions: { get: () => ({ width: 375, height: 812 }) },
+    Animated: { View: mockComponent('Animated.View'), Value: jest.fn() },
   };
 });
 

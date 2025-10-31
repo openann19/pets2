@@ -1,62 +1,55 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
 import { logger } from '@pawfectmatch/core';
-;
 import { persist } from 'zustand/middleware';
-// Secure token storage utilities - prioritize HTTP-only cookies
+import { isBrowser, getSafeWindow, getSafeDocument, removeLocalStorageItem } from '@pawfectmatch/core/utils/env';
+// SECURITY FIX: Tokens are now stored in httpOnly cookies set by the backend
+// Client-side CANNOT access httpOnly cookies - they are sent automatically with requests
+// Tokens are no longer stored in localStorage or client-accessible cookies
+// Backend sets httpOnly cookies on login/register/refresh - see SECURITY_TOKEN_FIX_PLAN.md
 const tokenStorage = {
-    setAccessToken: (token) => {
-        if (typeof window !== 'undefined') {
-            // Set secure HTTP-only cookie (preferred)
-            document.cookie = `accessToken=${token}; Max-Age=${15 * 60}; Path=/; SameSite=Strict; Secure=${location.protocol === 'https:'}`;
-            // Fallback to localStorage for client-side access (less secure)
-            localStorage.setItem('accessToken', token);
-        }
+    // Note: Tokens are in httpOnly cookies, not accessible via JavaScript
+    // These functions are kept for backwards compatibility but tokens come from cookies automatically
+    setAccessToken: (_token: string): void => {
+        // SECURITY: Tokens are set by backend in httpOnly cookies
+        // Client cannot and should not set tokens - this is a no-op
+        // Tokens are automatically sent with requests via cookies
+        logger.debug('[AuthStore] Token set by backend in httpOnly cookie');
     },
-    setRefreshToken: (token) => {
-        if (typeof window !== 'undefined') {
-            // Set secure HTTP-only cookie (preferred)
-            document.cookie = `refreshToken=${token}; Max-Age=${7 * 24 * 60 * 60}; Path=/; SameSite=Strict; Secure=${location.protocol === 'https:'}`;
-            // Fallback to localStorage for client-side access (less secure)
-            localStorage.setItem('refreshToken', token);
-        }
+    setRefreshToken: (_token: string): void => {
+        // SECURITY: Tokens are set by backend in httpOnly cookies
+        // Client cannot and should not set tokens - this is a no-op
+        logger.debug('[AuthStore] Refresh token set by backend in httpOnly cookie');
     },
     getAccessToken: () => {
-        if (typeof window === 'undefined')
-            return null;
-        // Try to get from cookie first (more secure)
-        const cookieValue = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('accessToken='))
-            ?.split('=')[1];
-        if (cookieValue)
-            return cookieValue;
-        // Fallback to localStorage
-        return localStorage.getItem('accessToken');
+        // SECURITY: httpOnly cookies cannot be accessed via JavaScript
+        // Tokens are automatically sent with requests via cookies
+        // Return null to indicate tokens come from cookies (handled by server)
+        return null;
     },
     getRefreshToken: () => {
-        if (typeof window === 'undefined')
-            return null;
-        // Try to get from cookie first (more secure)
-        const cookieValue = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('refreshToken='))
-            ?.split('=')[1];
-        if (cookieValue)
-            return cookieValue;
-        // Fallback to localStorage
-        return localStorage.getItem('refreshToken');
+        // SECURITY: httpOnly cookies cannot be accessed via JavaScript
+        // Tokens are automatically sent with requests via cookies
+        return null;
     },
     clearAll: () => {
-        if (typeof window === 'undefined')
+        if (!isBrowser())
             return;
-        // Clear localStorage
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        // Clear cookies with secure flags
-        const secureFlag = location.protocol === 'https:' ? '; Secure' : '';
-        document.cookie = `accessToken=; Max-Age=0; Path=/; SameSite=Strict${secureFlag}`;
-        document.cookie = `refreshToken=; Max-Age=0; Path=/; SameSite=Strict${secureFlag}`;
-        document.cookie = `auth-token=; Max-Age=0; Path=/; SameSite=Lax`;
+        // Clear any legacy localStorage entries (migration cleanup)
+        removeLocalStorageItem('accessToken');
+        removeLocalStorageItem('refreshToken');
+        removeLocalStorageItem('auth_token');
+        removeLocalStorageItem('refresh_token');
+        // Note: httpOnly cookies are cleared by backend on logout
+        // Client-side cookie clearing only works for non-httpOnly cookies
+        // Attempt to clear any non-httpOnly cookie remnants
+        const win = getSafeWindow();
+        const doc = getSafeDocument();
+        if (win && doc) {
+            const secureFlag = win.location.protocol === 'https:' ? '; Secure' : '';
+            doc.cookie = `accessToken=; Max-Age=0; Path=/; SameSite=Strict${secureFlag}`;
+            doc.cookie = `refreshToken=; Max-Age=0; Path=/; SameSite=Strict${secureFlag}`;
+            doc.cookie = `auth-token=; Max-Age=0; Path=/; SameSite=Lax`;
+        }
     }
 };
 export const useAuthStore = create()(persist((set, get) => ({
@@ -75,24 +68,28 @@ export const useAuthStore = create()(persist((set, get) => ({
         });
     },
     setTokens: (accessToken, refreshToken) => {
-        // Update store state
+        // SECURITY: Tokens are now in httpOnly cookies set by backend
+        // We still track token state in memory for UI purposes, but don't store in localStorage
+        // Tokens are automatically sent with requests via cookies
         set({
-            accessToken,
-            refreshToken: refreshToken || get().refreshToken,
+            accessToken: accessToken || null, // Keep in memory for state management
+            refreshToken: refreshToken || get().refreshToken, // Keep in memory for state management
             isAuthenticated: true,
             error: null
         });
-        // Store tokens in localStorage (single source of truth)
+        // Note: Token storage functions are no-ops - tokens come from httpOnly cookies
         tokenStorage.setAccessToken(accessToken);
         if (refreshToken) {
             tokenStorage.setRefreshToken(refreshToken);
         }
-        // Sync with API service if available
-        if (typeof window !== 'undefined') {
+        // Sync with API service if available (token is in cookie, but notify service of auth state)
+        if (isBrowser()) {
             try {
                 const apiService = require('../services/api').default;
-                if (apiService && apiService.setAuthToken) {
-                    apiService.setAuthToken(accessToken);
+                // API service will use cookies automatically, but we can notify it of auth state
+                if (apiService && typeof apiService.setToken === 'function') {
+                    // API service should use credentials: 'include' for cookies
+                    apiService.setToken(accessToken, refreshToken);
                 }
             }
             catch (error) {
@@ -134,48 +131,40 @@ export const useAuthStore = create()(persist((set, get) => ({
         }
         set({ isLoading: true, isInitialized: true });
         try {
-            // Check if we have stored tokens on mount
-            if (typeof window !== 'undefined') {
-                const storedToken = tokenStorage.getAccessToken();
-                const storedRefreshToken = tokenStorage.getRefreshToken();
-                if (storedToken) {
-                    // Update state with stored tokens
-                    set({
-                        accessToken: storedToken,
-                        refreshToken: storedRefreshToken,
-                        isAuthenticated: true
-                    });
-                    // Sync with API service
-                    try {
-                        const apiService = require('../services/api').default;
-                        if (apiService && apiService.setToken) {
-                            apiService.setToken(storedToken, storedRefreshToken);
+            // SECURITY: Tokens are in httpOnly cookies, not accessible via JavaScript
+            // Validate authentication by calling backend with credentials: 'include'
+            // This will automatically send cookies with the request
+            if (isBrowser()) {
+                try {
+                    const apiService = require('../services/api').default;
+                    // Validate token with backend by fetching current user
+                    // Cookies are sent automatically with credentials: 'include'
+                    if (apiService && apiService.getCurrentUser) {
+                        const userResponse = await apiService.getCurrentUser();
+                        if (userResponse.success && userResponse.data) {
+                            // Authentication successful - tokens are in httpOnly cookies
+                            set({ 
+                                user: userResponse.data, 
+                                isAuthenticated: true,
+                                // Don't store tokens in state - they're in httpOnly cookies
+                                accessToken: null,
+                                refreshToken: null
+                            });
+                        } else {
+                            // No valid authentication - clear state
+                            logger.warn('[AuthStore] Token validation failed - no valid session');
+                            get().clearTokens();
                         }
-                        // Validate token with backend by fetching current user
-                        if (apiService && apiService.getCurrentUser) {
-                            const userResponse = await apiService.getCurrentUser();
-                            if (userResponse.success && userResponse.data) {
-                                set({ user: userResponse.data, isAuthenticated: true });
-                            } else {
-                                // Token invalid - try refresh if we have refresh token
-                                if (storedRefreshToken && apiService.refreshAccessToken) {
-                                    const refreshed = await apiService.refreshAccessToken();
-                                    if (!refreshed) {
-                                        logger.warn('[AuthStore] Token validation failed and refresh failed');
-                                        get().clearTokens();
-                                    }
-                                } else {
-                                    logger.warn('[AuthStore] Token validation failed, no refresh token');
-                                    get().clearTokens();
-                                }
-                            }
-                        }
+                    } else {
+                        // No API service available
+                        logger.debug('[AuthStore] API service not available');
+                        set({ isAuthenticated: false });
                     }
-                    catch (error) {
-                        logger.debug('[AuthStore] Could not validate token', { error });
-                        // If validation fails, clear tokens
-                        get().clearTokens();
-                    }
+                }
+                catch (error) {
+                    logger.debug('[AuthStore] Could not validate token', { error });
+                    // If validation fails, clear tokens
+                    get().clearTokens();
                 }
             }
         }
@@ -189,24 +178,24 @@ export const useAuthStore = create()(persist((set, get) => ({
     },
     // Automatic token refresh before expiration
     refreshTokenIfNeeded: async () => {
-        const state = get();
-        if (!state.refreshToken || !state.accessToken) {
-            return false;
-        }
+        // SECURITY: Refresh token is in httpOnly cookie, not accessible via JavaScript
+        // API service will handle refresh using cookies automatically
         try {
             const apiService = require('../services/api').default;
             if (apiService && apiService.refreshAccessToken) {
+                // Refresh endpoint will read refreshToken from httpOnly cookie
+                // and set new tokens in httpOnly cookies
                 const refreshed = await apiService.refreshAccessToken();
                 if (refreshed) {
-                    const newToken = tokenStorage.getAccessToken();
-                    const newRefreshToken = tokenStorage.getRefreshToken();
-                    if (newToken) {
-                        set({
-                            accessToken: newToken,
-                            refreshToken: newRefreshToken || state.refreshToken,
-                        });
-                        return true;
-                    }
+                    // Tokens are now in httpOnly cookies set by backend
+                    // We don't need to read them - they're automatically sent with requests
+                    set({
+                        // Don't store tokens in state - they're in httpOnly cookies
+                        accessToken: null,
+                        refreshToken: null,
+                        isAuthenticated: true
+                    });
+                    return true;
                 }
             }
         } catch (error) {
@@ -217,10 +206,12 @@ export const useAuthStore = create()(persist((set, get) => ({
 }), {
     name: 'auth-storage',
     partialize: (state) => ({
+        // SECURITY: Only persist user data, NOT tokens
+        // Tokens are in httpOnly cookies set by backend, not stored in localStorage
         user: state.user,
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
+        // Explicitly exclude tokens from persistence
+        // accessToken and refreshToken should not be persisted
     }),
 }));
 //# sourceMappingURL=auth-store.js.map

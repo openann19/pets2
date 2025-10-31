@@ -494,7 +494,8 @@ describe('BiometricService', () => {
       expect(typeof capabilities.hasHardware).toBe('boolean');
       expect(typeof capabilities.isEnrolled).toBe('boolean');
       expect(Array.isArray(capabilities.supportedTypes)).toBe(true);
-      expect(typeof capabilities.securityLevel).toBe('string');
+      // securityLevel is a number (SecurityLevel enum value), not a string
+      expect(typeof capabilities.securityLevel === 'number' || capabilities.securityLevel === undefined).toBe(true);
     });
   });
 });

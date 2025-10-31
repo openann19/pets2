@@ -388,6 +388,7 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
           clearInterval(interval);
         };
       }
+      return undefined;
     }, delay);
 
     return () => {

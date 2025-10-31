@@ -7,6 +7,7 @@ import * as winston from 'winston';
 import * as path from 'path';
 import * as fs from 'fs';
 import { createHash } from 'crypto';
+import { hostname } from 'os';
 
 // Define secured log format
 const logFormat = winston.format.combine(
@@ -62,7 +63,7 @@ function sanitizeLogData(data: Record<string, any> | undefined): Record<string, 
         }
       } else if (typeof obj[key] === 'object' && obj[key] !== null) {
         // Recursively sanitize nested objects
-        sanitizeObj(obj[key]);
+        sanitizeObj(obj[key] as Record<string, unknown>);
       }
     });
   }
@@ -73,13 +74,13 @@ function sanitizeLogData(data: Record<string, any> | undefined): Record<string, 
 
 // Create enhanced logger instance
 const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
+  level: process.env['LOG_LEVEL'] || 'info',
   format: logFormat,
   defaultMeta: { 
     service: 'pawfectmatch-api',
     environment: process.env.NODE_ENV || 'development',
-    version: process.env.APP_VERSION || '1.0.0',
-    hostname: require('os').hostname()
+    version: process.env['APP_VERSION'] || '1.0.0',
+    hostname: hostname()
   },
   transports: [
     // Write all logs to combined.log with rotation
@@ -213,7 +214,7 @@ interface RequestMetadata {
   };
   
   logger.info(message, meta);
-  return meta.requestId; // Return requestId for correlation
+  return String(meta['requestId'] || ''); // Return requestId for correlation
 };
 
 (logger as ExtendedLogger).apiError = (req: RequestMetadata, error: Error | unknown, statusCode: number = 500, additionalMeta: Record<string, unknown> = {}) => {
@@ -230,7 +231,7 @@ interface RequestMetadata {
   };
 
   logger.error('API Error', errorMeta);
-  return errorMeta.requestId; // Return requestId for correlation
+  return String(errorMeta['requestId'] || ''); // Return requestId for correlation
 };
 
 // Security event logging

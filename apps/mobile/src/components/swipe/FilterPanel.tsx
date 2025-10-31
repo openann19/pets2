@@ -27,17 +27,19 @@ export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.
   const theme = useTheme();
 
   const handleBreedChange = (breed: string) => {
+    const newBreed = filters.breed === breed ? undefined : breed;
     onFilterChange({
       ...filters,
-      breed: filters.breed === breed ? undefined : breed,
+      breed: newBreed,
       species: 'dog',
     });
   };
 
   const handleSpeciesChange = (species: string) => {
+    const newSpecies = species === 'All' ? undefined : species.toLowerCase();
     onFilterChange({
       ...filters,
-      species: species === 'All' ? undefined : species.toLowerCase(),
+      species: newSpecies,
     });
   };
 

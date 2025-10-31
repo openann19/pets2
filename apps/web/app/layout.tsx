@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import '../src/polyfills'; // Import polyfills first
 import { Providers } from './providers';
+import { SharedOverlayProvider, AnimationBudgetManager, AnimationBudgetDisplay, SoundToggle, CommandPaletteWrapper } from '../src/components/Animations';
+import { globalCommands } from '../src/config/commands';
 import ThemeToggle from '@/components/ThemeToggle';
 import BackgroundProvider from '@/components/Background/BackgroundProvider';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -106,20 +108,27 @@ export default function RootLayout({
           Skip to content
         </a>
         <Providers>
-          <SafeAreaProvider>
-            <BackgroundProvider>
-              <MobileOptimizationInit />
-              {/* Global floating theme toggle - always visible */}
-              <div className="fixed top-4 right-4 z-[1000]">
-                <ThemeToggle />
-              </div>
-              <main id="main-content" role="main">
-                <ErrorBoundary>
-                  {children}
-                </ErrorBoundary>
-              </main>
-            </BackgroundProvider>
-          </SafeAreaProvider>
+          <SharedOverlayProvider>
+            <AnimationBudgetDisplay />
+            <CommandPaletteWrapper commands={globalCommands} />
+            <AnimationBudgetManager maxAnimations={16}>
+              <SafeAreaProvider>
+                <BackgroundProvider>
+                  <MobileOptimizationInit />
+                  {/* Global floating theme toggle - always visible */}
+                  <div className="fixed top-4 right-4 z-[1000] space-y-2">
+                    <ThemeToggle />
+                    <SoundToggle />
+                  </div>
+                  <main id="main-content" role="main">
+                    <ErrorBoundary>
+                      {children}
+                    </ErrorBoundary>
+                  </main>
+                </BackgroundProvider>
+              </SafeAreaProvider>
+            </AnimationBudgetManager>
+          </SharedOverlayProvider>
         </Providers>
       </body>
     </html>

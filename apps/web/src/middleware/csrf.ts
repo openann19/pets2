@@ -15,7 +15,6 @@
  */
 import crypto from 'crypto'
 import { logger } from '@pawfectmatch/core';
-;
 import { NextRequest, NextResponse } from 'next/server';
 /**
  * Configuration for CSRF protection
@@ -188,7 +187,7 @@ export async function csrfMiddleware(request) {
     // === CSRF Protection Logic ===
     // Step 1: Validate Origin/Referer headers
     if (!validateOrigin(request)) {
-        console.warn('[CSRF] Invalid origin/referer:', {
+        logger.warn('[CSRF] Invalid origin/referer:', {
             pathname,
             origin: request.headers.get('origin'),
             referer: request.headers.get('referer'),

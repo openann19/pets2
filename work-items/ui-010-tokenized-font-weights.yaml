@@ -1,0 +1,48 @@
+id: ui-010-tokenized-font-weights
+owner: ux
+severity: medium
+area: mobile+tokens
+context: |
+  Font weights are inconsistent with inline fontWeight: "bold" throughout codebase.
+  Need to enforce theme.typography tokens for all font weight usage.
+  Improves consistency and makes weight changes centralized.
+acceptance:
+  - No inline fontWeight bold or fontWeight 600 in components
+  - All text uses theme.typography tokens (body, h1, h2, h3, etc.)
+  - ESLint rule enforces token usage (no-hardcoded-font-weights)
+  - Visual consistency verified across all text elements
+  - Typography scale documented with usage guidelines
+states:
+  - compliant
+  - non-compliant
+telemetry:
+  - event: FONT_WEIGHT_AUDIT
+    props: [component, hasHardcodedWeight, tokenUsed]
+contracts:
+  request: { componentTree: object }
+  response: { violations: array, compliantCount: number }
+  errors: []
+assets:
+  theme: [apps/mobile/src/theme/typography.ts]
+  components: [apps/mobile/src/**/*.ts, apps/mobile/src/**/*.tsx]
+  eslint: [eslint-local-rules/rules/no-hardcoded-font-weights.js]
+  tests: [apps/mobile/src/__tests__/tokens/font-weights.test.tsx]
+  scripts: [scripts/audit-font-weights.ts]
+risks:
+  - Large number of files to update
+  - May reveal inconsistent font weight usage
+rollback:
+  - Remove ESLint rule
+  - Revert component changes
+links: []
+status: open
+priority: medium
+impact: 3
+effort: S
+category: tokens
+tokens:
+  - typography.body
+  - typography.h1
+  - typography.h2
+  - typography.h3
+estimated_hours: 6

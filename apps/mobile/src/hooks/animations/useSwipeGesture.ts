@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Dimensions } from 'react-native';
 import { Gesture } from 'react-native-gesture-handler';
-import Animated, {
+import {
   useSharedValue,
   useAnimatedStyle,
   withSpring,

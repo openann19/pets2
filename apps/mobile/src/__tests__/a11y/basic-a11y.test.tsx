@@ -5,33 +5,38 @@
 
 import React from 'react';
 import { render } from '@testing-library/react-native';
+import { Text, TouchableOpacity, Image, View } from 'react-native';
 import { describe, it, expect } from '@jest/globals';
 
 describe('Basic Accessibility', () => {
   describe('Semantic roles and labels', () => {
     it('should render accessible buttons', () => {
-      const Button = ({ title }: { title: string }) => <button aria-label={title}>{title}</button>;
+      const Button = ({ title, accessibilityRole = 'button' }: { title: string; accessibilityRole?: string }) => (
+        <TouchableOpacity accessibilityRole={accessibilityRole} accessibilityLabel={title}>
+          <Text>{title}</Text>
+        </TouchableOpacity>
+      );
 
       const { getByLabelText } = render(<Button title="Submit" />);
       const button = getByLabelText('Submit');
 
       expect(button).toBeTruthy();
-      expect(button.getAttribute('role')).toBe('button');
+      expect(button).toHaveProp('accessibilityRole', 'button');
     });
 
     it('should provide accessible names for images', () => {
-      const Image = ({ alt }: { alt: string }) => (
-        <img
-          src="test.jpg"
-          alt={alt}
+      const ImageComponent = ({ alt }: { alt: string }) => (
+        <Image
+          source={{ uri: 'test.jpg' }}
+          accessibilityLabel={alt}
+          testID="test-image"
         />
       );
 
-      const { getByAltText } = render(<Image alt="Pet photo" />);
-      const image = getByAltText('Pet photo');
+      const { getByLabelText } = render(<ImageComponent alt="Pet photo" />);
+      const image = getByLabelText('Pet photo');
 
       expect(image).toBeTruthy();
-    });
   });
 
   describe('Touch target sizes', () => {

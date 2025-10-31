@@ -53,8 +53,9 @@ router.post('/', async (req, res) => {
     }
     
     res.json(reel);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: errorMessage });
   }
 });
 
@@ -79,8 +80,9 @@ router.put('/:id/clips', async (req, res) => {
     }
     
     res.json({ ok: true });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: errorMessage });
   }
 });
 
@@ -99,8 +101,9 @@ router.post('/:id/render', async (req, res) => {
     await addRenderJob({ reelId: id });
     
     res.json({ queued: true });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: errorMessage });
   }
 });
 
@@ -123,8 +126,9 @@ router.get('/:id', async (req, res) => {
     );
     
     res.json({ ...reel, clips });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: errorMessage });
   }
 });
 
@@ -156,8 +160,9 @@ router.post('/:id/remix', async (req, res) => {
     );
     
     res.json(remix);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: errorMessage });
   }
 });
 
@@ -176,8 +181,9 @@ router.get('/', async (req, res) => {
     );
     
     res.json(reels);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: errorMessage });
   }
 });
 
@@ -201,8 +207,9 @@ router.get('/render-context/:reelId', async (req, res) => {
       vars: {}, // TODO: extract from spec.overlays
       durationMs: reel.duration_ms,
     });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: errorMessage });
   }
 });
 
@@ -221,8 +228,9 @@ router.post('/render-callback/:reelId', async (req, res) => {
     );
     
     res.json({ ok: true });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: errorMessage });
   }
 });
 

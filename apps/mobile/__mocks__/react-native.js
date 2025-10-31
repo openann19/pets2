@@ -4,6 +4,12 @@
  */
 
 const React = require('react');
+// Import actual React Native for Text component to work properly with React Testing Library
+// This is safe to do in Jest mocks as requireActual is hoisted
+const actualRN = typeof jest !== 'undefined' && typeof jest.requireActual === 'function'
+  ? jest.requireActual('react-native')
+  : {};
+
 // jest is available globally in Jest mocks, but provide fallback for safety
 const jestFn = (typeof jest !== 'undefined' && jest.fn) ? jest.fn : function mockFn(impl) {
   const fn = impl || function() {};
@@ -15,20 +21,138 @@ const jestFn = (typeof jest !== 'undefined' && jest.fn) ? jest.fn : function moc
 };
 
 // Mock React Native components
+// Return proper React components that React Testing Library can render
 const mockComponent = (name) => {
-  return React.forwardRef((props, ref) => {
+  const Component = (props, ref) => {
+    // Return a simple div-like element for testing
+    // React Testing Library will handle rendering
     return React.createElement('div', {
       ...props,
       ref,
-      'data-testid': name,
-      style: { display: 'flex', ...props.style }
+      testID: props.testID || name,
+      'data-testid': props.testID || name,
+      'data-component': name,
+      // Include accessibility props for React Testing Library
+      'aria-label': props.accessibilityLabel,
+      'aria-role': props.accessibilityRole,
+      role: props.accessibilityRole,
     }, props.children);
-  });
+  };
+  Component.displayName = name;
+  Component.propTypes = undefined;
+  // Return a forwardRef component that React can use
+  if (React.forwardRef) {
+    return React.forwardRef(Component);
+  }
+  // Fallback if forwardRef not available
+  Component.ref = null;
+  return Component;
 };
+
+// Special mock for Text component - needs to render children as text
+// React Testing Library for React Native uses react-test-renderer which needs proper Text nodes
+const mockTextComponent = (name) => {
+  const Component = (props, ref) => {
+    // Extract text content from children for React Testing Library to find
+    const getTextContent = (children) => {
+      if (typeof children === 'string') {
+        return children;
+      }
+      if (typeof children === 'number') {
+        return String(children);
+      }
+      if (typeof children === 'boolean') {
+        return children ? 'true' : 'false';
+      }
+      if (children === null || children === undefined) {
+        return '';
+      }
+      if (Array.isArray(children)) {
+        return children
+          .map((child) => {
+            if (typeof child === 'string') return child;
+            if (typeof child === 'number') return String(child);
+            if (typeof child === 'boolean') return child ? 'true' : 'false';
+            if (child === null || child === undefined) return '';
+            if (child && typeof child === 'object' && 'props' in child && child.props?.children) {
+              return getTextContent(child.props.children);
+            }
+            // Handle React elements
+            if (React.isValidElement && React.isValidElement(child)) {
+              return getTextContent(child.props?.children);
+            }
+            return '';
+          })
+          .filter(Boolean)
+          .join('');
+      }
+      if (children && typeof children === 'object') {
+        // Handle React elements
+        if ('props' in children && children.props?.children) {
+          return getTextContent(children.props.children);
+        }
+        // Handle React elements with isValidElement
+        if (React.isValidElement && React.isValidElement(children)) {
+          return getTextContent(children.props?.children);
+        }
+      }
+      return '';
+    };
+    
+    const textContent = getTextContent(props.children);
+    
+    // Create a React Native-like Text component structure
+    // Use Text component name to match React Native's structure for react-test-renderer
+    // React Testing Library for React Native looks for text content in children
+    const textProps = {
+      ...props,
+      ref,
+      testID: props.testID || name,
+      accessibilityLabel: props.accessibilityLabel || textContent,
+      accessibilityRole: props.accessibilityRole || 'text',
+      // Ensure children contains the text content for React Testing Library to find
+      children: textContent || props.children,
+    };
+    
+    // Return a structure that react-test-renderer can serialize
+    // Use React.createElement with 'Text' type to match React Native structure
+    return React.createElement('Text', textProps, textContent || props.children);
+  };
+  Component.displayName = name;
+  Component.propTypes = undefined;
+  // Make the component identifiable as Text for React Testing Library
+  Component._isTextComponent = true;
+  if (React.forwardRef) {
+    return React.forwardRef(Component);
+  }
+  Component.ref = null;
+  return Component;
+};
+
+// Try to use actual React Native Text component for better React Testing Library support
+// This works when jest.requireActual is available
+let TextComponent = mockTextComponent('Text');
+if (actualRN && actualRN.Text) {
+  try {
+    // Check if we're in a test environment that supports actual React Native components
+    // In most Jest environments, we'll use the mock, but if actualRN.Text exists and works,
+    // use it for better React Testing Library compatibility
+    const testText = actualRN.Text;
+    // Verify it's a valid component before using it
+    if (typeof testText === 'function' || (testText && typeof testText.render === 'function')) {
+      TextComponent = actualRN.Text;
+    } else {
+      TextComponent = mockTextComponent('Text');
+    }
+  } catch (e) {
+    // Fall back to mock if actual component fails
+    TextComponent = mockTextComponent('Text');
+  }
+}
 
 const RN = {
   View: mockComponent('View'),
-  Text: mockComponent('Text'),
+  Text: TextComponent,
   TouchableOpacity: mockComponent('TouchableOpacity'),
   TouchableWithoutFeedback: mockComponent('TouchableWithoutFeedback'),
   TouchableHighlight: mockComponent('TouchableHighlight'),
@@ -42,35 +166,69 @@ const RN = {
   ActivityIndicator: mockComponent('ActivityIndicator'),
   Switch: mockComponent('Switch'),
   Alert: {
-    alert: jestFn(),
+    alert: jestFn((title, message, buttons, options) => {
+      // React Native Alert.alert signature: (title, message?, buttons?, options?)
+      // Auto-click the last button (usually "OK" or confirm action) for test convenience
+      if (buttons && Array.isArray(buttons) && buttons.length > 0) {
+        const lastButton = buttons[buttons.length - 1];
+        // Execute onPress callback if available
+        if (lastButton && typeof lastButton.onPress === 'function') {
+          try {
+            lastButton.onPress();
+          } catch (e) {
+            // Ignore errors in test mocks
+          }
+        }
+      }
+      // Return undefined to match React Native Alert.alert behavior
+      return undefined;
+    }),
   },
   Platform: {
     OS: 'ios',
     Version: 15,
-    select: jestFn((obj) => obj?.ios || obj?.default),
+    select: jestFn((obj) => {
+      if (!obj) return undefined;
+      return obj.ios || obj.default || obj.android;
+    }),
+    isPad: false,
+    isTV: false,
+    isTesting: true,
   },
   Dimensions: {
-    get: jestFn(() => ({ width: 375, height: 812 })),
+    get: jestFn((dimension) => {
+      // Support both 'window' and 'screen' dimensions
+      const defaultDimensions = { width: 375, height: 812, scale: 2, fontScale: 1 };
+      if (dimension === 'window' || dimension === 'screen') {
+        return defaultDimensions;
+      }
+      return defaultDimensions;
+    }),
     addEventListener: jestFn(() => ({ remove: jestFn() })),
     removeEventListener: jestFn(),
   },
   StyleSheet: {
-    create: (typeof jest !== 'undefined' && jest.fn) 
-      ? jest.fn((styles) => styles)
-      : ((styles) => styles),
-    flatten: (typeof jest !== 'undefined' && jest.fn)
-      ? jest.fn((style) => style)
-      : ((style) => style),
-    compose: (typeof jest !== 'undefined' && jest.fn)
-      ? jest.fn((style1, style2) => [style1, style2])
-      : ((style1, style2) => [style1, style2]),
+    create: (styles) => {
+      // Ensure StyleSheet.create returns a proper object
+      if (typeof styles === 'object' && styles !== null) {
+        return styles;
+      }
+      return {};
+    },
+    flatten: (style) => {
+      if (Array.isArray(style)) {
+        return Object.assign({}, ...style);
+      }
+      return style || {};
+    },
+    compose: (style1, style2) => [style1, style2],
     hairlineWidth: 1,
     absoluteFill: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
     absoluteFillObject: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
   },
   Animated: {
     View: mockComponent('Animated.View'),
-    Text: mockComponent('Animated.Text'),
+    Text: mockTextComponent('Animated.Text'),
     Image: mockComponent('Animated.Image'),
     ScrollView: mockComponent('Animated.ScrollView'),
     Value: jestFn(() => ({
@@ -174,3 +332,5 @@ const RN = {
 };
 
 module.exports = RN;
+// Also export as default for ES modules
+module.exports.default = RN;

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment node
  * Integration Test: Swipe Gestures + Animations + Match Flow
  * Demonstrates how swipe-related hooks work together
  */

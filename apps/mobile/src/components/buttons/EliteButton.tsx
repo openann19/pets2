@@ -12,7 +12,7 @@
  */
 
 import { forwardRef } from 'react';
-import type { View, ViewStyle } from 'react-native';
+import type { View } from 'react-native';
 import { StyleSheet } from 'react-native';
 
 import BaseButton, { type BaseButtonProps } from './BaseButton';
@@ -97,20 +97,25 @@ const EliteButton = forwardRef<View, EliteButtonProps>(
       onPress?.();
     };
 
+    // Filter undefined props for exactOptionalPropertyTypes compatibility
+    const baseButtonProps = {
+      ...(variant !== undefined ? { variant } : {}),
+      ...(size !== undefined ? { size } : {}),
+      ...(loading !== undefined ? { loading } : {}),
+      ...(disabled !== undefined ? { disabled } : {}),
+      ...(icon !== undefined ? { icon } : {}),
+      ...(leftIcon !== undefined ? { leftIcon } : {}),
+      ...(rightIcon !== undefined ? { rightIcon } : {}),
+      ...(style !== undefined ? { style } : {}),
+    };
+
     // Create the button with all effects applied
     let ButtonComponent = (
       <BaseButton
         {...baseProps}
+        {...baseButtonProps}
         title={title}
-        variant={variant}
-        size={size}
-        loading={loading}
-        disabled={disabled}
-        icon={icon}
-        leftIcon={leftIcon}
-        rightIcon={rightIcon}
         onPress={handlePress}
-        style={style}
       />
     );
 
@@ -119,7 +124,7 @@ const EliteButton = forwardRef<View, EliteButtonProps>(
       ButtonComponent = (
         <WithShimmerFX
           duration={shimmerDuration}
-          style={style}
+          {...(style !== undefined ? { style } : {})}
         >
           {ButtonComponent}
         </WithShimmerFX>
@@ -129,9 +134,9 @@ const EliteButton = forwardRef<View, EliteButtonProps>(
     if (gradientEffect) {
       ButtonComponent = (
         <WithGradientFX
-          gradient={gradientName}
-          colors={gradientColors}
-          style={style}
+          {...(gradientName !== undefined ? { gradient: gradientName } : {})}
+          {...(gradientColors !== undefined ? { colors: gradientColors } : {})}
+          {...(style !== undefined ? { style } : {})}
         >
           {ButtonComponent}
         </WithGradientFX>
@@ -139,18 +144,18 @@ const EliteButton = forwardRef<View, EliteButtonProps>(
     }
 
     if (rippleEffect) {
-      ButtonComponent = <WithRippleFX style={style}>{ButtonComponent}</WithRippleFX>;
+      ButtonComponent = <WithRippleFX {...(style !== undefined ? { style } : {})}>{ButtonComponent}</WithRippleFX>;
     }
 
     if (pressEffect) {
-      ButtonComponent = <WithPressFX style={style}>{ButtonComponent}</WithPressFX>;
+      ButtonComponent = <WithPressFX {...(style !== undefined ? { style } : {})}>{ButtonComponent}</WithPressFX>;
     }
 
     if (magneticEffect) {
       ButtonComponent = (
         <WithMagneticFX
           sensitivity={magneticSensitivity}
-          style={style}
+          {...(style !== undefined ? { style } : {})}
         >
           {ButtonComponent}
         </WithMagneticFX>
@@ -160,9 +165,9 @@ const EliteButton = forwardRef<View, EliteButtonProps>(
     if (glowEffect) {
       ButtonComponent = (
         <WithGlowFX
-          color={glowColor}
+          {...(glowColor !== undefined ? { color: glowColor } : {})}
           intensity={glowIntensity}
-          style={style}
+          {...(style !== undefined ? { style } : {})}
         >
           {ButtonComponent}
         </WithGlowFX>

@@ -61,7 +61,7 @@ const matchSchema = new mongoose.Schema({
     },
     messageType: {
       type: String,
-      enum: ['text', 'image', 'location', 'system', 'voice', 'file'],
+      enum: ['text', 'image', 'video', 'location', 'system', 'voice', 'file', 'gif', 'sticker', 'pet_profile', 'playdate_proposal', 'health_alert', 'breed_info', 'compatibility'],
       default: 'text'
     },
     attachments: [{
@@ -70,6 +70,10 @@ const matchSchema = new mongoose.Schema({
       fileName: String,
       fileSize: Number
     }],
+    voiceMetadata: {
+      duration: Number,
+      waveform: [Number]
+    },
     replyTo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Message'
@@ -114,7 +118,28 @@ const matchSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
-    deletedAt: Date
+    deletedAt: Date,
+    // Pet-centric message data
+    petProfileCard: {
+      type: mongoose.Schema.Types.Mixed
+    },
+    compatibilityIndicator: {
+      type: mongoose.Schema.Types.Mixed
+    },
+    breedInformation: {
+      type: mongoose.Schema.Types.Mixed
+    },
+    healthAlert: {
+      type: mongoose.Schema.Types.Mixed
+    },
+    playdateProposal: {
+      type: mongoose.Schema.Types.Mixed
+    },
+    petContext: {
+      petId: String,
+      petName: String,
+      action: String
+    }
   }],
   
   // Meeting Planning

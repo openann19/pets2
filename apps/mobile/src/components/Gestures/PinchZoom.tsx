@@ -74,29 +74,29 @@ export function PinchZoom({
     container: {
       overflow: 'hidden',
       backgroundColor: theme?.colors?.bg || '#ffffff',
-      borderRadius: theme?.radius?.md || 8,
+      borderRadius: theme?.radii?.md || 8,
     },
     imageContainer: {
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
     },
     image: {
       backgroundColor: theme?.colors?.surface || '#f5f5f5',
-      borderRadius: theme?.radius?.md || 8,
+      borderRadius: theme?.radii?.md || 8,
     },
   }))() || {
     container: {
       overflow: 'hidden',
       backgroundColor: theme?.colors?.bg || '#ffffff',
-      borderRadius: theme?.radius?.md || 8,
+      borderRadius: theme?.radii?.md || 8,
     },
     imageContainer: {
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
     },
     image: {
       backgroundColor: theme?.colors?.surface || '#f5f5f5',
-      borderRadius: theme?.radius?.md || 8,
+      borderRadius: theme?.radii?.md || 8,
     },
   };
   const scale = useSharedValue(initialScale);

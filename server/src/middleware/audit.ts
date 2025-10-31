@@ -7,20 +7,11 @@ import { Request, Response, NextFunction } from 'express';
 import { AuditLog } from '../models/AuditLog';
 import logger from '../utils/logger';
 
-interface AuthRequest extends Request {
-  user?: {
-    _id: string;
-    email: string;
-    role: string;
-    [key: string]: unknown;
-  };
-}
-
 /**
  * Create an audit log entry
  */
 export async function logAdminAction(
-  req: AuthRequest,
+  req: Request,
   action: string,
   data: {
     target?: string;
@@ -52,7 +43,7 @@ export async function logAdminAction(
  * Higher-order function to create audit logger
  */
 export function adminActionLogger(action: string) {
-  return async (req: AuthRequest, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     const originalSend = res.send.bind(res);
     
     let responseSent = false;
@@ -83,7 +74,7 @@ export function adminActionLogger(action: string) {
  */
 export async function withAudit<T>(
   ctx: {
-    req: AuthRequest;
+    req: Request;
     action: string;
     target: string;
     reason?: string;

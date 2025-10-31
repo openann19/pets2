@@ -1,9 +1,13 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
+import type { AxiosResponse } from 'axios';
 import User from '../models/User';
 import Pet from '../models/Pet';
 import logger from '../utils/logger';
+import type { IUserPreferences, IUserLocation } from '../types/mongoose.d';
+import type { IPetLocation, IPetDocument } from '../types/mongoose.d';
+import type { IUserDocument } from '../models/User';
 
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+const AI_SERVICE_URL = process.env['AI_SERVICE_URL'] || 'http://localhost:8000';
 
 // Interface for AI recommendation result
 export interface AIRecommendation {
@@ -21,15 +25,15 @@ export interface PetProfile {
   size: string;
   personality_tags: string[];
   intent: string;
-  location?: any;
-  owner_id?: any;
+  location?: IPetLocation;
+  owner_id?: string;
 }
 
 // Interface for user profile data
 export interface UserProfile {
   id: string;
-  preferences: any;
-  location: any;
+  preferences: IUserPreferences;
+  location: IUserLocation;
   pets: PetProfile[];
 }
 
@@ -83,7 +87,7 @@ export const getAIRecommendations = async (
 
     if (!user || !user.pets || user.pets.length === 0) {
       // No pets to base recommendations on, return random order
-      return candidatePets.map(pet => ({
+      return candidatePets.map((pet: IPetDocument) => ({
         petId: pet._id.toString(),
         score: Math.random() * 100,
         reasons: ['New user - exploring options']
@@ -91,12 +95,13 @@ export const getAIRecommendations = async (
     }
 
     // Prepare data for AI service
+    const userDoc = user as IUserDocument;
     const requestData: AIRecommendationRequest = {
       user_profile: {
-        id: user._id.toString(),
-        preferences: (user as any).preferences,
-        location: (user as any).location,
-        pets: (user as any).pets.map((pet: any) => ({
+        id: (userDoc._id as unknown as { toString(): string }).toString(),
+        preferences: userDoc.preferences as IUserPreferences,
+        location: userDoc.location as IUserLocation,
+        pets: (userDoc.pets as IPetDocument[]).map((pet: IPetDocument) => ({
           id: pet._id.toString(),
           species: pet.species,
           breed: pet.breed,
@@ -106,7 +111,7 @@ export const getAIRecommendations = async (
           intent: pet.intent
         }))
       },
-      candidate_pets: candidatePets.map(pet => ({
+      candidate_pets: candidatePets.map((pet: IPetDocument) => ({
         id: pet._id.toString(),
         species: pet.species,
         breed: pet.breed,
@@ -114,7 +119,7 @@ export const getAIRecommendations = async (
         size: pet.size,
         personality_tags: pet.personalityTags,
         intent: pet.intent,
-        location: (pet as any).location,
+        location: pet.location,
         owner_id: pet.owner
       }))
     };
@@ -159,18 +164,20 @@ export const getRuleBasedRecommendations = async (
       return [];
     }
 
-    const recommendations: AIRecommendation[] = candidatePets.map((pet: any) => {
+    const userDoc = user as IUserDocument;
+    const userPets = userDoc.pets as IPetDocument[];
+    const recommendations: AIRecommendation[] = candidatePets.map((pet: IPetDocument) => {
       let score = 50; // Base score
       const reasons: string[] = [];
 
       // Species preference
-      if ((user as any).preferences?.species?.includes(pet.species)) {
+      if (userDoc.preferences?.species?.includes(pet.species)) {
         score += 20;
         reasons.push(`Matches your ${pet.species} preference`);
       }
 
       // Intent matching
-      if ((user as any).pets.some((userPet: any) => 
+      if (userPets.some((userPet: IPetDocument) => 
         userPet.intent === pet.intent || 
         userPet.intent === 'all' || 
         pet.intent === 'all'
@@ -180,16 +187,16 @@ export const getRuleBasedRecommendations = async (
       }
 
       // Age preference
-      if ((user as any).preferences?.ageRange && 
-          pet.age >= (user as any).preferences.ageRange.min && 
-          pet.age <= (user as any).preferences.ageRange.max) {
+      if (userDoc.preferences?.ageRange && 
+          pet.age >= userDoc.preferences.ageRange.min && 
+          pet.age <= userDoc.preferences.ageRange.max) {
         score += 10;
         reasons.push('Age matches preferences');
       }
 
       // Size compatibility (for playdates)
       if (pet.intent === 'playdate') {
-        const userPetSizes = (user as any).pets.map((p: any) => p.size);
+        const userPetSizes = userPets.map((p: IPetDocument) => p.size);
         if (userPetSizes.includes(pet.size)) {
           score += 10;
           reasons.push('Similar size for safe play');
@@ -197,7 +204,7 @@ export const getRuleBasedRecommendations = async (
       }
 
       // Personality compatibility
-      if ((user as any).pets.some((userPet: any) => {
+      if (userPets.some((userPet: IPetDocument) => {
         const commonTags = userPet.personalityTags.filter((tag: string) => 
           pet.personalityTags.includes(tag)
         );
@@ -208,7 +215,8 @@ export const getRuleBasedRecommendations = async (
       }
 
       // Premium user bonus
-      if (pet.owner?.premium?.isActive) {
+      const petOwner = pet.owner as unknown as IUserDocument;
+      if (petOwner?.premium?.isActive) {
         score += 5;
         reasons.push('Verified premium user');
       }
@@ -220,8 +228,8 @@ export const getRuleBasedRecommendations = async (
       }
 
       // Recently active bonus
-      const daysSinceActive = pet.owner?.analytics?.lastActive
-        ? (new Date().getTime() - new Date(pet.owner.analytics.lastActive).getTime()) / (1000 * 60 * 60 * 24)
+      const daysSinceActive = petOwner?.analytics?.lastActive
+        ? (new Date().getTime() - new Date(petOwner.analytics.lastActive).getTime()) / (1000 * 60 * 60 * 24)
         : Infinity;
       if (daysSinceActive < 7) {
         score += 5;
@@ -251,10 +259,10 @@ export const getRuleBasedRecommendations = async (
  */
 export const updatePetAIData = async (
   petId: string,
-  interactionData: Record<string, any>
+  interactionData: Record<string, unknown>
 ): Promise<void> => {
   try {
-    const response = await axios.post(
+    const response = await axios.post<AIDataUpdateResponse>(
       `${AI_SERVICE_URL}/api/update-pet-data`,
       {
         pet_id: petId,
@@ -265,12 +273,12 @@ export const updatePetAIData = async (
       }
     );
 
-    if ((response.data as any).success) {
+    if (response.data.success) {
       // Update pet's AI data in database
       await Pet.findByIdAndUpdate(petId, {
         $set: {
-          'aiData.personalityScore': (response.data as any).personality_score,
-          'aiData.compatibilityTags': (response.data as any).compatibility_tags,
+          'aiData.personalityScore': response.data.personality_score,
+          'aiData.compatibilityTags': response.data.compatibility_tags,
           'aiData.lastUpdated': new Date()
         }
       });
@@ -390,7 +398,7 @@ export const analyzePetCompatibility = async (
       factors.push('Similar size');
     }
     
-    const commonTraits = pet1.personalityTags.filter(tag => 
+    const commonTraits = pet1.personalityTags.filter((tag: string) => 
       pet2.personalityTags.includes(tag)
     );
     score += commonTraits.length * 5;

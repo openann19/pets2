@@ -236,6 +236,210 @@ const componentsSchema = z.object({
 });
 
 /**
+ * Animation preset configuration (2025 enhancements)
+ */
+const animationPresetSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  spring: z.object({
+    stiffness: z.number().min(1).max(1000),
+    damping: z.number().min(1).max(100),
+    mass: z.number().min(0.1).max(5),
+    overshootClamping: z.boolean().optional(),
+  }),
+  timing: z.object({
+    duration: z.number().min(0).max(2000),
+    easing: cubicBezierSchema,
+  }).optional(),
+});
+
+const visualEffectsSchema = z.object({
+  // 3D Card Effects
+  threeDCards: z.object({
+    enabled: z.boolean(),
+    tiltDegrees: z.number().min(0).max(30).optional(),
+    depthShadow: z.boolean().optional(),
+    gyroscopeTilt: z.boolean().optional(), // Gated by capabilities
+    maxCards: z.number().min(1).max(10).optional(),
+  }),
+  // Particle Systems
+  particles: z.object({
+    enabled: z.boolean(),
+    maxCount: z.number().min(0).max(200),
+    confetti: z.object({
+      enabled: z.boolean(),
+      particleCount: z.number().min(10).max(200),
+      colors: z.array(z.string()).min(2).max(10),
+      duration: z.number().min(500).max(5000),
+    }),
+    hearts: z.object({
+      enabled: z.boolean(),
+      particleCount: z.number().min(5).max(50),
+      spread: z.object({ min: z.number(), max: z.number() }),
+    }),
+    stars: z.object({
+      enabled: z.boolean(),
+      particleCount: z.number().min(5).max(50),
+    }),
+  }),
+  // Glass Morphism
+  glassMorphism: z.object({
+    enabled: z.boolean(),
+    blurIntensity: z.number().min(0).max(50),
+    opacity: z.number().min(0).max(1),
+    reflection: z.boolean().optional(),
+    animated: z.boolean().optional(),
+  }),
+  // Isometric 2.5D
+  isometric: z.object({
+    enabled: z.boolean(),
+    angle: z.number().min(0).max(90).optional(),
+    depth: z.number().min(0).max(100).optional(),
+  }),
+  // Textured Realism
+  texturedRealism: z.object({
+    enabled: z.boolean(),
+    softShadows: z.boolean().optional(),
+    claymorphicShapes: z.boolean().optional(),
+    gradientMeshes: z.boolean().optional(),
+  }),
+  // Three.js WebGL Effects
+  threeJsEffects: z.object({
+    enabled: z.boolean(),
+    // Liquid Morphing Geometry
+    liquidMorph: z.object({
+      enabled: z.boolean(),
+      intensity: z.number().min(0).max(3).optional(),
+      speed: z.number().min(0).max(5).optional(),
+      color1: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+      color2: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+    }),
+    // Galaxy Particle System
+    galaxyParticles: z.object({
+      enabled: z.boolean(),
+      baseCount: z.number().min(0).max(100000).optional(),
+      maxCount: z.number().min(0).max(100000).optional(),
+      autoScale: z.boolean().optional(),
+      qualityMultiplier: z.number().min(0).max(1).optional(),
+    }),
+    // Volumetric Portal
+    volumetricPortal: z.object({
+      enabled: z.boolean(),
+      active: z.boolean().optional(),
+      intensity: z.number().min(0).max(3).optional(),
+      color1: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+      color2: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+    }),
+    // Global Settings
+    global: z.object({
+      safeMode: z.boolean().optional(),
+      qualityTier: z.enum(['auto', 'low', 'mid', 'high']).optional(),
+      dprCap: z.number().min(1).max(3).optional(),
+      respectReducedMotion: z.boolean().optional(),
+    }).optional(),
+  }).optional(),
+});
+
+const typographyAnimationsSchema = z.object({
+  // Animated Gradient Text
+  gradientText: z.object({
+    enabled: z.boolean(),
+    animationSpeed: z.number().min(0.5).max(5),
+    variants: z.array(z.enum(['primary', 'secondary', 'premium', 'neon', 'rainbow', 'holographic'])),
+  }),
+  // Kinetic Typography
+  kinetic: z.object({
+    enabled: z.boolean(),
+    variants: z.array(z.enum(['bounce', 'wave', 'pulse', 'slide'])),
+    intensity: z.enum(['subtle', 'medium', 'bold']).optional(),
+  }),
+  // Scroll Reveal Text
+  scrollReveal: z.object({
+    enabled: z.boolean(),
+    offset: z.number().min(0).max(500).optional(),
+    direction: z.enum(['up', 'down', 'left', 'right']).optional(),
+  }),
+  // Text Morphing
+  morphing: z.object({
+    enabled: z.boolean(),
+    duration: z.number().min(200).max(2000).optional(),
+  }),
+});
+
+const colorEnhancementsSchema = z.object({
+  // Dynamic Color Adaptation
+  dynamicColors: z.object({
+    enabled: z.boolean(),
+    timeOfDayShift: z.boolean().optional(),
+    ambientLightAdaptation: z.boolean().optional(), // Future: camera-based
+  }),
+  // HDR/P3 Support
+  hdr: z.object({
+    enabled: z.boolean(),
+    fallbackToSRGB: z.boolean().optional(),
+    detectCapability: z.boolean().optional(),
+  }),
+  // Neon Accents
+  neonAccents: z.object({
+    enabled: z.boolean(),
+    intensity: z.number().min(0).max(1),
+    colors: z.array(z.string().regex(/^#[0-9A-Fa-f]{6}$/)).optional(),
+  }),
+  // Gradient Meshes
+  gradientMeshes: z.object({
+    enabled: z.boolean(),
+    animated: z.boolean().optional(),
+    rotationSpeed: z.number().min(0).max(10).optional(),
+  }),
+});
+
+const scrollInteractionsSchema = z.object({
+  // Multi-layer Parallax
+  parallax: z.object({
+    enabled: z.boolean(),
+    layers: z.number().min(1).max(5).optional(),
+    intensity: z.number().min(0).max(2).optional(),
+  }),
+  // Scroll-triggered Animations
+  scrollTriggers: z.object({
+    enabled: z.boolean(),
+    offset: z.number().min(0).max(500).optional(),
+    threshold: z.number().min(0).max(1).optional(),
+  }),
+  // Momentum-based Effects
+  momentum: z.object({
+    enabled: z.boolean(),
+    bounce: z.boolean().optional(),
+    friction: z.number().min(0).max(1).optional(),
+  }),
+  // Sticky Elements
+  sticky: z.object({
+    enabled: z.boolean(),
+    transformOnStick: z.boolean().optional(),
+  }),
+});
+
+const visualEnhancements2025Schema = z.object({
+  preset: z.enum(['minimal', 'standard', 'premium', 'ultra', 'custom']),
+  animations: z.object({
+    enabled: z.boolean(),
+    presets: z.array(animationPresetSchema).optional(),
+    customPreset: animationPresetSchema.optional(),
+  }),
+  effects: visualEffectsSchema,
+  typography: typographyAnimationsSchema,
+  colors: colorEnhancementsSchema,
+  scroll: scrollInteractionsSchema,
+  performance: z.object({
+    capabilityGating: z.boolean(),
+    lowEndDevicePolicy: z.enum(['skip', 'simplify', 'full']),
+    maxParticles: z.number().min(0).max(200),
+    maxBlurRadius: z.number().min(0).max(50),
+  }),
+});
+
+/**
  * Screen-specific configs
  */
 const screenConfigSchema = z.object({
@@ -289,6 +493,7 @@ export const uiConfigSchema = z.object({
   screens: screenConfigSchema,
   featureFlags: z.record(z.string(), z.boolean()),
   i18nOverrides: z.record(z.string(), z.string()).optional(),
+  visualEnhancements2025: visualEnhancements2025Schema.optional(), // New 2025 enhancements
   meta: z.object({
     changelog: z.string(),
     createdBy: z.string(),
@@ -302,4 +507,10 @@ export type MicroInteractions = z.infer<typeof microInteractionsSchema>;
 export type Components = z.infer<typeof componentsSchema>;
 export type Screens = z.infer<typeof screenConfigSchema>;
 export type Audience = z.infer<typeof audienceSchema>;
+export type VisualEnhancements2025 = z.infer<typeof visualEnhancements2025Schema>;
+export type AnimationPreset = z.infer<typeof animationPresetSchema>;
+export type VisualEffects = z.infer<typeof visualEffectsSchema>;
+export type TypographyAnimations = z.infer<typeof typographyAnimationsSchema>;
+export type ColorEnhancements = z.infer<typeof colorEnhancementsSchema>;
+export type ScrollInteractions = z.infer<typeof scrollInteractionsSchema>;
 

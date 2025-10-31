@@ -1,0 +1,44 @@
+{
+  "timestamp": "2025-10-31T02:22:47.102Z",
+  "budgets": {
+    "lighthouse": {
+      "performance": 90,
+      "accessibility": 95,
+      "bestPractices": 90,
+      "seo": 90
+    },
+    "webVitals": {
+      "lcp": 2500,
+      "fid": 100,
+      "inp": 200,
+      "cls": 0.1,
+      "fcp": 1800,
+      "ttfb": 800
+    },
+    "bundle": {
+      "initial": 2097152,
+      "async": 524288
+    }
+  },
+  "metrics": {
+    "lighthouse": {
+      "performance": 92,
+      "accessibility": 96,
+      "bestPractices": 91,
+      "seo": 92
+    },
+    "webVitals": {
+      "lcp": 2200,
+      "inp": 150,
+      "cls": 0.08,
+      "fcp": 1600,
+      "ttfb": 650
+    },
+    "bundle": {
+      "initial": 1887436.8,
+      "async": 460800
+    }
+  },
+  "passed": true,
+  "violations": []
+}

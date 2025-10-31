@@ -9,6 +9,10 @@ import { DevTools } from '../src/components/DevTools';
 import { ThemeProvider } from '../src/providers/ThemeProvider';
 import { CommandPalette } from '../src/providers/CommandPalette';
 import { PWAManager } from '../src/components/PWA/PWAManager';
+import { FeatureFlagsProvider } from '../src/foundation/flags/FeatureFlagsProvider';
+import { SocketProvider } from '../src/providers/SocketProvider';
+import { NotificationProvider } from '../src/providers/NotificationProvider';
+import { WeatherProvider } from '../src/providers/WeatherProvider';
 
 // Create query client per request to avoid sharing state between users
 export function Providers({ children }: { children: ReactNode }) {
@@ -26,15 +30,23 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <EnhancedErrorBoundary level="critical">
-        <ThemeProvider>
-          <CommandPalette>
-            <PWAManager>
-              <AuthProvider>
-                {children}
-              </AuthProvider>
-            </PWAManager>
-          </CommandPalette>
-        </ThemeProvider>
+        <FeatureFlagsProvider>
+          <ThemeProvider>
+            <CommandPalette>
+              <PWAManager>
+                <AuthProvider>
+                  <SocketProvider>
+                    <NotificationProvider>
+                      <WeatherProvider>
+                        {children}
+                      </WeatherProvider>
+                    </NotificationProvider>
+                  </SocketProvider>
+                </AuthProvider>
+              </PWAManager>
+            </CommandPalette>
+          </ThemeProvider>
+        </FeatureFlagsProvider>
       </EnhancedErrorBoundary>
       <DevTools />
     </QueryClientProvider>

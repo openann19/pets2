@@ -423,9 +423,10 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
 }) => {
   const theme = useTheme();
   // Note: fontSize and weight are available for future text implementation
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const fontSize = size ?? theme.typography.body.size;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // Intentionally computed but not used yet - will be used in future text rendering
+  // @ts-expect-error - Reserved for future text implementation
+  const _fontSize = size ?? theme.typography.body.size;
+  // @ts-expect-error - Reserved for future text implementation
   const _weight = weight;
   const gradientRotation = useSharedValue(0);
 

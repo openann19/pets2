@@ -4,15 +4,11 @@
  */
 
 import type { Request, Response } from 'express';
+import type { AuthRequest } from '../types/express';
 import type { IUserDocument } from '../types/mongoose';
 const logger = require('../utils/logger');
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-
-// Type definitions
-interface AuthRequest extends Request {
-  user?: IUserDocument;
-}
 
 interface SignUploadBody {
   filename: string;
@@ -109,7 +105,7 @@ export const signUpload = async (req: AuthRequest, res: Response): Promise<void>
       bucket: BUCKET_NAME,
       expiresIn: 3600,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error signing upload:', error);
     fail(res, 500, 'Failed to sign upload URL');
   }

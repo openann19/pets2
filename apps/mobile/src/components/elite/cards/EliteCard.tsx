@@ -19,9 +19,7 @@ import {
 import * as Haptics from "expo-haptics";
 import Animated from "react-native-reanimated";
 
-import {
-  SPRING,
-} from "../../../animation";
+import { springs, durations, motionEasing } from '@/foundation/motion';
 import { GlobalStyles, BorderRadius, Shadows } from "../../../styles/GlobalStyles";
 import { getPremiumGradients } from "../constants/gradients";
 import { getPremiumShadows } from "../constants/shadows";
@@ -61,8 +59,11 @@ export const EliteCard: React.FC<EliteCardProps> = ({
   useEffect(() => {
     if (shimmer) {
       shimmerOffset.value = withSequence(
-        withTiming(100, { duration: 2000 }),
-        withDelay(1000, withTiming(-100, { duration: 0 })),
+        withTiming(100, { 
+          duration: durations.lg * 10, // 3200ms for shimmer sweep
+          easing: motionEasing.enter,
+        }),
+        withDelay(durations.lg * 5, withTiming(-100, { duration: 0 })),
       );
     }
   }, [shimmer]);
@@ -76,14 +77,14 @@ export const EliteCard: React.FC<EliteCardProps> = ({
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.98, SPRING.soft);
+    scale.value = withSpring(0.98, springs.gentle);
     if (onPress) {
       runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
     }
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, SPRING.soft);
+    scale.value = withSpring(1, springs.gentle);
   };
 
   const getCardStyle = (): ViewStyle => {

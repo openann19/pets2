@@ -10,6 +10,22 @@ export * from './account';
 // Export API response types
 export * from './api-responses';
 
+// Export Phase 2 Product Enhancement contracts first (these are authoritative)
+export * from './phase2-contracts';
+
+// Export Phase 1 Product Enhancement contracts (excluding duplicates)
+// ScheduledMessage, MessageTemplate, and Translation are exported from phase2-contracts
+export type {
+  PushPayload,
+  ActivityEvent,
+  RichContent as Phase1RichContent,
+  PersonalizedDashboardData,
+  AdvancedMatchFilter,
+  MatchInsights,
+  // Note: ScheduledMessage, MessageTemplate, Translation are NOT exported from phase1
+  // to avoid conflicts with phase2-contracts definitions
+} from './phase1-contracts';
+
 // Export story types
 export * from './story';
 

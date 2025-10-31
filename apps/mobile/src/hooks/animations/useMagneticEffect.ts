@@ -10,7 +10,7 @@ import {
   interpolate,
   Extrapolate,
 } from 'react-native-reanimated';
-import { PREMIUM_ANIMATIONS } from './constants';
+import { springs } from '@/foundation/motion';
 
 export const useMagneticEffect = (enabled = true) => {
   const rotateX = useSharedValue(0);
@@ -22,18 +22,18 @@ export const useMagneticEffect = (enabled = true) => {
 
     rotateX.value = withSpring(
       interpolate(deltaY, [-50, 50], [10, -10], Extrapolate.CLAMP),
-      PREMIUM_ANIMATIONS.spring.gentle,
+      springs.gentle,
     );
     rotateY.value = withSpring(
       interpolate(deltaX, [-50, 50], [-10, 10], Extrapolate.CLAMP),
-      PREMIUM_ANIMATIONS.spring.gentle,
+      springs.gentle,
     );
   };
 
   const resetMagnetic = () => {
     if (!enabled) return;
-    rotateX.value = withSpring(0, PREMIUM_ANIMATIONS.spring.gentle);
-    rotateY.value = withSpring(0, PREMIUM_ANIMATIONS.spring.gentle);
+    rotateX.value = withSpring(0, springs.gentle);
+    rotateY.value = withSpring(0, springs.gentle);
   };
 
   const magneticStyle = useAnimatedStyle(() => ({

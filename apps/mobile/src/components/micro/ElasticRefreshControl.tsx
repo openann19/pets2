@@ -6,13 +6,12 @@
 
 import React from 'react';
 import { RefreshControl, type RefreshControlProps, Platform } from 'react-native';
-import Animated, {
+import {
   useSharedValue,
-  useAnimatedStyle,
-  useAnimatedReaction,
   withTiming,
   Extrapolate,
   interpolate,
+  useAnimatedReaction,
 } from 'react-native-reanimated';
 import { useAnimatedScrollHandler } from 'react-native-reanimated';
 

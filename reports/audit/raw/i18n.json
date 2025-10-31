@@ -1,0 +1,14 @@
+[34m🔍 Validating i18n files...[0m
+[36m📁 Found locales: bg, en[0m
+[32m✅ Loaded bg.json[0m
+[32m✅ Loaded en.json[0m
+[36m🔑 Base locale (bg) has 110 keys[0m
+[32m✅ EN: Perfect match[0m
+[34m
+📈 Summary:[0m
+[36m  Base locale: bg (110 keys)[0m
+[32m  Missing keys: 0[0m
+[32m  Extra keys: 0[0m
+[32m
+✅ i18n validation PASSED![0m
+[32mAll locales are in sync and properly translated.[0m

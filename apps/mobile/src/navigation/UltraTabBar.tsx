@@ -25,6 +25,7 @@ import { useTheme as useAppTheme } from '@mobile/theme';
 import type { AppTheme } from '@mobile/theme';
 import { useCapabilities } from '@/foundation/capabilities';
 import { useReduceMotion } from '@/hooks/useReducedMotion';
+import { springs } from '@/foundation/motion';
 
 type IconNameMap = {
   Home: { focused: 'home'; unfocused: 'home-outline' };
@@ -88,7 +89,7 @@ function TabComponent({
   // per-tab animations
   const iconScale = useSharedValue(focused ? 1.1 : 1);
   useEffect(() => {
-    iconScale.value = withSpring(focused ? 1.1 : 1, { damping: 15, stiffness: 240 });
+    iconScale.value = withSpring(focused ? 1.1 : 1, springs.standard);
   }, [focused]);
   const iconStyle = useAnimatedStyle(() => ({ transform: [{ scale: iconScale.value }] }));
 
@@ -101,7 +102,7 @@ function TabComponent({
   useEffect(() => {
     if (count > 0 && prev.current !== count) {
       badgeScale.value = 0.6;
-      badgeScale.value = withSpring(1, { damping: 12, stiffness: 280 });
+      badgeScale.value = withSpring(1, springs.bouncy);
     } else if (count === 0) {
       badgeScale.value = withTiming(0, { duration: 140 });
     }
@@ -207,18 +208,15 @@ const UltraTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigati
       indicatorScale.value = 1.15; // Splat effect
       
       // Animate position with spring
-      indicatorX.value = withSpring(x, { 
-        damping: 18, 
-        stiffness: 220,
-      }, (finished) => {
+      indicatorX.value = withSpring(x, springs.velocity, (finished) => {
         if (finished) {
           // Ease back to normal shape
-          indicatorScale.value = withSpring(1, { damping: 15, stiffness: 300 });
-          indicatorMorph.value = withSpring(0, { damping: 15, stiffness: 300 });
+          indicatorScale.value = withSpring(1, springs.standard);
+          indicatorMorph.value = withSpring(0, springs.standard);
         }
       });
       
-      indicatorW.value = withSpring(w, { damping: 18, stiffness: 220 });
+      indicatorW.value = withSpring(w, springs.velocity);
     }
   }, [state.index, containerW, state.routes.length, reducedMotion]);
 
@@ -271,8 +269,8 @@ const UltraTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigati
       );
       const x = tabXs.current[idx] ?? 0;
       const w = tabWs.current[idx] ?? containerW / state.routes.length;
-      indicatorX.value = withSpring(x, { damping: 18, stiffness: 320 });
-      indicatorW.value = withSpring(w, { damping: 18, stiffness: 320 });
+      indicatorX.value = withSpring(x, springs.standard);
+      indicatorW.value = withSpring(w, springs.standard);
     })
     .onEnd((e) => {
       isScrubbing.value = 0;

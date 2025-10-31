@@ -1,6 +1,7 @@
 import createIntlMiddleware from 'next-intl/middleware';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { logger } from '@pawfectmatch/core';
 
 import { isAuthDisabled } from './src/config/dev';
 import { locales } from './src/i18n';
@@ -41,7 +42,7 @@ export function middleware(request: NextRequest) {
   
   // DEVELOPMENT MODE: Skip authentication checks
   if (isAuthDisabled()) {
-    console.log(`[DEV] Bypassing auth for: ${pathname}`);
+    logger.info(`[DEV] Bypassing auth for: ${pathname}`);
     // Continue to security headers setup
   } else {
     // Get the token from cookies (we'll set this when user logs in)

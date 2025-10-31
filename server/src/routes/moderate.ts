@@ -47,7 +47,61 @@ router.post('/uploads/:id/moderate', authenticateToken, requireAdmin, async (req
 
       // Auto-link to pet if associated
       if (upload.associatedPet) {
-        // TODO: Update pet.photos array
+        try {
+          const Pet = (await import('../models/Pet')).default;
+          const pet = await Pet.findById(upload.associatedPet);
+          
+          if (pet) {
+            // Check if pet already has a primary photo
+            const hasPrimaryPhoto = pet.photos?.some(
+              (photo: { isPrimary?: boolean }) => photo.isPrimary
+            ) || false;
+
+            // Add photo to pet.photos array
+            const newPhoto = {
+              url: upload.url || `https://${process.env.S3_BUCKET || 'pawfectmatch-uploads'}.s3.amazonaws.com/${upload.s3Key}`,
+              publicId: upload.publicId || upload.s3Key,
+              caption: '',
+              isPrimary: !hasPrimaryPhoto, // Make first photo primary
+              uploadId: upload._id,
+              uploadedAt: upload.uploadedAt || new Date(),
+            };
+
+            // Get thumbnail from analysis if available
+            const uploadMetadata = upload.metadata as Record<string, unknown> | undefined;
+            const analysisId = uploadMetadata?.['analysisId'] as string | undefined;
+            if (analysisId) {
+              const PhotoAnalysis = (await import('../models/PhotoAnalysis')).default;
+              const analysis = await PhotoAnalysis.findById(analysisId);
+              const thumbnails = uploadMetadata?.['thumbnails'] as { small?: string; medium?: string; large?: string } | undefined;
+              if (analysis && thumbnails?.medium) {
+                (newPhoto as Record<string, unknown>)['thumbnailUrl'] = thumbnails.medium;
+              }
+            }
+
+            await Pet.findByIdAndUpdate(
+              upload.associatedPet,
+              {
+                $push: {
+                  photos: newPhoto,
+                },
+              },
+              { new: true }
+            );
+
+            logger.info('Pet photos array updated from moderation', {
+              petId: upload.associatedPet,
+              uploadId: upload._id,
+              isPrimary: newPhoto.isPrimary,
+            });
+          }
+        } catch (petUpdateError) {
+          logger.error('Failed to update pet photos array', {
+            petId: upload.associatedPet,
+            error: petUpdateError,
+          });
+          // Don't fail moderation if pet update fails
+        }
       }
     } else {
       upload.status = 'rejected';
@@ -111,11 +165,76 @@ router.post('/moderation/analyze/:uploadId', authenticateToken, requireAdmin, as
       return res.status(404).json({ success: false, error: 'Upload not found' });
     }
 
-    // TODO: Fetch image from S3/Cloudinary
-    // const imageBuffer = await fetchImageBuffer(upload.s3Key);
+    // Fetch image from S3
+    try {
+      const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3');
+      const s3Client = new S3Client({
+        region: process.env.AWS_REGION || 'us-east-1',
+        credentials: {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+        },
+      });
 
-    // Run moderation
-    // const moderationResult = await moderateImage(imageBuffer);
+      const uploadMetadata = upload.metadata as Record<string, unknown> | undefined;
+      const s3Key = (uploadMetadata?.['s3Key'] as string | undefined) || upload.publicId;
+      const bucketName = process.env['S3_BUCKET'] || 'pawfectmatch-uploads';
+      const getObjectCommand = new GetObjectCommand({
+        Bucket: bucketName,
+        Key: s3Key,
+      });
+
+      const s3Response = await s3Client.send(getObjectCommand);
+      if (!s3Response.Body) {
+        return res.status(404).json({
+          success: false,
+          error: 'Failed to fetch image from S3',
+        });
+      }
+
+      const imageBuffer = Buffer.from(await s3Response.Body.transformToByteArray());
+
+      // Run moderation analysis
+      const { scanImage } = await import('../services/contentModerationService');
+      const moderationResult = await scanImage(
+        imageBuffer,
+        upload.url || '',
+        upload.publicId || s3Key,
+        upload.userId.toString(),
+        'pet_photo'
+      );
+
+      // Update upload with moderation results
+      upload.metadata = {
+        ...upload.metadata,
+        moderationResult,
+      };
+
+      if (moderationResult.isSafe === false) {
+        upload.status = 'rejected';
+        upload.rejectionReason = moderationResult.reason || 'Content moderation failed';
+      }
+
+      await upload.save();
+
+      res.json({
+        success: true,
+        data: {
+          upload,
+          moderationResult,
+        },
+      });
+    } catch (fetchError) {
+      logger.error('Failed to fetch or analyze image', {
+        uploadId: upload._id,
+        error: fetchError,
+      });
+      res.status(500).json({
+        success: false,
+        error: 'Failed to fetch image or run moderation analysis',
+        message: fetchError instanceof Error ? fetchError.message : 'Unknown error',
+      });
+    }
 
     // Run duplicate check
     // const duplicateResult = await checkForDuplicates(...);

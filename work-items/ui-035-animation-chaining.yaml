@@ -1,0 +1,46 @@
+id: ui-035-animation-chaining
+owner: ux
+severity: low
+area: mobile+animations
+context: |
+  Sequential animations feel robotic without natural delays between steps.
+  Need micro-delays (30-60ms) to create natural-feeling animation sequences.
+  Improves perceived quality and reduces cognitive load.
+acceptance:
+  - useAnimationChain hook provides delay utilities
+  - Delays between 30-60ms for natural cadence
+  - Configurable delay per animation step
+  - Works with both Reanimated and Animated API
+  - Respects reduced motion preference (skip delays)
+  - Documentation includes best practices for delay timing
+states:
+  - idle
+  - animating
+  - complete
+telemetry:
+  - event: ANIMATION_CHAIN
+    props: [component, stepCount, totalDuration, delaySum]
+contracts:
+  request: { animations: array, delays: array }
+  response: { completed: boolean, duration: number }
+  errors: []
+assets:
+  hooks: [apps/mobile/src/hooks/animations/useAnimationChain.ts]
+  components: [apps/mobile/src/components/Animations/**/*.tsx]
+  tests: [apps/mobile/src/hooks/animations/__tests__/useAnimationChain.test.ts]
+  docs: [docs/ANIMATION_CHAINING.md]
+risks:
+  - Delays may feel sluggish if too long
+  - Complex chains may be hard to debug
+rollback:
+  - Remove delay logic
+  - Run animations sequentially without delays
+links: []
+status: open
+priority: low
+impact: 3
+effort: S
+category: micro-interactions
+tokens:
+  - motion.duration.standard
+estimated_hours: 3

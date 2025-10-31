@@ -15,6 +15,7 @@ import { Text } from './Text';
 import { PremiumShimmer } from '../../micro/PremiumShimmer';
 import { useReduceMotion } from '@/hooks/useReducedMotion';
 import { useEnhancedVariants } from '@/hooks/animations';
+import { springs } from '@/foundation/motion';
 
 export type BadgeVariant =
   | 'primary'
@@ -100,9 +101,9 @@ export function Badge({
     if (!premium || reducedMotion || !bounce) return;
 
     scale.value = withSequence(
-      withSpring(1.2, { damping: 10, stiffness: 400 }),
-      withSpring(0.95, { damping: 8, stiffness: 300 }),
-      withSpring(1, { damping: 12, stiffness: 350 }),
+      withSpring(1.2, springs.bouncy),
+      withSpring(0.95, springs.wobbly),
+      withSpring(1, springs.velocity),
     );
   }, [premium, reducedMotion, bounce]);
 

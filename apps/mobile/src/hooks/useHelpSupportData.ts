@@ -9,6 +9,7 @@ import {
   withSpring,
 } from 'react-native-reanimated';
 import { logger } from '@pawfectmatch/core';
+import { springs } from '@/foundation/motion';
 
 export interface HelpOption {
   id: string;
@@ -128,10 +129,10 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
 
   // Trigger staggered animations on mount
   React.useEffect(() => {
-    optionAnim1.value = withDelay(0, withSpring(1, { damping: 15, stiffness: 200 }));
-    optionAnim2.value = withDelay(150, withSpring(1, { damping: 15, stiffness: 200 }));
-    optionAnim3.value = withDelay(300, withSpring(1, { damping: 15, stiffness: 200 }));
-    optionAnim4.value = withDelay(450, withSpring(1, { damping: 15, stiffness: 200 }));
+    optionAnim1.value = withDelay(0, withSpring(1, springs.standard));
+    optionAnim2.value = withDelay(150, withSpring(1, springs.standard));
+    optionAnim3.value = withDelay(300, withSpring(1, springs.standard));
+    optionAnim4.value = withDelay(450, withSpring(1, springs.standard));
   }, [optionAnim1, optionAnim2, optionAnim3, optionAnim4]);
 
   // Create animated styles for each option

@@ -34,6 +34,7 @@ import Animated, {
 import { useTheme } from '@/theme';
 import type { AppTheme } from '@/theme';
 import { useReduceMotion } from '@/hooks/useReducedMotion';
+import { springs, durations, motionEasing } from '@/foundation/motion';
 
 // === TYPES ===
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline';
@@ -41,19 +42,19 @@ export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface BaseButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  loading?: boolean;
-  disabled?: boolean;
-  icon?: string;
-  leftIcon?: string;
-  rightIcon?: string;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
-  onPress?: () => void;
-  premium?: boolean;
-  haptic?: boolean;
-  glow?: boolean;
+  variant?: ButtonVariant | undefined;
+  size?: ButtonSize | undefined;
+  loading?: boolean | undefined;
+  disabled?: boolean | undefined;
+  icon?: string | undefined;
+  leftIcon?: string | undefined;
+  rightIcon?: string | undefined;
+  style?: ViewStyle | undefined;
+  textStyle?: TextStyle | undefined;
+  onPress?: (() => void) | undefined;
+  premium?: boolean | undefined;
+  haptic?: boolean | undefined;
+  glow?: boolean | undefined;
 }
 
 // === SIZE CONFIGURATIONS (theme-based) ===
@@ -250,26 +251,28 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
     const handlePressIn = () => {
       if (isDisabled || reducedMotion) return;
       
-      scale.value = withSpring(0.96, {
-        damping: 15,
-        stiffness: 400,
-      });
+      'worklet';
+      scale.value = withSpring(0.96, springs.velocity);
       
       if (glow) {
-        glowOpacity.value = withTiming(1, { duration: 150 });
+        glowOpacity.value = withTiming(1, { 
+          duration: durations.xs,
+          easing: motionEasing.enter,
+        });
       }
     };
 
     const handlePressOut = () => {
       if (isDisabled || reducedMotion) return;
       
-      scale.value = withSpring(1, {
-        damping: 15,
-        stiffness: 400,
-      });
+      'worklet';
+      scale.value = withSpring(1, springs.velocity);
       
       if (glow) {
-        glowOpacity.value = withTiming(0, { duration: 200 });
+        glowOpacity.value = withTiming(0, { 
+          duration: durations.sm,
+          easing: motionEasing.exit,
+        });
       }
     };
 
@@ -326,7 +329,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
           },
           premium ? animatedStyle : undefined,
           style,
-        ])}
+        ]) as any}
         onPress={handlePress}
         onPressIn={premium ? handlePressIn : undefined}
         onPressOut={premium ? handlePressOut : undefined}

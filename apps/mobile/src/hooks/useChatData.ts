@@ -6,23 +6,11 @@ import { matchesAPI } from '../services/api';
 import { useSocket } from './useSocket';
 import { offlineMessageQueue } from '../services/OfflineMessageQueue';
 import NetInfo from '@react-native-community/netinfo';
+import type { MobileMessage } from '../types/message';
+import { toMobileMessage } from '../types/message';
 
-export interface Message {
-  _id: string;
-  matchId?: string;
-  content: string;
-  senderId: string;
-  timestamp: string;
-  read: boolean;
-  type: 'text' | 'image' | 'emoji' | 'voice' | 'file' | 'location';
-  status?: 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
-  error?: boolean;
-  audioUrl?: string;
-  duration?: number;
-  replyTo?: { _id: string; author?: string; text?: string };
-  deliveredAt?: string;
-  readAt?: string;
-}
+// Re-export for backward compatibility
+export type Message = MobileMessage;
 
 export interface ChatData {
   messages: Message[];
@@ -208,69 +196,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
 
   // Helper to convert core Message to local Message format
   const convertMessage = useCallback((coreMsg: any): Message => {
-    const senderId = typeof coreMsg.sender === 'string' ? coreMsg.sender : (coreMsg.sender?._id || coreMsg.sender);
-    const isOwnMessage = senderId === user?._id;
-    const readBy = coreMsg.readBy || [];
-    const isRead = readBy.some((r: any) => {
-      const readerId = typeof r.user === 'string' ? r.user : r.user?._id;
-      return readerId === user?._id;
-    });
-
-    // Determine status
-    let status: 'sending' | 'sent' | 'delivered' | 'read' | 'failed' = 'sent';
-    if (coreMsg.status && ['sending', 'sent', 'delivered', 'read', 'failed'].includes(coreMsg.status)) {
-      status = coreMsg.status;
-    } else if (isOwnMessage && readBy.length > 0) {
-      status = 'read';
-    } else if (isOwnMessage && !isRead) {
-      status = 'delivered';
-    }
-
-    let replyToObj: { _id: string; author?: string; text?: string } | undefined;
-    if (coreMsg.replyTo) {
-      const replyId = typeof coreMsg.replyTo === 'string' ? coreMsg.replyTo : coreMsg.replyTo._id;
-      replyToObj = { _id: replyId };
-      if (typeof coreMsg.replyTo === 'object' && coreMsg.replyTo.sender?.firstName) {
-        replyToObj.author = coreMsg.replyTo.sender.firstName;
-      }
-      if (typeof coreMsg.replyTo === 'object' && coreMsg.replyTo.content) {
-        replyToObj.text = coreMsg.replyTo.content;
-      }
-    }
-
-    const result: Message = {
-      _id: coreMsg._id?.toString() || coreMsg._id,
-      content: coreMsg.content,
-      senderId,
-      timestamp: coreMsg.sentAt || coreMsg.timestamp || new Date().toISOString(),
-      read: isRead || readBy.length > 0,
-      type:
-        coreMsg.messageType === 'text'
-          ? 'text'
-          : coreMsg.messageType === 'image'
-            ? 'image'
-            : coreMsg.messageType === 'voice'
-              ? 'voice'
-              : coreMsg.messageType === 'file'
-                ? 'file'
-                : coreMsg.messageType === 'location'
-                  ? 'location'
-                  : 'text',
-      status,
-      error: false,
-    };
-
-    if (replyToObj) {
-      result.replyTo = replyToObj;
-    }
-    if (coreMsg.deliveredAt) {
-      result.deliveredAt = new Date(coreMsg.deliveredAt).toISOString();
-    }
-    if (readBy.length > 0 && readBy[0]?.readAt) {
-      result.readAt = new Date(readBy[0].readAt).toISOString();
-    }
-
-    return result;
+    return toMobileMessage(coreMsg, user?._id);
   }, [user?._id]);
 
   // Load messages from API

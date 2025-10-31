@@ -5,6 +5,7 @@
 
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@mobile/theme';
+import type { AppTheme } from '@mobile/theme';
 import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getExtendedColors } from '../../theme/adapters';
 
@@ -25,8 +26,9 @@ export function AttachmentPreview({
   onRemove,
   uploading = false,
 }: AttachmentPreviewProps): JSX.Element {
-  const theme = useTheme();
+  const theme = useTheme() as AppTheme;
   const colors = getExtendedColors(theme);
+  const styles = makeStyles(theme);
 
   const formatFileSize = (bytes?: number): string => {
     if (!bytes) return '';
@@ -48,13 +50,19 @@ export function AttachmentPreview({
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      accessibilityLabel={`${type} attachment${name ? `: ${name}` : ''}${size ? `, ${formatFileSize(size)}` : ''}`}
+      accessibilityState={{ busy: uploading }}
+    >
       <View style={StyleSheet.flatten([styles.preview, { backgroundColor: colors.bg }])}>
         {type === 'image' && (
           <Image
             source={{ uri }}
             style={styles.image}
             resizeMode="cover"
+            accessibilityRole="image"
+            accessibilityLabel={name || 'Image attachment'}
           />
         )}
 
@@ -80,23 +88,27 @@ export function AttachmentPreview({
         <TouchableOpacity
           style={styles.closeButton}
           onPress={onRemove}
-          accessibilityLabel="Remove attachment"
           accessibilityRole="button"
+          accessibilityLabel="Remove attachment"
+          accessibilityHint="Tap to remove this attachment"
+          hitSlop={{ top: 11, bottom: 11, left: 11, right: 11 }}
         >
           <Ionicons
             name="close-circle"
             size={24}
-            color={theme.palette.neutral[0]}
+            color={theme.colors.onPrimary}
           />
         </TouchableOpacity>
       </View>
 
       {name && (
-        <Text style={StyleSheet.flatten([styles.fileName, { color: colors.onMuted }])}>{name}</Text>
+        <Text style={StyleSheet.flatten([styles.fileName, { color: colors.onMuted }])} allowFontScaling>
+          {name}
+        </Text>
       )}
 
       {size && (
-        <Text style={StyleSheet.flatten([styles.fileSize, { color: colors.onMuted }])}>
+        <Text style={StyleSheet.flatten([styles.fileSize, { color: colors.onMuted }])} allowFontScaling>
           {formatFileSize(size)}
         </Text>
       )}
@@ -104,54 +116,55 @@ export function AttachmentPreview({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: 12,
-    marginBottom: 8,
-  },
-  preview: {
-    width: 100,
-    height: 100,
-    borderRadius: 12,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  fileIcon: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-  },
-  loadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    borderRadius: 12,
-  },
-  fileName: {
-    fontSize: 12,
-    marginTop: 4,
-    textAlign: 'center',
-  },
-  fileSize: {
-    fontSize: 10,
-    marginTop: 2,
-    textAlign: 'center',
-  },
-});
+const makeStyles = (theme: AppTheme) =>
+  StyleSheet.create({
+    container: {
+      marginHorizontal: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
+    },
+    preview: {
+      width: 100,
+      height: 100,
+      borderRadius: theme.radii.md,
+      overflow: 'hidden',
+      position: 'relative',
+    },
+    image: {
+      width: '100%',
+      height: '100%',
+    },
+    fileIcon: {
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.utils.alpha(theme.colors.onSurface, 0.05),
+    },
+    loadingOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: theme.utils.alpha(theme.colors.onSurface, 0.5),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    closeButton: {
+      position: 'absolute',
+      top: theme.spacing.xs,
+      right: theme.spacing.xs,
+      backgroundColor: theme.utils.alpha(theme.colors.onSurface, 0.6),
+      borderRadius: theme.radii.md,
+    },
+    fileName: {
+      fontSize: 12,
+      marginTop: theme.spacing.xs,
+      textAlign: 'center',
+    },
+    fileSize: {
+      fontSize: 10,
+      marginTop: 2,
+      textAlign: 'center',
+    },
+  });

@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import User from '../models/User';
 import logger from '../utils/logger';
 import paymentRetryService from '../services/paymentRetryService';
+import { setFeatureLimitsBasedOnPlan } from '../utils/premiumFeatures';
 import subscriptionAnalyticsService from '../services/subscriptionAnalyticsService';
 import { MongoClient } from 'mongodb';
 import { getErrorMessage } from '../utils/errorHandler';
@@ -113,36 +114,53 @@ export const handleStripeWebhook = async (req: StripeWebhookRequest, res: Respon
     let customerId: string | undefined;
 
     switch (event.type) {
-      case 'checkout.session.completed':
-        await handleCheckoutSessionCompleted(event.data.object as Session);
-        customerId = (event.data.object as any).customer;
+      case 'checkout.session.completed': {
+        const session = event.data.object as Session;
+        await handleCheckoutSessionCompleted(session);
+        customerId = typeof session.customer === 'string' ? session.customer : session.customer?.id;
         break;
-      case 'invoice.paid':
-        await handleInvoicePaid(event.data.object as Invoice);
-        customerId = (event.data.object as any).customer;
+      }
+      case 'invoice.paid': {
+        const invoice = event.data.object as Invoice;
+        await handleInvoicePaid(invoice);
+        customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
         break;
-      case 'invoice.payment_failed':
-        await handleInvoicePaymentFailed(event.data.object as Invoice);
-        customerId = (event.data.object as any).customer;
+      }
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object as Invoice;
+        await handleInvoicePaymentFailed(invoice);
+        customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
         break;
-      case 'invoice.payment_succeeded':
-        await handleInvoicePaymentSucceeded(event.data.object as Invoice);
-        customerId = (event.data.object as any).customer;
+      }
+      case 'invoice.payment_succeeded': {
+        const invoice = event.data.object as Invoice;
+        await handleInvoicePaymentSucceeded(invoice);
+        customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
         break;
-      case 'customer.subscription.updated':
-        await handleSubscriptionUpdated(event.data.object as Subscription);
-        customerId = (event.data.object as any).customer;
+      }
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object as Subscription;
+        await handleSubscriptionUpdated(subscription);
+        customerId = typeof subscription.customer === 'string' ? subscription.customer : subscription.customer?.id;
         break;
-      case 'customer.subscription.deleted':
-        await handleSubscriptionDeleted(event.data.object as Subscription);
-        customerId = (event.data.object as any).customer;
+      }
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as Subscription;
+        await handleSubscriptionDeleted(subscription);
+        customerId = typeof subscription.customer === 'string' ? subscription.customer : subscription.customer?.id;
         break;
-      case 'customer.subscription.created':
-        customerId = (event.data.object as any).customer;
+      }
+      case 'customer.subscription.created': {
+        const subscription = event.data.object as Subscription;
+        await handleSubscriptionCreated(subscription);
+        customerId = typeof subscription.customer === 'string' ? subscription.customer : subscription.customer?.id;
         break;
-      case 'payment_method.attached':
-        customerId = (event.data.object as any).customer;
+      }
+      case 'payment_method.attached': {
+        const paymentMethod = event.data.object as Stripe.PaymentMethod;
+        customerId = typeof paymentMethod.customer === 'string' ? paymentMethod.customer : paymentMethod.customer?.id;
         break;
+      }
       default:
         logger.info(`Unhandled webhook event: ${event.type}`);
     }
@@ -223,13 +241,33 @@ async function handleCheckoutSessionCompleted(session: Session): Promise<void> {
     const planName = await getPlanNameFromPriceId(priceId);
 
     // Update user with subscription details
-    const periodEnd = (subscription as any).current_period_end;
-    (user.premium as any) = {
+    const periodEnd = subscription.current_period_end;
+    user.premium = {
       isActive: true,
       plan: planName,
       stripeSubscriptionId: session.subscription,
-      expiresAt: periodEnd ? new Date(periodEnd * 1000) : undefined,
-      cancelAtPeriodEnd: subscription.cancel_at_period_end
+      expiresAt: periodEnd ? new Date(periodEnd * 1000) : null,
+      cancelAtPeriodEnd: subscription.cancel_at_period_end,
+      paymentStatus: 'active',
+      features: {
+        unlimitedLikes: false,
+        boostProfile: false,
+        seeWhoLiked: false,
+        advancedFilters: false,
+        aiMatching: false,
+        prioritySupport: false,
+        globalPassport: false
+      },
+      usage: {
+        swipesUsed: user.premium?.usage?.swipesUsed || 0,
+        swipesLimit: user.premium?.usage?.swipesLimit || 0,
+        superLikesUsed: user.premium?.usage?.superLikesUsed || 0,
+        superLikesLimit: user.premium?.usage?.superLikesLimit || 0,
+        boostsUsed: user.premium?.usage?.boostsUsed || 0,
+        boostsLimit: user.premium?.usage?.boostsLimit || 0,
+        messagesSent: user.premium?.usage?.messagesSent || 0,
+        profileViews: user.premium?.usage?.profileViews || 0
+      }
     };
 
     // Set feature limits based on plan
@@ -285,16 +323,48 @@ async function handleInvoicePaid(invoice: Invoice): Promise<void> {
     }
 
     // Update subscription expiry date
-    const periodEnd = (subscription as any).current_period_end;
-    (user.premium as any).expiresAt = periodEnd ? new Date(periodEnd * 1000) : undefined;
-    (user.premium as any).isActive = true; // Ensure it's active
+    const periodEnd = subscription.current_period_end;
+    if (!user.premium) {
+      user.premium = {
+        isActive: false,
+        plan: 'free',
+        expiresAt: null,
+        cancelAtPeriodEnd: false,
+        paymentStatus: 'active',
+        features: {
+          unlimitedLikes: false,
+          boostProfile: false,
+          seeWhoLiked: false,
+          advancedFilters: false,
+          aiMatching: false,
+          prioritySupport: false,
+          globalPassport: false,
+        },
+        usage: {
+          swipesUsed: 0,
+          swipesLimit: 5,
+          superLikesUsed: 0,
+          superLikesLimit: 0,
+          boostsUsed: 0,
+          boostsLimit: 0,
+          messagesSent: 0,
+          profileViews: 0,
+          rewindsUsed: 0,
+        },
+      };
+    }
+    user.premium.expiresAt = periodEnd ? new Date(periodEnd * 1000) : null;
+    user.premium.isActive = true; // Ensure it's active
+
+    // Ensure feature flags are correctly set based on current plan
+    setFeatureLimitsBasedOnPlan(user);
 
     await user.save();
 
     logger.info('Subscription renewed', {
       userId: user._id,
       subscriptionId: invoice.subscription,
-      newExpiryDate: (user.premium as any).expiresAt
+      newExpiryDate: user.premium.expiresAt
     });
   } catch (error: unknown) {
     logger.error('Error processing invoice.paid event', {
@@ -338,10 +408,42 @@ async function handleInvoicePaymentSucceeded(invoice: Invoice): Promise<void> {
     }
 
     // Update subscription status
-    const periodEnd = (subscription as any).current_period_end;
-    (user.premium as any).expiresAt = periodEnd ? new Date(periodEnd * 1000) : undefined;
-    (user.premium as any).isActive = true;
-    (user.premium as any).retryCount = 0; // Reset retry count on successful payment
+    const periodEnd = subscription.current_period_end;
+    if (!user.premium) {
+      user.premium = {
+        isActive: false,
+        plan: 'free',
+        expiresAt: null,
+        cancelAtPeriodEnd: false,
+        paymentStatus: 'active',
+        features: {
+          unlimitedLikes: false,
+          boostProfile: false,
+          seeWhoLiked: false,
+          advancedFilters: false,
+          aiMatching: false,
+          prioritySupport: false,
+          globalPassport: false,
+        },
+        usage: {
+          swipesUsed: 0,
+          swipesLimit: 5,
+          superLikesUsed: 0,
+          superLikesLimit: 0,
+          boostsUsed: 0,
+          boostsLimit: 0,
+          messagesSent: 0,
+          profileViews: 0,
+          rewindsUsed: 0,
+        },
+      };
+    }
+    user.premium.expiresAt = periodEnd ? new Date(periodEnd * 1000) : null;
+    user.premium.isActive = true;
+    user.premium.retryCount = 0; // Reset retry count on successful payment
+
+    // Ensure feature flags are correctly set based on current plan
+    setFeatureLimitsBasedOnPlan(user);
 
     await user.save();
 
@@ -352,7 +454,7 @@ async function handleInvoicePaymentSucceeded(invoice: Invoice): Promise<void> {
       userId: user._id,
       subscriptionId: invoice.subscription,
       amount: invoice.amount_paid ? invoice.amount_paid / 100 : 0,
-      newExpiryDate: (user.premium as any).expiresAt
+      newExpiryDate: user.premium.expiresAt
     });
   } catch (error: unknown) {
     logger.error('Error processing invoice.payment_succeeded event', {
@@ -391,8 +493,38 @@ async function handleInvoicePaymentFailed(invoice: Invoice): Promise<void> {
     const attemptCount = invoice.attempt_count || 1;
 
     // Update user's retry count
-    (user.premium as any).retryCount = ((user.premium as any).retryCount || 0) + 1;
-    (user.premium as any).paymentStatus = 'failed';
+    if (!user.premium) {
+      user.premium = {
+        isActive: false,
+        plan: 'free',
+        expiresAt: null,
+        cancelAtPeriodEnd: false,
+        paymentStatus: 'failed',
+        features: {
+          unlimitedLikes: false,
+          boostProfile: false,
+          seeWhoLiked: false,
+          advancedFilters: false,
+          aiMatching: false,
+          prioritySupport: false,
+          globalPassport: false,
+        },
+        usage: {
+          swipesUsed: 0,
+          swipesLimit: 5,
+          superLikesUsed: 0,
+          superLikesLimit: 0,
+          boostsUsed: 0,
+          boostsLimit: 0,
+          messagesSent: 0,
+          profileViews: 0,
+          rewindsUsed: 0,
+        },
+        retryCount: 0,
+      };
+    }
+    user.premium.retryCount = (user.premium.retryCount || 0) + 1;
+    user.premium.paymentStatus = 'failed';
     await user.save();
 
     // Use smart retry service to handle the failure
@@ -402,12 +534,130 @@ async function handleInvoicePaymentFailed(invoice: Invoice): Promise<void> {
       userId: user._id,
       subscriptionId: invoice.subscription,
       attemptCount,
-      retryCount: (user.premium as any).retryCount
+      retryCount: user.premium.retryCount
     });
   } catch (error: unknown) {
     logger.error('Error processing invoice.payment_failed event', {
       error: getErrorMessage(error),
       invoiceId: invoice.id
+    });
+    throw error;
+  }
+}
+
+/**
+ * Handle customer.subscription.created event
+ * This event is fired when a new subscription is created
+ */
+async function handleSubscriptionCreated(subscription: Subscription): Promise<void> {
+  if (!stripe) {
+    logger.error('Stripe not initialized for subscription.created');
+    return;
+  }
+
+  try {
+    // Get customer ID
+    const customerId = typeof subscription.customer === 'string' 
+      ? subscription.customer 
+      : subscription.customer?.id;
+    
+    if (!customerId) {
+      logger.error('Customer ID not found in subscription', { subscriptionId: subscription.id });
+      return;
+    }
+
+    // Find user by Stripe customer ID
+    const user = await User.findOne({ stripeCustomerId: customerId });
+    
+    if (!user) {
+      logger.error('User not found for subscription creation', { 
+        customerId, 
+        subscriptionId: subscription.id 
+      });
+      return;
+    }
+
+    // Get plan details from price ID
+    const priceId = subscription.items.data[0]?.price?.id;
+    if (!priceId) {
+      throw new Error('Price ID not found in subscription');
+    }
+    const planName = await getPlanNameFromPriceId(priceId);
+
+    // Initialize premium if needed
+    if (!user.premium) {
+      user.premium = {
+        isActive: false,
+        plan: 'free',
+        usage: {
+          swipesUsed: 0,
+          swipesLimit: 5,
+          superLikesUsed: 0,
+          superLikesLimit: 0,
+          boostsUsed: 0,
+          boostsLimit: 0,
+          messagesSent: 0,
+          profileViews: 0,
+          rewindsUsed: 0,
+          iapSuperLikes: 0,
+          iapBoosts: 0,
+        },
+      };
+    }
+
+    // Update subscription details
+    const periodEnd = subscription.current_period_end;
+    if (!user.premium) {
+      user.premium = {
+        isActive: false,
+        plan: 'free',
+        expiresAt: null,
+        cancelAtPeriodEnd: false,
+        paymentStatus: 'active',
+        features: {
+          unlimitedLikes: false,
+          boostProfile: false,
+          seeWhoLiked: false,
+          advancedFilters: false,
+          aiMatching: false,
+          prioritySupport: false,
+          globalPassport: false,
+        },
+        usage: {
+          swipesUsed: 0,
+          swipesLimit: 5,
+          superLikesUsed: 0,
+          superLikesLimit: 0,
+          boostsUsed: 0,
+          boostsLimit: 0,
+          messagesSent: 0,
+          profileViews: 0,
+          rewindsUsed: 0,
+        },
+      };
+    }
+    user.premium.isActive = true;
+    user.premium.plan = planName;
+    user.premium.stripeSubscriptionId = subscription.id;
+    user.premium.expiresAt = periodEnd ? new Date(periodEnd * 1000) : null;
+    user.premium.cancelAtPeriodEnd = subscription.cancel_at_period_end;
+    user.premium.paymentStatus = 'active';
+
+    // Set feature limits based on plan
+    setFeatureLimitsBasedOnPlan(user);
+
+    await user.save();
+
+    logger.info('Subscription created and activated', {
+      userId: user._id,
+      subscriptionId: subscription.id,
+      plan: planName,
+      expiresAt: user.premium.expiresAt,
+    });
+  } catch (error: unknown) {
+    logger.error('Error processing subscription.created event', {
+      error: getErrorMessage(error),
+      subscriptionId: subscription.id
     });
     throw error;
   }
@@ -441,10 +691,39 @@ async function handleSubscriptionUpdated(subscription: Subscription): Promise<vo
     }
     const planName = await getPlanNameFromPriceId(priceId);
 
-    (user.premium as any).plan = planName;
-    const periodEnd = (subscription as any).current_period_end;
-    (user.premium as any).expiresAt = periodEnd ? new Date(periodEnd * 1000) : undefined;
-    (user.premium as any).cancelAtPeriodEnd = subscription.cancel_at_period_end;
+    if (!user.premium) {
+      user.premium = {
+        isActive: false,
+        plan: 'free',
+        expiresAt: null,
+        cancelAtPeriodEnd: false,
+        paymentStatus: 'active',
+        features: {
+          unlimitedLikes: false,
+          boostProfile: false,
+          seeWhoLiked: false,
+          advancedFilters: false,
+          aiMatching: false,
+          prioritySupport: false,
+          globalPassport: false,
+        },
+        usage: {
+          swipesUsed: 0,
+          swipesLimit: 5,
+          superLikesUsed: 0,
+          superLikesLimit: 0,
+          boostsUsed: 0,
+          boostsLimit: 0,
+          messagesSent: 0,
+          profileViews: 0,
+          rewindsUsed: 0,
+        },
+      };
+    }
+    user.premium.plan = planName;
+    const periodEnd = subscription.current_period_end;
+    user.premium.expiresAt = periodEnd ? new Date(periodEnd * 1000) : null;
+    user.premium.cancelAtPeriodEnd = subscription.cancel_at_period_end;
 
     // If plan changed, update feature limits
     setFeatureLimitsBasedOnPlan(user);
@@ -483,9 +762,38 @@ async function handleSubscriptionDeleted(subscription: Subscription): Promise<vo
     }
 
     // Deactivate premium features
-    (user.premium as any).isActive = false;
-    (user.premium as any).plan = 'basic';
-    (user.premium as any).expiresAt = new Date();
+    if (!user.premium) {
+      user.premium = {
+        isActive: false,
+        plan: 'free',
+        expiresAt: null,
+        cancelAtPeriodEnd: false,
+        paymentStatus: 'active',
+        features: {
+          unlimitedLikes: false,
+          boostProfile: false,
+          seeWhoLiked: false,
+          advancedFilters: false,
+          aiMatching: false,
+          prioritySupport: false,
+          globalPassport: false,
+        },
+        usage: {
+          swipesUsed: 0,
+          swipesLimit: 5,
+          superLikesUsed: 0,
+          superLikesLimit: 0,
+          boostsUsed: 0,
+          boostsLimit: 0,
+          messagesSent: 0,
+          profileViews: 0,
+          rewindsUsed: 0,
+        },
+      };
+    }
+    user.premium.isActive = false;
+    user.premium.plan = 'free';
+    user.premium.expiresAt = new Date();
 
     // Reset feature limits to basic
     setFeatureLimitsBasedOnPlan(user);
@@ -507,44 +815,59 @@ async function handleSubscriptionDeleted(subscription: Subscription): Promise<vo
 
 /**
  * Helper function to get the plan name from price ID
+ * Supports both environment variable mapping and direct Stripe queries
  */
 async function getPlanNameFromPriceId(priceId: string): Promise<string> {
-  // This would typically query Stripe API to get the product details
-  // For this implementation, we'll use a simple mapping
-  const pricePlanMap: Record<string, string> = {
-    'price_basic_monthly': 'basic',
-    'price_basic_yearly': 'basic',
-    'price_premium_monthly': 'premium',
-    'price_premium_yearly': 'premium',
-    'price_ultimate_monthly': 'ultimate',
-    'price_ultimate_yearly': 'ultimate'
-  };
-
-  return pricePlanMap[priceId] || 'basic';
-}
-
-/**
- * Helper function to set feature limits based on plan
- */
-function setFeatureLimitsBasedOnPlan(user: any): void {
-  switch (user.premium?.plan) {
-    case 'premium':
-      (user.premium as any).swipesLimit = Infinity;
-      (user.premium as any).superLikesLimit = 5;
-      (user.premium as any).boostsLimit = 1;
-      break;
-    case 'ultimate':
-      (user.premium as any).swipesLimit = Infinity;
-      (user.premium as any).superLikesLimit = Infinity;
-      (user.premium as any).boostsLimit = 5;
-      break;
-    default:
-      // Basic plan
-      (user.premium as any).swipesLimit = 50;
-      (user.premium as any).superLikesLimit = 0;
-      (user.premium as any).boostsLimit = 0;
+  // Check environment variables first (most common case)
+  if (priceId === process.env.STRIPE_BASIC_MONTHLY_PRICE_ID || 
+      priceId === process.env.STRIPE_BASIC_YEARLY_PRICE_ID) {
+    return 'basic';
   }
+  if (priceId === process.env.STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
+      priceId === process.env.STRIPE_PREMIUM_YEARLY_PRICE_ID) {
+    return 'premium';
+  }
+  if (priceId === process.env.STRIPE_ULTIMATE_MONTHLY_PRICE_ID || 
+      priceId === process.env.STRIPE_ULTIMATE_YEARLY_PRICE_ID) {
+    return 'ultimate';
+  }
+
+  // Fallback: Query Stripe API for product details
+  if (stripe) {
+    try {
+      const price = await stripe.prices.retrieve(priceId);
+      if (price.product) {
+        const productId = typeof price.product === 'string' ? price.product : price.product.id;
+        const product = await stripe.products.retrieve(productId);
+        const productName = product.name?.toLowerCase() || '';
+        
+        if (productName.includes('basic')) return 'basic';
+        if (productName.includes('premium')) return 'premium';
+        if (productName.includes('ultimate') || productName.includes('elite') || productName.includes('vip')) {
+          return 'ultimate';
+        }
+      }
+    } catch (error) {
+      logger.warn('Failed to query Stripe for plan name', { 
+        priceId, 
+        error: error instanceof Error ? error.message : String(error) 
+      });
+    }
+  }
+
+  // Fallback: Parse from price ID format (price_*_*)
+  const parts = priceId.split('_');
+  if (parts.length >= 3) {
+    const planName = parts[1]?.toLowerCase();
+    if (planName === 'basic' || planName === 'premium' || planName === 'ultimate') {
+      return planName;
+    }
+  }
+
+  logger.warn('Could not determine plan name from price ID, defaulting to basic', { priceId });
+  return 'basic';
 }
+
 
 /**
  * Helper to check if an event has already been processed

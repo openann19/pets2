@@ -8,6 +8,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { springs } from '@/foundation/motion';
 
 import DoubleTapLikePlus from './DoubleTapLikePlus';
 import ReactionBarMagnetic from '../chat/ReactionBarMagnetic';
@@ -87,7 +88,7 @@ export default function LikeArbitrator({
           runOnJS(openReactions)();
         })
         .onFinalize(() => {
-          lift.value = withSpring(0, { damping: 18, stiffness: 320 });
+          lift.value = withSpring(0, springs.standard);
         }),
     [openReactions, lift],
   );

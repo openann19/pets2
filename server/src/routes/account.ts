@@ -2,7 +2,6 @@ import express, { type Request, type Response, Router } from 'express';
 import { body } from 'express-validator';
 import { authenticateToken } from '../middleware/auth';
 import { validate } from '../middleware/validation';
-import { type IUserDocument } from '../models/User';
 import {
   getAccountStatus,
   requestDataExport,

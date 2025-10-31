@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 
-import { SPRING_CONFIGS } from './configs/springConfigs';
+import { springs, type SpringConfig } from '@/foundation/motion';
 import { TIMING_CONFIGS } from './configs/timingConfigs';
 import { prefersReducedMotion } from './configs/accessibility';
 
@@ -11,20 +11,20 @@ import { prefersReducedMotion } from './configs/accessibility';
 
 interface UseSpringAnimationReturn {
   value: ReturnType<typeof useSharedValue<number>>;
-  animate: (toValue: number, customConfig?: Partial<typeof SPRING_CONFIGS.standard>) => void;
+  animate: (toValue: number, customConfig?: Partial<SpringConfig>) => void;
   reset: () => void;
 }
 
 export function useSpringAnimation(
   initialValue: number = 0,
-  config: keyof typeof SPRING_CONFIGS = 'standard',
+  config: keyof typeof springs = 'standard',
 ): UseSpringAnimationReturn {
   const animatedValue = useSharedValue(initialValue);
 
   const animate = useCallback(
-    (toValue: number, customConfig?: Partial<typeof SPRING_CONFIGS.standard>) => {
+    (toValue: number, customConfig?: Partial<SpringConfig>) => {
       const springConfig = {
-        ...SPRING_CONFIGS[config],
+        ...springs[config],
         ...customConfig,
       };
 
@@ -41,7 +41,7 @@ export function useSpringAnimation(
   );
 
   const reset = useCallback(() => {
-    animatedValue.value = withSpring(initialValue, SPRING_CONFIGS[config]);
+    animatedValue.value = withSpring(initialValue, springs[config]);
   }, [animatedValue, initialValue, config]);
 
   return {

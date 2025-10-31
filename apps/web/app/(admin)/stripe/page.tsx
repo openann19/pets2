@@ -1,5 +1,6 @@
 'use client';
 
+import { logger } from '@pawfectmatch/core';
 import {
   EnhancedButton,
   EnhancedCard,
@@ -108,7 +109,7 @@ export default function StripeManagementPage() {
         setStripeConfig(config);
       }
     } catch (error) {
-      console.error('Failed to load Stripe config:', error);
+      logger.error('Failed to load Stripe config:', error);
     }
   };
 
@@ -130,7 +131,7 @@ export default function StripeManagementPage() {
         setBillingMetrics(metrics);
       }
     } catch (error) {
-      console.error('Failed to load billing data:', error);
+      logger.error('Failed to load billing data:', error);
     } finally {
       setIsLoading(false);
     }
@@ -152,7 +153,7 @@ export default function StripeManagementPage() {
         await loadBillingData();
       }
     } catch (error) {
-      console.error('Failed to save Stripe config:', error);
+      logger.error('Failed to save Stripe config:', error);
     } finally {
       setIsConfiguring(false);
     }
@@ -168,7 +169,7 @@ export default function StripeManagementPage() {
         await loadBillingData();
       }
     } catch (error) {
-      console.error('Failed to cancel subscription:', error);
+      logger.error('Failed to cancel subscription:', error);
     }
   };
 
@@ -182,7 +183,7 @@ export default function StripeManagementPage() {
         await loadBillingData();
       }
     } catch (error) {
-      console.error('Failed to reactivate subscription:', error);
+      logger.error('Failed to reactivate subscription:', error);
     }
   };
 

@@ -57,6 +57,13 @@ config.transformer = {
       dead_code: true,
       // Remove unused code
       unused: true,
+      // Advanced optimizations
+      passes: 3, // Multiple passes for better optimization
+      pure_funcs: ['console.log', 'console.info', 'console.debug'],
+      unsafe: true, // Enable unsafe optimizations
+      unsafe_comps: true,
+      unsafe_math: true,
+      unsafe_proto: true,
     },
   },
   // Optimize asset loading
@@ -68,6 +75,10 @@ config.transformer = {
       inlineRequires: true,
     },
   }),
+  // Hermes bytecode precompilation (if available)
+  ...(process.env.EXPO_PUBLIC_ENABLE_HERMES_BYTECODE === 'true' && {
+    hermesCommand: 'hermesc',
+  }),
 };
 
 // Serializer configuration for bundle optimization
@@ -75,6 +86,25 @@ config.serializer = {
   ...config.serializer,
   // Optimize bundle output
   customSerializer: config.serializer?.customSerializer,
+  // Enable module concatenation (scope hoisting)
+  createModuleIdFactory: () => {
+    let nextId = 0;
+    return (path) => {
+      // Use shorter IDs for production
+      if (process.env.NODE_ENV === 'production') {
+        return nextId++;
+      }
+      return path;
+    };
+  },
+  // Custom serializer options for better tree shaking
+  processModuleFilter: (module) => {
+    // Filter out test files in production
+    if (process.env.NODE_ENV === 'production') {
+      return !module.path.includes('__tests__') && !module.path.includes('.test.');
+    }
+    return true;
+  },
 };
 
 // Watch folders for better development experience and hot reloading

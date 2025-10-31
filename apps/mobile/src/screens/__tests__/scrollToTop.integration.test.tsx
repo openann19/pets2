@@ -27,7 +27,7 @@ jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn().mockResolvedValue(undefined),
 }));
 
-jest.mock('../hooks/screens/useHomeScreen', () => ({
+jest.mock('../../hooks/screens/useHomeScreen', () => ({
   useHomeScreen: () => ({
     stats: { matches: 0, messages: 0 },
     refreshing: false,

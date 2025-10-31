@@ -12,7 +12,7 @@ import { connectToDB } from '../../../../../lib/db';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { exportId: string } }
+    context: { params: Promise<{ exportId: string }> }
 ) {
     try {
         // Verify authentication
@@ -21,6 +21,7 @@ export async function GET(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        const params = await context.params;
         const { exportId } = params;
 
         // Connect to the database

@@ -9,10 +9,10 @@
  * - Staggered animations for form sections
  */
 
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import {
   View,
+  Text,
   TextInput,
   StyleSheet,
   ScrollView,
@@ -23,19 +23,14 @@ import {
 
 // Import new architecture components
 import {
-  EliteButton,
-  EliteButtonPresets,
   FXContainerPresets,
   ModernPhotoUpload,
-  Heading2,
-  BodySmall,
-  Label,
   useStaggeredAnimation,
 } from '../components';
+import { EliteContainer, EliteHeader } from '../components/elite';
+import { useCreatePetScreen } from '../hooks/screens/useCreatePetScreen';
 import { useTheme } from '@mobile/theme';
-
-// Import legacy components for gradual migration
-
+import AnimatedButton from '../components/AnimatedButton';
 import type { RootStackScreenProps } from '../navigation/types';
 
 type CreatePetScreenProps = RootStackScreenProps<'CreatePet'>;
@@ -54,7 +49,7 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
   } = useCreatePetScreen();
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } = useStaggeredAnimation(6);
+  const { start: startStaggeredAnimation } = useStaggeredAnimation(6);
 
   // Start animations
   React.useEffect(() => {
@@ -173,8 +168,8 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
           {/* Photo Upload Section */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Pet Photos</Text>
-              <Text style={{fontSize: 14, color: theme.colors.onSurface}} style={styles.sectionSubtitle}>
+              <Text style={[styles.sectionTitle, { fontSize: 24, fontWeight: 'bold', color: theme.colors.onSurface }]}>Pet Photos</Text>
+              <Text style={[styles.sectionSubtitle, { fontSize: 14, color: theme.colors.onSurface }]}>
                 Add up to 6 photos to showcase your pet
               </Text>
               <ModernPhotoUpload
@@ -188,7 +183,7 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
           {/* Basic Information */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Basic Information</Text>
+              <Text style={[styles.sectionTitle, { fontSize: 24, fontWeight: 'bold', color: theme.colors.onSurface }]}>Basic Information</Text>
 
               <View style={styles.formGroup}>
                 <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Pet Name *</Text>
@@ -209,13 +204,14 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
                   {speciesOptions.map((species) => (
                     <AnimatedButton
                       key={species}
-                      title={species}
-                      variant={formData.species === species ? 'primary' : 'outline'}
+                      variant={formData.species === species ? 'primary' : 'ghost'}
                       size="sm"
                       onPress={() => {
                         updateFormData('species', species);
                       }}
-                    />
+                    >
+                      {species}
+                    </AnimatedButton>
                   ))}
                 </View>
               </View>
@@ -252,13 +248,14 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
                   {genderOptions.map((gender) => (
                     <AnimatedButton
                       key={gender}
-                      title={gender}
-                      variant={formData.gender === gender ? 'primary' : 'outline'}
+                      variant={formData.gender === gender ? 'primary' : 'ghost'}
                       size="sm"
                       onPress={() => {
                         updateFormData('gender', gender);
                       }}
-                    />
+                    >
+                      {gender}
+                    </AnimatedButton>
                   ))}
                 </View>
               </View>
@@ -269,13 +266,14 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
                   {sizeOptions.map((size) => (
                     <AnimatedButton
                       key={size}
-                      title={size}
-                      variant={formData.size === size ? 'primary' : 'outline'}
+                      variant={formData.size === size ? 'primary' : 'ghost'}
                       size="sm"
                       onPress={() => {
                         updateFormData('size', size);
                       }}
-                    />
+                    >
+                      {size}
+                    </AnimatedButton>
                   ))}
                 </View>
               </View>
@@ -285,7 +283,7 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
           {/* Description */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Description</Text>
+              <Text style={[styles.sectionTitle, { fontSize: 24, fontWeight: 'bold', color: theme.colors.onSurface }]}>Description</Text>
               <View style={styles.formGroup}>
                 <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Tell us about your pet *</Text>
                 <TextInput
@@ -306,20 +304,21 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
           {/* Intent */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Intent</Text>
+              <Text style={[styles.sectionTitle, { fontSize: 24, fontWeight: 'bold', color: theme.colors.onSurface }]}>Intent</Text>
               <View style={styles.formGroup}>
                 <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>What are you looking for?</Text>
                 <View style={styles.optionsContainer}>
                   {intentOptions.map((intent) => (
                     <AnimatedButton
                       key={intent}
-                      title={intent.charAt(0).toUpperCase() + intent.slice(1)}
-                      variant={formData.intent === intent ? 'primary' : 'outline'}
+                      variant={formData.intent === intent ? 'primary' : 'ghost'}
                       size="sm"
                       onPress={() => {
                         updateFormData('intent', intent);
                       }}
-                    />
+                    >
+                      {intent.charAt(0).toUpperCase() + intent.slice(1)}
+                    </AnimatedButton>
                   ))}
                 </View>
               </View>
@@ -329,20 +328,21 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
           {/* Personality Tags */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Personality & Traits</Text>
+              <Text style={[styles.sectionTitle, { fontSize: 24, fontWeight: 'bold', color: theme.colors.onSurface }]}>Personality & Traits</Text>
               <View style={styles.formGroup}>
                 <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Select traits that describe your pet</Text>
                 <View style={styles.optionsContainer}>
                   {personalityTagOptions.map((tag) => (
                     <AnimatedButton
                       key={tag}
-                      title={tag}
-                      variant={formData.personalityTags.includes(tag) ? 'primary' : 'outline'}
+                      variant={formData.personalityTags.includes(tag) ? 'primary' : 'ghost'}
                       size="sm"
                       onPress={() => {
                         togglePersonalityTag(tag);
                       }}
-                    />
+                    >
+                      {tag}
+                    </AnimatedButton>
                   ))}
                 </View>
               </View>
@@ -352,7 +352,7 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
           {/* Contact Information */}
           <View>
             <FXContainerPresets.glass style={styles.section}>
-              <Text style={{fontSize: 24, fontWeight: "bold", color: theme.colors.onSurface}} style={styles.sectionTitle}>Contact Information</Text>
+              <Text style={[styles.sectionTitle, { fontSize: 24, fontWeight: 'bold', color: theme.colors.onSurface }]}>Contact Information</Text>
 
               <View style={styles.formGroup}>
                 <Text style={{fontSize: 16, fontWeight: "500", color: theme.colors.onSurface}}>Email *</Text>
@@ -387,13 +387,15 @@ export default function ModernCreatePetScreen({ navigation }: CreatePetScreenPro
 
           {/* Submit Button */}
           <View style={styles.submitContainer}>
-            <AnimatedButtonPresets.holographic
-              title={isSubmitting ? 'Creating Profile...' : 'Create Pet Profile'}
+            <AnimatedButton
+              variant="primary"
               size="lg"
               loading={isSubmitting}
               onPress={onSubmit}
               style={styles.submitButton}
-            />
+            >
+              {isSubmitting ? 'Creating Profile...' : 'Create Pet Profile'}
+            </AnimatedButton>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

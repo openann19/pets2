@@ -1,216 +1,281 @@
 /**
- * Smart Notifications Routes
- * Handles notification preferences and delivery
+ * Notification Routes
+ * Handles notification preferences, do-not-disturb, and push notification management
  */
 
-import express from 'express';
-import type { Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+import { Router } from 'express';
+import type { Response } from 'express';
 import { authenticateToken } from '../middleware/auth';
-import {
-  getNotificationPreferences,
-  updateNotificationPreferences,
-  sendTestNotification,
-  getNotificationHistory,
-  markNotificationRead
-} from '../controllers/notificationController';
+import { sendPushToUser } from '../services/pushNotificationService';
+import logger from '../utils/logger';
+import type { AuthRequest } from '../types/express';
 
-// Add push token registration controllers
-import { registerPushToken } from '../controllers/pushTokenController';
-import { unregisterPushToken } from '../controllers/pushTokenController';
-
-
-const router = express.Router();
-
-// Validation rules
-const updatePreferencesValidation = [
-  body('enabled').isBoolean().withMessage('Enabled must be a boolean'),
-  body('matches').isBoolean().withMessage('Matches must be a boolean'),
-  body('messages').isBoolean().withMessage('Messages must be a boolean'),
-  body('likes').isBoolean().withMessage('Likes must be a boolean'),
-  body('reminders').isBoolean().withMessage('Reminders must be a boolean'),
-  body('frequency').isIn(['instant', 'batched', 'daily'])
-    .withMessage('Frequency must be one of: instant, batched, daily'),
-  body('sound').isBoolean().withMessage('Sound must be a boolean'),
-  body('vibration').isBoolean().withMessage('Vibration must be a boolean'),
-  body('quietHours.enabled').optional().isBoolean()
-    .withMessage('Quiet hours enabled must be a boolean'),
-  body('quietHours.start').optional().matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
-    .withMessage('Quiet hours start must be in HH:mm format'),
-  body('quietHours.end').optional().matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
-    .withMessage('Quiet hours end must be in HH:mm format')
-];
-
-const testNotificationValidation = [
-  body('type').optional().isString().withMessage('Type must be a string')
-];
+const router = Router();
 
 /**
- * @route   GET /api/user/notifications/preferences
- * @desc    Get user's notification preferences
- * @access  Private
+ * GET /api/notifications/preferences
+ * Get user's notification preferences
  */
-router.get('/preferences', authenticateToken, async (req: Request, res: Response): Promise<void> => {
+router.get('/preferences', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.userId) {
-      res.status(401).json({ success: false, message: 'Unauthorized' });
-      return;
+    const userId = req.user?._id?.toString() || req.userId;
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
     }
-    await getNotificationPreferences(req, res);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get notification preferences',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-});
 
-/**
- * @route   PUT /api/user/notifications/preferences
- * @desc    Update user's notification preferences
- * @access  Private
- */
-router.put('/preferences', authenticateToken, updatePreferencesValidation, async (req: Request, res: Response): Promise<void> => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({
-        success: false,
-        message: 'Validation failed',
-        errors: errors.array()
+    const NotificationPreference = (await import('../models/NotificationPreference')).default;
+    let preferences = await NotificationPreference.findOne({ userId });
+
+    // Create default preferences if they don't exist
+    if (!preferences) {
+      preferences = await NotificationPreference.create({
+        userId,
+        enabled: true,
+        matches: true,
+        messages: true,
+        likes: true,
+        reminders: true,
+        frequency: 'instant',
+        sound: true,
+        vibration: true,
       });
-      return;
     }
 
-    if (!req.userId) {
-      res.status(401).json({ success: false, message: 'Unauthorized' });
-      return;
-    }
-    await updateNotificationPreferences(req, res);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update notification preferences',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
+    res.json({ success: true, data: preferences });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error getting notification preferences:', error);
+    res.status(500).json({ success: false, error: errorMessage });
   }
 });
 
 /**
- * @route   POST /api/notifications/test
- * @desc    Send test notification
- * @access  Private
+ * PUT /api/notifications/preferences
+ * Update user's notification preferences
  */
-router.post('/test', authenticateToken, testNotificationValidation, async (req: Request, res: Response): Promise<void> => {
+router.put('/preferences', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({
-        success: false,
-        message: 'Validation failed',
-        errors: errors.array()
-      });
-      return;
+    const userId = req.user?._id?.toString() || req.userId;
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
     }
 
-    if (!req.userId) {
-      res.status(401).json({ success: false, message: 'Unauthorized' });
-      return;
-    }
-    await sendTestNotification(req, res);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to send test notification',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
+    const {
+      enabled,
+      matches,
+      messages,
+      likes,
+      reminders,
+      quietHours,
+      frequency,
+      sound,
+      vibration,
+    } = req.body;
+
+    const NotificationPreference = (await import('../models/NotificationPreference')).default;
+    const preferences = await NotificationPreference.findOneAndUpdate(
+      { userId },
+      {
+        ...(enabled !== undefined && { enabled }),
+        ...(matches !== undefined && { matches }),
+        ...(messages !== undefined && { messages }),
+        ...(likes !== undefined && { likes }),
+        ...(reminders !== undefined && { reminders }),
+        ...(quietHours && { quietHours }),
+        ...(frequency && { frequency }),
+        ...(sound !== undefined && { sound }),
+        ...(vibration !== undefined && { vibration }),
+      },
+      { new: true, upsert: true },
+    );
+
+    logger.info('Notification preferences updated', { userId, preferences });
+
+    res.json({ success: true, data: preferences });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error updating notification preferences:', error);
+    res.status(500).json({ success: false, error: errorMessage });
   }
 });
 
 /**
- * @route   GET /api/user/notifications/history
- * @desc    Get notification history for user
- * @access  Private
+ * POST /api/notifications/register-token
+ * Register push notification token
  */
-router.get('/history', authenticateToken, async (req: Request, res: Response): Promise<void> => {
+router.post('/register-token', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.userId) {
-      res.status(401).json({ success: false, message: 'Unauthorized' });
-      return;
+    const userId = req.user?._id?.toString() || req.userId;
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
     }
-    await getNotificationHistory(req, res);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get notification history',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
+
+    const { token, platform, deviceId } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ success: false, error: 'Token is required' });
+    }
+
+    const User = (await import('../models/User')).default;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    // Add or update push token
+    if (!user.pushTokens) {
+      user.pushTokens = [];
+    }
+
+    // Remove existing token for this device if present
+    const existingTokenIndex = user.pushTokens.findIndex(
+      (t: { token: string; deviceId?: string }) => t.deviceId === deviceId,
+    );
+
+    const tokenData: { token: string; platform?: string; deviceId?: string; registeredAt?: Date } = {
+      token,
+      platform,
+      deviceId,
+      registeredAt: new Date(),
+    };
+
+    if (existingTokenIndex >= 0) {
+      user.pushTokens[existingTokenIndex] = tokenData;
+    } else {
+      user.pushTokens.push(tokenData);
+    }
+
+    await user.save();
+
+    // Update notification preferences with token
+    const NotificationPreference = (await import('../models/NotificationPreference')).default;
+    await NotificationPreference.findOneAndUpdate(
+      { userId },
+      { pushToken: token, 'deviceInfo.platform': platform },
+      { upsert: true },
+    );
+
+    logger.info('Push token registered', { userId, deviceId, platform });
+
+    res.json({ success: true, message: 'Token registered successfully' });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error registering push token:', error);
+    res.status(500).json({ success: false, error: errorMessage });
   }
 });
 
 /**
- * @route   PUT /api/user/notifications/:notificationId/read
- * @desc    Mark notification as read
- * @access  Private
+ * DELETE /api/notifications/unregister-token
+ * Unregister push notification token
  */
-router.put('/:notificationId/read', authenticateToken, async (req: Request, res: Response): Promise<void> => {
+router.delete('/unregister-token', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.userId) {
-      res.status(401).json({ success: false, message: 'Unauthorized' });
-      return;
+    const userId = req.user?._id?.toString() || req.userId;
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
     }
-    await markNotificationRead(req, res);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to mark notification as read',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
+
+    const { deviceId } = req.body;
+
+    const User = (await import('../models/User')).default;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    if (user.pushTokens && deviceId) {
+      user.pushTokens = user.pushTokens.filter(
+        (t: { deviceId?: string }) => t.deviceId !== deviceId,
+      );
+      await user.save();
+    }
+
+    logger.info('Push token unregistered', { userId, deviceId });
+
+    res.json({ success: true, message: 'Token unregistered successfully' });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error unregistering push token:', error);
+    res.status(500).json({ success: false, error: errorMessage });
   }
 });
 
 /**
- * @route   POST /api/notifications/register-token
- * @desc    Register push notification token for device
- * @access  Private
+ * POST /api/notifications/test
+ * Send test notification
  */
-router.post('/register-token', authenticateToken, async (req: Request, res: Response): Promise<void> => {
+router.post('/test', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.userId) {
-      res.status(401).json({ success: false, message: 'Unauthorized' });
-      return;
+    const userId = req.user?._id?.toString() || req.userId;
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
     }
-    await registerPushToken(req, res);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to register push token',
-      error: error instanceof Error ? error.message : 'Unknown error'
+
+    await sendPushToUser(userId, {
+      title: 'Test Notification',
+      body: 'This is a test notification from PawfectMatch',
+      data: { type: 'test' },
     });
+
+    res.json({ success: true, message: 'Test notification sent' });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error sending test notification:', error);
+    res.status(500).json({ success: false, error: errorMessage });
   }
 });
 
 /**
- * @route   DELETE /api/notifications/unregister-token
- * @desc    Unregister push notification token for device
- * @access  Private
+ * GET /api/notifications/is-quiet-hours
+ * Check if current time is within quiet hours
  */
-router.delete('/unregister-token', authenticateToken, async (req: Request, res: Response): Promise<void> => {
+router.get('/is-quiet-hours', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.userId) {
-      res.status(401).json({ success: false, message: 'Unauthorized' });
-      return;
+    const userId = req.user?._id?.toString() || req.userId;
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
     }
-    await unregisterPushToken(req, res);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to unregister push token',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
+
+    const NotificationPreference = (await import('../models/NotificationPreference')).default;
+    const preferences = await NotificationPreference.findOne({ userId });
+
+    if (!preferences || !preferences.quietHours?.enabled) {
+      return res.json({ success: true, isQuietHours: false });
+    }
+
+    const { quietHours } = preferences;
+    if (!quietHours.enabled) {
+      return res.json({ success: true, isQuietHours: false });
+    }
+
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    const [startHour, startMin] = quietHours.start.split(':').map(Number);
+    const [endHour, endMin] = quietHours.end.split(':').map(Number);
+
+    const startTime = startHour * 60 + startMin;
+    const endTime = endHour * 60 + endMin;
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    let isQuietHours = false;
+
+    // Handle quiet hours that span midnight
+    if (startTime > endTime) {
+      isQuietHours = currentMinutes >= startTime || currentMinutes < endTime;
+    } else {
+      isQuietHours = currentMinutes >= startTime && currentMinutes < endTime;
+    }
+
+    res.json({ success: true, isQuietHours });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error checking quiet hours:', error);
+    res.status(500).json({ success: false, error: errorMessage });
   }
 });
 
 export default router;
-

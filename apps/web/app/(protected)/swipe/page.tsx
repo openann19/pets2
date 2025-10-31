@@ -1,57 +1,23 @@
+/**
+ * SwipeScreen - Web Version
+ * Identical to mobile SwipeScreen structure
+ */
+
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
-import dynamic from 'next/dynamic';
-import LoadingSpinner from '../../../src/components/UI/LoadingSpinner';
+import React, { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ScreenShell } from '@/src/components/layout/ScreenShell';
+import { EmptyStates } from '@/src/components/common/EmptyStates';
+import { useSwipeData } from '@/src/hooks/useSwipeData';
+import { useNetworkStatus } from '@/src/hooks/useNetworkStatus';
+import { useErrorHandling } from '@/src/hooks/useErrorHandling';
+import { useTranslation } from 'react-i18next';
+import { SwipeCardV2 } from '@/src/components/Pet/SwipeCardV2';
+import { MatchModal } from '@/src/components/Pet/MatchModal';
+import { ArrowLeftIcon, UsersIcon } from '@heroicons/react/24/outline';
+import type { PetCardData } from '@/src/components/Pet/SwipeCardV2';
 
-// Dynamic imports for heavy components
-const SwipeCardV2 = dynamic(() => import('../../../src/components/Pet/SwipeCardV2'), {
-  loading: () => <div className="w-80 h-96 bg-gray-200 animate-pulse rounded-2xl" />,
-  ssr: false
-});
-
-const MatchModal = dynamic(() => import('../../../src/components/Pet/MatchModal'), {
-  loading: () => null,
-  ssr: false
-});
-
-const PremiumButton = dynamic(() => import('../../../src/components/UI/PremiumButton'), {
-  loading: () => <div className="w-16 h-16 bg-gray-200 animate-pulse rounded-full" />,
-  ssr: false
-});
-
-// Lazy load heavy icons
-const HeartIcon = dynamic(() => import('@heroicons/react/24/solid').then(mod => ({ default: mod.HeartIcon })), {
-  loading: () => <div className="w-6 h-6 bg-gray-200 animate-pulse rounded" />,
-  ssr: false
-});
-
-const XMarkIcon = dynamic(() => import('@heroicons/react/24/solid').then(mod => ({ default: mod.XMarkIcon })), {
-  loading: () => <div className="w-6 h-6 bg-gray-200 animate-pulse rounded" />,
-  ssr: false
-});
-
-const StarIcon = dynamic(() => import('@heroicons/react/24/solid').then(mod => ({ default: mod.StarIcon })), {
-  loading: () => <div className="w-8 h-8 bg-gray-200 animate-pulse rounded" />,
-  ssr: false
-});
-
-const SparklesIcon = dynamic(() => import('@heroicons/react/24/solid').then(mod => ({ default: mod.SparklesIcon })), {
-  loading: () => <div className="w-10 h-10 bg-gray-200 animate-pulse rounded" />,
-  ssr: false
-});
-
-const ArrowPathIcon = dynamic(() => import('@heroicons/react/24/solid').then(mod => ({ default: mod.ArrowPathIcon })), {
-  loading: () => <div className="w-5 h-5 bg-gray-200 animate-pulse rounded" />,
-  ssr: false
-});
-
-// Import hooks and motion components normally (they're lightweight)
-import { motion, AnimatePresence } from 'framer-motion';
-import { useSwipeData } from '../../../src/hooks/api-hooks';
-import type { PetCardData } from '../../../src/components/Pet/SwipeCardV2';
-
-// Map API Pet -> SwipeCardV2 data shape
 function normalizeSize(s: any): PetCardData['size'] {
   const v = String(s || 'medium').toLowerCase();
   if (['tiny', 'small', 'medium', 'large', 'extra-large'].includes(v)) return v as PetCardData['size'];
@@ -61,223 +27,297 @@ function normalizeSize(s: any): PetCardData['size'] {
 
 function toCardData(pet: any): PetCardData {
   return {
-    id: pet.id,
+    id: pet.id || pet._id,
     name: pet.name,
     breed: pet.breed || 'Mixed',
     age: typeof pet.age === 'number' ? pet.age : 0,
     size: normalizeSize(pet.size),
     distanceKm: pet.owner?.location ? 5 : 0,
-    bio: pet.description || (pet as any).bio || '',
-    photos: Array.isArray(pet.photos) ? pet.photos.map((ph: any) => ph?.url).filter(Boolean) : [],
-    compatibility: (pet as any).compatibilityScore,
-    gender: (pet as any).gender,
-    species: (pet as any).species,
+    bio: pet.description || pet.bio || '',
+    photos: Array.isArray(pet.photos) ? pet.photos.map((ph: any) => ph?.url || ph).filter(Boolean) : [],
+    compatibility: pet.compatibilityScore,
+    gender: pet.gender,
+    species: pet.species,
   };
 }
 
-function SwipePageContent() {
-  const { pets, currentPet, swipe, isLoading, lastMatch, clearMatch, isPremium, refetch } = useSwipeData();
-  const [showMatchModal, setShowMatchModal] = useState(false);
+export default function SwipePage() {
+  const router = useRouter();
+  const { t } = useTranslation('common');
+  const [showLimitModal, setShowLimitModal] = useState(false);
+  const [limitData, setLimitData] = useState<{
+    usedToday: number;
+    limit: number;
+  } | null>(null);
 
-  useEffect(() => {
-    if (lastMatch) {
-      setShowMatchModal(true);
-    }
-  }, [lastMatch]);
+  // Data management hook
+  const { pets, isLoading, error, currentIndex, handleSwipe, handleButtonSwipe, refreshPets } =
+    useSwipeData();
 
-  const onSwipe = async (direction: 'like' | 'pass' | 'superlike') => {
-    if (!currentPet) return;
-    await swipe({
-      petId: currentPet.id,
-      action: direction,
-      timestamp: new Date().toISOString(),
-    });
-  };
+  // Wrapper for handleSwipe that catches limit errors
+  const handleSwipeWithLimit = useCallback(
+    async (action: 'like' | 'pass' | 'superlike') => {
+      try {
+        await handleSwipe(action);
+      } catch (err: unknown) {
+        const errorData = err as any;
+        if (errorData?.code === 'SWIPE_LIMIT_EXCEEDED') {
+          setLimitData({
+            usedToday: errorData.usedToday || 5,
+            limit: errorData.currentLimit || 5,
+          });
+          setShowLimitModal(true);
+        } else {
+          throw err;
+        }
+      }
+    },
+    [handleSwipe],
+  );
 
-  if (isLoading && !currentPet) {
+  // Network status monitoring
+  const { isOnline, isOffline } = useNetworkStatus({
+    onConnect: () => {
+      refreshPets();
+    },
+  });
+
+  // Error handling with retry
+  const {
+    error: errorHandlingError,
+    executeWithRetry,
+    retry,
+    clearError,
+  } = useErrorHandling({
+    maxRetries: 3,
+    showAlert: false,
+    logError: true,
+  });
+
+  const currentPet = pets[currentIndex];
+
+  // Show loading state
+  if (isLoading && pets.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
-        >
-          <LoadingSpinner size="lg" variant="holographic" />
-          <p className="mt-6 text-lg text-gray-600 font-semibold">Finding perfect matches for you...</p>
-        </motion.div>
-      </div>
-    );
-  }
-
-  if (!currentPet) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center bg-white/90 backdrop-blur-xl p-12 rounded-3xl shadow-2xl max-w-lg border border-white/20"
-        >
-          <div className="w-20 h-20 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <SparklesIcon className="w-10 h-10 text-white" />
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">No More Pets Right Now!</h2>
-          <p className="text-gray-600 mb-8 text-lg">Check back later for more adorable matches, or explore your current matches.</p>
-          <PremiumButton
-            onClick={() => refetch()}
-            variant="gradient"
-            size="lg"
-            icon={<ArrowPathIcon className="w-5 h-5" />}
-            glow
-            magneticEffect
-            haptic
-          >
-            Refresh
-          </PremiumButton>
-        </motion.div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex flex-col" data-testid="swipe-interface">
-      {/* Premium Header */}
-      <motion.header 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-40 shadow-sm"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                Pet Match
-              </h1>
-              <p className="text-sm text-gray-500 mt-0.5">Discover your perfect companion</p>
-            </div>
-            <div className="flex items-center gap-4">
-              {isPremium && (
-                <span className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold rounded-full">
-                  <SparklesIcon className="w-3.5 h-3.5" />
-                  PREMIUM
-                </span>
-              )}
-              <div className="text-right">
-                <p className="text-xs text-gray-500">Your Queue</p>
-                <p className="text-lg font-bold text-gray-900">{pets.length} pets</p>
+      <ScreenShell
+        header={
+          <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-16">
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => router.back()}
+                    className="p-2 text-gray-600 hover:text-gray-800"
+                    aria-label="Back"
+                  >
+                    <ArrowLeftIcon className="w-5 h-5" />
+                  </button>
+                  <h1 className="text-xl font-bold text-gray-900">{t('swipe.title', 'Swipe')}</h1>
+                </div>
+                <button
+                  onClick={() => router.push('/matches')}
+                  className="p-2 text-gray-600 hover:text-gray-800"
+                  aria-label="Matches"
+                >
+                  <UsersIcon className="w-5 h-5" />
+                </button>
               </div>
             </div>
           </div>
+        }
+      >
+        <div className="flex flex-col items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <p className="mt-4 text-gray-600">{t('swipe.loading_pets')}</p>
         </div>
-      </motion.header>
+      </ScreenShell>
+    );
+  }
 
-      {/* Swipe Area */}
-      <div className="flex-1 flex items-center justify-center p-4 md:p-8">
-        <div className="relative w-full max-w-lg">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentPet?.id}
-              initial={{ scale: 0.9, opacity: 0, rotateY: 10 }}
-              animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-              exit={{ scale: 0.9, opacity: 0, rotateY: -10 }}
-              transition={{ duration: 0.4, type: "spring" }}
-            >
-              {currentPet && (
-                <SwipeCardV2
-                  pet={toCardData(currentPet)}
-                  onSwipe={(action) => onSwipe(action)}
-                />
-              )}
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Premium Action Buttons */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex justify-center items-center gap-6 mt-10"
-          >
-            <PremiumButton
-              onClick={() => onSwipe('pass')}
-              variant="ghost"
-              size="lg"
-              icon={<XMarkIcon className="h-6 w-6 text-red-500" />}
-              haptic
-              className="!w-16 !h-16 !rounded-full !min-h-0 !p-0"
-              data-testid="pass-button"
-            />
-            
-            {isPremium && (
-              <PremiumButton
-                onClick={() => onSwipe('superlike')}
-                variant="neon"
-                size="lg"
-                icon={<StarIcon className="h-8 w-8" />}
-                glow
-                magneticEffect
-                haptic
-                sound
-                className="!w-20 !h-20 !rounded-full !min-h-0 !p-0 relative"
-              >
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
-                  <SparklesIcon className="w-3 h-3 text-white" />
+  // Show offline state
+  if (isOffline && pets.length === 0) {
+    return (
+      <ScreenShell
+        header={
+          <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-16">
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => router.back()}
+                    className="p-2 text-gray-600 hover:text-gray-800"
+                  >
+                    <ArrowLeftIcon className="w-5 h-5" />
+                  </button>
+                  <h1 className="text-xl font-bold text-gray-900">{t('swipe.title')}</h1>
                 </div>
-              </PremiumButton>
-            )}
-            
-            <PremiumButton
-              onClick={() => onSwipe('like')}
-              variant="gradient"
-              size="lg"
-              icon={<HeartIcon className="h-6 w-6" />}
-              glow
-              magneticEffect
-              haptic
-              sound
-              className="!w-16 !h-16 !rounded-full !min-h-0 !p-0"
-              data-testid="like-button"
-            />
-          </motion.div>
+              </div>
+            </div>
+          </div>
+        }
+      >
+        <EmptyStates.Offline
+          title={t('swipe.offline.title') || "You're offline"}
+          message={t('swipe.offline.message') || 'Connect to the internet to see pets'}
+        />
+      </ScreenShell>
+    );
+  }
 
-          {/* Action Labels */}
-          <div className="flex justify-center items-center gap-6 mt-4">
-            <span className="text-xs font-semibold text-gray-500 w-16 text-center">PASS</span>
-            {isPremium && <span className="text-xs font-semibold text-blue-600 w-20 text-center">SUPER LIKE</span>}
-            <span className="text-xs font-semibold text-pink-600 w-16 text-center">LIKE</span>
+  // Show error state
+  if ((error || errorHandlingError) && pets.length === 0) {
+    return (
+      <ScreenShell
+        header={
+          <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-16">
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => router.back()}
+                    className="p-2 text-gray-600 hover:text-gray-800"
+                  >
+                    <ArrowLeftIcon className="w-5 h-5" />
+                  </button>
+                  <h1 className="text-xl font-bold text-gray-900">{t('swipe.title')}</h1>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      >
+        <EmptyStates.Error
+          title={t('swipe.error.title') || 'Unable to load pets'}
+          message={errorHandlingError?.userMessage || error || t('swipe.error.message') || 'Please check your connection and try again'}
+          actionLabel={t('swipe.error.retry') || 'Retry'}
+          onAction={() => {
+            clearError();
+            retry();
+          }}
+        />
+      </ScreenShell>
+    );
+  }
+
+  // Show no pets state
+  if (!currentPet) {
+    return (
+      <ScreenShell
+        header={
+          <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-16">
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => router.back()}
+                    className="p-2 text-gray-600 hover:text-gray-800"
+                  >
+                    <ArrowLeftIcon className="w-5 h-5" />
+                  </button>
+                  <h1 className="text-xl font-bold text-gray-900">{t('swipe.title')}</h1>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      >
+        <EmptyStates.NoMatches
+          title={t('swipe.no_more_pets') || 'No more pets'}
+          message={t('swipe.check_back_later') || 'Check back later for more matches'}
+        />
+      </ScreenShell>
+    );
+  }
+
+  return (
+    <ScreenShell
+      header={
+        <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => router.back()}
+                  className="p-2 text-gray-600 hover:text-gray-800"
+                  aria-label="Back"
+                >
+                  <ArrowLeftIcon className="w-5 h-5" />
+                </button>
+                <h1 className="text-xl font-bold text-gray-900">{t('swipe.title')}</h1>
+                {pets.length > 0 && (
+                  <span className="text-sm text-gray-600">{pets.length} {t('swipe.petsAvailable', 'pets nearby')}</span>
+                )}
+              </div>
+              <button
+                onClick={() => router.push('/matches')}
+                className="p-2 text-gray-600 hover:text-gray-800"
+                aria-label="Matches"
+              >
+                <UsersIcon className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="relative w-full max-w-lg">
+          {currentPet && (
+            <div className="relative">
+              <SwipeCardV2
+                pet={toCardData(currentPet)}
+                onSwipe={(action) => handleSwipeWithLimit(action)}
+              />
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex justify-center items-center gap-6 mt-10">
+            <button
+              onClick={() => handleSwipeWithLimit('pass')}
+              className="w-16 h-16 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+              aria-label="Pass"
+            >
+              <span className="text-2xl">✕</span>
+            </button>
+            <button
+              onClick={() => handleSwipeWithLimit('like')}
+              className="w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 flex items-center justify-center transition-colors"
+              aria-label="Like"
+            >
+              <span className="text-white text-2xl">♥</span>
+            </button>
+            <button
+              onClick={() => handleSwipeWithLimit('superlike')}
+              className="w-20 h-20 rounded-full bg-blue-500 hover:bg-blue-600 flex items-center justify-center transition-colors"
+              aria-label="Super Like"
+            >
+              <span className="text-white text-3xl">⭐</span>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Match Modal */}
-      {showMatchModal && lastMatch && (
-        <MatchModal
-          isOpen={showMatchModal}
-          onClose={() => {
-            setShowMatchModal(false);
-            clearMatch();
-          }}
-          matchId={(lastMatch as any).id}
-          currentUserPet={(lastMatch as any).pet1}
-          matchedPet={(lastMatch as any).pet2}
-          matchedUser={(lastMatch as any).user2}
-        />
-      )}
-    </div>
-  );
-}
-
-// Export with Suspense boundary for better loading experience
-export default function SwipePage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
-        <div className="text-center">
-          <LoadingSpinner size="lg" variant="holographic" />
-          <p className="mt-6 text-lg text-gray-600 font-semibold">Loading swipe interface...</p>
+      {/* Match Modal would go here if match occurs */}
+      {limitData && showLimitModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-md">
+            <h3 className="text-xl font-bold mb-4">Swipe Limit Reached</h3>
+            <p className="text-gray-600 mb-4">
+              You've used {limitData.usedToday} of {limitData.limit} swipes today.
+            </p>
+            <button
+              onClick={() => {
+                setShowLimitModal(false);
+                setLimitData(null);
+              }}
+              className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+            >
+              Got it
+            </button>
+          </div>
         </div>
-      </div>
-    }>
-      <SwipePageContent />
-    </Suspense>
+      )}
+    </ScreenShell>
   );
 }

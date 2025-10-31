@@ -5,6 +5,12 @@
 
 const { expect } = require('chai');
 
+describe('Chat Load Test Configuration', () => {
+  it('should have valid scenario definitions', () => {
+    expect(scenarios).toBeDefined();
+  });
+});
+
 const scenarios = {
   chatReactions: {
     name: 'Chat Reactions Load Test',

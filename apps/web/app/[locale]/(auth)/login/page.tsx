@@ -51,10 +51,10 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      console.log('🔐 Attempting login with:', data.email);
+      logger.info('🔐 Attempting login with:', data.email);
       const result = await login({ email: data.email, password: data.password });
       
-      console.log('📊 Login result:', result);
+      logger.info('📊 Login result:', result);
       
       // Handle remember me
       if (data.rememberMe) {

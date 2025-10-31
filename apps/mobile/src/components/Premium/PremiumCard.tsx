@@ -177,26 +177,26 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
     const variants = {
       default: {
         colors: isDark
-          ? [theme.colors.onSurface.primary, theme.colors.onSurface.primary + '80']
-          : [theme.colors.bg.primary, theme.colors.bg.secondary],
-        shadowColor: theme.colors.onSurface.primary,
+          ? [theme.colors.onSurface, theme.colors.onSurface + '80']
+          : [theme.colors.bg, theme.colors.surface],
+        shadowColor: theme.colors.onSurface,
       },
       glass: {
         colors: ['transparent', 'transparent'],
-        shadowColor: theme.colors.onSurface.primary,
+        shadowColor: theme.colors.onSurface,
       },
       elevated: {
         colors: isDark
-          ? [theme.colors.onSurface.primary, theme.colors.onSurface.primary + '80']
-          : [theme.colors.bg.primary, theme.colors.bg.secondary],
-        shadowColor: theme.colors.onSurface.primary,
+          ? [theme.colors.onSurface, theme.colors.onSurface + '80']
+          : [theme.colors.bg, theme.colors.surface],
+        shadowColor: theme.colors.onSurface,
       },
       gradient: {
         colors: [theme.colors.primary, theme.colors.primary],
         shadowColor: theme.colors.primary,
       },
       neon: {
-        colors: [theme.colors.onSurface.primary, theme.colors.onSurface.primary],
+        colors: [theme.colors.onSurface, theme.colors.onSurface],
         shadowColor: theme.colors.primary,
       },
       holographic: {
@@ -250,8 +250,8 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       case 'elevated':
         return {
           ...baseStyle,
-          backgroundColor: isDark ? theme.colors.onSurface.primary : theme.colors.bg.primary,
-          shadowColor: theme.colors.onSurface.primary,
+          backgroundColor: isDark ? theme.colors.onSurface : theme.colors.bg,
+          shadowColor: theme.colors.onSurface,
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.15,
           shadowRadius: 16,
@@ -262,7 +262,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       case 'neon':
         return {
           ...baseStyle,
-          backgroundColor: theme.colors.onSurface.primary,
+          backgroundColor: theme.colors.onSurface,
           borderWidth: 2,
           borderColor: theme.colors.primary,
           shadowColor: theme.colors.primary,
@@ -287,8 +287,8 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       default:
         return {
           ...baseStyle,
-          backgroundColor: isDark ? theme.colors.onSurface.primary : theme.colors.bg.primary,
-          shadowColor: theme.colors.onSurface.primary,
+          backgroundColor: isDark ? theme.colors.onSurface : theme.colors.bg,
+          shadowColor: theme.colors.onSurface,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.1,
           shadowRadius: 8,

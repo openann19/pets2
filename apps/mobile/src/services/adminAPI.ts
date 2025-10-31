@@ -230,6 +230,133 @@ class AdminAPIService {
     });
   }
 
+  async deleteUser(userId: string, reason?: string): Promise<AdminAPIResponse<unknown>> {
+    return await this.request(`/admin/users/${userId}`, {
+      method: 'DELETE',
+      body: reason ? JSON.stringify({ reason }) : undefined,
+    });
+  }
+
+  async resetUserPassword(userId: string): Promise<AdminAPIResponse<{ temporaryPassword: string }>> {
+    return await this.request(`/admin/users/${userId}/reset-password`, {
+      method: 'POST',
+    });
+  }
+
+  // Reports Management
+  async getReports(params?: {
+    page?: number;
+    limit?: number;
+    type?: string;
+    status?: string;
+    priority?: string;
+    search?: string;
+  }): Promise<
+    AdminAPIResponse<{
+      reports: unknown[];
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        pages: number;
+      };
+    }>
+  > {
+    const queryParams = new URLSearchParams();
+    if (params?.page !== undefined) queryParams.append('page', String(params.page));
+    if (params?.limit !== undefined) queryParams.append('limit', String(params.limit));
+    if (params?.type) queryParams.append('type', params.type);
+    if (params?.status) queryParams.append('status', params.status);
+    if (params?.priority) queryParams.append('priority', params.priority);
+    if (params?.search) queryParams.append('search', params.search);
+    const query = queryParams.toString();
+    return await this.request(`/admin/reports${query ? `?${query}` : ''}`);
+  }
+
+  async updateReportStatus(
+    reportId: string,
+    status: string,
+    notes?: string,
+  ): Promise<AdminAPIResponse<unknown>> {
+    return await this.request(`/admin/reports/${reportId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status, notes }),
+    });
+  }
+
+  // Support Chat Management
+  async getSupportChats(params?: PaginationParams): Promise<
+    AdminAPIResponse<{
+      chats: Array<{
+        id: string;
+        userId: string;
+        userName: string;
+        userEmail: string;
+        subject: string;
+        status: 'open' | 'closed' | 'pending';
+        lastMessage: string;
+        lastMessageAt: string;
+        unreadCount: number;
+      }>;
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        pages: number;
+      };
+    }>
+  > {
+    const queryParams = new URLSearchParams();
+    if (params?.page !== null && params.page !== undefined)
+      queryParams.append('page', String(params.page));
+    if (params?.limit !== null && params.limit !== undefined)
+      queryParams.append('limit', String(params.limit));
+    const query = queryParams.toString();
+    return await this.request(`/admin/support/chats${query ? `?${query}` : ''}`);
+  }
+
+  async getSupportChatMessages(
+    chatId: string,
+    params?: PaginationParams,
+  ): Promise<
+    AdminAPIResponse<{
+      messages: Array<{
+        id: string;
+        senderId: string;
+        senderName: string;
+        senderType: 'user' | 'admin';
+        message: string;
+        timestamp: string;
+        read: boolean;
+      }>;
+    }>
+  > {
+    const queryParams = new URLSearchParams();
+    if (params?.page !== null && params.page !== undefined)
+      queryParams.append('page', String(params.page));
+    if (params?.limit !== null && params.limit !== undefined)
+      queryParams.append('limit', String(params.limit));
+    const query = queryParams.toString();
+    return await this.request(`/admin/support/chats/${chatId}/messages${query ? `?${query}` : ''}`);
+  }
+
+  async sendSupportMessage(
+    chatId: string,
+    message: string,
+  ): Promise<AdminAPIResponse<{ messageId: string }>> {
+    return await this.request(`/admin/support/chats/${chatId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ message }),
+    });
+  }
+
+  async closeSupportChat(chatId: string, resolution?: string): Promise<AdminAPIResponse<unknown>> {
+    return await this.request(`/admin/support/chats/${chatId}/close`, {
+      method: 'POST',
+      body: JSON.stringify({ resolution }),
+    });
+  }
+
   // Chat Management
   async getChats(params: PaginationParams = {}): Promise<
     AdminAPIResponse<{
@@ -659,8 +786,173 @@ class AdminAPIService {
     return await this.request('/admin/billing/metrics');
   }
 
+  // Conversion Funnel & Retention Analytics
+  async getConversionFunnel(params?: { timeRange?: string }): Promise<
+    AdminAPIResponse<{
+      totalFreeUsers: number;
+      paywallViews: number;
+      premiumSubscribers: number;
+      ultimateSubscribers: number;
+      freeToPaywallConversion: number;
+      paywallToPremiumConversion: number;
+      premiumToUltimateConversion: number;
+      overallConversionRate: number;
+    }>
+  > {
+    const queryParams = params?.timeRange ? `?timeRange=${params.timeRange}` : '';
+    return await this.request(`/admin/analytics/conversion-funnel${queryParams}`);
+  }
+
+  async getCohortRetention(params?: { cohorts?: string }): Promise<
+    AdminAPIResponse<{
+      cohorts: Array<{
+        cohort: string;
+        totalUsers: number;
+        week1: number;
+        week2: number;
+        week4: number;
+        month2: number;
+        month3: number;
+        month6: number;
+        month12: number;
+      }>;
+      averageRetention: {
+        week1: number;
+        week2: number;
+        week4: number;
+        month2: number;
+        month3: number;
+        month6: number;
+        month12: number;
+      };
+      latestCohortSize: number;
+    }>
+  > {
+    const queryParams = params?.cohorts ? `?cohorts=${params.cohorts}` : '';
+    return await this.request(`/admin/analytics/cohort-retention${queryParams}`);
+  }
+
+  async trackPaywallView(source: string): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request('/admin/analytics/paywall-view', {
+      method: 'POST',
+      body: JSON.stringify({ source }),
+    });
+  }
+
+  // A/B Testing
+  async getABTestResults(testId?: string): Promise<
+    AdminAPIResponse<{
+      test?: {
+        id: string;
+        name: string;
+        variants: Array<{ id: string; name: string }>;
+      };
+      conversionRates: Record<string, number>;
+      statisticalSignificance?: number;
+    }>
+  > {
+    const endpoint = testId
+      ? `/admin/analytics/ab-tests/${testId}`
+      : '/admin/analytics/ab-tests';
+    return await this.request(endpoint);
+  }
+
+  async assignABTestVariant(testId: string): Promise<
+    AdminAPIResponse<{
+      testId: string;
+      variantId: string;
+    }>
+  > {
+    return await this.request('/admin/analytics/ab-tests/assign', {
+      method: 'POST',
+      body: JSON.stringify({ testId }),
+    });
+  }
+
+  async trackABTestConversion(params: {
+    testId: string;
+    variantId: string;
+    conversionType?: string;
+  }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request('/admin/analytics/ab-tests/conversion', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    });
+  }
+
   async getSecurityMetrics(): Promise<AdminAPIResponse<unknown>> {
     return await this.request('/admin/security/metrics');
+  }
+
+  // Analytics Configuration
+  async getAnalyticsConfig(): Promise<
+    AdminAPIResponse<{
+      reportEmails: string[];
+      emailService: {
+        provider: string;
+        host: string;
+        port: number;
+        user: string;
+        from: string;
+        passwordConfigured: boolean;
+      };
+      reportSchedule: {
+        dailyEnabled: boolean;
+        dailyTime: string;
+        weeklyEnabled: boolean;
+        weeklyDay: string;
+        weeklyTime: string;
+        timezone: string;
+      };
+      alertThresholds: {
+        churnRate: { warning: number; critical: number };
+        conversionRate: { warning: number; critical: number };
+        retentionWeek1: { warning: number; critical: number };
+        retentionMonth1: { warning: number; critical: number };
+      };
+      isConfigured: boolean;
+      updatedAt?: string;
+    }>
+  > {
+    return await this.request('/admin/analytics/config');
+  }
+
+  async updateAnalyticsConfig(params: {
+    reportEmails?: string[];
+    emailService?: {
+      provider?: string;
+      host?: string;
+      port?: number;
+      user?: string;
+      password?: string;
+      from?: string;
+    };
+    reportSchedule?: {
+      dailyEnabled?: boolean;
+      dailyTime?: string;
+      weeklyEnabled?: boolean;
+      weeklyDay?: string;
+      weeklyTime?: string;
+      timezone?: string;
+    };
+    alertThresholds?: {
+      churnRate?: { warning?: number; critical?: number };
+      conversionRate?: { warning?: number; critical?: number };
+      retentionWeek1?: { warning?: number; critical?: number };
+      retentionMonth1?: { warning?: number; critical?: number };
+    };
+  }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request('/admin/analytics/config', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    });
+  }
+
+  async testEmailConfig(email: string): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request('/admin/analytics/config/test-email', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
   }
 
   async moderateMessage(params: {
@@ -685,12 +977,13 @@ class AdminAPIService {
   }
 
   // Billing - Subscription Management
-  async reactivateSubscription(params: {
+  async cancelSubscription(params: {
     userId: string;
+    reason?: string;
   }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
-    return await this.request(`/admin/users/${params.userId}/reactivate-subscription`, {
+    return await this.request(`/admin/users/${params.userId}/cancel-subscription`, {
       method: 'PUT',
-      body: JSON.stringify({}),
+      body: JSON.stringify({ reason: params.reason }),
     });
   }
 
@@ -699,6 +992,7 @@ class AdminAPIService {
   }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
     return await this.request(`/admin/users/${params.userId}/reactivate-subscription`, {
       method: 'PUT',
+      body: JSON.stringify({}),
     });
   }
 
@@ -958,6 +1252,26 @@ class AdminAPIService {
     isLiveMode: boolean;
   }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
     return await this.request('/admin/stripe/config', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    });
+  }
+
+  async getRevenueCatConfig(): Promise<
+    AdminAPIResponse<{
+      iosApiKey?: string;
+      androidApiKey?: string;
+      isConfigured?: boolean;
+    }>
+  > {
+    return await this.request('/admin/revenuecat/config');
+  }
+
+  async saveRevenueCatConfig(params: {
+    iosApiKey: string;
+    androidApiKey: string;
+  }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request('/admin/revenuecat/config', {
       method: 'POST',
       body: JSON.stringify(params),
     });

@@ -1,0 +1,50 @@
+id: u-02-lottie-pull-to-refresh
+owner: ux
+severity: high
+area: mobile
+status: open
+context: |
+  Pull-to-refresh uses default system indicator. Lottie animation (paw scratch) more engaging.
+  Current behavior: Standard system pull-to-refresh spinner.
+  Why it matters: Brand consistency, delightful micro-interaction.
+
+acceptance:
+  - [ ] Create Lottie paw scratch animation
+  - [ ] Integrate Lottie animation with RefreshControl
+  - [ ] Animation plays during pull
+  - [ ] Animation completes on release
+  - [ ] Works on pet list screens
+  - [ ] Works on match list screens
+  - [ ] Performance: smooth animation
+  - [ ] Test on iOS and Android
+
+states:
+  - idle
+  - pulling
+  - refreshing
+  - complete
+
+telemetry:
+  - event: UX_PULL_TO_REFRESH_USED
+    props: [screen, timestamp]
+
+contracts:
+  n/a
+
+assets:
+  components:
+    - apps/mobile/src/components/refresh/LottiePullToRefresh.tsx
+  animations:
+    - apps/mobile/assets/animations/paw-scratch.json
+  tests:
+    - apps/mobile/src/components/__tests__/LottiePullToRefresh.test.tsx
+
+dependencies:
+  - lottie-react-native
+  - Animation file
+
+timeline:
+  start: 2025-02-01
+  implementation: 2025-02-01
+  deploy: 2025-02-02
+

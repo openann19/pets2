@@ -1,26 +1,51 @@
 /**
  * WebSocket Server for Real-time Updates
+ * Production-ready with Redis adapter, SSL support, and enhanced authentication
  * Handles community feed, chat, and notifications
  */
 
 import { Server, Socket } from 'socket.io';
 import type { Server as HTTPServer } from 'http';
 import logger from './src/utils/logger.js';
-
-interface SocketUser {
-  id: string;
-  socketId: string;
-}
+import { getRedisClient } from './src/config/redis.js';
 
 function initializeSocket(httpServer: HTTPServer) {
-  const io = new Server(httpServer, {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const redisClient = getRedisClient();
+
+  // Production WebSocket configuration
+  const socketConfig = {
     cors: {
-      origin: process.env.CLIENT_URL || 'http://localhost:3000',
+      origin: isProduction
+        ? process.env.CLIENT_URL?.split(',') || process.env.CLIENT_URL || false
+        : process.env.CLIENT_URL || 'http://localhost:3000',
       methods: ['GET', 'POST'],
       credentials: true,
     },
-    transports: ['websocket', 'polling'],
-  });
+    // Production optimizations
+    pingTimeout: isProduction ? 20000 : 60000,
+    pingInterval: isProduction ? 25000 : 25000,
+    upgradeTimeout: isProduction ? 10000 : 30000,
+    maxHttpBufferSize: 1e6, // 1MB max message size
+  };
+
+  const io = new Server(httpServer, socketConfig);
+
+  // Use Redis adapter for horizontal scaling in production
+  if (isProduction && redisClient) {
+    try {
+      const { createAdapter } = require('@socket.io/redis-adapter');
+      const pubClient = redisClient.duplicate();
+      const subClient = redisClient.duplicate();
+      
+      io.adapter(createAdapter(pubClient, subClient));
+      logger.info('✅ Socket.IO Redis adapter enabled for production scaling');
+    } catch (error) {
+      logger.warn('⚠️ Redis adapter not available, using in-memory adapter', { 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
+  }
 
   // Track connected users
   const connectedUsers = new Map<string, string>();
@@ -143,8 +168,6 @@ function initializeSocket(httpServer: HTTPServer) {
   io.of(/^\/live:.+$/).on('connection', (socket: Socket) => {
     logger.info(`✅ Live stream connected: ${socket.nsp.name}`);
     
-    const roomName = socket.nsp.name.replace('/live:', '');
-
     socket.on('chat:message', (payload: any) => {
       socket.nsp.emit('chat:message', {
         userId: (socket as any).data?.userId || 'anon',

@@ -287,11 +287,11 @@ export default function MapsServiceManagementPage() {
         <nav className="-mb-px flex space-x-8">
           {(() => {
             type TabId = 'overview' | 'services' | 'quotas' | 'config';
-            const tabs: Array<{ id: TabId; label: string; icon: React.ComponentType<{ className?: string }> }> = [
-              { id: 'overview', label: 'Overview', icon: ({ className }) => <Icon icon={ChartBarIcon} className={className} /> },
-              { id: 'services', label: 'Services', icon: ({ className }) => <Icon icon={Cog6ToothIcon} className={className} /> },
-              { id: 'quotas', label: 'Quotas', icon: ({ className }) => <Icon icon={GlobeAltIcon} className={className} /> },
-              { id: 'config', label: 'Configuration', icon: ({ className }) => <Icon icon={PencilIcon} className={className} /> },
+            const tabs: Array<{ id: TabId; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }> = [
+              { id: 'overview', label: 'Overview', icon: ChartBarIcon },
+              { id: 'services', label: 'Services', icon: Cog6ToothIcon },
+              { id: 'quotas', label: 'Quotas', icon: GlobeAltIcon },
+              { id: 'config', label: 'Configuration', icon: PencilIcon },
             ];
             return tabs.map((tab) => (
             <button

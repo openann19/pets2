@@ -1,26 +1,21 @@
-import express, { type Request, type Response, Router } from 'express';
+import express, { Router } from 'express';
 import { authenticateToken, requirePremium } from '../middleware/auth';
 import {
   subscribeToPremium,
+  createPaymentSheet,
+  confirmPaymentSheet,
+  verifyPurchase,
   cancelSubscription,
   getPremiumFeatures,
   boostProfile,
   getSuperLikes,
   getSubscription,
   getUsage,
+  getDailySwipeStatus,
   reactivateSubscription,
   getPremiumStatus,
   checkPremiumFeature,
 } from '../controllers/premiumController';
-
-interface AuthenticatedRequest extends Request {
-  userId?: string;
-  user?: {
-    _id: string;
-    email: string;
-    [key: string]: unknown;
-  };
-}
 
 const router: Router = express.Router();
 
@@ -34,6 +29,9 @@ router.get('/features', getPremiumFeatures);
 
 // Subscription management
 router.post('/subscribe', subscribeToPremium);
+router.post('/create-payment-sheet', createPaymentSheet);
+router.post('/confirm-payment-sheet', confirmPaymentSheet);
+router.post('/verify-purchase', verifyPurchase);
 router.get('/subscription', requirePremium, getSubscription);
 router.post('/cancel', cancelSubscription);
 router.post('/reactivate', reactivateSubscription);
@@ -44,6 +42,7 @@ router.get('/super-likes', requirePremium, getSuperLikes);
 
 // Usage tracking
 router.get('/usage', requirePremium, getUsage);
+router.get('/daily-swipe-status', getDailySwipeStatus); // Available to all users (free + premium)
 
 export default router;
 

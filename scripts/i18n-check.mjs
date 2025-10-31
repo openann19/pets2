@@ -10,7 +10,7 @@ import path from 'path';
 
 const localesDir = 'apps/mobile/src/i18n/locales';
 const languages = ['en', 'bg'];
-const namespaces = ['common', 'auth', 'map', 'chat', 'premium'];
+const namespaces = ['common', 'auth', 'map', 'chat', 'premium', 'reels'];
 
 let hasErrors = false;
 

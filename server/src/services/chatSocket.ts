@@ -33,7 +33,16 @@ interface SocketUser {
 }
 
 interface SocketHandshake {
-  token?: string;
+  auth?: {
+    token?: string;
+    userId?: string;
+    isAdmin?: boolean;
+  };
+  headers?: {
+    cookie?: string;
+    [key: string]: string | string[] | undefined;
+  };
+  token?: string; // Legacy support
   userId?: string;
   isAdmin?: boolean;
 }
@@ -50,11 +59,19 @@ interface UserPresence {
   isOnline: boolean;
 }
 
+interface MessageAttachment {
+  url?: string;
+  type?: string;
+  fileType?: string;
+  fileName?: string;
+  fileSize?: number;
+}
+
 interface MessageData {
   matchId: string;
   content: string;
   messageType?: string;
-  attachments?: any[];
+  attachments?: MessageAttachment[];
   replyTo?: string;
 }
 
@@ -95,13 +112,35 @@ const typingUsers = new Map<string, Map<string, TypingData>>(); // matchId -> Ma
 
 export default function chatSocket(io: SocketIOServer): SocketIOServer {
   // Middleware to authenticate socket connections
+  // SECURITY: Supports both token-based (legacy) and cookie-based (httpOnly) authentication
   io.use(async (socket: Socket, next: (err?: Error) => void) => {
     try {
-      const handshake = socket.handshake as SocketHandshake;
-      const token = handshake.auth?.token;
+      // SECURITY: Try to get token from auth first (legacy support)
+      let token = (socket.handshake.auth as { token?: string })?.token;
+
+      // SECURITY: If no token in auth, try to get from cookies (httpOnly cookie support)
+      // Socket.IO automatically includes cookies in handshake.headers if CORS credentials enabled
+      if (!token) {
+        try {
+          const cookieHeader = socket.handshake.headers.cookie as string | undefined;
+          if (cookieHeader) {
+            // Parse cookies manually (no cookie-parser dependency)
+            const map: Record<string, string> = Object.create(null);
+            for (const part of cookieHeader.split(';')) {
+              const [k, ...v] = part.trim().split('=');
+              if (!k) continue;
+              map[decodeURIComponent(k)] = decodeURIComponent(v.join('='));
+            }
+            token = map['accessToken'] || map['access_token'] || map['pm_access'] || null;
+          }
+        } catch (cookieError) {
+          // Ignore cookie parsing errors, fall through to token check
+          logger.debug('Cookie parsing error in socket auth', { error: cookieError });
+        }
+      }
 
       if (!token) {
-        return next(new Error('Authentication error: No token provided'));
+        return next(new Error('Authentication error: No token provided (check token or cookies)'));
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
@@ -112,8 +151,13 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
         return next(new Error('Authentication error: Invalid user'));
       }
 
-      (socket as any).userId = user._id.toString();
-      (socket as any).user = user;
+      interface AuthenticatedSocket extends Socket {
+        userId?: string;
+        user?: SocketUser;
+      }
+      const authenticatedSocket = socket as AuthenticatedSocket;
+      authenticatedSocket.userId = user._id.toString();
+      authenticatedSocket.user = user;
       next();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -122,9 +166,20 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
     }
   });
 
-  io.on('connection', (socket: Socket) => {
-    const user = (socket as any).user as SocketUser;
-    const userId = (socket as any).userId as string;
+  interface AuthenticatedSocket extends Socket {
+    userId?: string;
+    user?: SocketUser;
+  }
+  
+  io.on('connection', (socket: AuthenticatedSocket) => {
+    const user = socket.user;
+    const userId = socket.userId;
+    
+    if (!user || !userId) {
+      logger.error('Socket connection missing user data', { socketId: socket.id });
+      socket.disconnect();
+      return;
+    }
 
     logger.info(`User ${user.firstName} connected`, { socketId: socket.id, userId });
 
@@ -152,7 +207,13 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
         }
 
         // Check if match is blocked
-        if ((match as any).isUserBlocked(userId)) {
+        interface MatchWithMethods {
+          isUserBlocked?: (userId: string) => boolean;
+          markMessagesAsRead?: (userId: string) => Promise<unknown>;
+        }
+        const matchWithMethods = match as unknown as MatchWithMethods;
+        
+        if (matchWithMethods.isUserBlocked && matchWithMethods.isUserBlocked(userId)) {
           socket.emit('error', { message: 'Cannot join blocked match' });
           return;
         }
@@ -161,7 +222,9 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
         logger.info(`User joined match`, { userId, matchId });
 
         // Mark messages as read
-        await (match as any).markMessagesAsRead(userId);
+        if (matchWithMethods.markMessagesAsRead) {
+          await matchWithMethods.markMessagesAsRead(userId);
+        }
 
         // Notify other user that this user is online
         socket.to(`match_${matchId}`).emit('user_online', {
@@ -241,14 +304,43 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
           return;
         }
 
-        if ((match as any).isUserBlocked(userId)) {
+        interface MatchWithMessages extends MatchWithMethods {
+          messages?: {
+            id: (messageId: string) => { _id?: { toString: () => string } | string } | null;
+            push: (message: unknown) => number;
+            length: number;
+            filter: (predicate: (msg: unknown) => boolean) => unknown[];
+            [index: number]: {
+              _id?: { toString: () => string } | string;
+              sender?: { toString: () => string } | string;
+              content?: string;
+              readBy?: Array<{ user: { toString: () => string } | string }>;
+              populate?: (fields: string, select: string) => Promise<unknown>;
+              reactions?: Array<{
+                user?: { toString: () => string } | string;
+                emoji?: string;
+              }>;
+              find?: (predicate: (r: unknown) => boolean) => unknown | undefined;
+              findIndex?: (predicate: (r: unknown) => boolean) => number;
+              push?: (reaction: unknown) => number;
+              splice?: (start: number, deleteCount: number) => unknown[];
+              length?: number;
+            };
+          };
+          lastActivity?: Date;
+          lastMessageAt?: Date;
+          save: () => Promise<unknown>;
+        }
+        const matchWithMessages = match as unknown as MatchWithMessages;
+        
+        if (matchWithMessages.isUserBlocked && matchWithMessages.isUserBlocked(userId)) {
           socket.emit('error', { message: 'Cannot send message to blocked match' });
           return;
         }
 
         // Validate replyTo if provided
-        if (replyTo) {
-          const replyMessage = (match as any).messages.id(replyTo);
+        if (replyTo && matchWithMessages.messages) {
+          const replyMessage = matchWithMessages.messages.id(replyTo);
           if (!replyMessage) {
             socket.emit('error', { message: 'Reply message not found' });
             return;
@@ -271,21 +363,26 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
           reactions: []
         };
 
-        (match as any).messages.push(message);
-        match.lastActivity = new Date();
-        (match as any).lastMessageAt = new Date();
-        await match.save();
+        if (matchWithMessages.messages) {
+          matchWithMessages.messages.push(message);
+        }
+        matchWithMessages.lastActivity = new Date();
+        matchWithMessages.lastMessageAt = new Date();
+        await matchWithMessages.save();
 
         // Get the saved message with populated sender
-        const savedMessage = (match as any).messages[(match as any).messages.length - 1];
+        const savedMessage = matchWithMessages.messages && matchWithMessages.messages.length > 0
+          ? matchWithMessages.messages[matchWithMessages.messages.length - 1]
+          : null;
         savedMessage.sender = user;
 
         // Populate replyTo if present
-        if (replyTo) {
-          const replyMessage = (match as any).messages.id(replyTo);
+        if (replyTo && matchWithMessages.messages) {
+          const replyMessage = matchWithMessages.messages.id(replyTo);
           if (replyMessage) {
+            const replyMsgId = typeof replyMessage._id === 'string' ? replyMessage._id : replyMessage._id?.toString();
             savedMessage.replyTo = {
-              _id: replyMessage._id,
+              _id: replyMsgId,
               sender: replyMessage.sender,
               content: replyMessage.content,
               messageType: replyMessage.messageType
@@ -341,16 +438,85 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
           // Other user is offline, send push notification
           const otherUser = match.user1._id.toString() === userId ? match.user2 : match.user1;
 
-          if ((otherUser as any).preferences?.notifications?.messages) {
-            // Here you would integrate with a push notification service
-            // For now, we'll emit to their user room in case they connect
+          interface UserWithPreferences {
+            preferences?: {
+              notifications?: {
+                messages?: boolean;
+              };
+            };
+          }
+          const userWithPrefs = otherUser as unknown as UserWithPreferences;
+
+          if (userWithPrefs.preferences?.notifications?.messages) {
+            // Check if user has quiet hours enabled
+            try {
+              const NotificationPreference = (await import('../models/NotificationPreference')).default;
+              const notificationPrefs = await NotificationPreference.findOne({ userId: otherUserId });
+
+              if (notificationPrefs && notificationPrefs.quietHours?.enabled) {
+                const now = new Date();
+                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                const { quietHours } = notificationPrefs;
+
+                const [startHour, startMin] = quietHours.start.split(':').map(Number);
+                const [endHour, endMin] = quietHours.end.split(':').map(Number);
+                const startTime = startHour * 60 + startMin;
+                const endTime = endHour * 60 + endMin;
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+                let isQuietHours = false;
+                if (startTime > endTime) {
+                  isQuietHours = currentMinutes >= startTime || currentMinutes < endTime;
+                } else {
+                  isQuietHours = currentMinutes >= startTime && currentMinutes < endTime;
+                }
+
+                if (isQuietHours) {
+                  logger.info('Skipping push notification due to quiet hours', { otherUserId });
+                  return;
+                }
+              }
+
+              // Send push notification via FCM
+              // Phase 1: Use rich push notifications if enabled
+              try {
+                const { sendConversationPreview } = await import('../services/richPushNotificationService');
+                await sendConversationPreview(
+                  otherUserId,
+                  matchId,
+                  user.firstName || 'Someone',
+                  content.substring(0, 100),
+                  user.avatar
+                );
+              } catch {
+                // Fallback to basic push
+                const { sendPushToUser } = await import('../services/pushNotificationService');
+                await sendPushToUser(otherUserId, {
+                  title: `New message from ${user.firstName}`,
+                  body: content.substring(0, 100),
+                  data: {
+                    type: 'new_message',
+                    matchId,
+                    senderId: userId,
+                    messageId: savedMessage._id.toString(),
+                  },
+                });
+              }
+            } catch (pushError) {
+              logger.error('Failed to send push notification', {
+                error: pushError instanceof Error ? pushError.message : 'Unknown error',
+                otherUserId,
+              });
+            }
+
+            // Also emit to their user room in case they connect
             io.to(`user_${otherUserId}`).emit('notification', {
               type: 'new_message',
               title: `New message from ${user.firstName}`,
               body: content.substring(0, 100),
               matchId,
               senderId: userId,
-              messageId: savedMessage._id
+              messageId: savedMessage._id,
             });
           }
         }
@@ -385,8 +551,15 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
           return;
         }
 
-        const message = (match as any).messages.id(messageId);
-        if (!message || message.sender.toString() !== userId) {
+        const matchWithMessages = match as unknown as MatchWithMessages;
+        
+        if (!matchWithMessages.messages) {
+          socket.emit('error', { message: 'Match has no messages' });
+          return;
+        }
+        
+        const message = matchWithMessages.messages.id(messageId);
+        if (!message || typeof message.sender === 'string' ? message.sender !== userId : message.sender?.toString() !== userId) {
           socket.emit('error', { message: 'Message not found or access denied' });
           return;
         }
@@ -406,7 +579,18 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
         await match.save();
 
         // Populate updated message
-        await (message as any).populate('sender', 'firstName lastName avatar');
+        interface MessageWithPopulate {
+          populate?: (fields: string, select: string) => Promise<unknown>;
+          sender?: unknown;
+          content?: string;
+          isEdited?: boolean;
+          editedAt?: Date;
+          sentAt?: Date;
+        }
+        const messageWithPopulate = message as unknown as MessageWithPopulate;
+        if (messageWithPopulate.populate) {
+          await messageWithPopulate.populate('sender', 'firstName lastName avatar');
+        }
 
         // Emit update to match room
         io.to(`match_${matchId}`).emit('message_edited', {
@@ -438,8 +622,15 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
           return;
         }
 
-        const message = (match as any).messages.id(messageId);
-        if (!message || message.sender.toString() !== userId) {
+        const matchWithMessages = match as unknown as MatchWithMessages;
+        
+        if (!matchWithMessages.messages) {
+          socket.emit('error', { message: 'Match has no messages' });
+          return;
+        }
+        
+        const message = matchWithMessages.messages.id(messageId);
+        if (!message || typeof message.sender === 'string' ? message.sender !== userId : message.sender?.toString() !== userId) {
           socket.emit('error', { message: 'Message not found or access denied' });
           return;
         }
@@ -488,16 +679,44 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
           return;
         }
 
-        const message = (match as any).messages.id(messageId);
+        const matchWithMessages = match as unknown as MatchWithMessages;
+        
+        if (!matchWithMessages.messages) {
+          socket.emit('error', { message: 'Match has no messages' });
+          return;
+        }
+        
+        const message = matchWithMessages.messages.id(messageId);
         if (!message) {
           socket.emit('error', { message: 'Message not found' });
           return;
         }
 
+        interface MessageWithReactions {
+          reactions?: Array<{
+            user?: { toString: () => string } | string;
+            emoji?: string;
+            reactedAt?: Date;
+            populate?: (fields: string, select: string) => Promise<unknown>;
+          }>;
+          find?: (predicate: (r: unknown) => boolean) => unknown | undefined;
+          findIndex?: (predicate: (r: unknown) => boolean) => number;
+          push?: (reaction: unknown) => number;
+          splice?: (start: number, deleteCount: number) => unknown[];
+          length?: number;
+        }
+        
+        const messageWithReactions = message as unknown as MessageWithReactions;
+        
+        if (!messageWithReactions.reactions) {
+          messageWithReactions.reactions = [];
+        }
+        
         // Check if user already reacted with this emoji
-        const existingReaction = (message as any).reactions.find((r: any) =>
-          r.user.toString() === userId && r.emoji === emoji
-        );
+        const existingReaction = messageWithReactions.reactions.find((r) => {
+          const rUserId = typeof r.user === 'string' ? r.user : r.user?.toString();
+          return rUserId === userId && r.emoji === emoji;
+        });
 
         if (existingReaction) {
           socket.emit('error', { message: 'Already reacted with this emoji' });
@@ -505,17 +724,26 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
         }
 
         // Add reaction
-        (message as any).reactions.push({
+        const reaction = {
           user: userId,
           emoji,
           reactedAt: new Date()
-        });
+        };
+        
+        if (messageWithReactions.reactions.push) {
+          messageWithReactions.reactions.push(reaction);
+        } else {
+          messageWithReactions.reactions = [...messageWithReactions.reactions, reaction];
+        }
 
         await match.save();
 
         // Populate reaction user
-        const newReaction = (message as any).reactions[(message as any).reactions.length - 1];
-        await (newReaction as any).populate('user', 'firstName lastName avatar');
+        const reactionsLength = messageWithReactions.reactions.length || 0;
+        const newReaction = reactionsLength > 0 ? messageWithReactions.reactions[reactionsLength - 1] : null;
+        if (newReaction && newReaction.populate) {
+          await newReaction.populate('user', 'firstName lastName avatar');
+        }
 
         // Emit reaction to match room
         io.to(`match_${matchId}`).emit('reaction_added', {
@@ -547,23 +775,51 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
           return;
         }
 
-        const message = (match as any).messages.id(messageId);
+        const matchWithMessages = match as unknown as MatchWithMessages;
+        
+        if (!matchWithMessages.messages) {
+          socket.emit('error', { message: 'Match has no messages' });
+          return;
+        }
+        
+        const message = matchWithMessages.messages.id(messageId);
         if (!message) {
           socket.emit('error', { message: 'Message not found' });
           return;
         }
-
+        
+        interface MessageWithReactions {
+          reactions?: Array<{
+            user?: { toString: () => string } | string;
+            emoji?: string;
+          }>;
+          findIndex?: (predicate: (r: unknown) => boolean) => number;
+          splice?: (start: number, deleteCount: number) => unknown[];
+        }
+        
+        const messageWithReactions = message as unknown as MessageWithReactions;
+        
+        if (!messageWithReactions.reactions) {
+          socket.emit('error', { message: 'Message has no reactions' });
+          return;
+        }
+        
         // Find and remove reaction
-        const reactionIndex = (message as any).reactions.findIndex((r: any) =>
-          r.user.toString() === userId && r.emoji === emoji
-        );
+        const reactionIndex = messageWithReactions.reactions.findIndex((r) => {
+          const rUserId = typeof r.user === 'string' ? r.user : r.user?.toString();
+          return rUserId === userId && r.emoji === emoji;
+        });
 
         if (reactionIndex === -1) {
           socket.emit('error', { message: 'Reaction not found' });
           return;
         }
 
-        (message as any).reactions.splice(reactionIndex, 1);
+        if (messageWithReactions.reactions.splice) {
+          messageWithReactions.reactions.splice(reactionIndex, 1);
+        } else {
+          messageWithReactions.reactions = messageWithReactions.reactions.filter((_, idx) => idx !== reactionIndex);
+        }
         await match.save();
 
         // Emit reaction removal to match room
@@ -611,9 +867,34 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
     });
 
     // Handle message read receipts
+    // Business Model: Read receipts are Premium+ feature (business.md)
     socket.on('mark_messages_read', async (data: MarkReadData) => {
       try {
         const { matchId } = data;
+
+        // Check premium status for read receipts - Premium+ required
+        const User = require('../models/User').default;
+        const user = await User.findById(userId);
+        
+        if (!user) {
+          socket.emit('error', { message: 'User not found' });
+          return;
+        }
+
+        const hasReadReceipts = user.premium?.isActive &&
+          (!user.premium.expiresAt || user.premium.expiresAt > new Date()) &&
+          (user.premium.plan?.toLowerCase() === 'premium' || user.premium.plan?.toLowerCase() === 'ultimate') &&
+          user.premium.features?.readReceipts;
+
+        if (!hasReadReceipts) {
+          socket.emit('error', {
+            message: 'Premium subscription required: Read receipts are available for Premium subscribers ($9.99/month)',
+            code: 'PREMIUM_FEATURE_REQUIRED',
+            requiredFeature: 'readReceipts',
+            upgradeRequired: true
+          });
+          return;
+        }
 
         const Match = require('../models/Match').default;
         const match = await Match.findOne({
@@ -625,19 +906,42 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
         });
 
         if (match) {
-          const unreadMessages = (match as any).messages.filter((msg: any) => {
-            const isOwnMessage = msg.sender.toString() === userId;
-            const isRead = (msg.readBy || []).some((r: any) => r.user.toString() === userId);
+          const matchWithMessages = match as unknown as MatchWithMessages;
+          
+          if (!matchWithMessages.messages) {
+            return;
+          }
+          
+          interface UnreadMessage {
+            _id?: { toString: () => string } | string;
+            sender?: { toString: () => string } | string;
+            readBy?: Array<{ user?: { toString: () => string } | string }>;
+            status?: string;
+          }
+          
+          const unreadMessages = matchWithMessages.messages.filter((msg) => {
+            const msgWithReadBy = msg as unknown as UnreadMessage;
+            const senderId = typeof msgWithReadBy.sender === 'string' ? msgWithReadBy.sender : msgWithReadBy.sender?.toString();
+            const isOwnMessage = senderId === userId;
+            const isRead = (msgWithReadBy.readBy || []).some((r) => {
+              const rUserId = typeof r.user === 'string' ? r.user : r.user?.toString();
+              return rUserId === userId;
+            });
             return !isOwnMessage && !isRead;
-          });
+          }) as unknown as UnreadMessage[];
 
-          await (match as any).markMessagesAsRead(userId);
+          if (matchWithMessages.markMessagesAsRead) {
+            await matchWithMessages.markMessagesAsRead(userId);
+          }
 
           // Update message status to 'read' for unread messages
           const messageIds: string[] = [];
           for (const msg of unreadMessages) {
             msg.status = 'read';
-            messageIds.push(msg._id.toString());
+            const msgId = typeof msg._id === 'string' ? msg._id : msg._id?.toString();
+            if (msgId) {
+              messageIds.push(msgId);
+            }
           }
 
           if (messageIds.length > 0) {
@@ -689,32 +993,64 @@ export default function chatSocket(io: SocketIOServer): SocketIOServer {
           return;
         }
 
+        const matchWithMethods = match as unknown as MatchWithMethods;
+
         switch (action) {
           case 'archive':
-            await (match as any).toggleArchive(userId);
+            if (matchWithMethods.toggleArchive) {
+              await matchWithMethods.toggleArchive(userId);
+            }
             socket.emit('match_archived', { matchId });
             socket.to(`match_${matchId}`).emit('match_updated', { matchId, action: 'archived' });
             break;
 
           case 'unarchive':
-            await (match as any).toggleArchive(userId);
+            if (matchWithMethods.toggleArchive) {
+              await matchWithMethods.toggleArchive(userId);
+            }
             socket.emit('match_unarchived', { matchId });
             socket.to(`match_${matchId}`).emit('match_updated', { matchId, action: 'unarchived' });
             break;
 
           case 'favorite':
-            await (match as any).toggleFavorite(userId);
+            if (matchWithMethods.toggleFavorite) {
+              await matchWithMethods.toggleFavorite(userId);
+            }
             socket.emit('match_favorited', { matchId });
             break;
 
           case 'unfavorite':
-            await (match as any).toggleFavorite(userId);
+            if (matchWithMethods.toggleFavorite) {
+              await matchWithMethods.toggleFavorite(userId);
+            }
             socket.emit('match_unfavorited', { matchId });
             break;
 
           case 'block': {
-            const userKey = match.user1.toString() === userId ? 'user1' : 'user2';
-            (match as any).userActions[userKey].isBlocked = true;
+            interface MatchWithUserActions {
+              userActions?: {
+                user1?: { isBlocked?: boolean };
+                user2?: { isBlocked?: boolean };
+              };
+              user1?: { toString: () => string } | string;
+              user2?: { toString: () => string } | string;
+              save: () => Promise<unknown>;
+            }
+            const matchWithUserActions = match as unknown as MatchWithUserActions;
+            const userKey = typeof matchWithUserActions.user1 === 'string' 
+              ? (matchWithUserActions.user1 === userId ? 'user1' : 'user2')
+              : (matchWithUserActions.user1?.toString() === userId ? 'user1' : 'user2');
+            
+            if (matchWithUserActions.userActions) {
+              if (userKey === 'user1') {
+                matchWithUserActions.userActions.user1 = matchWithUserActions.userActions.user1 || {};
+                matchWithUserActions.userActions.user1.isBlocked = true;
+              } else {
+                matchWithUserActions.userActions.user2 = matchWithUserActions.userActions.user2 || {};
+                matchWithUserActions.userActions.user2.isBlocked = true;
+              }
+              await matchWithUserActions.save();
+            }
             await match.save();
 
             // Remove both users from the match room
@@ -826,7 +1162,14 @@ function clearTypingStatus(matchId: string, userId: string): void {
 }
 
 // Export helper functions for external use
-(chatSocket as any).getOnlineUsers = (): Array<{ userId: string; lastSeen: Date }> => {
+// Export helper functions
+interface ChatSocketModule {
+  getOnlineUsers: () => Array<{ userId: string; lastSeen: Date }>;
+  getTypingUsers: (matchId: string) => Array<{ userId: string; userName: string; timestamp: number }>;
+}
+
+const chatSocketModule = chatSocket as unknown as ChatSocketModule;
+chatSocketModule.getOnlineUsers = (): Array<{ userId: string; lastSeen: Date }> => {
   return Array.from(onlineUsers.entries())
     .filter(([, presence]) => presence.isOnline)
     .map(([userId, presence]) => ({
@@ -835,7 +1178,7 @@ function clearTypingStatus(matchId: string, userId: string): void {
     }));
 };
 
-(chatSocket as any).getTypingUsers = (matchId: string): Array<{ userId: string; userName: string; timestamp: number }> => {
+chatSocketModule.getTypingUsers = (matchId: string): Array<{ userId: string; userName: string; timestamp: number }> => {
   const matchTyping = typingUsers.get(matchId);
   if (!matchTyping) return [];
 

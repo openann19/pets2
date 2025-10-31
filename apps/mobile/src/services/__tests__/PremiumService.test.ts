@@ -9,8 +9,8 @@
  * - Type safety
  */
 
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
-import { premiumService, PremiumService } from '../PremiumService';
+import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { premiumService } from '../PremiumService';
 import { api } from '../api';
 
 // Mock dependencies
@@ -86,10 +86,13 @@ describe('PremiumService', () => {
       const plans = premiumService.getAvailablePlans();
 
       expect(plans).toHaveLength(3);
-      expect(plans.map((p) => p.id)).toEqual(['basic', 'premium', 'ultimate']);
-      expect(plans[0].price).toBe(4.99);
-      expect(plans[1].price).toBe(9.99);
-      expect(plans[2].price).toBe(19.99);
+      expect(plans.map((p) => p.id)).toEqual(['free', 'premium', 'ultimate']);
+      const freePlan = plans.find((p) => p.id === 'free');
+      const premiumPlan = plans.find((p) => p.id === 'premium');
+      const ultimatePlan = plans.find((p) => p.id === 'ultimate');
+      expect(freePlan?.price).toBe(0); // Free tier is $0
+      expect(premiumPlan?.price).toBe(9.99); // Premium tier is $9.99/month
+      expect(ultimatePlan?.price).toBe(19.99); // Ultimate tier is $19.99/month
     });
 
     it('should have all required plan properties', () => {
@@ -176,9 +179,9 @@ describe('PremiumService', () => {
 
       const limits = await premiumService.getPremiumLimits();
 
-      expect(limits.swipesPerDay).toBe(50);
-      expect(limits.likesPerDay).toBe(100);
-      expect(limits.superLikesPerDay).toBe(3);
+      expect(limits.swipesPerDay).toBe(5); // Business Model: 5 daily swipes for free users
+      expect(limits.likesPerDay).toBe(5); // Business Model: 5 daily likes for free users
+      expect(limits.superLikesPerDay).toBe(0); // Business Model: Free users get 0 Super Likes (must purchase via IAP)
       expect(limits.canUndoSwipes).toBe(false);
       expect(limits.canSeeWhoLiked).toBe(false);
       expect(limits.canBoostProfile).toBe(false);
@@ -316,7 +319,7 @@ describe('PremiumService', () => {
 
       const limits = await premiumService.getPremiumLimits();
 
-      expect(limits.swipesPerDay).toBe(50); // Returns free tier on error
+      expect(limits.swipesPerDay).toBe(5); // Business Model: Returns free tier limits (5 daily swipes) on error
       expect(limits.canUndoSwipes).toBe(false);
     });
 

@@ -57,7 +57,7 @@ export const getAllUsers = async (req: AdminRequest, res: Response): Promise<voi
     const limit = parseInt(req.query.limit as string) || 20;
     const skip = (page - 1) * limit;
 
-    const filter: any = {};
+    const filter: Record<string, unknown> = {};
 
     // Apply filters
     if (req.query.status) {
