@@ -11,6 +11,9 @@ import type { Theme, SemanticColors } from './types';
  * Adds properties that components expect from the old theme
  */
 export interface ExtendedColors extends SemanticColors {
+  // Text color (alias for onSurface)
+  text: string;
+
   // Background variants
   background: string;
   surfaceElevated: string;
@@ -103,6 +106,7 @@ export function getExtendedColors(theme: Theme | any): ExtendedColors {
     onMuted: colors.onMuted ?? colors.textMuted ?? '#64748B',
     onPrimary: colors.onPrimary ?? colors.primaryText ?? '#FFFFFF',
     info: colors.info ?? '#3B82F6',
+    layer1: colors.layer1 ?? colors.surface ?? colors.bgElevated ?? '#F8FAFC',
 
     // Extended properties from interface
     background: colors.background ?? colors.bg ?? '#FFFFFF',

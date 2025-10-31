@@ -558,12 +558,12 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({
               />
               <Text style={styles.loadingText}>
                 {uploadProgress
-                  ? `Uploading... ${Math.round(uploadProgress.progress * 100)}%`
+                  ? `Uploading... ${Math.round((uploadProgress.progress ?? uploadProgress.percent ?? 0) * 100)}%`
                   : 'Creating...'}
               </Text>
-              {uploadProgress && (
+              {uploadProgress && uploadProgress.currentFile && (
                 <Text style={styles.uploadDetailText}>
-                  {uploadProgress.currentFile && `Uploading: ${uploadProgress.currentFile}`}
+                  Uploading: {uploadProgress.currentFile}
                 </Text>
               )}
             </View>
