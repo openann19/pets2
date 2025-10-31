@@ -13,9 +13,9 @@ import BottomTabNavigator from './navigation/BottomTabNavigator';
 import { screenTransitions } from './navigation/transitions';
 import type { RootStackParamList } from './navigation/types';
 import AppChrome from './chrome/AppChrome';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { NavigationGuard } from './navigation/NavigationGuard';
 import { ProtectedRoute } from './navigation/ProtectedRoute';
-import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { useBadgeCount } from './hooks/useBadgeCount';
 import { notificationService } from './services/notifications';
 
@@ -32,7 +32,7 @@ import WelcomeScreen from './screens/onboarding/WelcomeScreen';
 // import PreferencesSetupScreen from "./screens/onboarding/PreferencesSetupScreen";
 
 // Main Screens
-import { LazyChatScreen } from './navigation/lazyScreens'; // Lazy loaded (P-03)
+import ChatScreen from './screens/ChatScreen';
 import HomeScreen from './screens/HomeScreen';
 import MatchesScreen from './screens/MatchesScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -41,16 +41,21 @@ import PetProfileScreen from './screens/PetProfileScreen';
 
 // Premium & Subscription Screens - Lazy loaded for performance (P-03)
 import PremiumCancelScreen from './screens/PremiumCancelScreen';
-import { LazyPremiumScreen, LazyManageSubscriptionScreen, LazySubscriptionManagerScreen } from './navigation/lazyScreens';
+// import { LazyPremiumScreen, LazyManageSubscriptionScreen, LazySubscriptionManagerScreen } from './navigation/lazyScreens';
 import PremiumSuccessScreen from './screens/PremiumSuccessScreen';
 import { SubscriptionSuccessScreen } from './screens/premium/SubscriptionSuccessScreen';
+import PremiumScreen from './screens/PremiumScreen';
+import ManageSubscriptionScreen from './screens/ManageSubscriptionScreen';
 
 // AI Screens - Lazy loaded for performance (P-03)
-import {
-  LazyAIBioScreen,
-  LazyAICompatibilityScreen,
-  LazyAIPhotoAnalyzerScreen,
-} from './navigation/lazyScreens';
+// import {
+//   LazyAIBioScreen,
+//   LazyAICompatibilityScreen,
+//   LazyAIPhotoAnalyzerScreen,
+// } from './navigation/lazyScreens';
+import AIBioScreen from './screens/AIBioScreen';
+import AICompatibilityScreen from './screens/AICompatibilityScreen';
+import AIPhotoAnalyzerScreen from './screens/AIPhotoAnalyzerScreen';
 
 // Settings & Privacy Screens
 import AboutTermsPrivacyScreen from './screens/AboutTermsPrivacyScreen';
@@ -95,7 +100,7 @@ import MigrationExampleScreen from './screens/MigrationExampleScreen';
 import NewComponentsTestScreen from './screens/NewComponentsTestScreen';
 import PremiumDemoScreen from './screens/PremiumDemoScreen';
 import UIDemoScreen from './screens/UIDemoScreen';
-import MotionLabScreen from './labs/motion/MotionLabScreen';
+// import MotionLabScreen from './labs/motion/MotionLabScreen';
 
 // Live Streaming Screens
 import GoLiveScreen from './screens/GoLiveScreen';
@@ -186,7 +191,7 @@ const AppNavigator = (): React.ReactElement => (
     <Stack.Screen name="Chat">
       {(props) => (
         <ErrorBoundary screenName="Chat">
-          <ProtectedRoute {...props} component={LazyChatScreen} />
+          <ProtectedRoute {...props} component={ChatScreen} />
         </ErrorBoundary>
       )}
     </Stack.Screen>
@@ -219,11 +224,11 @@ const AppNavigator = (): React.ReactElement => (
     {/* Premium & Subscription Screens - Lazy loaded for performance (P-03) */}
     <Stack.Screen
       name="Premium"
-      component={LazyPremiumScreen}
+      component={PremiumScreen}
     />
     <Stack.Screen
       name="Subscription"
-      component={LazyPremiumScreen}
+      component={PremiumScreen}
     />
     <Stack.Screen
       name="PremiumSuccess"
@@ -235,7 +240,7 @@ const AppNavigator = (): React.ReactElement => (
     />
     <Stack.Screen
       name="SubscriptionManager"
-      component={LazySubscriptionManagerScreen}
+      component={ManageSubscriptionScreen}
     />
     <Stack.Screen
       name="SubscriptionSuccess"
@@ -243,21 +248,21 @@ const AppNavigator = (): React.ReactElement => (
     />
     <Stack.Screen
       name="ManageSubscription"
-      component={LazyManageSubscriptionScreen}
+      component={ManageSubscriptionScreen}
     />
 
     {/* AI Screens - Lazy loaded for performance (P-03) */}
     <Stack.Screen
       name="AIBio"
-      component={LazyAIBioScreen}
+      component={AIBioScreen}
     />
     <Stack.Screen
       name="AIPhotoAnalyzer"
-      component={LazyAIPhotoAnalyzerScreen}
+      component={AIPhotoAnalyzerScreen}
     />
     <Stack.Screen
       name="AICompatibility"
-      component={LazyAICompatibilityScreen}
+      component={AICompatibilityScreen}
     />
 
     {/* Settings & Privacy Screens */}

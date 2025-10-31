@@ -24,6 +24,7 @@ jest.mock('../../utils/PerformanceMonitor', () => ({
 
 // Mock theme
 jest.mock('../../theme/Provider', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { getMockLightTheme } = require('../../test-utils/theme-helpers');
   const theme = getMockLightTheme();
   return {

@@ -313,6 +313,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
 
           // if active and single reselect
           if (isFocused && !isDouble) {
+            // @ts-expect-error - custom event type not in navigation types
             navigation.emit({ type: "tabReselect", target: route.key });
             bump(route.key); // visual impulse (near-top refresh will also listen)
           }
@@ -320,6 +321,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
           if (isFocused && isDouble) {
             // visual impulse + emit the custom event
             bump(route.key);
+            // @ts-expect-error - custom event type not in navigation types
             navigation.emit({ type: "tabDoublePress", target: route.key });
             return;
           }

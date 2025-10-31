@@ -77,8 +77,8 @@ export function PinchZoom({
       borderRadius: theme?.radius?.md || 8,
     },
     imageContainer: {
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
     },
     image: {
       backgroundColor: theme?.colors?.surface || '#f5f5f5',
@@ -91,8 +91,8 @@ export function PinchZoom({
       borderRadius: theme?.radius?.md || 8,
     },
     imageContainer: {
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
     },
     image: {
       backgroundColor: theme?.colors?.surface || '#f5f5f5',
