@@ -199,7 +199,7 @@ export const useBiometric = (): BiometricState & BiometricActions => {
       setState((prev) => ({ ...prev, isLoading: false, error: errorMessage }));
       return false;
     }
-  }, []);
+  }, [state.isAvailable]);
 
   const storeSecureData = useCallback(async (_key: string, data: string): Promise<boolean> => {
     try {
