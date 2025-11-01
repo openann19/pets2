@@ -7,7 +7,8 @@ applyTo:
 
 ## Overview
 
-Shared packages provide reusable code across web, mobile, and server applications. These packages must be framework-agnostic and highly portable.
+Shared packages provide reusable code across web, mobile, and server
+applications. These packages must be framework-agnostic and highly portable.
 
 ## Package Structure
 
@@ -23,6 +24,7 @@ packages/
 ```
 
 Each package has:
+
 ```
 package-name/
 ├── src/
@@ -37,15 +39,19 @@ package-name/
 ## Core Package (@pawfectmatch/core)
 
 ### Purpose
-Shared business logic, TypeScript types, API clients, and utilities used across all applications.
+
+Shared business logic, TypeScript types, API clients, and utilities used across
+all applications.
 
 ### Rules
+
 - **Framework-agnostic**: No React, no DOM, no Node.js-specific APIs
 - **Pure functions**: Prefer functional programming
 - **Type-safe**: Explicit types for everything
 - **Well-tested**: 90%+ coverage
 
 ### Example Structure
+
 ```typescript
 // types/User.ts
 export interface User {
@@ -67,12 +73,12 @@ export const userApi = {
     const response = await fetch('/api/users');
     return response.json();
   },
-  
+
   getById: async (id: string): Promise<User> => {
     const response = await fetch(`/api/users/${id}`);
     return response.json();
   },
-  
+
   create: async (data: UserCreateDTO): Promise<User> => {
     const response = await fetch('/api/users', {
       method: 'POST',
@@ -89,16 +95,21 @@ export const isValidEmail = (email: string): boolean => {
 };
 
 export const isStrongPassword = (password: string): boolean => {
-  return password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password);
+  return (
+    password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password)
+  );
 };
 ```
 
 ## UI Package (@pawfectmatch/ui)
 
 ### Purpose
-Shared React components used in both web and mobile apps (with platform-specific adapters).
+
+Shared React components used in both web and mobile apps (with platform-specific
+adapters).
 
 ### Rules
+
 - **Component-driven**: Each component in its own file
 - **TypeScript props**: Explicit prop interfaces
 - **Accessible**: ARIA labels and semantic HTML
@@ -106,7 +117,8 @@ Shared React components used in both web and mobile apps (with platform-specific
 - **Tested**: Snapshot + behavior tests
 
 ### Component Template
-```typescript
+
+````typescript
 import React from 'react';
 
 export interface ButtonProps {
@@ -115,29 +127,29 @@ export interface ButtonProps {
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'outline';
-  
+
   /**
    * Button size
    * @default 'medium'
    */
   size?: 'small' | 'medium' | 'large';
-  
+
   /**
    * Click handler
    */
   onPress: () => void;
-  
+
   /**
    * Button text
    */
   children: React.ReactNode;
-  
+
   /**
    * Disabled state
    * @default false
    */
   disabled?: boolean;
-  
+
   /**
    * Accessibility label
    */
@@ -146,7 +158,7 @@ export interface ButtonProps {
 
 /**
  * Reusable button component
- * 
+ *
  * @example
  * ```tsx
  * <Button variant="primary" onPress={handleSubmit}>
@@ -165,9 +177,10 @@ export const Button: React.FC<ButtonProps> = ({
   // Implementation
   return <button onClick={onPress}>{children}</button>;
 };
-```
+````
 
 ### Testing UI Components
+
 ```typescript
 import { render, fireEvent } from '@testing-library/react';
 import { Button } from '../Button';
@@ -177,15 +190,15 @@ describe('Button', () => {
     const { getByText } = render(<Button onPress={() => {}}>Click me</Button>);
     expect(getByText('Click me')).toBeInTheDocument();
   });
-  
+
   it('calls onPress when clicked', () => {
     const handlePress = jest.fn();
     const { getByRole } = render(<Button onPress={handlePress}>Click</Button>);
-    
+
     fireEvent.click(getByRole('button'));
     expect(handlePress).toHaveBeenCalledTimes(1);
   });
-  
+
   it('is disabled when disabled prop is true', () => {
     const { getByRole } = render(<Button onPress={() => {}} disabled>Click</Button>);
     expect(getByRole('button')).toBeDisabled();
@@ -196,9 +209,12 @@ describe('Button', () => {
 ## Design Tokens Package (@pawfectmatch/design-tokens)
 
 ### Purpose
-Single source of truth for colors, typography, spacing, and other design system values.
+
+Single source of truth for colors, typography, spacing, and other design system
+values.
 
 ### Structure
+
 ```typescript
 // colors.ts
 export const colors = {
@@ -277,6 +293,7 @@ export type Theme = typeof theme;
 ```
 
 ### Usage in Apps
+
 ```typescript
 // Web (Tailwind config)
 import { theme } from '@pawfectmatch/design-tokens';
@@ -305,9 +322,11 @@ const styles = StyleSheet.create({
 ## Core Errors Package (@pawfectmatch/core-errors)
 
 ### Purpose
+
 Centralized error handling with typed error codes.
 
 ### Implementation
+
 ```typescript
 // ErrorCode.ts
 export enum ErrorCode {
@@ -331,17 +350,17 @@ export class AppError extends Error {
   public readonly code: ErrorCode;
   public readonly statusCode: number;
   public readonly details?: Record<string, any>;
-  
+
   constructor(options: AppErrorOptions) {
     super(options.message);
     this.name = 'AppError';
     this.code = options.code;
     this.statusCode = options.statusCode || 500;
     this.details = options.details;
-    
+
     Error.captureStackTrace(this, this.constructor);
   }
-  
+
   toJSON() {
     return {
       code: this.code,
@@ -364,9 +383,11 @@ throw new AppError({
 ## Security Package (@pawfectmatch/security)
 
 ### Purpose
+
 Security utilities like encryption, hashing, validation.
 
 ### Example Functions
+
 ```typescript
 // encryption.ts
 import crypto from 'crypto';
@@ -380,27 +401,33 @@ export const encrypt = (text: string, key: string): string => {
   const salt = crypto.randomBytes(SALT_LENGTH);
   const derivedKey = crypto.pbkdf2Sync(key, salt, 100000, 32, 'sha512');
   const iv = crypto.randomBytes(IV_LENGTH);
-  
+
   const cipher = crypto.createCipheriv(ALGORITHM, derivedKey, iv);
-  const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
+  const encrypted = Buffer.concat([
+    cipher.update(text, 'utf8'),
+    cipher.final(),
+  ]);
   const tag = cipher.getAuthTag();
-  
+
   return Buffer.concat([salt, iv, tag, encrypted]).toString('base64');
 };
 
 export const decrypt = (encrypted: string, key: string): string => {
   const buffer = Buffer.from(encrypted, 'base64');
-  
+
   const salt = buffer.slice(0, SALT_LENGTH);
   const iv = buffer.slice(SALT_LENGTH, SALT_LENGTH + IV_LENGTH);
-  const tag = buffer.slice(SALT_LENGTH + IV_LENGTH, SALT_LENGTH + IV_LENGTH + TAG_LENGTH);
+  const tag = buffer.slice(
+    SALT_LENGTH + IV_LENGTH,
+    SALT_LENGTH + IV_LENGTH + TAG_LENGTH,
+  );
   const encryptedText = buffer.slice(SALT_LENGTH + IV_LENGTH + TAG_LENGTH);
-  
+
   const derivedKey = crypto.pbkdf2Sync(key, salt, 100000, 32, 'sha512');
-  
+
   const decipher = crypto.createDecipheriv(ALGORITHM, derivedKey, iv);
   decipher.setAuthTag(tag);
-  
+
   return decipher.update(encryptedText) + decipher.final('utf8');
 };
 
@@ -423,9 +450,11 @@ export const sanitizeInput = (input: string): string => {
 ## AI Package (@pawfectmatch/ai)
 
 ### Purpose
+
 AI integration utilities, API clients for AI services.
 
 ### Example
+
 ```typescript
 // compatibility.ts
 export interface CompatibilityScore {
@@ -440,15 +469,16 @@ export interface CompatibilityScore {
 
 export const calculateCompatibility = (
   pet1: Pet,
-  pet2: Pet
+  pet2: Pet,
 ): CompatibilityScore => {
   const breedScore = calculateBreedCompatibility(pet1.breed, pet2.breed);
   const ageScore = calculateAgeCompatibility(pet1.age, pet2.age);
   const temperamentScore = calculateTemperamentScore(pet1, pet2);
   const locationScore = calculateLocationScore(pet1.location, pet2.location);
-  
-  const overall = (breedScore + ageScore + temperamentScore + locationScore) / 4;
-  
+
+  const overall =
+    (breedScore + ageScore + temperamentScore + locationScore) / 4;
+
   return {
     overall,
     factors: {
@@ -464,7 +494,9 @@ export const calculateCompatibility = (
 ## Package Development Guidelines
 
 ### TypeScript Configuration
+
 Each package should have a `tsconfig.json`:
+
 ```json
 {
   "extends": "../../tsconfig.base.json",
@@ -479,6 +511,7 @@ Each package should have a `tsconfig.json`:
 ```
 
 ### Package.json Structure
+
 ```json
 {
   "name": "@pawfectmatch/package-name",
@@ -500,19 +533,23 @@ Each package should have a `tsconfig.json`:
 ```
 
 ### Building Packages
+
 Packages must be built before use:
+
 ```bash
 pnpm build              # Build all packages
 pnpm --filter core build   # Build specific package
 ```
 
 ### Testing Packages
+
 ```bash
 pnpm --filter core test           # Run tests
 pnpm --filter core test:coverage  # With coverage
 ```
 
 ### Publishing Packages (if needed)
+
 ```bash
 pnpm --filter core publish
 ```
@@ -520,11 +557,13 @@ pnpm --filter core publish
 ## Dependency Rules
 
 ### Allowed Dependencies
+
 - Utility libraries: lodash, date-fns, validator
 - Type libraries: zod, yup
 - Testing libraries: jest, testing-library
 
 ### Prohibited Dependencies
+
 - ❌ React Native specific APIs in shared packages
 - ❌ Browser-specific APIs (DOM, window) in core
 - ❌ Node.js-specific APIs in UI packages
@@ -540,6 +579,7 @@ pnpm --filter core publish
 ## Documentation
 
 Each package must have:
+
 - README.md with usage examples
 - JSDoc comments on public APIs
 - Type definitions exported

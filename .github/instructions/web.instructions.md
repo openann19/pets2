@@ -7,18 +7,23 @@ applyTo:
 
 ## Overview
 
-The web application is built with Next.js 14.2.33, React 18.2.0, TypeScript, and Tailwind CSS. It emphasizes premium UX with studio-quality animations using Framer Motion.
+The web application is built with Next.js 14.2.33, React 18.2.0, TypeScript, and
+Tailwind CSS. It emphasizes premium UX with studio-quality animations using
+Framer Motion.
 
 ## Next.js Specific Standards
 
 ### App Router vs Pages Router
+
 This project uses the **Pages Router** (not App Router).
+
 - Pages in `src/pages/`
 - API routes in `src/pages/api/`
 - Dynamic routes: `[id].tsx`
 - Catch-all routes: `[...slug].tsx`
 
 ### File Structure
+
 ```
 apps/web/
 ├── src/
@@ -44,6 +49,7 @@ apps/web/
 ```
 
 ### Routing & Navigation
+
 ```typescript
 // Use Next.js Link component
 import Link from 'next/link';
@@ -63,6 +69,7 @@ const { id } = router.query;
 ```
 
 ### Data Fetching
+
 - **Client-side**: Use React Query for all API calls
 - **SSR**: Use `getServerSideProps` sparingly (prefer client-side)
 - **SSG**: Use `getStaticProps` for static content
@@ -77,13 +84,14 @@ export const UserProfile = ({ userId }: Props) => {
     queryKey: ['user', userId],
     queryFn: () => apiClient.users.getProfile(userId),
   });
-  
+
   if (isLoading) return <Skeleton />;
   return <div>{data.name}</div>;
 };
 ```
 
 ### Images
+
 ```typescript
 // Always use Next.js Image component
 import Image from 'next/image';
@@ -99,6 +107,7 @@ import Image from 'next/image';
 ```
 
 ### Head & Meta Tags
+
 ```typescript
 import Head from 'next/head';
 
@@ -112,6 +121,7 @@ import Head from 'next/head';
 ## Styling with Tailwind CSS
 
 ### Utility-First Approach
+
 ```tsx
 // Prefer Tailwind utilities
 <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
@@ -123,7 +133,9 @@ import Head from 'next/head';
 ```
 
 ### Custom Styles
+
 When Tailwind utilities are insufficient, use CSS Modules:
+
 ```typescript
 import styles from './Component.module.css';
 
@@ -133,7 +145,9 @@ import styles from './Component.module.css';
 ```
 
 ### Theme Configuration
+
 Tailwind config in `tailwind.config.js`:
+
 - Custom colors
 - Custom spacing
 - Custom fonts
@@ -142,6 +156,7 @@ Tailwind config in `tailwind.config.js`:
 ## Framer Motion Animations
 
 ### Animation Principles
+
 - Use spring physics: `{ type: "spring", stiffness: 300, damping: 30 }`
 - Implement shared layout animations
 - Stagger list animations with 0.07s delay
@@ -149,15 +164,17 @@ Tailwind config in `tailwind.config.js`:
 - 3D perspective effects with `rotateY`
 
 ### Shared Layout Animations
+
 ```tsx
 import { motion } from 'framer-motion';
 
 <motion.div layoutId="card-123">
   {/* This element morphs seamlessly */}
-</motion.div>
+</motion.div>;
 ```
 
 ### Page Transitions
+
 ```tsx
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/router';
@@ -175,14 +192,15 @@ const pageVariants = {
     animate="enter"
     exit="exit"
     variants={pageVariants}
-    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
   >
     {children}
   </motion.div>
-</AnimatePresence>
+</AnimatePresence>;
 ```
 
 ### List Stagger
+
 ```tsx
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -199,18 +217,26 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-<motion.ul variants={containerVariants} initial="hidden" animate="visible">
-  {items.map(item => (
-    <motion.li key={item.id} variants={itemVariants}>
+<motion.ul
+  variants={containerVariants}
+  initial="hidden"
+  animate="visible"
+>
+  {items.map((item) => (
+    <motion.li
+      key={item.id}
+      variants={itemVariants}
+    >
       {item.content}
     </motion.li>
   ))}
-</motion.ul>
+</motion.ul>;
 ```
 
 ## React Query Setup
 
 ### Query Client Configuration
+
 ```typescript
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -227,6 +253,7 @@ const queryClient = new QueryClient({
 ```
 
 ### Query Patterns
+
 ```typescript
 // List query
 export const useMatches = () => {
@@ -248,7 +275,7 @@ export const useMatch = (matchId: string) => {
 // Mutation with optimistic updates
 export const useCreateMatch = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: apiClient.matches.create,
     onSuccess: () => {
@@ -277,19 +304,19 @@ export const RegistrationForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
-  
+
   const onSubmit = (data: FormData) => {
     // Handle form submission
   };
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <input {...register('email')} />
       {errors.email && <span>{errors.email.message}</span>}
-      
+
       <input type="password" {...register('password')} />
       {errors.password && <span>{errors.password.message}</span>}
-      
+
       <button type="submit">Register</button>
     </form>
   );
@@ -304,20 +331,20 @@ import { useSocket } from '@/contexts/SocketContext';
 
 export const ChatRoom = ({ roomId }: Props) => {
   const socket = useSocket();
-  
+
   useEffect(() => {
     socket.emit('join-room', roomId);
-    
+
     socket.on('message', (message) => {
       // Handle incoming message
     });
-    
+
     return () => {
       socket.off('message');
       socket.emit('leave-room', roomId);
     };
   }, [socket, roomId]);
-  
+
   return <div>Chat Room</div>;
 };
 ```
@@ -325,6 +352,7 @@ export const ChatRoom = ({ roomId }: Props) => {
 ## Performance Optimization
 
 ### Code Splitting
+
 ```typescript
 import dynamic from 'next/dynamic';
 
@@ -336,6 +364,7 @@ const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
 ```
 
 ### Memoization
+
 ```typescript
 import { memo, useMemo, useCallback } from 'react';
 
@@ -356,6 +385,7 @@ const handleClick = useCallback(() => {
 ```
 
 ### Image Optimization
+
 - Use Next.js `<Image>` component
 - Serve images from CDN (Cloudinary)
 - Use appropriate formats (WebP, AVIF)
@@ -365,14 +395,13 @@ const handleClick = useCallback(() => {
 ## Accessibility
 
 ### Semantic HTML
+
 ```tsx
 <main>
   <header>
-    <nav aria-label="Main navigation">
-      {/* Navigation items */}
-    </nav>
+    <nav aria-label="Main navigation">{/* Navigation items */}</nav>
   </header>
-  
+
   <article>
     <h1>Article Title</h1>
     {/* Content */}
@@ -381,6 +410,7 @@ const handleClick = useCallback(() => {
 ```
 
 ### ARIA Attributes
+
 ```tsx
 <button
   aria-label="Close dialog"
@@ -402,6 +432,7 @@ const handleClick = useCallback(() => {
 ```
 
 ### Keyboard Navigation
+
 - Tab order should be logical
 - Implement keyboard shortcuts where appropriate
 - Focus management after route changes
@@ -409,6 +440,7 @@ const handleClick = useCallback(() => {
 - Enter/Space for button activation
 
 ### Color Contrast
+
 - WCAG AA: 4.5:1 for normal text
 - WCAG AA: 3:1 for large text
 - Use contrast checker tools
@@ -417,6 +449,7 @@ const handleClick = useCallback(() => {
 ## Testing
 
 ### Component Tests
+
 ```typescript
 import { render, screen, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -425,7 +458,7 @@ const renderWithProviders = (component: React.ReactElement) => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  
+
   return render(
     <QueryClientProvider client={queryClient}>
       {component}
@@ -436,13 +469,14 @@ const renderWithProviders = (component: React.ReactElement) => {
 test('button click triggers action', () => {
   const handleClick = jest.fn();
   renderWithProviders(<Button onClick={handleClick}>Click me</Button>);
-  
+
   fireEvent.click(screen.getByText('Click me'));
   expect(handleClick).toHaveBeenCalledTimes(1);
 });
 ```
 
 ### E2E Tests with Playwright
+
 ```typescript
 // cypress/e2e/login.cy.ts
 describe('Login Flow', () => {
@@ -459,12 +493,14 @@ describe('Login Flow', () => {
 ## Environment Variables
 
 Create `.env.local` file:
+
 ```
 NEXT_PUBLIC_API_URL=http://localhost:5001/api
 NEXT_PUBLIC_SOCKET_URL=http://localhost:5001
 ```
 
 Access in code:
+
 ```typescript
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 ```
@@ -474,6 +510,7 @@ Note: `NEXT_PUBLIC_` prefix makes variables available in browser.
 ## Common Patterns
 
 ### Protected Routes
+
 ```typescript
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/router';
@@ -482,41 +519,42 @@ import { useEffect } from 'react';
 export const ProtectedRoute: React.FC<Props> = ({ children }) => {
   const { user, isLoading } = useAuth();
   const router = useRouter();
-  
+
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login');
     }
   }, [user, isLoading, router]);
-  
+
   if (isLoading) return <LoadingSpinner />;
   if (!user) return null;
-  
+
   return <>{children}</>;
 };
 ```
 
 ### Error Boundaries
+
 ```typescript
 import { Component, ErrorInfo, ReactNode } from 'react';
 
 export class ErrorBoundary extends Component<Props, State> {
   state = { hasError: false };
-  
+
   static getDerivedStateFromError(error: Error) {
     return { hasError: true };
   }
-  
+
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Error caught:', error, errorInfo);
     // Log to error monitoring service
   }
-  
+
   render() {
     if (this.state.hasError) {
       return <ErrorFallback />;
     }
-    
+
     return this.props.children;
   }
 }
@@ -525,17 +563,20 @@ export class ErrorBoundary extends Component<Props, State> {
 ## Build & Development
 
 ### Development
+
 ```bash
 pnpm --filter web dev      # Start dev server (localhost:3000)
 ```
 
 ### Build
+
 ```bash
 pnpm --filter web build    # Production build
 pnpm --filter web start    # Start production server
 ```
 
 ### Testing
+
 ```bash
 pnpm --filter web test              # Run tests
 pnpm --filter web test:coverage     # With coverage
@@ -543,6 +584,7 @@ pnpm --filter web test:e2e          # E2E tests
 ```
 
 ### Linting
+
 ```bash
 pnpm --filter web lint              # Check
 pnpm --filter web lint:fix          # Fix
@@ -551,6 +593,7 @@ pnpm --filter web lint:fix          # Fix
 ## Quality Gates
 
 Before merging:
+
 1. TypeScript: No compilation errors
 2. ESLint: Zero warnings
 3. Tests: All passing, 80%+ coverage

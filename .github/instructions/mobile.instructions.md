@@ -7,17 +7,21 @@ applyTo:
 
 ## Overview
 
-The mobile app is built with React Native using Expo SDK ~49.0.23. Follow the multi-agent system principles from `AGENTS.md` for mobile development.
+The mobile app is built with React Native using Expo SDK ~49.0.23. Follow the
+multi-agent system principles from `AGENTS.md` for mobile development.
 
 ## Mobile-Specific Standards
 
 ### React Native Components
+
 - Use core React Native components as primitives
-- Import from `react-native`: `View`, `Text`, `TouchableOpacity`, `ScrollView`, `FlatList`
+- Import from `react-native`: `View`, `Text`, `TouchableOpacity`, `ScrollView`,
+  `FlatList`
 - Use themed components from design system when available
 - Never use `any` for component props
 
 ### Styling
+
 - Use design tokens from `packages/design-tokens/`
 - Create themed base components in `src/components/ui/`
 - Centralize all styles in `src/theme/` directory
@@ -26,6 +30,7 @@ The mobile app is built with React Native using Expo SDK ~49.0.23. Follow the mu
 - Border radii: 4, 8, 12, 16
 
 ### Theme System
+
 ```typescript
 // Always use theme values
 import { theme } from '../theme';
@@ -40,6 +45,7 @@ const styles = StyleSheet.create({
 ```
 
 ### Animations
+
 - Use React Native Reanimated 3.x for animations
 - Target 60fps performance
 - Spring configurations: `{ stiffness: 300, damping: 30 }`
@@ -47,24 +53,28 @@ const styles = StyleSheet.create({
 - Use `useAnimatedStyle` and `withSpring` / `withTiming`
 
 ### Navigation
+
 - React Navigation v6
 - Type-safe navigation with TypeScript
 - Define navigation types in `src/navigation/types.ts`
 - Use typed hooks: `useNavigation<NavigationProp>()`
 
 ### State Management
+
 - React Query for server state
 - Local state with `useState` for UI only
 - Context API sparingly for shared UI state
 - No Redux (we use React Query)
 
 ### Forms
+
 - React Hook Form + Zod validation
 - Validate on blur for better UX
 - Show inline error messages
 - Handle keyboard properly (dismiss on submit)
 
 ### Performance
+
 - Use `FlatList` for long lists (never `ScrollView` with `.map()`)
 - Implement `getItemLayout` when item heights are fixed
 - Add `keyExtractor` to all `FlatList` components
@@ -73,6 +83,7 @@ const styles = StyleSheet.create({
 - Profile with Expo DevTools
 
 ### Accessibility
+
 ```typescript
 // Required accessibility props
 <TouchableOpacity
@@ -90,6 +101,7 @@ const styles = StyleSheet.create({
 - Touch target size: minimum 44x44 points
 
 ### Testing
+
 - Use `@testing-library/react-native` for component tests
 - Jest for unit tests
 - Detox for E2E tests
@@ -103,19 +115,21 @@ import { render, fireEvent } from '@testing-library/react-native';
 test('button press triggers action', () => {
   const onPress = jest.fn();
   const { getByRole } = render(<Button onPress={onPress} />);
-  
+
   fireEvent.press(getByRole('button'));
   expect(onPress).toHaveBeenCalledTimes(1);
 });
 ```
 
 ### Error Handling
+
 - Use error boundaries for crash prevention
 - Show user-friendly error messages
 - Log errors to Sentry in production
 - Implement retry logic for network failures
 
 ### API Integration
+
 - Base URL from environment config
 - Use `src/services/api.ts` for API client
 - Handle offline scenarios gracefully
@@ -123,6 +137,7 @@ test('button press triggers action', () => {
 - Implement request cancellation
 
 ### Platform-Specific Code
+
 ```typescript
 import { Platform } from 'react-native';
 
@@ -136,6 +151,7 @@ const headerHeight = Platform.select({
 Use sparingly - prefer cross-platform solutions.
 
 ### File Organization
+
 ```
 apps/mobile/
 ├── src/
@@ -157,6 +173,7 @@ apps/mobile/
 ### Common Patterns
 
 #### Themed Button Component
+
 ```typescript
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { theme } from '@/theme';
@@ -167,13 +184,13 @@ interface ButtonProps {
   children: string;
 }
 
-export const Button: React.FC<ButtonProps> = ({ 
-  variant = 'primary', 
-  onPress, 
-  children 
+export const Button: React.FC<ButtonProps> = ({
+  variant = 'primary',
+  onPress,
+  children
 }) => {
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={[styles.base, styles[variant]]}
       onPress={onPress}
       accessible={true}
@@ -211,6 +228,7 @@ const styles = StyleSheet.create({
 ```
 
 #### API Call with React Query
+
 ```typescript
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/services/api';
@@ -248,22 +266,27 @@ Follow the agent system from `AGENTS.md`:
 ## Common Issues
 
 ### Metro bundler cache issues
+
 ```bash
 pnpm --filter mobile start --clear
 ```
 
 ### iOS build issues
+
 ```bash
 cd apps/mobile/ios && pod install && cd -
 ```
 
 ### Android build issues
+
 ```bash
 cd apps/mobile/android && ./gradlew clean && cd -
 ```
 
 ### TypeScript errors
+
 Ensure all dependencies are built:
+
 ```bash
 pnpm build
 ```
@@ -271,6 +294,7 @@ pnpm build
 ## Design System Migration
 
 The mobile app is undergoing UI consistency improvements:
+
 - All components must use themed base components
 - No inline styles for colors/spacing/typography
 - Reference `theme.ts` as single source of truth
@@ -279,6 +303,7 @@ The mobile app is undergoing UI consistency improvements:
 ## GDPR Requirements
 
 Mobile app must implement:
+
 - Delete account flow with password confirmation
 - Export user data functionality
 - Confirm deletion endpoint
