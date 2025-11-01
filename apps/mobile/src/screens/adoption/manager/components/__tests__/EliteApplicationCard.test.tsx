@@ -81,8 +81,7 @@ describe('EliteApplicationCard Component Tests', () => {
   describe('Rendering', () => {
     it('should render application card successfully', () => {
       render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       expect(screen.getByText('John Doe')).toBeTruthy();
@@ -91,8 +90,7 @@ describe('EliteApplicationCard Component Tests', () => {
 
     it('should render applicant email', () => {
       render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       expect(screen.getByText('john@example.com')).toBeTruthy();
@@ -100,8 +98,7 @@ describe('EliteApplicationCard Component Tests', () => {
 
     it('should render living space information', () => {
       render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       expect(screen.getByText('House with garden')).toBeTruthy();
@@ -109,8 +106,7 @@ describe('EliteApplicationCard Component Tests', () => {
 
     it('should render experience information', () => {
       render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       expect(screen.getByText('5 years with cats')).toBeTruthy();
@@ -118,8 +114,7 @@ describe('EliteApplicationCard Component Tests', () => {
 
     it('should render references count', () => {
       render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       expect(screen.getByText('3 references')).toBeTruthy();
@@ -127,8 +122,7 @@ describe('EliteApplicationCard Component Tests', () => {
 
     it('should render status badge with correct color and icon', () => {
       render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       expect(defaultProps.getStatusColor).toHaveBeenCalledWith('pending');
@@ -140,8 +134,7 @@ describe('EliteApplicationCard Component Tests', () => {
   describe('Status Display', () => {
     it('should display pending status correctly', () => {
       render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       expect(screen.getByText(/Pending/)).toBeTruthy();
@@ -150,8 +143,7 @@ describe('EliteApplicationCard Component Tests', () => {
     it('should display approved status', () => {
       const approvedApp = { ...defaultProps, application: { ...mockApplication, status: 'approved' as const } };
       render(
-        <EliteApplicationCard {...approvedApp} />
-        />,
+        <EliteApplicationCard {...approvedApp} />,
       );
 
       expect(approvedApp.getStatusColor).toHaveBeenCalledWith('approved');
@@ -161,8 +153,7 @@ describe('EliteApplicationCard Component Tests', () => {
     it('should display rejected status correctly', () => {
       const rejectedApp = { ...defaultProps, application: { ...mockApplication, status: 'rejected' as const } };
       render(
-        <EliteApplicationCard {...rejectedApp} />
-        />,
+        <EliteApplicationCard {...rejectedApp} />,
       );
 
       expect(rejectedApp.getStatusColor).toHaveBeenCalledWith('rejected');
@@ -172,8 +163,7 @@ describe('EliteApplicationCard Component Tests', () => {
     it('should display withdrawn status correctly', () => {
       const withdrawnApp = { ...defaultProps, application: { ...mockApplication, status: 'withdrawn' as const } };
       render(
-        <EliteApplicationCard {...withdrawnApp} />
-        />,
+        <EliteApplicationCard {...withdrawnApp} />,
       );
 
       expect(withdrawnApp.getStatusColor).toHaveBeenCalledWith('withdrawn');
@@ -184,8 +174,7 @@ describe('EliteApplicationCard Component Tests', () => {
   describe('Action Buttons', () => {
     it('should show approve and reject buttons for pending applications', () => {
       render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       expect(screen.getByText('Reject')).toBeTruthy();
@@ -194,8 +183,7 @@ describe('EliteApplicationCard Component Tests', () => {
 
     it('should call onApprove when approve button is pressed', () => {
       render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       const approveButton = screen.getByText('Approve');
@@ -207,8 +195,7 @@ describe('EliteApplicationCard Component Tests', () => {
 
     it('should call onReject when reject button is pressed', () => {
       render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       const rejectButton = screen.getByText('Reject');
@@ -221,8 +208,7 @@ describe('EliteApplicationCard Component Tests', () => {
     it('should not show action buttons for approved applications', () => {
       const approvedApp = { ...defaultProps, application: { ...mockApplication, status: 'approved' as const } };
       render(
-        <EliteApplicationCard {...approvedApp} />
-        />,
+        <EliteApplicationCard {...approvedApp} />,
       );
 
       expect(screen.queryByText('Reject')).toBeNull();
@@ -232,8 +218,7 @@ describe('EliteApplicationCard Component Tests', () => {
     it('should not show action buttons for rejected applications', () => {
       const rejectedApp = { ...defaultProps, application: { ...mockApplication, status: 'rejected' as const } };
       render(
-        <EliteApplicationCard {...rejectedApp} />
-        />,
+        <EliteApplicationCard {...rejectedApp} />,
       );
 
       expect(screen.queryByText('Reject')).toBeNull();
@@ -243,8 +228,7 @@ describe('EliteApplicationCard Component Tests', () => {
     it('should not show action buttons for withdrawn applications', () => {
       const withdrawnApp = { ...defaultProps, application: { ...mockApplication, status: 'withdrawn' as const } };
       render(
-        <EliteApplicationCard {...withdrawnApp} />
-        />,
+        <EliteApplicationCard {...withdrawnApp} />,
       );
 
       expect(screen.queryByText('Reject')).toBeNull();
@@ -256,8 +240,7 @@ describe('EliteApplicationCard Component Tests', () => {
     it('should handle empty applicant name gracefully', () => {
       const emptyNameApp = { ...defaultProps, application: { ...mockApplication, applicantName: '' } };
       render(
-        <EliteApplicationCard {...emptyNameApp} />
-        />,
+        <EliteApplicationCard {...emptyNameApp} />,
       );
 
       // Should still render without crashing
@@ -267,8 +250,7 @@ describe('EliteApplicationCard Component Tests', () => {
     it('should handle zero references', () => {
       const zeroRefsApp = { ...defaultProps, application: { ...mockApplication, references: 0 } };
       render(
-        <EliteApplicationCard {...zeroRefsApp} />
-        />,
+        <EliteApplicationCard {...zeroRefsApp} />,
       );
 
       expect(screen.getByText('0 references')).toBeTruthy();
@@ -277,8 +259,7 @@ describe('EliteApplicationCard Component Tests', () => {
     it('should handle many references', () => {
       const manyRefsApp = { ...defaultProps, application: { ...mockApplication, references: 15 } };
       render(
-        <EliteApplicationCard {...manyRefsApp} />
-        />,
+        <EliteApplicationCard {...manyRefsApp} />,
       );
 
       expect(screen.getByText('15 references')).toBeTruthy();
@@ -290,8 +271,7 @@ describe('EliteApplicationCard Component Tests', () => {
         application: { ...mockApplication, applicantName: 'A'.repeat(100) },
       };
       render(
-        <EliteApplicationCard {...longNameApp} />
-        />,
+        <EliteApplicationCard {...longNameApp} />,
       );
 
       expect(screen.getByText('A'.repeat(100))).toBeTruthy();
@@ -303,8 +283,7 @@ describe('EliteApplicationCard Component Tests', () => {
         application: { ...mockApplication, applicantEmail: 'a'.repeat(50) + '@example.com' },
       };
       render(
-        <EliteApplicationCard {...longEmailApp} />
-        />,
+        <EliteApplicationCard {...longEmailApp} />,
       );
 
       expect(screen.getByText('a'.repeat(50) + '@example.com')).toBeTruthy();
@@ -316,8 +295,7 @@ describe('EliteApplicationCard Component Tests', () => {
         application: { ...mockApplication, experience: 'A'.repeat(200) },
       };
       render(
-        <EliteApplicationCard {...longExpApp} />
-        />,
+        <EliteApplicationCard {...longExpApp} />,
       );
 
       expect(screen.getByText('A'.repeat(200))).toBeTruthy();
@@ -329,8 +307,7 @@ describe('EliteApplicationCard Component Tests', () => {
         application: { ...mockApplication, livingSpace: 'A'.repeat(150) },
       };
       render(
-        <EliteApplicationCard {...longSpaceApp} />
-        />,
+        <EliteApplicationCard {...longSpaceApp} />,
       );
 
       expect(screen.getByText('A'.repeat(150))).toBeTruthy();
@@ -353,9 +330,10 @@ describe('EliteApplicationCard Component Tests', () => {
       };
 
       render(
-        <EliteApplicationCard {...defaultProps} />
+        <>
+          <EliteApplicationCard {...defaultProps} />
           <EliteApplicationCard {...defaultProps} application={app2} />
-        />,
+        </>,
       );
 
       expect(screen.getByText('John Doe')).toBeTruthy();
@@ -366,8 +344,7 @@ describe('EliteApplicationCard Component Tests', () => {
   describe('Accessibility', () => {
     it('should be accessible', () => {
       const { getByText } = render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       // Card content should be accessible
@@ -378,8 +355,7 @@ describe('EliteApplicationCard Component Tests', () => {
   describe('Theme Integration', () => {
     it('should use theme colors correctly', () => {
       render(
-        <EliteApplicationCard {...defaultProps} />
-        />,
+        <EliteApplicationCard {...defaultProps} />,
       );
 
       // Theme is used via useTheme hook in component
