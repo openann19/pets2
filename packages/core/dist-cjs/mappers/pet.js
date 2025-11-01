@@ -128,4 +128,3 @@ function toLegacyPet(pet) {
     };
     return legacy;
 }
-//# sourceMappingURL=pet.js.map

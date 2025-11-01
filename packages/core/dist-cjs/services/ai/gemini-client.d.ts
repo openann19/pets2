@@ -36,4 +36,3 @@ export declare class GeminiClient {
 }
 export declare const initializeGemini: (config: GeminiConfig) => void;
 export declare const _getGeminiClient: () => GeminiClient;
-//# sourceMappingURL=gemini-client.d.ts.map

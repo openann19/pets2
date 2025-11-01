@@ -21,4 +21,3 @@ export interface UseEventTrackingReturn {
  * Hook for tracking user events and interactions
  */
 export declare function useEventTracking(): UseEventTrackingReturn;
-//# sourceMappingURL=useEventTracking.d.ts.map

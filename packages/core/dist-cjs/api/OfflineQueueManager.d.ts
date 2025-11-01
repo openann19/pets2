@@ -52,7 +52,7 @@ export declare class OfflineQueueManager {
     /**
      * Process individual item
      */
-    protected processItem(_item: QueueItem): Promise<void>;
+    protected processItem(item: QueueItem): Promise<void>;
     /**
      * Get queue statistics
      */

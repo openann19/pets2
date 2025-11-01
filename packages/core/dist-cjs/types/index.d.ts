@@ -626,4 +626,3 @@ export interface PackGroup {
     createdAt: string;
     updatedAt: string;
 }
-//# sourceMappingURL=index.d.ts.map

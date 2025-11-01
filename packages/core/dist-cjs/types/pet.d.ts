@@ -7,4 +7,3 @@ export interface Pet {
     photos?: string[];
     uri?: string;
 }
-//# sourceMappingURL=pet.d.ts.map

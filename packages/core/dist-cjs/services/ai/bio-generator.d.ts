@@ -39,4 +39,3 @@ export declare class BioGeneratorService {
     private generateFallbackBio;
 }
 export declare const _bioGeneratorService: BioGeneratorService;
-//# sourceMappingURL=bio-generator.d.ts.map

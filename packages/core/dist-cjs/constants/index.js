@@ -19,4 +19,3 @@ exports.SETTINGS = {
     HAPTICS: exports.HAPTIC_SETTINGS,
     // Add other settings categories here
 };
-//# sourceMappingURL=index.js.map

@@ -62,4 +62,3 @@ function useMatchAnalytics(options = {}) {
         refresh: fetchAnalytics,
     };
 }
-//# sourceMappingURL=useMatchAnalytics.js.map

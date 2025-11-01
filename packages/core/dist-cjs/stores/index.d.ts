@@ -4,4 +4,3 @@ export * from './useMatchStore';
 export * from './usePreferencesStore';
 export * from './useWeatherStore';
 export * from './useAnalyticsStore';
-//# sourceMappingURL=index.d.ts.map

@@ -301,4 +301,3 @@ export type SwipeData = z.infer<typeof swipeSchema>;
 export type SearchData = z.infer<typeof searchSchema>;
 export { createStorySchema as storyCreateSchema, replyStorySchema as storyReplySchema } from './story';
 export type { CreateStoryInput, ReplyStoryInput } from './story';
-//# sourceMappingURL=index.d.ts.map

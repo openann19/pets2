@@ -138,4 +138,3 @@ function formatRelativeTime(date) {
 __exportStar(require("./contentFilter"), exports);
 __exportStar(require("./storage"), exports);
 // Note: Constants are exported from types/index.ts to avoid duplication
-//# sourceMappingURL=index.js.map

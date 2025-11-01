@@ -100,4 +100,3 @@ export interface NotificationPreferences {
     push: boolean;
     sms: boolean;
 }
-//# sourceMappingURL=account.d.ts.map

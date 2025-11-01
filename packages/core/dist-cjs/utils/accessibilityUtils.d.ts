@@ -8,4 +8,3 @@ export declare function hexToRgb(hex: string): {
 } | null;
 export declare function getLuminance(r: number, g: number, b: number): number;
 export declare function isLightColor(hex: string): boolean;
-//# sourceMappingURL=accessibilityUtils.d.ts.map

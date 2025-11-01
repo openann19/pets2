@@ -7,4 +7,3 @@ interface KeyCombo {
 }
 export declare function useKeyboardShortcut(keyCombo: KeyCombo, handler: () => void): string;
 export {};
-//# sourceMappingURL=useKeyboardShortcut.d.ts.map
