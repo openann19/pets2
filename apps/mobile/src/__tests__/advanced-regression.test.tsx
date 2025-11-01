@@ -14,6 +14,7 @@
 
 import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
 import { render, fireEvent, waitFor, screen, act } from '@testing-library/react-native';
+import { renderHook } from '@testing-library/react-hooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 
@@ -46,7 +47,7 @@ const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
 const mockLocation = Location as jest.Mocked<typeof Location>;
 const mockApi = api as jest.Mocked<typeof api>;
 const mockOfflineService = offlineService as jest.Mocked<typeof offlineService>;
-const mockAuthService = authService as jest.Mocked<typeof authService>;
+const mockAuthService = AuthService as jest.Mocked<typeof AuthService>;
 const mockUploadHygieneService = uploadHygieneService as jest.Mocked<typeof uploadHygieneService>;
 const mockCommunityAPI = communityAPI as jest.Mocked<typeof communityAPI>;
 const mockNotificationService = notificationService as jest.Mocked<typeof notificationService>;
@@ -977,3 +978,4 @@ describe('Advanced Regression Test Suite', () => {
 });
 
 // Helper hooks for regression testing are defined in separate files
+export {};

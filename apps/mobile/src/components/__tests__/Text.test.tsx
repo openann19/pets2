@@ -61,3 +61,4 @@ describe('Text', () => {
       <Text style={{ fontSize: 20 }}>Custom styled text</Text>
     )).not.toThrow();
   });
+});
