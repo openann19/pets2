@@ -10,4 +10,3 @@ exports.createStorySchema = zod_1.z.object({
 exports.replyStorySchema = zod_1.z.object({
     message: zod_1.z.string().min(1).max(500),
 });
-//# sourceMappingURL=story.js.map

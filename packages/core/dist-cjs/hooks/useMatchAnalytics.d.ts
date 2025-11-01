@@ -39,4 +39,3 @@ interface UseMatchAnalyticsReturn {
  */
 export declare function useMatchAnalytics(options?: UseMatchAnalyticsOptions): UseMatchAnalyticsReturn;
 export {};
-//# sourceMappingURL=useMatchAnalytics.d.ts.map

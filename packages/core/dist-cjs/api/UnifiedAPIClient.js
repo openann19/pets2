@@ -12,7 +12,7 @@ const OfflineQueueManager_1 = require("./OfflineQueueManager");
 const APIErrorClassifier_1 = require("./APIErrorClassifier");
 const RecoveryStrategies_1 = require("./RecoveryStrategies");
 class UnifiedAPIClient extends OfflineQueueManager_1.OfflineQueueManager {
-    apiConfig;
+    clientConfig;
     circuitBreaker;
     retryStrategy;
     errorClassifier;
@@ -21,8 +21,8 @@ class UnifiedAPIClient extends OfflineQueueManager_1.OfflineQueueManager {
     tokenRefreshFn;
     cache = new Map();
     constructor(config) {
-        super(config);
-        this.apiConfig = config;
+        super(config.queueConfig);
+        this.clientConfig = config;
         this.circuitBreaker = new CircuitBreaker_1.CircuitBreaker(config.circuitBreakerConfig);
         this.retryStrategy = new RequestRetryStrategy_1.RequestRetryStrategy(config.retryConfig);
         this.errorClassifier = new APIErrorClassifier_1.APIErrorClassifier();
@@ -60,12 +60,11 @@ class UnifiedAPIClient extends OfflineQueueManager_1.OfflineQueueManager {
                 data: config.body,
                 headers: config.headers,
                 priority: config.priority || 'normal',
-                maxRetries: this.apiConfig.retryConfig?.maxRetries || 3,
+                maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
                 conflictResolution: 'overwrite',
             });
             return {
                 success: false,
-                data: null,
                 error: 'Request queued for offline processing',
             };
         }
@@ -118,9 +117,9 @@ class UnifiedAPIClient extends OfflineQueueManager_1.OfflineQueueManager {
      * Make actual HTTP request
      */
     async makeRequest(endpoint, config) {
-        const url = `${this.apiConfig.baseURL}${endpoint}`;
+        const url = `${this.clientConfig.baseURL}${endpoint}`;
         const method = config.method || 'GET';
-        const timeout = config.timeout || this.apiConfig.timeout || 30000;
+        const timeout = config.timeout || this.clientConfig.timeout || 30000;
         const headers = {
             'Content-Type': 'application/json',
             ...config.headers,
@@ -165,7 +164,7 @@ class UnifiedAPIClient extends OfflineQueueManager_1.OfflineQueueManager {
                 const recoveryResult = await this.recoveryStrategies.combinedRecovery(() => this.makeRequest(endpoint, config), {
                     retry: true,
                     refreshToken: this.tokenRefreshFn,
-                    useCache: async () => Promise.resolve(this.getCache(endpoint)),
+                    useCache: () => this.getCache(endpoint),
                     queue: async (data) => {
                         await this.enqueue({
                             endpoint,
@@ -173,12 +172,12 @@ class UnifiedAPIClient extends OfflineQueueManager_1.OfflineQueueManager {
                             data,
                             headers: config.headers,
                             priority: config.priority || 'normal',
-                            maxRetries: this.apiConfig.retryConfig?.maxRetries || 3,
+                            maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
                             conflictResolution: 'overwrite',
                         });
                     },
                 }, {
-                    maxRetries: this.apiConfig.retryConfig?.maxRetries || 3,
+                    maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
                 });
                 if (recoveryResult.success) {
                     return {
@@ -193,7 +192,6 @@ class UnifiedAPIClient extends OfflineQueueManager_1.OfflineQueueManager {
         }
         return {
             success: false,
-            data: null,
             error: this.errorClassifier.getUserMessage(error, { endpoint, method: config.method }),
             statusCode: classification.statusCode,
         };
@@ -215,7 +213,7 @@ class UnifiedAPIClient extends OfflineQueueManager_1.OfflineQueueManager {
     /**
      * Get cached data
      */
-    getCache(endpoint) {
+    async getCache(endpoint) {
         const cached = this.cache.get(endpoint);
         if (!cached) {
             return null;

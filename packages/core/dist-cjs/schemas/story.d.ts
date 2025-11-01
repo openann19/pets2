@@ -21,4 +21,3 @@ export declare const replyStorySchema: z.ZodObject<{
 }>;
 export type CreateStoryInput = z.infer<typeof createStorySchema>;
 export type ReplyStoryInput = z.infer<typeof replyStorySchema>;
-//# sourceMappingURL=story.d.ts.map

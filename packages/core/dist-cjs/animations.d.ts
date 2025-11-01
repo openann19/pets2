@@ -74,4 +74,3 @@ export declare const _PAGE_VARIANTS: {
         };
     };
 };
-//# sourceMappingURL=animations.d.ts.map

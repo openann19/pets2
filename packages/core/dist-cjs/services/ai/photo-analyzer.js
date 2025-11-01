@@ -132,4 +132,3 @@ class PhotoAnalyzerService {
 exports.PhotoAnalyzerService = PhotoAnalyzerService;
 // Export singleton
 exports._photoAnalyzerService = new PhotoAnalyzerService();
-//# sourceMappingURL=photo-analyzer.js.map

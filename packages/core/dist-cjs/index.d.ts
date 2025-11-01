@@ -19,4 +19,3 @@ export * from './api';
 export { useFocusTrap, useGesture, useKeyboardShortcut, useEventTracking, useRealtimeSocket } from './hooks';
 export * from './mappers';
 export declare const _VERSION = "1.0.0";
-//# sourceMappingURL=index.d.ts.map

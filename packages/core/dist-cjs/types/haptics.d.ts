@@ -12,4 +12,3 @@ export interface HapticFeedback {
     element?: string;
 }
 export type HapticSettingKey = keyof typeof HAPTIC_SETTINGS;
-//# sourceMappingURL=haptics.d.ts.map

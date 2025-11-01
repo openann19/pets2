@@ -3,4 +3,3 @@ export declare function useGesture(onSwipeLeft?: () => void, onSwipeRight?: () =
     handleTouchMove: (e: TouchEvent) => void;
     handleTouchEnd: (_e: TouchEvent) => void;
 };
-//# sourceMappingURL=useGesture.d.ts.map

@@ -8,4 +8,3 @@ export interface LegacyWebUser {
     preferences?: Record<string, unknown>;
 }
 export declare function toCoreUser(legacy: LegacyWebUser): User;
-//# sourceMappingURL=user.d.ts.map

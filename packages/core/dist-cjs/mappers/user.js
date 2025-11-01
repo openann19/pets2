@@ -64,4 +64,3 @@ function toCoreUser(legacy) {
         updatedAt: now,
     };
 }
-//# sourceMappingURL=user.js.map

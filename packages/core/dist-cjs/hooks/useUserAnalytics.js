@@ -69,4 +69,3 @@ function useUserAnalytics(options = {}) {
         refresh: fetchAnalytics,
     };
 }
-//# sourceMappingURL=useUserAnalytics.js.map

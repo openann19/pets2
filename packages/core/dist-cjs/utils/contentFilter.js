@@ -19,4 +19,3 @@ function filterContent(input, config) {
     }
     return { output, matched };
 }
-//# sourceMappingURL=contentFilter.js.map

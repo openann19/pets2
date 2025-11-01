@@ -59,4 +59,3 @@ Object.defineProperty(exports, "useRealtimeSocket", { enumerable: true, get: fun
 __exportStar(require("./mappers"), exports);
 // Version
 exports._VERSION = '1.0.0';
-//# sourceMappingURL=index.js.map

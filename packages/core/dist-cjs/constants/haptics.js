@@ -25,4 +25,3 @@ exports.HAPTIC_DURATIONS = {
     notification: 300,
     selection: 200,
 };
-//# sourceMappingURL=haptics.js.map

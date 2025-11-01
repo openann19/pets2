@@ -113,4 +113,3 @@ export interface SwipeAnimationConfig {
     useNativeDriver: boolean;
 }
 export declare const DEFAULT_ANIMATION_CONFIG: SwipeAnimationConfig;
-//# sourceMappingURL=swipe.d.ts.map

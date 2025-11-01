@@ -49,4 +49,3 @@ interface UseRealtimeSocketReturn {
  */
 export declare function useRealtimeSocket(options?: UseRealtimeSocketOptions): UseRealtimeSocketReturn;
 export {};
-//# sourceMappingURL=useRealtimeSocket.d.ts.map

@@ -38,4 +38,3 @@ declare class ApiClient {
 }
 export declare const apiClient: ApiClient;
 export default apiClient;
-//# sourceMappingURL=client.d.ts.map

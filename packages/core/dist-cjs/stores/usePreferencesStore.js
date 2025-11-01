@@ -93,4 +93,3 @@ exports._usePreferencesStore = (0, zustand_1.create)()((0, middleware_1.persist)
 })), {
     name: 'pawfectmatch-preferences',
 }));
-//# sourceMappingURL=usePreferencesStore.js.map

@@ -43,4 +43,3 @@ export interface WeatherState {
 export declare const _useWeatherStore: import("zustand").UseBoundStore<Omit<import("zustand").StoreApi<WeatherState>, "setState"> & {
     setState(nextStateOrUpdater: WeatherState | Partial<WeatherState> | ((state: import("immer").WritableDraft<WeatherState>) => void), shouldReplace?: boolean | undefined): void;
 }>;
-//# sourceMappingURL=useWeatherStore.d.ts.map

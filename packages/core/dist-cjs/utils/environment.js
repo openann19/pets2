@@ -86,4 +86,3 @@ const isEventListenerTarget = (target) => {
         'removeEventListener' in target &&
         typeof target.removeEventListener === 'function');
 };
-//# sourceMappingURL=environment.js.map

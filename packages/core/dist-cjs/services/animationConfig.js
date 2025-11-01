@@ -110,4 +110,3 @@ function useAnimationConfig() {
     // subscribe() on the returned object.
     return exports.animationConfig;
 }
-//# sourceMappingURL=animationConfig.js.map

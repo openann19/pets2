@@ -64,4 +64,3 @@ export interface UserStatusEvent {
     status: 'online' | 'offline' | 'away' | 'busy';
     lastSeen?: string;
 }
-//# sourceMappingURL=socket.d.ts.map

@@ -22,4 +22,3 @@ function isApiSuccessResponse(response) {
         'success' in response &&
         response.success);
 }
-//# sourceMappingURL=api-responses.js.map

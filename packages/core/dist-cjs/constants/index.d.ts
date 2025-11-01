@@ -20,4 +20,3 @@ export declare const SETTINGS: {
         readonly CUSTOM_ELEMENT: "haptic.customElement";
     };
 };
-//# sourceMappingURL=index.d.ts.map

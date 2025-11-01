@@ -45,4 +45,3 @@ export declare function toCoreMessage(legacy: LegacyWebMessage): Message;
  * Convert array of legacy messages to core Message types
  */
 export declare function toCoreMessages(legacyMessages: LegacyWebMessage[]): Message[];
-//# sourceMappingURL=message.d.ts.map

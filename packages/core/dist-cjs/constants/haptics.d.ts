@@ -23,4 +23,3 @@ export declare const HAPTIC_DURATIONS: {
     readonly notification: 300;
     readonly selection: 200;
 };
-//# sourceMappingURL=haptics.d.ts.map

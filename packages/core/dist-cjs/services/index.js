@@ -22,4 +22,3 @@ __exportStar(require("./ErrorHandler"), exports);
 __exportStar(require("./Logger"), exports);
 __exportStar(require("./WeatherService"), exports);
 // Add any additional service exports here
-//# sourceMappingURL=index.js.map

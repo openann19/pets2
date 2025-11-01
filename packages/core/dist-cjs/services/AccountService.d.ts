@@ -41,4 +41,3 @@ export declare class AccountService {
      */
     downloadDataExport(exportId: string, token: string): Promise<Blob>;
 }
-//# sourceMappingURL=AccountService.d.ts.map
