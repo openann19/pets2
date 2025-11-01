@@ -15,18 +15,22 @@ import type { ColorScheme } from '../theme';
  * Wrapper that syncs next-themes resolved theme with our AppTheme
  */
 function ThemeSyncWrapper({ children }: { children: ReactNode }) {
+  // Always call hooks unconditionally at the top level
   const { resolvedTheme } = useNextTheme();
   const [mounted, setMounted] = useState(false);
 
+  // Always call useEffect unconditionally
   useEffect(() => {
     setMounted(true);
   }, []);
 
   // Determine color scheme from next-themes
+  // Use undefined during SSR to avoid hydration mismatch
   const colorScheme: ColorScheme | undefined = mounted && resolvedTheme 
     ? (resolvedTheme === 'dark' ? 'dark' : 'light')
     : undefined;
 
+  // Always return the same structure - conditional logic is only inside hook bodies
   return (
     <AppThemeProvider scheme={colorScheme}>
       {children}

@@ -207,29 +207,69 @@ export function useMemoryOptimization() {
     return { memoryInfo, clearCache };
 }
 /**
- * Utility for preloading critical resources
+ * Utility for preloading critical resources with error handling and retry logic
  */
 export function preloadCriticalResources() {
     if (typeof window === 'undefined')
         return;
     const criticalResources = [
         // Add critical CSS, fonts, and images here
-        '/fonts/inter-var.woff2',
+        // Note: Inter font is handled by Next.js font optimization, no need to preload manually
         '/icons/icon-192x192.png',
     ];
+    
+    const preloadWithRetry = (resource: string, retries = 2, delay = 1000): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.href = resource;
+            
+            if (resource.endsWith('.woff2')) {
+                link.as = 'font';
+                link.type = 'font/woff2';
+                link.crossOrigin = 'anonymous';
+            }
+            else if (resource.endsWith('.png') || resource.endsWith('.jpg')) {
+                link.as = 'image';
+            }
+            
+            const handleError = () => {
+                if (retries > 0) {
+                    setTimeout(() => {
+                        preloadWithRetry(resource, retries - 1, delay * 2)
+                            .then(resolve)
+                            .catch(reject);
+                    }, delay);
+                } else {
+                    // Gracefully degrade - don't throw error, just log warning
+                    if (process.env.NODE_ENV === 'development') {
+                        console.warn(`Failed to preload resource after retries: ${resource}`);
+                    }
+                    resolve(); // Resolve instead of reject to not block rendering
+                }
+            };
+            
+            link.onerror = handleError;
+            
+            // Set timeout to avoid hanging indefinitely
+            const timeout = setTimeout(() => {
+                handleError();
+            }, 10000); // 10 second timeout
+            
+            link.onload = () => {
+                clearTimeout(timeout);
+                resolve();
+            };
+            
+            document.head.appendChild(link);
+        });
+    };
+    
+    // Preload resources without blocking - failures won't crash the app
     criticalResources.forEach(resource => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.href = resource;
-        if (resource.endsWith('.woff2')) {
-            link.as = 'font';
-            link.type = 'font/woff2';
-            link.crossOrigin = 'anonymous';
-        }
-        else if (resource.endsWith('.png') || resource.endsWith('.jpg')) {
-            link.as = 'image';
-        }
-        document.head.appendChild(link);
+        preloadWithRetry(resource).catch(() => {
+            // Already handled in preloadWithRetry with graceful degradation
+        });
     });
 }
 /**

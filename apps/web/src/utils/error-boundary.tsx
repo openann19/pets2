@@ -44,6 +44,11 @@ export class EnhancedErrorBoundary extends Component<EnhancedErrorBoundaryProps,
         };
     }
     override componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+        // Filter out NEXT_REDIRECT errors - these are expected Next.js behavior, not actual errors
+        if (error.message === 'NEXT_REDIRECT') {
+            return; // Silently ignore redirects
+        }
+        
         this.setState({ errorInfo });
         // Log error details
         logger.error('🚨 Error Boundary Caught:', { error });
@@ -58,6 +63,11 @@ export class EnhancedErrorBoundary extends Component<EnhancedErrorBoundaryProps,
         }
     }
     reportError(error: Error, errorInfo: ErrorInfo) {
+        // Skip NEXT_REDIRECT errors - these are expected Next.js behavior
+        if (error.message === 'NEXT_REDIRECT') {
+            return;
+        }
+        
         try {
             // Send to analytics/monitoring
             if (typeof window !== 'undefined') {

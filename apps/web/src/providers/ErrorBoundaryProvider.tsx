@@ -20,6 +20,11 @@ export const ErrorBoundaryProvider = ({ children }) => {
     const [globalError, setGlobalError] = useState(null);
     const [errorContext, setErrorContext] = useState('');
     const reportError = useCallback((error, context) => {
+        // Filter out NEXT_REDIRECT errors - these are expected Next.js behavior, not actual errors
+        if (error?.message === 'NEXT_REDIRECT') {
+            return; // Silently ignore redirects
+        }
+        
         logger.error('Global error reported:', { error, context });
         setGlobalError(error);
         setErrorContext(context || 'Unknown context');
@@ -48,6 +53,10 @@ export const ErrorBoundaryProvider = ({ children }) => {
         setErrorContext('');
     }, []);
     const handleError = useCallback((error, errorInfo) => {
+        // Filter out NEXT_REDIRECT errors
+        if (error?.message === 'NEXT_REDIRECT') {
+            return; // Silently ignore redirects
+        }
         reportError(error, 'React Error Boundary');
     }, [reportError]);
     const contextValue = {

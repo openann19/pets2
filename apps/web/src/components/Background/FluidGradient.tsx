@@ -1,8 +1,8 @@
 'use client';
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { logger } from '@pawfectmatch/core';
-;
 export default function FluidGradient() {
+    const [isMounted, setIsMounted] = useState(false);
     const containerRef = useRef(null);
     const animationIdRef = useRef(null);
     // Advanced touch state management
@@ -18,26 +18,47 @@ export default function FluidGradient() {
         smoothTarget: { x: 0, y: 0 },
         smoothCurrent: { x: 0, y: 0 }
     });
+    
+    // Only mount on client to prevent hydration mismatch
     useEffect(() => {
-        if (!containerRef.current || typeof window === 'undefined')
+        setIsMounted(true);
+    }, []);
+    useEffect(() => {
+        if (!containerRef.current || typeof window === 'undefined' || !isMounted)
             return;
+        
+        let componentMounted = true;
+        let renderer = null;
+        let geometry = null;
+        let material = null;
+        let cleanupHandlers = {
+            handleMouseMove: null,
+            handleMouseInteraction: null,
+            handleTouchStart: null,
+            handleTouchMove: null,
+            handleTouchEnd: null,
+            onWindowResize: null
+        };
+        
         // Dynamically import Three.js only on client-side
         import('three').then((THREE) => {
-            if (!containerRef.current)
+            if (!containerRef.current || !componentMounted)
                 return;
             const scene = new THREE.Scene();
             const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-            const renderer = new THREE.WebGLRenderer({
+            renderer = new THREE.WebGLRenderer({
                 antialias: true,
                 powerPreference: "high-performance"
             });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            if (!containerRef.current || !componentMounted)
+                return;
             containerRef.current.appendChild(renderer.domElement);
             // Shader geometry
-            const geometry = new THREE.PlaneGeometry(2, 2);
+            geometry = new THREE.PlaneGeometry(2, 2);
             // Ultra-smooth fluid gradient shader
-            const material = new THREE.ShaderMaterial({
+            material = new THREE.ShaderMaterial({
                 uniforms: {
                     time: { value: 0 },
                     resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
@@ -281,6 +302,8 @@ export default function FluidGradient() {
                 targetMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
                 targetMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             };
+            cleanupHandlers.handleMouseMove = handleMouseMove;
+            
             // Advanced touch start handler
             const handleTouchStart = (event) => {
                 event.preventDefault();
@@ -308,6 +331,8 @@ export default function FluidGradient() {
                 if (touchPressure?.value !== undefined)
                     touchPressure.value = 0.1;
             };
+            cleanupHandlers.handleTouchStart = handleTouchStart;
+            
             // Advanced touch move handler
             const handleTouchMove = (event) => {
                 event.preventDefault();
@@ -368,6 +393,8 @@ export default function FluidGradient() {
                 touchState.lastTouchX = touch.clientX;
                 touchState.lastTouchY = touch.clientY;
             };
+            cleanupHandlers.handleTouchMove = handleTouchMove;
+            
             // Advanced touch end handler
             const handleTouchEnd = (event) => {
                 event.preventDefault();
@@ -426,6 +453,8 @@ export default function FluidGradient() {
                 };
                 setTimeout(fadeOut, 100);
             };
+            cleanupHandlers.handleTouchEnd = handleTouchEnd;
+            
             // Mouse interaction handler (for desktop)
             const handleMouseInteraction = (event) => {
                 // Only respond if clicking on empty areas (not on interactive elements)
@@ -465,6 +494,8 @@ export default function FluidGradient() {
                 targetMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
                 targetMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
             };
+            cleanupHandlers.handleMouseInteraction = handleMouseInteraction;
+            
             // Add event listeners with proper touch handling
             window.addEventListener('mousemove', handleMouseMove, { passive: true });
             window.addEventListener('mousedown', handleMouseInteraction, { passive: true });
@@ -514,45 +545,89 @@ export default function FluidGradient() {
             };
             // Window resize
             const onWindowResize = () => {
+                if (!renderer || !material) return;
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 const resolution = material.uniforms['resolution'];
                 if (resolution?.value) {
                     resolution.value.set(window.innerWidth, window.innerHeight);
                 }
             };
+            cleanupHandlers.onWindowResize = onWindowResize;
             window.addEventListener('resize', onWindowResize);
             // Start animation
             animate();
-            // Cleanup
-            return () => {
-                window.removeEventListener('mousemove', handleMouseMove);
-                window.removeEventListener('mousedown', handleMouseInteraction);
-                window.removeEventListener('touchstart', handleTouchStart);
-                window.removeEventListener('touchmove', handleTouchMove);
-                window.removeEventListener('touchend', handleTouchEnd);
-                window.removeEventListener('touchcancel', handleTouchEnd);
-                window.removeEventListener('resize', onWindowResize);
-                if (animationIdRef.current !== null) {
-                    cancelAnimationFrame(animationIdRef.current);
-                }
-                if (containerRef.current && renderer.domElement) {
-                    containerRef.current.removeChild(renderer.domElement);
-                }
-                geometry.dispose();
-                material.dispose();
-                renderer.dispose();
-            };
         }).catch(error => {
             logger.error('Failed to load Three.js:', { error });
         });
-    }, []);
-    return (<div ref={containerRef} className="fixed inset-0 pointer-events-auto touch-none" style={{
+        
+        // Cleanup function
+        return () => {
+            componentMounted = false;
+            
+            // Remove event listeners
+            if (cleanupHandlers.handleMouseMove) {
+                window.removeEventListener('mousemove', cleanupHandlers.handleMouseMove);
+            }
+            if (cleanupHandlers.handleMouseInteraction) {
+                window.removeEventListener('mousedown', cleanupHandlers.handleMouseInteraction);
+            }
+            if (cleanupHandlers.handleTouchStart) {
+                window.removeEventListener('touchstart', cleanupHandlers.handleTouchStart);
+            }
+            if (cleanupHandlers.handleTouchMove) {
+                window.removeEventListener('touchmove', cleanupHandlers.handleTouchMove);
+            }
+            if (cleanupHandlers.handleTouchEnd) {
+                window.removeEventListener('touchend', cleanupHandlers.handleTouchEnd);
+                window.removeEventListener('touchcancel', cleanupHandlers.handleTouchEnd);
+            }
+            if (cleanupHandlers.onWindowResize) {
+                window.removeEventListener('resize', cleanupHandlers.onWindowResize);
+            }
+            
+            // Cancel animation
+            if (animationIdRef.current !== null) {
+                cancelAnimationFrame(animationIdRef.current);
+                animationIdRef.current = null;
+            }
+            
+            // Cleanup Three.js resources
+            if (renderer) {
+                if (containerRef.current && renderer.domElement && containerRef.current.contains(renderer.domElement)) {
+                    containerRef.current.removeChild(renderer.domElement);
+                }
+                renderer.dispose();
+                renderer = null;
+            }
+            
+            if (geometry) {
+                geometry.dispose();
+                geometry = null;
+            }
+            
+            if (material) {
+                material.dispose();
+                material = null;
+            }
+        };
+    }, [isMounted]);
+    
+    // Don't render anything until mounted to prevent hydration mismatch
+    if (!isMounted) {
+        return null;
+    }
+    
+    return (<div 
+        ref={containerRef} 
+        className="fixed inset-0 pointer-events-auto touch-none -z-[2]" 
+        suppressHydrationWarning
+        style={{
             backgroundColor: 'transparent',
-            zIndex: -10,
             touchAction: 'none',
             userSelect: 'none',
             WebkitUserSelect: 'none',
             WebkitTouchCallout: 'none'
-        }}/>);
+        }}
+    />);
 }
 //# sourceMappingURL=FluidGradient.jsx.map
