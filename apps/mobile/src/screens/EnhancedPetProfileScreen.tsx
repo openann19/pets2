@@ -10,7 +10,7 @@
  * - Lost pet alerts
  */
 
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -22,18 +22,14 @@ import {
 } from 'react-native';
 
 // Existing architecture components
-import {
-  FXContainerPresets,
-  ModernPhotoUpload,
-  useStaggeredAnimation,
-} from '../components';
+import { useStaggeredAnimation } from '../components';
 import { EliteContainer, EliteHeader } from '../components/elite';
 import { useTheme } from '@/theme';
+import { getExtendedColors } from '@/theme/adapters';
 
 // Pet-first hooks
 import {
   usePetProfile,
-  usePets,
   useHealthPassport,
   useLostPetAlert
 } from '../hooks/domains/pet';
@@ -42,16 +38,30 @@ import {
 import type { Pet } from '@pawfectmatch/core';
 import type { RootStackScreenProps } from '../navigation/types';
 
+// Extended Pet interface with additional properties
+interface ExtendedPet extends Pet {
+  playStyle?: string[];
+  energy?: number;
+  sociability?: string;
+  availability?: {
+    weekdays: boolean;
+    weekends: boolean;
+    mornings: boolean;
+    afternoons: boolean;
+    evenings: boolean;
+  };
+}
+
 type EnhancedPetProfileScreenProps = RootStackScreenProps<'EnhancedPetProfile'> & {
   petId?: string;
   isNew?: boolean;
 };
 
 export default function EnhancedPetProfileScreen({
-  navigation,
   route
 }: EnhancedPetProfileScreenProps) {
   const theme = useTheme();
+  const colors = getExtendedColors(theme);
   const { petId, isNew } = route?.params || {};
 
   // Pet management hooks
@@ -60,17 +70,11 @@ export default function EnhancedPetProfileScreen({
     loading: petLoading,
     error: petError,
     updatePet,
-    addHealthRecord,
-    updateAvailability,
-    verifyPet,
   } = usePetProfile(petId);
 
-  const { pets } = usePets();
   const {
     healthData,
     reminders,
-    addVaccineRecord,
-    addMedicationRecord,
   } = useHealthPassport(petId || '');
 
   const { createAlert, activeAlert } = useLostPetAlert();
@@ -86,7 +90,7 @@ export default function EnhancedPetProfileScreen({
   const handlePlayStyleToggle = useCallback(async (style: string) => {
     if (!pet) return;
 
-    const currentStyles = pet.playStyle || [];
+    const currentStyles = (pet as ExtendedPet).playStyle || [];
     const newStyles = currentStyles.includes(style)
       ? currentStyles.filter(s => s !== style)
       : [...currentStyles, style];
@@ -126,14 +130,14 @@ export default function EnhancedPetProfileScreen({
     <View style={styles.tabContent}>
       {/* Basic Info */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Basic Information</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Basic Information</Text>
         <View style={styles.field}>
-          <Text style={[styles.label, { color: theme.colors.textMuted }]}>Name</Text>
-          <Text style={[styles.value, { color: theme.colors.text }]}>{pet?.name}</Text>
+          <Text style={[styles.label, { color: colors.textMuted }]}>Name</Text>
+          <Text style={[styles.value, { color: colors.text }]}>{pet?.name}</Text>
         </View>
         <View style={styles.field}>
-          <Text style={[styles.label, { color: theme.colors.textMuted }]}>Species & Breed</Text>
-          <Text style={[styles.value, { color: theme.colors.text }]}>
+          <Text style={[styles.label, { color: colors.textMuted }]}>Species & Breed</Text>
+          <Text style={[styles.value, { color: colors.text }]}>
             {pet?.species} {pet?.breed && `- ${pet.breed}`}
           </Text>
         </View>
@@ -141,28 +145,28 @@ export default function EnhancedPetProfileScreen({
 
       {/* Play Style & Personality */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Play Style & Personality</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Play Style & Personality</Text>
 
         <View style={styles.field}>
-          <Text style={[styles.label, { color: theme.colors.textMuted }]}>Play Styles</Text>
+          <Text style={[styles.label, { color: colors.textMuted }]}>Play Styles</Text>
           <View style={styles.playStylesContainer}>
             {playStyles.map(style => {
-              const isSelected = pet?.playStyle?.includes(style) || false;
+              const isSelected = (pet as ExtendedPet)?.playStyle?.includes(style) || false;
               return (
                 <TouchableOpacity
                   key={style}
                   style={[
                     styles.playStyleChip,
                     {
-                      backgroundColor: isSelected ? theme.colors.primary : theme.colors.bgElevated,
-                      borderColor: theme.colors.border,
+                      backgroundColor: isSelected ? colors.primary : colors.bgElevated,
+                      borderColor: colors.border,
                     }
                   ]}
                   onPress={() => handlePlayStyleToggle(style)}
                 >
                   <Text style={[
                     styles.playStyleText,
-                    { color: isSelected ? theme.colors.primaryText : theme.colors.text }
+                    { color: isSelected ? colors.primaryText : colors.text }
                   ]}>
                     {style.charAt(0).toUpperCase() + style.slice(1)}
                   </Text>
@@ -173,7 +177,7 @@ export default function EnhancedPetProfileScreen({
         </View>
 
         <View style={styles.field}>
-          <Text style={[styles.label, { color: theme.colors.textMuted }]}>Energy Level</Text>
+          <Text style={[styles.label, { color: colors.textMuted }]}>Energy Level</Text>
           <View style={styles.energyContainer}>
             {energyLevels.map(level => (
               <TouchableOpacity
@@ -181,24 +185,24 @@ export default function EnhancedPetProfileScreen({
                 style={[
                   styles.energyDot,
                   {
-                    backgroundColor: pet?.energy === level ? theme.colors.primary : theme.colors.border,
+                    backgroundColor: (pet as ExtendedPet)?.energy === level ? colors.primary : colors.border,
                   }
                 ]}
                 onPress={() => handleEnergySelect(level)}
               />
             ))}
           </View>
-          <Text style={[styles.energyLabel, { color: theme.colors.textMuted }]}>
-            {pet?.energy === 1 && 'Lap cat energy'}
-            {pet?.energy === 2 && 'Low energy'}
-            {pet?.energy === 3 && 'Moderate energy'}
-            {pet?.energy === 4 && 'High energy'}
-            {pet?.energy === 5 && 'Hyper active'}
+          <Text style={[styles.energyLabel, { color: colors.textMuted }]}>
+            {(pet as ExtendedPet)?.energy === 1 && 'Lap cat energy'}
+            {(pet as ExtendedPet)?.energy === 2 && 'Low energy'}
+            {(pet as ExtendedPet)?.energy === 3 && 'Moderate energy'}
+            {(pet as ExtendedPet)?.energy === 4 && 'High energy'}
+            {(pet as ExtendedPet)?.energy === 5 && 'Hyper active'}
           </Text>
         </View>
 
         <View style={styles.field}>
-          <Text style={[styles.label, { color: theme.colors.textMuted }]}>Sociability</Text>
+          <Text style={[styles.label, { color: colors.textMuted }]}>Sociability</Text>
           <View style={styles.sociabilityContainer}>
             {(['shy', 'neutral', 'social'] as const).map(level => (
               <TouchableOpacity
@@ -206,15 +210,15 @@ export default function EnhancedPetProfileScreen({
                 style={[
                   styles.sociabilityOption,
                   {
-                    backgroundColor: pet?.sociability === level ? theme.colors.primary : theme.colors.bgElevated,
-                    borderColor: theme.colors.border,
+                    backgroundColor: (pet as ExtendedPet)?.sociability === level ? colors.primary : colors.bgElevated,
+                    borderColor: colors.border,
                   }
                 ]}
                 onPress={() => handleSociabilitySelect(level)}
               >
                 <Text style={[
                   styles.sociabilityText,
-                  { color: pet?.sociability === level ? theme.colors.primaryText : theme.colors.text }
+                  { color: (pet as ExtendedPet)?.sociability === level ? colors.primaryText : colors.text }
                 ]}>
                   {level.charAt(0).toUpperCase() + level.slice(1)}
                 </Text>
@@ -226,11 +230,11 @@ export default function EnhancedPetProfileScreen({
 
       {/* Care Badges */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Care Badges</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Care Badges</Text>
         <View style={styles.badgesContainer}>
           {(pet?.badges || []).map(badge => (
-            <View key={badge} style={[styles.badge, { backgroundColor: theme.colors.success }]}>
-              <Text style={[styles.badgeText, { color: theme.colors.primaryText }]}>
+            <View key={badge} style={[styles.badge, { backgroundColor: colors.success }]}>
+              <Text style={[styles.badgeText, { color: colors.primaryText }]}>
                 {badge.replace('_', ' ').toUpperCase()}
               </Text>
             </View>
@@ -242,19 +246,19 @@ export default function EnhancedPetProfileScreen({
 
   const renderHealthTab = () => (
     <View style={styles.tabContent}>
-      <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Health Passport</Text>
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>Health Passport</Text>
 
       {/* Vaccines */}
       <View style={styles.section}>
-        <Text style={[styles.subTitle, { color: theme.colors.text }]}>Vaccinations</Text>
+        <Text style={[styles.subTitle, { color: colors.text }]}>Vaccinations</Text>
         {(healthData?.vaccines || []).map((vaccine, index) => (
-          <View key={index} style={[styles.healthItem, { backgroundColor: theme.colors.bgElevated }]}>
-            <Text style={[styles.healthTitle, { color: theme.colors.text }]}>{vaccine.type}</Text>
-            <Text style={[styles.healthDate, { color: theme.colors.textMuted }]}>
+          <View key={index} style={[styles.healthItem, { backgroundColor: colors.bgElevated }]}>
+            <Text style={[styles.healthTitle, { color: colors.text }]}>{vaccine.type}</Text>
+            <Text style={[styles.healthDate, { color: colors.textMuted }]}>
               Administered: {new Date(vaccine.administeredAt).toLocaleDateString()}
             </Text>
             {vaccine.expiresAt && (
-              <Text style={[styles.healthExpiry, { color: theme.colors.warning }]}>
+              <Text style={[styles.healthExpiry, { color: colors.warning }]}>
                 Expires: {new Date(vaccine.expiresAt).toLocaleDateString()}
               </Text>
             )}
@@ -264,11 +268,11 @@ export default function EnhancedPetProfileScreen({
 
       {/* Medications */}
       <View style={styles.section}>
-        <Text style={[styles.subTitle, { color: theme.colors.text }]}>Medications</Text>
+        <Text style={[styles.subTitle, { color: colors.text }]}>Medications</Text>
         {(healthData?.medications || []).map((med, index) => (
-          <View key={index} style={[styles.healthItem, { backgroundColor: theme.colors.bgElevated }]}>
-            <Text style={[styles.healthTitle, { color: theme.colors.text }]}>{med.name}</Text>
-            <Text style={[styles.healthDetail, { color: theme.colors.textMuted }]}>
+          <View key={index} style={[styles.healthItem, { backgroundColor: colors.bgElevated }]}>
+            <Text style={[styles.healthTitle, { color: colors.text }]}>{med.name}</Text>
+            <Text style={[styles.healthDetail, { color: colors.textMuted }]}>
               {med.dosage} - {med.frequency}
             </Text>
           </View>
@@ -277,11 +281,11 @@ export default function EnhancedPetProfileScreen({
 
       {/* Reminders */}
       <View style={styles.section}>
-        <Text style={[styles.subTitle, { color: theme.colors.text }]}>Upcoming Reminders</Text>
+        <Text style={[styles.subTitle, { color: colors.text }]}>Upcoming Reminders</Text>
         {reminders.map((reminder, index) => (
-          <View key={index} style={[styles.reminderItem, { backgroundColor: theme.colors.bgElevated }]}>
-            <Text style={[styles.reminderTitle, { color: theme.colors.text }]}>{reminder.title}</Text>
-            <Text style={[styles.reminderDate, { color: theme.colors.primary }]}>
+          <View key={index} style={[styles.reminderItem, { backgroundColor: colors.bgElevated }]}>
+            <Text style={[styles.reminderTitle, { color: colors.text }]}>{reminder.title}</Text>
+            <Text style={[styles.reminderDate, { color: colors.primary }]}>
               Due: {new Date(reminder.dueAt).toLocaleDateString()}
             </Text>
           </View>
@@ -292,27 +296,27 @@ export default function EnhancedPetProfileScreen({
 
   const renderSafetyTab = () => (
     <View style={styles.tabContent}>
-      <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Safety & Emergency</Text>
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>Safety & Emergency</Text>
 
       {/* Lost Pet Alert */}
-      <View style={[styles.section, { backgroundColor: theme.colors.bgElevated, padding: theme.spacing.md, borderRadius: theme.radius.md }]}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Lost Pet Protection</Text>
-        <Text style={[styles.description, { color: theme.colors.textMuted }]}>
+      <View style={[styles.section, { backgroundColor: colors.bgElevated, padding: theme.spacing.md, borderRadius: theme.radius.md }]}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Lost Pet Protection</Text>
+        <Text style={[styles.description, { color: colors.textMuted }]}>
           Create an emergency alert to notify nearby users if your pet goes missing.
         </Text>
 
         {activeAlert ? (
-          <View style={[styles.alertStatus, { backgroundColor: theme.colors.warning }]}>
-            <Text style={[styles.alertStatusText, { color: theme.colors.primaryText }]}>
+          <View style={[styles.alertStatus, { backgroundColor: colors.warning }]}>
+            <Text style={[styles.alertStatusText, { color: colors.primaryText }]}>
               Active Alert - Broadcasting to {activeAlert.broadcastRadius}km radius
             </Text>
           </View>
         ) : (
           <TouchableOpacity
-            style={[styles.alertButton, { backgroundColor: theme.colors.primary }]}
+            style={[styles.alertButton, { backgroundColor: colors.primary }]}
             onPress={handleCreateLostPetAlert}
           >
-            <Text style={[styles.alertButtonText, { color: theme.colors.primaryText }]}>
+            <Text style={[styles.alertButtonText, { color: colors.primaryText }]}>
               Create Lost Pet Alert
             </Text>
           </TouchableOpacity>
@@ -321,13 +325,13 @@ export default function EnhancedPetProfileScreen({
 
       {/* Emergency Contacts */}
       <View style={styles.section}>
-        <Text style={[styles.subTitle, { color: theme.colors.text }]}>Emergency Contacts</Text>
-        <View style={[styles.emergencyCard, { backgroundColor: theme.colors.bgElevated }]}>
-          <Text style={[styles.emergencyTitle, { color: theme.colors.text }]}>Primary Vet</Text>
-          <Text style={[styles.emergencyDetail, { color: theme.colors.textMuted }]}>
+        <Text style={[styles.subTitle, { color: colors.text }]}>Emergency Contacts</Text>
+        <View style={[styles.emergencyCard, { backgroundColor: colors.bgElevated }]}>
+          <Text style={[styles.emergencyTitle, { color: colors.text }]}>Primary Vet</Text>
+          <Text style={[styles.emergencyDetail, { color: colors.textMuted }]}>
             {pet?.vetContact?.name || 'Not set'}
           </Text>
-          <Text style={[styles.emergencyDetail, { color: theme.colors.textMuted }]}>
+          <Text style={[styles.emergencyDetail, { color: colors.textMuted }]}>
             {pet?.vetContact?.clinic || ''}
           </Text>
         </View>
@@ -340,7 +344,7 @@ export default function EnhancedPetProfileScreen({
       <EliteContainer>
         <EliteHeader title="Loading Pet Profile..." />
         <View style={styles.loading}>
-          <Text style={{ color: theme.colors.text }}>Loading...</Text>
+          <Text style={{ color: colors.text }}>Loading...</Text>
         </View>
       </EliteContainer>
     );
@@ -351,7 +355,7 @@ export default function EnhancedPetProfileScreen({
       <EliteContainer>
         <EliteHeader title="Pet Profile Error" />
         <View style={styles.error}>
-          <Text style={{ color: theme.colors.danger }}>{petError}</Text>
+          <Text style={{ color: colors.danger }}>{petError}</Text>
         </View>
       </EliteContainer>
     );
@@ -369,20 +373,20 @@ export default function EnhancedPetProfileScreen({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         {/* Tab Navigation */}
-        <View style={[styles.tabBar, { backgroundColor: theme.colors.bgElevated }]}>
+        <View style={[styles.tabBar, { backgroundColor: colors.bgElevated }]}>
           {(['profile', 'health', 'availability', 'safety'] as const).map(tab => (
             <TouchableOpacity
               key={tab}
               style={[
                 styles.tab,
-                activeTab === tab && { borderBottomColor: theme.colors.primary, borderBottomWidth: 2 }
+                activeTab === tab && { borderBottomColor: colors.primary, borderBottomWidth: 2 }
               ]}
               onPress={() => setActiveTab(tab)}
             >
               <Text style={[
                 styles.tabText,
                 {
-                  color: activeTab === tab ? theme.colors.primary : theme.colors.textMuted
+                  color: activeTab === tab ? colors.primary : colors.textMuted
                 }
               ]}>
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}

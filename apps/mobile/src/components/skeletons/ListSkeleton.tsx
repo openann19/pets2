@@ -85,14 +85,15 @@ function SkeletonBase({
         easing: Easing.out(Easing.ease),
       });
     }
+    return undefined;
   }, [delay, duration, opacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
   }));
 
-  const defaultRadius = radius ?? theme.radii.md;
-  const skeletonColor = theme.colors.surfaceAlt ?? theme.colors.surface;
+  const defaultRadius = radius ?? 12;
+  const skeletonColor = theme.colors.bg;
 
   return (
     <Animated.View

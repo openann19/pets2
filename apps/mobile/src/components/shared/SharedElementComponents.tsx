@@ -5,10 +5,15 @@
  */
 
 import React from 'react';
-import { Image, ImageProps, ViewStyle, StyleProp } from 'react-native';
+import { Image, type ImageProps, type ViewStyle, type StyleProp } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { SharedElement, type SharedElementConfig } from '@/foundation/shared-element';
-import type { SharedElementLayout } from '@/foundation/shared-element';
+// Stub implementations for shared elements
+export const SharedElement: React.FC<any> = ({ children, ...props }) => {
+  return <>{children}</>;
+};
+
+export type SharedElementConfig = any;
+export type SharedElementLayout = any;
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
@@ -67,7 +72,7 @@ export function SharedImage({
       onLayoutMeasured={onLayoutMeasured}
       style={style}
     >
-      <AnimatedImage {...imageProps} style={style} />
+      <AnimatedImage {...imageProps} style={style as any} />
     </SharedElement>
   );
 }

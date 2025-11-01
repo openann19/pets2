@@ -1,8 +1,11 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from '@/theme';
 import { useTranslation } from 'react-i18next';
+import { haptic } from '@/foundation/haptics-unified';
+import { Button } from '../components/ui/v2/Button';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { useHeaderWithCounts } from '../hooks/useHeaderWithCounts';
 import { MessageInput } from '../components/chat/MessageInput';
@@ -43,10 +46,10 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
   });
 
   // Enhanced chat features state
-  const [showPetProfile, setShowPetProfile] = React.useState(false);
-  const [showVoiceRecorder, setShowVoiceRecorder] = React.useState(false);
-  const [showLocationShare, setShowLocationShare] = React.useState(false);
-  const [petCompatibilityScore, setPetCompatibilityScore] = React.useState<number | null>(null);
+  const [showPetProfile, setShowPetProfile] = useState(false);
+  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
+  const [showLocationShare, setShowLocationShare] = useState(false);
+  const [petCompatibilityScore, setPetCompatibilityScore] = useState<number | null>(null);
 
   const {
     inputText,
@@ -68,22 +71,26 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
     handleVideoCall,
     handleMoreOptions,
     quickReplies,
-  } = useChatScreen({ matchId, petName, navigation });
+  } = useChatScreen({ matchId, petName: petName || '', navigation });
 
   // Enhanced feature handlers
-  const handleShowPetProfile = React.useCallback(() => {
+  const handleShowPetProfile = useCallback(() => {
+    haptic.tap();
     setShowPetProfile(true);
   }, []);
 
-  const handleVoiceMessage = React.useCallback(() => {
+  const handleVoiceMessage = useCallback(() => {
+    haptic.confirm();
     setShowVoiceRecorder(true);
   }, []);
 
-  const handleLocationShare = React.useCallback(() => {
+  const handleLocationShare = useCallback(() => {
+    haptic.tap();
     setShowLocationShare(true);
   }, []);
 
-  const handlePetCompatibilityCheck = React.useCallback(async () => {
+  const handlePetCompatibilityCheck = useCallback(async () => {
+    haptic.confirm();
     // Calculate pet compatibility score
     // This would integrate with the feed algorithms
     const score = Math.floor(Math.random() * 40) + 60; // Mock score 60-100
@@ -104,27 +111,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
     petActionsContainer: {
       paddingHorizontal: theme.spacing.xl,
       paddingVertical: theme.spacing.sm,
-      backgroundColor: 'rgba(0,0,0,0.05)',
-    },
-    petActionButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingVertical: theme.spacing.sm,
-      paddingHorizontal: theme.spacing.md,
-      backgroundColor: 'rgba(255,255,255,0.9)',
-      borderRadius: theme.radius.xl,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 2,
-    },
-    petActionText: {
-      marginLeft: theme.spacing.sm,
-      fontSize: 14,
-      fontWeight: '600',
-      color: '#333',
+      backgroundColor: theme.utils.alpha(theme.colors.surface, 0.8),
     },
     reactionOverlay: {
       position: 'absolute',
@@ -198,7 +185,10 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
             title: petName,
             subtitle: data.isOnline ? t('online_now') : t('last_seen_recently'),
             showBackButton: true,
-            onBackPress: () => navigation.goBack(),
+            onBackPress: () => {
+              haptic.tap();
+              navigation.goBack();
+            },
             rightButtons: [
               {
                 type: 'custom',
@@ -292,15 +282,15 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
             />
             {/* Pet Compatibility Check Button */}
             <View style={styles.petActionsContainer}>
-              <TouchableOpacity
-                style={styles.petActionButton}
+              <Button
+                title={t('check_compatibility') || 'Check Pet Compatibility'}
                 onPress={handlePetCompatibilityCheck}
-              >
-                <Ionicons name="heart-circle-outline" size={20} color={theme.colors.primary} />
-                <Text style={styles.petActionText}>
-                  {t('check_compatibility') || 'Check Pet Compatibility'}
-                </Text>
-              </TouchableOpacity>
+                variant="outline"
+                size="md"
+                leftIcon={<Ionicons name="heart-circle-outline" size={20} color={theme.colors.primary} />}
+                hapticFeedback={false}
+                fullWidth
+              />
             </View>
           </View>
         )}
@@ -342,7 +332,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
           visible={showPetProfile}
           onClose={() => setShowPetProfile(false)}
           matchId={matchId}
-          petName={petName}
+          petName={petName || ''}
         />
       )}
 
@@ -377,5 +367,3 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
     </ErrorBoundary>
   );
 }
-
-export default ChatScreen;

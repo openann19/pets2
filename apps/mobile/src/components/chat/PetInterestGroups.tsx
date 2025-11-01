@@ -76,9 +76,7 @@ export const PetInterestGroups: React.FC<PetInterestGroupsProps> = ({
   userGroups = [],
 }) => {
   const theme = useTheme();
-  // @ts-expect-error - State declared for future implementation
   const [groups, setGroups] = useState<PetInterestGroup[]>(POPULAR_GROUPS);
-  // @ts-expect-error - State declared for future implementation
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredGroups = groups.filter(

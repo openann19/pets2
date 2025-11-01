@@ -18,12 +18,12 @@ import {
 // Existing architecture components
 import { EliteContainer, EliteHeader } from '../components/elite';
 import { useTheme } from '@/theme';
+import { getExtendedColors } from '@/theme/adapters';
 
 // Pet-first hooks
 import { useHealthPassport } from '../hooks/domains/pet';
 
 // Types
-import type { VaccineRecord, MedicationRecord } from '@pawfectmatch/core';
 import type { RootStackScreenProps } from '../navigation/types';
 
 type HealthPassportScreenProps = RootStackScreenProps<'HealthPassport'>;
@@ -33,6 +33,7 @@ export default function HealthPassportScreen({
   route
 }: HealthPassportScreenProps) {
   const theme = useTheme();
+  const colors = getExtendedColors(theme);
   const { petId } = route.params;
 
   const {
@@ -109,45 +110,45 @@ export default function HealthPassportScreen({
   const renderVaccinesTab = () => (
     <View style={styles.tabContent}>
       <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>
           Vaccination History
         </Text>
         <TouchableOpacity
-          style={[styles.addButton, { backgroundColor: theme.colors.primary }]}
+          style={[styles.addButton, { backgroundColor: colors.primary }]}
           onPress={() => {
             setModalType('vaccine');
             setShowAddModal(true);
           }}
         >
-          <Text style={[styles.addButtonText, { color: theme.colors.primaryText }]}>
+          <Text style={[styles.addButtonText, { color: colors.onPrimary }]}>
             ➕ Add Vaccine
           </Text>
         </TouchableOpacity>
       </View>
 
       {healthData?.vaccines && healthData.vaccines.length > 0 ? (
-        healthData.vaccines.map((vaccine, index) => (
-          <View key={index} style={[styles.healthCard, { backgroundColor: theme.colors.bgElevated }]}>
+        healthData.vaccines.map((vaccine: any, index: number) => (
+          <View key={index} style={[styles.healthCard, { backgroundColor: colors.bgElevated }]}>
             <View style={styles.cardHeader}>
-              <Text style={[styles.cardTitle, { color: theme.colors.text }]}>
+              <Text style={[styles.cardTitle, { color: colors.text }]}>
                 {vaccine.type}
               </Text>
               <View style={[
                 styles.statusBadge,
                 {
                   backgroundColor: vaccine.expiresAt && new Date(vaccine.expiresAt) > new Date()
-                    ? theme.colors.success
-                    : theme.colors.warning
+                    ? colors.success
+                    : colors.warning
                 }
               ]}>
-                <Text style={[styles.statusText, { color: theme.colors.primaryText }]}>
+                <Text style={[styles.statusText, { color: colors.onPrimary }]}>
                   {vaccine.expiresAt && new Date(vaccine.expiresAt) > new Date() ? 'Current' : 'Expired'}
                 </Text>
               </View>
             </View>
 
             <View style={styles.cardDetails}>
-              <Text style={[styles.detailText, { color: theme.colors.textMuted }]}>
+              <Text style={[styles.detailText, { color: colors.textMuted }]}>
                 📅 Administered: {new Date(vaccine.administeredAt).toLocaleDateString()}
               </Text>
               {vaccine.expiresAt && (
@@ -155,25 +156,25 @@ export default function HealthPassportScreen({
                   styles.detailText,
                   {
                     color: new Date(vaccine.expiresAt) > new Date()
-                      ? theme.colors.success
-                      : theme.colors.danger
+                      ? colors.success
+                      : colors.danger
                   }
                 ]}>
                   ⏰ Expires: {new Date(vaccine.expiresAt).toLocaleDateString()}
                 </Text>
               )}
-              <Text style={[styles.detailText, { color: theme.colors.textMuted }]}>
+              <Text style={[styles.detailText, { color: colors.textMuted }]}>
                 🩺 Vet: {vaccine.vetName}
               </Text>
             </View>
           </View>
         ))
       ) : (
-        <View style={[styles.emptyState, { backgroundColor: theme.colors.bgElevated }]}>
-          <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>
+        <View style={[styles.emptyState, { backgroundColor: colors.bgElevated }]}>
+          <Text style={[styles.emptyTitle, { color: colors.text }]}>
             No vaccinations recorded
           </Text>
-          <Text style={[styles.emptyText, { color: theme.colors.textMuted }]}>
+          <Text style={[styles.emptyText, { color: colors.textMuted }]}>
             Keep your pet's vaccination records up to date for safe playdates and travel.
           </Text>
         </View>
@@ -184,58 +185,58 @@ export default function HealthPassportScreen({
   const renderMedicationsTab = () => (
     <View style={styles.tabContent}>
       <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>
           Medications & Treatments
         </Text>
         <TouchableOpacity
-          style={[styles.addButton, { backgroundColor: theme.colors.primary }]}
+          style={[styles.addButton, { backgroundColor: colors.primary }]}
           onPress={() => {
             setModalType('medication');
             setShowAddModal(true);
           }}
         >
-          <Text style={[styles.addButtonText, { color: theme.colors.primaryText }]}>
+          <Text style={[styles.addButtonText, { color: colors.onPrimary }]}>
             ➕ Add Medication
           </Text>
         </TouchableOpacity>
       </View>
 
       {healthData?.medications && healthData.medications.length > 0 ? (
-        healthData.medications.map((med, index) => (
-          <View key={index} style={[styles.healthCard, { backgroundColor: theme.colors.bgElevated }]}>
+        healthData.medications.map((med: any, index: number) => (
+          <View key={index} style={[styles.healthCard, { backgroundColor: colors.bgElevated }]}>
             <View style={styles.cardHeader}>
-              <Text style={[styles.cardTitle, { color: theme.colors.text }]}>
+              <Text style={[styles.cardTitle, { color: colors.text }]}>
                 {med.name}
               </Text>
-              <View style={[styles.statusBadge, { backgroundColor: theme.colors.info }]}>
-                <Text style={[styles.statusText, { color: theme.colors.primaryText }]}>
+              <View style={[styles.statusBadge, { backgroundColor: colors.info }]}>
+                <Text style={[styles.statusText, { color: colors.onPrimary }]}>
                   Active
                 </Text>
               </View>
             </View>
 
             <View style={styles.cardDetails}>
-              <Text style={[styles.detailText, { color: theme.colors.textMuted }]}>
+              <Text style={[styles.detailText, { color: colors.textMuted }]}>
                 💊 Dosage: {med.dosage}
               </Text>
-              <Text style={[styles.detailText, { color: theme.colors.textMuted }]}>
+              <Text style={[styles.detailText, { color: colors.textMuted }]}>
                 🔄 Frequency: {med.frequency}
               </Text>
-              <Text style={[styles.detailText, { color: theme.colors.textMuted }]}>
+              <Text style={[styles.detailText, { color: colors.textMuted }]}>
                 📅 Prescribed: {new Date(med.prescribedAt).toLocaleDateString()}
               </Text>
-              <Text style={[styles.detailText, { color: theme.colors.textMuted }]}>
+              <Text style={[styles.detailText, { color: colors.textMuted }]}>
                 🩺 Vet: {med.vetName}
               </Text>
             </View>
           </View>
         ))
       ) : (
-        <View style={[styles.emptyState, { backgroundColor: theme.colors.bgElevated }]}>
-          <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>
+        <View style={[styles.emptyState, { backgroundColor: colors.bgElevated }]}>
+          <Text style={[styles.emptyTitle, { color: colors.text }]}>
             No medications recorded
           </Text>
-          <Text style={[styles.emptyText, { color: theme.colors.textMuted }]}>
+          <Text style={[styles.emptyText, { color: colors.textMuted }]}>
             Track your pet's medications and treatments for better care coordination.
           </Text>
         </View>
@@ -245,46 +246,46 @@ export default function HealthPassportScreen({
 
   const renderRemindersTab = () => (
     <View style={styles.tabContent}>
-      <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>
         Upcoming Reminders
       </Text>
 
       {reminders && reminders.length > 0 ? (
-        reminders.map((reminder, index) => (
-          <View key={index} style={[styles.reminderCard, { backgroundColor: theme.colors.bgElevated }]}>
+        reminders.map((reminder: any, index: number) => (
+          <View key={index} style={[styles.reminderCard, { backgroundColor: colors.bgElevated }]}>
             <View style={styles.reminderHeader}>
-              <Text style={[styles.reminderTitle, { color: theme.colors.text }]}>
+              <Text style={[styles.reminderTitle, { color: colors.text }]}>
                 {reminder.title}
               </Text>
               <View style={[
                 styles.priorityBadge,
                 {
-                  backgroundColor: reminder.priority === 'high' ? theme.colors.danger :
-                                   reminder.priority === 'medium' ? theme.colors.warning :
-                                   theme.colors.success
+                  backgroundColor: reminder.priority === 'high' ? colors.danger :
+                                   reminder.priority === 'medium' ? colors.warning :
+                                   colors.success
                 }
               ]}>
-                <Text style={[styles.priorityText, { color: theme.colors.primaryText }]}>
+                <Text style={[styles.priorityText, { color: colors.onPrimary }]}>
                   {reminder.priority}
                 </Text>
               </View>
             </View>
 
-            <Text style={[styles.reminderDate, { color: theme.colors.primary }]}>
+            <Text style={[styles.reminderDate, { color: colors.primary }]}>
               📅 Due: {new Date(reminder.dueAt).toLocaleDateString()}
             </Text>
 
-            <Text style={[styles.reminderDesc, { color: theme.colors.textMuted }]}>
+            <Text style={[styles.reminderDesc, { color: colors.textMuted }]}>
               {reminder.description}
             </Text>
           </View>
         ))
       ) : (
-        <View style={[styles.emptyState, { backgroundColor: theme.colors.bgElevated }]}>
-          <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>
+        <View style={[styles.emptyState, { backgroundColor: colors.bgElevated }]}>
+          <Text style={[styles.emptyTitle, { color: colors.text }]}>
             All caught up! 🎉
           </Text>
-          <Text style={[styles.emptyText, { color: theme.colors.textMuted }]}>
+          <Text style={[styles.emptyText, { color: colors.textMuted }]}>
             No upcoming health reminders. We'll notify you when it's time for check-ups or renewals.
           </Text>
         </View>
@@ -294,15 +295,15 @@ export default function HealthPassportScreen({
 
   const renderActivityTab = () => (
     <View style={styles.tabContent}>
-      <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>
         Activity Log (Coming Soon)
       </Text>
 
-      <View style={[styles.comingSoon, { backgroundColor: theme.colors.bgElevated }]}>
-        <Text style={[styles.comingSoonTitle, { color: theme.colors.text }]}>
+      <View style={[styles.comingSoon, { backgroundColor: colors.bgElevated }]}>
+        <Text style={[styles.comingSoonTitle, { color: colors.text }]}>
           🏃‍♀️ Activity Tracking
         </Text>
-        <Text style={[styles.comingSoonText, { color: theme.colors.textMuted }]}>
+        <Text style={[styles.comingSoonText, { color: colors.textMuted }]}>
           Track walks, playtime, and exercise to monitor your pet's health and activity levels.
         </Text>
       </View>
@@ -317,31 +318,31 @@ export default function HealthPassportScreen({
       onRequestClose={() => setShowAddModal(false)}
     >
       <View style={styles.modalOverlay}>
-        <View style={[styles.modalContent, { backgroundColor: theme.colors.bg }]}>
-          <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
+        <View style={[styles.modalContent, { backgroundColor: colors.bg }]}>
+          <Text style={[styles.modalTitle, { color: colors.text }]}>
             Add {modalType === 'vaccine' ? 'Vaccine' : 'Medication'} Record
           </Text>
 
           {modalType === 'vaccine' ? (
             <View style={styles.form}>
               <TextInput
-                style={[styles.input, { backgroundColor: theme.colors.bgElevated, color: theme.colors.text }]}
+                style={[styles.input, { backgroundColor: colors.bgElevated, color: colors.text }]}
                 placeholder="Vaccine type (e.g., Rabies, DHPP)"
-                placeholderTextColor={theme.colors.textMuted}
+                placeholderTextColor={colors.textMuted}
                 value={vaccineForm.type}
                 onChangeText={(type) => setVaccineForm(prev => ({ ...prev, type }))}
               />
               <TextInput
-                style={[styles.input, { backgroundColor: theme.colors.bgElevated, color: theme.colors.text }]}
+                style={[styles.input, { backgroundColor: colors.bgElevated, color: colors.text }]}
                 placeholder="Date administered (YYYY-MM-DD)"
-                placeholderTextColor={theme.colors.textMuted}
+                placeholderTextColor={colors.textMuted}
                 value={vaccineForm.administeredAt}
                 onChangeText={(administeredAt) => setVaccineForm(prev => ({ ...prev, administeredAt }))}
               />
               <TextInput
-                style={[styles.input, { backgroundColor: theme.colors.bgElevated, color: theme.colors.text }]}
+                style={[styles.input, { backgroundColor: colors.bgElevated, color: colors.text }]}
                 placeholder="Veterinarian name"
-                placeholderTextColor={theme.colors.textMuted}
+                placeholderTextColor={colors.textMuted}
                 value={vaccineForm.vetName}
                 onChangeText={(vetName) => setVaccineForm(prev => ({ ...prev, vetName }))}
               />
@@ -349,30 +350,30 @@ export default function HealthPassportScreen({
           ) : (
             <View style={styles.form}>
               <TextInput
-                style={[styles.input, { backgroundColor: theme.colors.bgElevated, color: theme.colors.text }]}
+                style={[styles.input, { backgroundColor: colors.bgElevated, color: colors.text }]}
                 placeholder="Medication name"
-                placeholderTextColor={theme.colors.textMuted}
+                placeholderTextColor={colors.textMuted}
                 value={medicationForm.name}
                 onChangeText={(name) => setMedicationForm(prev => ({ ...prev, name }))}
               />
               <TextInput
-                style={[styles.input, { backgroundColor: theme.colors.bgElevated, color: theme.colors.text }]}
+                style={[styles.input, { backgroundColor: colors.bgElevated, color: colors.text }]}
                 placeholder="Dosage (e.g., 1 tablet, 5ml)"
-                placeholderTextColor={theme.colors.textMuted}
+                placeholderTextColor={colors.textMuted}
                 value={medicationForm.dosage}
                 onChangeText={(dosage) => setMedicationForm(prev => ({ ...prev, dosage }))}
               />
               <TextInput
-                style={[styles.input, { backgroundColor: theme.colors.bgElevated, color: theme.colors.text }]}
+                style={[styles.input, { backgroundColor: colors.bgElevated, color: colors.text }]}
                 placeholder="Frequency (e.g., twice daily, every 3 months)"
-                placeholderTextColor={theme.colors.textMuted}
+                placeholderTextColor={colors.textMuted}
                 value={medicationForm.frequency}
                 onChangeText={(frequency) => setMedicationForm(prev => ({ ...prev, frequency }))}
               />
               <TextInput
-                style={[styles.input, { backgroundColor: theme.colors.bgElevated, color: theme.colors.text }]}
+                style={[styles.input, { backgroundColor: colors.bgElevated, color: colors.text }]}
                 placeholder="Veterinarian name"
-                placeholderTextColor={theme.colors.textMuted}
+                placeholderTextColor={colors.textMuted}
                 value={medicationForm.vetName}
                 onChangeText={(vetName) => setMedicationForm(prev => ({ ...prev, vetName }))}
               />
@@ -381,17 +382,17 @@ export default function HealthPassportScreen({
 
           <View style={styles.modalActions}>
             <TouchableOpacity
-              style={[styles.modalButton, styles.cancelButton, { borderColor: theme.colors.border }]}
+              style={[styles.modalButton, styles.cancelButton, { borderColor: colors.border }]}
               onPress={() => setShowAddModal(false)}
             >
-              <Text style={[styles.cancelButtonText, { color: theme.colors.text }]}>Cancel</Text>
+              <Text style={[styles.cancelButtonText, { color: colors.text }]}>Cancel</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.modalButton, styles.saveButton, { backgroundColor: theme.colors.primary }]}
+              style={[styles.modalButton, styles.saveButton, { backgroundColor: colors.primary }]}
               onPress={modalType === 'vaccine' ? handleAddVaccine : handleAddMedication}
             >
-              <Text style={[styles.saveButtonText, { color: theme.colors.primaryText }]}>
+              <Text style={[styles.saveButtonText, { color: colors.onPrimary }]}>
                 Save Record
               </Text>
             </TouchableOpacity>
@@ -406,7 +407,7 @@ export default function HealthPassportScreen({
       <EliteContainer>
         <EliteHeader title="Health Passport" />
         <View style={styles.loading}>
-          <Text style={{ color: theme.colors.text }}>Loading health data...</Text>
+          <Text style={{ color: colors.text }}>Loading health data...</Text>
         </View>
       </EliteContainer>
     );
@@ -417,20 +418,20 @@ export default function HealthPassportScreen({
       <EliteHeader title="Health Passport" />
 
       {/* Tab Navigation */}
-      <View style={[styles.tabBar, { backgroundColor: theme.colors.bgElevated }]}>
+      <View style={[styles.tabBar, { backgroundColor: colors.bgElevated }]}>
         {(['vaccines', 'medications', 'reminders', 'activity'] as const).map(tab => (
           <TouchableOpacity
             key={tab}
             style={[
               styles.tab,
-              activeTab === tab && { borderBottomColor: theme.colors.primary, borderBottomWidth: 2 }
+              activeTab === tab && { borderBottomColor: colors.primary, borderBottomWidth: 2 }
             ]}
             onPress={() => setActiveTab(tab)}
           >
             <Text style={[
               styles.tabText,
               {
-                color: activeTab === tab ? theme.colors.primary : theme.colors.textMuted
+                color: activeTab === tab ? colors.primary : colors.textMuted
               }
             ]}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}

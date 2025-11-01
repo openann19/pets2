@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import type { ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 
@@ -129,11 +130,12 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
   }, [saveImage, onSave]);
 
   const handleToggleGrid = useCallback(() => {
-    editorState.setShowGrid((g: 'off' | 'thirds' | 'golden') => {
-      if (g === 'off') return 'thirds';
-      if (g === 'thirds') return 'golden';
-      return 'off';
-    });
+    const currentGrid = editorState.showGrid;
+    let newGrid: 'off' | 'thirds' | 'golden';
+    if (currentGrid === 'off') newGrid = 'thirds';
+    else if (currentGrid === 'thirds') newGrid = 'golden';
+    else newGrid = 'off';
+    editorState.setShowGrid(newGrid);
   }, [editorState]);
 
   const handleApplyFilterPreset = useCallback(
@@ -182,15 +184,15 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
         showSplit={editorState.showSplit}
         showGrid={editorState.showGrid}
         comparing={comparing}
-        originalOpacity={originalOpacity}
-        editedOpacity={editedOpacity}
-        previewTransform={previewTransform}
-        pinchZoomGesture={pinchZoomGesture}
+        originalOpacity={originalOpacity as ViewStyle}
+        editedOpacity={editedOpacity as ViewStyle}
+        previewTransform={previewTransform as ViewStyle}
+        pinchZoomGesture={pinchZoomGesture as any}
         onCompareIn={onCompareIn}
         onCompareOut={onCompareOut}
         onCancel={onCancel}
         onSave={handleSave}
-        onToggleSplit={() => editorState.setShowSplit((s: boolean) => !s)}
+        onToggleSplit={() => editorState.setShowSplit(!editorState.showSplit)}
         isProcessing={isProcessing}
       >
         {editorState.activeTab === 'crop' && (
@@ -199,7 +201,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             cropperRef={editorState.cropperRef}
             showGuides={editorState.showGuides}
             onAutoCrop={editorState.handleAutoCrop}
-            onToggleGuides={() => editorState.setShowGuides((s) => !s)}
+            onToggleGuides={() => editorState.setShowGuides(!editorState.showGuides)}
             onSuggestionApply={editorState.handleSuggestionApply}
             onCropped={handleCropped}
           />

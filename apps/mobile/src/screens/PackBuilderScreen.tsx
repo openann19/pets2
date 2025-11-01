@@ -24,25 +24,51 @@ import {
 // Existing architecture components
 import { EliteContainer, EliteHeader } from '../components/elite';
 import { useTheme } from '@/theme';
+import { getExtendedColors } from '@/theme/adapters';
 import { logger } from '@pawfectmatch/core';
 
 // Pet-first hooks
 import { usePets, usePlaydateMatching } from '../hooks/domains/pet';
 
 // Types
-import type { Pet, PlaydateMatch, TimeSlot } from '@pawfectmatch/core';
+import type { Pet } from '@pawfectmatch/core';
 import type { RootStackScreenProps } from '../navigation/types';
 
-type PackBuilderScreenProps = RootStackScreenProps<'PackBuilder'>;
+// Extended Pet interface with energy property
+interface ExtendedPet extends Pet {
+  energy?: number;
+}
+
+// Local type definitions
+interface PlaydateMatch {
+  pet1: ExtendedPet;
+  pet2: ExtendedPet;
+  compatibilityScore: number;
+}
+
+interface TimeSlot {
+  start: Date;
+  end: Date;
+  available: boolean;
+}
+
+type PackBuilderScreenProps = RootStackScreenProps<'PackBuilder'> & {
+  route?: {
+    params?: {
+      hostPetId?: string;
+      initialMatch?: PlaydateMatch;
+    };
+  };
+};
 
 interface PackParticipant {
-  pet: Pet;
+  pet: ExtendedPet;
   compatibility: number;
   addedBy: 'host' | 'algorithm';
 }
 
 interface PackData {
-  hostPet: Pet;
+  hostPet: ExtendedPet | null;
   participants: PackParticipant[];
   scheduledAt: Date | null;
   venue: string;
@@ -55,6 +81,7 @@ export default function PackBuilderScreen({
   route
 }: PackBuilderScreenProps) {
   const theme = useTheme();
+  const colors = getExtendedColors(theme);
   const { hostPetId, initialMatch } = route?.params || {};
 
   // Pet data
@@ -113,12 +140,12 @@ export default function PackBuilderScreen({
         let score = 0;
 
         // Energy level compatibility (similar or complementary)
-        if (Math.abs((pet.energy || 3) - (host.energy || 3)) <= 1) score += 25;
+        if (Math.abs(((pet as ExtendedPet).energy || 3) - ((host as ExtendedPet).energy || 3)) <= 1) score += 25;
 
         // Size compatibility (avoid large size differences)
-        const sizeOrder = { small: 1, medium: 2, large: 3, xlarge: 4 };
-        const hostSize = sizeOrder[host.size || 'medium'];
-        const petSize = sizeOrder[pet.size || 'medium'];
+        const sizeOrder: Record<string, number> = { tiny: 0, small: 1, medium: 2, large: 3, 'extra-large': 4, xlarge: 4 };
+        const hostSize = sizeOrder[host.size || 'medium'] ?? 2;
+        const petSize = sizeOrder[pet.size || 'medium'] ?? 2;
         if (Math.abs(hostSize - petSize) <= 1) score += 25;
 
         // Sociability compatibility
@@ -157,9 +184,9 @@ export default function PackBuilderScreen({
         let pairScore = 0;
 
         // Size compatibility (most important for safety)
-        const sizeOrder = { small: 1, medium: 2, large: 3, xlarge: 4 };
-        const size1 = sizeOrder[pet1.size || 'medium'];
-        const size2 = sizeOrder[pet2.size || 'medium'];
+        const sizeOrder: Record<string, number> = { tiny: 0, small: 1, medium: 2, large: 3, 'extra-large': 4, xlarge: 4 };
+        const size1 = sizeOrder[pet1.size || 'medium'] ?? 2;
+        const size2 = sizeOrder[pet2.size || 'medium'] ?? 2;
         const sizeDiff = Math.abs(size1 - size2);
 
         if (sizeDiff === 0) pairScore += 30; // Same size
@@ -167,7 +194,7 @@ export default function PackBuilderScreen({
         else pairScore += 10; // Large size difference (caution)
 
         // Energy level compatibility
-        const energyDiff = Math.abs((pet1.energy || 3) - (pet2.energy || 3));
+        const energyDiff = Math.abs(((pet1 as ExtendedPet).energy || 3) - ((pet2 as ExtendedPet).energy || 3));
         if (energyDiff <= 1) pairScore += 25;
 
         // Good with dogs/cats compatibility
@@ -266,28 +293,28 @@ export default function PackBuilderScreen({
   }, [packData, navigation]);
 
   const renderPetCard = (pet: Pet, compatibility?: number, inPack: boolean = false, addedBy?: 'host' | 'algorithm') => (
-    <View key={pet._id} style={[styles.petCard, { backgroundColor: theme.colors.bgElevated }]}>
+    <View key={pet._id} style={[styles.petCard, { backgroundColor: colors.bgElevated }]}>
       <View style={styles.petHeader}>
         <View style={styles.petInfo}>
-          <Text style={[styles.petName, { color: theme.colors.text }]}>
+          <Text style={[styles.petName, { color: colors.text }]}>
             {pet.name}
           </Text>
-          <Text style={[styles.petDetails, { color: theme.colors.textMuted }]}>
+          <Text style={[styles.petDetails, { color: colors.textMuted }]}>
             {pet.breed} • {pet.age} months
           </Text>
         </View>
 
         {compatibility && (
           <View style={styles.compatibilityBadge}>
-            <Text style={[styles.compatibilityText, { color: theme.colors.primary }]}>
+            <Text style={[styles.compatibilityText, { color: colors.primary }]}>
               {compatibility}%
             </Text>
           </View>
         )}
 
         {addedBy === 'host' && (
-          <View style={[styles.hostBadge, { backgroundColor: theme.colors.primary }]}>
-            <Text style={[styles.hostBadgeText, { color: theme.colors.primaryText }]}>
+          <View style={[styles.hostBadge, { backgroundColor: colors.primary }]}>
+            <Text style={[styles.hostBadgeText, { color: colors.primaryText }]}>
               Host
             </Text>
           </View>
@@ -295,29 +322,29 @@ export default function PackBuilderScreen({
       </View>
 
       <View style={styles.petStats}>
-        <Text style={[styles.petStat, { color: theme.colors.textMuted }]}>
+        <Text style={[styles.petStat, { color: colors.textMuted }]}>
           🎾 {pet.playStyle?.slice(0, 2).join(', ') || 'No styles'}
         </Text>
-        <Text style={[styles.petStat, { color: theme.colors.textMuted }]}>
-          ⚡ Energy: {pet.energy || 3}/5
+        <Text style={[styles.petStat, { color: colors.textMuted }]}>
+          ⚡ Energy: {(pet as ExtendedPet).energy || 3}/5
         </Text>
       </View>
 
       {!inPack ? (
         <TouchableOpacity
-          style={[styles.addButton, { backgroundColor: theme.colors.primary }]}
+          style={[styles.addButton, { backgroundColor: colors.primary }]}
           onPress={() => addPetToPack(pet, compatibility)}
         >
-          <Text style={[styles.addButtonText, { color: theme.colors.primaryText }]}>
+          <Text style={[styles.addButtonText, { color: colors.primaryText }]}>
             ➕ Add to Pack
           </Text>
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
-          style={[styles.removeButton, { borderColor: theme.colors.danger, borderWidth: 1 }]}
+          style={[styles.removeButton, { borderColor: colors.danger, borderWidth: 1 }]}
           onPress={() => removePetFromPack(pet._id)}
         >
-          <Text style={[styles.removeButtonText, { color: theme.colors.danger }]}>
+          <Text style={[styles.removeButtonText, { color: colors.danger }]}>
             ➖ Remove
           </Text>
         </TouchableOpacity>
@@ -329,21 +356,21 @@ export default function PackBuilderScreen({
     const safetyScore = calculateSafetyScore(packData.participants);
 
     return (
-      <View style={[styles.packSummary, { backgroundColor: theme.colors.bgElevated }]}>
+      <View style={[styles.packSummary, { backgroundColor: colors.bgElevated }]}>
         <View style={styles.packHeader}>
-          <Text style={[styles.packTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.packTitle, { color: colors.text }]}>
             🐾 Pack of {packData.participants.length}
           </Text>
 
           <View style={styles.safetyScore}>
-            <Text style={[styles.safetyLabel, { color: theme.colors.textMuted }]}>
+            <Text style={[styles.safetyLabel, { color: colors.textMuted }]}>
               Safety Score
             </Text>
             <Text style={[
               styles.safetyValue,
               {
-                color: safetyScore >= 80 ? theme.colors.success :
-                       safetyScore >= 60 ? theme.colors.warning : theme.colors.danger
+                color: safetyScore >= 80 ? colors.success :
+                       safetyScore >= 60 ? colors.warning : colors.danger
               }
             ]}>
               {safetyScore}%
@@ -354,10 +381,10 @@ export default function PackBuilderScreen({
         <View style={styles.packPets}>
           {packData.participants.map(participant => (
             <View key={participant.pet._id} style={styles.packPet}>
-              <Text style={[styles.packPetName, { color: theme.colors.text }]}>
+              <Text style={[styles.packPetName, { color: colors.text }]}>
                 {participant.pet.name}
               </Text>
-              <Text style={[styles.packPetCompatibility, { color: theme.colors.primary }]}>
+              <Text style={[styles.packPetCompatibility, { color: colors.primary }]}>
                 {participant.compatibility}%
               </Text>
             </View>
@@ -365,8 +392,8 @@ export default function PackBuilderScreen({
         </View>
 
         {safetyScore < 70 && (
-          <View style={[styles.safetyWarning, { backgroundColor: theme.colors.warning + '20' }]}>
-            <Text style={[styles.safetyWarningText, { color: theme.colors.warning }]}>
+          <View style={[styles.safetyWarning, { backgroundColor: colors.warning + '20' }]}>
+            <Text style={[styles.safetyWarningText, { color: colors.warning }]}>
               ⚠️ Consider pack size or pet compatibility for safer playtime
             </Text>
           </View>
@@ -380,7 +407,7 @@ export default function PackBuilderScreen({
       <EliteContainer>
         <EliteHeader title="Build a Pack" />
         <View style={styles.loading}>
-          <Text style={{ color: theme.colors.text }}>Loading pets...</Text>
+          <Text style={{ color: colors.text }}>Loading pets...</Text>
         </View>
       </EliteContainer>
     );
@@ -398,29 +425,29 @@ export default function PackBuilderScreen({
         {packData.participants.length > 0 && renderPackSummary()}
 
         {/* Scheduling */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bgElevated }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>When & Where</Text>
+        <View style={[styles.section, { backgroundColor: colors.bgElevated }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>When & Where</Text>
 
           <TouchableOpacity style={styles.scheduleButton}>
-            <Text style={[styles.scheduleButtonText, { color: theme.colors.primary }]}>
+            <Text style={[styles.scheduleButtonText, { color: colors.primary }]}>
               📅 Schedule Playdate
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.venueButton}>
-            <Text style={[styles.venueButtonText, { color: theme.colors.primary }]}>
+            <Text style={[styles.venueButtonText, { color: colors.primary }]}>
               📍 Choose Venue
             </Text>
           </TouchableOpacity>
 
           <TextInput
             style={[styles.notesInput, {
-              backgroundColor: theme.colors.bg,
-              color: theme.colors.text,
-              borderColor: theme.colors.border,
+              backgroundColor: colors.bg,
+              color: colors.text,
+              borderColor: colors.border,
             }]}
             placeholder="Add notes about the playdate..."
-            placeholderTextColor={theme.colors.textMuted}
+            placeholderTextColor={colors.textMuted}
             value={packData.notes}
             onChangeText={(notes) => setPackData(prev => ({ ...prev, notes }))}
             multiline
@@ -430,17 +457,17 @@ export default function PackBuilderScreen({
 
         {/* Suggested Pets */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
             Suggested Pack Members
           </Text>
 
           {loading ? (
             <View style={styles.loading}>
-              <Text style={{ color: theme.colors.text }}>Finding compatible pets...</Text>
+              <Text style={{ color: colors.text }}>Finding compatible pets...</Text>
             </View>
           ) : suggestedPets.length === 0 ? (
-            <View style={[styles.emptyState, { backgroundColor: theme.colors.bgElevated }]}>
-              <Text style={[styles.emptyText, { color: theme.colors.textMuted }]}>
+            <View style={[styles.emptyState, { backgroundColor: colors.bgElevated }]}>
+              <Text style={[styles.emptyText, { color: colors.textMuted }]}>
                 No suggested pets found. Try adjusting your pack preferences.
               </Text>
             </View>
@@ -455,10 +482,10 @@ export default function PackBuilderScreen({
         {packData.participants.length >= 2 && (
           <View style={styles.createSection}>
             <TouchableOpacity
-              style={[styles.createButton, { backgroundColor: theme.colors.primary }]}
+              style={[styles.createButton, { backgroundColor: colors.primary }]}
               onPress={createPackPlaydate}
             >
-              <Text style={[styles.createButtonText, { color: theme.colors.primaryText }]}>
+              <Text style={[styles.createButtonText, { color: colors.primaryText }]}>
                 🎉 Create Pack Playdate ({packData.participants.length} pets)
               </Text>
             </TouchableOpacity>

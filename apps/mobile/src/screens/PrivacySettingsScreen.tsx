@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme';
+import { getExtendedColors } from '@/theme/adapters';
 import type { RootStackParamList } from '../navigation/types';
 import { request } from '../services/api';
 import {
@@ -20,7 +21,8 @@ import {
 type PrivacySettingsScreenProps = NativeStackScreenProps<RootStackParamList, 'PrivacySettings'>;
 
 function PrivacySettingsScreen({ navigation }: PrivacySettingsScreenProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
   const { settings, loading, updateSetting } = usePrivacySettingsScreen();
   const [loadingExport, setLoadingExport] = useState(false);
 
@@ -169,8 +171,8 @@ function PrivacySettingsScreen({ navigation }: PrivacySettingsScreenProps): Reac
               accessibilityState={{ checked: settings.showOnlineStatus }}
               value={settings.showOnlineStatus}
               onValueChange={(value) => updateSetting('showOnlineStatus', value)}
-              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.showOnlineStatus ? colors.card : theme.palette.neutral[500]}
+              trackColor={{ false: colors.gray300, true: colors.primary }}
+              thumbColor={settings.showOnlineStatus ? colors.card : colors.gray500}
             />,
           )}
 
@@ -180,8 +182,8 @@ function PrivacySettingsScreen({ navigation }: PrivacySettingsScreenProps): Reac
             <Switch
               value={settings.showDistance}
               onValueChange={(value) => updateSetting('showDistance', value)}
-              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.showDistance ? colors.card : theme.palette.neutral[500]}
+              trackColor={{ false: colors.gray300, true: colors.primary }}
+              thumbColor={settings.showDistance ? colors.card : colors.gray500}
             />,
           )}
 
@@ -191,8 +193,8 @@ function PrivacySettingsScreen({ navigation }: PrivacySettingsScreenProps): Reac
             <Switch
               value={settings.showLastActive}
               onValueChange={(value) => updateSetting('showLastActive', value)}
-              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.showLastActive ? colors.card : theme.palette.neutral[500]}
+              trackColor={{ false: colors.gray300, true: colors.primary }}
+              thumbColor={settings.showLastActive ? colors.card : colors.gray500}
             />,
           )}
         </View>
@@ -222,8 +224,8 @@ function PrivacySettingsScreen({ navigation }: PrivacySettingsScreenProps): Reac
             <Switch
               value={settings.showReadReceipts}
               onValueChange={(value) => updateSetting('showReadReceipts', value)}
-              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.showReadReceipts ? colors.card : theme.palette.neutral[500]}
+              trackColor={{ false: colors.gray300, true: colors.primary }}
+              thumbColor={settings.showReadReceipts ? colors.card : colors.gray500}
             />,
           )}
         </View>
@@ -239,8 +241,8 @@ function PrivacySettingsScreen({ navigation }: PrivacySettingsScreenProps): Reac
             <Switch
               value={settings.incognitoMode}
               onValueChange={(value) => updateSetting('incognitoMode', value)}
-              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.incognitoMode ? colors.card : theme.palette.neutral[500]}
+              trackColor={{ false: colors.gray300, true: colors.primary }}
+              thumbColor={settings.incognitoMode ? colors.card : colors.gray500}
             />,
           )}
 
@@ -250,8 +252,8 @@ function PrivacySettingsScreen({ navigation }: PrivacySettingsScreenProps): Reac
             <Switch
               value={settings.shareLocation}
               onValueChange={(value) => updateSetting('shareLocation', value)}
-              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.shareLocation ? colors.card : theme.palette.neutral[500]}
+              trackColor={{ false: colors.gray300, true: colors.primary }}
+              thumbColor={settings.shareLocation ? colors.card : colors.gray500}
             />,
           )}
         </View>
@@ -267,8 +269,8 @@ function PrivacySettingsScreen({ navigation }: PrivacySettingsScreenProps): Reac
             <Switch
               value={settings.dataSharing}
               onValueChange={(value) => updateSetting('dataSharing', value)}
-              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.dataSharing ? colors.card : theme.palette.neutral[500]}
+              trackColor={{ false: colors.gray300, true: colors.primary }}
+              thumbColor={settings.dataSharing ? colors.card : colors.gray500}
             />,
           )}
 
@@ -278,8 +280,8 @@ function PrivacySettingsScreen({ navigation }: PrivacySettingsScreenProps): Reac
             <Switch
               value={settings.analyticsTracking}
               onValueChange={(value) => updateSetting('analyticsTracking', value)}
-              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.analyticsTracking ? colors.card : theme.palette.neutral[500]}
+              trackColor={{ false: colors.gray300, true: colors.primary }}
+              thumbColor={settings.analyticsTracking ? colors.card : colors.gray500}
             />,
           )}
         </View>
@@ -399,7 +401,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 8,
-    shadowColor: theme.palette.neutral,
+    shadowColor: colors.gray400,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -427,7 +429,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: theme.palette.neutral[200],
+    borderColor: colors.gray200,
   },
   pickerOptionText: {
     fontSize: 12,

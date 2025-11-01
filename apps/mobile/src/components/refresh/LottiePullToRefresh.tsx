@@ -24,7 +24,7 @@ import {
 import LottieView from 'lottie-react-native';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/theme';
-import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { useReduceMotion } from '@/hooks/useReducedMotion';
 
 interface LottiePullToRefreshProps extends Omit<RefreshControlProps, 'refreshing' | 'onRefresh'> {
   /** Whether refresh is in progress */
@@ -59,7 +59,7 @@ export function LottiePullToRefresh({
   ...refreshControlProps
 }: LottiePullToRefreshProps): React.JSX.Element {
   const theme = useTheme();
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReduceMotion();
   const animationRef = useRef<LottieView>(null);
   const [hasTriggeredHaptic, setHasTriggeredHaptic] = useState(false);
   const [pullProgress, setPullProgress] = useState(0);
@@ -127,7 +127,7 @@ export function LottiePullToRefresh({
           <LottieView
             ref={animationRef}
             source={defaultAnimationSource}
-            progress={animatedProgress}
+            progress={currentProgress}
             style={styles.animation}
             autoPlay={false}
             loop={false}

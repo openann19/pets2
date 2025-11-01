@@ -24,9 +24,24 @@ import {
 // Existing architecture components
 import { EliteContainer, EliteHeader } from '../components/elite';
 import { useTheme } from '@/theme';
+import { getExtendedColors } from '@/theme/adapters';
 
-// Mock data for venues and meetups (would come from API)
-import type { Venue } from '@pawfectmatch/core';
+// Local type definitions
+interface Venue {
+  _id: string;
+  name: string;
+  type: 'park' | 'vet' | 'groomer' | 'cafe' | 'store';
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  address: string;
+  rating: number;
+  petPolicy: string;
+  amenities: string[];
+  hours: string;
+  imageUrl?: string;
+}
 
 type PetFriendlyMapScreenProps = {
   navigation: any;
@@ -135,6 +150,7 @@ export default function PetFriendlyMapScreen({
   route
 }: PetFriendlyMapScreenProps) {
   const theme = useTheme();
+  const colors = getExtendedColors(theme);
   const { filter = 'all' } = route?.params || {};
 
   const [selectedTab, setSelectedTab] = useState<'venues' | 'meetups' | 'alerts'>('venues');
@@ -172,42 +188,42 @@ export default function PetFriendlyMapScreen({
   const renderVenueCard = (venue: Venue) => (
     <TouchableOpacity
       key={venue.id}
-      style={[styles.venueCard, { backgroundColor: theme.colors.bgElevated }]}
+      style={[styles.venueCard, { backgroundColor: colors.bgElevated }]}
       onPress={() => navigation.navigate('VenueDetails', { venueId: venue.id })}
     >
       <View style={styles.venueHeader}>
         <View style={styles.venueInfo}>
-          <Text style={[styles.venueName, { color: theme.colors.text }]}>
+          <Text style={[styles.venueName, { color: colors.text }]}>
             {venue.name}
           </Text>
-          <Text style={[styles.venueType, { color: theme.colors.primary }]}>
+          <Text style={[styles.venueType, { color: colors.primary }]}>
             {venue.type.charAt(0).toUpperCase() + venue.type.slice(1)}
           </Text>
         </View>
         <View style={styles.venueRating}>
-          <Text style={[styles.ratingText, { color: theme.colors.text }]}>
+          <Text style={[styles.ratingText, { color: colors.text }]}>
             ⭐ {venue.rating}
           </Text>
-          <Text style={[styles.reviewsText, { color: theme.colors.textMuted }]}>
+          <Text style={[styles.reviewsText, { color: colors.textMuted }]}>
             ({venue.reviews})
           </Text>
         </View>
       </View>
 
-      <Text style={[styles.venueAddress, { color: theme.colors.textMuted }]}>
+      <Text style={[styles.venueAddress, { color: colors.textMuted }]}>
         📍 {venue.address}
       </Text>
 
       <View style={styles.venueAmenities}>
-        {venue.amenities.slice(0, 3).map((amenity, index) => (
-          <View key={index} style={[styles.amenityTag, { backgroundColor: theme.colors.bg }]}>
-            <Text style={[styles.amenityText, { color: theme.colors.textMuted }]}>
+        {venue.amenities.slice(0, 3).map((amenity: string, index: number) => (
+          <View key={index} style={[styles.amenityTag, { backgroundColor: colors.bg }]}>
+            <Text style={[styles.amenityText, { color: colors.textMuted }]}>
               {amenity.replace('_', ' ')}
             </Text>
           </View>
         ))}
         {venue.amenities.length > 3 && (
-          <Text style={[styles.moreAmenities, { color: theme.colors.textMuted }]}>
+          <Text style={[styles.moreAmenities, { color: colors.textMuted }]}>
             +{venue.amenities.length - 3} more
           </Text>
         )}
@@ -215,12 +231,12 @@ export default function PetFriendlyMapScreen({
 
       <View style={styles.petPolicy}>
         <Text style={[styles.policyText, {
-          color: venue.petPolicies.allowed ? theme.colors.success : theme.colors.danger
+          color: venue.petPolicies.allowed ? colors.success : colors.danger
         }]}>
           {venue.petPolicies.allowed ? '✅ Pets Welcome' : '❌ No Pets'}
         </Text>
         {venue.petPolicies.fees > 0 && (
-          <Text style={[styles.feeText, { color: theme.colors.warning }]}>
+          <Text style={[styles.feeText, { color: colors.warning }]}>
             ${venue.petPolicies.fees} fee
           </Text>
         )}
@@ -231,67 +247,67 @@ export default function PetFriendlyMapScreen({
   const renderMeetupCard = (meetup: any) => (
     <TouchableOpacity
       key={meetup.id}
-      style={[styles.meetupCard, { backgroundColor: theme.colors.bgElevated }]}
+      style={[styles.meetupCard, { backgroundColor: colors.bgElevated }]}
       onPress={() => navigation.navigate('MeetupDetails', { meetupId: meetup.id })}
     >
       <View style={styles.meetupHeader}>
         <View style={styles.meetupInfo}>
-          <Text style={[styles.meetupTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.meetupTitle, { color: colors.text }]}>
             {meetup.title}
           </Text>
-          <Text style={[styles.meetupHost, { color: theme.colors.textMuted }]}>
+          <Text style={[styles.meetupHost, { color: colors.textMuted }]}>
             Hosted by {meetup.host.firstName}
           </Text>
         </View>
         <View style={styles.attendeeCount}>
-          <Text style={[styles.attendeeText, { color: theme.colors.primary }]}>
+          <Text style={[styles.attendeeText, { color: colors.primary }]}>
             👥 {meetup.attendees}/{meetup.maxAttendees}
           </Text>
         </View>
       </View>
 
-      <Text style={[styles.meetupDescription, { color: theme.colors.textMuted }]}>
+      <Text style={[styles.meetupDescription, { color: colors.textMuted }]}>
         {meetup.description}
       </Text>
 
       <View style={styles.meetupDetails}>
-        <Text style={[styles.meetupTime, { color: theme.colors.text }]}>
+        <Text style={[styles.meetupTime, { color: colors.text }]}>
           📅 {new Date(meetup.scheduledAt).toLocaleDateString()} at{' '}
           {new Date(meetup.scheduledAt).toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit'
           })}
         </Text>
-        <Text style={[styles.meetupVenue, { color: theme.colors.textMuted }]}>
+        <Text style={[styles.meetupVenue, { color: colors.textMuted }]}>
           📍 {meetup.venue.name}
         </Text>
-        <Text style={[styles.meetupDuration, { color: theme.colors.textMuted }]}>
+        <Text style={[styles.meetupDuration, { color: colors.textMuted }]}>
           ⏱️ {meetup.duration} minutes
         </Text>
       </View>
 
       <View style={styles.meetupRequirements}>
-        <Text style={[styles.requirementsTitle, { color: theme.colors.text }]}>
+        <Text style={[styles.requirementsTitle, { color: colors.text }]}>
           Pet Requirements:
         </Text>
         <View style={styles.requirementsList}>
           {meetup.petRequirements.vaccinated && (
-            <Text style={[styles.requirement, { color: theme.colors.success }]}>✅ Vaccinated</Text>
+            <Text style={[styles.requirement, { color: colors.success }]}>✅ Vaccinated</Text>
           )}
-          <Text style={[styles.requirement, { color: theme.colors.textMuted }]}>
+          <Text style={[styles.requirement, { color: colors.textMuted }]}>
             📏 Size: {meetup.petRequirements.size}
           </Text>
           {meetup.petRequirements.leashed && (
-            <Text style={[styles.requirement, { color: theme.colors.textMuted }]}>🪢 Leashed</Text>
+            <Text style={[styles.requirement, { color: colors.textMuted }]}>🪢 Leashed</Text>
           )}
         </View>
       </View>
 
       <TouchableOpacity
-        style={[styles.rsvpButton, { backgroundColor: theme.colors.primary }]}
+        style={[styles.rsvpButton, { backgroundColor: colors.primary }]}
         onPress={() => Alert.alert('RSVP', 'RSVP functionality would be implemented here')}
       >
-        <Text style={[styles.rsvpButtonText, { color: theme.colors.primaryText }]}>
+        <Text style={[styles.rsvpButtonText, { color: colors.primaryText }]}>
           🎯 RSVP
         </Text>
       </TouchableOpacity>
@@ -332,13 +348,13 @@ export default function PetFriendlyMapScreen({
   );
 
   const renderFilters = () => (
-    <View style={[styles.filtersContainer, { backgroundColor: theme.colors.bgElevated }]}>
+    <View style={[styles.filtersContainer, { backgroundColor: colors.bgElevated }]}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
         <TouchableOpacity
           style={[
             styles.filterChip,
             {
-              backgroundColor: selectedFilters.type === 'all' ? theme.colors.primary : theme.colors.bg,
+              backgroundColor: selectedFilters.type === 'all' ? colors.primary : colors.bg,
             }
           ]}
           onPress={() => setSelectedFilters(prev => ({ ...prev, type: 'all' }))}
@@ -346,7 +362,7 @@ export default function PetFriendlyMapScreen({
           <Text style={[
             styles.filterChipText,
             {
-              color: selectedFilters.type === 'all' ? theme.colors.primaryText : theme.colors.text
+              color: selectedFilters.type === 'all' ? colors.primaryText : colors.text
             }
           ]}>
             All
@@ -359,7 +375,7 @@ export default function PetFriendlyMapScreen({
             style={[
               styles.filterChip,
               {
-                backgroundColor: selectedFilters.type === type ? theme.colors.primary : theme.colors.bg,
+                backgroundColor: selectedFilters.type === type ? colors.primary : colors.bg,
               }
             ]}
             onPress={() => setSelectedFilters(prev => ({ ...prev, type }))}
@@ -367,7 +383,7 @@ export default function PetFriendlyMapScreen({
             <Text style={[
               styles.filterChipText,
               {
-                color: selectedFilters.type === type ? theme.colors.primaryText : theme.colors.text
+                color: selectedFilters.type === type ? colors.primaryText : colors.text
               }
             ]}>
               {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -383,20 +399,20 @@ export default function PetFriendlyMapScreen({
       <EliteHeader title="Pet Places & Events" />
 
       {/* Tab Navigation */}
-      <View style={[styles.tabBar, { backgroundColor: theme.colors.bgElevated }]}>
+      <View style={[styles.tabBar, { backgroundColor: colors.bgElevated }]}>
         {(['venues', 'meetups', 'alerts'] as const).map(tab => (
           <TouchableOpacity
             key={tab}
             style={[
               styles.tab,
-              selectedTab === tab && { borderBottomColor: theme.colors.primary, borderBottomWidth: 2 }
+              selectedTab === tab && { borderBottomColor: colors.primary, borderBottomWidth: 2 }
             ]}
             onPress={() => setSelectedTab(tab)}
           >
             <Text style={[
               styles.tabText,
               {
-                color: selectedTab === tab ? theme.colors.primary : theme.colors.textMuted
+                color: selectedTab === tab ? colors.primary : colors.textMuted
               }
             ]}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -413,16 +429,16 @@ export default function PetFriendlyMapScreen({
       <ScrollView style={styles.container}>
         {selectedTab === 'venues' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
               Pet-Friendly Places ({filteredVenues.length})
             </Text>
 
             {filteredVenues.length === 0 ? (
-              <View style={[styles.emptyState, { backgroundColor: theme.colors.bgElevated }]}>
-                <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>
+              <View style={[styles.emptyState, { backgroundColor: colors.bgElevated }]}>
+                <Text style={[styles.emptyTitle, { color: colors.text }]}>
                   🐾 No places found
                 </Text>
-                <Text style={[styles.emptyText, { color: theme.colors.textMuted }]}>
+                <Text style={[styles.emptyText, { color: colors.textMuted }]}>
                   Try adjusting your filters to find more pet-friendly locations.
                 </Text>
               </View>
@@ -434,16 +450,16 @@ export default function PetFriendlyMapScreen({
 
         {selectedTab === 'meetups' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
               Upcoming Meetups ({meetups.length})
             </Text>
 
             {meetups.length === 0 ? (
-              <View style={[styles.emptyState, { backgroundColor: theme.colors.bgElevated }]}>
-                <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>
+              <View style={[styles.emptyState, { backgroundColor: colors.bgElevated }]}>
+                <Text style={[styles.emptyTitle, { color: colors.text }]}>
                   📅 No meetups scheduled
                 </Text>
-                <Text style={[styles.emptyText, { color: theme.colors.textMuted }]}>
+                <Text style={[styles.emptyText, { color: colors.textMuted }]}>
                   Check back later for upcoming pet events in your area.
                 </Text>
               </View>
@@ -455,16 +471,16 @@ export default function PetFriendlyMapScreen({
 
         {selectedTab === 'alerts' && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
               Local Alerts ({alerts.length})
             </Text>
 
             {alerts.length === 0 ? (
-              <View style={[styles.emptyState, { backgroundColor: theme.colors.bgElevated }]}>
-                <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>
+              <View style={[styles.emptyState, { backgroundColor: colors.bgElevated }]}>
+                <Text style={[styles.emptyTitle, { color: colors.text }]}>
                   ✅ All clear
                 </Text>
-                <Text style={[styles.emptyText, { color: theme.colors.textMuted }]}>
+                <Text style={[styles.emptyText, { color: colors.textMuted }]}>
                   No active alerts in your area.
                 </Text>
               </View>
