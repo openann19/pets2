@@ -1,7 +1,7 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { EliteButton } from "../EliteButton";
-import { FadeInUp } from "../FadeInUp";
+import EliteButton from "../buttons/EliteButton";
+import { FadeInUp } from "../PremiumComponents";
 import { tokens } from "@pawfectmatch/design-tokens";
 
 interface QuickRepliesProps {
@@ -30,8 +30,8 @@ export function QuickReplies({
         title={item}
         variant="glass"
         size="sm"
-        magnetic={true}
-        ripple={true}
+        magneticEffect={true}
+        rippleEffect={true}
         onPress={() => {
           onReplySelect(item);
         }}

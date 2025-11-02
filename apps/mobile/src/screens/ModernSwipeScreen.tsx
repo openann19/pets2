@@ -40,6 +40,7 @@ import {
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
 import { useTheme } from "../contexts/ThemeContext";
 import { matchesAPI } from "../services/api";
+import { getTextColor } from "../../theme/helpers";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -242,13 +243,13 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
           <FXContainer
             type="glow"
             hasGlow={true}
-            glowColor={Theme.colors.status.error}
+            glowColor={getStatusColor("error")}
             style={styles.errorCard}
           >
             <Ionicons
               name="alert-circle-outline"
               size={80}
-              color={Theme.colors.status.error}
+              color={getStatusColor("error")}
             />
             <Heading2 style={styles.errorTitle}>Error loading pets</Heading2>
             <Body style={styles.errorMessage}>{error}</Body>
@@ -272,7 +273,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             <Ionicons
               name="heart-outline"
               size={80}
-              color={Theme.colors.primary[500]}
+              color={getPrimaryColor(500)}
             />
             <Heading2 style={styles.emptyTitle}>No more pets!</Heading2>
             <Body style={styles.emptySubtitle}>
@@ -519,7 +520,7 @@ const styles = StyleSheet.create({
   },
   loadingSubtitle: {
     textAlign: "center",
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   emptyContainer: {
     flex: 1,
@@ -535,12 +536,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: Theme.spacing.lg,
     marginBottom: Theme.spacing.md,
-    color: Theme.colors.status.error,
+    color: getStatusColor("error"),
   },
   errorMessage: {
     textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   emptyCard: {
     padding: Theme.spacing["4xl"],
@@ -554,7 +555,7 @@ const styles = StyleSheet.create({
   emptySubtitle: {
     textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   headerActions: {
     flexDirection: "row",
@@ -644,7 +645,7 @@ const styles = StyleSheet.create({
   matchText: {
     textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   matchButtons: {
     flexDirection: "row",

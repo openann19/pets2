@@ -79,7 +79,9 @@ export function LottieAnimation({
         speed={speed}
         onAnimationFinish={handleAnimationFinish}
         colorFilters={colorFilters}
-        onLoad={() => { setIsLoaded(true); }}
+        onLoad={() => {
+          setIsLoaded(true);
+        }}
         resizeMode="contain"
       />
     </View>

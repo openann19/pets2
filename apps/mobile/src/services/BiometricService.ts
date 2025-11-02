@@ -230,32 +230,63 @@ class BiometricService {
 
   /**
    * Encrypt sensitive data with biometric protection
-   * Note: This is a placeholder - actual implementation would require
-   * platform-specific keychain/keystore integration
+   * Uses Expo SecureStore with biometric authentication requirement
    */
-  encryptWithBiometric(data: string): string {
-    // This would require native module implementation
-    // For now, return the data as-is with a warning
-    logger.warn("Biometric encryption not implemented - using fallback");
-    return btoa(data); // Simple base64 encoding as fallback
+  async encryptWithBiometric(data: string): Promise<string> {
+    try {
+      // First authenticate with biometrics
+      const authResult = await this.authenticate("Encrypt sensitive data");
+      if (!authResult.success) {
+        throw new Error("Biometric authentication required for encryption");
+      }
+
+      // Generate a unique key for this encryption session
+      const encryptionKey = `biometric_encrypted_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      // Store the encrypted data in SecureStore (which uses platform keychain)
+      await SecureStore.setItemAsync(encryptionKey, data, {
+        requireAuthentication: true,
+        authenticationPrompt: "Authenticate to access encrypted data",
+        keychainService: "PawfectMatchBiometric",
+      });
+
+      logger.info("Data encrypted with biometric protection", {
+        keyLength: encryptionKey.length,
+        dataLength: data.length,
+      });
+
+      return encryptionKey;
+    } catch (error) {
+      logger.error("Failed to encrypt with biometric", { error });
+      throw new Error("Biometric encryption failed");
+    }
   }
 
   /**
    * Decrypt data protected by biometrics
    */
-  async decryptWithBiometric(encryptedData: string): Promise<string> {
+  async decryptWithBiometric(encryptionKey: string): Promise<string> {
     try {
-      // First authenticate
-      const authResult = await this.authenticate("Decrypt sensitive data");
-      if (!authResult.success) {
-        throw new Error("Biometric authentication required");
+      // Retrieve the encrypted data from SecureStore (requires biometric auth)
+      const decryptedData = await SecureStore.getItemAsync(encryptionKey, {
+        requireAuthentication: true,
+        authenticationPrompt: "Authenticate to access encrypted data",
+        keychainService: "PawfectMatchBiometric",
+      });
+
+      if (!decryptedData) {
+        throw new Error("Encrypted data not found or access denied");
       }
 
-      // Decrypt (placeholder implementation)
-      return atob(encryptedData);
+      logger.info("Data decrypted with biometric protection", {
+        keyLength: encryptionKey.length,
+        dataLength: decryptedData.length,
+      });
+
+      return decryptedData;
     } catch (error) {
       logger.error("Failed to decrypt biometric data", { error });
-      throw error;
+      throw new Error("Biometric decryption failed");
     }
   }
 }

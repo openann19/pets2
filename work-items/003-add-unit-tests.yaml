@@ -1,0 +1,26 @@
+id: WI-003
+title: Add Unit Tests for GDPR & Safety Components
+priority: HIGH  
+scope:
+  - apps/mobile/src/screens/__tests__/DeleteAccountScreen.test.tsx
+  - apps/mobile/src/components/chat/__tests__/ChatActionSheet.test.tsx
+  - apps/mobile/src/components/moderation/__tests__/ReportModal.test.tsx
+
+description: |
+  Create comprehensive unit tests for critical GDPR and safety components.
+  Follow existing test patterns using Jest + RTL.
+
+acceptance_criteria:
+  - DeleteAccountScreen: Test 3-step flow, validation, API calls
+  - ChatActionSheet: Test all actions, confirmation dialogs
+  - ReportModal: Test reason selection, submission
+  - Coverage ≥ 80% for these files
+  - All tests pass
+
+risk: LOW
+estimated_time: 2 hours
+rollback: Delete test files
+
+verification:
+  - pnpm mobile:test --coverage
+  - Coverage report shows ≥ 80% for new files

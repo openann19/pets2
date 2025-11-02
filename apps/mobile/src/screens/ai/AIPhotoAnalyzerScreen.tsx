@@ -156,61 +156,10 @@ export default function AIPhotoAnalyzerScreen({
 
     setIsAnalyzing(true);
     try {
-      // Create FormData for image upload
-      const formData = new FormData();
-      formData.append(
-        "image",
-        JSON.stringify({
-          uri: selectedImage,
-          type: "image/jpeg",
-          name: "pet-photo.jpg",
-        }),
-      );
-      formData.append("userId", "unknown");
+      // Call real AI API for photo analysis
+      const response = await aiAPI.analyzePhoto(selectedImage);
 
-      // Mock API call for demo purposes
-      const response = {
-        success: true,
-        data: {
-          breed: {
-            primary: "Mixed Breed",
-            confidence: 0.75,
-          },
-          health: {
-            overall: "good" as const,
-            score: 85,
-            indicators: {
-              coat: "Healthy and shiny",
-              eyes: "Bright and alert",
-              posture: "Confident stance",
-              energy: "Energetic appearance",
-            },
-          },
-          quality: {
-            score: 88,
-            factors: {
-              lighting: 90,
-              clarity: 85,
-              composition: 88,
-              expression: 92,
-            },
-          },
-          characteristics: {
-            age: "Adult",
-            size: "Medium",
-            temperament: ["Friendly", "Playful"],
-            features: ["Well-groomed", "Alert expression"],
-          },
-          suggestions: [
-            "Great photo! Consider adding more variety in poses",
-            "Try capturing different angles to show personality",
-            "Natural lighting works well for this pet",
-          ],
-          tags: ["cute", "friendly", "well-groomed"],
-        },
-      };
-
-      if (response.success) {
+      if (response.success && response.data) {
         const result: PhotoAnalysisResult = {
           breed: response.data.breed ?? {
             primary: "Mixed Breed",
@@ -218,35 +167,31 @@ export default function AIPhotoAnalyzerScreen({
           },
           health: response.data.health ?? {
             overall: "good" as const,
-            score: 85,
+            score: 80,
             indicators: {
-              coat: "Healthy and shiny",
-              eyes: "Bright and alert",
-              posture: "Confident stance",
-              energy: "Energetic appearance",
+              coat: "Healthy",
+              eyes: "Bright",
+              posture: "Good",
+              energy: "Active",
             },
           },
           quality: response.data.quality ?? {
-            score: 88,
+            score: 85,
             factors: {
-              lighting: 90,
+              lighting: 80,
               clarity: 85,
-              composition: 88,
-              expression: 92,
+              composition: 80,
+              expression: 90,
             },
           },
           characteristics: response.data.characteristics ?? {
             age: "Adult",
             size: "Medium",
-            temperament: ["Friendly", "Playful"],
-            features: ["Well-groomed", "Alert expression"],
+            temperament: ["Friendly"],
+            features: ["Well-groomed"],
           },
-          suggestions: response.data.suggestions ?? [
-            "Great photo! Consider adding more variety in poses",
-            "Try capturing different angles to show personality",
-            "Natural lighting works well for this pet",
-          ],
-          tags: response.data.tags ?? ["cute", "friendly", "well-groomed"],
+          suggestions: response.data.suggestions ?? ["Good photo quality"],
+          tags: response.data.tags ?? ["cute"],
         };
 
         setAnalysisResult(result);
@@ -258,6 +203,8 @@ export default function AIPhotoAnalyzerScreen({
           timestamp: new Date().toISOString(),
           breed: result.breed.primary,
         });
+      } else {
+        throw new Error(response.error || "Analysis failed");
       }
     } catch (error) {
       logger.error("Photo analysis failed:", { error });

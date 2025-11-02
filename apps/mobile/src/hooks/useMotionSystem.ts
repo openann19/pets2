@@ -1,7 +1,39 @@
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Dimensions, Platform } from "react-native";
 
-// import { MotionSystem, Accessibility } from '../styles/EnhancedDesignTokens'; // === PROJECT HYPERION: MOTION & ANIMATION HOOKS ===
+// Local definitions for MotionSystem and Accessibility
+const MotionSystem = {
+  springs: {
+    standard: {
+      friction: 7,
+      tension: 40,
+    },
+    gentle: {
+      friction: 10,
+      tension: 25,
+    },
+    bouncy: {
+      friction: 4,
+      tension: 80,
+    },
+  },
+  timings: {
+    standard: 300,
+    fast: 150,
+    slow: 500,
+  },
+};
+
+const Accessibility = {
+  motion: {
+    prefersReducedMotion: false,
+    reducedMotionConfigs: {
+      timings: {
+        standard: 0,
+      },
+    },
+  },
+};
 
 // Custom hook for spring animations with physics
 export const useSpring = (

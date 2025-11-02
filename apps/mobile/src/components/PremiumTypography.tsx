@@ -1,11 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React, { type ReactNode, useEffect } from "react";
-import {
-  Text,
-  View,
-  type TextStyle,
-  type ViewStyle
-} from "react-native";
+import { Text, View, type TextStyle, type ViewStyle } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,

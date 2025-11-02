@@ -10,6 +10,7 @@ import { View, ScrollView, StyleSheet, Alert, Dimensions } from "react-native";
 
 // Import new architecture components
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
+import { getTextColor } from "../../theme/helpers";
 import {
   Theme,
   EliteButton,
@@ -364,7 +365,7 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: {
     textAlign: "center",
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   section: {
     padding: Theme.spacing.xl,
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   buttonGrid: {
     flexDirection: "row",

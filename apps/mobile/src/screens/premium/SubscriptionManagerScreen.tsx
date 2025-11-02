@@ -387,7 +387,8 @@ export const SubscriptionManagerScreen = () => {
                     style={[
                       styles.usageProgress,
                       {
-                        width: `${String(Math.round((usageStats.swipesRemaining / usageStats.totalSwipes) * 100))}%`,
+                        width:
+                          `${String(Math.round((usageStats.swipesRemaining / usageStats.totalSwipes) * 100))}%` as `${number}%`,
                         backgroundColor: "#7C3AED",
                       },
                     ]}
@@ -406,7 +407,8 @@ export const SubscriptionManagerScreen = () => {
                     style={[
                       styles.usageProgress,
                       {
-                        width: `${String(Math.round((usageStats.superLikesRemaining / usageStats.totalSuperLikes) * 100))}%`,
+                        width:
+                          `${String(Math.round((usageStats.superLikesRemaining / usageStats.totalSuperLikes) * 100))}%` as `${number}%`,
                         backgroundColor: "#0EA5E9",
                       },
                     ]}
@@ -425,7 +427,8 @@ export const SubscriptionManagerScreen = () => {
                     style={[
                       styles.usageProgress,
                       {
-                        width: `${String(Math.round((usageStats.boostsRemaining / usageStats.totalBoosts) * 100))}%`,
+                        width:
+                          `${String(Math.round((usageStats.boostsRemaining / usageStats.totalBoosts) * 100))}%` as `${number}%`,
                         backgroundColor: "#F97316",
                       },
                     ]}

@@ -14,7 +14,7 @@ module.exports = ({ config }) => ({
     resizeMode: 'contain',
     backgroundColor: '#ec4899',
   },
-  assetBundlePatterns: ['**/*'],
+  assetBundlePatterns: ['src/assets/fonts/*', '**/*'],
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.pawfectmatch.premium',

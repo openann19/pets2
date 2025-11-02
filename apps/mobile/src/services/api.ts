@@ -3,9 +3,21 @@ import {
   type ApiClientResponse,
   type Pet,
   type User,
+  type UserPreferences,
   type Match,
   type Message,
   type PetFilters,
+  // Import new API response types
+  type AuthResponse,
+  type UserProfileResponse,
+  type PetCreateResponse,
+  type SubscriptionResponse,
+  type CheckoutSessionResponse,
+  type SwipeRecommendationResponse,
+  type SwipeActionResponse,
+  type AIBioGenerationResponse,
+  type AIPhotoAnalysisResponse,
+  type AICompatibilityResponse,
 } from "@pawfectmatch/core";
 import { API_TIMEOUT } from "../config/environment";
 
@@ -203,6 +215,269 @@ interface AdoptionApplication {
   submittedAt: string;
 }
 
+// Support response types
+interface SupportTicketResponse {
+  success: boolean;
+  data: {
+    id: string;
+    userId: string;
+    subject: string;
+    message: string;
+    category: string;
+    priority: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  message: string;
+}
+
+interface BugReportResponse {
+  success: boolean;
+  data: {
+    id: string;
+    userId: string;
+    title: string;
+    description: string;
+    stepsToReproduce?: string;
+    expectedBehavior?: string;
+    actualBehavior?: string;
+    deviceInfo?: string;
+    appVersion?: string;
+    status: string;
+    priority: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  message: string;
+}
+
+// Authentication API methods
+export const authAPI = {
+  // Login with email and password
+  login: async (credentials: {
+    email: string;
+    password: string;
+  }): Promise<AuthResponse> => {
+    return request<AuthResponse>("/auth/login", {
+      method: "POST",
+      body: credentials,
+    });
+  },
+
+  // Register new user
+  register: async (data: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+  }): Promise<AuthResponse> => {
+    return request<AuthResponse>("/auth/register", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  // Refresh access token
+  refreshToken: async (refreshToken: string): Promise<AuthResponse> => {
+    return request<AuthResponse>("/auth/refresh", {
+      method: "POST",
+      body: { refreshToken },
+    });
+  },
+
+  // Biometric login
+  biometricLogin: async (data: {
+    email: string;
+    biometricToken: string;
+  }): Promise<AuthResponse> => {
+    return request<AuthResponse>("/auth/biometric-login", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  // Forgot password
+  forgotPassword: async (
+    email: string,
+  ): Promise<{ success: boolean; message: string }> => {
+    return request<{ success: boolean; message: string }>(
+      "/auth/forgot-password",
+      {
+        method: "POST",
+        body: { email },
+      },
+    );
+  },
+
+  // Reset password
+  resetPassword: async (data: {
+    token: string;
+    password: string;
+  }): Promise<{ success: boolean; message: string }> => {
+    return request<{ success: boolean; message: string }>(
+      "/auth/reset-password",
+      {
+        method: "POST",
+        body: data,
+      },
+    );
+  },
+
+  // Get current user
+  getCurrentUser: async (): Promise<UserProfileResponse> => {
+    return request<UserProfileResponse>("/auth/me");
+  },
+
+  // Logout
+  logout: async (): Promise<void> => {
+    await request("/auth/logout", { method: "POST" });
+  },
+};
+
+// Swipe API methods
+export const swipeAPI = {
+  // Get pet recommendations for swiping
+  getRecommendations: async (
+    filters?: PetFilters,
+  ): Promise<SwipeRecommendationResponse> => {
+    const params = filters
+      ? {
+          ...filters,
+          personalityTags: filters.personalityTags?.join(","),
+        }
+      : {};
+    return request<SwipeRecommendationResponse>("/swipe/recommendations", {
+      params,
+    });
+  },
+
+  // Like a pet
+  like: async (petId: string): Promise<SwipeActionResponse> => {
+    return request<SwipeActionResponse>("/swipe/like", {
+      method: "POST",
+      body: { petId },
+    });
+  },
+
+  // Pass on a pet
+  pass: async (petId: string): Promise<SwipeActionResponse> => {
+    return request<SwipeActionResponse>("/swipe/pass", {
+      method: "POST",
+      body: { petId },
+    });
+  },
+
+  // Super like a pet (premium)
+  superLike: async (petId: string): Promise<SwipeActionResponse> => {
+    return request<SwipeActionResponse>("/swipe/superlike", {
+      method: "POST",
+      body: { petId },
+    });
+  },
+
+  // Undo last swipe (premium)
+  undo: async (): Promise<SwipeActionResponse> => {
+    return request<SwipeActionResponse>("/swipe/undo", {
+      method: "POST",
+    });
+  },
+};
+
+// Pet API methods
+export const petAPI = {
+  // Create pet profile
+  createPet: async (petData: Partial<Pet>): Promise<PetCreateResponse> => {
+    return request<PetCreateResponse>("/pets", {
+      method: "POST",
+      body: petData,
+    });
+  },
+
+  // Get user's pets
+  getUserPets: async (): Promise<PetCreateResponse[]> => {
+    return request<PetCreateResponse[]>("/pets/my-pets");
+  },
+
+  // Get pet by ID
+  getPet: async (petId: string): Promise<PetCreateResponse> => {
+    return request<PetCreateResponse>(`/pets/${petId}`);
+  },
+
+  // Update pet profile
+  updatePet: async (
+    petId: string,
+    petData: Partial<Pet>,
+  ): Promise<PetCreateResponse> => {
+    return request<PetCreateResponse>(`/pets/${petId}`, {
+      method: "PUT",
+      body: petData,
+    });
+  },
+
+  // Delete pet profile
+  deletePet: async (petId: string): Promise<boolean> => {
+    return request<boolean>(`/pets/${petId}`, { method: "DELETE" });
+  },
+
+  // Upload pet photos
+  uploadPhotos: async (
+    petId: string,
+    photos: FormData,
+  ): Promise<PetCreateResponse> => {
+    return request<PetCreateResponse>(`/pets/${petId}/photos`, {
+      method: "POST",
+      body: photos,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+};
+
+// Subscription API methods
+export const subscriptionAPI = {
+  // Get current subscription
+  getCurrentSubscription: async (): Promise<SubscriptionResponse | null> => {
+    try {
+      return await request<SubscriptionResponse>("/subscription/current");
+    } catch (_error) {
+      return null;
+    }
+  },
+
+  // Create checkout session
+  createCheckoutSession: async (data: {
+    priceId: string;
+    successUrl: string;
+    cancelUrl: string;
+    metadata?: Record<string, unknown>;
+  }): Promise<CheckoutSessionResponse> => {
+    return request<CheckoutSessionResponse>("/subscription/create-checkout", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  // Cancel subscription
+  cancelSubscription: async (): Promise<boolean> => {
+    return request<boolean>("/subscription/cancel", { method: "POST" });
+  },
+
+  // Reactivate subscription
+  reactivateSubscription: async (): Promise<boolean> => {
+    return request<boolean>("/subscription/reactivate", { method: "POST" });
+  },
+
+  // Update payment method
+  updatePaymentMethod: async (paymentMethodId: string): Promise<boolean> => {
+    return request<boolean>("/subscription/payment-method", {
+      method: "PUT",
+      body: { paymentMethodId },
+    });
+  },
+};
+
 // API service for mobile app with proper typing
 export const matchesAPI = {
   // Get liked you (pets that liked current user)
@@ -214,22 +489,14 @@ export const matchesAPI = {
   },
 
   // Get matches
-
-  // Get liked you (pets that liked current user)
-  getLikedYou: async (): Promise<Match[]> => {
-    return resolveData(
-      apiClient.get<Match[]>("/matches/liked-you"),
-      "Failed to fetch liked you",
-    );
-  },
-
-  // Get user's matches
   getMatches: async (): Promise<Match[]> => {
     return resolveData(
       apiClient.get<Match[]>("/matches"),
       "Failed to fetch matches",
     );
   },
+
+  // Get a specific match
   getMatch: async (matchId: string): Promise<Match> => {
     return resolveData(
       apiClient.get<Match>(`/matches/${matchId}`),
@@ -237,7 +504,7 @@ export const matchesAPI = {
     );
   },
 
-  // Create a new match (like/swipe)
+  // Create a match
   createMatch: async (petId: string, targetPetId: string): Promise<Match> => {
     return resolveData(
       apiClient.post<Match>("/matches", { petId, targetPetId }),
@@ -410,19 +677,19 @@ export const matchesAPI = {
   },
 
   // Get user settings
-  getUserSettings: async (): Promise<User["preferences"]> => {
+  getUserSettings: async (): Promise<UserPreferences> => {
     return resolveData(
-      apiClient.get<User["preferences"]>("/users/settings"),
+      apiClient.get<UserPreferences>("/users/settings"),
       "Failed to fetch user settings",
     );
   },
 
   // Update user settings
   updateUserSettings: async (
-    settings: User["preferences"],
-  ): Promise<User["preferences"]> => {
+    settings: UserPreferences,
+  ): Promise<UserPreferences> => {
     return resolveData(
-      apiClient.put<User["preferences"]>("/users/settings", settings),
+      apiClient.put<UserPreferences>("/users/settings", settings),
       "Failed to update user settings",
     );
   },
@@ -565,6 +832,150 @@ export const matchesAPI = {
     );
   },
 
+  // Deactivate account
+  deactivateAccount: async (data: {
+    reason: string;
+    feedback?: string;
+  }): Promise<{ success: boolean; message: string }> => {
+    return request<{ success: boolean; message: string }>("/users/deactivate", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  // Delete account (GDPR Article 17 - Right to erasure)
+  deleteAccount: async (data: {
+    password: string;
+    reason?: string;
+    feedback?: string;
+  }): Promise<{
+    success: boolean;
+    message: string;
+    gracePeriodEndsAt: string;
+  }> => {
+    return request<{
+      success: boolean;
+      message: string;
+      gracePeriodEndsAt: string;
+    }>("/users/delete-account", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  // Export user data (GDPR Article 20 - Right to data portability)
+  exportUserData: async (): Promise<{
+    success: boolean;
+    downloadUrl: string;
+    expiresAt: string;
+  }> => {
+    return request<{
+      success: boolean;
+      downloadUrl: string;
+      expiresAt: string;
+    }>("/users/export-data", {
+      method: "POST",
+    });
+  },
+
+  // Confirm account deletion (after grace period)
+  confirmDeleteAccount: async (
+    token: string,
+  ): Promise<{ success: boolean }> => {
+    return request<{ success: boolean }>("/users/confirm-deletion", {
+      method: "POST",
+      body: { token },
+    });
+  },
+
+  // Cancel account deletion (during grace period)
+  cancelDeleteAccount: async (): Promise<{
+    success: boolean;
+    message: string;
+  }> => {
+    return request<{ success: boolean; message: string }>(
+      "/users/cancel-deletion",
+      {
+        method: "POST",
+      },
+    );
+  },
+
+  // Export chat history (GDPR)
+  exportChat: async (matchId: string): Promise<{
+    success: boolean;
+    downloadUrl: string;
+    expiresAt: string;
+  }> => {
+    return request<{
+      success: boolean;
+      downloadUrl: string;
+      expiresAt: string;
+    }>(`/chat/${matchId}/export`, {
+      method: "POST",
+    });
+  },
+
+  // Clear chat history
+  clearChatHistory: async (matchId: string): Promise<{
+    success: boolean;
+    message: string;
+  }> => {
+    return request<{ success: boolean; message: string }>(
+      `/chat/${matchId}/clear`,
+      {
+        method: "DELETE",
+      },
+    );
+  },
+
+  // Unmatch user
+  unmatchUser: async (matchId: string): Promise<{
+    success: boolean;
+    message: string;
+    gracePeriodEndsAt: string;
+  }> => {
+    return request<{
+      success: boolean;
+      message: string;
+      gracePeriodEndsAt: string;
+    }>(`/matches/${matchId}/unmatch`, {
+      method: "DELETE",
+    });
+  },
+
+  // Add message reaction
+  addMessageReaction: async (messageId: string, emoji: string): Promise<Message> => {
+    return resolveData(
+      apiClient.post<Message>(`/messages/${messageId}/react`, { emoji }),
+      "Failed to add reaction",
+    );
+  },
+
+  // Remove message reaction
+  removeMessageReaction: async (messageId: string, emoji: string): Promise<Message> => {
+    return resolveData(
+      apiClient.delete<Message>(`/messages/${messageId}/unreact`, { emoji } as any),
+      "Failed to remove reaction",
+    );
+  },
+
+  // Boost profile (Premium feature)
+  boostProfile: async (duration: "30m" | "1h" | "3h"): Promise<{
+    success: boolean;
+    expiresAt: string;
+    visibilityIncrease: number;
+  }> => {
+    return request<{
+      success: boolean;
+      expiresAt: string;
+      visibilityIncrease: number;
+    }>("/profile/boost", {
+      method: "POST",
+      body: { duration },
+    });
+  },
+
   // Get user activity
   getUserActivity: async (): Promise<
     Array<{ type: string; description: string; timestamp: string }>
@@ -575,6 +986,52 @@ export const matchesAPI = {
       >("/users/activity"),
       "Failed to fetch user activity",
     );
+  },
+
+  // Support API methods
+  getFAQ: async (): Promise<
+    Array<{
+      id: string;
+      category: string;
+      question: string;
+      answer: string;
+    }>
+  > => {
+    return request<
+      Array<{
+        id: string;
+        category: string;
+        question: string;
+        answer: string;
+      }>
+    >("/support/faq");
+  },
+
+  createSupportTicket: async (data: {
+    subject: string;
+    message: string;
+    category: string;
+    priority?: string;
+  }): Promise<SupportTicketResponse> => {
+    return request<SupportTicketResponse>("/support/ticket", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  submitBugReport: async (data: {
+    title: string;
+    description: string;
+    stepsToReproduce?: string;
+    expectedBehavior?: string;
+    actualBehavior?: string;
+    deviceInfo?: string;
+    appVersion?: string;
+  }): Promise<BugReportResponse> => {
+    return request<BugReportResponse>("/support/bug-report", {
+      method: "POST",
+      body: data,
+    });
   },
 
   // Get app version info
@@ -604,44 +1061,18 @@ export const aiAPI = {
     petType?: string;
     age?: number;
     breed?: string;
-  }): Promise<{
-    bio: string;
-    keywords: string[];
-    sentiment: { score: number; label: string };
-    matchScore: number;
-  }> => {
-    return request("/ai/generate-bio", {
+  }): Promise<AIBioGenerationResponse> => {
+    return request<AIBioGenerationResponse>("/ai/generate-bio", {
       method: "POST",
       body: data,
     });
   },
 
   // Analyze pet photos
-  analyzePhotos: async (
-    photos: string[],
-  ): Promise<{
-    breed_analysis: {
-      primary_breed: string;
-      confidence: number;
-      secondary_breeds?: Array<{ breed: string; confidence: number }>;
-    };
-    health_assessment: {
-      age_estimate: number;
-      health_score: number;
-      recommendations: string[];
-    };
-    photo_quality: {
-      overall_score: number;
-      lighting_score: number;
-      composition_score: number;
-      clarity_score: number;
-    };
-    matchability_score: number;
-    ai_insights: string[];
-  }> => {
-    return request("/ai/analyze-photos", {
+  analyzePhoto: async (photoUrl: string): Promise<AIPhotoAnalysisResponse> => {
+    return request<AIPhotoAnalysisResponse>("/ai/analyze-photo", {
       method: "POST",
-      body: { photos },
+      body: { photoUrl },
     });
   },
 
@@ -649,44 +1080,8 @@ export const aiAPI = {
   analyzeCompatibility: async (data: {
     pet1Id: string;
     pet2Id: string;
-  }): Promise<{
-    compatibility_score: number;
-    ai_analysis: string;
-    breakdown: {
-      personality_compatibility: number;
-      lifestyle_compatibility: number;
-      activity_compatibility: number;
-      social_compatibility: number;
-      environment_compatibility: number;
-    };
-    recommendations: {
-      meeting_suggestions: string[];
-      activity_recommendations: string[];
-      supervision_requirements: string[];
-      success_probability: number;
-    };
-  }> => {
-    return request("/ai/enhanced-compatibility", {
-      method: "POST",
-      body: data,
-    });
-  },
-
-  // Legacy compatibility (simpler version)
-  getCompatibility: async (data: {
-    pet1Id: string;
-    pet2Id: string;
-  }): Promise<{
-    score: number;
-    analysis: string;
-    factors: {
-      age_compatibility: boolean;
-      size_compatibility: boolean;
-      breed_compatibility: boolean;
-      personality_match: boolean;
-    };
-  }> => {
-    return request("/ai/compatibility", {
+  }): Promise<AICompatibilityResponse> => {
+    return request<AICompatibilityResponse>("/ai/compatibility", {
       method: "POST",
       body: data,
     });
@@ -695,6 +1090,10 @@ export const aiAPI = {
 
 export const api = {
   ...matchesAPI,
+  auth: authAPI,
+  swipe: swipeAPI,
+  pet: petAPI,
+  subscription: subscriptionAPI,
   ai: aiAPI,
   request,
 };

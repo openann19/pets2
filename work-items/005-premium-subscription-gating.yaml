@@ -1,0 +1,80 @@
+id: WI-005
+title: Premium Subscription Gating - Payment Verification System
+priority: P0-CRITICAL
+category: Critical
+effort_days: 4
+risk_level: High
+business_impact: Blocker
+technical_debt_reduction: High
+
+scope:
+  - apps/mobile/src/services/PremiumService.ts
+  - apps/mobile/src/components/premium/*
+  - apps/mobile/src/screens/premium/*.tsx
+  - apps/mobile/src/hooks/usePremium.ts
+  - Integration with Stripe SDK
+
+description: |
+  Implement comprehensive premium subscription gating that verifies payment status before allowing access to premium features.
+  Block premium features (unlimited swipes, AI matching, advanced filters, etc.) behind payment verification.
+  
+  Current state: PremiumService exists but needs full Stripe integration and feature gating logic.
+
+dependencies:
+  - Stripe integration (stripe-react-native or equivalent)
+  - Premium API endpoints
+  - SubscriptionStatus verification
+  - Premium hooks and contexts
+
+acceptance_criteria:
+  - [ ] Stripe SDK integrated for iOS and Android
+  - [ ] Real-time subscription status checking
+  - [ ] Premium features blocked for non-subscribers
+  - [ ] Subscription purchase flow functional
+  - [ ] Subscription status cached and refreshed
+  - [ ] Restore purchases functionality
+  - [ ] Subscription expiry handling
+  - [ ] Feature gates implemented throughout app
+  - [ ] Premium badge visible for subscribers
+  - [ ] Usage limits enforced (swipes, likes, etc.)
+  - [ ] Unit tests for PremiumService (≥80% coverage)
+  - [ ] Integration tests for purchase flow
+  - [ ] Zero TypeScript errors
+
+success_criteria:
+  - Working subscription purchase and feature gating
+  - Non-subscribers see upgrade prompts
+  - Subscribers have full premium access
+  - Purchase flow completes successfully
+  - Restore purchases works correctly
+
+implementation_steps:
+  1. Integrate Stripe SDK (native modules)
+  2. Implement subscription verification hooks
+  3. Add feature gates to all premium screens
+  4. Create subscription purchase flow UI
+  5. Implement restore purchases functionality
+  6. Add subscription status caching
+  7. Handle subscription expiry and renewal
+  8. Add usage limit enforcement
+  9. Write comprehensive tests
+
+technical_details:
+  - Use @stripe/stripe-react-native for iOS/Android
+  - Implement server-side webhook handling
+  - Cache subscription status with TTL
+  - Handle edge cases (subscription cancelled, payment failed)
+  - Add analytics for conversion tracking
+
+risk: High
+estimated_time: 4 days
+rollback: Feature flag to disable premium gating
+
+verification:
+  - pnpm --dir apps/mobile exec tsc --noEmit (0 errors)
+  - pnpm --dir apps/mobile lint (0 errors)
+  - pnpm --dir apps/mobile test PremiumService.spec.ts (≥80% coverage)
+  - Manual testing of purchase flow on real devices
+  - Test restore purchases flow
+  - Verify feature gates on all premium screens
+

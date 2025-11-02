@@ -76,6 +76,14 @@ export const Theme = {
       medium: "#d1d5db",
       dark: "#9ca3af",
     },
+
+    // Shadow color for backward compatibility
+    shadowColor: "#000000",
+
+    // Flat aliases for common usage (backward compatibility)
+    borderColor: "#e5e7eb",
+    backgroundColor: "#ffffff",
+    textColor: "#111827",
   },
 
   // Typography system
@@ -242,6 +250,7 @@ export const Theme = {
     error: ["#ef4444", "#dc2626"],
     glass: ["rgba(255, 255, 255, 0.1)", "rgba(255, 255, 255, 0.05)"],
     glow: ["rgba(236, 72, 153, 0.3)", "rgba(236, 72, 153, 0.1)"],
+    holographic: ["#667eea", "#764ba2", "#f093fb"],
   },
 
   // Glass morphism effects

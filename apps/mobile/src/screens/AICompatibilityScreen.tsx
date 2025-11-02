@@ -88,58 +88,11 @@ export default function AICompatibilityScreen({
   const loadAvailablePets = async () => {
     try {
       setIsLoadingPets(true);
-      // This would typically fetch pets from the API
-      // For now, we'll use mock data
-      const mockPets: Pet[] = [
-        {
-          _id: "1",
-          name: "Buddy",
-          photos: [
-            "https://images.unsplash.com/photo-1552053831-71594a27632d?w=200",
-          ],
-          breed: "Golden Retriever",
-          age: 3,
-          species: "dog",
-          owner: { _id: user?._id || "1", name: user?.name || "You" },
-        },
-        {
-          _id: "2",
-          name: "Luna",
-          photos: [
-            "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=200",
-          ],
-          breed: "Labrador",
-          age: 2,
-          species: "dog",
-          owner: { _id: "2", name: "Sarah" },
-        },
-        {
-          _id: "3",
-          name: "Max",
-          photos: [
-            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=200",
-          ],
-          breed: "German Shepherd",
-          age: 4,
-          species: "dog",
-          owner: { _id: "3", name: "Mike" },
-        },
-        {
-          _id: "4",
-          name: "Bella",
-          photos: [
-            "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=200",
-          ],
-          breed: "Border Collie",
-          age: 1,
-          species: "dog",
-          owner: { _id: "4", name: "Emma" },
-        },
-      ];
-
-      setAvailablePets(mockPets);
+      // Fetch real pets from API
+      const petsData = await api.getPets();
+      setAvailablePets(petsData);
     } catch (err: any) {
-      logger.error("Error loading pets:", { error });
+      logger.error("Error loading pets:", { error: err });
       setError("Failed to load pets. Please try again.");
     } finally {
       setIsLoadingPets(false);
@@ -452,7 +405,9 @@ export default function AICompatibilityScreen({
       >
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => { navigation.goBack(); }}
+          onPress={() => {
+            navigation.goBack();
+          }}
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>

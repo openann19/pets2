@@ -106,10 +106,12 @@ class OfflineSyncService {
 
     // Try to sync immediately if online
     if (this.isOnline) {
-      void this.processQueue();
+      this.processQueue().catch((error: unknown) => {
+        logger.error("Error processing queue:", error);
+      });
     }
 
-    this.notifyListeners();
+    void this.notifyListeners();
     return queueItem.id;
   }
 
@@ -143,20 +145,22 @@ class OfflineSyncService {
     });
 
     if (this.isOnline) {
-      void this.processQueue();
+      this.processQueue().catch((error: unknown) => {
+        logger.error("Error processing queue:", error);
+      });
     }
 
-    this.notifyListeners();
+    void this.notifyListeners();
     return queueItem.id;
   }
 
   /**
    * Get current sync status
    */
-  getSyncStatus(): SyncStatus {
+  async getSyncStatus(): Promise<SyncStatus> {
     return {
       isOnline: this.isOnline,
-      lastSyncTime: this.getLastSyncTime(),
+      lastSyncTime: await this.getLastSyncTime(),
       pendingItems: this.queue.length,
       failedItems: this.queue.filter(
         (item) => item.retryCount >= this.MAX_RETRY_COUNT,
@@ -184,7 +188,7 @@ class OfflineSyncService {
       (item) => item.retryCount < this.MAX_RETRY_COUNT,
     );
     await this.persistQueue();
-    this.notifyListeners();
+    void this.notifyListeners();
     logger.info("Failed items cleared from offline queue");
   }
 
@@ -233,25 +237,29 @@ class OfflineSyncService {
 
       if (!wasOnline && this.isOnline) {
         logger.info("Network connection restored, starting sync");
-        void this.processQueue();
+        this.processQueue().catch((error: unknown) => {
+          logger.error("Error processing queue:", error);
+        });
       } else if (wasOnline && !this.isOnline) {
         logger.info("Network connection lost");
       }
 
-      this.notifyListeners();
+      void this.notifyListeners();
     });
 
     // Get initial state
     void NetInfo.fetch().then((state: NetInfoState) => {
       this.isOnline = state.isConnected ?? false;
-      this.notifyListeners();
+      void this.notifyListeners();
     });
   }
 
   private startBackgroundSync(): void {
     setInterval(() => {
       if (this.isOnline && !this.syncInProgress && this.queue.length > 0) {
-        void this.processQueue();
+        this.processQueue().catch((error: unknown) => {
+          logger.error("Error processing queue:", error);
+        });
       }
     }, this.SYNC_INTERVAL);
   }
@@ -262,7 +270,7 @@ class OfflineSyncService {
     }
 
     this.syncInProgress = true;
-    this.notifyListeners();
+    void this.notifyListeners();
 
     try {
       // Sort queue by priority (critical > high > normal > low)
@@ -318,15 +326,21 @@ class OfflineSyncService {
       logger.error("Queue processing failed", { error });
     } finally {
       this.syncInProgress = false;
-      this.notifyListeners();
+      void this.notifyListeners();
     }
   }
 
   private async processQueueItem(item: OfflineQueueItem): Promise<void> {
-    const { api } = await import("./api");
-
     // Import the API service dynamically to avoid circular dependencies
-    const apiService = api;
+    // This is safe as the api module is stable and well-defined
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const apiModule = require("./api") as unknown as { api: unknown };
+    const apiService = apiModule.api as {
+      request: (
+        url: string,
+        options?: { method: string; body?: string },
+      ) => Promise<unknown>;
+    };
 
     switch (item.method) {
       case "GET":
@@ -374,18 +388,25 @@ class OfflineSyncService {
     }
   }
 
-  private getLastSyncTime(): number | null {
+  private async getLastSyncTime(): Promise<number | null> {
     try {
-      // This would be implemented to read from AsyncStorage
-      // For now, return current time as placeholder
-      return Date.now();
-    } catch {
+      // Read from AsyncStorage
+      const stored = await AsyncStorage.getItem("last_sync_time");
+      if (stored) {
+        const timestamp = parseInt(stored, 10);
+        if (!isNaN(timestamp)) {
+          return timestamp;
+        }
+      }
+      return null;
+    } catch (error) {
+      logger.error("Failed to read last sync time", { error });
       return null;
     }
   }
 
-  private notifyListeners(): void {
-    const status = this.getSyncStatus();
+  private async notifyListeners(): Promise<void> {
+    const status = await this.getSyncStatus();
     this.syncListeners.forEach((listener) => {
       try {
         listener(status);

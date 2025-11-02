@@ -29,6 +29,7 @@ import { Theme } from "../theme/unified-theme";
 
 import EliteButton from "./buttons/EliteButton";
 import FXContainer from "./containers/FXContainer";
+import { getTextColor } from "../../theme/helpers";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const PHOTO_SIZE =
@@ -184,7 +185,7 @@ function ModernPhotoUpload({
                   <Ionicons
                     name="cloud-upload"
                     size={24}
-                    color={Theme.colors.primary[500]}
+                    color={getPrimaryColor(500)}
                   />
                 </View>
                 <Text style={styles.uploadingText}>Uploading...</Text>
@@ -197,7 +198,7 @@ function ModernPhotoUpload({
                 <Ionicons
                   name="alert-circle"
                   size={24}
-                  color={Theme.colors.status.error}
+                  color={getStatusColor("error")}
                 />
                 <Text style={styles.errorText}>Failed</Text>
               </View>
@@ -306,12 +307,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary.primary,
+    color: getTextColor("primary").primary,
     marginBottom: Theme.spacing.sm,
   },
   subtitle: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     marginBottom: Theme.spacing.xl,
   },
   grid: {
@@ -365,7 +366,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: Theme.colors.status.error,
+    backgroundColor: getStatusColor("error"),
     padding: 0,
     minHeight: 32,
   },
@@ -386,12 +387,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Theme.typography.fontSize.lg,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary.primary,
+    color: getTextColor("primary").primary,
     marginBottom: Theme.spacing.sm,
   },
   emptySubtitle: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     textAlign: "center",
     lineHeight:
       Theme.typography.fontSize.base * Theme.typography.lineHeight.relaxed,

@@ -117,7 +117,9 @@ class WebRTCService extends EventEmitter {
 
     // Call answered
     this.socket.on("call-answered", (data: unknown) => {
-      void this.handleCallAnswered(data as CallAnsweredData);
+      this.handleCallAnswered(data as CallAnsweredData).catch((error) => {
+        logger.error("Error handling call answered:", error);
+      });
     });
 
     // Call rejected/ended
@@ -127,15 +129,21 @@ class WebRTCService extends EventEmitter {
 
     // WebRTC signaling
     this.socket.on("webrtc-offer", (data: unknown) => {
-      void this.handleOffer(data as WebRTCSignalingData);
+      this.handleOffer(data as WebRTCSignalingData).catch((error) => {
+        logger.error("Error handling offer:", error);
+      });
     });
 
     this.socket.on("webrtc-answer", (data: unknown) => {
-      void this.handleAnswer(data as WebRTCSignalingData);
+      this.handleAnswer(data as WebRTCSignalingData).catch((error) => {
+        logger.error("Error handling answer:", error);
+      });
     });
 
     this.socket.on("webrtc-ice-candidate", (data: unknown) => {
-      void this.handleIceCandidate(data as WebRTCSignalingData);
+      this.handleIceCandidate(data as WebRTCSignalingData).catch((error) => {
+        logger.error("Error handling ice candidate:", error);
+      });
     });
   }
 
@@ -400,6 +408,7 @@ class WebRTCService extends EventEmitter {
         const videoTrack = videoTracks[0];
         // React Native WebRTC specific method
         if (
+          videoTrack &&
           "_switchCamera" in videoTrack &&
           typeof (videoTrack as any)._switchCamera === "function"
         ) {
@@ -421,29 +430,26 @@ class WebRTCService extends EventEmitter {
   private setupPeerConnectionListeners() {
     if (this.peerConnection === null) return;
 
-    this.peerConnection.addEventListener(
-      "icecandidate",
-      (event: RTCPeerConnectionIceEvent) => {
-        if (event.candidate !== null) {
-          if (this.socket !== null) {
-            this.socket.emit("webrtc-ice-candidate", {
-              callId: this.currentCallId,
-              candidate: event.candidate,
-            });
-          }
+    this.peerConnection.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
+      if (event.candidate !== null) {
+        if (this.socket !== null) {
+          this.socket.emit("webrtc-ice-candidate", {
+            callId: this.currentCallId,
+            candidate: event.candidate,
+          });
         }
-      },
-    );
+      }
+    };
 
-    this.peerConnection.addEventListener("track", (event: RTCTrackEvent) => {
+    this.peerConnection.ontrack = (event: RTCTrackEvent) => {
       if (event.streams.length > 0) {
-        this.remoteStream = event.streams[0] as any;
+        this.remoteStream = event.streams[0] || undefined;
         this.callState.remoteStream = this.remoteStream;
         this.emit("callStateChanged", this.callState);
       }
-    });
+    };
 
-    this.peerConnection.addEventListener("connectionstatechange", () => {
+    this.peerConnection.onconnectionstatechange = () => {
       const state = this.peerConnection?.connectionState;
       if (state === "connected") {
         this.callState.isConnected = true;
@@ -452,7 +458,7 @@ class WebRTCService extends EventEmitter {
       } else if (state === "disconnected" || state === "failed") {
         this.endCall();
       }
-    });
+    };
   }
 
   private handleIncomingCall(callData: CallData) {

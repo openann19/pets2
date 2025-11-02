@@ -71,7 +71,7 @@ export interface ApiResponse<T = unknown> {
 /**
  * API error response
  */
-export interface ApiError {
+export interface AdvancedApiError {
   code: string;
   message: string;
   details?: EventData;

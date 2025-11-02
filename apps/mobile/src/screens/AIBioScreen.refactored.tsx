@@ -9,11 +9,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NavigationProp } from "@react-navigation/native";
 
-import { useAIBio } from "../../hooks/useAIBio";
-import { PetInfoForm } from "../../components/ai/PetInfoForm";
-import { ToneSelector } from "../../components/ai/ToneSelector";
-import { BioResults } from "../../components/ai/BioResults";
-import { Theme } from "../../theme/unified-theme";
+import { useAIBio } from "../hooks/useAIBio";
+import { PetInfoForm } from "../components/ai/PetInfoForm";
+import { ToneSelector } from "../components/ai/ToneSelector";
+import { BioResults } from "../components/ai/BioResults";
+import Theme from "../theme/unified-theme";
+import { getTextColor } from "../../theme/helpers";
 
 interface AIBioScreenProps {
   navigation: NavigationProp<any>;
@@ -72,7 +73,11 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
           onPress={handleBack}
           accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={24} color={Theme.colors.text.primary} />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={getTextColor("primary")}
+          />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Pet Bio</Text>
         <View style={styles.headerSpacer} />
@@ -117,7 +122,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
                     <Ionicons
                       name="camera"
                       size={32}
-                      color={Theme.colors.text.secondary}
+                      color={getTextColor(Theme, "secondary")}
                     />
                     <Text style={styles.photoText}>Add Photo</Text>
                   </View>
@@ -175,7 +180,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
               <Ionicons
                 name="add-circle"
                 size={20}
-                color={Theme.colors.primary}
+                color={getPrimaryColor(500)}
               />
               <Text style={styles.newBioText}>Create New Bio</Text>
             </TouchableOpacity>
@@ -189,7 +194,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.colors.background,
+    backgroundColor: getBackgroundColor("primary").primary,
   },
   header: {
     flexDirection: "row",
@@ -197,8 +202,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Theme.colors.border,
-    backgroundColor: Theme.colors.background.primary,
+    borderBottomColor: getBorderColor("light").light,
+    backgroundColor: getBackgroundColor("primary").primary,
   },
   backButton: {
     padding: Theme.spacing.sm,
@@ -207,7 +212,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Theme.typography.fontSize.xl,
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
+    color: getTextColor("primary"),
   },
   headerSpacer: {
     flex: 1,
@@ -224,18 +229,18 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize.lg,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
+    color: getTextColor("primary"),
     marginBottom: Theme.spacing.md,
   },
   photoPicker: {
     borderWidth: 2,
-    borderColor: Theme.colors.border,
+    borderColor: getBorderColor("light").light,
     borderStyle: "dashed",
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.xl,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: getBackgroundColor("primary").primary,
   },
   photoPlaceholder: {
     alignItems: "center",
@@ -245,34 +250,34 @@ const styles = StyleSheet.create({
   },
   photoText: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     marginTop: Theme.spacing.sm,
   },
   generateButton: {
-    backgroundColor: Theme.colors.primary,
+    backgroundColor: getPrimaryColor(500),
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     margin: Theme.spacing.lg,
     alignItems: "center",
-    shadowColor: Theme.colors.primary,
+    shadowColor: getPrimaryColor(500),
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 4,
   },
   disabledButton: {
-    backgroundColor: Theme.colors.text.secondary,
+    backgroundColor: getTextColor(Theme, "secondary"),
     shadowOpacity: 0,
     elevation: 0,
   },
   generateButtonText: {
     fontSize: Theme.typography.fontSize.lg,
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.background.primary,
+    color: getBackgroundColor("primary").primary,
   },
   submitError: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.status.error,
+    color: getStatusColor("error"),
     textAlign: "center",
     marginHorizontal: Theme.spacing.lg,
     marginBottom: Theme.spacing.lg,
@@ -286,7 +291,7 @@ const styles = StyleSheet.create({
   },
   historyText: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   newBioButton: {
     flexDirection: "row",
@@ -295,14 +300,14 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.md,
     margin: Theme.spacing.lg,
     borderWidth: 1,
-    borderColor: Theme.colors.primary,
+    borderColor: getPrimaryColor(500),
     borderRadius: Theme.borderRadius.lg,
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: getBackgroundColor("primary").primary,
   },
   newBioText: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.medium,
-    color: Theme.colors.primary,
+    color: getPrimaryColor(500),
     marginLeft: Theme.spacing.sm,
   },
 });

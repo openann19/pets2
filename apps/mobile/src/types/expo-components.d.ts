@@ -19,7 +19,9 @@ declare module "@expo/vector-icons" {
     style?: import("react-native").StyleProp<import("react-native").ViewStyle>;
   }
 
-  export const Ionicons: React.ComponentType<IconProps>;
+  export const Ionicons: React.ComponentType<IconProps> & {
+    glyphMap: Record<string, number>;
+  };
 }
 
 // LinearGradient type declaration

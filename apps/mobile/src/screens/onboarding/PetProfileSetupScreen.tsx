@@ -92,7 +92,7 @@ const PetProfileSetupScreen = ({
   }, [currentStep]);
 
   const progressStyle = useAnimatedStyle(() => ({
-    width: `${progressValue.value * 100}%`,
+    width: `${progressValue.value * 100}%` as `${number}%`,
   }));
 
   const updateFormData = (field: string, value: any) => {

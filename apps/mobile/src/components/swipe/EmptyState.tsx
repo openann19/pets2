@@ -2,10 +2,12 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { EliteButton } from "../EliteButton";
-import { GlowContainer } from "../GlowContainer";
-import { PremiumHeading } from "../PremiumHeading";
-import { PremiumBody } from "../PremiumBody";
+import EliteButton from "../buttons/EliteButton";
+import {
+  GlowContainer,
+  PremiumHeading,
+  PremiumBody,
+} from "../PremiumComponents";
 
 interface EmptyStateProps {
   type: "error" | "empty";
@@ -37,11 +39,7 @@ export function EmptyState({
           color={isError ? "#ff6b6b" : "#ec4899"}
         />
       </GlowContainer>
-      <PremiumHeading
-        level={2}
-        gradient={isError ? "error" : "primary"}
-        animated={true}
-      >
+      <PremiumHeading level={2} gradient="primary" animated={true}>
         {title}
       </PremiumHeading>
       <PremiumBody size="base" weight="regular">
@@ -49,12 +47,12 @@ export function EmptyState({
       </PremiumBody>
       <EliteButton
         title={buttonTitle}
-        variant={isError ? "primary" : "secondary"}
+        variant={isError ? "primary" : "premium"}
         size="lg"
-        icon="refresh"
-        magnetic={true}
-        ripple={true}
-        glow={true}
+        leftIcon="refresh"
+        magneticEffect={true}
+        rippleEffect={true}
+        glowEffect={true}
         onPress={onButtonPress}
       />
     </View>

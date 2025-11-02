@@ -11,7 +11,7 @@ import { logger } from "@pawfectmatch/core";
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
-  handleNotification: () => ({
+  handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
@@ -47,12 +47,12 @@ class NotificationService {
       let finalStatus = existingStatus;
 
       // Request permission if not granted
-      if (existingStatus !== Notifications.PermissionStatus.GRANTED) {
+      if (existingStatus !== "granted") {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
 
-      if (finalStatus !== Notifications.PermissionStatus.GRANTED) {
+      if (finalStatus !== "granted") {
         logger.warn("Failed to get push token for push notification!");
         return null;
       }

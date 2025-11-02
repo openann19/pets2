@@ -1,11 +1,21 @@
 /**
  * Authentication Service for PawfectMatch Mobile App
  * Handles user authentication, token management, and secure storage
+ * 
+ * Enhanced with JWT token validation and automatic refresh (WI-004)
  */
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
 import { logger } from "@pawfectmatch/core";
 import { api } from "./api";
+import type { AuthResponse, UserProfileResponse } from "@pawfectmatch/core";
+import {
+  validateToken,
+  shouldRefreshToken,
+  getTokenExpiration,
+  getTokenExpiresIn,
+  type TokenValidationResult,
+} from "../utils/jwt";
 
 // Types for authentication
 export interface LoginCredentials {
@@ -13,19 +23,7 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface AuthResponse {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    profileComplete: boolean;
-    subscriptionStatus: string;
-    createdAt: string;
-  };
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-}
+// Use the imported AuthResponse type from core
 
 export interface RegisterData {
   email: string;
@@ -40,14 +38,8 @@ export interface ResetPasswordData {
   confirmPassword: string;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  profileComplete: boolean;
-  subscriptionStatus: string;
-  createdAt: string;
-}
+// Use the imported UserProfileResponse type from core
+export type User = UserProfileResponse;
 
 export interface BiometricCredentials {
   email: string;
@@ -185,6 +177,124 @@ class AuthService {
   }
 
   /**
+   * Validate current access token
+   * Returns token validation result including expiration status
+   */
+  async validateAccessToken(): Promise<TokenValidationResult> {
+    try {
+      const token = await this.getAccessToken();
+      if (!token) {
+        return {
+          isValid: false,
+          isExpired: true,
+          expiresAt: null,
+          expiresIn: 0,
+          payload: null,
+          error: "No access token found",
+        };
+      }
+
+      return validateToken(token);
+    } catch (error) {
+      logger.error("Token validation failed", { error });
+      return {
+        isValid: false,
+        isExpired: true,
+        expiresAt: null,
+        expiresIn: 0,
+        payload: null,
+        error: error instanceof Error ? error.message : "Validation error",
+      };
+    }
+  }
+
+  /**
+   * Check if token needs refresh (expiring soon or expired)
+   */
+  async needsTokenRefresh(): Promise<boolean> {
+    try {
+      const token = await this.getAccessToken();
+      if (!token) {
+        return false;
+      }
+
+      // Check if token should be refreshed (expiring within 5 minutes)
+      return shouldRefreshToken(token, 5 * 60 * 1000);
+    } catch (error) {
+      logger.error("Token refresh check failed", { error });
+      return false;
+    }
+  }
+
+  /**
+   * Get token expiration info
+   */
+  async getTokenExpirationInfo(): Promise<{
+    expiresAt: Date | null;
+    expiresIn: number;
+    isValid: boolean;
+  }> {
+    try {
+      const token = await this.getAccessToken();
+      if (!token) {
+        return { expiresAt: null, expiresIn: 0, isValid: false };
+      }
+
+      const expiresAt = getTokenExpiration(token);
+      const expiresIn = getTokenExpiresIn(token);
+      const isValid = !this.isTokenExpired(token);
+
+      return { expiresAt, expiresIn, isValid };
+    } catch (error) {
+      logger.error("Failed to get token expiration info", { error });
+      return { expiresAt: null, expiresIn: 0, isValid: false };
+    }
+  }
+
+  /**
+   * Check if token is expired (private helper)
+   */
+  private isTokenExpired(token: string): boolean {
+    try {
+      const validation = validateToken(token);
+      return validation.isExpired;
+    } catch {
+      return true;
+    }
+  }
+
+  /**
+   * Automatically refresh token if needed
+   * Called before API requests to ensure valid token
+   */
+  async ensureValidToken(): Promise<boolean> {
+    try {
+      const token = await this.getAccessToken();
+      if (!token) {
+        return false;
+      }
+
+      // Check if token is expired or expiring soon
+      const validation = validateToken(token);
+      
+      if (!validation.isValid) {
+        logger.info("Token expired, attempting refresh");
+        return await this.refreshToken();
+      }
+
+      if (shouldRefreshToken(token, 5 * 60 * 1000)) {
+        logger.info("Token expiring soon, preemptively refreshing");
+        return await this.refreshToken();
+      }
+
+      return true;
+    } catch (error) {
+      logger.error("Failed to ensure valid token", { error });
+      return false;
+    }
+  }
+
+  /**
    * Force refresh token rotation
    */
   async rotateTokens(): Promise<boolean> {
@@ -195,10 +305,7 @@ class AuthService {
       }
 
       // Call refresh endpoint to get new tokens
-      const response = await api.request<AuthResponse>("/auth/refresh-token", {
-        method: "POST",
-        body: JSON.stringify({ refreshToken }),
-      });
+      const response = await api.auth.refreshToken(refreshToken);
 
       // Store new tokens
       await this.storeAuthData(response);
@@ -217,6 +324,39 @@ class AuthService {
       await this.logout();
       return false;
     }
+  }
+
+  /**
+   * Refresh token with retry mechanism
+   */
+  private async refreshTokenWithRetry(retries: number = 3): Promise<AuthResponse | null> {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const refreshToken = await this.getRefreshToken();
+        if (!refreshToken) {
+          return null;
+        }
+
+        const response = await api.auth.refreshToken(refreshToken);
+        await this.storeAuthData(response);
+
+        logger.info("Token refreshed successfully", { attempt });
+        return response;
+      } catch (error) {
+        logger.warn("Token refresh attempt failed", { attempt, retries, error });
+        
+        if (attempt === retries) {
+          logger.error("All token refresh attempts failed");
+          return null;
+        }
+        
+        // Wait before retry (exponential backoff)
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+
+    return null;
   }
 
   /**
@@ -358,22 +498,16 @@ class AuthService {
       const credentials: BiometricCredentials = JSON.parse(storedCredentials);
 
       // Perform login with stored email and a special biometric flag
-      const response = await api.request<AuthResponse>(
-        "/auth/biometric-login",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: credentials.email,
-            biometricToken: credentials.biometricToken,
-          }),
-        },
-      );
+      const response = await api.auth.biometricLogin({
+        email: credentials.email,
+        biometricToken: credentials.biometricToken,
+      });
 
       // Store authentication data securely
       await this.storeAuthData(response);
 
       logger.info("User logged in with biometrics", {
-        userId: response.user.id,
+        userId: response.user._id,
       });
       return response;
     } catch (error) {
@@ -390,15 +524,12 @@ class AuthService {
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await api.request<AuthResponse>("/auth/login", {
-        method: "POST",
-        body: JSON.stringify(credentials),
-      });
+      const response = await api.auth.login(credentials);
 
       // Store authentication data securely
       await this.storeAuthData(response);
 
-      logger.info("User logged in successfully", { userId: response.user.id });
+      logger.info("User logged in successfully", { userId: response.user._id });
       return response;
     } catch (error) {
       logger.error("Login failed", { error, email: credentials.email });
@@ -422,17 +553,17 @@ class AuthService {
       const registerData = {
         email: data.email,
         password: data.password,
-        name: data.name,
+        firstName: data.name.split(" ")[0] || "",
+        lastName: data.name.split(" ").slice(1).join(" ") || "",
       };
-      const response = await api.request<AuthResponse>("/auth/register", {
-        method: "POST",
-        body: JSON.stringify(registerData),
-      });
+      const response = await api.auth.register(registerData);
 
       // Store authentication data securely
       await this.storeAuthData(response);
 
-      logger.info("User registered successfully", { userId: response.user.id });
+      logger.info("User registered successfully", {
+        userId: response.user._id,
+      });
       return response;
     } catch (error) {
       logger.error("Registration failed", { error, email: data.email });
@@ -445,20 +576,14 @@ class AuthService {
    */
   async logout(): Promise<void> {
     try {
-      const refreshToken = await this.getRefreshToken();
-      if (refreshToken) {
-        // Notify server about logout (optional)
-        try {
-          await api.request("/auth/logout", {
-            method: "POST",
-            body: JSON.stringify({ refreshToken }),
-          });
-        } catch (error) {
-          // Ignore server logout errors
-          logger.warn("Server logout failed, continuing with local logout", {
-            error,
-          });
-        }
+      // Notify server about logout (optional)
+      try {
+        await api.auth.logout();
+      } catch (error) {
+        // Ignore server logout errors
+        logger.warn("Server logout failed, continuing with local logout", {
+          error,
+        });
       }
 
       // Clear all stored auth data
@@ -473,21 +598,19 @@ class AuthService {
 
   /**
    * Refresh access token using refresh token
+   * Uses retry logic for better reliability
    */
   async refreshToken(): Promise<AuthResponse | null> {
     try {
-      const refreshToken = await this.getRefreshToken();
-      if (!refreshToken) {
+      const response = await this.refreshTokenWithRetry(3);
+      
+      if (!response) {
+        logger.error("Token refresh failed after all retries");
+        // Clear invalid tokens
+        await this.clearAuthData();
         return null;
       }
 
-      const response = await api.request<AuthResponse>("/auth/refresh", {
-        method: "POST",
-        body: JSON.stringify({ refreshToken }),
-      });
-
-      // Store new tokens
-      await this.storeAuthData(response);
       return response;
     } catch (error) {
       logger.error("Token refresh failed", { error });
@@ -504,13 +627,7 @@ class AuthService {
     email: string,
   ): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.request<{ success: boolean; message: string }>(
-        "/auth/forgot-password",
-        {
-          method: "POST",
-          body: JSON.stringify({ email }),
-        },
-      );
+      const response = await api.auth.forgotPassword(email);
 
       logger.info("Password reset requested", { email });
       return response;
@@ -538,13 +655,7 @@ class AuthService {
         token: data.token,
         password: data.password,
       };
-      const response = await api.request<{ success: boolean; message: string }>(
-        "/auth/reset-password",
-        {
-          method: "POST",
-          body: JSON.stringify(resetData),
-        },
-      );
+      const response = await api.auth.resetPassword(resetData);
 
       logger.info("Password reset successful");
       return response;
@@ -615,6 +726,42 @@ class AuthService {
     }
   }
 
+  /**
+   * Store remember me preference
+   */
+  async storeRememberMe(email: string): Promise<void> {
+    try {
+      await SecureStore.setItemAsync("remember_me_email", email);
+      logger.info("Remember me preference stored");
+    } catch (error) {
+      logger.error("Failed to store remember me preference", { error });
+    }
+  }
+
+  /**
+   * Get biometric credentials for login
+   */
+  async getBiometricCredentials(): Promise<{
+    email: string;
+    password: string;
+  } | null> {
+    try {
+      const credentials = await SecureStore.getItemAsync(
+        AuthService.BIOMETRIC_CREDENTIALS_KEY,
+      );
+      if (credentials) {
+        const parsed = JSON.parse(credentials) as BiometricCredentials;
+        // In a real implementation, you would decrypt the password
+        // For now, we'll return null to require manual login
+        return null;
+      }
+      return null;
+    } catch (error) {
+      logger.error("Failed to get biometric credentials", { error });
+      return null;
+    }
+  }
+
   // Private helper methods
 
   private async storeAuthData(response: AuthResponse): Promise<void> {
@@ -642,6 +789,14 @@ class AuthService {
         ),
       ]);
 
+      // Sync token with apiClient
+      try {
+        const { apiClient } = await import("./apiClient");
+        await apiClient.setToken(response.accessToken);
+      } catch (error) {
+        logger.warn("Failed to sync token with apiClient", { error });
+      }
+
       // Start session monitoring
       this.startSessionMonitoring();
     } catch (error) {
@@ -659,6 +814,14 @@ class AuthService {
         SecureStore.deleteItemAsync(AuthService.SESSION_START_KEY),
         SecureStore.deleteItemAsync(AuthService.LAST_ACTIVITY_KEY),
       ]);
+
+      // Clear token from apiClient
+      try {
+        const { apiClient } = await import("./apiClient");
+        await apiClient.clearToken();
+      } catch (error) {
+        logger.warn("Failed to clear token from apiClient", { error });
+      }
 
       // Stop session monitoring
       this.stopSessionMonitoring();

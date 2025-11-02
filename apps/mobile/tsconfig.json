@@ -1,28 +1,41 @@
 {
-  "extends": "../../tsconfig.base.json", // <-- Inherits all strict rules
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    // --- TypeScript Max Strict Configuration ---
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "verbatimModuleSyntax": true,
+    "useUnknownInCatchVariables": true,
+
+    // --- Module Resolution ---
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+
     // --- Overrides & additions for React Native ---
     "lib": ["ES2023"],
     "types": ["jest", "react-native"],
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": "./",
     "paths": {
+      "@/*": ["src/*"],
       "@pawfectmatch/core": ["../../packages/core/src/index.ts"],
       "@pawfectmatch/core/*": ["../../packages/core/src/*"],
       "@pawfectmatch/ui": ["../../packages/ui/src/index.ts"],
       "@pawfectmatch/ui/*": ["../../packages/ui/src/*"],
-      "@pawfectmatch/design-tokens": [
-        "../../packages/design-tokens/src/index.ts"
-      ],
-      "@pawfectmatch/design-tokens/*": [
-        "../../packages/design-tokens/src/*"
-      ]
+      "@pawfectmatch/design-tokens": ["../../packages/design-tokens/src/index.ts"],
+      "@pawfectmatch/design-tokens/*": ["../../packages/design-tokens/src/*"]
     },
-    "jsx": "react-jsx", // Use modern JSX transform
+
+    // --- JSX ---
+    "jsx": "react-jsx",
     "allowJs": true,
-    "noEmit": true, // Metro handles bundling
+    "noEmit": true,
     "isolatedModules": true,
-    "skipLibCheck": true // Skip type checking of declaration files to avoid conflicts
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*.ts",
@@ -37,6 +50,7 @@
     "dist", 
     "coverage",
     "**/*.test.ts",
-    "**/*.test.tsx"
+    "**/*.test.tsx",
+    "src/__experimental__/**/*"
   ]
 }
