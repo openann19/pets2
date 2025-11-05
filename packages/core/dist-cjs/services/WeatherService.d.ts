@@ -10,13 +10,13 @@ declare const WeatherSchema: z.ZodObject<{
         main: z.ZodString;
         description: z.ZodString;
     }, "strip", z.ZodTypeAny, {
+        description: string;
         id: number;
         main: string;
-        description: string;
     }, {
+        description: string;
         id: number;
         main: string;
-        description: string;
     }>, "many">;
     main: z.ZodObject<{
         temp: z.ZodNumber;
@@ -24,12 +24,12 @@ declare const WeatherSchema: z.ZodObject<{
         pressure: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
         temp: number;
-        humidity: number;
         pressure: number;
+        humidity: number;
     }, {
         temp: number;
-        humidity: number;
         pressure: number;
+        humidity: number;
     }>;
     name: z.ZodString;
     sys: z.ZodObject<{
@@ -62,21 +62,22 @@ declare const WeatherSchema: z.ZodObject<{
     visibility: z.ZodNumber;
     dt: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
+    name: string;
     weather: {
+        description: string;
         id: number;
         main: string;
-        description: string;
     }[];
     main: {
         temp: number;
-        humidity: number;
         pressure: number;
+        humidity: number;
     };
-    name: string;
     sys: {
         sunrise: number;
         sunset: number;
     };
+    dt: number;
     wind: {
         speed: number;
         deg: number;
@@ -85,23 +86,23 @@ declare const WeatherSchema: z.ZodObject<{
         all: number;
     };
     visibility: number;
-    dt: number;
 }, {
+    name: string;
     weather: {
+        description: string;
         id: number;
         main: string;
-        description: string;
     }[];
     main: {
         temp: number;
-        humidity: number;
         pressure: number;
+        humidity: number;
     };
-    name: string;
     sys: {
         sunrise: number;
         sunset: number;
     };
+    dt: number;
     wind: {
         speed: number;
         deg: number;
@@ -110,7 +111,6 @@ declare const WeatherSchema: z.ZodObject<{
         all: number;
     };
     visibility: number;
-    dt: number;
 }>;
 export type WeatherResponse = z.infer<typeof WeatherSchema>;
 export interface EnhancedWeatherData extends WeatherResponse {
@@ -137,4 +137,3 @@ declare const _default: {
     useEnhancedWeather: typeof useEnhancedWeather;
 };
 export default _default;
-//# sourceMappingURL=WeatherService.d.ts.map

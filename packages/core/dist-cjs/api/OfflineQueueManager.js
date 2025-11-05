@@ -24,7 +24,7 @@ class OfflineQueueManager {
     constructor(config = {}) {
         this.config = { ...DEFAULT_CONFIG, ...config };
         this.initializeStorage();
-        void this.loadQueue();
+        this.loadQueue();
         this.startSyncInterval();
     }
     /**
@@ -85,7 +85,7 @@ class OfflineQueueManager {
                 this.removeItem(item.id);
                 logger_1.logger.debug('Item processed successfully', { id: item.id });
             }
-            catch (_error) {
+            catch (error) {
                 item.retryCount++;
                 if (item.retryCount >= item.maxRetries) {
                     logger_1.logger.error('Item failed after max retries', {
@@ -112,7 +112,7 @@ class OfflineQueueManager {
     /**
      * Process individual item
      */
-    async processItem(_item) {
+    async processItem(item) {
         // This would be implemented by the actual API client
         throw new Error('processItem must be implemented by subclass');
     }
@@ -153,7 +153,7 @@ class OfflineQueueManager {
         const index = this.queue.findIndex(item => item.id === id);
         if (index !== -1) {
             this.queue.splice(index, 1);
-            void this.persistQueue();
+            this.persistQueue();
             this.notifyListeners();
         }
     }

@@ -129,4 +129,3 @@ exports.notificationLogger = exports.logger.createChildLogger('Notifications');
 exports.mediaLogger = exports.logger.createChildLogger('Media');
 // Export default logger
 exports.default = exports.logger;
-//# sourceMappingURL=logger.js.map

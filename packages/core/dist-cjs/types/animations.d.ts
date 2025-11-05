@@ -153,4 +153,3 @@ export interface AnimationConfig {
  * Default animation configuration
  */
 export declare const defaultAnimationConfig: AnimationConfig;
-//# sourceMappingURL=animations.d.ts.map

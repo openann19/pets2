@@ -4,6 +4,7 @@
     // --- Package-specific overrides ---
     "outDir": "./dist",
     "rootDir": "./src",
+    "module": "ES2022",
     "lib": ["ES2023"],
     "types": ["node", "jest"],
     "verbatimModuleSyntax": false // Allow mixed import/export for compatibility
