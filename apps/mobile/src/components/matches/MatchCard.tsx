@@ -1,249 +1,312 @@
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { memo } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
-
-import type { Match } from "@pawfectmatch/core";
+import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import OptimizedImage from "../OptimizedImage";
+import { logger } from "@pawfectmatch/core";
 
 interface MatchCardProps {
-  match: Match;
+  match: {
+    _id: string;
+    petId: string;
+    petName: string;
+    petPhoto: string;
+    petAge: number;
+    petBreed: string;
+    lastMessage: {
+      content: string;
+      timestamp: string;
+      senderId: string;
+    };
+    isOnline: boolean;
+    matchedAt: string;
+    unreadCount: number;
+  };
   onPress?: () => void;
   onUnmatch?: (matchId: string, petName: string) => Promise<void>;
   onArchive?: (matchId: string, petName: string) => Promise<void>;
   onReport?: (matchId: string, petName: string) => void;
+  isPremium?: boolean;
+  index?: number;
 }
 
-function MatchCardBase({
+export function MatchCard({
   match,
   onPress,
   onUnmatch,
   onArchive,
   onReport,
-}: MatchCardProps): JSX.Element {
-  const scale = useSharedValue(1);
-  const opacity = useSharedValue(1);
-
+  isPremium = false,
+  index = 0,
+}: MatchCardProps) {
   const handlePress = () => {
-    void Haptics.selectionAsync();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPress?.();
   };
 
-  const handlePressIn = () => {
-    scale.value = withSpring(0.95, { stiffness: 300, damping: 20 });
-    opacity.value = withTiming(0.8, { duration: 100 });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { stiffness: 300, damping: 20 });
-    opacity.value = withTiming(1, { duration: 100 });
-  };
-
   const handleUnmatch = async () => {
-    try {
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-      await onUnmatch?.(match._id, displayPet.name);
-    } catch (error) {
-      logger.error("Error unmatching:", { error });
+    if (!isPremium) {
+      Alert.alert(
+        "Premium Feature",
+        "Unmatching is a premium feature. Upgrade to PawfectMatch Premium to unlock this feature.",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Upgrade",
+            onPress: () => logger.info("User wants to upgrade for unmatch"),
+          },
+        ],
+      );
+      return;
     }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    await onUnmatch?.(match._id, match.petName);
   };
 
   const handleArchive = async () => {
-    try {
-      void Haptics.selectionAsync();
-      await onArchive?.(match._id, displayPet.name);
-    } catch (error) {
-      logger.error("Error archiving:", { error });
+    if (!isPremium) {
+      Alert.alert(
+        "Premium Feature",
+        "Archiving matches is a premium feature. Upgrade to PawfectMatch Premium to unlock this feature.",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Upgrade",
+            onPress: () => logger.info("User wants to upgrade for archive"),
+          },
+        ],
+      );
+      return;
     }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    await onArchive?.(match._id, match.petName);
   };
 
   const handleReport = () => {
-    Alert.alert("Report Match", `Report this match with ${displayPet.name}?`, [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Report",
-        style: "destructive",
-        onPress: () => {
-          void Haptics.notificationAsync(
-            Haptics.NotificationFeedbackType.Warning,
-          );
-          onReport?.(match._id, displayPet.name);
+    Alert.alert(
+      "Report Match",
+      `Are you sure you want to report ${match.petName}? This action cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Report",
+          style: "destructive",
+          onPress: () => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            onReport?.(match._id, match.petName);
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-    opacity: opacity.value,
-  }));
+  const formatTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInHours = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60),
+    );
 
-  // Choose which pet to display (pet2 if current user owns pet1, otherwise pet1)
-  const displayPet = match.pet2; // For now, show pet2
-  const displayUser = match.user2; // For now, show user2
-  const petPhoto = displayPet.photos?.[0]?.url || "";
-  const lastMessage = match.messages?.[match.messages.length - 1];
+    if (diffInHours < 1) return "now";
+    if (diffInHours < 24) return `${diffInHours}h`;
+    return `${Math.floor(diffInHours / 24)}d`;
+  };
 
   return (
-    <Animated.View style={animatedStyle}>
-      <TouchableOpacity
-        style={styles.card}
-        activeOpacity={0.92}
-        onPress={handlePress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        accessibilityLabel={`View match with ${displayPet.name}`}
-      >
-        <LinearGradient
-          colors={["#fceabb", "#f8b500", "#ec4899", "#a21caf"]}
-          style={styles.gradient}
-        >
-          <OptimizedImage
-            source={{ uri: petPhoto }}
-            style={styles.photo}
-            resizeMode="cover"
-            accessibilityLabel={`${displayPet.name} photo`}
-            priority="high"
-          />
-          <View style={styles.info}>
-            <Text style={styles.name}>{displayPet.name}</Text>
-            <Text style={styles.meta}>
-              {displayPet.breed}, {displayPet.age} years old
-            </Text>
-            <Text style={styles.owner}>
-              {displayUser.firstName} {displayUser.lastName}
-            </Text>
-            {lastMessage ? (
-              <Text style={styles.lastMessage} numberOfLines={1}>
-                {lastMessage.content}
-              </Text>
-            ) : null}
-            <Text style={styles.matchedAt}>
-              Matched {new Date(match.createdAt).toLocaleDateString()}
-            </Text>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={handlePress}
+      activeOpacity={0.7}
+    >
+      <View style={styles.content}>
+        {/* Pet Photo */}
+        <View style={styles.photoContainer}>
+          <View style={styles.photo}>
+            {/* TODO: Replace with actual image component */}
+            <Ionicons name="paw" size={32} color="#ec4899" />
           </View>
-          {(onUnmatch || onArchive || onReport) && (
-            <View style={styles.actions}>
-              {onReport && (
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.reportButton]}
-                  onPress={handleReport}
-                  accessibilityLabel="Report match"
-                >
-                  <Ionicons name="flag-outline" size={20} color="#f59e0b" />
-                </TouchableOpacity>
-              )}
-              {onArchive && (
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  onPress={handleArchive}
-                  accessibilityLabel="Archive match"
-                >
-                  <Ionicons name="archive-outline" size={20} color="#6b21a8" />
-                </TouchableOpacity>
-              )}
-              {onUnmatch && (
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.unmatchButton]}
-                  onPress={handleUnmatch}
-                  accessibilityLabel="Unmatch"
-                >
-                  <Ionicons
-                    name="close-circle-outline"
-                    size={20}
-                    color="#dc2626"
-                  />
-                </TouchableOpacity>
-              )}
+
+          {/* Online Status */}
+          {match.isOnline && (
+            <View style={styles.onlineIndicator}>
+              <View style={styles.onlineDot} />
             </View>
           )}
-        </LinearGradient>
-      </TouchableOpacity>
-    </Animated.View>
+        </View>
+
+        {/* Match Info */}
+        <View style={styles.infoContainer}>
+          <View style={styles.header}>
+            <Text style={styles.petName}>{match.petName}</Text>
+            <Text style={styles.timestamp}>
+              {formatTime(match.lastMessage.timestamp)}
+            </Text>
+          </View>
+
+          <View style={styles.details}>
+            <Text style={styles.petDetails}>
+              {match.petAge} years • {match.petBreed}
+            </Text>
+          </View>
+
+          <View style={styles.messageContainer}>
+            <Text style={styles.lastMessage} numberOfLines={1}>
+              {match.lastMessage.content}
+            </Text>
+
+            {match.unreadCount > 0 && (
+              <View style={styles.unreadBadge}>
+                <Text style={styles.unreadCount}>
+                  {match.unreadCount > 99 ? "99+" : match.unreadCount}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+
+        {/* Action Buttons */}
+        <View style={styles.actions}>
+          {isPremium && (
+            <>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={handleUnmatch}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={16} color="#ef4444" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={handleArchive}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="archive" size={16} color="#6b7280" />
+              </TouchableOpacity>
+            </>
+          )}
+
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={handleReport}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="flag" size={16} color="#f59e0b" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: 24,
-    margin: 12,
-    shadowColor: "#ec4899",
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 8,
+  container: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  gradient: {
-    borderRadius: 24,
-    overflow: "hidden",
+  content: {
     flexDirection: "row",
-    alignItems: "center",
     padding: 16,
+    alignItems: "center",
   },
-  photo: {
-    width: 80,
-    height: 80,
-    borderRadius: 16,
-    backgroundColor: "#f3e8ff",
+  photoContainer: {
+    position: "relative",
     marginRight: 16,
   },
-  info: {
+  photo: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#f3f4f6",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  onlineIndicator: {
+    position: "absolute",
+    bottom: 2,
+    right: 2,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  onlineDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#10b981",
+  },
+  infoContainer: {
     flex: 1,
   },
-  name: {
-    fontSize: 20,
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  petName: {
+    fontSize: 16,
     fontWeight: "bold",
-    color: "#a21caf",
+    color: "#1f2937",
   },
-  meta: {
-    fontSize: 15,
-    color: "#6b21a8",
-    marginVertical: 2,
+  timestamp: {
+    fontSize: 12,
+    color: "#6b7280",
   },
-  owner: {
+  details: {
+    marginBottom: 6,
+  },
+  petDetails: {
     fontSize: 14,
-    color: "#7c3aed",
-    marginBottom: 2,
+    color: "#6b7280",
+  },
+  messageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   lastMessage: {
-    fontSize: 13,
-    color: "#6b7280",
-    marginBottom: 2,
+    fontSize: 14,
+    color: "#374151",
+    flex: 1,
+    marginRight: 8,
   },
-  matchedAt: {
+  unreadBadge: {
+    backgroundColor: "#ec4899",
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 6,
+  },
+  unreadCount: {
     fontSize: 12,
-    color: "#a21caf",
-    marginTop: 4,
+    fontWeight: "bold",
+    color: "#fff",
   },
   actions: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 8,
+    flexDirection: "row",
+    gap: 8,
   },
   actionButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    alignItems: "center",
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#f3f4f6",
     justifyContent: "center",
-    marginVertical: 4,
-  },
-  unmatchButton: {
-    backgroundColor: "rgba(220, 38, 38, 0.1)",
-  },
-  reportButton: {
-    backgroundColor: "rgba(245, 158, 11, 0.1)",
+    alignItems: "center",
   },
 });
-
-export const MatchCard = memo(MatchCardBase);
-MatchCard.displayName = "MatchCard";

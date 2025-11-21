@@ -15,6 +15,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import { useTheme } from "../contexts/ThemeContext";
+import { api } from "../services/api";
 
 interface BlockedUser {
   id: string;
@@ -39,32 +40,14 @@ function BlockedUsersScreen({
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Mock data for demo - in real app this would come from API
-  const mockBlockedUsers: BlockedUser[] = [
-    {
-      id: "1",
-      name: "John Smith",
-      email: "john@example.com",
-      blockedAt: "2024-01-15T10:30:00Z",
-      reason: "Inappropriate behavior",
-    },
-    {
-      id: "2",
-      name: "Sarah Johnson",
-      email: "sarah@example.com",
-      blockedAt: "2024-01-10T14:20:00Z",
-      reason: "Spam messages",
-    },
-  ];
-
   const loadBlockedUsers = useCallback(async (refresh = false) => {
     try {
       if (refresh) setRefreshing(true);
       else setLoading(true);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setBlockedUsers(mockBlockedUsers);
+      // Fetch real blocked users from API
+      const blockedUsersData = await api.getBlockedUsers();
+      setBlockedUsers(blockedUsersData);
     } catch (error) {
       logger.error("Failed to load blocked users:", { error });
       Alert.alert("Error", "Failed to load blocked users. Please try again.");
@@ -92,8 +75,8 @@ function BlockedUsersScreen({
               try {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
-                // Simulate API call
-                await new Promise((resolve) => setTimeout(resolve, 500));
+                // Call real API to unblock user
+                await api.unblockUser(userId);
 
                 setBlockedUsers((prev) =>
                   prev.filter((user) => user.id !== userId),

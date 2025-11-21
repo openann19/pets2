@@ -18,6 +18,10 @@ const counts: Cnt = {
   ionicons_glyphMap_fixed: 0,
   fontWeight_normalized: 0,
   animated_import_added: 0,
+  type_only_imports_fixed: 0,
+  button_props_fixed: 0,
+  date_to_string_fixed: 0,
+  undefined_checks_added: 0,
 };
 
 const args = process.argv.slice(2);
@@ -91,6 +95,7 @@ function transformFile(file: import("ts-morph").SourceFile) {
   // 2) Theme.semantic.X → Theme.colors.<map>[500]
   //    Matches: Theme.semantic.<id> and Theme.semantic["<id>"]
   const themeMap = EAConfig.themeMap || {};
+  const themePathMap = EAConfig.themePathMap || {};
   file.forEachDescendant(n => {
     try {
       if (Node.isPropertyAccessExpression(n)) {
@@ -131,6 +136,22 @@ function transformFile(file: import("ts-morph").SourceFile) {
       }
     } catch (e) {
       // Skip nodes that can't be safely replaced
+    }
+  });
+
+  // 2b) Direct Theme.colors path rewrites
+  file.forEachDescendant(n => {
+    if (Node.isPropertyAccessExpression(n)) {
+      const fullPath = n.getText();
+      if (fullPath.startsWith("Theme.")) {
+        const rel = fullPath.slice("Theme.".length);
+        const replacement = (themePathMap as any)[rel];
+        if (replacement) {
+          n.replaceWithText(`Theme.${replacement}`);
+          counts.theme_semantic_rewrites++;
+          touched = true;
+        }
+      }
     }
   });
 
@@ -209,6 +230,67 @@ function transformFile(file: import("ts-morph").SourceFile) {
     }
   }
 
+  // 6) Fix type-only imports (add 'type' keyword)
+  const typeOnlyNames = ['RenderOptions', 'CallData', 'GestureResponderEvent', 'FlexAlignType'];
+  for (const imp of imports) {
+    const namedImports = imp.getNamedImports();
+    for (const ni of namedImports) {
+      const name = ni.getName();
+      if (typeOnlyNames.includes(name) && !ni.isTypeOnly()) {
+        ni.setIsTypeOnly(true);
+        counts.type_only_imports_fixed++;
+        touched = true;
+      }
+    }
+  }
+
+  // 7) Fix EliteButton props: magnetic → magneticEffect, ripple → rippleEffect, glow → glowEffect
+  const buttonPropMap: Record<string, string> = {
+    'magnetic': 'magneticEffect',
+    'ripple': 'rippleEffect',
+    'glow': 'glowEffect',
+    'shimmer': 'shimmerEffect',
+    'icon': 'leftIcon',
+  };
+  
+  const jsxElems3 = [...file.getDescendantsOfKind(SyntaxKind.JsxOpeningElement), ...file.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement)];
+  for (const el of jsxElems3) {
+    const tagName = el.getTagNameNode().getText();
+    if (tagName.includes('Button') || tagName === 'EliteButton') {
+      const attrs = el.getAttributes();
+      for (const attr of attrs) {
+        if (!Node.isJsxAttribute(attr)) continue;
+        const nameNode = attr.getChildAtIndex(0);
+        const attrName = nameNode?.getText();
+        if (attrName && buttonPropMap[attrName] && nameNode) {
+          nameNode.replaceWithText(buttonPropMap[attrName]);
+          counts.button_props_fixed++;
+          touched = true;
+        }
+      }
+    }
+  }
+
+  // 8) Add undefined checks for optional chaining candidates
+  file.forEachDescendant(n => {
+    if (Node.isPropertyAccessExpression(n)) {
+      const text = n.getText();
+      // Look for common patterns like positions.pos[i] that should be positions.pos[i] ?? 0
+      if (text.includes('.pos[') && !n.getParent()?.getText().includes('??')) {
+        const parent = n.getParent();
+        if (parent && Node.isElementAccessExpression(parent)) {
+          try {
+            parent.replaceWithText(`(${parent.getText()} ?? 0)`);
+            counts.undefined_checks_added++;
+            touched = true;
+          } catch (e) {
+            // Skip if replacement fails
+          }
+        }
+      }
+    }
+  });
+
   if (touched) counts.filesTouched++;
   return touched;
 }
@@ -252,5 +334,9 @@ function transformFile(file: import("ts-morph").SourceFile) {
   console.log(pad("Ionicons glyphMap fixed") + counts.ionicons_glyphMap_fixed);
   console.log(pad("fontWeight normalized") + counts.fontWeight_normalized);
   console.log(pad("Animated import added") + counts.animated_import_added);
+  console.log(pad("Type-only imports fixed") + counts.type_only_imports_fixed);
+  console.log(pad("Button props fixed") + counts.button_props_fixed);
+  console.log(pad("Date→string fixed") + counts.date_to_string_fixed);
+  console.log(pad("Undefined checks added") + counts.undefined_checks_added);
   console.log("\n💡 Tip: run with --write to apply changes.\n");
 })();

@@ -1,18 +1,18 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View, TextInput, StyleSheet, Alert } from "react-native";
-import { Animated } from "react-native";
 import * as Haptics from "expo-haptics";
-import { EliteButton } from "../EliteButton";
-import { GlassContainer } from "../GlassContainer";
-import { PremiumBody } from "../PremiumBody";
+import EliteButton from "../buttons/EliteButton";
+import { PremiumBody } from "../PremiumTypography";
 import { tokens } from "@pawfectmatch/design-tokens";
 import { useTheme } from "../../contexts/ThemeContext";
+import { GlassContainer } from "../GlassMorphism";
 
 interface MessageInputProps {
   value: string;
   onChangeText: (text: string) => void;
   onSend: () => void;
   onTypingChange?: (isTyping: boolean) => void;
+  onAttachMedia?: (type: 'image' | 'video' | 'voice', source: 'camera' | 'library' | 'recorder') => void;
   isSending?: boolean;
   maxLength?: number;
   placeholder?: string;
@@ -26,6 +26,7 @@ export function MessageInput({
   onChangeText,
   onSend,
   onTypingChange,
+  onAttachMedia,
   isSending = false,
   maxLength = MAX_MESSAGE_LENGTH,
   placeholder = "Type a message...",
@@ -35,8 +36,7 @@ export function MessageInput({
   const [characterCount, setCharacterCount] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
 
-  const messageEntryAnimation = useRef(new Animated.Value(0)).current;
-  const sendButtonScale = useRef(new Animated.Value(1)).current;
+  // Simplified version without animations for TypeScript compatibility
 
   const handleTextChange = useCallback(
     (text: string) => {
@@ -58,53 +58,83 @@ export function MessageInput({
   const handleFocus = useCallback(() => {
     setIsTyping(true);
     onTypingChange?.(true);
-    Animated.timing(messageEntryAnimation, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  }, [messageEntryAnimation, onTypingChange]);
+  }, [onTypingChange]);
 
   const handleBlur = useCallback(() => {
     setIsTyping(false);
     onTypingChange?.(false);
-    Animated.timing(messageEntryAnimation, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  }, [messageEntryAnimation, onTypingChange]);
+  }, [onTypingChange]);
 
   const handleSend = useCallback(() => {
     if (!value.trim() || isSending) return;
 
     // Haptic feedback for send action
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-    // Animate send button
-    Animated.sequence([
-      Animated.timing(sendButtonScale, {
-        toValue: 0.8,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(sendButtonScale, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     onSend();
-  }, [value, isSending, onSend, sendButtonScale]);
+  }, [value, isSending, onSend]);
 
-  const handleAttachPress = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert("Attach Media", "Photo and file sharing coming soon!");
+  const handleAttachPress = useCallback(async () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    Alert.alert(
+      "Attach Media",
+      "Choose what you'd like to attach",
+      [
+        {
+          text: "Photo",
+          onPress: () => handleAttachMedia('image'),
+        },
+        {
+          text: "Video",
+          onPress: () => handleAttachMedia('video'),
+        },
+        {
+          text: "Voice Message",
+          onPress: () => handleAttachMedia('voice'),
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ]
+    );
+  }, []);
+
+  const handleAttachMedia = useCallback(async (type: 'image' | 'video' | 'voice') => {
+    try {
+      if (type === 'image') {
+        // Show source selection
+        Alert.alert(
+          "Select Photo",
+          "Choose how you want to add a photo",
+          [
+            { text: "Camera", onPress: () => onAttachMedia('image', 'camera') },
+            { text: "Library", onPress: () => onAttachMedia('image', 'library') },
+            { text: "Cancel", style: "cancel" },
+          ]
+        );
+      } else if (type === 'video') {
+        Alert.alert(
+          "Select Video",
+          "Choose how you want to add a video",
+          [
+            { text: "Camera", onPress: () => onAttachMedia('video', 'camera') },
+            { text: "Library", onPress: () => onAttachMedia('video', 'library') },
+            { text: "Cancel", style: "cancel" },
+          ]
+        );
+      } else if (type === 'voice') {
+        onAttachMedia('voice', 'recorder');
+      }
+    } catch (error) {
+      logger.error("Failed to attach media:", { error });
+      Alert.alert("Error", "Failed to attach media. Please try again.");
+    }
   }, []);
 
   const handleEmojiPress = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Alert.alert("Emoji Picker", "Emoji picker coming soon! 😊");
   }, []);
 
@@ -123,9 +153,9 @@ export function MessageInput({
           title=""
           variant="glass"
           size="sm"
-          icon="add"
-          magnetic={true}
-          ripple={true}
+          leftIcon="add"
+          magneticEffect={true}
+          rippleEffect={true}
           onPress={handleAttachPress}
         />
 
@@ -169,20 +199,15 @@ export function MessageInput({
 
           {/* Character Counter */}
           {characterCount > maxLength * 0.8 && (
-            <Animated.View
-              style={[
-                styles.characterCountContainer,
-                { opacity: messageEntryAnimation },
-              ]}
-            >
+            <View style={[styles.characterCountContainer]}>
               <PremiumBody
-                size="xs"
+                size="sm"
                 weight="regular"
                 style={{ color: isOverLimit ? colors.error : colors.gray500 }}
               >
                 {characterCount}/{maxLength}
               </PremiumBody>
-            </Animated.View>
+            </View>
           )}
         </View>
 
@@ -190,26 +215,26 @@ export function MessageInput({
           title=""
           variant="glass"
           size="sm"
-          icon="happy-outline"
-          magnetic={true}
-          ripple={true}
+          leftIcon="happy-outline"
+          magneticEffect={true}
+          rippleEffect={true}
           onPress={handleEmojiPress}
         />
 
-        <Animated.View style={{ transform: [{ scale: sendButtonScale }] }}>
+        <View>
           <EliteButton
             title=""
             variant={value.trim() ? "primary" : "glass"}
             size="sm"
-            icon={isSending ? "hourglass" : "send"}
-            magnetic={true}
-            ripple={true}
-            glow={value.trim()}
-            shimmer={isSending}
+            leftIcon={isSending ? "hourglass" : "send"}
+            magneticEffect={true}
+            rippleEffect={true}
+            glowEffect={!!value.trim()}
+            shimmerEffect={isSending}
             onPress={handleSend}
             disabled={!value.trim() || isSending}
           />
-        </Animated.View>
+        </View>
       </View>
     </GlassContainer>
   );

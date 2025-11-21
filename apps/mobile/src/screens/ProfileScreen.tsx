@@ -13,31 +13,32 @@ import {
   ScrollView,
   StyleSheet,
   Switch,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AdvancedCard, CardConfigs } from "../components/Advanced/AdvancedCard";
-import {
-  AdvancedHeader,
-  HeaderConfigs,
-} from "../components/Advanced/AdvancedHeader";
-// import { AdvancedButton } from '../components/Advanced/AdvancedInteractionSystem';
+import { Card, CardPresets } from "../components/Card";
+import { Button } from "../components/Button";
+import Text, {
+  Heading1,
+  Heading2,
+  Heading3,
+  Body,
+  BodySmall,
+  Caption,
+  Label,
+  ButtonText,
+} from "../components/Text";
 import { matchesAPI } from "../services/api";
 
-type RootStackParamList = {
-  Profile: undefined;
-  MyPets: undefined;
-  Settings: undefined;
-  CreatePet: undefined;
-  Login: undefined;
-};
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "../navigation/types";
 
 type ProfileScreenProps = NativeStackScreenProps<RootStackParamList, "Profile">;
 
-const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
+const ProfileScreen = ({ navigation, route }: ProfileScreenProps) => {
   const { user, logout } = useAuthStore();
   const [notifications, setNotifications] = useState({
     matches: true,
@@ -137,50 +138,35 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Advanced Header */}
-      <AdvancedHeader
-        {...HeaderConfigs.glass({
-          title: "Profile",
-          rightButtons: [
-            {
-              type: "edit",
-              onPress: () => {
-                logger.info("Edit profile");
-              },
-              variant: "glass",
-              haptic: "light",
-            },
-            {
-              type: "settings",
-              onPress: () => navigation.navigate("Settings"),
-              variant: "minimal",
-              haptic: "light",
-            },
-          ],
-          apiActions: {
-            edit: async () => {
-              const userProfile = await matchesAPI.getUserProfile();
-              logger.info("Loaded user profile for editing:", { userProfile });
-            },
-          },
-        })}
-      />
+      {/* Simple Header */}
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <Heading1 style={styles.headerTitle}>Profile</Heading1>
+          <Button
+            variant="ghost"
+            size="sm"
+            onPress={() => navigation.navigate("Settings")}
+            style={styles.headerButton}
+          >
+            <Ionicons name="settings" size={24} color="#666" />
+          </Button>
+        </View>
+      </View>
 
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Header Card */}
-        <AdvancedCard
-          {...CardConfigs.glass({
-            interactions: ["hover", "press", "glow"],
-            haptic: "light",
-            apiAction: async () => {
-              const userProfile = await matchesAPI.getUserProfile();
-              logger.info("Loaded user profile:", { userProfile });
-            },
-          })}
+        <CardPresets.glass
+          onPress={async () => {
+            const userProfile = await matchesAPI.getUserProfile();
+            logger.info("Loaded user profile:", { userProfile });
+          }}
           style={styles.header}
+          glowEffect
+          shimmerEffect
+          tiltEffect
         >
           <View style={styles.profileSection}>
             <Image
@@ -192,18 +178,18 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
               style={styles.profileImage}
             />
             <View style={styles.profileInfo}>
-              <Text style={styles.userName}>
+              <Heading2 style={styles.userName}>
                 {user?.firstName ?? "User"} {user?.lastName ?? ""}
-              </Text>
-              <Text style={styles.userEmail}>
+              </Heading2>
+              <Body style={styles.userEmail}>
                 {user?.email ?? "user@example.com"}
-              </Text>
-              <Text style={styles.memberSince}>
+              </Body>
+              <Caption style={styles.memberSince}>
                 Member since {new Date().getFullYear()}
-              </Text>
+              </Caption>
             </View>
           </View>
-        </AdvancedCard>
+        </CardPresets.glass>
 
         {/* Quick Stats */}
         <AdvancedCard
@@ -222,16 +208,16 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         >
           <View style={styles.statsContent}>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>12</Text>
-              <Text style={styles.statLabel}>Matches</Text>
+              <Heading2 style={styles.statNumber}>12</Heading2>
+              <Label style={styles.statLabel}>Matches</Label>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>8</Text>
-              <Text style={styles.statLabel}>Messages</Text>
+              <Heading2 style={styles.statNumber}>8</Heading2>
+              <Label style={styles.statLabel}>Messages</Label>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>3</Text>
-              <Text style={styles.statLabel}>Pets</Text>
+              <Heading2 style={styles.statNumber}>3</Heading2>
+              <Label style={styles.statLabel}>Pets</Label>
             </View>
           </View>
         </AdvancedCard>
@@ -263,12 +249,12 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
                   style={styles.menuIcon}
                 >
                   <Ionicons
-                    name={item.icon as keyof typeof Ionicons.glyphMap}
+                    name={item.icon as any}
                     size={24}
                     color={item.color}
                   />
                 </LinearGradient>
-                <Text style={styles.menuText}>{item.title}</Text>
+                <Body style={styles.menuText}>{item.title}</Body>
                 <Ionicons name="chevron-forward" size={20} color="#ccc" />
               </View>
             </AdvancedCard>
@@ -277,17 +263,17 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
         {/* Notifications */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Notifications</Text>
+          <Heading3 style={styles.sectionTitle}>Notifications</Heading3>
           <BlurView intensity={20} style={styles.settingsCard}>
             {Object.entries(notifications).map(([key, value]) => (
               <View key={key} style={styles.settingItem}>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingTitle}>
+                  <Label style={styles.settingTitle}>
                     {key.charAt(0).toUpperCase() + key.slice(1)} Notifications
-                  </Text>
-                  <Text style={styles.settingDescription}>
+                  </Label>
+                  <BodySmall style={styles.settingDescription}>
                     Receive {key} notifications
-                  </Text>
+                  </BodySmall>
                 </View>
                 <Switch
                   value={value}
@@ -302,17 +288,17 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
         {/* Privacy */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Privacy</Text>
+          <Heading3 style={styles.sectionTitle}>Privacy</Heading3>
           <BlurView intensity={20} style={styles.settingsCard}>
             {Object.entries(privacy).map(([key, value]) => (
               <View key={key} style={styles.settingItem}>
                 <View style={styles.settingInfo}>
-                  <Text style={styles.settingTitle}>
+                  <Label style={styles.settingTitle}>
                     Show {key.replace(/([A-Z])/g, " $1").toLowerCase()}
-                  </Text>
-                  <Text style={styles.settingDescription}>
+                  </Label>
+                  <BodySmall style={styles.settingDescription}>
                     {value ? "Visible to others" : "Hidden from others"}
-                  </Text>
+                  </BodySmall>
                 </View>
                 <Switch
                   value={value}
@@ -326,15 +312,21 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <LinearGradient
-            colors={["#ef4444", "#dc2626"]}
-            style={styles.logoutGradient}
-          >
-            <Ionicons name="log-out" size={20} color="#fff" />
-            <Text style={styles.logoutText}>Logout</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        <Button
+          variant="gradient"
+          size="lg"
+          onPress={handleLogout}
+          style={styles.logoutButton}
+          leftIcon="log-out"
+          gradientColors={["#ef4444", "#dc2626"]}
+          glowEffect
+          rippleEffect
+          pressEffect
+        >
+          <ButtonText color="inverse" style={styles.logoutText}>
+            Logout
+          </ButtonText>
+        </Button>
       </ScrollView>
     </SafeAreaView>
   );
@@ -350,6 +342,19 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#1f2937",
+  },
+  headerButton: {
+    padding: 8,
   },
   headerBlur: {
     borderRadius: 20,

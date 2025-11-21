@@ -1,0 +1,78 @@
+id: WI-006
+title: Admin Dashboard MVP - Content Moderation System
+priority: P0-CRITICAL
+category: Critical
+effort_days: 4
+risk_level: Medium
+business_impact: Blocker
+technical_debt_reduction: Medium
+
+scope:
+  - apps/mobile/src/screens/admin/*.tsx
+  - apps/mobile/src/services/adminAPI.ts
+  - apps/mobile/src/components/moderation/*
+  - Admin navigation and permissions
+
+description: |
+  Complete the admin moderation dashboard with approval workflow, user management, and content moderation tools.
+  Ensure all admin screens are functional with real API integration.
+  
+  Current state: Admin screens exist but need API integration and workflow completion.
+
+dependencies:
+  - Admin API endpoints
+  - Admin navigation setup
+  - Permission system for admin access
+  - Content moderation endpoints
+
+acceptance_criteria:
+  - [ ] Admin dashboard loads with real statistics
+  - [ ] User management (suspend, ban, verify) functional
+  - [ ] Content moderation (reports, flags) working
+  - [ ] Photo/pet moderation approval workflow
+  - [ ] Real-time stats updates
+  - [ ] Search and filter functionality
+  - [ ] Bulk actions for users/pets
+  - [ ] Admin actions logged and tracked
+  - [ ] Permission checks prevent unauthorized access
+  - [ ] Unit tests for admin screens (≥75% coverage)
+  - [ ] Integration tests for moderation flows
+  - [ ] Zero TypeScript errors
+
+success_criteria:
+  - Functional content moderation system
+  - Admins can approve/reject content
+  - User management tools operational
+  - Stats display correctly
+  - All admin features accessible and working
+
+implementation_steps:
+  1. Verify all admin API endpoints are working
+  2. Add real-time data fetching with polling
+  3. Implement moderation approval UI
+  4. Add search and filtering
+  5. Create bulk action functionality
+  6. Add permission checks
+  7. Implement admin action logging
+  8. Add error and loading states
+  9. Write comprehensive tests
+
+technical_details:
+  - Use React Query for data fetching
+  - Implement optimistic updates for better UX
+  - Add pull-to-refresh for stats
+  - Cache admin data appropriately
+  - Handle concurrent admin actions
+
+risk: Medium
+estimated_time: 4 days
+rollback: Git revert if admin features break
+
+verification:
+  - pnpm --dir apps/mobile exec tsc --noEmit (0 errors)
+  - pnpm --dir apps/mobile lint (0 errors)
+  - pnpm --dir apps/mobile test admin screens (≥75% coverage)
+  - Manual testing of all admin workflows
+  - Test permission checks
+  - Verify all API integrations
+

@@ -16,6 +16,7 @@ export function useStableCallback<T extends (...args: never[]) => unknown>(
   const callbackRef = useRef<T>(callback);
   callbackRef.current = callback;
 
+  // Note: This intentionally omits callbackRef from deps as it uses a ref pattern
   return useCallback((...args: Parameters<T>) => {
     return callbackRef.current(...args);
     // eslint-disable-next-line react-hooks/exhaustive-deps

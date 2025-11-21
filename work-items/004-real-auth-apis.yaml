@@ -1,0 +1,74 @@
+id: WI-004
+title: Real Authentication APIs - JWT Token Management and Secure Storage
+priority: P0-CRITICAL
+category: Critical
+effort_days: 3
+risk_level: High
+business_impact: Blocker
+technical_debt_reduction: High
+
+scope:
+  - apps/mobile/src/stores/useAuthStore.ts
+  - apps/mobile/src/services/AuthService.ts
+  - apps/mobile/src/services/api.ts
+  - apps/mobile/src/utils/secureStorage.ts
+  - apps/mobile/src/hooks/useBiometric.ts
+
+description: |
+  Replace mock authentication with production-ready JWT token management system using secure storage.
+  Implement automatic token refresh, biometric authentication integration, and proper token lifecycle management.
+  
+  Current state: Basic auth store exists with secure storage, but needs full JWT implementation.
+
+dependencies:
+  - expo-secure-store for secure token storage
+  - api.ts authentication endpoints
+  - BiometricService for biometric integration
+
+acceptance_criteria:
+  - [ ] Full JWT login/register flow with secure token storage
+  - [ ] Automatic token refresh before expiration
+  - [ ] Secure storage using expo-secure-store (already partially implemented)
+  - [ ] Token refresh logic with retry mechanism
+  - [ ] Biometric authentication integration
+  - [ ] Proper error handling for auth failures
+  - [ ] Logout functionality clears all secure tokens
+  - [ ] Unit tests for AuthService (≥80% coverage)
+  - [ ] Integration tests for login/register/refresh flows
+  - [ ] Zero TypeScript errors
+  - [ ] No @ts-ignore or any types without justification
+
+success_criteria:
+  - Working login/register/reset flow with secure token storage
+  - Tokens persist across app restarts
+  - Automatic token refresh prevents unauthorized errors
+  - Biometric login functional on supported devices
+  - All auth flows have proper error states
+
+implementation_steps:
+  1. Enhance AuthService with JWT decoding and validation
+  2. Implement automatic token refresh interceptor
+  3. Add token expiration detection
+  4. Integrate biometric authentication flows
+  5. Add comprehensive error handling
+  6. Write unit tests for all auth methods
+  7. Add integration tests for critical flows
+
+technical_details:
+  - Use expo-jwt for token validation (if needed)
+  - Implement refresh token rotation
+  - Store tokens in SecureStore with biometric protection
+  - Handle token refresh race conditions
+  - Add request interceptor for automatic header injection
+
+risk: Medium
+estimated_time: 3 days
+rollback: Git revert if authentication breaks
+
+verification:
+  - pnpm --dir apps/mobile exec tsc --noEmit (0 errors)
+  - pnpm --dir apps/mobile lint (0 errors)
+  - pnpm --dir apps/mobile test AuthService.spec.ts (≥80% coverage)
+  - Manual testing of login/register/refresh flows
+  - Test biometric authentication
+

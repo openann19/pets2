@@ -5,6 +5,7 @@
  * offline queue, and comprehensive error handling.
  */
 
+import * as SecureStore from "expo-secure-store";
 import { logger } from "@pawfectmatch/core";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type {
@@ -18,14 +19,37 @@ import NetInfo from "@react-native-community/netinfo";
 import {
   UnifiedAPIClient,
   type APIClientConfig,
-  type RequestConfig,
 } from "@pawfectmatch/core/api/UnifiedAPIClient";
+import {
+  securityAuditor,
+  validateEndpoint,
+  rateLimiter,
+  validateRequestBody,
+  getSecurityHeaders,
+  sanitizeErrorMessage,
+} from "./SecurityUtils";
+import { authService } from "./AuthService";
 
 const envApiBaseUrl = process.env["EXPO_PUBLIC_API_URL"];
 const API_BASE_URL =
   typeof envApiBaseUrl === "string" && envApiBaseUrl.trim().length > 0
     ? envApiBaseUrl
     : "http://localhost:3001/api";
+
+// API Response Types
+interface ApiSuccessResponse<T> {
+  success: true;
+  data: T;
+  message?: string;
+}
+
+interface ApiErrorResponse {
+  success: false;
+  error: string;
+  details?: Record<string, unknown>;
+}
+
+type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 
 interface ApiClientConfig {
   baseURL: string;
@@ -88,6 +112,19 @@ class ApiClient {
   }
 
   /**
+   * Get token from SecureStore (used after refresh)
+   */
+  private async getTokenFromStorage(): Promise<string | null> {
+    try {
+      const token = await SecureStore.getItemAsync("auth_access_token");
+      return token;
+    } catch (error: unknown) {
+      logger.error("api-client.get-token-from-storage.failed", { error });
+      return null;
+    }
+  }
+
+  /**
    * Set JWT token for authenticated requests
    */
   public async setToken(token: string): Promise<void> {
@@ -134,18 +171,89 @@ class ApiClient {
   }
 
   /**
-   * Setup axios interceptors
+   * Setup axios interceptors with enhanced security
    */
   private setupInterceptors(): void {
-    // Request interceptor - add auth token
+    // Track if we're currently refreshing to prevent infinite loops
+    let isRefreshing = false;
+    let failedQueue: Array<() => void> = [];
+
+    // Request interceptor - add auth token and security headers
     this.instance.interceptors.request.use(
-      (config) => {
+      async (config) => {
+        // Skip token validation for auth endpoints
+        const isAuthEndpoint = config.url?.includes("/auth/login") || 
+                               config.url?.includes("/auth/register") ||
+                               config.url?.includes("/auth/refresh");
+        
+        // Ensure valid token before making authenticated requests
+        if (!isAuthEndpoint && this.token !== null) {
+          try {
+            await authService.ensureValidToken();
+            
+            // Reload token after potential refresh
+            this.token = await this.getTokenFromStorage();
+          } catch (error) {
+            logger.warn("Failed to ensure valid token before request", { error, url: config.url });
+          }
+        }
+
+        // Validate endpoint
+        if (!validateEndpoint(config.url || "")) {
+          securityAuditor.log("request", {
+            error: "Invalid endpoint",
+            url: config.url,
+          });
+          throw new Error("Invalid API endpoint");
+        }
+
+        // Rate limiting
+        const clientId = "mobile-app";
+        if (!rateLimiter.isAllowed(clientId)) {
+          securityAuditor.log("request", {
+            error: "Rate limit exceeded",
+            url: config.url,
+          });
+          throw new Error("API rate limit exceeded");
+        }
+
+        // Add auth token
         if (this.token !== null) {
           const token = this.token;
           const headers = new AxiosHeaders(config.headers);
           headers.set("Authorization", `Bearer ${token}`);
           config.headers = headers;
         }
+
+        // Add security headers
+        const securityHeaders = getSecurityHeaders();
+        const headers = new AxiosHeaders(config.headers);
+        Object.entries(securityHeaders).forEach(([key, value]) => {
+          headers.set(key, value);
+        });
+        config.headers = headers;
+
+        // Validate request body
+        if (config.data && !validateRequestBody(config.data)) {
+          securityAuditor.log("request", {
+            error: "Invalid request body",
+            url: config.url,
+          });
+          throw new Error("Invalid request body");
+        }
+
+        // Log request for security audit
+        securityAuditor.log(
+          "request",
+          {
+            method: config.method?.toUpperCase(),
+            url: config.url,
+            hasAuth: !!this.token,
+          },
+          config.url,
+          config.method?.toUpperCase(),
+        );
+
         return config;
       },
       (error: unknown) => {
@@ -153,20 +261,110 @@ class ApiClient {
           error instanceof Error
             ? error
             : new Error("Request interceptor rejected");
+        securityAuditor.log("error", { error: reason.message });
         return Promise.reject(reason);
       },
     );
 
-    // Response interceptor - handle errors
+    // Response interceptor - handle errors with automatic token refresh
     this.instance.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        // Log successful response for security audit
+        securityAuditor.log(
+          "response",
+          {
+            status: response.status,
+            url: response.config.url,
+          },
+          response.config.url,
+          response.config.method?.toUpperCase(),
+        );
+
+        return response;
+      },
       async (error: AxiosError) => {
+        const originalRequest = error.config;
+        const sanitizedError = sanitizeErrorMessage(
+          error instanceof Error ? error : new Error("Unknown error"),
+          "API response interceptor",
+        );
+
         if (error.response !== undefined) {
           const { status, data } = error.response;
 
-          if (status === 401) {
-            await this.clearToken();
-            logger.warn("api-client.unauthorized", { status });
+          // Log security audit event
+          securityAuditor.log(
+            "error",
+            {
+              status,
+              url: error.config?.url,
+              method: error.config?.method,
+              sanitizedError,
+            },
+            error.config?.url,
+            error.config?.method,
+          );
+
+          // Handle 401 Unauthorized with automatic token refresh
+          if (status === 401 && originalRequest !== undefined) {
+            // Avoid infinite refresh loops
+            if (isRefreshing) {
+              return new Promise((resolve) => {
+                failedQueue.push(() => {
+                  resolve(this.instance(originalRequest));
+                });
+              });
+            }
+
+            isRefreshing = true;
+
+            try {
+              // Attempt to refresh token using SecureStore
+              const refreshToken = await SecureStore.getItemAsync(
+                "auth_refresh_token",
+              );
+
+              if (!refreshToken) {
+                logger.warn("api-client.no-refresh-token", { status });
+                await this.clearToken();
+                throw new Error("No refresh token available");
+              }
+
+              const newTokens = await authService.refreshToken();
+
+              if (newTokens !== null && originalRequest !== undefined) {
+                // Update token
+                await this.setToken(newTokens.accessToken);
+
+                // Retry original request with new token
+                const headers = new AxiosHeaders(originalRequest.headers);
+                headers.set("Authorization", `Bearer ${newTokens.accessToken}`);
+                originalRequest.headers = headers;
+
+                // Process failed queue
+                failedQueue.forEach((prom) => prom());
+                failedQueue = [];
+
+                isRefreshing = false;
+
+                return this.instance(originalRequest);
+              }
+
+              throw new Error("Token refresh failed");
+            } catch (refreshError) {
+              // Refresh failed, clear tokens and reject
+              logger.error("api-client.token-refresh-failed", {
+                error: refreshError,
+              });
+              await this.clearToken();
+              failedQueue.forEach((prom) => prom());
+              failedQueue = [];
+              isRefreshing = false;
+
+              const reason =
+                error instanceof Error ? error : new Error("API request failed");
+              return Promise.reject(reason);
+            }
           } else if (status === 403) {
             logger.error("api-client.forbidden", { status, data });
           } else if (status === 500) {
@@ -175,10 +373,19 @@ class ApiClient {
             logger.error("api-client.http-error", { status, data });
           }
         } else if (error.request !== undefined) {
-          logger.error("api-client.network-error", { message: error.message });
+          logger.error("api-client.network-error", { message: sanitizedError });
+          securityAuditor.log("error", {
+            type: "network",
+            message: sanitizedError,
+            url: error.config?.url,
+          });
         } else {
           logger.error("api-client.request-setup-error", {
-            message: error.message,
+            message: sanitizedError,
+          });
+          securityAuditor.log("error", {
+            type: "setup",
+            message: sanitizedError,
           });
         }
 
@@ -192,65 +399,89 @@ class ApiClient {
   /**
    * GET request
    */
-  public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response: AxiosResponse<T> = await this.instance.get(url, config);
-    return response.data;
+  public async get<T>(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<ApiSuccessResponse<T>> {
+    const response: AxiosResponse<ApiResponse<T>> = await this.instance.get(
+      url,
+      config,
+    );
+    return this.handleResponse(response);
   }
 
   /**
    * POST request
    */
-  public async post<T>(
+  public async post<T, D = unknown>(
     url: string,
-    data?: unknown,
+    data?: D,
     config?: AxiosRequestConfig,
-  ): Promise<T> {
-    const response: AxiosResponse<T> = await this.instance.post(
+  ): Promise<ApiSuccessResponse<T>> {
+    const response: AxiosResponse<ApiResponse<T>> = await this.instance.post(
       url,
       data,
       config,
     );
-    return response.data;
+    return this.handleResponse(response);
   }
 
   /**
    * PUT request
    */
-  public async put<T>(
+  public async put<T, D = unknown>(
     url: string,
-    data?: unknown,
+    data?: D,
     config?: AxiosRequestConfig,
-  ): Promise<T> {
-    const response: AxiosResponse<T> = await this.instance.put(
+  ): Promise<ApiSuccessResponse<T>> {
+    const response: AxiosResponse<ApiResponse<T>> = await this.instance.put(
       url,
       data,
       config,
     );
-    return response.data;
+    return this.handleResponse(response);
   }
 
   /**
    * PATCH request
    */
-  public async patch<T>(
+  public async patch<T, D = unknown>(
     url: string,
-    data?: unknown,
+    data?: D,
     config?: AxiosRequestConfig,
-  ): Promise<T> {
-    const response: AxiosResponse<T> = await this.instance.patch(
+  ): Promise<ApiSuccessResponse<T>> {
+    const response: AxiosResponse<ApiResponse<T>> = await this.instance.patch(
       url,
       data,
       config,
     );
-    return response.data;
+    return this.handleResponse(response);
   }
 
   /**
    * DELETE request
    */
-  public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response: AxiosResponse<T> = await this.instance.delete(url, config);
-    return response.data;
+  public async delete<T>(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<ApiSuccessResponse<T>> {
+    const response: AxiosResponse<ApiResponse<T>> = await this.instance.delete(
+      url,
+      config,
+    );
+    return this.handleResponse(response);
+  }
+
+  /**
+   * Handle API response and ensure it matches expected format
+   */
+  private handleResponse<T>(
+    response: AxiosResponse<ApiResponse<T>>,
+  ): ApiSuccessResponse<T> {
+    if (response.data.success === false) {
+      throw new Error(response.data.error || "API request failed");
+    }
+    return response.data as ApiSuccessResponse<T>;
   }
 
   /**

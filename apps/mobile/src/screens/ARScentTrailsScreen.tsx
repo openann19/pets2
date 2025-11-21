@@ -3,6 +3,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
+import * as Location from "expo-location";
 import React, { useState } from "react";
 import {
   Alert,
@@ -13,6 +14,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { matchesAPI } from "../services/api";
+import { logger } from "@pawfectmatch/core";
 
 type MapStackParamList = {
   ARScentTrails: undefined;
@@ -25,51 +28,82 @@ type ARScentTrailsScreenProps = NativeStackScreenProps<
 
 const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
   const [isScanning, setIsScanning] = useState(false);
-  const [scentTrails, setScentTrails] = useState([
-    {
-      id: "1",
-      petName: "Buddy",
-      petBreed: "Golden Retriever",
-      distance: "150m",
-      direction: "north",
-      intensity: "strong",
-      lastSeen: "5 minutes ago",
-      petPhoto:
-        "https://images.unsplash.com/photo-1552053831-71594a27632d?w=200",
-    },
-    {
-      id: "2",
-      petName: "Luna",
-      petBreed: "Siberian Husky",
-      distance: "280m",
-      direction: "east",
-      intensity: "medium",
-      lastSeen: "12 minutes ago",
-      petPhoto:
-        "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=200",
-    },
-    {
-      id: "3",
-      petName: "Max",
-      petBreed: "Beagle",
-      distance: "420m",
-      direction: "southwest",
-      intensity: "weak",
-      lastSeen: "25 minutes ago",
-      petPhoto:
-        "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=200",
-    },
-  ]);
+  const [scentTrails, setScentTrails] = useState<
+    Array<{
+      id: string;
+      petName: string;
+      petBreed: string;
+      distance: string;
+      direction: string;
+      intensity: string;
+      lastSeen: string;
+      petPhoto: string;
+    }>
+  >([]);
 
-  const startScanning = () => {
+  const startScanning = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setIsScanning(true);
 
-    // Simulate scanning process
-    setTimeout(() => {
+    try {
+      // Get user's current location
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Required",
+          "Location permission is needed to scan for scent trails.",
+        );
+        setIsScanning(false);
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+
+      // Fetch nearby pets using geolocation API
+      const nearbyPets = await matchesAPI.getNearbyPets(
+        latitude,
+        longitude,
+        1000,
+      ); // 1km radius
+
+      // Convert pets to scent trail format
+      const newScentTrails = nearbyPets.map((pet, index) => ({
+        id: pet._id,
+        petName: pet.name,
+        petBreed: pet.breed || "Unknown",
+        distance: `${Math.floor(Math.random() * 500) + 50}m`, // Mock distance calculation
+        direction: [
+          "north",
+          "east",
+          "south",
+          "west",
+          "northeast",
+          "northwest",
+          "southeast",
+          "southwest",
+        ][index % 8],
+        intensity: ["strong", "medium", "weak"][index % 3],
+        lastSeen: `${Math.floor(Math.random() * 30) + 1} minutes ago`,
+        petPhoto:
+          pet.photos?.[0] ||
+          "https://images.unsplash.com/photo-1552053831-71594a27632d?w=200",
+      }));
+
+      setScentTrails(newScentTrails);
+      Alert.alert(
+        "Scan Complete",
+        `Found ${newScentTrails.length} scent trails nearby!`,
+      );
+    } catch (error) {
+      logger.error("Scent trail scanning failed:", { error });
+      Alert.alert(
+        "Scan Failed",
+        "Unable to scan for scent trails. Please try again.",
+      );
+    } finally {
       setIsScanning(false);
-      Alert.alert("Scan Complete", "Found 3 scent trails nearby!");
-    }, 3000);
+    }
   };
 
   const getIntensityColor = (intensity: string) => {

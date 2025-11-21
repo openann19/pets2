@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { FlatList, View, StyleSheet } from "react-native";
-import { Message } from "../hooks/useChatData";
+import type { Message } from "../../hooks/useChatData";
 import { MessageItem } from "./MessageItem";
 import { TypingIndicator } from "./TypingIndicator";
 import { tokens } from "@pawfectmatch/design-tokens";
@@ -10,8 +10,10 @@ interface MessageListProps {
   typingUsers: string[];
   isOnline: boolean;
   onMessagePress?: (message: Message) => void;
-  onMessageLongPress?: (message: Message) => void;
+  onMessageLongPress?: (message: Message, event?: any) => void;
   onRetryMessage?: (messageId: string) => void;
+  onReactionPress?: (messageId: string, emoji: string) => void;
+  onAddReaction?: (messageId: string) => void;
   flatListRef?: React.RefObject<FlatList>;
   onScroll?: (event: {
     nativeEvent: { contentOffset: { x: number; y: number } };
@@ -25,6 +27,8 @@ export function MessageList({
   onMessagePress,
   onMessageLongPress,
   onRetryMessage,
+  onReactionPress,
+  onAddReaction,
   flatListRef,
   onScroll,
 }: MessageListProps): React.JSX.Element {
@@ -35,12 +39,14 @@ export function MessageList({
         index={index}
         messages={messages}
         isOnline={isOnline}
-        onPress={onMessagePress}
-        onLongPress={onMessageLongPress}
-        onRetry={onRetryMessage}
+        {...(onMessagePress && { onPress: onMessagePress })}
+        {...(onMessageLongPress && { onLongPress: onMessageLongPress })}
+        {...(onRetryMessage && { onRetry: onRetryMessage })}
+        {...(onReactionPress && { onReactionPress: onReactionPress })}
+        {...(onAddReaction && { onAddReaction: onAddReaction })}
       />
     ),
-    [messages, isOnline, onMessagePress, onMessageLongPress, onRetryMessage],
+    [messages, isOnline, onMessagePress, onMessageLongPress, onRetryMessage, onReactionPress, onAddReaction],
   );
 
   const renderTypingIndicator = useCallback(
@@ -51,7 +57,7 @@ export function MessageList({
   const keyExtractor = useCallback((item: Message) => item._id, []);
 
   const getItemLayout = useCallback(
-    (data: Message[] | null | undefined, index: number) => ({
+    (_data: any, index: number) => ({
       length: 80, // Approximate message height
       offset: 80 * index,
       index,

@@ -1,0 +1,68 @@
+id: WI-007
+title: Type Safety Fixes - Remove All Type Suppressions
+priority: P0-CRITICAL
+category: Critical
+effort_days: 2
+risk_level: Low
+business_impact: Blocker
+technical_debt_reduction: High
+
+scope:
+  - apps/mobile/src/**/*.{ts,tsx}
+  - Remove all @ts-ignore/@ts-expect-error comments
+  - Fix all type errors
+  - Improve TypeScript strict mode compliance
+
+description: |
+  Remove all @ts-ignore comments and fix type errors to achieve zero TypeScript errors with strict mode.
+  This is critical for code maintainability, IDE support, and preventing runtime errors.
+  
+  Current state: Need to audit and fix all TypeScript suppressions across the codebase.
+
+dependencies:
+  - TypeScript strict mode enabled
+  - ESLint TypeScript rules
+  - Proper type definitions
+
+acceptance_criteria:
+  - [ ] Zero TypeScript errors across mobile app
+  - [ ] All @ts-ignore removed with proper fixes
+  - [ ] All @ts-expect-error removed with proper fixes
+  - [ ] No 'any' types without justification
+  - [ ] No '!' (non-null) assertions without comments
+  - [ ] Strict type checking enabled
+  - [ ] All imported types are properly used
+  - [ ] Proper type guards for runtime checks
+
+success_criteria:
+  - Zero TypeScript errors
+  - Strict type checking enabled
+  - Improved IDE autocomplete and error detection
+  - Better runtime safety
+
+implementation_steps:
+  1. Run TypeScript compiler to identify all errors
+  2. Audit all @ts-ignore/@ts-expect-error usage
+  3. Fix type errors properly (not suppress them)
+  4. Add proper type definitions where missing
+  5. Use type guards for runtime checks
+  6. Enable strictest TypeScript settings
+  7. Verify zero errors after fixes
+
+technical_details:
+  - Use satisfies for theme/token objects
+  - Implement proper discriminated unions
+  - Add type guards for runtime checks
+  - Use TypeScript utility types appropriately
+  - Document why any types are used (rarely)
+
+risk: Low (code improvement only)
+estimated_time: 2 days
+rollback: Git revert, but unlikely to be needed
+
+verification:
+  - pnpm --dir apps/mobile exec tsc --noEmit (0 errors)
+  - pnpm --dir apps/mobile exec tsc --noEmit --strict (0 errors)
+  - No @ts-ignore/@ts-expect-error in codebase
+  - ESLint TypeScript rules passing
+

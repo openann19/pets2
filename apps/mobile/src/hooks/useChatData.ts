@@ -15,6 +15,11 @@ export interface Message {
   type: "text" | "image" | "emoji";
   status?: "sending" | "sent" | "failed";
   error?: boolean;
+  reactions?: Array<{
+    emoji: string;
+    count: number;
+    userReacted: boolean;
+  }>;
 }
 
 export interface ChatData {
@@ -33,6 +38,8 @@ export interface ChatActions {
   retryMessage: (messageId: string) => Promise<void>;
   markAsRead: () => Promise<void>;
   clearError: () => void;
+  addReaction: (messageId: string, emoji: string) => Promise<void>;
+  removeReaction: (messageId: string, emoji: string) => Promise<void>;
 }
 
 export interface UseChatDataReturn {
@@ -57,7 +64,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
   const [error, setError] = useState<string | null>(null);
 
   // Refs
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const socket = useSocket();
 
   // Setup socket connection and event listeners
@@ -137,7 +144,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
     } catch (err) {
       const errorMessage =
         "Failed to load messages. Please check your connection and try again.";
-      logger.error("Failed to load messages", { error: err, matchId });
+      logger.error("Failed to load messages", { error: err as Error, matchId });
       setError(errorMessage);
       Alert.alert("Connection Error", errorMessage);
     } finally {
@@ -190,30 +197,9 @@ export function useChatData(matchId: string): UseChatDataReturn {
             isTyping: false,
           });
         }
-
-        // Simulate realistic response for demo
-        setTimeout(() => {
-          setOtherUserTyping(true);
-          setTimeout(
-            () => {
-              setOtherUserTyping(false);
-              const response: Message = {
-                _id: `response_${Date.now()}`,
-                content: getIntelligentResponse(messageContent),
-                senderId: "other",
-                timestamp: new Date().toISOString(),
-                read: false,
-                type: "text",
-              };
-
-              setMessages((prev) => [...prev, response]);
-            },
-            1500 + Math.random() * 1000,
-          );
-        }, 800);
       } catch (err) {
         logger.error("Failed to send message", {
-          error: err,
+          error: err as Error,
           matchId,
           content,
         });
@@ -262,7 +248,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
           ),
         );
       } catch (err) {
-        logger.error("Failed to retry message", { error: err, messageId });
+        logger.error("Failed to retry message", { error: err as Error, messageId });
         setMessages((prev) =>
           prev.map((msg) =>
             msg._id === retryMessage._id
@@ -282,7 +268,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
       logger.debug("Messages marked as read", { matchId });
       setMessages((prev) => prev.map((msg) => ({ ...msg, read: true })));
     } catch (err) {
-      logger.error("Failed to mark messages as read", { error: err, matchId });
+      logger.error("Failed to mark messages as read", { error: err as Error, matchId });
     }
   }, [matchId]);
 
@@ -290,6 +276,77 @@ export function useChatData(matchId: string): UseChatDataReturn {
   const clearError = useCallback((): void => {
     setError(null);
   }, []);
+
+  // Add reaction to message
+  const addReaction = useCallback(
+    async (messageId: string, emoji: string): Promise<void> => {
+      try {
+        await matchesAPI.addMessageReaction(messageId, emoji);
+        
+        // Update local state optimistically
+        setMessages((prev) =>
+          prev.map((msg) => {
+            if (msg._id === messageId) {
+              const existingReaction = msg.reactions?.find(r => r.emoji === emoji);
+              if (existingReaction) {
+                return {
+                  ...msg,
+                  reactions: msg.reactions?.map(r =>
+                    r.emoji === emoji
+                      ? { ...r, count: r.count + 1, userReacted: true }
+                      : r
+                  ) || []
+                };
+              } else {
+                return {
+                  ...msg,
+                  reactions: [
+                    ...(msg.reactions || []),
+                    { emoji, count: 1, userReacted: true }
+                  ]
+                };
+              }
+            }
+            return msg;
+          })
+        );
+      } catch (err) {
+        logger.error("Failed to add reaction", { error: err as Error, messageId, emoji });
+        Alert.alert("Error", "Failed to add reaction. Please try again.");
+      }
+    },
+    []
+  );
+
+  // Remove reaction from message
+  const removeReaction = useCallback(
+    async (messageId: string, emoji: string): Promise<void> => {
+      try {
+        await matchesAPI.removeMessageReaction(messageId, emoji);
+        
+        // Update local state optimistically
+        setMessages((prev) =>
+          prev.map((msg) => {
+            if (msg._id === messageId) {
+              return {
+                ...msg,
+                reactions: msg.reactions?.map(r =>
+                  r.emoji === emoji
+                    ? { ...r, count: Math.max(0, r.count - 1), userReacted: false }
+                    : r
+                ).filter(r => r.count > 0) || []
+              };
+            }
+            return msg;
+          })
+        );
+      } catch (err) {
+        logger.error("Failed to remove reaction", { error: err as Error, messageId, emoji });
+        Alert.alert("Error", "Failed to remove reaction. Please try again.");
+      }
+    },
+    []
+  );
 
   // Load messages on mount
   useEffect(() => {
@@ -321,57 +378,8 @@ export function useChatData(matchId: string): UseChatDataReturn {
       retryMessage,
       markAsRead,
       clearError,
+      addReaction,
+      removeReaction,
     },
   };
-}
-
-// Intelligent response generation based on message content
-function getIntelligentResponse(messageContent: string): string {
-  const content = messageContent.toLowerCase();
-
-  if (
-    content.includes("weekend") ||
-    content.includes("saturday") ||
-    content.includes("sunday")
-  ) {
-    return "Weekends work perfectly for me! My schedule is pretty flexible then 📅";
-  }
-  if (content.includes("park") || content.includes("dog park")) {
-    return "The dog park sounds amazing! My pup absolutely loves meeting new friends there 🌳🐕";
-  }
-  if (content.includes("time") || content.includes("when")) {
-    return "I'm pretty flexible with timing! What works best for your schedule? ⏰";
-  }
-  if (
-    content.includes("weather") ||
-    content.includes("sunny") ||
-    content.includes("perfect")
-  ) {
-    return "Yes! I checked the forecast too - it's going to be beautiful! Perfect day for our pets to play ☀️";
-  }
-  if (
-    content.includes("excited") ||
-    content.includes("can't wait") ||
-    content.includes("looking forward")
-  ) {
-    return "Me too! This is going to be so much fun. I think our pets are going to be best friends! 🐾💕";
-  }
-  if (
-    content.includes("photo") ||
-    content.includes("picture") ||
-    content.includes("pic")
-  ) {
-    return "I'd love to see more photos! Your pet is absolutely adorable 📸✨";
-  }
-
-  // Default contextual responses
-  const responses = [
-    "That sounds absolutely perfect! I'm really looking forward to it 🎾",
-    "Amazing! My pet is going to be so excited to meet yours 🐕💕",
-    "Perfect! I think this is going to be the start of a beautiful friendship 😊",
-    "Wonderful! I can already tell our pets are going to get along great 🌟",
-    "Fantastic! This is exactly what I was hoping for 🎉",
-    "Love it! I have a really good feeling about this playdate ✨",
-  ];
-  return responses[Math.floor(Math.random() * responses.length)];
 }

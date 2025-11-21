@@ -1,91 +1,146 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
-import { AdvancedCard, CardConfigs } from "../Advanced/AdvancedCard";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 
 interface MatchesTabsProps {
   selectedTab: "matches" | "likedYou";
   onTabChange: (tab: "matches" | "likedYou") => void;
+  isPremium?: boolean;
 }
 
 export function MatchesTabs({
   selectedTab,
   onTabChange,
-}: MatchesTabsProps): React.JSX.Element {
+  isPremium = false,
+}: MatchesTabsProps) {
   return (
-    <AdvancedCard
-      {...CardConfigs.minimal({
-        interactions: ["hover", "press"],
-        haptic: "light",
-      })}
-      style={styles.tabContainer}
-    >
-      <View style={styles.tabContent}>
+    <View style={styles.container}>
+      <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tab, selectedTab === "matches" && styles.activeTab]}
-          onPress={() => {
-            onTabChange("matches");
-          }}
-          accessibilityLabel="View matches"
-          accessibilityState={{ selected: selectedTab === "matches" }}
+          onPress={() => onTabChange("matches")}
+          activeOpacity={0.7}
         >
-          <Text
-            style={[
-              styles.tabText,
-              selectedTab === "matches" && styles.activeTabText,
-            ]}
+          <LinearGradient
+            colors={
+              selectedTab === "matches"
+                ? ["#ec4899", "#be185d"]
+                : ["transparent", "transparent"]
+            }
+            style={styles.tabGradient}
           >
-            Matches
-          </Text>
+            <Ionicons
+              name="heart"
+              size={16}
+              color={selectedTab === "matches" ? "#fff" : "#6b7280"}
+            />
+            <Text
+              style={[
+                styles.tabText,
+                selectedTab === "matches" && styles.activeTabText,
+              ]}
+            >
+              Matches
+            </Text>
+          </LinearGradient>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={[styles.tab, selectedTab === "likedYou" && styles.activeTab]}
-          onPress={() => {
-            onTabChange("likedYou");
-          }}
-          accessibilityLabel="View liked you"
-          accessibilityState={{ selected: selectedTab === "likedYou" }}
+          onPress={() => onTabChange("likedYou")}
+          activeOpacity={0.7}
         >
-          <Text
-            style={[
-              styles.tabText,
-              selectedTab === "likedYou" && styles.activeTabText,
-            ]}
+          <LinearGradient
+            colors={
+              selectedTab === "likedYou"
+                ? ["#ec4899", "#be185d"]
+                : ["transparent", "transparent"]
+            }
+            style={styles.tabGradient}
           >
-            Liked You
-          </Text>
+            <Ionicons
+              name="heart-outline"
+              size={16}
+              color={selectedTab === "likedYou" ? "#fff" : "#6b7280"}
+            />
+            <Text
+              style={[
+                styles.tabText,
+                selectedTab === "likedYou" && styles.activeTabText,
+              ]}
+            >
+              Liked You
+            </Text>
+          </LinearGradient>
         </TouchableOpacity>
       </View>
-    </AdvancedCard>
+
+      {/* Premium Indicator */}
+      {!isPremium && (
+        <View style={styles.premiumIndicator}>
+          <Ionicons name="diamond" size={12} color="#fbbf24" />
+          <Text style={styles.premiumText}>Premium</Text>
+        </View>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  tabContainer: {
-    flexDirection: "row",
+  container: {
     backgroundColor: "#fff",
     borderBottomWidth: 1,
-    borderBottomColor: "#e9ecef",
+    borderBottomColor: "#e5e7eb",
+    position: "relative",
   },
-  tabContent: {
+  tabContainer: {
     flexDirection: "row",
   },
   tab: {
     flex: 1,
-    paddingVertical: 16,
-    alignItems: "center",
+    borderRadius: 0,
+    overflow: "hidden",
   },
   activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: "#ec4899",
+    shadowColor: "#ec4899",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  tabGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
   },
   tabText: {
     fontSize: 16,
-    color: "#6c757d",
+    color: "#6b7280",
     fontWeight: "500",
+    marginLeft: 8,
   },
   activeTabText: {
-    color: "#ec4899",
+    color: "#fff",
     fontWeight: "bold",
+  },
+  premiumIndicator: {
+    position: "absolute",
+    top: 8,
+    right: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(251, 191, 36, 0.1)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  premiumText: {
+    fontSize: 10,
+    color: "#fbbf24",
+    fontWeight: "600",
+    marginLeft: 4,
   },
 });

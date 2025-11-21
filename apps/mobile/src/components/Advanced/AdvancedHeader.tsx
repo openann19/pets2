@@ -234,7 +234,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
 
     return (
       <AdvancedButton
-        icon={icon}
+        leftIcon={icon}
         title={button.title}
         variant={variant}
         size="sm"
@@ -343,7 +343,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
         <View style={styles.leftSection}>
           {showBackButton && (
             <AdvancedButton
-              icon="arrow-back"
+              leftIcon="arrow-back"
               variant="minimal"
               size="sm"
               interactions={["hover", "press", "glow"]}
@@ -434,7 +434,6 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
         floating && styles.floatingContainer,
         transparent && styles.transparentContainer,
       ]}
-      edges={["top"]}
     >
       <StatusBar
         barStyle={

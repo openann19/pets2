@@ -12,9 +12,15 @@ interface UIState {
 
 export const useUIStore = create<UIState>((set) => ({
   theme: "light",
-  setTheme: (theme) => { set({ theme }); },
+  setTheme: (theme) => {
+    set({ theme });
+  },
   isLoading: false,
-  setLoading: (loading) => { set({ isLoading: loading }); },
+  setLoading: (loading) => {
+    set({ isLoading: loading });
+  },
   error: null,
-  setError: (error) => { set({ error }); },
+  setError: (error) => {
+    set({ error });
+  },
 }));

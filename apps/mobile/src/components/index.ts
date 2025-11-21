@@ -49,27 +49,33 @@ export {
 } from "./containers/FXContainer";
 
 // === TYPOGRAPHY SYSTEM ===
-export { default as ModernText } from "./typography/ModernTypography";
+export { default as ModernText } from "./typography/HyperTextSkia";
+export { default as HyperTextSkia } from "./typography/HyperTextSkia";
 export {
-  Heading1,
-  Heading2,
-  Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
-  Body,
-  BodyLarge,
-  BodySmall,
-  Caption,
-  Overline,
-  ButtonText,
-  Label,
-  GradientHeading,
-  GradientText,
-  HolographicText,
-  AnimatedHeading,
-  AnimatedText,
-} from "./typography/ModernTypography";
+  default as ProText,
+  ProTextHero,
+  ProTextPremium,
+  ProTextNeon,
+  ProTextHolographic,
+  ProTextSubtle,
+  ProTextGlitch,
+  ProTextGold,
+} from "./typography/ProText";
+export {
+  ProTextAurora,
+  ProTextPlasma,
+  ProTextCrystal,
+  ProTextFire,
+  ProTextOcean,
+  ProTextMidnight,
+  ProTextEmerald,
+  ProTextRuby,
+  ProTextCosmic,
+  ProTextPastel,
+  ProTextHeroMax,
+  ProTextThemeAware,
+  ProTextMinimal,
+} from "./typography/AdvancedProTextPresets";
 
 // === MODERNIZED COMPONENTS ===
 export { default as ModernSwipeCard } from "./ModernSwipeCard";

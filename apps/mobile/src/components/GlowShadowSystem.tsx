@@ -6,8 +6,6 @@ import Animated, {
   withRepeat,
   withSequence,
   withTiming,
-  interpolate,
-  Extrapolate,
 } from "react-native-reanimated";
 
 import { BorderRadius, Spacing } from "../styles/GlobalStyles";
@@ -135,6 +133,7 @@ interface GlowContainerProps extends ViewProps {
   children: ReactNode;
   color?: keyof typeof GLOW_SHADOW_CONFIGS.coloredShadows;
   intensity?: keyof typeof GLOW_SHADOW_CONFIGS.glowIntensities;
+  variant?: "subtle" | "medium" | "strong" | "intense";
   animated?: boolean;
   speed?: keyof typeof GLOW_SHADOW_CONFIGS.animationSpeeds;
   style?: ViewStyle;
@@ -144,18 +143,39 @@ export const GlowContainer: React.FC<GlowContainerProps> = ({
   children,
   color = "primary",
   intensity = "medium",
+  variant,
   animated = true,
   speed = "normal",
   style,
   ...props
 }) => {
+  // Map variant to color and intensity if provided
+  const effectiveColor = variant
+    ? variant === "subtle"
+      ? "primary"
+      : variant === "medium"
+        ? "primary"
+        : variant === "strong"
+          ? "primary"
+          : "primary"
+    : color;
+
+  const effectiveIntensity = variant
+    ? variant === "subtle"
+      ? "light"
+      : variant === "medium"
+        ? "medium"
+        : variant === "strong"
+          ? "heavy"
+          : "ultra"
+    : intensity;
   const glowIntensity = useSharedValue(1);
 
   useEffect(() => {
     if (animated) {
       glowIntensity.value = withRepeat(
         withSequence(
-          withTiming(GLOW_SHADOW_CONFIGS.glowIntensities[intensity], {
+          withTiming(GLOW_SHADOW_CONFIGS.glowIntensities[effectiveIntensity], {
             duration: GLOW_SHADOW_CONFIGS.animationSpeeds[speed],
           }),
           withTiming(1, {
@@ -166,10 +186,10 @@ export const GlowContainer: React.FC<GlowContainerProps> = ({
         false,
       );
     }
-  }, [animated, intensity, speed]);
+  }, [animated, effectiveIntensity, speed, glowIntensity]);
 
   const glowStyle = useAnimatedStyle(() => {
-    const baseShadow = GLOW_SHADOW_CONFIGS.coloredShadows[color];
+    const baseShadow = GLOW_SHADOW_CONFIGS.coloredShadows[effectiveColor];
     return {
       shadowOpacity: baseShadow.shadowOpacity * glowIntensity.value,
       shadowRadius: baseShadow.shadowRadius * glowIntensity.value,
@@ -177,7 +197,7 @@ export const GlowContainer: React.FC<GlowContainerProps> = ({
     };
   });
 
-  const baseShadow = GLOW_SHADOW_CONFIGS.coloredShadows[color];
+  const baseShadow = GLOW_SHADOW_CONFIGS.coloredShadows[effectiveColor];
 
   return (
     <Animated.View
@@ -254,10 +274,10 @@ export const NeonBorder: React.FC<NeonBorderProps> = ({
         false,
       );
     }
-  }, [animated, speed]);
+  }, [animated, speed, borderOpacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    borderOpacity: borderOpacity.value,
+    opacity: borderOpacity.value,
   }));
 
   const baseShadow = GLOW_SHADOW_CONFIGS.coloredShadows[color];
@@ -300,20 +320,20 @@ export const GlowingCard: React.FC<GlowingCardProps> = ({
   style,
   ...props
 }) => {
+  const cardStyle: ViewStyle = {
+    borderRadius: BorderRadius["2xl"],
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    padding: Spacing.lg,
+    ...GLOW_SHADOW_CONFIGS.depthShadows[shadowDepth],
+    ...style,
+  };
+
   return (
     <GlowContainer
       color={glowColor}
       intensity={glowIntensity}
       animated={animated}
-      style={[
-        {
-          borderRadius: BorderRadius["2xl"],
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
-          padding: Spacing.lg,
-        },
-        GLOW_SHADOW_CONFIGS.depthShadows[shadowDepth],
-        style,
-      ]}
+      style={cardStyle}
       {...props}
     >
       {children}
@@ -367,7 +387,7 @@ export const PulsingGlow: React.FC<PulsingGlowProps> = ({
       -1,
       false,
     );
-  }, [intensity, speed]);
+  }, [intensity, speed, pulseScale, glowIntensity]);
 
   const animatedStyle = useAnimatedStyle(() => {
     const baseShadow = GLOW_SHADOW_CONFIGS.coloredShadows[color];
@@ -499,7 +519,7 @@ export const FloatingShadow: React.FC<FloatingShadowProps> = ({
         false,
       );
     }
-  }, [animated]);
+  }, [animated, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],

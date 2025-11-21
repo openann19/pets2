@@ -11,6 +11,8 @@ export interface EnvironmentConfig {
   ENABLE_LOGGING: boolean;
   ENABLE_ANALYTICS: boolean;
   API_TIMEOUT: number;
+  USE_MOCK_API?: boolean;
+  MOCK_API_PORT?: number;
 }
 
 // Default configuration
@@ -22,6 +24,8 @@ const defaultConfig: EnvironmentConfig = {
   ENABLE_LOGGING: true,
   ENABLE_ANALYTICS: false,
   API_TIMEOUT: 30000,
+  USE_MOCK_API: false,
+  MOCK_API_PORT: 7337,
 };
 
 // Environment-specific configurations
@@ -34,6 +38,8 @@ const environments: Record<string, Partial<EnvironmentConfig>> = {
     ENABLE_LOGGING: true,
     ENABLE_ANALYTICS: false,
     API_TIMEOUT: 30000,
+    USE_MOCK_API: false, // Set to true when running pnpm mobile:mock
+    MOCK_API_PORT: 7337,
   },
   staging: {
     API_BASE_URL: "https://api-staging.pawfectmatch.com",
@@ -85,7 +91,17 @@ export const {
   ENABLE_LOGGING,
   ENABLE_ANALYTICS,
   API_TIMEOUT,
+  USE_MOCK_API,
+  MOCK_API_PORT,
 } = config;
+
+// Helper to get the actual API URL (with mock support)
+export const getApiUrl = (): string => {
+  if (USE_MOCK_API) {
+    return `http://localhost:${MOCK_API_PORT || 7337}`;
+  }
+  return API_BASE_URL;
+};
 
 // Helper functions
 export const isDevelopment = (): boolean => ENVIRONMENT === "development";
@@ -94,12 +110,15 @@ export const isProduction = (): boolean => ENVIRONMENT === "production";
 
 // Log configuration in development
 if (isDevelopment() && ENABLE_LOGGING) {
-  console.log("🔧 Environment Configuration:", {
-    environment: ENVIRONMENT,
-    apiBaseUrl: API_BASE_URL,
-    socketUrl: SOCKET_URL,
-    aiServiceUrl: AI_SERVICE_URL,
-    logging: ENABLE_LOGGING,
-    analytics: ENABLE_ANALYTICS,
+  // Use logger service instead of console
+  import("../services/logger").then(({ logger }) => {
+    logger.info("Environment Configuration", {
+      environment: ENVIRONMENT,
+      apiBaseUrl: API_BASE_URL,
+      socketUrl: SOCKET_URL,
+      aiServiceUrl: AI_SERVICE_URL,
+      logging: ENABLE_LOGGING,
+      analytics: ENABLE_ANALYTICS,
+    });
   });
 }

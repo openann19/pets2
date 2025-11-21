@@ -180,7 +180,7 @@ class AccessibilityService {
     try {
       if (Platform.OS === "ios") {
         // iOS specific focus
-        AccessibilityInfo.setAccessibilityFocus(ref);
+        AccessibilityInfo.setAccessibilityFocus(ref as number);
       } else {
         // Android specific focus
         // Would need additional implementation
@@ -217,14 +217,130 @@ class AccessibilityService {
 
   /**
    * Check if content meets contrast requirements
+   * Implements WCAG AA contrast ratio calculation
    */
   meetsContrastRequirement(
-    _foregroundColor: string,
-    _backgroundColor: string,
+    foregroundColor: string,
+    backgroundColor: string,
   ): boolean {
-    // Simplified contrast check - would need proper color math
-    // WCAG AA requires 4.5:1 for normal text, 3:1 for large text
-    return true; // Placeholder - implement proper contrast calculation
+    try {
+      const contrastRatio = this.calculateContrastRatio(
+        foregroundColor,
+        backgroundColor,
+      );
+
+      // WCAG AA requires 4.5:1 for normal text, 3:1 for large text
+      // We'll use 4.5:1 as the standard requirement
+      const meetsRequirement = contrastRatio >= 4.5;
+
+      logger.debug("Contrast check", {
+        foreground: foregroundColor,
+        background: backgroundColor,
+        ratio: contrastRatio,
+        meetsRequirement,
+      });
+
+      return meetsRequirement;
+    } catch (error: unknown) {
+      logger.error("Contrast calculation failed", {
+        error: error instanceof Error ? error : new Error(String(error)),
+      });
+      // Fallback to true to avoid breaking the UI
+      return true;
+    }
+  }
+
+  /**
+   * Calculate contrast ratio between two colors
+   * Returns ratio between 1 and 21
+   */
+  private calculateContrastRatio(color1: string, color2: string): number {
+    const luminance1 = this.getRelativeLuminance(color1);
+    const luminance2 = this.getRelativeLuminance(color2);
+
+    const lighter = Math.max(luminance1, luminance2);
+    const darker = Math.min(luminance1, luminance2);
+
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  /**
+   * Calculate relative luminance of a color
+   * Returns value between 0 and 1
+   */
+  private getRelativeLuminance(color: string): number {
+    const rgb = this.parseColor(color);
+    if (!rgb) return 0;
+
+    const { r, g, b } = rgb;
+
+    // Convert to relative luminance
+    const rsRGB = r / 255;
+    const gsRGB = g / 255;
+    const bsRGB = b / 255;
+
+    const rLinear =
+      rsRGB <= 0.03928 ? rsRGB / 12.92 : Math.pow((rsRGB + 0.055) / 1.055, 2.4);
+    const gLinear =
+      gsRGB <= 0.03928 ? gsRGB / 12.92 : Math.pow((gsRGB + 0.055) / 1.055, 2.4);
+    const bLinear =
+      bsRGB <= 0.03928 ? bsRGB / 12.92 : Math.pow((bsRGB + 0.055) / 1.055, 2.4);
+
+    return 0.2126 * rLinear + 0.7152 * gLinear + 0.0722 * bLinear;
+  }
+
+  /**
+   * Parse color string to RGB values
+   * Supports hex (#RRGGBB), rgb(r,g,b), and named colors
+   */
+  private parseColor(
+    color: string,
+  ): { r: number; g: number; b: number } | null {
+    // Remove whitespace and convert to lowercase
+    const cleanColor = color.trim().toLowerCase();
+
+    // Handle hex colors
+    if (cleanColor.startsWith("#")) {
+      const hex = cleanColor.slice(1);
+      if (hex.length === 3) {
+        // Short hex format (#RGB)
+        const r = parseInt((hex[0] as string) + (hex[0] as string), 16);
+        const g = parseInt((hex[1] as string) + (hex[1] as string), 16);
+        const b = parseInt((hex[2] as string) + (hex[2] as string), 16);
+        return { r, g, b };
+      } else if (hex.length === 6) {
+        // Full hex format (#RRGGBB)
+        const r = parseInt(hex.slice(0, 2), 16);
+        const g = parseInt(hex.slice(2, 4), 16);
+        const b = parseInt(hex.slice(4, 6), 16);
+        return { r, g, b };
+      }
+    }
+
+    // Handle rgb() format
+    const rgbMatch = cleanColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (rgbMatch) {
+      const r = parseInt(rgbMatch[1] as string, 10);
+      const g = parseInt(rgbMatch[2] as string, 10);
+      const b = parseInt(rgbMatch[3] as string, 10);
+      return { r, g, b };
+    }
+
+    // Handle common named colors
+    const namedColors: Record<string, { r: number; g: number; b: number }> = {
+      black: { r: 0, g: 0, b: 0 },
+      white: { r: 255, g: 255, b: 255 },
+      red: { r: 255, g: 0, b: 0 },
+      green: { r: 0, g: 128, b: 0 },
+      blue: { r: 0, g: 0, b: 255 },
+      yellow: { r: 255, g: 255, b: 0 },
+      cyan: { r: 0, g: 255, b: 255 },
+      magenta: { r: 255, g: 0, b: 255 },
+      gray: { r: 128, g: 128, b: 128 },
+      grey: { r: 128, g: 128, b: 128 },
+    };
+
+    return namedColors[cleanColor] || null;
   }
 
   /**

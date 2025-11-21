@@ -1,8 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useRef, useState, forwardRef } from "react";
 import type { ViewStyle, TouchableOpacityProps } from "react-native";
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
-import { View, TouchableOpacity, Text, Animated,  } from 'react-native';
+import { PanGestureHandler, State } from "react-native-gesture-handler";
+import { View, TouchableOpacity, Text, Animated } from "react-native";
 
 import {
   useGyroscopeTilt,
@@ -13,7 +13,7 @@ import {
   EnhancedShadows,
   SemanticColors,
   EnhancedTypography,
-} from '../styles/EnhancedDesignTokens';
+} from "../styles/EnhancedDesignTokens";
 
 // === PROJECT HYPERION: IMMERSIVE CARD COMPONENT ===
 

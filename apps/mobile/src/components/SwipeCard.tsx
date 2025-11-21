@@ -30,6 +30,7 @@ import {
 } from "react-native";
 
 import { useTheme } from "../contexts/ThemeContext";
+import { getTextColorString } from "../theme/helpers";
 // Local types until core package is properly configured
 interface Pet {
   _id: string;
@@ -65,7 +66,7 @@ const DEFAULT_ANIMATION_CONFIG = {
   duration: 300,
   tension: 100,
   friction: 8,
-  useNativeDriver: false, // Set to false for transform animations
+  useNativeDriver: true, // Enable for better performance with transforms/opacity
 };
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -80,6 +81,10 @@ const SwipeCard = React.memo(function SwipeCard({
   style,
 }: SwipeCardProps): JSX.Element {
   const { colors, isDark } = useTheme();
+
+  // Get theme colors using helpers
+  const textInverseColor = getTextColorString("inverse");
+
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isAccessibilityEnabled, setIsAccessibilityEnabled] = useState(false);
 
@@ -90,7 +95,6 @@ const SwipeCard = React.memo(function SwipeCard({
   const handleLike = useCallback(async (pet: Pet) => {
     setIsProcessing(true);
     try {
-      // eslint-disable-next-line no-console
       logger.info("Liked pet:", { petName: pet.name });
       // API call would go here
     } catch (error) {
@@ -103,7 +107,6 @@ const SwipeCard = React.memo(function SwipeCard({
   const handlePass = useCallback(async (pet: Pet) => {
     setIsProcessing(true);
     try {
-      // eslint-disable-next-line no-console
       logger.info("Passed pet:", { petName: pet.name });
       // API call would go here
     } catch (error) {
@@ -116,7 +119,6 @@ const SwipeCard = React.memo(function SwipeCard({
   const handleSuperLike = useCallback(async (pet: Pet) => {
     setIsProcessing(true);
     try {
-      // eslint-disable-next-line no-console
       logger.info("Super liked pet:", { petName: pet.name });
       // API call would go here
     } catch (error) {
@@ -156,10 +158,8 @@ const SwipeCard = React.memo(function SwipeCard({
         return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
       },
       onPanResponderGrant: () => {
-        pan.setOffset({
-          x: (pan.x as any)._value,
-          y: (pan.y as any)._value,
-        });
+        // Track current offset
+        pan.extractOffset();
         pan.setValue({ x: 0, y: 0 });
 
         // Haptic feedback on touch
@@ -508,20 +508,26 @@ const SwipeCard = React.memo(function SwipeCard({
           accessibilityLabel={`${pet.distance} kilometers away`}
           accessibilityRole="text"
         >
-          <Text style={styles.distanceText}>{pet.distance}km away</Text>
+          <Text style={[styles.distanceText, { color: textInverseColor }]}>
+            {pet.distance}km away
+          </Text>
         </View>
 
         {/* Swipe Overlays */}
         <Animated.View
           style={[styles.overlay, styles.likeOverlay, { opacity: likeOpacity }]}
         >
-          <Text style={styles.overlayText}>LIKE</Text>
+          <Text style={[styles.overlayText, { color: textInverseColor }]}>
+            LIKE
+          </Text>
         </Animated.View>
 
         <Animated.View
           style={[styles.overlay, styles.nopeOverlay, { opacity: nopeOpacity }]}
         >
-          <Text style={styles.overlayText}>NOPE</Text>
+          <Text style={[styles.overlayText, { color: textInverseColor }]}>
+            NOPE
+          </Text>
         </Animated.View>
 
         <Animated.View
@@ -531,7 +537,9 @@ const SwipeCard = React.memo(function SwipeCard({
             { opacity: superLikeOpacity },
           ]}
         >
-          <Text style={styles.overlayText}>SUPER LIKE</Text>
+          <Text style={[styles.overlayText, { color: textInverseColor }]}>
+            SUPER LIKE
+          </Text>
         </Animated.View>
       </View>
 
@@ -542,11 +550,17 @@ const SwipeCard = React.memo(function SwipeCard({
       >
         <View style={styles.infoContainer}>
           <View style={styles.nameRow}>
-            <Text style={styles.name}>{pet.name}</Text>
-            <Text style={styles.age}>{pet.age}</Text>
+            <Text style={[styles.name, { color: textInverseColor }]}>
+              {pet.name}
+            </Text>
+            <Text style={[styles.age, { color: textInverseColor }]}>
+              {pet.age}
+            </Text>
           </View>
 
-          <Text style={styles.breed}>{pet.breed}</Text>
+          <Text style={[styles.breed, { color: textInverseColor }]}>
+            {pet.breed}
+          </Text>
 
           {/* Compatibility Score */}
           <View style={styles.compatibilityContainer}>
@@ -561,7 +575,9 @@ const SwipeCard = React.memo(function SwipeCard({
                 ]}
               />
             </View>
-            <Text style={styles.compatibilityText}>
+            <Text
+              style={[styles.compatibilityText, { color: textInverseColor }]}
+            >
               {pet.compatibility}% match
             </Text>
           </View>
@@ -661,7 +677,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   distanceText: {
-    color: "#fff",
     fontSize: 12,
     fontWeight: "600",
   },
@@ -685,7 +700,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(33, 150, 243, 0.8)",
   },
   overlayText: {
-    color: "#fff",
     fontSize: 48,
     fontWeight: "800",
     textAlign: "center",
@@ -715,17 +729,14 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#fff",
     marginRight: 8,
   },
   age: {
     fontSize: 24,
     fontWeight: "400",
-    color: "#fff",
   },
   breed: {
     fontSize: 16,
-    color: "rgba(255,255,255,0.9)",
     marginBottom: 8,
   },
   compatibilityContainer: {
@@ -745,7 +756,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   compatibilityText: {
-    color: "#fff",
     fontSize: 12,
     fontWeight: "600",
   },

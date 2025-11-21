@@ -8,6 +8,9 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+
+import { getTextColorString, getPrimaryColor } from "../theme/helpers";
 
 interface TabBarIconProps {
   routeName: string;
@@ -16,6 +19,8 @@ interface TabBarIconProps {
   size: number;
   badgeCount?: number;
   showBadge?: boolean;
+  badgeBackgroundColor?: string;
+  badgeTextColor?: string;
 }
 
 const TabBarIcon: React.FC<TabBarIconProps> = ({
@@ -25,6 +30,8 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
   size,
   badgeCount = 0,
   showBadge = false,
+  badgeBackgroundColor = "#ef4444",
+  badgeTextColor = "#ffffff",
 }) => {
   const scale = useSharedValue(1);
   const badgeOpacity = useSharedValue(showBadge ? 1 : 0);
@@ -36,8 +43,7 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
     } else {
       scale.value = withSpring(1, { damping: 15, stiffness: 200 });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [focused]);
+  }, [focused, scale]);
 
   useEffect(() => {
     if (showBadge && badgeCount > 0) {
@@ -47,10 +53,9 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
       badgeOpacity.value = withTiming(0, { duration: 200 });
       badgeScale.value = withTiming(0, { duration: 200 });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showBadge, badgeCount]);
+  }, [showBadge, badgeCount, badgeOpacity, badgeScale]);
 
-  const getIconName = (): string => {
+  const getIconName = (): keyof typeof Ionicons.glyphMap => {
     switch (routeName) {
       case "Home":
         return focused ? "home" : "home-outline";
@@ -87,8 +92,17 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
       </Animated.View>
 
       {showBadge && badgeCount > 0 ? (
-        <Animated.View style={[styles.badge, animatedBadgeStyle]}>
-          <Text style={styles.badgeText}>
+        <Animated.View
+          style={[
+            styles.badge,
+            animatedBadgeStyle,
+            {
+              backgroundColor: badgeBackgroundColor,
+              borderColor: badgeTextColor,
+            },
+          ]}
+        >
+          <Text style={[styles.badgeText, { color: badgeTextColor }]}>
             {badgeCount > 99 ? "99+" : badgeCount.toString()}
           </Text>
         </Animated.View>
@@ -97,28 +111,18 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
   );
 };
 
-interface TabRoute {
-  key: string;
-  name: string;
-}
-
-interface TabBarState {
-  index: number;
-  routes: TabRoute[];
-}
-
-interface EnhancedTabBarProps {
-  state: TabBarState;
-  descriptors: any; // React Navigation bottom tab descriptors
-  navigation: any; // React Navigation navigation helper
-}
-
-export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
+export const EnhancedTabBar: React.FC<BottomTabBarProps> = ({
   state,
   descriptors,
   navigation,
 }) => {
   const { colors } = useTheme();
+
+  // Get theme colors using helpers
+  const backgroundColor = colors.background || "#ffffff";
+  const borderColor = colors.border || "#e9ecef";
+  const badgeBackgroundColor = getPrimaryColor() || "#ef4444";
+  const badgeTextColor = getTextColorString("inverse") || "#ffffff";
 
   // Mock notification counts - in real app, these would come from state/context
   const getBadgeCount = (routeName: string): number => {
@@ -148,14 +152,16 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
   };
 
   return (
-    <View style={[styles.tabBar, { backgroundColor: colors.background }]}>
-      {state.routes.map((route: TabRoute, index: number) => {
+    <View
+      style={[styles.tabBar, { backgroundColor, borderTopColor: borderColor }]}
+    >
+      {state.routes.map((route, index: number) => {
         const descriptor = descriptors[route.key];
         const options = descriptor?.options ?? {};
         const label =
-          options.tabBarLabel !== undefined
+          typeof options.tabBarLabel === "string"
             ? options.tabBarLabel
-            : options.title !== undefined
+            : typeof options.title === "string"
               ? options.title
               : route.name;
 
@@ -208,6 +214,8 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
               size={24}
               badgeCount={badgeCount}
               showBadge={showBadge}
+              badgeBackgroundColor={badgeBackgroundColor}
+              badgeTextColor={badgeTextColor}
             />
             <Text
               style={[
@@ -259,17 +267,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -6,
     right: -8,
-    backgroundColor: "#ef4444",
     borderRadius: 10,
     minWidth: 20,
     height: 20,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: "#fff",
   },
   badgeText: {
-    color: "#fff",
     fontSize: 10,
     fontWeight: "bold",
     textAlign: "center",
